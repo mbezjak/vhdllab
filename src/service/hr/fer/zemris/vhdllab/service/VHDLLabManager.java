@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface VHDLLabManager {
 	/**
-	 * Method loads project. An exception will be thrown if project
+	 * Method loads a project. An exception will be thrown if project
 	 * with specified identifier does not exists.
 	 * @param projectId identifier of project
 	 * @return requested project; this will never be <code>null</code>.
