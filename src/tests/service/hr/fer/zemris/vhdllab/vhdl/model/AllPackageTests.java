@@ -1,4 +1,4 @@
-package hr.fer.zemris.delab.tests;
+package hr.fer.zemris.vhdllab.vhdl.model;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

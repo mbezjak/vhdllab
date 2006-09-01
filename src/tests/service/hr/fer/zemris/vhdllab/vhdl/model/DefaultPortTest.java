@@ -1,4 +1,4 @@
-package hr.fer.zemris.delab.tests;
+package hr.fer.zemris.vhdllab.vhdl.model;
 
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;

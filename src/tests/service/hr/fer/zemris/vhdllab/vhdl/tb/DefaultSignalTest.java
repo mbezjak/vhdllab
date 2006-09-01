@@ -1,4 +1,4 @@
-package hr.fer.zemris.delab.tests.tb;
+package hr.fer.zemris.vhdllab.vhdl.tb;
 
 import hr.fer.zemris.vhdllab.vhdl.tb.DefaultImpulse;
 import hr.fer.zemris.vhdllab.vhdl.tb.DefaultSignal;

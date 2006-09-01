@@ -168,7 +168,7 @@
 
   <target name="run-tests-dao" depends="package-dao,package-tests-dao" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
+      <arg value="hr.fer.zemris.vhdllab.AllDAOJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib.dir}/${app.name}-tests-dao.jar"/>
@@ -180,7 +180,7 @@
 	
   <target name="run-tests-service" depends="package-service,package-tests-service" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
+      <arg value="hr.fer.zemris.vhdllab.AllServiceJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-service.jar"/>
         <pathelement location="${jlib.dir}/${app.name}-tests-service.jar"/>
@@ -192,7 +192,7 @@
      
   <target name="run-tests-web-onServer" depends="package-web-onServer,package-tests-web-onServer" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
+      <arg value="hr.fer.zemris.vhdllab.AllOnServerJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
         <pathelement location="${jlib.dir}/${app.name}-tests-web-onServer.jar"/>
@@ -204,7 +204,7 @@
 	
   <target name="run-tests-web-onClient" depends="package-web-onClient,package-tests-web-onClient" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
+      <arg value="hr.fer.zemris.vhdllab.AllOnClientJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
         <pathelement location="${jlib.dir}/${app.name}-tests-web-onClient.jar"/>

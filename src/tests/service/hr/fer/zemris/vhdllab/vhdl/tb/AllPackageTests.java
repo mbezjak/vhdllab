@@ -1,10 +1,10 @@
-package hr.fer.zemris.delab.tests.tb;
+package hr.fer.zemris.vhdllab.vhdl.tb;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class AllTBPackageTests extends TestCase {
+public class AllPackageTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
