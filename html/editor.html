@@ -1,0 +1,59 @@
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+<script language="JavaScript">
+<!--
+  var req;
+  
+  function performAjaxCall(data) {
+    if( window.XMLHttpRequest ) {
+      req = new XMLHttpRequest();
+    } else if( window.ActiveXObject ) {
+      req = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    req.open("POST", "doAjax", true);
+    req.onreadystatechange = ajaxCallback;
+    req.setRequestHeader("Content-Type","text/xml;charset=utf-8");
+    var forSending = String(data);
+    alert("Will send:["+forSending+"]");
+    req.send(forSending);
+  }
+
+  function performAjaxCallEx(url, data) {
+    if( window.XMLHttpRequest ) {
+      req = new XMLHttpRequest();
+    } else if( window.ActiveXObject ) {
+      req = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    url = String(url);
+    req.open("POST", url, true);
+    req.onreadystatechange = ajaxCallback;
+    req.setRequestHeader("Content-Type","text/xml;charset=utf-8");
+    var forSending = String(data);
+    alert("Will send:["+forSending+"] to ["+url+"]");
+    req.send(forSending);
+  }
+
+  function performAjaxAbort() {
+    req.abort();
+  }
+  
+  function ajaxCallback() {
+    if( req.readyState==4) {
+      alert("Dobio sam odgovor: ["+req.responseText+"]");
+      document.applets[0].ajaxCallResultReceived(req.responseText, req.status);
+    }
+  }
+  
+//-->
+</script>
+</head>
+<body>
+<center>
+  <applet archive="web-server-webApplets.jar" code="hr.fer.zemris.vhdllab.applets.SimpleEditorApplet" width="500" height="400" mayscript>
+  </applet>
+</center>
+</body>
+</html>

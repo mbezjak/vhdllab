@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/web/onClient"/>
+	<classpathentry kind="src" path="src/web/onServer"/>
+	<classpathentry kind="src" path="src/service"/>
+	<classpathentry kind="src" path="src/dao"/>
+	<classpathentry kind="src" path="src/tests/dao"/>
+	<classpathentry kind="src" path="src/tests/service"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/servlet-api.jar"/>
+	<classpathentry kind="lib" path="libs/plugin.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

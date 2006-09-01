@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+    <display-name>Sample application</display-name>
+    <description>
+      Welcome to Sample application
+    </description>
+
+    <!-- Application events listeners start -->
+
+    <listener>
+        <listener-class>hr.fer.zemris.vhdllab.servlets.InitManagerProvider</listener-class>
+    </listener>
+
+    <!-- Application events listeners end -->
+
+    <!-- JSPC servlet mappings start -->
+
+    <servlet>
+        <servlet-name>AjaxServlet1</servlet-name>
+        <servlet-class>hr.fer.zemris.vhdllab.servlets.AjaxServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AjaxServlet1</servlet-name>
+        <url-pattern>/doAjax</url-pattern>
+    </servlet-mapping>
+
+    <!-- JSPC servlet mappings end -->
+
+</web-app>
