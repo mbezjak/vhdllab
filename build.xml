@@ -1,8 +1,8 @@
 <!DOCTYPE project []>
 
-<project name="Web Server" basedir="." default="package">
+<project name="vhdllab" basedir="." default="package">
 
-  <property name="app.name" value="web-server"/>
+  <property name="app.name" value="vhdllab"/>
   
   <property name="build.dir" value="build"/>
   <property name="lib.dir" value="libs"/>
@@ -13,12 +13,15 @@
       <include name="junit.jar"/>
       <include name="servlet-api.jar"/>
       <include name="plugin.jar"/>
-   	  <include name="web-vhdl.jar"/>
     </fileset>
     <pathelement path="${build.dir}/dao"/>
     <pathelement path="${build.dir}/service"/>
-    <pathelement path="${build.dir}/web"/>
-    <pathelement path="${build.dir}/tests"/>
+    <pathelement path="${build.dir}/web/onServer"/>
+    <pathelement path="${build.dir}/web/onClient"/>
+    <pathelement path="${build.dir}/tests/dao"/>
+    <pathelement path="${build.dir}/tests/service"/>
+    <pathelement path="${build.dir}/tests/web/onServer"/>
+    <pathelement path="${build.dir}/tests/web/onClient"/>
   </path>
 
  <target name="init">
@@ -37,18 +40,17 @@
       "${lib.dir}/servlet-api.jar" file is not present. You can copy it from $CATALINA_HOME/common/lib/servlet-api.jar.
     </fail>
  	
-    <available file="${lib.dir}/web-vhdl.jar" property="web-vhdl.jar.present"/>
-     <fail unless="web-vhdl.jar.present">
-       "${lib.dir}/web-vhdl.jar" file is not present. You must create it from Web VHDL project.
-     </fail>
-
     <tstamp/>
     
     <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dir}/web"/>
+    <mkdir dir="${build.dir}/web/onClient"/>
+    <mkdir dir="${build.dir}/web/onServer"/>
     <mkdir dir="${build.dir}/service"/>
     <mkdir dir="${build.dir}/dao"/>
-    <mkdir dir="${build.dir}/tests"/>
+    <mkdir dir="${build.dir}/tests/web/onClient"/>
+    <mkdir dir="${build.dir}/tests/web/onServer"/>
+    <mkdir dir="${build.dir}/tests/service"/>
+    <mkdir dir="${build.dir}/tests/dao"/>
     <mkdir dir="${jlib.dir}"/>
  </target>
 
@@ -73,9 +75,16 @@
     </javac>
   </target>
 
-  <target name="compile-web" depends="compile-service">
-    <javac destdir="${build.dir}/web" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
-      <src path="src/web"/>
+  <target name="compile-web-onServer" depends="compile-service">
+    <javac destdir="${build.dir}/web/onServer" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+      <src path="src/web/onServer"/>
+      <classpath refid="src.class.path"/>
+    </javac>
+  </target>
+	
+  <target name="compile-web-onClient" depends="compile-service">
+    <javac destdir="${build.dir}/web/onClient" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+      <src path="src/web/onClient"/>
       <classpath refid="src.class.path"/>
     </javac>
   </target>
@@ -92,46 +101,132 @@
     </jar>
   </target>
         
-  <target name="package-web" depends="compile-web">
-    <jar destfile="${jlib.dir}/${app.name}-webLib.jar">
-      <fileset dir="${build.dir}/web" includes="hr/fer/zemris/vhdllab/servlets/**/*.class"/>
-      <fileset dir="${build.dir}/web" includes="hr/fer/zemris/ajax/shared/**/*.class"/>
-    </jar>
-    <jar destfile="${jlib.dir}/${app.name}-webApplets.jar">
-      <fileset dir="${build.dir}/web" includes="hr/fer/zemris/vhdllab/applets/**.class"/>
-      <fileset dir="${build.dir}/web" includes="hr/fer/zemris/ajax/shared/**.class"/>
-    </jar>
+  <target name="package-web-onClient" depends="compile-web-onClient">
+  	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar">
+  	  <fileset dir="${build.dir}/web/onClient" includes="**/*.class"/>
+	  <fileset dir="${build.dir}/web/onServer" includes="hr/fer/zemris/ajax/shared/**/*.class"/>
+  	</jar>
+  </target>
+  
+ <target name="package-web-onServer" depends="compile-web-onServer">
+  	<jar destfile="${jlib.dir}/${app.name}-web-onServer.jar">
+  	  <fileset dir="${build.dir}/web/onServer" includes="**/*.class"/>
+  	</jar>
   </target>
         
-        
-  <target name="compile-tests" depends="compile-dao,compile-service,compile-web">
-    <javac destdir="${build.dir}/tests" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
-      <src path="src/tests"/>
+  <target name="compile-tests-dao" depends="compile-dao">
+    <javac destdir="${build.dir}/tests/dao" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+      <src path="src/tests/dao"/>
+      <classpath refid="src.class.path"/>
+    </javac>
+  </target>
+	
+  <target name="compile-tests-service" depends="compile-service">
+    <javac destdir="${build.dir}/tests/service" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+      <src path="src/tests/service"/>
       <classpath refid="src.class.path"/>
     </javac>
   </target>
 
-  <target name="package-tests" depends="compile-tests">
-    <jar destfile="${jlib.dir}/${app.name}-tests.jar">
-      <fileset dir="${build.dir}/tests" includes="**/*.class"/>
+  <target name="compile-tests-web-onClient" depends="compile-web-onClient">
+    <javac destdir="${build.dir}/tests/web/onClient" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+      <src path="src/tests/web/onClient"/>
+      <classpath refid="src.class.path"/>
+    </javac>
+  </target>
+	
+  <target name="compile-tests-web-onServer" depends="compile-web-onServer">
+    <javac destdir="${build.dir}/tests/web/onServer" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+      <src path="src/tests/web/onServer"/>
+      <classpath refid="src.class.path"/>
+    </javac>
+  </target>
+
+  <target name="package-tests-dao" depends="compile-tests-dao">
+    <jar destfile="${jlib.dir}/${app.name}-tests-dao.jar">
+      <fileset dir="${build.dir}/tests/dao" includes="**/*.class"/>
+    </jar>
+  </target>
+	
+  <target name="package-tests-service" depends="compile-tests-service">
+    <jar destfile="${jlib.dir}/${app.name}-tests-service.jar">
+      <fileset dir="${build.dir}/tests/service" includes="**/*.class"/>
+    </jar>
+  </target>
+	
+  <target name="package-tests-web-onClient" depends="compile-tests-web-onClient">
+    <jar destfile="${jlib.dir}/${app.name}-tests-web-onClient.jar">
+      <fileset dir="${build.dir}/tests/web/onClient" includes="**/*.class"/>
+    </jar>
+  </target>
+	
+  <target name="package-tests-web-onServer" depends="compile-tests-web-onServer">
+    <jar destfile="${jlib.dir}/${app.name}-tests-web-onServer.jar">
+      <fileset dir="${build.dir}/tests/web/onServer" includes="**/*.class"/>
     </jar>
   </target>
 
-  <target name="compile" depends="compile-dao,compile-service,compile-web"/>
-
-  <target name="package" depends="package-dao,package-service,package-web"/>
-        
-  <!-- this target is currently invalid, since no tests are present -->
-  <target name="run-tests" depends="package,package-tests" if="junit.jar.present">
+  <target name="run-tests-dao" depends="package-dao,package-tests-dao" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.sekunde.tests.AllJunitTests"/>
+      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
       <classpath>
-        <pathelement location="${jlib.dir}/${app.name}.jar"/>
-        <pathelement location="${jlib.dir}/${app.name}-tests.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-tests-dao.jar"/>
+        <pathelement location="${lib.dir}/junit.jar"/>
+        <pathelement location="${java.class.path}"/>
+      </classpath>
+    </java>
+  </target>
+	
+  <target name="run-tests-service" depends="package-service,package-tests-service" if="junit.jar.present">
+    <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
+      <classpath>
+        <pathelement location="${jlib.dir}/${app.name}-service.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-tests-service.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
       </classpath>
     </java>
   </target>
      
+  <target name="run-tests-web-onServer" depends="package-web-onServer,package-tests-web-onServer" if="junit.jar.present">
+    <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
+      <classpath>
+        <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-tests-web-onServer.jar"/>
+        <pathelement location="${lib.dir}/junit.jar"/>
+        <pathelement location="${java.class.path}"/>
+      </classpath>
+    </java>
+  </target>
+	
+  <target name="run-tests-web-onClient" depends="package-web-onClient,package-tests-web-onClient" if="junit.jar.present">
+    <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
+      <arg value="hr.fer.zemris.vhdllab.AllJUnitTests"/>
+      <classpath>
+        <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-tests-web-onClient.jar"/>
+        <pathelement location="${lib.dir}/junit.jar"/>
+        <pathelement location="${java.class.path}"/>
+      </classpath>
+    </java>
+  </target>
+	
+	
+  <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
+
+  <target name="package" depends="package-dao,package-service,package-web-onServer,package-web-onClient"/>
+
+  <target name="package-tests" depends="package-tests-dao,package-tests-service,package-tests-web-onServer,package-tests-web-onClient"/>
+	
+  <target name="run-tests" depends="run-tests-dao,run-tests-service"/>
+	
+  <target name="all" depends="package,run-tests"/>
+	
+  <target name="rebuild" depends="clean,package"/>
+	
+  <target name="rebuildall" depends="clean,package,run-tests"/>
+
 </project>
