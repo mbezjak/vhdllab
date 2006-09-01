@@ -10,7 +10,7 @@ import hr.fer.zemris.vhdllab.vhdl.VHDLGenerator;
 import java.util.List;
 
 /**
- * This is interface representing a VHDL Laboratory Manager.
+ * This is an interface representing a VHDL Laboratory Manager. 
  * This interface defines the communication between the web 
  * and the service layer.
  */
