@@ -11,6 +11,8 @@ import java.util.List;
 
 /**
  * This is interface representing a VHDL Laboratory Manager.
+ * This interface defines the communication between the web 
+ * and the service layer.
  */
 public interface VHDLLabManager {
 	/**
