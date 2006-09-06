@@ -8,39 +8,41 @@ import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import java.util.Properties;
 
 /**
- * This class represents a registered method for "save file" request.
+ * This class represents a registered method for "exists file" request.
  * 
  * @author Miro Bezjak
  */
-public class DoMethodSaveFile implements JavaToAjaxRegisteredMethod {
+public class DoMethodExistsFile implements JavaToAjaxRegisteredMethod {
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
 	public Properties run(Properties p, VHDLLabManager labman) {
-		String fileID = p.getProperty(MethodConstants.PROP_FILE_ID,null);
-		String content = p.getProperty(MethodConstants.PROP_FILE_CONTENT,null);
-		if(fileID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file ID specified!");
-		if(content == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR, "No file content specified!");
+		String projectID = p.getProperty(MethodConstants.PROP_PROJECT_ID,null);
+		String fileName = p.getProperty(MethodConstants.PROP_FILE_NAME,null);
+		if(projectID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No project ID specified!");
+		if(fileName == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file name specified!");
 		
 		Long id = null;
 		try {
-			id = Long.parseLong(fileID);
+			id = Long.parseLong(projectID);
 		} catch (NumberFormatException e) {
-			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
+			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID!");
 		}
 		
-		// Save file
+		// Check if file exists
+		boolean exists = false;
 		try {
-			labman.saveFile(id, content);
+			exists = labman.existsFile(id, fileName);
 		} catch (ServiceException e) {
-			return errorProperties(MethodConstants.SE_CAN_NOT_SAVE_FILE,"File could not be saved.");
+			return errorProperties(MethodConstants.SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE, "Unable to determine if file exists.");
 		}
 		
 		// Prepare response
 		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_SAVE_FILE);
+		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_EXISTS_FILE);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
+		resProp.setProperty(MethodConstants.PROP_FILE_EXISTS,String.valueOf(exists));
 		return resProp;
 	}
 	

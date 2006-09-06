@@ -8,38 +8,38 @@ import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import java.util.Properties;
 
 /**
- * This class represents a registered method for "save file" request.
+ * This class represents a registered method for "rename project" request.
  * 
  * @author Miro Bezjak
  */
-public class DoMethodSaveFile implements JavaToAjaxRegisteredMethod {
+public class DoMethodRenameProject implements JavaToAjaxRegisteredMethod {
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
 	public Properties run(Properties p, VHDLLabManager labman) {
-		String fileID = p.getProperty(MethodConstants.PROP_FILE_ID,null);
-		String content = p.getProperty(MethodConstants.PROP_FILE_CONTENT,null);
-		if(fileID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file ID specified!");
-		if(content == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR, "No file content specified!");
-		
+		String projectID = p.getProperty(MethodConstants.PROP_PROJECT_ID,null);
+		String newName = p.getProperty(MethodConstants.PROP_PROJECT_NAME,null);
+		if(projectID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No project ID specified!");
+		if(newName == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No project name specified!");
+
 		Long id = null;
 		try {
-			id = Long.parseLong(fileID);
+			id = Long.parseLong(projectID);
 		} catch (NumberFormatException e) {
-			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
+			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID!");
 		}
 		
-		// Save file
+		// Rename project
 		try {
-			labman.saveFile(id, content);
+			labman.renameProject(id, newName);
 		} catch (ServiceException e) {
-			return errorProperties(MethodConstants.SE_CAN_NOT_SAVE_FILE,"File could not be saved.");
+			return errorProperties(MethodConstants.SE_CAN_NOT_RENAME_PROJECT,"Project could not be renamed.");
 		}
 		
 		// Prepare response
 		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_SAVE_FILE);
+		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_RENAME_PROJECT);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
 		return resProp;
 	}

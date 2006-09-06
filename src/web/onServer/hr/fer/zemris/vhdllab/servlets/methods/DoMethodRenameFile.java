@@ -5,46 +5,36 @@ import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 
-import java.io.IOException;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
- * This class represents a registered method for "rename.file" request.
+ * This class represents a registered method for "rename file" request.
  * 
  * @author Miro Bezjak
  */
 public class DoMethodRenameFile implements JavaToAjaxRegisteredMethod {
 
-	/**
-	 * This method is called when "rename.file" request is received.
-	 * @param p Properties representing accepted request
-	 * @param request http servlet request
-	 * @param response http servlet response
-	 * @param labman a lab manager from where to draw data
-	 * @return a response Properties
-	 * @throws IOException
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
-	public Properties run(Properties p, HttpServletRequest request, HttpServletResponse response, VHDLLabManager labman) throws IOException {
+	public Properties run(Properties p, VHDLLabManager labman) {
 		String fileID = p.getProperty(MethodConstants.PROP_FILE_ID,null);
-		if(fileID == null) {
-			return errorProperties("No file ID specified!", request, response);
-		}
+		String newName = p.getProperty(MethodConstants.PROP_FILE_NAME,null);
+		if(fileID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file ID specified!");
+		if(newName == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file name specified!");
+
 		Long id = null;
 		try {
 			id = Long.parseLong(fileID);
 		} catch (NumberFormatException e) {
-			return errorProperties("Unable to parse file ID!", request, response);
+			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
 		}
 		
 		// Rename file
-		String newName = p.getProperty(MethodConstants.PROP_FILE_NAME,"");
 		try {
 			labman.renameFile(id, newName);
 		} catch (ServiceException e) {
-			return errorProperties("File id "+fileID+" could not be renamed.",request,response);
+			return errorProperties(MethodConstants.SE_CAN_NOT_RENAME_FILE,"File could not be renamed.");
 		}
 		
 		// Prepare response
@@ -56,15 +46,14 @@ public class DoMethodRenameFile implements JavaToAjaxRegisteredMethod {
 	
 	/**
 	 * This method is called if errors occur.
-	 * @param errorMessage Error message to pass back to caller
-	 * @param request http servlet request
-	 * @param response http servlet response
-	 * @throws IOException
+	 * @param errNo error message number
+	 * @param errorMessage error message to pass back to caller
+	 * @return a response Properties
 	 */
-	private Properties errorProperties(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private Properties errorProperties(String errNo, String errorMessage) {
 		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_ERROR);
+		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
 		resProp.setProperty(MethodConstants.STATUS_CONTENT,errorMessage);
 		return resProp;
-	}	
+	}
 }

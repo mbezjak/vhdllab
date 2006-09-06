@@ -1,10 +1,9 @@
 package hr.fer.zemris.vhdllab.model;
 
-import hr.fer.zemris.vhdllab.model.File;
 import junit.framework.TestCase;
 
 /**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.model.File} class.
+ * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.model.File} class.
  * 
  * @author Miro Bezjak
  */

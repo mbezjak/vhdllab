@@ -6,11 +6,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultGenerator;
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultImpulse;
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultSignal;
-import hr.fer.zemris.vhdllab.vhdl.tb.Generator;
-import hr.fer.zemris.vhdllab.vhdl.tb.Signal;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -19,7 +14,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 /**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.tb.DefaultGenerator} class.
+ * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.DefaultGenerator} class.
  * 
  * @author Miro Bezjak
  */

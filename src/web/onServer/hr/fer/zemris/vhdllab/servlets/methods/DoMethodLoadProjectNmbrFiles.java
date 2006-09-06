@@ -2,45 +2,47 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 
 import java.util.Properties;
 
 /**
- * This class represents a registered method for "save file" request.
+ * This class represents a registered method for "load project number of files" request.
  * 
  * @author Miro Bezjak
  */
-public class DoMethodSaveFile implements JavaToAjaxRegisteredMethod {
+public class DoMethodLoadProjectNmbrFiles implements JavaToAjaxRegisteredMethod {
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
 	public Properties run(Properties p, VHDLLabManager labman) {
-		String fileID = p.getProperty(MethodConstants.PROP_FILE_ID,null);
-		String content = p.getProperty(MethodConstants.PROP_FILE_CONTENT,null);
-		if(fileID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file ID specified!");
-		if(content == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR, "No file content specified!");
-		
+		String projectID = p.getProperty(MethodConstants.PROP_PROJECT_ID,null);
+		if(projectID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No project ID specified!");
+
 		Long id = null;
 		try {
-			id = Long.parseLong(fileID);
+			id = Long.parseLong(projectID);
 		} catch (NumberFormatException e) {
-			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
+			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID!");
 		}
 		
-		// Save file
+		// Load project
+		Project project = null;
 		try {
-			labman.saveFile(id, content);
+			project = labman.loadProject(id);
 		} catch (ServiceException e) {
-			return errorProperties(MethodConstants.SE_CAN_NOT_SAVE_FILE,"File could not be saved.");
+			project = null;
 		}
-		
+		if(project==null) return errorProperties(MethodConstants.SE_NO_SUCH_PROJECT,"Project not found!");
+
 		// Prepare response
 		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_SAVE_FILE);
+		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_LOAD_PROJECT_NMBR_FILES);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
+		resProp.setProperty(MethodConstants.PROP_PROJECT_NMBR_FILES,String.valueOf(project.getFiles().size()));
 		return resProp;
 	}
 	

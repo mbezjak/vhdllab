@@ -65,6 +65,7 @@ public class Aplet extends JApplet{
 		//in_panel.nacrtaj_sve();
 	}
 	
+	@Override
 	public void init(){
 		
 			super.init();

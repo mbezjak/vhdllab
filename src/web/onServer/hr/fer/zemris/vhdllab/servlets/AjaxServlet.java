@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets;
 
+
 import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.ajax.shared.XMLUtil;
@@ -16,10 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Sample servlet which responses to AJAX calls.
+ * Servlet which responses to AJAX calls.
  * 
- * @author marcupic
- *
+ * @author Miro Bezjak
  */
 public class AjaxServlet extends HttpServlet {
 	
@@ -38,29 +38,30 @@ public class AjaxServlet extends HttpServlet {
 		Properties p = XMLUtil.deserializeProperties(text);
 		
 		// Perform method dispatching...
-		String method = p.getProperty("method","");
+		String method = p.getProperty(MethodConstants.PROP_METHOD,"");
 		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
 		JavaToAjaxRegisteredMethod regMethod = (JavaToAjaxRegisteredMethod)((Map)mprov.get("registeredMethods")).get(method);
-		if(regMethod==null) returnError("Invalid method called!", request, response);
 		
 		// Prepair response
-		Properties resProp = regMethod.run(p, request, response, labman);
+		Properties resProp = null;
+		if(regMethod==null) resProp = errorProperties(MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
+		else resProp = regMethod.run(p, labman);
+
 		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);
 	}
 	
 	/**
 	 * This method is called if errors occur.
-	 * @param errorMessage Error message to pass back to caller
-	 * @param request http servlet request
-	 * @param response http servlet response
-	 * @throws IOException
+	 * @param errNo error message number
+	 * @param errorMessage error message to pass back to caller
+	 * @return a response Properties
 	 */
-	private void returnError(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private Properties errorProperties(String errNo, String errorMessage) {
 		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_ERROR);
+		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
 		resProp.setProperty(MethodConstants.STATUS_CONTENT,errorMessage);
-		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);
+		return resProp;
 	}
 	
 	/**
@@ -68,7 +69,7 @@ public class AjaxServlet extends HttpServlet {
 	 * @param message message to send - this is assumed to be a XML message
 	 * @param request http servlet request
 	 * @param response http servlet response
-	 * @throws IOException
+	 * @throws IOException if method can not send results
 	 */
 	private void returnXMLResponse(String message, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("text/xml;charset=UTF-8");
@@ -76,5 +77,4 @@ public class AjaxServlet extends HttpServlet {
 		response.getWriter().write(message);
 		response.getWriter().flush();
 	}
-
 }

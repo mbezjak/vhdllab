@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import junit.framework.TestCase;
 
 /**

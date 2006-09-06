@@ -4,15 +4,13 @@ import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultGenerator;
-import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
 import java.text.ParseException;
 
 import junit.framework.TestCase;
 
 /**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.tb.Testbench} class.
+ * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.Testbench} class.
  * 
  * @author Miro Bezjak
  */

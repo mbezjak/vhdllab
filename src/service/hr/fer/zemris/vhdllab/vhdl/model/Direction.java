@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
 /**
- * This class describes direction of a port in <code>ENTITY</code>
- * block of <code>VHDL</code> code.
+ * This class describes direction of a port in ENTITY
+ * block of VHDL code.
  * <p>
  * Direction can be:
  * <ul>

@@ -8,7 +8,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.*;
+
+import javax.swing.JComponent;
 
 
 public class Platno extends JComponent {
@@ -578,6 +579,7 @@ public class Platno extends JComponent {
 		
 	}
 
+	@Override
 	public void paint(Graphics arg0){
 		if(this.podatci!=null)this.nacrtaj_sve();
 		this.validate();

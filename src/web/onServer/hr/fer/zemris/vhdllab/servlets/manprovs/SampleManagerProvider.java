@@ -8,11 +8,22 @@ import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
-import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGetFileContent;
-import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGetFileName;
-import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGetFileType;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewFile;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewProject;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodExistsFile;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodExistsProject;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodFindProjectsByUser;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileBelongsToProjectId;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileContent;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileName;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileType;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectName;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectNmbrFiles;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectOwnerId;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodRenameFile;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodRenameProject;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodSaveFile;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodSaveProject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,11 +52,23 @@ public class SampleManagerProvider implements ManagerProvider {
 		
 		//Register all known methods
 		Map<String,JavaToAjaxRegisteredMethod> registeredMethods = new HashMap<String, JavaToAjaxRegisteredMethod>();
-		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_NAME, new DoMethodGetFileName());
-		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_TYPE, new DoMethodGetFileType());
-		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_CONTENT, new DoMethodGetFileContent());
+		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_NAME, new DoMethodLoadFileName());
+		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_TYPE, new DoMethodLoadFileType());
+		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_CONTENT, new DoMethodLoadFileContent());
 		registeredMethods.put(MethodConstants.MTD_SAVE_FILE, new DoMethodSaveFile());
 		registeredMethods.put(MethodConstants.MTD_RENAME_FILE, new DoMethodRenameFile());
+		registeredMethods.put(MethodConstants.MTD_CREATE_NEW_FILE, new DoMethodCreateNewFile());
+		registeredMethods.put(MethodConstants.MTD_EXISTS_FILE, new DoMethodExistsFile());
+		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_BELONGS_TO_PROJECT_ID, new DoMethodLoadFileBelongsToProjectId());
+		
+		registeredMethods.put(MethodConstants.MTD_LOAD_PROJECT_NAME, new DoMethodLoadProjectName());
+		registeredMethods.put(MethodConstants.MTD_LOAD_PROJECT_NMBR_FILES, new DoMethodLoadProjectNmbrFiles());
+		registeredMethods.put(MethodConstants.MTD_LOAD_PROJECT_OWNER_ID, new DoMethodLoadProjectOwnerId());
+		registeredMethods.put(MethodConstants.MTD_SAVE_PROJECT, new DoMethodSaveProject());
+		registeredMethods.put(MethodConstants.MTD_RENAME_PROJECT, new DoMethodRenameProject());
+		registeredMethods.put(MethodConstants.MTD_CREATE_NEW_PROJECT, new DoMethodCreateNewProject());
+		registeredMethods.put(MethodConstants.MTD_EXISTS_PROJECT, new DoMethodExistsProject());
+		registeredMethods.put(MethodConstants.MTD_FIND_PROJECTS_BY_USER, new DoMethodFindProjectsByUser());
 		
 		// Remember created methods, so we can later return
 		// a reference to them.

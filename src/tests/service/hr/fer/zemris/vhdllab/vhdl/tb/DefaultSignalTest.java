@@ -1,17 +1,12 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultImpulse;
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultSignal;
-import hr.fer.zemris.vhdllab.vhdl.tb.Impulse;
-import hr.fer.zemris.vhdllab.vhdl.tb.Signal;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 /**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.tb.DefaultSignal} class.
+ * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.DefaultSignal} class.
  * 
  * @author Miro Bezjak
  */

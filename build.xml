@@ -7,6 +7,8 @@
   <property name="build.dir" value="build"/>
   <property name="lib.dir" value="libs"/>
   <property name="jlib.dir" value="jlibs"/>
+  <property name="jlib-tests.dir" value="jlibs/tests"/>
+  <property name="doc.dir" value="doc"/>
 
   <path id="src.class.path">
     <fileset dir="${lib.dir}">
@@ -39,7 +41,7 @@
     <fail unless="servlet-api.jar.present">
       "${lib.dir}/servlet-api.jar" file is not present. You can copy it from $CATALINA_HOME/common/lib/servlet-api.jar.
     </fail>
- 	
+
     <tstamp/>
     
     <mkdir dir="${build.dir}"/>
@@ -52,12 +54,14 @@
     <mkdir dir="${build.dir}/tests/service"/>
     <mkdir dir="${build.dir}/tests/dao"/>
     <mkdir dir="${jlib.dir}"/>
+    <mkdir dir="${jlib-tests.dir}"/>
  </target>
 
   <target name="clean">
-   <delete includeEmptyDirs="true">
+   <delete quiet="true" includeEmptyDirs="true">
       <fileset dir="${build.dir}"/>
       <fileset dir="${jlib.dir}"/>
+      <fileset dir="${doc.dir}"/>
     </delete>
   </target>
 
@@ -143,25 +147,25 @@
   </target>
 
   <target name="package-tests-dao" depends="compile-tests-dao">
-    <jar destfile="${jlib.dir}/${app.name}-tests-dao.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-dao.jar">
       <fileset dir="${build.dir}/tests/dao" includes="**/*.class"/>
     </jar>
   </target>
 	
   <target name="package-tests-service" depends="compile-tests-service">
-    <jar destfile="${jlib.dir}/${app.name}-tests-service.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-service.jar">
       <fileset dir="${build.dir}/tests/service" includes="**/*.class"/>
     </jar>
   </target>
 	
   <target name="package-tests-web-onClient" depends="compile-tests-web-onClient">
-    <jar destfile="${jlib.dir}/${app.name}-tests-web-onClient.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar">
       <fileset dir="${build.dir}/tests/web/onClient" includes="**/*.class"/>
     </jar>
   </target>
 	
   <target name="package-tests-web-onServer" depends="compile-tests-web-onServer">
-    <jar destfile="${jlib.dir}/${app.name}-tests-web-onServer.jar">
+    <jar destfile="$${jlib-tests.dir}/${app.name}-tests-web-onServer.jar">
       <fileset dir="${build.dir}/tests/web/onServer" includes="**/*.class"/>
     </jar>
   </target>
@@ -171,7 +175,7 @@
       <arg value="hr.fer.zemris.vhdllab.AllDAOJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
-        <pathelement location="${jlib.dir}/${app.name}-tests-dao.jar"/>
+        <pathelement location="${jlib-tests.dir}/${app.name}-tests-dao.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
       </classpath>
@@ -183,7 +187,7 @@
       <arg value="hr.fer.zemris.vhdllab.AllServiceJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-service.jar"/>
-        <pathelement location="${jlib.dir}/${app.name}-tests-service.jar"/>
+        <pathelement location="${jlib-tests.dir}/${app.name}-tests-service.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
       </classpath>
@@ -195,7 +199,7 @@
       <arg value="hr.fer.zemris.vhdllab.AllOnServerJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
-        <pathelement location="${jlib.dir}/${app.name}-tests-web-onServer.jar"/>
+        <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onServer.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
       </classpath>
@@ -207,13 +211,32 @@
       <arg value="hr.fer.zemris.vhdllab.AllOnClientJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
-        <pathelement location="${jlib.dir}/${app.name}-tests-web-onClient.jar"/>
+        <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
       </classpath>
     </java>
   </target>
 	
+  <target name="doc">
+  	<javadoc access="public" author="true" classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar"
+  		destdir="${doc.dir}" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false"
+  		packagenames="hr.fer.zemris.*" source="1.5"
+  		sourcepath="src/dao;src/service;src/web/onServer;src/web/OnServer"
+  		splitindex="true" use="true" version="true">
+	  <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+	</javadoc>
+  </target>
+	
+  <target name="doc-all">
+  	<javadoc access="public" author="true" classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar"
+  		destdir="${doc.dir}" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false"
+  		packagenames="hr.fer.zemris.*" source="1.5"
+  		sourcepath="src/dao;src/service;src/web/onServer;src/web/OnServer;src/tests/dao;src/tests/service;src/tests/web/onServer;src/tests/web/OnServer"
+  		splitindex="true" use="true" version="true">
+	  <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+	</javadoc>
+  </target>
 	
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
 
@@ -221,12 +244,16 @@
 
   <target name="package-tests" depends="package-tests-dao,package-tests-service,package-tests-web-onServer,package-tests-web-onClient"/>
 	
-  <target name="run-tests" depends="run-tests-dao,run-tests-service"/>
+  <target name="run-tests" depends="run-tests-dao,run-tests-service,run-tests-web-onServer,run-tests-web-onClient"/>
 	
-  <target name="all" depends="package,run-tests"/>
+  <target name="all" depends="package,run-tests,doc"/>
 	
   <target name="rebuild" depends="clean,package"/>
 	
-  <target name="rebuildall" depends="clean,package,run-tests"/>
-
+  <target name="rebuild-all" depends="clean,package,doc,run-tests"/>
+	
+  <target name="rebuild-doc" depends="clean,doc"/>
+  	
+  <target name="rebuild-doc-all" depends="clean,doc-all"/>
+	
 </project>

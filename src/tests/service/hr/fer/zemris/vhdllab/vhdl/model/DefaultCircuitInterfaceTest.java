@@ -1,11 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
-import hr.fer.zemris.vhdllab.vhdl.model.Direction;
-import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.tb.DefaultGenerator;
 import hr.fer.zemris.vhdllab.vhdl.tb.Generator;
 

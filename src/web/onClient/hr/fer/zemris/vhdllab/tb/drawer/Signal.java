@@ -272,6 +272,7 @@ public class Signal {
 		<signal name="b">(0,0)(15,1)(200,0)(250,1)(430,0)</signal>
 		<signal name="c" type="vector" rangeFrom="0" rangeTo="1">(0,00)(100,01)(100,10)(100,11)</signal>*/
 	
+	@Override
 	public String toString(){
 		
 		String temp=null;

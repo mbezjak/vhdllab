@@ -101,8 +101,8 @@ public interface CircuitInterface {
 	 * <li>if port is a scalar then signal must be a scalar aswell or if port is a vector
 	 * then signal must be a vector aswell and
 	 * 	<ul>
-	 * 	<li>{@link Type#getRangeFrom() port's rangeFrom} must be equal to {@link hr.fer.zemris.vhdllab.vhdl.model.tb.Signal#getRangeFrom() signal's rangeFrom}
-	 * 	<li>{@link Type#getRangeTo() port's rangeTo} must be equal to {@link hr.fer.zemris.vhdllab.vhdl.model.tb.Signal#getRangeTo() signal's rangeTo}
+	 * 	<li>{@link Type#getRangeFrom() port's rangeFrom} must be equal to {@link hr.fer.zemris.vhdllab.vhdl.tb.Signal#getRangeFrom() signal's rangeFrom}
+	 * 	<li>{@link Type#getRangeTo() port's rangeTo} must be equal to {@link hr.fer.zemris.vhdllab.vhdl.tb.Signal#getRangeTo() signal's rangeTo}
 	 * 	</ul>
 	 * </ul>
 	 * 
@@ -111,7 +111,7 @@ public interface CircuitInterface {
 	 * @throws NullPointerException if <code>generator</code> is <code>null</code>.
 	 * @see Generator#isCompatible(CircuitInterface)
 	 * @see Port
-	 * @see hr.fer.zemris.vhdllab.vhdl.model.tb.Signal
+	 * @see hr.fer.zemris.vhdllab.vhdl.tb.Signal
 	 */
 	boolean isCompatible(Generator generator);
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class VHDLLabManagerImpl implements VHDLLabManager {
@@ -27,14 +28,12 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	private FileDAO fileDAO;
 	private ProjectDAO projectDAO;
 	
-	private File file = new File();
-	private Project project = new Project();
-	
 	private Map<Long, File> files = new HashMap<Long, File>();
 	private Map<Long, Project> projects = new HashMap<Long, Project>();
 	
 	public VHDLLabManagerImpl() {
-		file.setId((long) 0);
+		File file = new File();
+		file.setId(Long.valueOf(0));
 		file.setFileName("sklop");
 		file.setFileType(File.FT_VHDLSOURCE);
 		file.setContent("library IEEE;\n"+
@@ -67,8 +66,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 				"end process;\n\n"+
 				"end Behavioral;\n");
 		
-		project.setId((long) 0);
-		project.setOwnerID((long) 0);
+		Project project = new Project();
+		project.setId(Long.valueOf(0));
+		project.setOwnerID(Long.valueOf(0));
 		project.setProjectName("Simple");
 		project.setFiles(new TreeSet<File>());
 		project.getFiles().add(file);
@@ -79,11 +79,11 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		
 		
 		//**********************************
-		file = new File();		
-		file.setId((long) 1);
-		file.setFileName("sklop_tb");
-		file.setFileType(File.FT_VHDLTB);
-		file.setContent("<measureUnit>ns</measureUnit>\n" +
+		File file2 = new File();
+		file2.setId(Long.valueOf(1));
+		file2.setFileName("sklop_tb");
+		file2.setFileType(File.FT_VHDLTB);
+		file2.setContent("<measureUnit>ns</measureUnit>\n" +
 				"<duration>1000</duration>\n" +
 				"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
 				"<signal name = \"b\" type=\"scalar\">(0,0)(200, 1)(300, z)(440, U)</signal>\n" +
@@ -92,14 +92,10 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 				"<signal name = \"e\" type=\"vector\" rangeFrom=\"2\" rangeTo=\"0\">(0,000)(100, 100)(400, 101)(500,111)(600, 010)</signal>\n" + 
 				"<signal name = \"f\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"4\">(0,0001)(100, 1000)(200, 0110)(300, U101)(400, 1001)(500,110Z)(600, 0110)</signal>");
 		
-		project.setId((long) 0);
-		project.setOwnerID((long) 0);
-		project.setProjectName("Simple");
-		project.setFiles(new TreeSet<File>());
-		project.getFiles().add(file);
+		project.getFiles().add(file2);
 		
-		file.setProject(project);
-		files.put(file.getId(), file);
+		file2.setProject(project);
+		files.put(file2.getId(), file2);
 		projects.put(project.getId(), project);
 	}
 
@@ -108,18 +104,18 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public File createNewFile(Project project, String fileName, String fileType) {
-		file = new File();
+		File file = new File();
 		file.setFileName(fileName);
 		file.setFileType(fileType);
 		file.setContent("");
-		file.setId((long) 0);
+		file.setId(Long.valueOf(5));
 		file.setProject(project);
 		return file;
 	}
 
 	public List<Project> findProjectsByUser(Long userId) {
 		List<Project> projects = new ArrayList<Project>();
-		projects.add(project);
+		projects.add(projects.get(0));
 		return projects;
 	}
 
@@ -163,11 +159,11 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public String getFileName(Long fileId) {
-		return file.getFileName();
+		return files.get(fileId).getFileName();
 	}
 
 	public String getFileType(Long fileId) {
-		return file.getFileType();
+		return files.get(fileId).getFileType();
 	}
 
 	public File loadFile(Long fileId) {
@@ -179,11 +175,11 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public void renameFile(Long fileId, String newName) {
-		file.setFileName(newName);
+		files.get(fileId).setFileName(newName);
 	}
 
 	public void renameProject(Long projectId, String newName) {
-		project.setProjectName(newName);
+		projects.get(projectId).setProjectName(newName);
 	}
 
 	public SimulationResult runSimulation(Long fileId) {
@@ -191,7 +187,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public void saveFile(Long fileId, String content) {
-		file = new File();
+		File file = new File();
 		file.setId(fileId);
 		file.setContent(content);
 		files.put(file.getId(), file);
@@ -218,10 +214,23 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public boolean existsFile(Long projectId, String fileName) throws ServiceException {
-		return file != null;
+		Set<File> files = projects.get(projectId).getFiles();
+		for(File f : files) {
+			if(f.getFileName().equals(fileName)) return true;
+		}
+		return false;
 	}
 
 	public boolean existsProject(Long projectId) throws ServiceException {
-		return project != null;
+		return projects.get(projectId) != null;
+	}
+
+	public Project createNewProject(String projectName, Long ownerId) throws ServiceException {
+		Project project = new Project();
+		project.setId(Long.valueOf(5));
+		project.setProjectName(projectName);
+		project.setOwnerID(ownerId);
+		project.setFiles(null);
+		return project;
 	}
 }

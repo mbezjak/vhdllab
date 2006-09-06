@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
-import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import junit.framework.TestCase;
 
 /**

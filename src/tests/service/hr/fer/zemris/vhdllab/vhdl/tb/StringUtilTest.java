@@ -1,10 +1,9 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
-import hr.fer.zemris.vhdllab.vhdl.tb.StringUtil;
 import junit.framework.TestCase;
 
 /**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.tb.StringUtil} class.
+ * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.StringUtil} class.
  * 
  * @author Miro Bezjak
  */

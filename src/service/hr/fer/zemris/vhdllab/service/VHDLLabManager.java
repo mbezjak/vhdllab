@@ -31,6 +31,15 @@ public interface VHDLLabManager {
 	 */
 	public boolean existsProject(Long projectId) throws ServiceException;
 	/**
+	 * Use this method to create a new project which has name and owner id as
+	 * specified. Collection of files will be set to <code>null</code>. 
+	 * @param projectName name for the project
+	 * @param ownerId owner id for the project
+	 * @return created project
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public Project createNewProject(String projectName, Long ownerId) throws ServiceException;
+	/**
 	 * Finds all projects whose owner is specified user. Return value will
 	 * never be <code>null</code>, although it can be an empty list.
 	 * @param userId identifier of user

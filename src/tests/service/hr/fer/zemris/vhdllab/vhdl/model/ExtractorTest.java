@@ -1,13 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
-import hr.fer.zemris.vhdllab.vhdl.model.Direction;
-import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
-import hr.fer.zemris.vhdllab.vhdl.model.Port;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

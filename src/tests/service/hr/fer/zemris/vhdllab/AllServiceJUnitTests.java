@@ -4,6 +4,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+/**
+ * This TestCase tests each Test in src/tests/service.
+ */
 public class AllServiceJUnitTests extends TestCase {
 
 	public static Test suite() {

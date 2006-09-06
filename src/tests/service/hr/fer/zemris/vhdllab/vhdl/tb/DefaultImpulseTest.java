@@ -1,10 +1,9 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultImpulse;
 import junit.framework.TestCase;
 
 /**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.tb.DefaultImpulse} class.
+ * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.DefaultImpulse} class.
  * 
  * @author Miro Bezjak
  */
