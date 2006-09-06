@@ -1,11 +1,10 @@
 package hr.fer.zemris.vhdllab.simulations;
 
-import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
+
 import javax.swing.JPanel;
 
 
@@ -18,7 +17,11 @@ import javax.swing.JPanel;
  */
 class Scale extends JPanel
 {
-    private final byte FEMTO_SECONDS = 1; 
+    /**
+	 * Serial version ID.
+	 */
+	private static final long serialVersionUID = 3975212454261824634L;
+	private final byte FEMTO_SECONDS = 1; 
     private final double PICO_SECONDS = 1e-3; 
     private final double NANO_SECONDS = 1e-6; 
     private final double MICRO_SECONDS = 1e-9; 

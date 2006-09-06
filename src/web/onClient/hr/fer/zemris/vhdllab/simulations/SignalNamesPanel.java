@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.simulations;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+
 import javax.swing.JPanel;
 
 
@@ -14,7 +15,12 @@ import javax.swing.JPanel;
  */
 class SignalNamesPanel extends JPanel
 {
-    private final Color BACKGROUND_COLOR = new Color(141, 176, 221);
+    /**
+	 * Serial version ID.
+	 */
+	private static final long serialVersionUID = 2059196312811436549L;
+
+	private final Color BACKGROUND_COLOR = new Color(141, 176, 221);
    
     /* prvo ime signala pocinje od 30-tog piksela */
     private final int YAXIS_START_POINT = 30;

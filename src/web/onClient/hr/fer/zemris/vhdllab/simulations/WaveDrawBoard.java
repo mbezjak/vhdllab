@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.simulations;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+
 import javax.swing.JPanel;
 
 
@@ -15,7 +16,12 @@ import javax.swing.JPanel;
  */
 class WaveDrawBoard extends JPanel 
 {
-    private final int WAVE_START_POINT_IN_PIXELS = 0;
+    /**
+	 * Serial version ID.
+	 */
+	private static final long serialVersionUID = 5042508573260343425L;
+
+	private final int WAVE_START_POINT_IN_PIXELS = 0;
 
     /* prvi valni oblik pocinje po y-osi od 20. piksela */
     private final int FIRST_WAVE_YAXIS_START = 20;

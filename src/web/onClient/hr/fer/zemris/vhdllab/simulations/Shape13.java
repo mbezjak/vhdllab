@@ -1,5 +1,6 @@
-import javax.swing.*;
-import java.awt.*;
+package hr.fer.zemris.vhdllab.simulations;
+
+import java.awt.Graphics;
 
 
 /**

@@ -1,3 +1,7 @@
+package hr.fer.zemris.vhdllab.simulations;
+
+import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
+
 /**
  * Klasa sluzi za parsiranje stringa koji sadrzi rezultate simulacije prikazane
  * u jednom stringu, internog formata.  Parsirane rezultate direktno koristi

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.simulations;
 
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -10,21 +11,20 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Map;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JTextField;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.DefaultListModel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 
@@ -68,7 +68,11 @@ class Console {
 
 public class WaveApplet extends JApplet 
 {
-    private Container cp;
+    /**
+	 * Serial version ID.
+	 */
+	private static final long serialVersionUID = 9162544280877418294L;
+	private Container cp;
     private SignalNamesPanel signalNames;
     private WaveDrawBoard waves;
     private Scale scale;

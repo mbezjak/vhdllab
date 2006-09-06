@@ -1,5 +1,10 @@
-import javax.swing.*;
-import java.awt.*;
+package hr.fer.zemris.vhdllab.simulations;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+import javax.swing.BorderFactory;
+import javax.swing.JTextField;
 
 /**
  * Crta zaobljeni JTextField
@@ -8,7 +13,12 @@ import java.awt.*;
  */
 public class RoundField extends JTextField 
 {
-    public RoundField (int cols) 
+    /**
+	 * Serial version ID.
+	 */
+	private static final long serialVersionUID = -8155311461982032920L;
+
+	public RoundField (int cols) 
     {
         super(cols);
 

@@ -1,7 +1,6 @@
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.*;
-import java.awt.*;
+package hr.fer.zemris.vhdllab.simulations;
+
+import java.awt.Graphics;
 
 
 interface Shape
