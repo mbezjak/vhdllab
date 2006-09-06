@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * Klasa cita linije VCD-datoteke i sprema ih polje stringova
  * @author Boris Ozegovic
@@ -41,7 +42,7 @@ class VcdFileReader
 
 		try
 		{
-			BufferedReader in = new BufferedReader(new FileReader(fileName));
+			BufferedReader in = new BufferedReader(new FileReader (fileName));
 			while ((string = in.readLine()) != null) 
 				list.add(string);
 		}
@@ -97,6 +98,26 @@ public class VcdParser
 
     /* Predstavlja najduze ime od svih signala, potreban zbog duljine panela */
     private int maximumSignalNameLength;
+
+    /* Predstavlja string koji se prenosi klijentu */
+    private String resultInString = "";
+
+    /* 
+     * Upotrebljava se za interni format prilikom razdvajanja imena signala i
+     * razdvajanja vrijednosti za svaki od signala prilikom transformacije u
+     * mape u string
+     */
+    private final String LIMITER = "###";
+
+    /* 
+     * Limiter koji razdvaja s jedne strane sva imena signala, njihove
+     * vrijednosti, tocke u kojima se dogada promjena vrijednosti i konacno
+     * duljinu u znakovima najduzeg imena signala
+     */
+    private final String HEAD_LIMITER = "%%%";
+
+    /* Limiter koji razdvaju svaku od trenutnih vrijednosti (0 */
+    private final String VALUE_LIMITER = "&&&";
 
 
     /** 
@@ -209,7 +230,66 @@ public class VcdParser
             }
 		}
 	}
-    
+
+
+    /**
+     * Metoda transformira mapu sa imenima signala i njihovim vrijednostima, te
+     * listu sa svim tockama u kojima se dogada promjena vrijednosti signala u
+     * jedan string pomocu internog formata, npr: A###B%%%0&&&1&&&Z###1&&&Z&&&1
+     * Razlog je tome sto se pomocu HTTP-a ne mogu prenositi objekti
+     */
+    public void resultToString ()
+    {
+        for (String key : signalValues.keySet())
+        {
+            resultInString += key + LIMITER;
+        }
+
+        /* ukloni zadnji limiter */
+        resultInString = resultInString.substring(0, resultInString.length() - 3);
+        
+        /* stavi limiter izmedu imena signala i vrijednosti */
+        resultInString += HEAD_LIMITER;
+
+        for (List<String> values : signalValues.values())
+        {
+            for (String string : values)
+            {
+                resultInString += string + VALUE_LIMITER;
+            }
+            resultInString = resultInString.substring(0, resultInString.length() - 3);
+            resultInString += LIMITER;
+        }
+        resultInString = resultInString.substring(0, resultInString.length() - 3);
+
+        /* 
+         * stavli limiter izmedu vrijednosti signala i tocaka u kojima se dogada
+         * promjena vrijednosti 
+         */
+        resultInString += HEAD_LIMITER;
+
+        for (Long point : transitionPoints)
+        {
+            resultInString += point + LIMITER;
+        }
+
+        /* ukloni zadnji limiter */
+        resultInString = resultInString.substring(0, resultInString.length() - 3);
+
+        /* broj znakova najduljeg imena signala */
+        resultInString += HEAD_LIMITER + maximumSignalNameLength;
+    }
+
+
+
+    /**
+     * Getter koji vraca rezultat simulacije kao jedan string
+     */
+    public String getResultInString ()
+    {
+        return resultInString;
+    }
+        
 
     /**
      * Getter koji vraca mapu signala i njihovih vrijednosti
@@ -245,12 +325,7 @@ public class VcdParser
 	{
 		VcdParser parser = new VcdParser("adder.vcd");
 		parser.parse();
-		System.out.println (parser.signalValues);
+        parser.resultToString();
+        System.out.println(parser.getResultInString());
 	}
 }
-
-
-
-
-
-
