@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.simulations;
 
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
-
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -22,6 +21,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTextField;
+import javax.swing.JList;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.DefaultListModel;
 import javax.swing.SwingConstants;
 
 
@@ -61,383 +64,591 @@ class Console {
 } ///:~
 
 
-/**
- * Listener horizontalnog scrollbara koji scrolla panel s valnim oblicima i
- * panel sa skalom
- *
- * @author Boris Ozegovic
- */
-class HorizontalScrollBarListener implements AdjustmentListener
-{
-    private WaveDrawBoard waves;
-    private JScrollBar scrollBar;
-    private Scale scale;
-
-
-    public HorizontalScrollBarListener (WaveDrawBoard waves, Scale scale)
-    {
-        this.waves = waves;
-        this.scale = scale;
-    }
-
-
-     /**
-     * Postavlja odgovarajuci offset na temelju trenutne vrijednosti scrollbara
-     * i ponovno crta obje komponente
-     */
-    public void adjustmentValueChanged (AdjustmentEvent event)
-    {
-        JScrollBar source = (JScrollBar)event.getSource();
-        waves.setHorizontalOffset(source.getValue());
-        waves.repaint();
-        scale.setHorizontalOffset(source.getValue());
-        scale.repaint();
-        
-    }
-}
-
-
-/**
- * Listener za vertikalni scrollbar koji pomice panel s valnim oblicima i panel
- * s imenima signala
- *
- * @author Boris Ozegovic
- */
-class VerticalScrollBarListener implements AdjustmentListener
-{
-    private WaveDrawBoard waves;
-    private SignalNamesPanel namesPanel;
-    private JScrollBar scrollBar;
-
-
-    /**
-     * Constructor
-     *
-     * @param waves je panel s valnim oblicima
-     * @param namesPanel je panel s imenima signala
-     */
-    public VerticalScrollBarListener (WaveDrawBoard waves, SignalNamesPanel namesPanel)
-    {
-        this.waves = waves;
-        this.namesPanel = namesPanel;
-    }
-
-
-    /**
-     * Postavlja odgovarajuci offset na temelju trenutne vrijednosti scrollbara
-     * i ponovno crta obje komponente
-     */
-    public void adjustmentValueChanged (AdjustmentEvent event)
-    {
-        JScrollBar source = (JScrollBar)event.getSource();
-        waves.setVerticalOffset(source.getValue());
-        waves.repaint();
-        namesPanel.setVerticalOffset(source.getValue());
-        namesPanel.repaint();
-    }
-}
-
-
-/**
- * Listener za panel s imenima signala.  Buduci da imena mogu biti povece
- * duljine, potrebno je bilo staviti ogranicenje duljine panela i postaviti
- * scrollbar.
- *
- * @author Boris Ozegovic
- */
-class NamesPanelScrollbarListener implements AdjustmentListener
-{
-    private SignalNamesPanel namesPanel;
-
-
-    /**
-     * Constructor
-     * 
-     * @param namesPanel panel s imenima signala
-     */
-    public NamesPanelScrollbarListener (SignalNamesPanel namesPanel)
-    {
-        this.namesPanel = namesPanel;
-    }
-
-
-    /**
-     * Metoda koja upravlja eventom i repainta panel s obzirom na offset
-     */
-    public void adjustmentValueChanged (AdjustmentEvent event)
-    {
-        JScrollBar source = (JScrollBar)event.getSource();
-        namesPanel.setHorizontalOffset(source.getValue());
-        namesPanel.repaint();
-    }
-}
-
-
-
-class ZoomInTwo implements ActionListener 
-{
-    /* panel u kojem su iscrtani valni oblici */
-    private WaveDrawBoard waves;
-    private Scale scale;
-    
-    /* scrollbar potreban zato da se prilikom povecanja smanji raspon */
-    private JScrollBar scrollbar;
-
-    /* namjesta se isti polozaj scrollbara koji je imao prije povecanja */
-    private int offset;
-
-
-    /**
-     * Constructor
-     *
-     * @param waves panel koji sadrzi valne oblike 
-     * @param scale skala koju je potrebno povecati
-     * @param scrollbar fino podesavanje
-     */
-    public ZoomInTwo (WaveDrawBoard waves, Scale scale, JScrollBar scrollbar)
-    {
-        this.waves = waves;
-        this.scale = scale;
-        this.scrollbar = scrollbar;
-    }
-
-
-    public void actionPerformed(ActionEvent event) 
-    {
-        scale.setDurationsInPixelsAfterZoom(2);
-		offset = scrollbar.getValue();
-		scrollbar.setValue(offset * 2);
-        scale.repaint();
-        waves.repaint();
-        scrollbar.setMaximum(scale.getScaleEndPointInPixels());
-    }
-}
-
-
-/**
- * Smanjuje skalu i vrijednost valnih oblika za 10
- *
- * @author Boris Ozegovic
- */
-class ZoomOutTwo implements ActionListener 
-{
-    /* panel u kojem su iscrtani valni oblici */
-    private WaveDrawBoard waves;
-    private Scale scale;
-    
-    /* scrollbar potreban zato da se prilikom smanjena smanji raspon */
-    private JScrollBar scrollbar;
-
-    /* namjesta se isti polozaj scrollbara koji je imao prije smanjenja */
-    private int offset;
-    
-
-    /**
-     * Constructor
-     *
-     * @param waves panel koji sadrzi valne oblike 
-     * @param scale skala koju je potrbno smanjiti
-     * @param scrollbar fino podesavanje
-     */
-    public ZoomOutTwo (WaveDrawBoard waves, Scale scale, JScrollBar scrollbar)
-    {
-        this.waves = waves;
-        this.scale = scale;
-        this.scrollbar = scrollbar;
-    }
-
-
-    public void actionPerformed(ActionEvent event) 
-    {
-        /* postavlja nove vrijednosti i automatski podesava sve parametre */
-        scale.setDurationsInPixelsAfterZoom(0.5f);
-		offset = scrollbar.getValue();
-
-        /* scrollbar ostaje na istom mjestu */
-		scrollbar.setValue(offset / 2);
-        scale.repaint();
-        waves.repaint();
-
-        /* nova maksimalna vrijednost scrollbara */
-        scrollbar.setMaximum(scale.getScaleEndPointInPixels());
-    }
-}
-
-
-/**
- * Povecava skalu i vrijednost valnih oblika za 10
- *
- * @author Boris Ozegovic
- */
-class ZoomInTen implements ActionListener 
-{
-    /* panel u kojem su iscrtani valni oblici */
-    private WaveDrawBoard waves;
-    private Scale scale;
-    
-    /* scrollbar potreban zato da se prilikom povecanja smanji raspon */
-    private JScrollBar scrollbar;
-
-    /* namjesta se isti polozaj scrollbara koji je imao prije povecanja */
-    private int offset;
-
-    /**
-     * Constructor
-     *
-     * @param waves panel koji sadrzi valne oblike 
-     * @param scale skala koju je potrebno povecati
-     * @param scrollbar fino podesavanje
-     */
-    public ZoomInTen (WaveDrawBoard waves, Scale scale, JScrollBar scrollbar)
-    {
-        this.waves = waves;
-        this.scale = scale;
-        this.scrollbar = scrollbar;
-    }
-
-
-    public void actionPerformed(ActionEvent event) 
-    {
-        /* postavlja nove vrijednosti i automatski podesava sve parametre */
-        scale.setDurationsInPixelsAfterZoom(10);
-		offset = scrollbar.getValue();
-
-        /* scrollbar ostaje na istom mjestu */
-		scrollbar.setValue(offset * 10);
-        scale.repaint();
-        waves.repaint();
-
-        /* nova maksimalna vrijednost scrollbara */
-        scrollbar.setMaximum(scale.getScaleEndPointInPixels());
-    }
-}
-
-
-/**
- * Smanjuje skalu i vrijednost valnih oblika za 10
- *
- * @author Boris Ozegovic
- */
-class ZoomOutTen implements ActionListener 
-{
-    /* panel u kojem su iscrtani valni oblici */
-    private WaveDrawBoard waves;
-    private Scale scale;
-    
-    /* scrollbar potreban zato da se prilikom smanjena smanji raspon */
-    private JScrollBar scrollbar;
-
-    /* namjesta se isti polozaj scrollbara koji je imao prije smanjenja */
-    private int offset;
-
-
-    /**
-     * Constructor
-     *
-     * @param waves panel koji sadrzi valne oblike 
-     * @param scale skala koju je potrbno smanjiti
-     * @param scrollbar fino podesavanje
-     */
-    public ZoomOutTen (WaveDrawBoard waves, Scale scale, JScrollBar scrollbar)
-    {
-        this.waves = waves;
-        this.scale = scale;
-        this.scrollbar = scrollbar;
-    }
-
-
-    /**
-     * Metoda koja upravlja eventom
-     */
-    public void actionPerformed(ActionEvent event) 
-    {
-        /* postavlja nove vrijednosti i automatski podesava sve parametre */
-        scale.setDurationsInPixelsAfterZoom(0.1f);
-		offset = scrollbar.getValue();
-
-        /* scrollbar ostaje na istom mjestu */
-		scrollbar.setValue(offset / 10);
-        scale.repaint();
-        waves.repaint();
-
-        /* nova maksimalna vrijednost scrollbara */
-        scrollbar.setMaximum(scale.getScaleEndPointInPixels());
-    }
-}
 
 
 public class WaveApplet extends JApplet 
 {
-  //private WaveDrawBoard signalBoard = new SignalDrawBoard();
-  
+    private Container cp;
+    private SignalNamesPanel signalNames;
+    private WaveDrawBoard waves;
+    private Scale scale;
+    private JScrollBar verticalScrollbar;
+    private JScrollBar horizontalScrollbar;
+    private JScrollBar signalNamesScrollbar;
+    private JTextField textField = new RoundField(10);
+    private JTextField search = new RoundField(10);
+    private DefaultListModel listSignals = new DefaultListModel();
+    private JList list = new JList(listSignals);
+    private JPopupMenu popup = new JPopupMenu();
+    private GhdlResults results;
+    
+
+    /**
+     * Listener za vertikalni scrollbar koji pomice panel s valnim oblicima i panel
+     * s imenima signala
+     */
+    private AdjustmentListener verticalScrollListener = new AdjustmentListener()
+    {
+        /*
+         * Postavlja odgovarajuci offset na temelju trenutne vrijednosti scrollbara
+         * i ponovno crta obje komponente
+         */
+        public void adjustmentValueChanged (AdjustmentEvent event)
+        {
+            waves.setVerticalOffset(verticalScrollbar.getValue());
+            signalNames.setVerticalOffset(verticalScrollbar.getValue());
+            waves.repaint();
+            signalNames.repaint();
+        }
+    };
+
+
+    /**
+     * Listener horizontalnog scrollbara koji scrolla panel s valnim oblicima i
+     * panel sa skalom
+     */
+    private AdjustmentListener horizontalScrollListener = new AdjustmentListener()
+    {
+         /*
+         * Postavlja odgovarajuci offset na temelju trenutne vrijednosti scrollbara
+         * i ponovno crta obje komponente
+         */
+        public void adjustmentValueChanged (AdjustmentEvent event)
+        {
+            waves.setHorizontalOffset(horizontalScrollbar.getValue());
+            scale.setHorizontalOffset(horizontalScrollbar.getValue());
+            waves.repaint();
+            scale.repaint();
+            
+        }
+    };
+
+
+    /**
+     * Listener horizontalnog scrollbara koji scrolla panel s valnim oblicima i
+     * panel sa skalom
+     */
+   private AdjustmentListener signalNamesScrollListener = new AdjustmentListener()
+   {
+        /**
+         * Postavlja odgovarajuci offset na temelju trenutne vrijednosti scrollbara
+         * i ponovno crta obje komponente
+         */
+        public void adjustmentValueChanged (AdjustmentEvent event)
+        {
+            signalNames.setHorizontalOffset(signalNamesScrollbar.getValue());
+            signalNames.repaint();
+        }
+    };
+
+
+   /**
+    * Listener buttona koji pokrece popup prozor
+    */
+    private ActionListener changeSignalMenu = new ActionListener()
+    {
+        public void actionPerformed (ActionEvent event) 
+        {
+            popup.show(cp, 400, 75);
+        }
+    };
+
+
+    /**
+     * Povecava skalu i vrijednost valnih oblika za 10
+     */
+    ActionListener zoomInTenListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent event) 
+        {
+            /* postavlja nove vrijednosti i automatski podesava sve parametre */
+            scale.setDurationsInPixelsAfterZoom(10d);
+            int offset = horizontalScrollbar.getValue();
+
+            /* scrollbar ostaje na istom mjestu */
+            horizontalScrollbar.setValue(offset * 10);
+            scale.repaint();
+            waves.repaint();
+
+            /* nova maksimalna vrijednost scrollbara */
+            horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
+        }
+    };
+
+
+    /**
+     * Povecava skalu i vrijednost valnih oblika za 2
+     */
+    ActionListener zoomInTwoListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent event) 
+        {
+            /* postavlja nove vrijednosti i automatski podesava sve parametre */
+            scale.setDurationsInPixelsAfterZoom(2d);
+            int offset = horizontalScrollbar.getValue();
+
+            /* scrollbar ostaje na istom mjestu */
+            horizontalScrollbar.setValue(offset * 2);
+            scale.repaint();
+            waves.repaint();
+
+            /* nova maksimalna vrijednost scrollbara */
+            horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
+        }
+    };
+
+    
+    /**
+     * Smanjuje skalu i vrijednost valnih oblika za 2
+     */
+    ActionListener zoomOutTenListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent event) 
+        {
+            /* postavlja nove vrijednosti i automatski podesava sve parametre */
+            scale.setDurationsInPixelsAfterZoom(0.1d);
+            int offset = horizontalScrollbar.getValue();
+
+            /* scrollbar ostaje na istom mjestu */
+            horizontalScrollbar.setValue(offset / 10);
+            scale.repaint();
+            waves.repaint();
+
+            /* nova maksimalna vrijednost scrollbara */
+            horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
+        }
+    };
+
+
+    /**
+     * Smanjuje skalu i vrijednost valnih oblika za 10
+     */
+    ActionListener zoomOutTwoListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent event) 
+        {
+            /* postavlja nove vrijednosti i automatski podesava sve parametre */
+            scale.setDurationsInPixelsAfterZoom(0.5d);
+            int offset = horizontalScrollbar.getValue();
+
+            /* scrollbar ostaje na istom mjestu */
+            horizontalScrollbar.setValue(offset / 2);
+            scale.repaint();
+            waves.repaint();
+
+            /* nova maksimalna vrijednost scrollbara */
+            horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
+        }
+    };
+        
+    
+    /**
+     * Osluskuje 'up' button u popup meniju
+     */
+    private ActionListener upListener = new ActionListener()
+    {
+        public void actionPerformed (ActionEvent event) 
+        {
+            int index = signalNames.getIndex();
+            boolean isClicked = signalNames.getIsClicked();
+            
+            /* ako niti jedan signal nije selektiran */
+            if (!isClicked)
+            {
+                return;
+            }
+ 
+            /* promijeni poredak signala prema gore */
+            results.changeSignalOrderUp(index);
+
+            if (index > 0)
+            {
+                signalNames.setIndex(index - 1);
+                waves.setIndex(index - 1);
+            }
+
+            /* repainta panel s imenima signala i panel s valnim oblicima */
+            signalNames.repaint();
+            waves.repaint();
+            if (index * 45 <= signalNames.getVerticalOffset())
+            {
+                verticalScrollbar.setValue(verticalScrollbar.getValue() - 200);
+            }
+        }
+    };
+
+
+    /**
+     * Slusa 'down' button popup meniju
+     */
+    private ActionListener downListener = new ActionListener()
+    {
+        public void actionPerformed (ActionEvent event) 
+        {
+            int index = signalNames.getIndex();
+            boolean isClicked = signalNames.getIsClicked();
+            
+            /* ako niti jedan signal nije selektiran */
+            if (!isClicked)
+            {
+                return;
+            }
+ 
+           /* promijeni poredak signala prema dolje */
+            results.changeSignalOrderDown(index);
+
+
+            if (index < results.getSignalNames().length - 1)
+            {
+                signalNames.setIndex(index + 1);
+                waves.setIndex(index + 1);
+            }
+
+            /* repainta panel s imenima signala i panel s valnim oblicima */
+            signalNames.repaint();
+            waves.repaint();
+            if ((index + 1) * 45 + 50 >= signalNames.getHeight() + signalNames.getVerticalOffset())
+            {
+                verticalScrollbar.setValue(verticalScrollbar.getValue() + 200);
+            }
+        }
+    };
+
+
+    /**
+     * slusa 'default' button u popup meniju
+     */
+    private ActionListener defaultOrderListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent event) 
+        {
+            /* promijeni natrag na defaultni poredak */
+            results.setDefaultOrder();
+
+            /* iscrtaj novi poredak u listi */
+            DefaultListModel listSignals = (DefaultListModel)list.getModel();
+            listSignals.removeAllElements();
+            for (String ime : results.getSignalNames())
+            {
+                listSignals.addElement(ime);
+            }
+
+            /* postavlja novi objekt imena signala i njihovih vrijednosti */
+            signalNames.setSignalNames(results.getSignalNames());
+            waves.setSignalValues(results.getSignalValues());
+
+            /* repainta panel s imenima signala i panel s valnim oblicima */
+            signalNames.repaint();
+            waves.repaint();
+        }
+    };
+
+
+    /**
+     * Mouse listener koji osluskuje pokrete misa i svaki pokret registrira te na
+     * temelju vrijednosti po X-osi i na temelju trenutnog stanja skale vraca
+     * preciznu vrijednost
+     */
+    private MouseMotionListener mouseListener = new MouseMotionListener()
+    {
+        /**
+         * Metoda koja upravlja eventom
+         */
+        public void mouseMoved(MouseEvent event)  
+        {  
+            /* trenutni offset + X-vrijednost kurosra misa */
+            int xValue = event.getX() + horizontalScrollbar.getValue(); 
+            /* podijeljeno s 100 jer je scaleStep za 100 piksela */
+            double value = xValue * scale.getScaleStepInTime() / 100;
+            textField.setText((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
+        } 
+
+        /**
+         * Za buducu upotrebu
+         */
+        public void mouseDragged(MouseEvent me)  
+        {
+            ;
+        }
+    };
+
+
+    /**
+     * Mouse listener koji osluskuje klik misa iznad panela sa imenima signala i
+     * panela s valnim oblicima te na temelju trenutne vrijednosti po X-osi
+     * mijenja background iznad trenutno oznacenog signala
+     */
+    private MouseListener mouseClickListener = new MouseListener()
+    {
+
+        public void mousePressed(MouseEvent event) 
+        {
+            ; 
+        }
+
+        public void mouseReleased(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseEntered(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseExited(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseClicked(MouseEvent event) 
+        {
+            int index;
+            boolean isClicked;
+            
+            /* 
+             * nadi tocno oznaceni spring, prvo se umanji za ostatak dijeljenja s
+             * 10, zatim se uzastopno umanjuje za 10 dok se ne nade broj dijeljiv s
+             * 40
+             */
+            int value = event.getY() + verticalScrollbar.getValue();
+            while (value % 45 == 0)
+            {
+                value -= 1;
+            }
+
+            /* pronalazi se index signala kojeg treba oznaciti */
+            index = value / 45;
+            isClicked = signalNames.getIsClicked();
+
+            /* postavlja se vrijednost suprotna od one koja je do sada bila */
+            if (waves.getIndex() == index && waves.getIsClicked() == true)
+            {
+                signalNames.setIsClicked(false);
+                waves.setIsClicked(false);
+            }
+            else
+            {
+                signalNames.setIsClicked(true);
+                signalNames.setIndex(index);
+                waves.setIsClicked(true);
+                waves.setIndex(index);
+            }
+            signalNames.repaint();
+            waves.repaint();
+        }
+    };
+
+
+    /**
+     * Listener koji provjerava je li sto upisano u search
+     */
+    private ActionListener searchListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            String input = search.getText();
+            boolean isFound = false;
+            int index = 0;
+
+            /* pretrazivanje imena signala */
+            for (int i = 0; i < results.getSignalNames().length; i++)
+            {
+                if (results.getSignalNames()[i].toLowerCase().equals(input.toLowerCase()))
+                {
+                    isFound = true;
+                    index = i;
+                    break;
+                }
+            }
+
+            /* ako je nasao */
+            if (isFound)
+            {
+                signalNames.setIsClicked(true);
+                signalNames.setIndex(index);
+                waves.setIsClicked(true);
+                waves.setIndex(index);
+                verticalScrollbar.setValue(index * 45);
+                System.out.println(index);
+            }
+            else
+            {
+                search.setText("Not found");
+            }
+            signalNames.repaint();
+            waves.repaint();
+        }
+    };
+
+
+    /**
+     * Listener koji resetira search polje kada se klikne na njega
+     */
+    private MouseListener searchClickListener = new MouseListener()
+    {
+        public void mousePressed(MouseEvent event) 
+        {
+            ; 
+        }
+
+        public void mouseReleased(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseEntered(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseExited(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseClicked(MouseEvent event) 
+        {
+            search.setText("");
+        }
+    };
+        
+
+      
   public void init() 
   {
     VcdParser parser = new VcdParser("adder2.vcd");
 	parser.parse();
-	Map <String, java.util.List <String>> signalValues = parser.getSignalValues();
+    parser.resultToString();
+    textField.setEditable(false);
+    search.setText("search signal");
+    search.addMouseListener(searchClickListener);
+    search.addActionListener(searchListener);
+
+    /* rezultati prikazni stringom prenose se GhdlResults klasi */
+    results = new GhdlResults(parser.getResultInString());
+
+    /* GhdlResults parsira string i iznacuje rezultate simulacije */
+    results.parseString();
    
-    Scale scale = new Scale(parser);
-    SignalNamesPanel signalNames = new SignalNamesPanel(signalValues, 
-                                                            parser.getMaximumSignalNameLength());
-    WaveDrawBoard waveDrawBoard = new WaveDrawBoard(signalValues, scale);
+    /* stvara se skala */
+    scale = new Scale(results);
+
+    /* panel s imenima signala */
+    signalNames = new SignalNamesPanel(results);
+    signalNames.addMouseListener(mouseClickListener);
+
+    /* panel s valnim oblicima */
+    waves = new WaveDrawBoard(results , scale);
+    waves.addMouseMotionListener(mouseListener);
+    waves.addMouseListener(mouseClickListener);
+
+
+    /* svi scrollbarovi sadrzani u appletu */
+    horizontalScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, scale.getScaleEndPointInPixels()); 
+    horizontalScrollbar.addAdjustmentListener(horizontalScrollListener);
+    verticalScrollbar = new JScrollBar(SwingConstants.VERTICAL, 0, 0, 0, waves.getPreferredSize().height); 
+    verticalScrollbar.addAdjustmentListener(verticalScrollListener);
+    signalNamesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, signalNames.getPreferredSize().width);
+    signalNamesScrollbar.addAdjustmentListener(signalNamesScrollListener);
+
+
+
+    /* 
+     * Popup prozor koji ce izletjeti na zahtjev promjene poretka signala.
+     * Popup prozor ce sadrzavati listu imena signala i primjerene buttone
+     */
     
-    JScrollBar horizontalScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, scale.getScaleEndPointInPixels()); //pazi, scrollbar mora biti iste duzine kao graf signala
-    HorizontalScrollBarListener scroll = new HorizontalScrollBarListener(waveDrawBoard, scale);
-    horizontalScrollbar.addAdjustmentListener(scroll);
+    /* lista signala i njezina inicijalizacija */
+    list.setBackground(new Color(141, 176, 221));
+    list.setSelectionBackground(new Color(254, 217, 182));
+    for (String ime : results.getSignalNames())
+    {
+        listSignals.addElement(ime);
+    }
+    JScrollPane listScroller = new JScrollPane(list);
+    //
+    //JButton upButton = new JButton ("Up");
+    //upButton.addActionListener(upListener);
+    //JButton downButton = new JButton("Down");
+    //downButton.addActionListener(downListener);
+    //JButton defaultButton = new JButton("Default order");
+    //defaultButton.addActionListener(defaultOrderListener);
+    //
+    //JPanel buttonPanel = new JPanel();
+    //buttonPanel.setBackground(new Color(141, 176, 221));
+    //buttonPanel.setLayout(new BoxLayout (buttonPanel, BoxLayout.PAGE_AXIS));
+    //buttonPanel.add(upButton);
+    //buttonPanel.add(Box.createRigidArea(new Dimension(0, 35)));
+    //buttonPanel.add(downButton);
+    //buttonPanel.add(Box.createRigidArea(new Dimension(0, 35)));
+    //buttonPanel.add(defaultButton);
+    //
+    //JPanel pane = new JPanel();
+    //pane.setBackground(new Color(141, 176, 221));
+    //pane.setLayout(new BoxLayout (pane, BoxLayout.LINE_AXIS));
+    //pane.add(listScroller);
+    //pane.add(buttonPanel);
+    //
+    //popup.setPreferredSize(new Dimension(300, 800));
+    //popup.add(pane);
+    /* kraj popup prozora */    
 
-    JScrollBar verticalScrollbar = new JScrollBar(SwingConstants.VERTICAL, 0, 0, 0, waveDrawBoard.getPreferredSize().height); //pazi, scrollbar mora biti iste duzine kao graf signala
-    VerticalScrollBarListener scroll2 = new VerticalScrollBarListener(waveDrawBoard, signalNames);
-    verticalScrollbar.addAdjustmentListener(scroll2);
-    
-    JScrollBar signalNamesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, signalNames.getPreferredSize().width);
-    NamesPanelScrollbarListener namesPanelListener = new NamesPanelScrollbarListener(signalNames);
-    signalNamesScrollbar.addAdjustmentListener(namesPanelListener);
 
-
+    /* toolbar */
 	JPanel toolbar = new JPanel();
     toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.LINE_AXIS));
     toolbar.setBackground(new Color(141, 176, 221));
     Icon ikona1 = new ImageIcon(getClass().getResource("+2.png"));
     JButton button1 = new JButton(ikona1);
-	ZoomInTwo zoomInTwo = new ZoomInTwo(waveDrawBoard, scale, horizontalScrollbar);
-    button1.addActionListener(zoomInTwo);
+    button1.addActionListener(zoomInTwoListener);
+    button1.setToolTipText("Zoom in by two");
     Icon ikona2 = new ImageIcon(getClass().getResource("-2.png"));
     JButton button2 = new JButton(ikona2);
-    ZoomOutTwo zoomOutTwo = new ZoomOutTwo(waveDrawBoard, scale, horizontalScrollbar);
-    button2.addActionListener(zoomOutTwo);
+    button2.addActionListener(zoomOutTwoListener);
+    button2.setToolTipText("Zoom out by two");
     Icon ikona3 = new ImageIcon(getClass().getResource("+10.png"));
     JButton button3 = new JButton(ikona3);
-	ZoomInTen zoomInTen = new ZoomInTen(waveDrawBoard, scale, horizontalScrollbar);
-	button3.addActionListener(zoomInTen);
+	button3.addActionListener(zoomInTenListener);
+    button3.setToolTipText("Zoom in by ten");
     Icon ikona4 = new ImageIcon(getClass().getResource("-10.png"));
     JButton button4 = new JButton(ikona4);
-	ZoomOutTen zoomOutTen = new ZoomOutTen(waveDrawBoard, scale, horizontalScrollbar);
-	button4.addActionListener(zoomOutTen);
+	button4.addActionListener(zoomOutTenListener);
+    button4.setToolTipText("Zoom out by ten");
+    Icon ikona5 = new ImageIcon(getClass().getResource("upDown.png"));
+    JButton button5 = new JButton(ikona5);
+    button5.addActionListener(changeSignalMenu);
+    button5.setToolTipText("Change signal order");
+    Icon ikona6 = new ImageIcon(getClass().getResource("up.png"));
+    JButton upButton = new JButton (ikona6);
+    upButton.setToolTipText("Signal up");
+    upButton.addActionListener(upListener);
+    Icon ikona7 = new ImageIcon(getClass().getResource("down.png"));
+    JButton downButton = new JButton(ikona7);
+    downButton.setToolTipText("Signal down");
+    downButton.addActionListener(downListener);
 	toolbar.add(button1);
 	toolbar.add(button2);
 	toolbar.add(button3);
 	toolbar.add(button4);
+    toolbar.add(upButton);
+    toolbar.add(downButton);
+    toolbar.add(button5);
 	
-    JTextField textField = new JTextField(10);
-    textField.setEditable(false);
-
-	Container cp = getContentPane();
+    
+    /* postavljanje komponenti na applet */
+	cp = getContentPane();
     cp.setLayout(new WaveLayoutManager());
     cp.setBackground(new Color(141, 176, 221));
     cp.add(toolbar, "toolbar");
     cp.add(textField, "textField");
+    cp.add(search, "search");
     cp.add(signalNames, "signalNames");
-    cp.add(waveDrawBoard, "waves");
+    cp.add(waves, "waves");
     cp.add(scale, "scale");
     cp.add(verticalScrollbar, "verticalScrollbar");
     cp.add(horizontalScrollbar, "horizontalScrollbar");
     cp.add(signalNamesScrollbar, "signalNamesScrollbar");
-    MouseMotionListener mouseListener = new MouseListenerImpl(textField, scale, horizontalScrollbar);
-    waveDrawBoard.addMouseMotionListener(mouseListener);
-
-     //addMouseMotionListener(this);
-
-
   }
 
 
@@ -445,57 +656,5 @@ public class WaveApplet extends JApplet
   {
       Console.run(new WaveApplet(), 1000, 1000);
   }
-}
+} 
 
-/**
- * Mouse listener koji osluskuje pokrete misa i svaki pokret registrira te na
- * temelju vrijednosti po X-osi i na temelju trenutnog stanja skale vraca
- * preciznu vrijednost
- *
- * @author Boris Ozegovic
- */
-class MouseListenerImpl implements MouseMotionListener
-{
-    private JTextField textField;
-    private Scale scale;
-    private JScrollBar scroll;
-    private int xValue;
-    private double value;
-
-
-    /**
-     * Constructor
-     *
-     * @param textField polje u kojem se ispisuje precizna vrijednost
-     * @param scale skala koja vrsi proracune prilikom zumiranja
-     * @param scroll scrollbar potreban zbog trenutnog offseta
-     */
-    public MouseListenerImpl (JTextField textField, Scale scale, JScrollBar scroll)
-    {
-        this.textField = textField;
-        this.scale = scale;
-        this.scroll = scroll;
-    }
-
-
-    /**
-     * Metoda koja upravlja eventom
-     */
-    public void mouseMoved(MouseEvent me)  
-    {  
-        /* trenutni offset + X-vrijednost kurosra misa */
-        xValue = me.getX() + scroll.getValue(); 
-
-        /* podijeljeno s 100 jer je scaleStep za 100 piksela */
-        value = xValue * scale.getScaleStepInTime() / 100;
-        textField.setText (value + scale.getMeasureUnitName());
-    } 
-
-    /**
-     * Buducu upotrebu
-     */
-    public void mouseDragged(MouseEvent me)  
-    {
-        ;
-    }
-}
