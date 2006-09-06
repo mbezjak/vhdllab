@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 
+
+
 /**
  * Custom layout manager
  *
@@ -19,6 +21,7 @@ class WaveLayoutManager implements LayoutManager
 {
     private final String TOOLBAR = "toolbar";
     private final String TEXTFIELD = "textField";
+    private final String SEARCH = "search";
     private final String SIGNAL_NAMES = "signalNames";
     private final String SIGNAL_NAMES_SCROLLBAR = "signalNamesScrollbar";
     private final String WAVES = "waves";
@@ -28,6 +31,7 @@ class WaveLayoutManager implements LayoutManager
 
     private Component toolbar;
     private Component textField;
+    private Component search;
     private Component signalNames;
     private Component signalNamesScrollbar;
     private Component waves;
@@ -45,6 +49,10 @@ class WaveLayoutManager implements LayoutManager
         else if (TEXTFIELD.equals(name)) 
         {
             textField = component;
+        }
+        else if (SEARCH.equals(name))
+        {
+            search = component;
         }
         else if (SIGNAL_NAMES.equals(name)) 
         {
@@ -86,6 +94,10 @@ class WaveLayoutManager implements LayoutManager
         else if (component == textField) 
         {
             textField = null;
+        }
+        else if (component == search)
+        {
+            search = null;
         }
         else if (component == signalNames) 
         {
@@ -214,6 +226,19 @@ public void layoutContainer(Container target)
              height
              );
     }
+    if ((search != null) && search.isVisible())
+    {
+        width = search.getPreferredSize().width;
+        height = search.getPreferredSize().height;
+        search.setSize(width, height);
+        search.setBounds
+            (
+             west + widthToolbar + 300 + textField.getPreferredSize().width + 20,
+             north + 10, 
+             width,
+             height
+             );
+    }
     if ((signalNames != null) && signalNames.isVisible())
     {
         width = signalNames.getMaximumSize().width;
@@ -294,3 +319,4 @@ public void layoutContainer(Container target)
     }
   }
 } 
+
