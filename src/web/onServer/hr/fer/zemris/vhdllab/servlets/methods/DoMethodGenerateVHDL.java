@@ -2,52 +2,48 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.vhdllab.model.Project;
+import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 
-import java.util.List;
 import java.util.Properties;
 
 /**
- * This class represents a registered method for "find project by user" request.
+ * This class represents a registered method for "generate VHDL" request.
  * 
  * @author Miro Bezjak
  */
-public class DoMethodFindProjectsByUser implements JavaToAjaxRegisteredMethod {
+public class DoMethodGenerateVHDL implements JavaToAjaxRegisteredMethod {
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
 	public Properties run(Properties p, VHDLLabManager labman) {
-		String ownerID = p.getProperty(MethodConstants.PROP_PROJECT_ID,null);
-		if(ownerID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No owner ID specified!");
+		String fileID = p.getProperty(MethodConstants.PROP_FILE_ID,null);
+		if(fileID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file ID specified!");
 
 		Long id = null;
 		try {
-			id = Long.parseLong(ownerID);
+			id = Long.parseLong(fileID);
 		} catch (NumberFormatException e) {
-			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID!");
+			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
 		}
 		
-		// Find projects
-		List<Project> projects = null;
+		// Generate VHDL
+		String vhdl = null;
 		try {
-			projects = labman.findProjectsByUser(id);
+			File file = labman.loadFile(id);
+			vhdl = labman.generateVHDL(file);
 		} catch (ServiceException e) {
-			projects = null;
+			vhdl = null;
 		}
-		if(projects==null) return errorProperties(MethodConstants.SE_NO_SUCH_PROJECT,"Projects not found!");
+		if(vhdl==null) return errorProperties(MethodConstants.SE_CAN_NOT_GENERATE_VHDL,"Can not generate VHDL!");
 
 		// Prepare response
 		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_FIND_PROJECTS_BY_USER);
+		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_GENERATE_VHDL);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		int i = 1;
-		for(Project project : projects) {
-			resProp.setProperty(MethodConstants.PROP_PROJECT_ID+i, String.valueOf(project.getId()));
-			i++;
-		}
+		resProp.setProperty(MethodConstants.PROP_FILE_NAME,vhdl);
 		return resProp;
 	}
 	

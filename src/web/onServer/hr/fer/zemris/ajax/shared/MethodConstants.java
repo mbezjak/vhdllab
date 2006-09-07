@@ -1,32 +1,86 @@
 package hr.fer.zemris.ajax.shared;
 
 /**
- * This class contains various constants for all known requests
- * from Java to Ajax and all responces from Ajax to Java.
- * 
- * - case insensitive
- * - parsing priority: left to right
+ * This class contains various constants for communication
+ * between Java applet and Servlet through AJAX. Communication
+ * is maintained through methods. Methods are case insensitive
+ * key words. Words within methods are separated by {@link #OP_SEPARATOR}.
+ * It is possible to create a method that contains multiple
+ * methods (inner methods) using operators. Operators may be
+ * placed only between two inner methods. Such operators are:
+ * <ul>
+ * <li>{@link #OP_METHOD_SEPARATOR}
+ * <li>{@link #OP_REDIRECT_TO_LEFT}
+ * <li>{@link #OP_REDIRECT_TO_RIGHT}
+ * <li>{@link #OP_LEFT_BRACKET}
+ * <li>{@link #OP_RIGHT_BRACKET}
+ * </ul>
+ * <p>
+ * Operators have prirority as follows:
+ * <ul>
+ * <li>highest priority: {@link #OP_LEFT_BRACKET}, {@link #OP_RIGHT_BRACKET}
+ * <li>medium priority: {@link #OP_METHOD_SEPARATOR}
+ * <li>lowest priority: {@link #OP_REDIRECT_TO_LEFT}, {@link #OP_REDIRECT_TO_RIGHT}
+ * </ul>
+ * <p>
+ * Furthermore, if method contains two operators with same
+ * priority in a tandem then the one on the left have higher
+ * priority.
  * 
  * @author Miro Bezjak
  */
 public class MethodConstants {
 
 	/**
-	 * A separator for separating parts of a method.
+	 * An operator for separating parts of a method. This
+	 * operator has no priority. It is simply a part of a
+	 * method.
+	 * <p>
+	 * Example:
+	 * <blockquote>
+	 * load.file.name
+	 * </blockquote>
+ 	 * This method will load a name of a file and is actualy
+ 	 * a {@link #MTD_LOAD_FILE_NAME} method.
 	 */
-	public static final String SEPARATOR = ".";
+	public static final String OP_SEPARATOR = ".";
 	/**
-	 * A separator for merging multiple methods into one.
+	 * An operator for merging multiple methods into one. Both
+	 * methods will be run and a result properties of merged
+	 * methods will contain results of both methods. It has
+	 * higher priority then redirecting operators and lower then
+	 * bracket operators.
+	 * <p>
+	 * Example:
+	 * <blockquote>
+	 * {@link #MTD_LOAD_FILE_NAME}&{@link #MTD_LOAD_FILE_TYPE}
+	 * </blockquote>
+	 * This method will return a properties that will contain both
+	 * {@link #PROP_FILE_NAME} and {@link #PROP_FILE_TYPE}.
 	 */
-	public static final String METHOD_SEPARATOR = "&";
+	public static final String OP_METHOD_SEPARATOR = "&";
 	/**
-	 * Redirect output of left method to input of right method
+	 * An operator for redirecting output of left method to
+	 * input of right method. This operator has the lowest
+	 * priority.
 	 */
-	public static final String METHOD_REDIRECT_TO_RIGHT = ">";
+	public static final String OP_REDIRECT_TO_RIGHT = ">";
 	/**
-	 * Redirect output of right method to input of left method
+	 * An operator for redirecting output of right method to
+	 * input of left method. This operator has the lowest
+	 * priority.
 	 */
-	public static final String METHOD_REDIRECT_TO_LEFT = "<";
+	public static final String OP_REDIRECT_TO_LEFT = "<";
+	/**
+	 * An operator that is used for grouping. It has the highest
+	 * priority among all operators.
+	 */
+	public static final String OP_LEFT_BRACKET= "(";
+	/**
+	 * An operator that is used for grouping. It has the highest
+	 * priority among all operators.
+	 */
+	public static final String OP_RIGHT_BRACKET= ")";
 	
 	
 	/**
@@ -57,6 +111,10 @@ public class MethodConstants {
 	 * A status error value for status property when method arguments are faulty.
 	 */
 	public static final String SE_METHOD_ARGUMENT_ERROR = "4";
+	/**
+	 * A status error value for status property when there are type inconsistencies.
+	 */
+	public static final String SE_TYPE_SAFETY = "5";
 	
 	/**
 	 * A status error value for status property when file was not found.
@@ -99,6 +157,27 @@ public class MethodConstants {
 	 * A status error value for status property when existance of project was not able to be determine.
 	 */
 	public static final String SE_CAN_NOT_DETERMINE_EXISTANCE_OF_PROJECT = "205";
+	
+	/**
+	 * A status error value for status property when can not get compilation result.
+	 */
+	public static final String SE_CAN_NOT_GET_COMPILATION_RESULT = "501";
+	/**
+	 * A status error value for status property when can not get simulation result.
+	 */
+	public static final String SE_CAN_NOT_GET_SIMULATION_RESULT = "502";
+	/**
+	 * A status error value for status property when can not generate VHDL.
+	 */
+	public static final String SE_CAN_NOT_GENERATE_VHDL = "503";
+	/**
+	 * A status error value for status property when can not generate testbench VHDL.
+	 */
+	public static final String SE_CAN_NOT_GENERATE_VHDL_TESTBENCH = "504";
+	/**
+	 * A status error value for status property when can not generate shema VHDL.
+	 */
+	public static final String SE_CAN_NOT_GENERATE_VHDL_SHEMA = "505";
 	
 	/**
 	 * A status content property used to pass a message to client describing
@@ -151,6 +230,70 @@ public class MethodConstants {
 	 * <code>false</code> otherwise.
 	 */
 	public static final String PROP_PROJECT_EXISTS = "project.exists";
+	
+	/**
+	 * A result status property.
+	 */
+	public static final String PROP_RESULT_STATUS = "result.status";
+	/**
+	 * A result isSuccessful property.
+	 */
+	public static final String PROP_RESULT_IS_SUCCESSFUL = "result.is.Successful";
+	/**
+	 * A simulation result waveform property.
+	 */
+	public static final String PROP_RESULT_WAVEFORM = "result.waveform";
+	/**
+	 * A result message text property.
+	 */
+	public static final String PROP_RESULT_MESSAGE_TEXT = "result.message.text";
+	/**
+	 * A compilation result message row property.
+	 */
+	public static final String PROP_RESULT_MESSAGE_ROW = "result.message.row";
+	/**
+	 * A compilation result message column property.
+	 */
+	public static final String PROP_RESULT_MESSAGE_COLUMN = "result.message.column";
+	/**
+	 * A result message type property. Type can be:
+	 * <ul>
+	 * <li>simulation
+	 * <li>compilation
+	 * <li>compilation warning
+	 * <li>compilation error
+	 * </ul>
+	 */
+	public static final String PROP_RESULT_MESSAGE_TYPE = "result.message.type";
+	/**
+	 * A value for result message type property. Value is simulation. This is normaly
+	 * unnecessary.
+	 */
+	public static final String PROP_MESSAGE_TYPE_SIMULATION = "message.type.simulation";
+	/**
+	 * A value for result message type property. Value is compilation.
+	 */
+	public static final String PROP_MESSAGE_TYPE_COMPILATION = "message.type.compilation";
+	/**
+	 * A value for result message type property. Value is compilation warning.
+	 */
+	public static final String PROP_MESSAGE_TYPE_COMPILATION_WARNING = "message.type.compilation.warning";
+	/**
+	 * A value for result message type property. Value is compilation error.
+	 */
+	public static final String PROP_MESSAGE_TYPE_COMPILATION_ERROR = "message.type.compilation.error";
+	/**
+	 * A value for generate VHDL property.
+	 */
+	public static final String PROP_GENERATE_VHDL = "generate.vhdl";
+	/**
+	 * A value for generate testbench VHDL property.
+	 */
+	public static final String PROP_GENERATE_VHDL_TESTBENCH = "generate.vhdl.testbench";
+	/**
+	 * A value for generate shema VHDL property.
+	 */
+	public static final String PROP_GENERATE_VHDL_SHEMA = "generate.vhdl.shema";
 	
 	
 	
@@ -494,7 +637,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_PROJECT_ID}
 	 * <li>list of {@link #PROP_FILE_ID} written in following format: {@link #PROP_FILE_ID}.number
-	 *     (number starts at 1)
+	 *     (number is positive and starts at 1)
 	 * </ul>
 	 * <p>
 	 * Example of request <code>Properties</code>:
@@ -635,12 +778,12 @@ public class MethodConstants {
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
 	 * <li>list of {@link #PROP_PROJECT_ID} written in following format: {@link #PROP_PROJECT_ID}.number
-	 *     (number starts at 1)
+	 *     (number is positive and starts at 1)
 	 * </ul>
 	 * <p>
 	 * Example of response <code>Properties</code>:
 	 * <blockquote>
-	 * {@link #PROP_METHOD} = find_projects_b<_user_method<br/>
+	 * {@link #PROP_METHOD} = find_projects_by_user_method<br/>
 	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
 	 * {@link #PROP_PROJECT_ID}.1 = project_ID_1<br/>
 	 * {@link #PROP_PROJECT_ID}.2 = project_ID_2<br/>
@@ -667,6 +810,206 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_FIND_PROJECTS_BY_USER = "find.project.by.user";
+	/**
+	 * A "compile file" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_RESULT_STATUS} - containing result status
+	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>true</code> if compilation
+	 *     finnished successfully; <code>false</code> otherwise
+	 * <li>list of {@link #PROP_RESULT_MESSAGE_TEXT} written in following format:
+	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.number (number is positive and starts at 1)
+	 * <li>list of {@link #PROP_RESULT_MESSAGE_ROW} written in following format:
+	 *     {@link #PROP_RESULT_MESSAGE_ROW}.number (number is positive and starts at 1)
+	 * <li>list of {@link #PROP_RESULT_MESSAGE_COLUMN} written in following format:
+	 *     {@link #PROP_RESULT_MESSAGE_COLUMN}.number (number is positive and starts at 1)
+	 * <li>list of {@link #PROP_RESULT_MESSAGE_TYPE} written in following format:
+	 *     {@link #PROP_RESULT_MESSAGE_TYPE}.number (number is positive and starts at 1)
+	 * </ul>
+	 * <p>
+	 * Example of response <code>Properties</code>:
+	 * <blockquote>
+	 * {@link #PROP_METHOD} = compile_file_method<br/>
+	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
+	 * {@link #PROP_RESULT_STATUS} = result_status<br/>
+	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = true or false<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TEXT}.1 = message_text_1<br/>
+	 * {@link #PROP_RESULT_MESSAGE_ROW}.1 = message_row_1<br/>
+	 * {@link #PROP_RESULT_MESSAGE_COLUMN}.1 = message_column_1<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TYPE}.1 = message_type_1<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TEXT}.2 = message_text_2<br/>
+	 * {@link #PROP_RESULT_MESSAGE_ROW}.2 = message_row_2<br/>
+	 * {@link #PROP_RESULT_MESSAGE_COLUMN}.2 = message_column_2<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TYPE}.2 = message_type_2<br/>
+	 * ...
+	 * </blockquote>
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_GET_COMPILATION_RESULT} - if can not get compilation result for a file with {@link #PROP_FILE_ID}
+	 * <li>{@link #SE_TYPE_SAFETY} - if found non-compilation type message in compilation result
+	 * </ul>
+	 */
+	public static final String MTD_COMPILE_FILE = "compile.file";
+	/**
+	 * A "run simulation" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_RESULT_STATUS} - containing result status
+	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>true</code> if compilation
+	 *     finnished successfully; <code>false</code> otherwise
+	 * <li>list of {@link #PROP_RESULT_MESSAGE_TEXT} written in following format:
+	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.number (number is positive and starts at 1)
+	 * </ul>
+	 * <p>
+	 * Example of response <code>Properties</code>:
+	 * <blockquote>
+	 * {@link #PROP_METHOD} = run_simulation_method<br/>
+	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
+	 * {@link #PROP_RESULT_STATUS} = result_status<br/>
+	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = true or false<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TEXT}.1 = message_text_1<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TEXT}.2 = message_text_2<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TEXT}.3 = message_text_3<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TEXT}.4 = message_text_4<br/>
+	 * {@link #PROP_RESULT_MESSAGE_TEXT}.5 = message_text_5<br/>
+	 * 
+	 * ...
+	 * </blockquote>
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_GET_SIMULATION_RESULT} - if can not get simulation result for a file with {@link #PROP_FILE_ID}
+	 * <li>{@link #SE_TYPE_SAFETY} - if found non-simulation type message in simulation result
+	 * </ul>
+	 */
+	public static final String MTD_RUN_SIMULATION = "run.simulation";
+	/**
+	 * A "generate VHDL" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_GENERATE_VHDL} - containing generated VHDL
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_GENERATE_VHDL} - if can not generate VHDL for file with {@link #PROP_FILE_ID}
+	 * </ul>
+	 */
+	public static final String MTD_GENERATE_VHDL = "generate.vhdl";
+	/**
+	 * A "generate testbench VHDL" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_GENERATE_VHDL_TESTBENCH} - containing generated testbench VHDL
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_GENERATE_VHDL_TESTBENCH} - if can not generate testbench VHDL for file with {@link #PROP_FILE_ID}
+	 * </ul>
+	 */
+	public static final String MTD_GENERATE_TESTBENCH_VHDL = "generate.vhdl.testbench";
+	/**
+	 * A "generate shema VHDL" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_GENERATE_VHDL_SHEMA} - containing generated shema VHDL
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_GENERATE_VHDL_SHEMA} - if can not generate shema VHDL for file with {@link #PROP_FILE_ID}
+	 * </ul>
+	 */
+	public static final String MTD_GENERATE_SHEMA_VHDL = "generate.vhdl.shema";
 	
 	/**
 	 * Dont let anyone instantiate this class.

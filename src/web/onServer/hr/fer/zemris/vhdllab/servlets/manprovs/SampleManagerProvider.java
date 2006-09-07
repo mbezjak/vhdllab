@@ -8,11 +8,15 @@ import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCompileFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewProject;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodExistsFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodExistsProject;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodFindProjectsByUser;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGenerateShemaVHDL;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGenerateTestbenchVHDL;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGenerateVHDL;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileBelongsToProjectId;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileContent;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileName;
@@ -22,6 +26,7 @@ import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectNmbrFiles;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectOwnerId;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodRenameFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodRenameProject;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodRunSimulation;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodSaveFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodSaveProject;
 
@@ -69,6 +74,12 @@ public class SampleManagerProvider implements ManagerProvider {
 		registeredMethods.put(MethodConstants.MTD_CREATE_NEW_PROJECT, new DoMethodCreateNewProject());
 		registeredMethods.put(MethodConstants.MTD_EXISTS_PROJECT, new DoMethodExistsProject());
 		registeredMethods.put(MethodConstants.MTD_FIND_PROJECTS_BY_USER, new DoMethodFindProjectsByUser());
+		
+		registeredMethods.put(MethodConstants.MTD_COMPILE_FILE, new DoMethodCompileFile());
+		registeredMethods.put(MethodConstants.MTD_RUN_SIMULATION, new DoMethodRunSimulation());
+		registeredMethods.put(MethodConstants.MTD_GENERATE_VHDL, new DoMethodGenerateVHDL());
+		registeredMethods.put(MethodConstants.MTD_GENERATE_TESTBENCH_VHDL, new DoMethodGenerateTestbenchVHDL());
+		registeredMethods.put(MethodConstants.MTD_GENERATE_SHEMA_VHDL, new DoMethodGenerateShemaVHDL());
 		
 		// Remember created methods, so we can later return
 		// a reference to them.
