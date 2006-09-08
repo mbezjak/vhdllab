@@ -207,7 +207,6 @@ public class Testbench {
 	 * @param ci a circuit interface from where to draw information.
 	 * @param gen a generator from where to draw information.
 	 */
-	@SuppressWarnings("unchecked")
 	private static List<Slot> createProcessList(CircuitInterface ci, Generator gen) {
 		Slot tmp = new Slot(0);
 		Map<Slot, Slot> table = new HashMap<Slot, Slot>();

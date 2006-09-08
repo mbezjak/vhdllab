@@ -25,6 +25,9 @@ import java.util.TreeSet;
 
 public class VHDLLabManagerImpl implements VHDLLabManager {
 	
+	private int createFile = 1001;
+	private int createProject = 1001;
+	
 	private FileDAO fileDAO;
 	private ProjectDAO projectDAO;
 	
@@ -108,8 +111,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		file.setFileName(fileName);
 		file.setFileType(fileType);
 		file.setContent("");
-		file.setId(Long.valueOf(5));
+		file.setId(Long.valueOf(createFile++));
 		file.setProject(project);
+		files.put(file.getId(), file);
 		return file;
 	}
 
@@ -227,10 +231,11 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public Project createNewProject(String projectName, Long ownerId) throws ServiceException {
 		Project project = new Project();
-		project.setId(Long.valueOf(5));
+		project.setId(Long.valueOf(createProject++));
 		project.setProjectName(projectName);
 		project.setOwnerID(ownerId);
 		project.setFiles(null);
+		projects.put(project.getId(), project);
 		return project;
 	}
 }

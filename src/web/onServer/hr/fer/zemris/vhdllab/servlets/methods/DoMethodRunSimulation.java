@@ -51,7 +51,7 @@ public class DoMethodRunSimulation implements JavaToAjaxRegisteredMethod {
 			if(!(msg instanceof SimulationMessage)){
 				return errorProperties(MethodConstants.SE_TYPE_SAFETY, "Found non-simulation type message for simulation result!");
 			}
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+i, msg.getMessageText());
+			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+"."+i, msg.getMessageText());
 			i++;
 		}
 		return resProp;

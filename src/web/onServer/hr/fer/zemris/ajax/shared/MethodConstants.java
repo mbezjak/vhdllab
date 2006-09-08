@@ -3,7 +3,7 @@ package hr.fer.zemris.ajax.shared;
 /**
  * This class contains various constants for communication
  * between Java applet and Servlet through AJAX. Communication
- * is maintained through methods. Methods are case insensitive
+ * is maintained through methods. Methods are case sensitive
  * key words. Words within methods are separated by {@link #OP_SEPARATOR}.
  * It is possible to create a method that contains multiple
  * methods (inner methods) using operators. Operators may be
@@ -23,9 +23,17 @@ package hr.fer.zemris.ajax.shared;
  * <li>lowest priority: {@link #OP_REDIRECT_TO_LEFT}, {@link #OP_REDIRECT_TO_RIGHT}
  * </ul>
  * <p>
- * Furthermore, if method contains two operators with same
- * priority in a tandem then the one on the left have higher
- * priority.
+ * Operator {@link #OP_REDIRECT_TO_RIGHT} has higher priority then 
+ * {@link #OP_REDIRECT_TO_LEFT} Furthermore, if method contains
+ * two operators with same priority in a tandem then the one on
+ * the left have higher priority. If there is a conflict in merging
+ * then left inner method will win the conflict. A method must be written
+ * in the precise format without any extra charaters, even whitespace.
+ * Format:
+ * <blockquote>
+ * method1&method2
+ * ...
+ * </blockquote>
  * 
  * @author Miro Bezjak
  */
@@ -632,6 +640,49 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_LOAD_PROJECT_NMBR_FILES = "load.project.nmbr.files";
+	/**
+	 * A "load project's id of files" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_PROJECT_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>list of {@link #PROP_FILE_ID} written in following format: {@link #PROP_FILE_ID}.number
+	 *     (number is positive and starts at 1)
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * Example of request <code>Properties</code>:
+	 * <blockquote>
+	 * {@link #PROP_METHOD} = load_project_files_id_method<br/>
+	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
+	 * {@link #PROP_FILE_ID}.1 = file_ID_1<br/>
+	 * {@link #PROP_FILE_ID}.2 = file_ID_2<br/>
+	 * {@link #PROP_FILE_ID}.3 = file_ID_3<br/>
+	 * {@link #PROP_FILE_ID}.4 = file_ID_4<br/>
+	 * {@link #PROP_FILE_ID}.5 = file_ID_5<br/>
+	 * ...
+	 * </blockquote>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_PROJECT_ID} is not a long int number
+	 * <li>{@link #SE_NO_SUCH_PROJECT} - if project with {@link #PROP_PROJECT_ID} could not be found
+	 * </ul>
+	 */
+	public static final String MTD_LOAD_PROJECT_FILES_ID = "load.project.files.id";
 	/**
 	 * A "save project" method. Expected parametars (written as a property) are
 	 * <ul>

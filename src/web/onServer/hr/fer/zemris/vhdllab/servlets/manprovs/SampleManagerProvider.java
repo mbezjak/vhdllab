@@ -2,12 +2,14 @@ package hr.fer.zemris.vhdllab.servlets.manprovs;
 
 import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.ajax.shared.MethodDispatcher;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
+import hr.fer.zemris.vhdllab.servlets.dispatch.AdvancedMethodDispatcher;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCompileFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewProject;
@@ -21,6 +23,7 @@ import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileBelongsToProjectId
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileContent;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileName;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileType;
+import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectFilesId;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectName;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectNmbrFiles;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadProjectOwnerId;
@@ -69,6 +72,7 @@ public class SampleManagerProvider implements ManagerProvider {
 		registeredMethods.put(MethodConstants.MTD_LOAD_PROJECT_NAME, new DoMethodLoadProjectName());
 		registeredMethods.put(MethodConstants.MTD_LOAD_PROJECT_NMBR_FILES, new DoMethodLoadProjectNmbrFiles());
 		registeredMethods.put(MethodConstants.MTD_LOAD_PROJECT_OWNER_ID, new DoMethodLoadProjectOwnerId());
+		registeredMethods.put(MethodConstants.MTD_LOAD_PROJECT_FILES_ID, new DoMethodLoadProjectFilesId());
 		registeredMethods.put(MethodConstants.MTD_SAVE_PROJECT, new DoMethodSaveProject());
 		registeredMethods.put(MethodConstants.MTD_RENAME_PROJECT, new DoMethodRenameProject());
 		registeredMethods.put(MethodConstants.MTD_CREATE_NEW_PROJECT, new DoMethodCreateNewProject());
@@ -84,6 +88,13 @@ public class SampleManagerProvider implements ManagerProvider {
 		// Remember created methods, so we can later return
 		// a reference to them.
 		beans.put("registeredMethods", registeredMethods);
+		
+		//Register method dispatcher
+		MethodDispatcher disp = new AdvancedMethodDispatcher();
+		
+		// Remember created methods, so we can later return
+		// a reference to them.
+		beans.put("methodDispatcher", disp);
 	}
 	
 	public Object get(String name) {

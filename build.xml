@@ -165,16 +165,19 @@
   </target>
 	
   <target name="package-tests-web-onServer" depends="compile-tests-web-onServer">
-    <jar destfile="$${jlib-tests.dir}/${app.name}-tests-web-onServer.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-web-onServer.jar">
       <fileset dir="${build.dir}/tests/web/onServer" includes="**/*.class"/>
     </jar>
   </target>
 
-  <target name="run-tests-dao" depends="package-dao,package-tests-dao" if="junit.jar.present">
+  <target name="run-tests-dao" depends="package,package-tests-dao" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
       <arg value="hr.fer.zemris.vhdllab.AllDAOJUnitTests"/>
       <classpath>
-        <pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-dao.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
@@ -182,11 +185,14 @@
     </java>
   </target>
 	
-  <target name="run-tests-service" depends="package-service,package-tests-service" if="junit.jar.present">
+  <target name="run-tests-service" depends="package,package-tests-service" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
       <arg value="hr.fer.zemris.vhdllab.AllServiceJUnitTests"/>
       <classpath>
-        <pathelement location="${jlib.dir}/${app.name}-service.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-service.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
@@ -194,11 +200,14 @@
     </java>
   </target>
      
-  <target name="run-tests-web-onServer" depends="package-web-onServer,package-tests-web-onServer" if="junit.jar.present">
+  <target name="run-tests-web-onServer" depends="package,package-tests-web-onServer" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
       <arg value="hr.fer.zemris.vhdllab.AllOnServerJUnitTests"/>
       <classpath>
+        <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
         <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onServer.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
@@ -206,11 +215,14 @@
     </java>
   </target>
 	
-  <target name="run-tests-web-onClient" depends="package-web-onClient,package-tests-web-onClient" if="junit.jar.present">
+  <target name="run-tests-web-onClient" depends="package,package-tests-web-onClient" if="junit.jar.present">
     <java fork="yes" classname="junit.textui.TestRunner" taskname="junit" failonerror="true">
       <arg value="hr.fer.zemris.vhdllab.AllOnClientJUnitTests"/>
       <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
+        <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
+      	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar"/>
         <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>

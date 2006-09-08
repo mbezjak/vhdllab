@@ -1,8 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-
 import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
-import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.ajax.shared.MethodDispatcher;
 import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 
@@ -28,6 +27,9 @@ public class AjaxServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = -8488801764777289854L;
 	
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		InputStream is = request.getInputStream();
@@ -37,31 +39,12 @@ public class AjaxServlet extends HttpServlet {
 		log("Recieved following[\n"+text+"]\n");
 		Properties p = XMLUtil.deserializeProperties(text);
 		
-		// Perform method dispatching...
-		String method = p.getProperty(MethodConstants.PROP_METHOD,"");
 		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		JavaToAjaxRegisteredMethod regMethod = (JavaToAjaxRegisteredMethod)((Map)mprov.get("registeredMethods")).get(method);
-		
-		// Prepair response
-		Properties resProp = null;
-		if(regMethod==null) resProp = errorProperties(MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
-		else resProp = regMethod.run(p, labman);
-
+		Map<String, JavaToAjaxRegisteredMethod> regMap = (Map<String, JavaToAjaxRegisteredMethod>)mprov.get("registeredMethods");
+		MethodDispatcher disp = (MethodDispatcher)mprov.get("methodDispatcher");
+		Properties resProp = disp.preformMethodDispatching(p, regMap, labman);
 		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);
-	}
-	
-	/**
-	 * This method is called if errors occur.
-	 * @param errNo error message number
-	 * @param errorMessage error message to pass back to caller
-	 * @return a response Properties
-	 */
-	private Properties errorProperties(String errNo, String errorMessage) {
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
-		resProp.setProperty(MethodConstants.STATUS_CONTENT,errorMessage);
-		return resProp;
 	}
 	
 	/**

@@ -51,18 +51,18 @@ public class DoMethodCompileFile implements JavaToAjaxRegisteredMethod {
 		int i = 1;
 		for(Message msg : result.getMessages()) {
 			if(msg instanceof CompilationMessage){
-				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION);
+				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+"."+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION);
 			} else if(msg instanceof WarningCompilationMessage) {
-				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION_WARNING);
+				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+"."+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION_WARNING);
 			} else if(msg instanceof ErrorCompilationMessage) {
-				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION_ERROR);
+				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+"."+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION_ERROR);
 			} else {
 				return errorProperties(MethodConstants.SE_TYPE_SAFETY, "Found non-compilation type message for compilation result!");
 			}
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+i, msg.getMessageText());
+			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+"."+i, msg.getMessageText());
 			CompilationMessage cmsg = (CompilationMessage) msg;
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_ROW+i, String.valueOf(cmsg.getRow()));
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_COLUMN+i, String.valueOf(cmsg.getColumn()));
+			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_ROW+"."+i, String.valueOf(cmsg.getRow()));
+			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_COLUMN+"."+i, String.valueOf(cmsg.getColumn()));
 			i++;
 		}
 		return resProp;
