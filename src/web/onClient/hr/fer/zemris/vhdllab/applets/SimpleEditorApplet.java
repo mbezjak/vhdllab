@@ -79,11 +79,11 @@ public class SimpleEditorApplet extends JApplet implements AjaxOpListener, AjaxT
 			return;
 		} else {
 			Properties p = XMLUtil.deserializeProperties(result);
-			String method = p.getProperty("method","");
+			String method = p.getProperty(MethodConstants.PROP_METHOD,"");
 			if(method.equals("")) return;
-			String status = p.getProperty("status");
+			String status = p.getProperty(MethodConstants.PROP_STATUS);
 			String content = p.getProperty(MethodConstants.PROP_FILE_CONTENT,"");
-			if(status.equalsIgnoreCase("error")) {
+			if(status.equalsIgnoreCase(MethodConstants.SE_NO_SUCH_FILE)) {
 				JOptionPane.showMessageDialog(null,content);
 			} else {
 				if(method.equalsIgnoreCase(MethodConstants.MTD_LOAD_FILE_CONTENT)) {
@@ -137,7 +137,7 @@ public class SimpleEditorApplet extends JApplet implements AjaxOpListener, AjaxT
 				inProgress = true;
 			}
 			Properties p = new Properties();
-			p.setProperty("method",MethodConstants.MTD_SAVE_FILE);
+			p.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_SAVE_FILE);
 			p.setProperty(MethodConstants.PROP_FILE_ID,fileName);
 			p.setProperty(MethodConstants.PROP_FILE_CONTENT,content);
 			String msg = XMLUtil.serializeProperties(p);
@@ -156,7 +156,7 @@ public class SimpleEditorApplet extends JApplet implements AjaxOpListener, AjaxT
 				inProgress = true;
 			}
 			Properties p = new Properties();
-			p.setProperty("method",MethodConstants.MTD_LOAD_FILE_CONTENT);
+			p.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_LOAD_FILE_CONTENT);
 			p.setProperty(MethodConstants.PROP_FILE_ID,fileName);
 			String msg = XMLUtil.serializeProperties(p);
 			msgButton.setEnabled(true);
@@ -180,8 +180,8 @@ public class SimpleEditorApplet extends JApplet implements AjaxOpListener, AjaxT
 				msgLabel.setText("Result arrived. Code is "+code+".");
 			} else {
 				Properties p = XMLUtil.deserializeProperties(result);
-				String method = p.getProperty("method","");
-				String status = p.getProperty("status");
+				String method = p.getProperty(MethodConstants.PROP_METHOD,"");
+				String status = p.getProperty(MethodConstants.PROP_STATUS);
 				String content = p.getProperty(MethodConstants.STATUS_CONTENT);
 				msgLabel.setText("Result arrived. ["+status+"/"+method+"] "+content);
 			}
