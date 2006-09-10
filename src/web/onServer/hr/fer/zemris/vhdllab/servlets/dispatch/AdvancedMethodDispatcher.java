@@ -31,7 +31,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	private Properties resolveOperators(String method, Properties prop) {
 		Properties p;
 		//lowest priority
-		if( (p = resolveRedirecting(method)) != null ) return p;
+		if( (p = resolveRedirecting(method, prop)) != null ) return p;
 		//medium priority
 		if( (p = resolveMethodMerging(method, prop)) != null ) return p;
 		//highest priority
@@ -55,7 +55,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * @return a responce Properties or <code>null</code> if
 	 *         <code>method</code> does not contain redirecting operator.
 	 */
-	private Properties resolveRedirecting(String method) {
+	private Properties resolveRedirecting(String method, Properties prop) {
 		int redirectPos = 0;
 		int offset = 0;
 		//repeat until there is no more redirecting operators in a method
@@ -69,10 +69,10 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 			
 			Properties retProp;
 			if(operator.equals(MethodConstants.OP_REDIRECT_TO_RIGHT)) {
-				Properties redirectProp = resolveOperators(innerMethods[0], properties);
+				Properties redirectProp = resolveOperators(innerMethods[0], prop);
 				retProp = redirectProperties(innerMethods[1], redirectProp);
 			} else {
-				Properties redirectProp = resolveOperators(innerMethods[1], properties);
+				Properties redirectProp = resolveOperators(innerMethods[1], prop);
 				retProp = redirectProperties(innerMethods[0], redirectProp);
 			}
 			retProp.setProperty(MethodConstants.PROP_METHOD, method);
@@ -173,7 +173,8 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 		Set<Object> keys = redirectProp.keySet();
 		Properties retProp = new Properties();
 		while(true) {
-			Properties p = prepairPropertiesToDispatch(method, properties);
+			redirectProp = mergeProperties(method, redirectProp, properties);
+			Properties p = prepairPropertiesToDispatch(method, redirectProp);
 			Set<Object> rem = new TreeSet<Object>();
 			String numberSuffix = null;
 			for(Object key : keys) {
@@ -192,6 +193,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 			}
 			
 			Properties ret = resolveOperators(method, p);
+			//TODO nesmije se ocistit status errori!
 			cleanProperties(ret);
 			Set<Object> retKeys = ret.keySet();
 			for(Object key : retKeys) {
@@ -207,7 +209,8 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	}
 	
 	/**
-	 * Merge two Properties into one.
+	 * Merge two Properties into one. Note that if these two properties have
+	 * the same key then left will win because it has higher priority.
 	 * @param method a method to which returned Properties will be set.
 	 * @param left left Properties
 	 * @param right right Properties
@@ -221,13 +224,13 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 		cleanProperties(right);
 		Set<Object> keys;
 		
-		keys = left.keySet();
-		for(Object key : keys) {
-			p.put(key, left.get(key));
-		}
 		keys = right.keySet();
 		for(Object key : keys) {
 			p.put(key, right.get(key));
+		}
+		keys = left.keySet();
+		for(Object key : keys) {
+			p.put(key, left.get(key));
 		}
 		p.setProperty(MethodConstants.PROP_STATUS, MethodConstants.STATUS_OK);
 		return p;

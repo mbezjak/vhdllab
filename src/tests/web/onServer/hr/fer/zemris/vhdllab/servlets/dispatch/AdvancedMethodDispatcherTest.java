@@ -515,4 +515,65 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 			fail("Generated exception: "+e.getMessage());
 		}
 	}
+	
+	/**
+	 * Test method preformMethodDispatching() when method is advanced:
+	 * <blockquote>
+	 * method1>method2>(method3&method4)
+	 * </blockquote>
+	 */
+	@Test
+	public void testPreformMethodDispatching19() {
+		Properties p = new Properties();
+		String method = MethodConstants.MTD_LOAD_FILE_BELONGS_TO_PROJECT_ID+">"+MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+")";
+		p.setProperty(MethodConstants.PROP_METHOD, method);
+		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
+		
+		try {
+			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+			assertEquals(8, prop.keySet().size());
+			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
+			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+1, ""));
+			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+2, ""));
+			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+2, ""));
+			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
+			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+3, ""));
+			} catch (Exception e) {
+			e.printStackTrace();
+			fail("Generated exception: "+e.getMessage());
+		}
+	}
+	
+	/**
+	 * Test method preformMethodDispatching() when method is advanced:
+	 * <blockquote>
+	 * ((method1>method2>(method3&method4))&method5)>method6
+	 * </blockquote>
+	 */
+	@Test
+	public void testPreformMethodDispatching20() {
+		Properties p = new Properties();
+		String method = "(("+MethodConstants.MTD_LOAD_FILE_BELONGS_TO_PROJECT_ID+">"+MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+"))&"+MethodConstants.MTD_CREATE_NEW_PROJECT+")>"+MethodConstants.MTD_CREATE_NEW_FILE;
+		p.setProperty(MethodConstants.PROP_METHOD, method);
+		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
+		p.setProperty(MethodConstants.PROP_PROJECT_NAME, "NewProjectName");
+		p.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, "500");
+		
+		try {
+			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+			Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_FILE_ID+".1"));
+			id = labman.loadFile(id).getProject().getId();
+			assertEquals(true, labman.existsProject(id));
+			assertEquals("NewProjectName", labman.loadProject(id).getProjectName());
+			assertEquals(Long.valueOf(500), labman.loadProject(id).getOwnerID());
+			assertEquals(5, prop.keySet().size());
+			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+			} catch (Exception e) {
+			e.printStackTrace();
+			fail("Generated exception: "+e.getMessage());
+		}
+	}
 }
