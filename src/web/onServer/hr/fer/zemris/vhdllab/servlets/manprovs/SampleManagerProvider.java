@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.manprovs;
 
-import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
+import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.ajax.shared.MethodDispatcher;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
@@ -59,7 +59,7 @@ public class SampleManagerProvider implements ManagerProvider {
 		beans.put("vhdlLabManager",labManImpl);
 		
 		//Register all known methods
-		Map<String,JavaToAjaxRegisteredMethod> registeredMethods = new HashMap<String, JavaToAjaxRegisteredMethod>();
+		Map<String,RegisteredMethod> registeredMethods = new HashMap<String, RegisteredMethod>();
 		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_NAME, new DoMethodLoadFileName());
 		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_TYPE, new DoMethodLoadFileType());
 		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_CONTENT, new DoMethodLoadFileContent());

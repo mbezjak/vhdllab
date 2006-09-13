@@ -39,21 +39,12 @@ public class TestbenchTest extends TestCase {
 		ci.addPort(new DefaultPort("e", Direction.IN, new DefaultType("std_logic_vector", new int[] {2,0}, "DOWNTO")));
 		ci.addPort(new DefaultPort("f", Direction.OUT, new DefaultType("std_logic_vector", new int[] {1,4}, "TO")));
 		
-		String writted = null;
 		try {
-			writted = Testbench.writeVHDL(ci, inducement);
+			Testbench.writeVHDL(ci, inducement);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Generated exception: "+e.getMessage());
 		}
-		
-		System.out.println("Test method writeVHDL(CircuitInterface, String)...");
-		System.out.println(inducement);
-		System.out.println("********************************************\n");
-		System.out.println(ci);
-		System.out.println("********************************************\n");
-		System.out.println(writted);
-		System.out.println("..................................................");
 	}
 	
 	/** Test method writeVHDL(CircuitInterface, String) when circuit interface is null */
@@ -124,23 +115,12 @@ public class TestbenchTest extends TestCase {
 		ci.addPort(new DefaultPort("e", Direction.IN, new DefaultType("std_logic_vector", new int[] {2,0}, "DOWNTO")));
 		ci.addPort(new DefaultPort("f", Direction.OUT, new DefaultType("std_logic_vector", new int[] {1,4}, "TO")));
 		
-		String writted = null;
 		try {
-			writted = Testbench.writeVHDL(ci, gen);
+			Testbench.writeVHDL(ci, gen);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Generated exception: "+e.getMessage());
 		}
-		
-		System.out.println("Test method writeVHDL(CircuitInterface, Generator)...");
-		System.out.println(inducement);
-		System.out.println("********************************************\n");
-		System.out.println(gen);
-		System.out.println("********************************************\n");
-		System.out.println(ci);
-		System.out.println("********************************************\n");
-		System.out.println(writted);
-		System.out.println("....................................................");
 	}
 	
 	/** Test method writeVHDL(CircuitInterface, Generator) when circuit interface is null */

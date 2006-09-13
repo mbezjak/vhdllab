@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
-import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
+import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
@@ -14,10 +14,10 @@ import java.util.Properties;
  * 
  * @author Miro Bezjak
  */
-public class DoMethodCreateNewFile implements JavaToAjaxRegisteredMethod {
+public class DoMethodCreateNewFile implements RegisteredMethod {
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
+	 * @see hr.fer.zemris.ajax.shared.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
 	public Properties run(Properties p, VHDLLabManager labman) {
 		String projectID = p.getProperty(MethodConstants.PROP_PROJECT_ID,null);
@@ -61,7 +61,7 @@ public class DoMethodCreateNewFile implements JavaToAjaxRegisteredMethod {
 	private Properties errorProperties(String errNo, String errorMessage) {
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
-		resProp.setProperty(MethodConstants.STATUS_CONTENT,errorMessage);
+		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
 		return resProp;
 	}
 }

@@ -13,7 +13,7 @@ import java.util.Properties;
  * @author Miro Bezjak
  * @see SampleManagerProvider#SampleManagerProvider()
  */
-public interface JavaToAjaxRegisteredMethod {
+public interface RegisteredMethod {
 	
 	/**
 	 * This method is called when cirtain request is received.

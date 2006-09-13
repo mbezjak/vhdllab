@@ -13,7 +13,7 @@ package hr.fer.zemris.ajax.shared;
  *
  */
 public interface AjaxToJavaInterface {
-
+	
 	/**
 	 * This method is called from JavaScript when AJAX operation
 	 * completes, and passes its results.

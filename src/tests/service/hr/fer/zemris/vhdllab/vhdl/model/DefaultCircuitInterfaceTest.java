@@ -368,7 +368,7 @@ public class DefaultCircuitInterfaceTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 */
+	 *//*
 	public void testToString() {
 		List<Port> ports = new ArrayList<Port>();
 		ports.add(new DefaultPort("a", Direction.IN, new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION)));
@@ -383,5 +383,5 @@ public class DefaultCircuitInterfaceTest extends TestCase {
 		System.out.println("Testing method toString():");
 		System.out.println(ci);
 		System.out.println("********************");
-	}
+	}*/
 }

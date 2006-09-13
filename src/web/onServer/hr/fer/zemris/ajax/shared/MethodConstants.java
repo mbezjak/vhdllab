@@ -100,6 +100,11 @@ public class MethodConstants {
 	 */
 	public static final String PROP_STATUS = "status";
 	/**
+	 * A status content property used to pass a message to client describing
+	 * an error that occured.
+	 */
+	public static final String PROP_STATUS_CONTENT = "status.content";
+	/**
 	 * A value for status property when no errors occured.
 	 */
 	public static final String STATUS_OK = "0";
@@ -186,12 +191,6 @@ public class MethodConstants {
 	 * A status error value for status property when can not generate shema VHDL.
 	 */
 	public static final String SE_CAN_NOT_GENERATE_VHDL_SHEMA = "505";
-	
-	/**
-	 * A status content property used to pass a message to client describing
-	 * an error that occured.
-	 */
-	public static final String STATUS_CONTENT = "status.content";
 	
 	
 	
@@ -324,7 +323,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -354,7 +353,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -384,7 +383,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -415,7 +414,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -445,7 +444,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -475,7 +474,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -507,7 +506,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -538,7 +537,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -569,7 +568,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -599,7 +598,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -629,7 +628,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -660,7 +659,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * Example of request <code>Properties</code>:
@@ -714,7 +713,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -745,7 +744,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -776,7 +775,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -806,7 +805,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -850,7 +849,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -908,7 +907,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -959,7 +958,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -990,7 +989,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -1020,7 +1019,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:
@@ -1050,7 +1049,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #STATUS_CONTENT} - containing a message that describes an error message
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
 	 * <p>
 	 * This method may cause following status errors:

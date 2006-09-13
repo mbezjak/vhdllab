@@ -306,7 +306,7 @@ public class DefaultTypeTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 */
+	 *//*
 	public void testToString() {
 		DefaultType type = new DefaultType("std_logic", new int[] {2, 0}, "DOWNTO");
 		System.out.println("********************");
@@ -314,5 +314,5 @@ public class DefaultTypeTest extends TestCase {
 		System.out.println("Testing method toString():");
 		System.out.println(type);
 		System.out.println("********************");
-	}
+	}*/
 }

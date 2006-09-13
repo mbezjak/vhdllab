@@ -1,22 +1,37 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
-import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.ajax.shared.MethodDispatcher;
+import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 
+/**
+ * 
+ * @author Miro Bezjak
+ */
 public class AdvancedMethodDispatcher implements MethodDispatcher {
 	
-	private Properties properties = null;
-	private Map<String, JavaToAjaxRegisteredMethod> regMap = null;
-	private VHDLLabManager labman = null;
+	/**
+	 * A Properties that will be processed.
+	 */
+	private Properties properties;
+	/**
+	 * A Map of registered methods.
+	 */
+	private Map<String, RegisteredMethod> regMap;
+	/**
+	 * A VHDL lab manager that will be used in a registered method.
+	 */
+	private VHDLLabManager labman;
 	
-	public Properties preformMethodDispatching(Properties p, Map<String, JavaToAjaxRegisteredMethod> regMap, VHDLLabManager labman) {
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.ajax.shared.MethodDispatcher#preformMethodDispatching(java.util.Properties, java.util.Map, hr.fer.zemris.vhdllab.service.VHDLLabManager)
+	 */
+	public Properties preformMethodDispatching(Properties p, Map<String, RegisteredMethod> regMap, VHDLLabManager labman) {
 		if(p==null) throw new NullPointerException("Properties can not be null!");
 		if(regMap==null) throw new NullPointerException("A map of registrated methods can not be null!");
 		if(labman==null) throw new NullPointerException("A lab manager can not be null!");
@@ -25,93 +40,93 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 		this.labman = labman;
 		
 		String method = p.getProperty(MethodConstants.PROP_METHOD);
-		return resolveOperators(method, properties);
+		Properties retProp = resolveOperators(method, properties);
+		retProp.setProperty(MethodConstants.PROP_METHOD, method);
+		return retProp;
 	}
 	
-	private Properties resolveOperators(String method, Properties prop) {
+	private Properties resolveOperators(String method, Properties properties) {
+		String status = properties.getProperty(MethodConstants.PROP_STATUS);
+		if(status != null && !status.equals(MethodConstants.STATUS_OK)) return properties;
+		properties = mergeProperties(method, properties, this.properties);
+		
 		Properties p;
 		//lowest priority
-		if( (p = resolveRedirecting(method, prop)) != null ) return p;
+		if( (p = resolveRedirect(method, properties)) != null ) return p;
 		//medium priority
-		if( (p = resolveMethodMerging(method, prop)) != null ) return p;
+		if( (p = resolveMethodMerging(method, properties)) != null ) return p;
 		//highest priority
-		if( (p = resolveBrackets(method, prop)) != null ) return p;
+		if( (p = resolveBrackets(method, properties)) != null ) return p;
 		//there is no operators in method
-		return resolveMethod(method, prop);
+		return resolveMethod(method, properties);
 	}
 
 	/**
 	 * This method resolves redirecting of one method (possibly complex)
-	 * into another one (possibly complex). Or if redirecting separator
-	 * is not present as a top level (see private method
-	 * isTopLevel(String, int) for more information on term: top level)
-	 * then it returns <code>null</code>.
+	 * into another one (possibly complex). Or if redirect operator
+	 * is not present as a top level then it returns <code>null</code>.
+	 * <p/>
+	 * See private method isTopLevel(String, int) for more information
+	 * on term: 'top level'.
 	 * <p/>
 	 * Complex method is defined as non-simple method.<br/>
 	 * Simple method is defined as a method which contains no operators
 	 * and only one registered method that will be dispatched without
 	 * processing using private method resolveMethod(String).
 	 * @param method a complex method.
+	 * @param properties a Properties from where to draw information.
 	 * @return a responce Properties or <code>null</code> if
-	 *         <code>method</code> does not contain redirecting operator.
+	 *         <code>method</code> does not contain top level redirect
+	 *         operator.
 	 */
-	private Properties resolveRedirecting(String method, Properties prop) {
-		int redirectPos = 0;
-		int offset = 0;
-		//repeat until there is no more redirecting operators in a method
-		while((redirectPos = indexOfMoreLeftRedirectOP(method, offset)) != -1) {
-			if(!isTopLevel(method, redirectPos)) {
-				offset = redirectPos + 1;
-				continue;
-			}
-			String[] innerMethods = splitMethod(method, redirectPos);
-			String operator = String.valueOf(method.charAt(redirectPos));
+	private Properties resolveRedirect(String method, Properties properties) {
+		int redirectPos = indexOfRedirectOP(method);
+		if(redirectPos == -1) return null;
+		
+		String[] innerMethods = splitMethod(method, redirectPos);
+		String operator = String.valueOf(method.charAt(redirectPos));
+		
+		if(operator.equals(MethodConstants.OP_REDIRECT_TO_RIGHT)) {
+			Properties redirectProp = resolveOperators(innerMethods[0], properties);
+			String status = redirectProp.getProperty(MethodConstants.PROP_STATUS);
+			if(status != null && !status.equals(MethodConstants.STATUS_OK)) return redirectProp;
 			
-			Properties retProp;
-			if(operator.equals(MethodConstants.OP_REDIRECT_TO_RIGHT)) {
-				Properties redirectProp = resolveOperators(innerMethods[0], prop);
-				retProp = redirectProperties(innerMethods[1], redirectProp);
-			} else {
-				Properties redirectProp = resolveOperators(innerMethods[1], prop);
-				retProp = redirectProperties(innerMethods[0], redirectProp);
-			}
-			retProp.setProperty(MethodConstants.PROP_METHOD, method);
-			retProp.setProperty(MethodConstants.PROP_STATUS, MethodConstants.STATUS_OK);
-			return retProp;
+			return resolveOperators(innerMethods[1], redirectProp);
+		} else {
+			Properties redirectProp = resolveOperators(innerMethods[1], properties);
+			String status = redirectProp.getProperty(MethodConstants.PROP_STATUS);
+			if(status != null && !status.equals(MethodConstants.STATUS_OK)) return redirectProp;
+			
+			return resolveOperators(innerMethods[0], redirectProp);
 		}
-		return null;
 	}
 	
 	/**
 	 * This method resolves merge of two methods (possibly complex).
-	 * Or if method separator is not present as a top level (see private
-	 * method isTopLevel(String, int) for more information on term: top
-	 * level) then it returns <code>null</code>.
+	 * Or if method separator is not present as a top level then it
+	 * returns <code>null</code>.
+	 * <p/>
+	 * See private method isTopLevel(String, int) for more information
+	 * on term: 'top level'.
 	 * <p/>
 	 * Complex method is defined as non-simple method.<br/>
 	 * Simple method is defined as a method which contains no operators
 	 * and only one registered method that will be dispatched without
 	 * processing using private method resolveMethod(String).
 	 * @param method a complex method.
+	 * @param properties a Properties from where to draw information.
 	 * @return a responce Properties or <code>null</code> if
 	 *         <code>method</code> does not contain top level method
 	 *         separator.
 	 */
-	private Properties resolveMethodMerging(String method, Properties prop) {
-		int mergePos = 0;
-		int offset = 0;
-		//repeat until there is no more method separators in a method
-		while((mergePos = method.indexOf(MethodConstants.OP_METHOD_SEPARATOR, offset)) != -1) {
-			if(!isTopLevel(method, mergePos)) {
-				offset = mergePos + 1;
-				continue;
-			}
-			String[] innerMethods = splitMethod(method, mergePos);
-			Properties left = resolveOperators(innerMethods[0], prop);
-			Properties right = resolveOperators(innerMethods[1], prop);
-			return mergeProperties(method, left, right);
-		}
-		return null;
+	private Properties resolveMethodMerging(String method, Properties properties) {
+		int mergePos = indexOfMethodSeparator(method);
+		if(mergePos == -1) return null;
+		
+		String[] innerMethods = splitMethod(method, mergePos);
+		Properties left = resolveOperators(innerMethods[0], properties);
+		Properties right = resolveOperators(innerMethods[1], properties);
+		return mergeProperties(method, left, right);
 	}
 
 	/**
@@ -124,159 +139,165 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * and only one registered method that will be dispatched without
 	 * processing using private method resolveMethod(String).
 	 * @param method a complex method.
+	 * @param properties a Properties from where to draw information.
 	 * @return a responce Properties or <code>null</code> if
 	 *         <code>method</code> is not surrounded with brackets.
 	 */
-	private Properties resolveBrackets(String method, Properties prop) {
+	private Properties resolveBrackets(String method, Properties properties) {
 		String mtd = removeBrackets(method);
 		if(mtd==null) return null;
-		Properties p = resolveOperators(mtd, prop);
-		p.setProperty(MethodConstants.PROP_METHOD, method);
-		return p;
+		return resolveOperators(mtd, properties);
 	}
 	
 	/**
-	 * This method resolves <code>method</code> and calls registered
+	 * This method resolves simple <code>method</code> and calls registered
 	 * method to deal with this method. If no registered methods exists
 	 * for <code>method</code> then <code>errorProperties</code> will 
 	 * be returned.
+	 * <p/>
+	 * Simple method is defined as a method which contains no operators
+	 * and only one registered method that will be dispatched without
+	 * processing.
 	 * @param method containing which method to call.
-	 * @param properties a Properties from where to draw information
+	 * @param properties a Properties from where to draw information.
 	 * @return a responce Properties.
 	 */
 	private Properties resolveMethod(String method, Properties properties) {
-		Properties p = prepairPropertiesToDispatch(method, properties);
-		JavaToAjaxRegisteredMethod regMethod = regMap.get(method);
-		if(regMethod==null) return errorProperties(MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
-		return regMethod.run(p, labman);
-	}
-	
-	/**
-	 * Redirect output of Properties <code>redirectProp</code> and direct
-	 * it as an input Properties with method <code>method</code>.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * @param method a method to which returned Properties will be set.
-	 * @param redirectProp a Properties that will be redirected.
-	 * @return a Properties that will contain information of <code>left</code>
-	 *         and <code>right</code> properties.
-	 */
-	private Properties redirectProperties(String method, Properties redirectProp) {
-		cleanProperties(redirectProp);
-		Set<Object> keys = redirectProp.keySet();
 		Properties retProp = new Properties();
+		int num = 1;
 		while(true) {
-			redirectProp = mergeProperties(method, redirectProp, properties);
-			Properties p = prepairPropertiesToDispatch(method, redirectProp);
-			Set<Object> rem = new TreeSet<Object>();
-			String numberSuffix = null;
-			for(Object key : keys) {
-				String propKey = (String) key;
-				String newKey = propKey.replaceAll("[.]{1}[0-9]+$", "");
-				if(propKey.matches("^[a-zA-Z.]+[.]{1}[0-9]$")) {
-					String[] splited = propKey.split("[.]");
-					if(numberSuffix == null) numberSuffix = splited[splited.length-1];
-					else if(!numberSuffix.equals(splited[splited.length-1])) continue;
+			Properties p = mergeProperties(method, properties, this.properties);
+			Properties modified = new Properties();
+			String numSuffix = String.valueOf(num);
+			for(Object key : p.keySet()) {
+				String strKey = (String) key;
+				if(strKey.matches("^[a-zA-Z.]+[.]{1}"+numSuffix+"$")) {
+					String newKey = strKey.replaceAll("[.]{1}"+numSuffix, "");
+					modified.setProperty(newKey, p.getProperty(strKey));
 				}
-				p.put(newKey, redirectProp.get(key));
-				rem.add(key);
-			}
-			for(Object k : rem) {
-				keys.remove(k);
 			}
 			
-			Properties ret = resolveOperators(method, p);
-			//TODO nesmije se ocistit status errori!
-			cleanProperties(ret);
-			Set<Object> retKeys = ret.keySet();
-			for(Object key : retKeys) {
-				if(numberSuffix!=null) {
-					retProp.put(key+"."+numberSuffix, ret.get(key));
-				} else {
-					retProp.put(key, ret.get(key));
-				}
+			if(num!=1 && modified.size()==0) return retProp;
+			for(Object key : modified.keySet()) {
+				p.put(key, modified.get(key));
 			}
-			if(keys.size() == 0) break;
+			
+			Properties ret;
+			RegisteredMethod regMethod = regMap.get(method);
+			if(regMethod==null) ret = errorProperties(MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
+			else ret = regMethod.run(p, labman);
+			if(num==1 && modified.size()==0) return ret;
+			for(Object key : ret.keySet()) {
+				String strKey = (String) key;
+				//there is no need to add #PROP_METHOD
+				if(strKey.equals(MethodConstants.PROP_METHOD)) continue;
+				if(strKey.equals(MethodConstants.PROP_STATUS) ||
+					strKey.equals(MethodConstants.PROP_STATUS_CONTENT)) {
+					retProp.put(key, ret.get(key));
+					continue;
+				}
+				
+				if(strKey.matches("^[a-zA-Z.]+[.]{1}[0-9]$")) {
+					retProp.put(key, ret.get(key));
+					continue;
+				}
+				retProp.setProperty(strKey+"."+numSuffix, ret.getProperty(strKey));
+			}
+			
+			String status = retProp.getProperty(MethodConstants.PROP_STATUS);
+			if(status != null && !status.equals(MethodConstants.STATUS_OK)) return retProp;
+			
+			if(modified.size()==0) return retProp;
+			num++;
 		}
-		return retProp;
 	}
 	
 	/**
 	 * Merge two Properties into one. Note that if these two properties have
-	 * the same key then left will win because it has higher priority.
+	 * the same key then left will win because it has higher priority. Also
+	 * if one Properties contains {@linkplain MethodConstants#PROP_STATUS}
+	 * other then {@linkplain MethodConstants#STATUS_OK} then returned
+	 * Properties will also have that status.
 	 * @param method a method to which returned Properties will be set.
-	 * @param left left Properties
-	 * @param right right Properties
+	 * @param left a left Properties
+	 * @param right a right Properties
 	 * @return a Properties that will contain information of <code>left</code>
 	 *         and <code>right</code> properties.
 	 */
 	private Properties mergeProperties(String method, Properties left, Properties right) {
 		Properties p = new Properties();
-		p.setProperty(MethodConstants.PROP_METHOD, method);
-		cleanProperties(left);
-		cleanProperties(right);
 		Set<Object> keys;
-		
+
 		keys = right.keySet();
 		for(Object key : keys) {
 			p.put(key, right.get(key));
 		}
 		keys = left.keySet();
 		for(Object key : keys) {
+			if( key.equals(MethodConstants.PROP_STATUS) &&
+				left.get(key).equals(MethodConstants.STATUS_OK) ) {
+				String status = p.getProperty(MethodConstants.PROP_STATUS);
+				if(status != null && !status.equals(MethodConstants.STATUS_OK)) continue;
+			}
 			p.put(key, left.get(key));
 		}
-		p.setProperty(MethodConstants.PROP_STATUS, MethodConstants.STATUS_OK);
-		return p;
-	}
-	
-	/**
-	 * This method creates a new Properties that is prepaired to dispatch. It will
-	 * have a <code>method</code> method and all argumets in <code>refProp</code>.
-	 * @param method a method to which prepaired properties will be set.
-	 * @param refProp a properties from where to draw information.
-	 * @return a prepaired properties.
-	 */
-	private Properties prepairPropertiesToDispatch(String method, Properties refProp) {
-		Properties p = new Properties();
 		p.setProperty(MethodConstants.PROP_METHOD, method);
-		cleanProperties(refProp);
-		Set<Object> keys = refProp.keySet();
-		for(Object key : keys) {
-			p.put(key, refProp.get(key));
-		}
 		return p;
 	}
 	
 	/**
-	 * Delete following key from Properties
-	 * <ul>
-	 * <li>{@linkplain hr.fer.zemris.ajax.shared.MethodConstants#PROP_METHOD}</li>
-	 * <li>{@linkplain hr.fer.zemris.ajax.shared.MethodConstants#PROP_STATUS}</li>
-	 * <li>{@linkplain hr.fer.zemris.ajax.shared.MethodConstants#STATUS_CONTENT}</li>
-	 * </ul>
-	 * @param p a properties to clean.
+	 * Returns an index of first occurance of top level redirect operator
+	 * in a <code>method</code> or <code>-1</code> if such operator does
+	 * not exists. See private method isTopLevel(String, int) for more
+	 * information on term: 'top level'.
+	 * @param method a method where to look for an operator.
+	 * @return first occurance of top level redirect operator in a 
+	 *         <code>method</code> or <code>-1</code> if such operator
+	 *         does not exists.
 	 */
-	private void cleanProperties(Properties p) {
-		p.remove(MethodConstants.PROP_METHOD);
-		p.remove(MethodConstants.PROP_STATUS);
-		p.remove(MethodConstants.STATUS_CONTENT);
+	private int indexOfRedirectOP(String method) {
+		int operatorPos = -1;
+		int offset = 0;
+		//repeat until there is no more redirect operators in a method
+		while((operatorPos = indexOfFarLeftRedirectOP(method, offset)) != -1) {
+			if(isTopLevel(method, operatorPos)) return operatorPos;
+			offset = operatorPos + 1;
+			continue;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Returns an index of first occurance of top level method separator
+	 * in a <code>method</code> or <code>-1</code> if such operator does
+	 * not exists. See private method isTopLevel(String, int) for more
+	 * information on term: 'top level'.
+	 * @param method a method where to look for an operator.
+	 * @return first occurance of top level method separator in a 
+	 *         <code>method</code> or <code>-1</code> if such operator
+	 *         does not exists.
+	 */
+	private int indexOfMethodSeparator(String method) {
+		int operatorPos = -1;
+		int offset = 0;
+		//repeat until there is no more method separators in a method
+		while((operatorPos = method.indexOf(MethodConstants.OP_METHOD_SEPARATOR, offset)) != -1) {
+			if(isTopLevel(method, operatorPos)) return operatorPos;
+			offset = operatorPos + 1;
+			continue;
+		}
+		return -1;
 	}
 
 	/**
-	 * Search for redirecting operator that is the furthest to the left.
-	 * Operators that are further to the left have higher priority.
-	 * @param method a method where to look for redirecting operator.
+	 * Search for redirect operator that is the furthest to the left.
+	 * Operators that are further to the left have higher priority!
+	 * @param method a method where to look for redirect operator.
 	 * @param offset the index from which to start the search.
-	 * @return position of more left redirecting operator.
+	 * @return position of far left redirect operator or <code>-1</code>
+	 *         if redirect operator does not exists in <code>method</code>.
 	 */
-	private int indexOfMoreLeftRedirectOP(String method, int offset) {
+	private int indexOfFarLeftRedirectOP(String method, int offset) {
 		int redirectToRight = method.indexOf(MethodConstants.OP_REDIRECT_TO_RIGHT, offset);
 		int redirectToLeft = method.indexOf(MethodConstants.OP_REDIRECT_TO_LEFT, offset);
 		if(redirectToRight == -1) return redirectToLeft;
@@ -298,7 +319,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * In this example operator '&' will be resolved last and therefor
 	 * it is top level.
 	 * @param method a method where to check if operator is top level.
-	 * @param opPos a position from where to check if operator is top level. 
+	 * @param opPos operator position.
 	 * @return <code>true</code> if operator at <code>opPos</code> is top level;
 	 *         <code>false</code> otherwise.
 	 */
@@ -311,10 +332,8 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 		StringBuilder sb = new StringBuilder(method.length() - (r-l+1));
 		sb.append(method.substring(0, l));
 		sb.append(method.substring(r+1, method.length()));
-		int pos = 0;
-		if(opPos<l) pos = opPos;
-		else pos = opPos - (r-l+1);
-		return isTopLevel(sb.toString(), pos);
+		if(opPos>l) opPos = opPos - (r-l+1);
+		return isTopLevel(sb.toString(), opPos);
 	}
 	
 	/**
@@ -334,7 +353,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * Split method into two parts. Character at <code>splitPos</code> will be ignored.
 	 * @param method a method to split.
 	 * @param splitPos a position where to split method.
-	 * @return an array of string which has two elemets: first part of a method and a second part of a method.
+	 * @return an array of string which has two elemets: first and second part of a method.
 	 */
 	private String[] splitMethod(String method, int splitPos) {
 		String firstPart = method.substring(0, splitPos);
@@ -351,7 +370,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	private Properties errorProperties(String errNo, String errorMessage) {
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
-		resProp.setProperty(MethodConstants.STATUS_CONTENT,errorMessage);
+		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
 		return resProp;
 	}
 }

@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
+import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodDispatcher;
 import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
@@ -42,7 +42,7 @@ public class AjaxServlet extends HttpServlet {
 		
 		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		Map<String, JavaToAjaxRegisteredMethod> regMap = (Map<String, JavaToAjaxRegisteredMethod>)mprov.get("registeredMethods");
+		Map<String, RegisteredMethod> regMap = (Map<String, RegisteredMethod>)mprov.get("registeredMethods");
 		MethodDispatcher disp = (MethodDispatcher)mprov.get("methodDispatcher");
 		Properties resProp = disp.preformMethodDispatching(p, regMap, labman);
 		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);

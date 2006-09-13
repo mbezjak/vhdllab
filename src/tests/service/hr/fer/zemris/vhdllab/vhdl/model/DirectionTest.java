@@ -94,12 +94,12 @@ public class DirectionTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 */
+	 *//*
 	public void testToString() {
 		System.out.println("********************");
 		System.out.println("Direction testing...");
 		System.out.println("Testing method toString():");
 		System.out.println(Direction.IN.toString());
 		System.out.println("********************");
-	}
+	}*/
 }

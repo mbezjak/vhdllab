@@ -182,7 +182,7 @@ public class SimpleEditorApplet extends JApplet implements AjaxOpListener, AjaxT
 				Properties p = XMLUtil.deserializeProperties(result);
 				String method = p.getProperty(MethodConstants.PROP_METHOD,"");
 				String status = p.getProperty(MethodConstants.PROP_STATUS);
-				String content = p.getProperty(MethodConstants.STATUS_CONTENT);
+				String content = p.getProperty(MethodConstants.PROP_STATUS_CONTENT);
 				msgLabel.setText("Result arrived. ["+status+"/"+method+"] "+content);
 			}
 		}

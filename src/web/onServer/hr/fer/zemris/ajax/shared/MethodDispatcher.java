@@ -14,7 +14,7 @@ public interface MethodDispatcher {
 	 * @return
 	 */
 	public Properties preformMethodDispatching(Properties p,
-						Map<String, JavaToAjaxRegisteredMethod> regMap,
+						Map<String, RegisteredMethod> regMap,
 						VHDLLabManager labman);
 	
 }

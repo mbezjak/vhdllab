@@ -1035,7 +1035,7 @@ public class DefaultGeneratorTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 */
+	 *//*
 	public void testToString() {
 		String inducement = new String("<measureUnit>ns</measureUnit>\n" +
 				"<duration>1000</duration>\n" +
@@ -1057,5 +1057,5 @@ public class DefaultGeneratorTest extends TestCase {
 		System.out.println("Testing method toString():");
 		System.out.println(g);
 		System.out.println("********************");
-	}
+	}*/
 }

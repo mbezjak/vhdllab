@@ -1,13 +1,12 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
-import hr.fer.zemris.ajax.shared.JavaToAjaxRegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.ajax.shared.MethodDispatcher;
+import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
-import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
@@ -29,7 +28,7 @@ import org.junit.Test;
 public class AdvancedMethodDispatcherTest extends TestCase {
 
 	private VHDLLabManager labman = null;
-	private Map<String, JavaToAjaxRegisteredMethod> regMap = null;
+	private Map<String, RegisteredMethod> regMap = null;
 	private MethodDispatcher disp = null;
 	
 	private Project project = null;
@@ -39,7 +38,8 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 	
 	@SuppressWarnings("unchecked")
 	private void init() {
-		this.labman = new VHDLLabManagerImpl();
+		ManagerProvider mprov = new SampleManagerProvider();
+		this.labman = (VHDLLabManager)mprov.get("vhdlLabManager");
 		try {
 			this.project = labman.createNewProject("TestProjectName", Long.valueOf(1000));
 			this.file1 = labman.createNewFile(project, "TestFileName_1", File.FT_VHDLSOURCE);
@@ -55,8 +55,8 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 			e.printStackTrace();
 			fail("Failed to create a file.");
 		}
-		ManagerProvider mprov = new SampleManagerProvider();
-		this.regMap = (Map<String, JavaToAjaxRegisteredMethod>) mprov.get("registeredMethods");
+		
+		this.regMap = (Map<String, RegisteredMethod>) mprov.get("registeredMethods");
 		this.disp = new AdvancedMethodDispatcher();
 	}
 	
@@ -405,7 +405,7 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 	@Test
 	public void testPreformMethodDispatching15() {
 		Properties p = new Properties();
-		String method = "(("+MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+")&("+MethodConstants.MTD_CREATE_NEW_PROJECT+")&("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+"))";
+		String method = "(("+MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+")&("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+"))";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
@@ -501,7 +501,6 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 		try {
 			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
 			assertEquals(8, prop.keySet().size());
-			method = method.substring(1, method.length()-1);
 			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
 			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
@@ -510,7 +509,7 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+2, ""));
 			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
 			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+3, ""));
-			} catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Generated exception: "+e.getMessage());
 		}
@@ -540,7 +539,7 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+2, ""));
 			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
 			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+3, ""));
-			} catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Generated exception: "+e.getMessage());
 		}
@@ -572,6 +571,38 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
 			} catch (Exception e) {
+			e.printStackTrace();
+			fail("Generated exception: "+e.getMessage());
+		}
+	}
+	
+	/**
+	 * Test method preformMethodDispatching() when method is advanced:
+	 * <blockquote>
+	 * method1&method2
+	 * </blockquote>
+	 */
+	@Test
+	public void testPreformMethodDispatching21() {
+		Properties p = new Properties();
+		String method = MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE;
+		p.setProperty(MethodConstants.PROP_METHOD, method);
+		p.setProperty(MethodConstants.PROP_FILE_ID+".1", String.valueOf(file1.getId()));
+		p.setProperty(MethodConstants.PROP_FILE_ID+".2", String.valueOf(file2.getId()));
+		p.setProperty(MethodConstants.PROP_FILE_ID+".3", String.valueOf(file3.getId()));
+		
+		try {
+			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+			assertEquals(8, prop.keySet().size());
+			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
+			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Generated exception: "+e.getMessage());
 		}

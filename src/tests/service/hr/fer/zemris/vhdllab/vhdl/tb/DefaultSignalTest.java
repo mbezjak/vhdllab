@@ -643,7 +643,7 @@ public class DefaultSignalTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 */
+	 *//*
 	public void testToString() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
@@ -656,5 +656,5 @@ public class DefaultSignalTest extends TestCase {
 		System.out.println("Testing method toString():");
 		System.out.println(signal);
 		System.out.println("********************");
-	}
+	}*/
 }

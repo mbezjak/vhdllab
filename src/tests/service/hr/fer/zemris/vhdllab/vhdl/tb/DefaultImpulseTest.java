@@ -122,7 +122,7 @@ public class DefaultImpulseTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 */
+	 *//*
 	public void testToString() {
 		DefaultImpulse impulse = new DefaultImpulse(100, "01001011");
 		System.out.println("********************");
@@ -130,5 +130,5 @@ public class DefaultImpulseTest extends TestCase {
 		System.out.println("Testing method toString():");
 		System.out.println(impulse);
 		System.out.println("********************");
-	}
+	}*/
 }

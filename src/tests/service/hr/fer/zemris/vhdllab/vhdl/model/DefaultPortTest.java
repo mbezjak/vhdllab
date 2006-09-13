@@ -190,7 +190,7 @@ public class DefaultPortTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 */
+	 *//*
 	public void testToString() {
 		DefaultType type = new DefaultType("std_logic", new int[] {2, 0}, "DOWNTO");
 		DefaultPort port = new DefaultPort("a", Direction.IN, type);
@@ -199,5 +199,5 @@ public class DefaultPortTest extends TestCase {
 		System.out.println("Testing method toString():");
 		System.out.println(port);
 		System.out.println("********************");
-	}
+	}*/
 }
