@@ -1,134 +1,135 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import junit.framework.JUnit4TestAdapter;
 
-/**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.DefaultImpulse} class.
- * 
- * @author Miro Bezjak
- */
-public class DefaultImpulseTest extends TestCase {
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
-	public DefaultImpulseTest(String name) {
-		super(name);
-	}
-
-	/** Test constructor when time is negative */
-	public void testDefaultImpulse() {
-		try {
-			new DefaultImpulse(-1, "0");
-			fail("No exception when time is negative");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+public class DefaultImpulseTest {
+	
+	private static Impulse impulse;
+	
+	@BeforeClass
+	public static void init() {
+		impulse = new DefaultImpulse(100, "1010");
 	}
 	
-	/** Test constructor when time is zero */
-	public void testDefaultImpulse2() {
-		try {
-			new DefaultImpulse(0, "0");
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Time is negative.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor() {
+		new DefaultImpulse(-1, "0");
 	}
 	
-	/** Test constructor when status is null */
-	public void testDefaultImpulse3() {
-		try {
-			new DefaultImpulse(1, null);
-			fail("No exception when status is null");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Time is zero.
+	 */
+	@Test
+	public void constructor2() {
+		new DefaultImpulse(0, "0");
 	}
 	
-	/** Test constructor when status is unknown */
-	public void testDefaultImpulse4() {
-		try {
-			new DefaultImpulse(1, "019-");
-			fail("No exception when status is unknown");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Status is <code>null</code>.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void constructor3() {
+		new DefaultImpulse(1, null);
 	}
 	
-	/** Test constructor when status is zero-lenght */
-	public void testDefaultImpulse5() {
-		try {
-			new DefaultImpulse(1, "");
-			fail("No exception when status is zero-lenght");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Status is unknown.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor4() {
+		new DefaultImpulse(1, "019-");
 	}
 	
-	/** Test constructor when status is correct */
-	public void testDefaultImpulse6() {
-		try {
-			new DefaultImpulse(1, DefaultImpulse.knownStateValues);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Status us zero-lengh.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor5() {
+		new DefaultImpulse(1, "");
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true */
-	public void testEqualsAndHashCode() {
-		DefaultImpulse impulse1 = new DefaultImpulse(100, "1z10");
-		DefaultImpulse impulse2 = new DefaultImpulse(100, "1z10");
+	/**
+	 * Status and time is correct.
+	 */
+	@Test
+	public void constructor6() {
+		new DefaultImpulse(1, DefaultImpulse.knownStateValues);
+	}
+	
+	/**
+	 * Impulses are equal.
+	 */
+	@Test
+	public void equalsAndHashCode() {
+		Impulse impulse1 = new DefaultImpulse(100, "1z10");
+		Impulse impulse2 = new DefaultImpulse(100, "1z10");
 		assertEquals(true, impulse1.equals(impulse2));
 		assertEquals(impulse1.hashCode(), impulse2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false */
-	public void testEqualsAndHashCode2() {
-		DefaultImpulse impulse1 = new DefaultImpulse(100, "1010");
-		DefaultImpulse impulse2 = new DefaultImpulse(200, "1010");
+	/**
+	 * Impulses are not equal.
+	 */
+	@Test
+	public void equalsAndHashCode2() {
+		Impulse impulse1 = new DefaultImpulse(100, "1010");
+		Impulse impulse2 = new DefaultImpulse(200, "1010");
 		assertEquals(false, impulse1.equals(impulse2));
 		assertNotSame(impulse1.hashCode(), impulse2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false */
-	public void testEqualsAndHashCode3() {
-		DefaultImpulse impulse1 = new DefaultImpulse(100, "1010");
-		DefaultImpulse impulse2 = new DefaultImpulse(100, "0110");
+	/**
+	 * Impulses are not equal.
+	 */
+	@Test
+	public void equalsAndHashCode3() {
+		Impulse impulse1 = new DefaultImpulse(100, "1010");
+		Impulse impulse2 = new DefaultImpulse(100, "0110");
 		assertEquals(false, impulse1.equals(impulse2));
 		assertNotSame(impulse1.hashCode(), impulse2.hashCode());
 	}
 	
-	/** Test method equals(Object) if argument is null */
-	public void testEqualsObject() {
-		DefaultImpulse impulse = new DefaultImpulse(100, "1010");
-		boolean val = impulse.equals(null);
-		assertEquals(false, val);
+	/**
+	 * Object is <code>null</code>.
+	 */
+	@Test
+	public void equalsObject() {
+		assertEquals(false, impulse.equals(null));
 	}
 	
-	/** Test method equals(Object) if argument is not instanceof DefaultType */
-	public void testEqualsObject2() {
-		DefaultImpulse impulse = new DefaultImpulse(100, "1010");
-		boolean val = impulse.equals(new String("1010"));
-		assertEquals(false, val);
+	/**
+	 * Object is not instance of Type.
+	 */
+	@Test
+	public void equalsObject2() {
+		assertEquals(false, impulse.equals(new String("1010")));
 	}
 	
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 *//*
-	public void testToString() {
-		DefaultImpulse impulse = new DefaultImpulse(100, "01001011");
+	 */
+	@Ignore("Writting on screen... Already tested!")
+	@Test
+	public void toStringTest() {
 		System.out.println("********************");
 		System.out.println("DefaultImpulse testing...");
 		System.out.println("Testing method toString():");
 		System.out.println(impulse);
 		System.out.println("********************");
-	}*/
+	}
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(DefaultImpulseTest.class);
+	}
+	
 }

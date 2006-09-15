@@ -1,20 +1,15 @@
-package hr.fer.zemris.vhdllab.vhdl.tb;
+package hr.fer.zemris.vhdllab.model;
 
 import junit.framework.JUnit4TestAdapter;
-import junit.framework.TestCase;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	StringUtilTest.class,
-	DefaultImpulseTest.class,
-	DefaultSignalTest.class,
-	DefaultGeneratorTest.class,
-	TestbenchTest.class
+	FileTest.class
 })
-public class AllPackageTests extends TestCase {
+public class AllPackageTests {
 	
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(AllPackageTests.class);

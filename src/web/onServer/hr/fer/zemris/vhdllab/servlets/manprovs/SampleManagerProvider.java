@@ -1,14 +1,14 @@
 package hr.fer.zemris.vhdllab.servlets.manprovs;
 
-import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.ajax.shared.MethodDispatcher;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
+import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
+import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.dispatch.AdvancedMethodDispatcher;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCompileFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewFile;

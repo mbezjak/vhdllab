@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.ajax.shared.RegisteredMethod;
-import hr.fer.zemris.ajax.shared.MethodDispatcher;
 import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 

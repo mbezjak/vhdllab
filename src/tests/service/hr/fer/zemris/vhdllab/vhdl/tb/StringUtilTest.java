@@ -1,125 +1,112 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-/**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.StringUtil} class.
- * 
- * @author Miro Bezjak
- */
-public class StringUtilTest extends TestCase {
+import org.junit.Test;
+
+public class StringUtilTest {
 
 	/** 
-	 * Test method isCorrectName(String) when string is empty.
+	 * String is empty.
 	 */
-	public void testIsCorrectName() {
-		boolean flag = StringUtil.isCorrectName("");
-		assertEquals(false, flag);
+	@Test
+	public void isCorrectName() {
+		assertEquals(false, StringUtil.isCorrectName(""));
 	}
 	
 	/** 
-	 * Test method isCorrectName(String) when string contains
-	 * letters, an underline and a number.
+	 * String contains letters, an underline and a number.
 	 */
-	public void testIsCorrectName2() {
-		boolean flag = StringUtil.isCorrectName("sklop_2");
-		assertEquals(true, flag);
+	@Test
+	public void isCorrectName2() {
+		assertEquals(true, StringUtil.isCorrectName("sklop_2"));
 	}
 	
 	/** 
-	 * Test method isCorrectName(String) when string starts with
-	 * an undeline. 
+	 * String starts with an undeline. 
 	 */
-	public void testIsCorrectName3() {
-		boolean flag = StringUtil.isCorrectName("_sklop2");
-		assertEquals(false, flag);
+	@Test
+	public void isCorrectName3() {
+		assertEquals(false, StringUtil.isCorrectName("_sklop2"));
 	}
 	
 	/** 
-	 * Test method isCorrectName(String) when string starts with
-	 * a number. 
+	 * String starts with a number. 
 	 */
-	public void testIsCorrectName4() {
-		boolean flag = StringUtil.isCorrectName("6sklop");
-		assertEquals(false, flag);
+	@Test
+	public void isCorrectName4() {
+		assertEquals(false, StringUtil.isCorrectName("6sklop"));
 	}
 	
 	/** 
-	 * Test method isCorrectName(String) when string contains
-	 * an underline after an undeline.
+	 * String contains an underline after an undeline.
 	 */
-	public void testIsCorrectName5() {
-		boolean flag = StringUtil.isCorrectName("sklop__a");
-		assertEquals(false, flag);
+	@Test
+	public void isCorrectName5() {
+		assertEquals(false, StringUtil.isCorrectName("sklop__a"));
 	}
 	
 	/** 
-	 * Test method isCorrectName(String) when string endss with
-	 * an undeline. 
+	 * String ends with an undeline. 
 	 */
-	public void testIsCorrectName6() {
-		boolean flag = StringUtil.isCorrectName("sklop5_");
-		assertEquals(false, flag);
+	@Test
+	public void isCorrectName6() {
+		assertEquals(false, StringUtil.isCorrectName("sklop5_"));
 	}
 	
 	/** 
-	 * Test method isCorrectName(String) when string contains
-	 * capital letters.
+	 * String contains capital letters.
 	 */
-	public void testIsCorrectName7() {
-		boolean flag = StringUtil.isCorrectName("SKLOP_5_drugi");
-		assertEquals(true, flag);
+	@Test
+	public void isCorrectName7() {
+		assertEquals(true, StringUtil.isCorrectName("SKLOP_5_drugi"));
 	}
 	
 	/** 
-	 * Test method isCorrectName(String) when string contains
-	 * illegal character (?).
+	 * String contains illegal character (?).
 	 */
-	public void testIsCorrectName8() {
-		boolean flag = StringUtil.isCorrectName("sklop?drugi");
-		assertEquals(false, flag);
+	@Test
+	public void isCorrectName8() {
+		assertEquals(false, StringUtil.isCorrectName("sklop?drugi"));
 	}
 
 	/** 
-	 * Test method isMeasureUnit(String) when string is measure unit.
+	 * String is measure unit.
 	 */
-	public void testIsMeasureUnit() {
-		boolean flag = StringUtil.isMeasureUnit("fs");
-		assertEquals(true, flag);
+	@Test
+	public void isMeasureUnit() {
+		assertEquals(true, StringUtil.isMeasureUnit("fs"));
 	}
 	
 	/** 
-	 * Test method isMeasureUnit(String) when string is not measure unit.
+	 * String is not measure unit.
 	 */
-	public void testIsMeasureUnit2() {
-		boolean flag = StringUtil.isMeasureUnit("h");
-		assertEquals(false, flag);
+	@Test
+	public void isMeasureUnit2() {
+		assertEquals(false, StringUtil.isMeasureUnit("h"));
 	}
 	
 	/** 
-	 * Test method isVectorDirection(String) when string is
-	 * vector direction DOWNTO.
+	 * String is vector direction DOWNTO.
 	 */
-	public void testIsVectorDirection() {
-		boolean flag = StringUtil.isVectorDirection("DOWNTO");
-		assertEquals(true, flag);
+	@Test
+	public void isVectorDirection() {
+		assertEquals(true, StringUtil.isVectorDirection("DOWNTO"));
 	}
 	
 	/** 
-	 * Test method isVectorDirection(String) when string is
-	 * vector direction TO.
+	 * String is vector direction TO.
 	 */
-	public void testIsVectorDirection2() {
-		boolean flag = StringUtil.isVectorDirection("TO");
-		assertEquals(true, flag);
+	@Test
+	public void isVectorDirection2() {
+		assertEquals(true, StringUtil.isVectorDirection("TO"));
 	}
 	
 	/** 
-	 * Test method isVectorDirection(String) when string is
-	 * not vector direction.
+	 * String is not vector direction.
 	 */
-	public void testIsVectorDirection3() {
-		boolean flag = StringUtil.isVectorDirection("UPTO");
-		assertEquals(false, flag);
+	@Test
+	public void isVectorDirection3() {
+		assertEquals(false, StringUtil.isVectorDirection("UPTO"));
 	}
 }

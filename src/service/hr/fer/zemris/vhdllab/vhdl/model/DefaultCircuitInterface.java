@@ -192,7 +192,7 @@ public class DefaultCircuitInterface implements CircuitInterface {
 		if( !(o instanceof CircuitInterface) ) return false;
 		CircuitInterface other = (CircuitInterface) o;
 		
-		return other.getEntityName().toLowerCase().equals(this.entityName) 
+		return other.getEntityName().equalsIgnoreCase(this.entityName) 
 			&& other.getPorts().size() == this.portList.size()
 			&& other.getPorts().equals(this.portList);
 	}

@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
-import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.ajax.shared.MethodDispatcher;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
+import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
 import java.util.Map;
 import java.util.Properties;

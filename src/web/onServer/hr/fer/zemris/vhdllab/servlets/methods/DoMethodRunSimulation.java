@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
-import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 import hr.fer.zemris.vhdllab.vhdl.Message;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;

@@ -1,683 +1,396 @@
 package hr.fer.zemris.vhdllab.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import junit.framework.JUnit4TestAdapter;
 
-/**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.model.File} class.
- * 
- * @author Miro Bezjak
- */
-public class FileTest extends TestCase {
+import org.junit.Before;
+import org.junit.Test;
 
-	public FileTest(String name) {
-		super(name);
-	}
-
-	/**
-	 * Test method hashCode() and equals(Object) when equals return true
-	 * and all file.id is not null.
-	 */
-	public void testHashCode() {
-		File file = new File();
-		file.setId((long) 0);
-		file.setFileName("SimpleFile");
+public class FileTest {
+	
+	private File file;
+	private File file2;
+	
+	@Before
+	public void init() {
+		file = new File();
+		file.setId(Long.valueOf(0));
+		file.setFileName("FileNameSample");
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
+		file.setContent("Content sample.");
 		file.setProject(null);
 		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
+		file2 = new File();
+		file2.setId(Long.valueOf(0));
+		file2.setFileName("FileNameSample");
 		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
+		file2.setContent("Content sample.");
 		file2.setProject(null);
-
+	}
+	
+	/**
+	 * Files are equal.
+	 */
+	@Test
+	public void equalsAndHashCode() {
 		assertEquals(true, file.equals(file2));
 		assertEquals(file.hashCode(), file2.hashCode());
 	}
 	
 	/**
-	 * Test method hashCode() and equals(Object) when equals return true
-	 * and all file.id is null and filename is equal.
+	 * Both file IDs are <code>null</code>.
 	 */
-	public void testHashCode2() {
-		File file = new File();
+	@Test
+	public void equalsAndHashCode2() {
 		file.setId(null);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
 		file2.setId(null);
-		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-
 		assertEquals(true, file.equals(file2));
 		assertEquals(file.hashCode(), file2.hashCode());
 	}
 	
 	/**
-	 * Test method hashCode() and equals(Object) when equals return true
-	 * and all file.id is null and filename is not equal.
+	 * Both file IDs are <code>null</code> and filenames are
+	 * not equal.
 	 */
-	public void testHashCode3() {
-		File file = new File();
+	@Test
+	public void equalsAndHashCode3() {
 		file.setId(null);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
+		file.setFileName("FileNameSample1");
 		file2.setId(null);
-		file2.setFileName("SimpleFile2");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-
+		file2.setFileName("FileNameSample2");
 		assertEquals(false, file.equals(file2));
 		assertNotSame(file.hashCode(), file2.hashCode());
 	}
 	
 	/**
-	 * Test method hashCode() and equals(Object) when equals return true
-	 * and one file.id is null and type is equal.
+	 * One File IDs is <code>null</code> while other is not.
 	 */
-	public void testHashCode4() {
-		File file = new File();
+	@Test
+	public void equalsAndHashCode4() {
 		file.setId(null);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 1);
-		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-
+		file2.setId(Long.valueOf(1));
 		assertEquals(false, file.equals(file2));
 		assertNotSame(file.hashCode(), file2.hashCode());
 	}
 	
 	/**
-	 * Test method hashCode() and equals(Object) when equals return true
-	 * and one file.id is null and type is not equal.
+	 * One File IDs is <code>null</code> while other is not
+	 * and file types are not equal.
 	 */
-	public void testHashCode5() {
-		File file = new File();
+	@Test
+	public void equalsAndHashCode5() {
 		file.setId(null);
-		file.setFileName("SimpleFile");
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 1);
-		file2.setFileName("SimpleFile2");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-
+		file2.setId(Long.valueOf(1));
+		file2.setFileType(File.FT_VHDLTB);
 		assertEquals(false, file.equals(file2));
 		assertNotSame(file.hashCode(), file2.hashCode());
 	}
 
 	/**
-	 * Test method equals(Object) when object is null
+	 * Object is <code>null</code>.
 	 */
-	public void testEqualsObject() {
-		File file = new File();
-		file.setId(null);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
+	@Test
+	public void equalsObject() {
 		assertEquals(false, file.equals(null));
 	}
 	
 	/**
-	 * Test method equals(Object) when object is not instance of File
+	 * Object is not instance of <code>File</code>.
 	 */
-	public void testEqualsObject2() {
-		File file = new File();
-		file.setId(null);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
+	@Test
+	public void equalsObject2() {
 		assertEquals(false, file.equals(new String("File")));
 	}
 
 	/**
-	 * Test method compareTo(Object) when they are equal
+	 * Files are equal.
 	 */
-	public void testCompareTo() {
-		File file = new File();
-		file.setId((long) 0);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
+	@Test
+	public void compareTo() {
 		assertEquals(0, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when ID are different
+	 * File IDs are not equal.
 	 */
-	public void testCompareTo2() {
-		File file = new File();
-		file.setId((long) 1);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
+	@Test
+	public void compareTo2() {
+		file.setId(Long.valueOf(1));
+		file2.setId(Long.valueOf(0));
 		assertEquals(1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when file types are different
+	 * File types are not equal.
 	 */
-	public void testCompareTo3() {
-		File file = new File();
-		file.setId((long) 0);
-		file.setFileName("SimpleFile");
+	@Test
+	public void compareTo3() {
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
 		file2.setFileType(File.FT_VHDLTB);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when file names are different
+	 * File names are not equal.
 	 */
-	public void testCompareTo4() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo4() {
 		file.setFileName("FilenameSimple");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
 		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals("FilenameSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when file names and types are different
+	 * File names and types are not equal.
 	 */
-	public void testCompareTo5() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo5() {
 		file.setFileName("FilenameSimple");
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
 		file2.setFileName("SimpleFile");
 		file2.setFileType(File.FT_VHDLTB);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals("FilenameSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when file names and ID are different
+	 * File names and IDs are not equal.
 	 */
-	public void testCompareTo6() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo6() {
+		file.setId(Long.valueOf(0));
 		file.setFileName("FilenameSimple");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 1);
+		file2.setId(Long.valueOf(1));
 		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals("FilenameSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when file types and ID are different
+	 * File types and IDs are not equal.
 	 */
-	public void testCompareTo7() {
-		File file = new File();
-		file.setId((long) 1);
-		file.setFileName("SimpleFile");
+	@Test
+	public void compareTo7() {
+		file.setId(Long.valueOf(1));
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
+		file2.setId(Long.valueOf(0));
 		file2.setFileType(File.FT_VHDLTB);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when other file name is null
+	 * One file name is <code>null</code> while other is not.
 	 */
-	public void testCompareTo8() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo8() {
 		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
 		file2.setFileName(null);
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when other file type is null
+	 * One file type is <code>null</code> while other is not.
 	 */
-	public void testCompareTo9() {
-		File file = new File();
-		file.setId((long) 0);
-		file.setFileName("SimpleFile");
+	@Test
+	public void compareTo9() {
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
 		file2.setFileType(null);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when other ID is null
+	 * One file IDs is <code>null</code> while other is not.
 	 */
-	public void testCompareTo10() {
-		File file = new File();
-		file.setId((long) 0);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
+	@Test
+	public void compareTo10() {
+		file.setId(Long.valueOf(0));
 		file2.setId(null);
-		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when this file name is null
+	 * One file name is <code>null</code> while other is not.
 	 */
-	public void testCompareTo11() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo11() {
 		file.setFileName(null);
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
 		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(-1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when this file type is null
+	 * One file type is <code>null</code> while other is not.
 	 */
-	public void testCompareTo12() {
-		File file = new File();
-		file.setId((long) 0);
-		file.setFileName("SimpleFile");
+	@Test
+	public void compareTo12() {
 		file.setFileType(null);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
 		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(-1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when this ID is null
+	 * One file IDs is <code>null</code> while other is not.
 	 */
-	public void testCompareTo13() {
-		File file = new File();
+	@Test
+	public void compareTo13() {
 		file.setId(null);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
+		file2.setId(Long.valueOf(0));
 		assertEquals(-1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file names are null
+	 * Both file names are <code>null</code>.
 	 */
-	public void testCompareTo14() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo14() {
 		file.setFileName(null);
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
 		file2.setFileName(null);
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(0, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file types are null
+	 * Both file types are <code>null</code>.
 	 */
-	public void testCompareTo15() {
-		File file = new File();
-		file.setId((long) 0);
-		file.setFileName("SimpleFile");
+	@Test
+	public void compareTo15() {
 		file.setFileType(null);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
 		file2.setFileType(null);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(0, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both ID are null
+	 * Both file IDs are <code>null</code>.
 	 */
-	public void testCompareTo16() {
-		File file = new File();
+	@Test
+	public void compareTo16() {
 		file.setId(null);
-		file.setFileName("SimpleFile");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
 		file2.setId(null);
-		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(0, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file names are null and file types are different
+	 * Both file names are <code>null</code> and file types
+	 * are not equal.
 	 */
-	public void testCompareTo17() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo17() {
 		file.setFileName(null);
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
 		file2.setFileName(null);
 		file2.setFileType(File.FT_VHDLTB);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file names are null and ID are different
+	 * Both file names are <code>null</code> and file IDs
+	 * are not equal.
 	 */
-	public void testCompareTo18() {
-		File file = new File();
-		file.setId((long) 1);
+	@Test
+	public void compareTo18() {
+		file.setId(Long.valueOf(1));
 		file.setFileName(null);
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
+		file2.setId(Long.valueOf(0));
 		file2.setFileName(null);
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file names are null and file types and ID are different
+	 * Both file names, types and IDs are <code>null</code>.
 	 */
-	public void testCompareTo19() {
-		File file = new File();
+	@Test
+	public void compareTo19() {
 		file.setId(null);
 		file.setFileName(null);
 		file.setFileType(null);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
 		file2.setId(null);
 		file2.setFileName(null);
 		file2.setFileType(null);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(0, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file types are null and file names are different
+	 * Both file types are <code>null</code> and file names
+	 * are not equal.
 	 */
-	public void testCompareTo20() {
-		File file = new File();
-		file.setId((long) 0);
+	@Test
+	public void compareTo20() {
 		file.setFileName("FileSimple");
 		file.setFileType(null);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
 		file2.setFileName("SimpleFile");
 		file2.setFileType(null);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals("FileSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file types are null and ID are different
+	 * Both file types are <code>null</code> and file IDs
+	 * are not equal.
 	 */
-	public void testCompareTo21() {
-		File file = new File();
-		file.setId((long) 1);
-		file.setFileName("SimpleFile");
+	@Test
+	public void compareTo21() {
+		file.setId(Long.valueOf(1));
 		file.setFileType(null);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
-		file2.setFileName("SimpleFile");
+		file2.setId(Long.valueOf(0));
 		file2.setFileType(null);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(1, file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both file types are null and file names and ID are different
+	 * Both file types are <code>null</code> and file names
+	 * and IDs are not equal.
 	 */
-	public void testCompareTo22() {
-		File file = new File();
-		file.setId((long) 1);
+	@Test
+	public void compareTo22() {
+		file.setId(Long.valueOf(1));
 		file.setFileName("FileSimple");
 		file.setFileType(null);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
-		file2.setId((long) 0);
+		file2.setId(Long.valueOf(0));
 		file2.setFileName("SimpleFile");
 		file2.setFileType(null);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals("FileSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both ID are null and file names are different
+	 * Both file IDs are <code>null</code> and file names
+	 * are not equal.
 	 */
-	public void testCompareTo23() {
-		File file = new File();
+	@Test
+	public void compareTo23() {
 		file.setId(null);
 		file.setFileName("FileSimple");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
 		file2.setId(null);
 		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLSOURCE);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals("FileSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both ID are null and file types are different
+	 * Both file IDs are <code>null</code> and file types
+	 * are not equal.
 	 */
-	public void testCompareTo24() {
-		File file = new File();
+	@Test
+	public void compareTo24() {
 		file.setId(null);
-		file.setFileName("SimpleFile");
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
 		file2.setId(null);
-		file2.setFileName("SimpleFile");
 		file2.setFileType(File.FT_VHDLTB);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
-	 * Test method compareTo(Object) when both ID are null and file names and types are different
+	 * Both file IDs are <code>null</code> and file names
+	 * and types are not equal.
 	 */
-	public void testCompareTo25() {
-		File file = new File();
+	@Test
+	public void compareTo25() {
 		file.setId(null);
 		file.setFileName("FileSimple");
 		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("");
-		file.setProject(null);
-		
-		File file2 = new File();
 		file2.setId(null);
 		file2.setFileName("SimpleFile");
 		file2.setFileType(File.FT_VHDLTB);
-		file2.setContent("");
-		file2.setProject(null);
-		
 		assertEquals("FileSimple".compareTo("SimpleFile"), file.compareTo(file2));
+	}
+	
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(FileTest.class);
 	}
 }

@@ -1,17 +1,18 @@
 package hr.fer.zemris.vhdllab;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.JUnit4TestAdapter;
 
-/**
- * This TestCase tests each Test in src/tests/dao.
- */
-public class AllDAOJUnitTests extends TestCase {
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		
-		return suite;
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	hr.fer.zemris.vhdllab.model.AllPackageTests.class
+})
+public class AllDAOJUnitTests {
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(AllDAOJUnitTests.class);
 	}
+	
 }

@@ -1,4 +1,4 @@
-package hr.fer.zemris.ajax.shared;
+package hr.fer.zemris.vhdllab.servlets;
 
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 

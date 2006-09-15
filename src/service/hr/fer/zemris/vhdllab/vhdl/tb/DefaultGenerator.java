@@ -518,6 +518,7 @@ public class DefaultGenerator implements Generator {
 		} catch (RuntimeException e) {
 			throw new ParseException(e.getMessage(), 0);
 		}
+		if(getSignals().size()==0) throw new ParseException("Must have at least one signal.", 0);
 	}
 	
 	/**

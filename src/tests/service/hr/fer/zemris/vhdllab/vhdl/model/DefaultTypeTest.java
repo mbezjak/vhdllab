@@ -1,318 +1,307 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import junit.framework.JUnit4TestAdapter;
 
-/**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.DefaultType} class.
- * 
- * @author Miro Bezjak
- */
-public class DefaultTypeTest extends TestCase {
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
-	public DefaultTypeTest(String name) {
-		super(name);
+public class DefaultTypeTest {
+	
+	private static Type type;
+	private static Type type2;
+	
+	@BeforeClass
+	public static void init() {
+		type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+		type2 = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 	
-	/** Test constructor when name is null */
-	public void testDefaultType() {
-		try {
-			new DefaultType(null, DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-			fail("No exception on when name is null");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Name is <code>null</code>.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void constructor() {
+		new DefaultType(null, DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
 	}
 	
-	/** Test constructor when name of wrong format */
-	public void testDefaultType2() {
-		try {
-			new DefaultType("1std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-			fail("No exception on when name is of wrong format");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Name is not of correct format.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor2() {
+		new DefaultType("1std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
 	}
 	
-	/** Test constructor when range is null and vector direction isnt */
-	public void testDefaultType3() {
-		try {
-			new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.VECTOR_DIRECTION_DOWNTO);
-			fail("No exception on when range is null and vector direction isnt");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Range is describes a scalar while vector direction describes a vector.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void constructor3() {
+		new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 	
-	/** Test constructor when vector direction is null and range isnt */
-	public void testDefaultType4() {
-		try {
-			new DefaultType("std_logic", new int[] {2, 0}, DefaultType.SCALAR_VECTOR_DIRECTION);
-			fail("No exception on when vector direction is null and range isnt");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Vector direction describes a vector while range describes a scalar.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void constructor4() {
+		new DefaultType("std_logic", new int[] {2, 0}, DefaultType.SCALAR_VECTOR_DIRECTION);
 	}
 	
-	/** Test constructor when range contains more then two elements */
-	public void testDefaultType5() {
-		try {
-			new DefaultType("std_logic_vector", new int[] {2, 0, 1}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-			fail("No exception on when range contains more then two elements");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Range contains more then two elements.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor5() {
+		new DefaultType("std_logic_vector", new int[] {2, 0, 1}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 	
-	/** Test constructor when range contains at least one negative element */
-	public void testDefaultType6() {
-		try {
-			new DefaultType("std_logic_vector", new int[] {-2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-			fail("No exception on when range contains at least one negative element");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Range contains at least one negative element.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor6() {
+		new DefaultType("std_logic_vector", new int[] {-2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 	
-	/** Test constructor when vector direction is incorrect */
-	public void testDefaultType7() {
-		try {
-			new DefaultType("std_logic_vector", new int[] {2, 0}, "UPTO");
-			fail("No exception on when vector direction is incorrect");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Vector direction is incorrect.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor7() {
+		new DefaultType("std_logic_vector", new int[] {2, 0}, "UPTO");
 	}
 	
-	/** Test constructor when range elements are not consistent with vector direction */
-	public void testDefaultType8() {
-		try {
-			new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_TO);
-			fail("No exception on when range elements are not consistent with vector direction");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Range elements are not consistent with vector direction.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor8() {
+		new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_TO);
 	}
 	
-	/** Test constructor when range elements are not consistent with vector direction */
-	public void testDefaultType9() {
-		try {
-			new DefaultType("std_logic_vector", new int[] {0, 3}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-			fail("No exception on when range elements are not consistent with vector direction");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Range elements are not consistent with vector direction.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructor9() {
+		new DefaultType("std_logic_vector", new int[] {0, 3}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 	
-	/** Test constructor when declaring a vector with bounds 0, 0 */
-	public void testDefaultType10() {
-		try {
-			new DefaultType("std_logic_vector", new int[] {0, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Vector bounds are 0, 0.
+	 */
+	@Test
+	public void constructor10() {
+		new DefaultType("std_logic_vector", new int[] {0, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 	
-	/** Test constructor when declaring a normal vector */
-	public void testDefaultType11() {
-		try {
-			new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Range and vector direction match.
+	 */
+	@Test
+	public void constructor11() {
+		new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 
-	/** Test method equals(Object) and hashCode() when equals return true and port is a scalar*/
-	public void testEqualsAndHashCode() {
-		DefaultType type1 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-		DefaultType type2 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+	/**
+	 * Types are equal and port is a scalar.
+	 */
+	@Test
+	public void equalsAndHashCode() {
+		Type type1 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+		Type type2 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
 		assertEquals(true, type1.equals(type2));
 		assertEquals(type1.hashCode(), type2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true and port is a vector*/
-	public void testEqualsAndHashCode2() {
-		DefaultType type1 = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		DefaultType type2 = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
+	/**
+	 * Types are equal and port is a vector.
+	 */
+	@Test
+	public void equalsAndHashCode2() {
+		Type type1 = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
+		Type type2 = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 		assertEquals(true, type1.equals(type2));
 		assertEquals(type1.hashCode(), type2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false and port is a scalar*/
-	public void testEqualsAndHashCode3() {
-		DefaultType type1 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-		DefaultType type2 = new DefaultType("std_logic2", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+	/**
+	 * Types are not equal and port is a scalar.
+	 */
+	@Test
+	public void equalsAndHashCode3() {
+		Type type1 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+		Type type2 = new DefaultType("std_logic2", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
 		assertEquals(false, type1.equals(type2));
 		assertNotSame(type1.hashCode(), type2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false and port is a vector*/
-	public void testEqualsAndHashCode4() {
-		DefaultType type1 = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		DefaultType type2 = new DefaultType("std_logic_vector2", new int[] {0, 2}, DefaultType.VECTOR_DIRECTION_TO);
+	/**
+	 * Types are not equal and port is a vector.
+	 */
+	@Test
+	public void equalsAndHashCode4() {
+		Type type1 = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
+		Type type2 = new DefaultType("std_logic_vector2", new int[] {0, 2}, DefaultType.VECTOR_DIRECTION_TO);
 		assertEquals(false, type1.equals(type2));
 		assertNotSame(type1.hashCode(), type2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true and port is a scalar*/
-	public void testEqualsAndHashCode5() {
-		DefaultType type1 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-		DefaultType type2 = new DefaultType("STD_LOGIC", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+	/**
+	 * Types are equal and port is a scalar.
+	 */
+	@Test
+	public void equalsAndHashCode5() {
+		Type type1 = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+		Type type2 = new DefaultType("STD_LOGIC", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
 		assertEquals(true, type1.equals(type2));
 		assertEquals(type1.hashCode(), type2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true and port is a vector*/
-	public void testEqualsAndHashCode6() {
-		DefaultType type1 = new DefaultType("std_logic", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		DefaultType type2 = new DefaultType("STD_LOGIC", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
+	/**
+	 * Types are equal and port is a vector.
+	 */
+	@Test
+	public void equalsAndHashCode6() {
+		Type type1 = new DefaultType("std_logic", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
+		Type type2 = new DefaultType("STD_LOGIC", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
 		assertEquals(true, type1.equals(type2));
 		assertEquals(type1.hashCode(), type2.hashCode());
 	}
 	
-	/** Test method equals(Object) if argument is null */
-	public void testEqualsObject() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-		boolean val = type.equals(null);
-		assertEquals(false, val);
+	/**
+	 * Object is <code>null</code>.
+	 */
+	@Test
+	public void equalsObject() {
+		assertEquals(false, type.equals(null));
 	}
 	
-	/** Test method equals(Object) if argument is not instanceof DefaultType */
-	public void testEqualsObject2() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-		boolean val = type.equals(new String("std_logic"));
-		assertEquals(false, val);
+	/**
+	 * Object is not instance of Type.
+	 */
+	@Test
+	public void equalsObject2() {
+		assertEquals(false, type.equals(new String("std_logic")));
 	}
 	
-	/** Test method getRangeFrom() when port is a scalar */
-	public void testGetRangeFrom() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-		try {
-			type.getRangeFrom();
-			fail("No exception on method getRangeFrom when port is a scalar");
-		} catch (IllegalStateException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Port is a scalar.
+	 */
+	@Test(expected=IllegalStateException.class)
+	public void getRangeFrom() {
+		type.getRangeFrom();
 	}
 	
-	/** Test method getRangeFrom() when port is a vector */
-	public void testGetRangeFrom2() {
-		DefaultType type = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		int ret = -1;
-		try {
-			ret = type.getRangeFrom();
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
-		assertEquals(2, ret);
+	/**
+	 * Port is a vector.
+	 */
+	@Test
+	public void getRangeFrom2() {
+		assertEquals(2, type2.getRangeFrom());
 	}
 
-	/** Test method getRangeTo() when port is a scalar */
-	public void testGetRangeTo() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
-		try {
-			type.getRangeTo();
-			fail("No exception on method getRangeFrom when port is a scalar");
-		} catch (IllegalStateException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+	/**
+	 * Port is a scalar.
+	 */
+	@Test(expected=IllegalStateException.class)
+	public void getRangeTo() {
+		type.getRangeTo();
 	}
 	
-	/** Test method getRangeTo() when port is a vector */
-	public void testGetRangeTo2() {
-		DefaultType type = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		int ret = -1;
-		try {
-			ret = type.getRangeTo();
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
-		assertEquals(0, ret);
+	/**
+	 * Port is a vector.
+	 */
+	@Test
+	public void getRangeTo2() {
+		assertEquals(0, type2.getRangeTo());
 	}
 
-	/** Test method isScalar() when port is a scalar */
-	public void testIsScalar() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+	/**
+	 * Port is a scalar.
+	 */
+	@Test
+	public void isScalar() {
 		assertEquals(true, type.isScalar());
 	}
 	
-	/** Test method isScalar() when port is not a scalar */
-	public void testIsScalar2() {
-		DefaultType type = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		assertEquals(false, type.isScalar());
+	/**
+	 * Port is not a scalar.
+	 */
+	@Test
+	public void isScalar2() {
+		assertEquals(false, type2.isScalar());
 	}
 
-	/** Test method isVector() when port is a vector */
-	public void testIsVector() {
-		DefaultType type = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		assertEquals(true, type.isVector());
+	/**
+	 * Port is a vector.
+	 */
+	@Test
+	public void isVector() {
+		assertEquals(true, type2.isVector());
 	}
 	
-	/** Test method isVector() when port is not a vector */
-	public void testIsVector2() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+	/**
+	 * Port is not a vector.
+	 */
+	@Test
+	public void isVector2() {
 		assertEquals(false, type.isVector());
 	}
 
-	/** Test method hasVectorDirectionDOWNTO() when port is a vector */
-	public void testHasVectorDirectionDOWNTO() {
-		DefaultType type = new DefaultType("std_logic_vector", new int[] {2, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO);
-		assertEquals(true, type.hasVectorDirectionDOWNTO());
+	/**
+	 * Port is a vector.
+	 */
+	@Test
+	public void hasVectorDirectionDOWNTO() {
+		assertEquals(true, type2.hasVectorDirectionDOWNTO());
 	}
 	
-	/** Test method hasVectorDirectionDOWNTO() when port is not a vector */
-	public void testHasVectorDirectionDOWNTO2() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+	/**
+	 * Port is not a vector.
+	 */
+	@Test
+	public void hasVectorDirectionDOWNTO2() {
 		assertEquals(false, type.hasVectorDirectionDOWNTO());
 	}
 
-	/** Test method hasVectorDirectionTO() when port is a vector */
-	public void testHasVectorDirectionTO() {
-		DefaultType type = new DefaultType("std_logic_vector", new int[] {0, 3}, DefaultType.VECTOR_DIRECTION_TO);
+	/**
+	 * Port is a vector.
+	 */
+	@Test
+	public void hasVectorDirectionTO() {
+		Type type = new DefaultType("std_logic_vector", new int[] {0, 2}, DefaultType.VECTOR_DIRECTION_TO);
 		assertEquals(true, type.hasVectorDirectionTO());
 	}
 	
-	/** Test method hasVectorDirectionTO() when port is not a vector */
-	public void testHasVectorDirectionTO2() {
-		DefaultType type = new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION);
+	/**
+	 * Port is not a vector.
+	 */
+	@Test
+	public void hasVectorDirectionTO2() {
 		assertEquals(false, type.hasVectorDirectionTO());
 	}
 
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 *//*
-	public void testToString() {
-		DefaultType type = new DefaultType("std_logic", new int[] {2, 0}, "DOWNTO");
+	 */
+	@Ignore("Writting on screen... Already tested!")
+	@Test
+	public void toStringTest() {
 		System.out.println("********************");
 		System.out.println("DefaultType testing...");
 		System.out.println("Testing method toString():");
-		System.out.println(type);
+		System.out.println(type2);
 		System.out.println("********************");
-	}*/
+	}
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(DefaultTypeTest.class);
+	}
+	
 }

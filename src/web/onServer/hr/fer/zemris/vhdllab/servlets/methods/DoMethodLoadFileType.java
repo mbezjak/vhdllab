@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
-import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
 import java.util.Properties;
 

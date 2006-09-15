@@ -1,23 +1,26 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import junit.framework.JUnit4TestAdapter;
 
-/**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.model.Extractor} class.
- *
- * @author marcupic
- */
-public class ExtractorTest extends TestCase {
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
+public class ExtractorTest {
 
 	/**
 	 * Test decommenting of VHDL source.
 	 */
-	public void testDecomment() {
+	@Test
+	public void decomment() {
 		String primjer = "-- najava biblioteke\n" +
 			"library ieee;\n" +
 			"--najava paketa\n" +
@@ -25,14 +28,7 @@ public class ExtractorTest extends TestCase {
 			"-- zavrsni komentar";
 		String tocno = "library ieee;\n" +
 			"use ieee.std_logic_1164.all;\n";
-		String result = null;
-
-		try {
-			result = Extractor.decomment(primjer);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
+		String result = Extractor.decomment(primjer);
 		assertEquals(tocno, result);
 	}
 
@@ -40,7 +36,8 @@ public class ExtractorTest extends TestCase {
 	 * Test decommenting of VHDL source, when source ends with
 	 * an empty comment.
 	 */
-	public void testDecomment2() {
+	@Test
+	public void decomment2() {
 		String primjer = "-- najava biblioteke\n" +
 			"library ieee;\n" +
 			"--najava paketa\n" +
@@ -50,61 +47,43 @@ public class ExtractorTest extends TestCase {
 		String tocno = "library ieee;\n" +
 			"use ieee.std_logic_1164.all;\n" +
 			"nesto ";
-		String result = null;
-
-		try {
-			result = Extractor.decomment(primjer);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
+		String result = Extractor.decomment(primjer);
 		assertEquals(tocno, result);
 	}
 
 	/**
 	 * Test removal of whitespaces.
 	 */
-	public void testRemoveWhiteSpaces() {
+	@Test
+	public void removeWhiteSpaces() {
 		String primjer = "  \n" +
 			" library   ieee;\n" +
 			"use  ieee.std_logic_1164.all;\n" +
 			"   ";
 		String tocno = "library ieee; use ieee.std_logic_1164.all;";
-		String result = null;
-
-		try {
-			result = Extractor.removeWhiteSpaces(primjer);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
+		String result = Extractor.removeWhiteSpaces(primjer);
 		assertEquals(tocno, result);
 	}
 
 	/**
 	 * Test removal of whitespaces.
 	 */
-	public void testRemoveWhiteSpaces2() {
+	@Test
+	public void removeWhiteSpaces2() {
 		String primjer = "  \n" +
 			" library   ieee;\n" +
 			"use  ieee.std_logic_1164.all;\n" +
 			"   ;";
 		String tocno = "library ieee; use ieee.std_logic_1164.all; ;";
-		String result = null;
-
-		try {
-			result = Extractor.removeWhiteSpaces(primjer);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
+		String result = Extractor.removeWhiteSpaces(primjer);
 		assertEquals(tocno, result);
 	}
 
 	/**
 	 * Test interface extraction.
 	 */
-	public void testExtractCircuitInterface() {
+	@Test
+	public void extractCircuitInterface() {
 		String source = "-- najava biblioteke\n" +
 			"library ieee;\n" +
 			"--najava paketa\n" +
@@ -115,14 +94,7 @@ public class ExtractorTest extends TestCase {
 			"  generic (n, pa : natural := 27; zet:std_logic_vector(3 downto 1):= \"0111\");\n"+
 			"  port (a, b, z : IN std_logic := '0'; q: OUT std_logic_vector(3 downto 0); w: std_logic_vector(0 to 2) := \"101\");\n"+
 			"end Entity sklop_0\n";
-		CircuitInterface ci = null;
-
-		try {
-			ci = Extractor.extractCircuitInterface(source);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
+		CircuitInterface ci = Extractor.extractCircuitInterface(source);
 
 		List<Port> ports = new ArrayList<Port>();
 		ports.add(new DefaultPort("A", Direction.IN, new DefaultType("STD_LOGIC", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION)));
@@ -137,7 +109,8 @@ public class ExtractorTest extends TestCase {
 	/**
 	 * Test interface extraction, when interface is empty.
 	 */
-	public void testExtractCircuitInterfaceWhenEmpty() {
+	@Test
+	public void extractCircuitInterfaceWhenEmpty() {
 		String source = "-- najava biblioteke\n" +
 			"library ieee;\n" +
 			"--najava paketa\n" +
@@ -146,18 +119,12 @@ public class ExtractorTest extends TestCase {
 			"nesto --\n"+
 			"Entity sklop_0 is \n"+
 			"end Entity sklop_0\n";
-		CircuitInterface ci = null;
-		
-		try {
-			ci = Extractor.extractCircuitInterface(source);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
+		CircuitInterface ci = Extractor.extractCircuitInterface(source);
 		assertEquals(new DefaultCircuitInterface("sklop_0"), ci);
 	}
 
-	public void testExtractUsedComponents() {
+	@Test
+	public void extractUsedComponents() {
 		String primjer = "-- najava biblioteke\n" +
 		"library ieee;\n" +
 		"--najava paketa\n" +
@@ -175,13 +142,7 @@ public class ExtractorTest extends TestCase {
 		"c2: ENTITY work.sklopNE port map ();\n"+
 		"end strukturna;\n";
 		
-		Set<String> result = null;
-		try {
-			result = Extractor.extractUsedComponents(primjer);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
+		Set<String> result = Extractor.extractUsedComponents(primjer);
 		Set<String> tocno = new HashSet<String>();
 		tocno.add("SKLOPI");
 		tocno.add("SKLOPILI");
@@ -189,7 +150,9 @@ public class ExtractorTest extends TestCase {
 		assertEquals(tocno,result);
 	}
 	
-	public void testExtractHierarchy() {
+	@Ignore("Not yet implemented.")
+	@Test
+	public void extractHierarchy() throws Exception {
 		List<String> identifiers = new ArrayList<String>();
 		identifiers.add("0");
 		identifiers.add("1");
@@ -197,23 +160,17 @@ public class ExtractorTest extends TestCase {
 		identifiers.add("3");
 		identifiers.add("4");
 		
-		try {
-			Extractor.extractHierarchy(identifiers, provider);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			fail("Exception generated: "+ex.getMessage());
-		}
-		
+		Extractor.extractHierarchy(identifiers, provider);
 		fail("Not yet implemented.");
 	}
 	
-	Extractor.VHDLSourceProvider provider = null;
+	private static Extractor.VHDLSourceProvider provider = null;
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeClass
+	public static void init() {
+
 		provider = new Extractor.VHDLSourceProvider() {
-		
+	
 			public String provide(String identifier) throws Exception {
 				int n = Integer.parseInt(identifier);
 				
@@ -233,7 +190,7 @@ public class ExtractorTest extends TestCase {
 				"begin\n"+
 				"  y <= a and b;\n"+
 				"end ponasajna;\n";
-
+	
 				case 1:
 					return "library ieee;\n"+
 				"use ieee.std_logic_1164.all;\n"+
@@ -248,7 +205,7 @@ public class ExtractorTest extends TestCase {
 				"begin\n"+
 				"  y <= not a;\n"+
 				"end ponasajna;\n";
-
+	
 				case 2:
 					return "library ieee;\n"+
 				"use ieee.std_logic_1164.all;\n"+
@@ -265,7 +222,7 @@ public class ExtractorTest extends TestCase {
 				"  c0: ENTITY work.sklopI port map (a,b,tmp);\n"+
 				"  c1: ENTITY work.sklopNE port map (tmp,y);\n"+
 				"end ponasajna;\n";
-
+	
 				case 3:
 					return "library ieee;\n"+
 				"use ieee.std_logic_1164.all;\n"+
@@ -282,8 +239,8 @@ public class ExtractorTest extends TestCase {
 				"  c0: ENTITY work.sklopNI port map (a,b,tmp);\n"+
 				"  c1: ENTITY work.sklopNI port map (tmp,c,y);\n"+
 				"end ponasajna;\n";
-
-
+	
+	
 				case 4:
 					return "library ieee;\n"+
 				"use ieee.std_logic_1164.all;\n"+
@@ -312,4 +269,7 @@ public class ExtractorTest extends TestCase {
 		};
 	}
 	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(ExtractorTest.class);
+	}
 }

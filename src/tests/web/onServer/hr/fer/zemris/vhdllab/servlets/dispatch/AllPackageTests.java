@@ -1,14 +1,18 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.JUnit4TestAdapter;
 
-public class AllPackageTests extends TestCase {
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTest(new TestSuite(AdvancedMethodDispatcherTest.class));
-		return suite;
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	AdvancedMethodDispatcherTest.class
+})
+public class AllPackageTests {
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(AllPackageTests.class);
 	}
+	
 }

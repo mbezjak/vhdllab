@@ -1,13 +1,15 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.ajax.shared.MethodDispatcher;
-import hr.fer.zemris.ajax.shared.RegisteredMethod;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
+import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
+import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
 import java.util.Map;
@@ -15,544 +17,446 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * This is a TestCase for {@linkplain hr.fer.zemris.servlets.dispatch.AdvancedMethodDispatcher}
- * class.
- * 
- * @author Miro Bezjak
- */
-public class AdvancedMethodDispatcherTest extends TestCase {
+public class AdvancedMethodDispatcherTest {
 
-	private VHDLLabManager labman = null;
-	private Map<String, RegisteredMethod> regMap = null;
-	private MethodDispatcher disp = null;
+	private static VHDLLabManager labman;
+	private static Map<String, RegisteredMethod> regMap;
+	private static MethodDispatcher disp;
 	
-	private Project project = null;
-	private File file1 = null;
-	private File file2 = null;
-	private File file3 = null;
+	private static Project project;
+	private static File file1;
+	private static File file2;
+	private static File file3;
 	
 	@SuppressWarnings("unchecked")
-	private void init() {
+	@BeforeClass
+	public static void init() throws ServiceException {
 		ManagerProvider mprov = new SampleManagerProvider();
-		this.labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		try {
-			this.project = labman.createNewProject("TestProjectName", Long.valueOf(1000));
-			this.file1 = labman.createNewFile(project, "TestFileName_1", File.FT_VHDLSOURCE);
-			this.file2 = labman.createNewFile(project, "TestFileName_2", File.FT_VHDLSOURCE);
-			this.file3 = labman.createNewFile(project, "TestFileName_3", File.FT_VHDLTB);
-			Set<File> files = new TreeSet<File>();
-			files.add(file1);
-			files.add(file2);
-			files.add(file3);
-			project.setFiles(files);
-			labman.saveProject(project);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-			fail("Failed to create a file.");
-		}
+		labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		project = labman.createNewProject("TestProjectName", Long.valueOf(1000));
+		file1 = labman.createNewFile(project, "TestFileName_1", File.FT_VHDLSOURCE);
+		file2 = labman.createNewFile(project, "TestFileName_2", File.FT_VHDLSOURCE);
+		file3 = labman.createNewFile(project, "TestFileName_3", File.FT_VHDLTB);
+		Set<File> files = new TreeSet<File>();
+		files.add(file1);
+		files.add(file2);
+		files.add(file3);
+		project.setFiles(files);
+		labman.saveProject(project);
 		
-		this.regMap = (Map<String, RegisteredMethod>) mprov.get("registeredMethods");
-		this.disp = new AdvancedMethodDispatcher();
-	}
-	
-	public AdvancedMethodDispatcherTest(String name) {
-		super(name);
-		init();
+		regMap = (Map<String, RegisteredMethod>) mprov.get("registeredMethods");
+		disp = new AdvancedMethodDispatcher();
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when properties is null.
+	 * Properties is <code>null</code>.
 	 */
-	@Test
-	public void testPreformMethodDispatching() {
-		try {
-			disp.preformMethodDispatching(null, regMap, labman);
-			fail("No exception when properties is null.");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+	@Test(expected=NullPointerException.class)
+	public void preformMethodDispatching() {
+		disp.preformMethodDispatching(null, regMap, labman);
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when map of registrated methods is null.
+	 * Map of registrated methods is <code>null</code>.
 	 */
-	@Test
-	public void testPreformMethodDispatching2() {
-		try {
-			disp.preformMethodDispatching(new Properties(), null, labman);
-			fail("No exception when map of registrated is null.");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+	@Test(expected=NullPointerException.class)
+	public void preformMethodDispatching2() {
+		disp.preformMethodDispatching(new Properties(), null, labman);
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when lab manager is null.
+	 * Lab manager is <code>null</code>.
 	 */
-	@Test
-	public void testPreformMethodDispatching3() {
-		try {
-			disp.preformMethodDispatching(new Properties(), regMap, null);
-			fail("No exception when lab manager is null.");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+	@Test(expected=NullPointerException.class)
+	public void preformMethodDispatching3() {
+		disp.preformMethodDispatching(new Properties(), regMap, null);
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is simple - no operators.
+	 * Method is simple - no operators.
 	 */
 	@Test
-	public void testPreformMethodDispatching4() {
+	public void preformMethodDispatching4() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_NAME;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(3, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is composed of a method separating operator.
+	 * Method is complex:
+	 * <blockquote>
+	 * method1&method2
+	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching5() {
+	public void preformMethodDispatching5() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(4, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(4, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is composed of a redirection to right operator.
+	 * Method is complex:
+	 * <blockquote>
+	 * method1>method2
+	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching6() {
+	public void preformMethodDispatching6() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">"+MethodConstants.MTD_LOAD_FILE_NAME;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(5, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
-			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+2, ""));
-			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(5, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 	}
 
 	/**
-	 * Test method preformMethodDispatching() when method is composed of a redirection to left operator.
+	 * Method is complex:
+	 * <blockquote>
+	 * method1<method2
+	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching7() {
+	public void preformMethodDispatching7() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_NAME+"<"+MethodConstants.MTD_LOAD_PROJECT_FILES_ID;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(5, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
-			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+2, ""));
-			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(5, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is simple surrounded with brackets.
+	 * Method is complex:
+	 * <blockquote>
+	 * (method1)
+	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching8() {
+	public void preformMethodDispatching8() {
 		Properties p = new Properties();
 		String method = "("+MethodConstants.MTD_LOAD_FILE_NAME+")";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(3, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is composed of a method separating operator
-	 * while one inner method is surrounded with brackets.
+	 * Method is complex:
+	 * <blockquote>
+	 * (method1)&method2
+	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching9() {
+	public void preformMethodDispatching9() {
 		Properties p = new Properties();
 		String method = "("+MethodConstants.MTD_LOAD_FILE_NAME+")&"+MethodConstants.MTD_LOAD_FILE_TYPE;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(4, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(4, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * method1&method2>method3
 	 * </blockquote>
+	 * @throws ServiceException 
 	 */
 	@Test
-	public void testPreformMethodDispatching10() {
+	public void preformMethodDispatching10() throws ServiceException {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+">"+MethodConstants.MTD_CREATE_NEW_PROJECT;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
-			assertEquals(true, labman.existsProject(id));
-			assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-			assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
-			assertEquals(3, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
+		assertEquals(true, labman.existsProject(id));
+		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
+		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * (method1&method2)>method3
 	 * </blockquote>
+	 * @throws ServiceException 
 	 */
 	@Test
-	public void testPreformMethodDispatching11() {
+	public void preformMethodDispatching11() throws ServiceException {
 		Properties p = new Properties();
 		String method = "("+MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+")>"+MethodConstants.MTD_CREATE_NEW_PROJECT;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
-			assertEquals(true, labman.existsProject(id));
-			assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-			assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
-			assertEquals(3, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
+		assertEquals(true, labman.existsProject(id));
+		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
+		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * method1<(method2&method3)
 	 * </blockquote>
+	 * @throws ServiceException 
 	 */
 	@Test
-	public void testPreformMethodDispatching12() {
+	public void preformMethodDispatching12() throws ServiceException {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_PROJECT+"<("+MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+")";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
-			assertEquals(true, labman.existsProject(id));
-			assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-			assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
-			assertEquals(3, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
+		assertEquals(true, labman.existsProject(id));
+		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
+		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * ((method1&method2)>method3)&method4
 	 * </blockquote>
+	 * @throws ServiceException 
 	 */
 	@Test
-	public void testPreformMethodDispatching13() {
+	public void preformMethodDispatching13() throws ServiceException {
 		Properties p = new Properties();
 		String method = "(("+MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+")>"+MethodConstants.MTD_CREATE_NEW_PROJECT+")&"+MethodConstants.MTD_LOAD_FILE_NAME;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
-			assertEquals(true, labman.existsProject(id));
-			assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-			assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
-			assertEquals(4, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
+		assertEquals(true, labman.existsProject(id));
+		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
+		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(4, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertNotSame(String.valueOf(project.getId()), prop.getProperty(MethodConstants.PROP_PROJECT_ID, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * (method1&method2)&(method3&method4)
 	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching14() {
+	public void preformMethodDispatching14() {
 		Properties p = new Properties();
 		String method = "("+MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+")&("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+")";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(6, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(project.getProjectName(), prop.getProperty(MethodConstants.PROP_PROJECT_NAME, ""));
-			assertEquals(String.valueOf(project.getOwnerID()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(6, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(project.getProjectName(), prop.getProperty(MethodConstants.PROP_PROJECT_NAME, ""));
+		assertEquals(String.valueOf(project.getOwnerID()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * ((method1&method2)&(method3&method4))
 	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching15() {
+	public void preformMethodDispatching15() {
 		Properties p = new Properties();
 		String method = "(("+MethodConstants.MTD_LOAD_PROJECT_NAME+"&"+MethodConstants.MTD_LOAD_PROJECT_OWNER_ID+")&("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+"))";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(6, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(project.getProjectName(), prop.getProperty(MethodConstants.PROP_PROJECT_NAME, ""));
-			assertEquals(String.valueOf(project.getOwnerID()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(6, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(project.getProjectName(), prop.getProperty(MethodConstants.PROP_PROJECT_NAME, ""));
+		assertEquals(String.valueOf(project.getOwnerID()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * method1>(method2&method3)
 	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching16() {
+	public void preformMethodDispatching16() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+")";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(8, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+1, ""));
-			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+2, ""));
-			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+2, ""));
-			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
-			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+3, ""));
-			} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(8, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
+		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * method1>(method2>(method3&method4))
 	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching17() {
+	public void preformMethodDispatching17() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+"))";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(8, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+1, ""));
-			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+2, ""));
-			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+2, ""));
-			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
-			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+3, ""));
-			} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(8, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
+		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * (method1>(method2>(method3&method4)))
 	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching18() {
+	public void preformMethodDispatching18() {
 		Properties p = new Properties();
 		String method = "("+MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+")))";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(8, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+1, ""));
-			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+2, ""));
-			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+2, ""));
-			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
-			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+3, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(8, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
+		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * method1>method2>(method3&method4)
 	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching19() {
+	public void preformMethodDispatching19() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_BELONGS_TO_PROJECT_ID+">"+MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+")";
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(8, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+1, ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+1, ""));
-			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+2, ""));
-			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+2, ""));
-			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+"."+3, ""));
-			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+"."+3, ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(8, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
+		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * ((method1>method2>(method3&method4))&method5)>method6
 	 * </blockquote>
+	 * @throws ServiceException 
 	 */
 	@Test
-	public void testPreformMethodDispatching20() {
+	public void preformMethodDispatching20() throws ServiceException {
 		Properties p = new Properties();
 		String method = "(("+MethodConstants.MTD_LOAD_FILE_BELONGS_TO_PROJECT_ID+">"+MethodConstants.MTD_LOAD_PROJECT_FILES_ID+">("+MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE+"))&"+MethodConstants.MTD_CREATE_NEW_PROJECT+")>"+MethodConstants.MTD_CREATE_NEW_FILE;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
@@ -560,30 +464,25 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 		p.setProperty(MethodConstants.PROP_PROJECT_NAME, "NewProjectName");
 		p.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, "500");
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_FILE_ID+".1"));
-			id = labman.loadFile(id).getProject().getId();
-			assertEquals(true, labman.existsProject(id));
-			assertEquals("NewProjectName", labman.loadProject(id).getProjectName());
-			assertEquals(Long.valueOf(500), labman.loadProject(id).getOwnerID());
-			assertEquals(5, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_FILE_ID+".1"));
+		id = labman.loadFile(id).getProject().getId();
+		assertEquals(true, labman.existsProject(id));
+		assertEquals("NewProjectName", labman.loadProject(id).getProjectName());
+		assertEquals(Long.valueOf(500), labman.loadProject(id).getOwnerID());
+		assertEquals(5, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
 	}
 	
 	/**
-	 * Test method preformMethodDispatching() when method is advanced:
+	 * Method is complex:
 	 * <blockquote>
 	 * method1&method2
 	 * </blockquote>
 	 */
 	@Test
-	public void testPreformMethodDispatching21() {
+	public void preformMethodDispatching21() {
 		Properties p = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
@@ -591,20 +490,72 @@ public class AdvancedMethodDispatcherTest extends TestCase {
 		p.setProperty(MethodConstants.PROP_FILE_ID+".2", String.valueOf(file2.getId()));
 		p.setProperty(MethodConstants.PROP_FILE_ID+".3", String.valueOf(file3.getId()));
 		
-		try {
-			Properties prop = disp.preformMethodDispatching(p, regMap, labman);
-			assertEquals(8, prop.keySet().size());
-			assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
-			assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-			assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
-			assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
-			assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
-			assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
-			assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
-			assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated exception: "+e.getMessage());
-		}
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(8, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
+		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
+	}
+	
+	/**
+	 * Method is complex:
+	 * <blockquote>
+	 * method1&method2
+	 * </blockquote>
+	 */
+	@Test
+	public void preformMethodDispatching22() {
+		Properties p = new Properties();
+		String method = MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE;
+		p.setProperty(MethodConstants.PROP_METHOD, method);
+		p.setProperty(MethodConstants.PROP_FILE_ID+".2", String.valueOf(file2.getId()));
+		p.setProperty(MethodConstants.PROP_FILE_ID+".3", String.valueOf(file3.getId()));
+		
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.SE_METHOD_ARGUMENT_ERROR, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+	}
+	
+	/**
+	 * Method is complex:
+	 * <blockquote>
+	 * method1&method2
+	 * </blockquote>
+	 */
+	@Test
+	public void preformMethodDispatching23() {
+		Properties p = new Properties();
+		String method = MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE;
+		p.setProperty(MethodConstants.PROP_METHOD, method);
+		
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.SE_METHOD_ARGUMENT_ERROR, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+	}
+	
+	/**
+	 * Method is complex:
+	 * <blockquote>
+	 * method1&method2
+	 * </blockquote>
+	 */
+	@Test
+	public void preformMethodDispatching24() {
+		Properties p = new Properties();
+		String method = MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE;
+		p.setProperty(MethodConstants.PROP_METHOD, method);
+		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()+"s"));
+		
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(3, prop.keySet().size());
+		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.SE_PARSE_ERROR, prop.getProperty(MethodConstants.PROP_STATUS, ""));
 	}
 }

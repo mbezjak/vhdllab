@@ -111,7 +111,7 @@ public class DefaultPort implements Port {
 		if( !(o instanceof Port) ) return false;
 		Port other = (Port) o;
 		
-		return other.getName().toLowerCase().equalsIgnoreCase(this.portName)
+		return other.getName().equalsIgnoreCase(this.portName)
 			&& other.getDirection().equals(this.direction)
 			&& other.getType().equals(this.type);
 	}

@@ -1,127 +1,97 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import junit.framework.JUnit4TestAdapter;
 
-/**
- * This is a TestCase for {@linkplain hr.fer.zemris.vhdllab.vhdl.tb.DefaultSignal} class.
- * 
- * @author Miro Bezjak
- */
-public class DefaultSignalTest extends TestCase {
+import org.junit.Ignore;
+import org.junit.Test;
 
-	public DefaultSignalTest(String name) {
-		super(name);
-	}
+public class DefaultSignalTest {
 
-	/** Test constructor when name is null */
-	public void testDefaultSignalString() {
-		try {
-			new DefaultSignal(null);
-			fail("No exception when name is null");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Name is <code>null</code>.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void constructorString() {
+		new DefaultSignal(null);
 	}
 	
-	/** Test constructor when name is incorrect */
-	public void testDefaultSignalString2() {
-		try {
-			new DefaultSignal("%Signal_2");
-			fail("No exception when name is incorrect");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Name is incorrect.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructorString2() {
+		new DefaultSignal("%Signal_2");
 	}
 	
-	/** Test constructor when name is correct */
-	public void testDefaultSignalString3() {
-		try {
-			new DefaultSignal("Signal_2");
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Name is correct.
+	 */
+	@Test
+	public void constructorString3() {
+		new DefaultSignal("Signal_2");
 	}
 
-	/** Test constructor when range has more then 2 elements */
-	public void testDefaultSignalStringIntArray() {
-		try {
-			new DefaultSignal("Signal_2", new int[] {2, 3, 4});
-			fail("No exception range has more then 2 elements");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Range has more then 2 elements.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructorStringIntArray() {
+		new DefaultSignal("Signal_2", new int[] {2, 3, 4});
 	}
 	
-	/** Test constructor when range has one element negative */
-	public void testDefaultSignalStringIntArray2() {
-		try {
-			new DefaultSignal("Signal_2", new int[] {-2, 3});
-			fail("No exception range has one element negative");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Range has one negative element.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructorStringIntArray2() {
+		new DefaultSignal("Signal_2", new int[] {-2, 3});
 	}
 	
-	/** Test constructor when range has both elements negative */
-	public void testDefaultSignalStringIntArray3() {
-		try {
-			new DefaultSignal("Signal_2", new int[] {-2, -3});
-			fail("No exception range has both elements negative");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Range has both negative elements.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void constructorStringIntArray3() {
+		new DefaultSignal("Signal_2", new int[] {-2, -3});
 	}
 	
-	/** Test constructor when range is null */
-	public void testDefaultSignalStringIntArray4() {
+	/**
+	 * Range is <code>null</code>.
+	 */
+	@Test
+	public void constructorStringIntArray4() {
 		int[] range = null;
-		try {
-			new DefaultSignal("Signal_2", range);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+		new DefaultSignal("Signal_2", range);
 	}
 	
-	/** Test constructor when range has equal bounds */
-	public void testDefaultSignalStringIntArray5() {
-		try {
-			new DefaultSignal("Signal_2", new int[] {2, 2});
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+	/**
+	 * Range has equal bounds.
+	 */
+	@Test
+	public void constructorStringIntArray5() {
+		new DefaultSignal("Signal_2", new int[] {2, 2});
 	}
 
-	/** Test constructor when exciter is null */
-	public void testDefaultSignalStringListOfImpulse() {
+	/**
+	 * Exciter is <code>null</code>.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void constructorStringListOfImpulse() {
 		List<Impulse> exciter = null;
-		try {
-			new DefaultSignal("Signal_0", exciter);
-			fail("No exception when exciter is null");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+		new DefaultSignal("Signal_0", exciter);
 	}
 	
-	/** Test constructor when exciter is correct */
-	public void testDefaultSignalStringListOfImpulse2() {
+	/**
+	 * Exciter is correct.
+	 */
+	@Test
+	public void constructorStringListOfImpulse2() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1"));
 		exciter.add(new DefaultImpulse(100, "0"));
@@ -130,14 +100,7 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "0"));
 		exciter.add(new DefaultImpulse(30, "1"));
 		exciter.add(new DefaultImpulse(500, "0"));
-		
-		Signal signal = null;
-		try {
-			signal = new DefaultSignal("Signal_0", exciter);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+		Signal signal = new DefaultSignal("Signal_0", exciter);
 		
 		List<Impulse> exciter2 = new ArrayList<Impulse>();
 		exciter2.add(new DefaultImpulse(0, "1"));
@@ -149,8 +112,11 @@ public class DefaultSignalTest extends TestCase {
 		assertEquals(signal2, signal);
 	}
 	
-	/** Test constructor when exciter is correct */
-	public void testDefaultSignalStringIntArrayListOfImpulse() {
+	/**
+	 * Exciter is correct.
+	 */
+	@Test
+	public void constructorStringListOfImpulse3() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -159,14 +125,7 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "00010"));
 		exciter.add(new DefaultImpulse(30, "100"));
 		exciter.add(new DefaultImpulse(500, "010"));
-		
-		Signal signal = null;
-		try {
-			signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+		Signal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
 		List<Impulse> exciter2 = new ArrayList<Impulse>();
 		exciter2.add(new DefaultImpulse(0, "1uu"));
@@ -177,51 +136,49 @@ public class DefaultSignalTest extends TestCase {
 		assertEquals(new DefaultSignal("Signal_0", new int[] {2, 4}, exciter2), signal);
 	}
 
-	/** Test constructor when impulse is null */
-	public void testDefaultSignalStringImpulse() {
+	/**
+	 * Impulse is <code>null</code>.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void constructorStringImpulse() {
 		Impulse impulse = null;
-		try {
-			new DefaultSignal("Signal_0", impulse);
-			fail("No exception when impulse is null");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+		new DefaultSignal("Signal_0", impulse);
 	}
 	
-	/** Test constructor when impulse is correct */
-	public void testDefaultSignalStringImpulse2() {
+	/**
+	 * Impulse is correct.
+	 */
+	@Test
+	public void constructorStringImpulse2() {
 		Impulse impulse = new DefaultImpulse(0, "0");
-		try {
-			new DefaultSignal("Signal_0", impulse);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+		new DefaultSignal("Signal_0", impulse);
 	}
 	
-	/** Test constructor when impulse is correct */
-	public void testDefaultSignalStringIntArrayImpulse() {
+	/**
+	 * Impulse is correct.
+	 */
+	@Test
+	public void constructorStringIntArrayImpulse() {
 		Impulse impulse = new DefaultImpulse(0, "010");
-		try {
-			new DefaultSignal("Signal_0", new int[] {0, 2}, impulse);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Generated Exception: "+e.getMessage());
-		}
+		new DefaultSignal("Signal_0", new int[] {0, 2}, impulse);
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true and signal is a scalar */
-	public void testEqualsAndHashCode() {
+	/**
+	 * Signals are equal and are scalars.
+	 */
+	@Test
+	public void equalsAndHashCode() {
 		Signal s1 = new DefaultSignal("Signal_0");
 		Signal s2 = new DefaultSignal("signal_0");
 		assertEquals(true, s1.equals(s2));
 		assertEquals(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true and signal is a scalar */
-	public void testEqualsAndHashCode2() {
+	/**
+	 * Signals are equal and are scalars.
+	 */
+	@Test
+	public void equalsAndHashCode2() {
 		Impulse i1 = new DefaultImpulse(0, "1");
 		Impulse i2 = new DefaultImpulse(0, "1");
 		Signal s1 = new DefaultSignal("Signal_0", i1);
@@ -230,16 +187,22 @@ public class DefaultSignalTest extends TestCase {
 		assertEquals(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false and signal is a scalar */
-	public void testEqualsAndHashCode3() {
+	/**
+	 * Signals are not equal and are scalars.
+	 */
+	@Test
+	public void equalsAndHashCode3() {
 		Signal s1 = new DefaultSignal("Signal_0");
 		Signal s2 = new DefaultSignal("signal0");
 		assertEquals(false, s1.equals(s2));
 		assertNotSame(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false and signal is a scalar */
-	public void testEqualsAndHashCode4() {
+	/**
+	 * Signals are not equal and are scalars.
+	 */
+	@Test
+	public void equalsAndHashCode4() {
 		Impulse i1 = new DefaultImpulse(0, "1");
 		Impulse i2 = new DefaultImpulse(0, "0");
 		Signal s1 = new DefaultSignal("Signal_0", i1);
@@ -248,16 +211,22 @@ public class DefaultSignalTest extends TestCase {
 		assertNotSame(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true and signal is a vector */
-	public void testEqualsAndHashCode5() {
+	/**
+	 * Signals are equal and are vectors.
+	 */
+	@Test
+	public void equalsAndHashCode5() {
 		Signal s1 = new DefaultSignal("Signal_0", new int[] {2, 0});
 		Signal s2 = new DefaultSignal("signal_0", new int[] {2, 0});
 		assertEquals(true, s1.equals(s2));
 		assertEquals(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return true and signal is a vector */
-	public void testEqualsAndHashCode6() {
+	/**
+	 * Signals are equal and are vectors.
+	 */
+	@Test
+	public void equalsAndHashCode6() {
 		Impulse i1 = new DefaultImpulse(0, "101");
 		Impulse i2 = new DefaultImpulse(0, "101");
 		Signal s1 = new DefaultSignal("Signal_0", new int[] {2, 0}, i1);
@@ -266,16 +235,22 @@ public class DefaultSignalTest extends TestCase {
 		assertEquals(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false and signal is a vector */
-	public void testEqualsAndHashCode57() {
+	/**
+	 * Signals are not equal and are vectors.
+	 */
+	@Test
+	public void equalsAndHashCode57() {
 		Signal s1 = new DefaultSignal("Signal_0", new int[] {2, 0});
 		Signal s2 = new DefaultSignal("signal0", new int[] {2, 0});
 		assertEquals(false, s1.equals(s2));
 		assertNotSame(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) and hashCode() when equals return false and signal is a vector */
-	public void testEqualsAndHashCode8() {
+	/**
+	 * Signals are not equal and are vectors.
+	 */
+	@Test
+	public void equalsAndHashCode8() {
 		Impulse i1 = new DefaultImpulse(0, "101");
 		Impulse i2 = new DefaultImpulse(0, "111");
 		Signal s1 = new DefaultSignal("Signal_0", new int[] {2, 0}, i1);
@@ -284,117 +259,116 @@ public class DefaultSignalTest extends TestCase {
 		assertNotSame(s1.hashCode(), s2.hashCode());
 	}
 	
-	/** Test method equals(Object) if argument is null */
-	public void testEqualsObject() {
-		DefaultSignal signal = new DefaultSignal("Signal_0");
-		boolean val = signal.equals(null);
-		assertEquals(false, val);
-	}
-	
-	/** Test method equals(Object) if argument is not instanceof DefaultType */
-	public void testEqualsObject2() {
-		DefaultSignal signal = new DefaultSignal("Signal_0");
-		boolean val = signal.equals(new String("Signal_0"));
-		assertEquals(false, val);
-	}
-	
-	/** Test method getRangeFrom() when signal is a scalar */
-	public void testGetRangeFrom() {
+	/**
+	 * Object is <code>null</code>.
+	 */
+	@Test
+	public void equalsObject() {
 		Signal signal = new DefaultSignal("Signal_0");
-		try {
-			signal.getRangeFrom();
-			fail("No exception on method getRangeFrom when signal is a scalar");
-		} catch (IllegalStateException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+		assertEquals(false, signal.equals(null));
 	}
 	
-	/** Test method getRangeFrom() when signal is a vector */
-	public void testGetRangeFrom2() {
+	/**
+	 * Object is not instance of Type.
+	 */
+	@Test
+	public void equalsObject2() {
+		Signal signal = new DefaultSignal("Signal_0");
+		assertEquals(false, signal.equals(new String("Signal_0")));
+	}
+	
+	/**
+	 * Signal is a scalar.
+	 */
+	@Test(expected=IllegalStateException.class)
+	public void getRangeFrom() {
+		Signal signal = new DefaultSignal("Signal_0");
+		signal.getRangeFrom();
+	}
+	
+	/**
+	 * Signal is a vector.
+	 */
+	@Test
+	public void getRangeFrom2() {
 		Signal signal = new DefaultSignal("Signal_0", new int[] {2, 0});
-		int ret = -1;
-		try {
-			ret = signal.getRangeFrom();
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
-		assertEquals(2, ret);
+		assertEquals(2, signal.getRangeFrom());
 	}
 
-	/** Test method getRangeTo() when signal is a scalar */
-	public void testGetRangeTo() {
+	/**
+	 * Signal is a scalar.
+	 */
+	@Test(expected=IllegalStateException.class)
+	public void getRangeTo() {
 		Signal signal = new DefaultSignal("Signal_0");
-		try {
-			signal.getRangeTo();
-			fail("No exception on method getRangeFrom when signal is a scalar");
-		} catch (IllegalStateException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+		signal.getRangeTo();
 	}
 	
-	/** Test method getRangeTo() when signal is a vector */
-	public void testGetRangeTo2() {
+	/**
+	 * Signal is a vector.
+	 */
+	@Test
+	public void getRangeTo2() {
 		Signal signal = new DefaultSignal("Signal_0", new int[] {2, 0});
-		int ret = -1;
-		try {
-			ret = signal.getRangeTo();
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
-		assertEquals(0, ret);
+		assertEquals(0, signal.getRangeTo());
 	}
 	
-	/** Test method isScalar() when signal is a scalar */
-	public void testIsScalar() {
+	/**
+	 * Signal is a scalar.
+	 */
+	@Test
+	public void isScalar() {
 		Signal signal = new DefaultSignal("Signal_0");
 		assertEquals(true, signal.isScalar());
 	}
 	
-	/** Test method isScalar() when signal is not a scalar */
-	public void testIsScalar2() {
+	/**
+	 * Signal is not a scalar.
+	 */
+	@Test
+	public void isScalar2() {
 		Signal signal = new DefaultSignal("Signal_0", new int[] {2, 0});
 		assertEquals(false, signal.isScalar());
 	}
 	
-	/** Test method isVector() when signal is a scalar */
-	public void testIsVector() {
+	/**
+	 * Signal is not a vector.
+	 */
+	@Test
+	public void isVector() {
 		Signal signal = new DefaultSignal("Signal_0");
 		assertEquals(false, signal.isVector());
 	}
 	
-	/** Test method isVector() when signal is not a scalar */
-	public void testIsVector2() {
+	/**
+	 * Signal is a vector.
+	 */
+	@Test
+	public void isVector2() {
 		Signal signal = new DefaultSignal("Signal_0", new int[] {2, 0});
 		assertEquals(true, signal.isVector());
 	}
 	
-	/** Test method getExciter(). Try to add an impulse from the outside */
-	public void testGetExciter() {
+	/**
+	 * Try to add an impulse after method getExciter().
+	 */
+	@Test(expected=UnsupportedOperationException.class)
+	public void getExciter() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
 		exciter.add(new DefaultImpulse(200, "110"));
 		exciter.add(new DefaultImpulse(500, "010"));
 		Signal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
-		
-		try {
-			signal.getExciter().add(new DefaultImpulse(600, "101"));
-			fail("Outside modification possible");
-		} catch (UnsupportedOperationException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+
+		signal.getExciter().add(new DefaultImpulse(600, "101"));
 	}
 	
-	/** Test method addImpulse(Impulse) when impulse is null */
-	public void testAddImpulse(){
+	/**
+	 * Impulse is <code>null</code>.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void addImpulse(){
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -402,31 +376,21 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		try {
-			signal.addImpulse(null);
-			fail("No exception on when impulse is null");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+		signal.addImpulse(null);
 	}
 	
-	/** Test method addImpulse(Impulse) when impulse is correct */
-	public void testAddImpulse2(){
+	/**
+	 * Impulse is correct.
+	 */
+	@Test
+	public void addImpulse2(){
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
 		exciter.add(new DefaultImpulse(200, "110"));
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
-		
-		try {
-			signal.addImpulse(new DefaultImpulse(600, "111"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+		signal.addImpulse(new DefaultImpulse(600, "111"));
 		
 		List<Impulse> impulseList = new ArrayList<Impulse>();
 		impulseList.add(new DefaultImpulse(0, "1uu"));
@@ -439,34 +403,31 @@ public class DefaultSignalTest extends TestCase {
 		assertEquals(signal2, signal);
 	}
 
-	/** Test method addExciter(Exciter) when exciter is null */
-	public void testAddExciter(){
+	/**
+	 * Exciter is <code>null</code>.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void addExciter(){
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
 		exciter.add(new DefaultImpulse(200, "110"));
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
-		
-		try {
-			signal.addExciter(null);
-			fail("No exception on when exciter is null");
-		} catch (NullPointerException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+		signal.addExciter(null);
 	}
 	
-	/** Test method addExciter(Exciter) when exciter is correct */
-	public void testAddExciter2(){
+	/**
+	 * Exciter is correct.
+	 */
+	@Test
+	public void addExciter2(){
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
 		exciter.add(new DefaultImpulse(200, "110"));
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
-		
 		
 		List<Impulse> exciterAdd = new ArrayList<Impulse>();
 		exciterAdd.add(new DefaultImpulse(600, "110"));
@@ -475,14 +436,8 @@ public class DefaultSignalTest extends TestCase {
 		exciterAdd.add(new DefaultImpulse(800, "uUu"));
 		exciterAdd.add(new DefaultImpulse(900, "1001"));
 		exciterAdd.add(new DefaultImpulse(1000, "zUZ"));
-		
-		
-		try {
-			signal.addExciter(exciterAdd);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exception generated: "+e.getMessage());
-		}
+
+		signal.addExciter(exciterAdd);
 		
 		List<Impulse> impulseList = new ArrayList<Impulse>();
 		impulseList.add(new DefaultImpulse(0, "1uu"));
@@ -497,8 +452,11 @@ public class DefaultSignalTest extends TestCase {
 		assertEquals(signal2, signal);
 	}
 
-	/** Test method getImpulseAfterTime when time is too negative */
-	public void testGetImpulseAfterTime() {
+	/**
+	 * Time is too negative.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void getImpulseAfterTime() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -506,18 +464,14 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		try {
-			signal.getImpulseAfterTime(-2);
-			fail("No exception when time is too negative");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Generated exception: "+e.getMessage());
-		}
+		signal.getImpulseAfterTime(-2);
 	}
 	
-	/** Test method getImpulseAfterTime when time is -1 */
-	public void testGetImpulseAfterTime2() {
+	/**
+	 * Time is <code>-1</code>.
+	 */
+	@Test
+	public void getImpulseAfterTime2() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -525,20 +479,16 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		Impulse impulseAtTime = null;
-		try {
-			impulseAtTime = signal.getImpulseAfterTime(-1);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Generated exception: "+e.getMessage());
-		}
-		
+		Impulse impulseAtTime = signal.getImpulseAfterTime(-1);
 		Impulse i = new DefaultImpulse(0, "1uu");
 		assertEquals(i, impulseAtTime);
 	}
 	
-	/** Test method getImpulseAfterTime when time is 0 */
-	public void testGetImpulseAfterTime3() {
+	/**
+	 * Time is zero.
+	 */
+	@Test
+	public void getImpulseAfterTime3() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -546,20 +496,16 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		Impulse impulseAtTime = null;
-		try {
-			impulseAtTime = signal.getImpulseAfterTime(0);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Generated exception: "+e.getMessage());
-		}
-		
+		Impulse impulseAtTime = signal.getImpulseAfterTime(0);
 		Impulse i = new DefaultImpulse(100, "000");
 		assertEquals(i, impulseAtTime);
 	}
 	
-	/** Test method getImpulseAfterTime when time is correct */
-	public void testGetImpulseAfterTime4() {
+	/**
+	 * Time is positive.
+	 */
+	@Test
+	public void getImpulseAfterTime4() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -567,20 +513,16 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		Impulse impulseAtTime = null;
-		try {
-			impulseAtTime = signal.getImpulseAfterTime(100);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Generated exception: "+e.getMessage());
-		}
-		
+		Impulse impulseAtTime = signal.getImpulseAfterTime(100);
 		Impulse i = new DefaultImpulse(200, "110");
 		assertEquals(i, impulseAtTime);
 	}
 
-	/** Test method getImpulseAtTime when time is negative */
-	public void testGetImpulseAtTime() {
+	/**
+	 * Time is negative.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void getImpulseAtTime() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -588,18 +530,14 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		try {
-			signal.getImpulseAtTime(-1);
-			fail("No exception when time is negative");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Generated exception: "+e.getMessage());
-		}
+		signal.getImpulseAtTime(-1);
 	}
 	
-	/** Test method getImpulseAtTime when time is zero */
-	public void testGetImpulseAtTime2() {
+	/**
+	 * Time is zero.
+	 */
+	@Test
+	public void getImpulseAtTime2() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -607,20 +545,16 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		Impulse impulseAtTime = null;
-		try {
-			impulseAtTime = signal.getImpulseAtTime(0);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Generated exception: "+e.getMessage());
-		}
-		
+		Impulse impulseAtTime = signal.getImpulseAtTime(0);
 		Impulse i = new DefaultImpulse(0, "1uu");	
 		assertEquals(i, impulseAtTime);
 	}
 
-	/** Test method getImpulseAtTime when time is correct */
-	public void testGetImpulseAtTime3() {
+	/**
+	 * Time is correct.
+	 */
+	@Test
+	public void getImpulseAtTime3() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -628,14 +562,7 @@ public class DefaultSignalTest extends TestCase {
 		exciter.add(new DefaultImpulse(500, "010"));
 		DefaultSignal signal = new DefaultSignal("Signal_0", new int[] {2, 4}, exciter);
 		
-		Impulse impulseAtTime = null;
-		try {
-			impulseAtTime = signal.getImpulseAtTime(200);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Generated exception: "+e.getMessage());
-		}
-		
+		Impulse impulseAtTime = signal.getImpulseAtTime(200);
 		Impulse i = new DefaultImpulse(200, "110");
 		assertEquals(i, impulseAtTime);
 	}
@@ -643,8 +570,10 @@ public class DefaultSignalTest extends TestCase {
 	/**
 	 * Test method toString(). No asserting necessary,
 	 * just testing to see this method work.
-	 *//*
-	public void testToString() {
+	 */
+	@Ignore("Writting on screen... Already tested!")
+	@Test
+	public void toStringTest() {
 		List<Impulse> exciter = new ArrayList<Impulse>();
 		exciter.add(new DefaultImpulse(0, "1uu"));
 		exciter.add(new DefaultImpulse(100, "000"));
@@ -656,5 +585,10 @@ public class DefaultSignalTest extends TestCase {
 		System.out.println("Testing method toString():");
 		System.out.println(signal);
 		System.out.println("********************");
-	}*/
+	}
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(DefaultSignalTest.class);
+	}
+	
 }
