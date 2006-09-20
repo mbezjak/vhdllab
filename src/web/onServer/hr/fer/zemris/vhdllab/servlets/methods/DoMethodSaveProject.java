@@ -20,24 +20,25 @@ public class DoMethodSaveProject implements RegisteredMethod {
 	 * @see hr.fer.zemris.ajax.shared.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
 	public Properties run(Properties p, VHDLLabManager labman) {
+		String method = p.getProperty(MethodConstants.PROP_METHOD);
 		String projectID = p.getProperty(MethodConstants.PROP_PROJECT_ID,null);
-		if(projectID == null) return errorProperties(MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No project ID specified!");
+		if(projectID == null) return errorProperties(method, MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No project ID specified!");
 		
 		Long id = null;
 		try {
 			id = Long.parseLong(projectID);
 		} catch (NumberFormatException e) {
-			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID!");
+			return errorProperties(method, MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID ("+projectID+")!");
 		}
 		
 		// Load Project
 		Project project = null;
 		try {
-			labman.loadProject(id);
+			project = labman.loadProject(id);
 		} catch (ServiceException e) {
 			project = null;
 		}
-		if(project == null) return errorProperties(MethodConstants.SE_NO_SUCH_PROJECT, "Project not found!");
+		if(project == null) return errorProperties(method, MethodConstants.SE_NO_SUCH_PROJECT, "Project ("+projectID+") not found!");
 		
 		int i = 1;
 		do {
@@ -48,11 +49,11 @@ public class DoMethodSaveProject implements RegisteredMethod {
 				id = Long.parseLong(fileId);
 				file = labman.loadFile(id);
 			} catch (NumberFormatException e) {
-				return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
+				return errorProperties(method, MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
 			} catch (ServiceException e) {
 				file = null;
 			}
-			if(file == null) return errorProperties(MethodConstants.SE_NO_SUCH_FILE, "File not found!");
+			if(file == null) return errorProperties(method, MethodConstants.SE_NO_SUCH_FILE, "File not found!");
 			
 			project.getFiles().add(file);
 			i++;
@@ -61,7 +62,7 @@ public class DoMethodSaveProject implements RegisteredMethod {
 		try {
 			labman.saveProject(project);
 		} catch (ServiceException e) {
-			return errorProperties(MethodConstants.SE_CAN_NOT_SAVE_PROJECT,"Project could not be saved.");
+			return errorProperties(method, MethodConstants.SE_CAN_NOT_SAVE_PROJECT,"Project could not be saved.");
 		}
 		
 		// Prepare response
@@ -72,13 +73,15 @@ public class DoMethodSaveProject implements RegisteredMethod {
 	}
 	
 	/**
-	 * This method is called if errors occur.
+	 * This method is called if error occurs.
+	 * @param method a method that caused this error
 	 * @param errNo error message number
 	 * @param errorMessage error message to pass back to caller
 	 * @return a response Properties
 	 */
-	private Properties errorProperties(String errNo, String errorMessage) {
+	private Properties errorProperties(String method, String errNo, String errorMessage) {
 		Properties resProp = new Properties();
+		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
 		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
 		return resProp;

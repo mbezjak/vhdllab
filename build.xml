@@ -3,7 +3,7 @@
 <project name="vhdllab" basedir="." default="package">
 
   <property name="app.name" value="vhdllab"/>
-  
+
   <property name="build.dir" value="build"/>
   <property name="lib.dir" value="libs"/>
   <property name="jlib.dir" value="jlibs"/>
@@ -12,9 +12,7 @@
 
   <path id="src.class.path">
     <fileset dir="${lib.dir}">
-      <include name="junit.jar"/>
-      <include name="servlet-api.jar"/>
-      <include name="plugin.jar"/>
+      <include name="**/*.jar"/>
     </fileset>
     <pathelement path="${build.dir}/dao"/>
     <pathelement path="${build.dir}/service"/>
@@ -41,8 +39,8 @@
     <fail unless="servlet-api.jar.present">
       "${lib.dir}/servlet-api.jar" file is not present. You can copy it from $CATALINA_HOME/common/lib/servlet-api.jar.
     </fail>
-
-    <tstamp/>
+ 
+ 	<tstamp/>
     
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${build.dir}/web/onClient"/>
@@ -234,17 +232,23 @@
 	  <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 	</javadoc>
   </target>
-	
-  <target name="doc-all">
-  	<javadoc access="public" author="true" classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar"
-  		destdir="${doc.dir}" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false"
-  		packagenames="*" source="1.5"
-  		sourcepath="src/dao;src/service;src/web/onServer;src/web/OnClient;src/tests/dao;src/tests/service;src/tests/web/onServer;src/tests/web/OnClient"
-  		splitindex="true" use="true" version="true">
-	  <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-	</javadoc>
+  
+  <target name="hibernate" depends="init" description="Generates Hibernate class descriptor files.">
+    <taskdef name="hibernatedoclet"
+      classname="xdoclet.modules.hibernate.HibernateDocletTask">
+      <classpath refid="src.class.path"/>
+    </taskdef>
+
+	<hibernatedoclet destdir="."
+		excludedtags="@version,@author,@todo,@see" force="false"
+	    mergedir="${generated.home}" verbose="true">
+		<fileset dir="src/dao/hr/fer/zemris/vhdllab/model">
+			<include name="**/*.java"/>
+		</fileset>
+		<hibernate version="2.0"/>
+	</hibernatedoclet>
   </target>
-	
+
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
 
   <target name="package" depends="package-dao,package-service,package-web-onServer,package-web-onClient"/>
@@ -261,6 +265,4 @@
 	
   <target name="rebuild-doc" depends="clean,doc"/>
   	
-  <target name="rebuild-doc-all" depends="clean,doc-all"/>
-	
 </project>

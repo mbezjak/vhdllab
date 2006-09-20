@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	AdvancedMethodDispatcherTest.class
+	AdvancedMethodDispatcherTest.class,
+	SimpleMethodDispatcherTest.class
 })
 public class AllPackageTests {
 	

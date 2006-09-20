@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.model;
 
+/**
+ * @hibernate.class
+ *  table="FILES"
+ */
 public class File implements Comparable {
 	public static final String FT_VHDLSOURCE = "vhdl_source";
 	public static final String FT_VHDLTB = "vhdl_tb";
@@ -11,6 +15,13 @@ public class File implements Comparable {
 	private String content;
 	private Project project;
 	
+	public File() {}
+	
+	/**
+	 * @hibernate.id
+	 * 	generator-class="native"
+	 *  column="FILE_ID"
+	 */
 	public Long getId() {
 		return id;
 	}
@@ -18,6 +29,10 @@ public class File implements Comparable {
 		this.id = id;
 	}
 	
+	/**
+	 * @hibernate.property
+	 * 	column="CONTENT"
+	 */
 	public String getContent() {
 		return content;
 	}
@@ -25,6 +40,11 @@ public class File implements Comparable {
 		this.content = content;
 	}
 	
+	/**
+	 * @hibernate.property
+	 * 	column="FILENAME"
+	 *  not-null="true"
+	 */
 	public String getFileName() {
 		return fileName;
 	}
@@ -32,6 +52,11 @@ public class File implements Comparable {
 		this.fileName = fileName;
 	}
 
+	/**
+	 * @hibernate.property
+	 * 	column="FILETYPE"
+	 * 	not-null="true"
+	 */
 	public String getFileType() {
 		return fileType;
 	}
@@ -39,6 +64,10 @@ public class File implements Comparable {
 		this.fileType = fileType;
 	}
 	
+	/**
+	 * @hibernate.many-to-one
+	 *  column="PROJECT_ID"
+	 */
 	public Project getProject() {
 		return project;
 	}

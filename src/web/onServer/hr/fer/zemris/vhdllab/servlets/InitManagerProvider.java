@@ -5,6 +5,9 @@ import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+/**
+ * Initializes a servlet.
+ */
 public class InitManagerProvider implements ServletContextListener {
 
 	public void contextInitialized(ServletContextEvent ev) {

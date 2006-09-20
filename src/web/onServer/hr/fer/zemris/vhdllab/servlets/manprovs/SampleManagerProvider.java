@@ -36,20 +36,30 @@ import hr.fer.zemris.vhdllab.servlets.methods.DoMethodSaveProject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides infomation regarding which implementations will
+ * be used for these interfaces:
+ * <ul>
+ * <li>FileDAO, ProjectDAO : data access objects</li>
+ * <li>VHDLLabManager : service manager</li>
+ * <li>RegisteredMethod : all registered methods</li>
+ * <li>MethodDispatcher : AJAX servlet method dispatcher</li>
+ * </ul>
+ */
 public class SampleManagerProvider implements ManagerProvider {
 
 	private Map<String,Object> beans = new HashMap<String,Object>();
 	
+	/**
+	 * Constructor that sets implemetation that will be used.
+	 */
 	public SampleManagerProvider() {
 		// Create all data access objects.
-		// This is usualy done by inspecting XML configuration
-		// file. However, here we will use simplified method:
 		FileDAO fileDAO = new FileDAOMemoryImpl();
 		ProjectDAO projectDAO = new ProjectDAOMemoryImpl();
 		
 		// Create all service managers, and configure them
-		// with appropriate DAO objects. This too is often
-		// performed by inspecting XML configuration file.
+		// with appropriate DAO objects.
 		VHDLLabManagerImpl labManImpl = new VHDLLabManagerImpl();
 		labManImpl.setFileDAO(fileDAO);
 		labManImpl.setProjectDAO(projectDAO);
@@ -58,7 +68,7 @@ public class SampleManagerProvider implements ManagerProvider {
 		// a reference to them.
 		beans.put("vhdlLabManager",labManImpl);
 		
-		//Register all known methods
+		//Register all known methods.
 		Map<String,RegisteredMethod> registeredMethods = new HashMap<String, RegisteredMethod>();
 		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_NAME, new DoMethodLoadFileName());
 		registeredMethods.put(MethodConstants.MTD_LOAD_FILE_TYPE, new DoMethodLoadFileType());
@@ -89,7 +99,7 @@ public class SampleManagerProvider implements ManagerProvider {
 		// a reference to them.
 		beans.put("registeredMethods", registeredMethods);
 		
-		//Register method dispatcher
+		//Register method dispatcher.
 		MethodDispatcher disp = new AdvancedMethodDispatcher();
 		
 		// Remember created methods, so we can later return
@@ -97,6 +107,9 @@ public class SampleManagerProvider implements ManagerProvider {
 		beans.put("methodDispatcher", disp);
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.servlets.ManagerProvider#get(java.lang.String)
+	 */
 	public Object get(String name) {
 		return beans.get(name);
 	}

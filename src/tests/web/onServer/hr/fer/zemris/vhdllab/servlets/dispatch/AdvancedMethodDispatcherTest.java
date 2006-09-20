@@ -17,6 +17,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -557,5 +559,24 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(3, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.SE_PARSE_ERROR, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+	}
+	
+	/**
+	 * Method is invalid.
+	 */
+	@Test
+	public void preformMethodDispatching25() {
+		Properties p = new Properties();
+		p.setProperty(MethodConstants.PROP_METHOD, "mtd");
+		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
+		
+		Properties prop = disp.preformMethodDispatching(p, regMap, labman);
+		assertEquals(3, prop.keySet().size());
+		assertEquals("mtd", prop.getProperty(MethodConstants.PROP_METHOD, ""));
+		assertEquals(MethodConstants.SE_INVALID_METHOD_CALL, prop.getProperty(MethodConstants.PROP_STATUS, ""));
+	}
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(AdvancedMethodDispatcherTest.class);
 	}
 }

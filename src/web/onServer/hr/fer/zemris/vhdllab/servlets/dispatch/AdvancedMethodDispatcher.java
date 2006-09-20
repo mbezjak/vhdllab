@@ -10,7 +10,12 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * 
+ * This class can resolve complex method.
+ * <p/>
+ * Complex method is defined as non-simple method.<br/>
+ * Simple method is defined as a method which contains no operators
+ * and only one registered method that will be dispatched without
+ * processing using private method resolveMethod(String).
  * @author Miro Bezjak
  */
 public class AdvancedMethodDispatcher implements MethodDispatcher {
@@ -45,6 +50,17 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 		return retProp;
 	}
 	
+	/**
+	 * This method resolves an operator or a simple method.
+	 * <p/>
+	 * Complex method is defined as non-simple method.<br/>
+	 * Simple method is defined as a method which contains no operators
+	 * and only one registered method that will be dispatched without
+	 * processing using private method resolveMethod(String).
+	 * @param method a complex or simple method.
+	 * @param properties a Properties from where to draw information.
+	 * @return a response Properties.
+	 */
 	private Properties resolveOperators(String method, Properties properties) {
 		String status = properties.getProperty(MethodConstants.PROP_STATUS);
 		if(status != null && !status.equals(MethodConstants.STATUS_OK)) return properties;
@@ -75,7 +91,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * processing using private method resolveMethod(String).
 	 * @param method a complex method.
 	 * @param properties a Properties from where to draw information.
-	 * @return a responce Properties or <code>null</code> if
+	 * @return a response Properties or <code>null</code> if
 	 *         <code>method</code> does not contain top level redirect
 	 *         operator.
 	 */
@@ -115,7 +131,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * processing using private method resolveMethod(String).
 	 * @param method a complex method.
 	 * @param properties a Properties from where to draw information.
-	 * @return a responce Properties or <code>null</code> if
+	 * @return a response Properties or <code>null</code> if
 	 *         <code>method</code> does not contain top level method
 	 *         separator.
 	 */
@@ -140,7 +156,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * processing using private method resolveMethod(String).
 	 * @param method a complex method.
 	 * @param properties a Properties from where to draw information.
-	 * @return a responce Properties or <code>null</code> if
+	 * @return a response Properties or <code>null</code> if
 	 *         <code>method</code> is not surrounded with brackets.
 	 */
 	private Properties resolveBrackets(String method, Properties properties) {
@@ -160,7 +176,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * processing.
 	 * @param method containing which method to call.
 	 * @param properties a Properties from where to draw information.
-	 * @return a responce Properties.
+	 * @return a response Properties.
 	 */
 	private Properties resolveMethod(String method, Properties properties) {
 		Properties retProp = new Properties();
@@ -184,7 +200,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 			
 			Properties ret;
 			RegisteredMethod regMethod = regMap.get(method);
-			if(regMethod==null) ret = errorProperties(MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
+			if(regMethod==null) ret = errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
 			else ret = regMethod.run(p, labman);
 			if(num==1 && modified.size()==0) return ret;
 			for(Object key : ret.keySet()) {
@@ -362,13 +378,15 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	}
 	
 	/**
-	 * This method is called if errors occur.
+	 * This method is called if error occurs.
+	 * @param method a method that caused this error
 	 * @param errNo error message number
 	 * @param errorMessage error message to pass back to caller
 	 * @return a response Properties
 	 */
-	private Properties errorProperties(String errNo, String errorMessage) {
+	private Properties errorProperties(String method, String errNo, String errorMessage) {
 		Properties resProp = new Properties();
+		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
 		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
 		return resProp;

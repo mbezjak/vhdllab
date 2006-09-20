@@ -35,7 +35,6 @@ public class AjaxServlet extends HttpServlet {
 		
 		// Another way to do it (and log request as well)
 		String text = XMLUtil.inputStreamAsText(is,"UTF-8");
-		log("Recieved following[\n"+text+"]\n");
 		Properties p = XMLUtil.deserializeProperties(text);
 		
 		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
