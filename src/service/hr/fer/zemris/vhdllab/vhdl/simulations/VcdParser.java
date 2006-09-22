@@ -104,7 +104,7 @@ public class VcdParser
 
     /* 
      * Upotrebljava se za interni format prilikom razdvajanja imena signala i
-     * razdvajanja vrijednosti za svaki od signala prilikom transformacije u
+     * razdvajanja vrijednosti za svaki od signala prilikom transformacije us
      * mape u string
      */
     private final String LIMITER = "###";
@@ -156,6 +156,10 @@ public class VcdParser
 				asciiSignalSimbols.add(vcdLines[index].charAt(11));
 				signalName = vcdLines[index].substring(13, endSignIndex - 1);
 				completeSignalName = scopeName.getFirst() + signalName;
+                if (vcdLines[index].charAt(9) != '1')
+                {
+                    completeSignalName = "+ " + completeSignalName;
+                }
 				signalValues.put(completeSignalName, new ArrayList<String>());
                 if (completeSignalName.length() > maximumSignalNameLength)
                 {
@@ -323,7 +327,7 @@ public class VcdParser
      */
 	public static void main(String[] args)
 	{
-		VcdParser parser = new VcdParser("adder.vcd");
+		VcdParser parser = new VcdParser("adder2.vcd");
 		parser.parse();
         parser.resultToString();
         System.out.println(parser.getResultInString());
