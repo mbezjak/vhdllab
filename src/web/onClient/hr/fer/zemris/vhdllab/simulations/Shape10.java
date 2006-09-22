@@ -21,6 +21,9 @@ class Shape10 implements Shape
 
     public void putLabel(Graphics g, String s, int x1, int y1, int x2)
 	{
-		;
+		if (x2 - x1 >= 10)
+        {
+            g.drawString(s, x1, y1 + 5);
+        }
 	}
 }
