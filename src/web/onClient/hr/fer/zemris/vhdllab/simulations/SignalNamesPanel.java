@@ -15,12 +15,7 @@ import javax.swing.JPanel;
  */
 class SignalNamesPanel extends JPanel
 {
-    /**
-	 * Serial version ID.
-	 */
-	private static final long serialVersionUID = 2059196312811436549L;
-
-	private final Color BACKGROUND_COLOR = new Color(141, 176, 221);
+    private final Color BACKGROUND_COLOR = new Color(141, 176, 221);
    
     /* prvo ime signala pocinje od 30-tog piksela */
     private final int YAXIS_START_POINT = 30;
@@ -29,16 +24,30 @@ class SignalNamesPanel extends JPanel
 	private final int SIGNAL_NAME_SPRING_HEIGHT = 45;
 
     /* maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
-	private final int PANEL_MAX_WIDTH = 150;
+	private final int PANEL_MAX_WIDTH = 450;
 
     /* polje Stringova koje sadrzi sva imena signala */
     private String[] signalNames;
+
+    /* 
+     * polje koje sadrzi pocetne tocke springova po Y-osi.  U ovisnoti o
+     * ekspandiranosti bit-vektora pocetne se tocke mogu mijenjati
+     */
+    private int[] springStartPoints;
 
     /* polozaj trenutnog springa */
     private int yAxis;
     private int offsetYAxis;
     private int offsetXAxis;
     private int maximumSignalNameLength;
+    private int panelWidth;
+
+    /* informacija o pokazivanju strelice za pomicanje sirine panela */
+    private boolean isArrowVisible;
+    private int yArrow;
+
+    /* sadrzi informaciju o expanded bit-vektorima */
+    private Map<Integer, Boolean> expandedSignalNames;
 
     /* varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
     private boolean isClicked = false;
@@ -57,7 +66,19 @@ class SignalNamesPanel extends JPanel
         super();
         setBackground(BACKGROUND_COLOR);
         this.signalNames = results.getSignalNames();
+        this.expandedSignalNames = results.getExpandedSignalNames();
         this.maximumSignalNameLength = results.getMaximumSignalNameLength();
+        panelWidth = maximumSignalNameLength * 6;
+        springStartPoints = new int[signalNames.length];
+        
+        /* 
+         * postavlja defaultne pocetne tocke, koj ce kasniju mogu promijeniti u
+         * ovisnosti je li neki bit-vektor ekspandiran
+         */
+        for (int i = 0; i < springStartPoints.length; i++)
+        {
+            springStartPoints[i] = i * SIGNAL_NAME_SPRING_HEIGHT;
+        }
     }
     
       
@@ -66,7 +87,7 @@ class SignalNamesPanel extends JPanel
      */
     public Dimension getPreferredSize() 
     { 
-        return new Dimension(maximumSignalNameLength * 6 + 4, 
+        return new Dimension(panelWidth + 4, 
 				signalNames.length * SIGNAL_NAME_SPRING_HEIGHT); 
     } 
 
@@ -77,15 +98,35 @@ class SignalNamesPanel extends JPanel
      */
     public Dimension getMaximumSize()
     {
-        if (maximumSignalNameLength * 6 < PANEL_MAX_WIDTH)
+        if (panelWidth < PANEL_MAX_WIDTH)
         {
-            return new Dimension(maximumSignalNameLength * 6, 
+            return new Dimension(panelWidth, 
 					signalNames.length * SIGNAL_NAME_SPRING_HEIGHT); 
         }
         else
         {
             return new Dimension(PANEL_MAX_WIDTH, signalNames.length * SIGNAL_NAME_SPRING_HEIGHT);
         }
+    }
+
+
+    /**
+     * Postavlja novu vrijednosti maksimalne velicine imena signala
+     *
+     * @param maximumSignalNameLength nova vrijednost
+     */
+    public void setPanelWidth (int panelWidth)
+    {
+        this.panelWidth = panelWidth;
+    }
+
+
+    /**
+     * Vraca width panela
+     */
+    public int getPanelWidth ()
+    {
+        return panelWidth;
     }
  
 
@@ -164,7 +205,73 @@ class SignalNamesPanel extends JPanel
         return index;
     }
 
-    
+
+    /**
+     * Vraca visinu springa u kojoj je smjesteno ime signala 
+     */
+    public int getSignalNameSpringHeight ()
+    {
+        return SIGNAL_NAME_SPRING_HEIGHT;
+    }
+
+
+    /**
+     * Modificira pocetne tocke springova nakon ekspandiranja nekog bit-vectora
+     *
+     * @param signalValues vrijednosti po signalima
+     */
+    public void setSpringStartPoints (String[][] signalValues)
+    {
+        for (int i = 0; i < springStartPoints.length; i++)
+        {
+            if (expandedSignalNames.containsKey(i) && expandedSignalNames.get(i) && i < springStartPoints.length - 1)
+            {
+                springStartPoints[i + 1] = springStartPoints[i] + 
+                    signalValues[i][0].length() * SIGNAL_NAME_SPRING_HEIGHT;
+            }
+            else if (i < springStartPoints.length - 1)
+            {
+                springStartPoints[i + 1] = springStartPoints[i] + SIGNAL_NAME_SPRING_HEIGHT;
+            }
+        }
+    }
+
+
+    /**
+     * Tocke u kojima pocinju springovi imena signala (u pikselima)
+     */
+    public int[] getSpringStartPoints ()
+    {
+        return springStartPoints;
+    }
+
+
+    /**
+     * Defaultne vrijednosti za defaultni poredak 
+     */
+    public void setDefaultSpringStartPoints()
+    {
+        for (int i = 0; i < springStartPoints.length; i++)
+        {
+            springStartPoints[i] = i * SIGNAL_NAME_SPRING_HEIGHT;
+        }
+    }
+
+
+    /**
+     * Ako je kurosr misa iznad granice s imenima signala tada prikazuj strelicu
+     * za pomicanje
+     *
+     * @param isArrowVisible treba li je pokazati ili ne
+     * @param y tocka na y osi
+     */
+    public void setIsArrowVisible (boolean isArrowVisible, int y)
+    {
+        this.yArrow = y;
+        this.isArrowVisible = isArrowVisible;
+    }
+
+
     /**
      * Crta komponentu
      */
@@ -176,16 +283,73 @@ class SignalNamesPanel extends JPanel
         if (isClicked)
         {
             g.setColor(new Color(254, 217, 182));
-            g.fillRect(0, (index * SIGNAL_NAME_SPRING_HEIGHT) + 15 -offsetYAxis, 
+            g.fillRect(0, (springStartPoints[index]) + 15 - offsetYAxis, 
                     getMaximumSize().width, SIGNAL_NAME_SPRING_HEIGHT / 2 + 5);
         }
         g.setColor(new Color(51, 51, 51));
 		yAxis = YAXIS_START_POINT - offsetYAxis;
-		for (String string : signalNames)
+		for (int i = 0; i < signalNames.length; i++)
 		{
-			g.drawString(string, 5 - offsetXAxis, yAxis);
-			yAxis += SIGNAL_NAME_SPRING_HEIGHT;
+            if (expandedSignalNames.containsKey(i) && expandedSignalNames.get(i))
+            {
+                String tempSignalName;
+                int startVector = Integer.valueOf(signalNames[i].charAt(signalNames[i].length() - 4)) - 48;
+                int endVector = Integer.valueOf(signalNames[i].charAt(signalNames[i].length() - 2)) - 48;
+                int vectorSize = Math.abs(startVector - endVector);
+                tempSignalName = signalNames[i].substring(1, signalNames[i].length() - 5);
+                g.drawString("-" + tempSignalName + "[" + startVector + "]", 5 - offsetXAxis, yAxis);
+                g.drawLine(7, yAxis, 7, yAxis + 10);
+                yAxis += SIGNAL_NAME_SPRING_HEIGHT;
+                if (startVector < endVector)
+                {
+                    startVector++;
+                }
+                else
+                {
+                    startVector--;
+                }
+                
+                for (int j = 0; j < vectorSize; j++)
+                {   
+                    g.drawString("  " + tempSignalName + "[" + startVector + "]", 5 - offsetXAxis, yAxis);
+                    g.drawLine(7, yAxis - 2, 7, yAxis - SIGNAL_NAME_SPRING_HEIGHT);
+                    g.drawLine(7, yAxis - 2, 9, yAxis - 2);
+                    yAxis += SIGNAL_NAME_SPRING_HEIGHT;
+                    if (startVector < endVector)
+                    {
+                        startVector++;
+                    }
+                    else
+                    {
+                        startVector--;
+                    }
+                    //(startVector < endVector) ? (startVector++) : (startVector--);
+                }
+            }
+
+            else
+            {
+			    g.drawString(signalNames[i], 5 - offsetXAxis, yAxis);
+			    yAxis += SIGNAL_NAME_SPRING_HEIGHT;
+            }
 		}
+
+        /* crta granicu izmedu panela s imenima signala i valnim oblicima */
+        g.setColor(new Color(86, 104, 176));
+        g.drawLine(panelWidth - 3, 0, panelWidth - 3, getHeight()); 
+        g.drawLine(panelWidth - 2, 0, panelWidth - 2, getHeight()); 
+        g.drawLine(panelWidth - 1, 0, panelWidth - 1, getHeight()); 
+        g.drawLine(panelWidth, 0, panelWidth, getHeight()); 
+
+        /* crta strelicu koja je indikator za pomicanje sirine panela */
+        if (isArrowVisible)
+        {
+            g.setColor(new Color(51, 51, 51));
+            g.drawLine(panelWidth - 8, yArrow, panelWidth - 6, yArrow - 2);
+            g.drawLine(panelWidth - 8, yArrow, panelWidth - 6, yArrow + 2);
+            g.drawLine(panelWidth - 2, yArrow - 2, panelWidth, yArrow);
+            g.drawLine(panelWidth - 2, yArrow + 2, panelWidth, yArrow);
+            g.drawLine(panelWidth - 8, yArrow, panelWidth, yArrow);
+        }
 	}
 }
-
