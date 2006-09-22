@@ -1,7 +1,8 @@
 package hr.fer.zemris.vhdllab.simulations;
 
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
-
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * Klasa sluzi za parsiranje stringa koji sadrzi rezultate simulacije prikazane
