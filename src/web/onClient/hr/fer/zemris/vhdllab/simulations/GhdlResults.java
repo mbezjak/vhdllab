@@ -32,6 +32,9 @@ public class GhdlResults
     /* broj znakova najduljeg imena signala */
     private int maximumSignalNameLength;
 
+    /* sadrzi informaciju jesu li bit-vectori prosireni */
+    private Map<Integer, Boolean> expandedSignalNames = new LinkedHashMap<Integer, Boolean>();
+
     /* privremeni string kod mijenjanja poretka signala */
     String tempString;
 
@@ -73,6 +76,11 @@ public class GhdlResults
         for (int i = 0; i < temp.length; i++)
         {
             matrica[i] = temp[i].split(VALUE_LIMITER);
+  
+            if (matrica[i][1].length() != 1)
+            {
+                expandedSignalNames.put(i, false);
+            }
         }
         signalValues = matrica;
 
@@ -191,11 +199,39 @@ public class GhdlResults
 
 
     /**
+     * Vraca informaciju o ekspandiranim bit-vektorima u panelu s imenima
+     * signala
+     */
+    public Map<Integer, Boolean> getExpandedSignalNames()
+    {
+        return expandedSignalNames;
+    }
+
+
+    /**
+     * Zatvara sve expandirane bit-vektore
+     */
+    public Map<Integer, Boolean> setDefaultExpandedSignalNames()
+    {
+        expandedSignalNames.clear();
+        for (int i = 0; i < signalValues.length; i++)
+        {
+            if (signalValues[i][1].length() != 1)
+            {
+                expandedSignalNames.put(i, false);
+            }
+        }
+        return expandedSignalNames;
+    }
+
+
+
+    /**
      * Test metoda
      */
     public static void main (String[] args)
     {
-        VcdParser parser = new VcdParser("adder.vcd");
+        VcdParser parser = new VcdParser("adder2.vcd");
         parser.parse();
         parser.resultToString();
         GhdlResults sParser = new GhdlResults(parser.getResultInString());
@@ -212,14 +248,7 @@ public class GhdlResults
             }
             System.out.println("");
         }
-        for (long broj : sParser.getTransitionPoints())
-        {
-            System.out.println(broj);
-        }
-        System.out.println(sParser.getMaximumSignalNameLength());
+
+        System.out.println(sParser.getExpandedSignalNames());
     }
 }
-
-
-
-
