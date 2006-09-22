@@ -1,3 +1,5 @@
+package hr.fer.zemris.vhdllab.simulations;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

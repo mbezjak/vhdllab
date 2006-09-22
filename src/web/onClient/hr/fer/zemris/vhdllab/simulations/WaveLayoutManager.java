@@ -7,7 +7,6 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 
 
-
 /**
  * Custom layout manager
  *
@@ -21,7 +20,9 @@ class WaveLayoutManager implements LayoutManager
 {
     private final String TOOLBAR = "toolbar";
     private final String TEXTFIELD = "textField";
+    private final String CURSOR_PANEL = "cursorPanel";
     private final String SEARCH = "search";
+    private final String INTERVAL = "interval";
     private final String SIGNAL_NAMES = "signalNames";
     private final String SIGNAL_NAMES_SCROLLBAR = "signalNamesScrollbar";
     private final String WAVES = "waves";
@@ -31,7 +32,9 @@ class WaveLayoutManager implements LayoutManager
 
     private Component toolbar;
     private Component textField;
+    private Component cursorPanel;
     private Component search;
+    private Component interval;
     private Component signalNames;
     private Component signalNamesScrollbar;
     private Component waves;
@@ -50,9 +53,17 @@ class WaveLayoutManager implements LayoutManager
         {
             textField = component;
         }
+        else if (CURSOR_PANEL.equals(name)) 
+        {
+            cursorPanel = component;
+        }
         else if (SEARCH.equals(name))
         {
             search = component;
+        }
+        else if (INTERVAL.equals(name))
+        {
+            interval = component;
         }
         else if (SIGNAL_NAMES.equals(name)) 
         {
@@ -95,9 +106,17 @@ class WaveLayoutManager implements LayoutManager
         {
             textField = null;
         }
+        else if (component == cursorPanel) 
+        {
+            cursorPanel = null;
+        }
         else if (component == search)
         {
             search = null;
+        }
+        else if (component == interval)
+        {
+            interval = null;
         }
         else if (component == signalNames) 
         {
@@ -189,9 +208,10 @@ public void layoutContainer(Container target)
 
     /* prilikom resizea ne mijenjaju svoju duljinu */
     int widthToolbar = toolbar.getPreferredSize().width;
+    int heightCursorPanel = cursorPanel.getPreferredSize().height;
     
     /* 
-     * ako bi imena signala bila predugacka tada se korisno fiksno 150 piksela
+     * ako bi imena signala bila predugacka tada se korisno fiksno 450 piksela
      * duljine i to je maksimalna moguca vrijednost.  Zato maximumSize() 
      */
     int widthSignalNames = signalNames.getMaximumSize().width;
@@ -207,7 +227,7 @@ public void layoutContainer(Container target)
         toolbar.setSize(width, height);
         toolbar.setBounds
             (
-             west + 150, 
+             west, 
              north + 10, 
              width, 
              height
@@ -220,7 +240,7 @@ public void layoutContainer(Container target)
         textField.setSize(width, height);
         textField.setBounds
             (
-             west + widthToolbar + 300,
+             west + widthToolbar + 50,
              north + 10, 
              width,
              height
@@ -233,9 +253,36 @@ public void layoutContainer(Container target)
         search.setSize(width, height);
         search.setBounds
             (
-             west + widthToolbar + 300 + textField.getPreferredSize().width + 20,
+             west + widthToolbar + 50 + textField.getPreferredSize().width + 20,
              north + 10, 
              width,
+             height
+             );
+    }
+    if ((interval != null) && interval.isVisible())
+    {
+        width = interval.getPreferredSize().width;
+        height = interval.getPreferredSize().height;
+        interval.setSize(width, height);
+        interval.setBounds
+            (
+             west + widthToolbar + 50 + textField.getPreferredSize().width + 20 + 
+                search.getPreferredSize().width + 20,
+             north + 10, 
+             width,
+             height
+             );
+    }
+    if ((cursorPanel != null) && cursorPanel.isVisible())
+    {
+        width = cursorPanel.getPreferredSize().width;
+        height = cursorPanel.getPreferredSize().height;
+        cursorPanel.setSize(width, height);
+        cursorPanel.setBounds
+            (
+             west + widthSignalNames, 
+             north + 10 + heightToolbar + 10, 
+             east - widthVerticalScrollbar - (west + widthSignalNames),
              height
              );
     }
@@ -247,9 +294,9 @@ public void layoutContainer(Container target)
         signalNames.setBounds
             (
              west,
-             north + 10 + heightToolbar + 10,
+             north + 10 + heightToolbar + 10 + heightCursorPanel,
              width, 
-             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10)
+             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
              );
     }
     if ((signalNamesScrollbar != null) && signalNamesScrollbar.isVisible())
@@ -273,9 +320,9 @@ public void layoutContainer(Container target)
         waves.setBounds
             (
              west + widthSignalNames, 
-             north + 10 + heightToolbar + 10, 
+             north + 10 + heightToolbar + 10 + heightCursorPanel, 
              east - widthVerticalScrollbar - (west + widthSignalNames),
-             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10)
+             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
              );                  
     }
     if ((scale != null) && scale.isVisible())
@@ -299,9 +346,9 @@ public void layoutContainer(Container target)
         verticalScrollbar.setBounds
             (
              east - width, 
-             north + 10 + heightToolbar + 10,
+             north + 10 + heightToolbar + 10 + heightCursorPanel,
              width, 
-             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10)
+             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
              );                                
     }
     if ((horizontalScrollbar != null) && horizontalScrollbar.isVisible())
@@ -319,4 +366,3 @@ public void layoutContainer(Container target)
     }
   }
 } 
-

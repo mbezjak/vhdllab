@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.simulations;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-
+import java.util.Map;
 import javax.swing.JPanel;
 
 
@@ -273,6 +273,16 @@ class SignalNamesPanel extends JPanel
 
 
     /**
+     * Vraca velicinu panela trenutno vidljivog na ekranu
+     */
+    public int getPanelHeight ()
+    {
+        return  getHeight();
+    }
+
+
+
+    /**
      * Crta komponentu
      */
     public void paintComponent (Graphics g)
@@ -336,6 +346,10 @@ class SignalNamesPanel extends JPanel
 
         /* crta granicu izmedu panela s imenima signala i valnim oblicima */
         g.setColor(new Color(86, 104, 176));
+        /* 
+         * getHeight() visina prikazana na ekranu, a ne preferred visina cijelog
+         * panela 
+         */
         g.drawLine(panelWidth - 3, 0, panelWidth - 3, getHeight()); 
         g.drawLine(panelWidth - 2, 0, panelWidth - 2, getHeight()); 
         g.drawLine(panelWidth - 1, 0, panelWidth - 1, getHeight()); 
