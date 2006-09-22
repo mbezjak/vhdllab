@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 
 
 
-
 /**
  * Klasa koja predstavlja panel po kojem se crtaju valni oblici
  *
@@ -16,19 +15,14 @@ import javax.swing.JPanel;
  */
 class WaveDrawBoard extends JPanel 
 {
-    /**
-	 * Serial version ID.
-	 */
-	private static final long serialVersionUID = 5042508573260343425L;
-
-	private final int WAVE_START_POINT_IN_PIXELS = 0;
+    private final int WAVE_START_POINT_IN_PIXELS = 0;
 
     /* prvi valni oblik pocinje po y-osi od 20. piksela */
     private final int FIRST_WAVE_YAXIS_START = 20;
 
     /* svaki spring (elasticni pretinac) vala iznosi 40 piksela */
-    private final int WAVE_SPRING_SIZE = 45;
-    private final Color BACKGROUND_COLOR = new Color (201, 211, 236);
+    private final int WAVE_SPRING_SIZE;
+    private final Color BACKGROUND_COLOR = new Color(201, 211, 236);
     
     /* vrijednosti signala */
     private String[][] signalValues;
@@ -46,12 +40,21 @@ class WaveDrawBoard extends JPanel
     /* panel se sastoji od polja valnih oblika */
     private WaveForm[] waveForm;
     private Scale scale;
+
+    /* sadrzi informaciju o trenutno ekspandiranim bit-vektorima */
+    private Map<Integer, Boolean> expandedSignalNames;
+
+    /* sadrzi pocetne tocke springova u pikselima */
+    private int[] springStartPoints;
     
     /* varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
     private boolean isClicked = false;
 
     /* sadrzi indeks trenutno oznacenog signala misem */
     private int index = -1;
+
+    /* pocetna tocka kursora u pikselima */
+    private int cursorStartPoint = 100;
 
 
     /**
@@ -60,7 +63,7 @@ class WaveDrawBoard extends JPanel
      * @param results rezultati simulacije, parsirani od GhdlResults klase
      * @param scale skala
      */
-    public WaveDrawBoard (GhdlResults results, Scale scale)
+    public WaveDrawBoard (GhdlResults results, Scale scale, int WAVE_SPRING_SIZE, int[] springStartPoints)
     {
         super();
         this.signalValues = results.getSignalValues();
@@ -69,6 +72,9 @@ class WaveDrawBoard extends JPanel
         this.durationsInPixels = scale.getDurationInPixels();
         this.waveEndPointInPixels = scale.getScaleEndPointInPixels();
         this.scale = scale;
+        this.expandedSignalNames = results.getExpandedSignalNames();
+        this.WAVE_SPRING_SIZE = WAVE_SPRING_SIZE;
+        this.springStartPoints = springStartPoints;
         waveForm = new WaveForm[signalValues.length];
         setBackground(BACKGROUND_COLOR);
         int i = 0;
@@ -187,6 +193,34 @@ class WaveDrawBoard extends JPanel
         return index;
     }
 
+
+    /**
+     * Postavlja novu vrijednost pocetka kursora
+     *
+     * @param cursorStartPoint nova vrijednost
+     */
+    public void setCursorStartPoint (int cursorStartPoint)
+    {
+        this.cursorStartPoint = cursorStartPoint;
+    }
+
+
+    /**
+     * Vraca trenutnu vrijednost pocetka kursora u pikselima
+     */
+    public int getCursorStartPoint ()
+    {
+        return cursorStartPoint;
+    }
+
+
+    /**
+     * Vraca trenutnu duljinu panela
+     */
+    public int getPanelWidth()
+    {
+        return getWidth();
+    }
 	
     
     /**
@@ -213,15 +247,24 @@ class WaveDrawBoard extends JPanel
             }
             x += 100;
         }
-
+        
+    
          /* ako treba oznaciti neki od signala */
         if (isClicked)
         {
             g.setColor(new Color(254, 217, 182));
-            g.fillRect(0, (index * WAVE_SPRING_SIZE) + 15 - offsetYAxis,
+            g.fillRect(0, (springStartPoints[index]) + 15 - offsetYAxis,
                     getPreferredSize().width, WAVE_SPRING_SIZE / 2 + 5);
         }
         g.setColor(new Color(51, 51, 51));
+        
+        /* crtanje kursora */
+        if (cursorStartPoint < 0)
+        {
+            cursorStartPoint = 0;
+        }
+        g.setColor(new Color(0, 0, 255));
+        g.drawLine(cursorStartPoint - offsetXAxis, 0, cursorStartPoint - offsetXAxis, this.getHeight());
 
         /* crtanje valova */
         g.setColor(new Color(51, 51, 51));
@@ -229,10 +272,28 @@ class WaveDrawBoard extends JPanel
         {
             waveForm[i].setSignalValues(signalValues[i]);
         }
-		for (WaveForm wave : waveForm)
+
+		for (int i = 0; i < waveForm.length; i++)
 		{
-			wave.drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
-			yAxis += WAVE_SPRING_SIZE;
+            if (expandedSignalNames.containsKey(i) && expandedSignalNames.get(i))
+            {
+                String[] expandedValues = new String[signalValues[i].length];
+                for (int j = 0; j < signalValues[i][0].length(); j++)
+                {
+                    for (int k = 0; k < signalValues[i].length; k++)
+                    {
+                        expandedValues[k] = String.valueOf(signalValues[i][k].charAt(j));
+                    }
+                    waveForm[i].setSignalValues(expandedValues);
+                    waveForm[i].drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
+			        yAxis += WAVE_SPRING_SIZE;
+                }
+            }
+            else
+            {
+                waveForm[i].drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
+			    yAxis += WAVE_SPRING_SIZE;
+            }
 		}
 	}
 }

@@ -24,6 +24,10 @@ class WaveForm
 
     /* nepoznata vrijednost */
     private final byte UNKNOWN = 5;
+
+    /* svi ostali (U, H, L, W) */
+    private final byte OTHERS = 6;
+
     private final int WAVE_START_POINT_IN_PIXELS = 0;
     
     private int screenSizeInPixels;
@@ -40,7 +44,8 @@ class WaveForm
                                           new Shape4(), new Shape5(), new Shape6(), 
                                           new Shape7(), new Shape8(), new Shape9(),
                                           new Shape10(), new Shape11(), new Shape12(),
-                                          new Shape13() };    
+                                          new Shape13(), new Shape14(), new Shape15(),
+                                          new Shape16()};    
 
 
     /**
@@ -122,6 +127,11 @@ class WaveForm
             else if (string.toUpperCase().equals("X"))
             {
                 presentGroup = UNKNOWN;
+            }
+            else if (string.toUpperCase().equals("U") || string.toUpperCase().equals("H") ||
+                    string.toUpperCase().equals("L") || string.toUpperCase().equals("W"))
+            {
+                presentGroup = OTHERS;
             }
             else
             {
@@ -207,6 +217,11 @@ class WaveForm
                         break;
                     case HIGH_IMPEDANCE :
                         shapes[10].draw(g, x1, y1, x2);
+                        shapes[10].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case OTHERS :
+                        shapes[14].draw(g, x1, y1, x2);
+                        shapes[14].putLabel(g, string, x1, y1, x2);
                         break;
                     case UNKNOWN : 
                         shapes[12].draw(g, x1, y1, x2);
@@ -228,6 +243,11 @@ class WaveForm
                         break;
                     case HIGH_IMPEDANCE : 
                         shapes[11].draw(g, x1, y1, x2);
+                        shapes[11].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case OTHERS :
+                        shapes[15].draw(g, x1, y1, x2);
+                        shapes[15].putLabel(g, string, x1, y1, x2);
                         break;
                     case UNKNOWN : 
                         shapes[12].draw(g, x1, y1, x2);
@@ -249,6 +269,11 @@ class WaveForm
                         break;
                     case HIGH_IMPEDANCE :
                         shapes[9].draw(g, x1, y1, x2);
+                        shapes[9].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case OTHERS :
+                        shapes[13].draw(g, x1, y1, x2);
+                        shapes[13].putLabel(g, string, x1, y1, x2);
                         break;
                     case UNKNOWN :
                         shapes[12].draw(g, x1, y1, x2);
@@ -271,6 +296,35 @@ class WaveForm
                     case HIGH_IMPEDANCE :
                         shapes[9].draw(g, x1, y1, x2);
                         break;
+                    case OTHERS :
+                        shapes[13].draw(g, x1, y1, x2);
+                        shapes[13].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case UNKNOWN :
+                        shapes[12].draw(g, x1, y1, x2);
+                        break;
+                }
+                break;
+            case OTHERS :
+                switch (presentGroup)
+                {
+                    case ZERO_SHAPES :
+                        shapes[2].draw(g, x1, y1, x2);
+                        break;
+                    case ONE_SHAPES :
+                        shapes[5].draw(g, x1, y1, x2);
+                        break;
+                    case HEXAGON_SHAPES :
+                        shapes[6].draw(g, x1, y1, x2);
+                        shapes[6].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case HIGH_IMPEDANCE :
+                        shapes[9].draw(g, x1, y1, x2);
+                        shapes[9].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case OTHERS :
+                        shapes[13].draw(g, x1, y1, x2);
+                        break;
                     case UNKNOWN :
                         shapes[12].draw(g, x1, y1, x2);
                         break;
@@ -291,6 +345,11 @@ class WaveForm
                         break;
                     case HIGH_IMPEDANCE :
                         shapes[9].draw(g, x1, y1, x2);
+                        shapes[9].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case OTHERS :
+                        shapes[13].draw(g, x1, y1, x2);
+                        shapes[13].putLabel(g, string, x1, y1, x2);
                         break;
                     case UNKNOWN : 
                         shapes[12].draw(g, x1, y1, x2);
@@ -312,6 +371,11 @@ class WaveForm
                         break;
                     case HIGH_IMPEDANCE :
                         shapes[9].draw(g, x1, y1, x2);
+                        shapes[9].putLabel(g, string, x1, y1, x2);
+                        break;
+                    case OTHERS :
+                        shapes[13].draw(g, x1, y1, x2);
+                        shapes[13].putLabel(g, string, x1, y1, x2);
                         break;
                     case UNKNOWN :
                         shapes[12].draw(g, x1, y1, x2);
