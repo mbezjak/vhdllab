@@ -1,5 +1,4 @@
-<!DOCTYPE project []>
-
+<?xml version="1.0"?>
 <project name="vhdllab" basedir="." default="package">
 
   <property name="app.name" value="vhdllab"/>
