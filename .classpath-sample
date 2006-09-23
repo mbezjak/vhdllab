@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/web/onClient"/>
-	<classpathentry kind="src" path="src/web/onServer"/>
-	<classpathentry kind="src" path="src/service"/>
-	<classpathentry kind="src" path="src/dao"/>
-	<classpathentry kind="src" path="src/tests/dao"/>
-	<classpathentry kind="src" path="src/tests/service"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/web/onClient"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/web/onServer"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/service"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/dao"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/dao"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/service"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/servlet-api.jar"/>
 	<classpathentry kind="lib" path="libs/plugin.jar"/>
