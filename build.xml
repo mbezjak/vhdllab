@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='utf-8'?>
 <project name="vhdllab" basedir="." default="package">
 
   <property name="app.name" value="vhdllab"/>
@@ -7,8 +7,12 @@
   <property name="lib.dir" value="libs"/>
   <property name="jlib.dir" value="jlibs"/>
   <property name="jlib-tests.dir" value="${jlib.dir}/tests"/>
-  <property name="doc.dir" value="doc"/>
-
+  <property name="doc.dir" value="docs"/>
+  
+  <property name="res.dir" value="resources"/>
+  <property name="gen.files.dir" value="gen-files"/>
+  <property name="hibernate.hbm.dir" value="${gen.files.dir}/hibernate"/>
+  
   <path id="src.class.path">
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>
@@ -52,6 +56,8 @@
     <mkdir dir="${build.dir}/tests/dao"/>
     <mkdir dir="${jlib.dir}"/>
     <mkdir dir="${jlib-tests.dir}"/>
+    <mkdir dir="${gen.files.dir}"/>
+    <mkdir dir="${hibernate.hbm.dir}"/>
  </target>
 
   <target name="clean">
@@ -60,6 +66,8 @@
       <fileset dir="${jlib.dir}"/>
       <fileset dir="${jlib-tests.dir}"/>
       <fileset dir="${doc.dir}"/>
+      <fileset dir="${gen.files.dir}"/>
+      <fileset dir="${hibernate.hbm.dir}"/>
     </delete>
   </target>
 
@@ -230,25 +238,63 @@
 	  <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 	</javadoc>
   </target>
-  
-  <target name="hibernate" depends="init" description="Generates Hibernate class descriptor files.">
-    <taskdef name="hibernatedoclet"
-      classname="xdoclet.modules.hibernate.HibernateDocletTask">
-      <classpath refid="src.class.path"/>
-    </taskdef>
 
-	<hibernatedoclet destdir="."
-		excludedtags="@version,@author,@todo,@see" force="false"
-	    mergedir="${generated.home}" verbose="true">
-		<fileset dir="src/dao/hr/fer/zemris/vhdllab/model">
-			<include name="**/*.java"/>
-		</fileset>
-		<hibernate version="2.0"/>
+  <target name="hibernate" depends="compile-dao" description="Generates Hibernate class descriptor files.">
+    <taskdef name="hibernatedoclet"
+      classname="org.xdoclet.ant.XDocletTask"
+      classpathref="src.class.path">
+  	</taskdef>
+
+	<hibernatedoclet>
+	  <fileset dir="src/dao/hr/fer/zemris/vhdllab/model">
+		<include name="**/*.java"/>
+	  </fileset>
+      <component
+		classname="org.xdoclet.plugin.hibernate.HibernateMappingPlugin"
+		destdir="${hibernate.hbm.dir}"
+		force="true">
+	  </component>
+		
+	  <component
+	  	classname="org.xdoclet.plugin.hibernate.HibernateConfigPlugin"
+	  	destdir="${gen.files.dir}"
+		dialect="net.sf.hibernate.dialect.MySQLDialect"
+	  	jdbcdriver="com.mysql.jdbc.Driver"
+	  	jdbcurl="jdbc:mysql://localhost:3306/vhdllab"
+	  	jdbcusername="root"
+	  	jdbcpassword=""
+	  	showsql="true"
+	  	hbm2ddlauto="true">
+      </component>
 	</hibernatedoclet>
+
+  	<copy todir="bin" includeemptydirs="no">
+     <fileset dir="${hibernate.hbm.dir}"/>
+ 	 <fileset dir="${res.dir}"/>
+    </copy>
+  		
+  	<taskdef name="shemaexport"
+      classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
+      classpathref="src.class.path">
+  	</taskdef>
+
+  	<shemaexport
+	  properties="${res.dir}/hibernate.properties"
+  	  quiet="no"
+  	  text="no"
+  	  drop="no"
+  	  delimiter=";"
+  	  output="${gen.files.dir}/schema-export.sql">
+  	  <fileset dir="${hibernate.hbm.dir}">
+ 		<include name="**/*.hbm.xml"/>
+  	  </fileset>
+	</shemaexport>
   </target>
 
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
-
+	
+  <target name="compile-tests" depends="compile-tests-dao,compile-tests-service,compile-tests-web-onServer,compile-tests-web-onClient"/>
+	
   <target name="package" depends="package-dao,package-service,package-web-onServer,package-web-onClient"/>
 
   <target name="package-tests" depends="package-tests-dao,package-tests-service,package-tests-web-onServer,package-tests-web-onClient"/>

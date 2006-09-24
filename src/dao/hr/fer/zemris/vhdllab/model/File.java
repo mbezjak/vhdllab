@@ -18,7 +18,7 @@ public class File implements Comparable {
 	public File() {}
 	
 	/**
-	 * @hibernate.id
+	 * @hibernate.id 
 	 * 	generator-class="native"
 	 *  column="FILE_ID"
 	 */
@@ -32,6 +32,8 @@ public class File implements Comparable {
 	/**
 	 * @hibernate.property
 	 * 	column="CONTENT"
+	 *  type = "text"
+	 *  length="10240"
 	 */
 	public String getContent() {
 		return content;
@@ -43,6 +45,7 @@ public class File implements Comparable {
 	/**
 	 * @hibernate.property
 	 * 	column="FILENAME"
+	 *  length="255"
 	 *  not-null="true"
 	 */
 	public String getFileName() {
@@ -55,6 +58,7 @@ public class File implements Comparable {
 	/**
 	 * @hibernate.property
 	 * 	column="FILETYPE"
+	 *  length="255"
 	 * 	not-null="true"
 	 */
 	public String getFileType() {

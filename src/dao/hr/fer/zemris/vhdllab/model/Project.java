@@ -42,6 +42,7 @@ public class Project {
 	/**
 	 * @hibernate.property
 	 *  column="PROJECTNAME"
+	 *  length="255"
 	 *  not-null="true"
 	 */
 	public String getProjectName() {
@@ -55,9 +56,10 @@ public class Project {
 	 * @hibernate.set
 	 * 	inverse="true"
 	 *  lazy="false"
-	 * @hibernate.collection-key
+	 * @hibernate.key
 	 *  column="PROJECT_ID"
-	 * @hibernate.collection-one-to-many
+	 * @hibernate.one-to-many
+	 *  class="hr.fer.zemris.vhdllab.model.File"
 	 */
 	public Set<File> getFiles() {
 		return files;
