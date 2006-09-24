@@ -273,12 +273,12 @@
  	 <fileset dir="${res.dir}"/>
     </copy>
   		
-  	<taskdef name="shemaexport"
+  	<taskdef name="schemaexport"
       classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
       classpathref="src.class.path">
   	</taskdef>
 
-  	<shemaexport
+  	<schemaexport
 	  properties="${res.dir}/hibernate.properties"
   	  quiet="no"
   	  text="no"
@@ -288,7 +288,7 @@
   	  <fileset dir="${hibernate.hbm.dir}">
  		<include name="**/*.hbm.xml"/>
   	  </fileset>
-	</shemaexport>
+	</schemaexport>
   </target>
 
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>

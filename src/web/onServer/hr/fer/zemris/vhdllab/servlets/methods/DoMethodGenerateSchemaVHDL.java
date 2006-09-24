@@ -9,11 +9,11 @@ import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 import java.util.Properties;
 
 /**
- * This class represents a registered method for "generate shema VHDL" request.
+ * This class represents a registered method for "generate schema VHDL" request.
  * 
  * @author Miro Bezjak
  */
-public class DoMethodGenerateShemaVHDL implements RegisteredMethod {
+public class DoMethodGenerateSchemaVHDL implements RegisteredMethod {
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.ajax.shared.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.service.VHDLLabManager)
@@ -29,7 +29,7 @@ public class DoMethodGenerateShemaVHDL implements RegisteredMethod {
 			return errorProperties(MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID!");
 		}
 		
-		// Generate shema VHDL
+		// Generate schema VHDL
 		String vhdl = null;
 		try {
 			File file = labman.loadFile(id);
@@ -37,11 +37,11 @@ public class DoMethodGenerateShemaVHDL implements RegisteredMethod {
 		} catch (ServiceException e) {
 			vhdl = null;
 		}
-		if(vhdl==null) return errorProperties(MethodConstants.SE_CAN_NOT_GENERATE_VHDL_SHEMA,"Can not generate shema VHDL!");
+		if(vhdl==null) return errorProperties(MethodConstants.SE_CAN_NOT_GENERATE_VHDL_SCHEMA,"Can not generate schema VHDL!");
 
 		// Prepare response
 		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_GENERATE_SHEMA_VHDL);
+		resProp.setProperty(MethodConstants.PROP_METHOD,MethodConstants.MTD_GENERATE_SCHEMA_VHDL);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
 		resProp.setProperty(MethodConstants.PROP_FILE_NAME,vhdl);
 		return resProp;

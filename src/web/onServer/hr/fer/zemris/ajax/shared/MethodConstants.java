@@ -188,9 +188,9 @@ public class MethodConstants {
 	 */
 	public static final String SE_CAN_NOT_GENERATE_VHDL_TESTBENCH = "504";
 	/**
-	 * A status error value for status property when can not generate shema VHDL.
+	 * A status error value for status property when can not generate schema VHDL.
 	 */
-	public static final String SE_CAN_NOT_GENERATE_VHDL_SHEMA = "505";
+	public static final String SE_CAN_NOT_GENERATE_VHDL_SCHEMA = "505";
 	
 	
 	
@@ -298,9 +298,9 @@ public class MethodConstants {
 	 */
 	public static final String PROP_GENERATE_VHDL_TESTBENCH = "generate.vhdl.testbench";
 	/**
-	 * A value for generate shema VHDL property.
+	 * A value for generate schema VHDL property.
 	 */
-	public static final String PROP_GENERATE_VHDL_SHEMA = "generate.vhdl.shema";
+	public static final String PROP_GENERATE_VHDL_SCHEMA = "generate.vhdl.schema";
 	
 	
 	
@@ -1031,7 +1031,7 @@ public class MethodConstants {
 	 */
 	public static final String MTD_GENERATE_TESTBENCH_VHDL = "generate.vhdl.testbench";
 	/**
-	 * A "generate shema VHDL" method. Expected parametars (written as a property) are
+	 * A "generate schema VHDL" method. Expected parametars (written as a property) are
 	 * <ul>
 	 * <li>{@link #PROP_FILE_ID}
 	 * </ul>
@@ -1041,7 +1041,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_GENERATE_VHDL_SHEMA} - containing generated shema VHDL
+	 * <li>{@link #PROP_GENERATE_VHDL_SCHEMA} - containing generated schema VHDL
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -1056,10 +1056,10 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
-	 * <li>{@link #SE_CAN_NOT_GENERATE_VHDL_SHEMA} - if can not generate shema VHDL for file with {@link #PROP_FILE_ID}
+	 * <li>{@link #SE_CAN_NOT_GENERATE_VHDL_SCHEMA} - if can not generate schema VHDL for file with {@link #PROP_FILE_ID}
 	 * </ul>
 	 */
-	public static final String MTD_GENERATE_SHEMA_VHDL = "generate.vhdl.shema";
+	public static final String MTD_GENERATE_SCHEMA_VHDL = "generate.vhdl.schema";
 	
 	/**
 	 * Dont let anyone instantiate this class.
