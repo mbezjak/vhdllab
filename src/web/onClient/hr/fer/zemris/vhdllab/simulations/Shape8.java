@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.simulations;
 
 import java.awt.Graphics;
+import java.awt.Color;
 
 
 /**
@@ -11,8 +12,20 @@ import java.awt.Graphics;
  */
 class Shape8 implements Shape
 {
+    private Color color = new Color(51, 51, 51);
+
+
+    /**
+     * Crta valni oblik
+     *
+     * @param g Graphics
+     * @param x1 pocetna tocka po X-osi od koje pocinje crtanje
+     * @param y1 pocetna tocka po Y-osi od koje pocinje crtanje
+     * @param x2 zarsna tocka po X-osi do koje traje crtanje
+     */
 	public void draw (Graphics g, int x1, int y1, int x2)
 	{
+        g.setColor(color);
         if (x2 - 3 > x1 + 3)
         {
             g.drawLine(x1, y1 + 10, x1 + 3, y1);
@@ -40,6 +53,15 @@ class Shape8 implements Shape
 	}
 
 
+    /**
+     * Postavlja labelu unutar valnog oblika
+     *
+     * @param g Graphics
+     * @param string labela koju treba ispisati
+     * @param x1 pocetna tocka po X-osi od koje pocinje crtanje
+     * @param y1 pocetna tocka po Y-osi od koje pocinje crtanje
+     * @param x2 zarsna tocka po X-osi do koje traje crtanje
+     */
 	public void putLabel (Graphics g, String string, int x1, int y1, int x2)
 	{
 		int length = x2 - x1;
@@ -52,4 +74,24 @@ class Shape8 implements Shape
             g.drawString(string, startPoint, y1 + 14);
         }
 	}
+
+
+    /**
+     * Postavlja boju valnog oblika
+     *
+     * @param color zeljena boja
+     */
+    public void setColor (Color color)
+    {
+        this.color = color;
+    }
+
+
+    /**
+     * Vraca trenutnu boju valnog oblika
+     */
+    public Color getColor ()
+    {
+        return color;
+    }
 }

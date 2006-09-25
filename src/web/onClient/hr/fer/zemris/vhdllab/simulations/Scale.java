@@ -1,10 +1,8 @@
 package hr.fer.zemris.vhdllab.simulations;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
-
 import javax.swing.JPanel;
 
 
@@ -17,71 +15,114 @@ import javax.swing.JPanel;
  */
 class Scale extends JPanel
 {
-    /**
-	 * Serial version ID.
-	 */
-	private static final long serialVersionUID = 3975212454261824634L;
-	private final byte FEMTO_SECONDS = 1; 
+    /** 
+     * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
+     * femto sekundama 
+     */
+    private final byte FEMTO_SECONDS = 1; 
+    
+    /** 
+     * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
+     * pico sekundama 
+     */    
     private final double PICO_SECONDS = 1e-3; 
+    
+    /** 
+     * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
+     * nano sekundama 
+     */    
     private final double NANO_SECONDS = 1e-6; 
+    
+    /** 
+     * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
+     * micro sekundama 
+     */    
     private final double MICRO_SECONDS = 1e-9; 
+    
+    /** 
+     * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
+     * mili sekundama 
+     */    
     private final double MILI_SECONDS = 1e-12;
+    
+    /** 
+     * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
+     * sekundama 
+     */    
     private final double SECONDS = 1e-15;
 
-    /* razmaka izmedu dvije tocke na skali je uvijek 100 piksela */
+    /** Razmak izmedu dvije tocke na skali je uvijek 100 piksela */
     private final int SCALE_STEP_IN_PIXELS = 100;
+
+    /** Visina skale */
     private final int SCALE_HEIGHT = 30;
         
-    /* piksel na kojem pocinje iscrtavanje skale */
+    /** Piksel na kojem pocinje iscrtavanje skale */
     private int SCALE_START_POINT_IN_PIXELS = 0;;
 
-    /* svaki vrijednost na skali pocinje od 19. piksela */
+    /** Svaki vrijednost na skali pocinje od 19. piksela */
     private final int SCALE_VALUE_YAXIS = 19;
 
-    /* os pocinje od 4. piksela */
+    /** Os pocinje od 4. piksela */
     private final int SCALE_MAIN_LINE_YAXIS = 4;
+    
+    /** Svaka crtica pocinje od 2. piksela */
     private final int SCALE_TAG_LINE_YSTART = 2;
+    
+    /** Svaka crtica zavrsava na 6. pikselu */
     private final int SCALE_TAG_LINE_YEND = 6;
-    private final Color BACKGROUND_COLOR = new Color(254, 217, 182);
+    
+    /** Tocke u kojima nastaju promjene vrijednosti signala */
     private long[] transitionPoints;
 
-    /* GHDL simulator generira sve u femtosekundama */
+    /** GHDL simulator generira sve u femtosekundama */
     private double[] durationsInFemtoSeconds;
 
-    /* trajanje u pikselima koje ide direktno za crtanje valnih oblika */
+    /** Trajanje u pikselima koje ide direktno za crtanje valnih oblika */
     private int[] durationsInPixels; 
 
-    /* povecava/smanjuje skalu za neku vrijednost */
+    /** Povecava/smanjuje skalu za neku vrijednost */
     private double scaleFactor = 1f;
+    
+    /** Ime mjerne jedinice */
     private String measureUnitName;
+    
+    /** Mjerna jedinica */
     private double measureUnit;
 
-    /* u pikselima - odreduje tocno odredeni piksel na kojem skala zavrsava */
+    /** U pikselima - odreduje tocno odredeni piksel na kojem skala zavrsava */
     private int scaleEndPointInPixels;
 
-    /* korak skale u vremenu, ovisno o scaleFactor */
+    /** Korak skale u vremenu, ovisno o scaleFactor */
     private double scaleStepInTime = 100;
 
-    /* vrijednost koja se kumulativno povecava, ovisno o scaleStepInTime */
+    /** Vrijednost koja se kumulativno povecava, ovisno o scaleStepInTime */
     private double scaleValue;
 
-    /* 
-     * ovisno o trenutnom offsetu scrollbara. Ako je offset npr. 1350, onda se
+    /** 
+     * Ovisno o trenutnom offsetu scrollbara. Ako je offset npr. 1350, onda se
      * interno preracuna u 1300 i od 1300 se crta skala
      */
     private int screenStartPointInPixels;
 
-    /* 
-     * podrazumijevana velicina ekrana - skale ne iscrtava automatski sve
+    /** 
+     * Podrazumijevana velicina ekrana - skale ne iscrtava automatski sve
      * vrijednost vec vrsi proracuna na temelju offseta i iscrtava samo trenutnu
      * velicinu komponente
      */
     private int screenSizeInPixels;   
 
-    /* screenStartPointInPixels + trenutna duljina komponente */
+    /** ScreenStartPointInPixels + trenutna duljina komponente */
     private int screenEndPointInPixels;
+
+    /** Sve podrzane mjerne jedinice **/
     private final String[] units = {"fs", "ps", "ns", "us", "ms", "s", "ks", "ms"};
+
+    /** Offset trenutni */
     private int offsetXAxis;
+
+    /** Boje */
+    private ThemeColor themeColor;
 
 
     /**
@@ -89,9 +130,10 @@ class Scale extends JPanel
      *
      * @param results rezultati koje je parsirao GhldResults
      */
-    public Scale (GhdlResults results)
+    public Scale (GhdlResults results, ThemeColor themeColor)
     {
         this.transitionPoints = results.getTransitionPoints();
+        this.themeColor = themeColor;
         durationsInFemtoSeconds = new double[transitionPoints.length - 1];
         durationsInPixels = new int[durationsInFemtoSeconds.length];
         for (int i = 0; i < durationsInFemtoSeconds.length; i++)
@@ -103,7 +145,6 @@ class Scale extends JPanel
             /* crta pocetne valne oblike sa scaleFaktorom 1 */
             drawDefaultWave();
         }
-        setBackground(BACKGROUND_COLOR);
     }
 
 
@@ -212,6 +253,8 @@ class Scale extends JPanel
                 
     /**
      * Setter postavlja scaleFactor
+     *
+     * @param scaleFactor Zeljeni faktor
      */
     public void setScaleFactor (float scaleFactor)
     {
@@ -220,7 +263,7 @@ class Scale extends JPanel
 
 
     /**
-     * Getter
+     * Vraca trenutni scale faktor
      */
     public double getScaleFactor ()
     {
@@ -239,6 +282,8 @@ class Scale extends JPanel
 
     /**
      * Setter koji postavlja horizontalni offset u ovisnosti i scrollbaru
+     *
+     * @param offset Zeljeni offset
      */
 	public void setHorizontalOffset (int offset) 
     {
@@ -247,7 +292,7 @@ class Scale extends JPanel
 
 
     /**
-     * Getter 
+     * Trenutni horizontalni offset
      */
     public int getHorizontalOffset ()
     {
@@ -276,7 +321,7 @@ class Scale extends JPanel
 
 
     /**
-     * Getter
+     * Preferirane dimenzije
      */
     public Dimension getPreferredSize ()
     { 
@@ -290,6 +335,8 @@ class Scale extends JPanel
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
+        setBackground(themeColor.getScale());
+        g.setColor(themeColor.getLetters());
 
         /* bilo koja vrijednost postavlja se na visekratnik broja 100 */
         screenStartPointInPixels = offsetXAxis - offsetXAxis % 100;
@@ -397,11 +444,9 @@ class Scale extends JPanel
 
         /* na kraju dodaj endPoint  Ovo volje izvesti */
         scaleValue = Math.round(scaleValue * 1e13d) / 1e13d;
-        g.drawLine(endPointInPixels - offsetXAxis, SCALE_TAG_LINE_YSTART, 
-                endPointInPixels - offsetXAxis, SCALE_TAG_LINE_YEND);
+        g.drawLine(endPointInPixels - offsetXAxis, SCALE_TAG_LINE_YSTART, endPointInPixels - offsetXAxis, SCALE_TAG_LINE_YEND);
         String string = String.valueOf((Math.round(scaleValue * 1000000d) / 1000000.0d));
         g.drawString(string + tempMeasureUnitName, endPointInPixels - offsetXAxis -
                         (string.length() * 6 + 14), SCALE_VALUE_YAXIS);
     }
 }
-

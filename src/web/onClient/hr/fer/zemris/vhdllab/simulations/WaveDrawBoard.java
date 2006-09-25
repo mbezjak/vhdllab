@@ -1,12 +1,9 @@
 package hr.fer.zemris.vhdllab.simulations;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Map;
 import javax.swing.JPanel;
-
-
+import java.util.Map;
 
 /**
  * Klasa koja predstavlja panel po kojem se crtaju valni oblici
@@ -15,46 +12,64 @@ import javax.swing.JPanel;
  */
 class WaveDrawBoard extends JPanel 
 {
-    private final int WAVE_START_POINT_IN_PIXELS = 0;
-
-    /* prvi valni oblik pocinje po y-osi od 20. piksela */
+    /** Prvi valni oblik pocinje po y-osi od 20. piksela */
     private final int FIRST_WAVE_YAXIS_START = 20;
 
-    /* svaki spring (elasticni pretinac) vala iznosi 40 piksela */
+    /** Svaki spring (elasticni pretinac) vala iznosi 40 piksela */
     private final int WAVE_SPRING_SIZE;
-    private final Color BACKGROUND_COLOR = new Color(201, 211, 236);
     
-    /* vrijednosti signala */
+    /** Vrijednosti signala */
     private String[][] signalValues;
-    /* trajanje u pikselima svake od vrijednosti u signalValues */
+    
+    /** Trajanje u pikselima svake od vrijednosti u signalValues */
     private int[] durationsInPixels;
 
-    /* sljedeca vrijednost vala na y-osi */
+    /** Svaki valni oblik pocinje od yAxis tocke */
     private int yAxis;
+    
+    /** Offset po X-osi */
     private int offsetXAxis;
+    
+    /** Offset po Y-osi */
     private int offsetYAxis;
 
-    /* kraja vala u pikselima, dobiven iz getScaleEndPointInPixels */
+    /** Kraj vala u pikselima */
     private int waveEndPointInPixels;
 
-    /* panel se sastoji od polja valnih oblika */
+    /** Panel se sastoji od polja valnih oblika */
     private WaveForm[] waveForm;
+    
+    /** Skala */
     private Scale scale;
 
-    /* sadrzi informaciju o trenutno ekspandiranim bit-vektorima */
+    /** Sadrzi informaciju o trenutno ekspandiranim bit-vektorima */
     private Map<Integer, Boolean> expandedSignalNames;
 
-    /* sadrzi pocetne tocke springova u pikselima */
+    /** Sadrzi pocetne tocke springova u pikselima */
     private int[] springStartPoints;
     
-    /* varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
+    /** Varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
     private boolean isClicked = false;
 
-    /* sadrzi indeks trenutno oznacenog signala misem */
+    /** Sadrzi indeks trenutno oznacenog signala misem */
     private int index = -1;
 
-    /* pocetna tocka kursora u pikselima */
+    /** Pocetna tocka kursora u pikselima */
     private int cursorStartPoint = 100;
+
+    /** Boje */
+    private ThemeColor themeColor;
+    
+    /** Svi valni oblici */
+    private Shape[] shapes = new Shape[] {new Shape1(), new Shape2(), new Shape3(),
+                                          new Shape4(), new Shape5(), new Shape6(), 
+                                          new Shape7(), new Shape8(), new Shape9(),
+                                          new Shape10(), new Shape11(), new Shape12(),
+                                          new Shape13(), new Shape14(), new Shape15(),
+                                          new Shape16()};
+    /** SerialVersionUID */ 
+    private static final long serialVersionUID = 3;
+
 
 
     /**
@@ -63,7 +78,7 @@ class WaveDrawBoard extends JPanel
      * @param results rezultati simulacije, parsirani od GhdlResults klase
      * @param scale skala
      */
-    public WaveDrawBoard (GhdlResults results, Scale scale, int WAVE_SPRING_SIZE, int[] springStartPoints)
+    public WaveDrawBoard (GhdlResults results, Scale scale, int WAVE_SPRING_SIZE, int[] springStartPoints, ThemeColor themeColor)
     {
         super();
         this.signalValues = results.getSignalValues();
@@ -75,8 +90,8 @@ class WaveDrawBoard extends JPanel
         this.expandedSignalNames = results.getExpandedSignalNames();
         this.WAVE_SPRING_SIZE = WAVE_SPRING_SIZE;
         this.springStartPoints = springStartPoints;
+        this.themeColor = themeColor;
         waveForm = new WaveForm[signalValues.length];
-        setBackground(BACKGROUND_COLOR);
         int i = 0;
 
         /* 
@@ -85,7 +100,7 @@ class WaveDrawBoard extends JPanel
          */
         for (String[] polje : signalValues)
         {
-            waveForm[i++] = new WaveForm(polje, durationsInPixels);
+            waveForm[i++] = new WaveForm(polje, durationsInPixels, shapes);
         }
     }
 
@@ -101,7 +116,9 @@ class WaveDrawBoard extends JPanel
 
 	
     /**
-     * Setter
+     * Postavlja horizontalni offset
+     *
+     * @param offset Nova vrijednost
      */
     public void setHorizontalOffset (int offset) 
     {
@@ -110,7 +127,7 @@ class WaveDrawBoard extends JPanel
 
 
     /**
-     * Getter
+     * Vraca horizontalni offset
      */
     public int getHorizontalOffset ()
     {
@@ -119,7 +136,9 @@ class WaveDrawBoard extends JPanel
     
 
     /**
-     * Setter
+     * Postavlja vertiklani offset
+     *
+     * @param offset Nova vrijednost
      */
     public void setVerticalOffset (int offset) 
     {
@@ -128,7 +147,9 @@ class WaveDrawBoard extends JPanel
 
 
     /**
-     * Setter koristi se pri event-hendlanju
+     * Postavlja nove vrijednosti trajanja 
+     *
+     * @param durationsInPixels Trajanje po vrijednostima signala
      */
     public void setDurationsInPixels (int[] durationsInPixels)
     {
@@ -137,9 +158,11 @@ class WaveDrawBoard extends JPanel
 
 
     /**
-     * Setter
+     * Postavlja krajnju tocka valnih oblika
+     *
+     * @param waveEndPointInPixels Nova vrijednost
      */
-    public void setWaveEndPointInPixels ()
+    public void setWaveEndPointInPixels (int waveEndPointInPixels)
     {
         this.waveEndPointInPixels = waveEndPointInPixels;
     }
@@ -147,6 +170,8 @@ class WaveDrawBoard extends JPanel
 
     /**
      * Metoda koja postavlja novi set vrijednosti signala 
+     *
+     * @param signalValues Nove vrijednosti po signalima
      */
     public void setSignalValues (String[][] signalValues)
     {
@@ -221,20 +246,32 @@ class WaveDrawBoard extends JPanel
     {
         return getWidth();
     }
+
+    
+    /**
+     * Metoda vraca polje valnih oblika
+     */
+    public Shape[] getShapes ()
+    {
+        return shapes;
+    }
 	
     
     /**
      * Crtanje valnih oblika 
+     *
+     * @param g Graphics objekt
      */
 	public void paintComponent (Graphics g) 
 	{
 		super.paintComponent(g);
+        setBackground(themeColor.getWaves());
+
         waveEndPointInPixels = scale.getScaleEndPointInPixels();
 		yAxis = FIRST_WAVE_YAXIS_START - offsetYAxis;
 
         /* crtanje isprekidanih crta */
-        //g.setColor(new Color(255, 241, 255));
-        g.setColor(new Color(163, 179, 225));
+        g.setColor(themeColor.getWavesNet());
         int x = 100 - offsetXAxis % 100;
         int y = 0;
         while (x < this.getWidth() + 100)
@@ -252,22 +289,22 @@ class WaveDrawBoard extends JPanel
          /* ako treba oznaciti neki od signala */
         if (isClicked)
         {
-            g.setColor(new Color(254, 217, 182));
+            g.setColor(themeColor.getApplet());
             g.fillRect(0, (springStartPoints[index]) + 15 - offsetYAxis,
                     getPreferredSize().width, WAVE_SPRING_SIZE / 2 + 5);
         }
-        g.setColor(new Color(51, 51, 51));
+        g.setColor(themeColor.getLetters());
         
         /* crtanje kursora */
         if (cursorStartPoint < 0)
         {
             cursorStartPoint = 0;
         }
-        g.setColor(new Color(0, 0, 255));
+        g.setColor(themeColor.getCursor());
         g.drawLine(cursorStartPoint - offsetXAxis, 0, cursorStartPoint - offsetXAxis, this.getHeight());
 
         /* crtanje valova */
-        g.setColor(new Color(51, 51, 51));
+        g.setColor(themeColor.getLetters());
         for (int i = 0; i < waveForm.length; i++)
         {
             waveForm[i].setSignalValues(signalValues[i]);

@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
+
 /**
  * Klasa sluzi za parsiranje stringa koji sadrzi rezultate simulacije prikazane
  * u jednom stringu, internog formata.  Parsirane rezultate direktno koristi
@@ -13,34 +14,49 @@ import java.util.LinkedHashMap;
  */
 public class GhdlResults
 {
+    /** Glavni limiter, razdvaja imena signala, vrijednosti i maxSignalName */
     private final String HEAD_LIMITER = "%%%";
+    
+    /** Razdvaja svako ime signala posebno, vrijednosti signala itd. */
     private final String LIMITER = "###";
+    
+    /* Razdvaja vrijednosti po signalima */
     private final String VALUE_LIMITER = "&&&";
+    
+    /** Rezultat simulacije predstavljen kao string */
     private String resultInString;
+
+    /** Sadrzi razdvojene signale */
     private String[] splitResults;
     
-    /* polje koji sadrzi imena signala nakon parsiranja */
+    /** Polje koji sadrzi imena signala nakon parsiranja */
     private String[] signalNames;
+
+    /** Sadrzavi default imena signala */
     private String[] defaultSignalNames;
 
-    /* svaki redak predstavlja sve vrijednosti pojedinog signala */
+    /** Svaki redak predstavlja sve vrijednosti pojedinog signala */
     private String[][] signalValues;
+    
+    /** Defaultne vrijednosti */
     private String[][] defaultSignalValues;
 
-    /* sadrzi tocke u kojima se dogada promjena vrijednosti signala */
+    /** Sadrzi tocke u kojima se dogada promjena vrijednosti signala */
     private String[] transitionPointsInStrings;
+    
+    /** Tocke u kojima se dogada promjena */
     private long[] transitionPoints;
 
-    /* broj znakova najduljeg imena signala */
+    /** Broj znakova najduljeg imena signala */
     private int maximumSignalNameLength;
 
-    /* sadrzi informaciju jesu li bit-vectori prosireni */
+    /** Sadrzi informaciju jesu li bit-vectori prosireni */
     private Map<Integer, Boolean> expandedSignalNames = new LinkedHashMap<Integer, Boolean>();
 
-    /* privremeni string kod mijenjanja poretka signala */
+    /** Privremeni string kod mijenjanja poretka signala */
     String tempString;
 
-    /* privremeno polje stringova kod mijenjanja poretka signala */
+    /** Privremeno polje stringova kod mijenjanja poretka signala */
     String[] tempArrayString;
 
 

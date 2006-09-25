@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.simulations;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import java.awt.Dimension;
-import java.awt.Color;
 
 
 /**
@@ -13,24 +12,30 @@ import java.awt.Color;
  */
 class CursorPanel extends JPanel
 {
-    //private final Color BACKGROUND_COLOR = new Color(201, 211, 236);
-    private final Color BACKGROUND_COLOR = new Color(255, 255, 255);
+    /** Zavrsna tocka panela  */
     private int panelEndPoint;
      
-    /* pocetna tocka kursora u pikselima */
+    /** Pocetna tocka kursora u pikselima */
     private int cursorStartPoint = 100;
 
-    /* offset horizntalnog scrollbara */
+    /** Offset horizntalnog scrollbara */
     private int offset;
 
-    /* vrijednost kursora u stringu */
+    /** Vrijednost kursora u stringu */
     private String string;
 
-    /* vrijednost kursora */
+    /** Vrijednost kursora */
     private double value = 100;;
 
-    /* mjerna jedinica */
+    /** Mjerna jedinica */
     private String measureUnitName;
+
+    /** Boje */
+    private ThemeColor themeColor;
+
+    /** SerialVersionUID */ 
+    private static final long serialVersionUID = 5;
+
 
 
     /**
@@ -40,13 +45,13 @@ class CursorPanel extends JPanel
      * @param offset trenutni pomak
      * @param measureUnitName mjerna jedinica
      */
-    public CursorPanel (int panelEndPoint, int offset, String measureUnitName)
+    public CursorPanel (int panelEndPoint, int offset, String measureUnitName, ThemeColor themeColor)
     {
         this.panelEndPoint = panelEndPoint;
         this.offset = offset;
         this.measureUnitName = measureUnitName;
-        string = "100.0" + measureUnitName;
-        setBackground(BACKGROUND_COLOR);
+        this.themeColor = themeColor;
+        string = "100.0" + this.measureUnitName;
     }
 
 
@@ -125,16 +130,16 @@ class CursorPanel extends JPanel
     public void paintComponent (Graphics g) 
 	{
         super.paintComponent(g);
+        setBackground(themeColor.getCursorPanel());
+        g.setColor(themeColor.getLetters());
+
         /* crtanje kursora */
         if (cursorStartPoint < 0)
         {
             cursorStartPoint = 0;
         }
         g.drawString(string, cursorStartPoint - offset - (string.length() * 6) / 2, 10);
-        g.setColor(new Color(254, 217, 182));
+        g.setColor(themeColor.getApplet());
         g.fillRect(cursorStartPoint - offset - 4, 11, 9, 9);
     }
 }
-
-
-

@@ -10,42 +10,47 @@ import java.awt.Graphics;
  */
 class WaveForm
 {
-    /* svi oblici koji su jednaki nuli pripadaju grupi nula */
+    /** Svi oblici koji su jednaki nuli pripadaju grupi nula */
     private final byte ZERO_SHAPES = 1;
 
-    /* svi oblici u jedinici */
+    /** Svi oblici koji su jedinic pripadaju grupi jedinica */
 	private final byte ONE_SHAPES = 2;
 
-    /* svi oblici koji predstavljaju vektor ili su neinicijalizirani */
+    /** Svi oblici koji predstavljaju vektor ili su neinicijalizirani */
 	private final byte HEXAGON_SHAPES = 3;
 
-    /* visoka impendancija */
+    /** Valni oblik koji ima visoku impedanciju */
     private final byte HIGH_IMPEDANCE = 4;
 
-    /* nepoznata vrijednost */
+    /** Nepoznata vrijednost */
     private final byte UNKNOWN = 5;
 
-    /* svi ostali (U, H, L, W) */
+    /** Valni oblici U, H, L, W */
     private final byte OTHERS = 6;
 
+    /** Trajanje u pikselima */
+    private int[] durationsInPixels;
+
+    /** Pocetna tocka crtanja valnog oblika */
     private final int WAVE_START_POINT_IN_PIXELS = 0;
     
+    /** Duljina ekrana u pikselima */
     private int screenSizeInPixels;
 
-    /* vrijednosti valnih oblika */
+    /** Vrijednosti valnih oblika */
 	private String[] values;
-	private int[] durationsInPixels; 
+	
+    /** 
+     * Tocka od koje pocinje iscrtavanje.  Valni oblici se ne iscrtavaju
+     * kompletno vec u ovisnosti u trenutnom offsetu
+     */
     private int screenStartPointInPixels;
+    
+    /** Iscrtavanje zavrsava ovisno u velicini ekrana, tj. o rezoluciji */
     private int screenEndPointInPixels;
-    private int waveEndPointInPixels;
-
-    /* svi valni oblici */
-    private Shape[] shapes = new Shape[] {new Shape1(), new Shape2(), new Shape3(),
-                                          new Shape4(), new Shape5(), new Shape6(), 
-                                          new Shape7(), new Shape8(), new Shape9(),
-                                          new Shape10(), new Shape11(), new Shape12(),
-                                          new Shape13(), new Shape14(), new Shape15(),
-                                          new Shape16()};    
+    
+    /** Svi valni oblici */
+    private Shape[] shapes;    
 
 
     /**
@@ -54,15 +59,16 @@ class WaveForm
      * @param values polje vrijednosti za svaki signal
      * @param durationsInPixels vrijeme trajanja u pikselima
      */
-	public WaveForm (String[] values, int[] durationsInPixels)
+	public WaveForm (String[] values, int[] durationsInPixels, Shape[] shapes)
 	{
 		this.values = values;
         this.durationsInPixels = durationsInPixels;
+        this.shapes = shapes;
 	}
 	
 	
     /**
-     * Metoda koji odlucuje koji dio valnih oblika ce se iscrtati u ovisnosti u
+     * Metoda koja odlucuje koji dio valnih oblika ce se iscrtati u ovisnosti u
      * screenEndPointInPixels
      * 
      * @param g Graphics
@@ -74,8 +80,6 @@ class WaveForm
 	public void drawWave (Graphics g, int screenWidth, int yAxis, int offsetXAxis, int[] durationsInPixels,
                           int waveEndPointInPixels) 
 	{
-        this.durationsInPixels = durationsInPixels;
-
         /* 
          * postoji sadasnja i sljedeca grupa, jer postoji vise vrsta oblika,
          * npr. jedinica koja slijedi iza nule drugacije je od jednice koja
@@ -83,6 +87,7 @@ class WaveForm
          */
 		byte previousGroup = 0;
 		byte presentGroup = 0;
+        this.durationsInPixels = durationsInPixels;
         screenStartPointInPixels = offsetXAxis;
         screenSizeInPixels = screenWidth + 200;
         screenEndPointInPixels = screenStartPointInPixels + screenSizeInPixels;
@@ -105,8 +110,8 @@ class WaveForm
         /* za svaku pojedinu vrijednost signala */
 		for (String string : values)
         {
-			x2 = x1 + durationsInPixels[i]; 
-            if (durationsInPixels[i] == 0)
+			x2 = x1 + this.durationsInPixels[i]; 
+            if (this.durationsInPixels[i] == 0)
             {
                 i++;
                 continue;
@@ -386,7 +391,9 @@ class WaveForm
 
 
     /**
-     * Metoda postavlja nove vrijednosti 
+     * Metoda postavlja nove vrijednosti
+     *
+     * @param values Vrijednosti po signalima
      */
     public void setSignalValues (String[] values)
     {

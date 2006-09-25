@@ -1,11 +1,9 @@
 package hr.fer.zemris.vhdllab.simulations;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Map;
 import javax.swing.JPanel;
-
 
 
 /**
@@ -15,45 +13,59 @@ import javax.swing.JPanel;
  */
 class SignalNamesPanel extends JPanel
 {
-    private final Color BACKGROUND_COLOR = new Color(141, 176, 221);
-   
-    /* prvo ime signala pocinje od 30-tog piksela */
+    /** Prvo ime signala pocinje od 30-tog piksela */
     private final int YAXIS_START_POINT = 30;
 
-    /* svako se ime nalazi u springu (elasticnom pretincu) koji je visine 40 piksela */
+    /** Svako se ime nalazi u springu (elasticnom pretincu) koji je visine 40 piksela */
 	private final int SIGNAL_NAME_SPRING_HEIGHT = 45;
 
-    /* maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
+    /** Maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
 	private final int PANEL_MAX_WIDTH = 450;
 
-    /* polje Stringova koje sadrzi sva imena signala */
+    /** Polje Stringova koje sadrzi sva imena signala */
     private String[] signalNames;
 
-    /* 
-     * polje koje sadrzi pocetne tocke springova po Y-osi.  U ovisnoti o
+    /** 
+     * Polje koje sadrzi pocetne tocke springova po Y-osi.  U ovisnoti o
      * ekspandiranosti bit-vektora pocetne se tocke mogu mijenjati
      */
     private int[] springStartPoints;
 
-    /* polozaj trenutnog springa */
+    /** Polozaj trenutnog springa */
     private int yAxis;
+    
+    /** Trenutni offset po Y-osi */
     private int offsetYAxis;
+
+    /** Trenutni offset po X-osi */
     private int offsetXAxis;
+
+    /** Makimalna duljina imena signala */
     private int maximumSignalNameLength;
+    
+    /** Sirina panela s imenima signala */
     private int panelWidth;
 
-    /* informacija o pokazivanju strelice za pomicanje sirine panela */
+    /** Informacija o pokazivanju strelice za pomicanje sirine panela */
     private boolean isArrowVisible;
+    
+    /** Polozaj strelice po Y-osi */
     private int yArrow;
 
-    /* sadrzi informaciju o expanded bit-vektorima */
+    /** Sadrzi informaciju o expanded bit-vektorima */
     private Map<Integer, Boolean> expandedSignalNames;
 
-    /* varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
+    /** Varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
     private boolean isClicked = false;
 
-    /* sadrzi indeks trenutno oznacenog signala misem */
+    /** Sadrzi indeks trenutno oznacenog signala misem */
     private int index = -1;
+
+    /** Boje */
+    private ThemeColor themeColor;
+
+    /** SerialVersionUID */ 
+    private static final long serialVersionUID = 1;
 
 
     /**
@@ -61,13 +73,13 @@ class SignalNamesPanel extends JPanel
      *
      * @param results rezultati dobiveni HTTP-om parsirani od GhdlResults klase 
      */
-    public SignalNamesPanel (GhdlResults results)
+    public SignalNamesPanel (GhdlResults results, ThemeColor themeColor)
     {
         super();
-        setBackground(BACKGROUND_COLOR);
         this.signalNames = results.getSignalNames();
         this.expandedSignalNames = results.getExpandedSignalNames();
         this.maximumSignalNameLength = results.getMaximumSignalNameLength();
+        this.themeColor = themeColor;
         panelWidth = maximumSignalNameLength * 6;
         springStartPoints = new int[signalNames.length];
         
@@ -122,7 +134,7 @@ class SignalNamesPanel extends JPanel
 
 
     /**
-     * Vraca width panela
+     * Vraca sirinu panela
      */
     public int getPanelWidth ()
     {
@@ -132,6 +144,8 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Setter koji postavlja vertikalni offset
+     *
+     * @param offset Zeljeni novi offset
      */
 	public void setVerticalOffset (int offset) 
     {
@@ -150,6 +164,8 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Setter koji postavlja horizontalni offset
+     *
+     *@param offset Zeljeni novi offset
      */
     public void setHorizontalOffset (int offset)
     {
@@ -159,6 +175,8 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Metoda postavlja novi set imena signala
+     *
+     * @param signalNames Nove set imena signala
      */
     public void setSignalNames (String[] signalNames)
     {
@@ -190,6 +208,8 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Vraca informaciju je li signal oznacen
+     *
+     * @return true ako je kliknut, inace false
      */
     public boolean getIsClicked ()
     {
@@ -199,6 +219,8 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Vraca indeks trenutno oznacenog signala
+     *
+     * @return Index kliknutog signala, inace vraca -1
      */
     public int getIndex ()
     {
@@ -284,19 +306,23 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Crta komponentu
+     *
+     * @param g Graphics objekt
      */
     public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);
 
+        setBackground(themeColor.getSignalNames());
+
         /* ako treba oznaciti neki od signala */
         if (isClicked)
         {
-            g.setColor(new Color(254, 217, 182));
+            g.setColor(themeColor.getApplet());
             g.fillRect(0, (springStartPoints[index]) + 15 - offsetYAxis, 
                     getMaximumSize().width, SIGNAL_NAME_SPRING_HEIGHT / 2 + 5);
         }
-        g.setColor(new Color(51, 51, 51));
+        g.setColor(themeColor.getLetters());
 		yAxis = YAXIS_START_POINT - offsetYAxis;
 		for (int i = 0; i < signalNames.length; i++)
 		{
@@ -345,7 +371,7 @@ class SignalNamesPanel extends JPanel
 		}
 
         /* crta granicu izmedu panela s imenima signala i valnim oblicima */
-        g.setColor(new Color(86, 104, 176));
+        g.setColor(themeColor.getDivider());
         /* 
          * getHeight() visina prikazana na ekranu, a ne preferred visina cijelog
          * panela 
@@ -358,7 +384,7 @@ class SignalNamesPanel extends JPanel
         /* crta strelicu koja je indikator za pomicanje sirine panela */
         if (isArrowVisible)
         {
-            g.setColor(new Color(51, 51, 51));
+            g.setColor(themeColor.getLetters());
             g.drawLine(panelWidth - 8, yArrow, panelWidth - 6, yArrow - 2);
             g.drawLine(panelWidth - 8, yArrow, panelWidth - 6, yArrow + 2);
             g.drawLine(panelWidth - 2, yArrow - 2, panelWidth, yArrow);

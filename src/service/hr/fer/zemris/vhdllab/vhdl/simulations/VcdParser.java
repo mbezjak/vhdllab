@@ -12,17 +12,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Klasa cita linije VCD-datoteke i sprema ih polje stringova
  * @author Boris Ozegovic
  */
 class VcdFileReader
 {
+    /** Ime datoteke koju treba parsirati */
 	private String fileName;
 
 
     /** Constructor
+     * 
      * @param fileName VCD file
      */
 	VcdFileReader (String fileName)
@@ -33,7 +34,8 @@ class VcdFileReader
 
 	/** 
      * Metoda koja cita VCD-datoteku
-     * @return polje stringova; string predstavlja pojedinu liniju datoteke
+     * 
+     * @return Polje stringova; string predstavlja pojedinu liniju datoteke
      */
 	public String[] toArrayString ()
 	{
@@ -81,47 +83,48 @@ public class VcdParser
     /* Parser pocinje parsirati nakon osnovnih informacija */
 	private int index = 9;
 	
-    /* Sadrzi sve linije datoteke */
+    /** Sadrzi sve linije datoteke */
     private String[] vcdLines;
 
-    /* 
+    /** 
      * Mapa ciji su kljucevi kompletna imena signala (scope ukljuciv), 
      * te cije su vrijednosti poznate u svakoj od tocaka tranzicije 
      */
 	private Map<String, List<String>> signalValues = new LinkedHashMap<String, List<String>>();
 
-    /* Sadrzi vrijednosti tocaka tranzicije (npr. 750-toj ns) */
+    /** Sadrzi vrijednosti tocaka tranzicije (npr. 750-toj ns) */
 	private List<Long> transitionPoints = new ArrayList<Long>();
 
-    /* Sadrzi upotrebljene ASCII simbole, svaki od njih predstavlja signal */
+    /** Sadrzi upotrebljene ASCII simbole, svaki od njih predstavlja signal */
     private List<Character> asciiSignalSimbols = new ArrayList<Character>();
 
-    /* Predstavlja najduze ime od svih signala, potreban zbog duljine panela */
+    /** Predstavlja najduze ime od svih signala, potreban zbog duljine panela */
     private int maximumSignalNameLength;
 
-    /* Predstavlja string koji se prenosi klijentu */
+    /** Predstavlja string koji se prenosi klijentu */
     private String resultInString = "";
 
-    /* 
+    /** 
      * Upotrebljava se za interni format prilikom razdvajanja imena signala i
      * razdvajanja vrijednosti za svaki od signala prilikom transformacije us
      * mape u string
      */
     private final String LIMITER = "###";
 
-    /* 
+    /** 
      * Limiter koji razdvaja s jedne strane sva imena signala, njihove
      * vrijednosti, tocke u kojima se dogada promjena vrijednosti i konacno
      * duljinu u znakovima najduzeg imena signala
      */
     private final String HEAD_LIMITER = "%%%";
 
-    /* Limiter koji razdvaju svaku od trenutnih vrijednosti (0 */
+    /** Limiter koji razdvaju svaku od trenutnih vrijednosti (0 */
     private final String VALUE_LIMITER = "&&&";
 
 
     /** 
      * Constructor
+     * 
      * @param fileName ime datoteke
      */
 	public VcdParser (String fileName)
@@ -288,6 +291,8 @@ public class VcdParser
 
     /**
      * Getter koji vraca rezultat simulacije kao jedan string
+     *
+     * @return Rezultat simulacije predstavljen kao String
      */
     public String getResultInString ()
     {
