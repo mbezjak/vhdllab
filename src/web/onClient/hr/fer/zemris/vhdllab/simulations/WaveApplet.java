@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.simulations;
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 
 
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -17,7 +18,8 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
-import java.util.Map;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -26,17 +28,21 @@ import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.Box;
 import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import javax.swing.JColorChooser;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingConstants;
 
-class Console {
+class Console 
+{
   // Create a title string from the class name:
-  public static String title(Object o) {
+  public static String title(Object o) 
+  {
     String t = o.getClass().toString();
     // Remove the word "class":
     if(t.indexOf("class") != -1)
@@ -44,13 +50,15 @@ class Console {
     return t;
   }
   public static void
-  run(JFrame frame, int width, int height) {
+  run(JFrame frame, int width, int height) 
+  {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(width, height);
     frame.setVisible(true);
   }
   public static void
-  run(JApplet applet, int width, int height) {
+  run(JApplet applet, int width, int height) 
+  {
     JFrame frame = new JFrame(title(applet));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().add(applet);
@@ -60,7 +68,8 @@ class Console {
     frame.setVisible(true);
   }
   public static void
-  run(JPanel panel, int width, int height) {
+  run(JPanel panel, int width, int height) 
+  {
     JFrame frame = new JFrame(title(panel));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().add(panel);
@@ -74,26 +83,60 @@ class Console {
 
 public class WaveApplet extends JApplet 
 {
+    /** glavni container */
     private Container cp;
-    private SignalNamesPanel signalNames;
-    private WaveDrawBoard waves;
-    private Scale scale;
-    private JScrollBar verticalScrollbar;
-    private JScrollBar horizontalScrollbar;
-    private JScrollBar signalNamesScrollbar;
-    private JTextField textField = new RoundField(10);
-    private JTextField search = new RoundField(10);
-    private JTextField interval = new RoundField(10);
-    private CursorPanel cursorPanel;
-    private DefaultListModel listSignals = new DefaultListModel();
-    private JList list = new JList(listSignals);
-    private JPopupMenu popup = new JPopupMenu();
-    private JPopupMenu popupHelp = new JPopupMenu();
-    private GhdlResults results;
-    private HelpPanel helpPanel = new HelpPanel();
-    
 
+    /** Panel koji sadrzi imena signala */
+    private SignalNamesPanel signalNames;
+
+    /** Panel na kojem se crtaju valni oblici */
+    private WaveDrawBoard waves;
+
+    /** Panel koji sadrzi skalu */
+    private Scale scale;
+
+    /** 
+     * Vertikalni scrollbar koji pomice panel s imenima signala i panel s
+     * valnim oblicima
+     */
+    private JScrollBar verticalScrollbar;
+
+    /** Horizontalni scrollbar pomice panel s valnim oblicima i skalu */
+    private JScrollBar horizontalScrollbar;
     
+    /** Scrollbar koji pomice panel s imenima signala */
+    private JScrollBar signalNamesScrollbar;
+
+    /** Textfield koji sadrzi tocnu vrijednost na kojoj se nalazi kursor misa */
+    private JTextField textField = new RoundField(10);
+
+    /** Search signal */
+    private JTextField search = new RoundField(10);
+
+    /** Vremenska razlika izmedu kursora i mouse kursora */
+    private JTextField interval = new RoundField(10);
+
+    /** Panel po kojem se pomice znacka kursora */
+    private CursorPanel cursorPanel;
+
+    /** Popup meni koji sadrzi ikone za pozicioniranje na bridove signala */
+    private JPopupMenu popup = new JPopupMenu();
+
+    /** Help popup */
+    private JPopupMenu popupHelp = new JPopupMenu();
+
+    /** Sadrzi rezultate simulacije. */
+    private GhdlResults results;
+
+    /** Help panel */
+    private HelpPanel helpPanel;
+
+    /** Options popup */
+    private JPopupMenu optionsPopup = new JPopupMenu();
+
+    /** Sve boje koje se koriste */
+    private ThemeColor themeColor = new ThemeColor();
+       
     /* ikone */
     private Icon navigate = new ImageIcon(getClass().getResource("navigate.png"));
     private Icon rightUpIcon = new ImageIcon(getClass().getResource("rightUp.png"));
@@ -108,24 +151,54 @@ public class WaveApplet extends JApplet
     private Icon upIcon = new ImageIcon(getClass().getResource("up.png"));
     private Icon downIcon = new ImageIcon(getClass().getResource("down.png"));
     private Icon helpIcon = new ImageIcon(getClass().getResource("help.png"));
+    private Icon optionsIcon = new ImageIcon(getClass().getResource("options.png"));
 
     /* buttons */
+    /** Pokazuje popup za trazenje bridova signala */
     private JButton navigateSignals = new JButton(navigate);
+
+    /** Sljedeci rastuci brid */
     private JButton rightUp = new JButton(rightUpIcon);
+    
+    /** Sljedeci padajuci brid */
     private JButton rightDown = new JButton(rightDownIcon);
+    
+    /** Prethodni rastuci brid */
     private JButton leftUp = new JButton(leftUpIcon);
+    
+    /** Prethodni padajuci brid */
     private JButton leftDown = new JButton(leftDownIcon);
+    
     private JButton zoomInTwoButton = new JButton(zoomInTwoIcon);
     private JButton zoomOutTwoButton = new JButton(zoomOutTwoIcon);
     private JButton zoomInTenButton = new JButton(zoomInTenIcon);
     private JButton zoomOutTenButton = new JButton(zoomOutTenIcon);
+    
+    /** Vraca defaultni poredak signala */
     private JButton defaultButton = new JButton(defaultIcon);
     private JButton upButton = new JButton(upIcon);
     private JButton downButton = new JButton(downIcon);
     private JButton helpButton = new JButton(helpIcon);
+    private JButton optionsButton = new JButton(optionsIcon);
+    private JButton okButton = new JButton("Ok");
+    private JButton defaultTheme = new JButton("DefaultTheme");
+    private JButton secondTheme = new JButton("SecondTheme");
+
+    /* liste */
+    private DefaultListModel shapes = new DefaultListModel();
+    private JList listShapes = new JList(shapes);
+    private DefaultListModel components = new DefaultListModel();
+    private JList listComponents = new JList(components);
+
+    /* color chooser */
+    private JColorChooser colorChooser = new JColorChooser();
 
     /* prethodno pritisnuta tipka. Potrebna za kombinaciju dviju tipki */
     private char previousKey = 'A';
+
+    /** SerialVersionUID */ 
+    private static final long serialVersionUID = 2;
+
 
 
     /**
@@ -208,7 +281,7 @@ public class WaveApplet extends JApplet
     {
         public void actionPerformed (ActionEvent event) 
         {
-            popup.show(cp, 540, 35);
+            popup.show(cp, 350, 55);
 
             /* vraca fokus na kontejner */
             cp.requestFocusInWindow();
@@ -223,13 +296,170 @@ public class WaveApplet extends JApplet
     {
         public void actionPerformed (ActionEvent event) 
         {
-            popupHelp.show(cp, 200, 50);
+            popupHelp.show(cp, 200, 55);
 
             /* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         } 
     };
 
+
+   /**
+    * Otvara options popup
+    */
+    private ActionListener showOptions = new ActionListener()
+    {
+        public void actionPerformed (ActionEvent event) 
+        {
+            optionsPopup.show(cp, 420, 55);
+
+            /* vraca fokus na kontejner */
+            cp.requestFocusInWindow();
+        } 
+    };
+
+
+    /** 
+     * Lista u option panelu
+     */
+    private ListSelectionListener listListener = new ListSelectionListener()
+    {
+        public void valueChanged(ListSelectionEvent event)
+        {
+            if (event.getSource().equals(listComponents))
+            {
+                listShapes.clearSelection();
+            }
+            else
+            {
+                listComponents.clearSelection();
+            }
+            /* vraca fokus na kontejner */
+            cp.requestFocusInWindow();
+        }
+    };
+
+
+    /**
+     * Promjena boje u options panelu
+     */
+    private ActionListener okListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent event) 
+        {
+            if (listComponents.isSelectionEmpty() && listShapes.isSelectionEmpty())
+            {
+                return;
+            }
+                
+            /* postavi index na custom boje */
+            themeColor.setThemeIndex(0);
+            int index;
+            
+            /* ako je selektirana lista s komponentama */
+            if (!listComponents.isSelectionEmpty())
+            {
+                index = listComponents.getSelectedIndex();
+                switch (index)
+                {
+                    case 0 :
+                        themeColor.setSignalNames(colorChooser.getColor());
+                        signalNames.repaint();
+                        break;
+                    case 1 :
+                        themeColor.setWaves(colorChooser.getColor());
+                        waves.repaint();
+                        break;
+                    case 2 :
+                        themeColor.setScale(colorChooser.getColor());
+                        scale.repaint();
+                        break;
+                    case 3:
+                        themeColor.setCursorPanel(colorChooser.getColor());
+                        cursorPanel.repaint();
+                        break;
+                    case 4 :
+                        themeColor.setCursor(colorChooser.getColor());
+                        waves.repaint();
+                        break;
+                    case 5 :
+                        themeColor.setLetters(colorChooser.getColor());
+                        signalNames.repaint();
+                        waves.repaint();
+                        scale.repaint();
+                        cursorPanel.repaint();
+                        break;
+                }
+            }
+            else
+            {
+                index = listShapes.getSelectedIndex();
+                switch (index)
+                {
+                    case 0 :
+                        waves.getShapes()[3].setColor(colorChooser.getColor());
+                        waves.getShapes()[4].setColor(colorChooser.getColor());
+                        waves.getShapes()[5].setColor(colorChooser.getColor());
+                        break;
+                    case 1 :
+                        waves.getShapes()[0].setColor(colorChooser.getColor());
+                        waves.getShapes()[1].setColor(colorChooser.getColor());
+                        waves.getShapes()[2].setColor(colorChooser.getColor());
+                        break;
+                    case 2 :
+                        waves.getShapes()[12].setColor(colorChooser.getColor());
+                        break;
+                    case 3 :
+                        waves.getShapes()[9].setColor(colorChooser.getColor());
+                        waves.getShapes()[10].setColor(colorChooser.getColor());
+                        waves.getShapes()[11].setColor(colorChooser.getColor());
+                        break;
+                    case 4 :
+                        waves.getShapes()[13].setColor(colorChooser.getColor());
+                        waves.getShapes()[14].setColor(colorChooser.getColor());
+                        waves.getShapes()[15].setColor(colorChooser.getColor());
+                        break;
+                    case 5 :
+                        waves.getShapes()[6].setColor(colorChooser.getColor());
+                        waves.getShapes()[7].setColor(colorChooser.getColor());
+                        waves.getShapes()[8].setColor(colorChooser.getColor());
+                        break;
+                }
+                waves.repaint();
+            }
+            
+            /* vraca fokus na kontejner */
+            cp.requestFocusInWindow();
+        }
+    };
+
+
+    /**
+     * Theme button listener
+     */
+    private ActionListener themeListener = new ActionListener()
+    {
+        public void actionPerformed(ActionEvent event) 
+        {
+            if (event.getSource().equals(defaultTheme))
+            {
+                themeColor.setThemeIndex(1);
+            }
+            else
+            {
+                themeColor.setThemeIndex(2);
+            }
+            signalNames.repaint();
+            waves.repaint();
+            scale.repaint();
+            cursorPanel.repaint();
+            cp.setBackground(themeColor.getSignalNames());
+            
+            /* vraca fokus na kontejner */
+            cp.requestFocusInWindow();
+        }
+    };  
+                                 
 
     /**
      * Povecava skalu i vrijednost valnih oblika za 10
@@ -748,51 +978,52 @@ public class WaveApplet extends JApplet
 
         public void mouseClicked(MouseEvent event) 
         {
-            boolean isClicked;
-            
+            int mouseButton = event.getButton();
             int value = event.getY() + verticalScrollbar.getValue();
             int index = 0;
 
-            /* pronalazi se index signala kojeg treba oznaciti */
-            for (; index < results.getSignalNames().length; index++)
+            if (mouseButton == 1)
             {
-                if (value <= signalNames.getSpringStartPoints()[index])
+                /* pronalazi se index signala kojeg treba oznaciti */
+                for (; index < results.getSignalNames().length; index++)
                 {
-                    break;
+                    if (value <= signalNames.getSpringStartPoints()[index])
+                    {
+                        break;
+                    }
                 }
-            }
-            index--;
-            isClicked = signalNames.getIsClicked();
+                index--;
 
-            /* postavlja se vrijednost suprotna od one koja je do sada bila */
-            if (waves.getIndex() == index && waves.getIsClicked() == true)
-            {
-                signalNames.setIsClicked(false);
-                waves.setIsClicked(false);
-            }
-            else
-            {
-                signalNames.setIsClicked(true);
-                signalNames.setIndex(index);
-                waves.setIsClicked(true);
-                waves.setIndex(index);
-            }
-            
-            /* provjerava je li kliknut plusic na bit-vektoru */
-            if (results.getExpandedSignalNames().containsKey(index) &&
-                    (event.getX() >= 0 && event.getX() <= 15) && 
-                    (value >= signalNames.getSpringStartPoints()[index] + 10 &&
-                     value <= index * signalNames.getSpringStartPoints()[index] + 30))
-            {
-                if (!results.getExpandedSignalNames().get(index))
+                /* postavlja se vrijednost suprotna od one koja je do sada bila */
+                if (waves.getIndex() == index && waves.getIsClicked() == true)
                 {
-                    results.getExpandedSignalNames().put(index, true);
-                    signalNames.setSpringStartPoints(results.getSignalValues());
+                    signalNames.setIsClicked(false);
+                    waves.setIsClicked(false);
                 }
                 else
                 {
-                    results.getExpandedSignalNames().put(index, false);
-                    signalNames.setSpringStartPoints(results.getSignalValues());
+                    signalNames.setIsClicked(true);
+                    signalNames.setIndex(index);
+                    waves.setIsClicked(true);
+                    waves.setIndex(index);
+                }
+                
+                /* provjerava je li kliknut plusic na bit-vektoru */
+                if (results.getExpandedSignalNames().containsKey(index) &&
+                        (event.getX() >= 0 && event.getX() <= 15) && 
+                        (value >= signalNames.getSpringStartPoints()[index] + 10 &&
+                         value <= index * signalNames.getSpringStartPoints()[index] + 30))
+                {
+                    if (!results.getExpandedSignalNames().get(index))
+                    {
+                        results.getExpandedSignalNames().put(index, true);
+                        signalNames.setSpringStartPoints(results.getSignalValues());
+                    }
+                    else
+                    {
+                        results.getExpandedSignalNames().put(index, false);
+                        signalNames.setSpringStartPoints(results.getSignalValues());
+                    }
                 }
             }
                 
@@ -1016,11 +1247,13 @@ public class WaveApplet extends JApplet
     parser.parse();
     parser.resultToString();
     textField.setEditable(false);
+    textField.setToolTipText("Value");
     search.setText("search signal");
     search.addMouseListener(searchClickListener);
     search.addActionListener(searchListener);
     interval.setText("Interval");
     interval.setEditable(false);
+    interval.setToolTipText("Time-interval between cursor and mouse cursor");
 
     /* rezultati prikazni stringom prenose se GhdlResults klasi */
     results = new GhdlResults(parser.getResultInString());
@@ -1029,25 +1262,28 @@ public class WaveApplet extends JApplet
     results.parseString();
    
     /* stvara se skala */
-    scale = new Scale(results);
+    scale = new Scale(results, themeColor);
 
     /* panel s imenima signala */
-    signalNames = new SignalNamesPanel(results);
+    signalNames = new SignalNamesPanel(results, themeColor);
     signalNames.addMouseListener(mouseClickListener);
     signalNames.addMouseMotionListener(signalNamesListener);
     signalNames.addMouseWheelListener(wheelListener);
 
     /* panel s valnim oblicima */
     waves = new WaveDrawBoard(results, scale, signalNames.getSignalNameSpringHeight(), 
-            signalNames.getSpringStartPoints());
+            signalNames.getSpringStartPoints(), themeColor);
     waves.addMouseMotionListener(mouseListener);
     waves.addMouseListener(mouseClickListener);
     waves.addMouseWheelListener(wheelListener);
 
     /* panel u kojem klizi kursor */
     cursorPanel = new CursorPanel(scale.getScaleEndPointInPixels(), 
-            waves.getHorizontalOffset(), scale.getMeasureUnitName());
+            waves.getHorizontalOffset(), scale.getMeasureUnitName(), themeColor);
     cursorPanel.addMouseMotionListener(mouseListener);
+
+    /* help panel */
+    helpPanel = new HelpPanel(waves.getShapes());
 
 
     /* svi scrollbarovi sadrzani u appletu */
@@ -1064,8 +1300,8 @@ public class WaveApplet extends JApplet
 
 
     /* 
-     * Popup prozor koji ce izletjeti na zahtjev promjene poretka signala.
-     * Popup prozor ce sadrzavati listu imena signala i primjerene buttone
+     * Popup prozor koji ce izletjeti na trazenje sljedeceg/prethodnog
+     * padajuceg/rastuceg brid signala.
      */
     rightUp.addActionListener(navigateListener);
     rightDown.addActionListener(navigateListener);
@@ -1102,6 +1338,7 @@ public class WaveApplet extends JApplet
     downButton.addActionListener(downListener);
     navigateSignals.addActionListener(showNavigation);
     helpButton.addActionListener(showHelp);
+    optionsButton.addActionListener(showOptions);
     
     zoomInTwoButton.setToolTipText("Zoom in by two");
     zoomOutTwoButton.setToolTipText("Zoom out by two");
@@ -1111,6 +1348,8 @@ public class WaveApplet extends JApplet
     upButton.setToolTipText("Move signal up");
     downButton.setToolTipText("Move signal down");
     navigateSignals.setToolTipText("Move to next/previous right/left edge");
+    optionsButton.setToolTipText("Change current theme/define custom colors");
+    helpButton.setToolTipText("Help");
 
     toolbar.add(zoomInTwoButton);
     toolbar.add(zoomOutTwoButton);
@@ -1120,19 +1359,87 @@ public class WaveApplet extends JApplet
     toolbar.add(downButton);
     toolbar.add(defaultButton);
     toolbar.add(navigateSignals);
+    toolbar.add(optionsButton);
     toolbar.add(helpButton);
     /* kraj toolbara */
     
     /* popup help */
-    popupHelp.setPreferredSize(new Dimension(800, 600));
+    popupHelp.setPreferredSize(new Dimension(500, 600));
     popupHelp.add(helpPanel);
+
+    /* popup options */
+    optionsPopup.setPreferredSize(new Dimension(450, 550));
+    optionsPopup.setBackground(new Color(238, 238, 238));
+    
+    JPanel labelPanel = new JPanel ();
+    labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
+    JLabel titleComponents = new JLabel("Change applet components color:");
+    JLabel titleShapes = new JLabel("Change Shapes color:");
+    labelPanel.add(titleComponents);
+    labelPanel.add(Box.createRigidArea(new Dimension(25, 0)));
+    labelPanel.add(titleShapes);
+    labelPanel.add(Box.createRigidArea(new Dimension(358, 0)));
+
+    JPanel listPanel = new JPanel();
+    listPanel.setBackground(new Color(238, 238, 238));
+    listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.LINE_AXIS));
+    
+    components.addElement("Signal names background");
+    components.addElement("Waveforms background");
+    components.addElement("Scale background");
+    components.addElement("Cursor background");
+    components.addElement("Cursor vertical line");
+    components.addElement("Letters color");
+    shapes.addElement("One");
+    shapes.addElement("Zero");
+    shapes.addElement("Unknown");
+    shapes.addElement("High impedance");
+    shapes.addElement("U, L, W and H");
+    shapes.addElement("Bit-vector");
+
+    listComponents.addListSelectionListener(listListener);
+    listShapes.addListSelectionListener(listListener);
+
+    listPanel.add(Box.createRigidArea(new Dimension(7, 0)));
+    listPanel.add(listComponents);
+    listPanel.add(Box.createRigidArea(new Dimension(60, 0)));
+    listPanel.add(listShapes);
+    listPanel.add(Box.createRigidArea(new Dimension(440, 0)));
+
+    JPanel okPanel = new JPanel();
+    okPanel.setBackground(new Color(238, 238, 238));
+    okPanel.setLayout(new BoxLayout(okPanel, BoxLayout.LINE_AXIS));
+    okButton.addActionListener(okListener);
+    okPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+    okPanel.add(okButton);
+    okPanel.add(Box.createRigidArea(new Dimension(120, 0)));
+    okPanel.add(defaultTheme);
+    defaultTheme.addActionListener(themeListener);
+    okPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+    okPanel.add(secondTheme);
+    secondTheme.addActionListener(themeListener);
+    okPanel.add(Box.createRigidArea(new Dimension(418, 0)));
+    
+    JPanel optionsPanel = new JPanel();
+    optionsPanel.setBackground(new Color(238, 238, 238));
+    optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+    optionsPanel.add(colorChooser);
+    optionsPanel.add(labelPanel);
+    optionsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+    optionsPanel.add(listPanel);
+    optionsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+    optionsPanel.add(okPanel);
+    optionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+    optionsPopup.add(optionsPanel);
+    /* kraj popup optionsa */
+
     
     /* postavljanje komponenti na applet */
     cp = getContentPane();
     cp.setFocusable(true);
     cp.addKeyListener(keyListener);
     cp.setLayout(new WaveLayoutManager());
-    cp.setBackground(new Color(141, 176, 221));
+    cp.setBackground(themeColor.getSignalNames());
     cp.add(toolbar, "toolbar");
     cp.add(textField, "textField");
     cp.add(cursorPanel, "cursorPanel");
@@ -1152,3 +1459,4 @@ public class WaveApplet extends JApplet
       Console.run(new WaveApplet(), 1024, 1000);
   }
 } 
+
