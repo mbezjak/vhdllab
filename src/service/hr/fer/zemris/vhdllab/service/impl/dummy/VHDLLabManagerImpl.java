@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service.impl.dummy;
 
+import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.model.File;
@@ -17,9 +18,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,10 +30,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	private FileDAO fileDAO;
 	private ProjectDAO projectDAO;
 	
-	private Map<Long, File> files = new HashMap<Long, File>();
-	private Map<Long, Project> projects = new HashMap<Long, Project>();
+	public VHDLLabManagerImpl() {}
 	
-	public VHDLLabManagerImpl() {
+	public void init() {
 		File file = new File();
 		file.setId(Long.valueOf(0));
 		file.setFileName("sklop");
@@ -77,8 +75,13 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		project.getFiles().add(file);
 		
 		file.setProject(project);
-		files.put(file.getId(), file);
-		projects.put(project.getId(), project);
+		try {
+			fileDAO.save(file);
+			projectDAO.save(project);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return;
+		}
 		
 		
 		//**********************************
@@ -98,8 +101,13 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		project.getFiles().add(file2);
 		
 		file2.setProject(project);
-		files.put(file2.getId(), file2);
-		projects.put(project.getId(), project);
+		try {
+			fileDAO.save(file2);
+			projectDAO.save(project);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	public CompilationResult compile(Long fileId) {
@@ -113,7 +121,12 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		file.setContent("");
 		file.setId(Long.valueOf(createFile++));
 		file.setProject(project);
-		files.put(file.getId(), file);
+		try {
+			fileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
 		return file;
 	}
 
@@ -163,27 +176,65 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public String getFileName(Long fileId) {
-		return files.get(fileId).getFileName();
+		File file = null;
+		try {
+			fileDAO.load(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return file.getFileName();
 	}
 
 	public String getFileType(Long fileId) {
-		return files.get(fileId).getFileType();
+		File file = null;
+		try {
+			fileDAO.load(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return file.getFileType();
 	}
 
 	public File loadFile(Long fileId) {
-		return files.get(fileId);
+		try {
+			return fileDAO.load(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public Project loadProject(Long projectId) {
-		return projects.get(projectId);
+		try {
+			return projectDAO.load(projectId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void renameFile(Long fileId, String newName) {
-		files.get(fileId).setFileName(newName);
+		try {
+			File file = fileDAO.load(fileId);
+			file.setFileName(newName);
+			fileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void renameProject(Long projectId, String newName) {
-		projects.get(projectId).setProjectName(newName);
+		try {
+			Project project = projectDAO.load(projectId);
+			project.setProjectName(newName);
+			projectDAO.save(project);
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public SimulationResult runSimulation(Long fileId) {
@@ -194,11 +245,19 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		File file = new File();
 		file.setId(fileId);
 		file.setContent(content);
-		files.put(file.getId(), file);
+		try {
+			fileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void saveProject(Project p) {
-		projects.put(p.getId(), p);
+		try {
+			projectDAO.save(p);
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public FileDAO getFileDAO() {
@@ -218,7 +277,13 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public boolean existsFile(Long projectId, String fileName) throws ServiceException {
-		Set<File> files = projects.get(projectId).getFiles();
+		Set<File> files = null;
+		try {
+			files = projectDAO.load(projectId).getFiles();
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return false;
+		}
 		for(File f : files) {
 			if(f.getFileName().equals(fileName)) return true;
 		}
@@ -226,7 +291,12 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public boolean existsProject(Long projectId) throws ServiceException {
-		return projects.get(projectId) != null;
+		try {
+			return projectDAO.load(projectId) != null;
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public Project createNewProject(String projectName, Long ownerId) throws ServiceException {
@@ -235,7 +305,12 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		project.setProjectName(projectName);
 		project.setOwnerID(ownerId);
 		project.setFiles(null);
-		projects.put(project.getId(), project);
+		try {
+			projectDAO.save(project);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
 		return project;
 	}
 }

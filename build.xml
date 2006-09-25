@@ -257,7 +257,7 @@
 		
 	  <component
 	  	classname="org.xdoclet.plugin.hibernate.HibernateConfigPlugin"
-	  	destdir="${gen.files.dir}"
+	  	destdir="${hibernate.hbm.dir}"
 		dialect="net.sf.hibernate.dialect.MySQLDialect"
 	  	jdbcdriver="com.mysql.jdbc.Driver"
 	  	jdbcurl="jdbc:mysql://localhost:3306/vhdllab"

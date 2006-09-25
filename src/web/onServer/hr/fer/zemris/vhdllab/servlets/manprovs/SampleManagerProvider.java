@@ -63,6 +63,7 @@ public class SampleManagerProvider implements ManagerProvider {
 		VHDLLabManagerImpl labManImpl = new VHDLLabManagerImpl();
 		labManImpl.setFileDAO(fileDAO);
 		labManImpl.setProjectDAO(projectDAO);
+		labManImpl.init();
 		
 		// Remember created managers, so we can later return
 		// a reference to them.
