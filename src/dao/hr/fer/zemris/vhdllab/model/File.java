@@ -18,7 +18,7 @@ public class File implements Comparable {
 	public File() {}
 	
 	/**
-	 * @hibernate.id 
+	 * @hibernate.id
 	 * 	generator-class="native"
 	 *  column="FILE_ID"
 	 */
@@ -71,6 +71,7 @@ public class File implements Comparable {
 	/**
 	 * @hibernate.many-to-one
 	 *  column="PROJECT_ID"
+	 *  cascade="save-update"
 	 */
 	public Project getProject() {
 		return project;
@@ -90,7 +91,7 @@ public class File implements Comparable {
 		if(!(o instanceof File)) return false;
 		File other = (File) o;
 
-		if( this.id != null && other.id != null ) return this.id == other.id;
+		if( this.id != null && other.id != null ) return this.id.equals(other.id);
 		else if( this.id == null && other.id == null ) return this.fileName.equals(other.fileName);
 		else return false;
 	}
@@ -114,9 +115,9 @@ public class File implements Comparable {
 		else if ( this.fileType != null && other.fileType == null ) val = 1;
 		else if ( this.fileType == null && other.fileType != null ) val = -1;
 		else val = 0;
-
+		
 		if( val != 0) return (int)val;
-
+		
 		/* File ID ordering if files have the same name and type */
 		if( this.id != null && other.id != null ) val = this.id.longValue() - other.id.longValue();
 		else if ( this.id != null && other.id == null ) val = 1;
@@ -126,5 +127,16 @@ public class File implements Comparable {
 		if(val>0) return 1;
 		else if(val<0) return -1;
 		else return 0;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("File '").append(fileName).append("', id=")
+			.append(id).append(", filetype=").append(fileType)
+			.append(", belongs to Project '").append(project.getProjectName())
+			.append("'(").append(project.getId()).append("), has content:\n")
+			.append(content);
+		return sb.toString();
 	}
 }

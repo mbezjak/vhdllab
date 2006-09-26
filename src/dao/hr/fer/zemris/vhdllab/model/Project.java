@@ -56,6 +56,7 @@ public class Project {
 	 * @hibernate.set
 	 * 	inverse="true"
 	 *  lazy="false"
+	 *  cascade="save-update"
 	 * @hibernate.key
 	 *  column="PROJECT_ID"
 	 * @hibernate.one-to-many
@@ -66,5 +67,32 @@ public class Project {
 	}
 	public void setFiles(Set<File> files) {
 		this.files = files;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof Project)) return false;
+		Project other = (Project) o;
+		
+		if( this.id != null && other.id != null ) return this.id.equals(other.id);
+		else if( this.id == null && other.id == null )
+			return this.ownerID.equals(other.ownerID) &&
+					this.projectName.equals(other.projectName) &&
+					this.files.equals(other.files);
+		else return false;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Project '").append(projectName).append("', id=")
+			.append(id).append(", ownerID=").append(ownerID)
+			.append(", has ").append(files.size()).append(" files:\n");
+		
+		for(File f : files) {
+			sb.append(f).append("\n");
+		}
+		
+		return sb.toString();
 	}
 }

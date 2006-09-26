@@ -280,7 +280,7 @@
 		force="${hibernate.hbm.force}"
       	version="${hibernate.hbm.version}">
 	  </component>
-		
+
 	  <component
 	  	classname="org.xdoclet.plugin.hibernate.HibernateConfigPlugin"
 	  	destdir="${hibernate.dir}"
@@ -288,7 +288,11 @@
       </component>
 	</xdoclet>
 
-  		
+  	<replace dir="${hibernate.dir}">
+  	  <include name="**/*.hbm.xml"/>
+	  <replacetoken>access="method" </replacetoken>
+  	</replace>
+  	
   	<taskdef name="schemaexport"
       classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
       classpathref="src.class.path">

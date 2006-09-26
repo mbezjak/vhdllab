@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	hr.fer.zemris.vhdllab.model.AllPackageTests.class
+	hr.fer.zemris.vhdllab.model.AllPackageTests.class,
+	hr.fer.zemris.vhdllab.dao.impl.AllPackageTests.class
 })
 public class AllDAOJUnitTests {
 	
