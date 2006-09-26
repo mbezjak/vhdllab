@@ -1,18 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <project name="vhdllab" basedir="." default="package">
 
-  <property name="app.name" value="vhdllab"/>
+  <property name="configuration.properties" value="./configuration.properties"/>
+  <property file="${configuration.properties}"/>
 
-  <property name="build.dir" value="build"/>
-  <property name="lib.dir" value="libs"/>
-  <property name="jlib.dir" value="jlibs"/>
-  <property name="jlib-tests.dir" value="${jlib.dir}/tests"/>
-  <property name="doc.dir" value="docs"/>
-  
-  <property name="res.dir" value="resources"/>
-  <property name="gen.files.dir" value="gen-files"/>
-  <property name="hibernate.hbm.dir" value="${gen.files.dir}/hibernate"/>
-  
   <path id="src.class.path">
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>
@@ -27,7 +18,7 @@
     <pathelement path="${build.dir}/tests/web/onClient"/>
   </path>
 
- <target name="init">
+  <target name="init">
     <available file="${lib.dir}/junit.jar" property="junit.jar.present"/>
     <fail unless="junit.jar.present">
       "${lib.dir}/junit.jar" file is not present. You can download it from http://www.junit.org.
@@ -42,32 +33,54 @@
     <fail unless="servlet-api.jar.present">
       "${lib.dir}/servlet-api.jar" file is not present. You can copy it from $CATALINA_HOME/common/lib/servlet-api.jar.
     </fail>
- 
+
+    <available file="${configuration.properties}" property="configuration.properties.present"/>
+    <fail unless="configuration.properties.present">
+      "${configuration.properties}" file is not present.
+    </fail>
+
  	<tstamp/>
     
     <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dir}/web/onClient"/>
-    <mkdir dir="${build.dir}/web/onServer"/>
-    <mkdir dir="${build.dir}/service"/>
     <mkdir dir="${build.dir}/dao"/>
-    <mkdir dir="${build.dir}/tests/web/onClient"/>
-    <mkdir dir="${build.dir}/tests/web/onServer"/>
-    <mkdir dir="${build.dir}/tests/service"/>
+    <mkdir dir="${build.dir}/service"/>
+    <mkdir dir="${build.dir}/web/onServer"/>
+  	<mkdir dir="${build.dir}/web/onClient"/>
     <mkdir dir="${build.dir}/tests/dao"/>
+    <mkdir dir="${build.dir}/tests/service"/>
+    <mkdir dir="${build.dir}/tests/web/onServer"/>
+    <mkdir dir="${build.dir}/tests/web/onClient"/>
     <mkdir dir="${jlib.dir}"/>
     <mkdir dir="${jlib-tests.dir}"/>
-    <mkdir dir="${gen.files.dir}"/>
-    <mkdir dir="${hibernate.hbm.dir}"/>
- </target>
+    <mkdir dir="${doc.dir}"/>
+    <mkdir dir="${local.dir}"/>
+    <mkdir dir="${hibernate.dir}"/>
+  	
+  	<copy todir="${local.dir}" overwrite="true">
+  	  <fileset dir="${metadata.dir}"/>
+	</copy>
+  	
+  	<replace dir="${local.dir}" propertyfile="${configuration.properties}">
+  	  <replacefilter token="@@database.dialect@@" property="database.dialect"/>
+	  <replacefilter token="@@database.driver@@" property="database.driver"/>
+	  <replacefilter token="@@database.url@@" property="database.url"/>
+   	  <replacefilter token="@@database.normal.username@@" property="database.normal.username"/>
+   	  <replacefilter token="@@database.normal.password@@" property="database.normal.password"/>
+	  <replacefilter token="@@database.show.sql@@" property="database.show.sql"/>
+	  <replacefilter token="@@database.use.reflection.optimizer@@" property="database.use.reflection.optimizer"/>
+  	  <replacefilter token="@@database.connection.pool.size@@" property="database.connection.pool.size"/>
+  	  <replacefilter token="@@database.hbm2ddl.auto@@" property="database.hbm2ddl.auto"/>
+  	</replace>
+  </target>
 
   <target name="clean">
    <delete quiet="true" includeEmptyDirs="true">
       <fileset dir="${build.dir}"/>
-      <fileset dir="${jlib.dir}"/>
       <fileset dir="${jlib-tests.dir}"/>
+	  <fileset dir="${jlib.dir}"/>
       <fileset dir="${doc.dir}"/>
-      <fileset dir="${gen.files.dir}"/>
       <fileset dir="${hibernate.hbm.dir}"/>
+      <fileset dir="${local.dir}"/>
     </delete>
   </target>
 
@@ -230,48 +243,51 @@
   </target>
 	
   <target name="doc">
-  	<javadoc access="public" author="true" classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar"
-  		destdir="${doc.dir}" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false"
-  		packagenames="*" source="1.5"
+  	<javadoc 
+  		access="public"
+  		author="true"
+  		classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar"
+  		destdir="${doc.dir}"
+  		nodeprecated="false"
+  		nodeprecatedlist="false"
+  		noindex="false"
+  		nonavbar="false"
+  		notree="false"
+  		packagenames="*"
+  		source="1.5"
   		sourcepath="src/dao;src/service;src/web/onServer;src/web/OnClient"
-  		splitindex="true" use="true" version="true">
+  		splitindex="true"
+  		use="true"
+  		version="true">
 	  <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 	</javadoc>
   </target>
 
-  <target name="hibernate" depends="compile-dao" description="Generates Hibernate class descriptor files.">
-    <taskdef name="hibernatedoclet"
+  <target name="hibernate" depends="compile-dao">
+    <taskdef name="xdoclet"
       classname="org.xdoclet.ant.XDocletTask"
       classpathref="src.class.path">
   	</taskdef>
 
-	<hibernatedoclet>
-	  <fileset dir="src/dao/hr/fer/zemris/vhdllab/model">
+	<xdoclet encoding="UTF-8">
+	  <fileset dir="${model.dir}">
 		<include name="**/*.java"/>
 	  </fileset>
       <component
 		classname="org.xdoclet.plugin.hibernate.HibernateMappingPlugin"
-		destdir="${hibernate.hbm.dir}"
-		force="true">
+      	encoding="UTF-8"
+		destdir="${hibernate.dir}"
+		force="${hibernate.hbm.force}"
+      	version="${hibernate.hbm.version}">
 	  </component>
 		
 	  <component
 	  	classname="org.xdoclet.plugin.hibernate.HibernateConfigPlugin"
-	  	destdir="${hibernate.hbm.dir}"
-		dialect="net.sf.hibernate.dialect.MySQLDialect"
-	  	jdbcdriver="com.mysql.jdbc.Driver"
-	  	jdbcurl="jdbc:mysql://localhost:3306/vhdllab"
-	  	jdbcusername="root"
-	  	jdbcpassword=""
-	  	showsql="true"
-	  	hbm2ddlauto="true">
+	  	destdir="${hibernate.dir}"
+	  	properties="${hibernate.dir}/hibernate.properties">
       </component>
-	</hibernatedoclet>
+	</xdoclet>
 
-  	<copy todir="bin" includeemptydirs="no">
-     <fileset dir="${hibernate.hbm.dir}"/>
- 	 <fileset dir="${res.dir}"/>
-    </copy>
   		
   	<taskdef name="schemaexport"
       classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
@@ -279,16 +295,23 @@
   	</taskdef>
 
   	<schemaexport
-	  properties="${res.dir}/hibernate.properties"
+	  properties="${hibernate.dir}/hibernate.properties"
   	  quiet="no"
   	  text="no"
   	  drop="no"
   	  delimiter=";"
-  	  output="${gen.files.dir}/schema-export.sql">
-  	  <fileset dir="${hibernate.hbm.dir}">
+  	  output="${hibernate.dir}/schema-export.sql">
+  	  <fileset dir="${hibernate.dir}">
  		<include name="**/*.hbm.xml"/>
   	  </fileset>
 	</schemaexport>
+  	
+  	<copy todir="bin">
+  	  <fileset dir="${local.dir}">
+  	  	<include name="*.*"/>
+  	  </fileset>
+  	  <fileset dir="${hibernate.dir}"/>
+  	</copy>
   </target>
 
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>

@@ -1,0 +1,35 @@
+######################
+### ant properties ###
+######################
+
+### application name ###
+app.name = vhdllab
+
+### directories in ${basedir} ###
+build.dir = build
+lib.dir = libs
+jlib.dir = jlibs
+jlib-tests.dir = ${jlib.dir}/tests
+doc.dir = docs
+local.dir = local
+metadata.dir = metadata
+
+### properties for "Model".hbm.xml files ###
+hibernate.dir = ${local.dir}/hibernate
+model.dir = src/dao/hr/fer/zemris/vhdllab/model
+hibernate.hbm.force = true
+hibernate.hbm.version = 2.0
+
+
+############################
+### hibernate properties ###
+############################
+database.dialect = net.sf.hibernate.dialect.MySQLDialect
+database.driver = com.mysql.jdbc.Driver
+database.url = jdbc:mysql://localhost:3306/vhdllab
+database.normal.username = pero
+database.normal.password = perica1234
+database.connection.pool.size = 20
+database.show.sql = true
+database.use.reflection.optimizer = false
+database.hbm2ddl.auto = create-drop
