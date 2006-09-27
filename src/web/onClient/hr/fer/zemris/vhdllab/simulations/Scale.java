@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.simulations;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
+
 import javax.swing.JPanel;
 
 
@@ -15,7 +16,12 @@ import javax.swing.JPanel;
  */
 class Scale extends JPanel
 {
-    /** 
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1297916589804859204L;
+
+	/** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * femto sekundama 
      */
