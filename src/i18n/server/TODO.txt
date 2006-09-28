@@ -1,4 +1,0 @@
-b) dodati src/i18n/server
-   - tu staviti ServerApplicationResources_XY.properties
-     u tu datoteku idu lokalizacije poruka koje se generiraju na
-     serverskoj strani

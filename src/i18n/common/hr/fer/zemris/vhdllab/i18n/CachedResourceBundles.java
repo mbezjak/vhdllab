@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CachedResourceBundles {
 	 
 	private static Map<String,WeakReference<ResourceBundle>> cache = new
-ConcurrentHashMap<String,WeakReference<ResourceBundle>>();
+					ConcurrentHashMap<String,WeakReference<ResourceBundle>>();
 	public static ResourceBundle getBundle(String name) {
 		return getBundle(name,null,null);
 	}
@@ -18,8 +18,7 @@ ConcurrentHashMap<String,WeakReference<ResourceBundle>>();
 		return getBundle(name,language,null);
 	}
  
-	public static ResourceBundle getBundle(String name, String language,
-String country) {
+	public static ResourceBundle getBundle(String name, String language, String country) {
 		String key = "N="+name+"|L="+language+"|C="+country;
 		WeakReference ref = cache.get(key);
 		ResourceBundle bundle = null;
@@ -42,8 +41,7 @@ String country) {
 		}
 	}
  
-	private static ResourceBundle loadBundle(String name, String language,
-String country) {
+	private static ResourceBundle loadBundle(String name, String language, String country) {
 		ResourceBundle bundle;
 		if(language==null) {
 			bundle = ResourceBundle.getBundle(name);
