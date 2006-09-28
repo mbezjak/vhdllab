@@ -1,0 +1,12 @@
+c) dodati src/i18n/client
+   - tu staviti ClientApplicationResources_XY.properties
+     u tu datoteku idu lokalizacije poruka koje se generiraju na
+     klijentskoj strani - ono sto generira applet
+     dodatno, ta se datoteka mora ubaciti u jar appleta koji se
+     salje browseru!
+     predlozio bih takoder, _ukoliko se radi vise appleta_, da svaki
+     applet ima svoje lokalizacijske datoteke, tipa:
+     Client_Waweform_ApplicationResources_XY.properties
+     Client_Testbench_ApplicationResources_XY.properties
+     Client_ProjNav_ApplicationResources_XY.properties
+     itd.
