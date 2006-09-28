@@ -19,6 +19,11 @@
   </path>
 
   <target name="init">
+    <available file="${configuration.properties}" property="configuration.properties.present"/>
+    <fail unless="configuration.properties.present">
+      ${configuration.properties} file is not present. You have a sample ${configuration.properties}-sample. Please copy this file under correct name and customize it.
+    </fail>
+
     <available file="${lib.dir}/junit.jar" property="junit.jar.present"/>
     <fail unless="junit.jar.present">
       "${lib.dir}/junit.jar" file is not present. You can download it from http://www.junit.org.
