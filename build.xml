@@ -251,7 +251,7 @@
   	<javadoc 
   		access="public"
   		author="true"
-  		classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar"
+  		classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar;libs/hibernate/hibernate2.jar"
   		destdir="${doc.dir}"
   		nodeprecated="false"
   		nodeprecatedlist="false"
@@ -260,7 +260,7 @@
   		notree="false"
   		packagenames="*"
   		source="1.5"
-  		sourcepath="src/dao;src/service;src/web/onServer;src/web/OnClient"
+  		sourcepath="src/dao;src/service;src/web/onServer;src/web/onClient"
   		splitindex="true"
   		use="true"
   		version="true">
