@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
@@ -25,24 +25,19 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 */
 	private Properties properties;
 	/**
-	 * A Map of registered methods.
+	 * A manager provider.
 	 */
-	private Map<String, RegisteredMethod> regMap;
-	/**
-	 * A VHDL lab manager that will be used in a registered method.
-	 */
-	private VHDLLabManager labman;
+	private ManagerProvider mprov;
 	
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.ajax.shared.MethodDispatcher#preformMethodDispatching(java.util.Properties, java.util.Map, hr.fer.zemris.vhdllab.service.VHDLLabManager)
+	 * @see hr.fer.zemris.vhdllab.servlets.MethodDispatcher#preformMethodDispatching(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
-	public Properties preformMethodDispatching(Properties p, Map<String, RegisteredMethod> regMap, VHDLLabManager labman) {
+	@SuppressWarnings("unchecked")
+	public Properties preformMethodDispatching(Properties p, ManagerProvider mprov) {
 		if(p==null) throw new NullPointerException("Properties can not be null!");
-		if(regMap==null) throw new NullPointerException("A map of registrated methods can not be null!");
-		if(labman==null) throw new NullPointerException("A lab manager can not be null!");
+		if(mprov==null) throw new NullPointerException("A manager provider can not be null!");
 		this.properties = p;
-		this.regMap = regMap;
-		this.labman = labman;
+		this.mprov = mprov;
 		
 		String method = p.getProperty(MethodConstants.PROP_METHOD);
 		Properties retProp = resolveOperators(method, properties);
@@ -178,6 +173,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * @param properties a Properties from where to draw information.
 	 * @return a response Properties.
 	 */
+	@SuppressWarnings("unchecked")
 	private Properties resolveMethod(String method, Properties properties) {
 		Properties retProp = new Properties();
 		int num = 1;
@@ -199,9 +195,10 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 			}
 			
 			Properties ret;
+			Map<String,RegisteredMethod> regMap = (Map<String,RegisteredMethod>)mprov.get("registeredMethods");
 			RegisteredMethod regMethod = regMap.get(method);
 			if(regMethod==null) ret = errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
-			else ret = regMethod.run(p, labman);
+			else ret = regMethod.run(p, mprov);
 			if(num==1 && modified.size()==0) return ret;
 			for(Object key : ret.keySet()) {
 				String strKey = (String) key;

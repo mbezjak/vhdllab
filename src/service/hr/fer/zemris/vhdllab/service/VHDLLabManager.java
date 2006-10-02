@@ -105,20 +105,6 @@ public interface VHDLLabManager {
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public void renameFile(Long fileId, String newName) throws ServiceException;
-	/**
-	 * Obtains file type for the specified file.
-	 * @param fileId identifier of the file
-	 * @return file type
-	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
-	 */
-	public String getFileType(Long fileId) throws ServiceException;
-	/**
-	 * Obtains file name for the specified file.
-	 * @param fileId identifier of the file
-	 * @return file name
-	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
-	 */
-	public String getFileName(Long fileId) throws ServiceException;
 	
 	/**
 	 * Use this method to compile specified file.
@@ -148,20 +134,4 @@ public interface VHDLLabManager {
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public String generateVHDL(File file) throws ServiceException;
-	/**
-	 * Use this method to generate VHDL for specified file. File given as
-	 * argument must be of type {@linkplain File#FT_VHDLTB}}.
-	 * @param file file for which VHDL must be generated
-	 * @return VHDL source for specified file
-	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
-	 */
-	public String generateTestbenchVHDL(File file) throws ServiceException;
-	/**
-	 * Use this method to generate VHDL for specified file. File given as
-	 * argument must be of type {@linkplain File#FT_STRUCT_SCHEMA}}.
-	 * @param file file for which VHDL must be generated
-	 * @return VHDL source for specified file
-	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
-	 */
-	public String generateShemaVHDL(File file) throws ServiceException;
 }

@@ -62,6 +62,18 @@ public class FileDAOMySQLImplTest {
 		assertEquals(file, file2);
 	}
 	
+	@Test
+	public void save2() throws DAOException {
+		File file = new File();
+		file.setContent("simple content of a file2!");
+		file.setFileName("sample name2");
+		file.setFileType(File.FT_VHDLSOURCE);
+
+		fileDAO.save(file);
+		File file2 = fileDAO.load(file.getId());
+		assertEquals(file, file2);
+	}
+	
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(FileDAOMySQLImplTest.class);
 	}

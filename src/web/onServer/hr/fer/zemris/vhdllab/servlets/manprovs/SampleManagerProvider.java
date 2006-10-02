@@ -16,8 +16,6 @@ import hr.fer.zemris.vhdllab.servlets.methods.DoMethodCreateNewProject;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodExistsFile;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodExistsProject;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodFindProjectsByUser;
-import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGenerateSchemaVHDL;
-import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGenerateTestbenchVHDL;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodGenerateVHDL;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileBelongsToProjectId;
 import hr.fer.zemris.vhdllab.servlets.methods.DoMethodLoadFileContent;
@@ -47,7 +45,7 @@ import java.util.Map;
  * </ul>
  */
 public class SampleManagerProvider implements ManagerProvider {
-
+	
 	private Map<String,Object> beans = new HashMap<String,Object>();
 	
 	/**
@@ -93,8 +91,6 @@ public class SampleManagerProvider implements ManagerProvider {
 		registeredMethods.put(MethodConstants.MTD_COMPILE_FILE, new DoMethodCompileFile());
 		registeredMethods.put(MethodConstants.MTD_RUN_SIMULATION, new DoMethodRunSimulation());
 		registeredMethods.put(MethodConstants.MTD_GENERATE_VHDL, new DoMethodGenerateVHDL());
-		registeredMethods.put(MethodConstants.MTD_GENERATE_TESTBENCH_VHDL, new DoMethodGenerateTestbenchVHDL());
-		registeredMethods.put(MethodConstants.MTD_GENERATE_SCHEMA_VHDL, new DoMethodGenerateSchemaVHDL());
 		
 		// Remember created methods, so we can later return
 		// a reference to them.
@@ -114,5 +110,4 @@ public class SampleManagerProvider implements ManagerProvider {
 	public Object get(String name) {
 		return beans.get(name);
 	}
-
 }

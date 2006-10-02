@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	hr.fer.zemris.vhdllab.servlets.dispatch.AllPackageTests.class
+	hr.fer.zemris.vhdllab.servlets.dispatch.AllPackageTests.class,
+	hr.fer.zemris.vhdllab.servlets.methods.AllPackageTests.class
 })
 public class AllOnServerJUnitTests {
 	

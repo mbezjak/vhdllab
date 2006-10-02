@@ -16,8 +16,13 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 	
 	public List<Project> findByUser(Long userId) throws DAOException {
 		Collection<Project> c = projects.values();
-		List<Project> p = new ArrayList<Project>(c);
-		return p;
+		List<Project> allProjects = new ArrayList<Project>(c);
+		List<Project> pr = new ArrayList<Project>();
+		for(Project p : allProjects) {
+			if(p.getOwnerID().equals(userId))
+				pr.add(p);
+		}
+		return pr;
 	}
 
 	public Project load(Long id) throws DAOException {

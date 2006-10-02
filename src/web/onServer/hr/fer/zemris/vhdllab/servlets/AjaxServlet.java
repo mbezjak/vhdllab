@@ -1,11 +1,9 @@
 package hr.fer.zemris.vhdllab.servlets;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
-import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -28,7 +26,6 @@ public class AjaxServlet extends HttpServlet {
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		InputStream is = request.getInputStream();
@@ -38,10 +35,8 @@ public class AjaxServlet extends HttpServlet {
 		Properties p = XMLUtil.deserializeProperties(text);
 		
 		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		Map<String, RegisteredMethod> regMap = (Map<String, RegisteredMethod>)mprov.get("registeredMethods");
 		MethodDispatcher disp = (MethodDispatcher)mprov.get("methodDispatcher");
-		Properties resProp = disp.preformMethodDispatching(p, regMap, labman);
+		Properties resProp = disp.preformMethodDispatching(p, mprov);
 		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);
 	}
 	

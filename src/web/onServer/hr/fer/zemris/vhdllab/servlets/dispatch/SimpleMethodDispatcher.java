@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
@@ -16,16 +16,17 @@ import java.util.Properties;
 public class SimpleMethodDispatcher implements MethodDispatcher {
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.servlets.MethodDispatcher#preformMethodDispatching(java.util.Properties, java.util.Map, hr.fer.zemris.vhdllab.service.VHDLLabManager)
+	 * @see hr.fer.zemris.vhdllab.servlets.MethodDispatcher#preformMethodDispatching(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
-	public Properties preformMethodDispatching(Properties p, Map<String, RegisteredMethod> regMap, VHDLLabManager labman) {
+	@SuppressWarnings("unchecked")
+	public Properties preformMethodDispatching(Properties p, ManagerProvider mprov) {
 		if(p==null) throw new NullPointerException("Properties can not be null!");
-		if(regMap==null) throw new NullPointerException("A map of registrated methods can not be null!");
-		if(labman==null) throw new NullPointerException("A lab manager can not be null!");
+		if(mprov==null) throw new NullPointerException("A manager provider can not be null!");
 		String method = p.getProperty(MethodConstants.PROP_METHOD);
+		Map<String,RegisteredMethod> regMap = (Map<String,RegisteredMethod>)mprov.get("registeredMethods");
 		RegisteredMethod regMethod = regMap.get(method);
 		if(regMethod==null) return errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
-		return regMethod.run(p, labman);
+		return regMethod.run(p, mprov);
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
 import java.util.Properties;
@@ -19,9 +18,9 @@ public interface RegisteredMethod {
 	 * This method is called when cirtain request is received.
 	 * 
 	 * @param p Properties representing accepted request
-	 * @param labman a lab manager defining communication between web-tier and service-tier
+	 * @param mprov a manager provider
 	 * @return a response Properties
 	 */
-	public Properties run(Properties p,	VHDLLabManager labman);
+	public Properties run(Properties p,	ManagerProvider mprov);
 	
 }

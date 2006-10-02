@@ -16,7 +16,7 @@ package hr.fer.zemris.ajax.shared;
  * <li>{@link #OP_RIGHT_BRACKET}
  * </ul>
  * <p>
- * Operators have prirority as follows:
+ * Operators have priority as follows:
  * <ul>
  * <li>highest priority: {@link #OP_LEFT_BRACKET}, {@link #OP_RIGHT_BRACKET}
  * <li>medium priority: {@link #OP_METHOD_SEPARATOR}
@@ -24,21 +24,21 @@ package hr.fer.zemris.ajax.shared;
  * </ul>
  * <p>
  * Operator {@link #OP_REDIRECT_TO_RIGHT} has higher priority then 
- * {@link #OP_REDIRECT_TO_LEFT} Furthermore, if method contains
+ * {@link #OP_REDIRECT_TO_LEFT}. Furthermore, if method contains
  * two operators with same priority in a tandem then the one on
  * the left have higher priority. If there is a conflict in merging
  * then left inner method will win the conflict. A method must be written
- * in the precise format without any extra charaters, even whitespace.
+ * in the precise format without any extra charaters, even whitespace!
  * Format:
  * <blockquote>
- * method1&method2
+ * (method1&method2)>method3
  * ...
  * </blockquote>
  * 
  * @author Miro Bezjak
  */
 public class MethodConstants {
-
+	
 	/**
 	 * An operator for separating parts of a method. This
 	 * operator has no priority. It is simply a part of a
@@ -183,14 +183,6 @@ public class MethodConstants {
 	 * A status error value for status property when can not generate VHDL.
 	 */
 	public static final String SE_CAN_NOT_GENERATE_VHDL = "503";
-	/**
-	 * A status error value for status property when can not generate testbench VHDL.
-	 */
-	public static final String SE_CAN_NOT_GENERATE_VHDL_TESTBENCH = "504";
-	/**
-	 * A status error value for status property when can not generate schema VHDL.
-	 */
-	public static final String SE_CAN_NOT_GENERATE_VHDL_SCHEMA = "505";
 	
 	
 	
@@ -211,8 +203,8 @@ public class MethodConstants {
 	 */
 	public static final String PROP_FILE_CONTENT = "file.content";
 	/**
-	 * A file exists property. Contains <code>true</code> if file exists;
-	 * <code>false</code> otherwise.
+	 * A file exists property. Contains <code>1</code> if file exists;
+	 * <code>0</code> otherwise.
 	 */
 	public static final String PROP_FILE_EXISTS = "file.exists";
 	
@@ -233,8 +225,8 @@ public class MethodConstants {
 	 */
 	public static final String PROP_PROJECT_NMBR_FILES = "project.nmbr.files";
 	/**
-	 * A project exists property. Contains <code>true</code> if project exists;
-	 * <code>false</code> otherwise.
+	 * A project exists property. Contains <code>1</code> if project exists;
+	 * <code>0</code> otherwise.
 	 */
 	public static final String PROP_PROJECT_EXISTS = "project.exists";
 	
@@ -245,7 +237,7 @@ public class MethodConstants {
 	/**
 	 * A result isSuccessful property.
 	 */
-	public static final String PROP_RESULT_IS_SUCCESSFUL = "result.is.Successful";
+	public static final String PROP_RESULT_IS_SUCCESSFUL = "result.is.successful";
 	/**
 	 * A simulation result waveform property.
 	 */
@@ -292,15 +284,7 @@ public class MethodConstants {
 	/**
 	 * A value for generate VHDL property.
 	 */
-	public static final String PROP_GENERATE_VHDL = "generate.vhdl";
-	/**
-	 * A value for generate testbench VHDL property.
-	 */
-	public static final String PROP_GENERATE_VHDL_TESTBENCH = "generate.vhdl.testbench";
-	/**
-	 * A value for generate schema VHDL property.
-	 */
-	public static final String PROP_GENERATE_VHDL_SCHEMA = "generate.vhdl.schema";
+	public static final String PROP_GENERATED_VHDL = "generated.vhdl";
 	
 	
 	
@@ -498,7 +482,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_FILE_ID} - containing an ID of a created file
+	 * <li>{@link #PROP_FILE_ID} - containing an ID of created file
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -529,7 +513,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_FILE_EXISTS} - containing <code>true</code> if file exists; <code>false</code> otherwise
+	 * <li>{@link #PROP_FILE_EXISTS} - containing <code>1</code> if file exists; <code>0</code> otherwise
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -650,9 +634,19 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>list of {@link #PROP_FILE_ID} written in following format: {@link #PROP_FILE_ID}.number
+	 * <li>list of {@link #PROP_FILE_ID} written in following format: {@link #PROP_FILE_ID}.[number]
 	 *     (number is positive and starts at 1)
 	 * </ul>
+	 * <p>
+	 * Example of response <code>Properties</code>:
+	 * <blockquote>
+	 * {@link #PROP_METHOD} = load.project.files.id<br/>
+	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
+	 * {@link #PROP_FILE_ID}.1 = 23<br/>
+	 * {@link #PROP_FILE_ID}.2 = 545<br/>
+	 * {@link #PROP_FILE_ID}.3 = 7<br/>
+	 * ...
+	 * </blockquote>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
 	 * property
@@ -661,18 +655,6 @@ public class MethodConstants {
 	 * <li>{@link #PROP_STATUS} - containing one of status errors
 	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
 	 * </ul>
-	 * <p>
-	 * Example of request <code>Properties</code>:
-	 * <blockquote>
-	 * {@link #PROP_METHOD} = load_project_files_id_method<br/>
-	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
-	 * {@link #PROP_FILE_ID}.1 = file_ID_1<br/>
-	 * {@link #PROP_FILE_ID}.2 = file_ID_2<br/>
-	 * {@link #PROP_FILE_ID}.3 = file_ID_3<br/>
-	 * {@link #PROP_FILE_ID}.4 = file_ID_4<br/>
-	 * {@link #PROP_FILE_ID}.5 = file_ID_5<br/>
-	 * ...
-	 * </blockquote>
 	 * <p>
 	 * This method may cause following status errors:
 	 * <ul>
@@ -686,18 +668,17 @@ public class MethodConstants {
 	 * A "save project" method. Expected parametars (written as a property) are
 	 * <ul>
 	 * <li>{@link #PROP_PROJECT_ID}
-	 * <li>list of {@link #PROP_FILE_ID} written in following format: {@link #PROP_FILE_ID}.number
-	 *     (number is positive and starts at 1)
+	 * <li>either {@link #PROP_FILE_ID} or a list of {@link #PROP_FILE_ID} written in
+	 *     following format: {@link #PROP_FILE_ID}.[number] (number is positive and
+	 *     starts at 1) also a combination of both 
 	 * </ul>
 	 * <p>
 	 * Example of request <code>Properties</code>:
 	 * <blockquote>
-	 * {@link #PROP_PROJECT_ID} = project_ID<br/>
-	 * {@link #PROP_FILE_ID}.1 = file_ID_1<br/>
-	 * {@link #PROP_FILE_ID}.2 = file_ID_2<br/>
-	 * {@link #PROP_FILE_ID}.3 = file_ID_3<br/>
-	 * {@link #PROP_FILE_ID}.4 = file_ID_4<br/>
-	 * {@link #PROP_FILE_ID}.5 = file_ID_5<br/>
+	 * {@link #PROP_PROJECT_ID} = 1<br/>
+	 * {@link #PROP_FILE_ID} = 156<br/>
+	 * {@link #PROP_FILE_ID}.1 = 174<br/>
+	 * {@link #PROP_FILE_ID}.2 = 51<br/>
 	 * ...
 	 * </blockquote>
 	 * <p>
@@ -721,6 +702,7 @@ public class MethodConstants {
 	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain parametars
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_PROJECT_ID} or {@link #PROP_FILE_ID} are not a long int number
 	 * <li>{@link #SE_NO_SUCH_PROJECT} - if project with {@link #PROP_PROJECT_ID} could not be found
+	 * <li>{@link #SE_NO_SUCH_FILE} - if file with {@link #PROP_FILE_ID} could not be found
 	 * <li>{@link #SE_CAN_NOT_SAVE_PROJECT} - if project with {@link #PROP_PROJECT_ID} could not be saved
 	 * </ul>
 	 */
@@ -767,7 +749,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_PROJECT_ID} - containing an ID of a created project
+	 * <li>{@link #PROP_PROJECT_ID} - containing an ID of created project
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -797,7 +779,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_PROJECT_EXISTS} - containing <code>true</code> if project exists; <code>false</code> otherwise
+	 * <li>{@link #PROP_PROJECT_EXISTS} - containing <code>1</code> if project exists; <code>0</code> otherwise
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -827,19 +809,17 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>list of {@link #PROP_PROJECT_ID} written in following format: {@link #PROP_PROJECT_ID}.number
+	 * <li>list of {@link #PROP_PROJECT_ID} written in following format: {@link #PROP_PROJECT_ID}.[number]
 	 *     (number is positive and starts at 1)
 	 * </ul>
 	 * <p>
 	 * Example of response <code>Properties</code>:
 	 * <blockquote>
-	 * {@link #PROP_METHOD} = find_projects_by_user_method<br/>
+	 * {@link #PROP_METHOD} = find.projects.by.user<br/>
 	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
-	 * {@link #PROP_PROJECT_ID}.1 = project_ID_1<br/>
-	 * {@link #PROP_PROJECT_ID}.2 = project_ID_2<br/>
-	 * {@link #PROP_PROJECT_ID}.3 = project_ID_3<br/>
-	 * {@link #PROP_PROJECT_ID}.4 = project_ID_4<br/>
-	 * {@link #PROP_PROJECT_ID}.5 = project_ID_5<br/>
+	 * {@link #PROP_PROJECT_ID}.1 = 104<br/>
+	 * {@link #PROP_PROJECT_ID}.2 = 3<br/>
+	 * {@link #PROP_PROJECT_ID}.3 = 55<br/>
 	 * ...
 	 * </blockquote>
 	 * </ul>
@@ -872,24 +852,24 @@ public class MethodConstants {
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
 	 * <li>{@link #PROP_RESULT_STATUS} - containing result status
-	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>true</code> if compilation
-	 *     finnished successfully; <code>false</code> otherwise
+	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>1</code> if compilation
+	 *     finished successfully; <code>0</code> otherwise
 	 * <li>list of {@link #PROP_RESULT_MESSAGE_TEXT} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.number (number is positive and starts at 1)
+	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.[number] (number is positive and starts at 1)
 	 * <li>list of {@link #PROP_RESULT_MESSAGE_ROW} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_ROW}.number (number is positive and starts at 1)
+	 *     {@link #PROP_RESULT_MESSAGE_ROW}.[number] (number is positive and starts at 1)
 	 * <li>list of {@link #PROP_RESULT_MESSAGE_COLUMN} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_COLUMN}.number (number is positive and starts at 1)
+	 *     {@link #PROP_RESULT_MESSAGE_COLUMN}.[number] (number is positive and starts at 1)
 	 * <li>list of {@link #PROP_RESULT_MESSAGE_TYPE} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_TYPE}.number (number is positive and starts at 1)
+	 *     {@link #PROP_RESULT_MESSAGE_TYPE}.[number] (number is positive and starts at 1)
 	 * </ul>
 	 * <p>
 	 * Example of response <code>Properties</code>:
 	 * <blockquote>
-	 * {@link #PROP_METHOD} = compile_file_method<br/>
+	 * {@link #PROP_METHOD} = compile.file<br/>
 	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
 	 * {@link #PROP_RESULT_STATUS} = result_status<br/>
-	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = true or false<br/>
+	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = 0<br/>
 	 * {@link #PROP_RESULT_MESSAGE_TEXT}.1 = message_text_1<br/>
 	 * {@link #PROP_RESULT_MESSAGE_ROW}.1 = message_row_1<br/>
 	 * {@link #PROP_RESULT_MESSAGE_COLUMN}.1 = message_column_1<br/>
@@ -931,24 +911,20 @@ public class MethodConstants {
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
 	 * <li>{@link #PROP_RESULT_STATUS} - containing result status
-	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>true</code> if compilation
-	 *     finnished successfully; <code>false</code> otherwise
+	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>1</code> if compilation
+	 *     finished successfully; <code>0</code> otherwise
 	 * <li>list of {@link #PROP_RESULT_MESSAGE_TEXT} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.number (number is positive and starts at 1)
+	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.[number] (number is positive and starts at 1)
 	 * </ul>
 	 * <p>
 	 * Example of response <code>Properties</code>:
 	 * <blockquote>
-	 * {@link #PROP_METHOD} = run_simulation_method<br/>
+	 * {@link #PROP_METHOD} = run.simulation<br/>
 	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
 	 * {@link #PROP_RESULT_STATUS} = result_status<br/>
-	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = true or false<br/>
+	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = 0<br/>
 	 * {@link #PROP_RESULT_MESSAGE_TEXT}.1 = message_text_1<br/>
 	 * {@link #PROP_RESULT_MESSAGE_TEXT}.2 = message_text_2<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TEXT}.3 = message_text_3<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TEXT}.4 = message_text_4<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TEXT}.5 = message_text_5<br/>
-	 * 
 	 * ...
 	 * </blockquote>
 	 * </ul>
@@ -981,7 +957,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_GENERATE_VHDL} - containing generated VHDL
+	 * <li>{@link #PROP_GENERATED_VHDL} - containing generated VHDL
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -1000,66 +976,6 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_GENERATE_VHDL = "generate.vhdl";
-	/**
-	 * A "generate testbench VHDL" method. Expected parametars (written as a property) are
-	 * <ul>
-	 * <li>{@link #PROP_FILE_ID}
-	 * </ul>
-	 * <p>
-	 * If no error occured, a returned <code>Properties</code> will contain following
-	 * property
-	 * <ul>
-	 * <li>{@link #PROP_METHOD} - containing this method request
-	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_GENERATE_VHDL_TESTBENCH} - containing generated testbench VHDL
-	 * </ul>
-	 * <p>
-	 * However if error occured, a returned <code>Properties</code> will contain following
-	 * property
-	 * <ul>
-	 * <li>{@link #PROP_METHOD} - containing this method request
-	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
-	 * </ul>
-	 * <p>
-	 * This method may cause following status errors:
-	 * <ul>
-	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
-	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
-	 * <li>{@link #SE_CAN_NOT_GENERATE_VHDL_TESTBENCH} - if can not generate testbench VHDL for file with {@link #PROP_FILE_ID}
-	 * </ul>
-	 */
-	public static final String MTD_GENERATE_TESTBENCH_VHDL = "generate.vhdl.testbench";
-	/**
-	 * A "generate schema VHDL" method. Expected parametars (written as a property) are
-	 * <ul>
-	 * <li>{@link #PROP_FILE_ID}
-	 * </ul>
-	 * <p>
-	 * If no error occured, a returned <code>Properties</code> will contain following
-	 * property
-	 * <ul>
-	 * <li>{@link #PROP_METHOD} - containing this method request
-	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_GENERATE_VHDL_SCHEMA} - containing generated schema VHDL
-	 * </ul>
-	 * <p>
-	 * However if error occured, a returned <code>Properties</code> will contain following
-	 * property
-	 * <ul>
-	 * <li>{@link #PROP_METHOD} - containing this method request
-	 * <li>{@link #PROP_STATUS} - containing one of status errors
-	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
-	 * </ul>
-	 * <p>
-	 * This method may cause following status errors:
-	 * <ul>
-	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
-	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
-	 * <li>{@link #SE_CAN_NOT_GENERATE_VHDL_SCHEMA} - if can not generate schema VHDL for file with {@link #PROP_FILE_ID}
-	 * </ul>
-	 */
-	public static final String MTD_GENERATE_SCHEMA_VHDL = "generate.vhdl.schema";
 	
 	/**
 	 * Dont let anyone instantiate this class.

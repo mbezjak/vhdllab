@@ -114,126 +114,107 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return new CompilationResult(0, true, new ArrayList<CompilationMessage>());
 	}
 
-	public File createNewFile(Project project, String fileName, String fileType) {
+	public File createNewFile(Project project, String fileName, String fileType) throws ServiceException {
 		File file = new File();
 		file.setFileName(fileName);
 		file.setFileType(fileType);
 		file.setContent("");
 		file.setId(Long.valueOf(createFile++));
 		file.setProject(project);
+		if(project.getFiles()==null) {
+			project.setFiles(new TreeSet<File>());
+		}
+		project.getFiles().add(file);
 		try {
 			fileDAO.save(file);
+			projectDAO.save(project);
 		} catch (DAOException e) {
 			e.printStackTrace();
-			return null;
+			throw new ServiceException();
 		}
 		return file;
 	}
 
-	public List<Project> findProjectsByUser(Long userId) {
-		List<Project> projects = new ArrayList<Project>();
-		projects.add(projects.get(0));
+	public List<Project> findProjectsByUser(Long userId) throws ServiceException {
+		List<Project> projects = null;
+		try {
+			projects = projectDAO.findByUser(userId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
 		return projects;
 	}
 
-	public String generateVHDL(File file) {
-		if(file.getFileType().equals(File.FT_VHDLTB)) 
-			return generateTestbenchVHDL(file);
+	public String generateVHDL(File file) throws ServiceException {
+		if(file.getFileType().equals(File.FT_VHDLTB)) {
+			String inducement = new String("<measureUnit>ns</measureUnit>\n" +
+					"<duration>1000</duration>\n" +
+					"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
+					"<signal name = \"b\" type=\"scalar\">(0,0)(200, 1)(300, z)(440, U)</signal>\n" +
+					"<signal name = \"c\" type=\"scalar\" rangeFrom=\"0\" rangeTo=\"0\">(0,0)(50,1)(300,0)(400,1)</signal>\n" +
+					"<signal name = \"d\" type=\"vector\" rangeFrom=\"0\" rangeTo=\"0\">(100,1)(200,0)(300,1)(400,z)</signal>\n" +
+					"<signal name = \"e\" type=\"vector\" rangeFrom=\"2\" rangeTo=\"0\">(0,000)(100, 100)(400, 101)(500,111)(600, 010)</signal>\n" + 
+					"<signal name = \"f\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"4\">(0,0001)(100, 1000)(200, 0110)(300, U101)(400, 1001)(500,110Z)(600, 0110)</signal>");
+			
+			DefaultCircuitInterface ci = new DefaultCircuitInterface("sklop");
+			ci.addPort(new DefaultPort("a", Direction.IN, new DefaultType("std_logic", null, null)));
+			ci.addPort(new DefaultPort("b", Direction.IN, new DefaultType("std_logic", null, null)));
+			ci.addPort(new DefaultPort("c", Direction.OUT, new DefaultType("std_logic", null, null)));
+			ci.addPort(new DefaultPort("d", Direction.IN, new DefaultType("std_logic_vector", new int[] {0,0}, "TO")));
+			ci.addPort(new DefaultPort("e", Direction.IN, new DefaultType("std_logic_vector", new int[] {2,0}, "DOWNTO")));
+			ci.addPort(new DefaultPort("f", Direction.OUT, new DefaultType("std_logic_vector", new int[] {1,4}, "TO")));
+			
+			String writted = null;
+			try {
+				writted = Testbench.writeVHDL(ci, inducement);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new ServiceException();
+			}
+			
+			return writted;
+		}
 		else return "";
 	}
 
-	public String generateShemaVHDL(File file) {
-		return "";
-	}
-
-	public String generateTestbenchVHDL(File file) {
-		String inducement = new String("<measureUnit>ns</measureUnit>\n" +
-				"<duration>1000</duration>\n" +
-				"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
-				"<signal name = \"b\" type=\"scalar\">(0,0)(200, 1)(300, z)(440, U)</signal>\n" +
-				"<signal name = \"c\" type=\"scalar\" rangeFrom=\"0\" rangeTo=\"0\">(0,0)(50,1)(300,0)(400,1)</signal>\n" +
-				"<signal name = \"d\" type=\"vector\" rangeFrom=\"0\" rangeTo=\"0\">(100,1)(200,0)(300,1)(400,z)</signal>\n" +
-				"<signal name = \"e\" type=\"vector\" rangeFrom=\"2\" rangeTo=\"0\">(0,000)(100, 100)(400, 101)(500,111)(600, 010)</signal>\n" + 
-				"<signal name = \"f\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"4\">(0,0001)(100, 1000)(200, 0110)(300, U101)(400, 1001)(500,110Z)(600, 0110)</signal>");
-		
-		DefaultCircuitInterface ci = new DefaultCircuitInterface("sklop");
-		ci.addPort(new DefaultPort("a", Direction.IN, new DefaultType("std_logic", null, null)));
-		ci.addPort(new DefaultPort("b", Direction.IN, new DefaultType("std_logic", null, null)));
-		ci.addPort(new DefaultPort("c", Direction.OUT, new DefaultType("std_logic", null, null)));
-		ci.addPort(new DefaultPort("d", Direction.IN, new DefaultType("std_logic_vector", new int[] {0,0}, "TO")));
-		ci.addPort(new DefaultPort("e", Direction.IN, new DefaultType("std_logic_vector", new int[] {2,0}, "DOWNTO")));
-		ci.addPort(new DefaultPort("f", Direction.OUT, new DefaultType("std_logic_vector", new int[] {1,4}, "TO")));
-		
-		String writted = null;
-		try {
-			writted = Testbench.writeVHDL(ci, inducement);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
-		
-		return writted;
-	}
-
-	public String getFileName(Long fileId) {
-		File file = null;
-		try {
-			fileDAO.load(fileId);
-		} catch (DAOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		return file.getFileName();
-	}
-
-	public String getFileType(Long fileId) {
-		File file = null;
-		try {
-			fileDAO.load(fileId);
-		} catch (DAOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		return file.getFileType();
-	}
-
-	public File loadFile(Long fileId) {
+	public File loadFile(Long fileId) throws ServiceException {
 		try {
 			return fileDAO.load(fileId);
 		} catch (DAOException e) {
 			e.printStackTrace();
+			throw new ServiceException();
 		}
-		return null;
 	}
 
-	public Project loadProject(Long projectId) {
+	public Project loadProject(Long projectId) throws ServiceException {
 		try {
 			return projectDAO.load(projectId);
 		} catch (DAOException e) {
 			e.printStackTrace();
+			throw new ServiceException();
 		}
-		return null;
 	}
 
-	public void renameFile(Long fileId, String newName) {
+	public void renameFile(Long fileId, String newName) throws ServiceException {
 		try {
 			File file = fileDAO.load(fileId);
 			file.setFileName(newName);
 			fileDAO.save(file);
 		} catch (DAOException e) {
 			e.printStackTrace();
+			throw new ServiceException();
 		}
 	}
 
-	public void renameProject(Long projectId, String newName) {
+	public void renameProject(Long projectId, String newName) throws ServiceException {
 		try {
 			Project project = projectDAO.load(projectId);
 			project.setProjectName(newName);
 			projectDAO.save(project);
 		} catch (DAOException e) {
 			e.printStackTrace();
+			throw new ServiceException();
 		}
 	}
 
@@ -241,22 +222,23 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return new SimulationResult(0, true, new ArrayList<SimulationMessage>(), "");
 	}
 
-	public void saveFile(Long fileId, String content) {
-		File file = new File();
-		file.setId(fileId);
+	public void saveFile(Long fileId, String content) throws ServiceException {
+		File file = loadFile(fileId);
 		file.setContent(content);
 		try {
 			fileDAO.save(file);
 		} catch (DAOException e) {
 			e.printStackTrace();
+			throw new ServiceException();
 		}
 	}
 
-	public void saveProject(Project p) {
+	public void saveProject(Project p) throws ServiceException {
 		try {
 			projectDAO.save(p);
 		} catch (DAOException e) {
 			e.printStackTrace();
+			throw new ServiceException();
 		}
 	}
 
@@ -282,7 +264,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			files = projectDAO.load(projectId).getFiles();
 		} catch (DAOException e) {
 			e.printStackTrace();
-			return false;
+			throw new ServiceException();
 		}
 		for(File f : files) {
 			if(f.getFileName().equals(fileName)) return true;
@@ -295,8 +277,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			return projectDAO.load(projectId) != null;
 		} catch (DAOException e) {
 			e.printStackTrace();
+			throw new ServiceException();
 		}
-		return false;
 	}
 
 	public Project createNewProject(String projectName, Long ownerId) throws ServiceException {
@@ -309,7 +291,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			projectDAO.save(project);
 		} catch (DAOException e) {
 			e.printStackTrace();
-			return null;
+			throw new ServiceException();
 		}
 		return project;
 	}
