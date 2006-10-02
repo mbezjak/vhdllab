@@ -89,6 +89,6 @@ public class DoMethodLoadFileContentTest {
 		assertEquals(3, p.keySet().size());
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(file1.getContent(), p.getProperty(MethodConstants.PROP_FILE_CONTENT, ""));
+		assertEquals("", p.getProperty(MethodConstants.PROP_FILE_CONTENT, ""));
 	}
 }

@@ -3,9 +3,9 @@ package hr.fer.zemris.vhdllab.servlets.dispatch;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
+import hr.fer.zemris.vhdllab.servlets.MethodFactory;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -32,7 +32,6 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.servlets.MethodDispatcher#preformMethodDispatching(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
-	@SuppressWarnings("unchecked")
 	public Properties preformMethodDispatching(Properties p, ManagerProvider mprov) {
 		if(p==null) throw new NullPointerException("Properties can not be null!");
 		if(mprov==null) throw new NullPointerException("A manager provider can not be null!");
@@ -173,7 +172,6 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * @param properties a Properties from where to draw information.
 	 * @return a response Properties.
 	 */
-	@SuppressWarnings("unchecked")
 	private Properties resolveMethod(String method, Properties properties) {
 		Properties retProp = new Properties();
 		int num = 1;
@@ -195,8 +193,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 			}
 			
 			Properties ret;
-			Map<String,RegisteredMethod> regMap = (Map<String,RegisteredMethod>)mprov.get("registeredMethods");
-			RegisteredMethod regMethod = regMap.get(method);
+			RegisteredMethod regMethod = MethodFactory.getMethod(method);
 			if(regMethod==null) ret = errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
 			else ret = regMethod.run(p, mprov);
 			if(num==1 && modified.size()==0) return ret;

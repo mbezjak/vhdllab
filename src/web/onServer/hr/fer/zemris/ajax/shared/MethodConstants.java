@@ -329,7 +329,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_FILE_NAME} - containing file type
+	 * <li>{@link #PROP_FILE_TYPE} - containing file type
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -359,7 +359,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_FILE_NAME} - containing file name
+	 * <li>{@link #PROP_FILE_CONTENT} - containing file content or empty string if file content is <code>null</code>.
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following

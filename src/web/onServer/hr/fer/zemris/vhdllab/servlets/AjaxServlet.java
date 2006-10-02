@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets;
 
+import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.ajax.shared.XMLUtil;
 
 import java.io.IOException;
@@ -34,10 +35,28 @@ public class AjaxServlet extends HttpServlet {
 		String text = XMLUtil.inputStreamAsText(is,"UTF-8");
 		Properties p = XMLUtil.deserializeProperties(text);
 		
+		Properties resProp;
 		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
-		MethodDispatcher disp = (MethodDispatcher)mprov.get("methodDispatcher");
-		Properties resProp = disp.preformMethodDispatching(p, mprov);
+		String method = p.getProperty("method");
+		RegisteredMethod regMethod = MethodFactory.getMethod(method);
+		if(regMethod==null) resProp = errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
+		else resProp = regMethod.run(p,mprov);
 		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);
+	}
+	
+	/**
+	 * This method is called if error occurs.
+	 * @param method a method that caused this error
+	 * @param errNo error message number
+	 * @param errorMessage error message to pass back to caller
+	 * @return a response Properties
+	 */
+	private Properties errorProperties(String method, String errNo, String errorMessage) {
+		Properties resProp = new Properties();
+		resProp.setProperty(MethodConstants.PROP_METHOD,method);
+		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
+		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
+		return resProp;
 	}
 	
 	/**

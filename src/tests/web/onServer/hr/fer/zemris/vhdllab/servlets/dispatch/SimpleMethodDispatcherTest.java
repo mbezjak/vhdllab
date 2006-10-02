@@ -30,7 +30,6 @@ public class SimpleMethodDispatcherTest {
 	private static File file2;
 	private static File file3;
 	
-	@SuppressWarnings("unchecked")
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();

@@ -31,7 +31,7 @@ public class FileDAOMySQLImpl implements FileDAO {
 			session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 			
-			session.save(file);
+			session.saveOrUpdate(file);
 			
 			tx.commit();
 			HibernateUtil.closeSession();

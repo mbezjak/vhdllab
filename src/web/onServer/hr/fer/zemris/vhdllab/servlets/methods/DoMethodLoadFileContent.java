@@ -37,7 +37,7 @@ public class DoMethodLoadFileContent implements RegisteredMethod {
 			file = null;
 		}
 		if(file==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_FILE,"File ("+fileID+") not found!");
-		
+		if(file.getContent()==null) file.setContent(new String());
 
 		// Prepare response
 		Properties resProp = new Properties();

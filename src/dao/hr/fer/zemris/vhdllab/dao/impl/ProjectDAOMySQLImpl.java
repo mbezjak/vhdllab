@@ -37,7 +37,7 @@ public class ProjectDAOMySQLImpl implements ProjectDAO {
 			session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 			
-			session.save(project);
+			session.saveOrUpdate(project);
 			
 			tx.commit();
 			HibernateUtil.closeSession();

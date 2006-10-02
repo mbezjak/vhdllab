@@ -34,7 +34,7 @@ public class DoMethodFindProjectsByUserTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		project = labman.createNewProject("TestProjectName", Long.valueOf(1000));
+		project = labman.createNewProject("TestProjectName", Long.valueOf(1111));
 		file1 = labman.createNewFile(project, "TestFileName_1", File.FT_VHDLSOURCE);
 		file2 = labman.createNewFile(project, "TestFileName_2", File.FT_VHDLSOURCE);
 		file3 = labman.createNewFile(project, "TestFileName_3", File.FT_VHDLTB);

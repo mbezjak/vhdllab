@@ -1,16 +1,14 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
-
 import java.util.Properties;
 
 /**
  * This interface represents one registered method for a given
  * request. All registered methods are registered in
- * {@linkplain hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider}
+ * {@linkplain hr.fer.zemris.vhdllab.servlets.MethodFactory}
  * 
  * @author Miro Bezjak
- * @see SampleManagerProvider#SampleManagerProvider()
+ * @see MethodFactory#getMethod(String)
  */
 public interface RegisteredMethod {
 	

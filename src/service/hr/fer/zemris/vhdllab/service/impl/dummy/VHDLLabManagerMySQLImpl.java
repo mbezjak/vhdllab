@@ -20,96 +20,14 @@ import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
-public class VHDLLabManagerImpl implements VHDLLabManager {
-	
-	private int createFile = 1001;
-	private int createProject = 1001;
+public class VHDLLabManagerMySQLImpl implements VHDLLabManager {
 	
 	private FileDAO fileDAO;
 	private ProjectDAO projectDAO;
 	
-	public VHDLLabManagerImpl() {}
+	public VHDLLabManagerMySQLImpl() {}
 	
-	public void init() {
-		File file = new File();
-		file.setId(Long.valueOf(0));
-		file.setFileName("sklop");
-		file.setFileType(File.FT_VHDLSOURCE);
-		file.setContent("library IEEE;\n"+
-				"use IEEE.STD_LOGIC_1164.ALL;\n\n"+
-				"entity func is port (\n"+
-				"\ta, b, c, d: in std_logic;\n"+
-				"\tf: out std_logic\n );"+
-				"end func;\n\n"+
-				"architecture Behavioral of func is\n"+
-				"signal	f1, f2, f3: std_logic;\n"+
-				"begin\n"+
-				"process(a, b, c, d)\n"+
-				"begin\n"+
-				"\tf1 <= ( not a and not b and not c and d) or\n"+
-					"\t\t( not a and not b and c and d) or\n"+
-					"\t\t( not a and b and not c and d) or\n"+
-					"\t\t( a and not b and not c and d) or\n"+
-					"\t\t( a and not b and c and not d) or\n"+
-					"\t\t( a and b and not c and not d);\n"+
-				"\tf2 <= ( a and b and c) or\n"+
-				"\t\t( a and c and d) or\n"+
-				"\t\t( not a and not b and c);\n"+
-				"\tf3 <= ( a or b or not c or d) and\n"+
-					"\t\t( a or not b or c or d) and\n"+
-					"\t\t( not a or b or c or not d) and\n"+
-					"\t\t( not a or b or not c or not d) and\n"+
-					"\t\t( not a or not b or c or d) and\n"+
-					"\t\t( not a or not b or not c or not d);\n"+
-				"\tf <= f1 and (f2 or f3);\n"+
-				"end process;\n\n"+
-				"end Behavioral;\n");
-		
-		Project project = new Project();
-		project.setId(Long.valueOf(0));
-		project.setOwnerID(Long.valueOf(0));
-		project.setProjectName("Simple");
-		project.setFiles(new TreeSet<File>());
-		project.getFiles().add(file);
-		
-		file.setProject(project);
-		try {
-			fileDAO.save(file);
-			projectDAO.save(project);
-		} catch (DAOException e) {
-			e.printStackTrace();
-			return;
-		}
-		
-		
-		//**********************************
-		File file2 = new File();
-		file2.setId(Long.valueOf(1));
-		file2.setFileName("sklop_tb");
-		file2.setFileType(File.FT_VHDLTB);
-		file2.setContent("<measureUnit>ns</measureUnit>\n" +
-				"<duration>1000</duration>\n" +
-				"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
-				"<signal name = \"b\" type=\"scalar\">(0,0)(200, 1)(300, z)(440, U)</signal>\n" +
-				"<signal name = \"c\" type=\"scalar\" rangeFrom=\"0\" rangeTo=\"0\">(0,0)(50,1)(300,0)(400,1)</signal>\n" +
-				"<signal name = \"d\" type=\"vector\" rangeFrom=\"0\" rangeTo=\"0\">(100,1)(200,0)(300,1)(400,z)</signal>\n" +
-				"<signal name = \"e\" type=\"vector\" rangeFrom=\"2\" rangeTo=\"0\">(0,000)(100, 100)(400, 101)(500,111)(600, 010)</signal>\n" + 
-				"<signal name = \"f\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"4\">(0,0001)(100, 1000)(200, 0110)(300, U101)(400, 1001)(500,110Z)(600, 0110)</signal>");
-		
-		project.getFiles().add(file2);
-		
-		file2.setProject(project);
-		try {
-			fileDAO.save(file2);
-			projectDAO.save(project);
-		} catch (DAOException e) {
-			e.printStackTrace();
-			return;
-		}
-	}
-
 	public CompilationResult compile(Long fileId) {
 		return new CompilationResult(0, true, new ArrayList<CompilationMessage>());
 	}
@@ -118,16 +36,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		File file = new File();
 		file.setFileName(fileName);
 		file.setFileType(fileType);
-		file.setContent("");
-		file.setId(Long.valueOf(createFile++));
 		file.setProject(project);
-		if(project.getFiles()==null) {
-			project.setFiles(new TreeSet<File>());
-		}
-		project.getFiles().add(file);
 		try {
 			fileDAO.save(file);
-			projectDAO.save(project);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException();
@@ -284,10 +195,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public Project createNewProject(String projectName, Long ownerId) throws ServiceException {
 		Project project = new Project();
-		project.setId(Long.valueOf(createProject++));
 		project.setProjectName(projectName);
 		project.setOwnerID(ownerId);
-		project.setFiles(null);
 		try {
 			projectDAO.save(project);
 		} catch (DAOException e) {

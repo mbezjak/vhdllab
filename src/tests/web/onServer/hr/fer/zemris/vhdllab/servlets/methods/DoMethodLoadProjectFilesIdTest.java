@@ -80,17 +80,23 @@ public class DoMethodLoadProjectFilesIdTest {
 	
 	/**
 	 * Test should pass without errors.
+	 * @throws ServiceException 
+	 * @throws NumberFormatException 
 	 */
 	@Test
-	public void run3() {
+	public void run3() throws NumberFormatException, ServiceException {
 		prop.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 
 		Properties p = regMethod.run(prop, mprov);
 		assertEquals(5, p.keySet().size());
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(String.valueOf(file1.getId()), p.getProperty(MethodConstants.PROP_FILE_ID+".1"));
-		assertEquals(String.valueOf(file2.getId()), p.getProperty(MethodConstants.PROP_FILE_ID+".2"));
-		assertEquals(String.valueOf(file3.getId()), p.getProperty(MethodConstants.PROP_FILE_ID+".3"));
+		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		File f = labman.loadFile(Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID+".1")));
+		assertEquals(true, project.getFiles().contains(f));
+		f = labman.loadFile(Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID+".2")));
+		assertEquals(true, project.getFiles().contains(f));
+		f = labman.loadFile(Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID+".3")));
+		assertEquals(true, project.getFiles().contains(f));
 	}
 }
