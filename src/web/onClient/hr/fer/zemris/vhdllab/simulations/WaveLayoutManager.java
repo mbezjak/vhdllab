@@ -25,6 +25,8 @@ class WaveLayoutManager implements LayoutManager
     private final String INTERVAL = "interval";
     private final String SIGNAL_NAMES = "signalNames";
     private final String SIGNAL_NAMES_SCROLLBAR = "signalNamesScrollbar";
+    private final String SIGNAL_VALUES = "signalValues";
+    private final String VALUES_SCROLLBAR = "valuesScrollbar";
     private final String WAVES = "waves";
     private final String SCALE = "scale";
     private final String VERTICAL_SCROLLBAR = "verticalScrollbar";
@@ -37,6 +39,8 @@ class WaveLayoutManager implements LayoutManager
     private Component interval;
     private Component signalNames;
     private Component signalNamesScrollbar;
+    private Component signalValues;
+    private Component valuesScrollbar;
     private Component waves;
     private Component scale;
     private Component verticalScrollbar;
@@ -72,6 +76,14 @@ class WaveLayoutManager implements LayoutManager
         else if (SIGNAL_NAMES_SCROLLBAR.equals(name)) 
         {
             signalNamesScrollbar = component;
+        }
+		else if (SIGNAL_VALUES.equals(name)) 
+        {
+            signalValues = component;
+        }
+        else if (VALUES_SCROLLBAR.equals(name)) 
+        {
+            valuesScrollbar = component;
         }
         else if (WAVES.equals(name)) 
         {
@@ -125,6 +137,14 @@ class WaveLayoutManager implements LayoutManager
         else if (component == signalNamesScrollbar) 
         {
             signalNamesScrollbar = null;
+        }
+		else if (component == signalValues) 
+        {
+            signalValues = null;
+        }
+        else if (component == valuesScrollbar) 
+        {
+			valuesScrollbar = null;
         }
         else if (component == waves) 
         {
@@ -215,6 +235,7 @@ public void layoutContainer(Container target)
      * duljine i to je maksimalna moguca vrijednost.  Zato maximumSize() 
      */
     int widthSignalNames = signalNames.getMaximumSize().width;
+	int widthSignalValues = signalValues.getMaximumSize().width;
     int widthVerticalScrollbar = verticalScrollbar.getPreferredSize().width;
     int heightToolbar = toolbar.getPreferredSize().height;
     int heightScale = scale.getPreferredSize().height;
@@ -280,7 +301,7 @@ public void layoutContainer(Container target)
         cursorPanel.setSize(width, height);
         cursorPanel.setBounds
             (
-             west + widthSignalNames, 
+             west + widthSignalNames + widthSignalValues, 
              north + 10 + heightToolbar + 10, 
              east - widthVerticalScrollbar - (west + widthSignalNames),
              height
@@ -312,6 +333,32 @@ public void layoutContainer(Container target)
              height
              );
     }
+	if ((signalValues != null) && signalValues.isVisible())
+    {
+        width = signalValues.getMaximumSize().width;
+        height = signalValues.getPreferredSize().height;
+        signalValues.setSize(width, height);
+        signalValues.setBounds
+            (
+             west + widthSignalNames,
+             north + 10 + heightToolbar + 10 + heightCursorPanel,
+             width, 
+             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
+             );
+    }
+    if ((valuesScrollbar != null) && valuesScrollbar.isVisible())
+    {
+        width = valuesScrollbar.getPreferredSize().width;
+        height = valuesScrollbar.getPreferredSize().height;
+        valuesScrollbar.setSize(width, height);
+        valuesScrollbar.setBounds
+            (
+             west + widthSignalNames,
+             south - heightHorizontalScrollbar - heightScale,
+             widthSignalValues,
+             height
+             );
+    }
     if ((waves != null) && waves.isVisible())
     {
         width = waves.getPreferredSize().width;
@@ -319,7 +366,7 @@ public void layoutContainer(Container target)
         waves.setSize(width, height);
         waves.setBounds
             (
-             west + widthSignalNames, 
+             west + widthSignalNames + widthSignalValues, 
              north + 10 + heightToolbar + 10 + heightCursorPanel, 
              east - widthVerticalScrollbar - (west + widthSignalNames),
              south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
@@ -332,7 +379,7 @@ public void layoutContainer(Container target)
         scale.setSize(width, height);
         scale.setBounds
             (
-             west + widthSignalNames,
+             west + widthSignalNames + widthSignalValues,
              south - heightHorizontalScrollbar - heightScale,
              east - widthVerticalScrollbar - (west + widthSignalNames),
              heightScale
@@ -358,7 +405,7 @@ public void layoutContainer(Container target)
         horizontalScrollbar.setSize(width, height);
         horizontalScrollbar.setBounds
             (
-             west + widthSignalNames,
+             west + widthSignalNames + widthSignalValues,
              south - height,
              east - widthVerticalScrollbar - (west + widthSignalNames),
              height
