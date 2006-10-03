@@ -4,9 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import java.util.List;
-import java.util.LinkedList;
 import java.util.ArrayList;
-
 
 /**
  * Klasa koja predstavlja panel po kojem se crtaju valni oblici
@@ -48,10 +46,7 @@ class WaveDrawBoard extends JPanel
     /** Skala */
     private Scale scale;
 
-    /** Sadrzi informaciju jesu li bit-vectori prosireni */
-    private List<Boolean> expandedSignalNames = new ArrayList<Boolean>();
-
-    /** 
+   /** 
      * Lista trenutnih indeksa vektora u listi sa signalima
      */
     private List<Integer> currentVectorIndex = new ArrayList<Integer>();
@@ -102,16 +97,9 @@ class WaveDrawBoard extends JPanel
         this.durationsInPixels = scale.getDurationInPixels();
         this.waveEndPointInPixels = scale.getScaleEndPointInPixels();
         this.scale = scale;
-        this.expandedSignalNames = results.getExpandedSignalNames();
         this.currentVectorIndex = results.getCurrentVectorIndex();
         this.WAVE_SPRING_SIZE = WAVE_SPRING_SIZE;
         this.themeColor = themeColor;
-        int i = 0;
-
-        /* 
-         * inicijalizacija pojedinih valnih oblika.  Svakom se valnom obliku
-         * odmah dodaje lista vrijednosti (1, 0, U, Z...)
-         */
     }
 
 
@@ -327,7 +315,7 @@ class WaveDrawBoard extends JPanel
 	 */
 	public void collapse (int index)
 	{
-		Integer defaultIndex = results.getCurrentVectorIndex().get(index);
+		Integer defaultIndex = currentVectorIndex.get(index);
 		int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
 		for (int i = 0; i < vectorSize; i++)
 		{

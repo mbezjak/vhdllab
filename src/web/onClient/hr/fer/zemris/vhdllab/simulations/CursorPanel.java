@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.simulations;
 
+
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import java.awt.Dimension;
@@ -14,9 +15,6 @@ class CursorPanel extends JPanel
 {
     /* Aktivan je prvi kursor */
     private final byte FIRST = 1;
-
-    /* Aktivan je drugi kursor */
-    private final byte SECOND = 2;
 
     /** Zavrsna tocka panela  */
     private int panelEndPoint;

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import java.util.List;
-import java.util.LinkedList;
 import java.util.ArrayList;
 
 
@@ -18,7 +17,7 @@ class SignalNamesPanel extends JPanel
     /** Prvo ime signala pocinje od 30-tog piksela */
     private final int YAXIS_START_POINT = 30;
 
-    /** Svako se ime nalazi u springu (elasticnom pretincu) koji je visine 40 piksela */
+    /** Svako se ime nalazi u springu (elasticnom pretincu) koji je visine 45 piksela */
 	private final int SIGNAL_NAME_SPRING_HEIGHT = 45;
 
     /** Maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
@@ -102,7 +101,7 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Getter koji vraca preferirane dimenzije ako je ime najvece duljine manje
-     * od 150 piksela, inace vraca 150 piksela
+     * od 450 piksela, inace vraca 450 piksela
      */
     public Dimension getMaximumSize()
     {
@@ -265,7 +264,7 @@ class SignalNamesPanel extends JPanel
 	public void expand (int index)
 	{
 		/* defaultIndex je index bit-vektora u default polju imena signala s kojim se barata */
-		Integer defaultIndex = results.getCurrentVectorIndex().get(index);
+		Integer defaultIndex = currentVectorIndex.get(index);
 		String tempSignalName;
         int startVector = Integer.valueOf(signalNames.get(index).charAt(signalNames.get(index).length() - 4)) - 48;
         int endVector = Integer.valueOf(signalNames.get(index).charAt(signalNames.get(index).length() - 2)) - 48;
@@ -298,13 +297,12 @@ class SignalNamesPanel extends JPanel
 			//(startVector < endVector) ? (startVector++) : (startVector--);
 		}
 
-		Integer vectorIndex;
 		/* 
 		 * refresha currentVectorIndex listu 
 		 */
 		for (int i = 0; i < vectorSize; i++)
 		{
-			results.getCurrentVectorIndex().add(index, defaultIndex);
+			currentVectorIndex.add(index, defaultIndex);
 		}
 	}
 
@@ -316,7 +314,7 @@ class SignalNamesPanel extends JPanel
 	 */
 	public void collapse (int index)
 	{
-		Integer defaultIndex = results.getCurrentVectorIndex().get(index);
+		Integer defaultIndex = currentVectorIndex.get(index);
 		int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
 		for (int i = 0; i < vectorSize; i++)
 		{
@@ -327,7 +325,7 @@ class SignalNamesPanel extends JPanel
 		/* Refresha currentVectorIndex listu nakon kolapsiranja odredenog bit-vektora */
 		for (int i = 0; i < vectorSize - 1; i++)
 		{
-			results.getCurrentVectorIndex().remove(index);
+			currentVectorIndex.remove(index);
 		}
 	}
 
@@ -354,10 +352,10 @@ class SignalNamesPanel extends JPanel
 		yAxis = YAXIS_START_POINT - offsetYAxis;
 		for (int i = 0; i < signalNames.size(); i++)
 		{
-            if (results.getCurrentVectorIndex().get(i) != -1)
+            if (currentVectorIndex.get(i) != -1)
             {
-				Integer defaultIndex = results.getCurrentVectorIndex().get(i);
-				if (results.getExpandedSignalNames().get(defaultIndex))
+				Integer defaultIndex = currentVectorIndex.get(i);
+				if (expandedSignalNames.get(defaultIndex))
 				{
 					int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
 					g.drawString(signalNames.get(i), 5 - offsetXAxis, yAxis);

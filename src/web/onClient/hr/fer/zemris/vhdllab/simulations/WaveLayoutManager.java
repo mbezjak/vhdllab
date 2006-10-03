@@ -303,7 +303,7 @@ public void layoutContainer(Container target)
             (
              west + widthSignalNames + widthSignalValues, 
              north + 10 + heightToolbar + 10, 
-             east - widthVerticalScrollbar - (west + widthSignalNames),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
              height
              );
     }
@@ -368,7 +368,7 @@ public void layoutContainer(Container target)
             (
              west + widthSignalNames + widthSignalValues, 
              north + 10 + heightToolbar + 10 + heightCursorPanel, 
-             east - widthVerticalScrollbar - (west + widthSignalNames),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
              south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
              );                  
     }
@@ -381,7 +381,7 @@ public void layoutContainer(Container target)
             (
              west + widthSignalNames + widthSignalValues,
              south - heightHorizontalScrollbar - heightScale,
-             east - widthVerticalScrollbar - (west + widthSignalNames),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
              heightScale
              );
     }
@@ -407,7 +407,7 @@ public void layoutContainer(Container target)
             (
              west + widthSignalNames + widthSignalValues,
              south - height,
-             east - widthVerticalScrollbar - (west + widthSignalNames),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
              height
              );
     }
