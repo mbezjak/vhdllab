@@ -2,8 +2,10 @@ package hr.fer.zemris.vhdllab.simulations;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Map;
 import javax.swing.JPanel;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 /**
@@ -22,14 +24,11 @@ class SignalNamesPanel extends JPanel
     /** Maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
 	private final int PANEL_MAX_WIDTH = 450;
 
-    /** Polje Stringova koje sadrzi sva imena signala */
-    private String[] signalNames;
+    /** Lista Stringova koje sadrzi sva imena signala */
+    private List<String> signalNames;
 
-    /** 
-     * Polje koje sadrzi pocetne tocke springova po Y-osi.  U ovisnoti o
-     * ekspandiranosti bit-vektora pocetne se tocke mogu mijenjati
-     */
-    private int[] springStartPoints;
+	/** Sadrzi rezultate simulacije */
+    private GhdlResults results;
 
     /** Polozaj trenutnog springa */
     private int yAxis;
@@ -52,8 +51,13 @@ class SignalNamesPanel extends JPanel
     /** Polozaj strelice po Y-osi */
     private int yArrow;
 
-    /** Sadrzi informaciju o expanded bit-vektorima */
-    private Map<Integer, Boolean> expandedSignalNames;
+    /** Sadrzi informaciju jesu li bit-vectori prosireni */
+    private List<Boolean> expandedSignalNames = new ArrayList<Boolean>();
+
+    /** 
+     * Lista trenutnih indeksa vektora u listi sa signalima
+     */
+    private List<Integer> currentVectorIndex = new ArrayList<Integer>();
 
     /** Varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
     private boolean isClicked = false;
@@ -76,21 +80,13 @@ class SignalNamesPanel extends JPanel
     public SignalNamesPanel (GhdlResults results, ThemeColor themeColor)
     {
         super();
+		this.results = results;
         this.signalNames = results.getSignalNames();
         this.expandedSignalNames = results.getExpandedSignalNames();
+        this.currentVectorIndex = results.getCurrentVectorIndex();
         this.maximumSignalNameLength = results.getMaximumSignalNameLength();
         this.themeColor = themeColor;
         panelWidth = maximumSignalNameLength * 6;
-        springStartPoints = new int[signalNames.length];
-        
-        /* 
-         * postavlja defaultne pocetne tocke, koj ce kasniju mogu promijeniti u
-         * ovisnosti je li neki bit-vektor ekspandiran
-         */
-        for (int i = 0; i < springStartPoints.length; i++)
-        {
-            springStartPoints[i] = i * SIGNAL_NAME_SPRING_HEIGHT;
-        }
     }
     
       
@@ -100,7 +96,7 @@ class SignalNamesPanel extends JPanel
     public Dimension getPreferredSize() 
     { 
         return new Dimension(panelWidth + 4, 
-				signalNames.length * SIGNAL_NAME_SPRING_HEIGHT); 
+				signalNames.size() * SIGNAL_NAME_SPRING_HEIGHT); 
     } 
 
 
@@ -113,11 +109,11 @@ class SignalNamesPanel extends JPanel
         if (panelWidth < PANEL_MAX_WIDTH)
         {
             return new Dimension(panelWidth, 
-					signalNames.length * SIGNAL_NAME_SPRING_HEIGHT); 
+					signalNames.size() * SIGNAL_NAME_SPRING_HEIGHT); 
         }
         else
         {
-            return new Dimension(PANEL_MAX_WIDTH, signalNames.length * SIGNAL_NAME_SPRING_HEIGHT);
+            return new Dimension(PANEL_MAX_WIDTH, signalNames.size() * SIGNAL_NAME_SPRING_HEIGHT);
         }
     }
 
@@ -178,7 +174,7 @@ class SignalNamesPanel extends JPanel
      *
      * @param signalNames Nove set imena signala
      */
-    public void setSignalNames (String[] signalNames)
+    public void setSignalNames (List<String> signalNames)
     {
         this.signalNames = signalNames;
     }
@@ -238,49 +234,6 @@ class SignalNamesPanel extends JPanel
 
 
     /**
-     * Modificira pocetne tocke springova nakon ekspandiranja nekog bit-vectora
-     *
-     * @param signalValues vrijednosti po signalima
-     */
-    public void setSpringStartPoints (String[][] signalValues)
-    {
-        for (int i = 0; i < springStartPoints.length; i++)
-        {
-            if (expandedSignalNames.containsKey(i) && expandedSignalNames.get(i) && i < springStartPoints.length - 1)
-            {
-                springStartPoints[i + 1] = springStartPoints[i] + 
-                    signalValues[i][0].length() * SIGNAL_NAME_SPRING_HEIGHT;
-            }
-            else if (i < springStartPoints.length - 1)
-            {
-                springStartPoints[i + 1] = springStartPoints[i] + SIGNAL_NAME_SPRING_HEIGHT;
-            }
-        }
-    }
-
-
-    /**
-     * Tocke u kojima pocinju springovi imena signala (u pikselima)
-     */
-    public int[] getSpringStartPoints ()
-    {
-        return springStartPoints;
-    }
-
-
-    /**
-     * Defaultne vrijednosti za defaultni poredak 
-     */
-    public void setDefaultSpringStartPoints()
-    {
-        for (int i = 0; i < springStartPoints.length; i++)
-        {
-            springStartPoints[i] = i * SIGNAL_NAME_SPRING_HEIGHT;
-        }
-    }
-
-
-    /**
      * Ako je kurosr misa iznad granice s imenima signala tada prikazuj strelicu
      * za pomicanje
      *
@@ -303,6 +256,81 @@ class SignalNamesPanel extends JPanel
     }
 
 
+	/**
+	 * Ekspandira bit-vektor.  Umjesto bit-vektora zapisuju se njegovi clanovi u listu signala.
+	 * Npr. Umjesto A[0:2] ulaze A[0], A[1] i A[2]
+	 *
+	 * @param index Index bit-vektora koji se ekspandira
+	 */
+	public void expand (int index)
+	{
+		/* defaultIndex je index bit-vektora u default polju imena signala s kojim se barata */
+		Integer defaultIndex = results.getCurrentVectorIndex().get(index);
+		String tempSignalName;
+        int startVector = Integer.valueOf(signalNames.get(index).charAt(signalNames.get(index).length() - 4)) - 48;
+        int endVector = Integer.valueOf(signalNames.get(index).charAt(signalNames.get(index).length() - 2)) - 48;
+
+		/* duljine vektora, s tim da je duljina umanjena za 1 od stvarne duljine */
+        int vectorSize = Math.abs(startVector - endVector);
+		/* Izvadi ime vektora bez oznake velicine vektora ([...]) */
+		tempSignalName = signalNames.get(index).substring(1, signalNames.get(index).length() - 5);
+		signalNames.remove(index);
+		signalNames.add(index, "-" + tempSignalName + "[" + startVector + "]");
+		if (startVector < endVector)
+        {
+            startVector++;
+		}
+        else
+        {
+			startVector--;
+        }
+		for (int j = 0; j < vectorSize; j++)
+		{   
+			signalNames.add(index + 1 + j, "  " + tempSignalName + "[" + startVector + "]");
+			if (startVector < endVector)
+			{
+				startVector++;
+			}
+			else
+			{
+				startVector--;
+			}
+			//(startVector < endVector) ? (startVector++) : (startVector--);
+		}
+
+		Integer vectorIndex;
+		/* 
+		 * refresha currentVectorIndex listu 
+		 */
+		for (int i = 0; i < vectorSize; i++)
+		{
+			results.getCurrentVectorIndex().add(index, defaultIndex);
+		}
+	}
+
+
+	/**
+	 * Kolapsira bit-vektor nakon sto se klikne minus ispred imena signala
+	 *
+	 * @param index Index bit-vektora koji se kolapsira
+	 */
+	public void collapse (int index)
+	{
+		Integer defaultIndex = results.getCurrentVectorIndex().get(index);
+		int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
+		for (int i = 0; i < vectorSize; i++)
+		{
+			signalNames.remove(index);
+		}
+		signalNames.add(index, results.getDefaultSignalNames()[defaultIndex]);
+
+		/* Refresha currentVectorIndex listu nakon kolapsiranja odredenog bit-vektora */
+		for (int i = 0; i < vectorSize - 1; i++)
+		{
+			results.getCurrentVectorIndex().remove(index);
+		}
+	}
+
 
     /**
      * Crta komponentu
@@ -319,53 +347,41 @@ class SignalNamesPanel extends JPanel
         if (isClicked)
         {
             g.setColor(themeColor.getApplet());
-            g.fillRect(0, (springStartPoints[index]) + 15 - offsetYAxis, 
+            g.fillRect(0, index * SIGNAL_NAME_SPRING_HEIGHT + 15 - offsetYAxis, 
                     getMaximumSize().width, SIGNAL_NAME_SPRING_HEIGHT / 2 + 5);
         }
         g.setColor(themeColor.getLetters());
 		yAxis = YAXIS_START_POINT - offsetYAxis;
-		for (int i = 0; i < signalNames.length; i++)
+		for (int i = 0; i < signalNames.size(); i++)
 		{
-            if (expandedSignalNames.containsKey(i) && expandedSignalNames.get(i))
+            if (results.getCurrentVectorIndex().get(i) != -1)
             {
-                String tempSignalName;
-                int startVector = Integer.valueOf(signalNames[i].charAt(signalNames[i].length() - 4)) - 48;
-                int endVector = Integer.valueOf(signalNames[i].charAt(signalNames[i].length() - 2)) - 48;
-                int vectorSize = Math.abs(startVector - endVector);
-                tempSignalName = signalNames[i].substring(1, signalNames[i].length() - 5);
-                g.drawString("-" + tempSignalName + "[" + startVector + "]", 5 - offsetXAxis, yAxis);
-                g.drawLine(7, yAxis, 7, yAxis + 10);
-                yAxis += SIGNAL_NAME_SPRING_HEIGHT;
-                if (startVector < endVector)
-                {
-                    startVector++;
-                }
-                else
-                {
-                    startVector--;
-                }
-                
-                for (int j = 0; j < vectorSize; j++)
-                {   
-                    g.drawString("  " + tempSignalName + "[" + startVector + "]", 5 - offsetXAxis, yAxis);
-                    g.drawLine(7, yAxis - 2, 7, yAxis - SIGNAL_NAME_SPRING_HEIGHT);
-                    g.drawLine(7, yAxis - 2, 9, yAxis - 2);
-                    yAxis += SIGNAL_NAME_SPRING_HEIGHT;
-                    if (startVector < endVector)
-                    {
-                        startVector++;
-                    }
-                    else
-                    {
-                        startVector--;
-                    }
-                    //(startVector < endVector) ? (startVector++) : (startVector--);
-                }
-            }
+				Integer defaultIndex = results.getCurrentVectorIndex().get(i);
+				if (results.getExpandedSignalNames().get(defaultIndex))
+				{
+					int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
+					g.drawString(signalNames.get(i), 5 - offsetXAxis, yAxis);
+					g.drawLine(7, yAxis, 7, yAxis + 10);
+					yAxis += SIGNAL_NAME_SPRING_HEIGHT;
+      
+					for (int j = 0; j < vectorSize - 1; j++)
+					{   
+						g.drawString(signalNames.get(++i), 5 - offsetXAxis, yAxis);
+						g.drawLine(7, yAxis - 2, 7, yAxis - SIGNAL_NAME_SPRING_HEIGHT);
+						g.drawLine(7, yAxis - 2, 9, yAxis - 2);
+						yAxis += SIGNAL_NAME_SPRING_HEIGHT;
+					}
+				}
+				else
+				{
+					g.drawString(signalNames.get(i), 5 - offsetXAxis, yAxis);
+					yAxis += SIGNAL_NAME_SPRING_HEIGHT;
+				}
+			}
 
             else
             {
-			    g.drawString(signalNames[i], 5 - offsetXAxis, yAxis);
+			    g.drawString(signalNames.get(i), 5 - offsetXAxis, yAxis);
 			    yAxis += SIGNAL_NAME_SPRING_HEIGHT;
             }
 		}

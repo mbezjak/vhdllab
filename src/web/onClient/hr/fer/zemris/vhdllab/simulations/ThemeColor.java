@@ -26,8 +26,11 @@ public class ThemeColor
     /** Boja isprekidanih crta u panelu s valnim oblicima */
     private Color[] wavesNet = {new Color(163, 179, 225), new Color(163, 179, 225), new Color(163, 179, 225)};
     
-    /** Boja kursora */
-    private Color[] cursor = {new Color(0, 0, 255), new Color(0, 0, 255), new Color(0, 0, 255)};
+    /** Boja pasivnog kursora */
+    private Color[] pasiveCursor = {new Color(129, 82, 182), new Color(129, 82, 182), new Color(129, 82, 182)};
+
+    /** Aktivni kursor */
+    private Color[] activeCursor = {new Color(131, 170, 85), new Color(116, 70, 57), new Color(116, 70, 57)};
 
     /** Boja panela s ikonicama za sljedeci/prethodni padajuci/rastuci brid */
     private Color[] buttonPanel = {new Color(141, 176, 221), new Color(141, 176, 221), new Color(214, 214, 214)};
@@ -138,22 +141,42 @@ public class ThemeColor
 
 
     /**
-     * Vraca boju kursora
+     * Vraca boju aktivnog kursora
      */
-    public Color getCursor ()
+    public Color getActiveCursor ()
     {
-        return cursor[themeIndex];
+        return activeCursor[themeIndex];
     }
 
 
     /**
-     * Postavlja custom boju panela s imenima signala
+     * Postavlja custom boju aktivnog kursora
      *
      * @param color zeljena boja
      */
-    public void setCursor (Color color)
+    public void setActiveCursor (Color color)
     {
-        cursor[0] = color;
+        activeCursor[0] = color;
+    }
+
+
+    /**
+     * Vraca boju pasivnog kursora
+     */
+    public Color getPasiveCursor ()
+    {
+        return pasiveCursor[themeIndex];
+    }
+
+
+    /**
+     * Postavlja custom boju pasivnog kursora
+     *
+     * @param color zeljena boja
+     */
+    public void setPasiveCursor (Color color)
+    {
+        pasiveCursor[0] = color;
     }
 
 

@@ -12,23 +12,41 @@ import java.awt.Dimension;
  */
 class CursorPanel extends JPanel
 {
+    /* Aktivan je prvi kursor */
+    private final byte FIRST = 1;
+
+    /* Aktivan je drugi kursor */
+    private final byte SECOND = 2;
+
     /** Zavrsna tocka panela  */
     private int panelEndPoint;
      
-    /** Pocetna tocka kursora u pikselima */
-    private int cursorStartPoint = 100;
+    /** Pocetna tocka prvog kursora u pikselima */
+    private int firstCursorStartPoint = 100;
+
+    /** Pocetna tocka drugog kursora u pikselima */
+    private int secondCursorStartPoint = 200;
 
     /** Offset horizntalnog scrollbara */
     private int offset;
 
-    /** Vrijednost kursora u stringu */
-    private String string;
+    /** Vrijednost prvog kursora u stringu */
+    private String firstString;
 
-    /** Vrijednost kursora */
-    private double value = 100;;
+    /** Vrijednost drugog kursora u stringu */
+    private String secondString;
+
+    /** Vrijednost prvog kursora */
+    private double firstValue = 100;
+    
+    /** Vrijednost drugog kursora */
+    private double secondValue = 200;
 
     /** Mjerna jedinica */
     private String measureUnitName;
+
+    /** Aktivan kursor; 0 */
+    private byte activeCursor = FIRST;
 
     /** Boje */
     private ThemeColor themeColor;
@@ -51,7 +69,8 @@ class CursorPanel extends JPanel
         this.offset = offset;
         this.measureUnitName = measureUnitName;
         this.themeColor = themeColor;
-        string = "100.0" + this.measureUnitName;
+        firstString = "100.0" + this.measureUnitName;
+        secondString = "200.0" + this.measureUnitName;
     }
 
 
@@ -60,27 +79,47 @@ class CursorPanel extends JPanel
      */
     public Dimension getPreferredSize ()
     {
-        return new Dimension(panelEndPoint, 20);
+        return new Dimension(panelEndPoint, 30);
     }
 
 
     /**
-     * Postavlja novu vrijednost pocetka kursora
+     * Postavlja novu vrijednost pocetka prvog kursora
      *
-     * @param cursorStartPoint nova vrijednost
+     * @param firstCursorStartPoint nova vrijednost
      */
-    public void setCursorStartPoint (int cursorStartPoint)
+    public void setFirstCursorStartPoint (int firstCursorStartPoint)
     {
-        this.cursorStartPoint = cursorStartPoint;
+        this.firstCursorStartPoint = firstCursorStartPoint;
     }
 
 
     /**
-     * Vraca trenutni polozaj kursora
+     * Vraca trenutni polozaj prvog kursora
      */
-    public int getCursorStartPoint ()
+    public int getFirstCursorStartPoint ()
     {
-        return cursorStartPoint;
+        return firstCursorStartPoint;
+    }
+
+
+    /**
+     * Postavlja novu vrijednost pocetka drugog kursora
+     *
+     * @param secondCursorStartPoint nova vrijednost
+     */
+    public void setSecondCursorStartPoint (int secondCursorStartPoint)
+    {
+        this.secondCursorStartPoint = secondCursorStartPoint;
+    }
+
+
+    /**
+     * Vraca trenutni polozaj drugog kursora
+     */
+    public int getSecondCursorStartPoint ()
+    {
+        return secondCursorStartPoint;
     }
 
 
@@ -97,33 +136,84 @@ class CursorPanel extends JPanel
 
 
     /**
-     * Vrijednost kursora u stringu
+     * Vrijednost prvog kursora u stringu
      *
-     * @param string vrijednost
+     * @param firstString vrijednost
      */
-    public void setString (String string)
+    public void setFirstString (String firstString)
     {
-        this.string = string;
-    }
-
-
-    /** 
-     * Vrijednost kursora
-     *
-     * @param value vrijednost
-     */
-    public void setValue (double value)
-    {
-        this.value = value;
+        this.firstString = firstString;
     }
 
 
     /**
-     * Vrijednost kursora
+     * Vrijednost drugog kursora u stringu
+     *
+     * @param secondString vrijednost
      */
-    public double getValue ()
+    public void setSecondString (String secondString)
     {
-        return value;
+        this.secondString = secondString;
+    }
+
+
+    /** 
+     * Vrijednost prvog kursora
+     *
+     * @param firstValue vrijednost
+     */
+    public void setFirstValue (double firstValue)
+    {
+        this.firstValue = firstValue;
+    }
+
+
+    /**
+     * Vrijednost prvog kursora
+     */
+    public double getFirstValue ()
+    {
+        return firstValue;
+    }
+
+
+    /** 
+     * Vrijednost drugog kursora
+     *
+     * @param secondValue vrijednost
+     */
+    public void setSecondValue (double secondValue)
+    {
+        this.secondValue = secondValue;
+    }
+
+
+    /**
+     * Vrijednost drugog kursora
+     */
+    public double getSecondValue ()
+    {
+        return secondValue;
+    }
+
+
+    /**
+     * Vraca trenutno aktivni kursor 
+     */
+    public byte getActiveCursor ()
+    {
+        return activeCursor;
+    }
+
+
+    /**
+     * Postavlja novi aktivni kursor
+     *
+     * @param activeCursor Novi aktivni kursor
+     */
+    public void setActiveCursor (byte activeCursor)
+    {
+        this.activeCursor = activeCursor;
     }
     
     
@@ -134,12 +224,30 @@ class CursorPanel extends JPanel
         g.setColor(themeColor.getLetters());
 
         /* crtanje kursora */
-        if (cursorStartPoint < 0)
+        if (firstCursorStartPoint < 0)
         {
-            cursorStartPoint = 0;
+            firstCursorStartPoint = 0;
         }
-        g.drawString(string, cursorStartPoint - offset - (string.length() * 6) / 2, 10);
-        g.setColor(themeColor.getApplet());
-        g.fillRect(cursorStartPoint - offset - 4, 11, 9, 9);
+        if (secondCursorStartPoint < 0)
+        {
+            secondCursorStartPoint = 0;
+        }
+        g.drawString(firstString, firstCursorStartPoint - offset - (firstString.length() * 6) / 2, 20);
+        g.drawString(secondString, secondCursorStartPoint - offset - (secondString.length() * 6) / 2, 10);
+
+        if (activeCursor == FIRST)
+        {
+            g.setColor(themeColor.getActiveCursor());
+            g.fillRect(firstCursorStartPoint - offset - 4, 21, 9, 9);
+            g.setColor(themeColor.getPasiveCursor());
+            g.fillRect(secondCursorStartPoint - offset - 4, 21, 9, 9);
+        }
+        else
+        {
+            g.setColor(themeColor.getPasiveCursor());
+            g.fillRect(firstCursorStartPoint - offset - 4, 21, 9, 9);
+            g.setColor(themeColor.getActiveCursor());
+            g.fillRect(secondCursorStartPoint - offset - 4, 21, 9, 9);
+        }
     }
 }

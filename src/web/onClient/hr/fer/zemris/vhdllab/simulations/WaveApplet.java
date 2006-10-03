@@ -1,9 +1,6 @@
 package hr.fer.zemris.vhdllab.simulations;
 
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
-
-
-
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -89,6 +86,9 @@ public class WaveApplet extends JApplet
     /** Panel koji sadrzi imena signala */
     private SignalNamesPanel signalNames;
 
+	/** Panel koji sadrzi trenutne vrijednosti u ovisnosti o polozaju kursora */
+	private SignalValuesPanel signalValues;
+
     /** Panel na kojem se crtaju valni oblici */
     private WaveDrawBoard waves;
 
@@ -106,6 +106,9 @@ public class WaveApplet extends JApplet
     
     /** Scrollbar koji pomice panel s imenima signala */
     private JScrollBar signalNamesScrollbar;
+    
+	/** Scrollbar koji pomice panel s trenutnim vrijednostima ovisno o kursoru */
+    private JScrollBar signalValuesScrollbar;
 
     /** Textfield koji sadrzi tocnu vrijednost na kojoj se nalazi kursor misa */
     private JTextField textField = new RoundField(10);
@@ -215,8 +218,10 @@ public class WaveApplet extends JApplet
         {
             waves.setVerticalOffset(verticalScrollbar.getValue());
             signalNames.setVerticalOffset(verticalScrollbar.getValue());
+            signalValues.setVerticalOffset(verticalScrollbar.getValue());
             waves.repaint();
             signalNames.repaint();
+            signalValues.repaint();
         }
     };
 
@@ -270,6 +275,24 @@ public class WaveApplet extends JApplet
         {
             signalNames.setHorizontalOffset(signalNamesScrollbar.getValue());
             signalNames.repaint();
+        }
+    };
+
+
+    /**
+     * Listener horizontalnog scrollbara koji scrolla panel s trenutnim vrijednostim ovisno o
+	 * polozaju kursora
+     */
+   private AdjustmentListener signalValuesScrollListener = new AdjustmentListener()
+   {
+        /**
+         * Postavlja odgovarajuci offset na temelju trenutne vrijednosti scrollbara
+         * i ponovno crta obje komponente
+         */
+        public void adjustmentValueChanged (AdjustmentEvent event)
+        {
+            signalValues.setHorizontalOffset(signalValuesScrollbar.getValue());
+            signalValues.repaint();
         }
     };
 
@@ -379,10 +402,16 @@ public class WaveApplet extends JApplet
                         cursorPanel.repaint();
                         break;
                     case 4 :
-                        themeColor.setCursor(colorChooser.getColor());
+                        themeColor.setActiveCursor(colorChooser.getColor());
                         waves.repaint();
+                        cursorPanel.repaint();
                         break;
                     case 5 :
+                        themeColor.setPasiveCursor(colorChooser.getColor());
+                        waves.repaint();
+                        cursorPanel.repaint();
+                        break;
+                    case 6 :
                         themeColor.setLetters(colorChooser.getColor());
                         signalNames.repaint();
                         waves.repaint();
@@ -452,6 +481,7 @@ public class WaveApplet extends JApplet
             signalNames.repaint();
             waves.repaint();
             scale.repaint();
+			signalValues.repaint();
             cursorPanel.repaint();
             cp.setBackground(themeColor.getSignalNames());
             
@@ -474,8 +504,10 @@ public class WaveApplet extends JApplet
 
             /* scrollbar ostaje na istom mjestu */
             horizontalScrollbar.setValue(offset * 10);
-            cursorPanel.setCursorStartPoint(cursorPanel.getCursorStartPoint() * 10);
-            waves.setCursorStartPoint(waves.getCursorStartPoint() * 10);
+            cursorPanel.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() * 10);
+            cursorPanel.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() * 10);
+            waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() * 10);
+            waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() * 10);
             cursorPanel.repaint();
             scale.repaint();
             waves.repaint();
@@ -502,8 +534,10 @@ public class WaveApplet extends JApplet
 
             /* scrollbar ostaje na istom mjestu */
             horizontalScrollbar.setValue(offset * 2);
-            cursorPanel.setCursorStartPoint(cursorPanel.getCursorStartPoint() * 2);
-            waves.setCursorStartPoint(waves.getCursorStartPoint() * 2);
+            cursorPanel.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() * 2);
+            cursorPanel.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() * 2);
+            waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() * 2);
+            waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() * 2);
             cursorPanel.repaint();
             scale.repaint();
             waves.repaint();
@@ -530,8 +564,10 @@ public class WaveApplet extends JApplet
 
             /* scrollbar ostaje na istom mjestu */
             horizontalScrollbar.setValue(offset / 10);
-            cursorPanel.setCursorStartPoint(cursorPanel.getCursorStartPoint() / 10);
-            waves.setCursorStartPoint(waves.getCursorStartPoint() / 10);
+            cursorPanel.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() / 10);
+            cursorPanel.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() / 10);
+            waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() / 10);
+            waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() / 10);
             cursorPanel.repaint();
             scale.repaint();
             waves.repaint();
@@ -558,8 +594,10 @@ public class WaveApplet extends JApplet
 
             /* scrollbar ostaje na istom mjestu */
             horizontalScrollbar.setValue(offset / 2);
-            cursorPanel.setCursorStartPoint(cursorPanel.getCursorStartPoint() / 2);
-            waves.setCursorStartPoint(waves.getCursorStartPoint() / 2);
+            cursorPanel.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() / 2);
+            cursorPanel.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() / 2);
+            waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() / 2);
+            waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() / 2);
             cursorPanel.repaint();
             scale.repaint();
             waves.repaint();
@@ -590,41 +628,18 @@ public class WaveApplet extends JApplet
             }
  
             /* promijeni poredak signala prema gore */
-            results.changeSignalOrderUp(index);
+            index = results.changeSignalOrderUp(index);
 
-            /* refresha mapu koja sadrzi informaciju o extendanim signalima */
-            /* ako je vektor otisao gore */
-            if (index > 0 && results.getSignalValues()[index - 1][0].length() > 1)
-            {
-                boolean isExpanded = results.getExpandedSignalNames().get(index);
-                /* ako iznad nije bio vektor */
-                if (!results.getExpandedSignalNames().containsKey(index - 1))
-                {
-                    results.getExpandedSignalNames().remove(index);
-                }
-                else
-                {
-                    results.getExpandedSignalNames().put(index, results.getExpandedSignalNames().get(index - 1));
-                }
-                results.getExpandedSignalNames().put(index - 1, isExpanded);
-                
-            }
-            else if (results.getExpandedSignalNames().containsKey(index - 1))
-            {
-                results.getExpandedSignalNames().put(index, results.getExpandedSignalNames().get(index - 1));
-                results.getExpandedSignalNames().remove(index - 1);
-            }
-            signalNames.setSpringStartPoints(results.getSignalValues());
-
-            if (index > 0)
-            {
-                signalNames.setIndex(index - 1);
-                waves.setIndex(index - 1);
-            }
+            signalNames.setIndex(index);
+            waves.setIndex(index);
+			signalValues.setIndex(index);
+            
 
             /* repainta panel s imenima signala i panel s valnim oblicima */
             signalNames.repaint();
             waves.repaint();
+			signalValues.repaint();
+
             if (index * 45 <= signalNames.getVerticalOffset())
             {
                 verticalScrollbar.setValue(verticalScrollbar.getValue() - 200);
@@ -653,42 +668,18 @@ public class WaveApplet extends JApplet
             }
  
            /* promijeni poredak signala prema dolje */
-            results.changeSignalOrderDown(index);
+            index = results.changeSignalOrderDown(index);
 
-            /* refresha mapu koja sadrzi informaciju o extendanim signalima */
-            /* ako je vektor otisao dolje */
-            if (index < results.getSignalNames().length - 1 && results.getSignalValues()[index + 1][0].length() > 1)
-            {
-                boolean isExpanded = results.getExpandedSignalNames().get(index);
-                /* ako ispod nije bio vektor */
-                if (!results.getExpandedSignalNames().containsKey(index + 1))
-                {
-                    results.getExpandedSignalNames().remove(index);
-                }
-                else
-                {
-                    results.getExpandedSignalNames().put(index, results.getExpandedSignalNames().get(index + 1));
-                }
-                results.getExpandedSignalNames().put(index + 1, isExpanded);
-                
-            }
-            /* inace ako je obican signal otisao dolje */
-            else if (results.getExpandedSignalNames().containsKey(index + 1))
-            {
-                results.getExpandedSignalNames().put(index, results.getExpandedSignalNames().get(index + 1));
-                results.getExpandedSignalNames().remove(index + 1);
-            }
-            signalNames.setSpringStartPoints(results.getSignalValues());
 
-            if (index < results.getSignalNames().length - 1)
-            {
-                signalNames.setIndex(index + 1);
-                waves.setIndex(index + 1);
-            }
+            signalNames.setIndex(index);
+            waves.setIndex(index);
+            signalValues.setIndex(index);
 
             /* repainta panel s imenima signala i panel s valnim oblicima */
             signalNames.repaint();
             waves.repaint();
+			signalValues.repaint();
+
             if ((index + 1) * 45 + 50 >= signalNames.getHeight() + signalNames.getVerticalOffset())
             {
                 verticalScrollbar.setValue(verticalScrollbar.getValue() + 200);
@@ -710,8 +701,7 @@ public class WaveApplet extends JApplet
             /* promijeni natrag na defaultni poredak */
             results.setDefaultOrder();
             results.setDefaultExpandedSignalNames();
-            signalNames.setDefaultSpringStartPoints();
-
+				
 
             /* postavlja novi objekt imena signala i njihovih vrijednosti */
             signalNames.setSignalNames(results.getSignalNames());
@@ -719,10 +709,12 @@ public class WaveApplet extends JApplet
 
             signalNames.setIndex(0);
             waves.setIndex(0);
+            signalValues.setIndex(0);
 
             /* repainta panel s imenima signala i panel s valnim oblicima */
             signalNames.repaint();
             waves.repaint();
+			signalValues.repaint();
 
             /* vraca fokus na kontejner */
             cp.requestFocusInWindow();
@@ -749,7 +741,7 @@ public class WaveApplet extends JApplet
             textField.setText((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
 
             /* racuna interval izmedu kursora i trenutne pozicije misa */
-            double measuredTime = value - cursorPanel.getValue();
+            double measuredTime = Math.abs(cursorPanel.getSecondValue() - cursorPanel.getFirstValue());
             interval.setText((Math.round(measuredTime * 100000d) / 100000d) + scale.getMeasureUnitName());
 
             /* 
@@ -765,37 +757,110 @@ public class WaveApplet extends JApplet
          */
         public void mouseDragged(MouseEvent event)  
         {
-            waves.setCursorStartPoint(event.getX() + waves.getHorizontalOffset());
-            cursorPanel.setCursorStartPoint(event.getX() + waves.getHorizontalOffset());
+            if (cursorPanel.getActiveCursor() == 1)
+            {
+                waves.setFirstCursorStartPoint(event.getX() + waves.getHorizontalOffset());
+                cursorPanel.setFirstCursorStartPoint(event.getX() + waves.getHorizontalOffset());
+            }
+            else
+            {
+                waves.setSecondCursorStartPoint(event.getX() + waves.getHorizontalOffset());
+                cursorPanel.setSecondCursorStartPoint(event.getX() + waves.getHorizontalOffset());
+            }
+
             int rightBorder = horizontalScrollbar.getValue() + waves.getPanelWidth();
             int leftBorder = horizontalScrollbar.getValue();
             if (event.getX() + waves.getHorizontalOffset () + 20 >= rightBorder)
             {
                 horizontalScrollbar.setValue(horizontalScrollbar.getValue() + 20);
-                waves.setCursorStartPoint(rightBorder - 20);
-                cursorPanel.setCursorStartPoint(rightBorder - 20);
+                if (cursorPanel.getActiveCursor() == 1)
+                {
+                    cursorPanel.setFirstCursorStartPoint(rightBorder - 20);
+                    waves.setFirstCursorStartPoint(rightBorder - 20);
+                }
+                else
+                {
+                    cursorPanel.setSecondCursorStartPoint(rightBorder - 20);
+                    waves.setSecondCursorStartPoint(rightBorder - 20);
+                }
             }
             else if (event.getX() + waves.getHorizontalOffset () < 
                     leftBorder && waves.getHorizontalOffset() != 0)
             {
                 horizontalScrollbar.setValue(horizontalScrollbar.getValue() - 20);
-                waves.setCursorStartPoint(leftBorder + 20);
-                cursorPanel.setCursorStartPoint(leftBorder + 20);
+                if (cursorPanel.getActiveCursor() == 1)
+                {
+                    cursorPanel.setFirstCursorStartPoint(leftBorder + 20);
+                    waves.setFirstCursorStartPoint(leftBorder + 20);
+                }
+                else
+                {
+                    cursorPanel.setSecondCursorStartPoint(leftBorder + 20);
+                    waves.setSecondCursorStartPoint(leftBorder + 20);
+                }
             }
             
             /* trenutni offset + X-vrijednost kurosra misa */
-            int xValue = event.getX() + horizontalScrollbar.getValue(); 
+            int xValue;
+            if (cursorPanel.getActiveCursor() == 1)
+            {
+                xValue = cursorPanel.getFirstCursorStartPoint(); 
+            }
+            else
+            {
+                xValue = cursorPanel.getSecondCursorStartPoint();
+            }
             /* podijeljeno s 100 jer je scaleStep za 100 piksela */
             double value = xValue * scale.getScaleStepInTime() / 100;
             textField.setText((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
-            cursorPanel.setString((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
+
             if (value <= 0)
             {
                 value = 0;
             }
-            cursorPanel.setValue((Math.round(value * 100000d) / 100000d));
+            if (cursorPanel.getActiveCursor() == 1)
+            {
+                cursorPanel.setFirstString((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
+                cursorPanel.setFirstValue((Math.round(value * 100000d) / 100000d));
+            }
+            else
+            {
+                cursorPanel.setSecondString((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
+                cursorPanel.setSecondValue((Math.round(value * 100000d) / 100000d));
+            }
+            double measuredTime = Math.abs(cursorPanel.getSecondValue() - cursorPanel.getFirstValue());
+            interval.setText((Math.round(measuredTime * 100000d) / 100000d) + scale.getMeasureUnitName());
+
+			/* trazi trenutni polozaj po tockama promjene */
+			int index = 0;
+            int transitionPoint = scale.getDurationInPixels()[0];
+            if (cursorPanel.getActiveCursor() == 1)
+            {
+                while (cursorPanel.getFirstCursorStartPoint() >= transitionPoint)
+                {
+					if (index == results.getSignalValues().get(0).length - 1)
+					{
+						break;
+					}
+                    index++;
+                    transitionPoint += scale.getDurationInPixels()[index];
+                }
+            }
+            else
+            {
+                while (cursorPanel.getSecondCursorStartPoint() >= transitionPoint)
+                {
+                    index++;
+                    transitionPoint += scale.getDurationInPixels()[index];
+                }
+            }
+
+			signalValues.setValueIndex(index);
+
+
             waves.repaint();
             cursorPanel.repaint();
+			signalValues.repaint();
         }
     };
 
@@ -816,19 +881,31 @@ public class WaveApplet extends JApplet
                 int index = 0;
                 int transitionPoint = scale.getDurationInPixels()[0];
                 boolean isFound = false;
-                while (cursorPanel.getCursorStartPoint() >= transitionPoint)
+                if (cursorPanel.getActiveCursor() == 1)
                 {
-                    index++;
-                    transitionPoint += scale.getDurationInPixels()[index];
+                    while (cursorPanel.getFirstCursorStartPoint() >= transitionPoint)
+                    {
+                        index++;
+                        transitionPoint += scale.getDurationInPixels()[index];
+                    }
                 }
+                else
+                {
+                    while (cursorPanel.getSecondCursorStartPoint() >= transitionPoint)
+                    {
+                        index++;
+                        transitionPoint += scale.getDurationInPixels()[index];
+                    }
+                }
+				signalValues.setValueIndex(index - 1);
 
                 /* ako se trazi prethodni rastuci */
                 if (event.getSource().equals(leftUp))
                 {
                     for (--index; index >= 1;)
                     {
-                        presentValue = results.getSignalValues()[signalNames.getIndex()][index];
-                        previousValue = results.getSignalValues()[signalNames.getIndex()][--index];
+                        presentValue = results.getSignalValues().get(signalNames.getIndex())[index];
+                        previousValue = results.getSignalValues().get(signalNames.getIndex())[--index];
                         if (presentValue.equals("1") && previousValue.equals("0"))
                         {
                             isFound = true;
@@ -841,8 +918,8 @@ public class WaveApplet extends JApplet
                 {
                     for (--index; index >= 1;)
                     {
-                        presentValue = results.getSignalValues()[signalNames.getIndex()][index];
-                        previousValue = results.getSignalValues()[signalNames.getIndex()][--index];
+                        presentValue = results.getSignalValues().get(signalNames.getIndex())[index];
+                        previousValue = results.getSignalValues().get(signalNames.getIndex())[--index];
                         if (presentValue.equals("0") && previousValue.equals("1"))
                         {
                             isFound = true;
@@ -853,10 +930,10 @@ public class WaveApplet extends JApplet
                 /* ako se trazi sljedeci rastuci */
                 else if (event.getSource().equals(rightUp))
                 {
-                    for (; index < results.getSignalValues()[0].length - 1; index++) 
+                    for (; index < results.getSignalValues().get(0).length - 1; index++) 
                     {
-                        presentValue = results.getSignalValues()[signalNames.getIndex()][index];
-                        nextValue = results.getSignalValues()[signalNames.getIndex()][index + 1];
+                        presentValue = results.getSignalValues().get(signalNames.getIndex())[index];
+                        nextValue = results.getSignalValues().get(signalNames.getIndex())[index + 1];
                         if (presentValue.equals("0") && nextValue.equals("1"))
                         {
                             isFound = true;
@@ -867,10 +944,10 @@ public class WaveApplet extends JApplet
                 /* ako se trazi sljedeci padajuci */
                 else if (event.getSource().equals(rightDown))
                 {
-                    for (; index < results.getSignalValues()[0].length - 1; index++)
+                    for (; index < results.getSignalValues().get(0).length - 1; index++)
                     {
-                        presentValue = results.getSignalValues()[signalNames.getIndex()][index];
-                        nextValue = results.getSignalValues()[signalNames.getIndex()][index + 1];
+                        presentValue = results.getSignalValues().get(signalNames.getIndex())[index];
+                        nextValue = results.getSignalValues().get(signalNames.getIndex())[index + 1];
                         if (presentValue.equals("1") && nextValue.equals("0"))
                         {
                             isFound = true;
@@ -880,22 +957,36 @@ public class WaveApplet extends JApplet
                 }
                 if (isFound)
                 {
+                    double value;
                     transitionPoint = 0;
                     for (; index >= 0; index--)
                     {
                         transitionPoint += scale.getDurationInPixels()[index];
                     }
-                    cursorPanel.setCursorStartPoint(transitionPoint);
-                    waves.setCursorStartPoint(transitionPoint);
+                    if (cursorPanel.getActiveCursor() == 1)
+                    {
+                        cursorPanel.setFirstCursorStartPoint(transitionPoint);
+                        waves.setFirstCursorStartPoint(transitionPoint);
+                        value = transitionPoint * scale.getScaleStepInTime() / 100;
+                        cursorPanel.setFirstString((Math.round(value * 100000d) / 100000d) + 
+                                                        scale.getMeasureUnitName());
+                        cursorPanel.setFirstValue((Math.round(value * 100000d) / 100000d));
+                    }
+                    else
+                    {
+                        cursorPanel.setSecondCursorStartPoint(transitionPoint);
+                        waves.setSecondCursorStartPoint(transitionPoint);
+                        value = transitionPoint * scale.getScaleStepInTime() / 100;
+                        cursorPanel.setSecondString((Math.round(value * 100000d) / 100000d) + 
+                                                        scale.getMeasureUnitName());
+                        cursorPanel.setSecondValue((Math.round(value * 100000d) / 100000d));
+                    }
                     horizontalScrollbar.setValue(transitionPoint - 100);
-                    double value = transitionPoint * scale.getScaleStepInTime() / 100;
-                    cursorPanel.setString((Math.round(value * 100000d) / 100000d) + 
-                            scale.getMeasureUnitName());
-                    cursorPanel.setValue((Math.round(value * 100000d) / 100000d));
                 }
             }
             cursorPanel.repaint();
             waves.repaint();
+			signalValues.repaint();
 
             /* vraca fokus na kontejner */
             cp.requestFocusInWindow();
@@ -903,6 +994,61 @@ public class WaveApplet extends JApplet
     };
 
 
+    
+    /**
+     * Mouse listener koji osluskuje klik misa iznad panela s kursorima i
+     * na temelju podrucja klika mijenja aktivni kursor
+     */
+    private MouseListener mouseCursorListener = new MouseListener()
+    {
+
+        public void mousePressed(MouseEvent event) 
+        {
+            ; 
+        }
+
+        public void mouseReleased(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseEntered(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseExited(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseClicked(MouseEvent event) 
+        {
+            double value = event.getX() +  horizontalScrollbar.getValue();
+             /* provjerava je li kliknut cursor */
+            if (value >= cursorPanel.getFirstCursorStartPoint() - 5 && 
+                    value <= cursorPanel.getFirstCursorStartPoint() + 5)
+            {
+                /* postavi prvi kursor aktivnim */
+                cursorPanel.setActiveCursor((byte)1);
+                waves.setActiveCursor((byte)1);
+            }
+            else if (value >= cursorPanel.getSecondCursorStartPoint() - 5 && 
+                        value <= cursorPanel.getSecondCursorStartPoint() + 5)
+            {
+                /*postavi drugi kursor aktivnim */
+                cursorPanel.setActiveCursor((byte)2);
+                waves.setActiveCursor((byte)2);
+            }
+                
+            cursorPanel.repaint();
+            waves.repaint();
+
+            /* vraca fokus na kontejner */
+            cp.requestFocusInWindow();
+        }
+    };
+    
 
         /**
      * Mouse listener koji osluskuje pokrete misa i svaki pokret registrira te na
@@ -981,24 +1127,21 @@ public class WaveApplet extends JApplet
             int mouseButton = event.getButton();
             int value = event.getY() + verticalScrollbar.getValue();
             int index = 0;
-
             if (mouseButton == 1)
             {
                 /* pronalazi se index signala kojeg treba oznaciti */
-                for (; index < results.getSignalNames().length; index++)
-                {
-                    if (value <= signalNames.getSpringStartPoints()[index])
-                    {
-                        break;
-                    }
-                }
-                index--;
+				while (value % 45 == 0)
+				{
+					value -= 1;
+				}
+				index = value / 45;    
 
                 /* postavlja se vrijednost suprotna od one koja je do sada bila */
                 if (waves.getIndex() == index && waves.getIsClicked() == true)
                 {
                     signalNames.setIsClicked(false);
                     waves.setIsClicked(false);
+                    signalValues.setIsClicked(false);
                 }
                 else
                 {
@@ -1006,29 +1149,61 @@ public class WaveApplet extends JApplet
                     signalNames.setIndex(index);
                     waves.setIsClicked(true);
                     waves.setIndex(index);
+                    signalValues.setIsClicked(true);
+                    signalValues.setIndex(index);
                 }
                 
+				Integer defaultVectorIndex = results.getCurrentVectorIndex().get(index);
                 /* provjerava je li kliknut plusic na bit-vektoru */
-                if (results.getExpandedSignalNames().containsKey(index) &&
-                        (event.getX() >= 0 && event.getX() <= 15) && 
-                        (value >= signalNames.getSpringStartPoints()[index] + 10 &&
-                         value <= index * signalNames.getSpringStartPoints()[index] + 30))
+                if (defaultVectorIndex != -1 && results.getCurrentVectorIndex().indexOf(defaultVectorIndex) == index &&
+                        (event.getX() >= 0 && event.getX() <= 15))
                 {
-                    if (!results.getExpandedSignalNames().get(index))
+                    if (!results.getExpandedSignalNames().get(defaultVectorIndex))
                     {
-                        results.getExpandedSignalNames().put(index, true);
-                        signalNames.setSpringStartPoints(results.getSignalValues());
+                        results.getExpandedSignalNames().set(defaultVectorIndex, true);
+						signalNames.expand(index);
+						waves.expand(index);
                     }
                     else
                     {
-                        results.getExpandedSignalNames().put(index, false);
-                        signalNames.setSpringStartPoints(results.getSignalValues());
+                        results.getExpandedSignalNames().set(defaultVectorIndex, false);
+						signalNames.collapse(index);
+						waves.collapse(index);
                     }
-                }
+                } 
             }
+            /* 
+             * Ako je kliknuta desna tipka misa, ili srednja tipka misa,
+             * trenutni pasivni kursor ce se pomaknuti tocno na mjesto na kojem
+             * smo kliknuli misem i ostat ce pasivan
+             */
+            else if (mouseButton == 2 || mouseButton == 3)
+            {
+                int xValue = event.getX() + horizontalScrollbar.getValue();
+                double timeValue = xValue * scale.getScaleStepInTime() / 100;
+                if (cursorPanel.getActiveCursor() == 1)
+                {
+                    cursorPanel.setSecondCursorStartPoint(xValue);
+                    waves.setSecondCursorStartPoint(xValue);
+                    cursorPanel.setSecondString((Math.round(timeValue * 100000d) / 100000d) + scale.getMeasureUnitName());
+                    cursorPanel.setSecondValue((Math.round(timeValue * 100000d) / 100000d));
+                }
+                else
+                {
+                    cursorPanel.setFirstCursorStartPoint(xValue);
+                    waves.setFirstCursorStartPoint(xValue);
+                    cursorPanel.setFirstString((Math.round(timeValue * 100000d) / 100000d) + scale.getMeasureUnitName());
+                    cursorPanel.setFirstValue((Math.round(timeValue * 100000d) / 100000d));
+                }
+                double measuredTime = Math.abs(cursorPanel.getSecondValue() - cursorPanel.getFirstValue());
+                interval.setText((Math.round(measuredTime * 100000d) / 100000d) + scale.getMeasureUnitName());
+            }
+                
                 
             signalNames.repaint();
             waves.repaint();
+            cursorPanel.repaint();
+			signalValues.repaint();
 
             /* vraca fokus na kontejner */
             cp.requestFocusInWindow();
@@ -1048,42 +1223,13 @@ public class WaveApplet extends JApplet
             int index = 0;
 
             /* pretrazivanje imena signala */
-            for (int i = 0; i < results.getSignalNames().length; i++)
+            for (int i = 0; i < results.getSignalNames().size(); i++)
             {
-                if (results.getSignalValues()[i][0].length() > 1 && 
-                        results.getExpandedSignalNames().get(i))
+                if (results.getSignalNames().get(i).toLowerCase().equals(input.toLowerCase()))
                 {
-                    String signalName = results.getSignalNames()[i];
-                    char startPoint = signalName.charAt(signalName.length() - 4);
-                    if (((signalName.substring(2, signalName.length() - 5) + 
-                                    "[" + startPoint + "]").toLowerCase()).equals(input.toLowerCase()))
-                    {
-                        isFound = true;
-                        index = i;
-                        break;
-                    }
-                }
-                /* ako usporeduje s vektorima, ali vektor nije ekspandiran */
-                else if (results.getSignalValues()[i][0].length() > 1 && 
-                        !results.getExpandedSignalNames().get(i))
-                {
-                     if ((results.getSignalNames()[i].substring(2, results.getSignalNames()[i].length()).
-                                 toLowerCase()).equals(input.toLowerCase()))
-                     {
-                         isFound = true;
-                         index = i;
-                         break;
-                     }
-                }
-                /* inace obican signal */
-                else
-                {
-                    if (results.getSignalNames()[i].toLowerCase().equals(input.toLowerCase()))
-                    {
-                        isFound = true;
-                        index = i;
-                        break;
-                    }
+                    isFound = true;
+                    index = i;
+                    break;
                 }
             }
 
@@ -1103,7 +1249,7 @@ public class WaveApplet extends JApplet
             signalNames.repaint();
             waves.repaint();
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };
@@ -1258,9 +1404,6 @@ public class WaveApplet extends JApplet
     /* rezultati prikazni stringom prenose se GhdlResults klasi */
     results = new GhdlResults(parser.getResultInString());
 
-    /* GhdlResults parsira string i iznacuje rezultate simulacije */
-    results.parseString();
-   
     /* stvara se skala */
     scale = new Scale(results, themeColor);
 
@@ -1271,16 +1414,21 @@ public class WaveApplet extends JApplet
     signalNames.addMouseWheelListener(wheelListener);
 
     /* panel s valnim oblicima */
-    waves = new WaveDrawBoard(results, scale, signalNames.getSignalNameSpringHeight(), 
-            signalNames.getSpringStartPoints(), themeColor);
+    waves = new WaveDrawBoard(results, scale, signalNames.getSignalNameSpringHeight(), themeColor);
     waves.addMouseMotionListener(mouseListener);
     waves.addMouseListener(mouseClickListener);
     waves.addMouseWheelListener(wheelListener);
+
+	/* panel s trenutnim vrijednostima ovisno o kursoru */
+	signalValues = new SignalValuesPanel(results, themeColor);
+	signalValues.addMouseListener(mouseClickListener);
+	signalValues.addMouseWheelListener(wheelListener);
 
     /* panel u kojem klizi kursor */
     cursorPanel = new CursorPanel(scale.getScaleEndPointInPixels(), 
             waves.getHorizontalOffset(), scale.getMeasureUnitName(), themeColor);
     cursorPanel.addMouseMotionListener(mouseListener);
+    cursorPanel.addMouseListener(mouseCursorListener);
 
     /* help panel */
     helpPanel = new HelpPanel(waves.getShapes());
@@ -1294,9 +1442,11 @@ public class WaveApplet extends JApplet
             waves.getPreferredSize().height); 
     verticalScrollbar.addAdjustmentListener(verticalScrollListener);
     signalNamesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
-            signalNames.getPreferredSize().width);
+            signalNames.getMaximumSize().width);
     signalNamesScrollbar.addAdjustmentListener(signalNamesScrollListener);
-
+    signalValuesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
+            signalValues.getMaximumSize().width);
+    signalValuesScrollbar.addAdjustmentListener(signalValuesScrollListener);
 
 
     /* 
@@ -1304,21 +1454,21 @@ public class WaveApplet extends JApplet
      * padajuceg/rastuceg brid signala.
      */
     rightUp.addActionListener(navigateListener);
-    rightDown.addActionListener(navigateListener);
     leftUp.addActionListener(navigateListener);
+    rightDown.addActionListener(navigateListener);
     leftDown.addActionListener(navigateListener);
 
     rightUp.setToolTipText("Move to next right positive edge");
-    rightDown.setToolTipText("Move to next right negative edge");
     leftUp.setToolTipText("Move to next left positive edge");
+    rightDown.setToolTipText("Move to next right negative edge");
     leftDown.setToolTipText("Move to next left negative edge");
 
     JPanel buttonPanel = new JPanel();
     buttonPanel.setBackground(new Color(141, 176, 221));
     buttonPanel.setLayout(new BoxLayout (buttonPanel, BoxLayout.LINE_AXIS));
     buttonPanel.add(rightUp);
-    buttonPanel.add(rightDown);
     buttonPanel.add(leftUp);
+    buttonPanel.add(rightDown);
     buttonPanel.add(leftDown);
     popup.add(buttonPanel);
     /* kraj popup prozora */    
@@ -1388,7 +1538,8 @@ public class WaveApplet extends JApplet
     components.addElement("Waveforms background");
     components.addElement("Scale background");
     components.addElement("Cursor background");
-    components.addElement("Cursor vertical line");
+    components.addElement("Active cursor");
+    components.addElement("Pasive cursor");
     components.addElement("Letters color");
     shapes.addElement("One");
     shapes.addElement("Zero");
@@ -1446,11 +1597,13 @@ public class WaveApplet extends JApplet
     cp.add(search, "search");
     cp.add(interval, "interval");
     cp.add(signalNames, "signalNames");
+    cp.add(signalValues, "signalValues");
     cp.add(waves, "waves");
     cp.add(scale, "scale");
     cp.add(verticalScrollbar, "verticalScrollbar");
     cp.add(horizontalScrollbar, "horizontalScrollbar");
     cp.add(signalNamesScrollbar, "signalNamesScrollbar");
+    cp.add(signalValuesScrollbar, "valuesScrollbar");
   }
 
 
@@ -1459,4 +1612,3 @@ public class WaveApplet extends JApplet
       Console.run(new WaveApplet(), 1024, 1000);
   }
 } 
-

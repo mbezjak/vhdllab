@@ -3,7 +3,10 @@ package hr.fer.zemris.vhdllab.simulations;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JPanel;
-import java.util.Map;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.ArrayList;
+
 
 /**
  * Klasa koja predstavlja panel po kojem se crtaju valni oblici
@@ -19,7 +22,10 @@ class WaveDrawBoard extends JPanel
     private final int WAVE_SPRING_SIZE;
     
     /** Vrijednosti signala */
-    private String[][] signalValues;
+    private List<String[]> signalValues;
+
+	/** Sadrzi rezultate simulacije */
+    private GhdlResults results;
     
     /** Trajanje u pikselima svake od vrijednosti u signalValues */
     private int[] durationsInPixels;
@@ -36,26 +42,34 @@ class WaveDrawBoard extends JPanel
     /** Kraj vala u pikselima */
     private int waveEndPointInPixels;
 
-    /** Panel se sastoji od polja valnih oblika */
-    private WaveForm[] waveForm;
+    /** Panel se sastoji od valnih oblika */
+    private WaveForm waveForm;
     
     /** Skala */
     private Scale scale;
 
-    /** Sadrzi informaciju o trenutno ekspandiranim bit-vektorima */
-    private Map<Integer, Boolean> expandedSignalNames;
+    /** Sadrzi informaciju jesu li bit-vectori prosireni */
+    private List<Boolean> expandedSignalNames = new ArrayList<Boolean>();
 
-    /** Sadrzi pocetne tocke springova u pikselima */
-    private int[] springStartPoints;
-    
+    /** 
+     * Lista trenutnih indeksa vektora u listi sa signalima
+     */
+    private List<Integer> currentVectorIndex = new ArrayList<Integer>();
+
     /** Varijabla koja sadrzi informaciju je li trenutni signal oznacen misem */
     private boolean isClicked = false;
 
     /** Sadrzi indeks trenutno oznacenog signala misem */
     private int index = -1;
 
-    /** Pocetna tocka kursora u pikselima */
-    private int cursorStartPoint = 100;
+    /** Pocetna tocka prvog kursora u pikselima */
+    private int firstCursorStartPoint = 100;
+
+    /** Pocetna tocka drugog kursora u pikselima */
+    private int secondCursorStartPoint = 200;
+
+    /** Aktivni kursor */
+    private byte activeCursor = 1;
 
     /** Boje */
     private ThemeColor themeColor;
@@ -78,9 +92,10 @@ class WaveDrawBoard extends JPanel
      * @param results rezultati simulacije, parsirani od GhdlResults klase
      * @param scale skala
      */
-    public WaveDrawBoard (GhdlResults results, Scale scale, int WAVE_SPRING_SIZE, int[] springStartPoints, ThemeColor themeColor)
+    public WaveDrawBoard (GhdlResults results, Scale scale, int WAVE_SPRING_SIZE, ThemeColor themeColor)
     {
         super();
+		this.results = results;
         this.signalValues = results.getSignalValues();
 
         /* skala proracunava sve parametre i panel koristi gotove parametre */
@@ -88,20 +103,15 @@ class WaveDrawBoard extends JPanel
         this.waveEndPointInPixels = scale.getScaleEndPointInPixels();
         this.scale = scale;
         this.expandedSignalNames = results.getExpandedSignalNames();
+        this.currentVectorIndex = results.getCurrentVectorIndex();
         this.WAVE_SPRING_SIZE = WAVE_SPRING_SIZE;
-        this.springStartPoints = springStartPoints;
         this.themeColor = themeColor;
-        waveForm = new WaveForm[signalValues.length];
         int i = 0;
 
         /* 
          * inicijalizacija pojedinih valnih oblika.  Svakom se valnom obliku
          * odmah dodaje lista vrijednosti (1, 0, U, Z...)
          */
-        for (String[] polje : signalValues)
-        {
-            waveForm[i++] = new WaveForm(polje, durationsInPixels, shapes);
-        }
     }
 
 
@@ -111,7 +121,7 @@ class WaveDrawBoard extends JPanel
 
     public Dimension getPreferredSize() 
     { 
-        return new Dimension(waveEndPointInPixels, signalValues.length * WAVE_SPRING_SIZE);
+        return new Dimension(waveEndPointInPixels, signalValues.size() * WAVE_SPRING_SIZE);
     } 
 
 	
@@ -173,7 +183,7 @@ class WaveDrawBoard extends JPanel
      *
      * @param signalValues Nove vrijednosti po signalima
      */
-    public void setSignalValues (String[][] signalValues)
+    public void setSignalValues (List<String[]> signalValues)
     {
         this.signalValues = signalValues;
     }
@@ -220,22 +230,42 @@ class WaveDrawBoard extends JPanel
 
 
     /**
-     * Postavlja novu vrijednost pocetka kursora
+     * Postavlja novu vrijednost pocetka prvog kursora
      *
-     * @param cursorStartPoint nova vrijednost
+     * @param firstCursorStartPoint nova vrijednost
      */
-    public void setCursorStartPoint (int cursorStartPoint)
+    public void setFirstCursorStartPoint (int firstCursorStartPoint)
     {
-        this.cursorStartPoint = cursorStartPoint;
+        this.firstCursorStartPoint = firstCursorStartPoint;
+    }
+
+
+    /**
+     * Vraca trenutnu vrijednost pocetka prvog kursora u pikselima
+     */
+    public int getFirstCursorStartPoint ()
+    {
+        return firstCursorStartPoint;
+    }
+
+
+        /**
+     * Postavlja novu vrijednost pocetka drugog kursora
+     *
+     * @param secondCursorStartPoint nova vrijednost
+     */
+    public void setSecondCursorStartPoint (int secondCursorStartPoint)
+    {
+        this.secondCursorStartPoint = secondCursorStartPoint;
     }
 
 
     /**
      * Vraca trenutnu vrijednost pocetka kursora u pikselima
      */
-    public int getCursorStartPoint ()
+    public int getSecondCursorStartPoint ()
     {
-        return cursorStartPoint;
+        return secondCursorStartPoint;
     }
 
 
@@ -255,7 +285,57 @@ class WaveDrawBoard extends JPanel
     {
         return shapes;
     }
-	
+
+
+    /**
+     * Postavlja aktivni kursor
+     */
+    public void setActiveCursor (byte activeCursor)
+    {
+        this.activeCursor = activeCursor;
+    }
+
+
+	/**
+	 * Ekspandira bit-vektor
+	 *
+	 * @param index Indeks bit-vektora koji se ekspandira
+	 */
+	public void expand (int index)
+	{
+
+		String[] expandedValues = new String[signalValues.get(index).length];
+		int j = 0;
+		for (; j < signalValues.get(index + j)[0].length(); j++)
+		{
+			expandedValues = new String[signalValues.get(index).length];
+			for (int k = 0; k < signalValues.get(index).length; k++)
+			{
+				expandedValues[k] = String.valueOf(signalValues.get(index + j)[k].charAt(j));
+			}
+
+			signalValues.add(index + j, expandedValues);
+		}
+		signalValues.remove(index + j);
+	}
+
+
+	/**
+	 * Kolapsira bit-vektor
+	 * 
+	 * @param index Indeks bit-vektora koji se kolapsira
+	 */
+	public void collapse (int index)
+	{
+		Integer defaultIndex = results.getCurrentVectorIndex().get(index);
+		int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
+		for (int i = 0; i < vectorSize; i++)
+		{
+			signalValues.remove(index);
+		}
+		signalValues.add(index, results.getDefaultSignalValues()[defaultIndex]);
+	}
+
     
     /**
      * Crtanje valnih oblika 
@@ -265,6 +345,7 @@ class WaveDrawBoard extends JPanel
 	public void paintComponent (Graphics g) 
 	{
 		super.paintComponent(g);
+
         setBackground(themeColor.getWaves());
 
         waveEndPointInPixels = scale.getScaleEndPointInPixels();
@@ -285,52 +366,49 @@ class WaveDrawBoard extends JPanel
             x += 100;
         }
         
-    
-         /* ako treba oznaciti neki od signala */
+		/* ako treba oznaciti neki od signala */
         if (isClicked)
         {
             g.setColor(themeColor.getApplet());
-            g.fillRect(0, (springStartPoints[index]) + 15 - offsetYAxis,
+            g.fillRect(0, index * WAVE_SPRING_SIZE + 15 - offsetYAxis,
                     getPreferredSize().width, WAVE_SPRING_SIZE / 2 + 5);
         }
         g.setColor(themeColor.getLetters());
         
         /* crtanje kursora */
-        if (cursorStartPoint < 0)
+        if (firstCursorStartPoint < 0)
         {
-            cursorStartPoint = 0;
+            firstCursorStartPoint = 0;
         }
-        g.setColor(themeColor.getCursor());
-        g.drawLine(cursorStartPoint - offsetXAxis, 0, cursorStartPoint - offsetXAxis, this.getHeight());
+        if (secondCursorStartPoint < 0)
+        {
+            secondCursorStartPoint = 0;
+        }
+        if (activeCursor == (byte)1)
+        {
+            g.setColor(themeColor.getActiveCursor());
+            g.drawLine(firstCursorStartPoint - offsetXAxis, 0, firstCursorStartPoint - offsetXAxis, this.getHeight());
+            g.setColor(themeColor.getPasiveCursor());
+            g.drawLine(secondCursorStartPoint - offsetXAxis, 0, secondCursorStartPoint - offsetXAxis, this.getHeight());
+        }
+        else
+        {
+            g.setColor(themeColor.getActiveCursor());
+            g.drawLine(secondCursorStartPoint - offsetXAxis, 0, secondCursorStartPoint - offsetXAxis, this.getHeight());
+            g.setColor(themeColor.getPasiveCursor());
+            g.drawLine(firstCursorStartPoint - offsetXAxis, 0, firstCursorStartPoint - offsetXAxis, this.getHeight());
+        }
 
         /* crtanje valova */
         g.setColor(themeColor.getLetters());
-        for (int i = 0; i < waveForm.length; i++)
-        {
-            waveForm[i].setSignalValues(signalValues[i]);
-        }
 
-		for (int i = 0; i < waveForm.length; i++)
+
+		for (String[] array : signalValues)
 		{
-            if (expandedSignalNames.containsKey(i) && expandedSignalNames.get(i))
-            {
-                String[] expandedValues = new String[signalValues[i].length];
-                for (int j = 0; j < signalValues[i][0].length(); j++)
-                {
-                    for (int k = 0; k < signalValues[i].length; k++)
-                    {
-                        expandedValues[k] = String.valueOf(signalValues[i][k].charAt(j));
-                    }
-                    waveForm[i].setSignalValues(expandedValues);
-                    waveForm[i].drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
-			        yAxis += WAVE_SPRING_SIZE;
-                }
-            }
-            else
-            {
-                waveForm[i].drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
-			    yAxis += WAVE_SPRING_SIZE;
-            }
+			waveForm =  new WaveForm(array, durationsInPixels, shapes);
+			waveForm.drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
+			yAxis += WAVE_SPRING_SIZE;
+            
 		}
 	}
 }
