@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class ProjectDAOMemoryImpl implements ProjectDAO {
 
+	private long id = 0;
+	
 	Map<Long, Project> projects = new HashMap<Long, Project>();
 	
 	public List<Project> findByUser(Long userId) throws DAOException {
@@ -30,6 +32,7 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 	}
 
 	public void save(Project project) throws DAOException {
+		if(project.getId()==null) project.setId(Long.valueOf(id++));
 		projects.put(project.getId(), project);
 	}
 

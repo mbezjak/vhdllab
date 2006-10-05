@@ -1,18 +1,16 @@
-package hr.fer.zemris.vhdllab.dao.impl;
+package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.model.Project;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.Transaction;
 
-public class ProjectDAOMySQLImpl implements ProjectDAO {
+public class ProjectDAOHibernateImpl implements ProjectDAO {
 	
 	public Project load(Long id) throws DAOException {
 		try {
@@ -47,6 +45,7 @@ public class ProjectDAOMySQLImpl implements ProjectDAO {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Project> findByUser(Long userId) throws DAOException {
 		Session session = null;
 		try {
@@ -56,10 +55,7 @@ public class ProjectDAOMySQLImpl implements ProjectDAO {
 			Query query = session.createQuery("from Project as p where p.ownerID = :userID")
 								.setLong("userID", userId.longValue());
 			
-			List<Project> projects = new ArrayList<Project>();
-			for(Iterator it = query.iterate(); it.hasNext();) {
-				projects.add((Project)it.next());
-			}
+			List<Project> projects = (List<Project>)query.list();
 			
 			tx.commit();
 			HibernateUtil.closeSession();
@@ -67,7 +63,7 @@ public class ProjectDAOMySQLImpl implements ProjectDAO {
 			return projects;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new DAOException("Unable to save project!");
+			throw new DAOException("Unable to load projects!");
 		}
 	}
 }

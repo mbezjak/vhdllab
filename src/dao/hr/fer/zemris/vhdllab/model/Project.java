@@ -41,7 +41,7 @@ public class Project {
 
 	/**
 	 * @hibernate.property
-	 *  column="PROJECTNAME"
+	 *  column="NAME"
 	 *  length="255"
 	 *  not-null="true"
 	 */

@@ -1,8 +1,9 @@
-package hr.fer.zemris.vhdllab.dao.impl;
+package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
+import hr.fer.zemris.vhdllab.dao.impl.hibernate.FileDAOHibernateImpl;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 
@@ -13,13 +14,13 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class FileDAOMySQLImplTest {
+public class FileDAOHibernateImplTest {
 
 	private static FileDAO fileDAO;
 	
 	@BeforeClass
 	public static void init() {
-		fileDAO = new FileDAOMySQLImpl();
+		fileDAO = new FileDAOHibernateImpl();
 	}
 	
 	@Test
@@ -75,6 +76,6 @@ public class FileDAOMySQLImplTest {
 	}
 	
 	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(FileDAOMySQLImplTest.class);
+		return new JUnit4TestAdapter(FileDAOHibernateImplTest.class);
 	}
 }

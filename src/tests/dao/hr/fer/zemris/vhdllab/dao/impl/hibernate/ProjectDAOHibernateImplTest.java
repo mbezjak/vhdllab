@@ -1,8 +1,9 @@
-package hr.fer.zemris.vhdllab.dao.impl;
+package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
+import hr.fer.zemris.vhdllab.dao.impl.hibernate.ProjectDAOHibernateImpl;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 
@@ -13,13 +14,13 @@ import java.util.TreeSet;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ProjectDAOMySQLImplTest {
+public class ProjectDAOHibernateImplTest {
 
 	private static ProjectDAO projectDAO;
 	
 	@BeforeClass
 	public static void init() {
-		projectDAO = new ProjectDAOMySQLImpl();
+		projectDAO = new ProjectDAOHibernateImpl();
 	}
 	
 	@Test

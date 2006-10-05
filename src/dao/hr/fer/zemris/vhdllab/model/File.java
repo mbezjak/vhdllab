@@ -44,7 +44,7 @@ public class File implements Comparable {
 	
 	/**
 	 * @hibernate.property
-	 * 	column="FILENAME"
+	 * 	column="NAME"
 	 *  length="255"
 	 *  not-null="true"
 	 */
@@ -57,7 +57,7 @@ public class File implements Comparable {
 
 	/**
 	 * @hibernate.property
-	 * 	column="FILETYPE"
+	 * 	column="TYPE"
 	 *  length="255"
 	 * 	not-null="true"
 	 */

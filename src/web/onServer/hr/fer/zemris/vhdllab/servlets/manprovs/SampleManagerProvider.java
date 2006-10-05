@@ -2,9 +2,9 @@ package hr.fer.zemris.vhdllab.servlets.manprovs;
 
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
-import hr.fer.zemris.vhdllab.dao.impl.FileDAOMySQLImpl;
-import hr.fer.zemris.vhdllab.dao.impl.ProjectDAOMySQLImpl;
-import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerMySQLImpl;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 
 import java.util.HashMap;
@@ -29,15 +29,14 @@ public class SampleManagerProvider implements ManagerProvider {
 	 */
 	public SampleManagerProvider() {
 		// Create all data access objects.
-		FileDAO fileDAO = new FileDAOMySQLImpl();
-		ProjectDAO projectDAO = new ProjectDAOMySQLImpl();
+		FileDAO fileDAO = new FileDAOMemoryImpl();
+		ProjectDAO projectDAO = new ProjectDAOMemoryImpl();
 		
 		// Create all service managers, and configure them
 		// with appropriate DAO objects.
-		VHDLLabManagerMySQLImpl labManImpl = new VHDLLabManagerMySQLImpl();
+		VHDLLabManagerImpl labManImpl = new VHDLLabManagerImpl();
 		labManImpl.setFileDAO(fileDAO);
 		labManImpl.setProjectDAO(projectDAO);
-		//labManImpl.init();
 		
 		// Remember created managers, so we can later return
 		// a reference to them.

@@ -120,8 +120,8 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(5, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
-		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
 		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 	}
 
@@ -142,8 +142,8 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(5, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
-		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
 		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 	}
 	
@@ -355,10 +355,10 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(8, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
-		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
-		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
-		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
 		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}
@@ -380,10 +380,10 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(8, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
-		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
-		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
-		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
 		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}
@@ -405,10 +405,10 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(8, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
-		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
-		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
-		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
 		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}
@@ -430,10 +430,10 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(8, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
-		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
-		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
-		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
+		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".1", ""));
+		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".1", ""));
+		assertEquals(file2.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".2", ""));
+		assertEquals(file2.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".2", ""));
 		assertEquals(file3.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME+".3", ""));
 		assertEquals(file3.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE+".3", ""));
 	}

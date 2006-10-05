@@ -274,6 +274,15 @@
   </target>
 
   <target name="hibernate" depends="compile-dao">
+  	<input
+	  message="Danger! Running this task will destroy existing database shema and create a new one. Loss of data is imminent! Are you sure you want to proceed?"
+  	  validargs="y,n"
+  	  addproperty="hibernate.run.task"/>
+  	<condition property="do.abort">
+  	  <equals arg1="n" arg2="${hibernate.run.task}"/>
+  	</condition>
+  	<fail if="do.abort">Build aborted by user.</fail>
+  	
     <taskdef name="xdoclet"
       classname="org.xdoclet.ant.XDocletTask"
       classpathref="src.class.path">

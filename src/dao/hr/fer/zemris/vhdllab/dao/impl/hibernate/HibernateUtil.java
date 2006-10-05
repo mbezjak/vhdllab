@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.dao.impl;
+package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;

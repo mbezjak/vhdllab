@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.dao.impl;
+package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
@@ -6,7 +6,7 @@ import hr.fer.zemris.vhdllab.model.File;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.Transaction;
 
-public class FileDAOMySQLImpl implements FileDAO {
+public class FileDAOHibernateImpl implements FileDAO {
 	
 	public File load(Long id) throws DAOException {
 		try {
