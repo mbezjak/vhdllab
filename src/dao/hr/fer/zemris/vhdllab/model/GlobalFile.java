@@ -6,6 +6,7 @@ package hr.fer.zemris.vhdllab.model;
  */
 public class GlobalFile {
 	public static final String GFT_THEME = "theme";
+	public static final String GFT_APPLET = "applet";
 	
 	private Long id;
 	private String name;

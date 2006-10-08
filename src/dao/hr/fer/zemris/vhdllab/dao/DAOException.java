@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.dao;
 
+/**
+ * Exception which is thrown when an exceptional condition occurs
+ * in DAO layer.
+ */
 public class DAOException extends Exception {
 
 	/**
@@ -11,15 +15,15 @@ public class DAOException extends Exception {
 		super();
 	}
 
-	public DAOException(String s) {
-		super(s);
+	public DAOException(String message) {
+		super(message);
 	}
 
-	public DAOException(String s, Throwable t) {
-		super(s, t);
+	public DAOException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public DAOException(Throwable t) {
-		super(t);
+	public DAOException(Throwable cause) {
+		super(cause);
 	}
 }

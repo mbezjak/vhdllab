@@ -56,7 +56,8 @@ public class Project {
 	 * @hibernate.set
 	 * 	inverse="true"
 	 *  lazy="false"
-	 *  cascade="save-update"
+	 *  order-by = "FILE_ID"
+	 *  cascade="all"
 	 * @hibernate.key
 	 *  column="PROJECT_ID"
 	 * @hibernate.one-to-many

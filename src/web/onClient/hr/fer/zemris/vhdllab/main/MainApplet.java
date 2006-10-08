@@ -51,15 +51,14 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	
 	private void initGUI() {
 		JPanel projectExplorerPanel = new JPanel(new BorderLayout());
-		JLabel l1 = new JLabel();
-		projectExplorerPanel.add(l1, BorderLayout.CENTER);
+		projectExplorerPanel.add(new ProjectExplorer(), BorderLayout.CENTER);
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/5,0));
 
 		JPanel writerPanel = new JPanel(new BorderLayout());
 		JTextArea ta = new JTextArea();
 		writerPanel.add(ta, BorderLayout.CENTER);
 		JPanel statusPanel = new JPanel(new BorderLayout());
-		statusPanel.add(l1, BorderLayout.CENTER);
+		statusPanel.add(projectExplorerPanel, BorderLayout.CENTER);
 		statusPanel.setPreferredSize(new Dimension(0,this.getHeight()/5));
 		
 		this.getContentPane().add(projectExplorerPanel, BorderLayout.WEST);

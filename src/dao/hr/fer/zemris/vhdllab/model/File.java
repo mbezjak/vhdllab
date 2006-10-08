@@ -71,7 +71,7 @@ public class File implements Comparable {
 	/**
 	 * @hibernate.many-to-one
 	 *  column="PROJECT_ID"
-	 *  cascade="save-update"
+	 *  cascade="all"
 	 */
 	public Project getProject() {
 		return project;

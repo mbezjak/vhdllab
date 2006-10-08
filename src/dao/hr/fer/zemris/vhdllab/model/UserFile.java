@@ -6,6 +6,7 @@ package hr.fer.zemris.vhdllab.model;
  */
 public class UserFile {
 	public static final String UFT_THEME = "theme";
+	public static final String UFT_APPLET = "applet";
 	
 	private Long id;
 	private Long ownerID;

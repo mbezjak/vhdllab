@@ -117,10 +117,14 @@
     </javac>
   </target>
 
-  <target name="package-dao" depends="compile-dao">
+  <target name="package-dao" depends="compile-dao,hibernate-hbm">
     <jar destfile="${jlib.dir}/${app.name}-dao.jar">
       <fileset dir="${build.dir}/dao" includes="**/*.class"/>
       <fileset dir="src/dao" excludes="**/*.java"/>
+	  <fileset dir="${local.dir}">
+	  	<include name="*.*"/>
+	  </fileset>
+	  <fileset dir="${hibernate.dir}"/>
     </jar>
   </target>
 
@@ -273,16 +277,7 @@
 	</javadoc>
   </target>
 
-  <target name="hibernate" depends="compile-dao">
-  	<input
-	  message="Danger! Running this task will destroy existing database shema and create a new one. Loss of data is imminent! Are you sure you want to proceed?"
-  	  validargs="y,n"
-  	  addproperty="hibernate.run.task"/>
-  	<condition property="do.abort">
-  	  <equals arg1="n" arg2="${hibernate.run.task}"/>
-  	</condition>
-  	<fail if="do.abort">Build aborted by user.</fail>
-  	
+  <target name="hibernate-hbm" depends="compile-dao">
     <taskdef name="xdoclet"
       classname="org.xdoclet.ant.XDocletTask"
       classpathref="src.class.path">
@@ -312,6 +307,24 @@
 	  <replacetoken>access="method" </replacetoken>
   	</replace>
   	
+  	<copy todir="bin">
+  	  <fileset dir="${local.dir}">
+  	  	<include name="*.*"/>
+  	  </fileset>
+  	  <fileset dir="${hibernate.dir}"/>
+  	</copy>
+  </target>
+  	
+  <target name="schema-export" depends="hibernate-hbm">
+  	<input
+	  message="Danger! Running this task will destroy existing database shema and create a new one. Loss of data is imminent! Are you sure you want to proceed?"
+  	  validargs="y,n"
+  	  addproperty="hibernate.run.task"/>
+  	<condition property="do.abort">
+  	  <equals arg1="n" arg2="${hibernate.run.task}"/>
+  	</condition>
+  	<fail if="do.abort">Build aborted by user.</fail>
+
   	<taskdef name="schemaexport"
       classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
       classpathref="src.class.path">
@@ -328,13 +341,6 @@
  		<include name="**/*.hbm.xml"/>
   	  </fileset>
 	</schemaexport>
-  	
-  	<copy todir="bin">
-  	  <fileset dir="${local.dir}">
-  	  	<include name="*.*"/>
-  	  </fileset>
-  	  <fileset dir="${hibernate.dir}"/>
-  	</copy>
   </target>
 
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
@@ -346,6 +352,8 @@
   <target name="package-tests" depends="package-tests-dao,package-tests-service,package-tests-web-onServer,package-tests-web-onClient"/>
 	
   <target name="run-tests" depends="run-tests-dao,run-tests-service,run-tests-web-onServer,run-tests-web-onClient"/>
+	
+  <target name="hibernate" depends="schema-export"/>
 	
   <target name="all" depends="package,doc,run-tests"/>
 	

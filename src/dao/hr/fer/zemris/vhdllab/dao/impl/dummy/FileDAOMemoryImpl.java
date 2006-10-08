@@ -12,10 +12,12 @@ import java.util.TreeSet;
 public class FileDAOMemoryImpl implements FileDAO {
 
 	private long id = 0;
-	
+
 	Map<Long, File> files = new HashMap<Long, File>();
-	
+
 	public File load(Long id) throws DAOException {
+		File file = files.get(id);
+		if(file==null) throw new DAOException("Unable to load file!");
 		return files.get(id);
 	}
 
@@ -31,5 +33,9 @@ public class FileDAOMemoryImpl implements FileDAO {
 			}
 		}
 		files.put(file.getId(), file);
+	}
+
+	public void delete(Long fileID) throws DAOException {
+		files.remove(fileID);
 	}
 }

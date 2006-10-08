@@ -10,9 +10,9 @@ import org.junit.runners.Suite;
 	FileTest.class
 })
 public class AllPackageTests {
-	
+
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(AllPackageTests.class);
 	}
-	
+
 }

@@ -5,9 +5,12 @@ import net.sf.hibernate.Session;
 import net.sf.hibernate.SessionFactory;
 import net.sf.hibernate.cfg.Configuration;
 
+/**
+ * This is a help class for creating session.
+ */
 public class HibernateUtil {
 	private static final SessionFactory sessionFactory;
-	
+
 	static {
 		try {
 			// Create the SessionFactory
@@ -17,9 +20,9 @@ public class HibernateUtil {
 			throw new RuntimeException("Configuration problem: " + e.getMessage());
 		}
 	}
-	
+
 	public static final ThreadLocal<Session> session = new ThreadLocal<Session>();
-	
+
 	public static Session currentSession() throws HibernateException {
 		Session s = session.get();
 		// Open a new Session, if this Thread has none yet
@@ -29,7 +32,7 @@ public class HibernateUtil {
 		}
 		return s;
 	}
-	
+
 	public static void closeSession() throws HibernateException {
 		Session s = session.get();
 		session.set(null);
