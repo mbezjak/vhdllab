@@ -244,7 +244,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			throw new ServiceException("Can not save user file.");
 		}
 		
-		return null;
+		return file;
 	}
 
 	public void deleteFile(Long fileId) throws ServiceException {

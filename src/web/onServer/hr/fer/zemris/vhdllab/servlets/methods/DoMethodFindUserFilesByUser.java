@@ -45,7 +45,7 @@ public class DoMethodFindUserFilesByUser implements RegisteredMethod {
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
 		int i = 1;
 		for(UserFile f : files) {
-			resProp.setProperty(MethodConstants.PROP_PROJECT_ID+"."+i, String.valueOf(f.getId()));
+			resProp.setProperty(MethodConstants.PROP_FILE_ID+"."+i, String.valueOf(f.getId()));
 			i++;
 		}
 		return resProp;

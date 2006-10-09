@@ -57,7 +57,6 @@ public class GlobalFile {
 	 * @hibernate.property
 	 *  column = "CONTENT"
 	 *  type = "text"
-	 *  not-null = "true"
 	 *  length = "1024"
 	 */
 	public String getContent() {

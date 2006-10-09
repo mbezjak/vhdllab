@@ -33,6 +33,8 @@ public class DoMethodCreateNewUserFile implements RegisteredMethod {
 		try {
 			Long id = Long.parseLong(ownerId);
 			file = labman.createNewUserFile(id, fileType);
+		} catch (NumberFormatException e) {
+			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID = '"+ownerId+"'!");
 		} catch (ServiceException e) {
 			file = null;
 		}
