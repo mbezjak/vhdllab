@@ -1,17 +1,17 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import static org.junit.Assert.*;
-
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-
+import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
+
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
+
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Before;

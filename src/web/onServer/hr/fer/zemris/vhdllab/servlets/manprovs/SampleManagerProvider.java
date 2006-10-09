@@ -4,10 +4,10 @@ import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
-import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
-import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
-import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
-import hr.fer.zemris.vhdllab.dao.impl.dummy.UserFileDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.dao.impl.hibernate.FileDAOHibernateImpl;
+import hr.fer.zemris.vhdllab.dao.impl.hibernate.GlobalFileDAOHibernateImpl;
+import hr.fer.zemris.vhdllab.dao.impl.hibernate.ProjectDAOHibernateImpl;
+import hr.fer.zemris.vhdllab.dao.impl.hibernate.UserFileDAOHibernateImpl;
 import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 
@@ -33,10 +33,10 @@ public class SampleManagerProvider implements ManagerProvider {
 	 */
 	public SampleManagerProvider() {
 		// Create all data access objects.
-		FileDAO fileDAO = new FileDAOMemoryImpl();
-		ProjectDAO projectDAO = new ProjectDAOMemoryImpl();
-		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
-		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
+		FileDAO fileDAO = new FileDAOHibernateImpl();
+		ProjectDAO projectDAO = new ProjectDAOHibernateImpl();
+		GlobalFileDAO globalFileDAO = new GlobalFileDAOHibernateImpl();
+		UserFileDAO userFileDAO = new UserFileDAOHibernateImpl();
 		
 		// Create all service managers, and configure them
 		// with appropriate DAO objects.
