@@ -2,7 +2,9 @@ package hr.fer.zemris.vhdllab.service;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.model.Project;
+import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLGenerator;
@@ -60,6 +62,12 @@ public interface VHDLLabManager {
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public void renameProject(Long projectId, String newName) throws ServiceException;
+	/**
+	 * Use this method to delete a project.
+	 * @param projectId identifier of a project
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void deleteProject(Long projectId) throws ServiceException;
 	
 	/**
 	 * Retrieves file with specified identifier. An exception will be thrown if file
@@ -105,7 +113,110 @@ public interface VHDLLabManager {
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public void renameFile(Long fileId, String newName) throws ServiceException;
+	/**
+	 * Use this method to delete a file.
+	 * @param fileId identifier of a file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void deleteFile(Long fileId) throws ServiceException;
+
+	/**
+	 * Retrieves global file with specified identifier. An exception will be thrown if global file
+	 * with specified identifier does not exists.
+	 * @param fileId identifier of the global file
+	 * @return requested global file; this will never be <code>null</code>
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public GlobalFile loadGlobalFile(Long fileId) throws ServiceException;
+	/**
+	 * Checks to see if specified global file exists.
+	 * @param fileId identifier of the global file
+	 * @return <code>true</code> if global file exists, <code>false</code> otherwise
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public boolean existsGlobalFile(Long fileId) throws ServiceException;
+	/**
+	 * Use this method to create a new global file.
+	 * @param name name for the global file
+	 * @param type type for the global file
+	 * @return created global file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public GlobalFile createNewGlobalFile(String name, String type) throws ServiceException;
+	/**
+	 * Use this method to set a new content for the global file.
+	 * @param fileId identifier of the global file
+	 * @param content content for the global file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void saveGlobalFile(Long fileId, String content) throws ServiceException;
+	/**
+	 * Use this method to rename a global file.
+	 * @param fileId identifier of the global file
+	 * @param newName new name
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void renameGlobalFile(Long fileId, String newName) throws ServiceException;
+	/**
+	 * Use this method to delete a global file.
+	 * @param fileId identifier of a global file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void deleteGlobalFile(Long fileId) throws ServiceException;
+	/**
+	 * Finds all global files whose type is specified type. Return value will
+	 * never be <code>null</code>, although it can be an empty list.
+	 * @param type type of a global file
+	 * @return list of global files
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public List<GlobalFile> findGlobalFilesByType(String type) throws ServiceException;
 	
+	/**
+	 * Retrieves user file with specified identifier. An exception will be thrown if user file
+	 * with specified identifier does not exists.
+	 * @param fileId identifier of the user file
+	 * @return requested user file; this will never be <code>null</code>
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public UserFile loadUserFile(Long fileId) throws ServiceException;
+	/**
+	 * Checks to see if specified user file exists.
+	 * @param fileId identifier of the user file
+	 * @return <code>true</code> if user file exists, <code>false</code> otherwise
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public boolean existsUserFile(Long fileId) throws ServiceException;
+	/**
+	 * Use this method to create a new user file.
+	 * @param ownerId owner id for the user file
+	 * @param type type for the user file
+	 * @return created user file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public UserFile createNewUserFile(Long ownerId, String type) throws ServiceException;
+	/**
+	 * Use this method to set a new content for the user file.
+	 * @param fileId identifier of the user file
+	 * @param content content for the user file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void saveUserFile(Long fileId, String content) throws ServiceException;
+	/**
+	 * Use this method to delete a user file.
+	 * @param fileId identifier of a user file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void deleteUserFile(Long fileId) throws ServiceException;
+	/**
+	 * Finds all user files whose owner is specified user. Return value will
+	 * never be <code>null</code>, although it can be an empty list.
+	 * @param userId identifier of user file
+	 * @return list of user files
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public List<UserFile> findUserFilesByUser(Long userId) throws ServiceException;
+
 	/**
 	 * Use this method to compile specified file.
 	 * @param fileId identifier of the file

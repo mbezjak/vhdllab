@@ -16,7 +16,6 @@ public class HibernateUtil {
 			// Create the SessionFactory
 			sessionFactory = new Configuration().configure().buildSessionFactory();
 		} catch (HibernateException e) {
-			e.printStackTrace();
 			throw new RuntimeException("Configuration problem: " + e.getMessage());
 		}
 	}

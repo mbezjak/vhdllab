@@ -209,8 +209,8 @@
       <classpath>
       	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-dao.jar"/>
-        <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
+      	<path refid="src.class.path"/>
       </classpath>
     </java>
   </target>
@@ -222,8 +222,8 @@
       	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-service.jar"/>
-        <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
+      	<path refid="src.class.path"/>
       </classpath>
     </java>
   </target>
@@ -236,8 +236,8 @@
       	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onServer.jar"/>
-        <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
+      	<path refid="src.class.path"/>
       </classpath>
     </java>
   </target>
@@ -250,8 +250,8 @@
       	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar"/>
-        <pathelement location="${lib.dir}/junit.jar"/>
         <pathelement location="${java.class.path}"/>
+      	<path refid="src.class.path"/>
       </classpath>
     </java>
   </target>
@@ -260,7 +260,7 @@
   	<javadoc 
   		access="public"
   		author="true"
-  		classpath="libs/junit.jar;libs/plugin.jar;libs/servlet-api.jar;libs/hibernate/hibernate2.jar"
+  		classpathref="src.class.path"
   		destdir="${doc.dir}"
   		nodeprecated="false"
   		nodeprecatedlist="false"
@@ -269,7 +269,7 @@
   		notree="false"
   		packagenames="*"
   		source="1.5"
-  		sourcepath="src/dao;src/service;src/web/onServer;src/web/onClient"
+  		sourcepath="src/dao;src/service;src/web/onServer;src/web/onClient;src/i18n/common"
   		splitindex="true"
   		use="true"
   		version="true">

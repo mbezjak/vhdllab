@@ -10,12 +10,13 @@ import java.util.List;
 public interface UserFileDAO {
 	
 	/**
-	 * Returns a <code>UserFile</code> that has user file ID equal to <code>id</code>.
-	 * @param id a user file ID.
-	 * @return a <code>UserFile</code> that has user file ID equal to <code>id</code>. 
+	 * Retrieves user file with specified identifier. An exception will be thrown if
+	 * user file with specified identifier does not exists.
+	 * @param ownerId indentifier of a global file.
+	 * @return a user file with specified identifier.
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	UserFile load(Long ownerID) throws DAOException;
+	UserFile load(Long ownerId) throws DAOException;
 	/**
 	 * Saves (or updates) a user file.
 	 * @param file a user file that will be saved (or updated).
@@ -23,17 +24,24 @@ public interface UserFileDAO {
 	 */
 	void save(UserFile file) throws DAOException;
 	/**
-	 * Deletes a user file with <code>fileID</code>.
-	 * @param fileID a user file ID.
+	 * Deletes a user file with specified identifier.
+	 * @param fileId indentifier of a user file.
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	void delete(Long fileID) throws DAOException;
+	void delete(Long fileId) throws DAOException;
 	/**
-	 * Returns a list of <code>UserFile</code> that have ownerID equal to <code>userID</code>.
-	 * @param userID an ownerID of a <code>UserFile</code>.
-	 * @return a list of <code>UserFile</code> that have ownerID equal to <code>userID</code>.
+	 * Finds all user files whose owner is specified user. Return value will
+	 * never be <code>null</code>, although it can be an empty list.
+	 * @param userId ownerId of user file
+	 * @return list of user files
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	List<UserFile> findByUser(Long userID) throws DAOException;
-	
+	List<UserFile> findByUser(Long userId) throws DAOException;
+	/**
+	 * Check if a user file with specified identifier exists.
+	 * @param fileId indentifier of a user file.
+	 * @return <code>true</code> if such user file exists; <code>false</code> otherwise.
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	boolean exists(Long fileId) throws DAOException;
 }

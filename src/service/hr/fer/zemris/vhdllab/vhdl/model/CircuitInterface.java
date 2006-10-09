@@ -28,10 +28,10 @@ import java.util.List;
  * ports that share the same name (ignore case)! Also entity name must have the
  * following format:
  * <ul>
- * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+ * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
  * <li>it must not start with a non-alpha character
- * <li>it must not end with an underline character
- * <li>it must not contain an underline character after an underline character
+ * <li>it must not end with an underscore character
+ * <li>it must not contain an underscore character after an underscore character
  * </ul>
  * 
  * @author Miro Bezjak

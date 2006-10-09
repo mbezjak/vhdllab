@@ -5,7 +5,10 @@ import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -37,5 +40,24 @@ public class FileDAOMemoryImpl implements FileDAO {
 
 	public void delete(Long fileID) throws DAOException {
 		files.remove(fileID);
+	}
+
+	public boolean exists(Long fileId) throws DAOException {
+		return files.get(fileId) != null;
+	}
+
+	public boolean exists(Long projectId, String name) throws DAOException {
+		Collection<File> c = files.values();
+		List<File> fileList = new ArrayList<File>(c);
+		for(File f : fileList) {
+			if(!f.getFileName().equals(name)) continue;
+			Project p = f.getProject();
+			if(p==null) {
+				if(projectId==null) return true;
+				continue;
+			}
+			if(p.getId().equals(projectId)) return true;
+		}
+		return false;
 	}
 }

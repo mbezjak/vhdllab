@@ -3,6 +3,10 @@ package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
+
+import java.util.List;
+
+import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.Transaction;
 
@@ -27,8 +31,7 @@ public class FileDAOHibernateImpl implements FileDAO {
 
 			return file;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to load file!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
@@ -46,13 +49,13 @@ public class FileDAOHibernateImpl implements FileDAO {
 			tx.commit();
 			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to save file!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
+
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#delete(java.lang.Long)
 	 */
 	public void delete(Long fileID) throws DAOException {
 		try {
@@ -65,8 +68,52 @@ public class FileDAOHibernateImpl implements FileDAO {
 			tx.commit();
 			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to delete file!");
+			throw new DAOException(e.getMessage());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#exists(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean exists(Long fileID) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from File as f where f.id = :fileId")
+									.setLong("fileId", fileID);
+			List<File> files = (List<File>)query.list();
+			
+			tx.commit();
+			HibernateUtil.closeSession();
+			
+			return files.size() != 0;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#exists(java.lang.Long, java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean exists(Long projectId, String name) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from File as f where f.project.id = :projectId and f.fileName = :filename")
+									.setLong("projectId", projectId)
+									.setString("filename", name);
+			List<File> files = (List<File>)query.list();
+
+			tx.commit();
+			HibernateUtil.closeSession();
+			
+			return files.size() != 0;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
 		}
 	}
 }

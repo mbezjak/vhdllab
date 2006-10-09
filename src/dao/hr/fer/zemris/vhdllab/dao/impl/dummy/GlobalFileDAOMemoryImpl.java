@@ -40,4 +40,8 @@ public class GlobalFileDAOMemoryImpl implements GlobalFileDAO {
 		}
 		return fileList;
 	}
+	
+	public boolean exists(Long fileId) throws DAOException {
+		return files.get(fileId) != null;
+	}
 }

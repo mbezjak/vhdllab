@@ -1,9 +1,13 @@
 package hr.fer.zemris.vhdllab.servlets.manprovs;
 
 import hr.fer.zemris.vhdllab.dao.FileDAO;
+import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
+import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.UserFileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 
@@ -31,12 +35,16 @@ public class SampleManagerProvider implements ManagerProvider {
 		// Create all data access objects.
 		FileDAO fileDAO = new FileDAOMemoryImpl();
 		ProjectDAO projectDAO = new ProjectDAOMemoryImpl();
+		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
+		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		
 		// Create all service managers, and configure them
 		// with appropriate DAO objects.
 		VHDLLabManagerImpl labManImpl = new VHDLLabManagerImpl();
 		labManImpl.setFileDAO(fileDAO);
 		labManImpl.setProjectDAO(projectDAO);
+		labManImpl.setGlobalFileDAO(globalFileDAO);
+		labManImpl.setUserFileDAO(userFileDAO);
 		
 		// Remember created managers, so we can later return
 		// a reference to them.

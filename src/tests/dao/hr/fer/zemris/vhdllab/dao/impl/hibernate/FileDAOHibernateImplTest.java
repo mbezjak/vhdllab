@@ -10,6 +10,7 @@ import java.util.TreeSet;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,37 +18,44 @@ public class FileDAOHibernateImplTest {
 
 	private static FileDAO fileDAO;
 
+	private static File file;
+	private static Project project;
+
 	@BeforeClass
 	public static void init() {
 		fileDAO = new FileDAOHibernateImpl();
 	}
 
-	@Test
-	public void saveAndLoad() throws DAOException {
-		File file = new File();
-		file.setContent("simple content of a file!");
-		file.setFileName("sample name");
-		file.setFileType(File.FT_VHDLSOURCE);
-
-		Project project = new Project();
+	@Before
+	public void initEachTest() throws DAOException {
+		file = new File();
+		project = new Project();
 		project.setOwnerID(Long.valueOf(100));
 		project.setProjectName("simple name of a project");
 		project.setFiles(new TreeSet<File>());
 		project.getFiles().add(file);
-
+		file.setContent("simple content of a file!");
+		file.setFileName("sample name");
+		file.setFileType(File.FT_VHDLSOURCE);
 		file.setProject(project);
+		fileDAO.save(file);
+	}
 
+	@Test
+	public void saveAndLoad() throws DAOException {
 		fileDAO.save(file);
 		File file2 = fileDAO.load(file.getId());
 		assertEquals(file, file2);
 	}
 
+	@Test(expected=DAOException.class)
+	public void load() throws DAOException {
+		fileDAO.load(Long.valueOf(121));
+	}
+	
 	@Test
 	public void save() throws DAOException {
-		File file = new File();
-		file.setContent("simple content of a file2!");
-		file.setFileName("sample name2");
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setProject(null);
 
 		fileDAO.save(file);
 		File file2 = fileDAO.load(file.getId());
@@ -56,22 +64,28 @@ public class FileDAOHibernateImplTest {
 	
 	@Test(expected=DAOException.class)
 	public void delete() throws DAOException {
-		File file = new File();
-		file.setContent("simple content of a file3!");
-		file.setFileName("sample name3");
-		file.setFileType(File.FT_STRUCT_SCHEMA);
-
-		Project project = new Project();
-		project.setOwnerID(Long.valueOf(200));
-		project.setProjectName("project name");
-		project.setFiles(new TreeSet<File>());
-		project.getFiles().add(file);
-
-		file.setProject(project);
-
-		fileDAO.save(file);
 		fileDAO.delete(file.getId());
 		fileDAO.load(file.getId());
+	}
+
+	@Test
+	public void exists() throws DAOException {
+		assertEquals(false, fileDAO.exists(Long.valueOf(121)));
+	}
+	
+	@Test
+	public void exists2() throws DAOException {
+		assertEquals(true, fileDAO.exists(Long.valueOf(file.getId())));
+	}
+	
+	@Test
+	public void exists3() throws DAOException {
+		assertEquals(false, fileDAO.exists(Long.valueOf(121), file.getFileName()));
+	}
+	
+	@Test
+	public void exists4() throws DAOException {
+		assertEquals(true, fileDAO.exists(project.getId(), file.getFileName()));
 	}
 	
 	public static junit.framework.Test suite() {

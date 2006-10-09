@@ -65,10 +65,10 @@ public class StringUtil {
 	 * Ignore case and check if <code>s</code> is a correct name. Correct name is
 	 * a string with the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * 
 	 * @param s a string that will be checked.
@@ -80,13 +80,13 @@ public class StringUtil {
 		char[] chars = s.toCharArray();
 		if( chars.length == 0 ) return false;
 		if( !StringUtil.isAlpha(chars[0]) ) return false;
-		if( StringUtil.isUnderline(chars[s.length()-1]) ) return false;
+		if( StringUtil.isunderscore(chars[s.length()-1]) ) return false;
 		for(int i = 0; i < chars.length; i++) {      
 			if( StringUtil.isAlpha(chars[i]) ||
 				StringUtil.isNumeric(chars[i]) ) continue;
-			if( StringUtil.isUnderline(chars[i]) ) {
+			if( StringUtil.isunderscore(chars[i]) ) {
 				if( (i + 1) < chars.length 
-					&& StringUtil.isUnderline(chars[i+1]) )
+					&& StringUtil.isunderscore(chars[i+1]) )
 					return false;
 				continue;
 			}
@@ -120,12 +120,12 @@ public class StringUtil {
 	}
 	
 	/**
-	 * Check if <code>c</code> is an underline character. (character '_')
+	 * Check if <code>c</code> is an underscore character. (character '_')
 	 * 
 	 * @param c a character that will be checked.
-	 * @return <code>true</code> is <code>c</code> is an underline character; <code>false</code> otherwise.
+	 * @return <code>true</code> is <code>c</code> is an underscore character; <code>false</code> otherwise.
 	 */
-	private static boolean isUnderline(char c) {
+	private static boolean isunderscore(char c) {
 		if( c == '_' ) return true;
 		return false;
 	}

@@ -46,4 +46,14 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 		String param = "ownerID";
 		return (List<UserFile>)getHibernateTemplate().findByNamedParam(query, param, userID);
 	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
+	 */
+	public boolean exists(Long fileId) throws DAOException {
+		String query = "from UserFile as f where f.id = :fileId";
+		String param = "fileId";
+		UserFile file = (UserFile) getHibernateTemplate().findByNamedParam(query, param, fileId);
+		return file != null;
+	}
 }

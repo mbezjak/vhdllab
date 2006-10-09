@@ -19,16 +19,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MethodFactoryTest {
-	
+
 	private static ManagerProvider mprov;
 	private Properties p;
-	
+
 	private static Project project;
-	
+
 	private static File file1;
 	private static File file2;
 	private static File file3;
-	
+
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
@@ -44,12 +44,12 @@ public class MethodFactoryTest {
 		project.setFiles(files);
 		labman.saveProject(project);
 	}
-	
+
 	@Before
 	public void initEachTest() {
 		p = new Properties();
 	}
-	
+
 	/**
 	 * Method is simple.
 	 */
@@ -58,7 +58,7 @@ public class MethodFactoryTest {
 		String method = MethodConstants.MTD_LOAD_FILE_NAME;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
-		
+
 		RegisteredMethod regMethod = MethodFactory.getMethod(method);
 		Properties response = regMethod.run(p, mprov);
 		assertEquals(3, response.size());
@@ -66,7 +66,7 @@ public class MethodFactoryTest {
 		assertEquals(MethodConstants.STATUS_OK, response.getProperty(MethodConstants.PROP_STATUS));
 		assertEquals(file1.getFileName(), response.getProperty(MethodConstants.PROP_FILE_NAME));
 	}
-	
+
 	/**
 	 * Method is advanced.
 	 */
@@ -75,7 +75,7 @@ public class MethodFactoryTest {
 		String method = MethodConstants.MTD_LOAD_FILE_NAME+"&"+MethodConstants.MTD_LOAD_FILE_TYPE;
 		p.setProperty(MethodConstants.PROP_METHOD, method);
 		p.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
-		
+
 		RegisteredMethod regMethod = MethodFactory.getMethod(method);
 		Properties response = regMethod.run(p, mprov);
 		assertEquals(4, response.size());
@@ -84,7 +84,7 @@ public class MethodFactoryTest {
 		assertEquals(file1.getFileName(), response.getProperty(MethodConstants.PROP_FILE_NAME));
 		assertEquals(file1.getFileType(), response.getProperty(MethodConstants.PROP_FILE_TYPE));
 	}
-	
+
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(MethodFactoryTest.class);
 	}

@@ -28,10 +28,10 @@ import hr.fer.zemris.vhdllab.vhdl.tb.StringUtil;
  * 
  * Port name will have the following format:
  * <ul>
- * <li>it will contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+ * <li>it will contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
  * <li>it will not start with a non-alpha character
- * <li>it will not end with an underline character
- * <li>it will not contain an underline character after an underline character
+ * <li>it will not end with an underscore character
+ * <li>it will not contain an underscore character after an underscore character
  * </ul>
  * 
  * @author Miro Bezjak
@@ -56,10 +56,10 @@ public class DefaultPort implements Port {
 	 * 
 	 * Port name must be of the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * 
 	 * @param name a name of a port.

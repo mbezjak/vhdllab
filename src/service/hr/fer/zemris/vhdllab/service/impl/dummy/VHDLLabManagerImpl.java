@@ -2,9 +2,13 @@ package hr.fer.zemris.vhdllab.service.impl.dummy;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
+import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
+import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.model.Project;
+import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
@@ -19,12 +23,13 @@ import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class VHDLLabManagerImpl implements VHDLLabManager {
 	
 	private FileDAO fileDAO;
 	private ProjectDAO projectDAO;
+	private GlobalFileDAO globalFileDAO;
+	private UserFileDAO userFileDAO;
 	
 	public VHDLLabManagerImpl() {}
 	
@@ -156,7 +161,6 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	public FileDAO getFileDAO() {
 		return fileDAO;
 	}
-
 	public void setFileDAO(FileDAO fileDAO) {
 		this.fileDAO = fileDAO;
 	}
@@ -164,29 +168,36 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	public ProjectDAO getProjectDAO() {
 		return projectDAO;
 	}
-
 	public void setProjectDAO(ProjectDAO projectDAO) {
 		this.projectDAO = projectDAO;
 	}
+	
+	public GlobalFileDAO getGlobalFileDAO() {
+		return globalFileDAO;
+	}
+	public void setGlobalFileDAO(GlobalFileDAO globalFileDAO) {
+		this.globalFileDAO = globalFileDAO;
+	}
+
+	public UserFileDAO getUserFileDAO() {
+		return userFileDAO;
+	}
+	public void setUserFileDAO(UserFileDAO userFileDAO) {
+		this.userFileDAO = userFileDAO;
+	}
 
 	public boolean existsFile(Long projectId, String fileName) throws ServiceException {
-		Set<File> files = null;
 		try {
-			files = projectDAO.load(projectId).getFiles();
+			return fileDAO.exists(projectId,fileName);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException();
 		}
-		if(files==null) return false;
-		for(File f : files) {
-			if(f.getFileName().equals(fileName)) return true;
-		}
-		return false;
 	}
 
 	public boolean existsProject(Long projectId) throws ServiceException {
 		try {
-			return projectDAO.load(projectId) != null;
+			return projectDAO.exists(projectId);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException();
@@ -204,5 +215,163 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			throw new ServiceException();
 		}
 		return project;
+	}
+
+	public GlobalFile createNewGlobalFile(String name, String type) throws ServiceException {
+		GlobalFile file = new GlobalFile();
+		file.setName(name);
+		file.setType(type);
+		
+		try {
+			globalFileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException("Can not save global file.");
+		}
+		
+		return file;
+	}
+
+	public UserFile createNewUserFile(Long ownerId, String type) throws ServiceException {
+		UserFile file = new UserFile();
+		file.setOwnerID(ownerId);
+		file.setType(type);
+		
+		try {
+			userFileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException("Can not save user file.");
+		}
+		
+		return null;
+	}
+
+	public void deleteFile(Long fileId) throws ServiceException {
+		try {
+			fileDAO.delete(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException("Can not delete file.");
+		}
+	}
+
+	public void deleteGlobalFile(Long fileId) throws ServiceException {
+		try {
+			globalFileDAO.delete(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException("Can not delete global file.");
+		}
+	}
+
+	public void deleteProject(Long projectId) throws ServiceException {
+		try {
+			projectDAO.delete(projectId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException("Can not delete project.");
+		}
+	}
+
+	public void deleteUserFile(Long fileId) throws ServiceException {
+		try {
+			userFileDAO.delete(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException("Can not delete user file.");
+		}
+	}
+
+	public boolean existsGlobalFile(Long fileId) throws ServiceException {
+		try {
+			return globalFileDAO.exists(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+	}
+
+	public boolean existsUserFile(Long fileId) throws ServiceException {
+		try {
+			return userFileDAO.exists(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+	}
+
+	public List<GlobalFile> findGlobalFilesByType(String type) throws ServiceException {
+		List<GlobalFile> files = null;
+		try {
+			files = globalFileDAO.findByType(type);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+		return files;
+	}
+
+	public List<UserFile> findUserFilesByUser(Long userId) throws ServiceException {
+		List<UserFile> files = null;
+		try {
+			files = userFileDAO.findByUser(userId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+		return files;
+	}
+
+	public GlobalFile loadGlobalFile(Long fileId) throws ServiceException {
+		try {
+			return globalFileDAO.load(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+	}
+
+	public UserFile loadUserFile(Long fileId) throws ServiceException {
+		try {
+			return userFileDAO.load(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+	}
+
+	public void renameGlobalFile(Long fileId, String newName) throws ServiceException {
+		try {
+			GlobalFile file = globalFileDAO.load(fileId);
+			file.setName(newName);
+			globalFileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+	}
+
+	public void saveGlobalFile(Long fileId, String content) throws ServiceException {
+		GlobalFile file = loadGlobalFile(fileId);
+		file.setContent(content);
+		try {
+			globalFileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+	}
+
+	public void saveUserFile(Long fileId, String content) throws ServiceException {
+		UserFile file = loadUserFile(fileId);
+		file.setContent(content);
+		try {
+			userFileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+
 	}
 }

@@ -10,9 +10,10 @@ import java.util.List;
 public interface ProjectDAO {
 	
 	/**
-	 * Returns a <code>Project</code> that has project ID equal to <code>id</code>.
-	 * @param id a project ID.
-	 * @return a <code>Project</code> that has project ID equal to <code>id</code>. 
+	 * Retrieves project with specified identifier. An exception will be thrown if
+	 * project with specified identifier does not exists.
+	 * @param id indentifier of a project.
+	 * @return a project with specified identifier.
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	Project load(Long id) throws DAOException;
@@ -23,17 +24,24 @@ public interface ProjectDAO {
 	 */
 	void save(Project project) throws DAOException;
 	/**
-	 * Deletes a project with <code>projectID</code>.
-	 * @param projectID a project ID.
+	 * Deletes a project with specified identifier.
+	 * @param projectId indentifier of a project.
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	void delete(Long projectID) throws DAOException;
+	void delete(Long projectId) throws DAOException;
 	/**
-	 * Returns a list of <code>Project</code> that have ownerID equal to <code>userID</code>.
-	 * @param userID an ownerID of a <code>Project</code>.
-	 * @return a list of <code>Project</code> that have ownerID equal to <code>userID</code>.
+	 * Finds all projects whose owner is specified user. Return value will
+	 * never be <code>null</code>, although it can be an empty list.
+	 * @param userId ownerId of project
+	 * @return list of user's projects
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	List<Project> findByUser(Long userID) throws DAOException;
-	
+	List<Project> findByUser(Long userId) throws DAOException;
+	/**
+	 * Check if a project with specified identifier exists.
+	 * @param projectId indentifier of a project.
+	 * @return <code>true</code> if such project exists; <code>false</code> otherwise.
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	boolean exists(Long projectId) throws DAOException;
 }

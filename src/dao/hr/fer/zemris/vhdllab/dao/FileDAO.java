@@ -8,9 +8,10 @@ import hr.fer.zemris.vhdllab.model.File;
 public interface FileDAO {
 
 	/**
-	 * Returns a <code>File</code> that has file ID equal to <code>id</code>.
-	 * @param id a file ID.
-	 * @return a <code>File</code> that has file ID equal to <code>id</code>. 
+	 * Retrieves file with specified identifier. An exception will be thrown if file
+	 * with specified identifier does not exists.
+	 * @param id indentifier of a file.
+	 * @return a file with specified identifier. 
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	File load(Long id) throws DAOException;
@@ -21,10 +22,25 @@ public interface FileDAO {
 	 */
 	void save(File file) throws DAOException;
 	/**
-	 * Deletes a file with <code>fileID</code>.
-	 * @param fileID a file ID.
+	 * Deletes a file with specified identifier.
+	 * @param fileId indentifier of a file.
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	void delete(Long fileID) throws DAOException;
+	void delete(Long fileId) throws DAOException;
+	/**
+	 * Check if a file with specified identifier exists.
+	 * @param fileId indentifier of a file.
+	 * @return <code>true</code> if such file exists; <code>false</code> otherwise.
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	boolean exists(Long fileId) throws DAOException;
+	/**
+	 * Checks to see if specified project contains a file with given name.
+	 * @param projectId identifier of the project
+	 * @param fileName name of file
+	 * @return <code>true</code> if such file exists; <code>false</code> otherwise.
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	boolean exists(Long projectId, String name) throws DAOException;
 
 }

@@ -31,8 +31,7 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 
 			return file;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to load user file!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
@@ -50,8 +49,7 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			tx.commit();
 			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to save user file!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
@@ -69,8 +67,7 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			tx.commit();
 			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to delete user file!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
@@ -94,8 +91,29 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 
 			return files;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to load user files!");
+			throw new DAOException(e.getMessage());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean exists(Long fileID) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from UserFile as f where f.id = :fileId")
+									.setLong("fileId", fileID);
+			List<UserFile> files = (List<UserFile>)query.list();
+
+			tx.commit();
+			HibernateUtil.closeSession();
+
+			return files.size() != 0;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
 		}
 	}
 }

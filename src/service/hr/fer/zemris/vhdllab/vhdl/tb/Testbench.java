@@ -398,10 +398,10 @@ public class Testbench {
 	 * 
 	 * A name must have the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * 
 	 * @author Miro Bezjak
@@ -415,10 +415,10 @@ public class Testbench {
 		 * Construct an instance of this class using a signal name and an impulse to
 		 * explain an ImpulseWithSignalName. A signal name must have the following format:
 		 * <ul>
-		 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+		 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 		 * <li>it must not start with a non-alpha character
-		 * <li>it must not end with an underline character
-		 * <li>it must not contain an underline character after an underline character
+		 * <li>it must not end with an underscore character
+		 * <li>it must not contain an underscore character after an underscore character
 		 * </ul>
 		 * 
 		 * @param name a name of a signal.

@@ -46,4 +46,14 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 		String param = "filetype";
 		return (List<GlobalFile>)getHibernateTemplate().findByNamedParam(query, param, type);
 	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.Long)
+	 */
+	public boolean exists(Long fileId) throws DAOException {
+		String query = "from GlobalFile as f where f.id = :fileId";
+		String param = "fileId";
+		GlobalFile file = (GlobalFile) getHibernateTemplate().findByNamedParam(query, param, fileId);
+		return file != null;
+	}
 }

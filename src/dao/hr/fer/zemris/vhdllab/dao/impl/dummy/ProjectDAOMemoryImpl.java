@@ -40,5 +40,9 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 		}
 		return projectList;
 	}
+	
+	public boolean exists(Long projectId) throws DAOException {
+		return projects.get(projectId) != null;
+	}
 
 }

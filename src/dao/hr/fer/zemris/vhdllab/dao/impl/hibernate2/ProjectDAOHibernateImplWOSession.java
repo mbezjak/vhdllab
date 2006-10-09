@@ -46,4 +46,10 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 		return (List<Project>)getHibernateTemplate().findByNamedParam(query, param, userID);
 	}
 
+	public boolean exists(Long projectId) throws DAOException {
+		String query = "from Project as p where p.id = :projectId";
+		String param = "projectId";
+		Project project = (Project) getHibernateTemplate().findByNamedParam(query, param, projectId);
+		return project != null;
+	}
 }

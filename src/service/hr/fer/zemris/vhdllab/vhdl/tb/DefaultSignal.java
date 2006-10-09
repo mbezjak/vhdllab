@@ -38,10 +38,10 @@ import java.util.Map;
  * 
  * Signal name will have the following format:
  * <ul>
- * <li>it will contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+ * <li>it will contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
  * <li>it will not start with a non-alpha character
- * <li>it will not end with an underline character
- * <li>it will not contain an underline character after an underline character
+ * <li>it will not end with an underscore character
+ * <li>it will not contain an underscore character after an underscore character
  * </ul>
  * When describing a scalar, range will contain <code>null</code> value thus
  * uniformly describing signal as a scalar and when describing a vector, it
@@ -110,10 +110,10 @@ public class DefaultSignal implements Signal {
 	 * 
 	 * A <code>name</code> must be of the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * 
 	 * @param name a name of a signal.
@@ -132,10 +132,10 @@ public class DefaultSignal implements Signal {
 	 * 
 	 * Signal name must have the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * <p>
 	 * Range must uniformly describe signal as a scalar or bounds of a vector,
@@ -169,10 +169,10 @@ public class DefaultSignal implements Signal {
 	 * 
 	 * Signal name must have the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * <p>
 	 * Every impulse in exciter that does not abide to following rules will not be added to
@@ -207,10 +207,10 @@ public class DefaultSignal implements Signal {
 	 * 
 	 * Signal name must have the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * <p>
 	 * Range must uniformly describe signal as a scalar or bounds of a vector,
@@ -261,10 +261,10 @@ public class DefaultSignal implements Signal {
 	 * 
 	 * Signal name must have the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * <p>
 	 * An impulse will not be added if state lenght of does not match range,
@@ -296,10 +296,10 @@ public class DefaultSignal implements Signal {
 	 * 
 	 * Signal name must have the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * <p>
 	 * Range must uniformly describe signal as a scalar or bounds of a vector,
@@ -348,10 +348,10 @@ public class DefaultSignal implements Signal {
 	 * 
 	 * Signal name must have the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underline (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underline character
-	 * <li>it must not contain an underline character after an underline character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain an underscore character after an underscore character
 	 * </ul>
 	 * <p>
 	 * Range must uniformly describe signal as a scalar or bounds of a vector,

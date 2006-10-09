@@ -15,7 +15,7 @@ public class StringUtilTest {
 	}
 	
 	/** 
-	 * String contains letters, an underline and a number.
+	 * String contains letters, an underscore and a number.
 	 */
 	@Test
 	public void isCorrectName2() {
@@ -39,7 +39,7 @@ public class StringUtilTest {
 	}
 	
 	/** 
-	 * String contains an underline after an undeline.
+	 * String contains an underscore after an undeline.
 	 */
 	@Test
 	public void isCorrectName5() {

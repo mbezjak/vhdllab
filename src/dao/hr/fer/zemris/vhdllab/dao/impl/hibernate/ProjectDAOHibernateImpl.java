@@ -31,8 +31,7 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 
 			return project;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to load project!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
@@ -50,8 +49,7 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			tx.commit();
 			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to save project!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
@@ -69,8 +67,7 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			tx.commit();
 			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to delete project!");
+			throw new DAOException(e.getMessage());
 		}
 	}
 
@@ -94,8 +91,29 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 
 			return projects;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DAOException("Unable to load projects!");
+			throw new DAOException(e.getMessage());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#exists(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean exists(Long projectId) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from Project as p where p.id = :projectId")
+									.setLong("projectId", projectId);
+			List<Project> projects = (List<Project>)query.list();
+
+			tx.commit();
+			HibernateUtil.closeSession();
+			
+			return projects.size() != 0;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
 		}
 	}
 
