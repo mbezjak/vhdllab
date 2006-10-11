@@ -10,9 +10,7 @@ import java.awt.Dimension;
 import java.util.Properties;
 
 import javax.swing.JApplet;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 public class MainApplet extends JApplet implements AjaxOpListener {
 	
@@ -22,6 +20,10 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	private static final long serialVersionUID = 4037604752375048576L;
 	
 	private AjaxMediator ajax;
+	
+	private final int PROJECT_EXPLORER_WIDTH = 5;
+	private final int STATUS_EXPLORER_HEIGHT = 5;
+	private final int SHORTCUT_EXPLORER_WIDTH = 5;
 	
 	@Override
 	public void init() {
@@ -44,29 +46,39 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	
 	@Override
 	public void destroy() {
-		ajax.initiateAbort();
+		//ajax.initiateAbort();
 		ajax = null;
 		super.destroy();
 	}
 	
 	private void initGUI() {
 		JPanel projectExplorerPanel = new JPanel(new BorderLayout());
-		projectExplorerPanel.add(new ProjectExplorer(), BorderLayout.CENTER);
-		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/5,0));
-
+		ProjectExplorer projectExplorer = new ProjectExplorer();
+		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
+		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/PROJECT_EXPLORER_WIDTH,0));
+		
 		JPanel writerPanel = new JPanel(new BorderLayout());
-		JTextArea ta = new JTextArea();
-		writerPanel.add(ta, BorderLayout.CENTER);
-		JPanel statusPanel = new JPanel(new BorderLayout());
-		statusPanel.add(projectExplorerPanel, BorderLayout.CENTER);
-		statusPanel.setPreferredSize(new Dimension(0,this.getHeight()/5));
+		Writer writer = new Writer();
+		writerPanel.add(writer, BorderLayout.CENTER);
 		
-		this.getContentPane().add(projectExplorerPanel, BorderLayout.WEST);
-		this.getContentPane().add(writerPanel, BorderLayout.CENTER);
-		this.getContentPane().add(statusPanel, BorderLayout.SOUTH);
-
+		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
+		StatusExplorer statusExplorer = new StatusExplorer();
+		statusExplorerPanel.add(statusExplorer, BorderLayout.CENTER);
+		statusExplorerPanel.setPreferredSize(new Dimension(0,this.getHeight()/STATUS_EXPLORER_HEIGHT));
 		
-		// TODO Auto-generated method stub
+		JPanel shortcutExplorerPanel = new JPanel(new BorderLayout());
+		ShortcutExplorer shortcutExplorer = new ShortcutExplorer();
+		shortcutExplorerPanel.add(shortcutExplorer, BorderLayout.CENTER);
+		shortcutExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/SHORTCUT_EXPLORER_WIDTH,0));
+		
+		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
+		centerComponentsPanel.add(projectExplorerPanel, BorderLayout.WEST);
+		centerComponentsPanel.add(writerPanel, BorderLayout.CENTER);
+		centerComponentsPanel.add(statusExplorerPanel, BorderLayout.SOUTH);
+		centerComponentsPanel.add(shortcutExplorerPanel, BorderLayout.EAST);
+		
+		this.getContentPane().add(centerComponentsPanel, BorderLayout.CENTER);
+		
 	}
 	
 	public void resultReceived(String result, int code) {

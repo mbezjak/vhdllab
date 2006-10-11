@@ -1,18 +1,18 @@
 package hr.fer.zemris.vhdllab.main;
 
-import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-public class ProjectExplorer extends JComponent {
+public class ProjectExplorer extends JPanel {
 
-	private static final long serialVersionUID = 2074383497057028265L;
-	private JLabel label;
-	
+	private static final long serialVersionUID = 4932799790563214089L;
+
 	public ProjectExplorer() {
-		label = new JLabel();
-	}
-	
-	public JLabel getLabel() {
-		return label;
+		JLabel label = new JLabel("This is project explorer area!");
+		this.add(label,BorderLayout.CENTER);
+		this.setBackground(Color.BLACK);
 	}
 }
