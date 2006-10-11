@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.Schema;
+package hr.fer.zemris.vhdllab.schema;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

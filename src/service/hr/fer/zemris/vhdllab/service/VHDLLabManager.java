@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLGenerator;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.util.List;
 
@@ -245,4 +246,14 @@ public interface VHDLLabManager {
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public String generateVHDL(File file) throws ServiceException;
+	
+	/**
+	 * Extracts CircuitInterface base on file content, however which extractor will be used
+	 * is based on file type.
+	 * @param file file for which CircuitInterface must be extracted
+	 * @return CircuitInterface CircuitInterface for specified file
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 * @see CircuitInterface
+	 */
+	public CircuitInterface extractCircuitInterface(File file) throws ServiceException;
 }

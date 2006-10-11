@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.Schema;
+package hr.fer.zemris.vhdllab.schema;
 
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -57,7 +57,6 @@ public class SchemaGrid extends JComponent implements MouseListener,
 
 	@Override
 	public void paint(Graphics g) {
-		// TODO Auto-generated method stub
 		this.setBackground(colors.GRID_BG);
 		//super.paint(g);
 	}

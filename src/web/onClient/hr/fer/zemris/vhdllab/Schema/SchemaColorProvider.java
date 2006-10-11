@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.Schema;
+package hr.fer.zemris.vhdllab.schema;
 
 import java.awt.Color;
 
