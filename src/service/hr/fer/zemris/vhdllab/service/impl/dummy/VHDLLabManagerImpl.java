@@ -15,6 +15,7 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
@@ -373,5 +374,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			throw new ServiceException();
 		}
 
+	}
+	
+	public CircuitInterface extractCircuitInterface(File file){
+		return new DefaultCircuitInterface("cicinc");
 	}
 }
