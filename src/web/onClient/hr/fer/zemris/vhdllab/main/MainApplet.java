@@ -7,10 +7,16 @@ import hr.fer.zemris.ajax.shared.XMLUtil;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.util.Properties;
 
 import javax.swing.JApplet;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
+import org.springframework.web.servlet.support.JspAwareRequestContext;
 
 public class MainApplet extends JApplet implements AjaxOpListener {
 	
@@ -21,9 +27,14 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	
 	private AjaxMediator ajax;
 	
-	private final int PROJECT_EXPLORER_WIDTH = 5;
-	private final int STATUS_EXPLORER_HEIGHT = 5;
-	private final int SHORTCUT_EXPLORER_WIDTH = 5;
+	private JMenuBar menubar;
+	private Toolbar toolbar;
+	private Statusbar statusbar;
+	
+	private ProjectExplorer projectExplorer;
+	private Writer writer;
+	private StatusExplorer statusExplorer;
+	private ShortcutExplorer shortcutExplorer;
 	
 	@Override
 	public void init() {
@@ -52,30 +63,68 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	}
 	
 	private void initGUI() {
+		setupMenubar();
+		setupToolbar();
+		setupStatusbar();
+		setupMainPanel();
+	}
+	
+	private void setupMenubar() {
+		menubar = new JMenuBar();
+		
+		JMenu file = new JMenu("File");
+		file.setMnemonic(KeyEvent.VK_F);
+		menubar.add(file);
+		
+		this.setJMenuBar(menubar);
+	}
+
+	private void setupToolbar() {
+		toolbar = new Toolbar();
+		JPanel toolbarPanel = new JPanel(new BorderLayout());
+		toolbarPanel.add(toolbar, BorderLayout.CENTER);
+		
+		this.getContentPane().add(toolbarPanel, BorderLayout.NORTH);		
+	}
+
+	private void setupStatusbar() {
+		statusbar = new Statusbar();
+		JPanel statusbarPanel = new JPanel(new BorderLayout());
+		statusbarPanel.add(statusbar, BorderLayout.CENTER);
+
+		this.getContentPane().add(statusbarPanel, BorderLayout.SOUTH);
+
+	}
+	
+	private void setupMainPanel() {
+		projectExplorer = new ProjectExplorer();
 		JPanel projectExplorerPanel = new JPanel(new BorderLayout());
-		ProjectExplorer projectExplorer = new ProjectExplorer();
 		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
-		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/PROJECT_EXPLORER_WIDTH,0));
+		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3,0));
 		
 		JPanel writerPanel = new JPanel(new BorderLayout());
-		Writer writer = new Writer();
+		writer = new Writer();
 		writerPanel.add(writer, BorderLayout.CENTER);
 		
 		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
-		StatusExplorer statusExplorer = new StatusExplorer();
+		statusExplorer = new StatusExplorer();
 		statusExplorerPanel.add(statusExplorer, BorderLayout.CENTER);
-		statusExplorerPanel.setPreferredSize(new Dimension(0,this.getHeight()/STATUS_EXPLORER_HEIGHT));
+		statusExplorerPanel.setPreferredSize(new Dimension(0,this.getHeight()/3));
 		
 		JPanel shortcutExplorerPanel = new JPanel(new BorderLayout());
-		ShortcutExplorer shortcutExplorer = new ShortcutExplorer();
+		shortcutExplorer = new ShortcutExplorer();
 		shortcutExplorerPanel.add(shortcutExplorer, BorderLayout.CENTER);
-		shortcutExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/SHORTCUT_EXPLORER_WIDTH,0));
+		shortcutExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3,0));
 		
+		JSplitPane shortcutExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, writerPanel, shortcutExplorerPanel);
+		JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, shortcutExplorerSplitPane);
+		JSplitPane statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExporerSplitPane, statusExplorerPanel);
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
-		centerComponentsPanel.add(projectExplorerPanel, BorderLayout.WEST);
-		centerComponentsPanel.add(writerPanel, BorderLayout.CENTER);
-		centerComponentsPanel.add(statusExplorerPanel, BorderLayout.SOUTH);
-		centerComponentsPanel.add(shortcutExplorerPanel, BorderLayout.EAST);
+		//centerComponentsPanel.add(projectExplorerPanel, BorderLayout.WEST);
+		//centerComponentsPanel.add(writerPanel, BorderLayout.CENTER);
+		//centerComponentsPanel.add(statusExplorerPanel, BorderLayout.SOUTH);
+		//centerComponentsPanel.add(shortcutExplorerPanel, BorderLayout.EAST);
+		centerComponentsPanel.add(statusExplorerSplitPane);
 		
 		this.getContentPane().add(centerComponentsPanel, BorderLayout.CENTER);
 		
