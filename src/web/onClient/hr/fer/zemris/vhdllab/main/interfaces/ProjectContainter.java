@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.main;
+package hr.fer.zemris.vhdllab.main.interfaces;
 
 import java.util.List;
 

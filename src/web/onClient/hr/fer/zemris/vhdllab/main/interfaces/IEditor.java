@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.main;
+package hr.fer.zemris.vhdllab.main.interfaces;
 
 /**
  * Interface that describes communication between MainApplet and instance that implemets this interface.

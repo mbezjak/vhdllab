@@ -3,12 +3,16 @@ package hr.fer.zemris.vhdllab.main;
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.AjaxOpListener;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
-import hr.fer.zemris.ajax.shared.XMLUtil;
+import hr.fer.zemris.vhdllab.main.dummy.ProjectExplorer;
+import hr.fer.zemris.vhdllab.main.dummy.SideBar;
+import hr.fer.zemris.vhdllab.main.dummy.StatusBar;
+import hr.fer.zemris.vhdllab.main.dummy.StatusExplorer;
+import hr.fer.zemris.vhdllab.main.dummy.ToolBar;
+import hr.fer.zemris.vhdllab.main.dummy.Writer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
-import java.util.Properties;
 
 import javax.swing.JApplet;
 import javax.swing.JMenu;
@@ -16,9 +20,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.springframework.web.servlet.support.JspAwareRequestContext;
-
-public class MainApplet extends JApplet implements AjaxOpListener {
+public class MainApplet
+		extends JApplet
+		implements AjaxOpListener {
 	
 	/**
 	 * Serial version ID.
@@ -27,14 +31,14 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	
 	private AjaxMediator ajax;
 	
-	private JMenuBar menubar;
-	private Toolbar toolbar;
-	private Statusbar statusbar;
+	private JMenuBar menuBar;
+	private ToolBar toolBar;
+	private StatusBar statusBar;
 	
 	private ProjectExplorer projectExplorer;
 	private Writer writer;
 	private StatusExplorer statusExplorer;
-	private ShortcutExplorer shortcutExplorer;
+	private SideBar sideBar;
 	
 	@Override
 	public void init() {
@@ -64,35 +68,35 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	
 	private void initGUI() {
 		setupMenubar();
-		setupToolbar();
-		setupStatusbar();
+		setupToolBar();
+		setupStatusBar();
 		setupMainPanel();
 	}
 	
 	private void setupMenubar() {
-		menubar = new JMenuBar();
+		menuBar = new JMenuBar();
 		
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
-		menubar.add(file);
+		menuBar.add(file);
 		
-		this.setJMenuBar(menubar);
+		this.setJMenuBar(menuBar);
 	}
 
-	private void setupToolbar() {
-		toolbar = new Toolbar();
-		JPanel toolbarPanel = new JPanel(new BorderLayout());
-		toolbarPanel.add(toolbar, BorderLayout.CENTER);
+	private void setupToolBar() {
+		toolBar = new ToolBar();
+		JPanel toolBarPanel = new JPanel(new BorderLayout());
+		toolBarPanel.add(toolBar, BorderLayout.CENTER);
 		
-		this.getContentPane().add(toolbarPanel, BorderLayout.NORTH);		
+		this.getContentPane().add(toolBarPanel, BorderLayout.NORTH);		
 	}
 
-	private void setupStatusbar() {
-		statusbar = new Statusbar();
-		JPanel statusbarPanel = new JPanel(new BorderLayout());
-		statusbarPanel.add(statusbar, BorderLayout.CENTER);
+	private void setupStatusBar() {
+		statusBar = new StatusBar();
+		JPanel statusBarPanel = new JPanel(new BorderLayout());
+		statusBarPanel.add(statusBar, BorderLayout.CENTER);
 
-		this.getContentPane().add(statusbarPanel, BorderLayout.SOUTH);
+		this.getContentPane().add(statusBarPanel, BorderLayout.SOUTH);
 
 	}
 	
@@ -111,13 +115,13 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 		statusExplorerPanel.add(statusExplorer, BorderLayout.CENTER);
 		statusExplorerPanel.setPreferredSize(new Dimension(0,this.getHeight()/3));
 		
-		JPanel shortcutExplorerPanel = new JPanel(new BorderLayout());
-		shortcutExplorer = new ShortcutExplorer();
-		shortcutExplorerPanel.add(shortcutExplorer, BorderLayout.CENTER);
-		shortcutExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3,0));
+		JPanel sideBarPanel = new JPanel(new BorderLayout());
+		sideBar = new SideBar();
+		sideBarPanel.add(sideBar, BorderLayout.CENTER);
+		sideBarPanel.setPreferredSize(new Dimension(this.getWidth()/3,0));
 		
-		JSplitPane shortcutExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, writerPanel, shortcutExplorerPanel);
-		JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, shortcutExplorerSplitPane);
+		JSplitPane splitBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, writerPanel, sideBarPanel);
+		JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, splitBarSplitPane);
 		JSplitPane statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExporerSplitPane, statusExplorerPanel);
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
 		//centerComponentsPanel.add(projectExplorerPanel, BorderLayout.WEST);
@@ -132,7 +136,7 @@ public class MainApplet extends JApplet implements AjaxOpListener {
 	
 	public void resultReceived(String result, int code) {
 		if(code!=200) return;
-		Properties p = XMLUtil.deserializeProperties(result);
+		//Properties p = XMLUtil.deserializeProperties(result);
 	}
 	
 	public void ajaxCallResultReceived(String result, int code) {
