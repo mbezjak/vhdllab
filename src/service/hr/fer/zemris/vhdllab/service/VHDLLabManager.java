@@ -87,6 +87,14 @@ public interface VHDLLabManager {
 	 */
 	public boolean existsFile(Long projectId, String fileName) throws ServiceException;
 	/**
+	 * Returns a file with specified project identifier and file name.
+	 * @param projectId project identifier
+	 * @param name a name of a file
+	 * @return a file with specified project identifier and file name
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	File findByName(Long projectId, String name) throws ServiceException;
+	/**
 	 * Use this method to create a new file which is member of specified
 	 * project, and has name and type as specified. Content will be set
 	 * to <code>null</code>. Be aware that project can not contain two

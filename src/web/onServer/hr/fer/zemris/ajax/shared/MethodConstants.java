@@ -545,6 +545,37 @@ public class MethodConstants {
 	 */
 	public static final String MTD_EXISTS_FILE = "exists.file";
 	/**
+	 * A "find file by name" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_PROJECT_ID}
+	 * <li>{@link #PROP_FILE_NAME}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_FILE_ID} - containing a file
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain both parametars
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_PROJECT_ID} is not a long int number
+	 * <li>{@link #SE_NO_SUCH_FILE} - if file with {@link #PROP_FILE_NAME} and {@link #PROP_PROJECT_ID} could not be found
+	 * </ul>
+	 */
+	public static final String MTD_FIND_FILE_BY_NAME = "find.file.by.name";
+	/**
 	 * A "delete file" method. Expected parametars (written as a property) are
 	 * <ul>
 	 * <li>{@link #PROP_FILE_ID}

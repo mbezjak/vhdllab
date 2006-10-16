@@ -32,7 +32,8 @@ import java.util.Map;
  *     least one impulse
  * </ul>
  * <p>
- * Tags may be separated with line feed or whitespace characters. Inducement must not
+ * Note that inducement may contain other tags, however they will be ignored. Tags
+ * may be separated with line feed or whitespace characters. Inducement must not
  * contain two signals that share the same name (ignore case). Duration must contain
  * a non-negative long integer number and measure unit must only contain following
  * values:

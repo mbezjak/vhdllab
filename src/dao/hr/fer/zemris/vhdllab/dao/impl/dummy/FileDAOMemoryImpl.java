@@ -60,4 +60,19 @@ public class FileDAOMemoryImpl implements FileDAO {
 		}
 		return false;
 	}
+
+	public File findByName(Long projectId, String name) throws DAOException {
+		Collection<File> c = files.values();
+		List<File> fileList = new ArrayList<File>(c);
+		for(File f : fileList) {
+			if(!f.getFileName().equals(name)) continue;
+			Project p = f.getProject();
+			if(p==null) {
+				if(projectId==null) return f;
+				continue;
+			}
+			if(p.getId().equals(projectId)) return f;
+		}
+		return null;
+	}
 }

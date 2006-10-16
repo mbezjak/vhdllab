@@ -52,4 +52,12 @@ public class FileDAOHibernateImplWOSession extends HibernateDaoSupport implement
 		File file = (File) getHibernateTemplate().findByNamedParam(query, params, values);
 		return file != null;
 	}
+
+	public File findByName(Long projectId, String name) throws DAOException {
+		String query = "from File as f where f.project.id = :projectId and f.fileName = :filename";
+		String[] params = new String[] {"projectId", "filename"};
+		Object[] values = new Object[] {projectId, name};
+		File file = (File) getHibernateTemplate().findByNamedParam(query, params, values);
+		return file;
+	}
 }

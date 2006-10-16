@@ -37,10 +37,19 @@ public interface FileDAO {
 	/**
 	 * Checks to see if specified project contains a file with given name.
 	 * @param projectId identifier of the project
-	 * @param fileName name of file
+	 * @param name name of file
 	 * @return <code>true</code> if such file exists; <code>false</code> otherwise.
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	boolean exists(Long projectId, String name) throws DAOException;
+	
+	/**
+	 * Returns a file with specified project identifier and file name.
+	 * @param projectId project identifier
+	 * @param name a name of a file
+	 * @return a file with specified project identifier and file name
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	File findByName(Long projectId, String name) throws DAOException;
 
 }

@@ -375,6 +375,15 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 
 	}
+
+	public File findByName(Long projectId, String name) throws ServiceException {
+		try {
+			return fileDAO.findByName(projectId,name);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException();
+		}
+	}
 	
 	public CircuitInterface extractCircuitInterface(File file){
 		return new DefaultCircuitInterface("cicinc");

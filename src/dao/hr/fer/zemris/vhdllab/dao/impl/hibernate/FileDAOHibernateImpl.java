@@ -116,4 +116,27 @@ public class FileDAOHibernateImpl implements FileDAO {
 			throw new DAOException(e.getMessage());
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#findByName(java.lang.Long, java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	public File findByName(Long projectId, String name) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from File as f where f.project.id = :projectId and f.fileName = :filename")
+									.setLong("projectId", projectId)
+									.setString("filename", name);
+			List<File> files = (List<File>)query.list();
+
+			tx.commit();
+			HibernateUtil.closeSession();
+
+			return files.get(0);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
 }

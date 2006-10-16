@@ -88,6 +88,11 @@ public class FileDAOHibernateImplTest {
 		assertEquals(true, fileDAO.exists(project.getId(), file.getFileName()));
 	}
 	
+	@Test
+	public void findByName() throws DAOException {
+		assertEquals(file, fileDAO.findByName(project.getId(), file.getFileName()));
+	}
+	
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(FileDAOHibernateImplTest.class);
 	}
