@@ -20,8 +20,8 @@ class SignalNamesPanel extends JPanel
     /** Svako se ime nalazi u springu (elasticnom pretincu) koji je visine 45 piksela */
 	private final int SIGNAL_NAME_SPRING_HEIGHT = 45;
 
-    /** Maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
-	private final int PANEL_MAX_WIDTH = 450;
+    /** Maksimalna duljina koju panel moze poprimiti iznosi 650 piksela */
+	private final int PANEL_MAX_WIDTH = 650;
 
     /** Lista Stringova koje sadrzi sva imena signala */
     private List<String> signalNames;
@@ -46,7 +46,13 @@ class SignalNamesPanel extends JPanel
 
     /** Informacija o pokazivanju strelice za pomicanje sirine panela */
     private boolean isArrowVisible;
-    
+
+	/** 
+	 * Ako je kliknut border izmedu panela imena i valnih oblika tada je moguce rastegnuti 
+	 * panel s imenima signala (ako je kliknut i ako se povuce, panel se rasteze)
+	 */
+	private boolean isBorderClicked = false;
+
     /** Polozaj strelice po Y-osi */
     private int yArrow;
 
@@ -101,7 +107,7 @@ class SignalNamesPanel extends JPanel
 
     /**
      * Getter koji vraca preferirane dimenzije ako je ime najvece duljine manje
-     * od 450 piksela, inace vraca 450 piksela
+     * od 650 piksela, inace vraca 650 piksela
      */
     public Dimension getMaximumSize()
     {
@@ -246,6 +252,26 @@ class SignalNamesPanel extends JPanel
     }
 
 
+	/** 
+	 * Ako je border izmedu imena signala i valnih oblika kliknut
+	 *
+	 * @param isBorderClicked Je ili nije
+	 */
+	public void setIsBorderClicked (boolean isBorderClicked)
+	{
+		this.isBorderClicked = isBorderClicked;
+	}
+
+
+	/**
+	 * Vrati trenutnu informaciju je li border kliknut ili nije
+	 */
+	public boolean getIsBorderClicked ()
+	{
+		return isBorderClicked;
+	}
+
+
     /**
      * Vraca velicinu panela trenutno vidljivog na ekranu
      */
@@ -359,14 +385,14 @@ class SignalNamesPanel extends JPanel
 				{
 					int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
 					g.drawString(signalNames.get(i), 5 - offsetXAxis, yAxis);
-					g.drawLine(7, yAxis, 7, yAxis + 10);
+					g.drawLine(7 - offsetXAxis, yAxis, 7 - offsetXAxis, yAxis + 10);
 					yAxis += SIGNAL_NAME_SPRING_HEIGHT;
       
 					for (int j = 0; j < vectorSize - 1; j++)
 					{   
 						g.drawString(signalNames.get(++i), 5 - offsetXAxis, yAxis);
-						g.drawLine(7, yAxis - 2, 7, yAxis - SIGNAL_NAME_SPRING_HEIGHT);
-						g.drawLine(7, yAxis - 2, 9, yAxis - 2);
+						g.drawLine(7 - offsetXAxis, yAxis - 2, 7 - offsetXAxis, yAxis - SIGNAL_NAME_SPRING_HEIGHT);
+						g.drawLine(7 - offsetXAxis, yAxis - 2, 9 - offsetXAxis, yAxis - 2);
 						yAxis += SIGNAL_NAME_SPRING_HEIGHT;
 					}
 				}
@@ -383,27 +409,5 @@ class SignalNamesPanel extends JPanel
 			    yAxis += SIGNAL_NAME_SPRING_HEIGHT;
             }
 		}
-
-        /* crta granicu izmedu panela s imenima signala i valnim oblicima */
-        g.setColor(themeColor.getDivider());
-        /* 
-         * getHeight() visina prikazana na ekranu, a ne preferred visina cijelog
-         * panela 
-         */
-        g.drawLine(panelWidth - 3, 0, panelWidth - 3, getHeight()); 
-        g.drawLine(panelWidth - 2, 0, panelWidth - 2, getHeight()); 
-        g.drawLine(panelWidth - 1, 0, panelWidth - 1, getHeight()); 
-        g.drawLine(panelWidth, 0, panelWidth, getHeight()); 
-
-        /* crta strelicu koja je indikator za pomicanje sirine panela */
-        if (isArrowVisible)
-        {
-            g.setColor(themeColor.getLetters());
-            g.drawLine(panelWidth - 8, yArrow, panelWidth - 6, yArrow - 2);
-            g.drawLine(panelWidth - 8, yArrow, panelWidth - 6, yArrow + 2);
-            g.drawLine(panelWidth - 2, yArrow - 2, panelWidth, yArrow);
-            g.drawLine(panelWidth - 2, yArrow + 2, panelWidth, yArrow);
-            g.drawLine(panelWidth - 8, yArrow, panelWidth, yArrow);
-        }
 	}
 }

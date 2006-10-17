@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.simulations;
 
 
+
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import java.awt.Dimension;

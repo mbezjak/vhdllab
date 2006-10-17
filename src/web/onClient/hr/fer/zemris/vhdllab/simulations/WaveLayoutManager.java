@@ -25,6 +25,8 @@ class WaveLayoutManager implements LayoutManager
     private final String INTERVAL = "interval";
     private final String SIGNAL_NAMES = "signalNames";
     private final String SIGNAL_NAMES_SCROLLBAR = "signalNamesScrollbar";
+	private final String DIVIDER1 = "divider1";
+	private final String DIVIDER2 = "divider2";
     private final String SIGNAL_VALUES = "signalValues";
     private final String VALUES_SCROLLBAR = "valuesScrollbar";
     private final String WAVES = "waves";
@@ -38,6 +40,8 @@ class WaveLayoutManager implements LayoutManager
     private Component search;
     private Component interval;
     private Component signalNames;
+	private Component divider1;
+	private Component divider2;
     private Component signalNamesScrollbar;
     private Component signalValues;
     private Component valuesScrollbar;
@@ -72,6 +76,14 @@ class WaveLayoutManager implements LayoutManager
         else if (SIGNAL_NAMES.equals(name)) 
         {
             signalNames = component;
+        }
+		else if (DIVIDER1.equals(name)) 
+        {
+            divider1 = component;
+        }
+		else if (DIVIDER2.equals(name)) 
+        {
+            divider2 = component;
         }
         else if (SIGNAL_NAMES_SCROLLBAR.equals(name)) 
         {
@@ -134,6 +146,14 @@ class WaveLayoutManager implements LayoutManager
         {
             signalNames = null;
         }
+        else if (component == divider1) 
+        {
+            divider1 = null;
+        }		
+        else if (component == divider2) 
+        {
+            divider2 = null;
+		}
         else if (component == signalNamesScrollbar) 
         {
             signalNamesScrollbar = null;
@@ -229,6 +249,8 @@ public void layoutContainer(Container target)
     /* prilikom resizea ne mijenjaju svoju duljinu */
     int widthToolbar = toolbar.getPreferredSize().width;
     int heightCursorPanel = cursorPanel.getPreferredSize().height;
+	int widthDivider1 = divider1.getPreferredSize().width;
+	int widthDivider2 = divider2.getPreferredSize().width;
     
     /* 
      * ako bi imena signala bila predugacka tada se korisno fiksno 450 piksela
@@ -301,9 +323,9 @@ public void layoutContainer(Container target)
         cursorPanel.setSize(width, height);
         cursorPanel.setBounds
             (
-             west + widthSignalNames + widthSignalValues, 
+             west + widthSignalNames + widthSignalValues + widthDivider2 + widthDivider1, 
              north + 10 + heightToolbar + 10, 
-             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues + widthDivider1 + widthDivider2),
              height
              );
     }
@@ -320,6 +342,19 @@ public void layoutContainer(Container target)
              south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
              );
     }
+	if ((divider1 != null) && divider1.isVisible())
+    {
+        width = divider1.getPreferredSize().width;
+        height = divider1.getPreferredSize().height;
+        divider1.setSize(width, height);
+        divider1.setBounds
+            (
+             west + widthSignalNames,
+             north + 10 + heightToolbar + 10 + heightCursorPanel,
+             width, 
+             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
+             );
+    }
     if ((signalNamesScrollbar != null) && signalNamesScrollbar.isVisible())
     {
         width = signalNamesScrollbar.getPreferredSize().width;
@@ -329,7 +364,7 @@ public void layoutContainer(Container target)
             (
              west,
              south - heightHorizontalScrollbar - heightScale,
-             widthSignalNames,
+             widthSignalNames + widthDivider1,
              height
              );
     }
@@ -340,7 +375,20 @@ public void layoutContainer(Container target)
         signalValues.setSize(width, height);
         signalValues.setBounds
             (
-             west + widthSignalNames,
+             west + widthSignalNames + widthDivider1,
+             north + 10 + heightToolbar + 10 + heightCursorPanel,
+             width, 
+             south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
+             );
+    }
+	if ((divider2 != null) && divider2.isVisible())
+    {
+        width = divider2.getPreferredSize().width;
+        height = divider2.getPreferredSize().height;
+        divider2.setSize(width, height);
+        divider2.setBounds
+            (
+             west + widthSignalNames + widthSignalValues + widthDivider1,
              north + 10 + heightToolbar + 10 + heightCursorPanel,
              width, 
              south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
@@ -353,7 +401,7 @@ public void layoutContainer(Container target)
         valuesScrollbar.setSize(width, height);
         valuesScrollbar.setBounds
             (
-             west + widthSignalNames,
+             west + widthSignalNames + widthDivider1,
              south - heightHorizontalScrollbar - heightScale,
              widthSignalValues,
              height
@@ -366,9 +414,9 @@ public void layoutContainer(Container target)
         waves.setSize(width, height);
         waves.setBounds
             (
-             west + widthSignalNames + widthSignalValues, 
+             west + widthSignalNames + widthSignalValues + widthDivider1 + widthDivider2, 
              north + 10 + heightToolbar + 10 + heightCursorPanel, 
-             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues + widthDivider1 + widthDivider2),
              south - (heightHorizontalScrollbar + heightScale) - (north + 10 + heightToolbar + 10 + heightCursorPanel)
              );                  
     }
@@ -379,9 +427,9 @@ public void layoutContainer(Container target)
         scale.setSize(width, height);
         scale.setBounds
             (
-             west + widthSignalNames + widthSignalValues,
+             west + widthSignalNames + widthSignalValues + widthDivider1 + widthDivider2,
              south - heightHorizontalScrollbar - heightScale,
-             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues + widthDivider1 + widthDivider2),
              heightScale
              );
     }
@@ -405,9 +453,9 @@ public void layoutContainer(Container target)
         horizontalScrollbar.setSize(width, height);
         horizontalScrollbar.setBounds
             (
-             west + widthSignalNames + widthSignalValues,
+             west + widthSignalNames + widthSignalValues + widthDivider1 + widthDivider2,
              south - height,
-             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues),
+             east - widthVerticalScrollbar - (west + widthSignalNames + widthSignalValues + widthDivider1 + widthDivider2),
              height
              );
     }

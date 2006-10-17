@@ -20,7 +20,7 @@ class SignalValuesPanel extends JPanel
 	private final int SIGNAL_NAME_SPRING_HEIGHT = 45;
 
     /** Maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
-	private final int PANEL_MAX_WIDTH = 100;
+	private final int PANEL_MAX_WIDTH = 650;
 
 	/** Trenutni indeks na kojem je kursor, vrijednost na tom indeksu crta se u panelu */
     private int valueIndex;
@@ -84,16 +84,12 @@ class SignalValuesPanel extends JPanel
 
     /**
      * Getter koji vraca preferirane dimenzije ako je ime najvece duljine manje
-     * od 100 piksela, inace vraca 100 piksela
+     * od 650 piksela, inace vraca 650 piksela
      */
     public Dimension getMaximumSize()
     {
         if (panelWidth < PANEL_MAX_WIDTH)
         {
-			if (panelWidth < 24)
-			{
-				panelWidth = 24;
-			}
             return new Dimension(panelWidth, 
 					results.getSignalNames().size() * SIGNAL_NAME_SPRING_HEIGHT); 
         }
@@ -102,7 +98,6 @@ class SignalValuesPanel extends JPanel
             return new Dimension(PANEL_MAX_WIDTH, results.getSignalNames().size() * SIGNAL_NAME_SPRING_HEIGHT);
         }
     }
-
 
 	/**
      * Setter koji postavlja vertikalni offset
@@ -197,6 +192,27 @@ class SignalValuesPanel extends JPanel
 	}
 
 
+	/**
+     * Postavlja novu vrijednosti sirine panela
+     *
+     * @param maximumSignalNameLength nova vrijednost
+     */
+    public void setPanelWidth (int panelWidth)
+    {
+        this.panelWidth = panelWidth;
+    }
+
+
+    /**
+     * Vraca sirinu panela
+     */
+    public int getPanelWidth ()
+    {
+        return panelWidth;
+    }
+ 
+
+
 	 /**
      * Crta komponentu
      *
@@ -221,16 +237,5 @@ class SignalValuesPanel extends JPanel
 			g.drawString(results.getSignalValues().get(i)[valueIndex], 5 - offsetXAxis, yAxis);
 			yAxis += SIGNAL_NAME_SPRING_HEIGHT;
 		}
-
-		 /* crta granicu izmedu panela s vrijednostima signala i valnim oblicima */
-        g.setColor(themeColor.getDivider());
-        /* 
-         * getHeight() visina prikazana na ekranu, a ne preferred visina cijelog
-         * panela 
-         */
-        g.drawLine(panelWidth - 3, 0, panelWidth - 3, getHeight()); 
-        g.drawLine(panelWidth - 2, 0, panelWidth - 2, getHeight()); 
-        g.drawLine(panelWidth - 1, 0, panelWidth - 1, getHeight()); 
-        g.drawLine(panelWidth, 0, panelWidth, getHeight()); 
 	}
 }
