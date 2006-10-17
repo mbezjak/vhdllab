@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.simulations;
 
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
+
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -15,9 +17,10 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.BorderLayout;
+
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
-
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -28,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.Box;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
@@ -128,6 +132,13 @@ public class WaveApplet extends JApplet
     /** Help popup */
     private JPopupMenu popupHelp = new JPopupMenu();
 
+	/** Trenutna vrijednost na dvoklik misa */
+	private JPopupMenu showValue = new JPopupMenu();
+
+	/** Trenutna vrijednost ide u ovaj textField */ 
+	/* Bitno je da ovdje ne staviti fiksnu duljinu jer ce paneli gledati tu duljinu, a ne broj znakova u textFieldu */
+	private JTextField currentValue = new JTextField();
+
     /** Sadrzi rezultate simulacije. */
     private GhdlResults results;
 
@@ -136,6 +147,12 @@ public class WaveApplet extends JApplet
 
     /** Options popup */
     private JPopupMenu optionsPopup = new JPopupMenu();
+
+	/** Divider koji razdvaja panel s imenima signala i trenutnim vrijednostima */
+	private JPanel divider1 = new JPanel();
+
+	/** Divider koji razdvaja panel s trenutnim vrijednostima i valne oblike */
+	private JPanel divider2 = new JPanel();
 
     /** Sve boje koje se koriste */
     private ThemeColor themeColor = new ThemeColor();
@@ -1050,53 +1067,79 @@ public class WaveApplet extends JApplet
     };
     
 
-        /**
-     * Mouse listener koji osluskuje pokrete misa i svaki pokret registrira te na
-     * temelju vrijednosti po X-osi i na temelju trenutnog stanja skale vraca
-     * preciznu vrijednost
+    /**
+     * Mouse listener koji pomice divider1 i mijenja sirinu panela s imenima signala
      */
-    private MouseMotionListener signalNamesListener = new MouseMotionListener()
+    private MouseMotionListener firstDividerListener = new MouseMotionListener()
     {
         /**
          * Metoda koja upravlja eventom
          */
         public void mouseMoved(MouseEvent event)  
         {  
-            /* 
-             * ako je kursor misa pozicioniran na granici panela s imenima
-             * signala pokazi strelicu za pomicanje panela
-             */
-            if (event.getX() < signalNames.getPanelWidth() - 2 && 
-                    event.getX() >= signalNames.getPanelWidth() - 5)
-            {
-                signalNames.setIsArrowVisible(true, event.getY());
-            }
-            else
-            {
-                signalNames.setIsArrowVisible(false, 0);
-            }
-            signalNames.repaint();
-        } 
+			;
+		} 
 
         /**
          * Mijenja sirinu panela s imenima signala
          */
         public void mouseDragged(MouseEvent event)  
         {
-            if (event.getX() < 2 || event.getX() >= 450)
-            {
-                return;
-            }
-            signalNames.setPanelWidth(event.getX());
-            signalNames.repaint();
-            cp.doLayout();
+			if (signalNames.getPanelWidth() <= 5 && event.getX() < 0)
+			{
+				return;
+			}
+
+			if (signalNames.getPanelWidth() + event.getX() <= 2 || 
+					signalNames.getPanelWidth() + event.getX() >= 650)
+			{
+				return;
+			}
+			signalNames.setPanelWidth(event.getX() + signalNames.getPanelWidth());
+			signalNames.repaint();
+			cp.doLayout();
+        }
+    };
+
+
+	/**
+     * Mouse listener koji pomice divider2 i mijenja sirinu panela s trenutnim vrijednostima
+     */
+    private MouseMotionListener secondDividerListener = new MouseMotionListener()
+    {
+        /**
+         * Metoda koja upravlja eventom
+         */
+        public void mouseMoved(MouseEvent event)  
+        {  
+			;
+		} 
+
+        /**
+         * Mijenja sirinu panela s imenima signala
+         */
+        public void mouseDragged(MouseEvent event)  
+        {
+			if (signalValues.getPanelWidth() <= 5 && event.getX() < 0)
+			{
+				return;
+			}
+
+			if (signalValues.getPanelWidth() + event.getX() <= 2 || 
+					signalValues.getPanelWidth() + event.getX() >= 650)
+			{
+				return;
+			}
+			signalValues.setPanelWidth(event.getX() + signalValues.getPanelWidth());
+			signalValues.repaint();
+			cp.doLayout();
         }
     };
 
 
     /**
-     * Mouse listener koji osluskuje klik misa iznad panela sa imenima signala i
-     * panela s valnim oblicima te na temelju trenutne vrijednosti po X-osi
+     * Mouse listener koji osluskuje klik misa iznad panela s imenima signala i
+     * panela s trenutnim vrijednostima te na temelju trenutne vrijednosti po X-osi
      * mijenja background iznad trenutno oznacenog signala
      */
     private MouseListener mouseClickListener = new MouseListener()
@@ -1172,12 +1215,56 @@ public class WaveApplet extends JApplet
                     }
                 } 
             }
+              
+            signalNames.repaint();
+            waves.repaint();
+            cursorPanel.repaint();
+			signalValues.repaint();
+
+            /* vraca fokus na kontejner */
+            cp.requestFocusInWindow();
+        }
+    };
+
+
+    /**
+     * Mouse listener koji osluskuje klik misa iznad panela s valnim oblicima
+     * te na temelju trenutne vrijednosti po X-osi mijenja background 
+	 * iznad trenutno oznacenog signala
+     */
+    private MouseListener mouseWaveListener = new MouseListener()
+    {
+
+        public void mousePressed(MouseEvent event) 
+        {
+            ; 
+        }
+
+        public void mouseReleased(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseEntered(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseExited(MouseEvent event) 
+        {
+            ;
+        }
+
+        public void mouseClicked(MouseEvent event) 
+        {
+            int mouseButton = event.getButton();
+    
             /* 
              * Ako je kliknuta desna tipka misa, ili srednja tipka misa,
              * trenutni pasivni kursor ce se pomaknuti tocno na mjesto na kojem
              * smo kliknuli misem i ostat ce pasivan
              */
-            else if (mouseButton == 2 || mouseButton == 3)
+            if ((mouseButton == 2 || mouseButton == 3) && event.getClickCount() == 1)
             {
                 int xValue = event.getX() + horizontalScrollbar.getValue();
                 double timeValue = xValue * scale.getScaleStepInTime() / 100;
@@ -1198,6 +1285,32 @@ public class WaveApplet extends JApplet
                 double measuredTime = Math.abs(cursorPanel.getSecondValue() - cursorPanel.getFirstValue());
                 interval.setText((Math.round(measuredTime * 100000d) / 100000d) + scale.getMeasureUnitName());
             }
+			else if (event.getClickCount() == 2)
+			{
+				int value = event.getY() + verticalScrollbar.getValue();
+				int index = 0;
+				/* pronalazi se index signala kojeg treba oznaciti */
+				while (value % 45 == 0)
+				{
+					value -= 1;
+				}
+				index = value / 45;
+					
+				int xValue = event.getX() + horizontalScrollbar.getValue();
+				int valueIndex = 0;
+				int transitionPoint = scale.getDurationInPixels()[0];
+                while (xValue >= transitionPoint)
+                {
+					if (valueIndex == results.getSignalValues().get(0).length - 1)
+					{
+						break;
+					}
+                    valueIndex++;
+                    transitionPoint += scale.getDurationInPixels()[valueIndex];
+                }
+				showValue.show(cp, 610, 47);
+				currentValue.setText(results.getSignalValues().get(index)[valueIndex]);
+			}
                 
                 
             signalNames.repaint();
@@ -1410,13 +1523,12 @@ public class WaveApplet extends JApplet
     /* panel s imenima signala */
     signalNames = new SignalNamesPanel(results, themeColor);
     signalNames.addMouseListener(mouseClickListener);
-    signalNames.addMouseMotionListener(signalNamesListener);
     signalNames.addMouseWheelListener(wheelListener);
 
     /* panel s valnim oblicima */
     waves = new WaveDrawBoard(results, scale, signalNames.getSignalNameSpringHeight(), themeColor);
     waves.addMouseMotionListener(mouseListener);
-    waves.addMouseListener(mouseClickListener);
+    waves.addMouseListener(mouseWaveListener);
     waves.addMouseWheelListener(wheelListener);
 
 	/* panel s trenutnim vrijednostima ovisno o kursoru */
@@ -1433,6 +1545,17 @@ public class WaveApplet extends JApplet
     /* help panel */
     helpPanel = new HelpPanel(waves.getShapes());
 
+	/* panel koji razdvaja imena signala i trenutne vrijednosti */
+	divider1.setPreferredSize(new Dimension(4, scale.getScaleEndPointInPixels()));
+	divider1.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+	divider1.setBackground(themeColor.getDivider());
+	divider1.addMouseMotionListener(firstDividerListener);
+
+	/* panel koji razdvaja trenutne vrijednosti i valne oblike */
+	divider2.setPreferredSize(new Dimension(4, scale.getScaleEndPointInPixels()));
+	divider2.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+	divider2.setBackground(themeColor.getDivider());
+	divider2.addMouseMotionListener(secondDividerListener);
 
     /* svi scrollbarovi sadrzani u appletu */
     horizontalScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
@@ -1473,6 +1596,17 @@ public class WaveApplet extends JApplet
     popup.add(buttonPanel);
     /* kraj popup prozora */    
 
+	/* Popup koji ce izletjeti na dvoklik u panelu s valnim oblicima */
+	showValue.setPreferredSize(new Dimension(300, 50));
+	currentValue.setEditable(false);
+	currentValue.setBackground(themeColor.getSignalNames());
+	JPanel valuePanel = new JPanel();
+	valuePanel.setLayout(new BorderLayout());
+	valuePanel.setBackground(themeColor.getSignalNames());
+	valuePanel.add(currentValue, BorderLayout.WEST);
+	JScrollPane scrollPane = new JScrollPane(valuePanel);
+	showValue.add(scrollPane);
+	/* kraj popup prozora */
 
     /* toolbar */
     JPanel toolbar = new JPanel();
@@ -1597,6 +1731,8 @@ public class WaveApplet extends JApplet
     cp.add(search, "search");
     cp.add(interval, "interval");
     cp.add(signalNames, "signalNames");
+	cp.add(divider1, "divider1");
+	cp.add(divider2, "divider2");
     cp.add(signalValues, "signalValues");
     cp.add(waves, "waves");
     cp.add(scale, "scale");
