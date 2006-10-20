@@ -264,4 +264,6 @@ public interface VHDLLabManager {
 	 * @see CircuitInterface
 	 */
 	public CircuitInterface extractCircuitInterface(File file) throws ServiceException;
+	
+	public List<File> extractDependencies(File file) throws ServiceException;
 }
