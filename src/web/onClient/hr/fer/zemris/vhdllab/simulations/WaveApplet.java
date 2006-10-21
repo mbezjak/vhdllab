@@ -761,11 +761,6 @@ public class WaveApplet extends JApplet
             double measuredTime = Math.abs(cursorPanel.getSecondValue() - cursorPanel.getFirstValue());
             interval.setText((Math.round(measuredTime * 100000d) / 100000d) + scale.getMeasureUnitName());
 
-            /* 
-             * samo zato da se strelica makne ako se pomakne mis prebrzo iz
-             * panela s imenima signala
-             */
-            signalNames.setIsArrowVisible(false, 0);
             signalNames.repaint(); 
         } 
 

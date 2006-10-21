@@ -44,8 +44,6 @@ class SignalNamesPanel extends JPanel
     /** Sirina panela s imenima signala */
     private int panelWidth;
 
-    /** Informacija o pokazivanju strelice za pomicanje sirine panela */
-    private boolean isArrowVisible;
 
 	/** 
 	 * Ako je kliknut border izmedu panela imena i valnih oblika tada je moguce rastegnuti 
@@ -53,8 +51,6 @@ class SignalNamesPanel extends JPanel
 	 */
 	private boolean isBorderClicked = false;
 
-    /** Polozaj strelice po Y-osi */
-    private int yArrow;
 
     /** Sadrzi informaciju jesu li bit-vectori prosireni */
     private List<Boolean> expandedSignalNames = new ArrayList<Boolean>();
@@ -235,20 +231,6 @@ class SignalNamesPanel extends JPanel
     public int getSignalNameSpringHeight ()
     {
         return SIGNAL_NAME_SPRING_HEIGHT;
-    }
-
-
-    /**
-     * Ako je kurosr misa iznad granice s imenima signala tada prikazuj strelicu
-     * za pomicanje
-     *
-     * @param isArrowVisible treba li je pokazati ili ne
-     * @param y tocka na y osi
-     */
-    public void setIsArrowVisible (boolean isArrowVisible, int y)
-    {
-        this.yArrow = y;
-        this.isArrowVisible = isArrowVisible;
     }
 
 
