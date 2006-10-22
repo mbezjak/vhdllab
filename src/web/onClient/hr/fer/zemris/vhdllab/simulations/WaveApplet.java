@@ -1499,7 +1499,6 @@ public class WaveApplet extends JApplet
   {
     VcdParser parser = new VcdParser("adder2.vcd");
     parser.parse();
-    parser.resultToString();
     textField.setEditable(false);
     textField.setToolTipText("Value");
     search.setText("search signal");
@@ -1510,7 +1509,8 @@ public class WaveApplet extends JApplet
     interval.setToolTipText("Time-interval between cursor and mouse cursor");
 
     /* rezultati prikazni stringom prenose se GhdlResults klasi */
-    results = new GhdlResults(parser.getResultInString());
+    results = new GhdlResults();
+    results.parseString(parser.getResultInString());
 
     /* stvara se skala */
     scale = new Scale(results, themeColor);

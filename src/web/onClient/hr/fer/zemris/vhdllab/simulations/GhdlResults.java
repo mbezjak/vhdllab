@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.simulations;
 
+
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 import java.util.List;
 import java.util.LinkedList;
@@ -74,27 +75,16 @@ public class GhdlResults
 
 
     /**
-     * Constructor
-     *
-     * @param resultInString uzima string dobiven preko HTTP-a
-     */
-    public GhdlResults (String resultInString)
-    {
-        this.resultInString = resultInString;
-        parseString();
-    }
-
-
-    /**
      * Metoda koja vrsi samo parsiranje stringa zapisanog u internom formatu
      */
-    public void parseString ()
+    public void parseString (String resultString)
     {
         /* 
          * razdvaja u cetiri stringa, imena signala, vrijednosti, tocke 
          * promjene vrijednosti signala i konacno broj znakova najduljeg imena
          * signala
          */
+        this.resultInString = resultString;
         splitResults = resultInString.split(HEAD_LIMITER);
 
         /* [0] su imena signala, [1] values, [2] tocke promjene, [3] max ime */
@@ -533,8 +523,8 @@ public class GhdlResults
     {
         VcdParser parser = new VcdParser("adder2.vcd");
         parser.parse();
-        parser.resultToString();
-        GhdlResults sParser = new GhdlResults(parser.getResultInString());
+        GhdlResults sParser = new GhdlResults();
+        sParser.parseString(parser.getResultInString());
 
 		//System.out.println(sParser.getSignalNames());
 		//System.out.println(sParser.getSignalValues());

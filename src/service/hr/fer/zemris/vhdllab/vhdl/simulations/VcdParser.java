@@ -47,7 +47,10 @@ class VcdFileReader
 		{
 			BufferedReader in = new BufferedReader(new FileReader (fileName));
 			while ((string = in.readLine()) != null) 
+            {
 				list.add(string);
+            }
+            in.close();
 		}
 		catch (FileNotFoundException e)
 		{
@@ -136,17 +139,19 @@ public class VcdParser
     
 
 	/** 
-     * Metoda izdvaja ASCII reprezentante odgovarajucih signala i koja trazi
-     * puna imena svih signala.
-     *
-     * Pretrazuje sve linije dok ne nade kraj definiranja simbola.  Ako linija
-     * pocinje s $var znaci da predstavlja signal, pa se pronalazi ASCII simbol
-     * i puno ime.  Ako linija pocinje s $scope znaci da ulazimo u novi scope te
-     * se u listu (koja se ponasao kao stog) dodaje novi scope na prethodni.
-     * Inace brise zadnji dodan scope.
+     * Metoda izdvaja ASCII reprezentante odgovarajucih signala i trazi
+     * puna imena svih signala.  Mapa imena signala/njihove vrijednosti poslije
+     * koristenja ove metode sadrzavat ce samo imena signala kao kljuceve, bez
+     * vrijednosti.  Koristi je metoda parse();
      */
 	public void parseSignals()
 	{
+        /* Pretrazuje sve linije dok ne nade kraj definiranja simbola.  Ako linija
+         * pocinje s $var znaci da predstavlja signal, pa se pronalazi ASCII simbol
+         * i puno ime.  Ako linija pocinje s $scope znaci da ulazimo u novi scope te
+         * se u listu (koja se ponasao kao stog) dodaje novi scope na prethodni.
+         * Inace brise zadnji dodan scope.
+         */
 		LinkedList<String> scopeName = new LinkedList<String>();
 		scopeName.addFirst("/");
 		int endSignIndex; /* indeks na kojem pocinje $end */  
@@ -186,22 +191,26 @@ public class VcdParser
 
     
     /**
-     * Metoda koja parsira VHDL-simulaciju
-     *
-     * Pretrazuje sve do kraja datoteke, tj. polja Stringova.  Izmedu svake
-     * tocke u kojima se dogada promjena (tocke tranzicije) cita red po red i
-     * provjerava vrijednosti signala.  Ako vrijednost pocinje s slovom 'b'
-     * znaci da slijedi vrijednost vektora iza koje se nalazi znak praznine i
-     * tek onda ASCII simbol, inace obraduje normalni signal.  Pronalazi ASCII
-     * simbol za svkai od signala i usporeduje koji je to signal u polju po redu
-     * tako da automatski moze dodati pod tim indeksom novu vrijednost u
-     * privremenom polju values.  Nakon svake iteracije pune se mapa s
-     * vrijednostima polje values, s tim da oni signali koji nisu mijenjali
-     * vrijednost imaju vrijednost od prethodne iteracije.
-     */
+     * Metoda koja parsira cijelu VHDL-simulaciju.  Nakon sto se upotrijebi ova
+     * metoda dobije se rezultat u obliku stringa kojeg vraca
+     * getResultInString() metoda.  Za potpuno parsiranje dovoljna je upotreba
+     * samo ove metode.
+     */ 
 	public void parse()
 	{
-		parseSignals();
+        /* Pretrazuje sve do kraja datoteke, tj. polja Stringova.  Izmedu svake
+         * tocke u kojima se dogada promjena (tocke tranzicije) cita red po red i
+         * provjerava vrijednosti signala.  Ako vrijednost pocinje s slovom 'b'
+         * znaci da slijedi vrijednost vektora iza koje se nalazi znak praznine i
+         * tek onda ASCII simbol, inace obraduje normalni signal.  Pronalazi ASCII
+         * simbol za svkai od signala i usporeduje koji je to signal u polju po redu
+         * tako da automatski moze dodati pod tim indeksom novu vrijednost u
+         * privremenom polju values.  Nakon svake iteracije pune se mapa s
+         * vrijednostima polje values, s tim da oni signali koji nisu mijenjali
+         * vrijednost imaju vrijednost od prethodne iteracije.
+         */
+		
+        parseSignals();
 		
         /* vrijednosti pojedinih signala.  Mogu biti 0, 1, U, X, Z... */
 		String[] values = new String[asciiSignalSimbols.size()];
@@ -238,6 +247,57 @@ public class VcdParser
                 ((List<String>)e.next()).add(values[i++]);
             }
 		}
+        this.resultToString();
+	}
+
+
+    /**
+     * Getter koji vraca rezultat simulacije kao jedan string
+     *
+     * @return Rezultat simulacije predstavljen kao String
+     */
+    public String getResultInString ()
+    {
+        return resultInString.toString();
+    }
+        
+
+    /**
+     * Getter koji vraca mapu imena signala i njihovih vrijednosti
+     */
+	public Map<String, List<String>> getSignalValues ()
+	{
+		return signalValues;
+	}
+
+    
+    /**
+     * Getter koji vraca tocke promjene vrijednosti 
+     */
+	public List<Long> getTransitionPoints ()
+	{
+		return transitionPoints;
+	}
+
+
+    /**
+     * Getter koji vraca najduze ime signala
+     */
+    public int getMaximumSignalNameLength ()
+    {
+        return maximumSignalNameLength;
+    }
+
+
+    /**
+     * Test metoda
+     */
+	public static void main(String[] args)
+	{
+		VcdParser parser = new VcdParser("adder2.vcd");
+		parser.parse();
+        parser.resultToString();
+        System.out.println(parser.getResultInString());
 	}
 
 
@@ -247,7 +307,7 @@ public class VcdParser
      * jedan string pomocu internog formata, npr: A###B%%%0&&&1&&&Z###1&&&Z&&&1
      * Razlog je tome sto se pomocu HTTP-a ne mogu prenositi objekti
      */
-    public void resultToString ()
+    private void resultToString ()
     {
         for (String key : signalValues.keySet())
         {
@@ -287,56 +347,6 @@ public class VcdParser
         /* broj znakova najduljeg imena signala */
         resultInString.append(HEAD_LIMITER).append(maximumSignalNameLength);
     }
-
-
-
-    /**
-     * Getter koji vraca rezultat simulacije kao jedan string
-     *
-     * @return Rezultat simulacije predstavljen kao String
-     */
-    public String getResultInString ()
-    {
-        return resultInString.toString();
-    }
-        
-
-    /**
-     * Getter koji vraca mapu signala i njihovih vrijednosti
-     */
-	public Map<String, List<String>> getSignalValues ()
-	{
-		return signalValues;
-	}
-
-    
-    /**
-     * Getter koji vraca tocke promjene vrijednosti 
-     */
-	public List<Long> getTransitionPoints ()
-	{
-		return transitionPoints;
-	}
-
-
-    /**
-     * Getter koji vraca najduze ime signala
-     */
-    public int getMaximumSignalNameLength ()
-    {
-        return maximumSignalNameLength;
-    }
-
-
-    /**
-     * Test metoda
-     */
-	public static void main(String[] args)
-	{
-		VcdParser parser = new VcdParser("adder2.vcd");
-		parser.parse();
-        parser.resultToString();
-        System.out.println(parser.getResultInString());
-	}
 }
+
 
