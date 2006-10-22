@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.vhdl.simulations;
 
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -102,7 +103,7 @@ public class VcdParser
     private int maximumSignalNameLength;
 
     /** Predstavlja string koji se prenosi klijentu */
-    private String resultInString = "";
+    private StringBuffer resultInString = new StringBuffer("");
 
     /** 
      * Upotrebljava se za interni format prilikom razdvajanja imena signala i
@@ -150,7 +151,7 @@ public class VcdParser
 		scopeName.addFirst("/");
 		int endSignIndex; /* indeks na kojem pocinje $end */  
 		String signalName; /* ime bez scopea */
-		String completeSignalName; /* ime sa scopeom */
+		StringBuffer completeSignalName = new StringBuffer(""); /* ime sa scopeom */
 		while (!vcdLines[index].equals("$enddefinitions $end"))
 		{
 			endSignIndex = vcdLines[index].indexOf("$end");
@@ -158,12 +159,13 @@ public class VcdParser
 			{	
 				asciiSignalSimbols.add(vcdLines[index].charAt(11));
 				signalName = vcdLines[index].substring(13, endSignIndex - 1);
-				completeSignalName = scopeName.getFirst() + signalName;
+				completeSignalName.setLength(0);
+				completeSignalName.append(scopeName.getFirst()).append(signalName);
                 if (vcdLines[index].charAt(9) != '1')
                 {
-                    completeSignalName = "+ " + completeSignalName;
+                    completeSignalName.insert(0, "+ ");
                 }
-				signalValues.put(completeSignalName, new ArrayList<String>());
+				signalValues.put(completeSignalName.toString(), new ArrayList<String>());
                 if (completeSignalName.length() > maximumSignalNameLength)
                 {
                     maximumSignalNameLength = completeSignalName.length();
@@ -171,8 +173,8 @@ public class VcdParser
 			}
 			else if (vcdLines[index].indexOf ("$scope") == 0)
 			{
-				scopeName.addFirst(scopeName.getFirst() 
-									+ vcdLines[index].substring(14, endSignIndex - 1) + "/");
+				scopeName.addFirst(new StringBuffer(scopeName.getFirst())
+                        .append(vcdLines[index].substring(14, endSignIndex - 1)).append("/").toString());
 			}
 			else 
 			{	
@@ -249,42 +251,41 @@ public class VcdParser
     {
         for (String key : signalValues.keySet())
         {
-            resultInString += key + LIMITER;
+            resultInString.append(key).append(LIMITER);
         }
 
         /* ukloni zadnji limiter */
-        resultInString = resultInString.substring(0, resultInString.length() - 3);
+        resultInString.delete(resultInString.length() - 3, resultInString.length());
         
         /* stavi limiter izmedu imena signala i vrijednosti */
-        resultInString += HEAD_LIMITER;
+        resultInString.append(HEAD_LIMITER);
 
         for (List<String> values : signalValues.values())
         {
             for (String string : values)
             {
-                resultInString += string + VALUE_LIMITER;
+                resultInString.append(string).append(VALUE_LIMITER);
             }
-            resultInString = resultInString.substring(0, resultInString.length() - 3);
-            resultInString += LIMITER;
+            resultInString.delete(resultInString.length() - 3, resultInString.length());
+            resultInString.append(LIMITER);
         }
-        resultInString = resultInString.substring(0, resultInString.length() - 3);
-
+        resultInString.delete(resultInString.length() - 3, resultInString.length());
         /* 
          * stavli limiter izmedu vrijednosti signala i tocaka u kojima se dogada
          * promjena vrijednosti 
          */
-        resultInString += HEAD_LIMITER;
+        resultInString.append(HEAD_LIMITER);
 
         for (Long point : transitionPoints)
         {
-            resultInString += point + LIMITER;
+            resultInString.append(point).append(LIMITER);
         }
 
         /* ukloni zadnji limiter */
-        resultInString = resultInString.substring(0, resultInString.length() - 3);
+        resultInString.delete(resultInString.length() - 3, resultInString.length());
 
         /* broj znakova najduljeg imena signala */
-        resultInString += HEAD_LIMITER + maximumSignalNameLength;
+        resultInString.append(HEAD_LIMITER).append(maximumSignalNameLength);
     }
 
 
@@ -296,7 +297,7 @@ public class VcdParser
      */
     public String getResultInString ()
     {
-        return resultInString;
+        return resultInString.toString();
     }
         
 
@@ -338,3 +339,4 @@ public class VcdParser
         System.out.println(parser.getResultInString());
 	}
 }
+
