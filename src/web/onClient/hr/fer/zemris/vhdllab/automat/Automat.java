@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.automat;
 
-import hr.fer.zemris.vhdllab.main.FileContent;
-import hr.fer.zemris.vhdllab.main.IEditor;
-import hr.fer.zemris.vhdllab.main.IWizard;
-import hr.fer.zemris.vhdllab.main.ProjectContainter;
+import hr.fer.zemris.vhdllab.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.main.interfaces.ProjectContainter;
 
 import javax.swing.JPanel;
 /**

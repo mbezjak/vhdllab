@@ -388,4 +388,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	public CircuitInterface extractCircuitInterface(File file){
 		return new DefaultCircuitInterface("cicinc");
 	}
+
+	public List<File> extractDependencies(File file) throws ServiceException {
+		return new ArrayList<File>();
+	}
 }
