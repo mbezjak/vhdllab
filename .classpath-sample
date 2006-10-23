@@ -26,6 +26,8 @@
 	<classpathentry kind="lib" path="libs/hibernate/jta.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/log4j.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/odmg-3.0.jar"/>
+	<classpathentry kind="lib" path="libs/xdoclet/commons-beanutils-1.7.0.jar"/>
+	<classpathentry kind="lib" path="libs/commons-digester-1.7.jar"/>
 	<classpathentry kind="lib" path="libs/spring.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

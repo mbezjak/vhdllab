@@ -4,6 +4,8 @@ package hr.fer.zemris.vhdllab.automat;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -21,6 +23,8 @@ import java.util.HashSet;
 import javax.swing.JPanel;
 
 import org.xml.sax.SAXException;
+
+import sun.font.FontManager;
 /**
  * 
  * @author ddelac
@@ -143,14 +147,33 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void nacrtajSklop(){
 		Graphics g=img.getGraphics();
-		g.setColor(Color.WHITE);
+		g.setColor(Color.BLACK);
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
-		for(Stanje st:stanja){
-		g.setColor(st.boja);
-		g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
 		g.setColor(Color.WHITE);
-		g.fillArc(st.ox+5,st.oy+5,2*radijus-10,2*radijus-10,0,360);
+		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
 		
+		//crtanje stanja
+		for(Stanje st:stanja){
+			g.setColor(st.boja);
+			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
+			g.setColor(Color.WHITE);
+			g.fillArc(st.ox+5,st.oy+5,2*radijus-10,2*radijus-10,0,360);
+			
+		//upis u stanja
+			g.setColor(st.boja);
+			String tekst=null;
+			if(podatci.tip.equals(new String("Moore")))
+				tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
+			else if (podatci.tip.equals(new String("Mealy"))) 
+				tekst=new StringBuffer().append(st.ime).toString();
+			g.setFont(new Font("Helvetica", Font.BOLD, radijus/2));
+			FontMetrics fm= g.getFontMetrics();
+			int xString=st.ox+radijus-fm.stringWidth(tekst)/2;
+			int yString=st.oy+radijus+fm.getAscent()/2;
+			g.drawString(tekst,xString,yString);
+			g.setColor(Color.WHITE);
+		}
+		//crtanje prijelaza
 		for(Prijelaz pr:prijelazi){
 			Stanje iz=null;
 			Stanje ka=null;
@@ -161,7 +184,6 @@ public class AutoDrawer extends JPanel{
 			nacrtajPrijelaz(iz, ka);
 		}
 		repaint();
-		}
 		
 	}
 	
@@ -220,15 +242,15 @@ public class AutoDrawer extends JPanel{
 		curve.setCurve(start,control,end);		
 		g.draw(curve);
 		
+		//upis podataka prijelaza
+		
 		//crtanje strijelica...
 		int l2=radijus/2;
 		int[] xstr = new int[3],ystr = new int[3];
 		xstr[1]=(int) (x1-l2*Math.cos(fi+0.3+strOdm));
 		ystr[1]=(int) (y1-l2*Math.sin(fi+0.3+strOdm));
-//		g.drawLine(x1,y1,xstr,ystr);
 		xstr[2]=(int) (x1-l2*Math.cos(fi-0.3+strOdm));
 		ystr[2]=(int) (y1-l2*Math.sin(fi-0.3+strOdm));
-//		g.drawLine(x1,y1,xstr,ystr);
 		xstr[0]=x1;ystr[0]=y1;
 		g.fillPolygon(xstr,ystr,3);
 
@@ -271,6 +293,10 @@ public class AutoDrawer extends JPanel{
 			if(pressed){
 					selektiran.ox=e.getX()-radijus;
 					selektiran.oy=e.getY()-radijus;
+					if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
+					if(selektiran.ox<0)selektiran.ox=0;
+					if(selektiran.oy>img.getHeight()-2*radijus) selektiran.oy=img.getHeight()-2*radijus;
+					if(selektiran.oy<0)selektiran.oy=0;
 					nacrtajSklop();
 			}
 		}
