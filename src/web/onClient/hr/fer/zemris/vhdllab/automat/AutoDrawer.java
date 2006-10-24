@@ -77,10 +77,10 @@ public class AutoDrawer extends JPanel{
 	 *
 	 */
 	
-	public AutoDrawer() throws FileNotFoundException{
+	public AutoDrawer(String strpodatci){
 		super();
 		this.setOpaque(true); 
-		setData("tu ce doci string");
+		setData(strpodatci);
 		createGUI();
 		this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
 	}
@@ -91,7 +91,7 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void createGUI() {
 		
-		img=new BufferedImage(400,250,BufferedImage.TYPE_3BYTE_BGR);
+		img=new BufferedImage(this.getPreferredSize().width,this.getPreferredSize().height,BufferedImage.TYPE_3BYTE_BGR);
 
 		nacrtajSklop();
 		
@@ -126,11 +126,10 @@ public class AutoDrawer extends JPanel{
 	 * stanja, prijelazi i podatci.
 	 * @throws FileNotFoundException 
 	 */
-	public void setData(String data) throws FileNotFoundException {
+	public void setData(String data) {
 		AUTParser aut=new AUTParser();
-		BufferedReader reader=new BufferedReader(new FileReader("./src/web/onClient/hr/fer/zemris/vhdllab/automat/automat1.xml"));
 		try {
-			aut.AUTParse(reader);
+			aut.AUTParse(data);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -147,10 +146,10 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void nacrtajSklop(){
 		Graphics g=img.getGraphics();
-		g.setColor(Color.BLACK);
-		g.fillRect(0,0,img.getWidth(),img.getHeight());
 		g.setColor(Color.WHITE);
-		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
+		g.fillRect(0,0,img.getWidth(),img.getHeight());
+//		g.setColor(Color.WHITE);
+//		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
 		
 		//crtanje stanja
 		for(Stanje st:stanja){
@@ -181,7 +180,7 @@ public class AutoDrawer extends JPanel{
 				if(stanje.ime.equals(pr.iz)) iz=stanje;
 				if(stanje.ime.equals(pr.u)) ka=stanje;
 			}
-			nacrtajPrijelaz(iz, ka);
+			nacrtajPrijelaz(iz, ka,pr);
 		}
 		repaint();
 		
@@ -193,9 +192,8 @@ public class AutoDrawer extends JPanel{
 	 * @param iz daje iz kojeg stanja
 	 * @param ka daje u koje stanje
 	 */
-	private void nacrtajPrijelaz(Stanje iz, Stanje ka){
-		// TODO sredi ovo: podatci....
-		
+	private void nacrtajPrijelaz(Stanje iz, Stanje ka,Prijelaz pr){
+
 		//racunanje polozaja tocki potrebnih za crtanje prijelaza...
 		int x1,x2,y1,y2;
 		double fi=0;
@@ -243,6 +241,7 @@ public class AutoDrawer extends JPanel{
 		g.draw(curve);
 		
 		//upis podataka prijelaza
+		upisiPodatkePrijelaza(iz,ka,pr,x3,y3,fi);
 		
 		//crtanje strijelica...
 		int l2=radijus/2;
@@ -255,7 +254,66 @@ public class AutoDrawer extends JPanel{
 		g.fillPolygon(xstr,ystr,3);
 
 	}
+	/**
+	 * ispis podataka prijelaza
+	 * @param iz stanje iz kojeg prijelaz ide
+	 * @param ka stanje ui koje prijelaz ide
+	 * @param pr podatci o priejelazu
+	 * @param x3 polaozaj korfinate x konetrolne tocke krivulje prijelaza
+	 * @param y3 polozaj kordinate y kontrolne tocke krivulje prijelaza
+	 * @param fi 
+	 */
+	private void upisiPodatkePrijelaza(Stanje iz, Stanje ka, Prijelaz pr, int x3, int y3, double fi) {
+		Graphics2D g=(Graphics2D) img.getGraphics();
+		
+		String tekst=null;
+		if(podatci.tip.equals(new String("Mealy")))
+			tekst=new StringBuffer().append(pr.pobuda).append("/").append(pr.izlaz).toString();
+		else if (podatci.tip.equals(new String("Moore"))) 
+			tekst=new StringBuffer().append(pr.pobuda).toString();
+		g.setFont(new Font("Helvetica", Font.PLAIN, 2*radijus/5));
+		
+		
+		Color cl=g.getColor();
+		g.setColor(getMyColor(iz,ka));
+		
+		FontMetrics fm=g.getFontMetrics();
+		int xtekst=x3-fm.stringWidth(tekst)/2;
+		int ytekst=y3+fm.getAscent()/2;
+		
+		if(iz.equals(ka)) {
+			ytekst+=3*radijus/2;
+		}else{
+			xtekst+=(int)((double)fm.stringWidth(tekst)/2*Math.sin(fi));
+			ytekst-=(int)((double)fm.getAscent()/2*Math.cos(fi));
+		}
+		
+		g.drawString(tekst,xtekst,ytekst);
+		g.setColor(cl);
+	}
+
+	/**
+	 * Odreduje koje ce boje biti tekst prijelaza
+	 * @param iz stanje iz kojeg se prelazi
+	 * @param ka stanje u koje se prelazi
+	 * @return boja koja nam treba
+	 */
+	private Color getMyColor(Stanje iz, Stanje ka) {
+		Color cl=Color.BLACK;
+		if(selektiran!=null)
+			if(selektiran.equals(iz)) cl=Color.RED;
+			else if(selektiran.equals(ka)) cl=Color.BLUE;
+		return cl;
+	}
 	
+	@Override
+	public Dimension getPreferredSize() {
+		int x,y;
+		if(this.getWidth()<100) x=100; else x=this.getWidth();
+		if(this.getHeight()<100) y=100; else y=this.getHeight();
+		return new Dimension(x,y);
+	}
+
 	/**
 	 * Ova metoda provjerava dali je mis na podrucju selekcije prijelaza pr
 	 * @param e MouseEvent koji se dogodio
@@ -320,14 +378,15 @@ public class AutoDrawer extends JPanel{
 		 * Funkcija propisana suceljem, obavlja dio drag&drop funkcionalnosti
 		 */
 		public void mousePressed(MouseEvent e) {
-			for(Stanje st:stanja)
-			if(jelSelektiran(e,st)){
-				st.boja=Color.GREEN;
-				pressed=true;
-				selektiran=st;
-				nacrtajSklop();
-				break;
-			}
+			if(e.getButton()==MouseEvent.BUTTON1 )
+				for(Stanje st:stanja)
+					if(jelSelektiran(e,st)){
+						st.boja=Color.GREEN;
+						pressed=true;
+						selektiran=st;
+						nacrtajSklop();
+						break;
+					}
 			
 		}
 
@@ -345,14 +404,20 @@ public class AutoDrawer extends JPanel{
 		}
 
 		/**
-		 * Funkcija propisana suceljem, ne radi nista...
+		 * kad mis ude stvara sliku ispocetka...
 		 */
-		public void mouseEntered(MouseEvent e) {}
+		public void mouseEntered(MouseEvent e) {
+			img=new BufferedImage(getPreferredSize().width,getPreferredSize().height,BufferedImage.TYPE_3BYTE_BGR);
+
+			nacrtajSklop();
+			}
 
 		/**
-		 * Funkcija propisana suceljem, ne radi nista...
+		 * nis ne radi...
 		 */
-		public void mouseExited(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {
+
+		}
 		
 	}
 }

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.automat;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashSet;
 
 import org.apache.commons.digester.Digester;
@@ -15,7 +16,7 @@ public class AUTParser {
 		super();
 	}
 	
-	public void AUTParse(Reader podatci) throws IOException, SAXException{
+	public void AUTParse(String podatci) throws IOException, SAXException{
 		Digester digester=new Digester();
 		
 		digester.push(this);
@@ -39,7 +40,7 @@ public class AUTParser {
 		digester.addCallParam("Automat/Prijelaz/Pobuda",2);
 		digester.addCallParam("Automat/Prijelaz/Izlaz",3);
 		
-		digester.parse(podatci);
+		digester.parse(new StringReader(podatci));
 	}
 	
 	public void dodajPodatke(String ime,String tip,String bbu,String bbi,String pocetnoStanje){
