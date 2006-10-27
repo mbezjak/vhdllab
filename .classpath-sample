@@ -29,5 +29,6 @@
 	<classpathentry kind="lib" path="libs/xdoclet/commons-beanutils-1.7.0.jar"/>
 	<classpathentry kind="lib" path="libs/commons-digester-1.7.jar"/>
 	<classpathentry kind="lib" path="libs/spring.jar"/>
+	<classpathentry kind="lib" path="libs/commons-digester-1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

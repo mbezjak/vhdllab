@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JApplet;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -78,6 +79,10 @@ public class MainApplet
 		
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
+		
+		JMenuItem exit = new JMenuItem("Exit");
+		exit.setMnemonic(KeyEvent.VK_X);
+		file.add(exit);
 		menuBar.add(file);
 		
 		this.setJMenuBar(menuBar);

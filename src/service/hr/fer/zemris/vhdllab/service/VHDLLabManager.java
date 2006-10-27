@@ -93,7 +93,7 @@ public interface VHDLLabManager {
 	 * @return a file with specified project identifier and file name
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	File findByName(Long projectId, String name) throws ServiceException;
+	public File findByName(Long projectId, String name) throws ServiceException;
 	/**
 	 * Use this method to create a new file which is member of specified
 	 * project, and has name and type as specified. Content will be set
@@ -256,14 +256,21 @@ public interface VHDLLabManager {
 	public String generateVHDL(File file) throws ServiceException;
 	
 	/**
-	 * Extracts CircuitInterface base on file content, however which extractor will be used
-	 * is based on file type.
-	 * @param file file for which CircuitInterface must be extracted
-	 * @return CircuitInterface CircuitInterface for specified file
+	 * Extracts circuit interface out of file content.
+	 * @param file a file for which circuit interface must be extracted
+	 * @return circuit interface for specified file
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 * @see CircuitInterface
 	 */
 	public CircuitInterface extractCircuitInterface(File file) throws ServiceException;
 	
+	/**
+	 * Returns a list of files on which specified file depends on. Return value will
+	 * never be <code>null</code>, although it can be an empty list if file has no
+	 * dependencies.
+	 * @param file a file for which dependencies must be extracted
+	 * @return a list of files on which specified file depends on
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
 	public List<File> extractDependencies(File file) throws ServiceException;
 }

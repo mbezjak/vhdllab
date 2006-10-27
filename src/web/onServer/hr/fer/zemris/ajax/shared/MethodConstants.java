@@ -191,6 +191,10 @@ public class MethodConstants {
 	 * A status error value for status property when can not generate VHDL.
 	 */
 	public static final String SE_CAN_NOT_GENERATE_VHDL = "503";
+	/**
+	 * A status error value for status property when dependencies could not be extracted.
+	 */
+	public static final String SE_CAN_NOT_EXTRACT_DEPENDENCIES = "504";
 	
 	
 	
@@ -1612,6 +1616,48 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_GENERATE_VHDL = "generate.vhdl";
+	/**
+	 * A "extract dependencies" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>list of {@link #PROP_FILE_ID} written in following format: {@link #PROP_FILE_ID}.[number]
+	 *     (number is positive and starts at 1)
+	 * </ul>
+	 * <p>
+	 * Example of response <code>Properties</code>:
+	 * <blockquote>
+	 * {@link #PROP_METHOD} = extract.dependencies<br/>
+	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
+	 * {@link #PROP_FILE_ID}.1 = 104<br/>
+	 * {@link #PROP_FILE_ID}.2 = 3<br/>
+	 * {@link #PROP_FILE_ID}.3 = 55<br/>
+	 * ...
+	 * </blockquote>
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain both parametars
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_PROJECT_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_EXTRACT_DEPENDENCIES} - if dependencies for file with {@link #PROP_FILE_ID} could not be extracted
+	 * </ul>
+	 */
+	public static final String MTD_EXTRACT_DEPENDENCIES = "extract.dependencies";
 	
 	/**
 	 * Dont let anyone instantiate this class.

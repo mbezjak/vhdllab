@@ -14,7 +14,7 @@ public class Writer extends JPanel {
 	
 	public Writer() {
 		text = new JTextArea("This is writer area!");
-		text.setPreferredSize(new Dimension(1000, 1000));
+		text.setPreferredSize(new Dimension(100, 100));
 		this.add(text, BorderLayout.CENTER);
 		this.setBackground(Color.RED);
 	}

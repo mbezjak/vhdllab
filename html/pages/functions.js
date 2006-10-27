@@ -25,6 +25,18 @@ function performAjaxCallEx(url, data) {
   req.send(String(data));
 }
 
+function performSyncAjaxCall(data) {
+  if( window.XMLHttpRequest ) {
+    req = new XMLHttpRequest();
+  } else if( window.ActiveXObject ) {
+    req = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  req.open("POST", "doAjax", false);
+  req.onreadystatechange = ajaxCallback;
+  req.setRequestHeader("Content-Type","text/xml;charset=utf-8");
+  req.send(String(data));
+}
+
 function performAjaxAbort() {
   req.abort();
 }
