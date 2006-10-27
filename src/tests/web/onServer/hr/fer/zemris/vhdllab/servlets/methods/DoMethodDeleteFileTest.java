@@ -14,6 +14,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -92,5 +94,9 @@ public class DoMethodDeleteFileTest {
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
 		assertEquals(false, labman.existsFile(file1.getProject().getId(), file1.getFileName()));
+	}
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(DoMethodDeleteFileTest.class);
 	}
 }

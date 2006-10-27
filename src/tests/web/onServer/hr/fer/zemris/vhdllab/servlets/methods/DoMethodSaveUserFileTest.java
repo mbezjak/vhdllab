@@ -11,6 +11,8 @@ import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
 import java.util.Properties;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -94,4 +96,7 @@ public class DoMethodSaveUserFileTest {
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
 	}
 
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(DoMethodSaveUserFileTest.class);
+	}
 }

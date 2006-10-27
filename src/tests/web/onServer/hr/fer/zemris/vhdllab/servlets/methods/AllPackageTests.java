@@ -20,6 +20,8 @@ import org.junit.runners.Suite;
 	DoMethodExistsGlobalFileTest.class,
 	DoMethodExistsProjectTest.class,
 	DoMethodExistsUserFileTest.class,
+	DoMethodExtractCircuitInterfaceTest.class,
+	DoMethodExtractDependenciesTest.class,
 	DoMethodFindGlobalFilesByTypeTest.class,
 	DoMethodFindProjectsByUserTest.class,
 	DoMethodFindUserFilesByUserTest.class,

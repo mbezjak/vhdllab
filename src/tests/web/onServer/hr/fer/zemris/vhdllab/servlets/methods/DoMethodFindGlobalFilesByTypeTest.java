@@ -11,6 +11,8 @@ import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
 import java.util.Properties;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,5 +68,9 @@ public class DoMethodFindGlobalFilesByTypeTest {
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
 		assertEquals(String.valueOf(file.getId()), p.getProperty(MethodConstants.PROP_FILE_ID+".1"));
 		assertEquals(String.valueOf(file2.getId()), p.getProperty(MethodConstants.PROP_FILE_ID+".2"));
+	}
+	
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(DoMethodFindGlobalFilesByTypeTest.class);
 	}
 }

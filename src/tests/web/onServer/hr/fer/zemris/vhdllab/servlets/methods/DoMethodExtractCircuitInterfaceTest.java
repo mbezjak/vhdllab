@@ -9,6 +9,9 @@ import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.util.Properties;
 import java.util.Set;
@@ -20,7 +23,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class DoMethodGenerateVHDLTest {
+public class DoMethodExtractCircuitInterfaceTest {
 	
 	private static ManagerProvider mprov;
 	private static RegisteredMethod regMethod;
@@ -87,8 +90,8 @@ public class DoMethodGenerateVHDLTest {
 		files.add(file3);
 		project.setFiles(files);
 		labman.saveProject(project);
-		regMethod = new DoMethodGenerateVHDL();
-		method = MethodConstants.MTD_GENERATE_VHDL;
+		regMethod = new DoMethodExtractCircuitInterface();
+		method = MethodConstants.MTD_EXTRACT_CIRCUIT_INTERFACE;
 	}
 	
 	@Before
@@ -122,7 +125,7 @@ public class DoMethodGenerateVHDLTest {
 	}
 	
 	/**
-	 * Filetype is {@link File#FT_VHDLSOURCE}
+	 * Test should pass without any errors.
 	 */
 	@Test
 	public void run3() throws ServiceException {
@@ -130,28 +133,25 @@ public class DoMethodGenerateVHDLTest {
 		prop.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
 		Properties p = regMethod.run(prop, mprov);
-		assertEquals(3, p.keySet().size());
+		assertEquals(33, p.keySet().size());
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(labman.generateVHDL(file1), p.getProperty(MethodConstants.PROP_GENERATED_VHDL, ""));
-	}
-	
-	/**
-	 * Filetype is {@link File#FT_VHDLTB}
-	 */
-	@Test
-	public void run4() throws ServiceException {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		prop.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file3.getId()));
-		
-		Properties p = regMethod.run(prop, mprov);
-		assertEquals(3, p.keySet().size());
-		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
-		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(labman.generateVHDL(file3), p.getProperty(MethodConstants.PROP_GENERATED_VHDL, ""));
+		CircuitInterface ci = labman.extractCircuitInterface(file1);
+		assertEquals(ci.getEntityName(), p.getProperty(MethodConstants.PROP_CI_ENTITY_NAME, ""));
+		int i = 1;
+		for(Port port : ci.getPorts()) {
+			Type type = port.getType();
+			assertEquals(port.getName(), MethodConstants.PROP_CI_PORT_NAME+".1");
+			assertEquals(port.getDirection().toString(), MethodConstants.PROP_CI_PORT_DIRECTION+".1");
+			assertEquals(type.getTypeName(), MethodConstants.PROP_CI_PORT_TYPE_NAME+".1");
+			assertEquals(String.valueOf(type.getRangeFrom()), MethodConstants.PROP_CI_PORT_TYPE_RANGE_FROM+".1");
+			assertEquals(String.valueOf(type.getRangeTo()), MethodConstants.PROP_CI_PORT_TYPE_RANGE_TO+".1");
+			assertEquals(type.getVectorDirection(), MethodConstants.PROP_CI_PORT_TYPE_VECTOR_DIRECTION+".1");
+			i++;
+		}
 	}
 	
 	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DoMethodGenerateVHDLTest.class);
+		return new JUnit4TestAdapter(DoMethodExtractCircuitInterfaceTest.class);
 	}
 }

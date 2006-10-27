@@ -192,9 +192,13 @@ public class MethodConstants {
 	 */
 	public static final String SE_CAN_NOT_GENERATE_VHDL = "503";
 	/**
+	 * A status error value for status property when circuit interface could not be extracted.
+	 */
+	public static final String SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE = "504";
+	/**
 	 * A status error value for status property when dependencies could not be extracted.
 	 */
-	public static final String SE_CAN_NOT_EXTRACT_DEPENDENCIES = "504";
+	public static final String SE_CAN_NOT_EXTRACT_DEPENDENCIES = "505";
 	
 	
 	
@@ -302,7 +306,35 @@ public class MethodConstants {
 	 */
 	public static final String PROP_GENERATED_VHDL = "generated.vhdl";
 	
-	
+	/**
+	 * A value for entity name of circuit interface.
+	 */
+	public static final String PROP_CI_ENTITY_NAME = "ci.entity.name";
+	/**
+	 * A value for port name.
+	 */
+	public static final String PROP_CI_PORT_NAME = "ci.port.name";
+	/**
+	 * A value for port direction.
+	 */
+	public static final String PROP_CI_PORT_DIRECTION = "ci.port.direction";
+	/**
+	 * A value for type name of a port.
+	 */
+	public static final String PROP_CI_PORT_TYPE_NAME = "ci.port.type.name";
+	/**
+	 * A value for range from of a port.
+	 */
+	public static final String PROP_CI_PORT_TYPE_RANGE_FROM = "ci.port.type.range.from";
+	/**
+	 * A value for range to of a port.
+	 */
+	public static final String PROP_CI_PORT_TYPE_RANGE_TO = "ci.port.type.range.to";
+	/**
+	 * A value for vector direction of a port.
+	 */
+	public static final String PROP_CI_PORT_TYPE_VECTOR_DIRECTION = "ci.port.type.vector.direction";
+
 	
 	/**
 	 * A "load file name" method. Expected parametars (written as a property) are
@@ -1616,6 +1648,67 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_GENERATE_VHDL = "generate.vhdl";
+	/**
+	 * A "extract circuit interface" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_CI_ENTITY_NAME} - containing entity name of a circuit interface
+	 * <li>list of
+	 * 		<ul>
+	 * 		<li>{@link #PROP_CI_PORT_NAME}
+	 * 		<li>{@link #PROP_CI_PORT_DIRECTION}
+	 * 		<li>{@link #PROP_CI_PORT_TYPE_NAME}
+	 * 		<li>{@link #PROP_CI_PORT_TYPE_RANGE_FROM}
+	 * 		<li>{@link #PROP_CI_PORT_TYPE_RANGE_TO}
+	 * 		<li>{@link #PROP_CI_PORT_TYPE_VECTOR_DIRECTION}
+	 * 		</ul>
+	 *     written in following format: property.[number] (number is positive and starts at 1)
+	 * </ul>
+	 * <p>
+	 * Example of response <code>Properties</code>:
+	 * <blockquote>
+	 * {@link #PROP_METHOD} = extract.circuit.interface<br/>
+	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
+	 * {@link #PROP_CI_ENTITY_NAME} = circuit_1<br/>
+	 * {@link #PROP_CI_PORT_NAME}.1 = a<br/>
+	 * {@link #PROP_CI_PORT_DIRECTION}.1 = IN<br/>
+	 * {@link #PROP_CI_PORT_TYPE_NAME}.1 = std_logic<br/>
+	 * {@link #PROP_CI_PORT_TYPE_RANGE_FROM}.1 = 0<br/>
+	 * {@link #PROP_CI_PORT_TYPE_RANGE_TO}.1 = 0<br/>
+	 * {@link #PROP_CI_PORT_TYPE_VECTOR_DIRECTION}.1 = DOWNTO<br/>
+	 * {@link #PROP_CI_PORT_NAME}.2 = b<br/>
+	 * {@link #PROP_CI_PORT_DIRECTION}.2 = OUT<br/>
+	 * {@link #PROP_CI_PORT_TYPE_NAME}.2 = std_logic_vector<br/>
+	 * {@link #PROP_CI_PORT_TYPE_RANGE_FROM}.2 = 0<br/>
+	 * {@link #PROP_CI_PORT_TYPE_RANGE_TO}.2 = 3<br/>
+	 * {@link #PROP_CI_PORT_TYPE_VECTOR_DIRECTION}.2 = TO<br/>
+	 * ...
+	 * </blockquote>
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain both parametars
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_PROJECT_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE} - if circuit interface for file with {@link #PROP_FILE_ID} could not be extracted
+	 * </ul>
+	 */
+	public static final String MTD_EXTRACT_CIRCUIT_INTERFACE = "extract.circuit.interface";
 	/**
 	 * A "extract dependencies" method. Expected parametars (written as a property) are
 	 * <ul>
