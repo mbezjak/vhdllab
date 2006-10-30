@@ -20,8 +20,6 @@ import java.util.Map;
  * <ul>
  * <li>FileDAO, ProjectDAO : data access objects</li>
  * <li>VHDLLabManager : service manager</li>
- * <li>RegisteredMethod : all registered methods</li>
- * <li>MethodDispatcher : AJAX servlet method dispatcher</li>
  * </ul>
  */
 public class SampleManagerProvider implements ManagerProvider {

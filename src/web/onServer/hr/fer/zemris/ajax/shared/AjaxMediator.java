@@ -36,6 +36,26 @@ public interface AjaxMediator {
 	 */
 	public void initiateAsynchronousCall(String targetURL, String message);
 	/**
+	 * Requests that a message is sent to the server. This call is
+	 * synchronous and result message will be returned through return
+	 * statement. Message is sent to default destination (as specified
+	 * in JavaScript implementation).
+	 * @param message message to send
+	 * @return response text
+	 */
+	public String initiateSynchronousCall(String message);
+	/**
+	 * Requests that a message is sent to the server. This call is
+	 * synchronous and result message will be returned through return
+	 * statement. Message is sent to specified destination, or if
+	 * this is null, then to default destination (as specified
+	 * in JavaScript implementation).
+	 * @param targetURL where to send message (URL, can be relative)
+	 * @param message message to send
+	 * @return response text
+	 */
+	public String initiateSynchronousCall(String targetURL, String message);
+	/**
 	 * This method will be called from applet when AJAX response
 	 * arrives. Then, registered listeners will be notified.
 	 * @param result response of the initiated call

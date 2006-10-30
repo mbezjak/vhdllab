@@ -35,6 +35,21 @@ function performSyncAjaxCall(data) {
   req.onreadystatechange = ajaxCallback;
   req.setRequestHeader("Content-Type","text/xml;charset=utf-8");
   req.send(String(data));
+  return req.responseText;
+}
+
+function performSyncAjaxCallEx(url, data) {
+  if( window.XMLHttpRequest ) {
+    req = new XMLHttpRequest();
+  } else if( window.ActiveXObject ) {
+    req = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  url = String(url);
+  req.open("POST", url, true);
+  req.onreadystatechange = ajaxCallback;
+  req.setRequestHeader("Content-Type","text/xml;charset=utf-8");
+  req.send(String(data));
+    return req.responseText;
 }
 
 function performAjaxAbort() {

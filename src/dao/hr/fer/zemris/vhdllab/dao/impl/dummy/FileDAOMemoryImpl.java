@@ -21,7 +21,7 @@ public class FileDAOMemoryImpl implements FileDAO {
 	public File load(Long id) throws DAOException {
 		File file = files.get(id);
 		if(file==null) throw new DAOException("Unable to load file!");
-		return files.get(id);
+		return file;
 	}
 
 	public void save(File file) throws DAOException {
