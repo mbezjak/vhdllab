@@ -72,7 +72,7 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * radijus krugova za stanja
 	 */
-	private int radijus=20;
+	private int radijus=25;
 	
 	/**
 	 * Stanja rada definirat ce dali se dodaje signal, dodaje prijelaz ili editira slika.
@@ -495,21 +495,17 @@ public class AutoDrawer extends JPanel{
 					stanjeZaDodati=null;
 					nacrtajSklop();
 				}
-				if(e.getButton()==MouseEvent.BUTTON2){
-					stanjeZaDodati=null;
-					stanjeRada=1;
-					nacrtajSklop();
-				}
+
 			}
 			
-			if(stanjeRada==3){
+			if(stanjeRada==3&&e.getButton()==MouseEvent.BUTTON1){
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
 						prijelazZaDodati.iz=st.ime;
 						stanjeRada=4;
 						break;
 					} }
-			else if(stanjeRada==4)
+			else if(stanjeRada==4&&e.getButton()==MouseEvent.BUTTON1)
 					for(Stanje sta:stanja)
 						if(jelSelektiran(e,sta)){
 							prijelazZaDodati.u=sta.ime;
@@ -519,6 +515,12 @@ public class AutoDrawer extends JPanel{
 							nacrtajSklop();
 							break;
 						}
+			if(e.getButton()==MouseEvent.BUTTON3){
+				stanjeZaDodati=null;
+				prijelazZaDodati=null;
+				stanjeRada=1;
+				nacrtajSklop();
+			}
 		}
 		
 		/**
