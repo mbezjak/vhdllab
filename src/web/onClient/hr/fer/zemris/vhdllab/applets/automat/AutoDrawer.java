@@ -17,7 +17,9 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.xml.sax.SAXException;
@@ -43,7 +45,7 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * kolekcija koja sadrzi sva stanja automata
 	 */
-	private HashSet<Stanje> stanja=null;
+	private LinkedList<Stanje> stanja=null;
 	/**
 	 * kolekcija koja sadrzi sve prijelaze automata
 	 */
@@ -53,13 +55,24 @@ public class AutoDrawer extends JPanel{
 	 */
 	private AUTPodatci podatci=null;
 	
-	
+	/**
+	 * selektirano stanje...
+	 */
 	private Stanje selektiran=null;
 	
 	/**
+	 * stanje koje se dodaje
+	 */
+	private Stanje stanjeZaDodati=null;
+	
+	/**
+	 * prijelaz koji se dodaje
+	 */
+	private Prijelaz prijelazZaDodati=null;
+	/**
 	 * radijus krugova za stanja
 	 */
-	private int radijus=25;
+	private int radijus=20;
 	
 	/**
 	 * Stanja rada definirat ce dali se dodaje signal, dodaje prijelaz ili editira slika.
@@ -88,7 +101,6 @@ public class AutoDrawer extends JPanel{
 	private void createGUI() {
 		
 		img=new BufferedImage(this.getPreferredSize().width,this.getPreferredSize().height,BufferedImage.TYPE_3BYTE_BGR);
-
 		nacrtajSklop();
 		
 		this.addMouseListener(new Mouse());
@@ -103,8 +115,13 @@ public class AutoDrawer extends JPanel{
 	 */
 	protected void paintComponent(Graphics g) {
 		if(img == null) {
-			super.paintComponent(g);
+			img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
+			nacrtajSklop();
 		} else {
+			if (img.getHeight()!=this.getHeight()||img.getWidth()!=this.getWidth()){
+				img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
+				nacrtajSklop();
+			}
 			g.drawImage(img,0,0,img.getWidth(),img.getHeight(),null);
 		}
 	}
@@ -137,17 +154,24 @@ public class AutoDrawer extends JPanel{
 	}
 	
 	/**
-	 * Ova metoda zasluzna je za crtanje sklopa.
-	 *
+	 * Ova metoda zasluzna je crtanje automata uz stanjeRada==4.
+	 *@param eventx ako je stanjeRada==4 daje x kordinatu misa
+	 *@param eventy ako je stanjeRada==4 daje y koordinatu misa
 	 */
-	private void nacrtajSklop(){
-		Graphics g=img.getGraphics();
-		g.setColor(Color.WHITE);
+	private void nacrtajSklop(int eventx,int eventy){
+		Graphics2D g=(Graphics2D)img.getGraphics();
+		g.setColor(Color.BLACK);
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
-//		g.setColor(Color.WHITE);
-//		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
+		g.setColor(Color.WHITE);
+		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
 		
 		//crtanje stanja
+		if(stanjeZaDodati!=null){
+			g.setColor(stanjeZaDodati.boja);
+			g.fillArc(stanjeZaDodati.ox,stanjeZaDodati.oy,2*radijus,2*radijus,0,360);
+			g.setColor(Color.WHITE);
+			g.fillArc(stanjeZaDodati.ox+5,stanjeZaDodati.oy+5,2*radijus-10,2*radijus-10,0,360);
+		}
 		for(Stanje st:stanja){
 			g.setColor(st.boja);
 			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
@@ -168,6 +192,7 @@ public class AutoDrawer extends JPanel{
 			g.drawString(tekst,xString,yString);
 			g.setColor(Color.WHITE);
 		}
+		
 		//crtanje prijelaza
 		for(Prijelaz pr:prijelazi){
 			Stanje iz=null;
@@ -178,6 +203,68 @@ public class AutoDrawer extends JPanel{
 			}
 			nacrtajPrijelaz(iz, ka,pr);
 		}
+		
+		if(stanjeRada==4){
+			for(Stanje st:stanja) if(st.ime==prijelazZaDodati.iz){
+				g.setColor(Color.CYAN);
+				g.drawLine(st.ox+radijus,st.oy+radijus,eventx,eventy);
+				break;
+			}
+		}
+		
+		repaint();
+		
+	}
+	/**
+	 * crta automat bez moguceg stanjaRada4
+	 *
+	 */
+	private void nacrtajSklop(){
+		Graphics2D g=(Graphics2D)img.getGraphics();
+		g.setColor(Color.BLACK);
+		g.fillRect(0,0,img.getWidth(),img.getHeight());
+		g.setColor(Color.WHITE);
+		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
+		
+		//crtanje stanja
+		if(stanjeZaDodati!=null){
+			g.setColor(stanjeZaDodati.boja);
+			g.fillArc(stanjeZaDodati.ox,stanjeZaDodati.oy,2*radijus,2*radijus,0,360);
+			g.setColor(Color.WHITE);
+			g.fillArc(stanjeZaDodati.ox+5,stanjeZaDodati.oy+5,2*radijus-10,2*radijus-10,0,360);
+		}
+		for(Stanje st:stanja){
+			g.setColor(st.boja);
+			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
+			g.setColor(Color.WHITE);
+			g.fillArc(st.ox+5,st.oy+5,2*radijus-10,2*radijus-10,0,360);
+			
+		//upis u stanja
+			g.setColor(st.boja);
+			String tekst=null;
+			if(podatci.tip.equals(new String("Moore")))
+				tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
+			else if (podatci.tip.equals(new String("Mealy"))) 
+				tekst=new StringBuffer().append(st.ime).toString();
+			g.setFont(new Font("Helvetica", Font.BOLD, radijus/2));
+			FontMetrics fm= g.getFontMetrics();
+			int xString=st.ox+radijus-fm.stringWidth(tekst)/2;
+			int yString=st.oy+radijus+fm.getAscent()/2;
+			g.drawString(tekst,xString,yString);
+			g.setColor(Color.WHITE);
+		}
+		
+		//crtanje prijelaza
+		for(Prijelaz pr:prijelazi){
+			Stanje iz=null;
+			Stanje ka=null;
+			for(Stanje stanje:stanja){
+				if(stanje.ime.equals(pr.iz)) iz=stanje;
+				if(stanje.ime.equals(pr.u)) ka=stanje;
+			}
+			nacrtajPrijelaz(iz, ka,pr);
+		}
+		
 		repaint();
 		
 	}
@@ -278,7 +365,7 @@ public class AutoDrawer extends JPanel{
 		int ytekst=y3+fm.getAscent()/2;
 		
 		if(iz.equals(ka)) {
-			ytekst+=3*radijus/2;
+			ytekst+=(int)(3*radijus/2.2);
 		}else{
 			xtekst+=(int)((double)fm.stringWidth(tekst)/2*Math.sin(fi));
 			ytekst-=(int)((double)fm.getAscent()/2*Math.cos(fi));
@@ -358,7 +445,27 @@ public class AutoDrawer extends JPanel{
 		/**
 		 * Funkcija propisana suceljem, ne radi nista...
 		 */
-		public void mouseMoved(MouseEvent e) {}
+		public void mouseMoved(MouseEvent e) {
+			
+			if(stanjeRada==2){
+				if(stanjeZaDodati==null) stanjeZaDodati=new Stanje("NOV","*",Color.RED);
+				stanjeZaDodati.ox=e.getX()-radijus;
+				stanjeZaDodati.oy=e.getY()-radijus;
+				if(stanjeZaDodati.ox>img.getWidth()-2*radijus) stanjeZaDodati.ox=img.getWidth()-2*radijus;
+				if(stanjeZaDodati.ox<0)stanjeZaDodati.ox=0;
+				if(stanjeZaDodati.oy>img.getHeight()-2*radijus) stanjeZaDodati.oy=img.getHeight()-2*radijus;
+				if(stanjeZaDodati.oy<0)stanjeZaDodati.oy=0;
+				nacrtajSklop();
+			}
+			
+			if(stanjeRada==3){
+				if(prijelazZaDodati==null)prijelazZaDodati=new Prijelaz("*","*");
+			}
+			if(stanjeRada==4){
+				nacrtajSklop(e.getX(),e.getY());
+			}
+			
+		}
 		
 	}
 	
@@ -368,12 +475,57 @@ public class AutoDrawer extends JPanel{
 		/**
 		 * Funkcija propisana suceljem, ne radi nista...
 		 */
-		public void mouseClicked(MouseEvent e) {}
+		public void mouseClicked(MouseEvent e) {
+			
+			if(stanjeRada==1){
+				for(Stanje st:stanja)
+					if(jelSelektiran(e,st)){
+						//TODO unos podataka za stanja
+						break;
+					}
+			}
+			
+			if(stanjeRada==2){
+				if (e.getButton()==MouseEvent.BUTTON1){
+					stanjeZaDodati.boja=Color.BLACK;
+					String podatci=(String)JOptionPane.showInputDialog("Unesi ime stanja");
+					stanjeZaDodati.ime=podatci;
+					stanja.add(stanjeZaDodati);
+					stanjeRada=1;
+					stanjeZaDodati=null;
+					nacrtajSklop();
+				}
+				if(e.getButton()==MouseEvent.BUTTON2){
+					stanjeZaDodati=null;
+					stanjeRada=1;
+					nacrtajSklop();
+				}
+			}
+			
+			if(stanjeRada==3){
+				for(Stanje st:stanja)
+					if(jelSelektiran(e,st)){
+						prijelazZaDodati.iz=st.ime;
+						stanjeRada=4;
+						break;
+					} }
+			else if(stanjeRada==4)
+					for(Stanje sta:stanja)
+						if(jelSelektiran(e,sta)){
+							prijelazZaDodati.u=sta.ime;
+							prijelazi.add(prijelazZaDodati);
+							prijelazZaDodati=null;
+							stanjeRada=1;
+							nacrtajSklop();
+							break;
+						}
+		}
 		
 		/**
 		 * Funkcija propisana suceljem, obavlja dio drag&drop funkcionalnosti
 		 */
 		public void mousePressed(MouseEvent e) {
+			if(stanjeRada==1)
 			if(e.getButton()==MouseEvent.BUTTON1 )
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
@@ -390,6 +542,7 @@ public class AutoDrawer extends JPanel{
 		 * Funkcija propisana suceljem, obavlja dio drag&drop funkcionalnosti
 		 */
 		public void mouseReleased(MouseEvent e) {	
+			
 			if(pressed){
 				selektiran.boja=Color.BLACK;
 				selektiran=null;
@@ -400,12 +553,10 @@ public class AutoDrawer extends JPanel{
 		}
 
 		/**
-		 * kad mis ude stvara sliku ispocetka...
+		 * nis ne radi...
 		 */
 		public void mouseEntered(MouseEvent e) {
-			img=new BufferedImage(getPreferredSize().width,getPreferredSize().height,BufferedImage.TYPE_3BYTE_BGR);
 
-			nacrtajSklop();
 			}
 
 		/**
@@ -415,5 +566,10 @@ public class AutoDrawer extends JPanel{
 
 		}
 		
+	}
+
+
+	public void setStanjeRada(int stanjeRada) {
+		this.stanjeRada = stanjeRada;
 	}
 }

@@ -13,5 +13,19 @@ public class Prijelaz {
 		this.pobuda=pobuda;
 		this.izlaz=izlaz;
 	}
+	public Prijelaz(String pobuda,String izlaz){
+		super();
+		this.pobuda=pobuda;
+		this.izlaz=izlaz;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		boolean pov=true;
+		Prijelaz prj=(Prijelaz)obj;
+		if (obj==null) pov=false;
+		else if(prj.iz!=this.iz||prj.u!=this.u)pov=false;
+		return pov;
+	}
 
 }

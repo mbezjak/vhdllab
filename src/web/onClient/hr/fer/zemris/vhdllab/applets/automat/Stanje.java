@@ -18,6 +18,14 @@ public class Stanje {
 		this.oy=Integer.parseInt(oy);
 		this.boja=Color.BLACK;
 	}
+	
+	public Stanje(String ime,String izlaz,Color boja){
+		super();
+		this.ime=ime;
+		this.izlaz=izlaz;
+		this.boja=boja;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		boolean vrj;

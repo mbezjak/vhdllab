@@ -6,6 +6,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -22,6 +24,8 @@ public class Automat extends JPanel implements IEditor, IWizard {
 	 */
 	private static final long serialVersionUID = 2093412659859056334L;
 	
+	AutoDrawer adrw=null;
+	
 	public Automat(String podatci) {
 		super();
 		createGUI(podatci);
@@ -33,9 +37,24 @@ public class Automat extends JPanel implements IEditor, IWizard {
 	
 	private void createGUI(String podatci) {
 		
-		AutoDrawer adrw=new AutoDrawer(podatci);
-		JButton dodajNoviSignal=new JButton("Dodaj novi signal");
+		adrw=new AutoDrawer(podatci);
+		JButton dodajNoviSignal=new JButton("Dodaj novo stanje");
 		JButton dodajNoviPrijelaz=new JButton("Dodaj novi prijelaz");
+		
+		dodajNoviSignal.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				adrw.setStanjeRada(2);
+			}
+			
+		});
+		
+		dodajNoviPrijelaz.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				adrw.setStanjeRada(3);
+			}
+			
+		});
+		
 		JToolBar tulbar=new JToolBar();
 		tulbar.add(dodajNoviSignal);
 		tulbar.add(dodajNoviPrijelaz);

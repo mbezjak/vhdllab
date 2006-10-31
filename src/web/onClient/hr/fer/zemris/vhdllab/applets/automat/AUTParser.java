@@ -2,13 +2,14 @@ package hr.fer.zemris.vhdllab.applets.automat;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXException;
 public class AUTParser {
 		
 	public AUTPodatci podatci;
-	public HashSet<Stanje> stanja=new HashSet<Stanje>();
+	public LinkedList<Stanje> stanja=new LinkedList<Stanje>();
 	public HashSet<Prijelaz> prijelazi=new HashSet<Prijelaz>();
 	
 	public AUTParser(){
