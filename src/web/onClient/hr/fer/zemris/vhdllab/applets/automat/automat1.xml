@@ -81,4 +81,14 @@
 		<U>B</U>
 		<Pobuda>1</Pobuda>
 	</Prijelaz>
+	<Prijelaz>
+		<Iz>C</Iz>
+		<U>B</U>
+		<Pobuda>0</Pobuda>
+	</Prijelaz>
+		<Prijelaz>
+		<Iz>C</Iz>
+		<U>B</U>
+		<Pobuda>1</Pobuda>
+	</Prijelaz>
 </Automat>

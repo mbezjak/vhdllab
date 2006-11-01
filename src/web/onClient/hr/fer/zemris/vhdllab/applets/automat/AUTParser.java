@@ -52,6 +52,12 @@ public class AUTParser {
 	}
 	public void dodajPrijelaz(String iz,String u,String pobuda,String izlaz){
 		Prijelaz pr=new Prijelaz(iz,u,pobuda,izlaz);
-		prijelazi.add(pr);
+		boolean test=true;
+		for(Prijelaz temp:prijelazi)
+			if(temp.equals(pr)){
+				temp.dodajPodatak(pobuda,izlaz);
+				test=false;
+			}
+		if(test)prijelazi.add(pr);
 	}
 }

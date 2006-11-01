@@ -349,11 +349,7 @@ public class AutoDrawer extends JPanel{
 	private void upisiPodatkePrijelaza(Stanje iz, Stanje ka, Prijelaz pr, int x3, int y3, double fi) {
 		Graphics2D g=(Graphics2D) img.getGraphics();
 		
-		String tekst=null;
-		if(podatci.tip.equals(new String("Mealy")))
-			tekst=new StringBuffer().append(pr.pobuda).append("/").append(pr.izlaz).toString();
-		else if (podatci.tip.equals(new String("Moore"))) 
-			tekst=new StringBuffer().append(pr.pobuda).toString();
+		String tekst=pr.toString();
 		g.setFont(new Font("Helvetica", Font.PLAIN, 2*radijus/5));
 		
 		
@@ -448,7 +444,6 @@ public class AutoDrawer extends JPanel{
 		public void mouseMoved(MouseEvent e) {
 			
 			if(stanjeRada==2){
-				if(stanjeZaDodati==null) stanjeZaDodati=new Stanje("NOV","*",Color.RED);
 				stanjeZaDodati.ox=e.getX()-radijus;
 				stanjeZaDodati.oy=e.getY()-radijus;
 				if(stanjeZaDodati.ox>img.getWidth()-2*radijus) stanjeZaDodati.ox=img.getWidth()-2*radijus;
@@ -458,9 +453,6 @@ public class AutoDrawer extends JPanel{
 				nacrtajSklop();
 			}
 			
-			if(stanjeRada==3){
-				if(prijelazZaDodati==null)prijelazZaDodati=new Prijelaz("*","*");
-			}
 			if(stanjeRada==4){
 				nacrtajSklop(e.getX(),e.getY());
 			}
@@ -480,7 +472,7 @@ public class AutoDrawer extends JPanel{
 			if(stanjeRada==1){
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
-						//TODO unos podataka za stanja
+						//TODO editor
 						break;
 					}
 			}
@@ -488,8 +480,6 @@ public class AutoDrawer extends JPanel{
 			if(stanjeRada==2){
 				if (e.getButton()==MouseEvent.BUTTON1){
 					stanjeZaDodati.boja=Color.BLACK;
-					String podatci=(String)JOptionPane.showInputDialog("Unesi ime stanja");
-					stanjeZaDodati.ime=podatci;
 					stanja.add(stanjeZaDodati);
 					stanjeRada=1;
 					stanjeZaDodati=null;
@@ -509,7 +499,14 @@ public class AutoDrawer extends JPanel{
 					for(Stanje sta:stanja)
 						if(jelSelektiran(e,sta)){
 							prijelazZaDodati.u=sta.ime;
-							prijelazi.add(prijelazZaDodati);
+							prijelazZaDodati.editPrijelaz(podatci,AutoDrawer.this);
+							boolean test=true;
+							for(Prijelaz pr:prijelazi)
+								if(pr.equals(prijelazZaDodati)){
+									test=false;
+									pr.dodajPodatak(prijelazZaDodati);
+								}
+							if(test)prijelazi.add(prijelazZaDodati);
 							prijelazZaDodati=null;
 							stanjeRada=1;
 							nacrtajSklop();
@@ -572,6 +569,39 @@ public class AutoDrawer extends JPanel{
 
 
 	public void setStanjeRada(int stanjeRada) {
+		stanjeZaDodati=null;
+		prijelazZaDodati=null;
+		nacrtajSklop();
 		this.stanjeRada = stanjeRada;
+		if(stanjeRada==2){
+			boolean zastavica=true;
+			while(zastavica){
+				stanjeZaDodati=new Stanje(podatci,this);
+				if(stanjeZaDodati.ime==null){
+					this.stanjeRada=1;
+					stanjeZaDodati=null;
+					zastavica=false;
+				}
+				boolean z2=true;
+				if(zastavica)
+					for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
+				if(z2)zastavica=false;
+				else{
+					int x=JOptionPane.showConfirmDialog(this,
+							"Unjeli ste ime stanja koje vec postoji\nZelite li pokusat ponovo?",
+							"Upozorenje",
+							JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+					if(x==JOptionPane.NO_OPTION){
+						this.stanjeRada=1;
+						stanjeZaDodati=null;
+						zastavica=false;
+					}
+				}
+			}
+			
+		}
+		if(stanjeRada==3)prijelazZaDodati=new Prijelaz();
 	}
+
+
 }
