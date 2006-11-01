@@ -24,112 +24,96 @@ public class LanguageConstants {
 
 
 	/**
+	 * Append this keyword to existing key to get its mnemonic value.
+	 */
+	public static final String MNEMONIC_APPEND = ".mnemonic";
+
+	/**
+	 * Append this keyword to existing key to get its accelerator value.
+	 */
+	public static final String ACCELERATOR_APPEND = ".accelerator";
+
+	
+	/**
 	 * Key for 'File' menu.
 	 */
 	public static final String MENU_FILE = "menu.file";
-	/**
-	 * Key for mnemonic of 'File' menu.
-	 */
-	public static final String MENU_FILE_MNEMONIC = "menu.file.mnemonic";
-
 	/**
 	 * Key for 'Edit' menu.
 	 */
 	public static final String MENU_EDIT = "menu.edit";
 	/**
-	 * Key for mnemonic of 'Edit' menu.
-	 */
-	public static final String MENU_EDIT_MNEMONIC = "menu.edit.mnemonic";
-
-	/**
 	 * Key for 'View' menu.
 	 */
 	public static final String MENU_VIEW = "menu.view";
 	/**
-	 * Key for mnemonic of 'View' menu.
+	 * Key for 'Tools' menu.
 	 */
-	public static final String MENU_VIEW_MNEMONIC = "menu.view.mnemonic";
-
-	/**
-	 * Key for 'Tool' menu.
-	 */
-	public static final String MENU_TOOL = "menu.tool";
-	/**
-	 * Key for mnemonic of 'Tool' menu.
-	 */
-	public static final String MENU_TOOL_MNEMONIC = "menu.tool.mnemonic";
-
+	public static final String MENU_TOOLS = "menu.tools";
 	/**
 	 * Key for 'Help' menu.
 	 */
 	public static final String MENU_HELP = "menu.help";
-	/**
-	 * Key for mnemonic of 'Help' menu.
-	 */
-	public static final String MENU_HELP_MNEMONIC = "menu.help.mnemonic";
-	
+
 	
 	/**
-	 * Key for 'New' menu item.
+	 * Key for 'New' menu item in 'File' menu.
 	 */
-	public static final String MENU_ITEM_NEW = "menu.item.new";
+	public static final String MENU_FILE_NEW = "menu.file.new";
+
 	/**
-	 * Key for mnemonic of 'New' menu item.
+	 * Key for 'Project' menu item in 'New' menu item.
 	 */
-	public static final String MENU_ITEM_NEW_MNEMONIC = "menu.item.new.mnemonic";
+	public static final String MENU_FILE_NEW_PROJECT = "menu.file.new.project";
 	
 	/**
-	 * Key for 'New Project' menu item.
+	 * Key for 'File' menu item in 'New' menu item.
 	 */
-	public static final String MENU_ITEM_NEW_PROJECT = "menu.item.new.project";
+	public static final String MENU_FILE_NEW_FILE = "menu.file.new.file";
+
 	/**
-	 * Key for mnemonic of 'New Project' menu item.
+	 * Key for 'Testbench' menu item in 'New' menu item.
 	 */
-	public static final String MENU_ITEM_NEW_PROJECT_MNEMONIC = "menu.item.new.project.mnemonic";
+	public static final String MENU_FILE_NEW_TESTBENCH = "menu.file.new.testbench";
+
+	/**
+	 * Key for 'Schema' menu item in 'New' menu item.
+	 */
+	public static final String MENU_FILE_NEW_SCHEMA = "menu.file.new.schema";
+
+	/**
+	 * Key for 'Automat' menu item in 'New' menu item.
+	 */
+	public static final String MENU_FILE_NEW_AUTOMAT = "menu.file.new.automat";
+
+	/**
+	 * Key for 'Open' menu item in 'File' menu.
+	 */
+	public static final String MENU_FILE_OPEN = "menu.file.open";
 	
 	/**
-	 * Key for 'New File' menu item.
+	 * Key for 'Save' menu item in 'File' menu.
 	 */
-	public static final String MENU_ITEM_NEW_FILE = "menu.item.new.file";
-	/**
-	 * Key for mnemonic of 'New File' menu item.
-	 */
-	public static final String MENU_ITEM_NEW_FILE_MNEMONIC = "menu.item.new.file.mnemonic";
+	public static final String MENU_FILE_SAVE = "menu.file.save";
 
 	/**
-	 * Key for 'New Testbench' menu item.
+	 * Key for 'Save All' menu item in 'File' menu.
 	 */
-	public static final String MENU_ITEM_NEW_TESTBENCH = "menu.item.new.testbench";
-	/**
-	 * Key for mnemonic of 'New Testbench' menu item.
-	 */
-	public static final String MENU_ITEM_NEW_TESTBENCH_MNEMONIC = "menu.item.new.testbench.mnemonic";
+	public static final String MENU_FILE_SAVE_ALL = "menu.file.save.all";
 
 	/**
-	 * Key for 'New Schema' menu item.
+	 * Key for 'Close' menu item in 'File' menu.
 	 */
-	public static final String MENU_ITEM_NEW_SCHEMA = "menu.item.new.schema";
-	/**
-	 * Key for mnemonic of 'New Schema' menu item.
-	 */
-	public static final String MENU_ITEM_NEW_SCHEMA_MNEMONIC = "menu.item.new.schema.mnemonic";
+	public static final String MENU_FILE_CLOSE = "menu.file.close";
 
 	/**
-	 * Key for 'New Automat' menu item.
+	 * Key for 'Close All' menu item in 'File' menu.
 	 */
-	public static final String MENU_ITEM_NEW_AUTOMAT = "menu.item.new.automat";
+	public static final String MENU_FILE_CLOSE_ALL = "menu.file.close.all";
+	
 	/**
-	 * Key for mnemonic of 'New Automat' menu item.
+	 * Key for 'Exit' menu item in 'File' menu.
 	 */
-	public static final String MENU_ITEM_NEW_AUTOMAT_MNEMONIC = "menu.item.new.automat.mnemonic";
-
-	/**
-	 * Key for 'Exit' menu item.
-	 */
-	public static final String MENU_ITEM_EXIT = "menu.item.exit";
-	/**
-	 * Key for mnemonic of 'Exit' menu item.
-	 */
-	public static final String MENU_ITEM_EXIT_MNEMONIC = "menu.item.exit.mnemonic";
+	public static final String MENU_FILE_EXIT = "menu.file.exit";
 
 }
