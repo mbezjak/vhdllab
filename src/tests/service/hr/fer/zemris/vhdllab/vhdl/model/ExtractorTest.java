@@ -3,6 +3,15 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.dao.impl.dummy.UserFileDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.model.Project;
+import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -163,7 +172,51 @@ public class ExtractorTest {
 		Extractor.extractHierarchy(identifiers, provider);
 		fail("Not yet implemented.");
 	}
-	
+
+	/**
+	 * Test dependency extraction.
+	 */
+	@Test
+	public void extractDependencies() {
+		try {
+			VHDLLabManagerImpl vhdlLabman = new VHDLLabManagerImpl();
+			vhdlLabman.setFileDAO(new FileDAOMemoryImpl());
+			vhdlLabman.setGlobalFileDAO(new GlobalFileDAOMemoryImpl());
+			vhdlLabman.setProjectDAO(new ProjectDAOMemoryImpl());
+			vhdlLabman.setUserFileDAO(new UserFileDAOMemoryImpl());
+			
+			Project proj = vhdlLabman.createNewProject("testProject", Long.valueOf(1));
+			File sklopI = vhdlLabman.createNewFile(proj,"sklopI",File.FT_VHDLSOURCE);
+			File sklopNE = vhdlLabman.createNewFile(proj,"sklopNE",File.FT_VHDLSOURCE);
+			File sklopNI = vhdlLabman.createNewFile(proj,"sklopNI",File.FT_VHDLSOURCE);
+			File sklopNINI = vhdlLabman.createNewFile(proj,"sklopNINI",File.FT_VHDLSOURCE);
+			File sklopNI_tb = vhdlLabman.createNewFile(proj,"sklopNI_tb",File.FT_VHDLSOURCE);
+			sklopI.setContent(provider.provide("0"));
+			vhdlLabman.saveFile(sklopI.getId(), sklopI.getContent());
+			sklopNE.setContent(provider.provide("1"));
+			vhdlLabman.saveFile(sklopNE.getId(), sklopNE.getContent());
+			sklopNI.setContent(provider.provide("2"));
+			vhdlLabman.saveFile(sklopNI.getId(), sklopNI.getContent());
+			sklopNINI.setContent(provider.provide("3"));
+			vhdlLabman.saveFile(sklopNINI.getId(), sklopNINI.getContent());
+			sklopNI_tb.setContent(provider.provide("4"));
+			vhdlLabman.saveFile(sklopNI_tb.getId(), sklopNI_tb.getContent());
+			
+			List<File> deps = vhdlLabman.extractDependencies(sklopNI);
+			
+			Set<File> extractedDeps = new HashSet<File>(deps);
+			Set<File> expectedDeps = new HashSet<File>();
+			expectedDeps.add(sklopNI);
+			expectedDeps.add(sklopI);
+			expectedDeps.add(sklopNE);
+			
+			assertEquals("Skupovi ovisnosti ne odgovaraju!",expectedDeps,extractedDeps);
+		} catch(Exception e) {
+			e.printStackTrace();
+			fail("Izazvana je iznimka: "+e);
+		}
+	}
+
 	private static Extractor.VHDLSourceProvider provider = null;
 	
 	@BeforeClass

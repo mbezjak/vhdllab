@@ -11,10 +11,12 @@ import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.service.dependency.IDependency;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
@@ -23,7 +25,10 @@ import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class VHDLLabManagerImpl implements VHDLLabManager {
 	
@@ -390,6 +395,29 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public List<File> extractDependencies(File file) throws ServiceException {
-		return new ArrayList<File>();
+		Set<File> visitedFiles = new HashSet<File>();
+		List<File> notYetAnalyzedFiles = new LinkedList<File>();
+		notYetAnalyzedFiles.add(file);
+		visitedFiles.add(file);
+		while(!notYetAnalyzedFiles.isEmpty()) {
+			File f = notYetAnalyzedFiles.remove(0);
+			List<File> dependancies = extractDependenciesDisp(f);
+			for(File dependancy : dependancies) {
+				if(visitedFiles.contains(dependancy)) continue;
+				notYetAnalyzedFiles.add(dependancy);
+				visitedFiles.add(dependancy);
+			}
+		}
+		return new ArrayList<File>(visitedFiles);
+	}
+
+	private List<File> extractDependenciesDisp(File file) throws ServiceException {
+		IDependency depExtractor = null;
+		if(file.getFileType().equals(File.FT_VHDLSOURCE)) {
+			depExtractor = new VHDLDependencyExtractor();
+		} else {
+			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");
+		}
+		return depExtractor.extractDependencies(file, this);
 	}
 }
