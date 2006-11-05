@@ -39,6 +39,7 @@ import javax.swing.JColorChooser;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingConstants;
 
+
 class Console 
 {
   // Create a title string from the class name:
@@ -136,7 +137,7 @@ public class WaveApplet extends JApplet
 	private JPopupMenu showValue = new JPopupMenu();
 
 	/** Trenutna vrijednost ide u ovaj textField */ 
-	/* Bitno je da ovdje ne staviti fiksnu duljinu jer ce paneli gledati tu duljinu, a ne broj znakova u textFieldu */
+	/* Bitno je ovdje ne staviti fiksnu duljinu jer ce paneli gledati tu duljinu, a ne broj znakova u textFieldu */
 	private JTextField currentValue = new JTextField();
 
     /** Sadrzi rezultate simulacije. */
@@ -231,7 +232,7 @@ public class WaveApplet extends JApplet
          * Postavlja odgovarajuci offset na temelju trenutne vrijednosti scrollbara
          * i ponovno crta obje komponente
          */
-        public void adjustmentValueChanged (AdjustmentEvent event)
+        public void adjustmentValueChanged(AdjustmentEvent event)
         {
             waves.setVerticalOffset(verticalScrollbar.getValue());
             signalNames.setVerticalOffset(verticalScrollbar.getValue());
@@ -515,6 +516,11 @@ public class WaveApplet extends JApplet
     {
         public void actionPerformed(ActionEvent event) 
         {
+            /* ako je veci od 214748364 prekoracio bi max int */ 
+            if (scale.getMaximumDurationInPixels() >= 214748364)
+            {
+                return;
+            }
             /* postavlja nove vrijednosti i automatski podesava sve parametre */
             scale.setDurationsInPixelsAfterZoom(10d);
             int offset = horizontalScrollbar.getValue();
@@ -545,6 +551,11 @@ public class WaveApplet extends JApplet
     {
         public void actionPerformed(ActionEvent event) 
         {
+            /** Ako je veci od 1073741824, prekoracio bi max int */
+            if (scale.getMaximumDurationInPixels() >= 1073741824)
+            {
+                return;
+            }
             /* postavlja nove vrijednosti i automatski podesava sve parametre */
             scale.setDurationsInPixelsAfterZoom(2d);
             int offset = horizontalScrollbar.getValue();
@@ -1497,7 +1508,7 @@ public class WaveApplet extends JApplet
       
   public void init() 
   {
-    VcdParser parser = new VcdParser("src/web/onClient/hr/fer/zemris/vhdllab/applets/simulations/adder2.vcd");
+    VcdParser parser = new VcdParser("adder2.vcd");
     parser.parse();
     textField.setEditable(false);
     textField.setToolTipText("Value");

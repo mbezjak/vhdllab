@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
@@ -16,12 +17,7 @@ import javax.swing.JPanel;
  */
 class Scale extends JPanel
 {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -1297916589804859204L;
-
-	/** 
+    /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * femto sekundama 
      */
@@ -87,6 +83,9 @@ class Scale extends JPanel
     /** Trajanje u pikselima koje ide direktno za crtanje valnih oblika */
     private int[] durationsInPixels; 
 
+    /** Maksimalna vrijednost trajanja signala izemdu dvije promjene */
+    private int maximumDurationInPixels = 0;
+
     /** Povecava/smanjuje skalu za neku vrijednost */
     private double scaleFactor = 1f;
     
@@ -129,6 +128,10 @@ class Scale extends JPanel
 
     /** Boje */
     private ThemeColor themeColor;
+    
+    /** SerialVersionUID */ 
+    private static final long serialVersionUID = 15245;
+
 
 
     /**
@@ -218,6 +221,10 @@ class Scale extends JPanel
         for (int i = 0; i < durationsInPixels.length; i++)
         {
             durationsInPixels[i] = (int)(durationsInFemtoSeconds[i] * measureUnit);
+            if (durationsInPixels[i] > maximumDurationInPixels)
+            {
+                maximumDurationInPixels = durationsInPixels[i];
+            }
 			scaleEndPointInPixels += durationsInPixels[i];
         }
     }
@@ -238,10 +245,15 @@ class Scale extends JPanel
             durationsInFemtoSeconds[i] *= scaleFactor;
         }
         scaleEndPointInPixels = 0;
+        maximumDurationInPixels = 0;
         for (int i = 0; i < durationsInPixels.length; i++)
         {
             /* s istim 10^x faktorom mnozi se cijelo vrijeme */
             durationsInPixels[i] = (int)(durationsInFemtoSeconds[i] * measureUnit);
+            if (durationsInPixels[i] > maximumDurationInPixels)
+            {
+                maximumDurationInPixels = durationsInPixels[i];
+            }
 			scaleEndPointInPixels += durationsInPixels[i];
         }
         this.scaleFactor *= scaleFactor;
@@ -313,6 +325,15 @@ class Scale extends JPanel
     public int getScaleEndPointInPixels ()
     {
         return scaleEndPointInPixels;
+    }
+
+
+    /**
+     * Vraca maksimalni durationInPixels
+     */
+    public int getMaximumDurationInPixels()
+    {
+        return maximumDurationInPixels;
     }
 
 
