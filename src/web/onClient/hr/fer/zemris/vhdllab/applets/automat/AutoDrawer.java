@@ -2,12 +2,16 @@ package hr.fer.zemris.vhdllab.applets.automat;
 
 
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -19,8 +23,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 import org.xml.sax.SAXException;
 /**
@@ -76,6 +87,11 @@ public class AutoDrawer extends JPanel{
 	
 	/**
 	 * Stanja rada definirat ce dali se dodaje signal, dodaje prijelaz ili editira slika.
+	 * stanjeRada=1 mjenjanje postojecih objekata
+	 * stanjeRada=2 dodavanje novog stanja
+	 * stanjeRada=3 dodavanje novog prijelaza (selekcija stanja iz)
+	 * stanjeRada=4 dodavanje novog prijelaza (selekcija stanja u)
+	 * stanjeRada=5 brisanje postojecih objekata
 	 */
 	private int stanjeRada=1;
 
@@ -400,8 +416,56 @@ public class AutoDrawer extends JPanel{
 	 * @return true ili false
 	 */
 	private boolean jelSelektiran(MouseEvent e,Prijelaz pr){
-		// TODO jelselektiran
-		return false;
+		Stanje ka=null,iz=null;
+		for(Stanje st:stanja){
+			if(st.ime.equals(pr.iz))iz=st;
+			if(st.ime.equals(pr.u))ka=st;
+		}
+		
+		int x1,x2,y1,y2;
+		double fi=0;
+		if(ka.ox!=iz.ox){
+			fi=Math.atan((double)(ka.oy-iz.oy)/(ka.ox-iz.ox));
+			if(ka.ox<iz.ox)fi=Math.PI+fi;
+		}else{
+			fi=Math.PI/2;
+			if(ka.oy<iz.oy)fi=Math.PI+fi;
+		}
+		double strOdm=0.2;
+		x1=ka.ox+radijus-(int)(Math.cos(fi+strOdm)*radijus);
+		y1=ka.oy+radijus-(int)(Math.sin(fi+strOdm)*radijus);
+		x2=iz.ox+radijus+(int)(Math.cos(fi-strOdm)*radijus);
+		y2=iz.oy+radijus+(int)(Math.sin(fi-strOdm)*radijus);
+		Graphics2D g=(Graphics2D) img.getGraphics();
+		if(ka.equals(selektiran)||iz.equals(selektiran)) g.setColor(Color.ORANGE); 
+		else g.setColor(Color.BLACK);
+		double l=radijus/2;
+		int x3=(int)(Math.abs(x2+(x1-x2)/2)+Math.cos(Math.PI/2-fi)*l);
+		int y3=(int)(Math.abs(y2+(y1-y2)/2)-Math.sin(Math.PI/2-fi)*l);
+		if(ka.equals(iz)){
+			strOdm=0.7;
+			x1=ka.ox+radijus-(int)(Math.cos(fi+strOdm)*radijus);
+			y1=ka.oy+radijus-(int)(Math.sin(fi+strOdm)*radijus);
+			x2=iz.ox+radijus-(int)(Math.cos(fi-strOdm)*radijus);
+			y2=iz.oy+radijus-(int)(Math.sin(fi-strOdm)*radijus);
+			x3=(int)(Math.abs(x2+(x1-x2)/2));
+			y3=(int)(Math.abs(y2+(y1-y2)/2)-7*l);
+			strOdm=-0.2;
+			}
+
+		String tekst=pr.toString();
+		FontMetrics fm=g.getFontMetrics(new Font("Helvetica",Font.PLAIN,2*radijus/5));
+		int xtekst=x3-fm.stringWidth(tekst)/2;
+		int ytekst=y3+fm.getAscent()/2;
+		
+		if(iz.equals(ka)) {
+			ytekst+=(int)(3*radijus/2.2);
+		}else{
+			xtekst+=(int)((double)fm.stringWidth(tekst)/2*Math.sin(fi));
+			ytekst-=(int)((double)fm.getAscent()/2*Math.cos(fi));
+		}
+		if(e.getX()>xtekst&&e.getX()<xtekst+fm.stringWidth(tekst)&&e.getY()<ytekst&&e.getY()>ytekst-fm.getHeight())return true;
+		else return false;
 	}
 	
 	/**
@@ -415,6 +479,112 @@ public class AutoDrawer extends JPanel{
 		int y1=e.getY();
 		return (Math.sqrt(Math.pow(x1-st.ox-radijus,2)+Math.pow(y1-st.oy-radijus,2)))<radijus;
 	}
+	
+
+
+
+	public void setStanjeRada(int stanjeRada) {
+		stanjeZaDodati=null;
+		prijelazZaDodati=null;
+		nacrtajSklop();
+		this.stanjeRada = stanjeRada;
+		if(stanjeRada==2)stanjeZaDodati=new Stanje();
+/*		if(stanjeRada==2){
+			boolean zastavica=true;
+			while(zastavica){
+				stanjeZaDodati=new Stanje(podatci,this);
+				if(stanjeZaDodati.ime==null){
+					this.stanjeRada=1;
+					stanjeZaDodati=null;
+					zastavica=false;
+				}
+				boolean z2=true;
+				if(zastavica)
+					for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
+				if(z2)zastavica=false;
+				else{
+					int x=JOptionPane.showConfirmDialog(this,
+							"Unjeli ste ime stanja koje vec postoji\nZelite li pokusat ponovo?",
+							"Upozorenje",
+							JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+					if(x==JOptionPane.NO_OPTION){
+						this.stanjeRada=1;
+						stanjeZaDodati=null;
+						zastavica=false;
+					}
+				}
+			}
+		
+		}*/
+		if(stanjeRada==3)prijelazZaDodati=new Prijelaz();
+	}
+
+	public void brisiPrijelaz(Prijelaz pr) {
+		prijelazi.remove(pr);
+		nacrtajSklop();
+	}
+
+	public void brisiStanje(Stanje st) {
+		HashSet<Prijelaz> pomocni=new HashSet<Prijelaz>();
+		for(Prijelaz pr:prijelazi){
+			if(st.ime.equals(pr.iz)||st.ime.equals(pr.u))pomocni.add(pr);
+		}
+		prijelazi.removeAll(pomocni);
+		stanja.remove(st);
+	}
+
+	public void editorPrijelaza(Prijelaz pr) {
+		JButton add=new JButton("Dodaj...");
+		JButton delete=new JButton("Obrisi...");
+		JLabel poruka=new JLabel("Popis prijelaza:");
+		
+		final DefaultListModel listam=new DefaultListModel();
+		for(String st:pr.pobudaIzlaz)listam.addElement(st);
+		final JList list=new JList(listam);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setLayoutOrientation(JList.VERTICAL);
+		list.setVisibleRowCount(-1);
+		list.setSelectedIndex(0);
+		JScrollPane listScroller = new JScrollPane(list);
+		listScroller.setPreferredSize(new Dimension(250, 80));
+		
+		JPanel panel=new JPanel(new BorderLayout());
+		panel.add(listScroller,BorderLayout.CENTER);
+		JPanel panel2=new JPanel(new GridLayout(2,1));
+		panel2.add(add);
+		panel2.add(delete);
+		panel.add(panel2,BorderLayout.EAST);
+		panel.add(poruka,BorderLayout.NORTH);
+		
+		add.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				Prijelaz pomocni=new Prijelaz();
+				String str=pomocni.editPrijelaz2(podatci,AutoDrawer.this);
+				if(listam.indexOf(str)==-1)listam.addElement(str);
+			};
+		});
+		
+		delete.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(list.getSelectedIndex()>-1)
+					if (listam.size()>1) listam.remove(list.getSelectedIndex());
+					else JOptionPane.showMessageDialog(AutoDrawer.this,"Mora ostati barem jedan prijelaz u listi!");
+			}	
+		});
+		
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
+		JDialog dialog=optionPane.createDialog(this,"Editor Prijelaza");
+		dialog.setVisible(true);
+		Object selected=optionPane.getValue();
+		
+		if(selected.equals(JOptionPane.OK_OPTION)){
+			pr.pobudaIzlaz.clear();
+			for(int i=0;i<listam.getSize();i++) pr.pobudaIzlaz.add((String)listam.get(i));
+			nacrtajSklop();
+		}
+	}
+	
+//****************************NESTED CLASESS****************************************
 	
 	/**
 	 * Klasa koja se bavi pomicanjem misa i selektiranih elemenata. Implementira MouseMotionListener
@@ -469,10 +639,16 @@ public class AutoDrawer extends JPanel{
 		 */
 		public void mouseClicked(MouseEvent e) {
 			
-			if(stanjeRada==1){
+			if(stanjeRada==1&&e.getButton()==MouseEvent.BUTTON3){
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
-						//TODO editor
+						st.editStanje2(podatci,AutoDrawer.this);
+						nacrtajSklop();
+						break;
+					}
+				for(Prijelaz pr:prijelazi)
+					if(jelSelektiran(e,pr)){
+						editorPrijelaza(pr);
 						break;
 					}
 			}
@@ -480,9 +656,39 @@ public class AutoDrawer extends JPanel{
 			if(stanjeRada==2){
 				if (e.getButton()==MouseEvent.BUTTON1){
 					stanjeZaDodati.boja=Color.BLACK;
-					stanja.add(stanjeZaDodati);
+					boolean zastavica=true;
+					boolean dodaj=true;
+					while(zastavica){
+						stanjeZaDodati.editStanje(podatci,AutoDrawer.this);
+						if(stanjeZaDodati.ime==null){
+							stanjeRada=2;
+							dodaj=false;
+							stanjeZaDodati=null;
+							stanjeZaDodati=new Stanje();
+							zastavica=false;
+						}
+						boolean z2=true;
+						if(zastavica)
+							for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
+						if(z2)zastavica=false;
+						else{
+							int x=JOptionPane.showConfirmDialog(AutoDrawer.this,
+									"Unjeli ste ime stanja koje vec postoji\nZelite li pokusat ponovo?",
+									"Upozorenje",
+									JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+							if(x==JOptionPane.NO_OPTION){
+								dodaj=false;
+								stanjeRada=2;
+								stanjeZaDodati=null;
+								stanjeZaDodati=new Stanje();
+								zastavica=false;
+							}
+						}
+					}
+					if(dodaj)stanja.add(stanjeZaDodati);
 					stanjeRada=1;
 					stanjeZaDodati=null;
+					setStanjeRada(2);
 					nacrtajSklop();
 				}
 
@@ -506,18 +712,34 @@ public class AutoDrawer extends JPanel{
 									test=false;
 									pr.dodajPodatak(prijelazZaDodati);
 								}
-							if(test)prijelazi.add(prijelazZaDodati);
+							if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0)prijelazi.add(prijelazZaDodati);
 							prijelazZaDodati=null;
-							stanjeRada=1;
+							prijelazZaDodati=new Prijelaz();
+							stanjeRada=3;
 							nacrtajSklop();
 							break;
 						}
-			if(e.getButton()==MouseEvent.BUTTON3){
+			if(stanjeRada==5){
+				for(Stanje st:stanja)
+					if (jelSelektiran(e,st)) {
+						brisiStanje(st);
+						nacrtajSklop();
+						break;
+					}	
+				for(Prijelaz pr:prijelazi)
+					if(jelSelektiran(e,pr)){
+						brisiPrijelaz(pr);
+						nacrtajSklop();
+						break;
+					}
+			}
+			
+			/*if(e.getButton()==MouseEvent.BUTTON3){
 				stanjeZaDodati=null;
 				prijelazZaDodati=null;
 				stanjeRada=1;
 				nacrtajSklop();
-			}
+			}*/
 		}
 		
 		/**
@@ -565,42 +787,6 @@ public class AutoDrawer extends JPanel{
 
 		}
 		
-	}
-
-
-	public void setStanjeRada(int stanjeRada) {
-		stanjeZaDodati=null;
-		prijelazZaDodati=null;
-		nacrtajSklop();
-		this.stanjeRada = stanjeRada;
-		if(stanjeRada==2){
-			boolean zastavica=true;
-			while(zastavica){
-				stanjeZaDodati=new Stanje(podatci,this);
-				if(stanjeZaDodati.ime==null){
-					this.stanjeRada=1;
-					stanjeZaDodati=null;
-					zastavica=false;
-				}
-				boolean z2=true;
-				if(zastavica)
-					for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
-				if(z2)zastavica=false;
-				else{
-					int x=JOptionPane.showConfirmDialog(this,
-							"Unjeli ste ime stanja koje vec postoji\nZelite li pokusat ponovo?",
-							"Upozorenje",
-							JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-					if(x==JOptionPane.NO_OPTION){
-						this.stanjeRada=1;
-						stanjeZaDodati=null;
-						zastavica=false;
-					}
-				}
-			}
-			
-		}
-		if(stanjeRada==3)prijelazZaDodati=new Prijelaz();
 	}
 
 

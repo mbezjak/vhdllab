@@ -55,6 +55,13 @@ public class Prijelaz {
 		if(pom!=null)pobudaIzlaz.add(pom);
 	}
 	
+	public String editPrijelaz2(AUTPodatci podatci,Component obj){
+		String pom=null;
+		if(podatci.ime.equals("Mealy")) pom=editMealy(obj);
+		else pom=editMoore(obj);
+		return pom;
+	}	
+	
 	private String editMealy(Component obj) {
 		JTextField pobuda=new JTextField("");
 		JTextField izlaz=new JTextField("");

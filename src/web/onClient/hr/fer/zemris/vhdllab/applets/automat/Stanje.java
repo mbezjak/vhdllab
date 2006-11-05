@@ -26,13 +26,14 @@ public class Stanje {
 		this.oy=Integer.parseInt(oy);
 		this.boja=Color.BLACK;
 	}
-	public Stanje(AUTPodatci podatci,Component obj) {
-		//TODO provjera za format unosa
+	public Stanje() {
 		super();
-		editStanje(podatci,obj);
+		this.ime="";
+		izlaz="";
 		this.boja=Color.RED;
 	}
 	
+
 	@Override
 	public boolean equals(Object obj) {
 		boolean vrj;
@@ -57,7 +58,7 @@ public class Stanje {
 		else editMealy(obj);
 	}
 	private void editMealy(Component obj) {
-		JTextField ime=new JTextField("");
+		JTextField ime=new JTextField(this.ime);
 		JLabel imeLab=new JLabel("Unesite ime stanja: ");
 		JPanel panel=new JPanel();
 		panel.setLayout(new GridLayout(1,2));
@@ -70,12 +71,12 @@ public class Stanje {
 		
 		Object selected=pane.getValue();		
 		if(selected.equals(JOptionPane.CANCEL_OPTION)) this.ime=null;
-		else this.ime=ime.getText();
+		else this.ime=ime.getText().toUpperCase();
 		
 	}
 	private void editMoore(Component obj) {
-		JTextField ime=new JTextField("");
-		JTextField izlaz=new JTextField("");
+		JTextField ime=new JTextField(this.ime);
+		JTextField izlaz=new JTextField(this.izlaz);
 		JLabel imeLab=new JLabel("Unesite ime stanja: ");
 		JLabel izlazLab=new JLabel("Unesite izlaz za stanje: ");
 		JPanel panel=new JPanel();
@@ -92,7 +93,29 @@ public class Stanje {
 		Object selected=pane.getValue();		
 		if(selected.equals(JOptionPane.CANCEL_OPTION)) this.ime=null;
 		else {
-			this.ime=ime.getText();
+			this.ime=ime.getText().toUpperCase();
+			this.izlaz=izlaz.getText();
+		}
+	}
+	
+	public void editStanje2(AUTPodatci podatci, Component obj){
+		if(podatci.tip.equals("Moore")) editMoore2(obj);
+		else JOptionPane.showMessageDialog(obj,"Mealyev automat!\nNijr moguce izmjeniti podatke stanja.");
+	}
+	private void editMoore2(Component obj) {
+		JTextField izlaz=new JTextField(this.izlaz);
+		JLabel izlazLab=new JLabel("Unesite izlaz za stanje: ");
+		JPanel panel=new JPanel();
+		panel.setLayout(new GridLayout(1,2));
+		panel.add(izlazLab);
+		panel.add(izlaz);
+		
+		JOptionPane pane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
+		JDialog dialog=pane.createDialog(obj,"Editor Stanja");
+		dialog.setVisible(true);
+		
+		Object selected=pane.getValue();		
+		if(selected.equals(JOptionPane.OK_OPTION)) {
 			this.izlaz=izlaz.getText();
 		}
 	}
