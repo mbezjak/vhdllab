@@ -10,6 +10,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -132,6 +133,7 @@ public class AutoDrawer extends JPanel{
 	protected void paintComponent(Graphics g) {
 		if(img == null) {
 			img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
+			Graphics2D gr=(Graphics2D)img.getGraphics();
 			nacrtajSklop();
 		} else {
 			if (img.getHeight()!=this.getHeight()||img.getWidth()!=this.getWidth()){
@@ -176,6 +178,7 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void nacrtajSklop(int eventx,int eventy){
 		Graphics2D g=(Graphics2D)img.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(Color.BLACK);
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
 		g.setColor(Color.WHITE);
@@ -229,6 +232,8 @@ public class AutoDrawer extends JPanel{
 		}
 		
 		repaint();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
+
 		
 	}
 	/**
@@ -237,6 +242,7 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void nacrtajSklop(){
 		Graphics2D g=(Graphics2D)img.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(Color.BLACK);
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
 		g.setColor(Color.WHITE);
@@ -282,6 +288,8 @@ public class AutoDrawer extends JPanel{
 		}
 		
 		repaint();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
+
 		
 	}
 	
@@ -309,6 +317,7 @@ public class AutoDrawer extends JPanel{
 		x2=iz.ox+radijus+(int)(Math.cos(fi-strOdm)*radijus);
 		y2=iz.oy+radijus+(int)(Math.sin(fi-strOdm)*radijus);
 		Graphics2D g=(Graphics2D) img.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		if(ka.equals(selektiran)||iz.equals(selektiran)) g.setColor(Color.ORANGE); 
 		else g.setColor(Color.BLACK);
 		double l=radijus/2;
@@ -351,7 +360,7 @@ public class AutoDrawer extends JPanel{
 		ystr[2]=(int) (y1-l2*Math.sin(fi-0.3+strOdm));
 		xstr[0]=x1;ystr[0]=y1;
 		g.fillPolygon(xstr,ystr,3);
-
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 	/**
 	 * ispis podataka prijelaza
@@ -364,7 +373,7 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void upisiPodatkePrijelaza(Stanje iz, Stanje ka, Prijelaz pr, int x3, int y3, double fi) {
 		Graphics2D g=(Graphics2D) img.getGraphics();
-		
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		String tekst=pr.toString();
 		g.setFont(new Font("Helvetica", Font.PLAIN, 2*radijus/5));
 		
@@ -385,6 +394,8 @@ public class AutoDrawer extends JPanel{
 		
 		g.drawString(tekst,xtekst,ytekst);
 		g.setColor(cl);
+
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
 	/**
