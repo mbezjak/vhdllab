@@ -1,6 +1,6 @@
-package hr.fer.zemris.vhdllab.tb.drawer;
+package hr.fer.zemris.vhdllab.applets.tb.drawer;
 
-import hr.fer.zemris.delab.tb_stari.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.Color;
 import java.awt.Dimension;

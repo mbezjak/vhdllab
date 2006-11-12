@@ -2,8 +2,6 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
-import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;

@@ -1,11 +1,10 @@
-package hr.fer.zemris.vhdllab.tb.drawer;
+package hr.fer.zemris.vhdllab.applets.tb.drawer;
 
-import hr.fer.zemris.delab.tb_stari.CircuitInterface;
-import hr.fer.zemris.delab.tb_stari.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -15,18 +14,15 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
 
-  public class tb_draw extends JPanel implements tbEditor {
+  public class tb_draw extends JPanel {
 
 	/**
 	 * 

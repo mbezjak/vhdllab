@@ -117,7 +117,7 @@
     </javac>
   </target>
 
-  <target name="package-dao" depends="compile-dao,hibernate-hbm">
+  <target name="package-dao" depends="compile-dao,hibernate">
     <jar destfile="${jlib.dir}/${app.name}-dao.jar">
       <fileset dir="${build.dir}/dao" includes="**/*.class"/>
       <fileset dir="src/dao" excludes="**/*.java"/>
