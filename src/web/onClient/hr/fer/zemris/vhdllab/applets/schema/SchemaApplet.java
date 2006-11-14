@@ -105,4 +105,7 @@ public class SchemaApplet extends JApplet {
 		initGUI();
 	}
 	
+	static public void Main(String[] args) {
+	}
+	
 }
