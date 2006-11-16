@@ -3,12 +3,15 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
+import javax.swing.JFrame;
 
 public class SchemaApplet extends JApplet {
 
@@ -103,9 +106,28 @@ public class SchemaApplet extends JApplet {
 		initLanguage();
 		initColors();		
 		initGUI();
+		
+		SchemaAdapter adapter = new SchemaAdapter(2.d);
+		Graphics g = this.getGraphics();
+		adapter.setGraphics(g);
+		adapter.drawLine(0, 0, 50, 25);
 	}
 	
-	static public void Main(String[] args) {
+	static public void main(String[] args) {
+		class probna extends Component {
+			public void paint(Graphics g) {
+				SchemaAdapter adapter = new SchemaAdapter(2.d);
+				adapter.setGraphics(g);
+				adapter.drawLine(5, 50, 75, 90);
+			}
+		}
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.pack();
+		frame.setSize(250, 150);
+		frame.setVisible(true);
+		probna p = new probna();
+		frame.add(p);
 	}
 	
 }

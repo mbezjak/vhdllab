@@ -21,7 +21,7 @@ public interface ISchemaComponent {
 	 * komponente.
 	 * @param adapter
 	 */
-	void draw(SchemaAdapter adapter);
+	public void draw(SchemaAdapter adapter);
 	
 	
 	/**
@@ -29,7 +29,7 @@ public interface ISchemaComponent {
 	 * portova sklopa.
 	 * @return Broj ulaznih portova.
 	 */
-	int getNumberOfInPorts();
+	public int getNumberOfInPorts();
 	
 	
 	/**
@@ -37,7 +37,7 @@ public interface ISchemaComponent {
 	 * portova sklopa.
 	 * @return Broj izlaznih portova.
 	 */
-	int getNumberOfOutPorts();
+	public int getNumberOfOutPorts();
 	
 	
 	/**
@@ -47,7 +47,7 @@ public interface ISchemaComponent {
 	 * @return
 	 * Koordinate trazenog porta.
 	 */
-	Point getInPortCoordinate(int portNum);
+	public Point getInPortCoordinate(int portNum);
 	
 	
 	/**
@@ -57,7 +57,7 @@ public interface ISchemaComponent {
 	 * @return
 	 * Koordinate trazenog porta.
 	 */
-	Point getOutPortCoordinate(int portNum);
+	public Point getOutPortCoordinate(int portNum);
 	
 	
 	/**
@@ -67,5 +67,5 @@ public interface ISchemaComponent {
 	 * objekt koji sadrzi sva svojstva za
 	 * tu komponentu (broj ulaza, izlaza, ime...).
 	 */
-	ComponentPropertyList getPropertyList();
+	public ComponentPropertyList getPropertyList();
 }
