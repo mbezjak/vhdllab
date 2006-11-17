@@ -1508,7 +1508,7 @@ public class WaveApplet extends JApplet
       
   public void init() 
   {
-    VcdParser parser = new VcdParser("adder2.vcd");
+    VcdParser parser = new VcdParser("./src/web/onClient/hr/fer/zemris/vhdllab/applets/simulations/adder2.vcd");
     parser.parse();
     textField.setEditable(false);
     textField.setToolTipText("Value");
