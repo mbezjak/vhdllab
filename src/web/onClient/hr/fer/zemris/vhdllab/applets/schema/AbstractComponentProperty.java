@@ -11,11 +11,15 @@ package hr.fer.zemris.vhdllab.applets.schema;
 public abstract class AbstractComponentProperty {
 	private String name;
 	
-	public AbstractComponentProperty(String nm) {
+	public AbstractComponentProperty(String nm, Ptr<Object> p) {
 		name = nm;
 	}
 	
 	public String getPropertyName() {
 		return name;
+	}
+	
+	public AbstractPropField getPropField() {
+		return null;
 	}
 }

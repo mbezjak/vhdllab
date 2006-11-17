@@ -6,12 +6,14 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class SchemaApplet extends JApplet {
 
@@ -127,7 +129,28 @@ public class SchemaApplet extends JApplet {
 		frame.setSize(250, 150);
 		frame.setVisible(true);
 		probna p = new probna();
-		frame.add(p);
+		//frame.add(p);
+		
+		GridLayout gridlay = new GridLayout(5, 3);
+		frame.setLayout(gridlay);
+		
+		String s1 = new String("Zika");
+		Ptr<Object> p1 = new Ptr<Object>(s1);
+		Ptr<Object> p2 = p1;
+		TextComponentProperty tcp = new TextComponentProperty("Ime", p1);
+		frame.add(new JLabel("Ime"));
+		frame.add(tcp.getPropField().getComponent());
+		frame.validate();
+		while (true) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
+			}
+			System.out.println(p1.val);
+			System.out.println(p2.val);
+		}
 	}
 	
 }
