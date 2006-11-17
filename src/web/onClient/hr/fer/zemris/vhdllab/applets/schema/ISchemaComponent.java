@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
 
 
 /**
@@ -8,7 +9,7 @@ import java.awt.Point;
  * komponente koja se iscrtava na shemi.
  * 
  * @author Axel
- *
+ * @author Tommy
  */
 public interface ISchemaComponent {
 	/**
@@ -68,4 +69,11 @@ public interface ISchemaComponent {
 	 * tu komponentu (broj ulaza, izlaza, ime...).
 	 */
 	public ComponentPropertyList getPropertyList();
+	
+	/**
+	 * Za dodavanje connection pointa komponente u
+	 * connetion point manager koji se brine za iscrtavanje, povezivanje 
+	 * i slicno....svih ostalih komponenti
+	 */	
+	public ArrayList<ConnectionPoint> getConnectionPoints();
 }

@@ -2,6 +2,12 @@ package hr.fer.zemris.vhdllab.applets.schema;
 
 import java.util.ResourceBundle;
 
+/**
+ * Lokalizacija Menija....
+ * @author Tommy
+ *
+ */
+
 public class SchemaMenuText {
 	public String FILE = "";
 	public String FILE_NEW = "";

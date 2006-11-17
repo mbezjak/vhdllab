@@ -7,7 +7,12 @@ import java.util.ResourceBundle;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
+/**
+ * Razred koji bi se trabao brinuti o svemu sto je vezano za
+ * izradu glavnog menija.
+ * @author Tommy
+ *
+ */
 public class SchemaMenu {
 	
 	private SchemaMenuText menuText = null;

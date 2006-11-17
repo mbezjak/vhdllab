@@ -109,7 +109,7 @@ public class SchemaApplet extends JApplet {
 		initColors();		
 		initGUI();
 		
-		SchemaAdapter adapter = new SchemaAdapter(2.d);
+		SchemaAdapter adapter = new SchemaAdapter(colors,2.d);
 		Graphics g = this.getGraphics();
 		adapter.setGraphics(g);
 		adapter.drawLine(0, 0, 50, 25);
@@ -118,7 +118,8 @@ public class SchemaApplet extends JApplet {
 	static public void main(String[] args) {
 		class probna extends Component {
 			public void paint(Graphics g) {
-				SchemaAdapter adapter = new SchemaAdapter(2.d);
+				SchemaColorProvider colors=new SchemaColorProvider();
+				SchemaAdapter adapter = new SchemaAdapter(colors,2.d);
 				adapter.setGraphics(g);
 				adapter.drawLine(5, 50, 75, 90);
 			}

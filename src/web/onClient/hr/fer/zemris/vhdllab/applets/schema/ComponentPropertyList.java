@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Objekt koji vraca svaka komponenta

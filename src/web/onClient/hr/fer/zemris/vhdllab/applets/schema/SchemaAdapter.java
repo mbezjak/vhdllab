@@ -1,16 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JWindow;
 
 
 /**
@@ -27,22 +17,23 @@ import javax.swing.JWindow;
  * otkud se relativno pocinje crtati bilo sto.
  * Tad se pozivaju metode drawLine, drawOval, drawRect... 
  * @author Axel
- *
+ * @author Tommy
  */
 public class SchemaAdapter {
 
 	private double magnificationFactor;
 	private int xStart, yStart;
 	private Graphics gph;
+	private SchemaColorProvider colors;
 	
-	public SchemaAdapter() {
+	public SchemaAdapter(SchemaColorProvider colors) {
 		magnificationFactor = 1.d;
 		xStart = 0;
 		yStart = 0;
 		gph = null;
 	}
 	
-	public SchemaAdapter(double mag) {
+	public SchemaAdapter(SchemaColorProvider colors,double mag) {
 		magnificationFactor = mag;
 		xStart = 0;
 		yStart = 0;
@@ -87,6 +78,10 @@ public class SchemaAdapter {
 				yStart + (int)(y1 * magnificationFactor),
 				(int)(wid * magnificationFactor),
 				(int)(hgt * magnificationFactor));
+	}
+	
+	public void drawConnectionPoint(ConnectionPoint point){
+		if(gph==null) return;
 	}
 }
 
