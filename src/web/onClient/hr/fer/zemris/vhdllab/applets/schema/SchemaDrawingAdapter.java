@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 
 /**
@@ -19,25 +20,27 @@ import java.awt.Graphics;
  * @author Axel
  * @author Tommy
  */
-public class SchemaAdapter {
+public class SchemaDrawingAdapter {
 
 	private double magnificationFactor;
 	private int xStart, yStart;
-	private Graphics gph;
+	private Graphics2D gph;
 	private SchemaColorProvider colors;
 	
-	public SchemaAdapter(SchemaColorProvider colors) {
+	public SchemaDrawingAdapter(SchemaColorProvider colors) {
 		magnificationFactor = 1.d;
 		xStart = 0;
 		yStart = 0;
 		gph = null;
+		this.colors=colors;
 	}
 	
-	public SchemaAdapter(SchemaColorProvider colors,double mag) {
+	public SchemaDrawingAdapter(SchemaColorProvider colors,double mag) {
 		magnificationFactor = mag;
 		xStart = 0;
 		yStart = 0;
 		gph = null;
+		this.colors=colors;
 	}
 	
 	public void setMagnificationFactor(double mag) {
@@ -50,7 +53,7 @@ public class SchemaAdapter {
 	}
 	
 	public void setGraphics(Graphics g) {
-		gph = g;
+		gph = (Graphics2D)g;
 	}
 	
 	public void drawLine(int x1, int y1, int x2, int y2) {

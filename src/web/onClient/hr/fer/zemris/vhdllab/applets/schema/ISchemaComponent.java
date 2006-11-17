@@ -22,7 +22,7 @@ public interface ISchemaComponent {
 	 * komponente.
 	 * @param adapter
 	 */
-	public void draw(SchemaAdapter adapter);
+	public void draw(SchemaDrawingAdapter adapter);
 	
 	
 	/**

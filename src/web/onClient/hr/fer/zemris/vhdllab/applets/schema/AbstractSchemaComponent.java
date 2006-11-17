@@ -19,7 +19,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.SchemaAdapter)
 	 */
-	public void draw(SchemaAdapter adapter) {
+	public void draw(SchemaDrawingAdapter adapter) {
 		// not applicable here
 	}
 

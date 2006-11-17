@@ -7,7 +7,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JComponent;
 
-public class SchemaGrid extends JComponent implements MouseListener,
+public class SchemaDrawingGrid extends JComponent implements MouseListener,
 		MouseMotionListener {
 
 	/**
@@ -16,7 +16,7 @@ public class SchemaGrid extends JComponent implements MouseListener,
 	private static final long serialVersionUID = -3467386400716562922L;
 	private SchemaColorProvider colors;
 	
-	public SchemaGrid(SchemaColorProvider colors){
+	public SchemaDrawingGrid(SchemaColorProvider colors){
 		this.colors=colors;
 	}
 
