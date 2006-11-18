@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
-import hr.fer.zemris.vhdllab.applets.schema.SchemaAdapter;
+import hr.fer.zemris.vhdllab.applets.schema.SchemaDrawingAdapter;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NumProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
 
@@ -29,7 +29,7 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.SchemaAdapter)
 	 */
 	@Override
-	public void draw(SchemaAdapter adapter) {
+	public void draw(SchemaDrawingAdapter adapter) {
 		adapter.drawRect(0, 0, 100, 100);
 	}
 

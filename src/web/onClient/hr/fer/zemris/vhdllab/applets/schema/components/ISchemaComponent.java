@@ -1,5 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
-import hr.fer.zemris.vhdllab.applets.schema.SchemaAdapter;
+import hr.fer.zemris.vhdllab.applets.schema.SchemaDrawingAdapter;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -23,7 +23,7 @@ public interface ISchemaComponent {
 	 * komponente.
 	 * @param adapter
 	 */
-	public void draw(SchemaAdapter adapter);
+	public void draw(SchemaDrawingAdapter adapter);
 	
 	
 	/**
