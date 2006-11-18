@@ -1,18 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 
 /**
  * Klasa koja se prenosi svakoj komponenti
- * pri pozivu metode draw, a sluzi kao adapter.
- * Komponenta se pomocu adaptera iscrtava na grid. 
+ * pri pozivu metode draw, a sluzi kao adapter izmedju stvarnog
+ * iscrtavanja piksela po povrsini i "relativnog" crtanja
+ * prilagodjenog crtanju komponenti. 
  * 
- * Koristenje: podesi se magnification factor
- * pozivom setMagnificationFactor(double). Potom
- * se prenese referenca na objekt Graphics pozivom
- * setGraphics(Graphics).
  * Po potrebi se podese pocetne koordinate pozivom
  * setStartCoordinates(int, int) - time se odreduje
  * otkud se relativno pocinje crtati bilo sto.
@@ -27,20 +23,27 @@ public class SchemaDrawingAdapter {
 	private Graphics2D gph;
 	private SchemaColorProvider colors;
 	
+	//recimo da nam ovo netreba...
+	/*jer je doljni konstruktor "jaci" a logicniji ako ovaj class
+	 * stvara SchemaDrawingGrid
 	public SchemaDrawingAdapter(SchemaColorProvider colors) {
 		magnificationFactor = 1.d;
 		xStart = 0;
 		yStart = 0;
 		gph = null;
 		this.colors=colors;
-	}
+	}*/
 	
-	public SchemaDrawingAdapter(SchemaColorProvider colors,double mag) {
+	public SchemaDrawingAdapter(Graphics2D graphics,SchemaColorProvider colors,double mag) {
 		magnificationFactor = mag;
 		xStart = 0;
 		yStart = 0;
-		gph = null;
+		gph = graphics;
 		this.colors=colors;
+	}
+	
+	public void redrawComponents(){
+		//ovdje ide cijeli mehanizam koji se brine bas o samom iscrtavanju komponenata
 	}
 	
 	public void setMagnificationFactor(double mag) {
@@ -52,12 +55,14 @@ public class SchemaDrawingAdapter {
 		yStart = ys;
 	}
 	
-	public void setGraphics(Graphics g) {
+	/*public void setGraphics(Graphics g) {
 		gph = (Graphics2D)g;
-	}
+	}*/
 	
 	public void drawLine(int x1, int y1, int x2, int y2) {
 		if (gph == null) return;
+		
+		gph.setColor(colors.ADAPTER_LINE);
 		
 		gph.drawLine(xStart + (int)(x1 * magnificationFactor),
 				yStart + (int)(y1 * magnificationFactor),
@@ -68,6 +73,8 @@ public class SchemaDrawingAdapter {
 	public void drawOval(int xCenter, int yCenter, int xRadius, int yRadius) {
 		if (gph == null) return;
 		
+		gph.setColor(colors.ADAPTER_LINE);
+		
 		gph.drawOval(xStart + (int)((xCenter - xRadius) * magnificationFactor),
 				yStart + (int)((yCenter - yRadius) * magnificationFactor),
 				(int)(xRadius * 2 * magnificationFactor),
@@ -76,6 +83,8 @@ public class SchemaDrawingAdapter {
 	
 	public void drawRect(int x1, int y1, int wid, int hgt) {
 		if (gph == null) return;
+		
+		gph.setColor(colors.ADAPTER_LINE);
 		
 		gph.drawRect(xStart + (int)(x1 * magnificationFactor), 
 				yStart + (int)(y1 * magnificationFactor),
@@ -86,6 +95,12 @@ public class SchemaDrawingAdapter {
 	public void drawConnectionPoint(ConnectionPoint point){
 		if(gph==null) return;
 	}
+
+	public void setColors(SchemaColorProvider colors) {
+		this.colors = colors;
+		redrawComponents();
+	}
+	
 }
 
 

@@ -1,66 +1,55 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.Graphics2D;
 
-import javax.swing.JComponent;
+/**
+ * SchemaDrawingGrid je 2. od slojeva koji se brine o iscrtavanju
+ * komponenti na povrsinu + iscrtavanje samog grid-a
+ * 
+ * @see 
+ * @author Tommy
+ *
+ */
 
-public class SchemaDrawingGrid extends JComponent implements MouseListener,
-		MouseMotionListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3467386400716562922L;
-	private SchemaColorProvider colors;
+public class SchemaDrawingGrid {
 	
-	public SchemaDrawingGrid(SchemaColorProvider colors){
+	private Graphics2D graphics = null;
+	private SchemaDrawingAdapter adapter = null;
+	private SchemaColorProvider colors = null;
+	private double magnificationFactor = 1.d;
+	
+	public SchemaDrawingGrid(Graphics g,SchemaColorProvider colors){
+		graphics=(Graphics2D)g;
 		this.colors=colors;
-	}
-
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void paint(Graphics g) {
-		this.setBackground(colors.GRID_BG);
-		//super.paint(g);
+		adapter=new SchemaDrawingAdapter(graphics,colors,magnificationFactor);
 	}
 	
-	
+	public SchemaDrawingGrid(Graphics g,SchemaColorProvider colors, double magnificationFactor){
+		graphics=(Graphics2D)g;
+		this.colors=colors;
+		this.magnificationFactor=magnificationFactor;
+		adapter=new SchemaDrawingAdapter(graphics,colors,magnificationFactor);		
+	}
+
+	public double getMagnificationFactor() {
+		return magnificationFactor;
+	}
+
+	public void setMagnificationFactor(double magnificationFactor) {
+		if(adapter==null)return;
+		this.magnificationFactor = magnificationFactor;
+		adapter.setMagnificationFactor(magnificationFactor);		
+	}
+
+	public SchemaDrawingAdapter getAdapter() {
+		return adapter;
+	}
+
+	public void setColors(SchemaColorProvider colors) {
+		if(adapter==null)return;
+		this.colors = colors;
+		adapter.setColors(colors);
+	}
 
 }

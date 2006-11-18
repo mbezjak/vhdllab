@@ -21,19 +21,21 @@ public class SchemaColorProvider {
 	public Color MENU_OVER;
 	
 	//SchemeAdapter
-	public Color ADAPTER_CONNECTIO_POINT;
+	public Color ADAPTER_CONNECTION_POINT;
+	public Color ADAPTER_LINE;
 	
 	public SchemaColorProvider(){
 		//Grid component
-		GRID_BG = Color.white;
-		GRID_LINES = Color.gray;
-		LINE = Color.black;
+		GRID_BG = Color.WHITE;
+		GRID_LINES = Color.GRAY;
+		LINE = Color.BLACK;
 		
 		//Menu component
-		MENU_BG=Color.black;
+		MENU_BG=Color.BLACK;
 		MENU_TEXT=Color.CYAN;
 		
 		//SchemeAdapter
-		ADAPTER_CONNECTIO_POINT=Color.BLACK;
+		ADAPTER_CONNECTION_POINT=Color.BLACK;
+		ADAPTER_CONNECTION_POINT=Color.YELLOW;
 	}
 }
