@@ -7,13 +7,19 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.Writer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
@@ -32,7 +38,7 @@ import javax.swing.KeyStroke;
  */
 public class MainApplet
 		extends JApplet
-		 {
+		implements ProjectContainter {
 	
 	/**
 	 * Serial version ID.
@@ -97,6 +103,7 @@ public class MainApplet
 		menuBar = new PrivateMenuBar(bundle).setup();
 		this.setJMenuBar( menuBar );
 		
+		this.setSize(new Dimension(1000,650));
 		toolBar = new PrivateToolBar(bundle).setup();
 		topContainerPanel.add(toolBar, BorderLayout.NORTH);
 		topContainerPanel.add(setupStatusBar(), BorderLayout.SOUTH);
@@ -116,6 +123,7 @@ public class MainApplet
 	
 	private JPanel setupCenterPanel() {
 		projectExplorer = new ProjectExplorer();
+		projectExplorer.addFile("pname", "filename");
 		JPanel projectExplorerPanel = new JPanel(new BorderLayout());
 		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
@@ -206,6 +214,11 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_NEW_FILE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setMnemonicAndAccelerator(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					writer.setupWizard();
+				}
+			});
 			submenu.add(menuItem);
 			
 			// New Testbench menu item
@@ -377,6 +390,61 @@ public class MainApplet
 			
 			return toolBar;
 		}
+	}
+	
+	private class Cache {
+
+		private AjaxMediator ajax;
+		
+		private Map<String, Long> identifiers;
+		
+		
+		public Cache(AjaxMediator ajax) {
+			if(ajax == null) throw new NullPointerException("Ajax Mediator can not be null");
+			identifiers = new HashMap<String, Long>();
+			this.ajax = ajax;
+		}
+		
+		private void cacheItem(String projectName, Long projectIdentifier) {
+			if(projectName == null | projectIdentifier == null) {
+				throw new NullPointerException("Project name and identifier can not be null.");
+			}
+			identifiers.put(projectName, projectIdentifier);
+		}
+		
+		private void cacheItem(String projectName, String fileName, Long fileIdentifier) {
+			if(projectName == null | fileName == null | fileIdentifier == null) {
+				throw new NullPointerException("Project name, file name and identifier can not be null.");
+			}
+			String key = projectName + "|" + fileName;
+			identifiers.put(key, fileIdentifier);
+		}
+
+	}
+
+
+	public List<String> getAllCircuits() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getOptions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ResourceBundle getResourceBundle() {
+		return bundle;
+	}
+
+	public void openFile(String projectName, String fileName) {
+		IEditor writer = (IEditor) this.writer;
+		
 	}
 
 }

@@ -136,4 +136,8 @@ public class Automat extends JPanel implements IEditor, IWizard {
 		return null;
 	}
 
+	public void setupWizard() {
+		//TODO Auto-generated method stub
+	}
+
 }
