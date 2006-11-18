@@ -1,4 +1,6 @@
-package hr.fer.zemris.vhdllab.applets.schema;
+package hr.fer.zemris.vhdllab.applets.schema.components.properties;
+
+import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 
 public class TextComponentProperty extends AbstractComponentProperty {
 	private TextField textfield;

@@ -73,10 +73,10 @@ public class TommyTestDisplay extends JFrame {
 		initColors();		
 		initGUI();
 		
-		SchemaDrawingAdapter adapter = new SchemaDrawingAdapter(colors,2.d);
+		//SchemaDrawingAdapter adapter = new SchemaDrawingAdapter(colors,2.d);
 		Graphics g = this.getGraphics();
-		adapter.setGraphics(g);
-		adapter.drawLine(0, 0, 50, 25);
+		//adapter.setGraphics(g);
+		//adapter.drawLine(0, 0, 50, 25);
 	}
 	
 	private void initColors() {		
