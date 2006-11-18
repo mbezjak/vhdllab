@@ -2,9 +2,10 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 
 
 
-import java.awt.Graphics;
-import javax.swing.JPanel;
 import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.JPanel;
 
 
 /**

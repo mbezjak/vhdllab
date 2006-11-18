@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+
 import java.util.List;
 import java.util.ResourceBundle;
-
-import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 public interface ProjectContainter {
 	List<String> getAllCircuits();

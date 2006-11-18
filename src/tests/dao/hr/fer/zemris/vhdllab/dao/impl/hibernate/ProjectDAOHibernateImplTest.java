@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
-import hr.fer.zemris.vhdllab.dao.impl.hibernate.ProjectDAOHibernateImpl;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 

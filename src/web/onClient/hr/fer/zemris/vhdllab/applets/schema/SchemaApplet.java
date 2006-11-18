@@ -3,17 +3,12 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 public class SchemaApplet extends JApplet {
 

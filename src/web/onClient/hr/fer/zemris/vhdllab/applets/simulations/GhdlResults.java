@@ -2,9 +2,10 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 
 
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
-import java.util.List;
-import java.util.LinkedList;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**

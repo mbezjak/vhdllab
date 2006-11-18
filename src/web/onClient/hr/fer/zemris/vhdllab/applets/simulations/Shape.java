@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Graphics;
 
 
 /**

@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.service.dependency;
 
-import java.util.List;
-
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+
+import java.util.List;
 
 public interface IDependency {
 

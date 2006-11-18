@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractComponentProperty;
 
-import java.awt.ComponentOrientation;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
