@@ -4,6 +4,10 @@ import hr.fer.zemris.vhdllab.applets.schema.components.PrivremeniProbniSklop;
 
 import javax.swing.JFrame;
 
+
+// Ovo ne dirati.
+//
+// aleksandar
 public class PrivremenaProbnaKlasa {
 
 	/**
