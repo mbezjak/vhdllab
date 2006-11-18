@@ -13,4 +13,9 @@ import java.util.List;
  *
  */
 public class ComponentPropertyList extends LinkedList<AbstractComponentProperty> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 }

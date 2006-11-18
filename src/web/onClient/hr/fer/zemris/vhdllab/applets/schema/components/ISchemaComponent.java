@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaDrawingAdapter;
 
-import java.awt.Dimension;
 import java.awt.Point;
 
 

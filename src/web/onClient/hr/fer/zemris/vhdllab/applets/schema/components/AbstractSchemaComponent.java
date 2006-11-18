@@ -6,8 +6,6 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
 
 import java.awt.Point;
 
-import sun.java2d.pipe.TextPipe;
-
 /**
  * Smisao ove klase jest ponuditi funkcionalnost 
  * zajednicku svim sklopovima.
