@@ -15,7 +15,7 @@ public class PrivremenaProbnaKlasa {
 		frame.pack();
 		frame.setSize(250, 150);
 		frame.setVisible(true);
-				
+		
 		PrivremeniProbniSklop probni = new PrivremeniProbniSklop();
 		
 		PropertyPanel panel = new PropertyPanel(probni.getPropertyList());
