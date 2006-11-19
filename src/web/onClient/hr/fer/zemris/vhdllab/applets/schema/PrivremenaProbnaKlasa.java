@@ -32,7 +32,7 @@ public class PrivremenaProbnaKlasa {
 			} catch (InterruptedException e) {
 				break;
 			}
-			System.out.println(probni.getComponentInstanceName());
+			System.out.println(probni.getSchemaPort(0).getName());
 		}
 	}
 
