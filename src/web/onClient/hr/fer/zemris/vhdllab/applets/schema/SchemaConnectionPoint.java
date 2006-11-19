@@ -5,6 +5,6 @@ package hr.fer.zemris.vhdllab.applets.schema;
  *
  * ovo je radjeno u letu,kasnije "razvijam"
  */
-public class ConnectionPoint {
+public class SchemaConnectionPoint {
 	
 }

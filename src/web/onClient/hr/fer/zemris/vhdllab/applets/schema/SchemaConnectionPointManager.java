@@ -3,6 +3,8 @@
  */
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
+
 import java.util.LinkedList;
 
 /**
@@ -13,15 +15,15 @@ import java.util.LinkedList;
  * @author Tommy
  *
  */
-public class ConnectionPointManager {
-	private LinkedList<ConnectionPoint> points=new LinkedList<ConnectionPoint>();
+public class SchemaConnectionPointManager {
+	private LinkedList<SchemaConnectionPoint> points=new LinkedList<SchemaConnectionPoint>();
 	private SchemaDrawingAdapter adapter=null;
 	
-	public ConnectionPointManager(SchemaDrawingAdapter adapter){
+	public SchemaConnectionPointManager(SchemaDrawingAdapter adapter){
 		this.adapter=adapter;
 	}
 	
-	public void addConnectionPoint(ConnectionPoint cp){
+	public void addConnectionPoint(SchemaConnectionPoint cp){
 		points.add(cp);
 	}
 	

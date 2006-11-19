@@ -1,6 +1,10 @@
-package hr.fer.zemris.vhdllab.applets.schema;
+package hr.fer.zemris.vhdllab.applets.schema.drawings;
+
+import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
+import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Dimension2D;
 
 
 /**
@@ -20,26 +24,23 @@ public class SchemaDrawingAdapter {
 
 	private double magnificationFactor;
 	private int xStart, yStart;
+	private Dimension2D canvasDimension = null;
 	private Graphics2D gph;
 	private SchemaColorProvider colors;
 	
-	//recimo da nam ovo netreba...
-	/*jer je doljni konstruktor "jaci" a logicniji ako ovaj class
-	 * stvara SchemaDrawingGrid
-	public SchemaDrawingAdapter(SchemaColorProvider colors) {
-		magnificationFactor = 1.d;
-		xStart = 0;
-		yStart = 0;
-		gph = null;
-		this.colors=colors;
-	}*/
-	
-	public SchemaDrawingAdapter(Graphics2D graphics,SchemaColorProvider colors,double mag) {
+	public SchemaDrawingAdapter(SchemaColorProvider colors,double mag) {
 		magnificationFactor = mag;
 		xStart = 0;
 		yStart = 0;
-		gph = graphics;
 		this.colors=colors;
+	}
+	
+	public void startDrawing(Graphics2D g){
+		gph=g;
+	}
+	
+	public void endDrawing(){
+		gph=null;
 	}
 	
 	public void redrawComponents(){
@@ -54,10 +55,6 @@ public class SchemaDrawingAdapter {
 		xStart = xs;
 		yStart = ys;
 	}
-	
-	/*public void setGraphics(Graphics g) {
-		gph = (Graphics2D)g;
-	}*/
 	
 	public void drawLine(int x1, int y1, int x2, int y2) {
 		if (gph == null) return;
@@ -92,7 +89,7 @@ public class SchemaDrawingAdapter {
 				(int)(hgt * magnificationFactor));
 	}
 	
-	public void drawConnectionPoint(ConnectionPoint point){
+	public void drawConnectionPoint(SchemaConnectionPoint point){
 		if(gph==null) return;
 	}
 

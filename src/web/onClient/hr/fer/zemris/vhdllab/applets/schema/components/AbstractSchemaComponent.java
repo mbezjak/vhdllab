@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
-import hr.fer.zemris.vhdllab.applets.schema.SchemaDrawingAdapter;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NoEditProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
 import java.util.ArrayList;
