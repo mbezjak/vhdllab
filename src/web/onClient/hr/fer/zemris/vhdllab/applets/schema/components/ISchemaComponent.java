@@ -26,39 +26,20 @@ public interface ISchemaComponent {
 	
 	
 	/**
-	 * Ono sto nam je cesto bitno jest broj ulaznih
-	 * portova sklopa.
+	 * Ono sto nam je cesto bitno jest broj portova.
 	 * @return Broj ulaznih portova.
 	 */
-	public int getNumberOfInPorts();
+	public int getNumberOfPorts();
 	
 	
 	/**
-	 * Ono sto nam je cesto bitno jest broj izlaznih
-	 * portova sklopa.
-	 * @return Broj izlaznih portova.
-	 */
-	public int getNumberOfOutPorts();
-	
-	
-	/**
-	 * Vraca koordinate za trazeni ulazni port.
+	 * Vraca sve informacije o pojedinom portu.
 	 * @param portNum
-	 * Broj ulaznog porta cije koordinate zelimo.
+	 * Broj porta cije koordinate zelimo.
 	 * @return
 	 * Koordinate trazenog porta.
 	 */
-	public Point getInPortCoordinate(int portNum);
-	
-	
-	/**
-	 * Vraca koordinate za trazeni izlazni port.
-	 * @param portNum
-	 * Broj izlaznog porta cije koordinate zelimo.
-	 * @return
-	 * Koordinate trazenog porta.
-	 */
-	public Point getOutPortCoordinate(int portNum);
+	public AbstractSchemaPort getSchemaPort(int portIndex);
 	
 	
 	/**

@@ -5,6 +5,8 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.NoEditProperty
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Smisao ove klase jest ponuditi funkcionalnost 
@@ -19,62 +21,7 @@ import java.awt.Point;
  *
  */
 public abstract class AbstractSchemaComponent implements ISchemaComponent {
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.SchemaAdapter)
-	 */
-	public void draw(SchemaDrawingAdapter adapter) {
-		// not applicable here
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#getInPortCoordinate(int)
-	 */
-	public Point getInPortCoordinate(int portNum) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#getNumberOfInPorts()
-	 */
-	public int getNumberOfInPorts() {
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#getNumberOfOutPorts()
-	 */
-	public int getNumberOfOutPorts() {
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#getOutPortCoordinate(int)
-	 */
-	public Point getOutPortCoordinate(int portNum) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#getPropertyList()
-	 */
-	public ComponentPropertyList getPropertyList() {
-		ComponentPropertyList cplist = new ComponentPropertyList();
-		addPropertiesToComponentPropertyList(cplist);
-		return cplist;
-	}
-	
-	/**
-	 * Konstruktor.
-	 *
-	 */
-	public AbstractSchemaComponent() {
-		pComponentName = new Ptr<Object>();
-		pComponentName.val = new String();
-		pComponentInstanceName = new Ptr<Object>();
-		pComponentInstanceName.val = new String("Mihelj sam ja, onaj, Herpes!");
-	}
-	
+	protected LinkedList<AbstractSchemaPort> portlist;
 	private Ptr<Object> pComponentName;
 	public String getComponentName() {
 		return (String)pComponentName.val;
@@ -90,6 +37,48 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	public void setComponentInstanceName(String name) {
 		this.pComponentInstanceName.val = name;
 	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#getNumberOfPorts()
+	 */
+	public int getNumberOfPorts() {
+		return portlist.size();
+	}
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#getSchemaPort(int)
+	 */
+	public AbstractSchemaPort getSchemaPort(int portIndex) {
+		try {
+			return portlist.get(portIndex);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema.ISchemaComponent#getPropertyList()
+	 */
+	public ComponentPropertyList getPropertyList() {
+		ComponentPropertyList cplist = new ComponentPropertyList();
+		addPropertiesToComponentPropertyList(cplist);
+		return cplist;
+	}
+	
+	/**
+	 * Konstruktor.
+	 *
+	 */
+	public AbstractSchemaComponent() {
+		portlist = new LinkedList<AbstractSchemaPort>();
+		pComponentName = new Ptr<Object>();
+		pComponentName.val = new String();
+		pComponentInstanceName = new Ptr<Object>();
+		pComponentInstanceName.val = new String("Mihelj sam ja, onaj, Herpes!");
+	}
+	
+	
 
 	/**
 	 * Adds properties to the component property list.

@@ -13,6 +13,7 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 	public PrivremeniProbniSklop() {
 		mojInt = 15;
 		maliTekst = "Tek tolko da nest pise.";
+		portlist.add(new SchemaPort());
 	}
 
 	/* (non-Javadoc)
@@ -23,50 +24,17 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 		super.addPropertiesToComponentPropertyList(cplist);
 		cplist.add(new TextProperty("Tekstic", new Ptr<Object>(maliTekst)));
 		cplist.add(new NumProperty("Brojcek", new Ptr<Object>(mojInt)));
+		int i = 0;
+		for (AbstractSchemaPort port : portlist) {
+			cplist.add(new TextProperty("Ime porta br. " + i, port.getNamePtr()));
+			i++;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.SchemaAdapter)
 	 */
-	@Override
 	public void draw(SchemaDrawingAdapter adapter) {
 		adapter.drawRect(0, 0, 100, 100);
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent#getInPortCoordinate(int)
-	 */
-	@Override
-	public Point getInPortCoordinate(int portNum) {
-		// TODO Auto-generated method stub
-		return super.getInPortCoordinate(portNum);
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent#getNumberOfInPorts()
-	 */
-	@Override
-	public int getNumberOfInPorts() {
-		// TODO Auto-generated method stub
-		return super.getNumberOfInPorts();
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent#getNumberOfOutPorts()
-	 */
-	@Override
-	public int getNumberOfOutPorts() {
-		// TODO Auto-generated method stub
-		return super.getNumberOfOutPorts();
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent#getOutPortCoordinate(int)
-	 */
-	@Override
-	public Point getOutPortCoordinate(int portNum) {
-		// TODO Auto-generated method stub
-		return super.getOutPortCoordinate(portNum);
-	}
-	
+	}		
 }
