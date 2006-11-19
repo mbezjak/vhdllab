@@ -2,6 +2,10 @@ package hr.fer.zemris.vhdllab.applets.schema.components.properties;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 
+// OVO TREBA ZBRISAT!!!! Slobodno ovo zbrisi.
+// Aleksandar
+
+
 public class TextComponentProperty extends AbstractComponentProperty {
 	private TextField textfield;
 	
