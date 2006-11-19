@@ -134,9 +134,9 @@ public class DefaultAjaxMediator implements AjaxMediator {
 		}
 		Object response;
 		if(targetURL==null) {
-			response = win.call("performAjaxCall",new Object[] {message});
+			response = win.call("performSyncAjaxCall",new Object[] {message});
 		} else {
-			response = win.call("performAjaxCallEx",new Object[] {targetURL, message});
+			response = win.call("performSyncAjaxCallEx",new Object[] {targetURL, message});
 		}
 		return response.toString();
 	}

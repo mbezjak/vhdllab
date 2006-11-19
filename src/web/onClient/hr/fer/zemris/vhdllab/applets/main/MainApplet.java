@@ -7,9 +7,13 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.Writer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.BorderLayout;
@@ -17,9 +21,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
@@ -45,6 +47,8 @@ public class MainApplet
 	 */
 	private static final long serialVersionUID = 4037604752375048576L;
 	
+	private Cache cache;
+	private MethodInvoker invoker;
 	private AjaxMediator ajax;
 	private ResourceBundle bundle;
 	
@@ -64,9 +68,14 @@ public class MainApplet
 	public void init() {
 		super.init();
 		ajax = new DefaultAjaxMediator(this);
+		invoker = new DefaultMethodInvoker(ajax);
+		//ServerInitData server = new ServerInitData();
+		//server.writeGlobalFiles();
+		cache = new Cache(invoker);
 		bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN,
 				LanguageConstants.LANGUAGE_EN, null);
 		initGUI();
+		//server.writeServerInitData();
 	}
 	
 	/* (non-Javadoc)
@@ -90,6 +99,8 @@ public class MainApplet
 	 */
 	@Override
 	public void destroy() {
+		cache = null;
+		invoker = null;
 		//ajax.initiateAbort();
 		ajax = null;
 		this.setJMenuBar(null);
@@ -392,37 +403,6 @@ public class MainApplet
 		}
 	}
 	
-	private class Cache {
-
-		private AjaxMediator ajax;
-		
-		private Map<String, Long> identifiers;
-		
-		
-		public Cache(AjaxMediator ajax) {
-			if(ajax == null) throw new NullPointerException("Ajax Mediator can not be null");
-			identifiers = new HashMap<String, Long>();
-			this.ajax = ajax;
-		}
-		
-		private void cacheItem(String projectName, Long projectIdentifier) {
-			if(projectName == null | projectIdentifier == null) {
-				throw new NullPointerException("Project name and identifier can not be null.");
-			}
-			identifiers.put(projectName, projectIdentifier);
-		}
-		
-		private void cacheItem(String projectName, String fileName, Long fileIdentifier) {
-			if(projectName == null | fileName == null | fileIdentifier == null) {
-				throw new NullPointerException("Project name, file name and identifier can not be null.");
-			}
-			String key = projectName + "|" + fileName;
-			identifiers.put(key, fileIdentifier);
-		}
-
-	}
-
-
 	public List<String> getAllCircuits() {
 		// TODO Auto-generated method stub
 		return null;
@@ -447,4 +427,33 @@ public class MainApplet
 		
 	}
 
+	private class ServerInitData {
+		
+		public void writeGlobalFiles() {
+			try {
+				Long fileId = invoker.createGlobalFile("Applet", GlobalFile.GFT_APPLET);
+				invoker.saveGlobalFile(fileId, "a=2a\nb=22");
+			} catch (AjaxException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public void writeServerInitData() {
+			try {
+				long start = System.currentTimeMillis();
+				Long projectId = invoker.createProject("Project1", Long.valueOf(0));
+				Long fileId = invoker.createFile(projectId, "File1", File.FT_VHDLSOURCE);
+				invoker.saveFile(fileId, "simple content");
+				
+				FileContent content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId), invoker.loadFileContent(fileId));
+				writer.setFileContent(content);
+				
+				long end = System.currentTimeMillis();
+				content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId), invoker.loadFileContent(fileId)+(start-end));
+				writer.setFileContent(content);
+			} catch (AjaxException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

@@ -1585,6 +1585,7 @@ public class MethodConstants {
 	 * <li>{@link #PROP_RESULT_STATUS} - containing result status
 	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>1</code> if compilation
 	 *     finished successfully; <code>0</code> otherwise
+	 * <li>{@link #PROP_RESULT_WAVEFORM} - containing result waveform
 	 * <li>list of {@link #PROP_RESULT_MESSAGE_TEXT} written in following format:
 	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.[number] (number is positive and starts at 1)
 	 * </ul>
@@ -1595,6 +1596,7 @@ public class MethodConstants {
 	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
 	 * {@link #PROP_RESULT_STATUS} = result_status<br/>
 	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = 0<br/>
+	 * {@link #PROP_RESULT_WAVEFORM} = result_waveform<br/>
 	 * {@link #PROP_RESULT_MESSAGE_TEXT}.1 = message_text_1<br/>
 	 * {@link #PROP_RESULT_MESSAGE_TEXT}.2 = message_text_2<br/>
 	 * ...

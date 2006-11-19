@@ -11,7 +11,7 @@ public class SimulationResult extends Result {
 		this.waveform = waveform;
 	}
 
-	public Object getWaveform() {
+	public String getWaveform() {
 		return waveform;
 	}
 }

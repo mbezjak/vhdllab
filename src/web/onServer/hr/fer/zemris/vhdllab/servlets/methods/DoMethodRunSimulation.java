@@ -46,6 +46,7 @@ public class DoMethodRunSimulation implements RegisteredMethod {
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
 		resProp.setProperty(MethodConstants.PROP_RESULT_STATUS,String.valueOf(result.getStatus()));
 		resProp.setProperty(MethodConstants.PROP_RESULT_IS_SUCCESSFUL,String.valueOf(result.isSuccessful() ? 1 : 0));
+		resProp.setProperty(MethodConstants.PROP_RESULT_WAVEFORM, result.getWaveform());
 		int i = 1;
 		for(Message msg : result.getMessages()) {
 			if(!(msg instanceof SimulationMessage)) {

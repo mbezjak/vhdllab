@@ -26,7 +26,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	
 	public Writer() {
 		text = new JTextArea("This is writer area!");
-		text.setPreferredSize(new Dimension(100,100));
+		text.setPreferredSize(new Dimension(300,300));
 		text.addKeyListener(new KeyListener() {
 		
 			public void keyTyped(KeyEvent e) {
