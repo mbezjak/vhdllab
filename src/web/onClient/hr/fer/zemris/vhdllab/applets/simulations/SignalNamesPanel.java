@@ -1,11 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JPanel;
+import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -74,22 +74,32 @@ class SignalNamesPanel extends JPanel
     private static final long serialVersionUID = 1;
 
 
-    /**
+   /**
      * Constructor
      *
-     * @param results rezultati dobiveni HTTP-om parsirani od GhdlResults klase 
-     */
-    public SignalNamesPanel (GhdlResults results, ThemeColor themeColor)
+     * @param themeColor predstavlja temu
+	 */
+    public SignalNamesPanel (ThemeColor themeColor)
     {
         super();
+        this.themeColor = themeColor;
+    }
+
+
+	/**
+	 * Postavlja vrijednosti potrebne za iscrtavanje panela
+	 *
+	 * @param results rezultati koje je parsirao GhdlResults
+	 */
+	public void setContent(GhdlResults results)
+	{
 		this.results = results;
-        this.signalNames = results.getSignalNames();
+		this.signalNames = results.getSignalNames();
         this.expandedSignalNames = results.getExpandedSignalNames();
         this.currentVectorIndex = results.getCurrentVectorIndex();
         this.maximumSignalNameLength = results.getMaximumSignalNameLength();
-        this.themeColor = themeColor;
         panelWidth = maximumSignalNameLength * 6;
-    }
+	}
     
       
     /**
@@ -394,3 +404,4 @@ class SignalNamesPanel extends JPanel
 		}
 	}
 }
+

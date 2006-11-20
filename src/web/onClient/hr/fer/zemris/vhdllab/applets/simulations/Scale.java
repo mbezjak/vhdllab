@@ -4,7 +4,6 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
-
 import javax.swing.JPanel;
 
 
@@ -128,21 +127,28 @@ class Scale extends JPanel
 
     /** Boje */
     private ThemeColor themeColor;
-    
-    /** SerialVersionUID */ 
-    private static final long serialVersionUID = 15245;
-
 
 
     /**
      * Constructor
      *
-     * @param results rezultati koje je parsirao GhldResults
+     * @param themeColor defaultna teme 
+	 *
      */
-    public Scale (GhdlResults results, ThemeColor themeColor)
+    public Scale (ThemeColor themeColor)
     {
-        this.transitionPoints = results.getTransitionPoints();
         this.themeColor = themeColor;
+    }
+
+
+	/**
+	 * Postavlja vrijednosti potrebne za iscrtavanje skale
+	 *
+	 * @param results rezultati koje je parsirao GhdlResults
+	 */
+	public void setContent(GhdlResults results)
+	{
+		this.transitionPoints = results.getTransitionPoints();
         durationsInFemtoSeconds = new double[transitionPoints.length - 1];
         durationsInPixels = new int[durationsInFemtoSeconds.length];
         for (int i = 0; i < durationsInFemtoSeconds.length; i++)
@@ -154,7 +160,7 @@ class Scale extends JPanel
             /* crta pocetne valne oblike sa scaleFaktorom 1 */
             drawDefaultWave();
         }
-    }
+	}
 
 
     /**
@@ -477,3 +483,4 @@ class Scale extends JPanel
                         (string.length() * 6 + 14), SCALE_VALUE_YAXIS);
     }
 }
+

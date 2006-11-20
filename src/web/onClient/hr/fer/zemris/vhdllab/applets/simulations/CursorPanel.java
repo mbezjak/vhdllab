@@ -1,11 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-
-
-import java.awt.Dimension;
 import java.awt.Graphics;
-
 import javax.swing.JPanel;
+import java.awt.Dimension;
 
 
 /**
@@ -63,15 +60,27 @@ class CursorPanel extends JPanel
      * @param offset trenutni pomak
      * @param measureUnitName mjerna jedinica
      */
-    public CursorPanel (int panelEndPoint, int offset, String measureUnitName, ThemeColor themeColor)
+    public CursorPanel (ThemeColor themeColor)
     {
-        this.panelEndPoint = panelEndPoint;
+        this.themeColor = themeColor;
+    }
+
+
+	/**
+	 * Postavlja vrijednosti potrebne za iscrtavanje panela
+	 *
+	 * @param panelEndPoint zavrsna tocka panela
+	 * @param offset pomak
+	 * @param measureUnitName jedinica
+	 */
+	public void setContent(int panelEndPoint, int offset, String measureUnitName)
+	{
+		this.panelEndPoint = panelEndPoint;
         this.offset = offset;
         this.measureUnitName = measureUnitName;
-        this.themeColor = themeColor;
-        firstString = "100.0" + this.measureUnitName;
+		firstString = "100.0" + this.measureUnitName;
         secondString = "200.0" + this.measureUnitName;
-    }
+	}
 
 
     /**
@@ -251,3 +260,4 @@ class CursorPanel extends JPanel
         }
     }
 }
+

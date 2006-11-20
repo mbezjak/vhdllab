@@ -1,10 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -24,10 +26,9 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
-import javax.swing.JFrame;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -40,53 +41,18 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-class Console 
+
+
+/**
+ * Klasa predstavlja panel za prikaz rezultata simulacije 
+ *
+ * @author Boris Ozegovic
+ */
+public class WaveApplet extends JPanel
+	implements IWizard, IEditor
 {
-  // Create a title string from the class name:
-  public static String title(Object o) 
-  {
-    String t = o.getClass().toString();
-    // Remove the word "class":
-    if(t.indexOf("class") != -1)
-      t = t.substring(6);
-    return t;
-  }
-  public static void
-  run(JFrame frame, int width, int height) 
-  {
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(width, height);
-    frame.setVisible(true);
-  }
-  public static void
-  run(JApplet applet, int width, int height) 
-  {
-    JFrame frame = new JFrame(title(applet));
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.getContentPane().add(applet);
-    frame.setSize(width, height);
-    applet.init();
-    applet.start();
-    frame.setVisible(true);
-  }
-  public static void
-  run(JPanel panel, int width, int height) 
-  {
-    JFrame frame = new JFrame(title(panel));
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.getContentPane().add(panel);
-    frame.setSize(width, height);
-    frame.setVisible(true);
-  }
-} ///:~
-
-
-
-
-public class WaveApplet extends JApplet 
-{
-    /** glavni container */
-    private Container cp;
+	/** WaveApplet */
+	JComponent cp = this;
 
     /** Panel koji sadrzi imena signala */
     private SignalNamesPanel signalNames;
@@ -157,6 +123,15 @@ public class WaveApplet extends JApplet
 
     /** Sve boje koje se koriste */
     private ThemeColor themeColor = new ThemeColor();
+
+	/** Toolbar */
+	private JPanel toolbar = new JPanel();
+	
+	/** FileContent */
+	private FileContent content;
+	
+	/** ProjectContainer */
+	private ProjectContainter projectContainer;
        
     /* ikone */
     private Icon navigate = new ImageIcon(getClass().getResource("navigate.png"));
@@ -220,6 +195,342 @@ public class WaveApplet extends JApplet
     /** SerialVersionUID */ 
     private static final long serialVersionUID = 2;
 
+
+
+	/** 
+	 * Constructor
+	 */
+	public WaveApplet()
+	{
+		initializeComponents();
+		initializeNextPreviousEdgePopup();
+		initializeShowValuePopup();
+		initializeToolbar();
+		initializeHelp();
+
+		popupHelp.setPreferredSize(new Dimension(500, 600));
+		popupHelp.add(helpPanel);
+	}
+
+
+	/**
+	 *	Uzima rezultate koji je vratio GHDL simulator, a koji su
+	 *	preneseni preko HTTP-a i postavlja vrijednosti potrebne za
+	 *	crtanje panela i konacno crta panel
+	 *
+	 *	@param content FileContent
+	 */
+	public void setFileContent(FileContent content)
+	{
+		this.content = content;
+		results.parseString(content.getContent());
+		scale.setContent(results);
+		signalNames.setContent(results);
+		waves.setContent(results, scale);
+		signalValues.setContent(results);
+		cursorPanel.setContent(scale.getScaleEndPointInPixels(), 
+				waves.getHorizontalOffset(), scale.getMeasureUnitName());
+		helpPanel.setContent(waves.getShapes());
+
+		/* panel koji razdvaja imena signala i trenutne vrijednosti */
+		divider1.setPreferredSize(new Dimension(4, scale.getScaleEndPointInPixels()));
+		divider1.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+		divider1.setBackground(themeColor.getDivider());
+		divider1.addMouseMotionListener(firstDividerListener);
+
+		/* panel koji razdvaja trenutne vrijednosti i valne oblike */
+		divider2.setPreferredSize(new Dimension(4, scale.getScaleEndPointInPixels()));
+		divider2.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+		divider2.setBackground(themeColor.getDivider());
+		divider2.addMouseMotionListener(secondDividerListener);
+
+		/* svi scrollbarovi sadrzani u appletu */
+		horizontalScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
+				scale.getScaleEndPointInPixels()); 
+		horizontalScrollbar.addAdjustmentListener(horizontalScrollListener);
+		verticalScrollbar = new JScrollBar(SwingConstants.VERTICAL, 0, 0, 0, 
+				waves.getPreferredSize().height); 
+		verticalScrollbar.addAdjustmentListener(verticalScrollListener);
+		signalNamesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
+				signalNames.getMaximumSize().width);
+		signalNamesScrollbar.addAdjustmentListener(signalNamesScrollListener);
+		signalValuesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
+				signalValues.getMaximumSize().width);
+		signalValuesScrollbar.addAdjustmentListener(signalValuesScrollListener);
+		
+		/* postavljanje komponenti na applet */
+		this.setFocusable(true);
+		this.addKeyListener(keyListener);
+		this.setLayout(new WaveLayoutManager());
+		this.setBackground(themeColor.getSignalNames());
+		this.add(toolbar, "toolbar");
+		this.add(textField, "textField");
+		this.add(cursorPanel, "cursorPanel");
+		this.add(search, "search");
+		this.add(interval, "interval");
+		this.add(signalNames, "signalNames");
+		this.add(divider1, "divider1");
+		this.add(divider2, "divider2");
+		this.add(signalValues, "signalValues");
+		this.add(waves, "waves");
+		this.add(scale, "scale");
+		this.add(verticalScrollbar, "verticalScrollbar");
+		this.add(horizontalScrollbar, "horizontalScrollbar");
+		this.add(signalNamesScrollbar, "signalNamesScrollbar");
+		this.add(signalValuesScrollbar, "valuesScrollbar");
+	}
+
+	public FileContent getInitialFileContent() 
+	{
+		return null;
+	}
+
+
+	public void setProjectContainer(ProjectContainter pContainer) 
+	{	
+		this.projectContainer = pContainer;
+	}
+
+
+	public void setupWizard() 
+	{
+		;
+	}
+
+
+	public String getData() 
+	{
+		return null;
+	}
+
+
+	public String getFileName() 
+	{
+		return content.getFileName();
+	}
+
+
+	public String getProjectName() 
+	{
+		return content.getProjectName();
+	}
+
+
+	public IWizard getWizard() 
+	{
+		return null;
+	}
+
+
+	public boolean isModified() 
+	{
+		return false;
+	}
+
+
+	/**
+	 * Metoda koja inicijalizira komponente koje sadrzi glavni panel
+	 */
+	private void initializeComponents()
+	{
+		textField.setEditable(false);
+		textField.setToolTipText("Value");
+		search.setText("search signal");
+		search.addMouseListener(searchClickListener);
+		search.addActionListener(searchListener);
+		interval.setText("Interval");
+		interval.setEditable(false);
+		interval.setToolTipText("Time-interval between cursor and mouse cursor");
+
+		/* rezultati prikazni stringom prenose se GhdlResults klasi */
+		results = new GhdlResults();
+
+		/* stvara se skala */
+		scale = new Scale(themeColor);
+
+		/* panel s imenima signala */
+		signalNames = new SignalNamesPanel(themeColor);  
+		signalNames.addMouseListener(mouseClickListener);
+		signalNames.addMouseWheelListener(wheelListener);
+
+		/* panel s valnim oblicima */
+		waves = new WaveDrawBoard(themeColor, signalNames.getSignalNameSpringHeight());	
+		waves.addMouseMotionListener(mouseListener);
+		waves.addMouseListener(mouseWaveListener);
+		waves.addMouseWheelListener(wheelListener);
+
+		/* panel s trenutnim vrijednostima ovisno o kursoru */
+		signalValues = new SignalValuesPanel(themeColor);
+		signalValues.addMouseListener(mouseClickListener);
+		signalValues.addMouseWheelListener(wheelListener);
+
+		/* panel u kojem klizi kursor */
+		cursorPanel = new CursorPanel(themeColor);
+		cursorPanel.addMouseMotionListener(mouseListener);
+		cursorPanel.addMouseListener(mouseCursorListener);
+
+		/* help panel */
+		helpPanel = new HelpPanel();
+	}
+
+
+	/**
+	 * Inicijalizira popup koji pomice kursore na sljedeci/prethodni padajuci/rastuci brid signala
+	 */
+	private void initializeNextPreviousEdgePopup()
+	{
+		rightUp.addActionListener(navigateListener);
+		leftUp.addActionListener(navigateListener);
+		rightDown.addActionListener(navigateListener);
+		leftDown.addActionListener(navigateListener);
+
+		rightUp.setToolTipText("Move to next right positive edge");
+		leftUp.setToolTipText("Move to next left positive edge");
+		rightDown.setToolTipText("Move to next right negative edge");
+		leftDown.setToolTipText("Move to next left negative edge");
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBackground(new Color(141, 176, 221));
+		buttonPanel.setLayout(new BoxLayout (buttonPanel, BoxLayout.LINE_AXIS));
+		buttonPanel.add(rightUp);
+		buttonPanel.add(leftUp);
+		buttonPanel.add(rightDown);
+		buttonPanel.add(leftDown);
+		popup.add(buttonPanel);
+	}
+
+
+	/**
+	 * Inicijalizira popup koji ce izletjeti na dvoklik po valnom obliku.  Popup sadrzi trenutnu
+	 * vrijednost, ovisno o mjestu dvoklika
+	 */
+	private void initializeShowValuePopup()
+	{
+		showValue.setPreferredSize(new Dimension(300, 50));
+		currentValue.setEditable(false);
+		currentValue.setBackground(themeColor.getSignalNames());
+		JPanel valuePanel = new JPanel();
+		valuePanel.setLayout(new BorderLayout());
+		valuePanel.setBackground(themeColor.getSignalNames());
+		valuePanel.add(currentValue, BorderLayout.WEST);
+		JScrollPane scrollPane = new JScrollPane(valuePanel);
+		showValue.add(scrollPane);
+	}
+
+
+	/** 
+	 * Inicijalizira toolbar
+	 */
+	private void initializeToolbar()
+	{
+		toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.LINE_AXIS));
+		toolbar.setBackground(new Color(141, 176, 221));
+		
+		zoomInTwoButton.addActionListener(zoomInTwoListener);
+		zoomOutTwoButton.addActionListener(zoomOutTwoListener);
+		zoomInTenButton.addActionListener(zoomInTenListener);
+		zoomOutTenButton.addActionListener(zoomOutTenListener);
+		defaultButton.addActionListener(defaultOrderListener);
+		upButton.addActionListener(upListener);
+		downButton.addActionListener(downListener);
+		navigateSignals.addActionListener(showNavigation);
+		helpButton.addActionListener(showHelp);
+		optionsButton.addActionListener(showOptions);
+		
+		zoomInTwoButton.setToolTipText("Zoom in by two");
+		zoomOutTwoButton.setToolTipText("Zoom out by two");
+		zoomInTenButton.setToolTipText("Zoom in by ten");
+		zoomOutTenButton.setToolTipText("Zoom out by ten");
+		defaultButton.setToolTipText("Change to default order");
+		upButton.setToolTipText("Move signal up");
+		downButton.setToolTipText("Move signal down");
+		navigateSignals.setToolTipText("Move to next/previous right/left edge");
+		optionsButton.setToolTipText("Change current theme/define custom colors");
+		helpButton.setToolTipText("Help");
+
+		toolbar.add(zoomInTwoButton);
+		toolbar.add(zoomOutTwoButton);
+		//toolbar.add(zoomInTenButton);
+		//toolbar.add(zoomOutTenButton);
+		toolbar.add(upButton);
+		toolbar.add(downButton);
+		toolbar.add(defaultButton);
+		toolbar.add(navigateSignals);
+		toolbar.add(optionsButton);
+		toolbar.add(helpButton);
+	}
+
+
+	/**
+	 * Inicijalizacija help popupa 
+	 */
+	private void initializeHelp()
+	{
+		optionsPopup.setPreferredSize(new Dimension(450, 550));
+		optionsPopup.setBackground(new Color(238, 238, 238));
+		
+		JPanel labelPanel = new JPanel ();
+		labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
+		JLabel titleComponents = new JLabel("Change applet components color:");
+		JLabel titleShapes = new JLabel("Change Shapes color:");
+		labelPanel.add(titleComponents);
+		labelPanel.add(Box.createRigidArea(new Dimension(25, 0)));
+		labelPanel.add(titleShapes);
+		labelPanel.add(Box.createRigidArea(new Dimension(358, 0)));
+
+		JPanel listPanel = new JPanel();
+		listPanel.setBackground(new Color(238, 238, 238));
+		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.LINE_AXIS));
+		
+		components.addElement("Signal names background");
+		components.addElement("Waveforms background");
+		components.addElement("Scale background");
+		components.addElement("Cursor background");
+		components.addElement("Active cursor");
+		components.addElement("Pasive cursor");
+		components.addElement("Letters color");
+		shapes.addElement("One");
+		shapes.addElement("Zero");
+		shapes.addElement("Unknown");
+		shapes.addElement("High impedance");
+		shapes.addElement("U, L, W and H");
+		shapes.addElement("Bit-vector");
+
+		listComponents.addListSelectionListener(listListener);
+		listShapes.addListSelectionListener(listListener);
+
+		listPanel.add(Box.createRigidArea(new Dimension(7, 0)));
+		listPanel.add(listComponents);
+		listPanel.add(Box.createRigidArea(new Dimension(60, 0)));
+		listPanel.add(listShapes);
+		listPanel.add(Box.createRigidArea(new Dimension(440, 0)));
+
+		JPanel okPanel = new JPanel();
+		okPanel.setBackground(new Color(238, 238, 238));
+		okPanel.setLayout(new BoxLayout(okPanel, BoxLayout.LINE_AXIS));
+		okButton.addActionListener(okListener);
+		okPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+		okPanel.add(okButton);
+		okPanel.add(Box.createRigidArea(new Dimension(120, 0)));
+		okPanel.add(defaultTheme);
+		defaultTheme.addActionListener(themeListener);
+		okPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+		okPanel.add(secondTheme);
+		secondTheme.addActionListener(themeListener);
+		okPanel.add(Box.createRigidArea(new Dimension(418, 0)));
+		
+		JPanel optionsPanel = new JPanel();
+		optionsPanel.setBackground(new Color(238, 238, 238));
+		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+		optionsPanel.add(colorChooser);
+		optionsPanel.add(labelPanel);
+		optionsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		optionsPanel.add(listPanel);
+		optionsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+		optionsPanel.add(okPanel);
+		optionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+		optionsPopup.add(optionsPanel);
+	}
 
 
     /**
@@ -323,8 +634,8 @@ public class WaveApplet extends JApplet
         public void actionPerformed (ActionEvent event) 
         {
             popup.show(cp, 350, 55);
-
-            /* vraca fokus na kontejner */
+			
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         } 
     };
@@ -339,7 +650,7 @@ public class WaveApplet extends JApplet
         {
             popupHelp.show(cp, 200, 55);
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         } 
     };
@@ -353,8 +664,8 @@ public class WaveApplet extends JApplet
         public void actionPerformed (ActionEvent event) 
         {
             optionsPopup.show(cp, 420, 55);
-
-            /* vraca fokus na kontejner */
+		
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         } 
     };
@@ -375,7 +686,7 @@ public class WaveApplet extends JApplet
             {
                 listComponents.clearSelection();
             }
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };
@@ -474,11 +785,11 @@ public class WaveApplet extends JApplet
                 }
                 waves.repaint();
             }
-            
-            /* vraca fokus na kontejner */
+
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
-    };
+	};
 
 
     /**
@@ -503,7 +814,7 @@ public class WaveApplet extends JApplet
             cursorPanel.repaint();
             cp.setBackground(themeColor.getSignalNames());
             
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };  
@@ -538,7 +849,7 @@ public class WaveApplet extends JApplet
             /* nova maksimalna vrijednost scrollbara */
             horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };
@@ -573,7 +884,7 @@ public class WaveApplet extends JApplet
             /* nova maksimalna vrijednost scrollbara */
             horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };
@@ -603,8 +914,8 @@ public class WaveApplet extends JApplet
             /* nova maksimalna vrijednost scrollbara */
             horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
 
-            /* vraca fokus na kontejner */
-            cp.requestFocusInWindow();
+			/* vraca fokus na kontejner */
+            cp.requestFocusInWindow();			
         }
     };
 
@@ -633,8 +944,8 @@ public class WaveApplet extends JApplet
             /* nova maksimalna vrijednost scrollbara */
             horizontalScrollbar.setMaximum(scale.getScaleEndPointInPixels());
 
-            /* vraca fokus na kontejner */
-            cp.requestFocusInWindow();
+			/* vraca fokus na kontejner */
+            cp.requestFocusInWindow();			
         }
     };
         
@@ -672,9 +983,9 @@ public class WaveApplet extends JApplet
             {
                 verticalScrollbar.setValue(verticalScrollbar.getValue() - 200);
             }
-            
-            /* vraca fokus na kontejner */
-            cp.requestFocusInWindow();
+
+			/* vraca fokus na kontejner */
+            cp.requestFocusInWindow();			
         }
     };
 
@@ -713,8 +1024,8 @@ public class WaveApplet extends JApplet
                 verticalScrollbar.setValue(verticalScrollbar.getValue() + 200);
             }
 
-            /* vraca fokus na kontejner */
-            cp.requestFocusInWindow();
+			/* vraca fokus na kontejner */
+            cp.requestFocusInWindow();			
         }
     };
 
@@ -744,8 +1055,8 @@ public class WaveApplet extends JApplet
             waves.repaint();
 			signalValues.repaint();
 
-            /* vraca fokus na kontejner */
-            cp.requestFocusInWindow();
+			/* vraca fokus na kontejner */
+            cp.requestFocusInWindow();			
         }
     };
 
@@ -1011,7 +1322,7 @@ public class WaveApplet extends JApplet
             waves.repaint();
 			signalValues.repaint();
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };
@@ -1067,7 +1378,7 @@ public class WaveApplet extends JApplet
             cursorPanel.repaint();
             waves.repaint();
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };
@@ -1227,8 +1538,9 @@ public class WaveApplet extends JApplet
             cursorPanel.repaint();
 			signalValues.repaint();
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
+
         }
     };
 
@@ -1324,7 +1636,7 @@ public class WaveApplet extends JApplet
             cursorPanel.repaint();
 			signalValues.repaint();
 
-            /* vraca fokus na kontejner */
+			/* vraca fokus na kontejner */
             cp.requestFocusInWindow();
         }
     };
@@ -1504,253 +1816,5 @@ public class WaveApplet extends JApplet
             ;
         }
     };
+}
 
-      
-  public void init() 
-  {
-    VcdParser parser = new VcdParser("./src/web/onClient/hr/fer/zemris/vhdllab/applets/simulations/adder2.vcd");
-    parser.parse();
-    textField.setEditable(false);
-    textField.setToolTipText("Value");
-    search.setText("search signal");
-    search.addMouseListener(searchClickListener);
-    search.addActionListener(searchListener);
-    interval.setText("Interval");
-    interval.setEditable(false);
-    interval.setToolTipText("Time-interval between cursor and mouse cursor");
-
-    /* rezultati prikazni stringom prenose se GhdlResults klasi */
-    results = new GhdlResults();
-    results.parseString(parser.getResultInString());
-
-    /* stvara se skala */
-    scale = new Scale(results, themeColor);
-
-    /* panel s imenima signala */
-    signalNames = new SignalNamesPanel(results, themeColor);
-    signalNames.addMouseListener(mouseClickListener);
-    signalNames.addMouseWheelListener(wheelListener);
-
-    /* panel s valnim oblicima */
-    waves = new WaveDrawBoard(results, scale, signalNames.getSignalNameSpringHeight(), themeColor);
-    waves.addMouseMotionListener(mouseListener);
-    waves.addMouseListener(mouseWaveListener);
-    waves.addMouseWheelListener(wheelListener);
-
-	/* panel s trenutnim vrijednostima ovisno o kursoru */
-	signalValues = new SignalValuesPanel(results, themeColor);
-	signalValues.addMouseListener(mouseClickListener);
-	signalValues.addMouseWheelListener(wheelListener);
-
-    /* panel u kojem klizi kursor */
-    cursorPanel = new CursorPanel(scale.getScaleEndPointInPixels(), 
-            waves.getHorizontalOffset(), scale.getMeasureUnitName(), themeColor);
-    cursorPanel.addMouseMotionListener(mouseListener);
-    cursorPanel.addMouseListener(mouseCursorListener);
-
-    /* help panel */
-    helpPanel = new HelpPanel(waves.getShapes());
-
-	/* panel koji razdvaja imena signala i trenutne vrijednosti */
-	divider1.setPreferredSize(new Dimension(4, scale.getScaleEndPointInPixels()));
-	divider1.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
-	divider1.setBackground(themeColor.getDivider());
-	divider1.addMouseMotionListener(firstDividerListener);
-
-	/* panel koji razdvaja trenutne vrijednosti i valne oblike */
-	divider2.setPreferredSize(new Dimension(4, scale.getScaleEndPointInPixels()));
-	divider2.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
-	divider2.setBackground(themeColor.getDivider());
-	divider2.addMouseMotionListener(secondDividerListener);
-
-    /* svi scrollbarovi sadrzani u appletu */
-    horizontalScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
-            scale.getScaleEndPointInPixels()); 
-    horizontalScrollbar.addAdjustmentListener(horizontalScrollListener);
-    verticalScrollbar = new JScrollBar(SwingConstants.VERTICAL, 0, 0, 0, 
-            waves.getPreferredSize().height); 
-    verticalScrollbar.addAdjustmentListener(verticalScrollListener);
-    signalNamesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
-            signalNames.getMaximumSize().width);
-    signalNamesScrollbar.addAdjustmentListener(signalNamesScrollListener);
-    signalValuesScrollbar = new JScrollBar(SwingConstants.HORIZONTAL, 0, 0, 0, 
-            signalValues.getMaximumSize().width);
-    signalValuesScrollbar.addAdjustmentListener(signalValuesScrollListener);
-
-
-    /* 
-     * Popup prozor koji ce izletjeti na trazenje sljedeceg/prethodnog
-     * padajuceg/rastuceg brid signala.
-     */
-    rightUp.addActionListener(navigateListener);
-    leftUp.addActionListener(navigateListener);
-    rightDown.addActionListener(navigateListener);
-    leftDown.addActionListener(navigateListener);
-
-    rightUp.setToolTipText("Move to next right positive edge");
-    leftUp.setToolTipText("Move to next left positive edge");
-    rightDown.setToolTipText("Move to next right negative edge");
-    leftDown.setToolTipText("Move to next left negative edge");
-
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.setBackground(new Color(141, 176, 221));
-    buttonPanel.setLayout(new BoxLayout (buttonPanel, BoxLayout.LINE_AXIS));
-    buttonPanel.add(rightUp);
-    buttonPanel.add(leftUp);
-    buttonPanel.add(rightDown);
-    buttonPanel.add(leftDown);
-    popup.add(buttonPanel);
-    /* kraj popup prozora */    
-
-	/* Popup koji ce izletjeti na dvoklik u panelu s valnim oblicima */
-	showValue.setPreferredSize(new Dimension(300, 50));
-	currentValue.setEditable(false);
-	currentValue.setBackground(themeColor.getSignalNames());
-	JPanel valuePanel = new JPanel();
-	valuePanel.setLayout(new BorderLayout());
-	valuePanel.setBackground(themeColor.getSignalNames());
-	valuePanel.add(currentValue, BorderLayout.WEST);
-	JScrollPane scrollPane = new JScrollPane(valuePanel);
-	showValue.add(scrollPane);
-	/* kraj popup prozora */
-
-    /* toolbar */
-    JPanel toolbar = new JPanel();
-    toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.LINE_AXIS));
-    toolbar.setBackground(new Color(141, 176, 221));
-    
-    zoomInTwoButton.addActionListener(zoomInTwoListener);
-    zoomOutTwoButton.addActionListener(zoomOutTwoListener);
-    zoomInTenButton.addActionListener(zoomInTenListener);
-    zoomOutTenButton.addActionListener(zoomOutTenListener);
-    defaultButton.addActionListener(defaultOrderListener);
-    upButton.addActionListener(upListener);
-    downButton.addActionListener(downListener);
-    navigateSignals.addActionListener(showNavigation);
-    helpButton.addActionListener(showHelp);
-    optionsButton.addActionListener(showOptions);
-    
-    zoomInTwoButton.setToolTipText("Zoom in by two");
-    zoomOutTwoButton.setToolTipText("Zoom out by two");
-    zoomInTenButton.setToolTipText("Zoom in by ten");
-    zoomOutTenButton.setToolTipText("Zoom out by ten");
-    defaultButton.setToolTipText("Change to default order");
-    upButton.setToolTipText("Move signal up");
-    downButton.setToolTipText("Move signal down");
-    navigateSignals.setToolTipText("Move to next/previous right/left edge");
-    optionsButton.setToolTipText("Change current theme/define custom colors");
-    helpButton.setToolTipText("Help");
-
-    toolbar.add(zoomInTwoButton);
-    toolbar.add(zoomOutTwoButton);
-    //toolbar.add(zoomInTenButton);
-    //toolbar.add(zoomOutTenButton);
-    toolbar.add(upButton);
-    toolbar.add(downButton);
-    toolbar.add(defaultButton);
-    toolbar.add(navigateSignals);
-    toolbar.add(optionsButton);
-    toolbar.add(helpButton);
-    /* kraj toolbara */
-    
-    /* popup help */
-    popupHelp.setPreferredSize(new Dimension(500, 600));
-    popupHelp.add(helpPanel);
-
-    /* popup options */
-    optionsPopup.setPreferredSize(new Dimension(450, 550));
-    optionsPopup.setBackground(new Color(238, 238, 238));
-    
-    JPanel labelPanel = new JPanel ();
-    labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
-    JLabel titleComponents = new JLabel("Change applet components color:");
-    JLabel titleShapes = new JLabel("Change Shapes color:");
-    labelPanel.add(titleComponents);
-    labelPanel.add(Box.createRigidArea(new Dimension(25, 0)));
-    labelPanel.add(titleShapes);
-    labelPanel.add(Box.createRigidArea(new Dimension(358, 0)));
-
-    JPanel listPanel = new JPanel();
-    listPanel.setBackground(new Color(238, 238, 238));
-    listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.LINE_AXIS));
-    
-    components.addElement("Signal names background");
-    components.addElement("Waveforms background");
-    components.addElement("Scale background");
-    components.addElement("Cursor background");
-    components.addElement("Active cursor");
-    components.addElement("Pasive cursor");
-    components.addElement("Letters color");
-    shapes.addElement("One");
-    shapes.addElement("Zero");
-    shapes.addElement("Unknown");
-    shapes.addElement("High impedance");
-    shapes.addElement("U, L, W and H");
-    shapes.addElement("Bit-vector");
-
-    listComponents.addListSelectionListener(listListener);
-    listShapes.addListSelectionListener(listListener);
-
-    listPanel.add(Box.createRigidArea(new Dimension(7, 0)));
-    listPanel.add(listComponents);
-    listPanel.add(Box.createRigidArea(new Dimension(60, 0)));
-    listPanel.add(listShapes);
-    listPanel.add(Box.createRigidArea(new Dimension(440, 0)));
-
-    JPanel okPanel = new JPanel();
-    okPanel.setBackground(new Color(238, 238, 238));
-    okPanel.setLayout(new BoxLayout(okPanel, BoxLayout.LINE_AXIS));
-    okButton.addActionListener(okListener);
-    okPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-    okPanel.add(okButton);
-    okPanel.add(Box.createRigidArea(new Dimension(120, 0)));
-    okPanel.add(defaultTheme);
-    defaultTheme.addActionListener(themeListener);
-    okPanel.add(Box.createRigidArea(new Dimension(20, 0)));
-    okPanel.add(secondTheme);
-    secondTheme.addActionListener(themeListener);
-    okPanel.add(Box.createRigidArea(new Dimension(418, 0)));
-    
-    JPanel optionsPanel = new JPanel();
-    optionsPanel.setBackground(new Color(238, 238, 238));
-    optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
-    optionsPanel.add(colorChooser);
-    optionsPanel.add(labelPanel);
-    optionsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-    optionsPanel.add(listPanel);
-    optionsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-    optionsPanel.add(okPanel);
-    optionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-    optionsPopup.add(optionsPanel);
-    /* kraj popup optionsa */
-
-    
-    /* postavljanje komponenti na applet */
-    cp = getContentPane();
-    cp.setFocusable(true);
-    cp.addKeyListener(keyListener);
-    cp.setLayout(new WaveLayoutManager());
-    cp.setBackground(themeColor.getSignalNames());
-    cp.add(toolbar, "toolbar");
-    cp.add(textField, "textField");
-    cp.add(cursorPanel, "cursorPanel");
-    cp.add(search, "search");
-    cp.add(interval, "interval");
-    cp.add(signalNames, "signalNames");
-	cp.add(divider1, "divider1");
-	cp.add(divider2, "divider2");
-    cp.add(signalValues, "signalValues");
-    cp.add(waves, "waves");
-    cp.add(scale, "scale");
-    cp.add(verticalScrollbar, "verticalScrollbar");
-    cp.add(horizontalScrollbar, "horizontalScrollbar");
-    cp.add(signalNamesScrollbar, "signalNamesScrollbar");
-    cp.add(signalValuesScrollbar, "valuesScrollbar");
-  }
-
-
-  public static void main(String[] args) 
-  {
-      Console.run(new WaveApplet(), 1024, 1000);
-  }
-} 

@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-
 import javax.swing.JPanel;
 
 
@@ -60,15 +59,25 @@ class SignalValuesPanel extends JPanel
 	 /**
      * Constructor
      *
-     * @param results rezultati dobiveni HTTP-om parsirani od GhdlResults klase 
 	 * @param themeColor Sve raspolozive boje
      */
-    public SignalValuesPanel (GhdlResults results, ThemeColor themeColor)
+    public SignalValuesPanel (ThemeColor themeColor)
     {
 		super();
+		this.themeColor = themeColor;
+		
+	}
+
+
+	/**
+	 * Postavlja vrijednosti potrebne za iscrtavanje panela
+	 *
+	 * @param results rezultati koje je parsirao GhdlResults
+	 */
+	public void setContent(GhdlResults results)
+	{
 		this.results = results;
 		this.maximumVectorSize = results.getMaximumVectorSize();
-		this.themeColor = themeColor;
 		panelWidth = maximumVectorSize * 6;
 	}
 
@@ -240,3 +249,4 @@ class SignalValuesPanel extends JPanel
 		}
 	}
 }
+

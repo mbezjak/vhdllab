@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Color;
 import java.awt.Graphics;
-
 import javax.swing.JPanel;
 
 
@@ -17,20 +17,19 @@ class HelpPanel extends JPanel
     /* Valni oblici */
     private Shape[] shapes;
 
-    
     /** SerialVersionUID */ 
     private static final long serialVersionUID = 6;
 
 
-    /**
-     * Constructor
-     *
-     * @param shapes Valni oblici
-     */
-    public HelpPanel (Shape[] shapes)
-    {
-        this.shapes = shapes;
-    }
+	/**
+	 * Postavlja vrijednosti potrebne za iscrtavanje panela
+	 *
+	 * @param shapes oblici
+	 */
+	public void setContent(Shape[] shapes)
+	{
+		this.shapes = shapes;
+	}
 
 
     /**
@@ -136,3 +135,4 @@ class HelpPanel extends JPanel
         g.drawString("end and home == end and home", 5, 550);
     }
 }
+

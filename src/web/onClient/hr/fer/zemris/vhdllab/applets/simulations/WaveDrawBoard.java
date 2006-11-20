@@ -1,11 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JPanel;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Klasa koja predstavlja panel po kojem se crtaju valni oblici
@@ -17,8 +17,8 @@ class WaveDrawBoard extends JPanel
     /** Prvi valni oblik pocinje po y-osi od 20. piksela */
     private final int FIRST_WAVE_YAXIS_START = 20;
 
-    /** Svaki spring (elasticni pretinac) vala iznosi 40 piksela */
-    private final int WAVE_SPRING_SIZE;
+    /** Svaki spring (elasticni pretinac) vala iznosi 45 piksela */
+    private final int waveSpringSize;
     
     /** Vrijednosti signala */
     private List<String[]> signalValues;
@@ -85,12 +85,25 @@ class WaveDrawBoard extends JPanel
     /**
      * Constructor
      *
-     * @param results rezultati simulacije, parsirani od GhdlResults klase
      * @param scale skala
+	 * @param waveSpringSize velicina springa
      */
-    public WaveDrawBoard (GhdlResults results, Scale scale, int WAVE_SPRING_SIZE, ThemeColor themeColor)
+    public WaveDrawBoard (ThemeColor themeColor, int waveSpringSize)
     {
         super();
+        this.themeColor = themeColor;
+		this.waveSpringSize = waveSpringSize;
+    }
+
+
+	/**
+	 * Postavljanje vrijednosti za pokretanje panela
+	 *
+	 * @param resultsrezultati koje je parsirao GhdlResults
+	 * @param scale rezultati dobiveni od skale
+	 */
+	public void setContent(GhdlResults results, Scale scale)
+	{
 		this.results = results;
         this.signalValues = results.getSignalValues();
 
@@ -99,9 +112,7 @@ class WaveDrawBoard extends JPanel
         this.waveEndPointInPixels = scale.getScaleEndPointInPixels();
         this.scale = scale;
         this.currentVectorIndex = results.getCurrentVectorIndex();
-        this.WAVE_SPRING_SIZE = WAVE_SPRING_SIZE;
-        this.themeColor = themeColor;
-    }
+	}
 
 
     /**
@@ -110,7 +121,7 @@ class WaveDrawBoard extends JPanel
 
     public Dimension getPreferredSize() 
     { 
-        return new Dimension(waveEndPointInPixels, signalValues.size() * WAVE_SPRING_SIZE);
+        return new Dimension(waveEndPointInPixels, signalValues.size() * waveSpringSize);
     } 
 
 	
@@ -359,8 +370,8 @@ class WaveDrawBoard extends JPanel
         if (isClicked)
         {
             g.setColor(themeColor.getApplet());
-            g.fillRect(0, index * WAVE_SPRING_SIZE + 15 - offsetYAxis,
-                    getPreferredSize().width, WAVE_SPRING_SIZE / 2 + 5);
+            g.fillRect(0, index * waveSpringSize + 15 - offsetYAxis,
+                    getPreferredSize().width, waveSpringSize / 2 + 5);
         }
         g.setColor(themeColor.getLetters());
         
@@ -396,8 +407,9 @@ class WaveDrawBoard extends JPanel
 		{
 			waveForm =  new WaveForm(array, durationsInPixels, shapes);
 			waveForm.drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
-			yAxis += WAVE_SPRING_SIZE;
+			yAxis += waveSpringSize;
             
 		}
 	}
 }
+
