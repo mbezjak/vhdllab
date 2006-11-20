@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 
 public class NumField extends AbstractPropField {
-	Ptr<Object> p;
-	JTextField tfield;
+	protected Ptr<Object> p;
+	protected JTextField tfield;
 	
 	public NumField(Ptr<Object> pNum) {
 		p = pNum;		

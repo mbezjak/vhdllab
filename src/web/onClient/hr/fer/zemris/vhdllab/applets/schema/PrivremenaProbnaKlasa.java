@@ -22,7 +22,7 @@ public class PrivremenaProbnaKlasa {
 		
 		PrivremeniProbniSklop probni = new PrivremeniProbniSklop();
 		
-		PropertyPanel panel = new PropertyPanel(probni.getPropertyList());
+		PropertyPanel panel = new PropertyPanel(probni);
 		frame.add(panel);
 		frame.validate();
 		

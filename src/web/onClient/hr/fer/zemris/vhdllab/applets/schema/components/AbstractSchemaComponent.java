@@ -22,7 +22,7 @@ import java.util.LinkedList;
  */
 public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	protected LinkedList<AbstractSchemaPort> portlist;
-	private Ptr<Object> pComponentName;
+	protected Ptr<Object> pComponentName;
 	public String getComponentName() {
 		return (String)pComponentName.val;
 	}
@@ -30,7 +30,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		this.pComponentName.val = name;
 	}
 	
-	private Ptr<Object> pComponentInstanceName;
+	protected Ptr<Object> pComponentInstanceName;
 	public String getComponentInstanceName() {
 		return (String)pComponentInstanceName.val;
 	}
@@ -39,7 +39,13 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	}
 	
 	
-
+	public void clearPortList() {
+		portlist.clear();
+	}
+	public void addPort(AbstractSchemaPort port) {
+		portlist.add(port);
+	}
+	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#getNumberOfPorts()
 	 */
