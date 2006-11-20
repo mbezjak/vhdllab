@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.model;
 
 /**
  * @hibernate.class
- *  table = "GENERAL_FILES"
+ *  table = "GLOBAL_FILES"
  */
 public class GlobalFile {
 	public static final String GFT_THEME = "theme";
@@ -17,7 +17,7 @@ public class GlobalFile {
 	
 	/**
 	 * @hibernate.id
-	 *  column = "GENERAL_FILE_ID"
+	 *  column = "GLOBAL_FILE_ID"
 	 *  generator-class = "native"
 	 */
 	public Long getId() {

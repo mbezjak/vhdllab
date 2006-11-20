@@ -140,4 +140,14 @@ public class Automat extends JPanel implements IEditor, IWizard {
 		//TODO Auto-generated method stub
 	}
 
+	public String getFileName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getProjectName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

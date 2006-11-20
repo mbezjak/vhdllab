@@ -53,5 +53,8 @@ public class ProjectExplorer extends JPanel implements Explorer {
 	public void setProjectContainer(ProjectContainter pContainer) {
 		this.container = pContainer;
 	}
+
+	public void addProject(String projectName) {
+	}
 	
 }

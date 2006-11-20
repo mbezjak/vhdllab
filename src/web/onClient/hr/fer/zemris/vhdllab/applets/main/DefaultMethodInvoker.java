@@ -264,6 +264,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
 			if(id == null) break;
 			files.add(Long.parseLong(id));
+			i++;
 		}
 		return files;
 	}
@@ -281,6 +282,25 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		Long id = Long.parseLong(fileId);
 		return id;
 	}
+	
+	public List<Long> findFileByProject(Long projectId) throws AjaxException {
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_FIND_FILES_BY_PROJECT;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
+		
+		Properties resProperties = initiateAjax(reqProperties);
+		
+		List<Long> files = new ArrayList<Long>();
+		int i = 1;
+		while(true) {
+			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
+			if(id == null) break;
+			files.add(Long.parseLong(id));
+			i++;
+		}
+		return files;
+	}
 
 	public List<Long> findGlobalFilesByType(String type) throws AjaxException {
 		Properties reqProperties = new Properties();
@@ -296,6 +316,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
 			if(id == null) break;
 			files.add(Long.parseLong(id));
+			i++;
 		}
 		return files;
 	}
@@ -314,6 +335,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 			String id = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID+"."+i);
 			if(id == null) break;
 			projects.add(Long.parseLong(id));
+			i++;
 		}
 		return projects;
 	}
@@ -332,6 +354,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
 			if(id == null) break;
 			files.add(Long.parseLong(id));
+			i++;
 		}
 		return files;
 	}
@@ -448,6 +471,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
 			if(id == null) break;
 			files.add(Long.parseLong(id));
+			i++;
 		}
 		return files;
 	}
@@ -499,6 +523,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		Properties resProperties = initiateAjax(reqProperties);
 		
 		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
+		if(content.equals("")) throw new AjaxException("No data in local file.");
 		return content;
 	}
 
@@ -631,8 +656,9 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		String response = ajax.initiateSynchronousCall(XMLUtil.serializeProperties(p));
 		Properties resProperties = XMLUtil.deserializeProperties(response);
 		
-		if(!method.equalsIgnoreCase(resProperties.getProperty(MethodConstants.PROP_METHOD))) {
-			throw new AjaxException("Wrong method returned.");
+		String resMethod = resProperties.getProperty(MethodConstants.PROP_METHOD);
+		if(!method.equalsIgnoreCase(resMethod)) {
+			throw new AjaxException("Wrong method returned! Expected: " + method + " but was: " + resMethod);
 		}
 		String status = resProperties.getProperty(MethodConstants.PROP_STATUS);
 		if(!status.equals(MethodConstants.STATUS_OK)) {
@@ -641,4 +667,5 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		
 		return resProperties;
 	}
+
 }

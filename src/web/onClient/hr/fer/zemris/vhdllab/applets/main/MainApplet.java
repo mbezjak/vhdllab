@@ -8,7 +8,6 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.Writer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
@@ -16,6 +15,7 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
+import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -69,13 +69,31 @@ public class MainApplet
 		super.init();
 		ajax = new DefaultAjaxMediator(this);
 		invoker = new DefaultMethodInvoker(ajax);
-		//ServerInitData server = new ServerInitData();
-		//server.writeGlobalFiles();
+		
+		//**********************
+		ServerInitData server = new ServerInitData();
+		server.init(this);
+		server.writeGlobalFiles();
+		//**********************
+		
 		cache = new Cache(invoker);
 		bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN,
 				LanguageConstants.LANGUAGE_EN, null);
 		initGUI();
-		//server.writeServerInitData();
+		
+		//**********************
+		server.writeServerInitData();
+		//**********************
+	
+		List<String> projects = cache.findProjects();
+		for(String projectName : projects) {
+			projectExplorer.addProject(projectName);
+			List<String> files = cache.findFilesByProject(projectName);
+			for(String fileName : files) {
+				projectExplorer.addFile(projectName, fileName);
+			}
+		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -109,12 +127,11 @@ public class MainApplet
 		super.destroy();
 	}
 	
-	protected void initGUI() {
+	private void initGUI() {
 		JPanel topContainerPanel = new JPanel(new BorderLayout());
 		menuBar = new PrivateMenuBar(bundle).setup();
 		this.setJMenuBar( menuBar );
 		
-		this.setSize(new Dimension(1000,650));
 		toolBar = new PrivateToolBar(bundle).setup();
 		topContainerPanel.add(toolBar, BorderLayout.NORTH);
 		topContainerPanel.add(setupStatusBar(), BorderLayout.SOUTH);
@@ -134,7 +151,7 @@ public class MainApplet
 	
 	private JPanel setupCenterPanel() {
 		projectExplorer = new ProjectExplorer();
-		projectExplorer.addFile("pname", "filename");
+		projectExplorer.setProjectContainer(this);
 		JPanel projectExplorerPanel = new JPanel(new BorderLayout());
 		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
@@ -227,7 +244,7 @@ public class MainApplet
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					writer.setupWizard();
+					createNewFileInstance(File.FT_VHDLSOURCE);
 				}
 			});
 			submenu.add(menuItem);
@@ -263,6 +280,11 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_SAVE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setMnemonicAndAccelerator(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					saveFileInstance(File.FT_VHDLSOURCE);
+				}
+			});
 			menu.add(menuItem);
 
 			// Save All menu item
@@ -403,19 +425,18 @@ public class MainApplet
 		}
 	}
 	
+	
 	public List<String> getAllCircuits() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) {
-		// TODO Auto-generated method stub
-		return null;
+		return cache.getCircuitInterfaceFor(projectName, fileName);
 	}
 
 	public String getOptions() {
-		// TODO Auto-generated method stub
-		return null;
+		return cache.getOptions();
 	}
 
 	public ResourceBundle getResourceBundle() {
@@ -423,16 +444,45 @@ public class MainApplet
 	}
 
 	public void openFile(String projectName, String fileName) {
-		IEditor writer = (IEditor) this.writer;
-		
+		String content = cache.loadFileContent(projectName, fileName);
+		FileContent fileContent = new FileContent(projectName, fileName, content);
+		writer.setFileContent(fileContent);
 	}
+	
+	private void createNewFileInstance(String type) {
+		if(type.equals(File.FT_VHDLSOURCE)) {
+			writer.setupWizard();
+			FileContent content = writer.getInitialFileContent();
+			String projectName = content.getProjectName();
+			String fileName = content.getFileName();
+			cache.createFile(projectName, fileName, type);
+			projectExplorer.addFile(projectName, fileName);
+		} else return;
+	}
+	
+	private void saveFileInstance(String type) {
+		if(type.equals(File.FT_VHDLSOURCE)) {
+			if(!writer.isModified()) return;
+			String fileName = writer.getFileName();
+			String projectName = writer.getProjectName();
+			String content = writer.getData();
+			cache.saveFile(projectName, fileName, content);
+		} else return;
+	}
+
 
 	private class ServerInitData {
 		
+		public void init(Applet applet) {
+			applet.setSize(new Dimension(1000,650));
+		}
+		
 		public void writeGlobalFiles() {
 			try {
-				Long fileId = invoker.createGlobalFile("Applet", GlobalFile.GFT_APPLET);
+				Long fileId = invoker.createGlobalFile("applet", GlobalFile.GFT_APPLET);
 				invoker.saveGlobalFile(fileId, "a=2a\nb=22");
+				fileId = invoker.createGlobalFile("tema", GlobalFile.GFT_THEME);
+				invoker.saveGlobalFile(fileId, "neka = random\ntema=za testiranje");
 			} catch (AjaxException e) {
 				e.printStackTrace();
 			}
@@ -444,12 +494,15 @@ public class MainApplet
 				Long projectId = invoker.createProject("Project1", Long.valueOf(0));
 				Long fileId = invoker.createFile(projectId, "File1", File.FT_VHDLSOURCE);
 				invoker.saveFile(fileId, "simple content");
+				fileId = invoker.createFile(projectId, "File2", File.FT_VHDLSOURCE);
+				invoker.saveFile(fileId, "some file content that should be displayed in writer");
+				
 				
 				FileContent content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId), invoker.loadFileContent(fileId));
 				writer.setFileContent(content);
 				
 				long end = System.currentTimeMillis();
-				content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId), invoker.loadFileContent(fileId)+(start-end));
+				content = new FileContent("", "", writer.getData()+(start-end)+"\nLoaded Options:\n"+cache.getOptions());
 				writer.setFileContent(content);
 			} catch (AjaxException e) {
 				e.printStackTrace();

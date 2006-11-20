@@ -38,8 +38,9 @@ public class DoMethodExtractCircuitInterface implements RegisteredMethod {
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID = '"+fileID+"'!");
 		} catch (ServiceException e) {
-			return errorProperties(method,MethodConstants.SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE, "Can not extract circuit interface for file id = '"+fileID+"'!");
+			ci = null;
 		}
+		if(ci == null) return errorProperties(method,MethodConstants.SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE, "Can not extract circuit interface for file id = '"+fileID+"'!");
 		
 		// Prepare response
 		Properties resProp = new Properties();

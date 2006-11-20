@@ -612,6 +612,48 @@ public class MethodConstants {
 	 */
 	public static final String MTD_FIND_FILE_BY_NAME = "find.file.by.name";
 	/**
+	 * A "find files by project" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_PROJECT_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>list of {@link #PROP_FILE_ID} written in following format: {@link #PROP_FILE_ID}.[number]
+	 *     (number is positive and starts at 1)
+	 * </ul>
+	 * <p>
+	 * Example of response <code>Properties</code>:
+	 * <blockquote>
+	 * {@link #PROP_METHOD} = find.files.by.project<br/>
+	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
+	 * {@link #PROP_FILE_ID}.1 = 104<br/>
+	 * {@link #PROP_FILE_ID}.2 = 3<br/>
+	 * {@link #PROP_FILE_ID}.3 = 55<br/>
+	 * ...
+	 * </blockquote>
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_OWNER_ID} is not a long int number
+	 * <li>{@link #SE_NO_SUCH_PROJECT} - if projects with {@link #PROP_PROJECT_ID} could not be found
+	 * </ul>
+	 */
+	public static final String MTD_FIND_FILES_BY_PROJECT = "find.files.by.project";
+	/**
 	 * A "delete file" method. Expected parametars (written as a property) are
 	 * <ul>
 	 * <li>{@link #PROP_FILE_ID}
@@ -1149,7 +1191,7 @@ public class MethodConstants {
 	 * <p>
 	 * Example of response <code>Properties</code>:
 	 * <blockquote>
-	 * {@link #PROP_METHOD} = find.user.file.by.user<br/>
+	 * {@link #PROP_METHOD} = find.user.files.by.user<br/>
 	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
 	 * {@link #PROP_FILE_ID}.1 = 104<br/>
 	 * {@link #PROP_FILE_ID}.2 = 3<br/>
@@ -1170,7 +1212,7 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_OWNER_ID} is not a long int number
-	 * <li>{@link #SE_NO_SUCH_FILE} - if projects with {@link #PROP_FILE_OWNER_ID} could not be found
+	 * <li>{@link #SE_NO_SUCH_FILE} - if no file with {@link #PROP_FILE_OWNER_ID} could not be found
 	 * </ul>
 	 */
 	public static final String MTD_FIND_USER_FILES_BY_USER = "find.user.files.by.user";

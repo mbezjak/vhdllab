@@ -7,12 +7,12 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class Writer extends JPanel implements IEditor, IWizard {
@@ -25,8 +25,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	private FileContent content;
 	
 	public Writer() {
-		text = new JTextArea("This is writer area!");
-		text.setPreferredSize(new Dimension(300,300));
+		text = new JTextArea("This is writer area!", 25,50);
 		text.addKeyListener(new KeyListener() {
 		
 			public void keyTyped(KeyEvent e) {
@@ -36,7 +35,8 @@ public class Writer extends JPanel implements IEditor, IWizard {
 			public void keyPressed(KeyEvent e) {}
 		
 		});
-		this.add(text, BorderLayout.CENTER);
+		JScrollPane scroll = new JScrollPane(text);
+		this.add(scroll, BorderLayout.CENTER);
 		this.setBackground(Color.RED);
 		
 	}
@@ -72,6 +72,14 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		String projectName = JOptionPane.showInputDialog("Enter project name:");
 		String fileName = JOptionPane.showInputDialog("Enter file name:");
 		content = new FileContent(projectName, fileName, "");
+	}
+
+	public String getFileName() {
+		return content.getFileName();
+	}
+
+	public String getProjectName() {
+		return content.getProjectName();
 	}
 
 }

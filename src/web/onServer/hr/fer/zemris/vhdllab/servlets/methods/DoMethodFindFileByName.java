@@ -36,8 +36,9 @@ public class DoMethodFindFileByName implements RegisteredMethod {
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID = '"+projectID+"'!");
 		} catch (ServiceException e) {
-			return errorProperties(method,MethodConstants.SE_NO_SUCH_FILE, "File with name ='"+fileName+"' and project id = '"+projectID+"' not found!");
+			file = null;
 		}
+		if(file==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_FILE, "File with name ='"+fileName+"' and project id = '"+projectID+"' not found!");
 		
 		// Prepare response
 		Properties resProp = new Properties();

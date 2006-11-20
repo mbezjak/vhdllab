@@ -20,6 +20,7 @@ public interface MethodInvoker {
 	boolean existsFile(Long projectId, String name) throws AjaxException;
 	void deleteFile(Long fileId) throws AjaxException;
 	Long findFileByName(Long projectId, String name) throws AjaxException;
+	List<Long> findFileByProject(Long projectId) throws AjaxException;
 
 	String loadGlobalFileName(Long fileId) throws AjaxException;
 	String loadGlobalFileType(Long fileId) throws AjaxException;

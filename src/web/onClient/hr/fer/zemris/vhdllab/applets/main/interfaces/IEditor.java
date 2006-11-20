@@ -17,6 +17,8 @@ public interface IEditor {
 	 * @return an internal format.
 	 */
 	String getData();
+	String getProjectName();
+	String getFileName();
 	boolean isModified();
 	void setProjectContainer(ProjectContainter pContainer);
 	IWizard getWizard();

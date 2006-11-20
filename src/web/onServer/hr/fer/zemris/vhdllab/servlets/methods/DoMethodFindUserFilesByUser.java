@@ -37,7 +37,7 @@ public class DoMethodFindUserFilesByUser implements RegisteredMethod {
 		} catch (ServiceException e) {
 			files = null;
 		}
-		if(files==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"User files for owner ("+ownerID+") not found!");
+		if(files==null || files.size() == 0) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"User files for owner ("+ownerID+") not found!");
 
 		// Prepare response
 		Properties resProp = new Properties();

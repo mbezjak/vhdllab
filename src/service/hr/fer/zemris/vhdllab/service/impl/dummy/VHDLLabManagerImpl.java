@@ -22,6 +22,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
+import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
 import java.util.ArrayList;
@@ -69,7 +70,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public String generateVHDL(File file) throws ServiceException {
-		if(file.getFileType().equals(File.FT_VHDLTB)) {
+		if(file.getFileType().equals(File.FT_VHDLSOURCE)) {
+			return file.getContent();
+		} else if(file.getFileType().equals(File.FT_VHDLTB)) {
 			String inducement = new String("<measureUnit>ns</measureUnit>\n" +
 					"<duration>1000</duration>\n" +
 					"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
@@ -390,8 +393,12 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 	}
 	
-	public CircuitInterface extractCircuitInterface(File file){
-		return new DefaultCircuitInterface("cicinc");
+	public CircuitInterface extractCircuitInterface(File file) {
+		if(file.getFileType().equals(File.FT_VHDLSOURCE)) {
+			return Extractor.extractCircuitInterface(file.getContent());
+		} else {
+			return new DefaultCircuitInterface("cicinc");
+		}
 	}
 
 	public List<File> extractDependencies(File file) throws ServiceException {
