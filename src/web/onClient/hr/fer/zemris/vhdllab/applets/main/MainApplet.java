@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.Writer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
@@ -158,6 +159,7 @@ public class MainApplet
 		
 		JPanel writerPanel = new JPanel(new BorderLayout());
 		writer = new Writer();
+		writer.setProjectContainer(this);
 		writerPanel.add(writer, BorderLayout.CENTER);
 		
 		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
@@ -449,10 +451,19 @@ public class MainApplet
 		writer.setFileContent(fileContent);
 	}
 	
+	public boolean existsFile(String projectName, String fileName) {
+		return cache.existsFile(projectName, fileName);
+	}
+	
+	public boolean existsProject(String projectName) {
+		return cache.existsProject(projectName);
+	}
+	
 	private void createNewFileInstance(String type) {
 		if(type.equals(File.FT_VHDLSOURCE)) {
-			writer.setupWizard();
-			FileContent content = writer.getInitialFileContent();
+			IWizard wizard = writer.getWizard();
+			wizard.setupWizard();
+			FileContent content = wizard.getInitialFileContent();
 			String projectName = content.getProjectName();
 			String fileName = content.getFileName();
 			cache.createFile(projectName, fileName, type);

@@ -78,6 +78,30 @@ import java.util.Properties;
 			return fileNames;
 		}
 		
+		public boolean existsFile(String projectName, String fileName) {
+			Long projectId = getIdentifierFor(projectName);
+			if(projectId == null) return false;
+			boolean exists;
+			try {
+				exists = invoker.existsFile(projectId, fileName);
+			} catch (AjaxException e) {
+				return false;
+			}
+			return exists;
+		}
+		
+		public boolean existsProject(String projectName) {
+			Long projectId = getIdentifierFor(projectName);
+			if(projectId == null) return false;
+			boolean exists;
+			try {
+				exists = invoker.existsProject(projectId);
+			} catch (AjaxException e) {
+				return false;
+			}
+			return exists;
+		}
+		
 		public void createFile(String projectName, String fileName, String type) {
 			Long projectId = getIdentifierFor(projectName);
 			Long id;

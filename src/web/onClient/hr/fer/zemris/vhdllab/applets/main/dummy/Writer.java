@@ -9,6 +9,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -47,8 +50,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public IWizard getWizard() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	public boolean isModified() {
@@ -69,9 +71,19 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 	
 	public void setupWizard() {
-		String projectName = JOptionPane.showInputDialog("Enter project name:");
-		String fileName = JOptionPane.showInputDialog("Enter file name:");
-		content = new FileContent(projectName, fileName, "");
+		String projectName;
+		String fileName;
+		do {
+			projectName = JOptionPane.showInputDialog("Enter project name:");
+		} while(!container.existsProject(projectName));
+		
+		do {
+			fileName = JOptionPane.showInputDialog("Enter file name:");
+		} while(container.existsFile(projectName, fileName));
+
+		String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();
+		text.setText(data);
+		content = new FileContent(projectName, fileName, data);
 	}
 
 	public String getFileName() {
@@ -80,6 +92,14 @@ public class Writer extends JPanel implements IEditor, IWizard {
 
 	public String getProjectName() {
 		return content.getProjectName();
+	}
+	
+	private String getCurrentDateAndTime() {
+		Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+		final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+		sdf.setTimeZone(TimeZone.getDefault());
+		return sdf.format(cal.getTime());
 	}
 
 }

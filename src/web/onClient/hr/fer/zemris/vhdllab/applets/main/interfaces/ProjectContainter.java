@@ -12,4 +12,6 @@ public interface ProjectContainter {
 	String getOptions();
 	ResourceBundle getResourceBundle();
 	void openFile(String projectName, String fileName);
+	boolean existsFile(String projectName, String fileName);
+	boolean existsProject(String projectName);
 }
