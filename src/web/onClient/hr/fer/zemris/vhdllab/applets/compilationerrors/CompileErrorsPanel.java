@@ -1,6 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.compilationerrors;
 
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -32,21 +37,105 @@ import javax.swing.event.ListSelectionListener;
  * @date 21.9.2006.
  */
 public class CompileErrorsPanel extends JPanel
+	implements IWizard, IEditor
 {
     private static final long serialVersionUID = 8;
     /** Sadrzi sve greske koje je generirao VHDL simulator */
     private String[] compileErrors;
 
     /** DefaultListModel */
-    private DefaultListModel context = new DefaultListModel();
+    private DefaultListModel content = new DefaultListModel();
 
     /** JList komponenta u koju ce se potrpati sve greske */
-    private JList listContext = new JList(context);
+    private JList listContent = new JList(content);
 
     /** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
-    private JScrollPane scrollPane = new JScrollPane(listContext);
+    private JScrollPane scrollPane = new JScrollPane(listContent);
+    
+    /** FileContent */
+    private FileContent fileContent;
+    
+    /** ProjectContainer */
+    private ProjectContainter projectContainer;
+    
+    /** VHDL editor */
+    private VHDLEditor editor;
 
-    /** 
+
+    /**
+     * Constructor 
+     *
+     * Kreira objekt i dovodi ga u pocetno stanje ciji kontekst sadrzi prazan
+     * string
+     */
+    public CompileErrorsPanel()
+    {
+        super();
+        compileErrors = new String[1];
+        compileErrors[0] = "";
+        this.add(scrollPane);
+
+        listContent.addMouseListener(mouseListener);
+        listContent.addListSelectionListener(listener);
+        listContent.setFixedCellHeight(15);
+    }
+
+    public String getData() 
+    {
+		return null;
+	}
+
+
+	public String getFileName() 
+	{
+		return fileContent.getFileName();
+	}
+
+
+	public String getProjectName() 
+	{
+		return fileContent.getProjectName();
+	}
+
+
+	public IWizard getWizard() 
+	{
+		return null;
+	}
+
+
+	public boolean isModified() 
+	{
+		return false;
+	}
+
+
+	public void setFileContent(FileContent fContent) 
+	{
+		this.fileContent = fContent;
+		setContent(fileContent.getContent());
+	}
+
+
+	public FileContent getInitialFileContent() 
+	{
+		return null;
+	}
+
+
+	public void setProjectContainer(ProjectContainter pContainer) 
+	{
+		this.projectContainer = pContainer;
+	}
+
+
+	public void setupWizard() 
+	{
+		;
+	}
+	
+
+	/** 
      * Listener koji osluskuje selekciju liste i na temelju selekcije vraca
      * indeks selektiranog retka, te se pozicionira na redak .vhdl datoteke u
      * kojoj se nalazi greska
@@ -95,31 +184,12 @@ public class CompileErrorsPanel extends JPanel
 
             if (clickCount == 2)
             {
-                String selectedValue = (String)listContext.getSelectedValue();
+                String selectedValue = (String)listContent.getSelectedValue();
                 highlightError(selectedValue);
             }
         }
     };    
-
-
-    /**
-     * Constructor 
-     *
-     * Kreira objekt i dovodi ga u pocetno stanje ciji kontekst sadrzi prazan
-     * string
-     */
-    public CompileErrorsPanel()
-    {
-        super();
-        compileErrors = new String[1];
-        compileErrors[0] = "";
-        this.add(scrollPane);
-
-        listContext.addMouseListener(mouseListener);
-        listContext.addListSelectionListener(listener);
-        listContext.setFixedCellHeight(15);
-    }
-
+    
 
     /**
      * Glavna metoda koja uzima neki string dobiven od strane servera u
@@ -127,16 +197,16 @@ public class CompileErrorsPanel extends JPanel
      *
      * @param compileErrors String koji ce ciniti kontekst panela s greskama
      */
-    public void setContext(String compileErrors)
+    public void setContent(String compileErrors)
     {
         final String LIMITER = "###";
         this.compileErrors = compileErrors.split(LIMITER);
 
         /* prazni listu prije novog upisa */
-        context.clear();
+        content.clear();
         for (String string : this.compileErrors)
         {
-            context.addElement(string);
+            content.addElement(string);
         }
     }
 
@@ -150,9 +220,9 @@ public class CompileErrorsPanel extends JPanel
      * 'Compile' i oba puta bude "Compilation was succesful" korisnik nece biti
      * siguran je li kompilacija uopce sprovedena ili ne.
      */
-    public void clearContext()
+    public void clearContent()
     {
-        context.clear();   
+        content.clear();   
     }
 
 
@@ -164,7 +234,7 @@ public class CompileErrorsPanel extends JPanel
      *
      * @param dimension Zeljene dimenzije
      */
-    public void setContextSize(Dimension dimension)
+    public void setContentSize(Dimension dimension)
     {
         this.scrollPane.setPreferredSize(dimension);
     }
@@ -185,11 +255,10 @@ public class CompileErrorsPanel extends JPanel
         Matcher matcher = pattern.matcher(error);
         if (matcher.matches())
         {
-            //TODO pozovi Mirinu metodu za postavljanje aktivnog taba
-            // prvo naravno provjera svih aktivnih tabova, ako postoji takav
-            // tab idi na njega i odi na tu liniju, inace nista. 
-            System.out.println(matcher.group(1)); 
-            System.out.println(matcher.group(2)); 
+        	// TODO mozda jos eventualna provjera postoji li uopce otvoren tab
+        	projectContainer.openFile(fileContent.getProjectName(), matcher.group(1));
+        	Integer temp = Integer.valueOf(matcher.group(2));
+        	editor.highlightLine(temp.intValue());
         }
     }
 
