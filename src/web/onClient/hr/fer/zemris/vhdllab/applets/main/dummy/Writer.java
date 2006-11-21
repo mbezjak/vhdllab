@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main.dummy;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,7 +24,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	private JTextArea text;
 	private boolean change;
 	
-	private ProjectContainter container;
+	private ProjectContainer container;
 	private FileContent content;
 	
 	public Writer() {
@@ -62,7 +62,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		text.setText(content.getContent());
 	}
 
-	public void setProjectContainer(ProjectContainter pContainer) {
+	public void setProjectContainer(ProjectContainer pContainer) {
 		this.container = pContainer;
 	}
 

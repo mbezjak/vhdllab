@@ -3,6 +3,6 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 public interface IWizard {
 	void setupWizard();
-	void setProjectContainer(ProjectContainter pContainer);
+	void setProjectContainer(ProjectContainer pContainer);
 	FileContent getInitialFileContent();
 }

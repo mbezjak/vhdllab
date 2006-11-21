@@ -20,6 +20,6 @@ public interface IEditor {
 	String getProjectName();
 	String getFileName();
 	boolean isModified();
-	void setProjectContainer(ProjectContainter pContainer);
+	void setProjectContainer(ProjectContainer pContainer);
 	IWizard getWizard();
 }

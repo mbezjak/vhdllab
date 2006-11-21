@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -131,7 +131,7 @@ public class WaveApplet extends JPanel
 	private FileContent content;
 	
 	/** ProjectContainer */
-	private ProjectContainter projectContainer;
+	private ProjectContainer projectContainer;
        
     /* ikone */
     private Icon navigate = new ImageIcon(getClass().getResource("navigate.png"));
@@ -286,7 +286,7 @@ public class WaveApplet extends JPanel
 	}
 
 
-	public void setProjectContainer(ProjectContainter pContainer) 
+	public void setProjectContainer(ProjectContainer pContainer) 
 	{	
 		this.projectContainer = pContainer;
 	}

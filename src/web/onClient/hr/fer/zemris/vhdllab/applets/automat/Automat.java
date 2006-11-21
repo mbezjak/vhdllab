@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.automat;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -121,7 +121,7 @@ public class Automat extends JPanel implements IEditor, IWizard {
 		return false;
 	}
 
-	public void setProjectContainer(ProjectContainter pContainer) {
+	public void setProjectContainer(ProjectContainer pContainer) {
 		// TODO Auto-generated method stub
 		
 	}

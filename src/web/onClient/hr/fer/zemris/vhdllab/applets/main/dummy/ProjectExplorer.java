@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.dummy;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Explorer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class ProjectExplorer extends JPanel implements Explorer {
 
 	private static final long serialVersionUID = 4932799790563214089L;
-	private ProjectContainter container;
+	private ProjectContainer container;
 	private JList list;
 	private DefaultListModel model;
 	private String projectName;
@@ -50,7 +50,7 @@ public class ProjectExplorer extends JPanel implements Explorer {
 		model.addElement(fileName);
 	}
 
-	public void setProjectContainer(ProjectContainter pContainer) {
+	public void setProjectContainer(ProjectContainer pContainer) {
 		this.container = pContainer;
 	}
 

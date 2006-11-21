@@ -10,7 +10,7 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.Writer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
@@ -41,7 +41,7 @@ import javax.swing.KeyStroke;
  */
 public class MainApplet
 		extends JApplet
-		implements ProjectContainter {
+		implements ProjectContainer {
 	
 	/**
 	 * Serial version ID.

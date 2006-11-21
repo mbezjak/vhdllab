@@ -4,7 +4,7 @@ package hr.fer.zemris.vhdllab.applets.compilationerrors;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainter;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -56,7 +56,7 @@ public class CompileErrorsPanel extends JPanel
     private FileContent fileContent;
     
     /** ProjectContainer */
-    private ProjectContainter projectContainer;
+    private ProjectContainer projectContainer;
     
     /** VHDL editor */
     private VHDLEditor editor;
@@ -123,7 +123,7 @@ public class CompileErrorsPanel extends JPanel
 	}
 
 
-	public void setProjectContainer(ProjectContainter pContainer) 
+	public void setProjectContainer(ProjectContainer pContainer) 
 	{
 		this.projectContainer = pContainer;
 	}
