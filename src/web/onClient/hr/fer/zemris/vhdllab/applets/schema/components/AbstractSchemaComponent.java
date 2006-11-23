@@ -180,6 +180,20 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 * Updateanje koordinata portova.
 	 */
 	protected abstract void updatePortCoordinates();
+	
+	
+	/**
+	 * Ovu verziju draw mora zvati metoda draw iz naslijedene klase.
+	 * Inace se nece iscrtati tockice koje oznacavaju same portove.
+	 */
+	public void draw(SchemaDrawingAdapter adapter) {
+		for (AbstractSchemaPort port : portlist) {
+			Point p = port.getCoordinate();
+			adapter.drawOval(p.x, p.y, 3, 3);
+		}
+	}
+	
+	
 }
 
 
