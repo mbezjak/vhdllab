@@ -12,12 +12,33 @@ import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
  */
 public class TestBasicOR extends AbstractSchemaComponent {
 
+	public TestBasicOR(String instanceName) {
+		super(instanceName);
+		// TODO Auto-generated constructor stub
+	}
+
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected void updatePortCoordinates() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public int getComponentWidth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getComponentHeight() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

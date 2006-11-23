@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.components.properties;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 
 /**

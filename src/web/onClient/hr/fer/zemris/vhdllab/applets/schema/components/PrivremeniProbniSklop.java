@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema.components;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractComponentProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractPropField;
+import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NumField;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NumProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.PortProperty;
@@ -19,10 +20,11 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 	private Ptr<Object> pMaliTekst = new Ptr<Object>();
 	private Ptr<Object> pMojInt = new Ptr<Object>();
 	
-	public PrivremeniProbniSklop() {
+	public PrivremeniProbniSklop(String ime) {
+		super(ime);
 		pComponentName.val = "Privremeni probni sklop";
 		pMojInt.val = 2;
-		pMaliTekst.val = "Tek tolko da nest pise.";
+		pMaliTekst.val = "Mihalj sam ja, onaj, Herpes!";
 		portlist.add(new SchemaPort());
 		portlist.add(new SchemaPort());
 	}
@@ -43,6 +45,13 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 			cplist.add(new TextProperty("Ime porta br. " + i, port.getNamePtr()));
 			i++;
 		}
+		AbstractComponentProperty pro = new GenericProperty("Svojstvo vise sile.", new Ptr<Object>(this)) {
+			@Override
+			public void onUpdate(JTextField tf) {
+				((PrivremeniProbniSklop)this.getSklopPtr().val).setComponentName("Zika!");
+			}
+		};
+		cplist.add(pro);
 	}
 
 	/* (non-Javadoc)
@@ -50,5 +59,27 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
 		adapter.drawRect(0, 0, 100, 100);
+	}
+
+
+
+	@Override
+	protected void updatePortCoordinates() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public int getComponentWidth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+
+	public int getComponentHeight() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

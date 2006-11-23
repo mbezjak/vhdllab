@@ -1,6 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.PrivremeniProbniSklop;
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
 
 import javax.swing.JFrame;
 
@@ -20,9 +23,10 @@ public class PrivremenaProbnaKlasa {
 		frame.setSize(250, 150);
 		frame.setVisible(true);
 		
-		PrivremeniProbniSklop probni = new PrivremeniProbniSklop();
+		Sklop_XOR sklopi = new Sklop_XOR("Prvi XOR");
+		Sklop_MUX2nNA1 muxi = new Sklop_MUX2nNA1("Moj muxic");
 		
-		PropertyPanel panel = new PropertyPanel(probni);
+		PropertyPanel panel = new PropertyPanel(muxi);
 		frame.add(panel);
 		frame.validate();
 		
@@ -32,7 +36,7 @@ public class PrivremenaProbnaKlasa {
 			} catch (InterruptedException e) {
 				break;
 			}
-			System.out.println(probni.getSchemaPort(0).getName());
+			System.out.println(muxi.getBrojPodUlaza() + " " + muxi.getSmjer());
 		}
 	}
 

@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
+import java.awt.Point;
+
 public abstract class AbstractSchemaPort {
 	public enum PortDirection { IN, OUT }
 	public enum PortOrientation { NORTH, SOUTH, WEST, EAST } 
@@ -7,6 +9,8 @@ public abstract class AbstractSchemaPort {
 	private Ptr<Object> pName;
 	private Ptr<Object> pDir;
 	private Ptr<Object> pOrientation;
+	private Point coordinate;
+	private String tipPorta;
 	
 	public AbstractSchemaPort() {
 		pName = new Ptr<Object>();
@@ -15,6 +19,9 @@ public abstract class AbstractSchemaPort {
 		pDir.val = PortDirection.IN;
 		pOrientation = new Ptr<Object>();
 		pOrientation.val = PortOrientation.WEST;
+		coordinate = new Point();
+		coordinate.x = 0;
+		coordinate.y = 0;
 	}
 	
 	/**
@@ -29,7 +36,9 @@ public abstract class AbstractSchemaPort {
 	
 	/**
 	 * Nema efekta ako radis s
-	 * obicnim portom.
+	 * obicnim portom. Kod vektorskog
+	 * porta ima smisla - to je broj
+	 * signala u vektoru.
 	 *
 	 */
 	public void setPortSize(int ps) {
@@ -77,6 +86,37 @@ public abstract class AbstractSchemaPort {
 		this.pOrientation.val = orientation;
 	}
 	
+	/**
+	 * @return Returns the coordinate.
+	 */
+	public Point getCoordinate() {
+		return coordinate;
+	}
+
+	/**
+	 * @param coordinate The coordinate to set.
+	 */
+	public void setCoordinate(Point coordinate) {
+		this.coordinate = coordinate;
+	}	
+
+	/**
+	 * @return Returns the tipPorta.
+	 */
+	public String getTipPorta() {
+		return tipPorta;
+	}
+
+	/**
+	 * @param tipUlaza The tipPorta to set.
+	 */
+	public void setTipPorta(String tipUlaza) {
+		this.tipPorta = tipUlaza;
+	}
+	
+	
+	
+
 	// dalje nemoj gledat, nije bitno
 	public Ptr<Object> getNamePtr() {
 		return pName;

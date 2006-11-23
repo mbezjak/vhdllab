@@ -50,4 +50,14 @@ public interface ISchemaComponent {
 	 * tu komponentu (broj ulaza, izlaza, ime...).
 	 */
 	public ComponentPropertyList getPropertyList();
+	
+	/**
+	 * Sirina komponente - za crtanje.
+	 */
+	public int getComponentWidth();
+	
+	/**
+	 * Visina komponente - za crtanje.
+	 */
+	public int getComponentHeight();
 }
