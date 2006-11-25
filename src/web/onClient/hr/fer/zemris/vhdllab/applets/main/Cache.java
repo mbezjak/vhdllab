@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -20,6 +22,7 @@ import java.util.Properties;
 		private List<String> filetypes;
 		private List<String> globalFiletypes;
 		private List<String> userFiletypes;
+		private Properties editors;
 		
 		private Map<String, Long> identifiers;
 		
@@ -29,6 +32,7 @@ import java.util.Properties;
 			filetypes = loadType("filetype.properties");
 			globalFiletypes = loadType("globalFiletype.properties");
 			userFiletypes = loadType("UserFiletype.properties");
+			editors = loadEditors("editors.properties");
 			this.invoker = invoker;
 			this.ownerId = Long.valueOf(0);
 		}
@@ -155,6 +159,29 @@ import java.util.Properties;
 			return ci;
 		}
 		
+		public IEditor getEditor(String type) {
+			String editorName = editors.getProperty(type);
+			IEditor editor = null;
+			try {
+				editor = (IEditor)Class.forName(editorName).newInstance();
+			} catch (Exception e) {
+				editor = null;
+			}
+			return editor;
+		}
+		
+		public IWizard getWizard(String type) {
+			String editorName = editors.getProperty(type);
+			IWizard wizard = null;
+			try {
+				wizard = (IWizard)Class.forName(editorName).newInstance();
+			} catch (Exception e) {
+				wizard = null;
+			}
+			return wizard;
+		}
+
+		
 		public String getOptions() {
 			if(options != null) return options;
 			
@@ -209,7 +236,7 @@ import java.util.Properties;
 		private List<String> loadType(String file) {
 			List<String> types = new ArrayList<String>();
 			InputStream in = this.getClass().getResourceAsStream(file);
-			if(in == null) throw new NullPointerException("Can not find resource.");
+			if(in == null) throw new NullPointerException("Can not find resource " + file + ".");
 			Properties p = new Properties();
 			try {
 				p.load(in);
@@ -223,6 +250,20 @@ import java.util.Properties;
 				try {in.close();} catch (Throwable ignore) {}
 			}
 			return types;
+		}
+		
+		private Properties loadEditors(String file) {
+			InputStream in = this.getClass().getResourceAsStream(file);
+			if(in == null) throw new NullPointerException("Can not find resource " + file + ".");
+			Properties p = new Properties();
+			try {
+				p.load(in);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {in.close();} catch (Throwable ignore) {}
+			}
+			return p;
 		}
 		
 		private Long getIdentifierFor(String projectName) {

@@ -1816,5 +1816,10 @@ public class WaveApplet extends JPanel
             ;
         }
     };
+    
+    public void highlightLine(int line) {
+    	// TODO Auto-generated method stub
+    	
+    }
 }
 

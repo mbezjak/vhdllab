@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.Writer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
@@ -18,12 +19,14 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
@@ -61,7 +64,6 @@ public class MainApplet
 	private JTabbedPane editorPane;
 	
 	private ProjectExplorer projectExplorer;
-	private Writer writer;
 	private StatusExplorer statusExplorer;
 	private SideBar sideBar;
 	
@@ -161,9 +163,9 @@ public class MainApplet
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
 		editorPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
-		writer = new Writer();
+		/*writer = new Writer();
 		writer.setProjectContainer(this);
-		editorPane.add(writer);
+		editorPane.add(writer);*/
 		
 		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
 		statusExplorer = new StatusExplorer();
@@ -287,7 +289,7 @@ public class MainApplet
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveFileInstance(File.FT_VHDLSOURCE);
+					saveFileInstance(editorPane.getSelectedComponent());
 				}
 			});
 			menu.add(menuItem);
@@ -296,6 +298,11 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_SAVE_ALL;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setMnemonicAndAccelerator(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					saveFileInstance(editorPane.getComponents());
+				}
+			});
 			menu.add(menuItem);
 			menu.addSeparator();
 			
@@ -303,12 +310,22 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_CLOSE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setMnemonicAndAccelerator(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeEditor(editorPane.getSelectedComponent());
+				}
+			});
 			menu.add(menuItem);
 
 			// Close All menu item
 			key = LanguageConstants.MENU_FILE_CLOSE_ALL;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setMnemonicAndAccelerator(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeEditor(editorPane.getComponents());
+				}
+			});
 			menu.add(menuItem);
 			menu.addSeparator();
 
@@ -458,7 +475,16 @@ public class MainApplet
 	public void openFile(String projectName, String fileName) {
 		String content = cache.loadFileContent(projectName, fileName);
 		FileContent fileContent = new FileContent(projectName, fileName, content);
-		writer.setFileContent(fileContent);
+		int index = editorPane.indexOfTab(fileName);
+		if(index == -1) {
+			String type = cache.loadFileType(projectName, fileName);
+			IEditor editor = cache.getEditor(type);
+			editor.setProjectContainer(this);
+			editor.setFileContent(fileContent);
+			editorPane.add(fileName, (JPanel)editor);
+			index = editorPane.indexOfTab(fileName);
+		}
+		editorPane.setSelectedIndex(index);
 	}
 	
 	public boolean existsFile(String projectName, String fileName) {
@@ -470,27 +496,48 @@ public class MainApplet
 	}
 	
 	private void createNewFileInstance(String type) {
-		if(type.equals(File.FT_VHDLSOURCE)) {
-			IWizard wizard = writer.getWizard();
-			wizard.setupWizard();
-			FileContent content = wizard.getInitialFileContent();
-			String projectName = content.getProjectName();
-			String fileName = content.getFileName();
-			cache.createFile(projectName, fileName, type);
-			projectExplorer.addFile(projectName, fileName);
-		} else return;
+		IWizard wizard = cache.getWizard(type);
+		wizard.setupWizard();
+		FileContent content = wizard.getInitialFileContent();
+		String projectName = content.getProjectName();
+		String fileName = content.getFileName();
+		cache.createFile(projectName, fileName, type);
+		projectExplorer.addFile(projectName, fileName);
 	}
 	
-	private void saveFileInstance(String type) {
-		if(type.equals(File.FT_VHDLSOURCE)) {
-			if(!writer.isModified()) return;
-			String fileName = writer.getFileName();
-			String projectName = writer.getProjectName();
-			String content = writer.getData();
-			cache.saveFile(projectName, fileName, content);
-		} else return;
+	public IEditor getEditor(String projectName, String fileName) {
+		int index = editorPane.indexOfTab(fileName);
+		return (IEditor)editorPane.getComponentAt(index);
+	}
+	
+	private void saveFileInstance(Component component) {
+		if(component == null) return;
+		IEditor editor = (IEditor) component;
+		if(!editor.isModified()) return;
+		String fileName = editor.getFileName();
+		String projectName = editor.getProjectName();
+		String content = editor.getData();
+		cache.saveFile(projectName, fileName, content);
 	}
 
+	private void saveFileInstance(Component[] components) {
+		if(components == null) return;
+		for(Component c : components) {
+			saveFileInstance(c);
+		}
+	}
+	
+	private void closeEditor(Component component) {
+		if(component == null) return;
+		editorPane.remove(component);
+	}
+	
+	private void closeEditor(Component[] components) {
+		if(components == null) return;
+		for(Component c : components) {
+			closeEditor(c);
+		}
+	}
 
 	private class ServerInitData {
 		
@@ -511,6 +558,7 @@ public class MainApplet
 		
 		public void writeServerInitData() {
 			try {
+				IEditor editor = cache.getEditor("vhdl_source");
 				long start = System.currentTimeMillis();
 				Long projectId = invoker.createProject("Project1", Long.valueOf(0));
 				Long fileId1 = invoker.createFile(projectId, "File1", File.FT_VHDLSOURCE);
@@ -520,13 +568,13 @@ public class MainApplet
 				
 				
 				FileContent content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId2), invoker.loadFileContent(fileId2));
-				writer.setFileContent(content);
+				editor.setFileContent(content);
 				
 				long end = System.currentTimeMillis();
-				String infoData = writer.getData()+(start-end)+"\nLoaded Options:\n"+cache.getOptions();
+				String infoData = editor.getData()+(start-end)+"\nLoaded Options:\n"+cache.getOptions();
 				invoker.saveFile(fileId1, infoData);
 				content = new FileContent("", "", infoData);
-				writer.setFileContent(content);
+				editor.setFileContent(content);
 			} catch (AjaxException e) {
 				e.printStackTrace();
 			}

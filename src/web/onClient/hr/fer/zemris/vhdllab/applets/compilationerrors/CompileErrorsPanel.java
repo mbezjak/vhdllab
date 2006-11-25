@@ -273,4 +273,9 @@ public class CompileErrorsPanel extends JPanel
     {
         super.paintComponent(g);
     }
+    
+    public void highlightLine(int line) {
+    	// TODO Auto-generated method stub
+    	
+    }
 }

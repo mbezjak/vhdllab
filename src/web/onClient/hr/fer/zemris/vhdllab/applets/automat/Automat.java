@@ -150,4 +150,8 @@ public class Automat extends JPanel implements IEditor, IWizard {
 		return null;
 	}
 
+	public void highlightLine(int line) {
+		// TODO Auto-generated method stub
+		
+	}
 }
