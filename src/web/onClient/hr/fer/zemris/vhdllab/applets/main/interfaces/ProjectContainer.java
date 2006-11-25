@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public interface ProjectContainer {
-	List<String> getAllCircuits();
+	List<String> getAllCircuits(String projectName);
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName);
 	String getOptions();
 	ResourceBundle getResourceBundle();

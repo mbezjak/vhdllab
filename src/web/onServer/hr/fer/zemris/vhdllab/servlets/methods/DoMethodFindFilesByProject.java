@@ -37,12 +37,13 @@ public class DoMethodFindFilesByProject implements RegisteredMethod {
 		} catch (ServiceException e) {
 			project = null;
 		}
-		if(project==null || project.getFiles().size() == 0) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"Files for project ("+projectID+") not found!");
+		if(project==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"Files for project ("+projectID+") not found!");
 
 		// Prepare response
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
+		if(project.getFiles() == null) return resProp;
 		int i = 1;
 		for(File f : project.getFiles()) {
 			resProp.setProperty(MethodConstants.PROP_FILE_ID+"."+i, String.valueOf(f.getId()));

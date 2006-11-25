@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
@@ -8,6 +9,7 @@ import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * This class represents a registered method for "load project number of files" request.
@@ -42,7 +44,8 @@ public class DoMethodLoadProjectNmbrFiles implements RegisteredMethod {
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		resProp.setProperty(MethodConstants.PROP_PROJECT_NMBR_FILES,String.valueOf(project.getFiles().size()));
+		Set<File> files = project.getFiles();
+		resProp.setProperty(MethodConstants.PROP_PROJECT_NMBR_FILES,String.valueOf(files != null ? files.size() : 0));
 		return resProp;
 	}
 	

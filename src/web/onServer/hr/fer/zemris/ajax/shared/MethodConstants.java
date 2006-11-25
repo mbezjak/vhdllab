@@ -1354,7 +1354,7 @@ public class MethodConstants {
 	 * <li>{@link #PROP_PROJECT_ID}
 	 * <li>either {@link #PROP_FILE_ID} or a list of {@link #PROP_FILE_ID} written in
 	 *     following format: {@link #PROP_FILE_ID}.[number] (number is positive and
-	 *     starts at 1) also a combination of both 
+	 *     starts at 1) also a combination of both
 	 * </ul>
 	 * <p>
 	 * Example of request <code>Properties</code>:

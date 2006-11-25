@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
 import java.util.Properties;
+import java.util.TreeSet;
 
 /**
  * This class represents a registered method for "save project" request.
@@ -71,6 +72,9 @@ public class DoMethodSaveProject implements RegisteredMethod {
 			if(file == null) return errorProperties(method, MethodConstants.SE_NO_SUCH_FILE, "File ("+fileId+") not found!");
 			
 			// Note that if project already contains same file it will be replaced.
+			if(project.getFiles() == null) {
+				project.setFiles(new TreeSet<File>());
+			}
 			project.getFiles().add(file);
 			i++;
 		} while(true);

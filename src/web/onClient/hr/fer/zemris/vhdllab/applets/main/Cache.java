@@ -133,6 +133,17 @@ import java.util.Properties;
 			return content;
 		}
 		
+		public String loadFileType(String projectName, String fileName) {
+			Long id = getIdentifierFor(projectName, fileName);
+			String type = null;
+			try {
+				type = invoker.loadFileType(id);
+			} catch (AjaxException e) {
+				type = null;
+			}
+			return type;
+		}
+		
 		public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) {
 			Long id = getIdentifierFor(projectName, fileName);
 			CircuitInterface ci = null;

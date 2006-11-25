@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -31,6 +32,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
@@ -56,6 +58,7 @@ public class MainApplet
 	private JMenuBar menuBar;
 	private JToolBar toolBar;
 	private StatusBar statusBar;
+	private JTabbedPane editorPane;
 	
 	private ProjectExplorer projectExplorer;
 	private Writer writer;
@@ -157,10 +160,10 @@ public class MainApplet
 		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
-		JPanel writerPanel = new JPanel(new BorderLayout());
+		editorPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
 		writer = new Writer();
 		writer.setProjectContainer(this);
-		writerPanel.add(writer, BorderLayout.CENTER);
+		editorPane.add(writer);
 		
 		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
 		statusExplorer = new StatusExplorer();
@@ -172,7 +175,7 @@ public class MainApplet
 		sideBarPanel.add(sideBar, BorderLayout.CENTER);
 		sideBarPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
-		JSplitPane sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, writerPanel, sideBarPanel);
+		JSplitPane sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
 		JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
 		JSplitPane statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExporerSplitPane, statusExplorerPanel);
 		
@@ -428,9 +431,16 @@ public class MainApplet
 	}
 	
 	
-	public List<String> getAllCircuits() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getAllCircuits(String projectName) {
+		List<String> fileNames = cache.findFilesByProject(projectName);
+		List<String> circuits = new ArrayList<String>();
+		for(String name : fileNames) {
+			String type = cache.loadFileType(projectName, name);
+			if(type.equals(File.FT_VHDLSOURCE)) {
+				circuits.add(name);
+			}
+		}
+		return circuits;
 	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) {
@@ -503,17 +513,19 @@ public class MainApplet
 			try {
 				long start = System.currentTimeMillis();
 				Long projectId = invoker.createProject("Project1", Long.valueOf(0));
-				Long fileId = invoker.createFile(projectId, "File1", File.FT_VHDLSOURCE);
-				invoker.saveFile(fileId, "simple content");
-				fileId = invoker.createFile(projectId, "File2", File.FT_VHDLSOURCE);
-				invoker.saveFile(fileId, "some file content that should be displayed in writer");
+				Long fileId1 = invoker.createFile(projectId, "File1", File.FT_VHDLSOURCE);
+				invoker.saveFile(fileId1, "simple content");
+				Long fileId2 = invoker.createFile(projectId, "File2", File.FT_VHDLSOURCE);
+				invoker.saveFile(fileId2, "some file content that should be displayed in writer");
 				
 				
-				FileContent content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId), invoker.loadFileContent(fileId));
+				FileContent content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId2), invoker.loadFileContent(fileId2));
 				writer.setFileContent(content);
 				
 				long end = System.currentTimeMillis();
-				content = new FileContent("", "", writer.getData()+(start-end)+"\nLoaded Options:\n"+cache.getOptions());
+				String infoData = writer.getData()+(start-end)+"\nLoaded Options:\n"+cache.getOptions();
+				invoker.saveFile(fileId1, infoData);
+				content = new FileContent("", "", infoData);
 				writer.setFileContent(content);
 			} catch (AjaxException e) {
 				e.printStackTrace();

@@ -37,14 +37,14 @@ public class DoMethodLoadProjectFilesId implements RegisteredMethod {
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID = '"+projectID+"'!");
 		} catch (ServiceException e) {
-			files = null;
+			return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"Files not found!");
 		}
-		if(files==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"Project not found!");
 		
 		// Prepare response
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
+		if(files==null) return resProp;
 		int i = 1;
 		for(File f : files) {
 			resProp.setProperty(MethodConstants.PROP_FILE_ID+"."+i,String.valueOf(f.getId()));

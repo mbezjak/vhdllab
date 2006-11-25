@@ -37,7 +37,7 @@ public class DoMethodFindProjectsByUser implements RegisteredMethod {
 		} catch (ServiceException e) {
 			projects = null;
 		}
-		if(projects==null || projects.size() == 0) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"Projects for owner ("+ownerID+") not found!");
+		if(projects==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"Projects for owner ("+ownerID+") not found!");
 
 		// Prepare response
 		Properties resProp = new Properties();
