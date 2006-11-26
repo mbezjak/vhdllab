@@ -1,12 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema.components.basics;
 
-import java.awt.Point;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
@@ -14,6 +7,10 @@ import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 import hr.fer.zemris.vhdllab.applets.schema.components.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericProperty;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
+
+import java.awt.Point;
+
+import javax.swing.JTextField;
 
 public class Sklop_XOR extends AbstractSchemaComponent {
 	private final static int RAZMAK_IZMEDU_PORTOVA = 20;

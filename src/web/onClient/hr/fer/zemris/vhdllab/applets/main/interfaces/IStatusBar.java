@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
-public interface BarContainer {
+public interface IStatusBar {
 
-	void setVisible(boolean flag);
+	void setText(String text);
 	
 }

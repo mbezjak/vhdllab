@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
-import java.awt.Point;
-
 
 /**
  * Ovo je interface za apstraktni model

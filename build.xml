@@ -349,20 +349,25 @@
   </target>
 	
   <target name="tomcat" depends="package">
-    <copy todir="${tomcat.dir}" overwrite="true">
+  	<property name="tomcat.app.dir" value="${tomcat.dir}${file.separator}webapps${file.separator}${app.name}"/>
+  	<mkdir dir="${tomcat.app.dir}"/>
+  	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF"/>
+  	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}lib"/>
+  	
+    <copy todir="${tomcat.app.dir}" overwrite="true">
       <fileset dir="${basedir}/html/pages"/>
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar"/>
     </copy>
   	
-    <copy todir="${tomcat.dir}${file.separator}WEB-INF" overwrite="true">
+    <copy todir="${tomcat.app.dir}${file.separator}WEB-INF" overwrite="true">
       <fileset dir="${basedir}/metadata/web"/>
     </copy>
 
-  	<copy todir="${tomcat.dir}${file.separator}WEB-INF${file.separator}lib" overwrite="true">
+  	<copy todir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}lib" overwrite="true">
       <fileset file="${basedir}/${jlib.dir}/${app.name}-dao.jar"/>
       <fileset file="${basedir}/${jlib.dir}/${app.name}-service.jar"/>
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onServer.jar"/>
-      <fileset file="${basedir}/${lib.dir}/*.*"/>
+      <fileset file="${basedir}/${lib.dir}/*.*" excludes="servlet-api.jar"/>
       <fileset file="${basedir}/${lib.dir}/hibernate/*.*"/>
       <fileset file="${basedir}/${lib.dir}/mysql/*.*"/>
     </copy>

@@ -2,13 +2,10 @@ package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
-import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractComponentProperty;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

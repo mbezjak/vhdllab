@@ -20,8 +20,8 @@ model.dir = src/dao/hr/fer/zemris/vhdllab/model
 hibernate.hbm.force = true
 hibernate.hbm.version = 2.0
 
-### Tomcat directory for this project ###
-tomcat.dir = C:\Program Files\Apache\apache-tomcat-5.5.17\webapps\vhdllab
+### Tomcat directory ###
+tomcat.dir = C:\\Program Files\\Apache\\apache-tomcat-5.5.17
 
 
 ############################

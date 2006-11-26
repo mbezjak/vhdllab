@@ -106,6 +106,16 @@ import java.util.Properties;
 			return exists;
 		}
 		
+		public void createProject(String projectName) {
+			Long id;
+			try {
+				id = invoker.createProject(projectName, ownerId);
+			} catch (AjaxException e) {
+				return;
+			}
+			cacheItem(projectName, id);
+		}
+
 		public void createFile(String projectName, String fileName, String type) {
 			Long projectId = getIdentifierFor(projectName);
 			Long id;
@@ -118,9 +128,9 @@ import java.util.Properties;
 		}
 		
 		public void saveFile(String projectName, String fileName, String content) {
-			Long fileId = getIdentifierFor(projectName, fileName);
+			Long id = getIdentifierFor(projectName, fileName);
 			try {
-				invoker.saveFile(fileId, content);
+				invoker.saveFile(id, content);
 			} catch (AjaxException e) {
 				return;
 			}

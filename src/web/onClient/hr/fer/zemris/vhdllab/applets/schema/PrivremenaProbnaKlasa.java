@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import hr.fer.zemris.vhdllab.applets.schema.components.PrivremeniProbniSklop;
-import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
 

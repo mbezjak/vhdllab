@@ -4,14 +4,13 @@ import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
 import hr.fer.zemris.vhdllab.applets.main.dummy.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
-import hr.fer.zemris.vhdllab.applets.main.dummy.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
-import hr.fer.zemris.vhdllab.applets.main.dummy.Writer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
@@ -26,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
@@ -54,8 +52,6 @@ public class MainApplet
 	private static final long serialVersionUID = 4037604752375048576L;
 	
 	private Cache cache;
-	private MethodInvoker invoker;
-	private AjaxMediator ajax;
 	private ResourceBundle bundle;
 	
 	private JMenuBar menuBar;
@@ -73,8 +69,8 @@ public class MainApplet
 	@Override
 	public void init() {
 		super.init();
-		ajax = new DefaultAjaxMediator(this);
-		invoker = new DefaultMethodInvoker(ajax);
+		AjaxMediator ajax = new DefaultAjaxMediator(this);
+		MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 		
 		//**********************
 		ServerInitData server = new ServerInitData();
@@ -124,9 +120,6 @@ public class MainApplet
 	@Override
 	public void destroy() {
 		cache = null;
-		invoker = null;
-		//ajax.initiateAbort();
-		ajax = null;
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
 		this.repaint();
@@ -163,9 +156,6 @@ public class MainApplet
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
 		editorPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
-		/*writer = new Writer();
-		writer.setProjectContainer(this);
-		editorPane.add(writer);*/
 		
 		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
 		statusExplorer = new StatusExplorer();
@@ -497,12 +487,16 @@ public class MainApplet
 	
 	private void createNewFileInstance(String type) {
 		IWizard wizard = cache.getWizard(type);
+		wizard.setProjectContainer(this);
 		wizard.setupWizard();
 		FileContent content = wizard.getInitialFileContent();
 		String projectName = content.getProjectName();
 		String fileName = content.getFileName();
+		String data = content.getContent();
 		cache.createFile(projectName, fileName, type);
+		cache.saveFile(projectName, fileName, data);
 		projectExplorer.addFile(projectName, fileName);
+		openFile(projectName, fileName);
 	}
 	
 	public IEditor getEditor(String projectName, String fileName) {
@@ -547,6 +541,8 @@ public class MainApplet
 		
 		public void writeGlobalFiles() {
 			try {
+				AjaxMediator ajax = new DefaultAjaxMediator(MainApplet.this);
+				MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 				Long fileId = invoker.createGlobalFile("applet", GlobalFile.GFT_APPLET);
 				invoker.saveGlobalFile(fileId, "a=2a\nb=22");
 				fileId = invoker.createGlobalFile("tema", GlobalFile.GFT_THEME);
@@ -558,24 +554,33 @@ public class MainApplet
 		
 		public void writeServerInitData() {
 			try {
-				IEditor editor = cache.getEditor("vhdl_source");
+				final String projectName1 = "Project1";
+				final String fileName1 = "File1";
+				final String fileType1 = File.FT_VHDLSOURCE;
+				final String fileContent1 = "simple content";
+				final String fileName2 = "File2";
+				final String fileType2 = File.FT_VHDLSOURCE;
+				final String fileContent2 = "some file content that should be displayed in writer";
+				
 				long start = System.currentTimeMillis();
-				Long projectId = invoker.createProject("Project1", Long.valueOf(0));
-				Long fileId1 = invoker.createFile(projectId, "File1", File.FT_VHDLSOURCE);
-				invoker.saveFile(fileId1, "simple content");
-				Long fileId2 = invoker.createFile(projectId, "File2", File.FT_VHDLSOURCE);
-				invoker.saveFile(fileId2, "some file content that should be displayed in writer");
+				IEditor editor = cache.getEditor("vhdl_source");
 				
+				cache.createProject(projectName1);
+				cache.createFile(projectName1, fileName1, fileType1);
+				cache.saveFile(projectName1, fileName1, fileContent1);
 				
-				FileContent content = new FileContent(invoker.loadProjectName(projectId), invoker.loadFileName(fileId2), invoker.loadFileContent(fileId2));
-				editor.setFileContent(content);
+				cache.createFile(projectName1, fileName2, fileType2);
+				cache.saveFile(projectName1, fileName2, fileContent2);
 				
 				long end = System.currentTimeMillis();
+				
 				String infoData = editor.getData()+(start-end)+"\nLoaded Options:\n"+cache.getOptions();
-				invoker.saveFile(fileId1, infoData);
-				content = new FileContent("", "", infoData);
-				editor.setFileContent(content);
-			} catch (AjaxException e) {
+				cache.saveFile(projectName1, fileName1, infoData);
+
+				openFile(projectName1, fileName2);
+				openFile(projectName1, fileName1);
+				
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

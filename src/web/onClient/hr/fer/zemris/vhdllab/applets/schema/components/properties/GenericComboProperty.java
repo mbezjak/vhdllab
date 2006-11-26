@@ -1,13 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema.components.properties;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
-import javax.swing.JTextField;
-
-import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 
 public abstract class GenericComboProperty extends AbstractComponentProperty {
 	private Ptr<Object> pSklop;

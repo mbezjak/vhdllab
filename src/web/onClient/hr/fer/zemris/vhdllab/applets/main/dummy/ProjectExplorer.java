@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class ProjectExplorer extends JPanel implements Explorer {
 
@@ -25,7 +26,7 @@ public class ProjectExplorer extends JPanel implements Explorer {
 		list = new JList(model);
 		list.setLayoutOrientation(JList.VERTICAL);
 		list.setPreferredSize(new Dimension(100,100));
-		this.add(list,BorderLayout.CENTER);
+		//this.add(list,BorderLayout.CENTER);
 		list.addMouseListener(new MouseListener() {
 
 			public void mouseClicked(MouseEvent e) {
@@ -41,6 +42,8 @@ public class ProjectExplorer extends JPanel implements Explorer {
 			public void mousePressed(MouseEvent e) {}
 			public void mouseReleased(MouseEvent e) {}
 		});
+		JScrollPane scroll = new JScrollPane(list);
+		this.add(scroll, BorderLayout.CENTER);
 	}
 	
 	
