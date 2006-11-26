@@ -31,6 +31,7 @@ import javax.swing.JApplet;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -86,7 +87,7 @@ public class MainApplet
 		//**********************
 		server.writeServerInitData();
 		//**********************
-	
+		
 		List<String> projects = cache.findProjects();
 		for(String projectName : projects) {
 			projectExplorer.addProject(projectName);
@@ -119,6 +120,7 @@ public class MainApplet
 	 */
 	@Override
 	public void destroy() {
+		closeAllEditors();
 		cache = null;
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
@@ -170,6 +172,13 @@ public class MainApplet
 		JSplitPane sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
 		JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
 		JSplitPane statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExporerSplitPane, statusExplorerPanel);
+		
+		//******************
+		sideBarSplitPane.setDividerLocation(650);
+		projectExporerSplitPane.setDividerLocation(110);
+		statusExplorerSplitPane.setDividerLocation(500);
+		
+		//******************
 		
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
 		centerComponentsPanel.add(statusExplorerSplitPane);
@@ -290,7 +299,7 @@ public class MainApplet
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveFileInstance(editorPane.getComponents());
+					saveAllFileInstances();
 				}
 			});
 			menu.add(menuItem);
@@ -313,7 +322,7 @@ public class MainApplet
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeEditor(editorPane.getComponents());
+					closeAllEditors();
 				}
 			});
 			menu.add(menuItem);
@@ -477,6 +486,11 @@ public class MainApplet
 		editorPane.setSelectedIndex(index);
 	}
 	
+	public void resetEditorTitle(boolean changed, String projectName, String fileName) {
+		//TODO daj implemetiraj to 
+		
+	}
+	
 	public boolean existsFile(String projectName, String fileName) {
 		return cache.existsFile(projectName, fileName);
 	}
@@ -490,6 +504,7 @@ public class MainApplet
 		wizard.setProjectContainer(this);
 		wizard.setupWizard();
 		FileContent content = wizard.getInitialFileContent();
+		if(content == null) return;
 		String projectName = content.getProjectName();
 		String fileName = content.getFileName();
 		String data = content.getContent();
@@ -507,28 +522,97 @@ public class MainApplet
 	private void saveFileInstance(Component component) {
 		if(component == null) return;
 		IEditor editor = (IEditor) component;
-		if(!editor.isModified()) return;
 		String fileName = editor.getFileName();
 		String projectName = editor.getProjectName();
 		String content = editor.getData();
 		cache.saveFile(projectName, fileName, content);
 	}
 
-	private void saveFileInstance(Component[] components) {
-		if(components == null) return;
-		for(Component c : components) {
-			saveFileInstance(c);
+	private void saveAllFileInstances() {
+		for(int i = 0; i < editorPane.getTabCount(); i++) {
+			saveFileInstance(editorPane.getComponentAt(i));
 		}
 	}
 	
 	private void closeEditor(Component component) {
-		if(component == null) return;
+		IEditor editor = (IEditor) component;
+		if(editor.isModified()) {
+			String yes = bundle.getString(LanguageConstants.DIALOG_BUTTON_YES);
+			String no = bundle.getString(LanguageConstants.DIALOG_BUTTON_NO);
+			String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
+			Object[] options = {yes, no, cancel};
+			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_SINGLE_RESOURCE_TITLE);
+			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_SINGLE_RESOURCE_MESSAGE);
+			message = message.replace("{0}", editor.getFileName());
+			
+			int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if(option == JOptionPane.YES_OPTION) {
+				String projectName = editor.getProjectName();
+				String fileName = editor.getFileName();
+				String data = editor.getData();
+				cache.saveFile(projectName, fileName, data);
+			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
+				return;
+			}
+		}
 		editorPane.remove(component);
 	}
 	
-	private void closeEditor(Component[] components) {
-		if(components == null) return;
-		for(Component c : components) {
+	private void closeAllEditors() {
+		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
+		StringBuilder messageRepresentation = new StringBuilder(50);
+		for(int i = 0; i < editorPane.getTabCount(); i++) {
+			IEditor editor = (IEditor)editorPane.getComponentAt(i);
+			if(editor.isModified()) {
+				notSavedEditors.add(editor);
+				messageRepresentation.append(editor.getFileName()).append(" [")
+					.append(editor.getProjectName()).append("]\n");
+			}
+		}
+		int lenght = messageRepresentation.length();
+		if(lenght != 0) {
+			messageRepresentation.replace(lenght-1, lenght, "");
+		}
+		
+		if(notSavedEditors.size() != 0) {
+			String yes = bundle.getString(LanguageConstants.DIALOG_BUTTON_YES);
+			String no = bundle.getString(LanguageConstants.DIALOG_BUTTON_NO);
+			String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
+			Object[] options = {yes, no, cancel};
+			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_TITLE);
+			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE);
+			message = message.replace("{0}", messageRepresentation.toString());
+	
+			int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			
+			if(option == JOptionPane.YES_OPTION) {
+				for(IEditor editor : notSavedEditors) {
+					String projectName = editor.getProjectName();
+					String fileName = editor.getFileName();
+					String data = editor.getData();
+					cache.saveFile(projectName, fileName, data);
+				}
+			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
+				return;
+			}
+		}
+		editorPane.removeAll();
+	}
+	
+	private void closeAllButThisEditors(Component component) {
+		List<Component> toBeClosedComponents = new ArrayList<Component>();
+		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
+		StringBuilder messageRepresentation = new StringBuilder(50);
+		for(int i = 0; i < editorPane.getTabCount(); i++) {
+			Component c = editorPane.getComponentAt(i);
+			if(!c.equals(component)) {
+				toBeClosedComponents.add(c);
+			}
+		}
+		
+		for(Component c : toBeClosedComponents) {
 			closeEditor(c);
 		}
 	}
@@ -574,7 +658,7 @@ public class MainApplet
 				
 				long end = System.currentTimeMillis();
 				
-				String infoData = editor.getData()+(start-end)+"\nLoaded Options:\n"+cache.getOptions();
+				String infoData = editor.getData()+(start-end)+"ms\nLoaded Options:\n"+cache.getOptions();
 				cache.saveFile(projectName1, fileName1, infoData);
 
 				openFile(projectName1, fileName2);

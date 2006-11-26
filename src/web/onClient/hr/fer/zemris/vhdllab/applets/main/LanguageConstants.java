@@ -116,4 +116,36 @@ public class LanguageConstants {
 	 */
 	public static final String MENU_FILE_EXIT = "menu.file.exit";
 
+
+	/**
+	 * Yes button in dialog.
+	 */
+	public static final String DIALOG_BUTTON_YES = "dialog.button.yes";
+	/**
+	 * No button in dialog.
+	 */
+	public static final String DIALOG_BUTTON_NO = "dialog.button.no";
+	/**
+	 * Cancel button in dialog.
+	 */
+	public static final String DIALOG_BUTTON_CANCEL = "dialog.button.cancel";
+	
+	/**
+	 * Title for option dialog when trying to save resource.
+	 */
+	public static final String DIALOG_OPTION_SAVE_SINGLE_RESOURCE_TITLE = "dialog.option.save.single.resource.title";
+	/**
+	 * Message content for option dialog when trying to save resource.
+	 */
+	public static final String DIALOG_OPTION_SAVE_SINGLE_RESOURCE_MESSAGE = "dialog.option.save.single.resource.message";
+	/**
+	 * Title for option dialog when trying to save multiple resources.
+	 */
+	public static final String DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_TITLE = "dialog.option.save.multiple.resource.title";
+	/**
+	 * Message content for option dialog when trying to save multiple resources.
+	 */
+	public static final String DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE = "dialog.option.save.multiple.resource.message";
+
+	
 }

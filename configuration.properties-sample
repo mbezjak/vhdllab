@@ -22,6 +22,27 @@ hibernate.hbm.version = 2.0
 
 ### Tomcat directory ###
 tomcat.dir = C:\\Program Files\\Apache\\apache-tomcat-5.5.17
+### Tomcat executable file ###
+tomcat.exec = startup.bat
+### Tomcat port ###
+tomcat.port = 8080
+### Application host ###
+app.host = localhost
+### Relative application url pattern for tomcat ###
+app.url = vhdllab.html
+
+### Full path to browser executable file ###
+browser = c:\\Program Files\\Mozilla Firefox\\firefox.exe
+#browser = c:\\Program Files\\Opera\\opera.exe
+
+### Command line argument ###
+### Firefox ###
+browser.arg = -new-window
+### Opera (Linux Only) ###
+#browser.arg = -newwindow
+#browser.arg = -nosession
+### No command line argument ###
+#browser.arg =
 
 
 ############################

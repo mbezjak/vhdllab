@@ -14,6 +14,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 public class StatusBar extends JPanel implements IStatusBar {
@@ -33,6 +35,7 @@ public class StatusBar extends JPanel implements IStatusBar {
 		timeLabel = new JLabel(TIME);
 		
 		Box box = Box.createHorizontalBox();
+		box.add(new JSeparator(SwingConstants.VERTICAL));
 		box.add(timeLabel);
 		
 		this.setLayout(new BorderLayout());

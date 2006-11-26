@@ -372,6 +372,18 @@
       <fileset file="${basedir}/${lib.dir}/mysql/*.*"/>
     </copy>
   </target>
+	
+  <target name="run-tomcat" depends="tomcat">
+    <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.exec}"
+    	spawn="true"></exec>
+  </target>
+	
+  <target name="run-app" depends="tomcat">
+    <exec executable="${browser}" spawn="true">
+      <arg line="${browser.arg}"/>
+      <arg line="http://${app.host}:${tomcat.port}/${app.name}/${app.url}"/>
+    </exec>
+  </target>
 
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
 	
@@ -383,7 +395,7 @@
 	
   <target name="run-tests" depends="run-tests-dao,run-tests-service,run-tests-web-onServer,run-tests-web-onClient"/>
 
-  <target name="default" depends="package, tomcat"/>
+  <target name="default" depends="package"/>
 	
   <target name="hibernate" depends="schema-export"/>
 	
