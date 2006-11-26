@@ -94,6 +94,7 @@ public class AutoDrawer extends JPanel{
 	 * stanjeRada=3 dodavanje novog prijelaza (selekcija stanja iz)
 	 * stanjeRada=4 dodavanje novog prijelaza (selekcija stanja u)
 	 * stanjeRada=5 brisanje postojecih objekata
+	 * stanjeRada=6 zadavanje pocetnog stanja
 	 */
 	private int stanjeRada=1;
 
@@ -149,8 +150,7 @@ public class AutoDrawer extends JPanel{
 	 * Metoda get data propisana suceljem IEditor. Vraca podatke o sklopu.
 	 */
 	public String getData() {
-		// TODO naprvi get data!!!!
-		return null;
+		return new CodeGenerator().generateInternalCode(podatci,prijelazi,stanja);
 	}
 
 	/**

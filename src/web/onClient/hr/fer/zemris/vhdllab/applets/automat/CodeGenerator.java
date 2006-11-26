@@ -1,20 +1,62 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class CodeGenerator {
 	/**
 	 * metoda koja za automat generira VHDL kod
 	 * @return VHDL kod automata
 	 */
-	public String generateVHDL(AUTPodatci podatci, HashSet<Prijelaz> prijelazi, HashSet<Stanje> stanja){
+	public String generateVHDL(AUTPodatci podatci, HashSet<Prijelaz> prijelazi, LinkedList<Stanje> stanja){
 		return null;
 	}
 	/**
 	 * Metoda koja generira interni kod za automat
 	 * @return interni kod automata
 	 */
-	public String generateInternalCode(AUTPodatci podatci, HashSet<Prijelaz> prijelazi, HashSet<Stanje> stanja){
-		return null;
+	public String generateInternalCode(AUTPodatci podatci, HashSet<Prijelaz> prijelazi, LinkedList<Stanje> stanja){
+		String code=new String("<?xml version=\"1.0\"?>");
+		code=new StringBuffer().append(code).append("\n<Automat>").toString();
+		code=generateHead(podatci,code);
+		code=generateStanja(stanja,podatci,code);
+		code=generatePrijelazi(prijelazi,podatci,code);
+		code=new StringBuffer().append(code).append("\n</Automat>").toString();
+		return code;
+	}
+	private String generatePrijelazi(HashSet<Prijelaz> prijelazi, AUTPodatci podatci, String code) {
+		StringBuffer buffer=new StringBuffer().append(code);
+		for(Prijelaz pr:prijelazi){
+			for(String pom:pr.pobudaIzlaz){
+				buffer.append("<Prijelaz>\n<Iz>").append(pr.iz).append("</Iz>\n<U>").append(pr.u)
+				.append("</U>\n<Pobuda>");
+				if(podatci.tip.equals("Moore"))buffer.append(pom).append("</Pobuda>\n");
+				else{
+					String[] pom2=pom.split("/");
+					buffer.append(pom2[0]).append("</Pobuda>\n<Izlaz>").append(pom2[1]).append("</Izlaz>\n");
+				}
+				buffer.append("</Prijelaz>\n");
+			}
+			
+		}
+		return buffer.toString();
+	}
+	private String generateStanja(LinkedList<Stanje> stanja, AUTPodatci podatci, String code) {
+		StringBuffer buffer=new StringBuffer().append(code);
+		for(Stanje st:stanja){
+			buffer.append("<Stanje>\n<Ime>").append(st.ime).append("</Ime>\n");
+			if(podatci.tip.equals("Moore"))buffer.append("<Izlaz>")
+			.append(st.izlaz).append("</Izlaz>\n").toString();
+			buffer.append("<Ox>").append(st.ox).append("</Ox>\n<Oy>").append(st.oy).append("</Oy>\n")
+			.append("</Stanje>\n");
+		}
+		return buffer.toString();
+		
+	}
+	private String generateHead(AUTPodatci podatci, String code) {
+		return new StringBuffer().append(code).append("\n<Podatci_Sklopa>\n<Ime>").append(podatci.ime)
+		.append("</Ime>\n<Tip>").append(podatci.tip).append("</Tip>\n<Interfac>").append(podatci.interfac)
+		.append("</Interfac>\n<Pocetno_Stanje>").append(podatci.pocetnoStanje).append("</Pocetno_Stanje>\n</Podatci_Sklopa>\n")
+		.toString();		
 	}
 }
