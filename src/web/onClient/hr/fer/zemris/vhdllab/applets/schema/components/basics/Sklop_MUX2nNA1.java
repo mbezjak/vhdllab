@@ -24,6 +24,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);
+		izlaz.setCoordinate(new Point(SIRINA_MUX2nNA1, RAZMAK_IZMEDU_PORTOVA));
 		this.addPort(izlaz);
 		setBrojSelUlaza(1);
 	}
@@ -87,7 +88,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 			for (int i = 0; i < nbr; i++) {
 				port = new SchemaPort();
 				port.setName("Selekcijski ulaz " + i);
-				port.setCoordinate(new Point(SIRINA_MUX2nNA1 + i * RAZMAK_IZMEDU_PORTOVA,
+				port.setCoordinate(new Point(SIRINA_MUX2nNA1 / nbr * i,
 						RAZMAK_IZMEDU_PORTOVA * (1 + dvaNaN)));
 				port.setDirection(AbstractSchemaPort.PortDirection.IN);
 				port.setTipPorta("SEL");
@@ -114,7 +115,21 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	 * Updatea koordinate portova.
 	 */
 	protected void updatePortCoordinates() {
+		int pod = 0, sel = 0;
 		for (AbstractSchemaPort port : portlist) {
+			if (port.getDirection() == AbstractSchemaPort.PortDirection.OUT) {
+				port.setCoordinate(new Point(SIRINA_MUX2nNA1, 
+						(portlist.size() - brojSelUlaza - 1) * RAZMAK_IZMEDU_PORTOVA / 2));
+			} else {
+				if (port.getTipPorta() == "SEL") {
+					port.setCoordinate(new Point(SIRINA_MUX2nNA1 / brojSelUlaza * sel,
+							RAZMAK_IZMEDU_PORTOVA * (portlist.size() - brojSelUlaza)));
+					sel++;
+				} else {
+					port.setCoordinate(new Point(0, pod * RAZMAK_IZMEDU_PORTOVA));
+					pod++;
+				}
+			}
 		}
 	}
 
