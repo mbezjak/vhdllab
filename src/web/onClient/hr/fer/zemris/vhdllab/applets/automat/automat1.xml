@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE Automat [
 	<!ELEMENT Automat (Podatci_Sklopa,Stanje*,Prijelaz*)>
-	<!ELEMENT Podatci_Sklopa (Ime,Tip,Broj_Bitova_Ulaz, Broj_Bitova_Izlaz,Pocetno_Stanje)>
+	<!ELEMENT Podatci_Sklopa (Ime,Tip,Interfac,Pocetno_Stanje)>
 	<!ELEMENT Prijelaz (Iz,U,Pobuda,Izlaz?)>
 	<!ELEMENT Stanje (Ime,Izlaz?,Ox,Oy)>
 	<!ELEMENT Ime (#PCDATA)>
@@ -20,8 +20,10 @@
 	<Podatci_Sklopa>
 		<Ime>Automat1</Ime>
 		<Tip>Moore</Tip>
-		<Broj_Bitova_Ulaz>1</Broj_Bitova_Ulaz>
-		<Broj_Bitova_Izlaz>1</Broj_Bitova_Izlaz>
+		<Interfac>
+		a:in 1
+b:out 1
+		</Interfac>
 		<Pocetno_Stanje>A</Pocetno_Stanje>
 	</Podatci_Sklopa>
 
@@ -77,16 +79,6 @@
 	</Prijelaz>
 
 	<Prijelaz>
-		<Iz>C</Iz>
-		<U>B</U>
-		<Pobuda>1</Pobuda>
-	</Prijelaz>
-	<Prijelaz>
-		<Iz>C</Iz>
-		<U>B</U>
-		<Pobuda>0</Pobuda>
-	</Prijelaz>
-		<Prijelaz>
 		<Iz>C</Iz>
 		<U>B</U>
 		<Pobuda>1</Pobuda>

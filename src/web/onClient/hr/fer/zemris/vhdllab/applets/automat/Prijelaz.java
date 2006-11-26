@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.automat;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import javax.swing.JDialog;
@@ -34,7 +35,7 @@ public class Prijelaz {
 		boolean pov=true;
 		Prijelaz prj=(Prijelaz)obj;
 		if (obj==null) pov=false;
-		else if(!(prj.iz.equals(this.iz)&&prj.u.equals(this.u)))pov=false;
+		else if(!(this.iz.equals(prj.iz)&&this.u.equals(prj.u)))pov=false;
 		return pov;
 	}
 	
@@ -50,14 +51,14 @@ public class Prijelaz {
 	
 	public void editPrijelaz(AUTPodatci podatci,Component obj){
 		String pom=null;
-		if(podatci.ime.equals("Mealy")) pom=editMealy(obj);
+		if(podatci.tip.equals("Mealy")) pom=editMealy(obj);
 		else pom=editMoore(obj);
 		if(pom!=null)pobudaIzlaz.add(pom);
 	}
 	
 	public String editPrijelaz2(AUTPodatci podatci,Component obj){
 		String pom=null;
-		if(podatci.ime.equals("Mealy")) pom=editMealy(obj);
+		if(podatci.tip.equals("Mealy")) pom=editMealy(obj);
 		else pom=editMoore(obj);
 		return pom;
 	}	
@@ -105,8 +106,62 @@ public class Prijelaz {
 		pobudaIzlaz.add(pomocni);
 	}
 	
-	public void dodajPodatak(Prijelaz pr){
+	public void dodajPodatak(Prijelaz pr,HashSet<Prijelaz>prijelazi){
+		if(!equals2(pr,prijelazi))
 		this.pobudaIzlaz.addAll(pr.pobudaIzlaz);
+	}
+	
+	/**
+	 * funkcija usporeduje dali se smije dodati prijelaz ob u listu prijelaza konacnog automata
+	 * obj smije imati samo jedan clan u TreeSetu pobudaIzlaz...
+	 * @param obj
+	 * @param prijelazi
+	 * @return
+	 */
+	public boolean equals2(Object obj,HashSet<Prijelaz>prijelazi) {
+		boolean pov=false;
+		Prijelaz prj=(Prijelaz)obj;
+		String pom=prj.pobudaIzlaz.first();
+		if (obj==null) pov=false;		
+		else{
+			int length=getLength(prj);
+			for(Prijelaz pr:prijelazi){
+				if(pr.iz.equals(prj.iz))
+				for(String pod:pr.pobudaIzlaz){
+					boolean test2=true;
+					for(int i=0;i<length;i++)if(!(pom.charAt(i)==pod.charAt(i)||pom.charAt(i)=='*')){
+						test2=false;
+					}
+					if(test2){
+						pov=true;
+						break;
+					}
+				}
+			}
+		}
+		return pov;
+	}
+	
+	/**
+	 * vraca velicinu pobude
+	 * @param prj
+	 * @return
+	 */
+	private static int getLength(Prijelaz prj) {
+		String str=prj.pobudaIzlaz.first();
+		String[] str2=str.split("/");
+		return str2[0].trim().length();
+	}
+	
+	/**
+	 * poruka za ne dodavanje
+	 * @param drawer
+	 */
+	public void porukaNeDodaj(AutoDrawer drawer) {
+		JOptionPane.showMessageDialog(drawer,"Unesena pobuda vec se koristi!\n" +
+				"Prijelaz se nemože dodati!\n" +
+				"Pokušajte ponovo.");
+		
 	}
 
 }

@@ -21,12 +21,11 @@ public class AUTParser {
 		
 		digester.push(this);
 		
-		digester.addCallMethod("Automat/Podatci_Sklopa","dodajPodatke",5);
+		digester.addCallMethod("Automat/Podatci_Sklopa","dodajPodatke",4);
 		digester.addCallParam("Automat/Podatci_Sklopa/Ime",0);
 		digester.addCallParam("Automat/Podatci_Sklopa/Tip",1);
-		digester.addCallParam("Automat/Podatci_Sklopa/Broj_Bitova_Ulaz",2);
-		digester.addCallParam("Automat/Podatci_Sklopa/Broj_Bitova_Izlaz",3);
-		digester.addCallParam("Automat/Podatci_Sklopa/Pocetno_Stanje",4);
+		digester.addCallParam("Automat/Podatci_Sklopa/Interfac",2);
+		digester.addCallParam("Automat/Podatci_Sklopa/Pocetno_Stanje",3);
 		
 		digester.addCallMethod("Automat/Stanje","dodajStanje",4);
 		digester.addCallParam("Automat/Stanje/Ime",0);
@@ -43,8 +42,8 @@ public class AUTParser {
 		digester.parse(new StringReader(podatci));
 	}
 	
-	public void dodajPodatke(String ime,String tip,String bbu,String bbi,String pocetnoStanje){
-		podatci=new AUTPodatci(ime,tip,bbu,bbi,pocetnoStanje);
+	public void dodajPodatke(String ime,String tip,String interfac,String pocetnoStanje){
+		podatci=new AUTPodatci(ime,tip,interfac,pocetnoStanje);
 	}
 	public void dodajStanje(String ime, String izlaz, String ox,String oy){
 		Stanje st=new Stanje(ime,izlaz,ox,oy);

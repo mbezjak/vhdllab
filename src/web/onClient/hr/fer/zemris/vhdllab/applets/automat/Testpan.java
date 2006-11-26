@@ -1,6 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -27,9 +30,12 @@ public class Testpan extends JFrame {
 		}
 		System.out.println(xmlAut);
 		
-		Automat aut=new Automat(xmlAut);
-		this.getContentPane().add(aut,BorderLayout.CENTER);
-		this.setSize(aut.getPreferredSize());
+		FileContent fc=new FileContent("proba","test","");
+		
+		Automat aut = new Automat();
+		aut.setFileContent(fc);
+		this.getContentPane().add((Component) aut,BorderLayout.CENTER);
+		this.setSize(((Component) aut).getPreferredSize());
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException{

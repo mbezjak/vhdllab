@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
+//TODO prijelaz i equals i kad se koristi lista i dialog i kad se stvara novi prijelaz koji ide iz-u...
 
 
 import java.awt.BorderLayout;
@@ -41,7 +42,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class AutoDrawer extends JPanel{
-
+	
 	/**
 	 * serialVersionUID
 	 */
@@ -66,17 +67,18 @@ public class AutoDrawer extends JPanel{
 	 * varijabla sa osnovnovnim podatcima o samom automatu
 	 */
 	private AUTPodatci podatci=null;
-	
+	/**
+	 * legenda u kutu
+	 */
+	private String legenda=null;
 	/**
 	 * selektirano stanje...
 	 */
 	private Stanje selektiran=null;
-	
 	/**
 	 * stanje koje se dodaje
 	 */
 	private Stanje stanjeZaDodati=null;
-	
 	/**
 	 * prijelaz koji se dodaje
 	 */
@@ -85,7 +87,6 @@ public class AutoDrawer extends JPanel{
 	 * radijus krugova za stanja
 	 */
 	private int radijus=25;
-	
 	/**
 	 * Stanja rada definirat ce dali se dodaje signal, dodaje prijelaz ili editira slika.
 	 * stanjeRada=1 mjenjanje postojecih objekata
@@ -158,19 +159,39 @@ public class AutoDrawer extends JPanel{
 	 * @throws FileNotFoundException 
 	 */
 	public void setData(String data) {
-		AUTParser aut=new AUTParser();
-		try {
-			aut.AUTParse(data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
+		if(!data.equals("")){
+			AUTParser aut=new AUTParser();
+			try {
+				aut.AUTParse(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
+			stanja=aut.stanja;
+			prijelazi=aut.prijelazi;
+			podatci=aut.podatci;
+		}else{
+			stanja=new LinkedList<Stanje>();
+			prijelazi=new HashSet<Prijelaz>();
+			podatci=new AUTPodatci(AutoDrawer.this);
 		}
-		stanja=aut.stanja;
-		prijelazi=aut.prijelazi;
-		podatci=aut.podatci;
+		parseLegend();
 	}
 	
+	private void parseLegend() {
+		String ulazi=new String("|");
+		String izlazi=new String("|");
+		String[] pom=podatci.interfac.split("\n");
+		for(int i=0;i<pom.length;i++){
+			String[] strPom=pom[i].split(":");
+			String[] strPom2=strPom[1].trim().split(" ");
+			if(strPom2[0].trim().toLowerCase().equals("in"))ulazi=new StringBuffer().append(ulazi).append(strPom[0].trim()).append("|").toString();
+			else izlazi=new StringBuffer().append(izlazi).append(strPom[0].trim()).append("|").toString();
+		}
+		legenda=new StringBuffer().append("Legenda:\nUlazi: ").append(ulazi).append("\nIzlazi:").append(izlazi).toString();
+	}
+
 	/**
 	 * Ova metoda zasluzna je crtanje automata uz stanjeRada==4.
 	 *@param eventx ako je stanjeRada==4 daje x kordinatu misa
@@ -231,6 +252,23 @@ public class AutoDrawer extends JPanel{
 			}
 		}
 		
+		g.setColor(Color.BLACK);
+		String[] legendic=legenda.split("\n");
+		g.setFont(new Font("Arial", Font.BOLD, 10));
+		FontMetrics fm= g.getFontMetrics();
+		int odmak=legendic[0].length()>legendic[1].length()?
+				(legendic[0].length()>legendic[2].length()?fm.stringWidth(legendic[0]):fm.stringWidth(legendic[2])):
+				(legendic[1].length()>legendic[2].length()?fm.stringWidth(legendic[1]):fm.stringWidth(legendic[2]));
+		int xStr=img.getWidth()-odmak-10;
+		int yStr=fm.getHeight()+5;
+		g.drawString(legendic[0],xStr,yStr);
+		g.setFont(new Font("Arial", Font.PLAIN, 10));
+		fm= g.getFontMetrics();
+		yStr+=fm.getHeight();
+		g.drawString(legendic[1],xStr,yStr);
+		yStr+=fm.getHeight();
+		g.drawString(legendic[2],xStr,yStr);
+		
 		repaint();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
 
@@ -286,6 +324,23 @@ public class AutoDrawer extends JPanel{
 			}
 			nacrtajPrijelaz(iz, ka,pr);
 		}
+		
+		g.setColor(Color.BLACK);
+		String[] legendic=legenda.split("\n");
+		g.setFont(new Font("Arial", Font.BOLD, 10));
+		FontMetrics fm= g.getFontMetrics();
+		int odmak=legendic[0].length()>legendic[1].length()?
+				(legendic[0].length()>legendic[2].length()?fm.stringWidth(legendic[0]):fm.stringWidth(legendic[2])):
+				(legendic[1].length()>legendic[2].length()?fm.stringWidth(legendic[1]):fm.stringWidth(legendic[2]));
+		int xStr=img.getWidth()-odmak-10;
+		int yStr=fm.getHeight()+5;
+		g.drawString(legendic[0],xStr,yStr);
+		g.setFont(new Font("Arial", Font.PLAIN, 10));
+		fm= g.getFontMetrics();
+		yStr+=fm.getHeight();
+		g.drawString(legendic[1],xStr,yStr);
+		yStr+=fm.getHeight();
+		g.drawString(legendic[2],xStr,yStr);
 		
 		repaint();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -545,12 +600,13 @@ public class AutoDrawer extends JPanel{
 	}
 
 	public void editorPrijelaza(Prijelaz pr) {
+		final Prijelaz pr2=pr;
 		JButton add=new JButton("Dodaj...");
 		JButton delete=new JButton("Obrisi...");
 		JLabel poruka=new JLabel("Popis prijelaza:");
 		
 		final DefaultListModel listam=new DefaultListModel();
-		for(String st:pr.pobudaIzlaz)listam.addElement(st);
+		for(String st:pr2.pobudaIzlaz)listam.addElement(st);
 		final JList list=new JList(listam);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
@@ -571,14 +627,23 @@ public class AutoDrawer extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				Prijelaz pomocni=new Prijelaz();
 				String str=pomocni.editPrijelaz2(podatci,AutoDrawer.this);
-				if(listam.indexOf(str)==-1)listam.addElement(str);
+				pomocni.iz=pr2.iz;
+				pomocni.pobudaIzlaz.add(str);
+				if(listam.indexOf(str)==-1&&!pomocni.equals2(pomocni,prijelazi)){
+					listam.addElement(str);
+					pr2.pobudaIzlaz.add(str);
+				} else pr2.porukaNeDodaj(AutoDrawer.this);
 			};
 		});
 		
 		delete.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(list.getSelectedIndex()>-1)
-					if (listam.size()>1) listam.remove(list.getSelectedIndex());
+					if (listam.size()>1) {
+						String pom=(String)list.getSelectedValue();
+						listam.remove(list.getSelectedIndex());
+						pr2.pobudaIzlaz.remove(pom);
+					}
 					else JOptionPane.showMessageDialog(AutoDrawer.this,"Mora ostati barem jedan prijelaz u listi!");
 			}	
 		});
@@ -589,8 +654,7 @@ public class AutoDrawer extends JPanel{
 		Object selected=optionPane.getValue();
 		
 		if(selected.equals(JOptionPane.OK_OPTION)){
-			pr.pobudaIzlaz.clear();
-			for(int i=0;i<listam.getSize();i++) pr.pobudaIzlaz.add((String)listam.get(i));
+		 	pr=pr2;
 			nacrtajSklop();
 		}
 	}
@@ -721,9 +785,14 @@ public class AutoDrawer extends JPanel{
 							for(Prijelaz pr:prijelazi)
 								if(pr.equals(prijelazZaDodati)){
 									test=false;
-									pr.dodajPodatak(prijelazZaDodati);
+									pr.dodajPodatak(prijelazZaDodati,prijelazi);
 								}
-							if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0)prijelazi.add(prijelazZaDodati);
+							if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0)
+								if(!prijelazZaDodati.equals2(prijelazZaDodati,prijelazi)){
+									prijelazi.add(prijelazZaDodati);
+								}else{//TODO ??!
+									prijelazZaDodati.porukaNeDodaj(AutoDrawer.this);
+								}
 							prijelazZaDodati=null;
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;

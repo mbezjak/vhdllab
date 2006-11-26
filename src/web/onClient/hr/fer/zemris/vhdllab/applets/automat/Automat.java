@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.automat;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -20,20 +19,20 @@ import javax.swing.JToolBar;
  * @author ddelac
  *
  */
-public class Automat extends JPanel implements IEditor, IWizard {
+public class Automat extends JPanel  {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2093412659859056334L;
 	
+	/**
+	 * AutoDrawer je JPanel na koji se crta automat
+	 */
 	AutoDrawer adrw=null;
 	
-	public Automat(String podatci) {
-		super();
-		createGUI(podatci);
-
-		
+	public Automat() {
+		super();		
 	}
 
 	
@@ -100,58 +99,18 @@ public class Automat extends JPanel implements IEditor, IWizard {
 		this.setLayout(new BorderLayout());
 		this.add(adrw,BorderLayout.CENTER);
 		this.add(tulbar,BorderLayout.NORTH);
+			
+	}
+
+
+
+	public void setFileContent(FileContent fc) {
+		createGUI(fc.getContent());
 		
 	}
 
 
 
 	//TODO ---------------IMPLEMENTIRAJ KASNIJE-------------------------------
-	public void setFileContent(FileContent fContent) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	public String getData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean isModified() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void setProjectContainer(ProjectContainer pContainer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public IWizard getWizard() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public FileContent getInitialFileContent() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setupWizard() {
-		//TODO Auto-generated method stub
-	}
-
-	public String getFileName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getProjectName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void highlightLine(int line) {
-		// TODO Auto-generated method stub
-		
-	}
 }
