@@ -374,11 +374,18 @@
   </target>
 	
   <target name="run-tomcat" depends="tomcat">
+  	<property environment="env"/>
+  	<condition property="">
+  	  <isset property="${env.CATALINA_HOME}"/>
+  	</condition>
     <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.exec}"
-    	spawn="true"></exec>
+    	spawn="true">
+    </exec>
   </target>
 	
   <target name="run-app" depends="tomcat">
+  	<!-- Sleep for tomcat to reload its resources -->
+  	<sleep seconds="1"/>
     <exec executable="${browser}" spawn="true">
       <arg line="${browser.arg}"/>
       <arg line="http://${app.host}:${tomcat.port}/${app.name}/${app.url}"/>

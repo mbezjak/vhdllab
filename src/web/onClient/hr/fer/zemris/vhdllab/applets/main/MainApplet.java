@@ -470,25 +470,45 @@ public class MainApplet
 	public ResourceBundle getResourceBundle() {
 		return bundle;
 	}
-
+	
+	private int indexOfEditor(String projectName, String fileName) {
+		for(int i = 0; i < editorPane.getTabCount(); i++) {
+			IEditor editor = (IEditor) editorPane.getComponentAt(i);
+			if(projectName.equals(editor.getProjectName()) &&
+					fileName.equals(editor.getFileName())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public void openFile(String projectName, String fileName) {
 		String content = cache.loadFileContent(projectName, fileName);
 		FileContent fileContent = new FileContent(projectName, fileName, content);
-		int index = editorPane.indexOfTab(fileName);
+		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			String type = cache.loadFileType(projectName, fileName);
 			IEditor editor = cache.getEditor(type);
 			editor.setProjectContainer(this);
 			editor.setFileContent(fileContent);
-			editorPane.add(fileName, (JPanel)editor);
+			Component component = editorPane.add(fileName, (JPanel)editor);
+			int i = editorPane.indexOfComponent(component);
+			String toolTipText = projectName + "/" + fileName;
+			editorPane.setToolTipTextAt(i, toolTipText);
 			index = editorPane.indexOfTab(fileName);
 		}
 		editorPane.setSelectedIndex(index);
 	}
 	
-	public void resetEditorTitle(boolean changed, String projectName, String fileName) {
-		//TODO daj implemetiraj to 
-		
+	public void resetEditorTitle(boolean contentChanged, String projectName, String fileName) {
+		String title = fileName;
+		if(contentChanged) {
+			title = "*" + title;
+		}
+		int index = indexOfEditor(projectName, fileName);
+		if(index != -1)  {
+			editorPane.setTitleAt(index, title);
+		}
 	}
 	
 	public boolean existsFile(String projectName, String fileName) {
@@ -502,7 +522,6 @@ public class MainApplet
 	private void createNewFileInstance(String type) {
 		IWizard wizard = cache.getWizard(type);
 		wizard.setProjectContainer(this);
-		wizard.setupWizard();
 		FileContent content = wizard.getInitialFileContent();
 		if(content == null) return;
 		String projectName = content.getProjectName();
@@ -515,7 +534,7 @@ public class MainApplet
 	}
 	
 	public IEditor getEditor(String projectName, String fileName) {
-		int index = editorPane.indexOfTab(fileName);
+		int index = indexOfEditor(projectName, fileName);
 		return (IEditor)editorPane.getComponentAt(index);
 	}
 	
@@ -526,6 +545,7 @@ public class MainApplet
 		String projectName = editor.getProjectName();
 		String content = editor.getData();
 		cache.saveFile(projectName, fileName, content);
+		resetEditorTitle(false, projectName, fileName);
 	}
 
 	private void saveAllFileInstances() {
@@ -608,10 +628,44 @@ public class MainApplet
 		for(int i = 0; i < editorPane.getTabCount(); i++) {
 			Component c = editorPane.getComponentAt(i);
 			if(!c.equals(component)) {
+				IEditor editor = (IEditor)c;
+				if(editor.isModified()) {
+					notSavedEditors.add(editor);
+					messageRepresentation.append(editor.getFileName()).append(" [")
+						.append(editor.getProjectName()).append("]\n");
+				}
 				toBeClosedComponents.add(c);
 			}
+			
+		}
+		int lenght = messageRepresentation.length();
+		if(lenght != 0) {
+			messageRepresentation.replace(lenght-1, lenght, "");
 		}
 		
+		if(notSavedEditors.size() != 0) {
+			String yes = bundle.getString(LanguageConstants.DIALOG_BUTTON_YES);
+			String no = bundle.getString(LanguageConstants.DIALOG_BUTTON_NO);
+			String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
+			Object[] options = {yes, no, cancel};
+			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_TITLE);
+			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE);
+			message = message.replace("{0}", messageRepresentation.toString());
+	
+			int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			
+			if(option == JOptionPane.YES_OPTION) {
+				for(IEditor editor : notSavedEditors) {
+					String projectName = editor.getProjectName();
+					String fileName = editor.getFileName();
+					String data = editor.getData();
+					cache.saveFile(projectName, fileName, data);
+				}
+			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
+				return;
+			}
+		}
 		for(Component c : toBeClosedComponents) {
 			closeEditor(c);
 		}

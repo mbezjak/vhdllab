@@ -161,13 +161,6 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 
-	public void setupWizard() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
 	public FileContent getInitialFileContent() {
 		// TODO Auto-generated method stub
 		return null;

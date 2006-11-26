@@ -32,6 +32,9 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		text.addKeyListener(new KeyListener() {
 		
 			public void keyTyped(KeyEvent e) {
+				if(!change) {
+					container.resetEditorTitle(true, content.getProjectName(), content.getFileName());
+				}
 				change = true;
 			}
 			public void keyReleased(KeyEvent e) {}
@@ -67,10 +70,6 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public FileContent getInitialFileContent() {
-		return content;
-	}
-	
-	public void setupWizard() {
 		String projectName;
 		String fileName;
 		do {
@@ -82,10 +81,10 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		} while(container.existsFile(projectName, fileName));
 
 		String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();
-		text.setText(data);
-		content = new FileContent(projectName, fileName, data);
+		FileContent initialContent = new FileContent(projectName, fileName, data);
+		return initialContent;
 	}
-
+	
 	public String getFileName() {
 		return content.getFileName();
 	}
