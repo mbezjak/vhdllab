@@ -28,7 +28,7 @@ public class StatusBar extends JPanel implements IStatusBar {
 	private JLabel statusText;
 	private JLabel timeLabel;
 
-	private final String TIME = " HH:MM ";
+	private final String TIME = " HH:mm ";
     
 	public StatusBar() {
 		statusText = new JLabel();

@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
@@ -57,7 +58,7 @@ public class MainApplet
 	
 	private JMenuBar menuBar;
 	private JToolBar toolBar;
-	private StatusBar statusBar;
+	private IStatusBar statusBar;
 	private JTabbedPane editorPane;
 	
 	private ProjectExplorer projectExplorer;
@@ -97,6 +98,8 @@ public class MainApplet
 			}
 		}
 		
+		String statusBarText = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
+		statusBar.setText(statusBarText);
 	}
 	
 	/* (non-Javadoc)
@@ -142,11 +145,11 @@ public class MainApplet
 	}
 	
 	private JPanel setupStatusBar() {
-		statusBar = new StatusBar();
+		StatusBar statusBar = new StatusBar();
 		JPanel statusBarPanel = new JPanel(new BorderLayout());
 		statusBarPanel.add(statusBar, BorderLayout.CENTER);
 		statusBarPanel.setPreferredSize(new Dimension(0, 24));
-
+		this.statusBar = statusBar;
 		return statusBarPanel;
 	}
 	

@@ -148,4 +148,8 @@ public class LanguageConstants {
 	public static final String DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE = "dialog.option.save.multiple.resource.message";
 
 	
+	/**
+	 * Key for StatusBar when applet loading is completed.
+	 */
+	public static final String STATUSBAR_LOAD_COMPLETE = "statusbar.load.complete";
 }

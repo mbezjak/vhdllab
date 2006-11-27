@@ -22,6 +22,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 
 	private static final long serialVersionUID = 5853551043423675268L;
 	private JTextArea text;
+	private String temp;
 	private boolean change;
 	
 	private ProjectContainer container;
@@ -32,12 +33,16 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		text.addKeyListener(new KeyListener() {
 		
 			public void keyTyped(KeyEvent e) {
-				if(!change) {
-					container.resetEditorTitle(true, content.getProjectName(), content.getFileName());
-				}
-				change = true;
+				temp = text.getText();
 			}
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				if(!temp.equals(text.getText())) {
+					if(!change) {
+						container.resetEditorTitle(true, content.getProjectName(), content.getFileName());
+					}
+					change = true;
+				}
+			}
 			public void keyPressed(KeyEvent e) {}
 		
 		});
