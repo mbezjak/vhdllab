@@ -108,4 +108,8 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public void highlightLine(int line) {}
+
+	public void setReadOnly(boolean flag) {}
+
+	public void setSaveable(boolean flag) {}
 }

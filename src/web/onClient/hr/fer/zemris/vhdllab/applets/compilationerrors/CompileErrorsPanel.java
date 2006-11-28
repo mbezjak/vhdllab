@@ -278,4 +278,14 @@ public class CompileErrorsPanel extends JPanel
     	// TODO Auto-generated method stub
     	
     }
+
+	public void setReadOnly(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setSaveable(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
 }

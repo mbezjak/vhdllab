@@ -168,6 +168,20 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 
+	public void setReadOnly(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void setSaveable(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
 	
 
 }

@@ -8,6 +8,7 @@
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/service"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/web/onClient"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/web/onServer"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/common"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/i18n/common"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/i18n/client"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/i18n/server"/>
