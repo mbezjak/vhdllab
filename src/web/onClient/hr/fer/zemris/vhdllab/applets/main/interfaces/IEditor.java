@@ -20,6 +20,8 @@ public interface IEditor {
 	String getProjectName();
 	String getFileName();
 	boolean isModified();
+	void setSaveable(boolean flag);
+	void setReadOnly(boolean flag);
 	public void highlightLine(int line);
 	void setProjectContainer(ProjectContainer pContainer);
 	IWizard getWizard();
