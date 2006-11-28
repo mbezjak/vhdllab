@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
@@ -30,7 +31,7 @@ public class DoMethodCreateNewUserFileTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile("user1000", UserFile.UFT_THEME);
+		file = labman.createNewUserFile("user1000", FileTypes.FT_THEME);
 		regMethod = new DoMethodCreateNewUserFile();
 		method = MethodConstants.MTD_CREATE_NEW_USER_FILE;
 	}
@@ -70,7 +71,7 @@ public class DoMethodCreateNewUserFileTest {
 	 */
 	@Test
 	public void run3() {
-		prop.setProperty(MethodConstants.PROP_FILE_TYPE, UserFile.UFT_THEME);
+		prop.setProperty(MethodConstants.PROP_FILE_TYPE, FileTypes.FT_THEME);
 		
 		Properties p = regMethod.run(prop, mprov);
 		assertEquals(3, p.keySet().size());
@@ -84,7 +85,7 @@ public class DoMethodCreateNewUserFileTest {
 	@Test
 	public void run4() {
 		prop.setProperty(MethodConstants.PROP_FILE_OWNER_ID, "n");
-		prop.setProperty(MethodConstants.PROP_FILE_TYPE, UserFile.UFT_THEME);
+		prop.setProperty(MethodConstants.PROP_FILE_TYPE, FileTypes.FT_THEME);
 		
 		Properties p = regMethod.run(prop, mprov);
 		assertEquals(3, p.keySet().size());
@@ -99,7 +100,7 @@ public class DoMethodCreateNewUserFileTest {
 	public void run5() throws ServiceException {
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
 		prop.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String.valueOf(file.getOwnerID()));
-		prop.setProperty(MethodConstants.PROP_FILE_TYPE, UserFile.UFT_APPLET);
+		prop.setProperty(MethodConstants.PROP_FILE_TYPE, FileTypes.FT_APPLET);
 		
 		Properties p = regMethod.run(prop, mprov);
 		assertEquals(3, p.keySet().size());
@@ -108,7 +109,7 @@ public class DoMethodCreateNewUserFileTest {
 		Long id = Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID));
 		UserFile f = labman.loadUserFile(id);
 		assertEquals(file.getOwnerID(), f.getOwnerID());
-		assertEquals(UserFile.UFT_APPLET, f.getType());
+		assertEquals(FileTypes.FT_APPLET, f.getType());
 	}
 	
 	public static junit.framework.Test suite() {

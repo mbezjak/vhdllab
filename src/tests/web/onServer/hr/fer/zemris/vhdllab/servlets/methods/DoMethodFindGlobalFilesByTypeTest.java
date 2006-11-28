@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
@@ -31,9 +32,9 @@ public class DoMethodFindGlobalFilesByTypeTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewGlobalFile("TestFileName_1", GlobalFile.GFT_APPLET);
-		file2 = labman.createNewGlobalFile("TestFileName_2", GlobalFile.GFT_APPLET);
-		labman.createNewGlobalFile("TestFileName_3", GlobalFile.GFT_THEME);
+		file = labman.createNewGlobalFile("TestFileName_1", FileTypes.FT_APPLET);
+		file2 = labman.createNewGlobalFile("TestFileName_2", FileTypes.FT_APPLET);
+		labman.createNewGlobalFile("TestFileName_3", FileTypes.FT_THEME);
 		regMethod = new DoMethodFindGlobalFilesByType();
 		method = MethodConstants.MTD_FIND_GLOBAL_FILES_BY_TYPE;
 	}

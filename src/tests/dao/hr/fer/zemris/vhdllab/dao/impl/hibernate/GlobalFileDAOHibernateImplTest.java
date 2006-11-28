@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
@@ -31,7 +32,7 @@ public class GlobalFileDAOHibernateImplTest {
 		file = new GlobalFile();
 		file.setContent("simple content of global file!");
 		file.setName("SimpleGlobalFileName");
-		file.setType(GlobalFile.GFT_THEME);
+		file.setType(FileTypes.FT_THEME);
 		fileDAO.save(file);
 	}
 	@Test
@@ -57,12 +58,12 @@ public class GlobalFileDAOHibernateImplTest {
 		GlobalFile file2 = new GlobalFile();
 		file2.setContent("simple content of global file2!");
 		file2.setName("SimpleGlobalFileName2");
-		file2.setType(GlobalFile.GFT_APPLET);
+		file2.setType(FileTypes.FT_APPLET);
 
 		GlobalFile file3 = new GlobalFile();
 		file3.setContent("simple content of global file3!");
 		file3.setName("SimpleGlobalFileName3");
-		file3.setType(GlobalFile.GFT_APPLET);
+		file3.setType(FileTypes.FT_APPLET);
 
 		fileDAO.save(file2);
 		fileDAO.save(file3);
@@ -71,7 +72,7 @@ public class GlobalFileDAOHibernateImplTest {
 		fileList.add(file2);
 		fileList.add(file3);
 		
-		assertEquals(fileList, fileDAO.findByType(GlobalFile.GFT_APPLET));
+		assertEquals(fileList, fileDAO.findByType(FileTypes.FT_APPLET));
 	}
 	
 	@Test

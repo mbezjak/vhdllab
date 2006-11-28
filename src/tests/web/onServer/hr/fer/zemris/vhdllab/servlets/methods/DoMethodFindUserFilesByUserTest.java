@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
@@ -31,9 +32,9 @@ public class DoMethodFindUserFilesByUserTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile("user1500", UserFile.UFT_THEME);
-		file2 = labman.createNewUserFile("user1500", UserFile.UFT_THEME);
-		labman.createNewUserFile("user2000", UserFile.UFT_THEME);
+		file = labman.createNewUserFile("user1500", FileTypes.FT_THEME);
+		file2 = labman.createNewUserFile("user1500", FileTypes.FT_THEME);
+		labman.createNewUserFile("user2000", FileTypes.FT_THEME);
 		regMethod = new DoMethodFindUserFilesByUser();
 		method = MethodConstants.MTD_FIND_USER_FILES_BY_USER;
 	}

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.model.Project;
@@ -31,7 +32,7 @@ public class UserFileDAOHibernateImplTest {
 		file = new UserFile();
 		file.setContent("simple content of global file!");
 		file.setOwnerID("user100");
-		file.setType(UserFile.UFT_THEME);
+		file.setType(FileTypes.FT_THEME);
 		fileDAO.save(file);
 	}
 	
@@ -58,12 +59,12 @@ public class UserFileDAOHibernateImplTest {
 		UserFile file2 = new UserFile();
 		file2.setContent("simple content of global file2!");
 		file2.setOwnerID("user200");
-		file2.setType(UserFile.UFT_APPLET);
+		file2.setType(FileTypes.FT_APPLET);
 
 		UserFile file3 = new UserFile();
 		file3.setContent("simple content of global file3!");
 		file3.setOwnerID("user200");
-		file3.setType(UserFile.UFT_THEME);
+		file3.setType(FileTypes.FT_THEME);
 
 		fileDAO.save(file2);
 		fileDAO.save(file3);

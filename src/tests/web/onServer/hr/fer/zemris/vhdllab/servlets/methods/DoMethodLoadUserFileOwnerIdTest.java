@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
@@ -30,7 +31,7 @@ public class DoMethodLoadUserFileOwnerIdTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile("user1000", UserFile.UFT_THEME);
+		file = labman.createNewUserFile("user1000", FileTypes.FT_THEME);
 		regMethod = new DoMethodLoadUserFileOwnerId();
 		method = MethodConstants.MTD_LOAD_USER_FILE_OWNER_ID;
 	}

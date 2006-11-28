@@ -14,7 +14,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.applet.Applet;
@@ -685,9 +684,9 @@ public class MainApplet
 			try {
 				AjaxMediator ajax = new DefaultAjaxMediator(MainApplet.this);
 				MethodInvoker invoker = new DefaultMethodInvoker(ajax);
-				Long fileId = invoker.createGlobalFile("applet", GlobalFile.GFT_APPLET);
+				Long fileId = invoker.createGlobalFile("applet", FileTypes.FT_APPLET);
 				invoker.saveGlobalFile(fileId, "a=2a\nb=22");
-				fileId = invoker.createGlobalFile("tema", GlobalFile.GFT_THEME);
+				fileId = invoker.createGlobalFile("tema", FileTypes.FT_THEME);
 				invoker.saveGlobalFile(fileId, "neka = random\ntema=za testiranje");
 			} catch (AjaxException e) {
 				e.printStackTrace();
