@@ -2,8 +2,9 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 
-import java.awt.Graphics;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 /**
  * SchemaDrawingGrid je 2. od slojeva koji se brine o iscrtavanju
@@ -16,18 +17,29 @@ import java.awt.Graphics2D;
 
 public class SchemaDrawingGrid {
 	
-	private Graphics2D graphics = null;
+	private BufferedImage graphics = null;
 	private SchemaDrawingAdapter adapter = null;
 	private SchemaColorProvider colors = null;
-	private double magnificationFactor = 1.d;
+	private double magnificationFactor = 100.d;
+	private int gridSpace = 5; //razmak izmedju iscrtanog grida (u pixelima)
 	
-	public SchemaDrawingGrid(SchemaColorProvider colors){
+	public SchemaDrawingGrid(SchemaColorProvider colors, BufferedImage canvas){
 		this.colors=colors;
+		this.graphics=canvas;
+		
+		initGRID();
 	}
 	
-	public SchemaDrawingGrid(SchemaColorProvider colors, double magnificationFactor){
+	public SchemaDrawingGrid(SchemaColorProvider colors, BufferedImage canvas, double magnificationFactor){
 		this.colors=colors;
-		this.magnificationFactor=magnificationFactor;		
+		this.magnificationFactor=magnificationFactor;
+		this.graphics=canvas;
+		
+		initGRID();
+	}
+	
+	public void initGRID(){
+		adapter=new SchemaDrawingAdapter(colors,magnificationFactor);
 	}
 
 	public double getMagnificationFactor() {
@@ -41,7 +53,26 @@ public class SchemaDrawingGrid {
 	}
 
 	public SchemaDrawingAdapter getAdapter() {
+		DrawGrid();		
 		return adapter;
+	}
+	
+	private void DrawGrid(){
+		int x = graphics.getWidth();
+		int y = graphics.getHeight();
+		Dimension size=new Dimension(x/gridSpace,y/gridSpace);
+		Graphics2D g=(Graphics2D) graphics.getGraphics();
+		
+		
+		
+		for(int i=0;i<size.getWidth();i++){
+			g.drawLine(i*gridSpace,0,i*gridSpace,y);	
+		}
+		
+		for(int j=0;j<size.getHeight();j++){
+			g.drawLine(0,j*gridSpace,x,j*gridSpace);
+		}
+								
 	}
 
 	public void setColors(SchemaColorProvider colors) {
@@ -49,27 +80,13 @@ public class SchemaDrawingGrid {
 		this.colors = colors;
 		adapter.setColors(colors);
 	}
-	
-	/**
-	 * Metoda koju treba pozvati prije svakog iscrtavanja komponenti
-	 * @param g Graphics parametar SchemaDrawingGrid komponente koja iscrtava
-	 * svu grafiku.\
-	 * @see hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingGrid#endDrawing()
+
+
+	/**height();
+	 * metoda za osvjezavanje svih crtkarija  
 	 */
-	public void startDrawing(Graphics g){
-		graphics=(Graphics2D)g;
-		adapter.startDrawing(graphics);
-	}
-	
-	/**
-	 * Metoda kojom se zavrsava iscrtavanja komponenti.
-	 * Mora biti u kombinaciji sa startDrawing(Graphics) metodom.
-	 * @see hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingGrid#startDrawing(Graphics)
-	 *
-	 */
-	public void  endDrawing(){
-		adapter.endDrawing();
-		graphics=null;
-	}
+	public void repaint(){
+		DrawGrid();
+	}	
 
 }

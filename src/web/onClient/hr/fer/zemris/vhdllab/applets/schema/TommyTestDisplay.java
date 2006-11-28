@@ -1,13 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingCanvas;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
@@ -25,7 +23,6 @@ public class TommyTestDisplay extends JFrame {
 	@SuppressWarnings("unused")
 	private Container container = null;
 	
-	
 	//Methods
 	
 	public TommyTestDisplay(){
@@ -42,28 +39,10 @@ public class TommyTestDisplay extends JFrame {
 		//default pane
 
 		//menu
-		menu=new SchemaMenu(rb,colors);
-		this.setJMenuBar(menu.getMenu());
+//		menu=new SchemaMenu(rb,colors);
+//		this.setJMenuBar(menu.getMenu());
 		
-		this.addKeyListener(new KeyListener() {
-		
-			public void keyTyped(KeyEvent e) {
-				System.err.print(e.getKeyChar());
-		
-			}
-		
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-		
-			}
-		
-			public void keyPressed(KeyEvent e) {
-				
-			}
-		
-		});
-		
-		
+		container.add(new SchemaDrawingCanvas(colors));		
 		
 		
 	}	
@@ -71,10 +50,8 @@ public class TommyTestDisplay extends JFrame {
 	public void init() {
 		initLanguage();
 		initColors();		
-		initGUI();
-		
+		initGUI();		
 		//SchemaDrawingAdapter adapter = new SchemaDrawingAdapter(colors,2.d);
-		Graphics g = this.getGraphics();
 		//adapter.setGraphics(g);
 		//adapter.drawLine(0, 0, 50, 25);
 	}

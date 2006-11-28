@@ -43,10 +43,6 @@ public class SchemaDrawingAdapter {
 		gph=null;
 	}
 	
-	public void redrawComponents(){
-		//ovdje ide cijeli mehanizam koji se brine bas o samom iscrtavanju komponenata
-	}
-	
 	public void setMagnificationFactor(double mag) {
 		this.magnificationFactor = mag;
 	}
@@ -95,7 +91,6 @@ public class SchemaDrawingAdapter {
 
 	public void setColors(SchemaColorProvider colors) {
 		this.colors = colors;
-		redrawComponents();
 	}
 	
 }
