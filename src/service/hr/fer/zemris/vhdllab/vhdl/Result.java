@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Result {
 
-	Integer status;
-	boolean isSuccessful;
-	List<? extends Message> messages;
+	private Integer status;
+	private boolean isSuccessful;
+	private List<? extends Message> messages;
 	
 	public Result(Integer status, boolean isSuccessful, List<? extends Message> messages) {
 		super();
