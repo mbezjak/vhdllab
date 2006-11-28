@@ -54,7 +54,7 @@ public class Stanje {
 	}
 	
 	public void editStanje(AUTPodatci podatci,Component obj){
-		if(podatci.tip.equals("Moore")) editMoore(obj);
+		if(podatci.tip.equals("Moore")) editMoore(obj,podatci);
 		else editMealy(obj);
 	}
 	private void editMealy(Component obj) {
@@ -74,9 +74,9 @@ public class Stanje {
 		else this.ime=ime.getText().toUpperCase();
 		
 	}
-	private void editMoore(Component obj) {
+	private void editMoore(Component obj, AUTPodatci podatci) {
 		JTextField ime=new JTextField(this.ime);
-		JTextField izlaz=new JTextField(this.izlaz);
+		JTextField izlaz=new CustomTextField(this.izlaz,podatci.sirinaIzlaza,false);
 		JLabel imeLab=new JLabel("Unesite ime stanja: ");
 		JLabel izlazLab=new JLabel("Unesite izlaz za stanje: ");
 		JPanel panel=new JPanel();
@@ -99,11 +99,11 @@ public class Stanje {
 	}
 	
 	public void editStanje2(AUTPodatci podatci, Component obj){
-		if(podatci.tip.equals("Moore")) editMoore2(obj);
+		if(podatci.tip.equals("Moore")) editMoore2(obj,podatci);
 		else JOptionPane.showMessageDialog(obj,"Mealyev automat!\nNijr moguce izmjeniti podatke stanja.");
 	}
-	private void editMoore2(Component obj) {
-		JTextField izlaz=new JTextField(this.izlaz);
+	private void editMoore2(Component obj, AUTPodatci podatci) {
+		JTextField izlaz=new CustomTextField(this.izlaz,podatci.sirinaIzlaza,false);
 		JLabel izlazLab=new JLabel("Unesite izlaz za stanje: ");
 		JPanel panel=new JPanel();
 		panel.setLayout(new GridLayout(1,2));

@@ -135,7 +135,7 @@ public class AutoDrawer extends JPanel{
 	protected void paintComponent(Graphics g) {
 		if(img == null) {
 			img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
-			Graphics2D gr=(Graphics2D)img.getGraphics();
+			//Graphics2D gr=(Graphics2D)img.getGraphics();
 			nacrtajSklop();
 		} else {
 			if (img.getHeight()!=this.getHeight()||img.getWidth()!=this.getWidth()){
@@ -217,9 +217,16 @@ public class AutoDrawer extends JPanel{
 			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
 			g.setColor(Color.WHITE);
 			g.fillArc(st.ox+5,st.oy+5,2*radijus-10,2*radijus-10,0,360);
+			g.setColor(st.boja);
+			if(st.ime.equals(podatci.pocetnoStanje)){
+				g.drawLine(st.ox-17,st.oy+radijus,st.ox,st.oy+radijus);
+				int[] xP=new int[3];
+				int[] yP=new int[3];
+				setXYP(xP,yP,st);
+				g.fillPolygon(xP,yP,3);
+			}
 			
 		//upis u stanja
-			g.setColor(st.boja);
 			String tekst=null;
 			if(podatci.tip.equals(new String("Moore")))
 				tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
@@ -298,9 +305,16 @@ public class AutoDrawer extends JPanel{
 			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
 			g.setColor(Color.WHITE);
 			g.fillArc(st.ox+5,st.oy+5,2*radijus-10,2*radijus-10,0,360);
-			
-		//upis u stanja
 			g.setColor(st.boja);
+			if(st.ime.equals(podatci.pocetnoStanje)){
+				g.drawLine(st.ox-17,st.oy+radijus,st.ox,st.oy+radijus);
+				int[] xP=new int[3];
+				int[] yP=new int[3];
+				setXYP(xP,yP,st);
+				g.fillPolygon(xP,yP,3);
+			}
+		//upis u stanja
+
 			String tekst=null;
 			if(podatci.tip.equals(new String("Moore")))
 				tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
@@ -348,6 +362,15 @@ public class AutoDrawer extends JPanel{
 		
 	}
 	
+
+	private void setXYP(int[] xp, int[] yp, Stanje st) {
+		xp[0]=st.ox;
+		xp[1]=st.ox-10;
+		xp[2]=st.ox-10;
+		yp[0]=st.oy+radijus;
+		yp[1]=st.oy+radijus+6;
+		yp[2]=st.oy+radijus-6;	
+	}
 
 	/**
 	 * metoda crta prijelaz iz stanja u stanje
@@ -802,6 +825,7 @@ public class AutoDrawer extends JPanel{
 			if(stanjeRada==5){
 				for(Stanje st:stanja)
 					if (jelSelektiran(e,st)) {
+						if(st.ime.equals(podatci.pocetnoStanje))podatci.pocetnoStanje=null;
 						brisiStanje(st);
 						nacrtajSklop();
 						break;
@@ -814,6 +838,14 @@ public class AutoDrawer extends JPanel{
 					}
 			}
 			
+			if(stanjeRada==6&&e.getButton()==MouseEvent.BUTTON1){
+				for(Stanje st:stanja)
+					if(jelSelektiran(e,st)){
+						podatci.pocetnoStanje=st.ime;
+						break;
+					}
+				nacrtajSklop();
+			}
 			/*if(e.getButton()==MouseEvent.BUTTON3){
 				stanjeZaDodati=null;
 				prijelazZaDodati=null;

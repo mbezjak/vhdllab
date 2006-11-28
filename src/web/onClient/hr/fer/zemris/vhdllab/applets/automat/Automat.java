@@ -8,11 +8,14 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 /**
@@ -54,9 +57,16 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 		brisi.setActionCommand("Brisi");
 		brisi.setToolTipText("Brisi");
 		ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/EditMode.png");
-		JToggleButton normal=new JToggleButton(ic);
+		final JToggleButton normal=new JToggleButton(ic);
 		normal.setActionCommand("Normal");
 		normal.setToolTipText("Super Mario mode!!!");
+		ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/StartStateMode.png");
+		JToggleButton pocStanje=new JToggleButton(ic);
+		pocStanje.setActionCommand("pocStanje");
+		pocStanje.setToolTipText("Pocetno stanje");
+		
+
+		
 		
 		normal.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -85,21 +95,31 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			}
 		});
 		
+		pocStanje.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(e.getActionCommand().equals("pocStanje"))adrw.setStanjeRada(6);
+			}
+		});
+		
 		JToolBar tulbar=new JToolBar();
-		ButtonGroup grupa=new ButtonGroup();
+		final ButtonGroup grupa=new ButtonGroup();
 		grupa.add(normal);
 		grupa.add(dodajNoviSignal);
 		grupa.add(dodajNoviPrijelaz);
 		grupa.add(brisi);
+		grupa.add(pocStanje);
 		grupa.setSelected(normal.getModel(),true);
 		tulbar.add(normal);
 		tulbar.add(dodajNoviSignal);
 		tulbar.add(dodajNoviPrijelaz);
 		tulbar.add(brisi);
+		tulbar.add(pocStanje);
 		
 		this.setLayout(new BorderLayout());
 		this.add(adrw,BorderLayout.CENTER);
 		this.add(tulbar,BorderLayout.NORTH);
+		
+		
 			
 	}
 
@@ -157,6 +177,13 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	public IWizard getWizard() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+
+	public void setupWizard() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

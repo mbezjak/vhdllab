@@ -20,6 +20,8 @@ public class AUTPodatci {
 	public String tip;
 	public String interfac;
 	public String pocetnoStanje;
+	public int sirinaUlaza;
+	public int sirinaIzlaza;
 	
 	public AUTPodatci(String ime,String tip,String interfac,String pocSt){
 		super();
@@ -27,9 +29,24 @@ public class AUTPodatci {
 		this.tip=tip;
 		this.interfac=interfac;
 		this.pocetnoStanje=pocSt;
+		parseInterfac(interfac);
+	}
+
+	private void parseInterfac(String interfac2) {
+		String[] pom=interfac2.split("\n");
+		int ul=0,iz=0;
+		for(int i=0;i<pom.length;i++){
+			String[] pom2=pom[i].split(":");
+			String[] pom3=pom2[1].trim().split(" ");
+			if(pom3[0].trim().toLowerCase().equals("in")) ul+=Integer.parseInt(pom3[1].trim());
+			else iz+=Integer.parseInt(pom3[1].trim());
+		}
+		sirinaIzlaza=iz;
+		sirinaUlaza=ul;
 	}
 
 	public AUTPodatci(JComponent drawer) {
+		super();
 		JLabel label1=new JLabel("Ime automata:");
 		JLabel label2=new JLabel("Tip automata:");
 		JLabel label3=new JLabel("Suèelje:");
@@ -71,6 +88,7 @@ public class AUTPodatci {
 				this.ime=ime.getText();
 				this.tip=(String)tip.getSelectedItem();
 				this.interfac=interfac.getText();
+				parseInterfac(this.interfac);
 				test=false;
 			}/*else if(selected.equals(JOptionPane.CANCEL_OPTION)) {
 				this.ime=null;

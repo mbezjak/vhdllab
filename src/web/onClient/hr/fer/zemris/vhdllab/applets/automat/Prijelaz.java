@@ -51,21 +51,21 @@ public class Prijelaz {
 	
 	public void editPrijelaz(AUTPodatci podatci,Component obj){
 		String pom=null;
-		if(podatci.tip.equals("Mealy")) pom=editMealy(obj);
-		else pom=editMoore(obj);
+		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci);
+		else pom=editMoore(obj,podatci);
 		if(pom!=null)pobudaIzlaz.add(pom);
 	}
 	
 	public String editPrijelaz2(AUTPodatci podatci,Component obj){
 		String pom=null;
-		if(podatci.tip.equals("Mealy")) pom=editMealy(obj);
-		else pom=editMoore(obj);
+		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci);
+		else pom=editMoore(obj,podatci);
 		return pom;
 	}	
-	
-	private String editMealy(Component obj) {
-		JTextField pobuda=new JTextField("");
-		JTextField izlaz=new JTextField("");
+	//TODO ove dve funkcije srediti
+	private String editMealy(Component obj, AUTPodatci podatci) {
+		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
+		JTextField izlaz=new CustomTextField("",podatci.sirinaIzlaza);
 		JLabel pobudaLab=new JLabel("Unesite pobudu za prijelaz: ");
 		JLabel izlazLabel=new JLabel("Unesite izlaz koji generira pobuda: ");
 		JPanel panel=new JPanel();
@@ -83,8 +83,8 @@ public class Prijelaz {
 		if(selected.equals(JOptionPane.CANCEL_OPTION)) return null;
 		else return new StringBuffer().append(pobuda.getText()).append("/").append(izlaz.getText()).toString();
 	}
-	private String editMoore(Component obj) {
-		JTextField pobuda=new JTextField("");
+	private String editMoore(Component obj, AUTPodatci podatci) {
+		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
 		JLabel pobudaLab=new JLabel("Unesite pobudu za prijelaz: ");
 		JPanel panel=new JPanel();
 		panel.setLayout(new GridLayout(1,2));

@@ -35,7 +35,7 @@ public class Testpan extends JFrame {
 		}
 		System.out.println(xmlAut);
 		
-		FileContent fc=new FileContent("proba","test","");
+		FileContent fc=new FileContent("proba","test",xmlAut);
 		
 		aut = new Automat();
 		aut.setFileContent(fc);
@@ -52,7 +52,7 @@ public class Testpan extends JFrame {
 	
 	public static void main(String[] args) throws FileNotFoundException{
 		Testpan tp=new Testpan();
-		tp.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		tp.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		tp.pack();
 		tp.setVisible(true);	
 	}
