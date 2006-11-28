@@ -18,7 +18,7 @@ public class TommyTestDisplay extends JFrame {
 	private String Language;
 	
 	//GUI things
-	private SchemaMenu menu = null;
+//	private SchemaMenu menu = null;
 	private SchemaColorProvider colors = null;
 	@SuppressWarnings("unused")
 	private Container container = null;
@@ -74,7 +74,7 @@ public class TommyTestDisplay extends JFrame {
 	public static void main(String[] args) {
 		JFrame frame=new TommyTestDisplay();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(new Dimension(1024,768));
+		frame.setSize(new Dimension(1000,500));
 		frame.setVisible(true);
 	}
 }

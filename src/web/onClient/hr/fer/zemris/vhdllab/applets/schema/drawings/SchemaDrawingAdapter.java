@@ -4,7 +4,8 @@ import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
+import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
 
 
 /**
@@ -23,47 +24,51 @@ import java.awt.geom.Dimension2D;
 public class SchemaDrawingAdapter {
 
 	private double magnificationFactor;
-	private int xStart, yStart;
-	private Dimension2D canvasDimension = null;
-	private Graphics2D gph;
+	private int virtualX, virtualY;
+	private BufferedImage gph;
 	private SchemaColorProvider colors;
+	private double virtualGridFactor;//hm..neznam sto bi sa magnificationFactor-om, ali znam sto cu s ovim...uglavnom,bilo bi dobro da je
+	//virtualGridFactor visekratnik gridSpace-a (u razredu ...Grid)
 	
-	public SchemaDrawingAdapter(SchemaColorProvider colors,double mag) {
-		magnificationFactor = mag;
-		xStart = 0;
-		yStart = 0;
+	
+	private float virtualToReal(double virtualPoint){
+		return (float) (virtualPoint*virtualGridFactor);
+	}
+	
+	public SchemaDrawingAdapter(SchemaColorProvider colors,BufferedImage canvas,double mag) {				
 		this.colors=colors;
+		this.gph=canvas;
+		setMagnificationFactor(mag);
+		setStartingCoordinates(0, 0);
 	}
-	
-	public void startDrawing(Graphics2D g){
-		gph=g;
-	}
-	
-	public void endDrawing(){
-		gph=null;
-	}
-	
+		
 	public void setMagnificationFactor(double mag) {
 		this.magnificationFactor = mag;
+		this.virtualGridFactor = 20;
 	}
 	
-	public void setStartingCoordinates(int xs, int ys) {
-		xStart = xs;
-		yStart = ys;
+	public void setStartingCoordinates(int virtualX, int virtualY) {
+		this.virtualX=virtualX;
+		this.virtualY=virtualY;
 	}
 	
-	public void drawLine(int x1, int y1, int x2, int y2) {
+	public void drawLine(int virtualX1, int virtualY1, int virtualX2, int virtualY2) {
 		if (gph == null) return;
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
 		
-		gph.setColor(colors.ADAPTER_LINE);
+		graph.setColor(colors.ADAPTER_LINE);
 		
-		gph.drawLine(xStart + (int)(x1 * magnificationFactor),
-				yStart + (int)(y1 * magnificationFactor),
-				xStart + (int)(x2 * magnificationFactor),
-				yStart + (int)(y2 * magnificationFactor));		
+		Line2D.Float line=new Line2D.Float();
+		
+		line.x1=virtualToReal(virtualX+virtualX1);
+		line.y1=virtualToReal(virtualY+virtualY1);
+		line.x2=virtualToReal(virtualX+virtualX2);
+		line.y2=virtualToReal(virtualY+virtualY2);
+		
+		graph.draw(line);
 	}
 	
-	public void drawOval(int xCenter, int yCenter, int xRadius, int yRadius) {
+	/*public void drawOval(int xCenter, int yCenter, int xRadius, int yRadius) {
 		if (gph == null) return;
 		
 		gph.setColor(colors.ADAPTER_LINE);
@@ -83,8 +88,12 @@ public class SchemaDrawingAdapter {
 				yStart + (int)(y1 * magnificationFactor),
 				(int)(wid * magnificationFactor),
 				(int)(hgt * magnificationFactor));
-	}
+	}*/
 	
+	/**
+	 * Metoda kojom se crta "connection point" komponente
+	 * @param point
+	 */
 	public void drawConnectionPoint(SchemaConnectionPoint point){
 		if(gph==null) return;
 	}

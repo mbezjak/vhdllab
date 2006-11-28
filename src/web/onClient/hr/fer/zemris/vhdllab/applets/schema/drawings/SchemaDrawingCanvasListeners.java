@@ -29,6 +29,10 @@ public class SchemaDrawingCanvasListeners implements MouseListener,
 		return position.y;
 	}
 	
+	public Point getPoint(){
+		return position;
+	}
+	
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 

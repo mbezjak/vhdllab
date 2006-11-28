@@ -27,13 +27,13 @@ public class SchemaDrawingCanvas extends JComponent {
 	
 	private Dimension dimension = null;
 	private SchemaDrawingGrid grid = null;
-	private ArrayList<AbstractSchemaComponent> components = null;	
+	private ArrayList<SchemaDrawingComponentEnvelope> components = null;	
 	private SchemaColorProvider colors = null;	
 	private BufferedImage canvas = null;
 	private SchemaDrawingCanvasListeners listeners = null;
 	
 	public SchemaDrawingCanvas(SchemaColorProvider colors) {
-		components=new ArrayList<AbstractSchemaComponent>();
+		components=new ArrayList<SchemaDrawingComponentEnvelope>();
 		this.colors=colors;		
 		initGUI();
 		initListeners();
@@ -56,7 +56,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	 */
 	private void initGUI() {
 		if(dimension==null){
-			dimension=new Dimension(1024,768);
+			dimension=new Dimension(1000,500);
 		}
 		
 		this.canvas=new BufferedImage(dimension.width,dimension.height,BufferedImage.TYPE_3BYTE_BGR);
@@ -70,25 +70,18 @@ public class SchemaDrawingCanvas extends JComponent {
 		listeners=new SchemaDrawingCanvasListeners(this);
 	}
 	
-
-	/**
-	 * Dodavanje komponente na crtacu povrsinu.
-	 * @param component Komponenta koja se dodaje.
-	 */
-	public void addComponent(AbstractSchemaComponent component){
-		//TODO ovdje treba jos napravit puno toga...neki mehanizam zastite i slicno...		
-		components.add(component);
-	}
-		
+	
 	/**
 	 * Dodavanje komponente na crtacu povrsinu...
 	 * @param component Komponenta koja se dodaje.
 	 */	
 	public void addComponent(AbstractSchemaComponent component, Point position){
+		SchemaDrawingComponentEnvelope envelope=new SchemaDrawingComponentEnvelope(component,position);
 		
+		components.add(envelope);
 	}
 	
-	public ArrayList<AbstractSchemaComponent> getComponentList(){
+	public ArrayList<SchemaDrawingComponentEnvelope> getComponentList(){
 		return this.components;
 	}
 
@@ -113,9 +106,11 @@ public class SchemaDrawingCanvas extends JComponent {
 		graph.setColor(colors.GRID_BG);
 		graph.fillRect(0,0,canvas.getWidth(),canvas.getHeight());		
 		
-		//grid.repaint();
+		grid.repaint();
 		
+		graph.setColor(new Color(15,200,200));
 		graph.drawString(listeners.getX()+", "+listeners.getY(),listeners.getX(),listeners.getY());
+
 				
 		//iscrtaj BufferedImage
 		gr.drawImage(canvas,0,0,canvas.getWidth(),canvas.getHeight(),null);

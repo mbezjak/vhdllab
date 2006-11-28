@@ -13,7 +13,6 @@ public class SchemaColorProvider {
 	//Grid component
 	public Color GRID_BG;
 	public Color GRID_LINES;
-	public Color LINE;
 	
 	//Menu component
 	public Color MENU_BG;
@@ -27,8 +26,7 @@ public class SchemaColorProvider {
 	public SchemaColorProvider(){
 		//Grid component
 		GRID_BG = Color.WHITE;
-		GRID_LINES = Color.GRAY;
-		LINE = Color.BLACK;
+		GRID_LINES = new Color(209,209,209);
 		
 		//Menu component
 		MENU_BG=Color.BLACK;

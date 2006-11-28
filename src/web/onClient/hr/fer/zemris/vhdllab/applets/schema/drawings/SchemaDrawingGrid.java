@@ -20,8 +20,10 @@ public class SchemaDrawingGrid {
 	private BufferedImage graphics = null;
 	private SchemaDrawingAdapter adapter = null;
 	private SchemaColorProvider colors = null;
-	private double magnificationFactor = 100.d;
-	private int gridSpace = 5; //razmak izmedju iscrtanog grida (u pixelima)
+	private double magnificationFactor = 100.d; //nemam pojma kamo da ga smjestim...
+	
+	private int gridSpace = 10; //razmak izmedju iscrtanog grida (u pixelima), ujedno (bi trebalo bit) je to i align grid...
+	
 	
 	public SchemaDrawingGrid(SchemaColorProvider colors, BufferedImage canvas){
 		this.colors=colors;
@@ -39,7 +41,7 @@ public class SchemaDrawingGrid {
 	}
 	
 	public void initGRID(){
-		adapter=new SchemaDrawingAdapter(colors,magnificationFactor);
+		adapter=new SchemaDrawingAdapter(colors,graphics,magnificationFactor);
 	}
 
 	public double getMagnificationFactor() {
@@ -63,6 +65,7 @@ public class SchemaDrawingGrid {
 		Dimension size=new Dimension(x/gridSpace,y/gridSpace);
 		Graphics2D g=(Graphics2D) graphics.getGraphics();
 		
+		g.setColor(colors.GRID_LINES);
 		
 		
 		for(int i=0;i<size.getWidth();i++){
