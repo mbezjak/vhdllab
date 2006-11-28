@@ -284,8 +284,18 @@ public class CompileErrorsPanel extends JPanel
 		
 	}
 
-	public void setSaveable(boolean flag) {
+	public void setSavable(boolean flag) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public boolean isReadOnly() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isSavable() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

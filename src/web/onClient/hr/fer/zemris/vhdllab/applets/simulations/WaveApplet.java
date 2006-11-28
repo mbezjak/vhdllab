@@ -132,6 +132,10 @@ public class WaveApplet extends JPanel
 	
 	/** ProjectContainer */
 	private ProjectContainer projectContainer;
+	
+	private boolean savable;
+	
+	private boolean readonly;
        
     /* ikone */
     private Icon navigate = new ImageIcon(getClass().getResource("navigate.png"));
@@ -1820,9 +1824,24 @@ public class WaveApplet extends JPanel
     public void highlightLine(int line) {}
 
 
-	public void setReadOnly(boolean flag) {}
+	public void setReadOnly(boolean flag) {
+		this.readonly = flag;
+	}
 
 
-	public void setSaveable(boolean flag) {}
+	public void setSavable(boolean flag) {
+		this.savable = flag;
+	}
+
+
+	public boolean isReadOnly() {
+		return readonly;
+	}
+
+
+	public boolean isSavable() {
+		return savable;
+	}
+
 }
 

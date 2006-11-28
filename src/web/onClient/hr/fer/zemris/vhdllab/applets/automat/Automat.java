@@ -182,6 +182,27 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 
+	public boolean isReadOnly() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	public boolean isSavable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	public void setSavable(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
 	
 
 }

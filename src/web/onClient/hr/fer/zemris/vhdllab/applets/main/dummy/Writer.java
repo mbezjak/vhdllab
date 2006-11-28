@@ -24,6 +24,8 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	private JTextArea text;
 	private String temp;
 	private boolean change;
+	private boolean savable;
+	private boolean readonly;
 	
 	private ProjectContainer container;
 	private FileContent content;
@@ -109,7 +111,24 @@ public class Writer extends JPanel implements IEditor, IWizard {
 
 	public void highlightLine(int line) {}
 
-	public void setReadOnly(boolean flag) {}
+	public void setReadOnly(boolean flag) {
+		this.readonly = flag;
+	}
 
-	public void setSaveable(boolean flag) {}
+	public void setSaveable(boolean flag) {
+		this.savable = flag;
+	}
+
+	public boolean isReadOnly() {
+		return readonly;
+	}
+
+	public boolean isSavable() {
+		return savable;
+	}
+
+	public void setSavable(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
 }
