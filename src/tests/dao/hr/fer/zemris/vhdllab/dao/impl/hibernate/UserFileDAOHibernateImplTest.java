@@ -30,7 +30,7 @@ public class UserFileDAOHibernateImplTest {
 	public void initEachTest() throws DAOException {
 		file = new UserFile();
 		file.setContent("simple content of global file!");
-		file.setOwnerID(Long.valueOf(100));
+		file.setOwnerID("user100");
 		file.setType(UserFile.UFT_THEME);
 		fileDAO.save(file);
 	}
@@ -57,12 +57,12 @@ public class UserFileDAOHibernateImplTest {
 	public void findByUser() throws DAOException {
 		UserFile file2 = new UserFile();
 		file2.setContent("simple content of global file2!");
-		file2.setOwnerID(Long.valueOf(200));
+		file2.setOwnerID("user200");
 		file2.setType(UserFile.UFT_APPLET);
 
 		UserFile file3 = new UserFile();
 		file3.setContent("simple content of global file3!");
-		file3.setOwnerID(Long.valueOf(200));
+		file3.setOwnerID("user200");
 		file3.setType(UserFile.UFT_THEME);
 
 		fileDAO.save(file2);
@@ -72,12 +72,12 @@ public class UserFileDAOHibernateImplTest {
 		fileList.add(file2);
 		fileList.add(file3);
 
-		assertEquals(fileList, fileDAO.findByUser(Long.valueOf(200)));
+		assertEquals(fileList, fileDAO.findByUser("user200"));
 	}
 	
 	@Test
 	public void findByUser2() throws DAOException {
-		List<UserFile> files = fileDAO.findByUser(Long.valueOf(111));
+		List<UserFile> files = fileDAO.findByUser("user111");
 		assertEquals(new ArrayList<Project>(), files);
 	}
 	

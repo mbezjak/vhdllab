@@ -27,4 +27,13 @@ public class Result {
 	public List<? extends Message> getMessages() {
 		return messages;
 	}
+	
+	public static Result deserialize(String data) {
+		return null;
+	}
+	
+	public String serialize() {
+		return null;
+	}
+	
 }

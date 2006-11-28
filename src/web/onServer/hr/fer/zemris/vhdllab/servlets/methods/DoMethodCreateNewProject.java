@@ -31,8 +31,7 @@ public class DoMethodCreateNewProject implements RegisteredMethod {
 		// Create new project
 		Project project = null;
 		try {
-			Long id = Long.parseLong(ownerId);
-			project = labman.createNewProject(projectName, id);
+			project = labman.createNewProject(projectName, ownerId);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID = '"+ownerId+"'!");
 		} catch (ServiceException e) {

@@ -43,6 +43,7 @@ public class ProjectExplorer extends JPanel implements Explorer {
 			public void mouseReleased(MouseEvent e) {}
 		});
 		JScrollPane scroll = new JScrollPane(list);
+		this.setLayout(new BorderLayout());
 		this.add(scroll, BorderLayout.CENTER);
 	}
 	

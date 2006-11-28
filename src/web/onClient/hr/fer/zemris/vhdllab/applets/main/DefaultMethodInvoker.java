@@ -102,14 +102,14 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return id;
 	}
 
-	public Long createProject(String name, Long ownerId) throws AjaxException {
+	public Long createProject(String name, String ownerId) throws AjaxException {
 		if(name == null) throw new NullPointerException("Project name can not be null.");
 		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, name);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, String.valueOf(ownerId));
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
 		
 		Properties resProperties = initiateAjax(reqProperties);
 		
@@ -118,13 +118,13 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return id;
 	}
 
-	public Long createUserFile(Long ownerId, String type) throws AjaxException {
+	public Long createUserFile(String ownerId, String type) throws AjaxException {
 		if(ownerId == null) throw new NullPointerException("User owner identifier can not be null.");
 		if(type == null) throw new NullPointerException("User file type can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_USER_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String.valueOf(ownerId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
 		
 		Properties resProperties = initiateAjax(reqProperties);
@@ -346,12 +346,12 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return files;
 	}
 
-	public List<Long> findProjectsByUser(Long ownerId) throws AjaxException {
+	public List<Long> findProjectsByUser(String ownerId) throws AjaxException {
 		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_PROJECTS_BY_USER;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, String.valueOf(ownerId));
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
 		
 		Properties resProperties = initiateAjax(reqProperties);
 		
@@ -366,12 +366,12 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return projects;
 	}
 
-	public List<Long> findUserFilesByOwner(Long ownerId) throws AjaxException {
+	public List<Long> findUserFilesByOwner(String ownerId) throws AjaxException {
 		if(ownerId == null) throw new NullPointerException("User file owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_USER_FILES_BY_USER;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String.valueOf(ownerId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
 		
 		Properties resProperties = initiateAjax(reqProperties);
 		
@@ -539,7 +539,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return count;
 	}
 
-	public Long loadProjectOwnerId(Long projectId) throws AjaxException {
+	public String loadProjectOwnerId(Long projectId) throws AjaxException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_OWNER_ID;
@@ -549,8 +549,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		Properties resProperties = initiateAjax(reqProperties);
 		
 		String ownerId = resProperties.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID);
-		Long id = Long.parseLong(ownerId);
-		return id;
+		return ownerId;
 	}
 
 	public String loadUserFileContent(Long fileId) throws AjaxException {
@@ -567,7 +566,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return content;
 	}
 
-	public Long loadUserFileOwnerId(Long fileId) throws AjaxException {
+	public String loadUserFileOwnerId(Long fileId) throws AjaxException {
 		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_OWNER_ID;
@@ -577,8 +576,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		Properties resProperties = initiateAjax(reqProperties);
 		
 		String ownerId = resProperties.getProperty(MethodConstants.PROP_FILE_OWNER_ID);
-		Long id = Long.parseLong(ownerId);
-		return id;
+		return ownerId;
 	}
 
 	public String loadUserFileType(Long fileId) throws AjaxException {

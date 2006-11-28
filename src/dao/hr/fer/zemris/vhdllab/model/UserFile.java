@@ -9,7 +9,7 @@ public class UserFile {
 	public static final String UFT_APPLET = "applet";
 	
 	private Long id;
-	private Long ownerID;
+	private String ownerID;
 	private String type;
 	private String content;
 	
@@ -30,12 +30,13 @@ public class UserFile {
 	/**
 	 * @hibernate.property
 	 *  column = "OWNER_ID"
+	 *  length = "255"
 	 *  not-null = "true"
 	 */
-	public Long getOwnerID() {
+	public String getOwnerID() {
 		return ownerID;
 	}
-	public void setOwnerID(Long ownerID) {
+	public void setOwnerID(String ownerID) {
 		this.ownerID = ownerID;
 	}
 	

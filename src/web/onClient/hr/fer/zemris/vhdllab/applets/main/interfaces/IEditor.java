@@ -6,7 +6,7 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 public interface IEditor {
 	/**
 	 * Sets a FileContent that mostly represents internal format that is used in Editor.
-	 * Note that {@linkplain hr.fer.zemris.vhdllab.model.File#FT_VHDLSOURCE} is also an
+	 * Note that {@linkplain hr.fer.zemris.vhdllab.constants.FileTypes#FT_VHDLSOURCE} is also an
 	 * "internal" format. This method is also used to initialize the component that uses internal
 	 * format.
 	 * @param fContent FileContent 

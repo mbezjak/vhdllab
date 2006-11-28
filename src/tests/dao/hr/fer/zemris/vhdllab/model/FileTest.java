@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Before;
@@ -17,14 +18,14 @@ public class FileTest {
 		file = new File();
 		file.setId(Long.valueOf(0));
 		file.setFileName("FileNameSample");
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file.setContent("Content sample.");
 		file.setProject(null);
 		
 		file2 = new File();
 		file2.setId(Long.valueOf(0));
 		file2.setFileName("FileNameSample");
-		file2.setFileType(File.FT_VHDLSOURCE);
+		file2.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setContent("Content sample.");
 		file2.setProject(null);
 	}
@@ -81,9 +82,9 @@ public class FileTest {
 	@Test
 	public void equalsAndHashCode5() {
 		file.setId(null);
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setId(Long.valueOf(1));
-		file2.setFileType(File.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDLTB);
 		assertEquals(false, file.equals(file2));
 		assertNotSame(file.hashCode(), file2.hashCode());
 	}
@@ -127,9 +128,9 @@ public class FileTest {
 	 */
 	@Test
 	public void compareTo3() {
-		file.setFileType(File.FT_VHDLSOURCE);
-		file2.setFileType(File.FT_VHDLTB);
-		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file2.setFileType(FileTypes.FT_VHDLTB);
+		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
@@ -148,9 +149,9 @@ public class FileTest {
 	@Test
 	public void compareTo5() {
 		file.setFileName("FilenameSimple");
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDLTB);
 		assertEquals("FilenameSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
@@ -172,10 +173,10 @@ public class FileTest {
 	@Test
 	public void compareTo7() {
 		file.setId(Long.valueOf(1));
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setId(Long.valueOf(0));
-		file2.setFileType(File.FT_VHDLTB);
-		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
+		file2.setFileType(FileTypes.FT_VHDLTB);
+		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
@@ -193,7 +194,7 @@ public class FileTest {
 	 */
 	@Test
 	public void compareTo9() {
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setFileType(null);
 		assertEquals(1, file.compareTo(file2));
 	}
@@ -224,7 +225,7 @@ public class FileTest {
 	@Test
 	public void compareTo12() {
 		file.setFileType(null);
-		file2.setFileType(File.FT_VHDLSOURCE);
+		file2.setFileType(FileTypes.FT_VHDLSOURCE);
 		assertEquals(-1, file.compareTo(file2));
 	}
 	
@@ -275,10 +276,10 @@ public class FileTest {
 	@Test
 	public void compareTo17() {
 		file.setFileName(null);
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setFileName(null);
-		file2.setFileType(File.FT_VHDLTB);
-		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
+		file2.setFileType(FileTypes.FT_VHDLTB);
+		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
@@ -369,10 +370,10 @@ public class FileTest {
 	@Test
 	public void compareTo24() {
 		file.setId(null);
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setId(null);
-		file2.setFileType(File.FT_VHDLTB);
-		assertEquals(File.FT_VHDLSOURCE.compareTo(File.FT_VHDLTB), file.compareTo(file2));
+		file2.setFileType(FileTypes.FT_VHDLTB);
+		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
 	}
 	
 	/**
@@ -383,10 +384,10 @@ public class FileTest {
 	public void compareTo25() {
 		file.setId(null);
 		file.setFileName("FileSimple");
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file2.setId(null);
 		file2.setFileName("SimpleFile");
-		file2.setFileType(File.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDLTB);
 		assertEquals("FileSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	

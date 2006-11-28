@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.model.File;
@@ -34,10 +35,10 @@ public class ProjectDAOHibernateImplTest {
 		file = new File();
 		file.setContent("simple content of a file!");
 		file.setFileName("sample name");
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file.setProject(project);
 		
-		project.setOwnerID(Long.valueOf(100));
+		project.setOwnerID("user100");
 		project.setProjectName("simple name of a project");
 		project.setFiles(new TreeSet<File>());
 		project.getFiles().add(file);
@@ -69,9 +70,9 @@ public class ProjectDAOHibernateImplTest {
 		File file2 = new File();
 		file2.setContent("simple file2!");
 		file2.setFileName("sample name2");
-		file2.setFileType(File.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDLTB);
 		Project project2 = new Project();
-		project2.setOwnerID(Long.valueOf(101));
+		project2.setOwnerID("user101");
 		project2.setProjectName("simple project2");
 		project2.setFiles(new TreeSet<File>());
 		project2.getFiles().add(file2);
@@ -80,19 +81,19 @@ public class ProjectDAOHibernateImplTest {
 		projects.add(project2);
 		
 		Project project3 = new Project();
-		project3.setOwnerID(Long.valueOf(101));
+		project3.setOwnerID("user101");
 		project3.setProjectName("name of third project");
 		project3.setFiles(null);
 		projectDAO.save(project3);
 		projects.add(project3);
 
-		List<Project> projects2 = projectDAO.findByUser(project2.getOwnerID());
+		List<Project> projects2 = projectDAO.findByUser(project2.getOwnerId());
 		assertEquals(projects, projects2);
 	}
 
 	@Test
 	public void findByUser2() throws DAOException {
-		List<Project> projects = projectDAO.findByUser(Long.valueOf(111));
+		List<Project> projects = projectDAO.findByUser("user111");
 		assertEquals(new ArrayList<Project>(), projects);
 	}
 	

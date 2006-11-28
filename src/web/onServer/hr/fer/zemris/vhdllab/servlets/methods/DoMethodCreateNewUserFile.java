@@ -31,8 +31,7 @@ public class DoMethodCreateNewUserFile implements RegisteredMethod {
 		// Create new user file
 		UserFile file = null;
 		try {
-			Long id = Long.parseLong(ownerId);
-			file = labman.createNewUserFile(id, fileType);
+			file = labman.createNewUserFile(ownerId, fileType);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID = '"+ownerId+"'!");
 		} catch (ServiceException e) {

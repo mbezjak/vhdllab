@@ -12,8 +12,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -71,6 +71,7 @@ public class MainApplet
 	@Override
 	public void init() {
 		super.init();
+		String userId = "mb41232";
 		AjaxMediator ajax = new DefaultAjaxMediator(this);
 		MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 		
@@ -80,7 +81,7 @@ public class MainApplet
 		server.writeGlobalFiles();
 		//**********************
 		
-		cache = new Cache(invoker);
+		cache = new Cache(invoker, userId);
 		bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN,
 				LanguageConstants.LANGUAGE_EN, null);
 		initGUI();
@@ -253,7 +254,7 @@ public class MainApplet
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewFileInstance(File.FT_VHDLSOURCE);
+					createNewFileInstance(FileTypes.FT_VHDLSOURCE);
 				}
 			});
 			submenu.add(menuItem);
@@ -455,7 +456,7 @@ public class MainApplet
 		List<String> circuits = new ArrayList<String>();
 		for(String name : fileNames) {
 			String type = cache.loadFileType(projectName, name);
-			if(type.equals(File.FT_VHDLSOURCE)) {
+			if(type.equals(FileTypes.FT_VHDLSOURCE)) {
 				circuits.add(name);
 			}
 		}
@@ -697,10 +698,10 @@ public class MainApplet
 			try {
 				final String projectName1 = "Project1";
 				final String fileName1 = "File1";
-				final String fileType1 = File.FT_VHDLSOURCE;
+				final String fileType1 = FileTypes.FT_VHDLSOURCE;
 				final String fileContent1 = "simple content";
 				final String fileName2 = "File2";
-				final String fileType2 = File.FT_VHDLSOURCE;
+				final String fileType2 = FileTypes.FT_VHDLSOURCE;
 				final String fileContent2 = "some file content that should be displayed in writer";
 				
 				long start = System.currentTimeMillis();

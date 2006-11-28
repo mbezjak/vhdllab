@@ -75,14 +75,14 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#findByUser(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<UserFile> findByUser(Long userID) throws DAOException {
+	public List<UserFile> findByUser(String userID) throws DAOException {
 		Session session = null;
 		try {
 			session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			Query query = session.createQuery("from UserFile as f where f.ownerID = :ownerID")
-									.setLong("ownerID", userID);
+									.setString("ownerID", userID);
 
 			List<UserFile> files = (List<UserFile>)query.list();
 

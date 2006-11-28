@@ -36,7 +36,7 @@ public interface ProjectDAO {
 	 * @return list of user's projects
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	List<Project> findByUser(Long userId) throws DAOException;
+	List<Project> findByUser(String userId) throws DAOException;
 	/**
 	 * Check if a project with specified identifier exists.
 	 * @param projectId indentifier of a project.

@@ -30,8 +30,7 @@ public class DoMethodFindProjectsByUser implements RegisteredMethod {
 		// Find projects
 		List<Project> projects = null;
 		try {
-			Long id = Long.parseLong(ownerID);
-			projects = labman.findProjectsByUser(id);
+			projects = labman.findProjectsByUser(ownerID);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID = '"+ownerID+"'!");
 		} catch (ServiceException e) {

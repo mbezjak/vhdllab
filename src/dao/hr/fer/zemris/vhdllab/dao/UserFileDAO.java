@@ -36,7 +36,7 @@ public interface UserFileDAO {
 	 * @return list of user files
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	List<UserFile> findByUser(Long userId) throws DAOException;
+	List<UserFile> findByUser(String userId) throws DAOException;
 	/**
 	 * Check if a user file with specified identifier exists.
 	 * @param fileId indentifier of a user file.

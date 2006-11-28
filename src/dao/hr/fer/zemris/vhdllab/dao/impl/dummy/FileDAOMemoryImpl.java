@@ -25,6 +25,7 @@ public class FileDAOMemoryImpl implements FileDAO {
 	}
 
 	public void save(File file) throws DAOException {
+		if(file.getFileType()==null) throw new DAOException("FileType can not be null!");
 		if(file.getId()==null) file.setId(Long.valueOf(id++));
 		Project project = file.getProject();
 		if(project!=null) {

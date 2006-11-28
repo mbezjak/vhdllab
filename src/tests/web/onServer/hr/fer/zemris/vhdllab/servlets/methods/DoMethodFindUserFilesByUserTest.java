@@ -31,9 +31,9 @@ public class DoMethodFindUserFilesByUserTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile(Long.valueOf(1500), UserFile.UFT_THEME);
-		file2 = labman.createNewUserFile(Long.valueOf(1500), UserFile.UFT_THEME);
-		labman.createNewUserFile(Long.valueOf(2000), UserFile.UFT_THEME);
+		file = labman.createNewUserFile("user1500", UserFile.UFT_THEME);
+		file2 = labman.createNewUserFile("user1500", UserFile.UFT_THEME);
+		labman.createNewUserFile("user2000", UserFile.UFT_THEME);
 		regMethod = new DoMethodFindUserFilesByUser();
 		method = MethodConstants.MTD_FIND_USER_FILES_BY_USER;
 	}

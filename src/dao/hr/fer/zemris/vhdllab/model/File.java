@@ -5,9 +5,6 @@ package hr.fer.zemris.vhdllab.model;
  *  table="FILES"
  */
 public class File implements Comparable {
-	public static final String FT_VHDLSOURCE = "vhdl_source";
-	public static final String FT_VHDLTB = "vhdl_tb";
-	public static final String FT_STRUCT_SCHEMA = "vhdl_struct_schema";
 	
 	private Long id;
 	private String fileName;
@@ -33,7 +30,7 @@ public class File implements Comparable {
 	 * @hibernate.property
 	 * 	column="CONTENT"
 	 *  type = "text"
-	 *  length="10240"
+	 *  length="65536"
 	 */
 	public String getContent() {
 		return content;

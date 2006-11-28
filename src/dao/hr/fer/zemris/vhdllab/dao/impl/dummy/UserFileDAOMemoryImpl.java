@@ -32,7 +32,7 @@ public class UserFileDAOMemoryImpl implements UserFileDAO {
 		files.remove(fileID);
 	}
 
-	public List<UserFile> findByUser(Long userID) throws DAOException {
+	public List<UserFile> findByUser(String userID) throws DAOException {
 		Collection<UserFile> c = files.values();
 		List<UserFile> fileList = new ArrayList<UserFile>();
 		for(UserFile f : new ArrayList<UserFile>(c)) {

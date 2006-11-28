@@ -30,7 +30,7 @@ public class DoMethodSaveUserFileTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile(Long.valueOf(1000), UserFile.UFT_THEME);
+		file = labman.createNewUserFile("user1000", UserFile.UFT_THEME);
 		regMethod = new DoMethodSaveUserFile();
 		method = MethodConstants.MTD_SAVE_USER_FILE;
 	}

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service;
 
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
@@ -41,7 +42,7 @@ public interface VHDLLabManager {
 	 * @return created project
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public Project createNewProject(String projectName, Long ownerId) throws ServiceException;
+	public Project createNewProject(String projectName, String ownerId) throws ServiceException;
 	/**
 	 * Finds all projects whose owner is specified user. Return value will
 	 * never be <code>null</code>, although it can be an empty list.
@@ -49,7 +50,7 @@ public interface VHDLLabManager {
 	 * @return list of user's projects
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public List<Project> findProjectsByUser(Long userId) throws ServiceException;
+	public List<Project> findProjectsByUser(String userId) throws ServiceException;
 	/**
 	 * Saves projects using underlaying persistance layer.
 	 * @param p project to save; must not be null
@@ -203,7 +204,7 @@ public interface VHDLLabManager {
 	 * @return created user file
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public UserFile createNewUserFile(Long ownerId, String type) throws ServiceException;
+	public UserFile createNewUserFile(String ownerId, String type) throws ServiceException;
 	/**
 	 * Use this method to set a new content for the user file.
 	 * @param fileId identifier of the user file
@@ -224,7 +225,7 @@ public interface VHDLLabManager {
 	 * @return list of user files
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public List<UserFile> findUserFilesByUser(Long userId) throws ServiceException;
+	public List<UserFile> findUserFilesByUser(String userId) throws ServiceException;
 
 	/**
 	 * Use this method to compile specified file.
@@ -235,7 +236,7 @@ public interface VHDLLabManager {
 	public CompilationResult compile(Long fileId) throws ServiceException;
 	/**
 	 * Use this method to perform a simulation. The file specified
-	 * must be of simulatable type (such as {@linkplain File#FT_VHDLTB}}).
+	 * must be of simulatable type (such as {@linkplain FileTypes#FT_VHDLTB}}).
 	 * @param fileId identifier of the file
 	 * @return simulation status
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
@@ -245,7 +246,7 @@ public interface VHDLLabManager {
 	/**
 	 * Use this method to generate VHDL for specified file. Please note that
 	 * this method can return directly content of specified file (if file type
-	 * is, e.g., {@linkplain File#FT_VHDLSOURCE}. This method will dispatch
+	 * is, e.g., {@linkplain FileTypes#FT_VHDLSOURCE}. This method will dispatch
 	 * the task of VHDL source generation to appropriate {@linkplain VHDLGenerator}.
 	 * If no generator for file type exists, a {@linkplain ServiceException} will
 	 * be thrown.

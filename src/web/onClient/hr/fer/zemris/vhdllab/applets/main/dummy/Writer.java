@@ -47,6 +47,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		
 		});
 		JScrollPane scroll = new JScrollPane(text);
+		this.setLayout(new BorderLayout());
 		this.add(scroll, BorderLayout.CENTER);
 		this.setBackground(Color.RED);
 		
@@ -78,11 +79,11 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		String projectName;
 		String fileName;
 		do {
-			projectName = JOptionPane.showInputDialog("Enter project name:");
+			projectName = JOptionPane.showInputDialog(this,"Enter project name:");
 		} while(!container.existsProject(projectName));
 		
 		do {
-			fileName = JOptionPane.showInputDialog("Enter file name:");
+			fileName = JOptionPane.showInputDialog(this, "Enter file name:");
 		} while(container.existsFile(projectName, fileName));
 
 		String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();

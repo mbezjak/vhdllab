@@ -32,11 +32,11 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 		projects.remove(projectID);
 	}
 
-	public List<Project> findByUser(Long userId) throws DAOException {
+	public List<Project> findByUser(String userId) throws DAOException {
 		Collection<Project> c = projects.values();
 		List<Project> projectList = new ArrayList<Project>();
 		for(Project p : new ArrayList<Project>(c)) {
-			if(p.getOwnerID().equals(userId)) projectList.add(p);
+			if(p.getOwnerId().equals(userId)) projectList.add(p);
 		}
 		return projectList;
 	}

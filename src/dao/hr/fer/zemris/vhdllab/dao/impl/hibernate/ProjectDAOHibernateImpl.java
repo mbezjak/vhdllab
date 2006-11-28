@@ -75,14 +75,14 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#findByUser(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Project> findByUser(Long userId) throws DAOException {
+	public List<Project> findByUser(String userId) throws DAOException {
 		Session session = null;
 		try {
 			session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			Query query = session.createQuery("from Project as p where p.ownerID = :userID")
-									.setLong("userID", userId.longValue());
+									.setString("userID", userId);
 
 			List<Project> projects = (List<Project>)query.list();
 

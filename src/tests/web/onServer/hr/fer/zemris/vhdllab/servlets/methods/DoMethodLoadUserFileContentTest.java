@@ -30,7 +30,7 @@ public class DoMethodLoadUserFileContentTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile(Long.valueOf(1000), UserFile.UFT_THEME);
+		file = labman.createNewUserFile("user1000", UserFile.UFT_THEME);
 		regMethod = new DoMethodLoadUserFileContent();
 		method = MethodConstants.MTD_LOAD_USER_FILE_CONTENT;
 	}

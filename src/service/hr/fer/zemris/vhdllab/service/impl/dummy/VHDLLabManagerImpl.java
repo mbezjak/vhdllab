@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service.impl.dummy;
 
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
@@ -58,7 +59,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return file;
 	}
 
-	public List<Project> findProjectsByUser(Long userId) throws ServiceException {
+	public List<Project> findProjectsByUser(String userId) throws ServiceException {
 		List<Project> projects = null;
 		try {
 			projects = projectDAO.findByUser(userId);
@@ -70,9 +71,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public String generateVHDL(File file) throws ServiceException {
-		if(file.getFileType().equals(File.FT_VHDLSOURCE)) {
+		if(file.getFileType().equals(FileTypes.FT_VHDLSOURCE)) {
 			return file.getContent();
-		} else if(file.getFileType().equals(File.FT_VHDLTB)) {
+		} else if(file.getFileType().equals(FileTypes.FT_VHDLTB)) {
 			String inducement = new String("<measureUnit>ns</measureUnit>\n" +
 					"<duration>1000</duration>\n" +
 					"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
@@ -213,7 +214,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 	}
 
-	public Project createNewProject(String projectName, Long ownerId) throws ServiceException {
+	public Project createNewProject(String projectName, String ownerId) throws ServiceException {
 		Project project = new Project();
 		project.setProjectName(projectName);
 		project.setOwnerID(ownerId);
@@ -241,7 +242,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return file;
 	}
 
-	public UserFile createNewUserFile(Long ownerId, String type) throws ServiceException {
+	public UserFile createNewUserFile(String ownerId, String type) throws ServiceException {
 		UserFile file = new UserFile();
 		file.setOwnerID(ownerId);
 		file.setType(type);
@@ -321,7 +322,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return files;
 	}
 
-	public List<UserFile> findUserFilesByUser(Long userId) throws ServiceException {
+	public List<UserFile> findUserFilesByUser(String userId) throws ServiceException {
 		List<UserFile> files = null;
 		try {
 			files = userFileDAO.findByUser(userId);
@@ -394,7 +395,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 	
 	public CircuitInterface extractCircuitInterface(File file) {
-		if(file.getFileType().equals(File.FT_VHDLSOURCE)) {
+		if(file.getFileType().equals(FileTypes.FT_VHDLSOURCE)) {
 			return Extractor.extractCircuitInterface(file.getContent());
 		} else {
 			return new DefaultCircuitInterface("cicinc");
@@ -420,7 +421,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	private List<File> extractDependenciesDisp(File file) throws ServiceException {
 		IDependency depExtractor = null;
-		if(file.getFileType().equals(File.FT_VHDLSOURCE)) {
+		if(file.getFileType().equals(FileTypes.FT_VHDLSOURCE)) {
 			depExtractor = new VHDLDependencyExtractor();
 		} else {
 			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");

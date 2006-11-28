@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
@@ -183,12 +184,12 @@ public class ExtractorTest {
 			vhdlLabman.setProjectDAO(new ProjectDAOMemoryImpl());
 			vhdlLabman.setUserFileDAO(new UserFileDAOMemoryImpl());
 			
-			Project proj = vhdlLabman.createNewProject("testProject", Long.valueOf(1));
-			File sklopI = vhdlLabman.createNewFile(proj,"sklopI",File.FT_VHDLSOURCE);
-			File sklopNE = vhdlLabman.createNewFile(proj,"sklopNE",File.FT_VHDLSOURCE);
-			File sklopNI = vhdlLabman.createNewFile(proj,"sklopNI",File.FT_VHDLSOURCE);
-			File sklopNINI = vhdlLabman.createNewFile(proj,"sklopNINI",File.FT_VHDLSOURCE);
-			File sklopNI_tb = vhdlLabman.createNewFile(proj,"sklopNI_tb",File.FT_VHDLSOURCE);
+			Project proj = vhdlLabman.createNewProject("testProject", "user1");
+			File sklopI = vhdlLabman.createNewFile(proj,"sklopI",FileTypes.FT_VHDLSOURCE);
+			File sklopNE = vhdlLabman.createNewFile(proj,"sklopNE",FileTypes.FT_VHDLSOURCE);
+			File sklopNI = vhdlLabman.createNewFile(proj,"sklopNI",FileTypes.FT_VHDLSOURCE);
+			File sklopNINI = vhdlLabman.createNewFile(proj,"sklopNINI",FileTypes.FT_VHDLSOURCE);
+			File sklopNI_tb = vhdlLabman.createNewFile(proj,"sklopNI_tb",FileTypes.FT_VHDLSOURCE);
 			sklopI.setContent(provider.provide("0"));
 			vhdlLabman.saveFile(sklopI.getId(), sklopI.getContent());
 			sklopNE.setContent(provider.provide("1"));

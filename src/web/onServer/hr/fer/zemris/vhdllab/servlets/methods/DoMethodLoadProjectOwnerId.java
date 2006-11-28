@@ -42,7 +42,7 @@ public class DoMethodLoadProjectOwnerId implements RegisteredMethod {
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		resProp.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID,String.valueOf(project.getOwnerID()));
+		resProp.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID,String.valueOf(project.getOwnerId()));
 		return resProp;
 	}
 	

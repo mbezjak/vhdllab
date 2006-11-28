@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -36,8 +37,8 @@ public class DoMethodGenerateVHDLTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		project = labman.createNewProject("TestProjectName", Long.valueOf(1000));
-		file1 = labman.createNewFile(project, "TestFileName_1", File.FT_VHDLSOURCE);
+		project = labman.createNewProject("TestProjectName", "user1000");
+		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDLSOURCE);
 		String content1 = "library IEEE;\n"+
 			"use IEEE.STD_LOGIC_1164.ALL;\n\n"+
 			"entity func is port (\n"+
@@ -68,10 +69,10 @@ public class DoMethodGenerateVHDLTest {
 			"end process;\n\n"+
 			"end Behavioral;\n";
 		labman.saveFile(file1.getId(), content1);
-		file2 = labman.createNewFile(project, "TestFileName_2", File.FT_VHDLSOURCE);
+		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDLSOURCE);
 		String content2 = "";
 		labman.saveFile(file2.getId(), content2);
-		file3 = labman.createNewFile(project, "TestFileName_3", File.FT_VHDLTB);
+		file3 = labman.createNewFile(project, "TestFileName_3", FileTypes.FT_VHDLTB);
 		String content3 = "<measureUnit>ns</measureUnit>\n" +
 			"<duration>1000</duration>\n" +
 			"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
@@ -122,7 +123,7 @@ public class DoMethodGenerateVHDLTest {
 	}
 	
 	/**
-	 * Filetype is {@link File#FT_VHDLSOURCE}
+	 * Filetype is {@link FileTypes#FT_VHDLSOURCE}
 	 */
 	@Test
 	public void run3() throws ServiceException {
@@ -137,7 +138,7 @@ public class DoMethodGenerateVHDLTest {
 	}
 	
 	/**
-	 * Filetype is {@link File#FT_VHDLTB}
+	 * Filetype is {@link FileTypes#FT_VHDLTB}
 	 */
 	@Test
 	public void run4() throws ServiceException {

@@ -40,7 +40,7 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#findByUser(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Project> findByUser(Long userID) throws DAOException {
+	public List<Project> findByUser(String userID) throws DAOException {
 		String query = "from Project as p where p.ownerID = :userID";
 		String param = "userID";
 		return (List<Project>)getHibernateTemplate().findByNamedParam(query, param, userID);

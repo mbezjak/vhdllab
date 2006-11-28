@@ -10,7 +10,7 @@ public class Project {
 	
 	private Long id;
 	private String projectName;
-	private Long ownerID;
+	private String ownerID;
 	private Set<File> files;
 	
 	public Project() {}
@@ -30,12 +30,13 @@ public class Project {
 	/**
 	 * @hibernate.property
 	 *  column="OWNER_ID"
+	 *  length="255"
 	 *  not-null="true"
 	 */
-	public Long getOwnerID() {
+	public String getOwnerId() {
 		return ownerID;
 	}
-	public void setOwnerID(Long ownerID) {
+	public void setOwnerID(String ownerID) {
 		this.ownerID = ownerID;
 	}
 

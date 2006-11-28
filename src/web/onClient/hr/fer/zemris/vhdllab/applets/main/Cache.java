@@ -17,7 +17,7 @@ import java.util.Properties;
 
 		private MethodInvoker invoker;
 
-		private Long ownerId;
+		private String ownerId;
 		private String options;
 		private List<String> filetypes;
 		private List<String> globalFiletypes;
@@ -26,7 +26,7 @@ import java.util.Properties;
 		
 		private Map<String, Long> identifiers;
 		
-		public Cache(MethodInvoker invoker) {
+		public Cache(MethodInvoker invoker, String ownerId) {
 			if(invoker == null) throw new NullPointerException("Method invoker can not be null");
 			identifiers = new HashMap<String, Long>();
 			filetypes = loadType("filetype.properties");
@@ -34,7 +34,7 @@ import java.util.Properties;
 			userFiletypes = loadType("UserFiletype.properties");
 			editors = loadEditors("editors.properties");
 			this.invoker = invoker;
-			this.ownerId = Long.valueOf(0);
+			this.ownerId = ownerId;
 		}
 		
 		public List<String> findProjects() {

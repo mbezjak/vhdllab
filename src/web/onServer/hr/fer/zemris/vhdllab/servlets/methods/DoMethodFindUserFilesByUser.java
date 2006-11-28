@@ -30,8 +30,7 @@ public class DoMethodFindUserFilesByUser implements RegisteredMethod {
 		// Find user files
 		List<UserFile> files = null;
 		try {
-			Long id = Long.parseLong(ownerID);
-			files = labman.findUserFilesByUser(id);
+			files = labman.findUserFilesByUser(ownerID);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID = '"+ownerID+"'!");
 		} catch (ServiceException e) {

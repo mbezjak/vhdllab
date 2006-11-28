@@ -41,7 +41,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#findByUser(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<UserFile> findByUser(Long userID) throws DAOException {
+	public List<UserFile> findByUser(String userID) throws DAOException {
 		String query = "from UserFile as f where f.ownerID = :ownerID";
 		String param = "ownerID";
 		return (List<UserFile>)getHibernateTemplate().findByNamedParam(query, param, userID);

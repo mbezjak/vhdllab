@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.servlets.dispatch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -35,10 +36,10 @@ public class AdvancedMethodDispatcherTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		project = labman.createNewProject("TestProjectName", Long.valueOf(1000));
-		file1 = labman.createNewFile(project, "TestFileName_1", File.FT_VHDLSOURCE);
-		file2 = labman.createNewFile(project, "TestFileName_2", File.FT_VHDLSOURCE);
-		file3 = labman.createNewFile(project, "TestFileName_3", File.FT_VHDLTB);
+		project = labman.createNewProject("TestProjectName", "user1000");
+		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDLSOURCE);
+		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDLSOURCE);
+		file3 = labman.createNewFile(project, "TestFileName_3", FileTypes.FT_VHDLTB);
 		Set<File> files = new TreeSet<File>();
 		files.add(file1);
 		files.add(file2);
@@ -206,7 +207,7 @@ public class AdvancedMethodDispatcherTest {
 		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
 		assertEquals(true, labman.existsProject(id));
 		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(project.getOwnerId(), labman.loadProject(id).getOwnerId());
 		assertEquals(3, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
@@ -231,7 +232,7 @@ public class AdvancedMethodDispatcherTest {
 		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
 		assertEquals(true, labman.existsProject(id));
 		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(project.getOwnerId(), labman.loadProject(id).getOwnerId());
 		assertEquals(3, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
@@ -256,7 +257,7 @@ public class AdvancedMethodDispatcherTest {
 		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
 		assertEquals(true, labman.existsProject(id));
 		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(project.getOwnerId(), labman.loadProject(id).getOwnerId());
 		assertEquals(3, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
@@ -282,7 +283,7 @@ public class AdvancedMethodDispatcherTest {
 		Long id = Long.parseLong(prop.getProperty(MethodConstants.PROP_PROJECT_ID));
 		assertEquals(true, labman.existsProject(id));
 		assertEquals(project.getProjectName(), labman.loadProject(id).getProjectName());
-		assertEquals(project.getOwnerID(), labman.loadProject(id).getOwnerID());
+		assertEquals(project.getOwnerId(), labman.loadProject(id).getOwnerId());
 		assertEquals(4, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
@@ -309,7 +310,7 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
 		assertEquals(project.getProjectName(), prop.getProperty(MethodConstants.PROP_PROJECT_NAME, ""));
-		assertEquals(String.valueOf(project.getOwnerID()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
+		assertEquals(String.valueOf(project.getOwnerId()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
 		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
 		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
 	}
@@ -333,7 +334,7 @@ public class AdvancedMethodDispatcherTest {
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));
 		assertEquals(project.getProjectName(), prop.getProperty(MethodConstants.PROP_PROJECT_NAME, ""));
-		assertEquals(String.valueOf(project.getOwnerID()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
+		assertEquals(String.valueOf(project.getOwnerId()), prop.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
 		assertEquals(file1.getFileName(), prop.getProperty(MethodConstants.PROP_FILE_NAME, ""));
 		assertEquals(file1.getFileType(), prop.getProperty(MethodConstants.PROP_FILE_TYPE, ""));
 	}
@@ -459,7 +460,7 @@ public class AdvancedMethodDispatcherTest {
 		id = labman.loadFile(id).getProject().getId();
 		assertEquals(true, labman.existsProject(id));
 		assertEquals("NewProjectName", labman.loadProject(id).getProjectName());
-		assertEquals(Long.valueOf(500), labman.loadProject(id).getOwnerID());
+		assertEquals(Long.valueOf(500), labman.loadProject(id).getOwnerId());
 		assertEquals(5, prop.keySet().size());
 		assertEquals(method, prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, prop.getProperty(MethodConstants.PROP_STATUS, ""));

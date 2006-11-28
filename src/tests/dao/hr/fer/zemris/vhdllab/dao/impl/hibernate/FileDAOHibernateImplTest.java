@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
@@ -30,13 +31,13 @@ public class FileDAOHibernateImplTest {
 	public void initEachTest() throws DAOException {
 		file = new File();
 		project = new Project();
-		project.setOwnerID(Long.valueOf(100));
+		project.setOwnerID("user100");
 		project.setProjectName("simple name of a project");
 		project.setFiles(new TreeSet<File>());
 		project.getFiles().add(file);
 		file.setContent("simple content of a file!");
 		file.setFileName("sample name");
-		file.setFileType(File.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDLSOURCE);
 		file.setProject(project);
 		fileDAO.save(file);
 	}

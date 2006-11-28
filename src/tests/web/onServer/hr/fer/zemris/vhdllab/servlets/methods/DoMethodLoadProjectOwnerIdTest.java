@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -36,10 +37,10 @@ public class DoMethodLoadProjectOwnerIdTest {
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		project = labman.createNewProject("TestProjectName", Long.valueOf(1000));
-		file1 = labman.createNewFile(project, "TestFileName_1", File.FT_VHDLSOURCE);
-		file2 = labman.createNewFile(project, "TestFileName_2", File.FT_VHDLSOURCE);
-		file3 = labman.createNewFile(project, "TestFileName_3", File.FT_VHDLTB);
+		project = labman.createNewProject("TestProjectName", "user1000");
+		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDLSOURCE);
+		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDLSOURCE);
+		file3 = labman.createNewFile(project, "TestFileName_3", FileTypes.FT_VHDLTB);
 		Set<File> files = new TreeSet<File>();
 		files.add(file1);
 		files.add(file2);
@@ -91,7 +92,7 @@ public class DoMethodLoadProjectOwnerIdTest {
 		assertEquals(3, p.keySet().size());
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
-		assertEquals(String.valueOf(project.getOwnerID()), p.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
+		assertEquals(String.valueOf(project.getOwnerId()), p.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ""));
 	}
 	
 	public static junit.framework.Test suite() {
