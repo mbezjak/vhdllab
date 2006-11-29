@@ -60,6 +60,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
+		super.draw(adapter);
 	}
 
 	/**
