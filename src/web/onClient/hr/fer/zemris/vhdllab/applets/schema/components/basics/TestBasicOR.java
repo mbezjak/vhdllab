@@ -41,4 +41,10 @@ public class TestBasicOR extends AbstractSchemaComponent {
 		return 0;
 	}
 
+	@Override
+	public AbstractSchemaComponent vCtr() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

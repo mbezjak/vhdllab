@@ -74,7 +74,7 @@ public class SchemaDrawingAdapter {
 		
 		//gph.setColor(colors.ADAPTER_LINE);
 		
-		((Graphics) gph).drawOval(virtualX + (int)((xCenter - xRadius) * magnificationFactor),
+		gph.getGraphics().drawOval(virtualX + (int)((xCenter - xRadius) * magnificationFactor),
 				virtualY + (int)((yCenter - yRadius) * magnificationFactor),
 				(int)(xRadius * 2 * magnificationFactor),
 				(int)(yRadius * 2 * magnificationFactor));
@@ -85,7 +85,7 @@ public class SchemaDrawingAdapter {
 		
 		//gph.setColor(colors.ADAPTER_LINE);
 		
-		((Graphics) gph).drawRect(virtualX + (int)(x1 * magnificationFactor), 
+		gph.createGraphics().drawRect(virtualX + (int)(x1 * magnificationFactor), 
 				virtualY + (int)(y1 * magnificationFactor),
 				(int)(wid * magnificationFactor),
 				(int)(hgt * magnificationFactor));
