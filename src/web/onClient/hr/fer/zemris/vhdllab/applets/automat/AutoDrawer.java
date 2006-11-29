@@ -97,7 +97,7 @@ public class AutoDrawer extends JPanel{
 	 * stanjeRada=6 zadavanje pocetnog stanja
 	 */
 	private int stanjeRada=1;
-
+	public boolean isModified=false;
 	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
@@ -109,8 +109,11 @@ public class AutoDrawer extends JPanel{
 		super();
 		this.setOpaque(true); 
 		setData(strpodatci);
-		createGUI();
-		this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
+		if(podatci.ime!=null){
+			createGUI();
+			this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
+			isModified=false;
+		}
 	}
 
 	/**
@@ -176,7 +179,8 @@ public class AutoDrawer extends JPanel{
 			prijelazi=new HashSet<Prijelaz>();
 			podatci=new AUTPodatci(AutoDrawer.this);
 		}
-		parseLegend();
+		if(podatci.ime!=null)
+			parseLegend();
 	}
 	
 	private void parseLegend() {
@@ -696,6 +700,7 @@ public class AutoDrawer extends JPanel{
 		 */
 		public void mouseDragged(MouseEvent e) {
 			if(pressed){
+				if(!isModified)isModified=true;
 					selektiran.ox=e.getX()-radijus;
 					selektiran.oy=e.getY()-radijus;
 					if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
@@ -741,12 +746,14 @@ public class AutoDrawer extends JPanel{
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
 						st.editStanje2(podatci,AutoDrawer.this);
+						if(!isModified)isModified=true;
 						nacrtajSklop();
 						break;
 					}
 				for(Prijelaz pr:prijelazi)
 					if(jelSelektiran(e,pr)){
 						editorPrijelaza(pr);
+						if(!isModified)isModified=true;
 						break;
 					}
 			}
@@ -783,7 +790,10 @@ public class AutoDrawer extends JPanel{
 							}
 						}
 					}
-					if(dodaj)stanja.add(stanjeZaDodati);
+					if(dodaj){
+						stanja.add(stanjeZaDodati);
+						if(!isModified)isModified=true;
+					}
 					stanjeRada=1;
 					stanjeZaDodati=null;
 					setStanjeRada(2);
@@ -815,10 +825,11 @@ public class AutoDrawer extends JPanel{
 									prijelazi.add(prijelazZaDodati);
 								}else{//TODO ??!
 									prijelazZaDodati.porukaNeDodaj(AutoDrawer.this);
-								}
+								}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this);
 							prijelazZaDodati=null;
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;
+							if(!isModified)isModified=true;
 							nacrtajSklop();
 							break;
 						}
@@ -827,12 +838,14 @@ public class AutoDrawer extends JPanel{
 					if (jelSelektiran(e,st)) {
 						if(st.ime.equals(podatci.pocetnoStanje))podatci.pocetnoStanje=null;
 						brisiStanje(st);
+						if(!isModified)isModified=true;
 						nacrtajSklop();
 						break;
 					}	
 				for(Prijelaz pr:prijelazi)
 					if(jelSelektiran(e,pr)){
 						brisiPrijelaz(pr);
+						if(!isModified)isModified=true;
 						nacrtajSklop();
 						break;
 					}
@@ -841,7 +854,10 @@ public class AutoDrawer extends JPanel{
 			if(stanjeRada==6&&e.getButton()==MouseEvent.BUTTON1){
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
-						podatci.pocetnoStanje=st.ime;
+						if(!podatci.pocetnoStanje.equals(st.ime)){
+							podatci.pocetnoStanje=st.ime;
+							if(!isModified)isModified=true;
+						}
 						break;
 					}
 				nacrtajSklop();
@@ -902,4 +918,9 @@ public class AutoDrawer extends JPanel{
 	}
 
 
+	public AUTPodatci getPodatci() {
+		return podatci;
+	}
+
+	
 }

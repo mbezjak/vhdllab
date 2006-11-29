@@ -90,11 +90,10 @@ public class AUTPodatci {
 				this.interfac=interfac.getText();
 				parseInterfac(this.interfac);
 				test=false;
-			}/*else if(selected.equals(JOptionPane.CANCEL_OPTION)) {
+			}else if(selected.equals(JOptionPane.CANCEL_OPTION)) {
 				this.ime=null;
 				test=false;
-			//TODO za cancel
-			}*/
+			}
 		}
 	}
 

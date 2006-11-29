@@ -43,7 +43,7 @@ public class Testpan extends JFrame {
 		JButton b1=new JButton("Ispisi interni kod");
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				System.out.println(aut.getData());
+				System.out.println(aut.getData()+"\n"+aut.isModified());
 			};
 		});
 		this.add(b1,BorderLayout.NORTH);
