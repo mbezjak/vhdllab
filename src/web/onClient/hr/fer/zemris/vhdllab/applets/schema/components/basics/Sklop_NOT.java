@@ -59,5 +59,10 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 	public int getComponentHeight() {
 		return VISINA_NOT_VRATA;
 	}
+
+	@Override
+	public AbstractSchemaComponent vCtr() {
+		return new Sklop_NOT((String) pComponentInstanceName.val);
+	}
 	
 }

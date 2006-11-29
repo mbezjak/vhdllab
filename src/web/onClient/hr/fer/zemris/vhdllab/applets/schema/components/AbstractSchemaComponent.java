@@ -179,6 +179,10 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 */
 	protected abstract void updatePortCoordinates();
 	
+	/**
+	 * Virtualni konstruktor.
+	 */
+	public abstract AbstractSchemaComponent vCtr();
 	
 	/**
 	 * Ovu verziju draw mora zvati metoda draw iz naslijedene klase.

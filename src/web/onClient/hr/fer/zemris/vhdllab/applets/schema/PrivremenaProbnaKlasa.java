@@ -22,7 +22,7 @@ public class PrivremenaProbnaKlasa {
 		frame.setVisible(true);
 		
 		Sklop_XOR sklopi = new Sklop_XOR("Prvi XOR");
-		Sklop_MUX2nNA1 muxi = new Sklop_MUX2nNA1("Moj muxic");
+		Sklop_MUX2nNA1 muxi = new Sklop_MUX2nNA1("Moj muxic2");
 		
 		PropertyPanel panel = new PropertyPanel(muxi);
 		frame.add(panel);

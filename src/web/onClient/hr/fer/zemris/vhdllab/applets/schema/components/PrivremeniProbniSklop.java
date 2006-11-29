@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractComponentProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NumProperty;
@@ -74,5 +75,12 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 	public int getComponentHeight() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+
+
+	@Override
+	public AbstractSchemaComponent vCtr() {
+		return new PrivremeniProbniSklop((String) pComponentInstanceName.val);
 	}
 }

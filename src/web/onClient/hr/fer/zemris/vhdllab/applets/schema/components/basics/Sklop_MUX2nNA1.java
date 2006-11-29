@@ -140,5 +140,10 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	public int getComponentHeight() {
 		return portlist.size() * RAZMAK_IZMEDU_PORTOVA;
 	}
+
+	@Override
+	public AbstractSchemaComponent vCtr() {
+		return new Sklop_MUX2nNA1((String) pComponentInstanceName.val);
+	}
 	
 }

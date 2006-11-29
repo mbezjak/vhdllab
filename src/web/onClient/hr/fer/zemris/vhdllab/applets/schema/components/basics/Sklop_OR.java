@@ -120,5 +120,10 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	public int getComponentHeight() {
 		return portlist.size() * RAZMAK_IZMEDU_PORTOVA;
 	}
+
+	@Override
+	public AbstractSchemaComponent vCtr() {
+		return new Sklop_OR((String) pComponentInstanceName.val);
+	}
 	
 }
