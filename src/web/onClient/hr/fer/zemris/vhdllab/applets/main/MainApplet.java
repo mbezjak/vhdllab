@@ -23,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -33,6 +35,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
@@ -133,7 +136,7 @@ public class MainApplet
 	
 	private void initGUI() {
 		JPanel topContainerPanel = new JPanel(new BorderLayout());
-		menuBar = new PrivateMenuBar(bundle).setup();
+		menuBar = new PrivateMenuBar(bundle).setupMainMenu();
 		this.setJMenuBar( menuBar );
 		
 		toolBar = new PrivateToolBar(bundle).setup();
@@ -161,6 +164,7 @@ public class MainApplet
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
 		editorPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
+		editorPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForEditors());
 		
 		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
 		statusExplorer = new StatusExplorer();
@@ -217,12 +221,71 @@ public class MainApplet
 			this.bundle = bundle;
 		}
 		
+		public JPopupMenu setupPopupMenuForEditors() {
+			JPopupMenu menuBar = new JPopupMenu();
+			JMenuItem menuItem;
+			String key;
+
+			// Save editor
+			key = LanguageConstants.MENU_FILE_SAVE;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					saveFileInstance(editorPane.getSelectedComponent());
+				}
+			});
+			menuBar.add(menuItem);
+			
+			// Save all editors
+			key = LanguageConstants.MENU_FILE_SAVE_ALL;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					saveAllFileInstances();
+				}
+			});
+			menuBar.add(menuItem);
+			menuBar.addSeparator();
+			
+			// Close editor
+			key = LanguageConstants.MENU_FILE_CLOSE;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeEditor(editorPane.getSelectedComponent());
+				}
+			});
+			menuBar.add(menuItem);
+
+			// Close other editors
+			key = LanguageConstants.MENU_FILE_CLOSE_OTHER;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeAllButThisEditors(editorPane.getSelectedComponent());
+				}
+			});
+			menuBar.add(menuItem);
+			
+			// Close all editors
+			key = LanguageConstants.MENU_FILE_CLOSE_ALL;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeAllEditors();
+				}
+			});
+			menuBar.add(menuItem);
+
+			return menuBar;
+		}
+		
 		/**
-		 * Creates and instantiates menu bar.
+		 * Creates and instantiates main menu bar.
 		 * 
 		 * @return created menu bar
 		 */
-		public JMenuBar setup() {
+		public JMenuBar setupMainMenu() {
 
 			JMenuBar menuBar = new JMenuBar();
 			JMenu menu;
@@ -485,20 +548,25 @@ public class MainApplet
 		return -1;
 	}
 	
-	public void openFile(String projectName, String fileName) {
+	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) {
 		String content = cache.loadFileContent(projectName, fileName);
 		FileContent fileContent = new FileContent(projectName, fileName, content);
 		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			String type = cache.loadFileType(projectName, fileName);
+			
+			// Initialization of an editor
 			IEditor editor = cache.getEditor(type);
 			editor.setProjectContainer(this);
 			editor.setFileContent(fileContent);
+			editor.setSavable(isSavable);
+			editor.setReadOnly(isReadOnly);
+			// End of initialization
+			
 			Component component = editorPane.add(fileName, (JPanel)editor);
-			int i = editorPane.indexOfComponent(component);
+			index = editorPane.indexOfComponent(component);
 			String toolTipText = projectName + "/" + fileName;
-			editorPane.setToolTipTextAt(i, toolTipText);
-			index = editorPane.indexOfTab(fileName);
+			editorPane.setToolTipTextAt(index, toolTipText);
 		}
 		editorPane.setSelectedIndex(index);
 	}
@@ -523,9 +591,13 @@ public class MainApplet
 	}
 	
 	private void createNewFileInstance(String type) {
-		IWizard wizard = cache.getWizard(type);
+		// Initialization of a wizard
+		IWizard wizard = cache.getEditor(type).getWizard();
+		if(wizard == null) throw new NullPointerException("Wizard can not be null.");
 		wizard.setProjectContainer(this);
 		FileContent content = wizard.getInitialFileContent();
+		// End of initialization
+		
 		if(content == null) return;
 		String projectName = content.getProjectName();
 		String fileName = content.getFileName();
@@ -533,22 +605,28 @@ public class MainApplet
 		cache.createFile(projectName, fileName, type);
 		cache.saveFile(projectName, fileName, data);
 		projectExplorer.addFile(projectName, fileName);
-		openFile(projectName, fileName);
+		openEditor(projectName, fileName, true, false);
 	}
 	
 	public IEditor getEditor(String projectName, String fileName) {
 		int index = indexOfEditor(projectName, fileName);
+		if(index == -1) {
+			openEditor(projectName, fileName, true, false);
+			index = indexOfEditor(projectName, fileName);
+		}
 		return (IEditor)editorPane.getComponentAt(index);
 	}
 	
 	private void saveFileInstance(Component component) {
 		if(component == null) return;
 		IEditor editor = (IEditor) component;
-		String fileName = editor.getFileName();
-		String projectName = editor.getProjectName();
-		String content = editor.getData();
-		cache.saveFile(projectName, fileName, content);
-		resetEditorTitle(false, projectName, fileName);
+		if(editor.isSavable()) {
+			String fileName = editor.getFileName();
+			String projectName = editor.getProjectName();
+			String content = editor.getData();
+			cache.saveFile(projectName, fileName, content);
+			resetEditorTitle(false, projectName, fileName);
+		}
 	}
 
 	private void saveAllFileInstances() {
@@ -559,7 +637,7 @@ public class MainApplet
 	
 	private void closeEditor(Component component) {
 		IEditor editor = (IEditor) component;
-		if(editor.isModified()) {
+		if(editor.isSavable() && editor.isModified()) {
 			String yes = bundle.getString(LanguageConstants.DIALOG_BUTTON_YES);
 			String no = bundle.getString(LanguageConstants.DIALOG_BUTTON_NO);
 			String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
@@ -587,7 +665,7 @@ public class MainApplet
 		StringBuilder messageRepresentation = new StringBuilder(50);
 		for(int i = 0; i < editorPane.getTabCount(); i++) {
 			IEditor editor = (IEditor)editorPane.getComponentAt(i);
-			if(editor.isModified()) {
+			if(editor.isSavable() && editor.isModified()) {
 				notSavedEditors.add(editor);
 				messageRepresentation.append(editor.getFileName()).append(" [")
 					.append(editor.getProjectName()).append("]\n");
@@ -632,7 +710,7 @@ public class MainApplet
 			Component c = editorPane.getComponentAt(i);
 			if(!c.equals(component)) {
 				IEditor editor = (IEditor)c;
-				if(editor.isModified()) {
+				if(editor.isSavable() && editor.isModified()) {
 					notSavedEditors.add(editor);
 					messageRepresentation.append(editor.getFileName()).append(" [")
 						.append(editor.getProjectName()).append("]\n");
@@ -702,6 +780,15 @@ public class MainApplet
 				final String fileName2 = "File2";
 				final String fileType2 = FileTypes.FT_VHDLSOURCE;
 				final String fileContent2 = "some file content that should be displayed in writer";
+				final String fileName3 = "Simulator";
+				final String fileType3 = FileTypes.FT_SIMULATION;
+				InputStream in = this.getClass().getResourceAsStream("adder2.vcd");
+				StringBuffer out = new StringBuffer();
+			    byte[] b = new byte[14096];
+			    for (int n; (n = in.read(b)) != -1;) {
+			        out.append(new String(b, 0, n));
+			    }
+				final String fileContent3 = out.toString();
 				
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor("vhdl_source");
@@ -712,14 +799,17 @@ public class MainApplet
 				
 				cache.createFile(projectName1, fileName2, fileType2);
 				cache.saveFile(projectName1, fileName2, fileContent2);
-				
+
+				cache.createFile(projectName1, fileName3, fileType3);
+				cache.saveFile(projectName1, fileName3, fileContent3);
 				long end = System.currentTimeMillis();
 				
 				String infoData = editor.getData()+(start-end)+"ms\nLoaded Options:\n"+cache.getOptions();
 				cache.saveFile(projectName1, fileName1, infoData);
 
-				openFile(projectName1, fileName2);
-				openFile(projectName1, fileName1);
+				openEditor(projectName1, fileName1, true, false);
+				openEditor(projectName1, fileName2, true, false);
+				openEditor(projectName1, fileName3, true, false);
 				
 			} catch (Exception e) {
 				e.printStackTrace();

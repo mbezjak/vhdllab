@@ -33,7 +33,7 @@ public class ProjectExplorer extends JPanel implements Explorer {
 				if(e.getClickCount() == 2) {
 					JList l = (JList) e.getSource();
 					int index = l.locationToIndex(e.getPoint());
-					container.openFile(projectName, (String)model.getElementAt(index));
+					container.openEditor(projectName, (String)model.getElementAt(index), true, false);
 				}
 			}
 
@@ -59,6 +59,11 @@ public class ProjectExplorer extends JPanel implements Explorer {
 	}
 
 	public void addProject(String projectName) {
+	}
+
+
+
+	public void setActiveProject(String projectName) {
 	}
 	
 }

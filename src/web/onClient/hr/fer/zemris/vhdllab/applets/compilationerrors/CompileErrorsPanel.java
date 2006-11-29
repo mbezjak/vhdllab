@@ -256,7 +256,7 @@ public class CompileErrorsPanel extends JPanel
         if (matcher.matches())
         {
         	// TODO mozda jos eventualna provjera postoji li uopce otvoren tab
-        	projectContainer.openFile(fileContent.getProjectName(), matcher.group(1));
+        	projectContainer.openEditor(fileContent.getProjectName(), matcher.group(1), true, false);
         	Integer temp = Integer.valueOf(matcher.group(2));
         	editor.highlightLine(temp.intValue());
         }

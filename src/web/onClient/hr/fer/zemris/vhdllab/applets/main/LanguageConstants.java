@@ -107,6 +107,11 @@ public class LanguageConstants {
 	public static final String MENU_FILE_CLOSE = "menu.file.close";
 
 	/**
+	 * Key for 'Close Other' menu item in editor popup menu.
+	 */
+	public static final String MENU_FILE_CLOSE_OTHER = "menu.file.close.other";
+
+	/**
 	 * Key for 'Close All' menu item in 'File' menu.
 	 */
 	public static final String MENU_FILE_CLOSE_ALL = "menu.file.close.all";

@@ -96,6 +96,7 @@
   <target name="compile-service" depends="compile-dao">
     <javac destdir="${build.dir}/service" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/service"/>
+      <src path="src/common"/>
       <classpath refid="src.class.path"/>
     </javac>
   </target>
@@ -103,6 +104,7 @@
   <target name="compile-web-onServer" depends="compile-service">
     <javac destdir="${build.dir}/web/onServer" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/web/onServer"/>
+      <src path="src/common"/>
       <src path="src/i18n/common"/>
       <classpath refid="src.class.path"/>
     </javac>
@@ -111,14 +113,12 @@
   <target name="compile-web-onClient" depends="compile-service">
     <javac destdir="${build.dir}/web/onClient" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/web/onClient"/>
-      <src path="src/web/onServer/hr/fer/zemris/ajax/shared"/>
-      <src path="src/service/hr/fer/zemris/vhdllab/vhdl"/>
-      <src path="src/dao/hr/fer/zemris/vhdllab/model"/>
+      <src path="src/common"/>
       <src path="src/i18n/common"/>
       <classpath refid="src.class.path"/>
     </javac>
   	<copy todir="src/web/onClient/hr/fer/zemris/vhdllab/applets/main" overwrite="true">
-  	  <fileset dir="src/dao/hr/fer/zemris/vhdllab/model" excludes="**/*.java"/>
+  	  <fileset dir="src/common/hr/fer/zemris/vhdllab/constants" excludes="**/*.java"/>
   	</copy>
   </target>
 
@@ -126,9 +126,7 @@
     <jar destfile="${jlib.dir}/${app.name}-dao.jar">
       <fileset dir="${build.dir}/dao" includes="**/*.class"/>
       <fileset dir="src/dao" excludes="**/*.java"/>
-	  <fileset dir="${local.dir}">
-	  	<include name="*.*"/>
-	  </fileset>
+	  <fileset dir="${local.dir}" includes="*.*"/>
 	  <fileset dir="${hibernate.dir}"/>
     </jar>
   </target>

@@ -139,10 +139,10 @@ public class WaveApplet extends JPanel
        
     /* ikone */
     private Icon navigate = new ImageIcon(getClass().getResource("navigate.png"));
-    private Icon rightUpIcon = new ImageIcon(getClass().getResource("rightUp.png"));
-    private Icon rightDownIcon = new ImageIcon(getClass().getResource("rightDown.png"));
-    private Icon leftUpIcon = new ImageIcon(getClass().getResource("leftUp.png"));
-    private Icon leftDownIcon = new ImageIcon(getClass().getResource("leftDown.png"));
+    private Icon rightUpIcon = new ImageIcon(getClass().getResource("rightUp.PNG"));
+    private Icon rightDownIcon = new ImageIcon(getClass().getResource("rightDown.PNG"));
+    private Icon leftUpIcon = new ImageIcon(getClass().getResource("leftUp.PNG"));
+    private Icon leftDownIcon = new ImageIcon(getClass().getResource("leftDown.PNG"));
     private Icon zoomInTwoIcon = new ImageIcon(getClass().getResource("+2.png"));
     private Icon zoomOutTwoIcon = new ImageIcon(getClass().getResource("-2.png"));
     private Icon zoomInTenIcon = new ImageIcon(getClass().getResource("+10.png"));

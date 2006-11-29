@@ -1,17 +1,20 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.swing.JOptionPane;
 
 	public class Cache {
 
@@ -20,8 +23,6 @@ import java.util.Properties;
 		private String ownerId;
 		private String options;
 		private List<String> filetypes;
-		private List<String> globalFiletypes;
-		private List<String> userFiletypes;
 		private Properties editors;
 		
 		private Map<String, Long> identifiers;
@@ -29,9 +30,7 @@ import java.util.Properties;
 		public Cache(MethodInvoker invoker, String ownerId) {
 			if(invoker == null) throw new NullPointerException("Method invoker can not be null");
 			identifiers = new HashMap<String, Long>();
-			filetypes = loadType("filetype.properties");
-			globalFiletypes = loadType("globalFiletype.properties");
-			userFiletypes = loadType("UserFiletype.properties");
+			filetypes = loadType("filetypes.properties");
 			editors = loadEditors("editors.properties");
 			this.invoker = invoker;
 			this.ownerId = ownerId;
@@ -175,22 +174,14 @@ import java.util.Properties;
 			try {
 				editor = (IEditor)Class.forName(editorName).newInstance();
 			} catch (Exception e) {
+				StringWriter sw = new StringWriter();
+			    PrintWriter pw = new PrintWriter(sw);
+			    e.printStackTrace(pw);
+				JOptionPane.showMessageDialog(null, sw.toString());
 				editor = null;
 			}
 			return editor;
 		}
-		
-		public IWizard getWizard(String type) {
-			String editorName = editors.getProperty(type);
-			IWizard wizard = null;
-			try {
-				wizard = (IWizard)Class.forName(editorName).newInstance();
-			} catch (Exception e) {
-				wizard = null;
-			}
-			return wizard;
-		}
-
 		
 		public String getOptions() {
 			if(options != null) return options;
@@ -223,7 +214,7 @@ import java.util.Properties;
 		}
 		
 		public void setServerDefaultOptionsAsLocal() {
-			for(String type : globalFiletypes) {
+			for(String type : filetypes) {
 				List<Long> globalFiles;
 				try {
 					globalFiles = invoker.findGlobalFilesByType(type);

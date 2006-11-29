@@ -11,7 +11,7 @@ public interface ProjectContainer {
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName);
 	String getOptions();
 	ResourceBundle getResourceBundle();
-	void openFile(String projectName, String fileName);
+	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly);
 	void resetEditorTitle(boolean contentChanged, String projectName, String fileName);
 	boolean existsFile(String projectName, String fileName);
 	boolean existsProject(String projectName);
