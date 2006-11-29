@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
@@ -68,13 +69,13 @@ public class SchemaDrawingAdapter {
 		graph.draw(line);
 	}
 	
-	/*public void drawOval(int xCenter, int yCenter, int xRadius, int yRadius) {
+	public void drawOval(int xCenter, int yCenter, int xRadius, int yRadius) {
 		if (gph == null) return;
 		
-		gph.setColor(colors.ADAPTER_LINE);
+		//gph.setColor(colors.ADAPTER_LINE);
 		
-		gph.drawOval(xStart + (int)((xCenter - xRadius) * magnificationFactor),
-				yStart + (int)((yCenter - yRadius) * magnificationFactor),
+		((Graphics) gph).drawOval(virtualX + (int)((xCenter - xRadius) * magnificationFactor),
+				virtualY + (int)((yCenter - yRadius) * magnificationFactor),
 				(int)(xRadius * 2 * magnificationFactor),
 				(int)(yRadius * 2 * magnificationFactor));
 	}
@@ -82,13 +83,13 @@ public class SchemaDrawingAdapter {
 	public void drawRect(int x1, int y1, int wid, int hgt) {
 		if (gph == null) return;
 		
-		gph.setColor(colors.ADAPTER_LINE);
+		//gph.setColor(colors.ADAPTER_LINE);
 		
-		gph.drawRect(xStart + (int)(x1 * magnificationFactor), 
-				yStart + (int)(y1 * magnificationFactor),
+		((Graphics) gph).drawRect(virtualX + (int)(x1 * magnificationFactor), 
+				virtualY + (int)(y1 * magnificationFactor),
 				(int)(wid * magnificationFactor),
 				(int)(hgt * magnificationFactor));
-	}*/
+	}
 	
 	/**
 	 * Metoda kojom se crta "connection point" komponente
