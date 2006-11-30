@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
@@ -45,7 +46,7 @@ public class SchemaDrawingAdapter {
 		
 	public void setMagnificationFactor(double mag) {
 		this.magnificationFactor = mag;
-		this.virtualGridFactor = 20;
+		this.virtualGridFactor = mag;
 	}
 	
 	public void setStartingCoordinates(int virtualX, int virtualY) {
@@ -55,6 +56,7 @@ public class SchemaDrawingAdapter {
 	
 	public void drawLine(int virtualX1, int virtualY1, int virtualX2, int virtualY2) {
 		if (gph == null) return;
+		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
 		
 		graph.setColor(colors.ADAPTER_LINE);
@@ -72,9 +74,11 @@ public class SchemaDrawingAdapter {
 	public void drawOval(int xCenter, int yCenter, int xRadius, int yRadius) {
 		if (gph == null) return;
 		
-		//gph.setColor(colors.ADAPTER_LINE);
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
 		
-		gph.getGraphics().drawOval(virtualX + (int)((xCenter - xRadius) * magnificationFactor),
+		graph.setColor(colors.ADAPTER_LINE);
+		
+		graph.drawOval(virtualX + (int)((xCenter - xRadius) * magnificationFactor),
 				virtualY + (int)((yCenter - yRadius) * magnificationFactor),
 				(int)(xRadius * 2 * magnificationFactor),
 				(int)(yRadius * 2 * magnificationFactor));
@@ -83,9 +87,11 @@ public class SchemaDrawingAdapter {
 	public void drawRect(int x1, int y1, int wid, int hgt) {
 		if (gph == null) return;
 		
-		//gph.setColor(colors.ADAPTER_LINE);
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
 		
-		gph.createGraphics().drawRect(virtualX + (int)(x1 * magnificationFactor), 
+		graph.setColor(colors.ADAPTER_LINE);
+		
+		graph.drawRect(virtualX + (int)(x1 * magnificationFactor), 
 				virtualY + (int)(y1 * magnificationFactor),
 				(int)(wid * magnificationFactor),
 				(int)(hgt * magnificationFactor));

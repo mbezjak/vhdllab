@@ -106,7 +106,7 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 		int pos = 0;
 		for (AbstractSchemaPort port : portlist) {
 			if (port.getDirection() == AbstractSchemaPort.PortDirection.IN) {
-				port.setCoordinate(new Point(0, pos * RAZMAK_IZMEDU_PORTOVA));
+				port.setCoordinate(new Point(0, (pos + 1) * RAZMAK_IZMEDU_PORTOVA));
 				pos++;
 			} else {
 				port.setCoordinate(new Point(SIRINA_XOR_VRATA, portlist.size() * RAZMAK_IZMEDU_PORTOVA / 2));

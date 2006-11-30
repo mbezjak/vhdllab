@@ -52,7 +52,6 @@ public class SchemaDrawingCanvas extends JComponent {
 
 	/**
 	 * Inicijalizacija GUIa
-	 *
 	 */
 	private void initGUI() {
 		if(dimension==null){
@@ -110,10 +109,24 @@ public class SchemaDrawingCanvas extends JComponent {
 		
 		graph.setColor(new Color(15,200,200));
 		graph.drawString(listeners.getX()+", "+listeners.getY(),listeners.getX(),listeners.getY());
-
-				
+		
+		// ovo sam ja dodo, ti prouci i reci kaj mislis. Btw, ovo:
+		// grid.getAdapter().drawLine(0, 0, 100, 100);
+		// bi ovdje bar trebalo raditi, al ne radi.
+		// Ono sto je zanimljivo - grid.getAdapter().drawLine(0, 0, 150, 100); radi savrseno.
+		// 
+		// Uglavnom, ti ovo promijeni kako mislis da je potrebno.
+		SchemaDrawingAdapter adapter = grid.getAdapter();
+		adapter.setMagnificationFactor(1.d);
+		for (SchemaDrawingComponentEnvelope envelope : components) {
+			Point p = envelope.getPosition();
+			adapter.setStartingCoordinates(p.x, p.y);
+			envelope.getComponent().draw(adapter);
+		}
+		
 		//iscrtaj BufferedImage
 		gr.drawImage(canvas,0,0,canvas.getWidth(),canvas.getHeight(),null);
+		
 	}
 	
 		

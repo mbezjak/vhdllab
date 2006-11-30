@@ -6,7 +6,11 @@ import java.util.HashMap;
 public class ComponentFactory {
 	private HashMap<String, AbstractSchemaComponent> factoryMap;
 	
-	AbstractSchemaComponent getSchemaComponent(String componentName) throws Exception {
+	public ComponentFactory() {
+		factoryMap = new HashMap<String, AbstractSchemaComponent>();
+	}
+	
+	public AbstractSchemaComponent getSchemaComponent(String componentName) throws Exception {
 		AbstractSchemaComponent component = factoryMap.get(componentName).vCtr();
 		if (component == null)
 			throw new Exception("Component factory unable to generate requested object!");
@@ -14,7 +18,15 @@ public class ComponentFactory {
 			return component;
 	}
 	
-	void registerComponent(AbstractSchemaComponent component) {
-		factoryMap.put(component.getComponentName(), component);
+	public AbstractSchemaComponent getSchemaComponent(AbstractSchemaComponent comp) throws Exception {
+		AbstractSchemaComponent component = factoryMap.get(comp.getComponentName()).vCtr();
+		if (component == null)
+			throw new Exception("Component factory unable to generate requested object!");
+		else
+			return component;
+	}
+	
+	public void registerComponent(AbstractSchemaComponent component) {
+		factoryMap.put(component.getComponentName(), component.vCtr());
 	}
 }

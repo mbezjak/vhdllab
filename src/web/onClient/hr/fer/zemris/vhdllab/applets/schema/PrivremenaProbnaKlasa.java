@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import java.awt.Point;
+
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
@@ -26,7 +30,7 @@ public class PrivremenaProbnaKlasa {
 		JFrame frame2 = new JFrame();
 		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame2.pack();
-		frame2.setSize(250, 150);
+		frame2.setSize(450, 350);
 		frame2.setLocation(400, 100);
 		frame2.setVisible(true);
 		
@@ -44,6 +48,16 @@ public class PrivremenaProbnaKlasa {
 		ad.setMagnificationFactor(1.d);
 		ad.setStartingCoordinates(0, 0);
 		
+		canvas.addComponent(muxi, new Point(150, 150));
+		ComponentFactory factory = new ComponentFactory();
+		factory.registerComponent(new Sklop_AND("Sklop_AND"));
+		try {
+			canvas.addComponent(factory.getSchemaComponent("AND sklop"), new Point(20, 20));
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		while (true) {
 			try {
 				Thread.sleep(1000);
@@ -51,7 +65,6 @@ public class PrivremenaProbnaKlasa {
 				break;
 			}
 			System.out.println(muxi.getBrojPodUlaza() + " " + muxi.getSmjer());
-			canvas.getAdapter().drawLine(0, 0, 100, 100);
 		}
 	}
 

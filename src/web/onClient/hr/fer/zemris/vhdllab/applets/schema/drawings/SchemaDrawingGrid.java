@@ -55,7 +55,7 @@ public class SchemaDrawingGrid {
 	}
 
 	public SchemaDrawingAdapter getAdapter() {
-		DrawGrid();		
+		DrawGrid();
 		return adapter;
 	}
 	
@@ -75,7 +75,6 @@ public class SchemaDrawingGrid {
 		for(int j=0;j<size.getHeight();j++){
 			g.drawLine(0,j*gridSpace,x,j*gridSpace);
 		}
-								
 	}
 
 	public void setColors(SchemaColorProvider colors) {

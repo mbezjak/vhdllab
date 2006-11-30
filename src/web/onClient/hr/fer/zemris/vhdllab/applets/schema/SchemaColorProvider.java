@@ -35,5 +35,7 @@ public class SchemaColorProvider {
 		//SchemeAdapter
 		ADAPTER_CONNECTION_POINT=Color.BLACK;
 		ADAPTER_CONNECTION_POINT=Color.YELLOW;
+		
+		ADAPTER_LINE = Color.BLACK;
 	}
 }
