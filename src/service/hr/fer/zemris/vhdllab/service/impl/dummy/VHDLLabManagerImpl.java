@@ -24,8 +24,10 @@ import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
+import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -145,7 +147,21 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public SimulationResult runSimulation(Long fileId) {
-		return new SimulationResult(0, true, new ArrayList<SimulationMessage>(), "");
+		/*
+		 * InputStream in = this.getClass().getResourceAsStream("adder2.vcd");
+		 * StringBuffer out = new StringBuffer();
+		 * byte[] b = new byte[65536];
+		 * for (int n; (n = in.read(b)) != -1;) {
+		 *     out.append(new String(b, 0, n));
+		 * }
+		 * String vcdResult = out.toString();
+		 */
+		String vcdResult = "src/service/hr/fer/zemris/vhdllab/vhdl/simulations/adder2.vcd";
+		VcdParser vcd = new VcdParser(vcdResult);
+		vcd.parse();
+		String waveform = vcd.getResultInString();
+		SimulationResult result = new SimulationResult(0, true, new ArrayList<SimulationMessage>(), waveform);
+		return result;
 	}
 
 	public void saveFile(Long fileId, String content) throws ServiceException {

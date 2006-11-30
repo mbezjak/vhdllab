@@ -67,9 +67,9 @@ public class LanguageConstants {
 	public static final String MENU_FILE_NEW_PROJECT = "menu.file.new.project";
 	
 	/**
-	 * Key for 'File' menu item in 'New' menu item.
+	 * Key for 'VHDL Source' menu item in 'New' menu item.
 	 */
-	public static final String MENU_FILE_NEW_FILE = "menu.file.new.file";
+	public static final String MENU_FILE_NEW_VHDL_SOURCE = "menu.file.new.vhdl.source";
 
 	/**
 	 * Key for 'Testbench' menu item in 'New' menu item.
@@ -120,6 +120,16 @@ public class LanguageConstants {
 	 * Key for 'Exit' menu item in 'File' menu.
 	 */
 	public static final String MENU_FILE_EXIT = "menu.file.exit";
+	
+	/**
+	 * Key for 'Compile' menu item in 'Tools' menu.
+	 */
+	public static final String MENU_TOOLS_COMPILE = "menu.tools.compile";
+
+	/**
+	 * Key for 'Simulate' menu item in 'Tools' menu.
+	 */
+	public static final String MENU_TOOLS_SIMULATE = "menu.tools.simulate";
 
 
 	/**

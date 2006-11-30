@@ -14,6 +14,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.applet.Applet;
@@ -309,8 +310,8 @@ public class MainApplet
 			submenu.add(menuItem);
 			submenu.addSeparator();
 			
-			// New File menu item
-			key = LanguageConstants.MENU_FILE_NEW_FILE;
+			// New VHDL Source menu item
+			key = LanguageConstants.MENU_FILE_NEW_VHDL_SOURCE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
@@ -422,6 +423,25 @@ public class MainApplet
 			key = LanguageConstants.MENU_TOOLS;
 			menu = new JMenu(bundle.getString(key));
 			setMnemonicAndAccelerator(menu, key);
+			
+			// Compile menu item
+			key = LanguageConstants.MENU_TOOLS_COMPILE;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setMnemonicAndAccelerator(menuItem, key);
+			menu.add(menuItem);
+			
+			// Simulate menu item
+			key = LanguageConstants.MENU_TOOLS_SIMULATE;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setMnemonicAndAccelerator(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					simulate(editorPane.getSelectedComponent());
+				}
+			});
+			menu.add(menuItem);
+
+			
 			menuBar.add(menu);
 
 			// Help menu
@@ -511,6 +531,26 @@ public class MainApplet
 		}
 	}
 	
+	private void simulate(Component component) {
+		if(component == null) return;
+		IEditor editor = (IEditor) component;
+		String projectName = editor.getProjectName();
+		String fileName = editor.getFileName();
+		
+		List<String> notSavedEditors = new ArrayList<String>();
+		for(int i = 0; i < editorPane.getTabCount(); i++) {
+			IEditor e = (IEditor) editorPane.getComponentAt(i);
+			if(projectName.equals(e.getProjectName()) &&
+					e.isModified()) {
+				notSavedEditors.add(fileName);
+			}
+		}
+		
+		SimulationResult result = cache.runSimulation(projectName, fileName);
+		cache.createFile(projectName, fileName+".sim", FileTypes.FT_SIMULATION);
+		cache.saveFile(projectName, fileName+".sim", result.getWaveform());
+		openEditor(projectName, fileName+".sim", true, false);
+	}
 	
 	public List<String> getAllCircuits(String projectName) {
 		List<String> fileNames = cache.findFilesByProject(projectName);
@@ -779,7 +819,7 @@ public class MainApplet
 				final String fileName2 = "File2";
 				final String fileType2 = FileTypes.FT_VHDLSOURCE;
 				final String fileContent2 = "some file content that should be displayed in writer";
-				final String fileName3 = "Simulator";
+				/*final String fileName3 = "Simulator";
 				final String fileType3 = FileTypes.FT_SIMULATION;
 				InputStream in = this.getClass().getResourceAsStream("adder2.vcd");
 				StringBuffer out = new StringBuffer();
@@ -787,7 +827,7 @@ public class MainApplet
 			    for (int n; (n = in.read(b)) != -1;) {
 			        out.append(new String(b, 0, n));
 			    }
-				final String fileContent3 = out.toString();
+				final String fileContent3 = out.toString();*/
 				
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor("vhdl_source");
@@ -799,8 +839,8 @@ public class MainApplet
 				cache.createFile(projectName1, fileName2, fileType2);
 				cache.saveFile(projectName1, fileName2, fileContent2);
 
-				cache.createFile(projectName1, fileName3, fileType3);
-				cache.saveFile(projectName1, fileName3, fileContent3);
+				/*cache.createFile(projectName1, fileName3, fileType3);
+				cache.saveFile(projectName1, fileName3, fileContent3);*/
 				long end = System.currentTimeMillis();
 				
 				String infoData = editor.getData()+(start-end)+"ms\nLoaded Options:\n"+cache.getOptions();
@@ -808,7 +848,7 @@ public class MainApplet
 
 				openEditor(projectName1, fileName1, true, false);
 				openEditor(projectName1, fileName2, true, false);
-				openEditor(projectName1, fileName3, true, false);
+				//openEditor(projectName1, fileName3, true, false);
 				
 			} catch (Exception e) {
 				e.printStackTrace();

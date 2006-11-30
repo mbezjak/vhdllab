@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
+import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.io.IOException;
@@ -155,6 +156,17 @@ import javax.swing.JOptionPane;
 				type = null;
 			}
 			return type;
+		}
+		
+		public SimulationResult runSimulation(String projectName, String fileName) {
+			Long id = getIdentifierFor(projectName, fileName);
+			SimulationResult result = null;
+			try {
+				result = invoker.runSimulation(id);
+			} catch (AjaxException e) {
+				result = null;
+			}
+			return result;
 		}
 		
 		public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) {
