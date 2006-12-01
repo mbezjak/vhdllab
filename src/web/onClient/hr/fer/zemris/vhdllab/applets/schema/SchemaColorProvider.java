@@ -22,6 +22,7 @@ public class SchemaColorProvider {
 	//SchemeAdapter
 	public Color ADAPTER_CONNECTION_POINT;
 	public Color ADAPTER_LINE;
+	public Color ADAPTER_CURSOR_POINT;
 	
 	public SchemaColorProvider(){
 		//Grid component
@@ -33,9 +34,8 @@ public class SchemaColorProvider {
 		MENU_TEXT=Color.CYAN;
 		
 		//SchemeAdapter
-		ADAPTER_CONNECTION_POINT=Color.BLACK;
-		ADAPTER_CONNECTION_POINT=Color.YELLOW;
-		
+		ADAPTER_CONNECTION_POINT=Color.YELLOW;		
 		ADAPTER_LINE = Color.BLACK;
+		ADAPTER_CURSOR_POINT = new Color(0,0,255);
 	}
 }

@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 /**
@@ -20,6 +21,7 @@ public class SchemaDrawingGrid {
 	private BufferedImage graphics = null;
 	private SchemaDrawingAdapter adapter = null;
 	private SchemaColorProvider colors = null;
+	
 	private double magnificationFactor = 100.d; //nemam pojma kamo da ga smjestim...
 	
 	private int gridSpace = 10; //razmak izmedju iscrtanog grida (u pixelima), ujedno (bi trebalo bit) je to i align grid...
@@ -59,6 +61,10 @@ public class SchemaDrawingGrid {
 		return adapter;
 	}
 	
+	/**
+	 * Iscrtavanje crtace mreze.
+	 *
+	 */
 	private void DrawGrid(){
 		int x = graphics.getWidth();
 		int y = graphics.getHeight();
@@ -75,6 +81,32 @@ public class SchemaDrawingGrid {
 		for(int j=0;j<size.getHeight();j++){
 			g.drawLine(0,j*gridSpace,x,j*gridSpace);
 		}
+	}
+	
+	/**
+	 * Iscrtava "tockicu" na sjecistu dviju linija grid-a.
+	 * @param mousePosition Trenutna pozicija misa.
+	 */
+	public void ShowCursorPoint(Point mousePosition){
+		int gridX,gridY;
+		
+		gridX=Math.round((float)mousePosition.x/10)*10;
+		gridY=Math.round((float)mousePosition.y/10)*10;
+		
+		//TODO za kasnije, treba upogonit Adapter da crta tockicu
+		//adapter.
+		
+		adapter.drawCursorPoint(gridX, gridY);
+	
+	}
+	
+	public Point getAlignedPonter(Point mousePosition){
+		int gridX,gridY;
+		
+		gridX=Math.round((float)mousePosition.x/10)*10;
+		gridY=Math.round((float)mousePosition.y/10)*10;
+		
+		return new Point(gridX,gridY);
 	}
 
 	public void setColors(SchemaColorProvider colors) {

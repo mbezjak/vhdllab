@@ -6,7 +6,6 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -31,6 +30,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	private SchemaColorProvider colors = null;	
 	private BufferedImage canvas = null;
 	private SchemaDrawingCanvasListeners listeners = null;
+	public Point mousePosition;
 	
 	public SchemaDrawingCanvas(SchemaColorProvider colors) {
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
@@ -55,7 +55,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	 */
 	private void initGUI() {
 		if(dimension==null){
-			dimension=new Dimension(1000,500);
+			dimension=new Dimension(1000,500);//ovo je samo privremeno...
 		}
 		
 		this.canvas=new BufferedImage(dimension.width,dimension.height,BufferedImage.TYPE_3BYTE_BGR);
@@ -78,6 +78,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		SchemaDrawingComponentEnvelope envelope=new SchemaDrawingComponentEnvelope(component,position);
 		
 		components.add(envelope);
+		this.repaint();
 	}
 	
 	public ArrayList<SchemaDrawingComponentEnvelope> getComponentList(){
@@ -105,10 +106,9 @@ public class SchemaDrawingCanvas extends JComponent {
 		graph.setColor(colors.GRID_BG);
 		graph.fillRect(0,0,canvas.getWidth(),canvas.getHeight());		
 		
-		grid.repaint();
 		
-		graph.setColor(new Color(15,200,200));
-		graph.drawString(listeners.getX()+", "+listeners.getY(),listeners.getX(),listeners.getY());
+		//graph.setColor(new Color(15,200,200));
+		//graph.drawString(listeners.getX()+", "+listeners.getY(),listeners.getX(),listeners.getY());
 		
 		// ovo sam ja dodo, ti prouci i reci kaj mislis. Btw, ovo:
 		// grid.getAdapter().drawLine(0, 0, 100, 100);
@@ -117,7 +117,9 @@ public class SchemaDrawingCanvas extends JComponent {
 		// 
 		// Uglavnom, ti ovo promijeni kako mislis da je potrebno.
 		SchemaDrawingAdapter adapter = grid.getAdapter();
-		adapter.setMagnificationFactor(1.d);
+		
+		grid.ShowCursorPoint(mousePosition);
+		
 		for (SchemaDrawingComponentEnvelope envelope : components) {
 			Point p = envelope.getPosition();
 			adapter.setStartingCoordinates(p.x, p.y);
