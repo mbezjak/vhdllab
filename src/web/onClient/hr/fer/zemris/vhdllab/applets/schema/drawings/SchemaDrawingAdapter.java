@@ -80,7 +80,7 @@ public class SchemaDrawingAdapter {
 	@Deprecated
 	public void setMagnificationFactor(double mag) {
 		this.magnificationFactor = mag;//beskorisno
-		this.virtualGridFactor = 5; //fiksno samo da radi...trebat ce jos dosta mozganja...
+		this.virtualGridFactor = 1; //fiksno samo da radi...trebat ce jos dosta mozganja...
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class SchemaDrawingAdapter {
 		
 		graph.setColor(colors.ADAPTER_CURSOR_POINT);
 		
-		graph.fillOval(realX-5, realY-5, 10, 10);			
+		graph.fillOval(virtualToRealRelativeX(realX-3), virtualToRealRelativeY(realY-3), 6, 6);			
 	}
 	
 	//TODO ovo jos treba prepraviti jer nisam stigo istestirat to... :(

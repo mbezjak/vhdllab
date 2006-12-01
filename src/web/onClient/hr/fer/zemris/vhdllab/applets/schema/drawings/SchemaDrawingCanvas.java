@@ -118,7 +118,8 @@ public class SchemaDrawingCanvas extends JComponent {
 		// Uglavnom, ti ovo promijeni kako mislis da je potrebno.
 		SchemaDrawingAdapter adapter = grid.getAdapter();
 		
-		grid.ShowCursorPoint(mousePosition);
+		//mousePosition = new Point(listeners.getX(),listeners.getY());
+		//grid.ShowCursorPoint(mousePosition);
 		
 		for (SchemaDrawingComponentEnvelope envelope : components) {
 			Point p = envelope.getPosition();

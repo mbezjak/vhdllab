@@ -191,7 +191,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	public void draw(SchemaDrawingAdapter adapter) {
 		for (AbstractSchemaPort port : portlist) {
 			Point p = port.getCoordinate();
-			adapter.drawOval(p.x, p.y, 2, 2);
+			adapter.drawCursorPoint(p.x, p.y);
 		}
 		adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
 	}

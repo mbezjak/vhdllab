@@ -52,7 +52,7 @@ public class PrivremenaProbnaKlasa {
 		ComponentFactory factory = new ComponentFactory();
 		factory.registerComponent(new Sklop_AND("Sklop_AND"));
 		try {
-			canvas.addComponent(factory.getSchemaComponent("AND sklop"), new Point(20, 20));
+			//canvas.addComponent(factory.getSchemaComponent("AND sklop"), new Point(20, 20));
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
