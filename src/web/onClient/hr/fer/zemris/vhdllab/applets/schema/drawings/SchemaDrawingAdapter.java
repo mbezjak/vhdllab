@@ -3,7 +3,9 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
@@ -176,6 +178,29 @@ public class SchemaDrawingAdapter {
 					   virtualToRealRelativeY(virtualY1),
 					   virtualToReal(virtualWid),
 					   virtualToReal(virtualHgt));
+	}
+	
+	public void draw4gon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
+		if (gph == null) return;
+		
+		Graphics2D graph = (Graphics2D) gph.getGraphics();
+		
+		graph.setColor(Color.WHITE);
+		
+		int [] xarr = new int[4];
+		int [] yarr = new int[4];
+		xarr[0] = virtualToRealRelativeX(x1);
+		xarr[1] = virtualToRealRelativeX(x2);
+		xarr[2] = virtualToRealRelativeX(x3);
+		xarr[3] = virtualToRealRelativeX(x4);
+		yarr[0] = virtualToRealRelativeX(y1);
+		yarr[1] = virtualToRealRelativeX(y2);
+		yarr[2] = virtualToRealRelativeX(y3);
+		yarr[3] = virtualToRealRelativeX(y4);
+		
+		graph.fillPolygon(xarr, yarr, 4);
+		graph.setColor(colors.ADAPTER_LINE);
+		graph.drawPolygon(xarr, yarr, 4);
 	}
 	
 	/**

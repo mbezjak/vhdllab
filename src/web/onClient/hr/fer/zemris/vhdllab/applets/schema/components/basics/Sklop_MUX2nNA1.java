@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	private final static int RAZMAK_IZMEDU_PORTOVA = 20;
 	private final static int SIRINA_MUX2nNA1 = 50;
+	private final static int ODMAK_OD_RUBA = 7;
 	
 	private Integer brojSelUlaza;
 	
@@ -61,6 +62,22 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
 		super.draw(adapter);
+		for (AbstractSchemaPort port : portlist) {
+			Point p = port.getCoordinate();
+			if (port.getTipPorta() == "POD") {
+				adapter.drawLine(p.x, p.y, p.x + ODMAK_OD_RUBA, p.y);
+			} else if (port.getTipPorta() == "SEL") {
+				adapter.drawLine(p.x, p.y, p.x, p.y - this.getComponentHeight() / 2);
+			} else {
+				adapter.drawLine(p.x, p.y, p.x - ODMAK_OD_RUBA, p.y);
+			}
+		}
+		adapter.draw4gon(
+				ODMAK_OD_RUBA, ODMAK_OD_RUBA,
+				this.getComponentWidth() - ODMAK_OD_RUBA, RAZMAK_IZMEDU_PORTOVA,
+				this.getComponentWidth() - ODMAK_OD_RUBA, this.getComponentHeight() - RAZMAK_IZMEDU_PORTOVA,
+				ODMAK_OD_RUBA, this.getComponentHeight() - ODMAK_OD_RUBA
+				);
 	}
 
 	/**
