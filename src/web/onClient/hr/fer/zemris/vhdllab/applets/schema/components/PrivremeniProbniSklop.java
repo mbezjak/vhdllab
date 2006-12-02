@@ -16,7 +16,6 @@ public class PrivremeniProbniSklop extends AbstractSchemaComponent {
 	
 	public PrivremeniProbniSklop(String ime) {
 		super(ime);
-		pComponentName.val = "Privremeni probni sklop";
 		pMojInt.val = 2;
 		pMaliTekst.val = "Mihalj sam ja, onaj, Herpes!";
 		portlist.add(new SchemaPort());

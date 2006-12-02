@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema.components.basics;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
@@ -12,9 +13,13 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 	private final static int SIRINA_NOT_VRATA = 45;
 	private final static int VISINA_NOT_VRATA = 26;
 	
+	static {
+		setComponentName("NOT sklop");
+		ComponentFactory.registerComponent(new Sklop_XOR("Sklop_NOT"));
+	}
+	
 	public Sklop_NOT(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
-		pComponentName.val = "NOT sklop";
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);

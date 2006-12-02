@@ -4,10 +4,13 @@ import java.util.HashMap;
 
 
 public class ComponentFactory {
-	private HashMap<String, AbstractSchemaComponent> factoryMap;
+	static private HashMap<String, AbstractSchemaComponent> factoryMap;
 	
-	public ComponentFactory() {
+	static {
 		factoryMap = new HashMap<String, AbstractSchemaComponent>();
+	}
+	
+	public ComponentFactory() {	
 	}
 	
 	public AbstractSchemaComponent getSchemaComponent(String componentName) throws Exception {
@@ -26,7 +29,7 @@ public class ComponentFactory {
 			return component;
 	}
 	
-	public void registerComponent(AbstractSchemaComponent component) {
+	static public void registerComponent(AbstractSchemaComponent component) {
 		factoryMap.put(component.getComponentName(), component.vCtr());
 	}
 }

@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema.components.basics;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 import hr.fer.zemris.vhdllab.applets.schema.components.SchemaPort;
@@ -19,9 +20,13 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	
 	private Integer brojSelUlaza;
 	
+	static {
+		setComponentName("MUX2^nNA1");
+		ComponentFactory.registerComponent(new Sklop_XOR("Sklop_MUX2nNA1"));
+	}
+	
 	public Sklop_MUX2nNA1(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
-		pComponentName.val = "Multipleksor 2^n na 1";
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);

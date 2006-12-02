@@ -24,12 +24,13 @@ import javax.swing.JComboBox;
  */
 public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	protected LinkedList<AbstractSchemaPort> portlist;
-	protected Ptr<Object> pComponentName;
-	public String getComponentName() {
+	static protected Ptr<Object> pComponentName;
+	static public String getComponentName() {
 		return (String)pComponentName.val;
 	}
-	public void setComponentName(String name) {
-		this.pComponentName.val = name;
+	static public void setComponentName(String name) {
+		pComponentName = new Ptr<Object>();
+		pComponentName.val = name;
 	}
 	
 	protected Ptr<Object> pComponentInstanceName;
@@ -82,8 +83,6 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 */
 	public AbstractSchemaComponent(String instanceName) {
 		portlist = new LinkedList<AbstractSchemaPort>();
-		pComponentName = new Ptr<Object>();
-		pComponentName.val = new String();
 		pComponentInstanceName = new Ptr<Object>();
 		pComponentInstanceName.val = new String(instanceName);
 		smjer = AbstractSchemaPort.PortOrientation.WEST;
