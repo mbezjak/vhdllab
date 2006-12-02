@@ -73,7 +73,13 @@ public class MainApplet
 	@Override
 	public void init() {
 		super.init();
-		String userId = "mb41232";
+		//String userId = "mb41232";
+		String userId = this.getParameter("userId");
+		if(userId==null) {
+			// We must not enter this! If we do, applet should refuse to run!
+			// Until then:
+			userId = "uid:id-not-set";
+		}
 		AjaxMediator ajax = new DefaultAjaxMediator(this);
 		MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 		

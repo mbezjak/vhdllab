@@ -32,4 +32,37 @@
 
     <!-- JSPC servlet mappings end -->
 
+    <!-- Security constraints start -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>VHDLLAB</web-resource-name>
+            <description>Require users to authenticate</description>    
+            <url-pattern>/vhdllab.jsp</url-pattern>                    
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Define who can access this url-pattern</description>
+            <role-name>student</role-name>
+            <role-name>admin</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+    </login-config>
+
+    <security-role>
+        <description>Student role (can use vhdllab)</description>
+        <role-name>student</role-name>
+    </security-role>
+    <security-role>
+        <description>Administrator role (also can use vhdllab)</description>
+        <role-name>admin</role-name>
+    </security-role>
+    <!-- Security constraints end -->
+
 </web-app>
