@@ -82,7 +82,7 @@ public class SchemaDrawingAdapter {
 	@Deprecated
 	public void setMagnificationFactor(double mag) {
 		this.magnificationFactor = mag;//beskorisno
-		this.virtualGridFactor = 1; //fiksno samo da radi...trebat ce jos dosta mozganja...
+		this.virtualGridFactor = 20; //fiksno samo da radi...trebat ce jos dosta mozganja...
 	}
 	
 	/**
@@ -139,7 +139,10 @@ public class SchemaDrawingAdapter {
 		
 		graph.setColor(colors.ADAPTER_CURSOR_POINT);
 		
-		graph.fillOval(virtualToRealRelativeX(realX-3), virtualToRealRelativeY(realY-3), 6, 6);			
+		// NAPOMENA: stogod da napravis s ovih 6 - to je promjer tockice,
+		// pazi da stavis da se od koordinata oduzima pola promjera - da 
+		// tockica bude na sredini porta
+		graph.fillOval(virtualToRealRelativeX(realX) - 3, virtualToRealRelativeY(realY) - 3, 6, 6);			
 	}
 	
 	//TODO ovo jos treba prepraviti jer nisam stigo istestirat to... :(
@@ -150,8 +153,8 @@ public class SchemaDrawingAdapter {
 		
 		graph.setColor(colors.ADAPTER_LINE);
 
-		graph.drawOval(virtualToReal(virtualX),
-				virtualToReal(virtualY),
+		graph.drawOval(virtualToRealRelativeX(virtualX),
+				virtualToRealRelativeY(virtualY),
 				virtualToReal(virtualXRadius),
 				virtualToReal(virtualYRadius));
 	}

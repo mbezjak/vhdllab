@@ -48,11 +48,11 @@ public class PrivremenaProbnaKlasa {
 		ad.setMagnificationFactor(1.d);
 		ad.setStartingCoordinates(0, 0);
 		
-		canvas.addComponent(muxi, new Point(150, 150));
+		canvas.addComponent(muxi, new Point(50, 50));
 		ComponentFactory factory = new ComponentFactory();
 		factory.registerComponent(new Sklop_AND("Sklop_AND"));
 		try {
-			//canvas.addComponent(factory.getSchemaComponent("AND sklop"), new Point(20, 20));
+			canvas.addComponent(factory.getSchemaComponent("AND sklop"), new Point(320, 20));
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

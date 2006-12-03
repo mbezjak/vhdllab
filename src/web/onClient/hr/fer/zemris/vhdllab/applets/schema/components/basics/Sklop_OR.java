@@ -14,8 +14,8 @@ import java.awt.Point;
 import javax.swing.JTextField;
 
 public class Sklop_OR extends AbstractSchemaComponent {
-	private final static int RAZMAK_IZMEDU_PORTOVA = 20;
-	private final static int SIRINA_OR_VRATA = 45;
+	private final static int RAZMAK_IZMEDU_PORTOVA = 4;
+	private final static int SIRINA_OR_VRATA = 9;
 	
 	private Integer brojUlaza;
 	

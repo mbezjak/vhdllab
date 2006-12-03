@@ -10,8 +10,8 @@ import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 import java.awt.Point;
 
 public class Sklop_NOT extends AbstractSchemaComponent {
-	private final static int SIRINA_NOT_VRATA = 45;
-	private final static int VISINA_NOT_VRATA = 26;
+	private final static int SIRINA_NOT_VRATA = 9;
+	private final static int VISINA_NOT_VRATA = 6;
 	
 	static {
 		setComponentName("NOT sklop");

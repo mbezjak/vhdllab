@@ -14,9 +14,9 @@ import java.awt.Point;
 import javax.swing.JTextField;
 
 public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
-	private final static int RAZMAK_IZMEDU_PORTOVA = 20;
-	private final static int SIRINA_MUX2nNA1 = 50;
-	private final static int ODMAK_OD_RUBA = 7;
+	private final static int RAZMAK_IZMEDU_PORTOVA = 5;
+	private final static int SIRINA_MUX2nNA1 = 12;
+	private final static int ODMAK_OD_RUBA = 2;
 	
 	private Integer brojSelUlaza;
 	
@@ -142,7 +142,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 						getComponentHeight() / 2));
 			} else {
 				if (port.getTipPorta() == "SEL") {
-					port.setCoordinate(new Point(SIRINA_MUX2nNA1 / (brojSelUlaza + 2) * (sel + 1),
+					port.setCoordinate(new Point((int) (1.f * SIRINA_MUX2nNA1 / (brojSelUlaza + 2) * (sel + 1)),
 							RAZMAK_IZMEDU_PORTOVA * (portlist.size() - brojSelUlaza)));
 					sel++;
 				} else {
