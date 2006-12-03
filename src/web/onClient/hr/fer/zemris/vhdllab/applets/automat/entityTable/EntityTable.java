@@ -92,7 +92,10 @@ public class EntityTable extends JPanel {
 		for(Object key:p.keySet())cb.addItem(p.get(key));
 		return cb;
 	}
-
+	
+	public Object[][] getData(){
+		return model.getData();
+	}
 
 
 	//***********MyTableModel************
@@ -157,5 +160,8 @@ public class EntityTable extends JPanel {
         	data=obj;
         	fireTableDataChanged();
         };
+        public Object[][] getData(){
+        	return data;
+        }
     }
 }
