@@ -1,8 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import java.awt.Point;
+import java.io.StringReader;
+import java.util.Set;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
+import hr.fer.zemris.vhdllab.applets.schema.components.SchemaComponentException;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
@@ -10,6 +15,8 @@ import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingCanvas;
 
 import javax.swing.JFrame;
+
+import org.apache.commons.digester.Digester;
 
 
 // Ovo ne dirati.
@@ -48,12 +55,27 @@ public class PrivremenaProbnaKlasa {
 		ad.setMagnificationFactor(1.d);
 		ad.setStartingCoordinates(0, 0);
 		
-		canvas.addComponent(muxi, new Point(50, 50));
+		canvas.addComponent(muxi, new Point(400, 190));
 		ComponentFactory factory = new ComponentFactory();
 		factory.registerComponent(new Sklop_AND("Sklop_AND"));
 		try {
 			canvas.addComponent(factory.getSchemaComponent("AND sklop"), new Point(320, 20));
 		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		Set<String> sviSklopovi = ComponentFactory.getAvailableComponents();
+		for (String s : sviSklopovi) {
+			System.out.println(s);
+		}
+		
+		String s = muxi.serializeComponent();
+		AbstractSchemaComponent compi = null;
+		try {
+			compi = ComponentFactory.getSchemaComponent("MUX2^nNA1", s);
+			canvas.addComponent(compi, new Point(50, 80));
+		} catch (ComponentFactoryException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -64,8 +86,32 @@ public class PrivremenaProbnaKlasa {
 			} catch (InterruptedException e) {
 				break;
 			}
-			System.out.println(muxi.getBrojPodUlaza() + " " + muxi.getSmjer());
+			//System.out.println(muxi.getBrojPodUlaza() + " " + muxi.getSmjer());
 		}
 	}
+	
+	
+	
+	static protected void digest(String par) {
+		class Proba {
+			public void ispis(String s) {
+				System.out.println("Ispisao sam: " + s);
+			}
+		}
+		
+		Digester digester=new Digester();
+		
+		digester.push(new Proba());
+		
+		digester.addCallMethod("komponenta/componentSpecific", "ispis", 1);
+		digester.addCallParam("komponenta/componentSpecific/brojSelUlaza", 0);
+		
+		try {
+			System.out.println("Pocinje..." + par);
+			digester.parse(new StringReader(par));
+		} catch (Exception e) {
+			return;
+		}
+	}	
 
 }

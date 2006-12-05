@@ -14,12 +14,12 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 	private final static int VISINA_NOT_VRATA = 6;
 	
 	static {
-		setComponentName("NOT sklop");
-		ComponentFactory.registerComponent(new Sklop_XOR("Sklop_NOT"));
+		ComponentFactory.registerComponent(new Sklop_NOT("Sklop_NOT"));
 	}
 	
 	public Sklop_NOT(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
+		setComponentName("NOT sklop");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);

@@ -26,12 +26,12 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	private Integer brojSelUlaza;
 	
 	static {
-		setComponentName("MUX2^nNA1");
-		ComponentFactory.registerComponent(new Sklop_XOR("Sklop_MUX2nNA1"));
+		ComponentFactory.registerComponent(new Sklop_MUX2nNA1("Sklop_MUX2nNA1"));
 	}
 	
 	public Sklop_MUX2nNA1(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
+		setComponentName("MUX2^nNA1");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);
@@ -105,6 +105,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	 * @param brojUlaza The brojUlaza to set.
 	 */
 	public void setBrojSelUlaza(Integer nbr) {
+		System.out.println("Postavljam selekcijske na: " + nbr);
 		if (nbr != brojSelUlaza) {
 			// izracunaj 2^n
 			int dvaNaN = 1;
@@ -173,25 +174,17 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 
 	@Override
 	protected boolean deserializeComponentSpecific(String serial) {
-		Digester digester=new Digester();
+		// ne koristiti xml ovdje!!
+		String [] sfield = serial.split("#");
 		
-		digester.push(this);
-		
-		digester.addCallMethod("", "setBrojSelUlaza", 1);
-		digester.addCallParam("brojSelUlaza", 0);
-		
-		try {
-			digester.parse(new StringReader(serial));
-		} catch (Exception e) {
-			return false;
-		}
+		setBrojSelUlaza(Integer.parseInt(sfield[1]));
 		
 		return true;
 	}
 
 	@Override
 	protected String serializeComponentSpecific() {
-		return "<brojSelUlaza>" + brojSelUlaza + "</brojSelUlaza>";
+		return "#" + brojSelUlaza + "#";
 	}
 	
 }

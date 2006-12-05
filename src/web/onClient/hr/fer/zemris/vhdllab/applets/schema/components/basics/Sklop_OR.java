@@ -20,12 +20,12 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	private Integer brojUlaza;
 	
 	static {
-		setComponentName("OR sklop");
-		ComponentFactory.registerComponent(new Sklop_XOR("Sklop_OR"));
+		ComponentFactory.registerComponent(new Sklop_OR("Sklop_OR"));
 	}
 	
 	public Sklop_OR(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
+		setComponentName("OR sklop");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);

@@ -82,7 +82,7 @@ public class SchemaDrawingAdapter {
 	@Deprecated
 	public void setMagnificationFactor(double mag) {
 		this.magnificationFactor = mag;//beskorisno
-		this.virtualGridFactor = 20; //fiksno samo da radi...trebat ce jos dosta mozganja...
+		this.virtualGridFactor = 10; //fiksno samo da radi...trebat ce jos dosta mozganja...
 	}
 	
 	/**
@@ -196,10 +196,10 @@ public class SchemaDrawingAdapter {
 		xarr[1] = virtualToRealRelativeX(x2);
 		xarr[2] = virtualToRealRelativeX(x3);
 		xarr[3] = virtualToRealRelativeX(x4);
-		yarr[0] = virtualToRealRelativeX(y1);
-		yarr[1] = virtualToRealRelativeX(y2);
-		yarr[2] = virtualToRealRelativeX(y3);
-		yarr[3] = virtualToRealRelativeX(y4);
+		yarr[0] = virtualToRealRelativeY(y1);
+		yarr[1] = virtualToRealRelativeY(y2);
+		yarr[2] = virtualToRealRelativeY(y3);
+		yarr[3] = virtualToRealRelativeY(y4);
 		
 		graph.fillPolygon(xarr, yarr, 4);
 		graph.setColor(colors.ADAPTER_LINE);
@@ -242,6 +242,18 @@ public class SchemaDrawingAdapter {
 	 */
 	public void setColors(SchemaColorProvider colors) {
 		this.colors = colors;
+	}
+	
+	
+	public void drawString(String s, int virtx, int virty) {
+		if (gph == null) return;
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		
+		graph.setColor(colors.ADAPTER_LINE);
+		
+		graph.drawString(s, virtualToRealRelativeX(virtx),
+				   virtualToRealRelativeY(virty));
 	}
 	
 }

@@ -6,10 +6,15 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import javax.swing.JComboBox;
+
+import org.apache.commons.digester.Digester;
+import org.xml.sax.SAXException;
 
 /**
  * Smisao ove klase jest ponuditi funkcionalnost 
@@ -23,29 +28,41 @@ import javax.swing.JComboBox;
  * @author Axel
  *
  */
-public abstract class AbstractSchemaComponent implements ISchemaComponent {
-	static HashSet<String> instanceNameSet;
-	
+public abstract class AbstractSchemaComponent implements ISchemaComponent {	
 	protected LinkedList<AbstractSchemaPort> portlist;
-	static protected Ptr<Object> pComponentName;
-	static public String getComponentName() {
+	protected Ptr<Object> pComponentName;
+	public String getComponentName() {
 		return (String)pComponentName.val;
 	}
-	static public void setComponentName(String name) {
+	public void setComponentName(String name) {
 		pComponentName = new Ptr<Object>();
 		pComponentName.val = name;
 	}
 	
+	static HashSet<String> instanceNameSet;
 	protected Ptr<Object> pComponentInstanceName;
 	public String getComponentInstanceName() {
 		return (String)pComponentInstanceName.val;
 	}
-	public void setComponentInstanceName(String name) {
-		this.pComponentInstanceName.val = name;
+	public void setComponentInstanceName(String name) throws SchemaComponentException {
+		if (name == pComponentInstanceName.val) return;
+		System.out.println("Postavljam ime na: " + name);
+		if (instanceNameSet.contains(name)) {
+			throw new SchemaComponentException("Ime vec postoji!!");
+		} 
+		else {
+			instanceNameSet.remove(this.pComponentInstanceName.val);
+			this.pComponentInstanceName.val = name;
+			instanceNameSet.add(name);
+		}
+		
 	}
 	
 	protected AbstractSchemaPort.PortOrientation smjer;
 	
+	static {
+		instanceNameSet = new HashSet();
+	}
 	
 	public void clearPortList() {
 		portlist.clear();
@@ -173,7 +190,13 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 * @param smjer The smjer to set.
 	 */
 	public void setSmjer(AbstractSchemaPort.PortOrientation smjer) {
+		System.out.println("Postavljam smjer na: " + smjer);
 		this.smjer = smjer;
+	}
+	public void setSmjerWithInt(String smj) {
+		System.out.println("Postavljam smjer na: " + smj);
+		int indSmj = Integer.parseInt(smj);
+		this.smjer = intToSm(indSmj);
 	}
 	
 	/**
@@ -196,43 +219,72 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 			adapter.drawCursorPoint(p.x, p.y);
 		}
 		adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
+		adapter.drawString((String) pComponentInstanceName.val, 0, 0);
 	}
 	
 	protected abstract boolean deserializeComponentSpecific(String serial);
 	
 	protected abstract String serializeComponentSpecific();
 	
+	public void postaviOpcenito(String ime, String ori, String componentSpecific) {
+		try {
+			setComponentInstanceName(ime);
+		} catch (SchemaComponentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setSmjerWithInt(ori);
+		deserializeComponentSpecific(componentSpecific);
+	}
+	
 	public boolean deserializeComponent(String serial) {
+		System.out.println(serial);
+		
+		
+		Digester digester=new Digester();
+		
+		digester.push(this);
+		
 		// prvo deserijaliziraj opcenite stvari
-		
+		digester.addCallMethod("komponenta", "postaviOpcenito", 3);
+		digester.addCallParam("komponenta/imeInstanceKomponente", 0);
+		digester.addCallParam("komponenta/orijentacija", 1);
 		// deserijaliziraj component-specific stvari
+		digester.addCallParam("komponenta/componentSpecific", 2);
 		
-		// onda deserijaliziraj portove
+		try {
+			digester.parse(new StringReader(serial));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 		
-		return false;
+		return true;
 	}
 	
 	public String serializeComponent() {
 		// serijaliziraj opcenite stvari
-		StringBuilder builder = new StringBuilder("<imeInstanceKomponente>");
-		builder.append(pComponentName.val).append("</imeInstanceKomponente>");
+		StringBuilder builder = new StringBuilder("<komponenta>");
+		builder.append("<imeInstanceKomponente>").append(pComponentInstanceName.val).append("</imeInstanceKomponente>");
 		builder.append("<orijentacija>").append(smToInt(smjer)).append("</orijentacija>");
 		
 		// serijaliziraj component-specific stvari
 		builder.append("<componentSpecific>").append(serializeComponentSpecific()).append("</componentSpecific>");
 		
 		// serijaliziraj portove
-		builder.append("<portovi>");
-		int i = 0;
-		for (AbstractSchemaPort port : portlist) {
-			builder.append("<port>");
-			builder.append("<portNumber>").append(i).append("</portNumber>");
-			builder.append("<portInfo>").append(port.serialize()).append("</portInfo>");
-			builder.append("</port>");
-		}
-		builder.append("</portovi>");
+		//		builder.append("<portovi>");
+		//		int i = 0;
+		//		for (AbstractSchemaPort port : portlist) {
+		//			builder.append("<port>");
+		//			builder.append("<portNumber>").append(i).append("</portNumber>");
+		//			builder.append("<portInfo>").append(port.serialize()).append("</portInfo>");
+		//			builder.append("</port>");
+		//		}
+		//		builder.append("</portovi>");
 		
-		return null;
+		builder.append("</komponenta>");
+		
+		return builder.toString();
 	}
 	
 	

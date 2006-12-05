@@ -20,12 +20,12 @@ public class Sklop_AND extends AbstractSchemaComponent {
 	private Integer brojUlaza;
 	
 	static {
-		setComponentName("AND sklop");
 		ComponentFactory.registerComponent(new Sklop_AND("Sklop_AND"));
 	}
 	
 	public Sklop_AND(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
+		setComponentName("AND sklop");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);
