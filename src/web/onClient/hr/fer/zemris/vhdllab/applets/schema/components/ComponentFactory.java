@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
 import java.util.HashMap;
+import java.util.Set;
 
 
 public class ComponentFactory {
@@ -19,7 +20,7 @@ public class ComponentFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public AbstractSchemaComponent getSchemaComponent(String componentName) throws ComponentFactoryException {
+	static public AbstractSchemaComponent getSchemaComponent(String componentName) throws ComponentFactoryException {
 		AbstractSchemaComponent component = factoryMap.get(componentName).vCtr();
 		if (component == null)
 			throw new ComponentFactoryException("Component factory unable to generate requested object!");
@@ -34,13 +35,13 @@ public class ComponentFactory {
 	 * @return
 	 * @throws Exception 
 	 */
-	public AbstractSchemaComponent getSchemaComponent(String componentName, String serial) throws ComponentFactoryException {
-		AbstractSchemaComponent component = this.getSchemaComponent(componentName);
+	static public AbstractSchemaComponent getSchemaComponent(String componentName, String serial) throws ComponentFactoryException {
+		AbstractSchemaComponent component = getSchemaComponent(componentName);
 		component.deserializeComponent(serial);
 		return component;
 	}
 	
-	public AbstractSchemaComponent getSchemaComponent(AbstractSchemaComponent comp) throws ComponentFactoryException {
+	static public AbstractSchemaComponent getSchemaComponent(AbstractSchemaComponent comp) throws ComponentFactoryException {
 		AbstractSchemaComponent component = factoryMap.get(comp.getComponentName()).vCtr();
 		if (component == null)
 			throw new ComponentFactoryException("Component factory unable to generate requested object!");
@@ -50,5 +51,9 @@ public class ComponentFactory {
 	
 	static public void registerComponent(AbstractSchemaComponent component) {
 		factoryMap.put(component.getComponentName(), component.vCtr());
+	}
+	
+	static public Set<String> getAvailableComponents() {
+		return factoryMap.keySet();
 	}
 }
