@@ -28,6 +28,21 @@ public class SchemaVectorPort extends AbstractSchemaPort {
 	public void setPortSize(int ps) {
 		portSize = ps;
 	}
+
+	@Override
+	public String getTypeID() {
+		return "SchemaVectorPort";
+	}
+
+	@Override
+	protected String serializeSpecific() {
+		return "<portSize>" + portSize + "</portSize>";
+	}
+
+	@Override
+	protected void deserializeSpecific(String code) {
+		// TODO: ovdje moras <portSize>15</portSize> razradit.
+	}
 	
 	
 	

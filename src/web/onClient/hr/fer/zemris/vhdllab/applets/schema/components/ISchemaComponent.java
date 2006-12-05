@@ -58,4 +58,21 @@ public interface ISchemaComponent {
 	 * Visina komponente - za crtanje.
 	 */
 	public int getComponentHeight();
+	
+	/**
+	 * Stvara jedinstven string specifican za svaku komponentu.
+	 * @return
+	 */
+	public String serializeComponent();
+	
+	/**
+	 * Iz stringa komponente rekontruira svojstva komponente.
+	 * @return
+	 */
+	public boolean deserializeComponent(String serial);
 }
+
+
+
+
+

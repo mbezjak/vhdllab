@@ -47,4 +47,16 @@ public class TestBasicOR extends AbstractSchemaComponent {
 		return null;
 	}
 
+	@Override
+	protected boolean deserializeComponentSpecific(String serial) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected String serializeComponentSpecific() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

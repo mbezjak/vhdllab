@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import javax.swing.JComboBox;
@@ -23,6 +24,8 @@ import javax.swing.JComboBox;
  *
  */
 public abstract class AbstractSchemaComponent implements ISchemaComponent {
+	static HashSet<String> instanceNameSet;
+	
 	protected LinkedList<AbstractSchemaPort> portlist;
 	static protected Ptr<Object> pComponentName;
 	static public String getComponentName() {
@@ -193,6 +196,43 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 			adapter.drawCursorPoint(p.x, p.y);
 		}
 		adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
+	}
+	
+	protected abstract boolean deserializeComponentSpecific(String serial);
+	
+	protected abstract String serializeComponentSpecific();
+	
+	public boolean deserializeComponent(String serial) {
+		// prvo deserijaliziraj opcenite stvari
+		
+		// deserijaliziraj component-specific stvari
+		
+		// onda deserijaliziraj portove
+		
+		return false;
+	}
+	
+	public String serializeComponent() {
+		// serijaliziraj opcenite stvari
+		StringBuilder builder = new StringBuilder("<imeInstanceKomponente>");
+		builder.append(pComponentName.val).append("</imeInstanceKomponente>");
+		builder.append("<orijentacija>").append(smToInt(smjer)).append("</orijentacija>");
+		
+		// serijaliziraj component-specific stvari
+		builder.append("<componentSpecific>").append(serializeComponentSpecific()).append("</componentSpecific>");
+		
+		// serijaliziraj portove
+		builder.append("<portovi>");
+		int i = 0;
+		for (AbstractSchemaPort port : portlist) {
+			builder.append("<port>");
+			builder.append("<portNumber>").append(i).append("</portNumber>");
+			builder.append("<portInfo>").append(port.serialize()).append("</portInfo>");
+			builder.append("</port>");
+		}
+		builder.append("</portovi>");
+		
+		return null;
 	}
 	
 	

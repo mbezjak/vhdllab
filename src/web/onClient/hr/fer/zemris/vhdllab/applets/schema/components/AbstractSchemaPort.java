@@ -115,9 +115,58 @@ public abstract class AbstractSchemaPort {
 	}
 	
 	
+	public abstract String getTypeID();
+	
+	public String serialize() {
+		StringBuilder builder = new StringBuilder();
+		
+		// opcenite stvari
+		builder.append("<imePorta>").append(this.getName()).append("</imePorta>");
+		builder.append("<smjerPorta>").append(this.getDirection()).append("</smjerPorta>");
+		builder.append("<orijentacijaPorta>").append(this.getOrientation()).append("</orijentacijaPorta>");
+		builder.append("<Xporta>").append(this.coordinate.x).append("</Xporta>");
+		builder.append("<Yporta>").append(this.coordinate.y).append("</Yporta>");
+		builder.append("<tipPorta>").append(this.tipPorta).append("</tipPorta>");
+		
+		// specificno za naslijedeni port
+		builder.append("<portSpecific>").append(serializeSpecific()).append("</portSpecific>");
+		
+		return builder.toString();
+	}	
+	public void deserialize(String code) {
+		// opcenite stvari
+		String s = code.substring(code.indexOf("<imePorta>") + 10, code.indexOf("</imePorta>"));
+		this.setName(s);
+		s = code.substring(code.indexOf("<smjerPorta>") + 12, code.indexOf("</smjerPorta>"));
+		this.setDirection(PortDirection.valueOf(s));
+		s = code.substring(code.indexOf("<orijentacijaPorta>") + 19, code.indexOf("</orijentacijaPorta>"));
+		this.setOrientation(PortOrientation.valueOf(s));
+		Point p = new Point();
+		s = code.substring(code.indexOf("<XPorta>") + 8, code.indexOf("</XPorta>"));
+		p.x = Integer.parseInt(s);
+		s = code.substring(code.indexOf("<YPorta>") + 8, code.indexOf("</YPorta>"));
+		p.y = Integer.parseInt(s);
+		this.setCoordinate(p);
+		s = code.substring(code.indexOf("<tipPorta>") + 10, code.indexOf("</tipPorta>"));
+		this.setTipPorta(s);
+		
+		// specificno za naslijedeni port
+		s = code.substring(code.indexOf("<portSpecific>") + 14, code.indexOf("</portSpecific>"));
+		deserializeSpecific(s);
+	}
+	
+	protected abstract String serializeSpecific();
+	protected abstract void deserializeSpecific(String code);
 	
 
 	// dalje nemoj gledat, nije bitno
+	static AbstractSchemaPort generatePort(String typeID) {
+		if (typeID == "SchemaPort") return new SchemaPort();
+		if (typeID == "SchemaVectorPort") return new SchemaVectorPort();
+		return null;
+	}
+	
+	
 	public Ptr<Object> getNamePtr() {
 		return pName;
 	}

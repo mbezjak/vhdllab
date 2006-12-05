@@ -10,8 +10,13 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericPropert
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
+import java.io.IOException;
+import java.io.StringReader;
 
 import javax.swing.JTextField;
+
+import org.apache.commons.digester.Digester;
+import org.xml.sax.SAXException;
 
 public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	private final static int RAZMAK_IZMEDU_PORTOVA = 5;
@@ -164,6 +169,29 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	@Override
 	public AbstractSchemaComponent vCtr() {
 		return new Sklop_MUX2nNA1((String) pComponentInstanceName.val);
+	}
+
+	@Override
+	protected boolean deserializeComponentSpecific(String serial) {
+		Digester digester=new Digester();
+		
+		digester.push(this);
+		
+		digester.addCallMethod("", "setBrojSelUlaza", 1);
+		digester.addCallParam("brojSelUlaza", 0);
+		
+		try {
+			digester.parse(new StringReader(serial));
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	@Override
+	protected String serializeComponentSpecific() {
+		return "<brojSelUlaza>" + brojSelUlaza + "</brojSelUlaza>";
 	}
 	
 }

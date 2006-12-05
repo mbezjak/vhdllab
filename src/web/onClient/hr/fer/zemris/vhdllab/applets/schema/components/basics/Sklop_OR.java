@@ -131,5 +131,17 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	public AbstractSchemaComponent vCtr() {
 		return new Sklop_OR((String) pComponentInstanceName.val);
 	}
+
+	@Override
+	protected boolean deserializeComponentSpecific(String serial) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected String serializeComponentSpecific() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

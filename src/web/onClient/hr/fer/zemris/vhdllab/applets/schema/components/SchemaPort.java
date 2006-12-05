@@ -7,5 +7,22 @@ package hr.fer.zemris.vhdllab.applets.schema.components;
  *
  */
 public class SchemaPort extends AbstractSchemaPort {
+
+	@Override
+	public String getTypeID() {
+		return "SchemaPort";
+	}
+
+	@Override
+	protected String serializeSpecific() {
+		return "";
+	}
+
+	@Override
+	protected void deserializeSpecific(String code) {
+		// apsolutno nist :)
+	}
+
+	
 	
 }

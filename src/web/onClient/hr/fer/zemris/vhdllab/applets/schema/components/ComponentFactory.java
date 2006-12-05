@@ -13,18 +13,37 @@ public class ComponentFactory {
 	public ComponentFactory() {	
 	}
 	
-	public AbstractSchemaComponent getSchemaComponent(String componentName) throws Exception {
+	/**
+	 * Stvara komponentu.
+	 * @param componentName
+	 * @return
+	 * @throws Exception
+	 */
+	public AbstractSchemaComponent getSchemaComponent(String componentName) throws ComponentFactoryException {
 		AbstractSchemaComponent component = factoryMap.get(componentName).vCtr();
 		if (component == null)
-			throw new Exception("Component factory unable to generate requested object!");
+			throw new ComponentFactoryException("Component factory unable to generate requested object!");
 		else
 			return component;
 	}
 	
-	public AbstractSchemaComponent getSchemaComponent(AbstractSchemaComponent comp) throws Exception {
+	/**
+	 * Stvara komponentu i puni je sa svojstvima pozivom component.deserializeComponent().
+	 * @param componentName
+	 * @param serial
+	 * @return
+	 * @throws Exception 
+	 */
+	public AbstractSchemaComponent getSchemaComponent(String componentName, String serial) throws ComponentFactoryException {
+		AbstractSchemaComponent component = this.getSchemaComponent(componentName);
+		component.deserializeComponent(serial);
+		return component;
+	}
+	
+	public AbstractSchemaComponent getSchemaComponent(AbstractSchemaComponent comp) throws ComponentFactoryException {
 		AbstractSchemaComponent component = factoryMap.get(comp.getComponentName()).vCtr();
 		if (component == null)
-			throw new Exception("Component factory unable to generate requested object!");
+			throw new ComponentFactoryException("Component factory unable to generate requested object!");
 		else
 			return component;
 	}
