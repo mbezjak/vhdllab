@@ -36,6 +36,12 @@ public class SampleManagerProvider implements ManagerProvider {
 		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
 		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		
+		/*FileDAO fileDAO = new FileDAOHibernateImpl();
+		ProjectDAO projectDAO = new ProjectDAOHibernateImpl();
+		GlobalFileDAO globalFileDAO = new GlobalFileDAOHibernateImpl();
+		UserFileDAO userFileDAO = new UserFileDAOHibernateImpl();*/
+
+		
 		// Create all service managers, and configure them
 		// with appropriate DAO objects.
 		VHDLLabManagerImpl labManImpl = new VHDLLabManagerImpl();

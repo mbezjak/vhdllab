@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -64,6 +66,49 @@ public class ProjectExplorer extends JPanel implements Explorer {
 
 
 	public void setActiveProject(String projectName) {
+	}
+
+
+
+	public void closeProject(String projectName) {
+	}
+
+
+
+	public List<String> getAllProjects() {
+		return new ArrayList<String>();
+	}
+
+
+
+	public List<String> getFilesByProject(String projectName) {
+		if(!this.projectName.equals(projectName)) {
+			return null;
+		}
+		
+		List<String> fileNames = new ArrayList<String>();
+		for(int index = 0; index < model.size(); index++) {
+			String name = (String) model.getElementAt(index);
+			fileNames.add(name);
+		}
+		return fileNames;
+	}
+
+
+
+	public void removeFile(String projectName, String fileName) {
+		if(!this.projectName.equals(projectName)) {
+			return;
+		}
+		model.removeElement(fileName);
+	}
+
+
+
+	public void removeProject(String projectName) {
+		for(String name : getFilesByProject(projectName)) {
+			removeFile(projectName, name);
+		}
 	}
 	
 }

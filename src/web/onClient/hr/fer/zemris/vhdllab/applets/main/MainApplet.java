@@ -14,6 +14,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -24,7 +25,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -66,6 +66,14 @@ public class MainApplet
 	private ProjectExplorer projectExplorer;
 	private StatusExplorer statusExplorer;
 	private SideBar sideBar;
+	
+	private JPanel projectExplorerPanel;
+	private JPanel statusExplorerPanel;
+	private JPanel sideBarPanel;
+	
+	private JSplitPane projectExplorerSplitPane;
+	private JSplitPane statusExplorerSplitPane;
+	private JSplitPane sideBarSplitPane;
 	
 	/* (non-Javadoc)
 	 * @see java.applet.Applet#init()
@@ -165,30 +173,37 @@ public class MainApplet
 	private JPanel setupCenterPanel() {
 		projectExplorer = new ProjectExplorer();
 		projectExplorer.setProjectContainer(this);
-		JPanel projectExplorerPanel = new JPanel(new BorderLayout());
+		//JPanel projectExplorerPanel = new JPanel(new BorderLayout());
+		projectExplorerPanel = new JPanel(new BorderLayout());
 		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
 		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
 		editorPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
 		editorPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForEditors());
 		
-		JPanel statusExplorerPanel = new JPanel(new BorderLayout());
+		//JPanel statusExplorerPanel = new JPanel(new BorderLayout());
+		statusExplorerPanel = new JPanel(new BorderLayout());
 		statusExplorer = new StatusExplorer();
 		statusExplorerPanel.add(statusExplorer, BorderLayout.CENTER);
 		statusExplorerPanel.setPreferredSize(new Dimension(0, this.getHeight()/3));
 		
-		JPanel sideBarPanel = new JPanel(new BorderLayout());
+		//JPanel sideBarPanel = new JPanel(new BorderLayout());
+		sideBarPanel = new JPanel(new BorderLayout());
 		sideBar = new SideBar();
 		sideBarPanel.add(sideBar, BorderLayout.CENTER);
 		sideBarPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
-		JSplitPane sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
-		JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
-		JSplitPane statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExporerSplitPane, statusExplorerPanel);
+		//JSplitPane sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
+		//JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
+		//JSplitPane statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExporerSplitPane, statusExplorerPanel);
+		
+		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
+		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
+		statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, statusExplorerPanel);
 		
 		//******************
 		sideBarSplitPane.setDividerLocation(650);
-		projectExporerSplitPane.setDividerLocation(110);
+		projectExplorerSplitPane.setDividerLocation(110);
 		statusExplorerSplitPane.setDividerLocation(500);
 		
 		//******************
@@ -480,7 +495,8 @@ public class MainApplet
 			// Set mnemonic
 			try {
 				String temp = bundle.getString(key + LanguageConstants.MNEMONIC_APPEND);
-				if(temp.length() == 1) {
+				temp = temp.trim();
+				if(temp.length() == 1 && StringUtil.isAlphaNumeric(temp)) {
 					menu.setMnemonic(temp.codePointAt(0));
 				}
 			} catch (RuntimeException e) {}
@@ -494,10 +510,13 @@ public class MainApplet
 					int keyCode = 0;
 					for(String k : keys) {
 						k = k.trim();
-						if(k.equals("ctrl")) mask += KeyEvent.CTRL_DOWN_MASK;
-						else if(k.equals("alt")) mask += KeyEvent.ALT_DOWN_MASK;
-						else if(k.equals("shift")) mask += KeyEvent.SHIFT_DOWN_MASK;
-						else if(k.length() == 1) keyCode = k.toUpperCase().codePointAt(0);
+						if(k.equalsIgnoreCase("ctrl")) mask += KeyEvent.CTRL_DOWN_MASK;
+						else if(k.equalsIgnoreCase("alt")) mask += KeyEvent.ALT_DOWN_MASK;
+						else if(k.equalsIgnoreCase("shift")) mask += KeyEvent.SHIFT_DOWN_MASK;
+						else if(k.length() == 1) {
+							if(!StringUtil.isAlphaNumeric(k)) throw new IllegalArgumentException();
+							keyCode = k.toUpperCase().codePointAt(0);
+						}
 					}
 					menu.setAccelerator(KeyStroke.getKeyStroke(keyCode, mask));
 				}

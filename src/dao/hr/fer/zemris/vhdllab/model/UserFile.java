@@ -54,7 +54,7 @@ public class UserFile {
 	 * @hibernate.property
 	 *  column = "CONTENT"
 	 *  type = "text"
-	 *  length = "1024"
+	 *  length = "65536"
 	 */
 	public String getContent() {
 		return content;

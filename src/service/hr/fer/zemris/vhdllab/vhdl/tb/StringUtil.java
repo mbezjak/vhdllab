@@ -80,13 +80,13 @@ public class StringUtil {
 		char[] chars = s.toCharArray();
 		if( chars.length == 0 ) return false;
 		if( !StringUtil.isAlpha(chars[0]) ) return false;
-		if( StringUtil.isunderscore(chars[s.length()-1]) ) return false;
+		if( StringUtil.isUnderscore(chars[s.length()-1]) ) return false;
 		for(int i = 0; i < chars.length; i++) {      
 			if( StringUtil.isAlpha(chars[i]) ||
 				StringUtil.isNumeric(chars[i]) ) continue;
-			if( StringUtil.isunderscore(chars[i]) ) {
+			if( StringUtil.isUnderscore(chars[i]) ) {
 				if( (i + 1) < chars.length 
-					&& StringUtil.isunderscore(chars[i+1]) )
+					&& StringUtil.isUnderscore(chars[i+1]) )
 					return false;
 				continue;
 			}
@@ -125,7 +125,7 @@ public class StringUtil {
 	 * @param c a character that will be checked.
 	 * @return <code>true</code> is <code>c</code> is an underscore character; <code>false</code> otherwise.
 	 */
-	private static boolean isunderscore(char c) {
+	private static boolean isUnderscore(char c) {
 		if( c == '_' ) return true;
 		return false;
 	}

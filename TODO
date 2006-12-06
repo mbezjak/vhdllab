@@ -54,7 +54,7 @@ TODO 85) [OPEN]   Slozit View da se prikazuju u panelima (to je za CompilationEr
 TODO 86) [OPEN]   Mogucnost maksimizacije nekog panela preko cijelog ekrana (to je jednostavno, vec imam ideju u glavi kak bi to islo)
 TODO 87) [OPEN]   Pocet koristit statusbar (za sad se ne koristi)
 TODO 88) [OPEN]   Popravit statusbar (dodat nove funkcionalnosti)
-TODO 89) [OPEN]   Dovrsit serializaciju Result-a (sto povlaci i sve ostalo vezano uz Result)
+TODO 89) [CLOSED]   Dovrsit serializaciju Result-a (sto povlaci i sve ostalo vezano uz Result)
 TODO 90) [OPEN]   Definirat interface za View (paneli koji ce bit dolje, znaci ko CompilationErrors)
 TODO 91) [OPEN]   Dovrsit main meni
 TODO 92) [OPEN]   Popravit handlanje greskama u cache-u
