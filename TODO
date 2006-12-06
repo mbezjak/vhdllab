@@ -59,6 +59,15 @@ TODO 90) [OPEN]   Definirat interface za View (paneli koji ce bit dolje, znaci k
 TODO 91) [OPEN]   Dovrsit main meni
 TODO 92) [OPEN]   Popravit handlanje greskama u cache-u
 TODO 93) [OPEN]   Napravit kompletan toolbar
-
+TODO 94) [OPEN]   Definirat nacit na koji ce se predavat options editorima
+TODO 95) [OPEN]   Definirat nacit na koji ce se predavat resourceBundle editorima
+TODO 96) [OPEN]   Implementirat to dvoje
+TODO 97) [OPEN]   Naravit test koji ce testirat kak se ponasa serverski dio pri multithreadingu
+TODO 98) [OPEN]   Modificirat ProjectContainer tako da baca iznimku pri nekim metodama
+TODO 99) [OPEN]   Napravit cache tako da stvarno cacheira stvari
+TODO 100) [OPEN]  Napravit Options editor (onako kako to izgleda kod firefoxa)
+TODO 101) [OPEN]  Dobro definirat sadrzaj svih globalnih i localnih file-ove
+TODO 102) [OPEN]  Implementirat zatvaranje cijelog appleta (tako da se sve spremi pri zatvaranju)
+TODO 103) [OPEN]  Rijesit problem pri otvaranju simulatora (tj. nacin otvaranja)
 
 
