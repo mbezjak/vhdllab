@@ -2,12 +2,15 @@ package hr.fer.zemris.vhdllab.applets.schema.wires;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.apache.commons.digester.Digester;
 
@@ -19,16 +22,21 @@ public abstract class AbstractSchemaWire {
 	// zica mora pamtiti imena komponenti i redni broj porta na koje je spojena.
 	// Nadalje, svaka zica moze biti spojena na vise od jedne komponente, i zato
 	// je tu i HashSet.
+	//
 	// Poznavajuci ime komponente i redni broj porta, moguce je jednoznacno odrediti
 	// koordinate porta.
+	//
 	// Takoder, ono sto svaka zica ima jest niz parova tocaka od kojih se sastoji. Izmedu
 	// tih parova vuku se crte, te se na taj nacin zica iscrtava. Iz tog razloga je tu i
 	// jedan ArrayList parova koordinata.
+	//
 	// Konacno, buduci da svaki wire reprezentira jedan signal, nuzno je da wire ima i jedinstveno ime.
 	// Za to se brine dolje navedena static hashmapa, koja pamti dosad iskoristena imena.
 	// I na kraju - serijalizacija, treba dodati podrsku za pohranu zice u obliku stringa,
 	// i, obratno, rekonstrukciju njenih svojstava na temelju stringa.
-	protected class Connection {
+	//
+	// Svaka zica se moze i sama iscrtavati pozivom metode draw.
+	public class Connection {
 		public String componentInstanceName;
 		public int portIndex;
 		
@@ -44,8 +52,8 @@ public abstract class AbstractSchemaWire {
 		}
 	}
 	
-	public HashSet<Connection> connections;
-	public ArrayList<SPair<Point>> wireLines;
+	protected HashSet<Connection> connections;
+	protected HashSet<SPair<Point>> wireLines;
 	
 	private String wireName;
 	public String getWireName() {
@@ -62,6 +70,23 @@ public abstract class AbstractSchemaWire {
 	static protected HashSet<String> nameSet;
 	static {
 		nameSet = new HashSet<String>();
+	}
+	
+	// KONSTRUKTORI
+	
+	public AbstractSchemaWire(String wireName) {
+		super();
+		this.wireName = wireName;
+		connections = new HashSet<Connection>();
+		wireLines = new HashSet<SPair<Point>>();
+	}
+	
+	// ISCRTAVANJE
+	
+	public void draw(SchemaDrawingAdapter adapter) {
+		for (SPair<Point> par : wireLines) {
+			adapter.drawLine(par.first.x, par.first.y, par.second.x, par.second.y);
+		}
 	}
 	
 	
@@ -99,8 +124,11 @@ public abstract class AbstractSchemaWire {
 		String [] wireArr = wireStr.split("#");
 		for (String s : wireArr) {
 			String [] sf = s.split("$");
-			SPair<Point> par = new SPair(new Point(Integer.parseInt(sf[0]), Integer.parseInt(sf[1])),
-					new Point(Integer.parseInt(sf[2]), Integer.parseInt(sf[3])));
+			SPair<Point> par = new SPair<Point>(
+					new Point(Integer.parseInt(sf[0]), Integer.parseInt(sf[1])),
+					new Point(Integer.parseInt(sf[2]), Integer.parseInt(sf[3]))
+					);
+			wireLines.add(par);
 		}
 	}
 	
@@ -153,4 +181,117 @@ public abstract class AbstractSchemaWire {
 	
 	protected abstract String serializeSpecific();
 	protected abstract boolean deserializeSpecific(String serial);
+	
+	// Ovo dalje je za upravljanje kolekcijama wireLines i connections
+	
+	
+	public boolean add_Connections(Connection arg0) {
+		return connections.add(arg0);
+	}
+	public boolean addAll_Connections(Collection<? extends Connection> arg0) {
+		return connections.addAll(arg0);
+	}
+	public void clear_Connections() {
+		connections.clear();
+	}
+	public Object clone_Connections() {
+		return connections.clone();
+	}
+	public boolean contains_Connections(Object arg0) {
+		return connections.contains(arg0);
+	}
+	public boolean containsAll_Connections(Collection<?> arg0) {
+		return connections.containsAll(arg0);
+	}
+	public boolean equals_Connections(Object arg0) {
+		return connections.equals(arg0);
+	}
+	public int hashCode_Connections() {
+		return connections.hashCode();
+	}
+	public boolean isEmpty_Connections() {
+		return connections.isEmpty();
+	}
+	public Iterator<Connection> iterator_Connections() {
+		return connections.iterator();
+	}
+	public boolean remove_Connections(Object arg0) {
+		return connections.remove(arg0);
+	}
+	public boolean removeAll_Connections(Collection<?> arg0) {
+		return connections.removeAll(arg0);
+	}
+	public boolean retainAll_Connections(Collection<?> arg0) {
+		return connections.retainAll(arg0);
+	}
+	public int size_Connections() {
+		return connections.size();
+	}
+	public Object[] _Connections() {
+		return connections.toArray();
+	}
+	public <T> T[] toArray_Connections(T[] arg0) {
+		return connections.toArray(arg0);
+	}
+	public String toString_Connections() {
+		return connections.toString();
+	}
+	
+	
+	public boolean add_WireLines(SPair<Point> arg0) {
+		return wireLines.add(arg0);
+	}
+	public boolean add_WireLines(Point p1, Point p2) {
+		return add_WireLines(new SPair<Point>(p1, p2));
+	}
+	public boolean addAll_WireLines(Collection<? extends SPair<Point>> arg0) {
+		return wireLines.addAll(arg0);
+	}
+	public void clear_WireLines() {
+		wireLines.clear();
+	}
+	public Object clone_WireLines() {
+		return wireLines.clone();
+	}
+	public boolean contains_WireLines(Object arg0) {
+		return wireLines.contains(arg0);
+	}
+	public boolean containsAll_WireLines(Collection<?> arg0) {
+		return wireLines.containsAll(arg0);
+	}
+	public boolean equals_WireLines(Object arg0) {
+		return wireLines.equals(arg0);
+	}
+	public int hashCode_WireLines() {
+		return wireLines.hashCode();
+	}
+	public boolean isEmpty_WireLines() {
+		return wireLines.isEmpty();
+	}
+	public Iterator<SPair<Point>> iterator_WireLines() {
+		return wireLines.iterator();
+	}
+	public boolean remove_WireLines(Object arg0) {
+		return wireLines.remove(arg0);
+	}
+	public boolean removeAll_WireLines(Collection<?> arg0) {
+		return wireLines.removeAll(arg0);
+	}
+	public boolean retainAll_WireLines(Collection<?> arg0) {
+		return wireLines.retainAll(arg0);
+	}
+	public int size_WireLines() {
+		return wireLines.size();
+	}
+	public Object[] toArray_WireLines() {
+		return wireLines.toArray();
+	}
+	public <T> T[] toArray_WireLines(T[] arg0) {
+		return wireLines.toArray(arg0);
+	}
+	public String toString_WireLines() {
+		return wireLines.toString();
+	}
+	
+	
 }

@@ -13,6 +13,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingCanvas;
+import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 
 import javax.swing.JFrame;
 
@@ -70,13 +71,15 @@ public class PrivremenaProbnaKlasa {
 			System.out.println(s);
 		}
 		
+		SimpleSchemaWire wire = new SimpleSchemaWire("Moja zica");
+		wire.add_WireLines(new Point(5, 5), new Point(10, 10));
+		
 		String s = muxi.serializeComponent();
 		AbstractSchemaComponent compi = null;
 		try {
 			compi = ComponentFactory.getSchemaComponent("MUX2^nNA1", s);
 			canvas.addComponent(compi, new Point(50, 80));
 		} catch (ComponentFactoryException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		

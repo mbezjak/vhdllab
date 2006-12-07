@@ -55,7 +55,6 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 			this.pComponentInstanceName.val = name;
 			instanceNameSet.add(name);
 		}
-		
 	}
 	
 	protected AbstractSchemaPort.PortOrientation smjer;

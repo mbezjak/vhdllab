@@ -1,6 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema.wires;
 
 public class SimpleSchemaWire extends AbstractSchemaWire {
+	
+
+	public SimpleSchemaWire(String wireName) {
+		super(wireName);
+	}
 
 	@Override
 	protected String serializeSpecific() {
