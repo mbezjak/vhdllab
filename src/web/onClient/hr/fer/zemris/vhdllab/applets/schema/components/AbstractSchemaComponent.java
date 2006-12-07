@@ -39,7 +39,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		pComponentName.val = name;
 	}
 	
-	static HashSet<String> instanceNameSet;
+	protected static HashSet<String> instanceNameSet;
 	protected Ptr<Object> pComponentInstanceName;
 	public String getComponentInstanceName() {
 		return (String)pComponentInstanceName.val;
@@ -219,7 +219,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 			adapter.drawCursorPoint(p.x, p.y);
 		}
 		adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
-		adapter.drawString((String) pComponentInstanceName.val, 0, 0);
+		adapter.drawString((String) pComponentInstanceName.val, 0, 1);
 	}
 	
 	protected abstract boolean deserializeComponentSpecific(String serial);
@@ -230,7 +230,6 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		try {
 			setComponentInstanceName(ime);
 		} catch (SchemaComponentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		setSmjerWithInt(ori);

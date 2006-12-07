@@ -177,7 +177,12 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 		// ne koristiti xml ovdje!!
 		String [] sfield = serial.split("#");
 		
-		setBrojSelUlaza(Integer.parseInt(sfield[1]));
+		try {
+			setBrojSelUlaza(Integer.parseInt(sfield[1]));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
 		
 		return true;
 	}

@@ -37,8 +37,8 @@ public class PrivremenaProbnaKlasa {
 		JFrame frame2 = new JFrame();
 		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame2.pack();
-		frame2.setSize(450, 350);
-		frame2.setLocation(400, 100);
+		frame2.setSize(550, 350);
+		frame2.setLocation(300, 100);
 		frame2.setVisible(true);
 		
 		SchemaDrawingCanvas canvas = new SchemaDrawingCanvas(new SchemaColorProvider());

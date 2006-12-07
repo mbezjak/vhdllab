@@ -15,7 +15,8 @@ import javax.swing.JTextField;
 
 public class Sklop_AND extends AbstractSchemaComponent {
 	private final static int RAZMAK_IZMEDU_PORTOVA = 5;
-	private final static int SIRINA_AND_VRATA = 9;
+	private final static int SIRINA_AND_VRATA = 15;
+	private final static int ODMAK_OD_RUBA = 2;
 	
 	private Integer brojUlaza;
 	
@@ -66,6 +67,23 @@ public class Sklop_AND extends AbstractSchemaComponent {
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
 		super.draw(adapter);
+		
+		// draw wires to ports
+		int w = getComponentWidth();
+		int h = getComponentHeight();
+		adapter.drawLine(w / 2, h / 2, w, h / 2);
+		for (int i = 0; i < getBrojUlaza(); i++) {
+			adapter.drawLine(0, (i + 1) * RAZMAK_IZMEDU_PORTOVA, w / 2, (i + 1) * RAZMAK_IZMEDU_PORTOVA);
+		}
+		
+		// draw component
+		int diameter = (getComponentHeight() - 2 * ODMAK_OD_RUBA);
+		adapter.fillRect(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 - ODMAK_OD_RUBA + 1, getComponentHeight() - ODMAK_OD_RUBA * 2);
+		adapter.fillOvalSegment((getComponentWidth() - diameter) / 2, (getComponentHeight() - diameter) / 2, diameter, diameter, -90, 180);
+		adapter.drawLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA);
+		adapter.drawLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, ODMAK_OD_RUBA);
+		adapter.drawLine(ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, getComponentHeight() - ODMAK_OD_RUBA);
+		adapter.drawOvalSegment((getComponentWidth() - diameter) / 2, (getComponentHeight() - diameter) / 2, diameter, diameter, -90, 180);
 	}
 
 	/**
@@ -134,14 +152,21 @@ public class Sklop_AND extends AbstractSchemaComponent {
 
 	@Override
 	protected boolean deserializeComponentSpecific(String serial) {
-		// TODO Auto-generated method stub
-		return false;
+		String [] sfield = serial.split("#");
+		
+		try {
+			setBrojUlaza(Integer.parseInt(sfield[1]));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 
 	@Override
 	protected String serializeComponentSpecific() {
-		// TODO Auto-generated method stub
-		return null;
+		return "#" + brojUlaza + "#";
 	}
 	
 }

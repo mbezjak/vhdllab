@@ -159,6 +159,34 @@ public class SchemaDrawingAdapter {
 				virtualToReal(virtualYRadius));
 	}
 	
+	public void drawOvalSegment(int virtXCenter, int virtYCenter, int virtXRadius, int virtYRadius, int arcStart, int arcAdded) {
+		if (gph == null) return;
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		
+		graph.setColor(colors.ADAPTER_LINE);
+
+		graph.drawArc(virtualToRealRelativeX(virtXCenter),
+				virtualToRealRelativeY(virtYCenter),
+				virtualToReal(virtXRadius),
+				virtualToReal(virtYRadius),
+				arcStart, arcAdded);
+	}
+	
+	public void fillOvalSegment(int virtXCenter, int virtYCenter, int virtXRadius, int virtYRadius, int arcStart, int arcAdded) {
+		if (gph == null) return;
+		
+		Graphics2D graph = (Graphics2D) gph.getGraphics();
+		
+		graph.setColor(Color.WHITE);
+
+		graph.fillArc(virtualToRealRelativeX(virtXCenter),
+				virtualToRealRelativeY(virtYCenter),
+				virtualToReal(virtXRadius),
+				virtualToReal(virtYRadius),
+				arcStart, arcAdded);
+	}
+	
 	
 	/**
 	 * Crta pravokutnik sa relativnim koordinatama s obzirom na pocetne koordinate (virtualX, virtualY).
@@ -178,6 +206,20 @@ public class SchemaDrawingAdapter {
 		graph.setColor(colors.ADAPTER_LINE);
 		
 		graph.drawRect(virtualToRealRelativeX(virtualX1),
+					   virtualToRealRelativeY(virtualY1),
+					   virtualToReal(virtualWid),
+					   virtualToReal(virtualHgt));
+	}
+	
+	public void fillRect(int virtualX1, int virtualY1, int virtualWid, int virtualHgt) {
+		if (gph == null) return;
+		
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		
+		graph.setColor(Color.WHITE);
+		
+		graph.fillRect(virtualToRealRelativeX(virtualX1),
 					   virtualToRealRelativeY(virtualY1),
 					   virtualToReal(virtualWid),
 					   virtualToReal(virtualHgt));

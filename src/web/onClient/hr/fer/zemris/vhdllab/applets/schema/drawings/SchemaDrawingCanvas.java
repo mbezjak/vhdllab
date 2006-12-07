@@ -26,7 +26,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	
 	private Dimension dimension = null;
 	private SchemaDrawingGrid grid = null;
-	private ArrayList<SchemaDrawingComponentEnvelope> components = null;	
+	private ArrayList<SchemaDrawingComponentEnvelope> components = null;
 	private SchemaColorProvider colors = null;	
 	private BufferedImage canvas = null;
 	private SchemaDrawingCanvasListeners listeners = null;
