@@ -5,6 +5,7 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -12,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.JComponent;
 
@@ -27,6 +29,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	private Dimension dimension = null;
 	private SchemaDrawingGrid grid = null;
 	private ArrayList<SchemaDrawingComponentEnvelope> components = null;
+	private ArrayList<AbstractSchemaWire> wires = null;
 	private SchemaColorProvider colors = null;	
 	private BufferedImage canvas = null;
 	private SchemaDrawingCanvasListeners listeners = null;
@@ -34,6 +37,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	
 	public SchemaDrawingCanvas(SchemaColorProvider colors) {
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
+		wires = new ArrayList<AbstractSchemaWire>();
 		this.colors=colors;		
 		initGUI();
 		initListeners();
@@ -81,8 +85,17 @@ public class SchemaDrawingCanvas extends JComponent {
 		this.repaint();
 	}
 	
+	public void addWire(AbstractSchemaWire wire) {
+		wires.add(wire);
+		this.repaint();
+	}
+	
 	public ArrayList<SchemaDrawingComponentEnvelope> getComponentList(){
 		return this.components;
+	}
+	
+	public ArrayList<AbstractSchemaWire> getWireList() {
+		return this.wires;
 	}
 
 	/**
@@ -125,6 +138,10 @@ public class SchemaDrawingCanvas extends JComponent {
 			Point p = envelope.getPosition();
 			adapter.setStartingCoordinates(p.x, p.y);
 			envelope.getComponent().draw(adapter);
+		}
+		
+		for (AbstractSchemaWire wire : wires) {
+			wire.draw(adapter);
 		}
 		
 		//iscrtaj BufferedImage

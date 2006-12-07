@@ -227,7 +227,7 @@ public abstract class AbstractSchemaWire {
 	public int size_Connections() {
 		return connections.size();
 	}
-	public Object[] _Connections() {
+	public Object[] toArray_Connections() {
 		return connections.toArray();
 	}
 	public <T> T[] toArray_Connections(T[] arg0) {
