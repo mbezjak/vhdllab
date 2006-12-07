@@ -5,8 +5,6 @@ import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
-import hr.fer.zemris.vhdllab.vhdl.Message;
-import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
 import java.util.Properties;
@@ -44,17 +42,7 @@ public class DoMethodRunSimulation implements RegisteredMethod {
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		resProp.setProperty(MethodConstants.PROP_RESULT_STATUS,String.valueOf(result.getStatus()));
-		resProp.setProperty(MethodConstants.PROP_RESULT_IS_SUCCESSFUL,String.valueOf(result.isSuccessful() ? 1 : 0));
-		resProp.setProperty(MethodConstants.PROP_RESULT_WAVEFORM, result.getWaveform());
-		int i = 1;
-		for(Message msg : result.getMessages()) {
-			if(!(msg instanceof SimulationMessage)) {
-				return errorProperties(method,MethodConstants.SE_TYPE_SAFETY, "Found non-simulation type message for simulation result!");
-			}
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+"."+i, msg.getMessageText());
-			i++;
-		}
+		resProp.setProperty(MethodConstants.PROP_RESULT_SIMULATION_SERIALIZATION, result.serialize());
 		return resProp;
 	}
 	

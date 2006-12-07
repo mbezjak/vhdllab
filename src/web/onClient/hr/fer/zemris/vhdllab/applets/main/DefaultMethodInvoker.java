@@ -4,12 +4,8 @@ import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
-import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
-import hr.fer.zemris.vhdllab.vhdl.ErrorCompilationMessage;
-import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
-import hr.fer.zemris.vhdllab.vhdl.WarningCompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
@@ -40,32 +36,9 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		
 		Properties resProperties = initiateAjax(reqProperties);
 		
-		String resultStatus = resProperties.getProperty(MethodConstants.PROP_RESULT_STATUS);
-		Integer status = Integer.parseInt(resultStatus);
-		String resultIsSuccessful = resProperties.getProperty(MethodConstants.PROP_RESULT_IS_SUCCESSFUL);
-		boolean isSuccessful = resultIsSuccessful.equals("1") ? true : false;
-		List<CompilationMessage> messages = new ArrayList<CompilationMessage>();
-		int i = 1;
-		while(true) {
-			String messageType = resProperties.getProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+"."+i);
-			if(messageType == null) break;
-			String messageText = resProperties.getProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+"."+i);
-			String messageColumn = resProperties.getProperty(MethodConstants.PROP_RESULT_MESSAGE_COLUMN+"."+i);
-			String messageRow = resProperties.getProperty(MethodConstants.PROP_RESULT_MESSAGE_ROW+"."+i);
-			int column = Integer.parseInt(messageColumn);
-			int row = Integer.parseInt(messageRow);
-			
-			if(messageType.equals(MethodConstants.PROP_MESSAGE_TYPE_COMPILATION)) {
-				messages.add(new CompilationMessage(messageText, row, column));
-			} else if(messageType.equals(MethodConstants.PROP_MESSAGE_TYPE_COMPILATION_ERROR)) {
-				messages.add(new ErrorCompilationMessage(messageText, row, column));
-			} else {
-				messages.add(new WarningCompilationMessage(messageText, row, column));
-			}
-			i++;
-		}
-		
-		return new CompilationResult(status, isSuccessful, messages);
+		String data = resProperties.getProperty(MethodConstants.PROP_RESULT_COMPILATION_SERIALIZATION);
+		CompilationResult result = CompilationResult.deserialize(data);
+		return result;
 	}
 
 	public Long createFile(Long projectId, String name, String type) throws AjaxException {
@@ -637,21 +610,9 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		
 		Properties resProperties = initiateAjax(reqProperties);
 		
-		String resultStatus = resProperties.getProperty(MethodConstants.PROP_RESULT_STATUS);
-		Integer status = Integer.parseInt(resultStatus);
-		String resultIsSuccessful = resProperties.getProperty(MethodConstants.PROP_RESULT_IS_SUCCESSFUL);
-		boolean isSuccessful = resultIsSuccessful.equals("1") ? true : false;
-		String waveform = resProperties.getProperty(MethodConstants.PROP_RESULT_WAVEFORM);
-		List<SimulationMessage> messages = new ArrayList<SimulationMessage>();
-		int i = 1;
-		while(true) {
-			String messageText = resProperties.getProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+"."+i);
-			if(messageText == null) break;
-			messages.add(new SimulationMessage(messageText));
-			i++;
-		}
-		
-		return new SimulationResult(status, isSuccessful, messages, waveform);
+		String data = resProperties.getProperty(MethodConstants.PROP_RESULT_SIMULATION_SERIALIZATION);
+		SimulationResult result = SimulationResult.deserialize(data);
+		return result;
 	}
 
 	public void saveFile(Long fileId, String content) throws AjaxException {

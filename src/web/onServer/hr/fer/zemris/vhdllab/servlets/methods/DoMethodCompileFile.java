@@ -5,11 +5,7 @@ import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
-import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
-import hr.fer.zemris.vhdllab.vhdl.ErrorCompilationMessage;
-import hr.fer.zemris.vhdllab.vhdl.Message;
-import hr.fer.zemris.vhdllab.vhdl.WarningCompilationMessage;
 
 import java.util.Properties;
 
@@ -46,25 +42,7 @@ public class DoMethodCompileFile implements RegisteredMethod {
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_METHOD,method);
 		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		resProp.setProperty(MethodConstants.PROP_RESULT_STATUS,String.valueOf(result.getStatus()));
-		resProp.setProperty(MethodConstants.PROP_RESULT_IS_SUCCESSFUL,String.valueOf(result.isSuccessful() ? 1 : 0));
-		int i = 1;
-		for(Message msg : result.getMessages()) {
-			if(msg instanceof CompilationMessage){
-				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+"."+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION);
-			} else if(msg instanceof WarningCompilationMessage) {
-				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+"."+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION_WARNING);
-			} else if(msg instanceof ErrorCompilationMessage) {
-				resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TYPE+"."+i, MethodConstants.PROP_MESSAGE_TYPE_COMPILATION_ERROR);
-			} else {
-				return errorProperties(method,MethodConstants.SE_TYPE_SAFETY, "Found non-compilation type message for compilation result!");
-			}
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_TEXT+"."+i, msg.getMessageText());
-			CompilationMessage cmsg = (CompilationMessage) msg;
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_ROW+"."+i, String.valueOf(cmsg.getRow()));
-			resProp.setProperty(MethodConstants.PROP_RESULT_MESSAGE_COLUMN+"."+i, String.valueOf(cmsg.getColumn()));
-			i++;
-		}
+		resProp.setProperty(MethodConstants.PROP_RESULT_COMPILATION_SERIALIZATION, result.serialize());
 		return resProp;
 	}
 	

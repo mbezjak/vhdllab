@@ -124,10 +124,6 @@ public class MethodConstants {
 	 * A status error value for status property when method arguments are faulty.
 	 */
 	public static final String SE_METHOD_ARGUMENT_ERROR = "4";
-	/**
-	 * A status error value for status property when there are type inconsistencies.
-	 */
-	public static final String SE_TYPE_SAFETY = "5";
 	
 	/**
 	 * A status error value for status property when file was not found.
@@ -251,56 +247,14 @@ public class MethodConstants {
 	public static final String PROP_PROJECT_EXISTS = "project.exists";
 	
 	/**
-	 * A result status property.
+	 * A compilation result serialization property.
 	 */
-	public static final String PROP_RESULT_STATUS = "result.status";
+	public static final String PROP_RESULT_COMPILATION_SERIALIZATION = "result.compilation.serialization";
 	/**
-	 * A result isSuccessful property.
+	 * A simulation result serialization property.
 	 */
-	public static final String PROP_RESULT_IS_SUCCESSFUL = "result.is.successful";
-	/**
-	 * A simulation result waveform property.
-	 */
-	public static final String PROP_RESULT_WAVEFORM = "result.waveform";
-	/**
-	 * A result message text property.
-	 */
-	public static final String PROP_RESULT_MESSAGE_TEXT = "result.message.text";
-	/**
-	 * A compilation result message row property.
-	 */
-	public static final String PROP_RESULT_MESSAGE_ROW = "result.message.row";
-	/**
-	 * A compilation result message column property.
-	 */
-	public static final String PROP_RESULT_MESSAGE_COLUMN = "result.message.column";
-	/**
-	 * A result message type property. Type can be:
-	 * <ul>
-	 * <li>simulation
-	 * <li>compilation
-	 * <li>compilation warning
-	 * <li>compilation error
-	 * </ul>
-	 */
-	public static final String PROP_RESULT_MESSAGE_TYPE = "result.message.type";
-	/**
-	 * A value for result message type property. Value is simulation. This is normaly
-	 * unnecessary.
-	 */
-	public static final String PROP_MESSAGE_TYPE_SIMULATION = "message.type.simulation";
-	/**
-	 * A value for result message type property. Value is compilation.
-	 */
-	public static final String PROP_MESSAGE_TYPE_COMPILATION = "message.type.compilation";
-	/**
-	 * A value for result message type property. Value is compilation warning.
-	 */
-	public static final String PROP_MESSAGE_TYPE_COMPILATION_WARNING = "message.type.compilation.warning";
-	/**
-	 * A value for result message type property. Value is compilation error.
-	 */
-	public static final String PROP_MESSAGE_TYPE_COMPILATION_ERROR = "message.type.compilation.error";
+	public static final String PROP_RESULT_SIMULATION_SERIALIZATION = "result.simulation.serialization";
+
 	/**
 	 * A value for generate VHDL property.
 	 */
@@ -1565,35 +1519,8 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_RESULT_STATUS} - containing result status
-	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>1</code> if compilation
-	 *     finished successfully; <code>0</code> otherwise
-	 * <li>list of {@link #PROP_RESULT_MESSAGE_TEXT} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.[number] (number is positive and starts at 1)
-	 * <li>list of {@link #PROP_RESULT_MESSAGE_ROW} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_ROW}.[number] (number is positive and starts at 1)
-	 * <li>list of {@link #PROP_RESULT_MESSAGE_COLUMN} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_COLUMN}.[number] (number is positive and starts at 1)
-	 * <li>list of {@link #PROP_RESULT_MESSAGE_TYPE} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_TYPE}.[number] (number is positive and starts at 1)
-	 * </ul>
-	 * <p>
-	 * Example of response <code>Properties</code>:
-	 * <blockquote>
-	 * {@link #PROP_METHOD} = compile.file<br/>
-	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
-	 * {@link #PROP_RESULT_STATUS} = result_status<br/>
-	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = 0<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TEXT}.1 = message_text_1<br/>
-	 * {@link #PROP_RESULT_MESSAGE_ROW}.1 = message_row_1<br/>
-	 * {@link #PROP_RESULT_MESSAGE_COLUMN}.1 = message_column_1<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TYPE}.1 = message_type_1<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TEXT}.2 = message_text_2<br/>
-	 * {@link #PROP_RESULT_MESSAGE_ROW}.2 = message_row_2<br/>
-	 * {@link #PROP_RESULT_MESSAGE_COLUMN}.2 = message_column_2<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TYPE}.2 = message_type_2<br/>
-	 * ...
-	 * </blockquote>
+	 * <li>{@link #PROP_RESULT_COMPILATION_SERIALIZATION} - containing serialized
+	 * 			compilation result (deserialize using static method in CompilationResult class
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -1609,7 +1536,6 @@ public class MethodConstants {
 	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
 	 * <li>{@link #SE_CAN_NOT_GET_COMPILATION_RESULT} - if can not get compilation result for a file with {@link #PROP_FILE_ID}
-	 * <li>{@link #SE_TYPE_SAFETY} - if found non-compilation type message in compilation result
 	 * </ul>
 	 */
 	public static final String MTD_COMPILE_FILE = "compile.file";
@@ -1624,25 +1550,8 @@ public class MethodConstants {
 	 * <ul>
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
-	 * <li>{@link #PROP_RESULT_STATUS} - containing result status
-	 * <li>{@link #PROP_RESULT_IS_SUCCESSFUL} - containing <code>1</code> if compilation
-	 *     finished successfully; <code>0</code> otherwise
-	 * <li>{@link #PROP_RESULT_WAVEFORM} - containing result waveform
-	 * <li>list of {@link #PROP_RESULT_MESSAGE_TEXT} written in following format:
-	 *     {@link #PROP_RESULT_MESSAGE_TEXT}.[number] (number is positive and starts at 1)
-	 * </ul>
-	 * <p>
-	 * Example of response <code>Properties</code>:
-	 * <blockquote>
-	 * {@link #PROP_METHOD} = run.simulation<br/>
-	 * {@link #PROP_STATUS} = {@link #STATUS_OK}<br/>
-	 * {@link #PROP_RESULT_STATUS} = result_status<br/>
-	 * {@link #PROP_RESULT_IS_SUCCESSFUL} = 0<br/>
-	 * {@link #PROP_RESULT_WAVEFORM} = result_waveform<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TEXT}.1 = message_text_1<br/>
-	 * {@link #PROP_RESULT_MESSAGE_TEXT}.2 = message_text_2<br/>
-	 * ...
-	 * </blockquote>
+	 * <li>{@link #PROP_RESULT_SIMULATION_SERIALIZATION} - containing serialized
+	 * 			simulation result (deserialize using static method in SimulationResult class
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -1658,7 +1567,6 @@ public class MethodConstants {
 	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
 	 * <li>{@link #SE_CAN_NOT_GET_SIMULATION_RESULT} - if can not get simulation result for a file with {@link #PROP_FILE_ID}
-	 * <li>{@link #SE_TYPE_SAFETY} - if found non-simulation type message in simulation result
 	 * </ul>
 	 */
 	public static final String MTD_RUN_SIMULATION = "run.simulation";

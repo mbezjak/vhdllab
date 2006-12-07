@@ -122,7 +122,8 @@ public class Extractor {
 	 * work.
 	 * 
 	 * @param source VHDL source contaning some module.
-	 * @return CircuitInterface representation in form of {@linkplain CircuitInterface} interface.
+	 * @return CircuitInterface representation in form of
+	 * 			{@linkplain hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface} interface.
 	 */
 	public static CircuitInterface extractCircuitInterface(String source) {
 		Entity entity = Extractor.extractInterface(source);
