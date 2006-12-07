@@ -148,8 +148,9 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 						getComponentHeight() / 2));
 			} else {
 				if (port.getTipPorta() == "SEL") {
-					port.setCoordinate(new Point((int) (1.f * SIRINA_MUX2nNA1 / (brojSelUlaza + 2) * (sel + 1)),
-							RAZMAK_IZMEDU_PORTOVA * (portlist.size() - brojSelUlaza)));
+					port.setCoordinate(new Point(
+									(int) (ODMAK_OD_RUBA + 1.f * ((SIRINA_MUX2nNA1 - 2 * ODMAK_OD_RUBA) / (brojSelUlaza + 1) * (sel + 1))),
+									RAZMAK_IZMEDU_PORTOVA * (portlist.size() - brojSelUlaza)));
 					sel++;
 				} else {
 					port.setCoordinate(new Point(0, (pod + 1) * RAZMAK_IZMEDU_PORTOVA));

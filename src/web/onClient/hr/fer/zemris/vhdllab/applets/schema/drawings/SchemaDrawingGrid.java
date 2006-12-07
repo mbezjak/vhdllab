@@ -66,19 +66,19 @@ public class SchemaDrawingGrid {
 	 *
 	 */
 	private void DrawGrid(){
-		int x = graphics.getWidth();
-		int y = graphics.getHeight();
+		int x = graphics.getWidth()+50;
+		int y = graphics.getHeight()+50;
 		Dimension size=new Dimension(x/gridSpace,y/gridSpace);
 		Graphics2D g=(Graphics2D) graphics.getGraphics();
 		
 		g.setColor(colors.GRID_LINES);
-		
 		
 		for(int i=0;i<size.getWidth();i++){
 			g.drawLine(i*gridSpace,0,i*gridSpace,y);	
 		}
 		
 		for(int j=0;j<size.getHeight();j++){
+			g.drawLine(0,j*gridSpace,x,j*gridSpace);
 			g.drawLine(0,j*gridSpace,x,j*gridSpace);
 		}
 	}

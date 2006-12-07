@@ -4,24 +4,37 @@ import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractComponentProperty;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.plaf.SplitPaneUI;
+import javax.swing.plaf.basic.BasicBorders;
 
-public class PropertyPanel extends JPanel implements KeyListener {
+public class SPropertyPanel extends JPanel implements KeyListener {
 	//Ptr<Object> pSklop;
 	AbstractSchemaComponent sklop;
 	
-	public PropertyPanel(AbstractSchemaComponent sklop) {
+	public SPropertyPanel(AbstractSchemaComponent sklop) {
+		this.setMinimumSize(new Dimension(200, 150));
+		this.setPreferredSize(new Dimension(200, 150));
+		this.setBorder(BasicBorders.getInternalFrameBorder());
 		this.sklop = sklop;
-		generatePanel(sklop.getPropertyList());
+		if (sklop != null) generatePanel(sklop.getPropertyList());
 	}
 	
-	public void generatePanel(ComponentPropertyList cplist) {
+	public void setLinkToComponent(AbstractSchemaComponent sklop) {
+		this.sklop = sklop;
+		this.removeAll();
+		if (sklop != null) generatePanel(sklop.getPropertyList());
+	}
+	
+	private void generatePanel(ComponentPropertyList cplist) {
 		this.removeAll();
 		if (cplist != null) {
 			int i = cplist.size();

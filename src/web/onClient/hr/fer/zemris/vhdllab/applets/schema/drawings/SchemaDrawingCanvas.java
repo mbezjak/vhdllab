@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	 */
 	private void initGUI() {
 		if(dimension==null){
-			dimension=new Dimension(1000,500);//ovo je samo privremeno...
+			dimension=new Dimension(1280, 800);//ovo je samo privremeno...
 		}
 		
 		this.canvas=new BufferedImage(dimension.width,dimension.height,BufferedImage.TYPE_3BYTE_BGR);
@@ -148,6 +149,12 @@ public class SchemaDrawingCanvas extends JComponent {
 		gr.drawImage(canvas,0,0,canvas.getWidth(),canvas.getHeight(),null);
 		
 	}
+
+	@Override
+	public void repaint(Rectangle arg0) {
+		super.repaint(arg0);
+		grid.repaint();
+	}
 	
-		
+	
 }
