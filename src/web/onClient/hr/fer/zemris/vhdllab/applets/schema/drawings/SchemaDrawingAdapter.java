@@ -85,6 +85,10 @@ public class SchemaDrawingAdapter {
 		this.virtualGridFactor = 10; //fiksno samo da radi...trebat ce jos dosta mozganja...
 	}
 	
+	public void setVirtualGridFactor(double vgf) {
+		this.virtualGridFactor = vgf;
+	}
+	
 	/**
 	 * Postavljanje pocetnih koordinata u svrhu stvaranja novog "virtualnog" koordinatnog sustava za olaksano iscrtavanje komponente.
 	 * <h3><b>Vazno!</b></h3> realX i realY bi trebale bit "poravnate" sa gridom.

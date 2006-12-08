@@ -59,6 +59,10 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	
 	protected AbstractSchemaPort.PortOrientation smjer;
 	
+	private boolean isDrawingPorts;
+	private boolean isDrawingFrame;
+	private boolean isDrawingName;
+	
 	static {
 		instanceNameSet = new HashSet();
 	}
@@ -105,6 +109,9 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		pComponentInstanceName = new Ptr<Object>();
 		pComponentInstanceName.val = new String(instanceName);
 		smjer = AbstractSchemaPort.PortOrientation.WEST;
+		isDrawingPorts = true;
+		isDrawingFrame = true;
+		isDrawingName = true;
 	}
 
 	/**
@@ -213,12 +220,12 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 * Inace se nece iscrtati tockice koje oznacavaju same portove.
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
-		for (AbstractSchemaPort port : portlist) {
+		if (isDrawingPorts) for (AbstractSchemaPort port : portlist) {
 			Point p = port.getCoordinate();
 			adapter.drawCursorPoint(p.x, p.y);
 		}
-		adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
-		adapter.drawString((String) pComponentInstanceName.val, 0, 1);
+		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
+		if (isDrawingName) adapter.drawString((String) pComponentInstanceName.val, 0, 1);
 	}
 	
 	protected abstract boolean deserializeComponentSpecific(String serial);
@@ -283,6 +290,24 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		builder.append("</komponenta>");
 		
 		return builder.toString();
+	}
+	public boolean isDrawingPorts() {
+		return isDrawingPorts;
+	}
+	public void setDrawingPorts(boolean isDrawingPorts) {
+		this.isDrawingPorts = isDrawingPorts;
+	}
+	public boolean isDrawingFrame() {
+		return isDrawingFrame;
+	}
+	public void setDrawingFrame(boolean isDrawingFrame) {
+		this.isDrawingFrame = isDrawingFrame;
+	}
+	public boolean isDrawingName() {
+		return isDrawingName;
+	}
+	public void setDrawingName(boolean isDrawingName) {
+		this.isDrawingName = isDrawingName;
 	}
 	
 	
