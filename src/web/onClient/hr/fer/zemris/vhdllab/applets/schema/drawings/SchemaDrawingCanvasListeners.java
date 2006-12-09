@@ -19,7 +19,7 @@ public class SchemaDrawingCanvasListeners implements MouseListener,
 	}
 	
 	public void mouseClicked(MouseEvent e) {
-		
+		canvas.getMainframe().handleClickOnSchema(e);
 	}
 
 	public void mousePressed(MouseEvent e) {

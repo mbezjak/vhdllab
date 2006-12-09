@@ -37,11 +37,11 @@ public class SchemaDrawingAdapter {
 	 * Pretvara virtualne koordinate u realne koordinate.
 	 */
 	@SuppressWarnings("unused")
-	private float virtualToReal(double virtualPoint){
+	public float virtualToReal(double virtualPoint){
 		return (float) (virtualPoint*virtualGridFactor);
 	}
 	
-	private int virtualToReal(int virtualPoint){
+	public int virtualToReal(int virtualPoint){
 		return (int)(virtualPoint*virtualGridFactor);
 	}
 	
@@ -50,7 +50,7 @@ public class SchemaDrawingAdapter {
 	 * @param virtualPoint Virtualna tocka
 	 * @return Realnu tocku pomaknutu za relanu udaljenost virtualX
 	 */
-	private int virtualToRealRelativeX(int virtualPoint){
+	public int virtualToRealRelativeX(int virtualPoint){
 		return (int)((virtualPoint+virtualX)*virtualGridFactor);
 	}
 	
@@ -59,7 +59,7 @@ public class SchemaDrawingAdapter {
 	 * @param virtualPoint Virtualna tocka
 	 * @return Realnu tocku pomaknutu za relanu udaljenost virtualY
 	 */
-	private int virtualToRealRelativeY(int virtualPoint){
+	public int virtualToRealRelativeY(int virtualPoint){
 		return (int)((virtualPoint+virtualY)*virtualGridFactor);
 	}
 	
@@ -68,7 +68,7 @@ public class SchemaDrawingAdapter {
 	 * @param realPoint Stvarna (pixel) koordinata
 	 * @return Virtualnu koordinatu
 	 */
-	private int realToVirtual(int realPoint){
+	public int realToVirtual(int realPoint){
 		return (int) Math.round(realPoint/virtualGridFactor);
 	}
 	

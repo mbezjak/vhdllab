@@ -14,8 +14,8 @@ import java.awt.Point;
 import javax.swing.JTextField;
 
 public class Sklop_AND extends AbstractSchemaComponent {
-	private final static int RAZMAK_IZMEDU_PORTOVA = 5;
-	private final static int SIRINA_AND_VRATA = 15;
+	private final static int RAZMAK_IZMEDU_PORTOVA = 4;
+	private final static int SIRINA_AND_VRATA = 14;
 	private final static int ODMAK_OD_RUBA = 2;
 	
 	private Integer brojUlaza;
@@ -77,13 +77,14 @@ public class Sklop_AND extends AbstractSchemaComponent {
 		}
 		
 		// draw component
-		int diameter = (getComponentHeight() - 2 * ODMAK_OD_RUBA);
+		int diameterY = (getComponentHeight() - 2 * ODMAK_OD_RUBA);
+		int diameterX = (getComponentWidth() - 2 * ODMAK_OD_RUBA);
 		adapter.fillRect(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 - ODMAK_OD_RUBA + 1, getComponentHeight() - ODMAK_OD_RUBA * 2);
-		adapter.fillOvalSegment((getComponentWidth() - diameter) / 2, (getComponentHeight() - diameter) / 2, diameter, diameter, -90, 180);
+		adapter.fillOvalSegment((getComponentWidth() - diameterX) / 2, (getComponentHeight() - diameterY) / 2, diameterX, diameterY, -90, 180);
 		adapter.drawLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA);
 		adapter.drawLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, ODMAK_OD_RUBA);
 		adapter.drawLine(ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, getComponentHeight() - ODMAK_OD_RUBA);
-		adapter.drawOvalSegment((getComponentWidth() - diameter) / 2, (getComponentHeight() - diameter) / 2, diameter, diameter, -90, 180);
+		adapter.drawOvalSegment((getComponentWidth() - diameterX) / 2, (getComponentHeight() - diameterY) / 2, diameterX, diameterY, -90, 180);
 	}
 
 	/**

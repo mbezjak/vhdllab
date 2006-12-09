@@ -68,7 +68,7 @@ public class PrivremenaProbnaKlasa {
 		AbstractSchemaComponent compi = null;
 		try {
 			compi = ComponentFactory.getSchemaComponent("MUX2^nNA1", s);
-			mframe.drawingCanvas.addComponent(compi, new Point(50, 80));
+			mframe.drawingCanvas.addComponent(compi, new Point(15, 15));
 		} catch (ComponentFactoryException e1) {
 			e1.printStackTrace();
 		}
@@ -78,11 +78,11 @@ public class PrivremenaProbnaKlasa {
 		
 		while (true) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				break;
 			}
-			//System.out.println(muxi.getBrojPodUlaza() + " " + muxi.getSmjer());
+			//System.out.println();
 		}
 	}
 	

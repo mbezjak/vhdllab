@@ -166,10 +166,26 @@ public class SchemaDrawingCanvas extends JComponent {
 		grid.repaint();
 	}
 	
+	public SchemaMainFrame getMainframe() {
+		return mainframe;
+	}
+
+	public void setMainframe(SchemaMainFrame mainframe) {
+		this.mainframe = mainframe;
+	}
+
 	public AbstractSchemaComponent getSchemaComponentAt(int x, int y) {
+		SchemaDrawingAdapter adapter = grid.getAdapter();
+		//x = adapter.realToVirtual(x);
+		//y = adapter.realToVirtual(y);
+		System.out.println("Klik na virtualnu koordinatu " + x + ", " + y);
 		for (SchemaDrawingComponentEnvelope env : components) {
-			if (x >= (env.getPosition().x) && x <= (env.getPosition().x + env.getComponent().getComponentWidth())
-					&& y >= (env.getPosition().y) && y <= (env.getPosition().y + env.getComponent().getComponentHeight()))
+			int xr = env.getPosition().x + adapter.virtualToReal(env.getComponent().getComponentWidth());
+			int yr = env.getPosition().y + adapter.virtualToReal(env.getComponent().getComponentHeight());
+			System.out.println("Ovaj sklop jeste na koord'nati: " + env.getPosition().x + ", " + env.getPosition().y);
+			System.out.println("Ovaj sklop idje do koord'nate: " + xr + ", " + yr);
+			if (x >= env.getPosition().x && x <= xr
+					&& y >= env.getPosition().y && y <= yr)
 			{
 				return env.getComponent();
 			}

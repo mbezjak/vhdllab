@@ -32,6 +32,7 @@ public class SPropertyPanel extends JPanel implements KeyListener {
 		this.sklop = sklop;
 		this.removeAll();
 		if (sklop != null) generatePanel(sklop.getPropertyList());
+		else System.out.println("Nisi kliknuo ni na kakvu komponentu.");
 	}
 	
 	private void generatePanel(ComponentPropertyList cplist) {
