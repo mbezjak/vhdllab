@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.dummy;
 
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -78,19 +79,24 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public FileContent getInitialFileContent() {
-		String projectName;
-		String fileName;
-		do {
-			projectName = JOptionPane.showInputDialog(this,"Enter project name:");
-		} while(!container.existsProject(projectName));
-		
-		do {
-			fileName = JOptionPane.showInputDialog(this, "Enter file name:");
-		} while(container.existsFile(projectName, fileName));
+		try {
+			String projectName;
+			String fileName;
+			do {
+				projectName = JOptionPane.showInputDialog(this,"Enter project name:");
+			} while(!container.existsProject(projectName));
+			
+			do {
+				fileName = JOptionPane.showInputDialog(this, "Enter file name:");
+			} while(container.existsFile(projectName, fileName));
 
-		String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();
-		FileContent initialContent = new FileContent(projectName, fileName, data);
-		return initialContent;
+			String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();
+			FileContent initialContent = new FileContent(projectName, fileName, data);
+			return initialContent;
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public String getFileName() {

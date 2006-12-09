@@ -2,34 +2,31 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
+import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-
 	public class Cache {
 
 		private MethodInvoker invoker;
 
 		private String ownerId;
-		private String options;
 		private List<String> filetypes;
 		private Properties editors;
 		
 		private Map<String, Long> identifiers;
 		
 		public Cache(MethodInvoker invoker, String ownerId) {
-			if(invoker == null) throw new NullPointerException("Method invoker can not be null");
+			if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
+			if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
 			identifiers = new HashMap<String, Long>();
 			filetypes = loadType("filetypes.properties");
 			editors = loadEditors("editors.properties");
@@ -37,213 +34,136 @@ import javax.swing.JOptionPane;
 			this.ownerId = ownerId;
 		}
 		
-		public List<String> findProjects() {
-			List<Long> projects;
-			try {
-				projects = invoker.findProjectsByUser(ownerId);
-			} catch (AjaxException e) {
-				return null;
-			}
-			
+		public List<String> findProjects() throws UniformAppletException {
+			List<Long> projectIdentifiers = invoker.findProjectsByUser(ownerId);
+
 			List<String> projectNames = new ArrayList<String>();
-			for(Long id : projects) {
-				String name;
-				try {
-					name = invoker.loadProjectName(id);
-				} catch (AjaxException e) {
-					return null;
-				}
+			for(Long id : projectIdentifiers) {
+				String name = invoker.loadProjectName(id);
 				cacheItem(name, id);
 				projectNames.add(name);
 			}
 			return projectNames;
 		}
 		
-		public List<String> findFilesByProject(String projectName) {
-			Long projectId = getIdentifierFor(projectName);
-			List<Long> files;
-			try {
-				files =  invoker.findFileByProject(projectId);
-			} catch (AjaxException e) {
-				return null;
-			}
+		public List<String> findFilesByProject(String projectName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			Long projectIdentifier = getIdentifierFor(projectName);
+			if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
+			List<Long> fileIdentifiers =  invoker.findFileByProject(projectIdentifier);
 			
 			List<String> fileNames = new ArrayList<String>();
-			for(Long id : files) {
-				String name;
-				try {
-					name = invoker.loadFileName(id);
-				} catch (AjaxException e) {
-					return null;
-				}
+			for(Long id : fileIdentifiers) {
+				String name = invoker.loadFileName(id);
 				cacheItem(projectName, name, id);
 				fileNames.add(name);
 			}
 			return fileNames;
 		}
 		
-		public boolean existsFile(String projectName, String fileName) {
-			Long projectId = getIdentifierFor(projectName);
-			if(projectId == null) return false;
-			boolean exists;
-			try {
-				exists = invoker.existsFile(projectId, fileName);
-			} catch (AjaxException e) {
-				return false;
-			}
-			return exists;
+		public boolean existsFile(String projectName, String fileName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			Long projectIdentifier = getIdentifierFor(projectName);
+			if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
+			return invoker.existsFile(projectIdentifier, fileName);
 		}
 		
-		public boolean existsProject(String projectName) {
-			Long projectId = getIdentifierFor(projectName);
-			if(projectId == null) return false;
-			boolean exists;
-			try {
-				exists = invoker.existsProject(projectId);
-			} catch (AjaxException e) {
-				return false;
-			}
-			return exists;
+		public boolean existsProject(String projectName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			Long projectIdentifier = getIdentifierFor(projectName);
+			if(projectIdentifier == null) return false;
+			return invoker.existsProject(projectIdentifier);
 		}
 		
-		public void createProject(String projectName) {
-			Long id;
-			try {
-				id = invoker.createProject(projectName, ownerId);
-			} catch (AjaxException e) {
-				return;
-			}
-			cacheItem(projectName, id);
+		public void createProject(String projectName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			Long identifier = invoker.createProject(projectName, ownerId);
+			cacheItem(projectName, identifier);
 		}
 
-		public void createFile(String projectName, String fileName, String type) {
-			Long projectId = getIdentifierFor(projectName);
-			Long id;
-			try {
-				id = invoker.createFile(projectId, fileName, type);
-			} catch (AjaxException e) {
-				return;
-			}
-			cacheItem(projectName, fileName, id);
+		public void createFile(String projectName, String fileName, String type) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			if(type == null) throw new NullPointerException("File type can not be null.");
+			Long projectIdentifier = getIdentifierFor(projectName);
+			if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
+			Long fileIdentifier = invoker.createFile(projectIdentifier, fileName, type);
+			cacheItem(projectName, fileName, fileIdentifier);
 		}
 		
-		public void saveFile(String projectName, String fileName, String content) {
-			Long id = getIdentifierFor(projectName, fileName);
-			try {
-				invoker.saveFile(id, content);
-			} catch (AjaxException e) {
-				return;
-			}
+		public void saveFile(String projectName, String fileName, String content) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			if(content == null) throw new NullPointerException("File content can not be null.");
+			Long fileIdentifier = getIdentifierFor(projectName, fileName);
+			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			invoker.saveFile(fileIdentifier, content);
 		}
 		
-		public String loadFileContent(String projectName, String fileName) {
-			Long id = getIdentifierFor(projectName, fileName);
-			String content = null;
-			try {
-				content = invoker.loadFileContent(id);
-			} catch (AjaxException e) {
-				content = null;
-			}
-			return content;
+		public String loadFileContent(String projectName, String fileName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			Long fileIdentifier = getIdentifierFor(projectName, fileName);
+			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			return invoker.loadFileContent(fileIdentifier);
 		}
 		
-		public String loadFileType(String projectName, String fileName) {
-			Long id = getIdentifierFor(projectName, fileName);
-			String type = null;
-			try {
-				type = invoker.loadFileType(id);
-			} catch (AjaxException e) {
-				type = null;
-			}
-			return type;
+		public String loadFileType(String projectName, String fileName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			Long fileIdentifier = getIdentifierFor(projectName, fileName);
+			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			return invoker.loadFileType(fileIdentifier);
 		}
 		
-		public SimulationResult runSimulation(String projectName, String fileName) {
-			Long id = getIdentifierFor(projectName, fileName);
-			SimulationResult result = null;
-			try {
-				result = invoker.runSimulation(id);
-			} catch (AjaxException e) {
-				result = null;
-			}
-			return result;
+		public CompilationResult compile(String projectName, String fileName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			Long fileIdentifier = getIdentifierFor(projectName, fileName);
+			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			return invoker.compileFile(fileIdentifier);
+		}
+
+		public SimulationResult runSimulation(String projectName, String fileName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			Long fileIdentifier = getIdentifierFor(projectName, fileName);
+			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			return invoker.runSimulation(fileIdentifier);
 		}
 		
-		public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) {
-			Long id = getIdentifierFor(projectName, fileName);
-			CircuitInterface ci = null;
-			try {
-				ci = invoker.extractCircuitInterface(id);
-			} catch (AjaxException e) {
-				ci = null;
-			}
-			return ci;
+		public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			Long fileIdentifier = getIdentifierFor(projectName, fileName);
+			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			return invoker.extractCircuitInterface(fileIdentifier);
 		}
 		
-		public IEditor getEditor(String type) {
+		public IEditor getEditor(String type) throws UniformAppletException {
+			if(type == null) throw new NullPointerException("Type can not be null.");
 			String editorName = editors.getProperty(type);
+			if(editorName == null) throw new IllegalArgumentException("Can not find editor for given type.");
 			IEditor editor = null;
 			try {
 				editor = (IEditor)Class.forName(editorName).newInstance();
 			} catch (Exception e) {
-				StringWriter sw = new StringWriter();
-			    PrintWriter pw = new PrintWriter(sw);
-			    e.printStackTrace(pw);
-				JOptionPane.showMessageDialog(null, sw.toString());
-				editor = null;
+				throw new UniformAppletException("Can not instantiate editor.");
 			}
 			return editor;
 		}
 		
-		public String getOptions() {
-			if(options != null) return options;
+		public String getOptions(String type) throws UniformAppletException {
+			List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
 			
-			List<Long> userFiles;
-			try {
-				userFiles = invoker.findUserFilesByOwner(ownerId);
-			} catch (AjaxException e) {
-				setServerDefaultOptionsAsLocal();
-				try {
-					userFiles = invoker.findUserFilesByOwner(ownerId);
-				} catch (AjaxException e1) {
-					return null;
-				}
-			}
-			
-			StringBuilder sb = new StringBuilder(200);
 			for(Long id : userFiles) {
-				String content;
-				try {
-					content = invoker.loadUserFileContent(id);
-				} catch (AjaxException e) {
-					return null;
-				}
-				sb.append(content).append("\n");
-			}
-			
-			options = sb.toString();
-			return options;
-		}
-		
-		public void setServerDefaultOptionsAsLocal() {
-			for(String type : filetypes) {
-				List<Long> globalFiles;
-				try {
-					globalFiles = invoker.findGlobalFilesByType(type);
-				} catch (AjaxException e1) {
-					continue;
-				}
-				for(Long id : globalFiles) {
-					try {
-						String content = invoker.loadGlobalFileContent(id);
-						String globalType = invoker.loadGlobalFileType(id);
-						Long userFileId = invoker.createUserFile(ownerId, globalType);
-						invoker.saveUserFile(userFileId, content);
-					} catch (AjaxException e) {
-						continue;
-					}
+				String userFileType = invoker.loadUserFileType(id);
+				if(type.equals(userFileType)) {
+					return invoker.loadUserFileContent(id);
 				}
 			}
+			return "";
 		}
 		
 		private List<String> loadType(String file) {
@@ -258,7 +178,7 @@ import javax.swing.JOptionPane;
 					types.add(p.getProperty(key));
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				return null;
 			} finally {
 				try {in.close();} catch (Throwable ignore) {}
 			}
@@ -272,7 +192,7 @@ import javax.swing.JOptionPane;
 			try {
 				p.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				return null;
 			} finally {
 				try {in.close();} catch (Throwable ignore) {}
 			}
@@ -289,28 +209,22 @@ import javax.swing.JOptionPane;
 			return identifiers.get(key);
 		}
 		
+		private void cacheItem(String projectName, Long projectIdentifier) {
+			String key = makeKey(projectName);
+			identifiers.put(key, projectIdentifier);
+		}
+		
+		private void cacheItem(String projectName, String fileName, Long fileIdentifier) {
+			String key = makeKey(projectName, fileName);
+			identifiers.put(key, fileIdentifier);
+		}
+		
 		private String makeKey(String str) {
 			return str;
 		}
 
 		private String makeKey(String str1, String str2) {
 			return str1 + "|" + str2;
-		}
-
-		private void cacheItem(String projectName, Long projectIdentifier) {
-			if(projectName == null | projectIdentifier == null) {
-				throw new NullPointerException("Project name and identifier can not be null.");
-			}
-			String key = makeKey(projectName);
-			identifiers.put(key, projectIdentifier);
-		}
-		
-		private void cacheItem(String projectName, String fileName, Long fileIdentifier) {
-			if(projectName == null | fileName == null | fileIdentifier == null) {
-				throw new NullPointerException("Project name, file name and identifier can not be null.");
-			}
-			String key = makeKey(projectName, fileName);
-			identifiers.put(key, fileIdentifier);
 		}
 
 	}

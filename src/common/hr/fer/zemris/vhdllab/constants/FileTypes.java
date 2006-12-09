@@ -10,5 +10,6 @@ public class FileTypes {
 	
 	public static final String FT_THEME = "theme";
 	public static final String FT_APPLET = "applet";
+	public static final String FT_COMMON = "common";
 	
 }

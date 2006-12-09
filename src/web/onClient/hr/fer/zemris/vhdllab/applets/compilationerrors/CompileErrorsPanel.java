@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.compilationerrors;
 
 
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -256,9 +257,13 @@ public class CompileErrorsPanel extends JPanel
         if (matcher.matches())
         {
         	// TODO mozda jos eventualna provjera postoji li uopce otvoren tab
-        	projectContainer.openEditor(fileContent.getProjectName(), matcher.group(1), true, false);
-        	Integer temp = Integer.valueOf(matcher.group(2));
-        	editor.highlightLine(temp.intValue());
+        	try {
+				projectContainer.openEditor(fileContent.getProjectName(), matcher.group(1), true, false);
+				Integer temp = Integer.valueOf(matcher.group(2));
+				editor.highlightLine(temp.intValue());
+			} catch (UniformAppletException e) {
+				e.printStackTrace();
+			}
         }
     }
 

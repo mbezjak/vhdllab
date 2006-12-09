@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.dummy;
 
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Explorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
@@ -35,7 +36,9 @@ public class ProjectExplorer extends JPanel implements Explorer {
 				if(e.getClickCount() == 2) {
 					JList l = (JList) e.getSource();
 					int index = l.locationToIndex(e.getPoint());
-					container.openEditor(projectName, (String)model.getElementAt(index), true, false);
+					try {
+						container.openEditor(projectName, (String)model.getElementAt(index), true, false);
+					} catch (UniformAppletException ex) {}
 				}
 			}
 

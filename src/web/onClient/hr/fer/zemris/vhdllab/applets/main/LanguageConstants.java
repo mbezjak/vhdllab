@@ -13,15 +13,6 @@ public class LanguageConstants {
 	 * Application resources for main applet.
 	 */
 	public static final String APPLICATION_RESOURCES_NAME_MAIN = "Client_Main_ApplicationResources";
-	/**
-	 * English language.
-	 */
-	public static final String LANGUAGE_EN = "en";
-	/**
-	 * Croatian language.
-	 */
-	public static final String LANGUAGE_HR = "hr";
-
 
 	/**
 	 * Append this keyword to existing key to get its mnemonic value.
@@ -167,4 +158,30 @@ public class LanguageConstants {
 	 * Key for StatusBar when applet loading is completed.
 	 */
 	public static final String STATUSBAR_LOAD_COMPLETE = "statusbar.load.complete";
+	/**
+	 * Key for StatusBar when language setting in user file is not found.
+	 */
+	public static final String STATUSBAR_LANGUAGE_SETTING_NOT_FOUND = "statusbar.language.setting.not.found";
+	/**
+	 * Key for StatusBar when file could not be saved.
+	 */
+	public static final String STATUSBAR_CANT_SAVE_FILE = "statusbar.cant.save.file";
+	/**
+	 * Key for StatusBar when project could not be saved.
+	 */
+	public static final String STATUSBAR_CANT_SAVE_PROJECT = "statusbar.cant.save.project";
+	/**
+	 * Key for StatusBar when file could not be created.
+	 */
+	public static final String STATUSBAR_CANT_CREATE_FILE = "statusbar.cant.create.file";
+	/**
+	 * Key for StatusBar when project could not be created.
+	 */
+	public static final String STATUSBAR_CANT_CREATE_PROJECT = "statusbar.cant.create.project";
+	/**
+	 * Key for StatusBar when file content could not be loaded.
+	 */
+	public static final String STATUSBAR_CANT_LOAD_FILE_CONTENT = "statusbar.cant.load.file.content";
+
+
 }

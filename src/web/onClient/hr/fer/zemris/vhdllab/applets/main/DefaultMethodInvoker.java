@@ -27,7 +27,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		this.ajax = ajax;
 	}
 	
-	public CompilationResult compileFile(Long fileId) throws AjaxException {
+	public CompilationResult compileFile(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_COMPILE_FILE;
@@ -41,7 +41,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return result;
 	}
 
-	public Long createFile(Long projectId, String name, String type) throws AjaxException {
+	public Long createFile(Long projectId, String name, String type) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		if(name == null) throw new NullPointerException("File name can not be null.");
 		if(type == null) throw new NullPointerException("File type can not be null.");
@@ -59,7 +59,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return id;
 	}
 
-	public Long createGlobalFile(String name, String type) throws AjaxException {
+	public Long createGlobalFile(String name, String type) throws UniformAppletException {
 		if(name == null) throw new NullPointerException("Global file name can not be null.");
 		if(type == null) throw new NullPointerException("Global file type can not be null.");
 		Properties reqProperties = new Properties();
@@ -75,7 +75,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return id;
 	}
 
-	public Long createProject(String name, String ownerId) throws AjaxException {
+	public Long createProject(String name, String ownerId) throws UniformAppletException {
 		if(name == null) throw new NullPointerException("Project name can not be null.");
 		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
 		Properties reqProperties = new Properties();
@@ -91,7 +91,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return id;
 	}
 
-	public Long createUserFile(String ownerId, String type) throws AjaxException {
+	public Long createUserFile(String ownerId, String type) throws UniformAppletException {
 		if(ownerId == null) throw new NullPointerException("User owner identifier can not be null.");
 		if(type == null) throw new NullPointerException("User file type can not be null.");
 		Properties reqProperties = new Properties();
@@ -107,7 +107,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return id;
 	}
 
-	public void deleteFile(Long fileId) throws AjaxException {
+	public void deleteFile(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_FILE;
@@ -117,7 +117,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void deleteGlobalFile(Long fileId) throws AjaxException {
+	public void deleteGlobalFile(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_GLOBAL_FILE;
@@ -127,7 +127,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void deleteProject(Long projectId) throws AjaxException {
+	public void deleteProject(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_PROJECT;
@@ -137,7 +137,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void deleteUserFile(Long fileId) throws AjaxException {
+	public void deleteUserFile(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_USER_FILE;
@@ -147,7 +147,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public boolean existsFile(Long projectId, String name) throws AjaxException {
+	public boolean existsFile(Long projectId, String name) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		if(name == null) throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
@@ -162,7 +162,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return exists.equals("1");
 	}
 
-	public boolean existsGlobalFile(Long fileId) throws AjaxException {
+	public boolean existsGlobalFile(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_GLOBAL_FILE;
@@ -175,7 +175,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return exists.equals("1");
 	}
 
-	public boolean existsProject(Long projectId) throws AjaxException {
+	public boolean existsProject(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_PROJECT;
@@ -188,7 +188,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return exists.equals("1");
 	}
 
-	public boolean existsUserFile(Long fileId) throws AjaxException {
+	public boolean existsUserFile(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_USER_FILE;
@@ -201,7 +201,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return exists.equals("1");
 	}
 
-	public CircuitInterface extractCircuitInterface(Long fileId) throws AjaxException {
+	public CircuitInterface extractCircuitInterface(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXTRACT_CIRCUIT_INTERFACE;
@@ -243,7 +243,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return new DefaultCircuitInterface(ciEntityName, ports);
 	}
 
-	public List<Long> extractDependencies(Long fileId) throws AjaxException {
+	public List<Long> extractDependencies(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXTRACT_DEPENDENCIES;
@@ -263,7 +263,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return files;
 	}
 
-	public Long findFileByName(Long projectId, String name) throws AjaxException {
+	public Long findFileByName(Long projectId, String name) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		if(name == null) throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
@@ -279,7 +279,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return id;
 	}
 	
-	public List<Long> findFileByProject(Long projectId) throws AjaxException {
+	public List<Long> findFileByProject(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_FILES_BY_PROJECT;
@@ -299,7 +299,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return files;
 	}
 
-	public List<Long> findGlobalFilesByType(String type) throws AjaxException {
+	public List<Long> findGlobalFilesByType(String type) throws UniformAppletException {
 		if(type == null) throw new NullPointerException("Global file type can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_GLOBAL_FILES_BY_TYPE;
@@ -319,7 +319,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return files;
 	}
 
-	public List<Long> findProjectsByUser(String ownerId) throws AjaxException {
+	public List<Long> findProjectsByUser(String ownerId) throws UniformAppletException {
 		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_PROJECTS_BY_USER;
@@ -339,7 +339,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return projects;
 	}
 
-	public List<Long> findUserFilesByOwner(String ownerId) throws AjaxException {
+	public List<Long> findUserFilesByOwner(String ownerId) throws UniformAppletException {
 		if(ownerId == null) throw new NullPointerException("User file owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_USER_FILES_BY_USER;
@@ -359,7 +359,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return files;
 	}
 
-	public String generateVHDL(Long fileId) throws AjaxException {
+	public String generateVHDL(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_GENERATE_VHDL;
@@ -372,7 +372,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return vhdl;
 	}
 
-	public String loadFileContent(Long fileId) throws AjaxException {
+	public String loadFileContent(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_CONTENT;
@@ -385,7 +385,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return content;
 	}
 
-	public String loadFileName(Long fileId) throws AjaxException {
+	public String loadFileName(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_NAME;
@@ -398,7 +398,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return name;
 	}
 
-	public Long loadFileProjectId(Long fileId) throws AjaxException {
+	public Long loadFileProjectId(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_BELONGS_TO_PROJECT_ID;
@@ -413,7 +413,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 
 	}
 
-	public String loadFileType(Long fileId) throws AjaxException {
+	public String loadFileType(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_TYPE;
@@ -426,7 +426,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return type;
 	}
 
-	public String loadGlobalFileContent(Long fileId) throws AjaxException {
+	public String loadGlobalFileContent(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_GLOBAL_FILE_CONTENT;
@@ -439,7 +439,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return content;
 	}
 
-	public String loadGlobalFileName(Long fileId) throws AjaxException {
+	public String loadGlobalFileName(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_GLOBAL_FILE_NAME;
@@ -452,7 +452,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return name;
 	}
 
-	public String loadGlobalFileType(Long fileId) throws AjaxException {
+	public String loadGlobalFileType(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_GLOBAL_FILE_TYPE;
@@ -465,7 +465,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return type;
 	}
 
-	public List<Long> loadProjectFilesId(Long projectId) throws AjaxException {
+	public List<Long> loadProjectFilesId(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_FILES_ID;
@@ -485,7 +485,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return files;
 	}
 
-	public String loadProjectName(Long projectId) throws AjaxException {
+	public String loadProjectName(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_NAME;
@@ -498,7 +498,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return name;
 	}
 
-	public Long loadProjectNumberFiles(Long projectId) throws AjaxException {
+	public Long loadProjectNumberFiles(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_NMBR_FILES;
@@ -512,7 +512,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return count;
 	}
 
-	public String loadProjectOwnerId(Long projectId) throws AjaxException {
+	public String loadProjectOwnerId(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_OWNER_ID;
@@ -525,7 +525,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return ownerId;
 	}
 
-	public String loadUserFileContent(Long fileId) throws AjaxException {
+	public String loadUserFileContent(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_CONTENT;
@@ -535,11 +535,10 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		Properties resProperties = initiateAjax(reqProperties);
 		
 		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
-		if(content.equals("")) throw new AjaxException("No data in local file.");
 		return content;
 	}
 
-	public String loadUserFileOwnerId(Long fileId) throws AjaxException {
+	public String loadUserFileOwnerId(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_OWNER_ID;
@@ -552,7 +551,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return ownerId;
 	}
 
-	public String loadUserFileType(Long fileId) throws AjaxException {
+	public String loadUserFileType(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_TYPE;
@@ -565,7 +564,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return type;
 	}
 
-	public void renameFile(Long fileId, String name) throws AjaxException {
+	public void renameFile(Long fileId, String name) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		if(name == null) throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
@@ -577,7 +576,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void renameGlobalFile(Long fileId, String name) throws AjaxException {
+	public void renameGlobalFile(Long fileId, String name) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
 		if(name == null) throw new NullPointerException("Global file name can not be null.");
 		Properties reqProperties = new Properties();
@@ -589,7 +588,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void renameProject(Long projectId, String name) throws AjaxException {
+	public void renameProject(Long projectId, String name) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		if(name == null) throw new NullPointerException("Project name can not be null.");
 		Properties reqProperties = new Properties();
@@ -601,7 +600,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public SimulationResult runSimulation(Long fileId) throws AjaxException {
+	public SimulationResult runSimulation(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_RUN_SIMULATION;
@@ -615,7 +614,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		return result;
 	}
 
-	public void saveFile(Long fileId, String content) throws AjaxException {
+	public void saveFile(Long fileId, String content) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		if(content == null) throw new NullPointerException("File content can not be null.");
 		Properties reqProperties = new Properties();
@@ -627,7 +626,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void saveGlobalFile(Long fileId, String content) throws AjaxException {
+	public void saveGlobalFile(Long fileId, String content) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
 		if(content == null) throw new NullPointerException("Global file content can not be null.");
 		Properties reqProperties = new Properties();
@@ -639,7 +638,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void saveProject(Long projectId, List<Long> filesId) throws AjaxException {
+	public void saveProject(Long projectId, List<Long> filesId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		if(filesId == null) throw new NullPointerException("List of File identifiers can not be null.");
 		if(filesId.size() == 0) throw new IllegalArgumentException("List of File identifiers can not be empty.");
@@ -656,7 +655,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	public void saveUserFile(Long fileId, String content) throws AjaxException {
+	public void saveUserFile(Long fileId, String content) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		if(content == null) throw new NullPointerException("User file content can not be null.");
 		Properties reqProperties = new Properties();
@@ -668,18 +667,24 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		initiateAjax(reqProperties);
 	}
 
-	private Properties initiateAjax(Properties p) throws AjaxException {
+	private Properties initiateAjax(Properties p) throws UniformAppletException {
 		String method = p.getProperty(MethodConstants.PROP_METHOD, "");
-		String response = ajax.initiateSynchronousCall(XMLUtil.serializeProperties(p));
-		Properties resProperties = XMLUtil.deserializeProperties(response);
+		String response = null;
+		try {
+			response = ajax.initiateSynchronousCall(XMLUtil.serializeProperties(p));
+		} catch (Exception e) {
+			response = null;
+		}
+		if(response == null) throw new UniformAppletException("AJAX connection problems");
 		
+		Properties resProperties = XMLUtil.deserializeProperties(response);
 		String resMethod = resProperties.getProperty(MethodConstants.PROP_METHOD, "");
 		if(!method.equalsIgnoreCase(resMethod)) {
-			throw new AjaxException("Wrong method returned! Expected: " + method + " but was: " + resMethod);
+			throw new UniformAppletException("Wrong method returned! Expected: " + method + " but was: " + resMethod);
 		}
 		String status = resProperties.getProperty(MethodConstants.PROP_STATUS, "");
 		if(!status.equals(MethodConstants.STATUS_OK)) {
-			throw new AjaxException(resProperties.getProperty(MethodConstants.PROP_STATUS_CONTENT, "Unknown error."));
+			throw new UniformAppletException(resProperties.getProperty(MethodConstants.PROP_STATUS_CONTENT, "Unknown error."));
 		}
 		
 		return resProperties;

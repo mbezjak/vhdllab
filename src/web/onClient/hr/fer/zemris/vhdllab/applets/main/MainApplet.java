@@ -13,6 +13,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
+import hr.fer.zemris.vhdllab.constants.UserFileConstants;
+import hr.fer.zemris.vhdllab.file.options.Options;
+import hr.fer.zemris.vhdllab.file.options.SingleOption;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -81,7 +84,6 @@ public class MainApplet
 	@Override
 	public void init() {
 		super.init();
-		//String userId = "mb41232";
 		String userId = this.getParameter("userId");
 		if(userId==null) {
 			// We must not enter this! If we do, applet should refuse to run!
@@ -98,25 +100,40 @@ public class MainApplet
 		//**********************
 		
 		cache = new Cache(invoker, userId);
+		String language = null;
+		try {
+			String data = cache.getOptions(FileTypes.FT_COMMON);
+			Options options = Options.deserialize(data);
+			SingleOption commonOptions = options.getOption(UserFileConstants.COMMON_LANGUAGE);
+			language = commonOptions.getSelectedValue();
+		} catch (UniformAppletException e) {
+			statusBar.setText(bundle.getString(LanguageConstants.STATUSBAR_LANGUAGE_SETTING_NOT_FOUND));
+			language = "en";
+		}
 		bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN,
-				LanguageConstants.LANGUAGE_EN, null);
+				language, null);
 		initGUI();
 		
 		//**********************
 		server.writeServerInitData();
 		//**********************
 		
-		List<String> projects = cache.findProjects();
-		for(String projectName : projects) {
-			projectExplorer.addProject(projectName);
-			List<String> files = cache.findFilesByProject(projectName);
-			for(String fileName : files) {
-				projectExplorer.addFile(projectName, fileName);
+		try {
+			List<String> projects = cache.findProjects();
+			for(String projectName : projects) {
+				projectExplorer.addProject(projectName);
+				List<String> files = cache.findFilesByProject(projectName);
+				for(String fileName : files) {
+					projectExplorer.addFile(projectName, fileName);
+				}
 			}
+			
+			String statusBarText = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
+			statusBar.setText(statusBarText);
+		} catch (UniformAppletException e) {
+			//TODO implement this
 		}
 		
-		String statusBarText = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-		statusBar.setText(statusBarText);
 	}
 	
 	/* (non-Javadoc)
@@ -337,7 +354,9 @@ public class MainApplet
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewFileInstance(FileTypes.FT_VHDLSOURCE);
+					try {
+						createNewFileInstance(FileTypes.FT_VHDLSOURCE);
+					} catch (UniformAppletException e1) {}
 				}
 			});
 			submenu.add(menuItem);
@@ -457,7 +476,9 @@ public class MainApplet
 			setMnemonicAndAccelerator(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					simulate(editorPane.getSelectedComponent());
+					try {
+						simulate(editorPane.getSelectedComponent());
+					} catch (UniformAppletException ex) {}
 				}
 			});
 			menu.add(menuItem);
@@ -556,7 +577,7 @@ public class MainApplet
 		}
 	}
 	
-	private void simulate(Component component) {
+	private void simulate(Component component) throws UniformAppletException {
 		if(component == null) return;
 		IEditor editor = (IEditor) component;
 		String projectName = editor.getProjectName();
@@ -577,7 +598,7 @@ public class MainApplet
 		openEditor(projectName, fileName+".sim", true, false);
 	}
 	
-	public List<String> getAllCircuits(String projectName) {
+	public List<String> getAllCircuits(String projectName) throws UniformAppletException {
 		List<String> fileNames = cache.findFilesByProject(projectName);
 		List<String> circuits = new ArrayList<String>();
 		for(String name : fileNames) {
@@ -589,12 +610,12 @@ public class MainApplet
 		return circuits;
 	}
 
-	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) {
+	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
 		return cache.getCircuitInterfaceFor(projectName, fileName);
 	}
 
-	public String getOptions() {
-		return cache.getOptions();
+	public String getOptions(String type) throws UniformAppletException {
+		return cache.getOptions(type);
 	}
 
 	public ResourceBundle getResourceBundle() {
@@ -612,7 +633,7 @@ public class MainApplet
 		return -1;
 	}
 	
-	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) {
+	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
 		String content = cache.loadFileContent(projectName, fileName);
 		FileContent fileContent = new FileContent(projectName, fileName, content);
 		int index = indexOfEditor(projectName, fileName);
@@ -646,15 +667,15 @@ public class MainApplet
 		}
 	}
 	
-	public boolean existsFile(String projectName, String fileName) {
+	public boolean existsFile(String projectName, String fileName) throws UniformAppletException {
 		return cache.existsFile(projectName, fileName);
 	}
 	
-	public boolean existsProject(String projectName) {
+	public boolean existsProject(String projectName) throws UniformAppletException {
 		return cache.existsProject(projectName);
 	}
 	
-	private void createNewFileInstance(String type) {
+	private void createNewFileInstance(String type) throws UniformAppletException {
 		// Initialization of a wizard
 		IWizard wizard = cache.getEditor(type).getWizard();
 		if(wizard == null) throw new NullPointerException("Wizard can not be null.");
@@ -672,7 +693,7 @@ public class MainApplet
 		openEditor(projectName, fileName, true, false);
 	}
 	
-	public IEditor getEditor(String projectName, String fileName) {
+	public IEditor getEditor(String projectName, String fileName) throws UniformAppletException {
 		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			openEditor(projectName, fileName, true, false);
@@ -688,8 +709,14 @@ public class MainApplet
 			String fileName = editor.getFileName();
 			String projectName = editor.getProjectName();
 			String content = editor.getData();
-			cache.saveFile(projectName, fileName, content);
-			resetEditorTitle(false, projectName, fileName);
+			try {
+				cache.saveFile(projectName, fileName, content);
+				resetEditorTitle(false, projectName, fileName);
+			} catch (UniformAppletException e) {
+				String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+				text = replacePlaceholders(text, new String[] {fileName});
+				statusBar.setText(text);
+			}
 		}
 	}
 
@@ -708,7 +735,7 @@ public class MainApplet
 			Object[] options = {yes, no, cancel};
 			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_SINGLE_RESOURCE_TITLE);
 			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_SINGLE_RESOURCE_MESSAGE);
-			message = message.replace("{0}", editor.getFileName());
+			message = replacePlaceholders(message, new String[] {editor.getFileName()});
 			
 			int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -716,7 +743,13 @@ public class MainApplet
 				String projectName = editor.getProjectName();
 				String fileName = editor.getFileName();
 				String data = editor.getData();
-				cache.saveFile(projectName, fileName, data);
+				try {
+					cache.saveFile(projectName, fileName, data);
+				} catch (UniformAppletException e) {
+					String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+					text = replacePlaceholders(text, new String[] {fileName});
+					statusBar.setText(text);
+				}
 			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
 				return;
 			}
@@ -747,7 +780,7 @@ public class MainApplet
 			Object[] options = {yes, no, cancel};
 			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_TITLE);
 			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE);
-			message = message.replace("{0}", messageRepresentation.toString());
+			message = replacePlaceholders(message, new String[] {messageRepresentation.toString()});
 	
 			int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -757,7 +790,13 @@ public class MainApplet
 					String projectName = editor.getProjectName();
 					String fileName = editor.getFileName();
 					String data = editor.getData();
-					cache.saveFile(projectName, fileName, data);
+					try {
+						cache.saveFile(projectName, fileName, data);
+					} catch (UniformAppletException e) {
+						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+						text = replacePlaceholders(text, new String[] {fileName});
+						statusBar.setText(text);
+					}
 				}
 			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
 				return;
@@ -795,8 +834,8 @@ public class MainApplet
 			Object[] options = {yes, no, cancel};
 			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_TITLE);
 			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE);
-			message = message.replace("{0}", messageRepresentation.toString());
-	
+			message = replacePlaceholders(message, new String[] {messageRepresentation.toString()});
+			
 			int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			
@@ -805,7 +844,13 @@ public class MainApplet
 					String projectName = editor.getProjectName();
 					String fileName = editor.getFileName();
 					String data = editor.getData();
-					cache.saveFile(projectName, fileName, data);
+					try {
+						cache.saveFile(projectName, fileName, data);
+					} catch (UniformAppletException e) {
+						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+						text = replacePlaceholders(text, new String[] {fileName});
+						statusBar.setText(text);
+					}
 				}
 			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
 				return;
@@ -814,6 +859,16 @@ public class MainApplet
 		for(Component c : toBeClosedComponents) {
 			closeEditor(c);
 		}
+	}
+	
+	private String replacePlaceholders(String message, String[] replacements) {
+		String replaced = message;
+		int i = 0;
+		for(String s : replacements) {
+			replaced = replaced.replace("{" + i + "}", s);
+			i++;
+		}
+		return replaced;
 	}
 
 	private class ServerInitData {
@@ -826,11 +881,23 @@ public class MainApplet
 			try {
 				AjaxMediator ajax = new DefaultAjaxMediator(MainApplet.this);
 				MethodInvoker invoker = new DefaultMethodInvoker(ajax);
-				Long fileId = invoker.createGlobalFile("applet", FileTypes.FT_APPLET);
-				invoker.saveGlobalFile(fileId, "a=2a\nb=22");
-				fileId = invoker.createGlobalFile("tema", FileTypes.FT_THEME);
-				invoker.saveGlobalFile(fileId, "neka = random\ntema=za testiranje");
-			} catch (AjaxException e) {
+				
+				Long fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_APPLET);
+				invoker.saveUserFile(fileId, "a=2a\nb=22");
+				fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_THEME);
+				invoker.saveUserFile(fileId, "neka = random\ntema=za testiranje");
+				
+				Long fileId2 = invoker.createUserFile("uid:id-not-set", FileTypes.FT_COMMON);
+				List<String> values = new ArrayList<String>();
+				values.add("en");
+				values.add("hr");
+				SingleOption o = new SingleOption("localization.language", "Language", "String", values, "en", "en");
+				List<SingleOption> options = new ArrayList<SingleOption>();
+				options.add(o);
+				Options opt = new Options();
+				opt.setOption(o);
+				invoker.saveUserFile(fileId2, opt.serialize());
+			} catch (UniformAppletException e) {
 				e.printStackTrace();
 			}
 		}
@@ -844,15 +911,6 @@ public class MainApplet
 				final String fileName2 = "File2";
 				final String fileType2 = FileTypes.FT_VHDLSOURCE;
 				final String fileContent2 = "some file content that should be displayed in writer";
-				/*final String fileName3 = "Simulator";
-				final String fileType3 = FileTypes.FT_SIMULATION;
-				InputStream in = this.getClass().getResourceAsStream("adder2.vcd");
-				StringBuffer out = new StringBuffer();
-			    byte[] b = new byte[14096];
-			    for (int n; (n = in.read(b)) != -1;) {
-			        out.append(new String(b, 0, n));
-			    }
-				final String fileContent3 = out.toString();*/
 				
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor("vhdl_source");
@@ -864,16 +922,13 @@ public class MainApplet
 				cache.createFile(projectName1, fileName2, fileType2);
 				cache.saveFile(projectName1, fileName2, fileContent2);
 
-				/*cache.createFile(projectName1, fileName3, fileType3);
-				cache.saveFile(projectName1, fileName3, fileContent3);*/
 				long end = System.currentTimeMillis();
 				
-				String infoData = editor.getData()+(start-end)+"ms\nLoaded Options:\n"+cache.getOptions();
+				String infoData = editor.getData()+(start-end)+"ms\nLoaded Options:\n"+cache.getOptions(FileTypes.FT_COMMON);
 				cache.saveFile(projectName1, fileName1, infoData);
 
 				openEditor(projectName1, fileName1, true, false);
 				openEditor(projectName1, fileName2, true, false);
-				//openEditor(projectName1, fileName3, true, false);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
