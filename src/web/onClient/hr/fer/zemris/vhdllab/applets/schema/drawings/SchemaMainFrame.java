@@ -6,6 +6,11 @@ import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JFrame;
 
@@ -34,7 +39,7 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	private void initUI() {
-		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider());
+		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
 		compbar = new SComponentBar();
 		propbar = new SPropertyBar();
 		this.add(compbar, BorderLayout.PAGE_START);

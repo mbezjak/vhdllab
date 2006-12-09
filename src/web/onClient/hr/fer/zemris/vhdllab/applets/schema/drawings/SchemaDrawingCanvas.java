@@ -36,9 +36,12 @@ public class SchemaDrawingCanvas extends JComponent {
 	private SchemaColorProvider colors = null;	
 	private BufferedImage canvas = null;
 	private SchemaDrawingCanvasListeners listeners = null;
+	private SchemaMainFrame mainframe = null;
+	
 	public Point mousePosition;
 	
-	public SchemaDrawingCanvas(SchemaColorProvider colors) {
+	public SchemaDrawingCanvas(SchemaColorProvider colors, SchemaMainFrame parent) {
+		mainframe = parent;
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
 		wires = new ArrayList<AbstractSchemaWire>();
 		this.colors=colors;		
@@ -46,10 +49,11 @@ public class SchemaDrawingCanvas extends JComponent {
 		initListeners();
 	}
 	
-	public SchemaDrawingCanvas(SchemaColorProvider colors, Dimension dimension){
-		 this.dimension=dimension;
-		 initGUI();
-		 initListeners();
+	public SchemaDrawingCanvas(SchemaColorProvider colors, Dimension dimension, SchemaMainFrame parent){
+		mainframe = parent;
+		this.dimension=dimension;
+		initGUI();
+		initListeners();
 	}
 	
 	public SchemaDrawingAdapter getAdapter(){

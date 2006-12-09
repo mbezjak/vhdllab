@@ -42,7 +42,7 @@ public class TommyTestDisplay extends JFrame {
 //		menu=new SchemaMenu(rb,colors);
 //		this.setJMenuBar(menu.getMenu());
 		
-		container.add(new SchemaDrawingCanvas(colors));		
+		container.add(new SchemaDrawingCanvas(colors, null));		
 		
 		
 	}	
