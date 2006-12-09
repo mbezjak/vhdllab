@@ -228,6 +228,21 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		if (isDrawingName) adapter.drawString((String) pComponentInstanceName.val, 0, 1);
 	}
 	
+	/**
+	 * 
+	 * @param serial
+	 * @return
+	 */
+	public void drawEssential(SchemaDrawingAdapter adapter) {
+		isDrawingPorts = false;
+		isDrawingFrame = false;
+		isDrawingName = false;
+		draw(adapter);
+		isDrawingPorts = true;
+		isDrawingFrame = true;
+		isDrawingName = true;
+	}
+	
 	protected abstract boolean deserializeComponentSpecific(String serial);
 	
 	protected abstract String serializeComponentSpecific();

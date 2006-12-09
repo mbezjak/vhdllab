@@ -3,10 +3,13 @@
  */
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
+import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
+import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,7 +17,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import javax.swing.JComponent;
 
@@ -65,6 +67,9 @@ public class SchemaDrawingCanvas extends JComponent {
 		
 		this.canvas=new BufferedImage(dimension.width,dimension.height,BufferedImage.TYPE_3BYTE_BGR);
 		this.grid=new SchemaDrawingGrid(colors,canvas);
+		
+		this.setLayout(new BorderLayout());
+		this.add(grid, BorderLayout.CENTER);
 	}
 	
 	/**
@@ -103,6 +108,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	 * Metoda za iscrtavanje plohe
 	 */
 	protected void paintComponent(Graphics gr){
+		super.paintComponent(gr);
 		if(canvas==null){
 			try {
 				throw new Exception("Za sada jedan veliki problem - konstruktor ne radi kako spada");
@@ -154,6 +160,18 @@ public class SchemaDrawingCanvas extends JComponent {
 	public void repaint(Rectangle arg0) {
 		super.repaint(arg0);
 		grid.repaint();
+	}
+	
+	public AbstractSchemaComponent getSchemaComponentAt(int x, int y) {
+		for (SchemaDrawingComponentEnvelope env : components) {
+			if (x >= (env.getPosition().x) && x <= (env.getPosition().x + env.getComponent().getComponentWidth())
+					&& y >= (env.getPosition().y) && y <= (env.getPosition().y + env.getComponent().getComponentHeight()))
+			{
+				return env.getComponent();
+			}
+		}
+		
+		return null;
 	}
 	
 	

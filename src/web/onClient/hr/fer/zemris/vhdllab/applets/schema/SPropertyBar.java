@@ -8,7 +8,7 @@ public class SPropertyBar extends JToolBar {
 	private SPropertyPanel panel = null;
 
 	public SPropertyBar() {
-		super("Component Property Bar");
+		super("Property Bar");
 		this.setLayout(new BorderLayout());
 		panel = new SPropertyPanel(null);
 		this.add(panel, BorderLayout.NORTH);

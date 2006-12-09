@@ -24,23 +24,18 @@ public class SComponentBarIcon implements Icon {
 	}
 	
 	public void paintIcon(Component comp, Graphics graphics, int x, int y) {
-		AbstractSchemaComponent SchCmp = null;
+		BufferedImage buffi = ((Graphics2D) graphics).getDeviceConfiguration().createCompatibleImage(
+				WIDTH, HEIGHT, Transparency.TRANSLUCENT);
+		SchemaDrawingAdapter adapter = new SchemaDrawingAdapter(new SchemaColorProvider(), buffi, 1.d);
+		//adapter.setStartingCoordinates(x, y);
 		try {
-			SchCmp = ComponentFactory.getSchemaComponent(refName);
+			adapter.setVirtualGridFactor(WIDTH / ComponentFactory.getSchemaComponent(refName).getComponentWidth());
+			ComponentFactory.getSchemaComponent(refName).drawEssential(adapter);
 		} catch (ComponentFactoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;
 		}
-		BufferedImage buffi = ((Graphics2D) graphics).getDeviceConfiguration().createCompatibleImage(
-				WIDTH, HEIGHT, Transparency.TRANSLUCENT);
-		SchemaDrawingAdapter adapter = new SchemaDrawingAdapter(new SchemaColorProvider(), buffi, 1.d);
-		//adapter.setStartingCoordinates(x, y);
-		adapter.setVirtualGridFactor(WIDTH / SchCmp.getComponentWidth());
-		SchCmp.setDrawingPorts(false);
-		SchCmp.setDrawingFrame(false);
-		SchCmp.setDrawingName(false);
-		SchCmp.draw(adapter);
 		graphics.drawImage(buffi, 0, 0, buffi.getWidth(), buffi.getHeight(), null);
 	}
 	public int getIconWidth() {

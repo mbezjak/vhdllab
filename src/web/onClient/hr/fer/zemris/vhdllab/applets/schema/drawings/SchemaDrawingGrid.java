@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JComponent;
+
 /**
  * SchemaDrawingGrid je 2. od slojeva koji se brine o iscrtavanju
  * komponenti na povrsinu + iscrtavanje samog grid-a
@@ -16,7 +18,7 @@ import java.awt.image.BufferedImage;
  *
  */
 
-public class SchemaDrawingGrid {
+public class SchemaDrawingGrid extends JComponent {
 	
 	private BufferedImage graphics = null;
 	private SchemaDrawingAdapter adapter = null;
