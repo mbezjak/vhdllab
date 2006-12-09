@@ -13,7 +13,6 @@ import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
-import hr.fer.zemris.vhdllab.service.impl.Rn;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
@@ -25,25 +24,21 @@ import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
-import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 
 
 public class VHDLLabManagerImpl0 implements VHDLLabManager {

@@ -27,7 +27,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;

@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 

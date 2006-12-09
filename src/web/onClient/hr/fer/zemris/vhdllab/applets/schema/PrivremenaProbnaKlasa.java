@@ -1,33 +1,16 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.io.StringReader;
-import java.util.Set;
-
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
-import hr.fer.zemris.vhdllab.applets.schema.components.SchemaComponentException;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
-import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_NOT;
-import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_OR;
-import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingCanvas;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JToolBar;
-import javax.swing.border.Border;
+import java.awt.Point;
+import java.io.StringReader;
+import java.util.Set;
 
 import org.apache.commons.digester.Digester;
 

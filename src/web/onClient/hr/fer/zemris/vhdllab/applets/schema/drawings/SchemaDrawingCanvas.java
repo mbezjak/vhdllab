@@ -3,8 +3,6 @@
  */
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
-import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
-import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;

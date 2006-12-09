@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -14,7 +13,6 @@ import java.util.LinkedList;
 import javax.swing.JComboBox;
 
 import org.apache.commons.digester.Digester;
-import org.xml.sax.SAXException;
 
 /**
  * Smisao ove klase jest ponuditi funkcionalnost 

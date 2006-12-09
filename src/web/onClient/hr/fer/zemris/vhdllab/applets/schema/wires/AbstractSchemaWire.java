@@ -1,14 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema.wires;
 
-import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema.components.Ptr;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 

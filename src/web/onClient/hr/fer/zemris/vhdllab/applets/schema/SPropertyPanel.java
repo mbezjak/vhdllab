@@ -4,7 +4,6 @@ import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractComponentProperty;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -13,7 +12,6 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.plaf.SplitPaneUI;
 import javax.swing.plaf.basic.BasicBorders;
 
 public class SPropertyPanel extends JPanel implements KeyListener {

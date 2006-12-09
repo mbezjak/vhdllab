@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;

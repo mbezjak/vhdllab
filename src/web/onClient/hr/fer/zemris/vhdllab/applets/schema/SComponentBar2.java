@@ -1,30 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.GridLayout;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
+
 import java.util.Set;
 
-import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
-
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.Border;
 
 public class SComponentBar2 extends JToolBar {
 	private boolean isDrawingIcons;
