@@ -69,6 +69,7 @@ public class PrivremenaProbnaKlasa {
 		SPropertyBar propbar = new SPropertyBar();
 		
 		SComponentBar compbar = new SComponentBar();
+		SComponentBar2 compbar2 = new SComponentBar2();
 		
 		SchemaDrawingCanvas canvas = new SchemaDrawingCanvas(new SchemaColorProvider());
 		//canvas.setPreferredSize(new Dimension(500, 500));
@@ -76,6 +77,7 @@ public class PrivremenaProbnaKlasa {
 		frame2.add(canvas, BorderLayout.CENTER);
 		frame2.add(propbar, BorderLayout.EAST);
 		frame2.add(compbar, BorderLayout.PAGE_START);
+		frame2.add(compbar2, BorderLayout.PAGE_END);
 		frame2.validate();
 		
 		Sklop_XOR sklopi = new Sklop_XOR("Prvi XOR");
@@ -116,6 +118,7 @@ public class PrivremenaProbnaKlasa {
 		}
 		
 		compbar.remanufactureComponents();
+		compbar2.remanufactureComponents();
 		
 		while (true) {
 			try {

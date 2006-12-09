@@ -26,24 +26,17 @@ import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 
-public class SComponentBar extends JToolBar {
+public class SComponentBar2 extends JToolBar {
 	private boolean isDrawingIcons;
-	private JPanel cpanel;
-	private JScrollPane scrpan;
 
-	public SComponentBar() {
-		super("Component Bar");
+	public SComponentBar2() {
+		super("Component Bar 2");
 		isDrawingIcons = true;
-		cpanel = new JPanel();
 		remanufactureComponents();
-		scrpan = new JScrollPane(cpanel);
-		scrpan.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-		this.setPreferredSize(new Dimension(500, 85));
-		this.add(scrpan);
 	}
 	
 	public void remanufactureComponents() {
-		cpanel.removeAll();
+		this.removeAll();
 		Set<String> list = ComponentFactory.getAvailableComponents();
 		ButtonGroup group = new ButtonGroup();
 		for (String cmpName : list) {
@@ -52,7 +45,7 @@ public class SComponentBar extends JToolBar {
 				button.setIcon(new SComponentBarIcon(cmpName));
 			}
 			group.add(button);
-			cpanel.add(button);
+			this.add(button);
 		}
 		for (String cmpName : list) {
 			JToggleButton button = new JToggleButton(cmpName);
@@ -60,7 +53,7 @@ public class SComponentBar extends JToolBar {
 				button.setIcon(new SComponentBarIcon(cmpName));
 			}
 			group.add(button);
-			cpanel.add(button);
+			this.add(button);
 		}
 		for (String cmpName : list) {
 			JToggleButton button = new JToggleButton(cmpName);
@@ -68,7 +61,7 @@ public class SComponentBar extends JToolBar {
 				button.setIcon(new SComponentBarIcon(cmpName));
 			}
 			group.add(button);
-			cpanel.add(button);
+			this.add(button);
 		}
 		this.validate();
 	}
