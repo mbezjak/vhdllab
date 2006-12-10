@@ -58,6 +58,11 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 				}
 				((Sklop_MUX2nNA1)getSklopPtr().val).setBrojSelUlaza(i);				
 			}
+
+			@Override
+			public void onLoad(JTextField tf) {
+				tf.setText(((Sklop_MUX2nNA1)getSklopPtr().val).getBrojSelUlaza().toString());	
+			}
 		};
 		cplist.add(prop1);
 	}

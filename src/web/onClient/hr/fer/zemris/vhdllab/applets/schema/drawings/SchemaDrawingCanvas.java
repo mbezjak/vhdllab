@@ -147,6 +147,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		for (SchemaDrawingComponentEnvelope envelope : components) {
 			Point p = envelope.getPosition();
 			adapter.setStartingCoordinates(p.x, p.y);
+			envelope.getComponent().setDrawingFrame(false);
 			envelope.getComponent().draw(adapter);
 		}
 		

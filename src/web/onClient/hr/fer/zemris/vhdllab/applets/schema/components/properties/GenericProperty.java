@@ -32,11 +32,15 @@ public abstract class GenericProperty extends AbstractComponentProperty {
 					updateProperty();
 				}
 			});
-			updateProperty();
+			setStartValue();
 		}
 		
 		public void updateProperty() {
 			onUpdate(tfield);
+		}
+		
+		public void setStartValue() {
+			onLoad(tfield);
 		}
 		
 		public Component getComponent() {
@@ -55,4 +59,6 @@ public abstract class GenericProperty extends AbstractComponentProperty {
 	}
 
 	public abstract void onUpdate(JTextField tf);
+	
+	public abstract void onLoad(JTextField tf);
 }

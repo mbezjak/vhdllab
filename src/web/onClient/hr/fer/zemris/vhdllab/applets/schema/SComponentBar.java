@@ -1,51 +1,30 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Enumeration;
-import java.util.Set;
-
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_NOT;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_OR;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 
-import javax.swing.AbstractButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Set;
+
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
-import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.Border;
-import javax.swing.event.ChangeListener;
 
+@SuppressWarnings("serial")
 public class SComponentBar extends JToolBar {
-	class SCBToggleButton extends JToggleButton implements ActionListener {		
+
+	class SCBToggleButton extends JRadioButton implements ActionListener {		
 		private String cmpName;
 		private SComponentBar parent;
 
@@ -62,33 +41,34 @@ public class SComponentBar extends JToolBar {
 		}
 
 		public void actionPerformed(ActionEvent arg0) {
-			System.out.println("Mama, stisnuo me!");
+			//System.out.println("Mama, stisnuo me!");
 			parent.setSelectedComponentName(this.getText());
+			if (this.getText().compareTo("(none)") == 0) {
+				//System.out.println("Mama, iskljucio me!");
+				parent.getParentToolbar().changeCursor(SchemaMainFrame.DEFAULT_CURSOR_TYPE);
+			}
+			else {
+				parent.getParentToolbar().changeCursor(SchemaMainFrame.CROSSHAIR_CURSOR_TYPE);
+			}
 		}
-	}	
+	}
 	
 	private boolean isDrawingIcons;
 	private JPanel cpanel;
 	private JScrollPane scrpan;
 	private ButtonGroup group;
 	private String selCompName;
+	private SCBToggleButton noneButt;
+	private SchemaMainFrame parent;
 
-	public SComponentBar() {
+	public SComponentBar(SchemaMainFrame mframe) {
 		super("Component Bar");
 		isDrawingIcons = true;
 		selCompName = null;
-		
-		cpanel = new JPanel();
-		cpanel.setLayout(new BoxLayout(cpanel, BoxLayout.X_AXIS));
+		parent = mframe;
 		
 		initComponents();
 		remanufactureComponents();
-		
-		scrpan = new JScrollPane(cpanel);
-		scrpan.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-		
-		//this.setPreferredSize(new Dimension(500, 78));
-		this.add(scrpan);
 	}
 	
 	public void initComponents() {
@@ -100,9 +80,19 @@ public class SComponentBar extends JToolBar {
 	}
 	
 	public void remanufactureComponents() {
-		cpanel.removeAll();
-		Set<String> list = ComponentFactory.getAvailableComponents();
+		this.removeAll();
+		
+		cpanel = new JPanel();
+		cpanel.setLayout(new BoxLayout(cpanel, BoxLayout.X_AXIS));
+		
+		noneButt = new SCBToggleButton("(none)", this);
+		noneButt.setIcon(new SComponentBarIcon("(none)"));
+
 		group = new ButtonGroup();
+		group.add(noneButt);
+		cpanel.add(noneButt);
+		
+		Set<String> list = ComponentFactory.getAvailableComponents();
 		for (String cmpName : list) {
 			SCBToggleButton button = new SCBToggleButton(cmpName, this);
 			if (isDrawingIcons) {
@@ -111,6 +101,12 @@ public class SComponentBar extends JToolBar {
 			group.add(button);
 			cpanel.add(button);
 		}
+		noneButt.setSelected(true);
+		
+		scrpan = new JScrollPane(cpanel);
+		scrpan.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		
+		this.add(scrpan);
 		this.validate();
 	}
 
@@ -122,16 +118,17 @@ public class SComponentBar extends JToolBar {
 		this.isDrawingIcons = isDrawingIcons;
 	}
 	
+	public SchemaMainFrame getParentToolbar() {
+		return parent;
+	}
+
 	public String getSelectedComponentName() {
 		return selCompName;
 	}
 	
 	public void selectNone() {
-		// ne znam zasto ali ovo ne radi!
-		ButtonModel butt = group.getSelection();
-		if (butt != null) {
-			butt.setSelected(false);
-		}
+		noneButt.setSelected(true);
+		selCompName = null;
 	}
 	
 	public void setSelectedComponentName(String cmpName) {

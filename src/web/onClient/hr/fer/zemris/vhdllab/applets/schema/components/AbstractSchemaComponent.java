@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericComboProperty;
+import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NoEditProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.TextProperty;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import javax.swing.JComboBox;
+import javax.swing.JTextField;
 
 import org.apache.commons.digester.Digester;
 
@@ -37,33 +39,56 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		pComponentName.val = name;
 	}
 	
+	
+	
+	
+	
 	protected static HashSet<String> instanceNameSet;
+	protected static long counter;
+	static {
+		instanceNameSet = new HashSet();
+		counter = 0;
+	}
 	protected Ptr<Object> pComponentInstanceName;
 	public String getComponentInstanceName() {
 		return (String)pComponentInstanceName.val;
 	}
-	public void setComponentInstanceName(String name) throws SchemaComponentException {
+	public void setComponentInstanceName(String name) {
+		name = name.replace(' ', '_');
 		if (name == pComponentInstanceName.val) return;
 		System.out.println("Postavljam ime na: " + name);
-		if (instanceNameSet.contains(name)) {
-			throw new SchemaComponentException("Ime vec postoji!!");
+		if (isInstanceNameInvalid(name)) {
+			name = generateNewInstanceName(name);
 		} 
-		else {
-			instanceNameSet.remove(this.pComponentInstanceName.val);
-			this.pComponentInstanceName.val = name;
-			instanceNameSet.add(name);
-		}
+		instanceNameSet.remove(this.pComponentInstanceName.val);
+		this.pComponentInstanceName.val = name;
+		instanceNameSet.add(name);
 	}
+	static protected boolean isInstanceNameInvalid(String name) {
+		if (instanceNameSet.contains(name)) return true;
+		if (name.length() == 0) return true;
+		return false;
+	}
+	static protected String generateNewInstanceName(String input) {
+		counter++;
+		if (input.length() > 3) {
+			input = input + counter;
+		} else {
+			input = "Sklop_" + counter;
+		}
+		return input;
+	}
+	
+	
+	
+	
+	
 	
 	protected AbstractSchemaPort.PortOrientation smjer;
 	
 	private boolean isDrawingPorts;
 	private boolean isDrawingFrame;
 	private boolean isDrawingName;
-	
-	static {
-		instanceNameSet = new HashSet();
-	}
 	
 	public void clearPortList() {
 		portlist.clear();
@@ -105,12 +130,14 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	public AbstractSchemaComponent(String instanceName) {
 		portlist = new LinkedList<AbstractSchemaPort>();
 		pComponentInstanceName = new Ptr<Object>();
-		pComponentInstanceName.val = new String(instanceName);
+		setComponentInstanceName(instanceName);
 		smjer = AbstractSchemaPort.PortOrientation.WEST;
 		isDrawingPorts = true;
 		isDrawingFrame = true;
 		isDrawingName = true;
 	}
+	
+	
 
 	/**
 	 * Adds properties to the component property list.
@@ -125,7 +152,20 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 //		Ptr<Object> pcin = new Ptr<Object>();
 //		pcin.val = componentInstanceName;
 		cplist.add(new NoEditProperty("Ime sklopa", pComponentName));
-		cplist.add(new TextProperty("Ime instance sklopa", pComponentInstanceName));
+		cplist.add(new GenericProperty("Ime instance sklopa", new Ptr<Object>(this)) {
+			@Override
+			public void onUpdate(JTextField tf) {
+				AbstractSchemaComponent comp = (AbstractSchemaComponent) getSklopPtr().val;
+				comp.setComponentInstanceName(tf.getText());
+				tf.setText(comp.getComponentInstanceName());
+			}
+
+			@Override
+			public void onLoad(JTextField tf) {
+				AbstractSchemaComponent comp = (AbstractSchemaComponent) getSklopPtr().val;
+				tf.setText(comp.getComponentInstanceName());
+			}
+		});
 		cplist.add(new GenericComboProperty("Orijentacija", new Ptr<Object>(this)) {
 			@Override
 			public void onUpdate(JComboBox cbox) {
@@ -249,11 +289,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	protected abstract String serializeComponentSpecific();
 	
 	public void postaviOpcenito(String ime, String ori, String componentSpecific) {
-		try {
-			setComponentInstanceName(ime);
-		} catch (SchemaComponentException e) {
-			e.printStackTrace();
-		}
+		setComponentInstanceName(ime);
 		setSmjerWithInt(ori);
 		deserializeComponentSpecific(componentSpecific);
 	}

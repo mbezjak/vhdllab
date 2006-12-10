@@ -410,7 +410,7 @@ public class SchemaDrawingAdapter {
 		
 		graph.setColor(colors.ADAPTER_LINE);
 		
-		graph.drawString(s, virtualToRealRelativeX(virtx),
+		if (s != null) graph.drawString(s, virtualToRealRelativeX(virtx),
 				   virtualToRealRelativeY(virty));
 	}
 	

@@ -58,6 +58,11 @@ public class Sklop_AND extends AbstractSchemaComponent {
 				}
 				((Sklop_AND)getSklopPtr().val).setBrojUlaza(i);				
 			}
+
+			@Override
+			public void onLoad(JTextField tf) {
+				tf.setText(((Sklop_AND)getSklopPtr().val).getBrojUlaza().toString());	
+			}
 		};
 		cplist.add(prop1);
 	}

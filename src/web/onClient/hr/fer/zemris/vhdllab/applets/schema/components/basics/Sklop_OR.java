@@ -62,6 +62,11 @@ public class Sklop_OR extends AbstractSchemaComponent {
 				}
 				((Sklop_OR)getSklopPtr().val).setBrojUlaza(i);				
 			}
+
+			@Override
+			public void onLoad(JTextField tf) {
+				tf.setText(((Sklop_OR)getSklopPtr().val).getBrojUlaza().toString());	
+			}
 		};
 		cplist.add(prop1);
 	}
@@ -69,14 +74,19 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
-	// ljudi moji, polomio sam kurcu rebra da ovo dolje nacrtam. Ali uspio sam.
+	// ljudi moji, polomio sam k*** rebra da ovo dolje nacrtam. Ali uspio sam.
 	public void drawSpecific(SchemaDrawingAdapter adapter) {
 		// draw wires to ports
 		int w = getComponentWidth();
 		int h = getComponentHeight();
 		adapter.drawLine(w / 2, h / 2, w, h / 2);
+		float koef = (1.5f * ODMAK_OD_RUBA - 0.5f * ODMAK_OD_RUBA) / (h * 0.5f - ODMAK_OD_RUBA);
 		for (int i = 0; i < getBrojUlaza(); i++) {
-			adapter.drawLine(0, (i + 1) * RAZMAK_IZMEDU_PORTOVA, w / 2, (i + 1) * RAZMAK_IZMEDU_PORTOVA);
+			adapter.drawLine(0, (i + 1) * RAZMAK_IZMEDU_PORTOVA, 
+					(i < getBrojUlaza() / 2) 
+							? ((i + 1) * RAZMAK_IZMEDU_PORTOVA - ODMAK_OD_RUBA) * koef + ODMAK_OD_RUBA * 1.5f
+							: ((i + 1) * RAZMAK_IZMEDU_PORTOVA - h + ODMAK_OD_RUBA) * (-koef) + ODMAK_OD_RUBA * 1.5f,
+							(i + 1) * RAZMAK_IZMEDU_PORTOVA);
 		}
 		
 		GeneralPath path = new GeneralPath();
