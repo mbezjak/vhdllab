@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.applets.main.constants;
 
 /**
  * Constants for helping to deal with resource bundles are declared here.
@@ -153,6 +153,23 @@ public class LanguageConstants {
 	 */
 	public static final String DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE = "dialog.option.save.multiple.resource.message";
 
+	/**
+	 * Title for option dialog when trying to compile a file.
+	 */
+	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_TITLE = "dialog.option.save.resources.for.compilation.title";
+	/**
+	 * Message content for option dialog when trying to compile a file.
+	 */
+	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE = "dialog.option.save.resources.for.compilation.message";
+	/**
+	 * Title for option dialog when trying to simulate a file.
+	 */
+	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_TITLE = "dialog.option.save.resources.for.simulation.title";
+	/**
+	 * Message content for option dialog when trying to simulate a file.
+	 */
+	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE = "dialog.option.save.resources.for.simulation.message";
+
 	
 	/**
 	 * Key for StatusBar when applet loading is completed.
@@ -182,6 +199,19 @@ public class LanguageConstants {
 	 * Key for StatusBar when file content could not be loaded.
 	 */
 	public static final String STATUSBAR_CANT_LOAD_FILE_CONTENT = "statusbar.cant.load.file.content";
+	/**
+	 * Key for StatusBar when workspace could not be loaded.
+	 */
+	public static final String STATUSBAR_CANT_LOAD_WORKSPACE = "statusbar.cant.load.workspace";
+	/**
+	 * Key for StatusBar when compilation could not be run.
+	 */
+	public static final String STATUSBAR_CANT_COMPILE = "statusbar.cant.compile";
+	/**
+	 * Key for StatusBar when simulation could not be run.
+	 */
+	public static final String STATUSBAR_CANT_SIMULATE = "statusbar.cant.simulate";
+
 
 
 }

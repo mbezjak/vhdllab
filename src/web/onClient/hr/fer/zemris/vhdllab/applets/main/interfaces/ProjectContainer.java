@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 public interface ProjectContainer {
 	List<String> getAllCircuits(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
-	String getOptions(String type) throws UniformAppletException;
+	String getUserFile(String type) throws UniformAppletException;
 	ResourceBundle getResourceBundle();
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;
 	void resetEditorTitle(boolean contentChanged, String projectName, String fileName);

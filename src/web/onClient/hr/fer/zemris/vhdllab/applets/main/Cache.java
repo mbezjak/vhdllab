@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 	public class Cache {
 
@@ -21,15 +24,22 @@ import java.util.Properties;
 		private String ownerId;
 		private List<String> filetypes;
 		private Properties editors;
+		private Properties views;
 		
 		private Map<String, Long> identifiers;
+		
+		private List<Long> compilationHistory;
+		private List<Long> simulationHistory;
 		
 		public Cache(MethodInvoker invoker, String ownerId) {
 			if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
 			if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
 			identifiers = new HashMap<String, Long>();
+			compilationHistory = new ArrayList<Long>();
+			simulationHistory = new ArrayList<Long>();
 			filetypes = loadType("filetypes.properties");
-			editors = loadEditors("editors.properties");
+			editors = loadResource("editors.properties");
+			views = loadResource("views.properties");
 			this.invoker = invoker;
 			this.ownerId = ownerId;
 		}
@@ -117,20 +127,65 @@ import java.util.Properties;
 			return invoker.loadFileType(fileIdentifier);
 		}
 		
+		public FileIdentifier getLastCompilationHistoryTarget() throws UniformAppletException {
+			if(compilationHistory.isEmpty()) throw new UniformAppletException("No history of compilation.");
+			Long last = compilationHistory.get(compilationHistory.size() - 1);
+			return getFileIdentifierFor(last);
+		}
+		
 		public CompilationResult compile(String projectName, String fileName) throws UniformAppletException {
 			if(projectName == null) throw new NullPointerException("Project name can not be null.");
 			if(fileName == null) throw new NullPointerException("File name can not be null.");
 			Long fileIdentifier = getIdentifierFor(projectName, fileName);
 			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			if(compilationHistory.contains(fileIdentifier)) {
+				compilationHistory.remove(fileIdentifier);
+			}
+			compilationHistory.add(fileIdentifier);
 			return invoker.compileFile(fileIdentifier);
 		}
+		
+		public List<FileIdentifier> getCompilationHistory() {
+			List<FileIdentifier> history = new ArrayList<FileIdentifier>();
+			for(Long id : compilationHistory) {
+				history.add(getFileIdentifierFor(id));
+			}
+			return history;
+		}
+		
+		public boolean compilationHistoryIsEmpty() {
+			return compilationHistory.isEmpty();
+		}
+		
+		public FileIdentifier getLastSimulationHistoryTarget() throws UniformAppletException {
+			if(simulationHistory.isEmpty()) throw new UniformAppletException("No history of simulation.");
+			Long last = simulationHistory.get(simulationHistory.size() - 1);
+			return getFileIdentifierFor(last);
+		}
+
 
 		public SimulationResult runSimulation(String projectName, String fileName) throws UniformAppletException {
 			if(projectName == null) throw new NullPointerException("Project name can not be null.");
 			if(fileName == null) throw new NullPointerException("File name can not be null.");
 			Long fileIdentifier = getIdentifierFor(projectName, fileName);
 			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			if(simulationHistory.contains(fileIdentifier)) {
+				simulationHistory.remove(fileIdentifier);
+			}
+			simulationHistory.add(fileIdentifier);
 			return invoker.runSimulation(fileIdentifier);
+		}
+		
+		public List<FileIdentifier> getSimulationHistory() {
+			List<FileIdentifier> history = new ArrayList<FileIdentifier>();
+			for(Long id : simulationHistory) {
+				history.add(getFileIdentifierFor(id));
+			}
+			return history;
+		}
+		
+		public boolean simulationHistoryIsEmpty() {
+			return simulationHistory.isEmpty();
 		}
 		
 		public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
@@ -154,7 +209,20 @@ import java.util.Properties;
 			return editor;
 		}
 		
-		public String getOptions(String type) throws UniformAppletException {
+		public IView getView(String type) throws UniformAppletException {
+			if(type == null) throw new NullPointerException("Type can not be null.");
+			String viewName = views.getProperty(type);
+			if(viewName == null) throw new IllegalArgumentException("Can not find view for given type.");
+			IView view = null;
+			try {
+				view = (IView)Class.forName(viewName).newInstance();
+			} catch (Exception e) {
+				throw new UniformAppletException("Can not instantiate view.");
+			}
+			return view;
+		}
+		
+		public String getUserFile(String type) throws UniformAppletException {
 			List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
 			
 			for(Long id : userFiles) {
@@ -163,7 +231,7 @@ import java.util.Properties;
 					return invoker.loadUserFileContent(id);
 				}
 			}
-			return "";
+			throw new UniformAppletException("No such user file.");
 		}
 		
 		private List<String> loadType(String file) {
@@ -185,7 +253,7 @@ import java.util.Properties;
 			return types;
 		}
 		
-		private Properties loadEditors(String file) {
+		private Properties loadResource(String file) {
 			InputStream in = this.getClass().getResourceAsStream(file);
 			if(in == null) throw new NullPointerException("Can not find resource " + file + ".");
 			Properties p = new Properties();
@@ -197,6 +265,19 @@ import java.util.Properties;
 				try {in.close();} catch (Throwable ignore) {}
 			}
 			return p;
+		}
+		
+		private FileIdentifier getFileIdentifierFor(Long fileIdentifier) {
+			for(Entry<String, Long> entry : identifiers.entrySet()) {
+				if(entry.getValue().equals(fileIdentifier)) {
+					String key = entry.getKey();
+					String[] names = key.split("[|]");
+					if(names.length != 2) throw new IllegalArgumentException("Found project insted of a file.");
+					FileIdentifier file = new FileIdentifier(names[0], names[1]);
+					return file;
+				}
+			}
+			return null;
 		}
 		
 		private Long getIdentifierFor(String projectName) {

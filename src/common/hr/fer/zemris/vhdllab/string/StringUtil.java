@@ -14,7 +14,7 @@ public class StringUtil {
 	private StringUtil() {}
 	
 	/**
-	 * Checks to see if string is alpha-numeric. if
+	 * Checks to see if string is alpha-numeric. If
 	 * <code>s</code> is empty string this method will return
 	 * <code>true</code>.
 	 * 
@@ -41,6 +41,22 @@ public class StringUtil {
 	}
 	
 	/**
+	 * Checks to see if string is alpha (letters of english
+	 * alphabet, a-z or A-Z). If <code>s</code> is empty
+	 * string this method will return <code>true</code>.
+	 * 
+	 * @param s a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is
+	 * 			alpha; <code>false</code> otherwise;
+	 */
+	public static boolean isAlpha(String s) {
+		for(char c : s.toCharArray()) {
+			if(!isAlpha(c)) return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * Check if <code>c</code> is an alpha character.
 	 * (letter of english alphabet, a-z or A-Z)
 	 *  
@@ -51,6 +67,21 @@ public class StringUtil {
 		if( (c >= 'a' && c <= 'z') ||
 			(c >= 'A' && c <= 'Z') ) return true;
 		return false;
+	}
+	
+	/**
+	 * Checks to see if string is numeric. If <code>s</code>
+	 * is empty string this method will return <code>true</code>.
+	 * 
+	 * @param s a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is
+	 * 			numeric; <code>false</code> otherwise;
+	 */
+	public static boolean isNumeric(String s) {
+		for(char c : s.toCharArray()) {
+			if(!isNumeric(c)) return false;
+		}
+		return true;
 	}
 	
 	/**
