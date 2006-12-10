@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -35,10 +36,10 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	private static boolean isReadOnly=false;
 	private static boolean isSavable=false;
 	private ProjectContainer pContainer;
-	private String projectName=null;
+	private String projectName="";
 	
 	public Automat() {
-		super();		
+		super();	
 	}
 
 	
@@ -103,7 +104,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 					if(e.getActionCommand().equals("pocStanje"))adrw.setStanjeRada(6);
 				}
 			});
-		
+	
 			JToolBar tulbar=new JToolBar();
 			final ButtonGroup grupa=new ButtonGroup();
 			grupa.add(normal);
@@ -121,13 +122,13 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			this.setLayout(new BorderLayout());
 			this.add(adrw,BorderLayout.CENTER);
 			this.add(tulbar,BorderLayout.NORTH);
-		}
+		}else adrw=null;
 		
 			
 	}
 
 
-//	TODO ---------------IMPLEMENTIRAJ KASNIJE-------------------------------
+//*************************************************************************
 	
 	public void setFileContent(FileContent fc) {
 		projectName=fc.getProjectName();
@@ -138,7 +139,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public String getData() {
-		//adrw.isModified=false;
+		adrw.isModified=false;
 		return adrw.getData();
 	}
 

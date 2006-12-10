@@ -120,6 +120,7 @@ public class Prijelaz {
 	 */
 	public boolean equals2(Object obj,HashSet<Prijelaz>prijelazi) {
 		boolean pov=false;
+		if (obj==null) return false;
 		Prijelaz prj=(Prijelaz)obj;
 		String pom=prj.pobudaIzlaz.first();
 		if (obj==null) pov=false;		
@@ -129,7 +130,7 @@ public class Prijelaz {
 				if(pr.iz.equals(prj.iz))
 				for(String pod:pr.pobudaIzlaz){
 					boolean test2=true;
-					for(int i=0;i<length;i++)if(!(pom.charAt(i)==pod.charAt(i)||pom.charAt(i)=='*')){
+					for(int i=0;i<length;i++)if(!(pom.charAt(i)==pod.charAt(i)||pom.charAt(i)=='*'||pod.charAt(i)=='*')){
 						test2=false;
 					}
 					if(test2){

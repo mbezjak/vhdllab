@@ -1,6 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
+import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
+import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
+
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JComboBox;
@@ -10,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
@@ -19,7 +22,7 @@ public class AUTPodatci {
 	public String ime;
 	public String tip;
 	public String interfac;
-	public String pocetnoStanje;
+	public String pocetnoStanje="";
 	public int sirinaUlaza;
 	public int sirinaIzlaza;
 	
@@ -28,21 +31,22 @@ public class AUTPodatci {
 		this.ime=ime;
 		this.tip=tip;
 		this.interfac=interfac;
-		this.pocetnoStanje=pocSt;
+		this.pocetnoStanje=(pocSt==null?"":pocSt);
 		parseInterfac(interfac);
 	}
 
 	private void parseInterfac(String interfac2) {
-		String[] pom=interfac2.split("\n");
-		int ul=0,iz=0;
-		for(int i=0;i<pom.length;i++){
-			String[] pom2=pom[i].split(":");
-			String[] pom3=pom2[1].trim().split(" ");
-			if(pom3[0].trim().toLowerCase().equals("in")) ul+=Integer.parseInt(pom3[1].trim());
-			else iz+=Integer.parseInt(pom3[1].trim());
-		}
-		sirinaIzlaza=iz;
-		sirinaUlaza=ul;
+		EntityParser ep=new EntityParser(interfac2);
+		interfac=interfac2;
+		sirinaIzlaza=ep.getOutputWidth();
+		sirinaUlaza=ep.getInputWidth();
+	}
+
+	private void parseInterfac(String[][] inter) {
+		EntityParser ep=new EntityParser(ime,inter);
+		interfac=ep.getParsedEntity();
+		sirinaUlaza=ep.getInputWidth();
+		sirinaIzlaza=ep.getOutputWidth();
 	}
 
 	public AUTPodatci(JComponent drawer) {
@@ -51,7 +55,8 @@ public class AUTPodatci {
 		JLabel label2=new JLabel("Tip automata:");
 		JLabel label3=new JLabel("Suèelje:");
 		JTextField ime=new JTextField();
-		JTextArea interfac=new JTextArea(5,20);
+		String[] st={"Ime","Smjer","Tip","Od","Do"};
+		EntityTable interfac=new EntityTable("Suèelje:",st);
 		JScrollPane scp=new JScrollPane(interfac,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -81,14 +86,14 @@ public class AUTPodatci {
 			JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
 			JDialog dialog=optionPane.createDialog(drawer,"Editor Prijelaza");
 			dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+			dialog.setSize(new Dimension(700,300));
 			dialog.setVisible(true);
 			Object selected=optionPane.getValue();
-		
-			if(selected.equals(JOptionPane.OK_OPTION)&&vrijedi(interfac.getText())){
+			if(selected.equals(JOptionPane.OK_OPTION)){
 				this.ime=ime.getText();
 				this.tip=(String)tip.getSelectedItem();
-				this.interfac=interfac.getText();
-				parseInterfac(this.interfac);
+				String[][] inter=interfac.getData();
+				parseInterfac(inter);
 				test=false;
 			}else if(selected.equals(JOptionPane.CANCEL_OPTION)) {
 				this.ime=null;
@@ -96,12 +101,14 @@ public class AUTPodatci {
 			}
 		}
 	}
-
+/*bit ce da netreba :) 
 	/**
 	 * provjerava formatiranost interfacea
 	 * @param text
 	 * @return
-	 */
+	 
+	
+	//TODO sredi mozda netreba
 	private boolean vrijedi(String text) {
 		boolean test=true;
 		String[] str=text.split("\n");
@@ -122,5 +129,5 @@ public class AUTPodatci {
 				}else test=false;
 			}
 		return test;
-	}
+	}*/
 }

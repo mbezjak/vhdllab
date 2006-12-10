@@ -13,14 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 public class EntityTable extends JPanel {
 
-	private JTextField ime=null;
 	private JTable table=null;
 	private MyTableModel model=null;
 	/**
@@ -45,9 +43,11 @@ public class EntityTable extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(panel,BorderLayout.NORTH);
 		
-		Object[][] obj={{"","in","Std_Logic","",""}};
+		Object[][] obj={{"","in","Std_Logic","0","0"}};
 		JComboBox inComboBox=createInComboBox();
 		JComboBox tipComboBox=createTipComboBox();
+		
+		NumberBox brojevi=new NumberBox("0");
 		
 		model=new MyTableModel(obj,data);
 		model.addTableModelListener(new TableModelListener(){
@@ -59,6 +59,8 @@ public class EntityTable extends JPanel {
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(inComboBox));
 		table.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(tipComboBox));
+		table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(brojevi));
+		table.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(brojevi));
 		
 		JScrollPane pane=new JScrollPane(table);
 		pane.setPreferredSize(new Dimension(100,100));
@@ -93,7 +95,7 @@ public class EntityTable extends JPanel {
 		return cb;
 	}
 	
-	public Object[][] getData(){
+	public String[][] getData(){
 		return model.getData();
 	}
 
@@ -132,11 +134,11 @@ public class EntityTable extends JPanel {
         public Object getValueAt(int row, int col) {
             return data[row][col];
         }
-
+/*
         public Class<? extends Object> getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
-
+*/
 
         public boolean isCellEditable(int row, int col) {
         	if(col>2&&getValueAt(row,2).equals("Std_Logic"))return false;
@@ -155,13 +157,16 @@ public class EntityTable extends JPanel {
         	obj[getRowCount()][0]="";
         	obj[getRowCount()][1]="in";
         	obj[getRowCount()][2]="Std_Logic";
-        	obj[getRowCount()][3]="";
-        	obj[getRowCount()][4]="";
+        	obj[getRowCount()][3]="0";
+        	obj[getRowCount()][4]="0";
         	data=obj;
         	fireTableDataChanged();
         };
-        public Object[][] getData(){
-        	return data;
+        public String[][] getData(){
+        	String[][] pom=new String[getRowCount()][getColumnCount()];
+        	for(int i=0;i<getRowCount();i++)
+        		for(int j=0;j<getColumnCount();j++)pom[i][j]=(String) data[i][j];
+        	return  pom;
         }
     }
 }

@@ -186,12 +186,11 @@ public class AutoDrawer extends JPanel{
 	private void parseLegend() {
 		String ulazi=new String("|");
 		String izlazi=new String("|");
-		String[] pom=podatci.interfac.split("\n");
-		for(int i=0;i<pom.length;i++){
-			String[] strPom=pom[i].split(":");
-			String[] strPom2=strPom[1].trim().split(" ");
-			if(strPom2[0].trim().toLowerCase().equals("in"))ulazi=new StringBuffer().append(ulazi).append(strPom[0].trim()).append("|").toString();
-			else izlazi=new StringBuffer().append(izlazi).append(strPom[0].trim()).append("|").toString();
+		String[] redovi=podatci.interfac.split("\n");
+		for(int i=0;i<redovi.length;i++){
+			String[] rijeci=redovi[i].split(" ");
+			if(rijeci[1].toUpperCase().equals("IN")) ulazi=new StringBuffer().append(ulazi).append(rijeci[0]).append("|").toString();
+			else izlazi=new StringBuffer().append(izlazi).append(rijeci[0]).append("|").toString();
 		}
 		legenda=new StringBuffer().append("Legenda:\nUlazi: ").append(ulazi).append("\nIzlazi:").append(izlazi).toString();
 	}
@@ -654,12 +653,14 @@ public class AutoDrawer extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				Prijelaz pomocni=new Prijelaz();
 				String str=pomocni.editPrijelaz2(podatci,AutoDrawer.this);
-				pomocni.iz=pr2.iz;
-				pomocni.pobudaIzlaz.add(str);
-				if(listam.indexOf(str)==-1&&!pomocni.equals2(pomocni,prijelazi)){
-					listam.addElement(str);
-					pr2.pobudaIzlaz.add(str);
-				} else pr2.porukaNeDodaj(AutoDrawer.this);
+				if(str!=null){
+					pomocni.iz=pr2.iz;
+					pomocni.pobudaIzlaz.add(str);
+					if(listam.indexOf(str)==-1&&!pomocni.equals2(pomocni,prijelazi)){
+						listam.addElement(str);
+						pr2.pobudaIzlaz.add(str);
+					} else pr2.porukaNeDodaj(AutoDrawer.this);
+				}
 			};
 		});
 		
@@ -820,12 +821,11 @@ public class AutoDrawer extends JPanel{
 									test=false;
 									pr.dodajPodatak(prijelazZaDodati,prijelazi);
 								}
-							if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0)
+							if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0){
 								if(!prijelazZaDodati.equals2(prijelazZaDodati,prijelazi)){
 									prijelazi.add(prijelazZaDodati);
-								}else{//TODO ??!
-									prijelazZaDodati.porukaNeDodaj(AutoDrawer.this);
-								}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this);
+									}
+							}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this);
 							prijelazZaDodati=null;
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;

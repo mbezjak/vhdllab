@@ -21,7 +21,7 @@ public class CodeGenerator {
 		code=generateHead(podatci,code);
 		code=generateStanja(stanja,podatci,code);
 		code=generatePrijelazi(prijelazi,podatci,code);
-		code=new StringBuffer().append(code).append("\n</Automat>").toString();
+		code=new StringBuffer().append(code).append("</Automat>").toString();
 		return code;
 	}
 	private String generatePrijelazi(HashSet<Prijelaz> prijelazi, AUTPodatci podatci, String code) {

@@ -20,9 +20,8 @@
 	<Podatci_Sklopa>
 		<Ime>Automat1</Ime>
 		<Tip>Moore</Tip>
-		<Interfac>
-		a:in 1
-b:out 1
+		<Interfac>a in std_logic
+b out std_logic
 		</Interfac>
 		<Pocetno_Stanje>A</Pocetno_Stanje>
 	</Podatci_Sklopa>

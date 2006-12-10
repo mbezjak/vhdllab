@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat;
+package hr.fer.zemris.vhdllab.applets.automat.entityTable;
 
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
@@ -6,42 +6,37 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-public class CustomTextField extends JTextField {
+public class NumberBox extends JTextField {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -636501698092103448L;
-	protected static int size=0;
 	static int curSize=0;
-	static boolean useAste=true;
 	
-	public CustomTextField(String tekst,int size1) {
+	public NumberBox(String tekst) {
 		        super(tekst);
-		        size=size1;
 		        curSize=0;
-		        useAste=true;
 		    }
 		
-	public CustomTextField(String string, int size1, boolean b) {
-		 super(string);
-	        size=size1;
-	        curSize=0;
-	        useAste=b;
-	}
+
 
 	protected Document createDefaultModel() {
-	      return new Document10();
+	      return new DocumentNumber();
 	}
 	
 	@Override
 	public String getText() {
-		String str=super.getText();
-		while(str.length()<size)str+="*";
-		return str;	
+		String s=super.getText();
+		if(s.equals(""))s="0";
+		return s;
 	}
-		
-	static class Document10 extends PlainDocument {
+	
+	@Override
+	public String toString() {
+		return getText();
+	}
+	static class DocumentNumber extends PlainDocument {
 		
 	      /**
 		 * 
@@ -54,11 +49,7 @@ public class CustomTextField extends JTextField {
 	        	  return;
 			  }
 			  char[] cha = str.toCharArray();
-			  curSize=getLength();
-			  if(useAste){
-				  if(curSize==size||!String.valueOf(cha[str.length()-1]).matches("[10*]")) str="";
-				  }
-			  else if(curSize==size||!String.valueOf(cha[str.length()-1]).matches("[10]")) str="";
+			  if(!String.valueOf(cha[str.length()-1]).matches("[0123456789]")) str="";
 			  
 			  super.insertString(offs, str, a);
 		}
