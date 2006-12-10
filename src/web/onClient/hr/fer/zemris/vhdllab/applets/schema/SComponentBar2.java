@@ -8,6 +8,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
+@Deprecated
 public class SComponentBar2 extends JToolBar {
 	private boolean isDrawingIcons;
 
