@@ -4,6 +4,8 @@ import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -47,9 +49,29 @@ public class SchemaMainFrame extends JFrame {
 		this.add(drawingCanvas, BorderLayout.CENTER);
 	}
 	
-	public void handleClickOnSchema(MouseEvent e) {
-		AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
-		propbar.getPropertyPanel().setLinkToComponent(comp);
+	
+	
+	// methods called by events
+	
+	public void handleLeftClickOnSchema(MouseEvent e) {
+		String selectedStr = compbar.getSelectedComponentName();
+		if (selectedStr == null) {
+			AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
+			propbar.getPropertyPanel().setLinkToComponent(comp);
+		} else {
+			try {
+				AbstractSchemaComponent compi = ComponentFactory.getSchemaComponent(selectedStr);
+				drawingCanvas.addComponent(compi, e.getPoint());
+			} catch (ComponentFactoryException e1) {
+				System.out.println("Nemoguce izgenerirati novu komponentu - " +
+						"ComponentFactory ne prepoznaje ime." + selectedStr);
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	public void handleRightClickOnSchema(MouseEvent e) {
+		compbar.selectNone();
 	}
 	
 }

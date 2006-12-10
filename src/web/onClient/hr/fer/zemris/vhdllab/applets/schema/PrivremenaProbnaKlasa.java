@@ -43,10 +43,6 @@ public class PrivremenaProbnaKlasa {
 			System.out.println(s);
 		}
 		
-		SimpleSchemaWire wire = new SimpleSchemaWire("Moja zica");
-		wire.add_WireLines(new Point(15, 15), new Point(25, 15));
-		mframe.drawingCanvas.addWire(wire);
-		
 		String s = muxi.serializeComponent();
 		AbstractSchemaComponent compi = null;
 		try {

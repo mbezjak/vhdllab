@@ -65,9 +65,7 @@ public class Sklop_AND extends AbstractSchemaComponent {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
-	public void draw(SchemaDrawingAdapter adapter) {
-		super.draw(adapter);
-		
+	public void drawSpecific(SchemaDrawingAdapter adapter) {		
 		// draw wires to ports
 		int w = getComponentWidth();
 		int h = getComponentHeight();

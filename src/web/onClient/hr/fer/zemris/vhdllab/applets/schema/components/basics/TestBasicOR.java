@@ -59,4 +59,10 @@ public class TestBasicOR extends AbstractSchemaComponent {
 		return null;
 	}
 
+	@Override
+	public void drawSpecific(SchemaDrawingAdapter adapter) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

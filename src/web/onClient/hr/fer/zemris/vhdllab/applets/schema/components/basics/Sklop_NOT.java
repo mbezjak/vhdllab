@@ -12,6 +12,8 @@ import java.awt.Point;
 public class Sklop_NOT extends AbstractSchemaComponent {
 	private final static int SIRINA_NOT_VRATA = 9;
 	private final static int VISINA_NOT_VRATA = 6;
+	private final static int ODMAK_HORIZ = 2;
+	private final static int ODMAK_VERT = 1;
 	
 	static {
 		ComponentFactory.registerComponent(new Sklop_NOT("Sklop_NOT"));
@@ -28,6 +30,7 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 		ulaz.setName("Ulaz");
 		ulaz.setDirection(AbstractSchemaPort.PortDirection.IN);
 		this.addPort(ulaz);
+		updatePortCoordinates();
 	}
 
 	/* (non-Javadoc)
@@ -41,8 +44,13 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
-	public void draw(SchemaDrawingAdapter adapter) {
-		super.draw(adapter);
+	public void drawSpecific(SchemaDrawingAdapter adapter) {
+		adapter.drawLine(0, VISINA_NOT_VRATA / 2, SIRINA_NOT_VRATA, VISINA_NOT_VRATA / 2);
+		adapter.draw4gon(
+				ODMAK_HORIZ, VISINA_NOT_VRATA / 2,
+				ODMAK_HORIZ, ODMAK_VERT,
+				getComponentWidth() - ODMAK_HORIZ, VISINA_NOT_VRATA / 2,
+				ODMAK_HORIZ, getComponentHeight() - ODMAK_VERT);
 	}
 	
 	/**

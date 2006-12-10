@@ -218,13 +218,16 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 * Inace se nece iscrtati tockice koje oznacavaju same portove.
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
+		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
+		drawSpecific(adapter);
 		if (isDrawingPorts) for (AbstractSchemaPort port : portlist) {
 			Point p = port.getCoordinate();
 			adapter.drawCursorPoint(p.x, p.y);
 		}
-		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
 		if (isDrawingName) adapter.drawString((String) pComponentInstanceName.val, 0, 1);
 	}
+	
+	public abstract void drawSpecific(SchemaDrawingAdapter adapter);
 	
 	/**
 	 * 

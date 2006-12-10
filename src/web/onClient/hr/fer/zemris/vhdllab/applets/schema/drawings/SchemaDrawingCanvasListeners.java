@@ -6,6 +6,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import javax.swing.event.MouseInputListener;
+
 public class SchemaDrawingCanvasListeners implements MouseListener,
 		MouseMotionListener, MouseWheelListener {
 
@@ -19,7 +21,12 @@ public class SchemaDrawingCanvasListeners implements MouseListener,
 	}
 	
 	public void mouseClicked(MouseEvent e) {
-		canvas.getMainframe().handleClickOnSchema(e);
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			canvas.getMainframe().handleLeftClickOnSchema(e);
+		}
+		if (e.getButton() == MouseEvent.BUTTON3) {
+			canvas.getMainframe().handleRightClickOnSchema(e);
+		}
 	}
 
 	public void mousePressed(MouseEvent e) {

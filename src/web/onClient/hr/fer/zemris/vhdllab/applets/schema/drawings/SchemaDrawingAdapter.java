@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
@@ -114,6 +115,7 @@ public class SchemaDrawingAdapter {
 		if (gph == null) return;
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		//postavljanje boje crtanja
 		graph.setColor(colors.ADAPTER_LINE);
@@ -139,6 +141,7 @@ public class SchemaDrawingAdapter {
 		if(gph==null)return;
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(colors.ADAPTER_CURSOR_POINT);
 		
@@ -153,6 +156,7 @@ public class SchemaDrawingAdapter {
 		if (gph == null) return;
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(colors.ADAPTER_LINE);
 
@@ -166,6 +170,7 @@ public class SchemaDrawingAdapter {
 		if (gph == null) return;
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(colors.ADAPTER_LINE);
 
@@ -180,6 +185,7 @@ public class SchemaDrawingAdapter {
 		if (gph == null) return;
 		
 		Graphics2D graph = (Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(Color.WHITE);
 
@@ -205,6 +211,7 @@ public class SchemaDrawingAdapter {
 		
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(colors.ADAPTER_LINE);
 		
@@ -219,6 +226,7 @@ public class SchemaDrawingAdapter {
 		
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(Color.WHITE);
 		
@@ -232,6 +240,7 @@ public class SchemaDrawingAdapter {
 		if (gph == null) return;
 		
 		Graphics2D graph = (Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(Color.WHITE);
 		
@@ -294,6 +303,7 @@ public class SchemaDrawingAdapter {
 		if (gph == null) return;
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(colors.ADAPTER_LINE);
 		

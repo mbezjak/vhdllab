@@ -65,8 +65,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
-	public void draw(SchemaDrawingAdapter adapter) {
-		super.draw(adapter);
+	public void drawSpecific(SchemaDrawingAdapter adapter) {
 		for (AbstractSchemaPort port : portlist) {
 			Point p = port.getCoordinate();
 			if (port.getTipPorta() == "POD") {
