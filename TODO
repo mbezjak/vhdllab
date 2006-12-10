@@ -30,8 +30,8 @@ TODO 17) [OPEN]   Parsiranje cijelog rezulatat sto vraca GHDL (error, warning, s
 Davor Delac
 --------------------------------------------
 TODO 21) [OPEN]   lokalizacija automata-dosta posla, recimo barem jedan dan, neznam kolko je bitno za sad
-TODO 22) [OPEN]   srediti wizard da ima onu fensi tablicu-GOTOVO-
-TODO 22a)[OPEN]   promjeniti AUTpodatke i AUTparser da stvar bude malo bolja-danas  :) 
+TODO 22) [CLOSED]   srediti wizard da ima onu fensi tablicu-GOTOVO-
+TODO 22a)[CLOSED]   promjeniti AUTpodatke i AUTparser da stvar bude malo bolja-danas  :) 
 TODO 23) [OPEN]   generiranje VHDL-a za automat- SUTRA ili mozda danas ak stignem-predpostavljam najbitnije za sad!!!
 TODO 24) [OPEN]   neznam dal ce ikone biti dobre, mozda naci bolje, nariktavanje boja, sminka, vecinom gluposti koje ne ovise o funkcionalnosti...  :) 
 
