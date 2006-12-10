@@ -54,7 +54,7 @@ public class SchemaMainFrame extends JFrame {
 	// methods called by events
 	
 	public void handleLeftClickOnSchema(MouseEvent e) {
-		String selectedStr = null;//compbar.getSelectedComponentName();
+		String selectedStr = compbar.getSelectedComponentName();
 		if (selectedStr == null) {
 			AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
 			propbar.getPropertyPanel().setLinkToComponent(comp);
@@ -71,7 +71,7 @@ public class SchemaMainFrame extends JFrame {
 	}
 
 	public void handleRightClickOnSchema(MouseEvent e) {
-		//compbar.selectNone();
+		compbar.selectNone();
 	}
 	
 }
