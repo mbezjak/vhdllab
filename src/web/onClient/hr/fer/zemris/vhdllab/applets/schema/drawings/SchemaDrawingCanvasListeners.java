@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -9,7 +11,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.event.MouseInputListener;
 
 public class SchemaDrawingCanvasListeners implements MouseListener,
-		MouseMotionListener, MouseWheelListener {
+		MouseMotionListener, MouseWheelListener, KeyListener {
 
 	private SchemaDrawingCanvas canvas = null;
 	
@@ -40,8 +42,7 @@ public class SchemaDrawingCanvasListeners implements MouseListener,
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		// TODO Argh.
 	}
 
 	public void mouseExited(MouseEvent e) {
@@ -62,6 +63,21 @@ public class SchemaDrawingCanvasListeners implements MouseListener,
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		canvas.getMainframe().handleKeyPressed(arg0);
+	}
+
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

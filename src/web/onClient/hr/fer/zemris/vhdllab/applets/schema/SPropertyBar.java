@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 
 import java.awt.BorderLayout;
 import java.awt.ScrollPane;
@@ -12,9 +13,12 @@ public class SPropertyBar extends JToolBar {
 	private SPropertyPanel panel = null;
 	private JScrollPane scrpan = null;
 	private String currentSelectedInstance = null;
+	private SchemaMainFrame parentFrame = null;
 
-	public SPropertyBar() {
+	public SPropertyBar(SchemaMainFrame mfr) {
 		super("Property Bar");
+		parentFrame = mfr;
+		
 		this.setLayout(new BorderLayout());
 		
 		panel = new SPropertyPanel(null);
@@ -26,15 +30,23 @@ public class SPropertyBar extends JToolBar {
 	
 	public void generatePropertiesAndSetAsSelected(AbstractSchemaComponent comp) {
 		if (comp == null) {
-			System.out.print("null!");
+			currentSelectedInstance = null;
+			panel.removeAll();
 			return;
 		}
 		currentSelectedInstance = comp.getComponentInstanceName();
 		panel.setLinkToComponent(comp);
+		parentFrame.requestFocus();
 	}
 	
 	public String getSelectedComponentInstanceName() {
 		return currentSelectedInstance;
+	}
+	
+	public void showNoProperties() {
+		panel.removeAll();
+		currentSelectedInstance = null;
+		repaint();
 	}
 	
 }

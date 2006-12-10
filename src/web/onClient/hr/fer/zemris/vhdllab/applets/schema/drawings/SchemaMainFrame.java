@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
 import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
-import hr.fer.zemris.vhdllab.applets.schema.SSchemaComponentBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
@@ -12,12 +11,12 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
 
 /**
  * Ovaj enkapsulira kompletni UI, ukljucujuci i canvas.
@@ -52,11 +51,30 @@ public class SchemaMainFrame extends JFrame {
 	private void initUI() {
 		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
 		compbar = new SComponentBar(this);
-		propbar = new SPropertyBar();
+		propbar = new SPropertyBar(this);
 		scrpan = new JScrollPane(drawingCanvas);
 		this.add(compbar, BorderLayout.PAGE_START);
 		this.add(propbar, BorderLayout.EAST);
 		this.add(scrpan, BorderLayout.CENTER);
+		
+		// tipke
+		this.addKeyListener(new KeyListener() {
+
+			public void keyTyped(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void keyPressed(KeyEvent arg0) {
+				handleKeyPressed(arg0);
+			}
+
+			public void keyReleased(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 	}
 	
 	
@@ -82,7 +100,6 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	public void handleMouseDownOnSchema(MouseEvent e) {
-		
 	}
 
 	public void handleRightClickOnSchema(MouseEvent e) {
@@ -96,6 +113,20 @@ public class SchemaMainFrame extends JFrame {
 		}
 		if (type == CROSSHAIR_CURSOR_TYPE) {
 			this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+		}
+	}
+	
+	public void handleKeyPressed(KeyEvent kev) {
+		System.out.println("STISNUL SI: " + kev.getKeyChar());
+		if (kev.getKeyChar() == KeyEvent.VK_DELETE) {
+			System.out.println("Obrada...");
+			String toBeRemoved = propbar.getSelectedComponentInstanceName();
+			System.out.println("Micemo: " + toBeRemoved);
+			if (toBeRemoved != null) {
+				if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
+					propbar.showNoProperties();
+				}
+			}
 		}
 	}
 	

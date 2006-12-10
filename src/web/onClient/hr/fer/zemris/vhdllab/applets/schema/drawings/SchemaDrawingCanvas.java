@@ -194,5 +194,13 @@ public class SchemaDrawingCanvas extends JComponent {
 		return null;
 	}
 	
-	
+	public boolean removeComponentInstance(String componentInstanceName) {
+		for (SchemaDrawingComponentEnvelope env : components) {
+			if (env.getComponent().getComponentInstanceName() == componentInstanceName) {
+				components.remove(env);
+				return true;
+			}
+		}
+		return false;
+	}
 }

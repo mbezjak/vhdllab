@@ -36,6 +36,20 @@ public class SchemaDrawingComponentEnvelope {
 	public Point getPosition() {
 		return position;
 	}
+
+	@Override
+	public boolean equals(Object arg0) {
+		SchemaDrawingComponentEnvelope rhs = null;
+		try {
+			rhs = (SchemaDrawingComponentEnvelope)arg0;
+		} catch (Exception e) {
+			return false;
+		}
+		if (rhs.getComponent().getComponentInstanceName() == component.getComponentInstanceName()) {
+			return true;
+		}
+		return false;
+	}
 	
 	
 	

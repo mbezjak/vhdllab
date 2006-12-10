@@ -46,6 +46,7 @@ public class SComponentBar extends JToolBar {
 			if (this.getText().compareTo("(none)") == 0) {
 				//System.out.println("Mama, iskljucio me!");
 				parent.getParentToolbar().changeCursor(SchemaMainFrame.DEFAULT_CURSOR_TYPE);
+				selCompName = null;
 			}
 			else {
 				parent.getParentToolbar().changeCursor(SchemaMainFrame.CROSSHAIR_CURSOR_TYPE);
@@ -129,6 +130,7 @@ public class SComponentBar extends JToolBar {
 	public void selectNone() {
 		noneButt.setSelected(true);
 		selCompName = null;
+		parent.requestFocus();
 	}
 	
 	public void setSelectedComponentName(String cmpName) {
