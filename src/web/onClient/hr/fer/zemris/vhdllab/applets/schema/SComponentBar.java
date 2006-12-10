@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_NOT;
@@ -46,7 +48,7 @@ public class SComponentBar extends JToolBar {
 			if (this.getText().compareTo("(none)") == 0) {
 				//System.out.println("Mama, iskljucio me!");
 				parent.getParentToolbar().changeCursor(SchemaMainFrame.DEFAULT_CURSOR_TYPE);
-				selCompName = null;
+				setSelectedComponentName(null);
 			}
 			else {
 				parent.getParentToolbar().changeCursor(SchemaMainFrame.CROSSHAIR_CURSOR_TYPE);
@@ -59,6 +61,7 @@ public class SComponentBar extends JToolBar {
 	private JScrollPane scrpan;
 	private ButtonGroup group;
 	private String selCompName;
+	private AbstractSchemaComponent selComp;
 	private SCBToggleButton noneButt;
 	private SchemaMainFrame parent;
 
@@ -66,6 +69,7 @@ public class SComponentBar extends JToolBar {
 		super("Component Bar");
 		isDrawingIcons = true;
 		selCompName = null;
+		selComp = null;
 		parent = mframe;
 		
 		initComponents();
@@ -127,6 +131,10 @@ public class SComponentBar extends JToolBar {
 		return selCompName;
 	}
 	
+	public AbstractSchemaComponent getSelectedComponent() {
+		return selComp;
+	}
+	
 	public void selectNone() {
 		noneButt.setSelected(true);
 		selCompName = null;
@@ -136,7 +144,11 @@ public class SComponentBar extends JToolBar {
 	public void setSelectedComponentName(String cmpName) {
 		System.out.println("Odabran(a) je " + cmpName);
 		selCompName = cmpName;
-	}
-	
-	
+		if (cmpName == null) return;
+		try {
+			selComp = ComponentFactory.getSchemaComponent(cmpName);
+		} catch (ComponentFactoryException e) {
+			e.printStackTrace();
+		}
+	}	
 }

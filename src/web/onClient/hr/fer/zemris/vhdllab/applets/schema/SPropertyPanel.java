@@ -19,7 +19,6 @@ public class SPropertyPanel extends JPanel implements KeyListener {
 	AbstractSchemaComponent sklop;
 	
 	public SPropertyPanel(AbstractSchemaComponent sklop) {
-		this.setMinimumSize(new Dimension(200, 150));
 		this.setPreferredSize(new Dimension(200, 150));
 		this.setBorder(BasicBorders.getInternalFrameBorder());
 		this.sklop = sklop;
@@ -40,8 +39,8 @@ public class SPropertyPanel extends JPanel implements KeyListener {
 			if (i <= 0) i = 1;
 			GridLayout grlay = new GridLayout(i, 2);
 			this.setLayout(grlay);
-			this.setPreferredSize(new Dimension(250, grlay.getRows() * 45));
-			this.setMinimumSize(new Dimension(250, grlay.getRows() * 45));
+			//this.setPreferredSize(new Dimension(250, grlay.getRows() * 45));
+			//this.setMinimumSize(new Dimension(250, grlay.getRows() * 45));
 			JLabel lab = null;
 			Component comp = null;
 			for (AbstractComponentProperty cprop : cplist) {

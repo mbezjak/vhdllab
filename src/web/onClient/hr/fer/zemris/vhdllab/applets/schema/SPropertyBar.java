@@ -25,7 +25,7 @@ public class SPropertyBar extends JToolBar {
 		scrpan = new JScrollPane(panel);
 		scrpan.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		this.add(scrpan, BorderLayout.CENTER);
+		this.add(scrpan, BorderLayout.NORTH);
 	}
 	
 	public void generatePropertiesAndSetAsSelected(AbstractSchemaComponent comp) {

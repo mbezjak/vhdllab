@@ -47,7 +47,6 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	protected static long counter;
 	static {
 		instanceNameSet = new HashSet();
-		counter = 0;
 	}
 	protected Ptr<Object> pComponentInstanceName;
 	public String getComponentInstanceName() {

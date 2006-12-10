@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,6 +17,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import javax.swing.JComponent;
 
@@ -25,6 +27,12 @@ import javax.swing.JComponent;
  *
  */
 public class SchemaDrawingCanvas extends JComponent {
+	
+	// pravokutnik s boolean varijablom
+	class RectWithBool {
+		public Rectangle r;
+		public boolean b;
+	}
 
 	private static final long serialVersionUID = 168392906688186429L;
 	
@@ -36,13 +44,18 @@ public class SchemaDrawingCanvas extends JComponent {
 	private BufferedImage canvas = null;
 	private SchemaDrawingCanvasListeners listeners = null;
 	private SchemaMainFrame mainframe = null;
+	private Stack<RectWithBool> rectangleStack = null;
+	private String selectedName;
 	
 	public Point mousePosition;
+
+	
 	
 	public SchemaDrawingCanvas(SchemaColorProvider colors, SchemaMainFrame parent) {
 		mainframe = parent;
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
 		wires = new ArrayList<AbstractSchemaWire>();
+		rectangleStack = new Stack();
 		this.colors=colors;		
 		initGUI();
 		initListeners();
@@ -106,6 +119,32 @@ public class SchemaDrawingCanvas extends JComponent {
 	public ArrayList<AbstractSchemaWire> getWireList() {
 		return this.wires;
 	}
+	
+	/**
+	 * Koristi se za iscrtavanje pravokutnika pri
+	 * navlacenju komponente. Svi pravokutnici
+	 * sa stoga iscrtat ce se tijekom sljedeceg
+	 * poziva metode paintComponent - dakle samo jednom.
+	 *
+	 */
+	public void addRectToStack(int x, int y, int w, int h, boolean ok) {
+		RectWithBool rb = new RectWithBool();
+		rb.r = new Rectangle(x, y, w, h);
+		rb.b = ok;
+		rectangleStack.add(rb);
+	}
+	
+	/**
+	 * Instanca sklopa koja je izabrana mora oko sebe imati pravokutnik.
+	 * @return
+	 */
+	public String getSelectedName() {
+		return selectedName;
+	}
+
+	public void setSelectedName(String selectedName) {
+		this.selectedName = selectedName;
+	}
 
 	/**
 	 * Metoda za iscrtavanje plohe
@@ -148,11 +187,24 @@ public class SchemaDrawingCanvas extends JComponent {
 			Point p = envelope.getPosition();
 			adapter.setStartingCoordinates(p.x, p.y);
 			envelope.getComponent().setDrawingFrame(false);
+			if (envelope.getComponent().getComponentInstanceName() == selectedName) {
+				envelope.getComponent().setDrawingFrame(true);
+			}
 			envelope.getComponent().draw(adapter);
 		}
 		
 		for (AbstractSchemaWire wire : wires) {
 			wire.draw(adapter);
+		}
+		
+		// iscrtaj sve pravokutnike koji su dodani
+		while (!rectangleStack.empty()) {
+			RectWithBool rb = rectangleStack.pop();
+			if (rb.b) graph.setColor(Color.BLACK);
+			else graph.setColor(Color.RED);
+			rb.r.width = adapter.virtualToReal(rb.r.width);
+			rb.r.height = adapter.virtualToReal(rb.r.height);
+			graph.draw(rb.r);
 		}
 		
 		//iscrtaj BufferedImage

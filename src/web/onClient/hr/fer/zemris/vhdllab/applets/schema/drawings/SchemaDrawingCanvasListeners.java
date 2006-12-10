@@ -51,12 +51,11 @@ public class SchemaDrawingCanvasListeners implements MouseListener,
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseMoved(MouseEvent e) {
 		canvas.mousePosition=e.getPoint();
+		canvas.getMainframe().handleMouseOverSchema(e);
 		canvas.repaint();
 	}
 
