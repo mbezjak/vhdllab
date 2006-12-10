@@ -3,9 +3,13 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
@@ -54,12 +58,20 @@ public class SchemaDrawingAdapter {
 		return (int)((virtualPoint+virtualX)*virtualGridFactor);
 	}
 	
+	public int virtualToRealRelativeX(float virtualPoint){
+		return (int)((virtualPoint+virtualX)*virtualGridFactor);
+	}
+	
 	/**
 	 * Pretvara virtualnu tocku u realnu i dodaje relativni pomak po Y osi (virtualY).
 	 * @param virtualPoint Virtualna tocka
 	 * @return Realnu tocku pomaknutu za relanu udaljenost virtualY
 	 */
 	public int virtualToRealRelativeY(int virtualPoint){
+		return (int)((virtualPoint+virtualY)*virtualGridFactor);
+	}
+	
+	public int virtualToRealRelativeY(float virtualPoint){
 		return (int)((virtualPoint+virtualY)*virtualGridFactor);
 	}
 	
@@ -132,6 +144,51 @@ public class SchemaDrawingAdapter {
 		graph.draw(line);
 	}
 	
+	public void drawLine(int virtualX1, int virtualY1, float virtualX2, float virtualY2) {
+		if (gph == null) return;
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		//postavljanje boje crtanja
+		graph.setColor(colors.ADAPTER_LINE);
+		
+		
+		Line2D.Float line=new Line2D.Float();
+		
+		line.x1=virtualToRealRelativeX(virtualX1);
+		line.y1=virtualToRealRelativeY(virtualY1);
+		
+		line.x2=virtualToRealRelativeX(virtualX2);
+		line.y2=virtualToRealRelativeY(virtualY2);
+		
+		graph.draw(line);
+	}
+	
+	public void drawThickLine(int virtualX1, int virtualY1, int virtualX2, int virtualY2, float thickness) {
+		if (gph == null) return;
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		//postavljanje boje crtanja
+		graph.setColor(colors.ADAPTER_LINE);
+		
+		
+		Line2D.Float line=new Line2D.Float();
+		
+		line.x1=virtualToRealRelativeX(virtualX1);
+		line.y1=virtualToRealRelativeY(virtualY1);
+		
+		line.x2=virtualToRealRelativeX(virtualX2);
+		line.y2=virtualToRealRelativeY(virtualY2);
+		
+		Stroke stroke = graph.getStroke();
+		graph.setStroke(new BasicStroke(thickness));
+		graph.draw(line);
+		graph.setStroke(stroke);
+	}
+	
 	/**
 	 * Crta onu tockicu koja daje neku naznaku align-a po grid-u.
 	 * @param realX
@@ -159,7 +216,7 @@ public class SchemaDrawingAdapter {
 		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		graph.setColor(colors.ADAPTER_LINE);
-
+		
 		graph.drawOval(virtualToRealRelativeX(virtualX),
 				virtualToRealRelativeY(virtualY),
 				virtualToReal(virtualXRadius),
@@ -258,6 +315,52 @@ public class SchemaDrawingAdapter {
 		graph.fillPolygon(xarr, yarr, 4);
 		graph.setColor(colors.ADAPTER_LINE);
 		graph.drawPolygon(xarr, yarr, 4);
+	}
+	
+	public Shape drawCubic(int x1, int y1, float xc1, float yc1, float xc2, float yc2, int x2, int y2) {
+		if (gph == null) return null;
+
+		Graphics2D graph = (Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		graph.setColor(colors.ADAPTER_LINE);
+		
+		x1 = virtualToRealRelativeX(x1);
+		y1 = virtualToRealRelativeY(y1);
+		xc1 = virtualToRealRelativeX(xc1);
+		yc1 = virtualToRealRelativeY(yc1);
+		xc2 = virtualToRealRelativeX(xc2);
+		yc2 = virtualToRealRelativeY(yc2);
+		x2 = virtualToRealRelativeX(x2);
+		y2 = virtualToRealRelativeY(y2);
+		
+		CubicCurve2D cubic = new CubicCurve2D.Float();
+		cubic.setCurve(x1, y1, xc1, yc1, xc2, yc2, x2, y2);
+		
+		graph.draw(cubic);
+		return cubic;
+	}
+	
+	public void draw(Shape shape) {
+		if (gph == null) return;
+
+		Graphics2D graph = (Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		graph.setColor(colors.ADAPTER_LINE);
+		
+		graph.draw(shape);
+	}
+	
+	public void fill(Shape shape) {
+		if (gph == null) return;
+
+		Graphics2D graph = (Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		graph.setColor(Color.WHITE);
+		
+		graph.fill(shape);
 	}
 	
 	/**

@@ -10,12 +10,17 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericPropert
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.GeneralPath;
 
 import javax.swing.JTextField;
 
 public class Sklop_OR extends AbstractSchemaComponent {
 	private final static int RAZMAK_IZMEDU_PORTOVA = 4;
-	private final static int SIRINA_OR_VRATA = 9;
+	private final static int SIRINA_OR_VRATA = 14;
+	private final static int ODMAK_OD_RUBA = 2;
 	
 	private Integer brojUlaza;
 	
@@ -64,7 +69,42 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
+	// ljudi moji, polomio sam kurcu rebra da ovo dolje nacrtam. Ali uspio sam.
 	public void drawSpecific(SchemaDrawingAdapter adapter) {
+		// draw wires to ports
+		int w = getComponentWidth();
+		int h = getComponentHeight();
+		adapter.drawLine(w / 2, h / 2, w, h / 2);
+		for (int i = 0; i < getBrojUlaza(); i++) {
+			adapter.drawLine(0, (i + 1) * RAZMAK_IZMEDU_PORTOVA, w / 2, (i + 1) * RAZMAK_IZMEDU_PORTOVA);
+		}
+		
+		GeneralPath path = new GeneralPath();
+		
+		// draw component
+		path.append(adapter.drawCubic(
+				ODMAK_OD_RUBA, ODMAK_OD_RUBA,
+				w / 2, h / 4,
+				w * 2 / 3, h / 3,
+				w - ODMAK_OD_RUBA, h / 2), true);
+		path.append(adapter.drawCubic(
+				w - ODMAK_OD_RUBA, h / 2,
+				w * 2 / 3, h - h / 3,
+				w / 2, h - h / 4,
+				ODMAK_OD_RUBA, h - ODMAK_OD_RUBA), true);
+		path.append(adapter.drawCubic(
+				ODMAK_OD_RUBA, h - ODMAK_OD_RUBA,
+				ODMAK_OD_RUBA * 1.5f, h - h / 4,
+				ODMAK_OD_RUBA * 1.8f, h - h / 3,
+				ODMAK_OD_RUBA * 2, h / 2), true);
+		path.append(adapter.drawCubic(
+				ODMAK_OD_RUBA * 2, h / 2,
+				ODMAK_OD_RUBA * 1.8f, h / 3,
+				ODMAK_OD_RUBA * 1.5f, h / 4,
+				ODMAK_OD_RUBA, ODMAK_OD_RUBA
+				), true);
+		adapter.fill(path.createTransformedShape(new AffineTransform()));
+		adapter.draw(path.createTransformedShape(new AffineTransform()));
 	}
 
 	/**

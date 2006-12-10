@@ -10,12 +10,15 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericPropert
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 
 import javax.swing.JTextField;
 
 public class Sklop_XOR extends AbstractSchemaComponent {
 	private final static int RAZMAK_IZMEDU_PORTOVA = 4;
-	private final static int SIRINA_XOR_VRATA = 9;
+	private final static int SIRINA_XOR_VRATA = 14;
+	private static final int ODMAK_OD_RUBA = 2;
 	
 	private Integer brojUlaza;
 	
@@ -65,6 +68,57 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
 	public void drawSpecific(SchemaDrawingAdapter adapter) {
+//		 draw wires to ports
+		int w = getComponentWidth();
+		int h = getComponentHeight();
+		adapter.drawLine(w / 2, h / 2, w, h / 2);
+		float koef = (1.5f * ODMAK_OD_RUBA - 0.5f * ODMAK_OD_RUBA) / (h * 0.5f - ODMAK_OD_RUBA);
+		for (int i = 0; i < getBrojUlaza(); i++) {
+			adapter.drawLine(0, (i + 1) * RAZMAK_IZMEDU_PORTOVA, 
+					(i < getBrojUlaza() / 2) 
+							? ((i + 1) * RAZMAK_IZMEDU_PORTOVA - ODMAK_OD_RUBA) * koef + ODMAK_OD_RUBA * 0.5f
+							: ((i + 1) * RAZMAK_IZMEDU_PORTOVA - h + ODMAK_OD_RUBA) * (-koef) + ODMAK_OD_RUBA * 0.5f,
+							(i + 1) * RAZMAK_IZMEDU_PORTOVA);
+		}
+		
+		GeneralPath path = new GeneralPath();
+		
+		// draw component
+		path.append(adapter.drawCubic(
+				ODMAK_OD_RUBA, ODMAK_OD_RUBA,
+				w / 2, h / 4,
+				w * 2 / 3, h / 3,
+				w - ODMAK_OD_RUBA, h / 2), true);
+		path.append(adapter.drawCubic(
+				w - ODMAK_OD_RUBA, h / 2,
+				w * 2 / 3, h - h / 3,
+				w / 2, h - h / 4,
+				ODMAK_OD_RUBA, h - ODMAK_OD_RUBA), true);
+		path.append(adapter.drawCubic(
+				ODMAK_OD_RUBA, h - ODMAK_OD_RUBA,
+				ODMAK_OD_RUBA * 1.5f, h - h / 4,
+				ODMAK_OD_RUBA * 1.8f, h - h / 3,
+				ODMAK_OD_RUBA * 2, h / 2), true);
+		path.append(adapter.drawCubic(
+				ODMAK_OD_RUBA * 2, h / 2,
+				ODMAK_OD_RUBA * 1.8f, h / 3,
+				ODMAK_OD_RUBA * 1.5f, h / 4,
+				ODMAK_OD_RUBA, ODMAK_OD_RUBA
+				), true);
+		adapter.fill(path.createTransformedShape(new AffineTransform()));
+		adapter.draw(path.createTransformedShape(new AffineTransform()));
+		adapter.drawCubic(
+				ODMAK_OD_RUBA / 2, h - ODMAK_OD_RUBA,
+				ODMAK_OD_RUBA * 1.f, h - h / 4,
+				ODMAK_OD_RUBA * 1.3f, h - h / 3,
+				ODMAK_OD_RUBA * 3 / 2, h / 2
+				);
+		adapter.drawCubic(
+				ODMAK_OD_RUBA * 3 / 2, h / 2,
+				ODMAK_OD_RUBA * 1.3f, h / 3,
+				ODMAK_OD_RUBA * 1.0f, h / 4,
+				ODMAK_OD_RUBA / 2, ODMAK_OD_RUBA
+				);
 	}
 
 	/**

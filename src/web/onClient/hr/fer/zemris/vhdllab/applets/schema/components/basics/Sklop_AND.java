@@ -79,9 +79,9 @@ public class Sklop_AND extends AbstractSchemaComponent {
 		int diameterX = (getComponentWidth() - 2 * ODMAK_OD_RUBA);
 		adapter.fillRect(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 - ODMAK_OD_RUBA + 1, getComponentHeight() - ODMAK_OD_RUBA * 2);
 		adapter.fillOvalSegment((getComponentWidth() - diameterX) / 2, (getComponentHeight() - diameterY) / 2, diameterX, diameterY, -90, 180);
-		adapter.drawLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA);
-		adapter.drawLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, ODMAK_OD_RUBA);
-		adapter.drawLine(ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, getComponentHeight() - ODMAK_OD_RUBA);
+		adapter.drawThickLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA, 1.15f);
+		adapter.drawThickLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, ODMAK_OD_RUBA, 1.15f);
+		adapter.drawThickLine(ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, getComponentHeight() - ODMAK_OD_RUBA, 1.15f);
 		adapter.drawOvalSegment((getComponentWidth() - diameterX) / 2, (getComponentHeight() - diameterY) / 2, diameterX, diameterY, -90, 180);
 	}
 

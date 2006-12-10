@@ -13,6 +13,7 @@ import java.awt.HeadlessException;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 /**
  * Ovaj enkapsulira kompletni UI, ukljucujuci i canvas.
@@ -24,6 +25,7 @@ import javax.swing.JFrame;
 public class SchemaMainFrame extends JFrame {
 	private SComponentBar compbar;
 	private SPropertyBar propbar;
+	private JScrollPane scrpan;
 	public SchemaDrawingCanvas drawingCanvas;
 
 	public SchemaMainFrame(String arg0) throws HeadlessException {
@@ -44,9 +46,10 @@ public class SchemaMainFrame extends JFrame {
 		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
 		compbar = new SComponentBar();
 		propbar = new SPropertyBar();
+		scrpan = new JScrollPane(drawingCanvas);
 		this.add(compbar, BorderLayout.PAGE_START);
 		this.add(propbar, BorderLayout.EAST);
-		this.add(drawingCanvas, BorderLayout.CENTER);
+		this.add(scrpan, BorderLayout.CENTER);
 	}
 	
 	

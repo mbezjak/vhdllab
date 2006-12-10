@@ -48,6 +48,7 @@ public class PrivremenaProbnaKlasa {
 		try {
 			compi = ComponentFactory.getSchemaComponent("MUX2^nNA1", s);
 			mframe.drawingCanvas.addComponent(compi, new Point(15, 15));
+			mframe.drawingCanvas.addComponent(ComponentFactory.getSchemaComponent("XOR sklop"), new Point(120, 175));
 		} catch (ComponentFactoryException e1) {
 			e1.printStackTrace();
 		}
