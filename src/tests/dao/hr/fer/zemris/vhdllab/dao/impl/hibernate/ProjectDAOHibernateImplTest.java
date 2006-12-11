@@ -35,7 +35,7 @@ public class ProjectDAOHibernateImplTest {
 		file = new File();
 		file.setContent("simple content of a file!");
 		file.setFileName("sample name");
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file.setProject(project);
 		
 		project.setOwnerID("user100");
@@ -70,7 +70,7 @@ public class ProjectDAOHibernateImplTest {
 		File file2 = new File();
 		file2.setContent("simple file2!");
 		file2.setFileName("sample name2");
-		file2.setFileType(FileTypes.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDL_TB);
 		Project project2 = new Project();
 		project2.setOwnerID("user101");
 		project2.setProjectName("simple project2");

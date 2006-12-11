@@ -236,7 +236,7 @@ public interface VHDLLabManager {
 	public CompilationResult compile(Long fileId) throws ServiceException;
 	/**
 	 * Use this method to perform a simulation. The file specified
-	 * must be of simulatable type (such as {@linkplain FileTypes#FT_VHDLTB}}).
+	 * must be of simulatable type (such as {@linkplain FileTypes#FT_VHDL_TB}}).
 	 * @param fileId identifier of the file
 	 * @return simulation status
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
@@ -246,7 +246,7 @@ public interface VHDLLabManager {
 	/**
 	 * Use this method to generate VHDL for specified file. Please note that
 	 * this method can return directly content of specified file (if file type
-	 * is, e.g., {@linkplain FileTypes#FT_VHDLSOURCE}. This method will dispatch
+	 * is, e.g., {@linkplain FileTypes#FT_VHDL_SOURCE}. This method will dispatch
 	 * the task of VHDL source generation to appropriate {@linkplain VHDLGenerator}.
 	 * If no generator for file type exists, a {@linkplain ServiceException} will
 	 * be thrown.

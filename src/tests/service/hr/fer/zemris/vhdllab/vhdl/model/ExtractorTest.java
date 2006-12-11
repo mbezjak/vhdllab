@@ -185,11 +185,11 @@ public class ExtractorTest {
 			vhdlLabman.setUserFileDAO(new UserFileDAOMemoryImpl());
 			
 			Project proj = vhdlLabman.createNewProject("testProject", "user1");
-			File sklopI = vhdlLabman.createNewFile(proj,"sklopI",FileTypes.FT_VHDLSOURCE);
-			File sklopNE = vhdlLabman.createNewFile(proj,"sklopNE",FileTypes.FT_VHDLSOURCE);
-			File sklopNI = vhdlLabman.createNewFile(proj,"sklopNI",FileTypes.FT_VHDLSOURCE);
-			File sklopNINI = vhdlLabman.createNewFile(proj,"sklopNINI",FileTypes.FT_VHDLSOURCE);
-			File sklopNI_tb = vhdlLabman.createNewFile(proj,"sklopNI_tb",FileTypes.FT_VHDLSOURCE);
+			File sklopI = vhdlLabman.createNewFile(proj,"sklopI",FileTypes.FT_VHDL_SOURCE);
+			File sklopNE = vhdlLabman.createNewFile(proj,"sklopNE",FileTypes.FT_VHDL_SOURCE);
+			File sklopNI = vhdlLabman.createNewFile(proj,"sklopNI",FileTypes.FT_VHDL_SOURCE);
+			File sklopNINI = vhdlLabman.createNewFile(proj,"sklopNINI",FileTypes.FT_VHDL_SOURCE);
+			File sklopNI_tb = vhdlLabman.createNewFile(proj,"sklopNI_tb",FileTypes.FT_VHDL_SOURCE);
 			sklopI.setContent(provider.provide("0"));
 			vhdlLabman.saveFile(sklopI.getId(), sklopI.getContent());
 			sklopNE.setContent(provider.provide("1"));

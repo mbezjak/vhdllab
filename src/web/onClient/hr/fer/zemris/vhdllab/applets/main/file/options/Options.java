@@ -1,8 +1,7 @@
-package hr.fer.zemris.vhdllab.file.options;
+package hr.fer.zemris.vhdllab.applets.main.file.options;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -27,10 +26,6 @@ public class Options {
 		return options.get(name);
 	}
 	
-	public Map<String, SingleOption> getSelectedOptions() {
-		return Collections.unmodifiableMap(options);
-	}
-
 	public String serialize() {
 		Properties p = new Properties();
 		int i = 1;

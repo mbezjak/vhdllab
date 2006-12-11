@@ -38,9 +38,9 @@ public class DoMethodFindProjectsByUserTest {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
 		project = labman.createNewProject("TestProjectName", "user1111");
-		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDLSOURCE);
-		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDLSOURCE);
-		file3 = labman.createNewFile(project, "TestFileName_3", FileTypes.FT_VHDLTB);
+		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDL_SOURCE);
+		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDL_SOURCE);
+		file3 = labman.createNewFile(project, "TestFileName_3", FileTypes.FT_VHDL_TB);
 		Set<File> files = new TreeSet<File>();
 		files.add(file1);
 		files.add(file2);

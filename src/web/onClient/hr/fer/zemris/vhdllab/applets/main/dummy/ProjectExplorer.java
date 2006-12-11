@@ -113,5 +113,11 @@ public class ProjectExplorer extends JPanel implements Explorer {
 			removeFile(projectName, name);
 		}
 	}
+
+
+
+	public String getActiveProject() {
+		return projectName;
+	}
 	
 }

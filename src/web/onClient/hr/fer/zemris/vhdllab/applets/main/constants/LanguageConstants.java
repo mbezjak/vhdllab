@@ -23,6 +23,11 @@ public class LanguageConstants {
 	 * Append this keyword to existing key to get its accelerator value.
 	 */
 	public static final String ACCELERATOR_APPEND = ".accelerator";
+	
+	/**
+	 * Append this keyword to existing key to get its tooltip value.
+	 */
+	public static final String TOOLTIP_APPEND = ".tooltip";
 
 	
 	/**
@@ -111,6 +116,11 @@ public class LanguageConstants {
 	 * Key for 'Exit' menu item in 'File' menu.
 	 */
 	public static final String MENU_FILE_EXIT = "menu.file.exit";
+	
+	/**
+	 * Key for 'Maximize Active Window' menu item in 'View' menu.
+	 */
+	public static final String MENU_VIEW_MAXIMIZE_ACTIVE_WINDOW = "menu.view.maximize.active.window";
 	
 	/**
 	 * Key for 'Compile' menu item in 'Tools' menu.

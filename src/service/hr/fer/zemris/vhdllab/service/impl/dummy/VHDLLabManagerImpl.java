@@ -72,9 +72,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public String generateVHDL(File file) throws ServiceException {
-		if(file.getFileType().equals(FileTypes.FT_VHDLSOURCE)) {
+		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			return file.getContent();
-		} else if(file.getFileType().equals(FileTypes.FT_VHDLTB)) {
+		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
 			String inducement = new String("<measureUnit>ns</measureUnit>\n" +
 					"<duration>1000</duration>\n" +
 					"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
@@ -410,7 +410,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 	
 	public CircuitInterface extractCircuitInterface(File file) {
-		if(file.getFileType().equals(FileTypes.FT_VHDLSOURCE)) {
+		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			return Extractor.extractCircuitInterface(file.getContent());
 		} else {
 			return new DefaultCircuitInterface("cicinc");
@@ -436,7 +436,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	private List<File> extractDependenciesDisp(File file) throws ServiceException {
 		IDependency depExtractor = null;
-		if(file.getFileType().equals(FileTypes.FT_VHDLSOURCE)) {
+		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			depExtractor = new VHDLDependencyExtractor();
 		} else {
 			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");

@@ -3,10 +3,14 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
 import hr.fer.zemris.vhdllab.applets.main.constants.LanguageConstants;
+import hr.fer.zemris.vhdllab.applets.main.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.ViewTypes;
 import hr.fer.zemris.vhdllab.applets.main.dummy.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
+import hr.fer.zemris.vhdllab.applets.main.file.options.Options;
+import hr.fer.zemris.vhdllab.applets.main.file.options.SingleOption;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.Explorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
@@ -18,9 +22,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.simulations.WaveApplet;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.file.options.Options;
-import hr.fer.zemris.vhdllab.file.options.SingleOption;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
@@ -30,9 +31,12 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -77,17 +81,18 @@ public class MainApplet
 	
 	private JPanel centerPanel;
 	private JPanel normalCenterPanel;
+	private Container parentOfMaximizedComponent = null;
 	
-	private ProjectExplorer projectExplorer;
-	private StatusExplorer statusExplorer;
+	private Explorer projectExplorer;
+	private StatusExplorer view;
 	private SideBar sideBar;
 	
 	private JPanel projectExplorerPanel;
-	private JPanel statusExplorerPanel;
+	private JPanel viewPanel;
 	private JPanel sideBarPanel;
 	
 	private JSplitPane projectExplorerSplitPane;
-	private JSplitPane statusExplorerSplitPane;
+	private JSplitPane viewSplitPane;
 	private JSplitPane sideBarSplitPane;
 	
 	/* (non-Javadoc)
@@ -117,14 +122,25 @@ public class MainApplet
 			String data = cache.getUserFile(FileTypes.FT_COMMON);
 			Options options = Options.deserialize(data);
 			SingleOption commonOptions = options.getOption(UserFileConstants.COMMON_LANGUAGE);
-			language = commonOptions.getSelectedValue();
+			language = commonOptions.getChosenValue();
 		} catch (UniformAppletException e) {
 			statusBar.setText(bundle.getString(LanguageConstants.STATUSBAR_LANGUAGE_SETTING_NOT_FOUND));
 			language = "en";
 		}
 		bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN,
 				language, null);
+		
 		initGUI();
+		this.addComponentListener(new ComponentListener() {
+			public void componentHidden(ComponentEvent e) {}
+			public void componentMoved(ComponentEvent e) {}
+			public void componentResized(ComponentEvent e) {
+				setPaneSize();
+			}
+			public void componentShown(ComponentEvent e) {}
+			
+		});
+
 		
 		//**********************
 		server.writeServerInitData();
@@ -155,6 +171,7 @@ public class MainApplet
 	@Override
 	public void start() {
 		super.start();
+		setPaneSize();
 	}
 	
 	/* (non-Javadoc)
@@ -188,7 +205,7 @@ public class MainApplet
 		topContainerPanel.add(toolBar, BorderLayout.NORTH);
 		topContainerPanel.add(setupStatusBar(), BorderLayout.SOUTH);
 		normalCenterPanel = setupCenterPanel();
-		centerPanel.add(normalCenterPanel);
+		centerPanel.add(normalCenterPanel, BorderLayout.CENTER);
 		topContainerPanel.add(centerPanel, BorderLayout.CENTER);
 		
 		this.add(topContainerPanel, BorderLayout.CENTER);
@@ -204,22 +221,19 @@ public class MainApplet
 	}
 	
 	private JPanel setupCenterPanel() {
-		projectExplorer = new ProjectExplorer();
+		ProjectExplorer projectExplorer = new ProjectExplorer();
+		this.projectExplorer = projectExplorer;
 		projectExplorer.setProjectContainer(this);
 		//JPanel projectExplorerPanel = new JPanel(new BorderLayout());
 		projectExplorerPanel = new JPanel(new BorderLayout());
 		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
-		projectExplorerPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
 		
 		editorPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
 		editorPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForEditors());
 		editorPane.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount() == 2) {
-					maximizeActiveComponent(editorPane);
-					/*centerPanel.remove(normalCenterPanel);
-					centerPanel.add(editorPane, BorderLayout.CENTER);
-					centerPanel.repaint();*/
+					maximizeComponent(editorPane);
 				}
 			}
 			public void mouseEntered(MouseEvent e) {}
@@ -228,35 +242,22 @@ public class MainApplet
 			public void mouseReleased(MouseEvent e) {}
 		});
 		
-		//JPanel statusExplorerPanel = new JPanel(new BorderLayout());
-		statusExplorerPanel = new JPanel(new BorderLayout());
-		statusExplorer = new StatusExplorer();
-		statusExplorerPanel.add(statusExplorer, BorderLayout.CENTER);
-		statusExplorerPanel.setPreferredSize(new Dimension(0, this.getHeight()/3));
+		//JPanel viewPanel = new JPanel(new BorderLayout());
+		viewPanel = new JPanel(new BorderLayout());
+		view = new StatusExplorer();
+		viewPanel.add(view, BorderLayout.CENTER);
 		
 		//JPanel sideBarPanel = new JPanel(new BorderLayout());
 		sideBarPanel = new JPanel(new BorderLayout());
 		sideBar = new SideBar();
 		sideBarPanel.add(sideBar, BorderLayout.CENTER);
-		sideBarPanel.setPreferredSize(new Dimension(this.getWidth()/3, 0));
-		
-		//JSplitPane sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
-		//JSplitPane projectExporerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
-		//JSplitPane statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExporerSplitPane, statusExplorerPanel);
 		
 		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
 		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
-		statusExplorerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, statusExplorerPanel);
-		
-		//******************
-		sideBarSplitPane.setDividerLocation(650);
-		projectExplorerSplitPane.setDividerLocation(110);
-		statusExplorerSplitPane.setDividerLocation(500);
-		
-		//******************
+		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, viewPanel);
 		
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
-		centerComponentsPanel.add(statusExplorerSplitPane);
+		centerComponentsPanel.add(viewSplitPane);
 		
 		return centerComponentsPanel;
 		
@@ -364,28 +365,28 @@ public class MainApplet
 			// File menu
 			key = LanguageConstants.MENU_FILE;
 			menu = new JMenu(bundle.getString(key));
-			setMnemonicAndAccelerator(menu, key);
+			setCommonMenuAttributes(menu, key);
 			
 			// New sub menu
 			key = LanguageConstants.MENU_FILE_NEW;
 			submenu = new JMenu(bundle.getString(key));
-			setMnemonicAndAccelerator(submenu, key);
+			setCommonMenuAttributes(submenu, key);
 
 			// New Project menu item
 			key = LanguageConstants.MENU_FILE_NEW_PROJECT;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			submenu.add(menuItem);
 			submenu.addSeparator();
 			
 			// New VHDL Source menu item
 			key = LanguageConstants.MENU_FILE_NEW_VHDL_SOURCE;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						createNewFileInstance(FileTypes.FT_VHDLSOURCE);
+						createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
 					} catch (UniformAppletException e1) {}
 				}
 			});
@@ -394,19 +395,19 @@ public class MainApplet
 			// New Testbench menu item
 			key = LanguageConstants.MENU_FILE_NEW_TESTBENCH;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			submenu.add(menuItem);
 			
 			// New Schema menu item
 			key = LanguageConstants.MENU_FILE_NEW_SCHEMA;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			submenu.add(menuItem);
 			
 			// New Automat menu item
 			key = LanguageConstants.MENU_FILE_NEW_AUTOMAT;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			submenu.add(menuItem);
 			
 			menu.add(submenu);
@@ -414,14 +415,14 @@ public class MainApplet
 			// Open menu item
 			key = LanguageConstants.MENU_FILE_OPEN;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menu.add(menuItem);
 			menu.addSeparator();
 			
 			// Save menu item
 			key = LanguageConstants.MENU_FILE_SAVE;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					saveEditor((IEditor)editorPane.getSelectedComponent());
@@ -432,7 +433,7 @@ public class MainApplet
 			// Save All menu item
 			key = LanguageConstants.MENU_FILE_SAVE_ALL;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					saveAllEditors();
@@ -444,7 +445,7 @@ public class MainApplet
 			// Close menu item
 			key = LanguageConstants.MENU_FILE_CLOSE;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					closeEditor((IEditor)editorPane.getSelectedComponent());
@@ -455,7 +456,7 @@ public class MainApplet
 			// Close All menu item
 			key = LanguageConstants.MENU_FILE_CLOSE_ALL;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					closeAllEditors();
@@ -467,7 +468,7 @@ public class MainApplet
 			// Exit menu item
 			key = LanguageConstants.MENU_FILE_EXIT;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					exitApplication();
@@ -480,24 +481,40 @@ public class MainApplet
 			// Edit menu
 			key = LanguageConstants.MENU_EDIT;
 			menu = new JMenu(bundle.getString(key));
-			setMnemonicAndAccelerator(menu, key);
+			setCommonMenuAttributes(menu, key);
 			menuBar.add(menu);
 			
 			// View menu
 			key = LanguageConstants.MENU_VIEW;
 			menu = new JMenu(bundle.getString(key));
-			setMnemonicAndAccelerator(menu, key);
+			setCommonMenuAttributes(menu, key);
+			
+			// Maximize active window
+			key = LanguageConstants.MENU_VIEW_MAXIMIZE_ACTIVE_WINDOW;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(editorPane.isFocusOwner()) {
+						maximizeComponent(editorPane);
+					} else if(editorPane.isFocusCycleRoot()) {
+						maximizeComponent(viewPane);
+					}
+				}
+			});
+			menu.add(menuItem);
+			
 			menuBar.add(menu);
 
 			// Tool menu
 			key = LanguageConstants.MENU_TOOLS;
 			menu = new JMenu(bundle.getString(key));
-			setMnemonicAndAccelerator(menu, key);
+			setCommonMenuAttributes(menu, key);
 			
 			// Compile menu item
 			key = LanguageConstants.MENU_TOOLS_COMPILE;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -513,7 +530,7 @@ public class MainApplet
 			// Simulate menu item
 			key = LanguageConstants.MENU_TOOLS_SIMULATE;
 			menuItem = new JMenuItem(bundle.getString(key));
-			setMnemonicAndAccelerator(menuItem, key);
+			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -532,27 +549,29 @@ public class MainApplet
 			// Help menu
 			key = LanguageConstants.MENU_HELP;
 			menu = new JMenu(bundle.getString(key));
-			setMnemonicAndAccelerator(menu, key);
+			setCommonMenuAttributes(menu, key);
 			menuBar.add(menu);
 			
 			return menuBar;
 		}
 
 		/**
-		 * Sets mnemonic and accelerator for a given menu. If keys for mnemonic
-		 * or accelerator (or both) does not exists then they will simply be ignored.
+		 * Sets mnemonic, accelerator and tooltip for a given menu. If keys for mnemonic,
+		 * accelerator or tooltip (or all of them) does not exists then they will simply
+		 * be ignored.
 		 * 
 		 * @param menu a menu where to set mnemonic and accelerator
 		 * @param key a key containing menu's name 
 		 */
-		private void setMnemonicAndAccelerator(JMenuItem menu, String key) {
+		private void setCommonMenuAttributes(JMenuItem menu, String key) {
 			/**
-			 * For locating mnemonic or accelerator of a <code>menu</code> this method
-			 * will simply append appropriate string to <code>key</code>.
+			 * For locating mnemonic, accelerator or tooltip of a <code>menu</code> this
+			 * method will simply append appropriate string to <code>key</code>.
 			 * Information regarding such strings that will be appended can be found here:
 			 * <ul>
 			 * <li>LanguageConstants.MNEMONIC_APPEND</li>
 			 * <li>LanguageConstants.ACCELERATOR_APPEND</li>
+			 * <li>LanguageConstants.TOOLTIP_APPEND</li>
 			 * </ul>
 			 */
 			
@@ -591,6 +610,13 @@ public class MainApplet
 					}
 					menu.setAccelerator(KeyStroke.getKeyStroke(keyCode, mask));
 				}
+			} catch (RuntimeException e) {}
+			
+			// Set tooltip
+			try {
+				String text = bundle.getString(key + LanguageConstants.TOOLTIP_APPEND);
+				text = text.trim();
+				menu.setToolTipText(text);
 			} catch (RuntimeException e) {}
 		}
 	}
@@ -652,7 +678,7 @@ public class MainApplet
 		if(notSavedEditors.size() != 0) {
 			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
 			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-			int option = showSaveDialog(title, message);
+			int option = showOptionDialog(title, message);
 			
 			if(option == JOptionPane.YES_OPTION) {
 				saveEditors(notSavedEditors);
@@ -693,7 +719,7 @@ public class MainApplet
 		if(notSavedEditors.size() != 0) {
 			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
 			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-			int option = showSaveDialog(title, message);
+			int option = showOptionDialog(title, message);
 			
 			if(option == JOptionPane.YES_OPTION) {
 				saveEditors(notSavedEditors);
@@ -704,7 +730,7 @@ public class MainApplet
 		
 		SimulationResult result = cache.runSimulation(projectName, fileName);
 		String simulationName = fileName + ".sim";
-		//cache.createFile(projectName, simulationName, FileTypes.FT_SIMULATION);
+		//cache.createFile(projectName, simulationName, FileTypes.FT_VHDL_SIMULATION);
 		//cache.saveFile(projectName, simulationName, result.getWaveform());
 		//openEditor(projectName, simulationName, true, false);
 		openSimulationEditor(projectName, simulationName, result.getWaveform());
@@ -715,7 +741,7 @@ public class MainApplet
 		List<String> circuits = new ArrayList<String>();
 		for(String name : fileNames) {
 			String type = cache.loadFileType(projectName, name);
-			if(type.equals(FileTypes.FT_VHDLSOURCE)) {
+			if(type.equals(FileTypes.FT_VHDL_SOURCE)) {
 				circuits.add(name);
 			}
 		}
@@ -803,6 +829,30 @@ public class MainApplet
 		editorPane.setSelectedIndex(index);
 	}
 	
+	private void refreshWorkspace() {
+		List<String> openedProjects = projectExplorer.getAllProjects();
+		for(String p : openedProjects) {
+			projectExplorer.closeProject(p);
+		}
+		
+		try {
+			List<String> projects = cache.findProjects();
+			for(String projectName : projects) {
+				projectExplorer.addProject(projectName);
+				List<String> files = cache.findFilesByProject(projectName);
+				for(String fileName : files) {
+					projectExplorer.addFile(projectName, fileName);
+				}
+			}
+			
+			String statusBarText = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
+			statusBar.setText(statusBarText);
+		} catch (UniformAppletException e) {
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
+			statusBar.setText(text);
+		}
+	}
+	
 	public void resetEditorTitle(boolean contentChanged, String projectName, String fileName) {
 		String title = fileName;
 		if(contentChanged) {
@@ -849,15 +899,70 @@ public class MainApplet
 		return (IEditor)editorPane.getComponentAt(index);
 	}
 	
-	private void maximizeActiveComponent(Component component) {
-		if(normalCenterPanel.isVisible()) {
+	private void setPaneSize() {
+		try {
+			String data = cache.getUserFile(FileTypes.FT_COMMON);
+			Options opt = Options.deserialize(data);
+			validate();
+			SingleOption o;
+			double size;
+			
+			o = opt.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
+			size = Double.parseDouble(o.getChosenValue());
+			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
+			
+			o = opt.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
+			size = Double.parseDouble(o.getChosenValue());
+			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
+			
+			o = opt.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
+			size = Double.parseDouble(o.getChosenValue());
+			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
+		} catch (UniformAppletException e) {
+			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * 0.15));
+			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * 0.75));
+			viewSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * 0.75));
+		}
+	}
+	
+	private void storePaneSize() {
+		try {
+			String type = FileTypes.FT_COMMON;
+			String data = cache.getUserFile(type);
+			Options opt = Options.deserialize(data);
+			
+			SingleOption o = opt.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
+			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth(); 
+			o.setChosenValue(String.valueOf(size));
+			
+			o = opt.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
+			size = sideBarSplitPane.getDividerLocation() * 1.0 / sideBarSplitPane.getWidth(); 
+			o.setChosenValue(String.valueOf(size));
+
+			o = opt.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
+			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
+			o.setChosenValue(String.valueOf(size));
+			
+			cache.saveUserFile(type, opt.serialize());
+		} catch (UniformAppletException e) {}
+	}
+	
+	private void maximizeComponent(Component component) {
+		if(component == null) return;
+		if(parentOfMaximizedComponent == null) {
+			storePaneSize();
 			centerPanel.remove(normalCenterPanel);
+			parentOfMaximizedComponent = component.getParent();
 			centerPanel.add(component, BorderLayout.CENTER);
 		} else {
 			centerPanel.remove(component);
+			parentOfMaximizedComponent.add(component);
 			centerPanel.add(normalCenterPanel, BorderLayout.CENTER);
+			parentOfMaximizedComponent = null;
+			setPaneSize();
 		}
 		centerPanel.repaint();
+		centerPanel.validate();
 	}
 	
 	private void saveEditor(IEditor editor) {
@@ -937,7 +1042,7 @@ public class MainApplet
 				message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE);
 			}
 			message = replacePlaceholders(message, new String[] {messageRepresentation.toString()});
-			int option = showSaveDialog(title, message);
+			int option = showOptionDialog(title, message);
 			
 			if(option == JOptionPane.YES_OPTION) {
 				saveEditors(notSavedEditors);
@@ -952,7 +1057,7 @@ public class MainApplet
 		}
 	}
 	
-	private int showSaveDialog(String title, String message) {
+	private int showOptionDialog(String title, String message) {
 		String yes = bundle.getString(LanguageConstants.DIALOG_BUTTON_YES);
 		String no = bundle.getString(LanguageConstants.DIALOG_BUTTON_NO);
 		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
@@ -984,21 +1089,24 @@ public class MainApplet
 				AjaxMediator ajax = new DefaultAjaxMediator(MainApplet.this);
 				MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 				
-				Long fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_APPLET);
-				invoker.saveUserFile(fileId, "a=2a\nb=22");
-				fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_THEME);
-				invoker.saveUserFile(fileId, "neka = random\ntema=za testiranje");
-				
-				Long fileId2 = invoker.createUserFile("uid:id-not-set", FileTypes.FT_COMMON);
+				Long fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_COMMON);
+				Options opt = new Options();
 				List<String> values = new ArrayList<String>();
 				values.add("en");
 				values.add("hr");
-				SingleOption o = new SingleOption("localization.language", "Language", "String", values, "en", "en");
-				List<SingleOption> options = new ArrayList<SingleOption>();
-				options.add(o);
-				Options opt = new Options();
+				SingleOption o = new SingleOption(UserFileConstants.COMMON_LANGUAGE, "Language", "String", values, "en", "en");
 				opt.setOption(o);
-				invoker.saveUserFile(fileId2, opt.serialize());
+				
+				o = new SingleOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
+				opt.setOption(o);
+				
+				o = new SingleOption(UserFileConstants.COMMON_SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
+				opt.setOption(o);
+
+				o = new SingleOption(UserFileConstants.COMMON_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
+				opt.setOption(o);
+				
+				invoker.saveUserFile(fileId, opt.serialize());
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
 			}
@@ -1008,14 +1116,14 @@ public class MainApplet
 			try {
 				final String projectName1 = "Project1";
 				final String fileName1 = "File1";
-				final String fileType1 = FileTypes.FT_VHDLSOURCE;
+				final String fileType1 = FileTypes.FT_VHDL_SOURCE;
 				final String fileContent1 = "simple content";
 				final String fileName2 = "File2";
-				final String fileType2 = FileTypes.FT_VHDLSOURCE;
+				final String fileType2 = FileTypes.FT_VHDL_SOURCE;
 				final String fileContent2 = "some file content that should be displayed in writer";
 				
 				long start = System.currentTimeMillis();
-				IEditor editor = cache.getEditor("vhdl_source");
+				IEditor editor = cache.getEditor(FileTypes.FT_VHDL_SOURCE);
 				
 				cache.createProject(projectName1);
 				cache.createFile(projectName1, fileName1, fileType1);

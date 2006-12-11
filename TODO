@@ -48,11 +48,11 @@ TODO 57) [OPEN]   Stvaranje dependencya itd. - iskreno, nije mi ni jasno sto tu 
 Miro Bezjak
 --------------------------------------------
 TODO 81) [CLOSED]   Popravit kod za simulaciju
-TODO 82) [OPEN]   Napisat kod za kompilaciju
+TODO 82) [CLOSED]   Napisat kod za kompilaciju
 TODO 83) [OPEN]   Napisat kod za refresh workspace
 TODO 84) [OPEN]   Napisat kod za sidebar
 TODO 85) [OPEN]   Slozit View da se prikazuju u panelima (to je za CompilationErrorsPanel)
-TODO 86) [OPEN]   Mogucnost maksimizacije nekog panela preko cijelog ekrana (to je jednostavno, vec imam ideju u glavi kak bi to islo)
+TODO 86) [CLOSED]   Mogucnost maksimizacije nekog panela preko cijelog ekrana (to je jednostavno, vec imam ideju u glavi kak bi to islo)
 TODO 87) [CLOSED]   Pocet koristit statusbar (za sad se ne koristi)
 TODO 88) [OPEN]   Popravit statusbar (dodat nove funkcionalnosti)
 TODO 89) [CLOSED]   Dovrsit serializaciju Result-a (sto povlaci i sve ostalo vezano uz Result)

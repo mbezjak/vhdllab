@@ -8,6 +8,7 @@ public interface Explorer {
 	void addFile(String projectName, String fileName);
 	void addProject(String projectName);
 	void setActiveProject(String projectName);
+	String getActiveProject();
 	List<String> getAllProjects();
 	List<String> getFilesByProject(String projectName);
 	void closeProject(String projectName);

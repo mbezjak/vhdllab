@@ -18,14 +18,14 @@ public class FileTest {
 		file = new File();
 		file.setId(Long.valueOf(0));
 		file.setFileName("FileNameSample");
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file.setContent("Content sample.");
 		file.setProject(null);
 		
 		file2 = new File();
 		file2.setId(Long.valueOf(0));
 		file2.setFileName("FileNameSample");
-		file2.setFileType(FileTypes.FT_VHDLSOURCE);
+		file2.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setContent("Content sample.");
 		file2.setProject(null);
 	}
@@ -82,9 +82,9 @@ public class FileTest {
 	@Test
 	public void equalsAndHashCode5() {
 		file.setId(null);
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setId(Long.valueOf(1));
-		file2.setFileType(FileTypes.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDL_TB);
 		assertEquals(false, file.equals(file2));
 		assertNotSame(file.hashCode(), file2.hashCode());
 	}
@@ -128,9 +128,9 @@ public class FileTest {
 	 */
 	@Test
 	public void compareTo3() {
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
-		file2.setFileType(FileTypes.FT_VHDLTB);
-		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
+		file2.setFileType(FileTypes.FT_VHDL_TB);
+		assertEquals(FileTypes.FT_VHDL_SOURCE.compareTo(FileTypes.FT_VHDL_TB), file.compareTo(file2));
 	}
 	
 	/**
@@ -149,9 +149,9 @@ public class FileTest {
 	@Test
 	public void compareTo5() {
 		file.setFileName("FilenameSimple");
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setFileName("SimpleFile");
-		file2.setFileType(FileTypes.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDL_TB);
 		assertEquals("FilenameSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
@@ -173,10 +173,10 @@ public class FileTest {
 	@Test
 	public void compareTo7() {
 		file.setId(Long.valueOf(1));
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setId(Long.valueOf(0));
-		file2.setFileType(FileTypes.FT_VHDLTB);
-		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
+		file2.setFileType(FileTypes.FT_VHDL_TB);
+		assertEquals(FileTypes.FT_VHDL_SOURCE.compareTo(FileTypes.FT_VHDL_TB), file.compareTo(file2));
 	}
 	
 	/**
@@ -194,7 +194,7 @@ public class FileTest {
 	 */
 	@Test
 	public void compareTo9() {
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setFileType(null);
 		assertEquals(1, file.compareTo(file2));
 	}
@@ -225,7 +225,7 @@ public class FileTest {
 	@Test
 	public void compareTo12() {
 		file.setFileType(null);
-		file2.setFileType(FileTypes.FT_VHDLSOURCE);
+		file2.setFileType(FileTypes.FT_VHDL_SOURCE);
 		assertEquals(-1, file.compareTo(file2));
 	}
 	
@@ -276,10 +276,10 @@ public class FileTest {
 	@Test
 	public void compareTo17() {
 		file.setFileName(null);
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setFileName(null);
-		file2.setFileType(FileTypes.FT_VHDLTB);
-		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
+		file2.setFileType(FileTypes.FT_VHDL_TB);
+		assertEquals(FileTypes.FT_VHDL_SOURCE.compareTo(FileTypes.FT_VHDL_TB), file.compareTo(file2));
 	}
 	
 	/**
@@ -370,10 +370,10 @@ public class FileTest {
 	@Test
 	public void compareTo24() {
 		file.setId(null);
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setId(null);
-		file2.setFileType(FileTypes.FT_VHDLTB);
-		assertEquals(FileTypes.FT_VHDLSOURCE.compareTo(FileTypes.FT_VHDLTB), file.compareTo(file2));
+		file2.setFileType(FileTypes.FT_VHDL_TB);
+		assertEquals(FileTypes.FT_VHDL_SOURCE.compareTo(FileTypes.FT_VHDL_TB), file.compareTo(file2));
 	}
 	
 	/**
@@ -384,10 +384,10 @@ public class FileTest {
 	public void compareTo25() {
 		file.setId(null);
 		file.setFileName("FileSimple");
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file2.setId(null);
 		file2.setFileName("SimpleFile");
-		file2.setFileType(FileTypes.FT_VHDLTB);
+		file2.setFileType(FileTypes.FT_VHDL_TB);
 		assertEquals("FileSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	

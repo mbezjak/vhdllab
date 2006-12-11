@@ -41,7 +41,7 @@ public class DoMethodExtractCircuitInterfaceTest {
 		mprov = new SampleManagerProvider();
 		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
 		project = labman.createNewProject("TestProjectName", "user1000");
-		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDLSOURCE);
+		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDL_SOURCE);
 		String content1 = "library IEEE;\n"+
 			"use IEEE.STD_LOGIC_1164.ALL;\n\n"+
 			"entity func is port (\n"+
@@ -72,10 +72,10 @@ public class DoMethodExtractCircuitInterfaceTest {
 			"end process;\n\n"+
 			"end Behavioral;\n";
 		labman.saveFile(file1.getId(), content1);
-		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDLSOURCE);
+		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDL_SOURCE);
 		String content2 = "";
 		labman.saveFile(file2.getId(), content2);
-		file3 = labman.createNewFile(project, "TestFileName_3", FileTypes.FT_VHDLTB);
+		file3 = labman.createNewFile(project, "TestFileName_3", FileTypes.FT_VHDL_TB);
 		String content3 = "<measureUnit>ns</measureUnit>\n" +
 			"<duration>1000</duration>\n" +
 			"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 

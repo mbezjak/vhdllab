@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.file.options;
+package hr.fer.zemris.vhdllab.applets.main.file.options;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
 
@@ -13,31 +13,36 @@ public class SingleOption {
 	private static final String SERIALIZATION_KEY_VALUE_TYPE = "value.type";
 	private static final String SERIALIZATION_KEY_VALUE = "value";
 	private static final String SERIALIZATION_KEY_DEFALUT_VALUE = "default.value";
-	private static final String SERIALIZATION_KEY_SELECTED_VALUE = "selected.value";
+	private static final String SERIALIZATION_KEY_CHOSEN_VALUE = "chosen.value";
 	
 	private String name;
 	private String description;
 	private String valueType;
 	private List<String> values;
 	private String defaultValue;
-	private String selectedValue;
+	private String chosenValue;
 
-	public SingleOption(String name, String description, String valueType, List<String> values, String defaultValue, String selectedValue) {
+	public SingleOption(String name, String description, String valueType, List<String> values, String defaultValue, String chosenValue) {
 		if(name == null) throw new NullPointerException("Name must not be null.");
 		if(description == null) throw new NullPointerException("Description must not be null.");
 		if(valueType == null) throw new NullPointerException("Type of a value must not be null.");
-		if(values == null) throw new NullPointerException("Values must not be null.");
 		if(defaultValue == null) throw new NullPointerException("Default value must not be null.");
-		if(selectedValue == null) throw new NullPointerException("Selected value must not be null.");
-		if(!values.contains(defaultValue)) throw new IllegalArgumentException("Default value must be one of values provided in a list.");
-		if(!values.contains(selectedValue)) throw new IllegalArgumentException("Seleted value must be one of values provided in a list.");
+		if(chosenValue == null) throw new NullPointerException("Chosen value must not be null.");
+		if(values != null) {
+			if(!values.contains(defaultValue)) {
+				throw new IllegalArgumentException("Default value must be one of values provided in a list.");
+			}
+			if(!values.contains(chosenValue)) {
+				throw new IllegalArgumentException("Chosen value must be one of values provided in a list.");
+			}
+		}
 
 		this.name = name;
 		this.description = description;
 		this.valueType = valueType;
 		this.values = values;
 		this.defaultValue = defaultValue;
-		this.selectedValue = selectedValue;
+		this.chosenValue = chosenValue;
 	}
 
 	public String getDefaultValue() {
@@ -56,14 +61,16 @@ public class SingleOption {
 		this.name = name;
 	}
 
-	public String getSelectedValue() {
-		return selectedValue;
+	public String getChosenValue() {
+		return chosenValue;
 	}
 
-	public void setSelectedValue(String selectedValue) {
-		if(selectedValue == null) throw new NullPointerException("Selected value must not be null.");
-		if(!values.contains(selectedValue)) throw new IllegalArgumentException("Seleted value must be one of values provided in a list.");
-		this.selectedValue = selectedValue;
+	public void setChosenValue(String chosenValue) {
+		if(chosenValue == null) throw new NullPointerException("Chosen value must not be null.");
+		if(values != null && !values.contains(chosenValue)) {
+			throw new IllegalArgumentException("Chosen value must be one of values provided in a list.");
+		}
+		this.chosenValue = chosenValue;
 	}
 
 	public List<String> getValues() {
@@ -80,11 +87,13 @@ public class SingleOption {
 		p.setProperty(SERIALIZATION_KEY_VALUE_TYPE, valueType);
 		p.setProperty(SERIALIZATION_KEY_DESCRIPTION, description);
 		p.setProperty(SERIALIZATION_KEY_DEFALUT_VALUE, defaultValue);
-		p.setProperty(SERIALIZATION_KEY_SELECTED_VALUE, selectedValue);
-		int i = 1;
-		for(String v : values) {
-			p.setProperty(SERIALIZATION_KEY_VALUE + "." + i, v);
-			i++;
+		p.setProperty(SERIALIZATION_KEY_CHOSEN_VALUE, chosenValue);
+		if(values != null) {
+			int i = 1;
+			for(String v : values) {
+				p.setProperty(SERIALIZATION_KEY_VALUE + "." + i, v);
+				i++;
+			}
 		}
 		return XMLUtil.serializeProperties(p);
 	}
@@ -97,14 +106,17 @@ public class SingleOption {
 		String valueType = p.getProperty(SERIALIZATION_KEY_VALUE_TYPE);
 		String description = p.getProperty(SERIALIZATION_KEY_DESCRIPTION);
 		String defaultValue = p.getProperty(SERIALIZATION_KEY_DEFALUT_VALUE);
-		String selectedValue = p.getProperty(SERIALIZATION_KEY_SELECTED_VALUE);
-		List<String> values = new ArrayList<String>();
-		for(int i = 1; true; i++) {
-			String v = p.getProperty(SERIALIZATION_KEY_VALUE + "." + i);
-			if(v == null) break;
-			values.add(v);
+		String chosenValue = p.getProperty(SERIALIZATION_KEY_CHOSEN_VALUE);
+		List<String> values = null;
+		if(p.getProperty(SERIALIZATION_KEY_VALUE + ".1") != null) {
+			values = new ArrayList<String>();
+			for(int i = 1; true; i++) {
+				String v = p.getProperty(SERIALIZATION_KEY_VALUE + "." + i);
+				if(v == null) break;
+				values.add(v);
+			}
 		}
-		return new SingleOption(name, description, valueType, values, defaultValue, selectedValue);
+		return new SingleOption(name, description, valueType, values, defaultValue, chosenValue);
 	}
 	
 	@Override

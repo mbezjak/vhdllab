@@ -37,7 +37,7 @@ public class FileDAOHibernateImplTest {
 		project.getFiles().add(file);
 		file.setContent("simple content of a file!");
 		file.setFileName("sample name");
-		file.setFileType(FileTypes.FT_VHDLSOURCE);
+		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file.setProject(project);
 		fileDAO.save(file);
 	}

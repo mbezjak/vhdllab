@@ -93,7 +93,7 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 			
 			ArrayList list =new ArrayList<CompilationMessage>();
 			
-			if(t.equals(FileTypes.FT_VHDLSOURCE)){
+			if(t.equals(FileTypes.FT_VHDL_SOURCE)){
 				
 				String ime = f.getFileName()+".vhdl";
 				String of = prop.getProperty("dataDir")+user+"\\\\";
@@ -136,7 +136,7 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 				}
 				
 				
-			}else if(t.equals(FileTypes.FT_VHDLTB)){
+			}else if(t.equals(FileTypes.FT_VHDL_TB)){
 				
 				String ime = f.getFileName()+".vhdl";
 				String of = prop.getProperty("dataDir")+user+"\\\\";
@@ -180,7 +180,7 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 
 				
 				
-			}else if(t.equals(FileTypes.FT_STRUCT_SCHEMA)){
+			}else if(t.equals(FileTypes.FT_VHDL_STRUCT_SCHEMA)){
 				
 				//TODO 
 				
@@ -230,7 +230,7 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 
 	public String generateVHDL(File file) throws ServiceException {
 		//TODO nema nacina da utvrdim direction
-		if(file.getFileType().equals("FT_VHDLTB")){
+		if(file.getFileType().equals("FT_VHDL_TB")){
 			String data=file.getContent();
 			/*data dolazi u obliku:
 			 * <measureUnit>ns<measureUnit>1000</duration>
@@ -693,7 +693,7 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 
 	private List<File> extractDependenciesDisp(File file) throws ServiceException {
 		IDependency depExtractor = null;
-		if(file.getFileType().equals("FT_VHDLSOURCE")) {
+		if(file.getFileType().equals("FT_VHDL_SOURCE")) {
 			depExtractor = new VHDLDependencyExtractor();
 		} else {
 			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");

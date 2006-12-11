@@ -222,12 +222,24 @@ import java.util.Map.Entry;
 			return view;
 		}
 		
+		public void saveUserFile(String type, String content) throws UniformAppletException {
+			if(type == null) throw new NullPointerException("Type can not be null.");
+			if(content == null) throw new NullPointerException("Content can not be null.");
+			Long identifier = getIdentifierForUserFile(type);
+			if(identifier == null) {
+				getUserFile(type);
+				identifier = getIdentifierForUserFile(type);
+			}
+			invoker.saveUserFile(identifier, content);
+		}
+		
 		public String getUserFile(String type) throws UniformAppletException {
 			List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
 			
 			for(Long id : userFiles) {
 				String userFileType = invoker.loadUserFileType(id);
 				if(type.equals(userFileType)) {
+					cacheUserFileItem(userFileType, id);
 					return invoker.loadUserFileContent(id);
 				}
 			}
@@ -280,6 +292,11 @@ import java.util.Map.Entry;
 			return null;
 		}
 		
+		private Long getIdentifierForUserFile(String type) {
+			String key = makeKeyForUserFile(type);
+			return identifiers.get(key);
+		}
+
 		private Long getIdentifierFor(String projectName) {
 			String key = makeKey(projectName);
 			return identifiers.get(key);
@@ -290,6 +307,11 @@ import java.util.Map.Entry;
 			return identifiers.get(key);
 		}
 		
+		private void cacheUserFileItem(String type, Long userFileIdentifier) {
+			String key = makeKeyForUserFile(type);
+			identifiers.put(key, userFileIdentifier);
+		}
+
 		private void cacheItem(String projectName, Long projectIdentifier) {
 			String key = makeKey(projectName);
 			identifiers.put(key, projectIdentifier);
@@ -299,13 +321,17 @@ import java.util.Map.Entry;
 			String key = makeKey(projectName, fileName);
 			identifiers.put(key, fileIdentifier);
 		}
-		
+	
+		private String makeKeyForUserFile(String str) {
+			return "|U=" + str + "|";
+		}
+	
 		private String makeKey(String str) {
-			return str;
+			return "|P=" + str + "|";
 		}
 
 		private String makeKey(String str1, String str2) {
-			return str1 + "|" + str2;
+			return "|P=" + str1 + "|&|F=" + str2 + "|";
 		}
 
 	}
