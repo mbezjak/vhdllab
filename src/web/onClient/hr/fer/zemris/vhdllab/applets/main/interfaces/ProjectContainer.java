@@ -8,13 +8,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public interface ProjectContainer {
+	
 	List<String> getAllCircuits(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
 	String getUserFile(String type) throws UniformAppletException;
-	ResourceBundle getResourceBundle();
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;
-	void resetEditorTitle(boolean contentChanged, String projectName, String fileName);
 	boolean existsFile(String projectName, String fileName) throws UniformAppletException;
 	boolean existsProject(String projectName) throws UniformAppletException;
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
+	void compile(String projectName, String fileName) throws UniformAppletException;
+	void simulate(String projectName, String fileName) throws UniformAppletException;
+	void resetEditorTitle(boolean contentChanged, String projectName, String fileName);
+	String getActiveProject();
+	ResourceBundle getResourceBundle();
+	
 }

@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import java.util.List;
 
-public interface Explorer {
+public interface IExplorer {
 
 	void setProjectContainer(ProjectContainer pContainer);
 	void addFile(String projectName, String fileName);

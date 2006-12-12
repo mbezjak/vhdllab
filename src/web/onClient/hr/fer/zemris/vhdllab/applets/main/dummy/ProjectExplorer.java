@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.dummy;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.Explorer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
@@ -16,7 +16,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class ProjectExplorer extends JPanel implements Explorer {
+public class ProjectExplorer extends JPanel implements IExplorer {
 
 	private static final long serialVersionUID = 4932799790563214089L;
 	private ProjectContainer container;

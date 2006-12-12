@@ -35,7 +35,8 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	private static boolean isReadOnly=false;
 	private static boolean isSavable=false;
 	private ProjectContainer pContainer;
-	private String projectName="";
+	private String projectName;
+	private String fileName;
 	
 	public Automat() {
 		super();	
@@ -151,7 +152,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public String getFileName() {
-		return adrw.getPodatci().ime;
+		return fileName;
 	}
 
 
@@ -163,7 +164,6 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public void highlightLine(int line) {
-		// TODO Auto-generated method stub
 		
 	}
 

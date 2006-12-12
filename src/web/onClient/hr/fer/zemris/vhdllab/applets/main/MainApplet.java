@@ -10,16 +10,15 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.file.options.Options;
 import hr.fer.zemris.vhdllab.applets.main.file.options.SingleOption;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.Explorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.simulations.WaveApplet;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
@@ -83,7 +82,7 @@ public class MainApplet
 	private JPanel normalCenterPanel;
 	private Container parentOfMaximizedComponent = null;
 	
-	private Explorer projectExplorer;
+	private IExplorer projectExplorer;
 	private StatusExplorer view;
 	private SideBar sideBar;
 	
@@ -408,6 +407,13 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_NEW_AUTOMAT;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
+					} catch (UniformAppletException ex) {}
+				}
+			});
 			submenu.add(menuItem);
 			
 			menu.add(submenu);
@@ -495,11 +501,12 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(editorPane.isFocusOwner()) {
+					/*if(editorPane.isFocusOwner()) {
 						maximizeComponent(editorPane);
 					} else if(editorPane.isFocusCycleRoot()) {
 						maximizeComponent(viewPane);
-					}
+					}*/
+					maximizeComponent(editorPane);
 				}
 			});
 			menu.add(menuItem);
@@ -733,10 +740,12 @@ public class MainApplet
 		//cache.createFile(projectName, simulationName, FileTypes.FT_VHDL_SIMULATION);
 		//cache.saveFile(projectName, simulationName, result.getWaveform());
 		//openEditor(projectName, simulationName, true, false);
-		openSimulationEditor(projectName, simulationName, result.getWaveform());
+		openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
 	}
 	
 	public List<String> getAllCircuits(String projectName) throws UniformAppletException {
+		// TODO sto s testbench tipom kojeg treba recimo simulation wizard
+		// ili recimo tu nesmiju bit samo VHDL_SOURCE nego i automat i schema koji ce izgenerirat vhdl
 		List<String> fileNames = cache.findFilesByProject(projectName);
 		List<String> circuits = new ArrayList<String>();
 		for(String name : fileNames) {
@@ -757,7 +766,12 @@ public class MainApplet
 	}
 
 	public ResourceBundle getResourceBundle() {
+		// TODO treba se jos vidjet sto s tim
 		return bundle;
+	}
+	
+	public String getActiveProject() {
+		return projectExplorer.getActiveProject();
 	}
 	
 	private int indexOfEditor(String projectName, String fileName) {
@@ -809,16 +823,16 @@ public class MainApplet
 		editorPane.setSelectedIndex(index);
 	}
 	
-	private void openSimulationEditor(String projectName, String fileName, String content) throws UniformAppletException {
+	private void openEditor(String projectName, String fileName, String content, String type, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
 		FileContent fileContent = new FileContent(projectName, fileName, content);
 		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			// Initialization of an editor
-			IEditor editor = new WaveApplet();
+			IEditor editor = cache.getEditor(type);
 			editor.setProjectContainer(this);
 			editor.setFileContent(fileContent);
-			editor.setSavable(false);
-			editor.setReadOnly(true);
+			editor.setSavable(isSavable);
+			editor.setReadOnly(isReadOnly);
 			// End of initialization
 			
 			Component component = editorPane.add(fileName, (JPanel)editor);
@@ -830,6 +844,8 @@ public class MainApplet
 	}
 	
 	private void refreshWorkspace() {
+		// TODO to treba jos do kraja napravit, zajedno s refreshProject i refreshFile
+		// TODO tu jos treba stavit da se cita iz userfilea koji je aktivan projekt pa ga stavit aktivnim!!
 		List<String> openedProjects = projectExplorer.getAllProjects();
 		for(String p : openedProjects) {
 			projectExplorer.closeProject(p);
@@ -875,7 +891,7 @@ public class MainApplet
 	private void createNewFileInstance(String type) throws UniformAppletException {
 		// Initialization of a wizard
 		IWizard wizard = cache.getEditor(type).getWizard();
-		if(wizard == null) throw new NullPointerException("No wizard can not be null.");
+		if(wizard == null) throw new NullPointerException("Wizard can not be null.");
 		wizard.setProjectContainer(this);
 		FileContent content = wizard.getInitialFileContent();
 		// End of initialization
