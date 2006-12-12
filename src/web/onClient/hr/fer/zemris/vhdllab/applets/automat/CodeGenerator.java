@@ -5,13 +5,6 @@ import java.util.LinkedList;
 
 public class CodeGenerator {
 	/**
-	 * metoda koja za automat generira VHDL kod
-	 * @return VHDL kod automata
-	 */
-	public String generateVHDL(AUTPodatci podatci, HashSet<Prijelaz> prijelazi, LinkedList<Stanje> stanja){
-		return null;
-	}
-	/**
 	 * Metoda koja generira interni kod za automat
 	 * @return interni kod automata
 	 */

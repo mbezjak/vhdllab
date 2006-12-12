@@ -39,18 +39,18 @@ public class Testpan extends JFrame {
 		System.out.println(xmlAut);
 		
 		aut = new Automat();
-		FileContent fc=new FileContent("ljd","skadh",xmlAut);
-		aut.setFileContent(fc);
-		//FileContent fc=aut.getInitialFileContent();
+		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
+		//aut.setFileContent(fc);
+		FileContent fc=aut.getInitialFileContent();
 		if (fc!=null)this.getContentPane().add((Component) aut,BorderLayout.CENTER);
 		JButton b1=new JButton("Ispisi interni kod");
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				/*String data=aut.getData();
+				String data=aut.getData();
 				System.out.println(aut.getData()+"\n"+aut.isModified());
-				Automat aut2=new Automat();
-				aut2.setFileContent(new FileContent("df","safas",data));
-				getContentPane().add(aut2,BorderLayout.EAST);*/
+				//Automat aut2=new Automat();
+				//aut2.setFileContent(new FileContent("df","safas",data));
+				//getContentPane().add(aut2,BorderLayout.EAST);*/
 				VHDLParser parser=new VHDLParser(aut.getData());
 				System.out.println(parser.getParsedVHDL());
 			};

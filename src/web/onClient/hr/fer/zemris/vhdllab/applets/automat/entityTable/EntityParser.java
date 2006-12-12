@@ -34,7 +34,7 @@ public class EntityParser {
 				}
 				buffer.append("\n");
 			}
-		
+		parsedEntity=buffer.toString();
 		/*StringBuffer buffer=new StringBuffer().append("ENTITY ").append(ime).append(" IS  PORT(");
 		for (int i=0;i<pom.length;i++)
 			if(!pom[i][0].trim().equals("")){

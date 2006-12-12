@@ -135,7 +135,7 @@ public class EntityTable extends JPanel {
             return data[row][col];
         }
 /*
-        public Class<? extends Object> getColumnClass(int c) {
+        public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
 */

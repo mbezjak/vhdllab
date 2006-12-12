@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.automat.Stanje;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 public class MooreParser implements IAutomatVHDLParser {
 	
@@ -75,9 +76,10 @@ public class MooreParser implements IAutomatVHDLParser {
 		buffer.append("\n\t\t");
 		int pozicija=0;
 		for(Signal sig:izlazniSignali){
-			buffer.append(sig.getImeSignala()).append(" <= \"")
+			String navodnici=(sig.getTip()==Signal.STD_LOGIC_VECTOR?"\"":"'");
+			buffer.append(sig.getImeSignala()).append(" <= ").append(navodnici)
 			.append(izlaz.substring(pozicija,pozicija+sig.getSirinaSignala()))
-			.append("\";\n\t\t");
+			.append(navodnici).append(";\n\t\t");
 			pozicija+=sig.getSirinaSignala();
 		}
 		buffer.deleteCharAt(buffer.length()-1);
@@ -87,15 +89,45 @@ public class MooreParser implements IAutomatVHDLParser {
 	}
 
 	private StringBuffer createBlok1(StringBuffer buffer) {
-		// TODO Auto-generated method stub
 		buffer.append("PROCESS(state_present");
 		for (Signal ul:ulazniSignali)buffer.append(", ").append(ul.getImeSignala());
 		buffer.append(")\nBEGIN\n\tCASE state_present IS");
 		for(Stanje st:stanja){
-			//TODO ovdije si stao!!
+			buffer.append("\n\t\tWHEN ").append(st.ime).append("=>\n\t\t");
+			boolean test=true;
+			for(Prijelaz pr:prijelazi)
+				if(pr.iz.equals(st.ime)){
+					buffer.append(test?"IF ":"ELSIF ");
+					test=false;
+					buffer=generirajPrijelaz(buffer,pr);
+			}
+			if(!test)buffer.append("ELSE ");
+			buffer.append("state_next=").append(st.ime).append("\n\t\tEND IF;");
 		}
-		
-		
+		buffer.append("\n\t\t WHEN OTHERS state_next=state_present;\n\tEND CASE\nEND PROCESS\n");
+		return buffer;
+	}
+
+	private StringBuffer generirajPrijelaz(StringBuffer buffer, Prijelaz pr) {
+		buffer=createCondition(buffer,pr.pobudaIzlaz);
+		buffer.append(" THEN state_next<=").append(pr.u).append(";\n\t\t");
+		return buffer;
+	}
+
+	private StringBuffer createCondition(StringBuffer buffer, TreeSet<String> pobudaIzlaz) {
+		for(String pom:pobudaIzlaz){
+			int broj=0;
+			for(Signal sig:ulazniSignali){
+				String navodnici=(sig.getTip()==Signal.STD_LOGIC?"'":"\"");
+				buffer.append(sig.getImeSignala()).append("=").append(navodnici).append(pom.substring(broj,broj+sig.getSirinaSignala()))
+				.append(navodnici).append(" AND ");
+				broj+=sig.getSirinaSignala();
+			}
+		}
+		buffer.deleteCharAt(buffer.length()-1);
+		buffer.deleteCharAt(buffer.length()-1);
+		buffer.deleteCharAt(buffer.length()-1);
+		buffer.deleteCharAt(buffer.length()-1);
 		return buffer;
 	}
 
@@ -119,8 +151,8 @@ public class MooreParser implements IAutomatVHDLParser {
 			.append(" ").append(rijeci[2]);
 			if(rijeci[2].toUpperCase().equals("STD_LOGIC_VECTOR")){
 				if(Integer.parseInt(rijeci[3])<Integer.parseInt(rijeci[4]))
-					buffer.append(Integer.parseInt(rijeci[3])).append(" TO ").append(Integer.parseInt(rijeci[4])).append(")");
-				else buffer.append(Integer.parseInt(rijeci[3])).append(" DOWNTO ").append(Integer.parseInt(rijeci[4])).append(")");
+					buffer.append("(").append(Integer.parseInt(rijeci[3])).append(" TO ").append(Integer.parseInt(rijeci[4])).append(")");
+				else buffer.append("(").append(Integer.parseInt(rijeci[3])).append(" DOWNTO ").append(Integer.parseInt(rijeci[4])).append(")");
 			}
 			buffer.append(";");
 		}
@@ -139,12 +171,12 @@ public class MooreParser implements IAutomatVHDLParser {
 			if(pom[2].toUpperCase().equals("STD_LOGIC_VECTOR")){
 				br+=Math.abs(Integer.parseInt(pom[3])-Integer.parseInt(pom[4]));	
 			}
-			if(pom[1].equals("in"))podatci.sirinaUlaza+=br;
-			else if(pom[1].equals("out"))podatci.sirinaIzlaza+=br;
+			if(pom[1].toUpperCase().equals("IN"))podatci.sirinaUlaza+=br;
+			else if(pom[1].toUpperCase().equals("OUT"))podatci.sirinaIzlaza+=br;
 			if(pom[1].toUpperCase().equals("IN")){
-				ulazniSignali.add(new Signal(br,pom[0]));
+				ulazniSignali.add(new Signal(br,pom[0],pom[2]));
 			}else {
-				izlazniSignali.add(new Signal(br,pom[0]));
+				izlazniSignali.add(new Signal(br,pom[0],pom[2]));
 			};
 		}
 	}

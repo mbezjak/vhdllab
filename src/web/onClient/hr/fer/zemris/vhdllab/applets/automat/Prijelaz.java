@@ -22,7 +22,7 @@ public class Prijelaz {
 		this.u=u;
 		pobudaIzlaz=new TreeSet<String>();
 		String pomocni=pobuda;
-		if(izlaz!=null)pomocni=new StringBuffer().append("/").append(izlaz).toString();
+		if(izlaz!=null)pomocni=new StringBuffer().append(pomocni).append("/").append(izlaz).toString();
 		pobudaIzlaz.add(pomocni);
 	}
 	public Prijelaz() {
@@ -65,7 +65,7 @@ public class Prijelaz {
 	//TODO ove dve funkcije srediti
 	private String editMealy(Component obj, AUTPodatci podatci) {
 		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
-		JTextField izlaz=new CustomTextField("",podatci.sirinaIzlaza);
+		JTextField izlaz=new CustomTextField("",podatci.sirinaIzlaza,false);
 		JLabel pobudaLab=new JLabel("Unesite pobudu za prijelaz: ");
 		JLabel izlazLabel=new JLabel("Unesite izlaz koji generira pobuda: ");
 		JPanel panel=new JPanel();
@@ -130,7 +130,7 @@ public class Prijelaz {
 				if(pr.iz.equals(prj.iz))
 				for(String pod:pr.pobudaIzlaz){
 					boolean test2=true;
-					for(int i=0;i<length;i++)if(!(pom.charAt(i)==pod.charAt(i)||pom.charAt(i)=='*'||pod.charAt(i)=='*')){
+					for(int i=0;i<length;i++)if(!(pom.charAt(i)==pod.charAt(i)||pom.charAt(i)=='-'||pod.charAt(i)=='-')){
 						test2=false;
 					}
 					if(test2){
