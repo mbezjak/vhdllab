@@ -35,7 +35,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	private static boolean isReadOnly=false;
 	private static boolean isSavable=false;
 	private ProjectContainer pContainer;
-	private String projectName;
+	private String projectName="default project";
 	private String fileName;
 	
 	public Automat() {
@@ -51,23 +51,23 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			Icon ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/AddMode1.png");
 			JToggleButton dodajNoviSignal=new JToggleButton(ic);
 			dodajNoviSignal.setActionCommand("Dodaj stanje");
-			dodajNoviSignal.setToolTipText("Dodaj stanje");
+			dodajNoviSignal.setToolTipText("Add state");
 			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/AddMode2.png");
 			JToggleButton dodajNoviPrijelaz=new JToggleButton(ic);
 			dodajNoviPrijelaz.setActionCommand("Dodaj prijelaz");
-			dodajNoviPrijelaz.setToolTipText("Dodaj prijelaz");
+			dodajNoviPrijelaz.setToolTipText("Add transition");
 			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/DeleteMode.png");
 			JToggleButton brisi=new JToggleButton(ic);
 			brisi.setActionCommand("Brisi");
-			brisi.setToolTipText("Brisi");
+			brisi.setToolTipText("Delete");
 			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/EditMode.png");
 			final JToggleButton normal=new JToggleButton(ic);
 			normal.setActionCommand("Normal");
-			normal.setToolTipText("Super Mario mode!!!");
+			normal.setToolTipText("Editor mode");
 			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/StartStateMode.png");
 			JToggleButton pocStanje=new JToggleButton(ic);
 			pocStanje.setActionCommand("pocStanje");
-			pocStanje.setToolTipText("Pocetno stanje");
+			pocStanje.setToolTipText("Set initial state");
 		
 
 		

@@ -51,11 +51,10 @@ public class AUTPodatci {
 
 	public AUTPodatci(JComponent drawer) {
 		super();
-		JLabel label1=new JLabel("Ime automata:");
-		JLabel label2=new JLabel("Tip automata:");
-		JLabel label3=new JLabel("Suèelje:");
+		JLabel label1=new JLabel("Machine name:");
+		JLabel label2=new JLabel("Machine type:");
 		JTextField ime=new JTextField();
-		String[] st={"Ime","Smjer","Tip","Od","Do"};
+		String[] st={"Name","Direction","Type","From","To"};
 		EntityTable interfac=new EntityTable("Suèelje:",st);
 		JScrollPane scp=new JScrollPane(interfac,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -73,7 +72,6 @@ public class AUTPodatci {
 		
 		JPanel panel2=new JPanel();
 		panel2.setLayout(new BorderLayout());
-		panel2.add(label3,BorderLayout.NORTH);
 		panel2.add(scp,BorderLayout.CENTER);
 		
 		JPanel panel=new JPanel();
@@ -84,7 +82,7 @@ public class AUTPodatci {
 		boolean test=true;
 		while(test){
 			JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-			JDialog dialog=optionPane.createDialog(drawer,"Editor Prijelaza");
+			JDialog dialog=optionPane.createDialog(drawer,"Transition Editor");
 			dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 			dialog.setSize(new Dimension(700,300));
 			dialog.setVisible(true);

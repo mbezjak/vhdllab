@@ -627,9 +627,9 @@ public class AutoDrawer extends JPanel{
 
 	public void editorPrijelaza(Prijelaz pr) {
 		final Prijelaz pr2=pr;
-		JButton add=new JButton("Dodaj...");
-		JButton delete=new JButton("Obrisi...");
-		JLabel poruka=new JLabel("Popis prijelaza:");
+		JButton add=new JButton("Add...");
+		JButton delete=new JButton("Delete...");
+		JLabel poruka=new JLabel("List of transitions:");
 		
 		final DefaultListModel listam=new DefaultListModel();
 		for(String st:pr2.pobudaIzlaz)listam.addElement(st);
@@ -672,12 +672,12 @@ public class AutoDrawer extends JPanel{
 						listam.remove(list.getSelectedIndex());
 						pr2.pobudaIzlaz.remove(pom);
 					}
-					else JOptionPane.showMessageDialog(AutoDrawer.this,"Mora ostati barem jedan prijelaz u listi!");
+					else JOptionPane.showMessageDialog(AutoDrawer.this,"List must contain at least one transition!");
 			}	
 		});
 		
 		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(this,"Editor Prijelaza");
+		JDialog dialog=optionPane.createDialog(this,"Transition Editor");
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
@@ -779,8 +779,8 @@ public class AutoDrawer extends JPanel{
 						if(z2)zastavica=false;
 						else{
 							int x=JOptionPane.showConfirmDialog(AutoDrawer.this,
-									"Unjeli ste ime stanja koje vec postoji\nZelite li pokusat ponovo?",
-									"Upozorenje",
+									"The state you tried to input alredy exists!\nTry again?",
+									"Warning",
 									JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
 							if(x==JOptionPane.NO_OPTION){
 								dodaj=false;

@@ -15,8 +15,8 @@ public class CustomTextField extends JTextField {
 	/**
 	 * 
 	 */
-	public static int size=0;
-	public static boolean useAste=true;
+	public int size=0;
+	public boolean useAste=true;
 	
 	public CustomTextField(String tekst,int size1) {
 		  super(tekst);
@@ -37,11 +37,11 @@ public class CustomTextField extends JTextField {
 	@Override
 	public String getText() {
 		String str=super.getText();
-		while(str.length()<size)str+="-";
+		while(str.length()<size)str+=(useAste?"-":"0");
 		return str;	
 	}
 		
-	static class Document10 extends PlainDocument {
+	private class Document10 extends PlainDocument {
 		
 	      /**
 		 * 

@@ -66,8 +66,8 @@ public class Prijelaz {
 	private String editMealy(Component obj, AUTPodatci podatci) {
 		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
 		JTextField izlaz=new CustomTextField("",podatci.sirinaIzlaza,false);
-		JLabel pobudaLab=new JLabel("Unesite pobudu za prijelaz: ");
-		JLabel izlazLabel=new JLabel("Unesite izlaz koji generira pobuda: ");
+		JLabel pobudaLab=new JLabel("Input for transition: ");
+		JLabel izlazLabel=new JLabel("Output for transition: ");
 		JPanel panel=new JPanel();
 		panel.setLayout(new GridLayout(2,2));
 		panel.add(pobudaLab);
@@ -76,7 +76,7 @@ public class Prijelaz {
 		panel.add(izlaz);
 		
 		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(obj,"Editor Prijelaza");
+		JDialog dialog=optionPane.createDialog(obj,"Transition Editor");
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
@@ -85,7 +85,7 @@ public class Prijelaz {
 	}
 	private String editMoore(Component obj, AUTPodatci podatci) {
 		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
-		JLabel pobudaLab=new JLabel("Unesite pobudu za prijelaz: ");
+		JLabel pobudaLab=new JLabel("Input for transition: ");
 		JPanel panel=new JPanel();
 		panel.setLayout(new GridLayout(1,2));
 		panel.add(pobudaLab);
@@ -93,7 +93,7 @@ public class Prijelaz {
 
 		
 		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(obj,"Editor Prijelaza");
+		JDialog dialog=optionPane.createDialog(obj,"Transition Editor");
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		

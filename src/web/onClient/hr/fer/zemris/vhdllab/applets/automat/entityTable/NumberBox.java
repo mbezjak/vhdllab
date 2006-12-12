@@ -12,11 +12,9 @@ public class NumberBox extends JTextField {
 	 * 
 	 */
 	private static final long serialVersionUID = -636501698092103448L;
-	static int curSize=0;
 	
 	public NumberBox(String tekst) {
 		        super(tekst);
-		        curSize=0;
 		    }
 		
 
@@ -36,7 +34,7 @@ public class NumberBox extends JTextField {
 	public String toString() {
 		return getText();
 	}
-	static class DocumentNumber extends PlainDocument {
+	private class DocumentNumber extends PlainDocument {
 		
 	      /**
 		 * 
