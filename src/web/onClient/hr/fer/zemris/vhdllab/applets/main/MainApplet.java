@@ -17,11 +17,11 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.main.preferences.Options;
-import hr.fer.zemris.vhdllab.applets.main.preferences.SingleOption;
 import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.preferences.Preferences;
+import hr.fer.zemris.vhdllab.preferences.SingleOption;
 import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -119,9 +119,9 @@ public class MainApplet
 		String language = null;
 		try {
 			String data = cache.getUserFile(FileTypes.FT_COMMON);
-			Options options = Options.deserialize(data);
-			SingleOption commonOptions = options.getOption(UserFileConstants.COMMON_LANGUAGE);
-			language = commonOptions.getChosenValue();
+			Preferences preferences = Preferences.deserialize(data);
+			SingleOption option = preferences.getOption(UserFileConstants.COMMON_LANGUAGE);
+			language = option.getChosenValue();
 		} catch (UniformAppletException e) {
 			statusBar.setText(bundle.getString(LanguageConstants.STATUSBAR_LANGUAGE_SETTING_NOT_FOUND));
 			language = "en";
@@ -918,20 +918,20 @@ public class MainApplet
 	private void setPaneSize() {
 		try {
 			String data = cache.getUserFile(FileTypes.FT_COMMON);
-			Options opt = Options.deserialize(data);
+			Preferences preferences = Preferences.deserialize(data);
 			validate();
 			SingleOption o;
 			double size;
 			
-			o = opt.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
+			o = preferences.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
 			size = Double.parseDouble(o.getChosenValue());
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
 			
-			o = opt.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
+			o = preferences.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
 			size = Double.parseDouble(o.getChosenValue());
 			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
 			
-			o = opt.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
+			o = preferences.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
 			size = Double.parseDouble(o.getChosenValue());
 			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
 		} catch (UniformAppletException e) {
@@ -945,21 +945,21 @@ public class MainApplet
 		try {
 			String type = FileTypes.FT_COMMON;
 			String data = cache.getUserFile(type);
-			Options opt = Options.deserialize(data);
+			Preferences preferences = Preferences.deserialize(data);
 			
-			SingleOption o = opt.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
+			SingleOption o = preferences.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
 			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth(); 
 			o.setChosenValue(String.valueOf(size));
 			
-			o = opt.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
+			o = preferences.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
 			size = sideBarSplitPane.getDividerLocation() * 1.0 / sideBarSplitPane.getWidth(); 
 			o.setChosenValue(String.valueOf(size));
 
-			o = opt.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
+			o = preferences.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
 			o.setChosenValue(String.valueOf(size));
 			
-			cache.saveUserFile(type, opt.serialize());
+			cache.saveUserFile(type, preferences.serialize());
 		} catch (UniformAppletException e) {}
 	}
 	
@@ -1106,23 +1106,23 @@ public class MainApplet
 				MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 				
 				Long fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_COMMON);
-				Options opt = new Options();
+				Preferences preferences = new Preferences();
 				List<String> values = new ArrayList<String>();
 				values.add("en");
 				values.add("hr");
 				SingleOption o = new SingleOption(UserFileConstants.COMMON_LANGUAGE, "Language", "String", values, "en", "en");
-				opt.setOption(o);
+				preferences.setOption(o);
 				
 				o = new SingleOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
-				opt.setOption(o);
+				preferences.setOption(o);
 				
 				o = new SingleOption(UserFileConstants.COMMON_SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
-				opt.setOption(o);
+				preferences.setOption(o);
 
 				o = new SingleOption(UserFileConstants.COMMON_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
-				opt.setOption(o);
+				preferences.setOption(o);
 				
-				invoker.saveUserFile(fileId, opt.serialize());
+				invoker.saveUserFile(fileId, preferences.serialize());
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
 			}
@@ -1150,7 +1150,7 @@ public class MainApplet
 
 				long end = System.currentTimeMillis();
 				
-				String infoData = editor.getData()+(start-end)+"ms\nLoaded Options:\n"+cache.getUserFile(FileTypes.FT_COMMON);
+				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n"+cache.getUserFile(FileTypes.FT_COMMON);
 				cache.saveFile(projectName1, fileName1, infoData);
 
 				openEditor(projectName1, fileName1, true, false);

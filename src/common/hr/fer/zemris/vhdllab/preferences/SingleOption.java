@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.preferences;
+package hr.fer.zemris.vhdllab.preferences;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
 

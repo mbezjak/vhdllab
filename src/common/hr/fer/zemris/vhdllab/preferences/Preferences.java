@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.preferences;
+package hr.fer.zemris.vhdllab.preferences;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
 
@@ -6,41 +6,41 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class Options {
+public class Preferences {
 
 	private static final String SERIALIZATION_KEY_SINGLE_OPTION = "single.option";
 	
-	private Map<String, SingleOption> options;
+	private Map<String, SingleOption> preferences;
 	
-	public Options() {
-		options = new HashMap<String, SingleOption>();
+	public Preferences() {
+		preferences = new HashMap<String, SingleOption>();
 	}
 	
 	public void setOption(SingleOption o) {
 		if(o == null) throw new NullPointerException("Single option must not be null.");
-		options.put(o.getName(), o);
+		preferences.put(o.getName(), o);
 	}
 	
 	public SingleOption getOption(String name) {
 		if(name == null) throw new NullPointerException("Name must not be null.");
-		return options.get(name);
+		return preferences.get(name);
 	}
 	
 	public String serialize() {
 		Properties p = new Properties();
 		int i = 1;
-		for(String s : options.keySet()) {
-			p.setProperty(SERIALIZATION_KEY_SINGLE_OPTION + "." + i, options.get(s).serialize());
+		for(String s : preferences.keySet()) {
+			p.setProperty(SERIALIZATION_KEY_SINGLE_OPTION + "." + i, preferences.get(s).serialize());
 			i++;
 		}
 		return XMLUtil.serializeProperties(p);
 	}
 	
-	public static Options deserialize(String data) {
+	public static Preferences deserialize(String data) {
 		if(data == null) throw new NullPointerException("Data can not be null.");
 		Properties p = XMLUtil.deserializeProperties(data);
 		if(p == null) throw new IllegalArgumentException("Unknown serialization format: data");
-		Options opt = new Options();
+		Preferences opt = new Preferences();
 		for(int i = 1; true; i++) {
 			String s = p.getProperty(SERIALIZATION_KEY_SINGLE_OPTION + "." + i);
 			if(s == null) break;
@@ -53,15 +53,15 @@ public class Options {
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) return false;
-		if(!(obj instanceof Options)) return false;
-		Options other = (Options) obj;
+		if(!(obj instanceof Preferences)) return false;
+		Preferences other = (Preferences) obj;
 		
-		return options.equals(other.options);
+		return preferences.equals(other.preferences);
 	}
 	
 	@Override
 	public int hashCode() {
-		return options.hashCode();
+		return preferences.hashCode();
 	}
 	
 }
