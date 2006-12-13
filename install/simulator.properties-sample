@@ -1,0 +1,3 @@
+simulator.class = hr.fer.zemris.vhdllab.simulators.ghdl.GHDLSimulator
+simulator.params.executable = /usr/local/bin/ghdl
+simulator.params.tmpRootDir = /tmp/ghdltmp

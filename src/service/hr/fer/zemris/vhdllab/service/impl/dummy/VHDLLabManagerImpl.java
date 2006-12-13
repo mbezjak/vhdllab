@@ -13,9 +13,9 @@ import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
+import hr.fer.zemris.vhdllab.simulators.ISimulator;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
-import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -24,13 +24,17 @@ import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
-import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
+import hr.fer.zemris.vhdllab.vhdl.tb.TestBenchDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 public class VHDLLabManagerImpl implements VHDLLabManager {
@@ -145,7 +149,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 	}
 
-	public SimulationResult runSimulation(Long fileId) {
+	public SimulationResult runSimulation(Long fileId) throws ServiceException {
 		/*
 		 * InputStream in = this.getClass().getResourceAsStream("adder2.vcd");
 		 * StringBuffer out = new StringBuffer();
@@ -155,12 +159,52 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		 * }
 		 * String vcdResult = out.toString();
 		 */
+		
+		File file = loadFile(fileId);
+		// Pretpostavka: file je po tipu VHDL Source samog testbencha
+		List<File> deps = extractDependencies(file);
+		
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("simulator.properties");
+		if(is == null) {
+			throw new ServiceException("Internal error. Properties file not found.");
+		}
+		Properties allSimProps = new Properties();
+		try { 
+			allSimProps.load(is); 
+		} catch(Exception ignorable) {
+		}
+		
+		String sClass = allSimProps.getProperty("simulator.class");
+		if(sClass==null) {
+			throw new ServiceException("File simulator.properties is incomplete.");
+		}
+		Properties simProps = new Properties();
+		for(Object key : allSimProps.keySet()) {
+			String k = (String)key;
+			if(k.startsWith("simulator.params.")) {
+				simProps.setProperty(k.substring(17), allSimProps.getProperty(k));
+			}
+		}
+		
+		ISimulator simulator = null;
+		try {
+			Constructor c = Class.forName(sClass).getConstructor(new Class[] {Properties.class});
+			simulator = (ISimulator)c.newInstance(new Object[] {simProps});
+		} catch(Exception ex) {
+			throw new ServiceException("Could not start simulator wrapper.");
+		}
+		
+		return simulator.simulate(deps, null, file, this);
+		
+		// This below was previous implementation
+		/*
 		String vcdResult = "src/service/hr/fer/zemris/vhdllab/vhdl/simulations/adder2.vcd";
 		VcdParser vcd = new VcdParser(vcdResult);
 		vcd.parse();
 		String waveform = vcd.getResultInString();
 		SimulationResult result = new SimulationResult(0, true, new ArrayList<SimulationMessage>(), waveform);
 		return result;
+		*/
 	}
 
 	public void saveFile(Long fileId, String content) throws ServiceException {
@@ -438,9 +482,13 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		IDependency depExtractor = null;
 		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			depExtractor = new VHDLDependencyExtractor();
+		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
+			depExtractor = new TestBenchDependencyExtractor();
 		} else {
 			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");
 		}
-		return depExtractor.extractDependencies(file, this);
+		List<File> deps = depExtractor.extractDependencies(file, this);
+		if(deps == null) return Collections.emptyList();
+		return deps;
 	}
 }

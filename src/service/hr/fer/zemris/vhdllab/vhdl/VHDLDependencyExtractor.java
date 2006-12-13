@@ -32,7 +32,9 @@ public class VHDLDependencyExtractor implements IDependency {
 		Set<String> usedComponents = Extractor.extractUsedComponents(source);
 		for(String componentName : usedComponents) {
 			File component  = findMatchingFile(f.getProject(), componentName);
-			if(component==null) return null;
+			if(component==null) {
+				throw new ServiceException("VHDL source points to non project file!");
+			}
 			result.add(component);
 		}
 		return result;

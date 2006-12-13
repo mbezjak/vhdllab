@@ -1,0 +1,9 @@
+Following must be done in order to prepare project.
+
+1) copy simulator.properties-sample to ../src/service/simulator.properties
+   Then edit this file and fix paths. Currently, as simulator is choosen
+   ghdl and a wrapper that knows how to run it. ghdl can be obtained from:
+   http://ghdl.free.fr/
+
+   Developers: do not add ../src/service/simulator.properties to svn
+   repository! You shoud only customize it and leave it for yourself.
