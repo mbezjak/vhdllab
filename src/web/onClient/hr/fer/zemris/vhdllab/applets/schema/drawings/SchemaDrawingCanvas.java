@@ -33,6 +33,12 @@ public class SchemaDrawingCanvas extends JComponent {
 		public Rectangle r;
 		public boolean b;
 	}
+	
+	// linija s boolean varijablom
+	class LineWithBool {
+		public int x1, y1, x2, y2;
+		public boolean b;
+	}
 
 	private static final long serialVersionUID = 168392906688186429L;
 	
@@ -45,6 +51,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	private SchemaDrawingCanvasListeners listeners = null;
 	private SchemaMainFrame mainframe = null;
 	private Stack<RectWithBool> rectangleStack = null;
+	private Stack<LineWithBool> lineStack = null;
 	private String selectedName;
 	
 	public Point mousePosition;
@@ -56,6 +63,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
 		wires = new ArrayList<AbstractSchemaWire>();
 		rectangleStack = new Stack();
+		lineStack = new Stack();
 		this.colors=colors;		
 		initGUI();
 		initListeners();
@@ -122,7 +130,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	
 	/**
 	 * Koristi se za iscrtavanje pravokutnika pri
-	 * navlacenju komponente. Svi pravokutnici
+	 * pozicioniranju komponente. Svi pravokutnici
 	 * sa stoga iscrtat ce se tijekom sljedeceg
 	 * poziva metode paintComponent - dakle samo jednom.
 	 *
@@ -132,6 +140,14 @@ public class SchemaDrawingCanvas extends JComponent {
 		rb.r = new Rectangle(x, y, w, h);
 		rb.b = ok;
 		rectangleStack.add(rb);
+	}
+	
+	/**
+	 * Koristi se za iscrtavanje linija pri crtanju
+	 * zica.
+	 */
+	public void addLineToStack(int x1, int y1, int x2, int y2) {
+		
 	}
 	
 	/**
@@ -205,6 +221,15 @@ public class SchemaDrawingCanvas extends JComponent {
 			rb.r.width = adapter.virtualToReal(rb.r.width);
 			rb.r.height = adapter.virtualToReal(rb.r.height);
 			graph.draw(rb.r);
+		}
+		
+		// iscrtaj sve linije koje su dodane
+		while (!lineStack.empty()) {
+			LineWithBool lb = lineStack.pop();
+			if (lb.b) graph.setColor(Color.BLACK);
+			else graph.setColor(Color.RED);
+			// dodati jos skaliranje linija
+			graph.drawLine(lb.x1, lb.y1, lb.x2, lb.y2);
 		}
 		
 		//iscrtaj BufferedImage

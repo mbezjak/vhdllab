@@ -44,14 +44,16 @@ public class SComponentBar extends JToolBar {
 
 		public void actionPerformed(ActionEvent arg0) {
 			//System.out.println("Mama, stisnuo me!");
-			parent.setSelectedComponentName(this.getText());
 			if (this.getText().compareTo("(none)") == 0) {
 				//System.out.println("Mama, iskljucio me!");
 				parent.getParentToolbar().changeCursor(SchemaMainFrame.DEFAULT_CURSOR_TYPE);
 				setSelectedComponentName(null);
+				parent.getParentFrame().handleComponentSelected();
 			}
 			else {
+				parent.setSelectedComponentName(this.getText());
 				parent.getParentToolbar().changeCursor(SchemaMainFrame.CROSSHAIR_CURSOR_TYPE);
+				parent.getParentFrame().handleComponentSelected();
 			}
 		}
 	}
@@ -150,5 +152,9 @@ public class SComponentBar extends JToolBar {
 		} catch (ComponentFactoryException e) {
 			e.printStackTrace();
 		}
-	}	
+	}
+	
+	public SchemaMainFrame getParentFrame() {
+		return parent;
+	}
 }

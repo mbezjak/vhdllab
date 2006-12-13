@@ -57,6 +57,9 @@ public abstract class AbstractSchemaWire {
 	}
 	public void setWireName(String name) throws SchemaWireException {
 		if (name == this.wireName) return;
+		if (nameSet.contains(name)) {
+			name = generateNewName(name);
+		}
 		if (nameSet.contains(name)) throw new SchemaWireException("Ime zice vec postoji!!");
 		nameSet.remove(wireName);
 		nameSet.add(name);
@@ -64,8 +67,14 @@ public abstract class AbstractSchemaWire {
 	}
 	
 	static protected HashSet<String> nameSet;
+	static protected Integer counter;
 	static {
 		nameSet = new HashSet<String>();
+		counter = 0;
+	}
+	static String generateNewName(String oldname) {
+		counter++;
+		return oldname + counter.toString();
 	}
 	
 	// KONSTRUKTORI
