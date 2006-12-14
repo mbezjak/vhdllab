@@ -143,6 +143,17 @@ public class SchemaMainFrame extends JFrame {
 		return true;
 	}
 	
+	private void deleteComponent() {
+		String toBeRemoved = propbar.getSelectedComponentInstanceName();
+		if (toBeRemoved != null) {
+			if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
+				propbar.showNoProperties();
+			}
+		}
+		
+		// pretrazi sve zice i makni im konekcije na ovu komponentu
+	}
+	
 	private Integer findPortIndexClosestToXY(SchemaDrawingComponentEnvelope env, int x, int y) {
 		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 		AbstractSchemaComponent comp = env.getComponent();
@@ -317,12 +328,7 @@ public class SchemaMainFrame extends JFrame {
 	public void handleKeyPressed(KeyEvent kev) {
 		System.out.println("STISNUL SI: " + kev.getKeyChar());
 		if (kev.getKeyChar() == KeyEvent.VK_DELETE) {
-			String toBeRemoved = propbar.getSelectedComponentInstanceName();
-			if (toBeRemoved != null) {
-				if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
-					propbar.showNoProperties();
-				}
-			}
+			deleteComponent();
 		}
 	}
 	
