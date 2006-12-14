@@ -118,21 +118,24 @@ public class GHDLSimulator implements ISimulator {
 				waveform = vcd.getResultInString();
 			}
 			return new SimulationResult(Integer.valueOf(retVal),retVal==0,listToSimMessages(errors),waveform);
-			
 		} catch(Exception ex) {
 			ex.printStackTrace();
+		} catch(Throwable tr) {
+			tr.printStackTrace();
 		} finally {
 			if(tmpDir != null) {
 				try {
 					recursiveDelete(tmpDir);
 				} catch(Exception ignorable) {
+					ignorable.printStackTrace();
 				}
 			}
 			if(tmpFile!=null) {
 				tmpFile.delete();
 			}
 		}
-		return null;
+		
+		return new SimulationResult(1,false,messageToSimMessages("Could not simulate due to exception."),"");
 	}
 
 	private List<? extends SimulationMessage> listToSimMessages(List<String> errors) {
@@ -140,6 +143,12 @@ public class GHDLSimulator implements ISimulator {
 		for(String e : errors) {
 			list.add(new SimulationMessage(e));
 		}
+		return list;
+	}
+
+	private List<? extends SimulationMessage> messageToSimMessages(String error) {
+		List<SimulationMessage> list = new ArrayList<SimulationMessage>(1);
+		list.add(new SimulationMessage(error));
 		return list;
 	}
 
@@ -176,32 +185,38 @@ public class GHDLSimulator implements ISimulator {
 		
 		public InputConsumer(InputStream procOutput, InputStream procError, List<String> outputs, List<String> errors) {
 			try {
-				Thread t1 = consume(procOutput, outputs); 
+				Thread t1 = consume("ulaz",procOutput, outputs); 
 				t1.start();
-				Thread t2 = consume(procError, errors);
+				Thread t2 = consume("error",procError, errors);
 				t2.start();
 			} catch(Exception ignorable) {
 			}
 		}
 
-		private Thread consume(final InputStream procStream, final List<String> list) {
-			Thread t = new Thread(new Runnable() {
+		private Thread consume(final String name, final InputStream procStream, final List<String> list) {
+			final Thread t = new Thread(new Runnable() {
 				public void run() {
-					try {
-						BufferedReader br = new BufferedReader(new InputStreamReader(procStream));
-						while(true) {
-							String line = br.readLine();
-							if(line == null) break;
-							if(line.equals("")) continue;
-							synchronized(list) {
-								list.add(line);
+					if(procStream!=null) {
+						try {
+							BufferedReader br = new BufferedReader(new InputStreamReader(procStream));
+							while(true) {
+								String line = br.readLine();
+								if(line == null) {
+									break;
+								}
+								if(line.equals("")) {
+									continue;
+								}
+								synchronized(list) {
+									list.add(line);
+								}
 							}
+						} catch(Exception ignorable) {
 						}
-					} catch(Exception ignorable) {
 					}
-					synchronized (this) {
+					synchronized (InputConsumer.this) {
 						runningThreads--;
-						this.notifyAll();
+						InputConsumer.this.notifyAll();
 					}
 				}
 			});
