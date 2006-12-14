@@ -35,7 +35,7 @@ public class DoMethodSaveProject implements RegisteredMethod {
 			project = labman.loadProject(id);
 		} catch (NumberFormatException e) {
 			return errorProperties(method, MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID = '"+projectID+"'!");
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			project = null;
 		}
 		if(project == null) return errorProperties(method, MethodConstants.SE_NO_SUCH_PROJECT, "Project ("+projectID+") not found!");

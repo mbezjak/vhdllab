@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -36,7 +35,7 @@ public class DoMethodLoadProjectFilesId implements RegisteredMethod {
 			if(project!=null) files = project.getFiles();
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID = '"+projectID+"'!");
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"Files not found!");
 		}
 		

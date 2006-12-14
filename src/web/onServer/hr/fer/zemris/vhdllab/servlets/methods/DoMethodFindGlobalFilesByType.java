@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -31,7 +30,7 @@ public class DoMethodFindGlobalFilesByType implements RegisteredMethod {
 		List<GlobalFile> files = null;
 		try {
 			files = labman.findGlobalFilesByType(type);
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			files = null;
 		}
 		if(files==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_FILE,"Files with type ='"+type+"' not found!");

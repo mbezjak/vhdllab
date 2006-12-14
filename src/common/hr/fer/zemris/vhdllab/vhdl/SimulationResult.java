@@ -14,7 +14,6 @@ public class SimulationResult extends Result {
 
 	public SimulationResult(Integer status, boolean isSuccessful, List<? extends SimulationMessage> messages, String waveform) {
 		super(status, isSuccessful, messages);
-		if(waveform == null) throw new NullPointerException("Waveform can not be null.");
 		this.waveform = waveform;
 	}
 
@@ -27,7 +26,9 @@ public class SimulationResult extends Result {
 		Properties prop = new Properties();
 		String superSerialization = super.serialize();
 		prop.setProperty(SIMULATION_RESULT_SUPER, superSerialization);
-		prop.setProperty(SIMULATION_RESULT_WAVEFORM, waveform);
+		if(waveform != null) {
+			prop.setProperty(SIMULATION_RESULT_WAVEFORM, waveform);
+		}
 		return XMLUtil.serializeProperties(prop);
 	}
 	

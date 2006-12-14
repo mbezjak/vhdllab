@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -32,7 +31,7 @@ public class DoMethodCreateNewGlobalFile implements RegisteredMethod {
 		GlobalFile file = null;
 		try {
 			file = labman.createNewGlobalFile(fileName, fileType);
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			file = null;
 		}
 		if(file == null) return errorProperties(method,MethodConstants.SE_CAN_NOT_CREATE_FILE, "Unable to create a new file!");

@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -33,7 +32,7 @@ public class DoMethodCompileFile implements RegisteredMethod {
 			result = labman.compile(id);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID = '"+fileID+"'!");
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			result = null;
 		}
 		if(result==null) return errorProperties(method,MethodConstants.SE_CAN_NOT_GET_COMPILATION_RESULT,"Unable to get compilation result for file ("+fileID+")!");

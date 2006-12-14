@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.UserFile;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -33,7 +32,7 @@ public class DoMethodFindUserFilesByUser implements RegisteredMethod {
 			files = labman.findUserFilesByUser(ownerID);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID = '"+ownerID+"'!");
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			files = null;
 		}
 		if(files==null || files.size() == 0) return errorProperties(method,MethodConstants.SE_NO_SUCH_PROJECT,"User files for owner ("+ownerID+") not found!");

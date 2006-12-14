@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -39,7 +38,7 @@ public class DoMethodCreateNewFile implements RegisteredMethod {
 			if(project!=null) file = labman.createNewFile(project, fileName, fileType);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID = '"+projectID+"'!");
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			file = null;
 		}
 		if(file == null) return errorProperties(method,MethodConstants.SE_CAN_NOT_CREATE_FILE, "Unable to create a new file!");

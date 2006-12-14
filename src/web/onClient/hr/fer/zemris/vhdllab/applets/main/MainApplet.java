@@ -743,6 +743,11 @@ public class MainApplet
 		}
 		
 		SimulationResult result = cache.runSimulation(projectName, fileName);
+		if(result.getWaveform() == null) {
+			// TODO tu pozvat simulationErrorPanel i predat mu greske...
+			statusBar.setText("Greske!");
+			return;
+		}
 		String simulationName = fileName + ".sim";
 		//cache.createFile(projectName, simulationName, FileTypes.FT_VHDL_SIMULATION);
 		//cache.saveFile(projectName, simulationName, result.getWaveform());

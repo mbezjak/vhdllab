@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -37,7 +36,7 @@ public class DoMethodExtractCircuitInterface implements RegisteredMethod {
 			ci = labman.extractCircuitInterface(file);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID = '"+fileID+"'!");
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			ci = null;
 		}
 		if(ci == null) return errorProperties(method,MethodConstants.SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE, "Can not extract circuit interface for file id = '"+fileID+"'!");

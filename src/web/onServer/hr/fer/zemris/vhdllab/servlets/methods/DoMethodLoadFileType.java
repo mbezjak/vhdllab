@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
@@ -33,7 +32,7 @@ public class DoMethodLoadFileType implements RegisteredMethod {
 			file = labman.loadFile(id);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID == '"+fileID+"'!");
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			file = null;
 		}
 		if(file==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_FILE,"File ("+fileID+") not found!");
