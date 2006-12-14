@@ -49,6 +49,7 @@ TODO 58) [OPEN]   Stvaranje dependencya itd. - iskreno, nije mi ni jasno sto tu 
 TODO 59) [OPEN]   Napraviti posebni izbornik za odabir klase sklopova - to je dodatak SOptionBaru
 TODO 60) [OPEN]   Dovrsiti serijalizaciju kod nekoliko sklopova kod kojih to jos nije dovrseno
 TODO 61) [OPEN]   !BITNO! Promijenit SchemaMainFrame tako da nasljeduje Mirin panel, a ne JFrame
+TODO 62) [OPEN]   Undo opcija... Ajoj...
 
 Miro Bezjak
 --------------------------------------------
