@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.tb.StringUtil;
 
 /**
  * This class describes type of a port in ENTITY block. It consists
@@ -147,10 +146,10 @@ public class DefaultType implements Type {
 		if( range == null && vectorDirection != null ) throw new NullPointerException("Conflict: vector direction can not be null while range is not.");
 		if( range != null && vectorDirection == null ) throw new NullPointerException("Conflict: range can not be null while vector direction is not.");
 		
-		if( !StringUtil.isCorrectName(typeName) ) throw new IllegalArgumentException("Type name is not of correct format.");
+		if( !StringFormat.isCorrectName(typeName) ) throw new IllegalArgumentException("Type name is not of correct format.");
 		if( range != null && (range.length != 2 || range[0] < 0 || range[1] < 0) ) throw new IllegalArgumentException("Range does not have two elements or at least one of them is negative.");
 		if( vectorDirection != null ) {
-			if( !StringUtil.isVectorDirection(vectorDirection) ) throw new IllegalArgumentException("Vector direction is incorrect.");
+			if( !StringFormat.isVectorDirection(vectorDirection) ) throw new IllegalArgumentException("Vector direction is incorrect.");
 			if( vectorDirection.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_DOWNTO) 
 				&& range[0] < range[1] ) throw new IllegalArgumentException("First element of range must be greater then second one when vector direction is DOWNTO");
 			if( vectorDirection.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_TO)

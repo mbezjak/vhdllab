@@ -12,7 +12,7 @@ public interface IEditor {
 	 * @param fContent FileContent 
 	 */
 	void setFileContent(FileContent fContent);
-	//void initGUI();
+	//void init();
 	/**
 	 * Returns an internal format.
 	 * @return an internal format.

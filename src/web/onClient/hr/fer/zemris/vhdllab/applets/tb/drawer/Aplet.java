@@ -1,5 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.tb.drawer;
 
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
@@ -13,9 +18,9 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -24,7 +29,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Aplet extends JApplet{
+public class Aplet extends JPanel implements IEditor, IWizard {
 
 	
 	/**
@@ -39,6 +44,15 @@ public class Aplet extends JApplet{
 	String elementGrafa="pozadina";
 	CircuitInterface io;
 	
+	private ProjectContainer container;
+	private String projectName;
+	private String fileName;
+	private boolean isSavable;
+	private boolean isReadOnly;
+	
+	private String fileDepends;
+	private String measureUnit;
+	private String duration;
 	
 	
 	
@@ -51,7 +65,7 @@ public class Aplet extends JApplet{
 	
 	public void setCircuitInterface(CircuitInterface i){
 		io=i;
-		if(this.data.contentEquals(""))this.stvoriSignal();
+		this.stvoriSignal();
 		
 	}
 	
@@ -65,13 +79,11 @@ public class Aplet extends JApplet{
 		//in_panel.nacrtaj_sve();
 	}
 	
-	@Override
 	public void init(){
 		
-			super.init();
 			//scrol.setIgnoreRepaint(true);
 			
-			stvoriSignal();
+			//stvoriSignal();
 			//setData("<signal name=\"a\" type=\"scalar\">(0,0)(100,1)(200,0)(250,1)(430,0)</signal><signal name=\"b\">(0,0)(15,1)(200,0)(250,1)(430,0)</signal><signal name=\"c\" type=\"vector\" rangeFrom=\"0\" rangeTo=\"1\">(0,00)(120,01)(150,10)(180,11)</signal>");
 			
 			stvoriGUI();
@@ -87,9 +99,9 @@ public class Aplet extends JApplet{
 
 	
 	private void stvoriSignal() {
-	  if(io!=null){
+		String data = "";
 		List<Port> p=io.getPorts();
-		
+	
 		for(Port port : p){
 			if(port.getDirection().isIN()){
 				if(port.getType().isVector()){
@@ -101,35 +113,29 @@ public class Aplet extends JApplet{
 						nule+="0";
 					}
 					String signal="<signal name=\""+port.getName()+"\" "+"type=\"vector\" "+"rangeFrom=\""+from+"\" "+"rangeTo=\""+to+"\">"+ "(0,"+nule+")</signal>";         
-					this.setData(signal);
+					data += signal + "\n";
 				}else if(port.getType().isScalar()){
 					String signal="<signal name=\""+port.getName()+"\">(0,0)</signal>";
-					this.setData(signal);
+					data += signal + "\n";
 				}
 			}
 		}
-	  }else{
-		  System.out.println("<signal name=\"podatci_nisu_uneseni\" type=\"scalar\">(0,0)</signal>");
-		  this.setData("<signal name=\"NO_INPUT\" type=\"scalar\">(0,0)</signal>");
-	  }
-	}
-
-
-
-	public void setData(String data) {
-		this.data=data;
-		
-		//postavljanje podataka u in_panel ce nacrtat postavljene podatke
-		
-		in_panel.setData(this.data);
+		this.setData(data);
 	}
 
 
 
 	public String getData() {
-		this.data=this.in_panel.getData();
-		return this.data;
+		String data = "";
+		data += "<file>" + fileDepends + "</file>\n";
+		data += "<measureUnit>" + measureUnit != null ? measureUnit : "ns" + "</measureUnit>\n";
+		data += "<duration>" + duration != null ? duration : "100" + "</duration>\n";
+		Signal[] signals=this.in_panel.podatci_t;
 		
+		for(Signal s : signals) {
+			data += s.toString() + "\n";
+		}
+		return data;
 	}
 
 	private void postaviBoju(Color color) {
@@ -397,14 +403,120 @@ public class Aplet extends JApplet{
 		});
 		
 		
-		this.getContentPane().setLayout(new BorderLayout());
-		this.getContentPane().add(split);
+		this.setLayout(new BorderLayout());
+		this.add(split);
 		//this.getContentPane().add(tab,BorderLayout.WEST);
 		//this.getContentPane().add(scrol,BorderLayout.CENTER);
 	
 	
 	}
 	
-	
+	private void setData(String data) {
+		this.data=data;
+		
+		//postavljanje podataka u in_panel ce nacrtat postavljene podatke
+		in_panel.setData(this.data);
+	}
+
+
+	public String getFileName() {
+		return fileName;
+	}
+
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+
+	public IWizard getWizard() {
+		return this;
+	}
+
+
+	public void highlightLine(int line) {}
+
+
+	public boolean isModified() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+
+	public boolean isReadOnly() {
+		return isReadOnly;
+	}
+
+
+	public boolean isSavable() {
+		return isSavable;
+	}
+
+
+	public void setFileContent(FileContent fContent) {
+		projectName = fContent.getProjectName();
+		fileName = fContent.getFileName();
+		String data = fContent.getContent();
+		
+		int start, end;
+		start = data.indexOf("<file>");
+		start += "<file>".length();
+		end = data.indexOf("</file>");
+		fileDepends = data.substring(start, end);
+
+		start = data.indexOf("<measureUnit>");
+		if(start != -1) {
+			start += "<measureUnit>".length();
+			end = data.indexOf("</measureUnit>");
+			measureUnit = data.substring(start, end);
+		}
+
+		if(start != -1) {
+			start = data.indexOf("<duration>");
+			start += "<duration>".length();
+			end = data.indexOf("</duration>");
+			duration = data.substring(start, end);
+		}
+		
+		setData(data);
+		if(this.in_panel.podatci_t == null) {
+			try {
+				CircuitInterface ci = container.getCircuitInterfaceFor(projectName, fileDepends);
+				setCircuitInterface(ci);
+			} catch (UniformAppletException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		init();
+	}
+
+
+	public void setProjectContainer(ProjectContainer pContainer) {
+		this.container = pContainer;
+	}
+
+
+	public void setReadOnly(boolean flag) {
+		isReadOnly = flag;
+	}
+
+
+	public void setSavable(boolean flag) {
+		isSavable = flag;
+	}
+
+
+	public FileContent getInitialFileContent() {
+		String projectName = container.getActiveProject();
+		String depends = JOptionPane.showInputDialog("Which VHDL file?");
+		String fileName = JOptionPane.showInputDialog("Name of a file?");
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("<file>").append(depends).append("</file>");
+		
+		
+		return new FileContent(projectName, fileName, sb.toString());
+	}
 	
 }

@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
+import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -376,7 +378,7 @@ public class DefaultSignal implements Signal {
 	 */
 	private void createDefaultSignal(String name, int[] range, List<Impulse> exciter) {
 		if( name == null ) throw new NullPointerException("Name can not be null.");
-		if( !StringUtil.isCorrectName(name) ) throw new IllegalArgumentException("Signal name is not of correct format.");
+		if( !StringFormat.isCorrectName(name) ) throw new IllegalArgumentException("Signal name is not of correct format.");
 		if( range != null && (range.length != 2 || range[0] < 0 || range[1] < 0) ) throw new IllegalArgumentException("Range does not have two elements or at least one of them is negative.");
 		
 		this.signalName = name;

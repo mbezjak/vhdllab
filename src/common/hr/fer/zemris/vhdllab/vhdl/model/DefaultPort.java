@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.tb.StringUtil;
 
 /**
  * This class describes port part in ENTITY block of VHDL code.
@@ -75,7 +74,7 @@ public class DefaultPort implements Port {
 		if( direction == null ) throw new NullPointerException("Direction can not be null.");
 		if( type == null ) throw new NullPointerException("Type can not be null.");
 		
-		if( !StringUtil.isCorrectName(name) ) throw new IllegalArgumentException("Port name is not of correct format.");
+		if( !StringFormat.isCorrectName(name) ) throw new IllegalArgumentException("Port name is not of correct format.");
 		
 		this.portName = name;
 		this.direction = direction;

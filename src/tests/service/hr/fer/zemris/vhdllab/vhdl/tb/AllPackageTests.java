@@ -8,7 +8,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	StringUtilTest.class,
+	StringFormatTest.class,
 	DefaultImpulseTest.class,
 	DefaultSignalTest.class,
 	DefaultGeneratorTest.class,

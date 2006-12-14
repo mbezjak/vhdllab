@@ -190,6 +190,14 @@ public class LanguageConstants {
 	 */
 	public static final String STATUSBAR_LANGUAGE_SETTING_NOT_FOUND = "statusbar.language.setting.not.found";
 	/**
+	 * Key for StatusBar when file already exists.
+	 */
+	public static final String STATUSBAR_EXISTS_FILE = "statusbar.exists.file";
+	/**
+	 * Key for StatusBar when project already exists.
+	 */
+	public static final String STATUSBAR_EXISTS_PROJECT = "statusbar.exists.project";
+	/**
 	 * Key for StatusBar when file could not be saved.
 	 */
 	public static final String STATUSBAR_CANT_SAVE_FILE = "statusbar.cant.save.file";

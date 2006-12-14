@@ -1,4 +1,6 @@
-package hr.fer.zemris.vhdllab.vhdl.tb;
+package hr.fer.zemris.vhdllab.vhdl.model;
+
+import hr.fer.zemris.vhdllab.string.StringUtil;
 
 
 /**
@@ -6,12 +8,12 @@ package hr.fer.zemris.vhdllab.vhdl.tb;
  * 
  * @author Miro Bezjak
  */
-public class StringUtil {
+public class StringFormat {
 	
 	/**
 	 * Don't let anyone instantiate this class.
 	 */
-	private StringUtil() {}
+	private StringFormat() {}
 	
 	/**
 	 * Ignore case and check if <code>s</code> is vector direction.
@@ -94,39 +96,5 @@ public class StringUtil {
 		}  
 		return true;
 	}
-	
-	/**
-	 * Check if <code>c</code> is an alpha character.
-	 * (letter of english alphabet, a-z or A-Z)
-	 *  
-	 * @param c a character that will be checked.
-	 * @return <code>true</code> if <code>c</code> is an alpha character; <code>false</code> otherwise.
-	 */
-	private static boolean isAlpha(char c) {
-		if( (c >= 'a' && c <= 'z') ||
-			(c >= 'A' && c <= 'Z') ) return true;
-		return false;
-	}
-	
-	/**
-	 * Check if <code>c</code> os a numeric character. (digit 0-9)
-	 * 
-	 * @param c a character that will be checked.
-	 * @return <code>true</code> is <code>c</code> is a numeric character; <code>false</code> otherwise.
-	 */
-	private static boolean isNumeric(char c) {
-		if( (c >= '0' && c <= '9') ) return true;
-		return false;
-	}
-	
-	/**
-	 * Check if <code>c</code> is an underscore character. (character '_')
-	 * 
-	 * @param c a character that will be checked.
-	 * @return <code>true</code> is <code>c</code> is an underscore character; <code>false</code> otherwise.
-	 */
-	private static boolean isUnderscore(char c) {
-		if( c == '_' ) return true;
-		return false;
-	}
+
 }

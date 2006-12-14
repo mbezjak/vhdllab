@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 public class DefaultMethodInvoker implements MethodInvoker {
 
 	private AjaxMediator ajax;
@@ -221,8 +223,6 @@ public class DefaultMethodInvoker implements MethodInvoker {
 			String typeRangeFrom = resProperties.getProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_FROM+"."+i);
 			String typeRangeTo = resProperties.getProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_TO+"."+i);
 			String vectorDirection = resProperties.getProperty(MethodConstants.PROP_CI_PORT_TYPE_VECTOR_DIRECTION+"."+i);
-			int rangeFrom = Integer.parseInt(typeRangeFrom);
-			int rangeTo = Integer.parseInt(typeRangeTo);
 			
 			Direction direction;
 			if(portDirection.equalsIgnoreCase("IN")) {
@@ -235,7 +235,16 @@ public class DefaultMethodInvoker implements MethodInvoker {
 				direction = Direction.BUFFER;
 			}
 			
-			Type type = new DefaultType(typeName, new int[] {rangeFrom, rangeTo}, vectorDirection);
+			int[] range;
+			if(typeRangeFrom == null && typeRangeTo == null) {
+				range = null;
+			} else {
+				int rangeFrom = Integer.parseInt(typeRangeFrom);
+				int rangeTo = Integer.parseInt(typeRangeTo);
+				range = new int[] {rangeFrom, rangeTo};
+			} 
+			
+			Type type = new DefaultType(typeName, range, vectorDirection);
 			ports.add(new DefaultPort(portName, direction, type));
 			i++;
 		}
@@ -678,7 +687,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		if(response == null) throw new UniformAppletException("AJAX connection problems");
 		
 		Properties resProperties = XMLUtil.deserializeProperties(response);
-		String resMethod = resProperties.getProperty(MethodConstants.PROP_METHOD, "");
+		String resMethod = resProperties.getProperty(MethodConstants.PROP_METHOD);
 		if(!method.equalsIgnoreCase(resMethod)) {
 			throw new UniformAppletException("Wrong method returned! Expected: " + method + " but was: " + resMethod);
 		}

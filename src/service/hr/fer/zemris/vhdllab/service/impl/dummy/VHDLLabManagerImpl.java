@@ -20,9 +20,6 @@ import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
-import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.TestBenchDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
@@ -79,34 +76,23 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			return file.getContent();
 		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
-			String inducement = new String("<measureUnit>ns</measureUnit>\n" +
-					"<duration>1000</duration>\n" +
-					"<signal name = \"A\" type=\"scalar\">(0,0)(100, 1)(150, 0)(300,1)</signal>\n" + 
-					"<signal name = \"b\" type=\"scalar\">(0,0)(200, 1)(300, z)(440, U)</signal>\n" +
-					"<signal name = \"c\" type=\"scalar\" rangeFrom=\"0\" rangeTo=\"0\">(0,0)(50,1)(300,0)(400,1)</signal>\n" +
-					"<signal name = \"d\" type=\"vector\" rangeFrom=\"0\" rangeTo=\"0\">(100,1)(200,0)(300,1)(400,z)</signal>\n" +
-					"<signal name = \"e\" type=\"vector\" rangeFrom=\"2\" rangeTo=\"0\">(0,000)(100, 100)(400, 101)(500,111)(600, 010)</signal>\n" + 
-					"<signal name = \"f\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"4\">(0,0001)(100, 1000)(200, 0110)(300, U101)(400, 1001)(500,110Z)(600, 0110)</signal>");
-			
-			DefaultCircuitInterface ci = new DefaultCircuitInterface("sklop");
-			ci.addPort(new DefaultPort("a", Direction.IN, new DefaultType("std_logic", null, null)));
-			ci.addPort(new DefaultPort("b", Direction.IN, new DefaultType("std_logic", null, null)));
-			ci.addPort(new DefaultPort("c", Direction.OUT, new DefaultType("std_logic", null, null)));
-			ci.addPort(new DefaultPort("d", Direction.IN, new DefaultType("std_logic_vector", new int[] {0,0}, "TO")));
-			ci.addPort(new DefaultPort("e", Direction.IN, new DefaultType("std_logic_vector", new int[] {2,0}, "DOWNTO")));
-			ci.addPort(new DefaultPort("f", Direction.OUT, new DefaultType("std_logic_vector", new int[] {1,4}, "TO")));
-			
-			String writted = null;
-			try {
-				writted = Testbench.writeVHDL(ci, inducement);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ServiceException();
+			List<File> vhdlSources = extractDependencies(file);
+			if(vhdlSources.size() != 1) {
+				throw new ServiceException("Testbench depends on more then one or unknown file!");
 			}
 			
-			return writted;
+			File source = vhdlSources.get(0);
+			CircuitInterface ci = extractCircuitInterface(source);
+			String vhdl = null;
+			try {
+				vhdl = Testbench.writeVHDL(ci, file.getContent());
+			} catch (Exception e) {
+				vhdl = null;
+			}
+			if(vhdl == null) throw new ServiceException("Error during extraction of VHDL code of testbench"); 
+			return vhdl;
 		}
-		else return "";
+		else throw new ServiceException("FileType "+file.getFileType()+" has no registered vhdl generators!");
 	}
 
 	public File loadFile(Long fileId) throws ServiceException {
@@ -453,9 +439,17 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 	}
 	
-	public CircuitInterface extractCircuitInterface(File file) {
+	public CircuitInterface extractCircuitInterface(File file) throws ServiceException {
 		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			return Extractor.extractCircuitInterface(file.getContent());
+		} else if (file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
+			List<File> vhdlSources = extractDependencies(file);
+			if(vhdlSources.size() != 1) {
+				throw new ServiceException("Testbench depends on more then one or unknown file!");
+			}
+			
+			File source = vhdlSources.get(0);
+			return Extractor.extractCircuitInterface(source.getContent());
 		} else {
 			return new DefaultCircuitInterface("cicinc");
 		}

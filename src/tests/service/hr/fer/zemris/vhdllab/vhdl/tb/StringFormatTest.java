@@ -1,17 +1,18 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
 import static org.junit.Assert.assertEquals;
+import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import org.junit.Test;
 
-public class StringUtilTest {
+public class StringFormatTest {
 
 	/** 
 	 * String is empty.
 	 */
 	@Test
 	public void isCorrectName() {
-		assertEquals(false, StringUtil.isCorrectName(""));
+		assertEquals(false, StringFormat.isCorrectName(""));
 	}
 	
 	/** 
@@ -19,7 +20,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isCorrectName2() {
-		assertEquals(true, StringUtil.isCorrectName("sklop_2"));
+		assertEquals(true, StringFormat.isCorrectName("sklop_2"));
 	}
 	
 	/** 
@@ -27,7 +28,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isCorrectName3() {
-		assertEquals(false, StringUtil.isCorrectName("_sklop2"));
+		assertEquals(false, StringFormat.isCorrectName("_sklop2"));
 	}
 	
 	/** 
@@ -35,7 +36,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isCorrectName4() {
-		assertEquals(false, StringUtil.isCorrectName("6sklop"));
+		assertEquals(false, StringFormat.isCorrectName("6sklop"));
 	}
 	
 	/** 
@@ -43,7 +44,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isCorrectName5() {
-		assertEquals(false, StringUtil.isCorrectName("sklop__a"));
+		assertEquals(false, StringFormat.isCorrectName("sklop__a"));
 	}
 	
 	/** 
@@ -51,7 +52,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isCorrectName6() {
-		assertEquals(false, StringUtil.isCorrectName("sklop5_"));
+		assertEquals(false, StringFormat.isCorrectName("sklop5_"));
 	}
 	
 	/** 
@@ -59,7 +60,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isCorrectName7() {
-		assertEquals(true, StringUtil.isCorrectName("SKLOP_5_drugi"));
+		assertEquals(true, StringFormat.isCorrectName("SKLOP_5_drugi"));
 	}
 	
 	/** 
@@ -67,7 +68,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isCorrectName8() {
-		assertEquals(false, StringUtil.isCorrectName("sklop?drugi"));
+		assertEquals(false, StringFormat.isCorrectName("sklop?drugi"));
 	}
 
 	/** 
@@ -75,7 +76,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isMeasureUnit() {
-		assertEquals(true, StringUtil.isMeasureUnit("fs"));
+		assertEquals(true, StringFormat.isMeasureUnit("fs"));
 	}
 	
 	/** 
@@ -83,7 +84,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isMeasureUnit2() {
-		assertEquals(false, StringUtil.isMeasureUnit("h"));
+		assertEquals(false, StringFormat.isMeasureUnit("h"));
 	}
 	
 	/** 
@@ -91,7 +92,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isVectorDirection() {
-		assertEquals(true, StringUtil.isVectorDirection("DOWNTO"));
+		assertEquals(true, StringFormat.isVectorDirection("DOWNTO"));
 	}
 	
 	/** 
@@ -99,7 +100,7 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isVectorDirection2() {
-		assertEquals(true, StringUtil.isVectorDirection("TO"));
+		assertEquals(true, StringFormat.isVectorDirection("TO"));
 	}
 	
 	/** 
@@ -107,6 +108,6 @@ public class StringUtilTest {
 	 */
 	@Test
 	public void isVectorDirection3() {
-		assertEquals(false, StringUtil.isVectorDirection("UPTO"));
+		assertEquals(false, StringFormat.isVectorDirection("UPTO"));
 	}
 }

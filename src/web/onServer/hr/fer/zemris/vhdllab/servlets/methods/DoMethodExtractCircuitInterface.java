@@ -53,9 +53,11 @@ public class DoMethodExtractCircuitInterface implements RegisteredMethod {
 			resProp.setProperty(MethodConstants.PROP_CI_PORT_NAME+"."+i, port.getName());
 			resProp.setProperty(MethodConstants.PROP_CI_PORT_DIRECTION+"."+i, port.getDirection().toString());
 			resProp.setProperty(MethodConstants.PROP_CI_PORT_TYPE_NAME+"."+i, type.getTypeName());
-			resProp.setProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_FROM+"."+i, String.valueOf(type.getRangeFrom()));
-			resProp.setProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_TO+"."+i, String.valueOf(type.getRangeTo()));
-			resProp.setProperty(MethodConstants.PROP_CI_PORT_TYPE_VECTOR_DIRECTION+"."+i, type.getVectorDirection());
+			if(type.isVector()) {
+				resProp.setProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_FROM+"."+i, String.valueOf(type.getRangeFrom()));
+				resProp.setProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_TO+"."+i, String.valueOf(type.getRangeTo()));
+				resProp.setProperty(MethodConstants.PROP_CI_PORT_TYPE_VECTOR_DIRECTION+"."+i, type.getVectorDirection());
+			}
 			i++;
 		}
 		return resProp;

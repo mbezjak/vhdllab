@@ -395,6 +395,13 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_NEW_TESTBENCH;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						createNewFileInstance(FileTypes.FT_VHDL_TB);
+					} catch (UniformAppletException e1) {}
+				}
+			});
 			submenu.add(menuItem);
 			
 			// New Schema menu item
@@ -758,10 +765,12 @@ public class MainApplet
 	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
+		// TODO mozda bi tu trebalo sejvat taj file...
 		return cache.getCircuitInterfaceFor(projectName, fileName);
 	}
 
 	public String getUserFile(String type) throws UniformAppletException {
+		// TODO getUserFile() metoda u ProjectContaineru treba bit getPreferences i treba vratit Preferences objekt!
 		return cache.getUserFile(type);
 	}
 
@@ -801,18 +810,18 @@ public class MainApplet
 	}
 	
 	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
-		String content = cache.loadFileContent(projectName, fileName);
-		FileContent fileContent = new FileContent(projectName, fileName, content);
 		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
+			String content = cache.loadFileContent(projectName, fileName);
+			FileContent fileContent = new FileContent(projectName, fileName, content);
 			String type = cache.loadFileType(projectName, fileName);
 			
 			// Initialization of an editor
 			IEditor editor = cache.getEditor(type);
 			editor.setProjectContainer(this);
-			editor.setFileContent(fileContent);
 			editor.setSavable(isSavable);
 			editor.setReadOnly(isReadOnly);
+			editor.setFileContent(fileContent);
 			// End of initialization
 			
 			Component component = editorPane.add(fileName, (JPanel)editor);
@@ -900,6 +909,12 @@ public class MainApplet
 		String projectName = content.getProjectName();
 		String fileName = content.getFileName();
 		String data = content.getContent();
+		boolean exists = cache.existsFile(projectName, fileName);
+		if(exists) {
+			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
+			statusBar.setText(text);
+			return;
+		}
 		cache.createFile(projectName, fileName, type);
 		cache.saveFile(projectName, fileName, data);
 		projectExplorer.addFile(projectName, fileName);
@@ -916,6 +931,8 @@ public class MainApplet
 	}
 	
 	private void setPaneSize() {
+		// TODO to treba bit u FT_APPLET file typu a ne u common
+		// TODO getUserFile() metoda u ProjectContaineru treba bit getPreferences i treba vratit Preferences objekt!
 		try {
 			String data = cache.getUserFile(FileTypes.FT_COMMON);
 			Preferences preferences = Preferences.deserialize(data);
@@ -1136,7 +1153,36 @@ public class MainApplet
 				final String fileContent1 = "simple content";
 				final String fileName2 = "File2";
 				final String fileType2 = FileTypes.FT_VHDL_SOURCE;
-				final String fileContent2 = "some file content that should be displayed in writer";
+				final String fileContent2 = "library IEEE;" + "\n" +
+											"use IEEE.STD_LOGIC_1164.ALL;" + "\n" + 
+											"use IEEE.STD_LOGIC_ARITH.ALL;" + "\n" +
+											"use IEEE.STD_LOGIC_UNSIGNED.ALL;" + "\n" +
+											"\n" +
+											"entity mux41 is" + "\n" +
+											"port ( e :in std_logic;" + "\n" +
+											"d:in std_logic_vector (3 downto 0);" + "\n" +
+											"sel :in std_logic_vector (1 downto 0);" + "\n" +
+											"z :out std_logic);" + "\n" +
+											//");" + "\n" +
+											"end mux41;" + "\n" +
+											"" + "\n" +
+											"architecture Behavioral of mux41 is" + "\n" +
+											"" + "\n" +
+											"begin" + "\n" +
+											"process(d,e,sel)" + "\n" +
+											"begin" + "\n" +
+											"if (e = '1')then" + "\n" + 
+											"case sel is" + "\n" +
+											"when  \"00\" => z <= d(0);" + "\n" +
+											"when  \"01\" => z <= d(1);" + "\n" +
+											"when  \"10\" => z <= d(2);" + "\n" +
+											"when  \"11\" => z <= d(3);" + "\n" +
+											"when others => z <='0';" + "\n" +
+											"end case;" + "\n" +
+											"else z<='0';" + "\n" +
+											"end if;" + "\n" +
+											"end process;" + "\n" +
+											"end Behavioral";
 				
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor(FileTypes.FT_VHDL_SOURCE);

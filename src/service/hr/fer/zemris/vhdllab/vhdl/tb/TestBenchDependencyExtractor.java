@@ -13,11 +13,15 @@ public class TestBenchDependencyExtractor implements IDependency {
 
 	public List<File> extractDependencies(File f, VHDLLabManager labman)
 			throws ServiceException {
-		String imeSklopa = null; // Tu izvaditi iz f-a ime sklopa koji se testira!
-								 // Napomena: ime je BEZ ekstenzije!
-		if(imeSklopa == null) {  // Ovo je sada null pa ce stvar riknuti 
-			throw new ServiceException("Not yet implemented.");
-		}
+		String imeSklopa = null;
+		String content = f.getContent();
+		final String START_TAG = "<file>";
+		final String END_TAG = "</file>";
+		int start = content.indexOf(START_TAG);
+		start += START_TAG.length();
+		int end = content.indexOf(END_TAG);
+		imeSklopa = content.substring(start, end);
+		
 		List<File> list = new ArrayList<File>(1);
 		File sklop = findMatchingFile(f.getProject(), imeSklopa);
 		if(sklop==null) {

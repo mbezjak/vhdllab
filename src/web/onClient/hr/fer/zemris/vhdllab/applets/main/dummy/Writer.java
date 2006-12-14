@@ -8,8 +8,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -33,7 +31,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	
 	public Writer() {
 		text = new JTextArea("This is writer area!", 25,50);
-		text.addKeyListener(new KeyListener() {
+		/*text.addKeyListener(new KeyListener() {
 		
 			public void keyTyped(KeyEvent e) {
 				temp = text.getText();
@@ -48,7 +46,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 			}
 			public void keyPressed(KeyEvent e) {}
 		
-		});
+		});*/
 		JScrollPane scroll = new JScrollPane(text);
 		this.setLayout(new BorderLayout());
 		this.add(scroll, BorderLayout.CENTER);
@@ -57,7 +55,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public String getData() {
-		change = false;
+		//change = false;
 		return text.getText();
 	}
 
@@ -66,7 +64,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public boolean isModified() {
-		return change;
+		return true;
 	}
 
 	public void setFileContent(FileContent fContent) {
@@ -134,7 +132,6 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public void setSavable(boolean flag) {
-		// TODO Auto-generated method stub
-		
+		savable = flag;
 	}
 }

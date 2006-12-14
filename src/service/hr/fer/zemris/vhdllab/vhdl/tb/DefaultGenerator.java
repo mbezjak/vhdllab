@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.vhdl.tb;
 
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -341,7 +342,7 @@ public class DefaultGenerator implements Generator {
 	 */
 	public void setMeasureUnit(String measureUnit) {
 		if( measureUnit == null ) throw new NullPointerException("Measure unit can not be null.");
-		if( !StringUtil.isMeasureUnit( measureUnit ) ) throw new IllegalArgumentException("Measure unit is incorrect.");
+		if( !StringFormat.isMeasureUnit( measureUnit ) ) throw new IllegalArgumentException("Measure unit is incorrect.");
 		this.measureUnit = measureUnit;
 	}
 	

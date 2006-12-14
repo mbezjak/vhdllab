@@ -150,19 +150,26 @@ public class Extractor {
 		source = source.toUpperCase();
 		char[] chs = source.toCharArray();
 		int pos = source.indexOf("ENTITY");
-		if(pos==-1) return null;
+		if(pos==-1) {
+			throw new NullPointerException();
+			//return null;
+		}
 		pos += 7;
 		int start = pos;
 		while(chs[pos]!=' ') pos++;
 		String entity_name = new String(chs,start,pos-start);
 		pos++;
-		if(!startsWith(chs,pos,ch_IS)||chs[pos+ch_IS.length]!=' ') return null;
+		if(!startsWith(chs,pos,ch_IS)||chs[pos+ch_IS.length]!=' '){
+			throw new NullPointerException();
+			//return null;
+		}
 		pos+=3;
 		if(startsWith(chs,pos,ch_GENERIC)&&(chs[pos+ch_GENERIC.length]==' '||chs[pos+ch_GENERIC.length]=='(')) {
 			if(chs[pos+ch_GENERIC.length]==' ') pos++;
 			pos += ch_GENERIC.length;
 			if(chs[pos]!='(') {
-				return null;
+				throw new NullPointerException();
+				//return null;
 			}
 			pos++;
 			if(chs[pos]==' ') pos++;
@@ -171,7 +178,10 @@ public class Extractor {
 				List<String> nazivi = new ArrayList<String>();
 				while(true) {
 					findEnd(res, chs,pos,ch_DVOTOCKA_RAZMAK_ZAREZ_ZOBLA);
-					if(res[0]==-1) return null;
+					if(res[0]==-1) {
+						throw new NullPointerException();
+						//return null;
+					}
 					if(res[0]==0) {
 						// dvotocka:
 						nazivi.add(new String(chs,pos,res[1]-pos));
@@ -193,7 +203,9 @@ public class Extractor {
 							if(chs[pos]==' ') pos++;
 							continue;
 						}
-						return null;
+						throw new NullPointerException();
+						//return null;
+
 					}
 					if(res[0]==2) {
 						// zarez:
@@ -206,7 +218,9 @@ public class Extractor {
 				}
 				if(res[0]==3) {
 					if(nazivi.isEmpty()) break;
-					return null;
+					throw new NullPointerException();
+					//return null;
+
 				}
 				start = pos;
 				pos = findTypeEnd(chs,pos);
@@ -215,7 +229,10 @@ public class Extractor {
 				if(chs[pos]==' ') pos++;
 				if(chs[pos]==':') {
 					pos++;
-					if(chs[pos]!='=') return null; // mora doci :=
+					if(chs[pos]!='=') {
+						throw new NullPointerException();
+						//return null; // mora doci :=
+					}
 					pos++;
 					if(chs[pos]==' ') pos++;
 					start = pos;
@@ -234,23 +251,36 @@ public class Extractor {
 				pos++;
 				if(chs[pos]==' ') pos++;
 			}
-			if(chs[pos]!=')') return null;
+			if(chs[pos]!=')') {
+				throw new NullPointerException();
+				//return null;
+			}
 			pos++; if(chs[pos]==' ') pos++;
-			if(chs[pos]!=';') return null;
+			if(chs[pos]!=';') {
+				throw new NullPointerException();
+				//return null;
+			}
 			pos++; if(chs[pos]==' ') pos++;
 		}
 
 		if(startsWith(chs,pos,ch_PORT)) {
 			pos += ch_PORT.length;
 			if(chs[pos]==' ') pos++;
-			if(chs[pos]!='(') return null;
+			if(chs[pos]!='(') {
+				throw new NullPointerException();
+				//return null;
+			}
 			pos++; if(chs[pos]==' ') pos++;
 			int[] res = new int[2];
 			while(true) {
 				List<String> nazivi = new ArrayList<String>();
 				while(true) {
 					findEnd(res, chs,pos,ch_DVOTOCKA_RAZMAK_ZAREZ_ZOBLA);
-					if(res[0]==-1) return null;
+					if(res[0]==-1) {
+						throw new NullPointerException();
+						//return null;
+
+					}
 					if(res[0]==0) {
 						// dvotocka:
 						nazivi.add(new String(chs,pos,res[1]-pos));
@@ -272,7 +302,9 @@ public class Extractor {
 							if(chs[pos]==' ') pos++;
 							continue;
 						}
-						return null;
+						throw new NullPointerException();
+						//return null;
+
 					}
 					if(res[0]==2) {
 						// zarez:
@@ -285,7 +317,9 @@ public class Extractor {
 				}
 				if(res[0]==3) {
 					if(nazivi.isEmpty()) break;
-					return null;
+					throw new NullPointerException();
+					//return null;
+
 				}
 				String direction = null;
 				int w = whichStarts(chs,pos,ch_IN_OUT_INOUT_BUFFER);
@@ -298,12 +332,15 @@ public class Extractor {
 				}
 				start = pos;
 				pos = findTypeEnd(chs,pos);
-				String type_name = new String(chs, start, pos-start);
+				String type_name = new String(chs, start, pos-start).trim();
 				//String initializer_value = null;
 				if(chs[pos]==' ') pos++;
 				if(chs[pos]==':') {
 					pos++;
-					if(chs[pos]!='=') return null; // mora doci :=
+					if(chs[pos]!='=') {
+						throw new NullPointerException();
+						//return null; // mora doci :=
+					}
 					pos++;
 					if(chs[pos]==' ') pos++;
 					start = pos;
@@ -315,7 +352,7 @@ public class Extractor {
 				int x = type_name.indexOf('(');
 				if(x>0) {
 					String rangeText = type_name.substring(x);
-					type_name = type_name.substring(0,x);
+					type_name = type_name.substring(0,x).trim();
 					range = Range.extractRange(rangeText);
 				}
 				for(String naziv : nazivi) {
@@ -329,9 +366,17 @@ public class Extractor {
 				pos++;
 				if(chs[pos]==' ') pos++;
 			}
-			if(chs[pos]!=')') return null;
+			if(chs[pos]!=')') {
+				throw new NullPointerException();
+				//return null;
+
+			}
 			pos++; if(chs[pos]==' ') pos++;
-			if(chs[pos]!=';') return null;
+			if(chs[pos]!=';') {
+				throw new NullPointerException();
+				//return null;
+
+			}
 			pos++; if(chs[pos]==' ') pos++;
 		
 		}
@@ -407,7 +452,7 @@ public class Extractor {
 	 * This method finds position in given VHDL source represented
 	 * as character array, starting from given initial position, of
 	 * character which terminates signal type declaration. This can be
-	 * one of: ':', ';', ' ', ')'. However, character ')' is considered
+	 * one of: ':', ';', ')'. However, character ')' is considered
 	 * terminator only if it is not closure of some '(' opened after 
 	 * the initial position.
 	 * @param chs VHDL source represented as character array
@@ -416,7 +461,7 @@ public class Extractor {
 	 */
 	private static int findTypeEnd(char[] chs, int pos) {
 		while(true) {
-			if(chs[pos]==':' || chs[pos]==';' || chs[pos]==' ' || chs[pos]==')') return pos;
+			if(chs[pos]==':' || chs[pos]==';' || chs[pos]==')') return pos;
 			if(chs[pos]=='(') {
 				int cnt=1;
 				for(pos=pos+1; true; pos++) {

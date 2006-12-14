@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import hr.fer.zemris.vhdllab.vhdl.tb.Generator;
 import hr.fer.zemris.vhdllab.vhdl.tb.Signal;
-import hr.fer.zemris.vhdllab.vhdl.tb.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -152,7 +151,7 @@ public class DefaultCircuitInterface implements CircuitInterface {
 	 */
 	private void createDefaultCircuitInterface(String name, List<Port> ports) {
 		if( name == null ) throw new NullPointerException("Name can not be null.");
-		if( !StringUtil.isCorrectName(name) ) throw new IllegalArgumentException("Name is not of correct format.");
+		if( !StringFormat.isCorrectName(name) ) throw new IllegalArgumentException("Name is not of correct format.");
 		
 		this.entityName = name;
 		if( ports != null ) addPortList(ports);

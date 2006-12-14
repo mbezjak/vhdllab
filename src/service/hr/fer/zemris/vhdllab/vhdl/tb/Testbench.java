@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.vhdl.tb;
 
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -429,7 +430,7 @@ public class Testbench {
 		public ImpulseWithSignalName(String name, Impulse impulse) {
 			if( impulse == null ) throw new NullPointerException("Impulse can not be null.");
 			if( name == null ) throw new NullPointerException("Signal name can not be null.");
-			if( !StringUtil.isCorrectName(name) ) throw new IllegalArgumentException("Signal name is not of correct format.");
+			if( !StringFormat.isCorrectName(name) ) throw new IllegalArgumentException("Signal name is not of correct format.");
 			this.signalName = name;
 			this.impulse = impulse;
 		}
