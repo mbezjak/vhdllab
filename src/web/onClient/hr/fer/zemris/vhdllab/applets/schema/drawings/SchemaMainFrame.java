@@ -5,11 +5,13 @@ import hr.fer.zemris.vhdllab.applets.schema.SOptionBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SPair;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
+import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire.WireConnection;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -137,7 +139,30 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	private boolean evaluateIfWireCanBeDrawn() {
+		// jos se tu moze nesto dodati
 		return true;
+	}
+	
+	private Integer findPortIndexClosestToXY(SchemaDrawingComponentEnvelope env, int x, int y) {
+		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
+		AbstractSchemaComponent comp = env.getComponent();
+		x = ad.realToVirtualRelativeX(x);
+		y = ad.realToVirtualRelativeY(y);
+		int cx = ad.realToVirtualRelativeX(env.getPosition().x), cy = ad.realToVirtualRelativeY(env.getPosition().y);
+		int minDist = comp.getComponentHeight();
+		int dist = 0;
+		Integer minPort = null;
+		for (int i = 0; i < comp.getNumberOfPorts(); i++) {
+			AbstractSchemaPort port = comp.getSchemaPort(i);
+			int px = port.getCoordinate().x, py = port.getCoordinate().y;
+			dist = (int) Math.sqrt((cx + px - x) * (cx + px - x) + (cy + py - y) * (cy + py - y));
+			//System.out.println(dist + " " + minDist + " " + port.getCoordinate().x + " " + port.getCoordinate().y + " " + cx + " " + cy + " " + x + " " + y);
+			if (dist < minDist) {
+				minDist = dist;
+				minPort = i;
+			}
+		}
+		return minPort;
 	}
 	
 	
@@ -155,8 +180,37 @@ public class SchemaMainFrame extends JFrame {
 				drawWireState = DRAW_WIRE_STATE_DRAWING;
 				currentLine = new SPair<Point>();
 				currentLine.first = new Point(x, y);
+				
+				// spajanja s komponentama
+				SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
+				if (env != null) {
+					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
+					if (portIndex != null) {
+						System.out.println("Hej nasel sam ga!");
+						WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
+						wireBeingDrawed.connections.add(conn);
+						currentLine.first.x = ad.realToVirtualRelativeX(env.getPosition().x) + env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
+						currentLine.first.y = ad.realToVirtualRelativeX(env.getPosition().y) + env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
+					}
+				}
+				return;
 			}
 			if (drawWireState == DRAW_WIRE_STATE_DRAWING) {
+				// spajanja s komponentama
+				SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
+				boolean over = false;
+				if (env != null) {
+					System.out.println("Opet");
+					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
+					if (portIndex != null) {
+						WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
+						wireBeingDrawed.connections.add(conn);
+						x = ad.realToVirtualRelativeX(env.getPosition().x) + env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
+						y = ad.realToVirtualRelativeX(env.getPosition().y) + env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
+						over = true;
+					}
+				}
+				
 				currentLine.second = new Point(x, y);
 				SPair<Point> t = new SPair<Point>();
 				SPair<Point> s = new SPair<Point>();
@@ -167,6 +221,7 @@ public class SchemaMainFrame extends JFrame {
 				wireBeingDrawed.wireLines.add(t);
 				wireBeingDrawed.wireLines.add(s);
 				currentLine.first = currentLine.second;
+				if (over) handleRightClickOnSchema(e);
 			}
 			return;
 		}

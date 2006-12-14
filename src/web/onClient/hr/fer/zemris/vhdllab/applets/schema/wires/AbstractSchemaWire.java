@@ -32,11 +32,11 @@ public abstract class AbstractSchemaWire {
 	// i, obratno, rekonstrukciju njenih svojstava na temelju stringa.
 	//
 	// Svaka zica se moze i sama iscrtavati pozivom metode draw.
-	public class Connection {
+	public class WireConnection {
 		public String componentInstanceName;
 		public int portIndex;
 	
-		public Connection(String componentInstanceName, int portIndex) {
+		public WireConnection(String componentInstanceName, int portIndex) {
 			super();
 			this.componentInstanceName = componentInstanceName;
 			this.portIndex = portIndex;
@@ -48,7 +48,7 @@ public abstract class AbstractSchemaWire {
 		}
 	}
 	
-	public HashSet<Connection> connections;
+	public HashSet<WireConnection> connections;
 	public HashSet<SPair<Point>> wireLines;
 	
 	private String wireName;
@@ -82,7 +82,7 @@ public abstract class AbstractSchemaWire {
 	public AbstractSchemaWire(String wireName) {
 		super();
 		this.wireName = wireName;
-		connections = new HashSet<Connection>();
+		connections = new HashSet<WireConnection>();
 		wireLines = new HashSet<SPair<Point>>();
 	}
 	
@@ -91,7 +91,9 @@ public abstract class AbstractSchemaWire {
 	public void draw(SchemaDrawingAdapter adapter) {
 		for (SPair<Point> par : wireLines) {
 			adapter.drawLine(par.first.x, par.first.y, par.second.x, par.second.y);
-			System.out.println(par.first.x + " " + par.first.y + " " + par.second.x + " " + par.second.y);
+		}
+		for (WireConnection conn : connections) {
+			// nesto s portovima
 		}
 	}
 	
@@ -103,14 +105,14 @@ public abstract class AbstractSchemaWire {
 		String [] connArray = connStr.split("#");
 		for (String s : connArray) {
 			String [] sfield = s.split("$");
-			Connection c = new Connection(sfield[0], Integer.parseInt(sfield[1]));
+			WireConnection c = new WireConnection(sfield[0], Integer.parseInt(sfield[1]));
 			connections.add(c);
 		}
 	}
 	
 	protected String getConnections() {
 		StringBuilder builder = new StringBuilder();
-		for (Connection c : connections) {
+		for (WireConnection c : connections) {
 			builder.append('#').append(c.componentInstanceName).append('$').append(c.portIndex);
 		}
 		return builder.toString();
@@ -191,10 +193,10 @@ public abstract class AbstractSchemaWire {
 	// Ovo dalje je za upravljanje kolekcijama wireLines i connections
 	
 	
-	public boolean add_Connections(Connection arg0) {
+	public boolean add_Connections(WireConnection arg0) {
 		return connections.add(arg0);
 	}
-	public boolean addAll_Connections(Collection<? extends Connection> arg0) {
+	public boolean addAll_Connections(Collection<? extends WireConnection> arg0) {
 		return connections.addAll(arg0);
 	}
 	public void clear_Connections() {
@@ -218,7 +220,7 @@ public abstract class AbstractSchemaWire {
 	public boolean isEmpty_Connections() {
 		return connections.isEmpty();
 	}
-	public Iterator<Connection> iterator_Connections() {
+	public Iterator<WireConnection> iterator_Connections() {
 		return connections.iterator();
 	}
 	public boolean remove_Connections(Object arg0) {

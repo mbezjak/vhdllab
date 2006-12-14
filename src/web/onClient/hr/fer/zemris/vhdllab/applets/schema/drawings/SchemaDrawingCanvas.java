@@ -268,16 +268,35 @@ public class SchemaDrawingCanvas extends JComponent {
 		SchemaDrawingAdapter adapter = grid.getAdapter();
 		//x = adapter.realToVirtual(x);
 		//y = adapter.realToVirtual(y);
-		System.out.println("Klik na virtualnu koordinatu " + x + ", " + y);
+		//System.out.println("Klik na virtualnu koordinatu " + x + ", " + y);
 		for (SchemaDrawingComponentEnvelope env : components) {
 			int xr = env.getPosition().x + adapter.virtualToReal(env.getComponent().getComponentWidth());
 			int yr = env.getPosition().y + adapter.virtualToReal(env.getComponent().getComponentHeight());
-			System.out.println("Ovaj sklop jeste na koord'nati: " + env.getPosition().x + ", " + env.getPosition().y);
-			System.out.println("Ovaj sklop idje do koord'nate: " + xr + ", " + yr);
+			//System.out.println("Ovaj sklop jeste na koord'nati: " + env.getPosition().x + ", " + env.getPosition().y);
+			//System.out.println("Ovaj sklop idje do koord'nate: " + xr + ", " + yr);
 			if (x >= env.getPosition().x && x <= xr
 					&& y >= env.getPosition().y && y <= yr)
 			{
 				return env.getComponent();
+			}
+		}
+		
+		return null;
+	}
+	public SchemaDrawingComponentEnvelope getSchemaComponentEnvelopeAt(int x, int y) {
+		SchemaDrawingAdapter adapter = grid.getAdapter();
+		//x = adapter.realToVirtual(x);
+		//y = adapter.realToVirtual(y);
+		//System.out.println("Klik na virtualnu koordinatu " + x + ", " + y);
+		for (SchemaDrawingComponentEnvelope env : components) {
+			int xr = env.getPosition().x + adapter.virtualToReal(env.getComponent().getComponentWidth());
+			int yr = env.getPosition().y + adapter.virtualToReal(env.getComponent().getComponentHeight());
+			//System.out.println("Ovaj sklop jeste na koord'nati: " + env.getPosition().x + ", " + env.getPosition().y);
+			//System.out.println("Ovaj sklop idje do koord'nate: " + xr + ", " + yr);
+			if (x >= env.getPosition().x && x <= xr
+					&& y >= env.getPosition().y && y <= yr)
+			{
+				return env;
 			}
 		}
 		
