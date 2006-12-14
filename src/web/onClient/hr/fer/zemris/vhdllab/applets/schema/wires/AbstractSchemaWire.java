@@ -91,6 +91,7 @@ public abstract class AbstractSchemaWire {
 	public void draw(SchemaDrawingAdapter adapter) {
 		for (SPair<Point> par : wireLines) {
 			adapter.drawLine(par.first.x, par.first.y, par.second.x, par.second.y);
+			System.out.println(par.first.x + " " + par.first.y + " " + par.second.x + " " + par.second.y);
 		}
 	}
 	

@@ -84,6 +84,14 @@ public class SchemaDrawingAdapter {
 		return (int) Math.round(realPoint/virtualGridFactor);
 	}
 	
+	public int realToVirtualRelativeX(int realX) {
+		return (int) Math.round(realX/virtualGridFactor - virtualX);
+	}
+	
+	public int realToVirtualRelativeY(int realY) {
+		return (int) Math.round(realY/virtualGridFactor - virtualY);
+	}
+	
 	public SchemaDrawingAdapter(SchemaColorProvider colors,BufferedImage canvas,double mag) {				
 		this.colors=colors;
 		this.gph=canvas;
@@ -112,6 +120,14 @@ public class SchemaDrawingAdapter {
 		this.virtualY=realToVirtual(realY);
 	}
 	
+	public int getStartingX() {
+		return virtualX;
+	}
+	
+	public int getStartingY() {
+		return virtualY;
+	}
+	
 	/**
 	 * 
 	 * Crta liniju sa relativnim koordinatama s obzirom na pocetne koordinate (virtualX, virtualY).
@@ -137,7 +153,6 @@ public class SchemaDrawingAdapter {
 		
 		line.x1=virtualToRealRelativeX(virtualX1);
 		line.y1=virtualToRealRelativeY(virtualY1);
-		
 		line.x2=virtualToRealRelativeX(virtualX2);
 		line.y2=virtualToRealRelativeY(virtualY2);
 		

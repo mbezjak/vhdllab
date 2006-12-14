@@ -6,6 +6,7 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
+import hr.fer.zemris.vhdllab.applets.schema.wires.SPair;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -116,6 +117,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	}
 	
 	public void addWire(AbstractSchemaWire wire) {
+		SchemaDrawingAdapter adapter = this.getAdapter();
 		wires.add(wire);
 		this.repaint();
 	}
@@ -205,6 +207,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		//mousePosition = new Point(listeners.getX(),listeners.getY());
 		//grid.ShowCursorPoint(mousePosition);
 		
+		int sx = adapter.getStartingX(), sy = adapter.getStartingY();
 		for (SchemaDrawingComponentEnvelope envelope : components) {
 			Point p = envelope.getPosition();
 			adapter.setStartingCoordinates(p.x, p.y);
@@ -214,6 +217,7 @@ public class SchemaDrawingCanvas extends JComponent {
 			}
 			envelope.getComponent().draw(adapter);
 		}
+		adapter.setStartingCoordinates(sx, sy);
 		
 		for (AbstractSchemaWire wire : wires) {
 			wire.draw(adapter);
@@ -234,7 +238,10 @@ public class SchemaDrawingCanvas extends JComponent {
 			LineWithBool lb = lineStack.pop();
 			if (lb.b) graph.setColor(Color.BLACK);
 			else graph.setColor(Color.RED);
-			// dodati jos skaliranje linija
+			lb.x1 = adapter.virtualToRealRelativeX(lb.x1);
+			lb.y1 = adapter.virtualToRealRelativeY(lb.y1);
+			lb.x2 = adapter.virtualToRealRelativeX(lb.x2);
+			lb.y2 = adapter.virtualToRealRelativeY(lb.y2);
 			graph.drawLine(lb.x1, lb.y1, lb.x2, lb.y2);
 		}
 		

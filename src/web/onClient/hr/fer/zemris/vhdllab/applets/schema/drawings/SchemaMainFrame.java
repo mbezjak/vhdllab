@@ -136,20 +136,28 @@ public class SchemaMainFrame extends JFrame {
 		return true;
 	}
 	
+	private boolean evaluateIfWireCanBeDrawn() {
+		return true;
+	}
+	
 	
 	
 	// methods called by events
 	
 	public void handleLeftClickOnSchema(MouseEvent e) {
 		if (optionbar.isDrawWireSelected()) {
+			SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
+			int x = e.getX(), y = e.getY();
+			x = ad.realToVirtualRelativeX(x);
+			y = ad.realToVirtualRelativeY(y);
 			if (drawWireState == DRAW_WIRE_STATE_NOTHING) {
 				wireBeingDrawed = new SimpleSchemaWire(null);
 				drawWireState = DRAW_WIRE_STATE_DRAWING;
 				currentLine = new SPair<Point>();
-				currentLine.first = new Point(e.getX(), e.getY());
+				currentLine.first = new Point(x, y);
 			}
 			if (drawWireState == DRAW_WIRE_STATE_DRAWING) {
-				currentLine.second = new Point(e.getX(), e.getY());
+				currentLine.second = new Point(x, y);
 				SPair<Point> t = new SPair<Point>();
 				SPair<Point> s = new SPair<Point>();
 				t.first = new Point(currentLine.first);
@@ -188,21 +196,23 @@ public class SchemaMainFrame extends JFrame {
 	public void handleMouseOverSchema(MouseEvent e) {
 		if (optionbar.isDrawWireSelected()) {
 			if (currentLine != null) {
+				SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
+				int x = ad.realToVirtualRelativeX(e.getX()), y = ad.realToVirtualRelativeY(e.getY());
 				for (SPair<Point> lin : wireBeingDrawed.wireLines) {
 					drawingCanvas.addLineToStack(
 							lin.first.x,
 							lin.first.y,
 							lin.second.x,
 							lin.second.y,
-							true);
+							evaluateIfWireCanBeDrawn());
 				}
-				currentLine.second = new Point(e.getX(), e.getY());
+				currentLine.second = new Point(x, y);
 				drawingCanvas.addLineToStack(
 						currentLine.first.x,
 						currentLine.first.y,
 						currentLine.second.x,
 						currentLine.second.y,
-						true);
+						evaluateIfWireCanBeDrawn());
 			}
 			return;
 		}
@@ -210,7 +220,8 @@ public class SchemaMainFrame extends JFrame {
 		if (selectedStr != null) {
 			//iteriraj kroz listu i odluci da li sklop prekriva neki vec postojeci
 			//medutim, nemoj to raditi precesto - ucestalost neka bude obrnuto proporcionalna
-			//broju sklopova na shemi (druga bi varijanta bio inteligentno drvo, al to je prevec posla)
+			//broju sklopova na shemi (druga bi varijanta bio drvo ili hashmapa s modificiranim
+			//equals i compare, al to je prevec posla)
 			freePlaceEvalCounter++;
 			boolean ok = lastEvalResult;
 			if (drawingCanvas.getComponentList().size() == 0) ok = true;
