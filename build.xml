@@ -149,8 +149,9 @@
   <target name="package-web-onClient" depends="compile-web-onClient">
   	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar">
   	  <fileset dir="${build.dir}/web/onClient" includes="**/*.class"/>
-      <fileset dir="src/web/onClient" excludes="**/*.java"/>
+          <fileset dir="src/web/onClient" excludes="**/*.java"/>
    	  <fileset dir="src/i18n/client" includes="**/*"/>
+   	  <metainf dir="metadata/onClient/META-INF"/>
   	</jar>
   </target>
   
