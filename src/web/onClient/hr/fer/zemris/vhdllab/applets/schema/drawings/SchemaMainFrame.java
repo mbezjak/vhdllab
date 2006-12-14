@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
+import hr.fer.zemris.vhdllab.applets.schema.wires.SPair;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 
 import java.awt.BorderLayout;
@@ -15,10 +16,12 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.LayoutManager;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -46,6 +49,7 @@ public class SchemaMainFrame extends JFrame {
 	private int freePlaceEvalCounter = 0;
 	private boolean lastEvalResult = false;
 	private int drawWireState = DRAW_WIRE_STATE_NOTHING;
+	private SPair<Point> currentLine = null; 
 	private AbstractSchemaWire wireBeingDrawed = null;
 
 	public SchemaMainFrame(String arg0) throws HeadlessException {
@@ -141,10 +145,20 @@ public class SchemaMainFrame extends JFrame {
 			if (drawWireState == DRAW_WIRE_STATE_NOTHING) {
 				wireBeingDrawed = new SimpleSchemaWire(null);
 				drawWireState = DRAW_WIRE_STATE_DRAWING;
-				
+				currentLine = new SPair<Point>();
+				currentLine.first = new Point(e.getX(), e.getY());
 			}
 			if (drawWireState == DRAW_WIRE_STATE_DRAWING) {
-				// TODO: dovrsiti ovo ovdje
+				currentLine.second = new Point(e.getX(), e.getY());
+				SPair<Point> t = new SPair<Point>();
+				SPair<Point> s = new SPair<Point>();
+				t.first = new Point(currentLine.first);
+				t.second = new Point(currentLine.first.x, currentLine.second.y);
+				s.first = new Point(currentLine.first.x, currentLine.second.y);
+				s.second = new Point(currentLine.second);
+				wireBeingDrawed.wireLines.add(t);
+				wireBeingDrawed.wireLines.add(s);
+				currentLine.first = currentLine.second;
 			}
 			return;
 		}
@@ -172,6 +186,26 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	public void handleMouseOverSchema(MouseEvent e) {
+		if (optionbar.isDrawWireSelected()) {
+			if (currentLine != null) {
+				for (SPair<Point> lin : wireBeingDrawed.wireLines) {
+					drawingCanvas.addLineToStack(
+							lin.first.x,
+							lin.first.y,
+							lin.second.x,
+							lin.second.y,
+							true);
+				}
+				currentLine.second = new Point(e.getX(), e.getY());
+				drawingCanvas.addLineToStack(
+						currentLine.first.x,
+						currentLine.first.y,
+						currentLine.second.x,
+						currentLine.second.y,
+						true);
+			}
+			return;
+		}
 		String selectedStr = compbar.getSelectedComponentName();
 		if (selectedStr != null) {
 			//iteriraj kroz listu i odluci da li sklop prekriva neki vec postojeci
@@ -191,8 +225,12 @@ public class SchemaMainFrame extends JFrame {
 
 	public void handleRightClickOnSchema(MouseEvent e) {
 		if (optionbar.isDrawWireSelected()) {
+			if (wireBeingDrawed != null && wireBeingDrawed.wireLines.size() > 0) {
+				drawingCanvas.addWire(wireBeingDrawed);
+			}
 			optionbar.selectNoOption();
 			wireBeingDrawed = null;
+			currentLine = null;
 			drawWireState = DRAW_WIRE_STATE_NOTHING;
 		}
 		drawWireState = 0;

@@ -4,7 +4,7 @@ public class SPair<T> {
 	public T first;
 	public T second;
 	
-	SPair() {
+	public SPair() {
 	}
 
 	public SPair(T first, T second) {

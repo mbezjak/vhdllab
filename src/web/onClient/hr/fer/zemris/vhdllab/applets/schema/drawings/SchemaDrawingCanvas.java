@@ -139,15 +139,21 @@ public class SchemaDrawingCanvas extends JComponent {
 		RectWithBool rb = new RectWithBool();
 		rb.r = new Rectangle(x, y, w, h);
 		rb.b = ok;
-		rectangleStack.add(rb);
+		rectangleStack.push(rb);
 	}
 	
 	/**
 	 * Koristi se za iscrtavanje linija pri crtanju
 	 * zica.
 	 */
-	public void addLineToStack(int x1, int y1, int x2, int y2) {
-		
+	public void addLineToStack(int x1, int y1, int x2, int y2, boolean ok) {
+		LineWithBool lb = new LineWithBool();
+		lb.x1 = x1;
+		lb.y1 = y1;
+		lb.x2 = x2;
+		lb.y2 = y2;
+		lb.b = ok;
+		lineStack.push(lb);
 	}
 	
 	/**

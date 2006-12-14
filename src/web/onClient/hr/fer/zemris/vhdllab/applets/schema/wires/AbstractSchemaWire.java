@@ -35,7 +35,7 @@ public abstract class AbstractSchemaWire {
 	public class Connection {
 		public String componentInstanceName;
 		public int portIndex;
-		
+	
 		public Connection(String componentInstanceName, int portIndex) {
 			super();
 			this.componentInstanceName = componentInstanceName;
@@ -48,8 +48,8 @@ public abstract class AbstractSchemaWire {
 		}
 	}
 	
-	protected HashSet<Connection> connections;
-	protected HashSet<SPair<Point>> wireLines;
+	public HashSet<Connection> connections;
+	public HashSet<SPair<Point>> wireLines;
 	
 	private String wireName;
 	public String getWireName() {
@@ -72,7 +72,7 @@ public abstract class AbstractSchemaWire {
 		nameSet = new HashSet<String>();
 		counter = 0;
 	}
-	static String generateNewName(String oldname) {
+	static protected String generateNewName(String oldname) {
 		counter++;
 		return oldname + counter.toString();
 	}
