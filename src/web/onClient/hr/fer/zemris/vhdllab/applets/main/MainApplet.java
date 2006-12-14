@@ -670,7 +670,7 @@ public class MainApplet
 	private void compileLastHistoryResult() throws UniformAppletException {
 		if(cache.compilationHistoryIsEmpty()) {
 			//TODO run compilation wizard
-			String projectName = JOptionPane.showInputDialog("In which project is a file?");
+			String projectName = projectExplorer.getActiveProject();
 			String fileName = JOptionPane.showInputDialog("Which file to simulate?");
 			simulate(projectName, fileName);
 			
@@ -711,7 +711,7 @@ public class MainApplet
 	private void simulateLastHistoryResult() throws UniformAppletException {
 		if(cache.simulationHistoryIsEmpty()) {
 			//TODO run simulation wizard
-			String projectName = JOptionPane.showInputDialog("In which project is a file?");
+			String projectName = projectExplorer.getActiveProject();
 			String fileName = JOptionPane.showInputDialog("Which file to simulate?");
 			simulate(projectName, fileName);
 			
@@ -1012,6 +1012,13 @@ public class MainApplet
 				String fileName = editor.getFileName();
 				String projectName = editor.getProjectName();
 				String content = editor.getData();
+//				IEditor ed = null;
+//				try {
+//					ed = getEditor("Project1", "File1");
+//				} catch (UniformAppletException e1) {
+//					e1.printStackTrace();
+//				}
+//				ed.setFileContent(new FileContent("Project1", "File1", content));
 				try {
 					cache.saveFile(projectName, fileName, content);
 					resetEditorTitle(false, projectName, fileName);
@@ -1184,6 +1191,15 @@ public class MainApplet
 											"end process;" + "\n" +
 											"end Behavioral";
 				
+				final String fileName3 = "tb";
+				final String fileType3 = FileTypes.FT_VHDL_TB;
+				final String fileContent3 = "<file>File2</file>" + "\n" + 
+											"<measureUnit>ns</measureUnit>" + "\n" +
+											"<duration>700</duration>" + "\n" +
+											"<signal name=\"E\" type=\"scalar\">(0,1)</signal>" + "\n" + 
+											"<signal name=\"D\" type=\"vector\" rangeFrom=\"3\" rangeTo=\"0\">(0,0000)(20,1000)(30,1100)(40,1110)(50,1111)(60,0111)(65,0101)(70,0001)(90,0000)(95,0010)(120,1110)(135,1100)(150,0100)(155,0001)(180,0000)(190,1010)(230,0010)(235,0110)(245,0100)(255,0101)(265,1101)(295,1001)(315,1000)(325,1010)(330,0010)(340,0110)(360,1111)(375,1101)(380,1001)(385,1000)</signal>" + "\n" + 
+											"<signal name=\"SEL\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"0\">(0,00)(25,10)(35,11)(70,10)(85,00)(130,01)(165,11)(195,10)(200,00)(250,01)(260,00)(285,10)(310,11)(320,10)(350,00)(360,01)(385,00)(395,10)(410,00)(415,01)(430,00)</signal>" + "\n";
+				
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor(FileTypes.FT_VHDL_SOURCE);
 				
@@ -1194,6 +1210,9 @@ public class MainApplet
 				cache.createFile(projectName1, fileName2, fileType2);
 				cache.saveFile(projectName1, fileName2, fileContent2);
 
+				cache.createFile(projectName1, fileName3, fileType3);
+				cache.saveFile(projectName1, fileName3, fileContent3);
+
 				long end = System.currentTimeMillis();
 				
 				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n"+cache.getUserFile(FileTypes.FT_COMMON);
@@ -1201,6 +1220,7 @@ public class MainApplet
 
 				openEditor(projectName1, fileName1, true, false);
 				openEditor(projectName1, fileName2, true, false);
+				openEditor(projectName1, fileName3, true, false);
 				
 			} catch (Exception e) {
 				e.printStackTrace();

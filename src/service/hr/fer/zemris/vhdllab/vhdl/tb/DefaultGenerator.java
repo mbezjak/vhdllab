@@ -408,10 +408,9 @@ public class DefaultGenerator implements Generator {
 	 */
 	public boolean isCompatible(CircuitInterface ci) {
 		if( ci == null ) throw new NullPointerException("Circuit interface can not be null.");
-		if( signalList.size() != ci.getPorts().size() ) return false;
-		for(Port port : ci.getPorts()) {
-			Signal signal = getSignal(port.getName()); //O(1)
-			if( signal == null ) return false;
+		for(Signal signal : signalList) {
+			Port port = ci.getPort(signal.getName()); //O(1)
+			if( port == null ) return false;
 			
 			if( signal.isScalar() && port.getType().isScalar() ) continue;
 			if( signal.isVector() && port.getType().isVector()

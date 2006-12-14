@@ -241,7 +241,6 @@ public class DefaultCircuitInterface implements CircuitInterface {
 	 */
 	public boolean isCompatible(Generator generator) {
 		if( generator == null ) throw new NullPointerException("Generator can not be null.");
-		if( portList.size() != generator.getSignals().size() ) return false;
 		for(Signal signal : generator.getSignals()) {
 			Port port = getPort(signal.getName()); //O(1)
 			if( port == null ) return false;

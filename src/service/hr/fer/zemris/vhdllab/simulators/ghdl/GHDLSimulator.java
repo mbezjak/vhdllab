@@ -164,6 +164,7 @@ public class GHDLSimulator implements ISimulator {
 			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new java.io.File(destDir,src.getFileName()+".vhdl")),"UTF-8"));
 			bw.write(vhdlman.generateVHDL(src));
 		} catch(Exception ex) {
+			ex.printStackTrace();
 			throw new IOException("Could not copy file.");
 		} finally {
 			if(bw != null) try { bw.close(); } catch(Exception ignorable) {}

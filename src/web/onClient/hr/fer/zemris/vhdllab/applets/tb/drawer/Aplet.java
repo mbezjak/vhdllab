@@ -50,9 +50,9 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	private boolean isSavable;
 	private boolean isReadOnly;
 	
-	private String fileDepends;
-	private String measureUnit;
-	private String duration;
+	private String fileDepends = null;
+	private String measureUnit = null;
+	private String duration = null;
 	
 	
 	
@@ -126,16 +126,16 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 
 
 	public String getData() {
-		String data = "";
-		data += "<file>" + fileDepends + "</file>\n";
-		data += "<measureUnit>" + measureUnit != null ? measureUnit : "ns" + "</measureUnit>\n";
-		data += "<duration>" + duration != null ? duration : "100" + "</duration>\n";
+		StringBuilder data = new StringBuilder();
+		data.append("<file>").append(fileDepends).append("</file>\n");
+		data.append("<measureUnit>").append(measureUnit != null ? measureUnit : "ns").append("</measureUnit>\n");
+		data.append("<duration>").append(duration != null ? duration : "700").append("</duration>\n");
 		Signal[] signals=this.in_panel.podatci_t;
 		
 		for(Signal s : signals) {
-			data += s.toString() + "\n";
+			data.append(s.toString()).append("\n");
 		}
-		return data;
+		return data.toString();
 	}
 
 	private void postaviBoju(Color color) {

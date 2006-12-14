@@ -77,6 +77,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			return file.getContent();
 		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
 			List<File> vhdlSources = extractDependencies(file);
+			vhdlSources.remove(file);
 			if(vhdlSources.size() != 1) {
 				throw new ServiceException("Testbench depends on more then one or unknown file!");
 			}

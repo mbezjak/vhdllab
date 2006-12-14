@@ -89,6 +89,7 @@
   <target name="compile-dao" depends="init">
     <javac destdir="${build.dir}/dao" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/dao"/>
+      <src path="src/common/hr/fer/zemris/vhdllab/constants"/>
       <classpath refid="src.class.path"/>
     </javac>
   </target>
