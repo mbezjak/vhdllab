@@ -219,9 +219,10 @@ public class VcdParser
 
         /* odmah dodaje nulu.  Nula predstavlja pocetak simulacije */
 		transitionPoints.add(Long.valueOf(vcdLines[++index].substring(1)));
+		boolean isSharpFound = true;
 		for (++index; index < vcdLines.length; index++)
 		{
-            while (index < vcdLines.length && vcdLines[index].charAt(0) != '#')
+            while (vcdLines[index].charAt(0) != '#')
             {
                 if (vcdLines[index].charAt(0) != 'b')
                 {
@@ -237,8 +238,16 @@ public class VcdParser
                     values[position] = vcdLines[index].substring (1, positionOfWhiteSpaceChar);
                 }
                 index++;
+				if (index == vcdLines.length) {
+					isSharpFound = false;
+					break;
+				}
             }
-            transitionPoints.add (Long.valueOf(vcdLines[index].substring(1)));
+			if (isSharpFound) {
+				transitionPoints.add (Long.valueOf(vcdLines[index].substring(1)));
+			} else {
+				transitionPoints.add(transitionPoints.get(transitionPoints.size() - 1));
+			}
             Iterator<List<String>> e = signalValues.values().iterator();
             int i = 0;
             while (e.hasNext())
