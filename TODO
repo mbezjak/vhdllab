@@ -3,8 +3,8 @@ Aktualna TODO lista
 
 John Doe 1?
 --------------------------------------------
-TODO 01) Napisati kod koji pokrece simulator.
-TODO 02) Napisati kod koji pokrece compiler.
+TODO 01) [CLOSED]   Napisati kod koji pokrece simulator.
+TODO 02) [OPEN]   Napisati kod koji pokrece compiler.
 
 Boris Ozegovic
 --------------------------------------------
@@ -22,19 +22,29 @@ John Doe 2?
 TODO 11) [OPEN]   Napisat kod za metodu generateVHDL (ona koja ce pozivat odgovarajuce generatore po tipu)
 TODO 12) [OPEN]   Napisat kod za metodu extractCircuitInterface (ona koja ce pozivat odgovarajuce extractore po tipu)
 TODO 13) [OPEN]   Napisat kod za metodu extractDependency (ona koja ce pozivat odgovarajuce extractore(dependency) po tipu)
-TODO 14) [OPEN]   Prepravit TestbenchApplet tako da extenda JPanel i implemetira IEditor i IWizard
+TODO 14) [CLOSED]   Prepravit TestbenchApplet tako da extenda JPanel i implemetira IEditor i IWizard
 TODO 15) [OPEN]   Trebalo bi sklozit onaj dependency u Extractor-u
 TODO 16) [OPEN]   Napravit wizad za new VHDL source
 TODO 17) [OPEN]   Parsiranje cijelog rezulatat sto vraca GHDL (error, warning, status) i stvaranje odgovarajucih objekata (SimulationResult ili CompilationResult)
+TODO 18) [OPEN]   Naprisat kod za sidebar - to bi trebalo imat samo par buttona i uglavnom zovu metode iz ProjectContainera (znaci nist strasno)
+TODO 19) [OPEN]   Napravit ProjectExplorer - to je Boris uzeo, mislim da nije to tak komplicirano
+TODO 20) [OPEN]   status bar bi trebalo malo dotjerat (mozda postavit da se ispisuje NUM, CAPS i SCROLL, ono standardno)
+TODO 21) [OPEN]   wizard za simulation
+TODO 22) [OPEN]   wizard za compilation
+TODO 23) [OPEN]   wizard za testbench applet + sredit taj applet da bude kak se spada
+TODO 24) [OPEN]   dialog, potpuno isti kao i u eclipse-u (kad hocete nesto radit, pa vam on veli da morate sejvat vise fajlova)
+TODO 25) [OPEN]   mijenjanje preferences-a (potpuno isto ko i u firefoxu)
+TODO 26) [OPEN]   SimulationErrorsPanel (to vam je samo iteriranje kroz listu u prikazivanje u JTextField ili JList, i pritom to mora bit readonly)
+TODO 27) [OPEN]   Statusbar history (slicno ko i ovo gore, znaci isto jedan JTextField ili JList i svaki put kad se promijeni status bar tu se prikaze u obliku vrijeme : statusBarContent)
 
 Davor Delac
 --------------------------------------------
-TODO 21) [OPEN]   lokalizacija automata-dosta posla, recimo barem jedan dan, neznam kolko je bitno za sad
-TODO 22) [CLOSED]   srediti wizard da ima onu fensi tablicu-GOTOVO-
-TODO 22a)[CLOSED]   promjeniti AUTpodatke i AUTparser da stvar bude malo bolja-danas  :) 
-TODO 23) [CLOSED]   generiranje VHDL-a za automat- SUTRA ili mozda danas ak stignem-predpostavljam najbitnije za sad!!!
-TODO 24) [OPEN]   neznam dal ce ikone biti dobre, mozda naci bolje, nariktavanje boja, sminka, vecinom gluposti koje ne ovise o funkcionalnosti...  :) 
-TODO 25) [OPEN]	rijesiti bugove kojih ima vjerojatno puno...
+TODO 41) [OPEN]   lokalizacija automata-dosta posla, recimo barem jedan dan, neznam kolko je bitno za sad
+TODO 42) [CLOSED]   srediti wizard da ima onu fensi tablicu-GOTOVO-
+TODO 42a)[CLOSED]   promjeniti AUTpodatke i AUTparser da stvar bude malo bolja-danas  :) 
+TODO 43) [CLOSED]   generiranje VHDL-a za automat- SUTRA ili mozda danas ak stignem-predpostavljam najbitnije za sad!!!
+TODO 44) [OPEN]   neznam dal ce ikone biti dobre, mozda naci bolje, nariktavanje boja, sminka, vecinom gluposti koje ne ovise o funkcionalnosti...  :) 
+TODO 45) [OPEN]	rijesiti bugove kojih ima vjerojatno puno...
 
 Aleksandar Prokopec
 --------------------------------------------
@@ -56,11 +66,9 @@ Miro Bezjak
 TODO 81) [CLOSED]   Popravit kod za simulaciju
 TODO 82) [CLOSED]   Napisat kod za kompilaciju
 TODO 83) [OPEN]   Napisat kod za refresh workspace
-TODO 84) [OPEN]   Napisat kod za sidebar
 TODO 85) [OPEN]   Slozit View da se prikazuju u panelima (to je za CompilationErrorsPanel)
 TODO 86) [CLOSED]   Mogucnost maksimizacije nekog panela preko cijelog ekrana (to je jednostavno, vec imam ideju u glavi kak bi to islo)
 TODO 87) [CLOSED]   Pocet koristit statusbar (za sad se ne koristi)
-TODO 88) [OPEN]   Popravit statusbar (dodat nove funkcionalnosti)
 TODO 89) [CLOSED]   Dovrsit serializaciju Result-a (sto povlaci i sve ostalo vezano uz Result)
 TODO 90) [CLOSED]   Definirat interface za View (paneli koji ce bit dolje, znaci ko CompilationErrors)
 TODO 91) [OPEN]   Dovrsit main meni
@@ -72,9 +80,8 @@ TODO 96) [OPEN]   Implementirat to dvoje
 TODO 97) [OPEN]   Napravit test koji ce testirat kak se ponasa serverski dio pri multithreadingu
 TODO 98) [CLOSED]   Modificirat ProjectContainer tako da baca iznimku pri nekim metodama
 TODO 99) [OPEN]   Napravit cache tako da stvarno cacheira stvari
-TODO 100) [OPEN]  Napravit Options editor (onako kako to izgleda kod firefoxa)
 TODO 101) [CLOSED]  Dobro definirat sadrzaj svih globalnih i localnih file-ove
 TODO 102) [OPEN]  Implementirat zatvaranje cijelog appleta (tako da se sve spremi pri zatvaranju)
-TODO 103) [OPEN]  Rijesit problem pri otvaranju simulatora (tj. nacin otvaranja)
+TODO 103) [CLOSED]  Rijesit problem pri otvaranju simulatora (tj. nacin otvaranja)
 
 
