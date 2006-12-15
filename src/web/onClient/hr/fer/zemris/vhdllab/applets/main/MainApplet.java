@@ -1208,15 +1208,23 @@ public class MainApplet
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor(FileTypes.FT_VHDL_SOURCE);
 				
-				cache.createProject(projectName1);
-				cache.createFile(projectName1, fileName1, fileType1);
-				cache.saveFile(projectName1, fileName1, fileContent1);
+				if(!cache.existsProject(projectName1)) {
+					cache.createProject(projectName1);
+				}
+				if(!cache.existsFile(projectName1,fileName1)) {
+					cache.createFile(projectName1, fileName1, fileType1);
+					cache.saveFile(projectName1, fileName1, fileContent1);
+				}
 				
-				cache.createFile(projectName1, fileName2, fileType2);
-				cache.saveFile(projectName1, fileName2, fileContent2);
+				if(!cache.existsFile(projectName1,fileName2)) {
+					cache.createFile(projectName1, fileName2, fileType2);
+					cache.saveFile(projectName1, fileName2, fileContent2);
+				}
 
-				cache.createFile(projectName1, fileName3, fileType3);
-				cache.saveFile(projectName1, fileName3, fileContent3);
+				if(!cache.existsFile(projectName1,fileName3)) {
+					cache.createFile(projectName1, fileName3, fileType3);
+					cache.saveFile(projectName1, fileName3, fileContent3);
+				}
 
 				long end = System.currentTimeMillis();
 				

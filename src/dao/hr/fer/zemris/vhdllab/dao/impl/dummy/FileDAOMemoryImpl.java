@@ -5,10 +5,7 @@ import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -17,16 +14,24 @@ public class FileDAOMemoryImpl implements FileDAO {
 	private long id = 0;
 
 	Map<Long, File> files = new HashMap<Long, File>();
+	Map<FileNameIndexKey, File> nameIndex = new HashMap<FileNameIndexKey, File>(); 
 
-	public File load(Long id) throws DAOException {
+	public synchronized File load(Long id) throws DAOException {
 		File file = files.get(id);
 		if(file==null) throw new DAOException("Unable to load file!");
 		return file;
 	}
 
-	public void save(File file) throws DAOException {
-		if(file.getFileType()==null) throw new DAOException("FileType can not be null!");
-		if(file.getId()==null) file.setId(Long.valueOf(id++));
+	public synchronized void save(File file) throws DAOException {
+		if(file.getFileType()==null) throw new DAOException("FileType can not be null!");		
+		FileNameIndexKey k = null;
+		if(file.getId()==null) {
+			k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
+			if(nameIndex.containsKey(k)) {
+				throw new DAOException("File "+file.getFileName()+" already exists!");
+			}
+			file.setId(Long.valueOf(id++));
+		}
 		Project project = file.getProject();
 		if(project!=null) {
 			if(project.getFiles()==null) {
@@ -37,17 +42,28 @@ public class FileDAOMemoryImpl implements FileDAO {
 			}
 		}
 		files.put(file.getId(), file);
+		if(k!=null) {
+			nameIndex.put(k, file);
+		}
 	}
 
-	public void delete(Long fileID) throws DAOException {
+	public synchronized void delete(Long fileID) throws DAOException {
+		File file = files.get(fileID);
+		if(file==null) return;
+		FileNameIndexKey k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
+		nameIndex.remove(k);
 		files.remove(fileID);
 	}
 
-	public boolean exists(Long fileId) throws DAOException {
+	public synchronized boolean exists(Long fileId) throws DAOException {
 		return files.get(fileId) != null;
 	}
 
-	public boolean exists(Long projectId, String name) throws DAOException {
+	public synchronized boolean exists(Long projectId, String name) throws DAOException {
+		// Better implementation:
+		FileNameIndexKey k = new FileNameIndexKey(name.toUpperCase(),projectId);
+		return nameIndex.containsKey(k);
+		/* Old implementation:
 		Collection<File> c = files.values();
 		List<File> fileList = new ArrayList<File>(c);
 		for(File f : fileList) {
@@ -60,9 +76,14 @@ public class FileDAOMemoryImpl implements FileDAO {
 			if(p.getId().equals(projectId)) return true;
 		}
 		return false;
+		*/
 	}
 
-	public File findByName(Long projectId, String name) throws DAOException {
+	public synchronized File findByName(Long projectId, String name) throws DAOException {
+		// Better implementation:
+		FileNameIndexKey k = new FileNameIndexKey(name.toUpperCase(),projectId);
+		return nameIndex.get(k);
+		/* Old implementation:
 		Collection<File> c = files.values();
 		List<File> fileList = new ArrayList<File>(c);
 		for(File f : fileList) {
@@ -74,6 +95,30 @@ public class FileDAOMemoryImpl implements FileDAO {
 			}
 			if(p.getId().equals(projectId)) return f;
 		}
-		return null;
+		return null;*/
+	}
+	
+	private static class FileNameIndexKey {
+		private String fileName;
+		private Long projectId;
+		
+		public FileNameIndexKey(String name, Long id) {
+			super();
+			fileName = name;
+			projectId = id;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(obj == null) return false;
+			if(!(obj instanceof FileNameIndexKey)) return false;
+			FileNameIndexKey other = (FileNameIndexKey)obj;
+			return this.fileName.equals(other.fileName) && this.projectId.equals(other.projectId);
+		}
+		
+		@Override
+		public int hashCode() {
+			return fileName.hashCode() ^ projectId.hashCode();
+		}
 	}
 }

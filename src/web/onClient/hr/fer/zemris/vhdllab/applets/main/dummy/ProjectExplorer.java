@@ -56,7 +56,9 @@ public class ProjectExplorer extends JPanel implements IExplorer {
 
 	public void addFile(String projectName, String fileName) {
 		this.projectName = projectName;
-		model.addElement(fileName);
+		if(!model.contains(fileName)) {
+			model.addElement(fileName);
+		}
 	}
 
 	public void setProjectContainer(ProjectContainer pContainer) {

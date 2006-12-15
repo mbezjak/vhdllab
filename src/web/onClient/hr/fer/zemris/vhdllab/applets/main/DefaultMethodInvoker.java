@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-
 public class DefaultMethodInvoker implements MethodInvoker {
 
 	private AjaxMediator ajax;

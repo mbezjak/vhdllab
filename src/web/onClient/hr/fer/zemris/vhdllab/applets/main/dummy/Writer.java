@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class Writer extends JPanel implements IEditor, IWizard {
 
@@ -25,6 +27,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	private boolean change;
 	private boolean savable;
 	private boolean readonly;
+	private boolean modifiedFlag = true;
 	
 	private ProjectContainer container;
 	private FileContent content;
@@ -51,11 +54,28 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		this.setLayout(new BorderLayout());
 		this.add(scroll, BorderLayout.CENTER);
 		this.setBackground(Color.RED);
-		
+		text.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				if(modifiedFlag) return;
+				modifiedFlag = true;
+				container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
+			}
+			public void removeUpdate(DocumentEvent e) {
+				if(modifiedFlag) return;
+				modifiedFlag = true;
+				container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
+			}
+			public void insertUpdate(DocumentEvent e) {
+				if(modifiedFlag) return;
+				modifiedFlag = true;
+				container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
+			}
+		});
 	}
 
 	public String getData() {
 		//change = false;
+		modifiedFlag = false;
 		return text.getText();
 	}
 
@@ -64,12 +84,14 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public boolean isModified() {
-		return true;
+		return modifiedFlag;
 	}
 
 	public void setFileContent(FileContent fContent) {
 		this.content = fContent;
 		text.setText(content.getContent());
+		modifiedFlag = false;
+		container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
 	}
 
 	public void setProjectContainer(ProjectContainer pContainer) {

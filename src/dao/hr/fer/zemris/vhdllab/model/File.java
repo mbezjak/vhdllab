@@ -80,7 +80,7 @@ public class File implements Comparable {
 	@Override
 	public int hashCode() {
 		if( id != null ) return id.hashCode();
-		else return fileName.hashCode();
+		else return fileName.toUpperCase().hashCode();
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class File implements Comparable {
 		File other = (File) o;
 
 		if( this.id != null && other.id != null ) return this.id.equals(other.id);
-		else if( this.id == null && other.id == null ) return this.fileName.equals(other.fileName);
+		else if( this.id == null && other.id == null ) return this.fileName.equalsIgnoreCase(other.fileName);
 		else return false;
 	}
 	
@@ -100,7 +100,7 @@ public class File implements Comparable {
 		long val = 0;
 		
 		/* File name ordering */
-		if( this.fileName != null && other.fileName != null ) val = this.fileName.compareTo(other.fileName);
+		if( this.fileName != null && other.fileName != null ) val = this.fileName.compareToIgnoreCase(other.fileName);
 		else if ( this.fileName != null && other.fileName == null ) val = 1;
 		else if ( this.fileName == null && other.fileName != null ) val = -1;
 		else val = 0;
