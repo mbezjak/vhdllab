@@ -23,7 +23,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
-
+import hr.fer.zemris.vhdllab.simulators.ghdl.GHDLSimulator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -49,151 +49,10 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 	public VHDLLabManagerImpl0() {}
 	
 	
-	/**prije koristenja ove metode moraju biti postavljeni propertiji: "simulator" 
-	 * npr C:\\Program Files\\Ghdl\\bin\\ghdl.exe i direktorij u kojem se nalaze 
-	 * korisnicki dir-ovi imenivani prema OwnerID-ovima 
-	 */
+	
 	public CompilationResult compile(Long fileId) throws ServiceException {
 		
-			InputStream is = null;
-			Properties prop = new Properties();
-			try {
-				is = this.getClass().getClassLoader().getResourceAsStream("appProperties");
-			//gdje smjestiti nesto da ga cl loader nade
-				
-				prop.load(is);
-			} catch(Exception ex) {
-				ex.printStackTrace();
-				System.exit(1);
-			} finally {
-				if(is!=null) {
-					try { is.close(); } catch(Exception ex) {}
-				}
-			}
-		
-			System.out.println("dataDir "+prop.getProperty("dataDir"));
-			System.out.println("simulator "+prop.getProperty("simulator"));
-			File f=loadFile(fileId);
-			String user= f.getProject().getOwnerId();
-			
-			String content = f.getContent();
-			
-			String CIime = null;
-			CircuitInterface ci= Extractor.extractCircuitInterface(f.getContent());
-			CIime= ci.getEntityName();
-			
-							        
-			String t =f.getFileType();
-			
-			FileWriter writer;
-			BufferedWriter bWriter;
-			
-			
-			ArrayList list =new ArrayList<CompilationMessage>();
-			
-			if(t.equals(FileTypes.FT_VHDL_SOURCE)){
-				
-				String ime = f.getFileName()+".vhdl";
-				String of = prop.getProperty("dataDir")+user+"\\\\";
-				System.out.println(of);
-				java.io.File outputFile = new java.io.File(of+ime);
-				
-				
-				try {
-					writer = new FileWriter(outputFile);
-					bWriter = new BufferedWriter(writer);
-					
-					
-					BufferedReader sReader =new BufferedReader(new StringReader(content));
-					//ako se dogode problemi korisriti read umjesto readline
-					 String line;
-					 while ((line = sReader.readLine()) != null){
-					    System.out.println(line);
-						 bWriter.write(line);
-					}
-					//int line;
-					//while((line= sReader.read())!= -1){
-					///	System.out.println(line+"jdjksdjhf");
-					//	bWriter.write(line);
-					//}
-					 
-					 bWriter.close();
-				
-				} catch (IOException e1) {
-					throw new ServiceException();
-				}
-				
-				
-				
-				try {		        
-					list=Rn.cmp(ime, CIime, of, prop.getProperty("simulator"));
-				} catch (IOException e) {
-					throw new ServiceException();
-				} catch (InterruptedException e) {
-					throw new ServiceException();
-				}
-				
-				
-			}else if(t.equals(FileTypes.FT_VHDL_TB)){
-				
-				String ime = f.getFileName()+".vhdl";
-				String of = prop.getProperty("dataDir")+user+"\\\\";
-				System.out.println(of);
-				java.io.File outputFile = new java.io.File(of+ime);
-				
-
-				try {
-					writer = new FileWriter(outputFile);
-					bWriter = new BufferedWriter(writer);
-					
-					
-					BufferedReader sReader =new BufferedReader(new StringReader(content));
-					//ako se dogode problemi korisriti read umjesto readline
-					 String line;
-					 while ((line = sReader.readLine()) != null){
-					    System.out.println(line);
-						 bWriter.write(line);
-					}
-					//int line;
-					//while((line= sReader.read())!= -1){
-					///	System.out.println(line+"jdjksdjhf");
-					//	bWriter.write(line);
-					//}
-					 
-					 bWriter.close();
-				
-				} catch (IOException e1) {
-					throw new ServiceException();
-				}
-				
-				
-				
-				try {		         	
-					list=Rn.cmp(ime,CIime, of , prop.getProperty("simulator"));
-				} catch (IOException e) {
-					throw new ServiceException();
-				} catch (InterruptedException e) {
-					throw new ServiceException();
-				}
-
-				
-				
-			}else if(t.equals(FileTypes.FT_VHDL_STRUCT_SCHEMA)){
-				
-				//TODO 
-				
-				
-				
-			}
-			
-			
-			boolean b= true;
-			
-			if (!list.isEmpty()){
-				b=false;
-			}
-									 //TODO sto bi trebalo ici kao prvi argument
-			return new CompilationResult(0, b,list);
+			return null; //TODO
 	}
 
 	
@@ -281,7 +140,7 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 		Properties prop = new Properties();
 		try {
 			is = this.getClass().getClassLoader().getResourceAsStream("appProperties");
-		//gdje smjestiti nesto da ga cl loader nade
+		
 			
 			prop.load(is);
 		} catch(Exception ex) {
@@ -292,69 +151,20 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 				try { is.close(); } catch(Exception ex) {}
 			}
 		}
-	
-		System.out.println("dataDir "+prop.getProperty("dataDir"));
-		System.out.println("simulator "+prop.getProperty("simulator")); new SimulationResult(0, true, new ArrayList<SimulationMessage>(), "");
+		
+		File f= this.loadFile(fileId);
 		
 		
-		File f = null;
-		try {
-			f = loadFile(fileId);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-	
-		}
-		
-		String user = f.getProject().getOwnerId();
-		
-		String CIime = null;
-		CircuitInterface ci= Extractor.extractCircuitInterface(f.getContent());
-		CIime= ci.getEntityName();
-		
-		ArrayList list=null;
-		String dd = prop.getProperty("dataDir")+user;//dir u kojemu se radi je /neki dir/.../user/                prop sadrzi prvi dio /neko dir/.../
-		try {					
-			list = Rn.sim(CIime,dd,prop.getProperty("simulator"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ServiceException();
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new ServiceException();
-		}
-		
-			
-			
-			
-		boolean b= true;
-		//provjeri
-		if (!list.isEmpty()){
-			b=false;
-		}
-		//String wawe= new VcdParser()
-		//sto u SimulationResult-u treba biti waveform
-		//ako je rez treba biti parsirani vcd trebam cd parser koji mogu upotrijebiti na
-		//string ili datoteku u dir-u koji ja odredim 
-		
-		BufferedReader reader=null;
-		StringBuffer bu = new StringBuffer();
-		
-		try {
-			reader= new BufferedReader(new FileReader(dd+"adder.vcd"/*CIime+".vcd"*/));
-			String l;
-			while((l=reader.readLine())!=null){
-				bu.append(l);
-				
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ServiceException();
-		}
+		List<File> dbFiles = extractDependencies(f);
 		
 		
-		return new SimulationResult(0, b,list,new String(bu));
+		
+		
+		GHDLSimulator sim =new GHDLSimulator(prop);
+		SimulationResult s= sim.simulate(dbFiles, null, f, this);
+		return s;
+		
+		
 	}
 
 	public void saveFile(Long fileId, String content) throws ServiceException {
