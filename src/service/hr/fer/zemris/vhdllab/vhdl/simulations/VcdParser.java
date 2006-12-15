@@ -221,7 +221,7 @@ public class VcdParser
 		transitionPoints.add(Long.valueOf(vcdLines[++index].substring(1)));
 		for (++index; index < vcdLines.length; index++)
 		{
-            while (vcdLines[index].charAt(0) != '#')
+            while (index < vcdLines.length && vcdLines[index].charAt(0) != '#')
             {
                 if (vcdLines[index].charAt(0) != 'b')
                 {
