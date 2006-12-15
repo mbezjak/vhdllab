@@ -10,9 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericPropert
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 
 import javax.swing.JTextField;

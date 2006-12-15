@@ -1,13 +1,13 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestBenchDependencyExtractor implements IDependency {
 

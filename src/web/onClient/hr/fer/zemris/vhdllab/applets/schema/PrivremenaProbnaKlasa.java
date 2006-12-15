@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
-import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 
 import java.awt.Point;
 import java.io.StringReader;

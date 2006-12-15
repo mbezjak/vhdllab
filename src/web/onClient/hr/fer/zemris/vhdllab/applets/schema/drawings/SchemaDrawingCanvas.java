@@ -6,7 +6,6 @@ package hr.fer.zemris.vhdllab.applets.schema.drawings;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
-import hr.fer.zemris.vhdllab.applets.schema.wires.SPair;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,7 +14,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Stack;

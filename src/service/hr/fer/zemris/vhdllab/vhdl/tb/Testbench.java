@@ -1,5 +1,10 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
+import hr.fer.zemris.vhdllab.constants.FileTypes;
+import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.service.ServiceException;
+import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
@@ -18,32 +23,29 @@ import java.util.Map;
  * 
  * @author Miro Bezjak
  */
-public class Testbench {
+public class Testbench implements IVHDLGenerator {
 
-	/**
-	 * Don't let anyone instantiate this class.
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator#generateVHDL(hr.fer.zemris.vhdllab.model.File, hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
-	private Testbench() {}
-	
-	/**
-	 * Create a testbench VHDL from circuit interface and inducement. A
-	 * {@linkplain Generator} will be created from inducement.
-	 * 
-	 * @param ci a circuit interface.
-	 * @param inducement a string describing signal changes.
-	 * @return a string representing testbench VHDL.
-	 * @throws NullPointerException if <code>ci</code> or <code>inducement</code> is <code>null</code>.
-	 * @throws ParseException if inducement is not of correct format.
-	 * @throws IncompatibleDataException if <code>ci</code> is not compatible with <code>inducement</code>.
-	 * @see CircuitInterface
-	 * @see CircuitInterface#isCompatible(Generator)
-	 * @see Generator
-	 */
-	public static String writeVHDL(CircuitInterface ci, String inducement) throws ParseException, IncompatibleDataException {
-		if( ci == null ) throw new NullPointerException("Circuit interface can not be null.");
-		if( inducement == null ) throw new NullPointerException("Inducement can not be null.");
-		Generator gen = new DefaultGenerator(inducement);
-		return Testbench.writeVHDL(ci, gen);
+	public String generateVHDL(File f, VHDLLabManager labman) throws ServiceException {
+		if(f == null) throw new NullPointerException("File can not be null.");
+		if(labman == null) throw new NullPointerException("VHDLLabManager can not be null.");
+		if(!f.getFileType().equals(FileTypes.FT_VHDL_TB)) throw new IllegalArgumentException("");
+		List<File> vhdlSources = labman.extractDependencies(f);
+		vhdlSources.remove(f);
+		if(vhdlSources.size() != 1) return null;
+		
+		File source = vhdlSources.get(0);
+		CircuitInterface ci = labman.extractCircuitInterface(source);
+		String vhdl = null;
+		try {
+			Generator gen = new DefaultGenerator(f.getContent());
+			vhdl = writeVHDL(ci, gen, f.getFileName());
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
+		}
+		return vhdl;
 	}
 	
 	/**
@@ -59,7 +61,7 @@ public class Testbench {
 	 * @see CircuitInterface#isCompatible(Generator)
 	 * @see Generator
 	 */
-	public static String writeVHDL(CircuitInterface ci, Generator generator) throws ParseException, IncompatibleDataException {
+	private String writeVHDL(CircuitInterface ci, Generator generator, String sourceName) throws ParseException, IncompatibleDataException {
 		if( ci == null ) throw new NullPointerException("Circuit interface can not be null.");
 		if( generator == null ) throw new NullPointerException("Generator can not be null.");
 		if( !ci.isCompatible(generator) ) throw new IncompatibleDataException("Circuit Interface's ports are not compatible with Generator's signals.");
@@ -68,10 +70,10 @@ public class Testbench {
 		vhdl.append("library IEEE;\n")
 			.append("use IEEE.STD_LOGIC_1164.ALL;\n")
 			.append("\n")
-			.append("entity ").append(genTestbenchName(ci.getEntityName())).append(" is \n")
-			.append("end ").append(genTestbenchName(ci.getEntityName())).append(";\n")
+			.append("entity ").append(sourceName).append(" is \n")
+			.append("end ").append(sourceName).append(";\n")
 			.append("\n")
-			.append("architecture structural of ").append(genTestbenchName(ci.getEntityName())).append(" is \n");
+			.append("architecture structural of ").append(sourceName).append(" is \n");
 		populateComponent(ci, vhdl);
 		vhdl.append("end component;\n")
 			.append("\n");
@@ -80,6 +82,8 @@ public class Testbench {
 		populatePortMap(ci, vhdl);
 		vhdl.append("\n")
 			.append("process")
+			.append("\n")
+			.append("begin")
 			.append("\n");
 		populateProcess(ci, generator, vhdl);
 		vhdl.append("\n")
@@ -88,20 +92,6 @@ public class Testbench {
 		return vhdl.toString();
 	}
 
-	/**
-	 * Create a testbench entity name from a given entity name.
-	 * Testbench entity name will have the following format:
-	 * <blockquote>
-	 * 'entityName'_tb
-	 * </blockquote>
-	 * 
-	 * @param name an entity name.
-	 * @return a testbench entity name.
-	 */
-	private static String genTestbenchName(String name) {
-		return name + "_tb";
-	}
-	
 	/**
 	 * Create a testbench signal name from a given signal name.
 	 * Testbench signal name will have the following format:
@@ -112,17 +102,17 @@ public class Testbench {
 	 * @param name a name of a signal.
 	 * @return a testbench signal name.
 	 */
-	private static String getTestbenchSignal(Port p) {
-		return "tb_" + p.getName();
+	private String getTestbenchSignal(String name) {
+		return "tb_" + name;
 	}
-
+	
 	/**
 	 * Populate a component in testbench VHDL.
 	 * 
 	 * @param ci a circuit interface from where to draw information.
 	 * @param vhdl a string builder where to store testbench VHDL.
 	 */
-	private static void populateComponent(CircuitInterface ci, StringBuilder vhdl) {
+	private void populateComponent(CircuitInterface ci, StringBuilder vhdl) {
 		vhdl.append("component ").append(ci.getEntityName()).append(" is port (\n");
 		for(Port p : ci.getPorts()) {
 			vhdl.append("\t").append(p.getName()).append(" : ")
@@ -144,9 +134,9 @@ public class Testbench {
 	 * @param ci a circuit interface from where to draw information.
 	 * @param vhdl a string builder where to store testbench VHDL.
 	 */
-	private static void populateSignals(CircuitInterface ci, StringBuilder vhdl) {
+	private void populateSignals(CircuitInterface ci, StringBuilder vhdl) {
 		for(Port p : ci.getPorts()) {
-			vhdl.append("\tsignal ").append(getTestbenchSignal(p)).append(" : ")
+			vhdl.append("\tsignal ").append(getTestbenchSignal(p.getName())).append(" : ")
 				.append(p.getType().getTypeName());
 			if( p.getType().isVector() )
 				vhdl.append("(").append(p.getType().getRangeFrom())
@@ -162,10 +152,10 @@ public class Testbench {
 	 * @param ci a circuit interface from where to draw information.
 	 * @param vhdl a string builder where to store testbench VHDL.
 	 */
-	private static void populatePortMap(CircuitInterface ci, StringBuilder vhdl) {
+	private void populatePortMap(CircuitInterface ci, StringBuilder vhdl) {
 		vhdl.append("uut: ").append(ci.getEntityName()).append(" port map ( ");
 		for(Port p : ci.getPorts()) {
-			vhdl.append(getTestbenchSignal(p)).append(", ");
+			vhdl.append(getTestbenchSignal(p.getName())).append(", ");
 		}
 		vhdl.deleteCharAt(vhdl.length()-2); //deleting last ','
 		vhdl.append(");\n");
@@ -178,17 +168,17 @@ public class Testbench {
 	 * @param gen a generator from where to draw information.
 	 * @param vhdl a string builder where to store testbench VHDL.
 	 */
-	private static void populateProcess(CircuitInterface ci, Generator gen, StringBuilder vhdl) {
+	private void populateProcess(CircuitInterface ci, Generator gen, StringBuilder vhdl) {
 		List<Slot> list = createProcessList(ci, gen);
 		long time = -1;
 		for(Slot slot : list) {
 			if( time != -1 ) {
-				vhdl.append("wait ").append(slot.getTime() - time)
+				vhdl.append("wait for ").append(slot.getTime() - time).append(" ")
 					.append(gen.getMeasureUnit()).append(";\n");
 			}
 			for(ImpulseWithSignalName imp : slot.getList()) {
 				String state = imp.getImpulse().getState();
-				vhdl.append(imp.getSignalName()).append(" <= ");
+				vhdl.append(getTestbenchSignal(imp.getSignalName())).append(" <= ");
 				if( ci.getPort(imp.getSignalName()).getType().isScalar() )
 					vhdl.append("\'").append(state).append("\'; ");
 				else
@@ -209,7 +199,7 @@ public class Testbench {
 	 * @param gen a generator from where to draw information.
 	 */
 	@SuppressWarnings("unchecked")
-	private static List<Slot> createProcessList(CircuitInterface ci, Generator gen) {
+	private List<Slot> createProcessList(CircuitInterface ci, Generator gen) {
 		Slot tmp = new Slot(0);
 		Map<Slot, Slot> table = new HashMap<Slot, Slot>();
 		for(Signal s : gen.getSignals()) {
@@ -259,7 +249,7 @@ public class Testbench {
 	 * @author Miro Bezjak
 	 * @see ImpulseWithSignalName
 	 */
-	private static class Slot implements Comparable {
+	private class Slot implements Comparable {
 		
 		private long time;
 		private List<ImpulseWithSignalName> list = new ArrayList<ImpulseWithSignalName>();
@@ -407,7 +397,7 @@ public class Testbench {
 	 * 
 	 * @author Miro Bezjak
 	 */
-	private static class ImpulseWithSignalName {
+	private class ImpulseWithSignalName {
 		
 		private String signalName;
 		private Impulse impulse;
@@ -471,4 +461,5 @@ public class Testbench {
 				&& other.getImpulse().equals(this.impulse);
 		}
 	}
+
 }

@@ -13,6 +13,7 @@ import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
+import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.simulators.ISimulator;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
@@ -76,22 +77,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			return file.getContent();
 		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
-			List<File> vhdlSources = extractDependencies(file);
-			vhdlSources.remove(file);
-			if(vhdlSources.size() != 1) {
-				throw new ServiceException("Testbench depends on more then one or unknown file!");
-			}
-			
-			File source = vhdlSources.get(0);
-			CircuitInterface ci = extractCircuitInterface(source);
-			String vhdl = null;
-			try {
-				vhdl = Testbench.writeVHDL(ci, file.getContent());
-			} catch (Exception e) {
-				vhdl = null;
-			}
-			if(vhdl == null) throw new ServiceException("Error during extraction of VHDL code of testbench"); 
-			return vhdl;
+			IVHDLGenerator generator = new Testbench();
+			return generator.generateVHDL(file, this);
 		}
 		else throw new ServiceException("FileType "+file.getFileType()+" has no registered vhdl generators!");
 	}

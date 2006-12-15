@@ -24,6 +24,7 @@ import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.preferences.SingleOption;
 import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
+import hr.fer.zemris.vhdllab.vhdl.Message;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -745,7 +746,15 @@ public class MainApplet
 		SimulationResult result = cache.runSimulation(projectName, fileName);
 		if(result.getWaveform() == null) {
 			// TODO tu pozvat simulationErrorPanel i predat mu greske...
-			statusBar.setText("Greske!");
+			statusBar.setText("Errors!");
+			StringBuilder sb = new StringBuilder();
+			for(Message m : result.getMessages()) {
+				sb.append(m.getMessageText()).append("\n");
+			}
+			IEditor ed = getEditor("Project1", "File1");
+			if(ed != null) {
+				ed.setFileContent(new FileContent("Project1", "File1", sb.toString()));
+			}
 			return;
 		}
 		String simulationName = fileName + ".sim";
@@ -1163,12 +1172,10 @@ public class MainApplet
 				final String fileName1 = "File1";
 				final String fileType1 = FileTypes.FT_VHDL_SOURCE;
 				final String fileContent1 = "simple content";
-				final String fileName2 = "File2";
+				final String fileName2 = "mux41";
 				final String fileType2 = FileTypes.FT_VHDL_SOURCE;
 				final String fileContent2 = "library IEEE;" + "\n" +
 											"use IEEE.STD_LOGIC_1164.ALL;" + "\n" + 
-											"use IEEE.STD_LOGIC_ARITH.ALL;" + "\n" +
-											"use IEEE.STD_LOGIC_UNSIGNED.ALL;" + "\n" +
 											"\n" +
 											"entity mux41 is" + "\n" +
 											"port ( e :in std_logic;" + "\n" +
@@ -1194,11 +1201,11 @@ public class MainApplet
 											"else z<='0';" + "\n" +
 											"end if;" + "\n" +
 											"end process;" + "\n" +
-											"end Behavioral";
+											"end Behavioral;";
 				
-				final String fileName3 = "tb";
+				final String fileName3 = "mux41_tb";
 				final String fileType3 = FileTypes.FT_VHDL_TB;
-				final String fileContent3 = "<file>File2</file>" + "\n" + 
+				final String fileContent3 = "<file>mux41</file>" + "\n" + 
 											"<measureUnit>ns</measureUnit>" + "\n" +
 											"<duration>700</duration>" + "\n" +
 											"<signal name=\"E\" type=\"scalar\">(0,1)</signal>" + "\n" + 

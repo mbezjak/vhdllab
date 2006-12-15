@@ -13,6 +13,7 @@ import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
+import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
@@ -20,9 +21,6 @@ import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
-import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
@@ -229,78 +227,13 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 	}
 
 	public String generateVHDL(File file) throws ServiceException {
-		//TODO nema nacina da utvrdim direction
-		if(file.getFileType().equals("FT_VHDL_TB")){
-			String data=file.getContent();
-			/*data dolazi u obliku:
-			 * <measureUnit>ns<measureUnit>1000</duration>
-					<signal name="A" type="scalar">(0,0)(100, 1)(150, 0)(300,1)</signal> 
-					<signal name="b" type="scalar">(0,0)(200, 1)(300, z)(440, U)</signal>
-					<signal name="c" type="scalar" rangeFrom="0" rangeTo="0">(0,0)(50,1)(300,0)(400,1)</signal>
-					<signal name="d" type="vector" rangeFrom="0" rangeTo="0">(100,1)(200,0)(300,1)(400,z)</signal>
-					<signal name="e" type="vector" rangeFrom="2" rangeTo="0">(0,000)(100, 100)(400, 101)(500,111)(600, 010)</signal>
-					<signal name="f" type="vector" rangeFrom="1" rangeTo="4">(0,0001)(100, 1000)(200, 0110)(300, U101)(400, 1001)(500,110Z)(600, 0110)</signal>
-			
-			 */
-			//PROBLEM smijer , nemam nacina da utvrdim smijer!!!!!!!!!!!!!!!!!!!!
-			/*
-			 * 
-					 name="A"type="scalar"
-					 name="b"type="scalar"
-					 name="c"type="scalar"rangeFrom="0"rangeTo="0"
-					 name="d"type="vector"rangeFrom="0"rangeTo="0"
-					 name="e"type="vector"rangeFrom="2"rangeTo="0"
-					 f 1 4
-					 ime 21 484
-			 */
-			DefaultCircuitInterface ci = new DefaultCircuitInterface(file.getFileName());
-			
-			
-			data=data.split("</duration>")[1].replace("<signal","").replace(" ","");
-			String[] p=data.split("</signal>");
-			
-			
-			int l=p.length;
-			for(int i=0;i<l;i++){
-				if(p[i].contains("scalar")){
-					
-					p[i]=p[i].split(">")[0];
-					String ime =p[i].replace("name=\"","").replace("\"type=\"scalar\"","");
-					ci.addPort(new DefaultPort(ime, Direction.IN, new DefaultType("std_logic", null, null)));
-					
-				}else if(p[i].contains("vector")){
-					
-					p[i]=p[i].split(">")[0];
-					String pom =p[i].replace("name=\"","").replace("\"type=\"vector\"rangeFrom=\""," ").replace("\"rangeTo=\""," ").replace("\"","");
-					String[] pom2=pom.split(" ");
-					String dir;
-					if(Integer.parseInt(pom2[1])>Integer.parseInt(pom2[2])){
-						dir =new String("DOWNTO");
-					}else{
-						dir=new String("TO");
-						 
-					}									//nema nacina da utvrdim direction TODO
-					ci.addPort(new DefaultPort(pom2[0], Direction.IN, new DefaultType("std_logic", new int[] {Integer.parseInt(pom2[1]), Integer.parseInt(pom2[2])}, dir)));
-					
-				}
-			}
-			
-			String VHDLtb = null;
-			try {
-				VHDLtb = Testbench.writeVHDL(ci,file.getContent());
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ServiceException();
-			}
-			
-			return VHDLtb;	
-			
-		}else{
-			return "";
+		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
+			return file.getContent();
+		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
+			IVHDLGenerator generator = new Testbench();
+			return generator.generateVHDL(file, this);
 		}
-		
-		
-		
+		else throw new ServiceException("FileType "+file.getFileType()+" has no registered vhdl generators!");
 	}
 
 	public File loadFile(Long fileId) throws ServiceException {

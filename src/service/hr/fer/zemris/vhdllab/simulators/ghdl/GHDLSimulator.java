@@ -1,5 +1,12 @@
 package hr.fer.zemris.vhdllab.simulators.ghdl;
 
+import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.simulators.ISimulator;
+import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
+import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -11,13 +18,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-
-import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.service.VHDLLabManager;
-import hr.fer.zemris.vhdllab.simulators.ISimulator;
-import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
-import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
-import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 
 /**
  * @author marcupic

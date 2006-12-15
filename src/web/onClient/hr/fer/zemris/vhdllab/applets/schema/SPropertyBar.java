@@ -4,7 +4,6 @@ import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 
 import java.awt.BorderLayout;
-import java.awt.ScrollPane;
 
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;

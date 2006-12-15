@@ -8,8 +8,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import javax.swing.event.MouseInputListener;
-
 public class SchemaDrawingCanvasListeners implements MouseListener,
 		MouseMotionListener, MouseWheelListener, KeyListener {
 

@@ -1,14 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 

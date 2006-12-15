@@ -17,13 +17,11 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
-import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;

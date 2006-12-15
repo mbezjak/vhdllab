@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import junit.framework.JUnit4TestAdapter;
-
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
@@ -11,6 +9,7 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,9 +45,8 @@ public class SimulateTest {
 		vhdlLabman.setUserFileDAO(new UserFileDAOMemoryImpl());
 		
 		Project proj = vhdlLabman.createNewProject("testProject", "user1");
-		File sklopFja = vhdlLabman.createNewFile(proj,"File2",FileTypes.FT_VHDL_SOURCE);
-		File sklopFjaTb = vhdlLabman.createNewFile(proj,"tb",FileTypes.FT_VHDL_TB);
-		
+		File sklopFja = vhdlLabman.createNewFile(proj,"mux41",FileTypes.FT_VHDL_SOURCE);
+		File sklopFjaTb = vhdlLabman.createNewFile(proj,"mux41_tb",FileTypes.FT_VHDL_TB);
 		sklopFja.setContent("library IEEE;" + "\n" +
 				"use IEEE.STD_LOGIC_1164.ALL;" + "\n" + 
 				"\n" +
@@ -78,8 +76,7 @@ public class SimulateTest {
 				"end process;" + "\n" +
 				"end Behavioral;");
 		vhdlLabman.saveFile(sklopFja.getId(), sklopFja.getContent());
-		
-		sklopFjaTb.setContent("<file>File2</file>" + "\n" + 
+		sklopFjaTb.setContent("<file>mux41</file>" + "\n" + 
 				"<measureUnit>ns</measureUnit>" + "\n" +
 				"<duration>700</duration>" + "\n" +
 				"<signal name=\"E\" type=\"scalar\">(0,1)</signal>" + "\n" + 

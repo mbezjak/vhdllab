@@ -26,7 +26,9 @@ import java.util.Map.Entry;
 		private Properties editors;
 		private Properties views;
 		
-		private Map<String, Long> identifiers;
+		private Map<String, Long> fileIdentifiers;
+		private Map<String, Long> userFileIdentifiers;
+		private Map<String, Long> projectIdentifiers;
 		
 		private List<Long> compilationHistory;
 		private List<Long> simulationHistory;
@@ -34,7 +36,9 @@ import java.util.Map.Entry;
 		public Cache(MethodInvoker invoker, String ownerId) {
 			if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
 			if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
-			identifiers = new HashMap<String, Long>();
+			fileIdentifiers = new HashMap<String, Long>();
+			userFileIdentifiers = new HashMap<String, Long>();
+			projectIdentifiers = new HashMap<String, Long>();
 			compilationHistory = new ArrayList<Long>();
 			simulationHistory = new ArrayList<Long>();
 			filetypes = loadType("filetypes.properties");
@@ -280,11 +284,10 @@ import java.util.Map.Entry;
 		}
 		
 		private FileIdentifier getFileIdentifierFor(Long fileIdentifier) {
-			for(Entry<String, Long> entry : identifiers.entrySet()) {
+			for(Entry<String, Long> entry : fileIdentifiers.entrySet()) {
 				if(entry.getValue().equals(fileIdentifier)) {
 					String key = entry.getKey();
 					String[] names = key.split("[|]");
-					if(names.length != 2) throw new IllegalArgumentException("Found project insted of a file.");
 					FileIdentifier file = new FileIdentifier(names[0], names[1]);
 					return file;
 				}
@@ -294,44 +297,44 @@ import java.util.Map.Entry;
 		
 		private Long getIdentifierForUserFile(String type) {
 			String key = makeKeyForUserFile(type);
-			return identifiers.get(key);
+			return userFileIdentifiers.get(key);
 		}
 
 		private Long getIdentifierFor(String projectName) {
 			String key = makeKey(projectName);
-			return identifiers.get(key);
+			return projectIdentifiers.get(key);
 		}
 
 		private Long getIdentifierFor(String projectName, String fileName) {
 			String key = makeKey(projectName, fileName);
-			return identifiers.get(key);
+			return fileIdentifiers.get(key);
 		}
 		
 		private void cacheUserFileItem(String type, Long userFileIdentifier) {
 			String key = makeKeyForUserFile(type);
-			identifiers.put(key, userFileIdentifier);
+			userFileIdentifiers.put(key, userFileIdentifier);
 		}
 
 		private void cacheItem(String projectName, Long projectIdentifier) {
 			String key = makeKey(projectName);
-			identifiers.put(key, projectIdentifier);
+			projectIdentifiers.put(key, projectIdentifier);
 		}
 		
 		private void cacheItem(String projectName, String fileName, Long fileIdentifier) {
 			String key = makeKey(projectName, fileName);
-			identifiers.put(key, fileIdentifier);
+			fileIdentifiers.put(key, fileIdentifier);
 		}
 	
 		private String makeKeyForUserFile(String str) {
-			return "|U=" + str + "|";
+			return str;
 		}
 	
 		private String makeKey(String str) {
-			return "|P=" + str + "|";
+			return str;
 		}
 
 		private String makeKey(String str1, String str2) {
-			return "|P=" + str1 + "|&|F=" + str2 + "|";
+			return str1 + "|" + str2;
 		}
 
 	}
