@@ -82,7 +82,7 @@ public class WaveApplet extends JPanel
     private JScrollBar signalValuesScrollbar;
 
     /** Textfield koji sadrzi tocnu vrijednost na kojoj se nalazi kursor misa */
-    private JTextField textField = new RoundField(10);
+  //  private JTextField textField = new RoundField(10);
 
     /** Search signal */
     private JTextField search = new RoundField(10);
@@ -233,7 +233,8 @@ public class WaveApplet extends JPanel
 		waves.setContent(results, scale);
 		signalValues.setContent(results);
 		cursorPanel.setContent(scale.getScaleEndPointInPixels(), 
-				waves.getHorizontalOffset(), scale.getMeasureUnitName());
+				waves.getHorizontalOffset(), scale.getScaleStepInTime(), 
+				scale.getScaleStepInTime() * 2, scale.getMeasureUnitName());
 		helpPanel.setContent(waves.getShapes());
 
 		/* panel koji razdvaja imena signala i trenutne vrijednosti */
@@ -268,7 +269,7 @@ public class WaveApplet extends JPanel
 		this.setLayout(new WaveLayoutManager());
 		this.setBackground(themeColor.getSignalNames());
 		this.add(toolbar, "toolbar");
-		this.add(textField, "textField");
+		//this.add(textField, "textField");
 		this.add(cursorPanel, "cursorPanel");
 		this.add(search, "search");
 		this.add(interval, "interval");
@@ -337,8 +338,8 @@ public class WaveApplet extends JPanel
 	 */
 	private void initializeComponents()
 	{
-		textField.setEditable(false);
-		textField.setToolTipText("Value");
+		//textField.setEditable(false);
+		//textField.setToolTipText("Value");
 		search.setText("search signal");
 		search.addMouseListener(searchClickListener);
 		search.addActionListener(searchListener);
@@ -1077,17 +1078,17 @@ public class WaveApplet extends JPanel
          */
         public void mouseMoved(MouseEvent event)  
         {  
-            /* trenutni offset + X-vrijednost kurosra misa */
-            int xValue = event.getX() + horizontalScrollbar.getValue(); 
-            /* podijeljeno s 100 jer je scaleStep za 100 piksela */
-            double value = xValue * scale.getScaleStepInTime() / 100;
-            textField.setText((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
-
-            /* racuna interval izmedu kursora i trenutne pozicije misa */
-            double measuredTime = Math.abs(cursorPanel.getSecondValue() - cursorPanel.getFirstValue());
-            interval.setText((Math.round(measuredTime * 100000d) / 100000d) + scale.getMeasureUnitName());
-
-            signalNames.repaint(); 
+			///* trenutni offset + X-vrijednost kurosra misa */
+			//int xValue = event.getX() + horizontalScrollbar.getValue(); 
+			///* podijeljeno s 100 jer je scaleStep za 100 piksela */
+			//double value = xValue * scale.getScaleStepInTime() / 100;
+			//textField.setText((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
+			//
+			///* racuna interval izmedu kursora i trenutne pozicije misa */
+			//double measuredTime = Math.abs(cursorPanel.getSecondValue() - cursorPanel.getFirstValue());
+			//interval.setText((Math.round(measuredTime * 100000d) / 100000d) + scale.getMeasureUnitName());
+			//
+			//signalNames.repaint(); 
         } 
 
         /**
@@ -1150,7 +1151,7 @@ public class WaveApplet extends JPanel
             }
             /* podijeljeno s 100 jer je scaleStep za 100 piksela */
             double value = xValue * scale.getScaleStepInTime() / 100;
-            textField.setText((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
+           // textField.setText((Math.round(value * 100000d) / 100000d) + scale.getMeasureUnitName());
 
             if (value <= 0)
             {
@@ -1617,6 +1618,9 @@ public class WaveApplet extends JPanel
 					value -= 1;
 				}
 				index = value / 45;
+				if (index >= results.getSignalValues().size()) {
+					return;
+				}
 					
 				int xValue = event.getX() + horizontalScrollbar.getValue();
 				int valueIndex = 0;

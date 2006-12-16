@@ -35,10 +35,10 @@ class CursorPanel extends JPanel
     private String secondString;
 
     /** Vrijednost prvog kursora */
-    private double firstValue = 100;
+    private double firstValue;
     
     /** Vrijednost drugog kursora */
-    private double secondValue = 200;
+    private double secondValue;
 
     /** Mjerna jedinica */
     private String measureUnitName;
@@ -74,13 +74,16 @@ class CursorPanel extends JPanel
 	 * @param offset pomak
 	 * @param measureUnitName jedinica
 	 */
-	public void setContent(int panelEndPoint, int offset, String measureUnitName)
+	public void setContent(int panelEndPoint, int offset, double firstValue, 
+			double secondValue, String measureUnitName)
 	{
 		this.panelEndPoint = panelEndPoint;
         this.offset = offset;
+		this.firstValue = firstValue;
+		this.secondValue = secondValue;
         this.measureUnitName = measureUnitName;
-		firstString = "100.0" + this.measureUnitName;
-        secondString = "200.0" + this.measureUnitName;
+		firstString = firstValue + this.measureUnitName;
+        secondString = secondValue + this.measureUnitName;
 	}
 
 

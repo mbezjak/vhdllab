@@ -17,7 +17,9 @@ import javax.swing.JPanel;
  */
 class Scale extends JPanel
 {
-    /** 
+	private static final long	serialVersionUID	= -4934785363261778378L;
+
+   /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * femto sekundama 
      */
@@ -80,14 +82,20 @@ class Scale extends JPanel
     /** GHDL simulator generira sve u femtosekundama */
     private double[] durationsInFemtoSeconds;
 
-    /** Trajanje u pikselima koje ide direktno za crtanje valnih oblika */
-    private int[] durationsInPixels; 
+    /** Trajanje pojedenih intervala u vremenskoj jedinici */
+    private int[] durationsInTime; 
 
-    /** Maksimalna vrijednost trajanja signala izemdu dvije promjene */
-    private int maximumDurationInPixels = 0;
+	/** Trajanje u pikselima koje id direktno za crtanje valnih oblika */
+	private int[] durationsInPixels;
+
+    /** Minimalna vrijednost trajanja signala izemdu dvije promjene */
+    private int minimumDurationInTime;
 
     /** Povecava/smanjuje skalu za neku vrijednost */
     private double scaleFactor = 1f;
+
+	/** Povecava/smanjuje time/pixel faktor */
+	private double pixelFactor;
     
     /** Ime mjerne jedinice */
     private String measureUnitName;
@@ -99,7 +107,7 @@ class Scale extends JPanel
     private int scaleEndPointInPixels;
 
     /** Korak skale u vremenu, ovisno o scaleFactor */
-    private double scaleStepInTime = 100;
+    private double scaleStepInTime;
 
     /** Vrijednost koja se kumulativno povecava, ovisno o scaleStepInTime */
     private double scaleValue;
@@ -149,9 +157,9 @@ class Scale extends JPanel
 	 */
 	public void setContent(GhdlResults results)
 	{
-		this.transitionPoints = results.getTransitionPoints();
-        durationsInFemtoSeconds = new double[transitionPoints.length - 1];
-        durationsInPixels = new int[durationsInFemtoSeconds.length];
+		durationsInFemtoSeconds = new double[transitionPoints.length - 1];
+        durationsInTime = new int[durationsInFemtoSeconds.length];
+		durationsInPixels = new int[durationsInFemtoSeconds.length];
         for (int i = 0; i < durationsInFemtoSeconds.length; i++)
         {
             double operand1 = transitionPoints[i + 1];
@@ -162,7 +170,6 @@ class Scale extends JPanel
             drawDefaultWave();
         }
 	}
-
 
     /**
      * Metoda koja crta pocetne oblike
@@ -178,62 +185,76 @@ class Scale extends JPanel
          * i na temelju tog minimalnog trajanja odreduje pocetnu jedinicu (ns,
          * ps, itd).  Castanje zbog toga da ne produ znamenke iza dec. zareza.
          * Pomocu string.length() izracunava broj znamenki i na temelju broj
-         * znamenki odreduje mjernu jedinicu.  Odreduje se najmanja promejna, te
-         * se na temelju postavlja skala u najmanju jedinicu i mnozi ostatak s
+         * znamenki odreduje mjernu jedinicu.  Odreduje se najmanja promjena, te
+         * se na temelju nje postavlja skala u najmanju jedinicu i mnozi ostatak s
          * odgovarajucim 10^x faktorom.
          * */
         String minimumDuration = String.valueOf((int)temporaryDurations[0]);
-        int numberOfDigits = minimumDuration.length();
-        switch (numberOfDigits)
+		//System.out.println("minimalna razlika je " + minimumDuration);
+        
+		int numberOfEndZeroes = 0;
+		char[] tempArray = minimumDuration.toCharArray();
+		for (int i = tempArray.length - 1; i >= 0; i--) {
+			if (tempArray[i] == '0') {
+				numberOfEndZeroes++;
+			} else {
+				break;
+			}
+		}
+
+        switch (numberOfEndZeroes)
         {
+            case 0 :
             case 1 :
             case 2 :
-            case 3 :
                 measureUnitName = "fs";
                 measureUnit = FEMTO_SECONDS;
                 break;
+            case 3 :
             case 4 :
             case 5 :
-            case 6 :
                 measureUnitName = "ps";
                 measureUnit = PICO_SECONDS;
                 break;
+            case 6 :
             case 7 :
             case 8 :
-            case 9 :
                 measureUnitName = "ns";
                 measureUnit = NANO_SECONDS;
                 break;
-            case 10 :
-            case 11 : 
-            case 12 :
+            case 9 :
+            case 10 : 
+            case 11 :
                 measureUnitName = "us";
                 measureUnit = MICRO_SECONDS;
                 break;
+            case 12 :
             case 13 :
             case 14 :
-            case 15 :
                 measureUnitName = "ms";
                 measureUnit = MILI_SECONDS;
                 break;
+            case 15 :
             case 16 :
             case 17 :
-            case 18 :
                 measureUnitName = "s";
                 measureUnit = SECONDS;
                 break;
         }
 
         scaleEndPointInPixels = 0;
-        for (int i = 0; i < durationsInPixels.length; i++)
+		minimumDurationInTime = (int)(durationsInFemtoSeconds[0] * measureUnit);
+        for (int i = 0; i < durationsInTime.length; i++)
         {
-            durationsInPixels[i] = (int)(durationsInFemtoSeconds[i] * measureUnit);
-            if (durationsInPixels[i] > maximumDurationInPixels)
-            {
-                maximumDurationInPixels = durationsInPixels[i];
-            }
-			scaleEndPointInPixels += durationsInPixels[i];
+            durationsInTime[i] = (int)(durationsInFemtoSeconds[i] * measureUnit);
+			if (durationsInTime[i] < minimumDurationInTime) {
+				minimumDurationInTime = durationsInTime[i];
+			}
+			scaleEndPointInPixels += durationsInTime[i];
         }
+		scaleStepInTime = minimumDurationInTime;
+		pixelFactor = 100 / scaleStepInTime;
+		scaleEndPointInPixels *= pixelFactor;
     }
 
 
@@ -243,26 +264,22 @@ class Scale extends JPanel
      */
     public void setDurationsInPixelsAfterZoom (double scaleFactor)
     {
-        /* 
-         * mnozi se originalni durationsInFemtoSeconds koji je tipa double tako
-         * da se sacuva polozaj i nakon sto se prilikom smanjena ode preko nule
-         */
-        for (int i = 0; i < durationsInFemtoSeconds.length; i++)
-        {
-            durationsInFemtoSeconds[i] *= scaleFactor;
-        }
+		scaleStepInTime /= scaleFactor;
+		pixelFactor *= scaleFactor;
         scaleEndPointInPixels = 0;
-        maximumDurationInPixels = 0;
-        for (int i = 0; i < durationsInPixels.length; i++)
+        for (int i = 0; i < durationsInTime.length; i++)
         {
             /* s istim 10^x faktorom mnozi se cijelo vrijeme */
-            durationsInPixels[i] = (int)(durationsInFemtoSeconds[i] * measureUnit);
-            if (durationsInPixels[i] > maximumDurationInPixels)
-            {
-                maximumDurationInPixels = durationsInPixels[i];
-            }
-			scaleEndPointInPixels += durationsInPixels[i];
+            durationsInTime[i] = (int)(durationsInFemtoSeconds[i] * measureUnit);
+			scaleEndPointInPixels += durationsInTime[i];
         }
+		scaleEndPointInPixels *= pixelFactor;
+
+		int i = 0;
+		for (int interval : durationsInTime) {
+			durationsInPixels[i++] = (int)(interval * pixelFactor);
+		}
+	
         this.scaleFactor *= scaleFactor;
     }
 
@@ -270,9 +287,13 @@ class Scale extends JPanel
     /**
      * Getter trajanje u pikselima za valne oblike
      */
-    public int[] getDurationInPixels ()
+    public int[] getDurationInPixels()
     {
-        return durationsInPixels;
+		int i = 0;
+		for (int interval : durationsInTime) {
+			durationsInPixels[i++] = (int)(interval * pixelFactor);
+		}
+		return durationsInPixels;
     }
     
                 
@@ -336,15 +357,6 @@ class Scale extends JPanel
 
 
     /**
-     * Vraca maksimalni durationInPixels
-     */
-    public int getMaximumDurationInPixels()
-    {
-        return maximumDurationInPixels;
-    }
-
-
-    /**
      * Getter koji daje trenutnu vrijednost skale u vremenu (npr. 345 ns na 100
      * piksela)
      */
@@ -372,14 +384,23 @@ class Scale extends JPanel
         setBackground(themeColor.getScale());
         g.setColor(themeColor.getLetters());
 
-        /* bilo koja vrijednost postavlja se na visekratnik broja 100 */
+        /* 
+		 * Bilo koja vrijednost postavlja se na visekratnik broja 100.  Znaci, ako je
+		 * offset bio 1450, stavit ce 1400 i poceti crtati od 1400
+		 */
         screenStartPointInPixels = offsetXAxis - offsetXAxis % 100;
+
+		/*
+		 * Duljina trenutno aktivnog ekrana koji ce se iscrtati je duljina panela + 200
+		 * Skala se ne crta kompletno, vec samo dio koji trenutno upada u offset
+		 */
         screenSizeInPixels = getWidth() + 200;
         screenEndPointInPixels = screenStartPointInPixels + screenSizeInPixels;
+		//System.out.println(" end screen " + screenEndPointInPixels);
+		//System.out.println(" end scale " + scaleEndPointInPixels);
+		//System.out.println(" facotr scale " + scaleFactor);
         scaleFactor = Math.round(scaleFactor * 1e13d) / 1e13d;
 
-        /* npr. scaleFactor = 2 => scaleStepInTime = 50 */
-        scaleStepInTime = SCALE_STEP_IN_PIXELS / scaleFactor;
 
         /* scaleStepInTime ostaje fiksan jer je potrebna pocetna vrijednost */
         double tempScaleStepInTime = scaleStepInTime;
@@ -394,7 +415,8 @@ class Scale extends JPanel
          */
         if (screenStartPointInPixels == SCALE_START_POINT_IN_PIXELS)
         {
-			g.drawLine(x - offsetXAxis, SCALE_TAG_LINE_YSTART, x - offsetXAxis, SCALE_TAG_LINE_YEND);
+			g.drawLine(x - offsetXAxis, SCALE_TAG_LINE_YSTART, x - offsetXAxis, 
+					SCALE_TAG_LINE_YEND);
 			g.drawString("0", x - offsetXAxis, SCALE_VALUE_YAXIS);
             x = SCALE_STEP_IN_PIXELS;
             scaleValue = scaleStepInTime;
@@ -410,18 +432,9 @@ class Scale extends JPanel
             scaleValue = screenStartPointInPixels / 100 * scaleStepInTime;
         }
 
-        int endPoint;
+        int endPoint = screenEndPointInPixels;
         
-        /* screenEndPointInPixels moze biti manji od zavrsetka skale... */
-        if (scaleEndPointInPixels > screenEndPointInPixels)
-        {
-            endPoint = screenEndPointInPixels;
-        }
-        else 
-        {
-            endPoint = scaleEndPointInPixels;
-        }
-        g.drawLine(screenStartPointInPixels - offsetXAxis, SCALE_MAIN_LINE_YAXIS, 
+		g.drawLine(screenStartPointInPixels - offsetXAxis, SCALE_MAIN_LINE_YAXIS, 
 				endPoint - offsetXAxis, SCALE_MAIN_LINE_YAXIS);
         String tempMeasureUnitName = measureUnitName;
         
@@ -466,22 +479,18 @@ class Scale extends JPanel
 
             /* 
              * bez obzira na vrijednost x, sve se crta pomaknuto za offset, tako
-             * da na ekranu bude slika od nultog piksela do 2000-tog
+             * da na ekranu bude slika od nultog piksela
              */
-            g.drawLine(x - offsetXAxis, SCALE_TAG_LINE_YSTART, x - offsetXAxis, SCALE_TAG_LINE_YEND);
-            g.drawString((Math.round(scaleValue * 1000000d) / 1000000.0d) + tempMeasureUnitName, 
-					x -(((Math.round(scaleValue * 1000000d) / 1000000.0d) + tempMeasureUnitName).length() * 5) / 2 
+            g.drawLine(x - offsetXAxis, SCALE_TAG_LINE_YSTART, 
+					x - offsetXAxis, SCALE_TAG_LINE_YEND);
+            g.drawString((Math.round(scaleValue * 1000000d) / 1000000.0d)
+					+ tempMeasureUnitName, 
+					x -(((Math.round(scaleValue * 1000000d) / 1000000.0d) 
+					+ tempMeasureUnitName).length() * 5) / 2 
                     - offsetXAxis, SCALE_VALUE_YAXIS);
-            scaleValue += tempScaleStepInTime;
+            
+			scaleValue += tempScaleStepInTime;
             x += SCALE_STEP_IN_PIXELS;   
         }
-
-        /* na kraju dodaj endPoint  Ovo volje izvesti */
-        scaleValue = Math.round(scaleValue * 1e13d) / 1e13d;
-        g.drawLine(endPointInPixels - offsetXAxis, SCALE_TAG_LINE_YSTART, endPointInPixels - offsetXAxis, SCALE_TAG_LINE_YEND);
-        String string = String.valueOf((Math.round(scaleValue * 1000000d) / 1000000.0d));
-        g.drawString(string + tempMeasureUnitName, endPointInPixels - offsetXAxis -
-                        (string.length() * 6 + 14), SCALE_VALUE_YAXIS);
-    }
+	}
 }
-

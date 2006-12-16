@@ -19,7 +19,7 @@ import java.awt.LayoutManager;
 class WaveLayoutManager implements LayoutManager
 {
     private final String TOOLBAR = "toolbar";
-    private final String TEXTFIELD = "textField";
+  //  private final String TEXTFIELD = "textField";
     private final String CURSOR_PANEL = "cursorPanel";
     private final String SEARCH = "search";
     private final String INTERVAL = "interval";
@@ -35,7 +35,7 @@ class WaveLayoutManager implements LayoutManager
     private final String HORIZONTAL_SCROLLBAR = "horizontalScrollbar";
 
     private Component toolbar;
-    private Component textField;
+	//private Component textField;
     private Component cursorPanel;
     private Component search;
     private Component interval;
@@ -57,10 +57,10 @@ class WaveLayoutManager implements LayoutManager
         {
             toolbar = component;
         }
-        else if (TEXTFIELD.equals(name)) 
-        {
-            textField = component;
-        }
+		//else if (TEXTFIELD.equals(name)) 
+		//{
+		//    textField = component;
+		//}
         else if (CURSOR_PANEL.equals(name)) 
         {
             cursorPanel = component;
@@ -126,10 +126,10 @@ class WaveLayoutManager implements LayoutManager
         {
             toolbar = null;
         }
-        else if (component == textField) 
-        {
-            textField = null;
-        }
+		//else if (component == textField) 
+		//{
+		//    textField = null;
+		//}
         else if (component == cursorPanel) 
         {
             cursorPanel = null;
@@ -276,14 +276,27 @@ public void layoutContainer(Container target)
              height
              );
     }
-    if ((textField != null) && textField.isVisible())
+	//if ((textField != null) && textField.isVisible())
+	//{
+	//    width = textField.getPreferredSize().width;
+	//    height = textField.getPreferredSize().height;
+	//    textField.setSize(width, height);
+	//    textField.setBounds
+	//        (
+	//         west + widthToolbar + 50,
+	//         north + 10, 
+	//         width,
+	//         height
+	//         );
+	//}
+	if ((interval != null) && interval.isVisible())
     {
-        width = textField.getPreferredSize().width;
-        height = textField.getPreferredSize().height;
-        textField.setSize(width, height);
-        textField.setBounds
+        width = interval.getPreferredSize().width;
+        height = interval.getPreferredSize().height;
+        interval.setSize(width, height);
+        interval.setBounds
             (
-             west + widthToolbar + 50,
+             west + widthToolbar + 5 + /*textField.getPreferredSize().width*/ + 20,
              north + 10, 
              width,
              height
@@ -296,26 +309,13 @@ public void layoutContainer(Container target)
         search.setSize(width, height);
         search.setBounds
             (
-             west + widthToolbar + 50 + textField.getPreferredSize().width + 20,
+             west + widthToolbar + 5 + /*textField.getPreferredSize().width*/ + 20 + 
+			 20 + interval.getPreferredSize().width,
              north + 10, 
              width,
              height
              );
-    }
-    if ((interval != null) && interval.isVisible())
-    {
-        width = interval.getPreferredSize().width;
-        height = interval.getPreferredSize().height;
-        interval.setSize(width, height);
-        interval.setBounds
-            (
-             west + widthToolbar + 50 + textField.getPreferredSize().width + 20 + 
-                search.getPreferredSize().width + 20,
-             north + 10, 
-             width,
-             height
-             );
-    }
+    } 
     if ((cursorPanel != null) && cursorPanel.isVisible())
     {
         width = cursorPanel.getPreferredSize().width;
