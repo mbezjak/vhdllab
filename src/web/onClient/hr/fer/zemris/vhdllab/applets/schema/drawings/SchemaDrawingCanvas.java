@@ -51,7 +51,8 @@ public class SchemaDrawingCanvas extends JComponent {
 	private SchemaMainFrame mainframe = null;
 	private Stack<RectWithBool> rectangleStack = null;
 	private Stack<LineWithBool> lineStack = null;
-	private String selectedName;
+	private String selectedCompName;
+	private String selectedWireName;
 	
 	public Point mousePosition;
 
@@ -120,6 +121,19 @@ public class SchemaDrawingCanvas extends JComponent {
 		this.repaint();
 	}
 	
+	public void removeWire(String wireInstanceName) {
+		int posdel = -1;
+		for (int i = 0; i < wires.size(); i++) {
+			if (wireInstanceName.compareTo(wires.get(i).getWireName()) == 0) {
+				posdel = i;
+				break;
+			}
+		}
+		if (posdel != -1) {
+			wires.remove(posdel);
+		}
+	}
+	
 	public ArrayList<SchemaDrawingComponentEnvelope> getComponentList(){
 		return this.components;
 	}
@@ -160,12 +174,20 @@ public class SchemaDrawingCanvas extends JComponent {
 	 * Instanca sklopa koja je izabrana mora oko sebe imati pravokutnik.
 	 * @return
 	 */
-	public String getSelectedName() {
-		return selectedName;
+	public String getSelectedCompName() {
+		return selectedCompName;
 	}
 
-	public void setSelectedName(String selectedName) {
-		this.selectedName = selectedName;
+	public void setSelectedCompName(String selectedName) {
+		this.selectedCompName = selectedName;
+	}
+	
+	public String getSelectedWireName() {
+		return selectedWireName;
+	}
+
+	public void setSelectedWireName(String selectedWireName) {
+		this.selectedWireName = selectedWireName;
 	}
 
 	/**
@@ -210,7 +232,7 @@ public class SchemaDrawingCanvas extends JComponent {
 			Point p = envelope.getPosition();
 			adapter.setStartingCoordinates(p.x, p.y);
 			envelope.getComponent().setDrawingFrame(false);
-			if (envelope.getComponent().getComponentInstanceName() == selectedName) {
+			if (envelope.getComponent().getComponentInstanceName() == selectedCompName) {
 				envelope.getComponent().setDrawingFrame(true);
 			}
 			envelope.getComponent().draw(adapter);
@@ -218,7 +240,14 @@ public class SchemaDrawingCanvas extends JComponent {
 		adapter.setStartingCoordinates(sx, sy);
 		
 		for (AbstractSchemaWire wire : wires) {
-			wire.draw(adapter);
+			if (wire.getWireName() == selectedWireName) {
+				wire.setThickness(2);
+				wire.draw(adapter);
+				wire.setThickness(1);
+			}
+			else {
+				wire.draw(adapter);
+			}
 		}
 		
 		// iscrtaj sve pravokutnike koji su dodani

@@ -159,6 +159,27 @@ public class SchemaDrawingAdapter {
 		graph.draw(line);
 	}
 	
+	public void drawLine(int virtualX1, int virtualY1, int virtualX2, int virtualY2, int thick) {
+		if (gph == null) return;
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		//postavljanje boje crtanja
+		graph.setColor(colors.ADAPTER_LINE);
+		graph.setStroke(new BasicStroke(thick));
+		
+		
+		Line2D.Float line=new Line2D.Float();
+		
+		line.x1=virtualToRealRelativeX(virtualX1);
+		line.y1=virtualToRealRelativeY(virtualY1);
+		line.x2=virtualToRealRelativeX(virtualX2);
+		line.y2=virtualToRealRelativeY(virtualY2);
+		
+		graph.draw(line);
+	}
+	
 	public void drawLine(int virtualX1, int virtualY1, float virtualX2, float virtualY2) {
 		if (gph == null) return;
 		

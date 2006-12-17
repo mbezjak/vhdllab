@@ -154,6 +154,14 @@ public class SchemaMainFrame extends JFrame {
 		// pretrazi sve zice i makni im konekcije na ovu komponentu
 	}
 	
+	private void deleteWire() {
+		if (wireSelected != null) {
+			drawingCanvas.removeWire(wireSelected.getWireName());
+			wireSelected = null;
+			drawingCanvas.setSelectedWireName(null);
+		}
+	}
+	
 	private Integer findPortIndexClosestToXY(SchemaDrawingComponentEnvelope env, int x, int y) {
 		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 		AbstractSchemaComponent comp = env.getComponent();
@@ -195,10 +203,21 @@ public class SchemaMainFrame extends JFrame {
 		return false;
 	}
 	
+	private boolean almostEqual(int a, int b) {
+		if (Math.abs(a - b) <= 2) return true;
+		return false;
+	}
+	
 	private boolean coordinateWithinLine(int x, int y, SPair<Point> line) {
-		if ((x == line.first.x && x == line.second.x && ((y > line.first.y && y < line.second.y) || (y < line.first.y && y > line.second.y)))
-				|| (y == line.first.y && y == line.second.y && 
-						((x > line.first.x && x < line.second.x) || (x < line.first.x && x > line.second.x))))
+		//System.out.println("x = " + x + "; y = " + y + ";");
+		//System.out.println("linija: (" + line.first.x + ", " + line.first.y + ") (" + line.second.x + ", " + line.second.y + ")");
+		if (
+				(x == line.first.x && x == line.second.x 
+				&& ((y >= line.first.y && y <= line.second.y) || (y <= line.first.y && y >= line.second.y)))
+				|| 
+				(y == line.first.y && y == line.second.y
+				&& ((x >= line.first.x && x <= line.second.x) || (x <= line.first.x && x >= line.second.x)))
+				)
 						return true;
 		return false;
 	}
@@ -210,6 +229,7 @@ public class SchemaMainFrame extends JFrame {
 		for (AbstractSchemaWire wire : wlist) {
 			for (SPair<Point> lin : wire.wireLines) {
 				if (coordinateWithinLine(x, y, lin)) {
+					System.out.println("Stisno si zicu! " + wire.getWireName());
 					wireToExtract = wire;
 					exitLoop = true;
 					break;
@@ -221,7 +241,18 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	private void selectWire(MouseEvent e) {
-		wireSelected = extractWireAt(e.getX(), e.getY());
+		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
+		int x = ad.realToVirtualRelativeX(e.getX());
+		int y = ad.realToVirtualRelativeY(e.getY());
+		wireSelected = extractWireAt(x, y);
+		if (wireSelected != null) {
+			drawingCanvas.setSelectedWireName(wireSelected.getWireName());
+			propbar.showNoProperties();
+		}
+	}
+	
+	private void createPopup() {
+		
 	}
 	
 	// methods called by events
@@ -233,7 +264,7 @@ public class SchemaMainFrame extends JFrame {
 			x = ad.realToVirtualRelativeX(x);
 			y = ad.realToVirtualRelativeY(y);
 			if (drawWireState == DRAW_WIRE_STATE_NOTHING) {
-				wireBeingDrawed = new SimpleSchemaWire(null);
+				wireBeingDrawed = new SimpleSchemaWire("Wire0");
 				drawWireState = DRAW_WIRE_STATE_DRAWING;
 				currentLine = new SPair<Point>();
 				currentLine.first = new Point(x, y);
@@ -307,10 +338,12 @@ public class SchemaMainFrame extends JFrame {
 			AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
 			if (comp != null) {
 				propbar.generatePropertiesAndSetAsSelected(comp);
-				drawingCanvas.setSelectedName(comp.getComponentInstanceName());
+				drawingCanvas.setSelectedCompName(comp.getComponentInstanceName());
+				wireSelected = null;
+				drawingCanvas.setSelectedWireName(null);
 			}
 			else {
-				drawingCanvas.setSelectedName(null);
+				drawingCanvas.setSelectedCompName(null);
 				selectWire(e);			
 			}
 			
@@ -379,8 +412,11 @@ public class SchemaMainFrame extends JFrame {
 		}
 		drawWireState = 0;
 		compbar.selectNone();
-		drawingCanvas.setSelectedName(null);
+		drawingCanvas.setSelectedCompName(null);
 		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		wireSelected = null;
+		drawingCanvas.setSelectedWireName(null);
+		createPopup();
 	}
 	
 	public void changeCursor(int type) {
@@ -396,6 +432,7 @@ public class SchemaMainFrame extends JFrame {
 		System.out.println("STISNUL SI: " + kev.getKeyChar());
 		if (kev.getKeyChar() == KeyEvent.VK_DELETE) {
 			deleteComponent();
+			deleteWire();
 		}
 	}
 	

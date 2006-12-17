@@ -52,6 +52,7 @@ public abstract class AbstractSchemaWire {
 	public HashSet<SPair<Point>> wireLines;
 	
 	private String wireName;
+	private int thickness;
 	public String getWireName() {
 		return wireName;
 	}
@@ -81,16 +82,21 @@ public abstract class AbstractSchemaWire {
 	
 	public AbstractSchemaWire(String wireName) {
 		super();
-		this.wireName = wireName;
+		try {
+			setWireName(wireName);
+		} catch (SchemaWireException e) {
+			e.printStackTrace();
+		}
 		connections = new HashSet<WireConnection>();
 		wireLines = new HashSet<SPair<Point>>();
+		thickness = 1;
 	}
 	
 	// ISCRTAVANJE
 	
 	public void draw(SchemaDrawingAdapter adapter) {
 		for (SPair<Point> par : wireLines) {
-			adapter.drawLine(par.first.x, par.first.y, par.second.x, par.second.y);
+			adapter.drawLine(par.first.x, par.first.y, par.second.x, par.second.y, thickness);
 		}
 		for (WireConnection conn : connections) {
 			// iscrtavanje mjesta connectiona
@@ -190,8 +196,15 @@ public abstract class AbstractSchemaWire {
 	protected abstract String serializeSpecific();
 	protected abstract boolean deserializeSpecific(String serial);
 	
-	// Ovo dalje je za upravljanje kolekcijama wireLines i connections
+	public int getThickness() {
+		return thickness;
+	}
+	public void setThickness(int thickness) {
+		this.thickness = thickness;
+	}
 	
+
+	// Ovo dalje je za upravljanje kolekcijama wireLines i connections	
 	
 	public boolean add_Connections(WireConnection arg0) {
 		return connections.add(arg0);
