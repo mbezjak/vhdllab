@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema.wires;
 
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.StringReader;
 import java.util.Collection;
@@ -25,6 +26,9 @@ public abstract class AbstractSchemaWire {
 	// Takoder, ono sto svaka zica ima jest niz parova tocaka od kojih se sastoji. Izmedu
 	// tih parova vuku se crte, te se na taj nacin zica iscrtava. Iz tog razloga je tu i
 	// jedan ArrayList parova koordinata.
+	//
+	// Ako se zica sastoji od vise dijelova, onda ona ima i cvorove - tockice kod kojih se
+	// zica grana.
 	//
 	// Konacno, buduci da svaki wire reprezentira jedan signal, nuzno je da wire ima i jedinstveno ime.
 	// Za to se brine dolje navedena static hashmapa, koja pamti dosad iskoristena imena.
@@ -50,6 +54,7 @@ public abstract class AbstractSchemaWire {
 	
 	public HashSet<WireConnection> connections;
 	public HashSet<SPair<Point>> wireLines;
+	public HashSet<Point> nodes;
 	
 	private String wireName;
 	private int thickness;
@@ -89,6 +94,7 @@ public abstract class AbstractSchemaWire {
 		}
 		connections = new HashSet<WireConnection>();
 		wireLines = new HashSet<SPair<Point>>();
+		nodes = new HashSet<Point>();
 		thickness = 1;
 	}
 	
@@ -100,6 +106,9 @@ public abstract class AbstractSchemaWire {
 		}
 		for (WireConnection conn : connections) {
 			// iscrtavanje mjesta connectiona
+		}
+		for (Point p : nodes) {
+			adapter.drawCursorPoint(p.x, p.y, Color.BLACK);
 		}
 	}
 	

@@ -47,4 +47,8 @@ public class SOptionBar extends JToolBar {
 	public boolean isDrawWireSelected() {
 		return drawWireButton.isSelected();
 	}
+	
+	public void selectDrawWire() {
+		drawWireButton.setSelected(true);
+	}
 }

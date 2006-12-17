@@ -17,14 +17,20 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.MenuItem;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 /**
@@ -40,6 +46,25 @@ public class SchemaMainFrame extends JFrame {
 	public static final int DRAW_WIRE_STATE_NOTHING = 0;
 	public static final int DRAW_WIRE_STATE_DRAWING = 1;
 	
+	class PopupListener extends MouseAdapter {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+		
+		private void maybeShowPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+    }
+	
 	private SComponentBar compbar;
 	private SOptionBar optionbar;
 	private SPropertyBar propbar;
@@ -52,6 +77,7 @@ public class SchemaMainFrame extends JFrame {
 	private SPair<Point> currentLine = null; 
 	private AbstractSchemaWire wireBeingDrawed = null;
 	private AbstractSchemaWire wireSelected = null;
+	private JPopupMenu popupMenu = null;
 
 	public SchemaMainFrame(String arg0) throws HeadlessException {
 		super(arg0);
@@ -87,6 +113,8 @@ public class SchemaMainFrame extends JFrame {
 		
 		this.add(canvaspanel, BorderLayout.CENTER);
 		this.add(optionpanel, BorderLayout.NORTH);
+		
+		popupMenu = new JPopupMenu("Menu");
 		
 		// tipke
 		this.addKeyListener(new KeyListener() {
@@ -251,13 +279,110 @@ public class SchemaMainFrame extends JFrame {
 		}
 	}
 	
-	private void createPopup() {
-		
+	private void selectComponent(MouseEvent e) {
+		AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
+		if (comp != null) {
+			propbar.generatePropertiesAndSetAsSelected(comp);
+			drawingCanvas.setSelectedCompName(comp.getComponentInstanceName());
+			wireSelected = null;
+			drawingCanvas.setSelectedWireName(null);
+		}
+		else {
+			drawingCanvas.setSelectedCompName(null);
+			selectWire(e);			
+		}
 	}
+	
+	public void startWireExpansion(int x, int y, String wireName) {
+		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
+		x = ad.realToVirtualRelativeX(x);
+		y = ad.realToVirtualRelativeY(y);
+		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
+		AbstractSchemaWire extwire = null;
+		for (AbstractSchemaWire wire : wlist) {
+			if (wire.getWireName().compareTo(wireName) == 0) {
+				extwire = wire;
+			}
+		}
+		if (extwire != null) {
+			wireBeingDrawed = extwire;
+			drawingCanvas.removeWire(extwire.getWireName());
+			wireBeingDrawed.nodes.add(new Point(x, y));
+			currentLine = new SPair<Point>();
+			currentLine.first = new Point(x, y);
+			optionbar.selectDrawWire();
+			drawWireState = DRAW_WIRE_STATE_DRAWING;
+		}
+	}
+	
+	private class DeleteComponentListener implements ActionListener {
+		public void actionPerformed(ActionEvent ae) {
+			deleteComponent();
+		}
+	}
+	
+	private class DeleteWireListener implements ActionListener {
+		public void actionPerformed(ActionEvent ae) {
+			deleteWire();
+		}
+	}
+	
+	private class ExpandWireListener implements ActionListener {
+		private int xp, yp;
+		private String wireName;
+		public ExpandWireListener(int x, int y, String wireInstanceName) {
+			xp = x;
+			yp = y;
+			wireName = wireInstanceName;
+		}
+		public void actionPerformed(ActionEvent ae) {
+			startWireExpansion(xp, yp, wireName);
+		}
+	}
+	
+	private void createPopup(MouseEvent e) {
+		deletePopup(e);
+		selectWire(e);
+		if (wireSelected != null) {
+			JMenuItem item = new JMenuItem("Expand wire");
+			item.addActionListener(new ExpandWireListener(e.getX(), e.getY(), wireSelected.getWireName()));
+			popupMenu.add(item);
+			
+			item = new JMenuItem("Delete");
+			item.addActionListener(new DeleteWireListener());
+			popupMenu.add(item);
+			
+			popupMenu.show(e.getComponent(), e.getX(), e.getY());
+		}
+		else {
+			selectComponent(e);
+			if (propbar.getSelectedComponentInstanceName() != null) {
+				JMenuItem item = new JMenuItem("Delete");
+				item.addActionListener(new DeleteComponentListener());
+				popupMenu.add(item);
+				
+				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+			else {
+				JMenuItem item = new JMenuItem("(none)");
+				popupMenu.add(item);
+				
+				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+	}
+	
+	private void deletePopup(MouseEvent e) {
+		if (popupMenu != null) {
+			popupMenu.removeAll();
+		}
+	}
+	
 	
 	// methods called by events
 	
 	public void handleLeftClickOnSchema(MouseEvent e) {
+		deletePopup(e);
 		if (optionbar.isDrawWireSelected()) {
 			SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 			int x = e.getX(), y = e.getY();
@@ -335,18 +460,7 @@ public class SchemaMainFrame extends JFrame {
 				e1.printStackTrace();
 			}
 		} else {
-			AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
-			if (comp != null) {
-				propbar.generatePropertiesAndSetAsSelected(comp);
-				drawingCanvas.setSelectedCompName(comp.getComponentInstanceName());
-				wireSelected = null;
-				drawingCanvas.setSelectedWireName(null);
-			}
-			else {
-				drawingCanvas.setSelectedCompName(null);
-				selectWire(e);			
-			}
-			
+			selectComponent(e);
 		}
 	}
 	
@@ -401,6 +515,7 @@ public class SchemaMainFrame extends JFrame {
 	}
 
 	public void handleRightClickOnSchema(MouseEvent e) {
+		boolean noPopup = false;
 		if (optionbar.isDrawWireSelected()) {
 			if (wireBeingDrawed != null && wireBeingDrawed.wireLines.size() > 0) {
 				drawingCanvas.addWire(wireBeingDrawed);
@@ -409,14 +524,16 @@ public class SchemaMainFrame extends JFrame {
 			wireBeingDrawed = null;
 			currentLine = null;
 			drawWireState = DRAW_WIRE_STATE_NOTHING;
+			noPopup = true;
 		}
 		drawWireState = 0;
 		compbar.selectNone();
 		drawingCanvas.setSelectedCompName(null);
+		propbar.showNoProperties();
 		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		wireSelected = null;
 		drawingCanvas.setSelectedWireName(null);
-		createPopup();
+		if (!noPopup) createPopup(e);
 	}
 	
 	public void changeCursor(int type) {

@@ -98,7 +98,7 @@ public class SchemaDrawingGrid extends JComponent {
 		//TODO za kasnije, treba upogonit Adapter da crta tockicu
 		//adapter.
 		
-		adapter.drawCursorPoint(gridX, gridY);
+		adapter.drawCursorPoint(gridX, gridY, null);
 	
 	}
 	

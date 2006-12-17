@@ -230,13 +230,14 @@ public class SchemaDrawingAdapter {
 	 * @param realX
 	 * @param realY
 	 */
-	public void drawCursorPoint(int realX,int realY){
+	public void drawCursorPoint(int realX,int realY, Color c) {
 		if(gph==null)return;
 		
 		Graphics2D graph=(Graphics2D) gph.getGraphics();
 		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		graph.setColor(colors.ADAPTER_CURSOR_POINT);
+		if (c == null) graph.setColor(colors.ADAPTER_CURSOR_POINT);
+		else graph.setColor(c);
 		
 		// NAPOMENA: stogod da napravis s ovih 6 - to je promjer tockice,
 		// pazi da stavis da se od koordinata oduzima pola promjera - da 

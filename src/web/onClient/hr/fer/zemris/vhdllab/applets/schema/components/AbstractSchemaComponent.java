@@ -260,7 +260,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		drawSpecific(adapter);
 		if (isDrawingPorts) for (AbstractSchemaPort port : portlist) {
 			Point p = port.getCoordinate();
-			adapter.drawCursorPoint(p.x, p.y);
+			adapter.drawCursorPoint(p.x, p.y, null);
 		}
 		if (isDrawingName) adapter.drawString((String) pComponentInstanceName.val, 0, 1);
 	}
