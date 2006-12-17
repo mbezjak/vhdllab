@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
+import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -226,28 +227,43 @@ import java.util.Map.Entry;
 			return view;
 		}
 		
-		public void saveUserFile(String type, String content) throws UniformAppletException {
+		public void savePreferences(String type, Preferences pref) throws UniformAppletException {
 			if(type == null) throw new NullPointerException("Type can not be null.");
-			if(content == null) throw new NullPointerException("Content can not be null.");
+			if(pref == null) throw new NullPointerException("Preferences can not be null.");
 			Long identifier = getIdentifierForUserFile(type);
 			if(identifier == null) {
-				getUserFile(type);
+				getPreferences(type);
 				identifier = getIdentifierForUserFile(type);
 			}
-			invoker.saveUserFile(identifier, content);
+			invoker.saveUserFile(identifier, pref.serialize());
 		}
 		
-		public String getUserFile(String type) throws UniformAppletException {
+		public Preferences getPreferences(String type) throws UniformAppletException {
 			List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
 			
 			for(Long id : userFiles) {
 				String userFileType = invoker.loadUserFileType(id);
 				if(type.equals(userFileType)) {
 					cacheUserFileItem(userFileType, id);
-					return invoker.loadUserFileContent(id);
+					String data = invoker.loadUserFileContent(id);
+					return Preferences.deserialize(data);
 				}
 			}
 			throw new UniformAppletException("No such user file.");
+		}
+		
+		public List<Preferences> getAllPreferences() throws UniformAppletException {
+			List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
+			List<Preferences> preferances = new ArrayList<Preferences>();
+			
+			for(Long id : userFiles) {
+				String userFileType = invoker.loadUserFileType(id);
+				cacheUserFileItem(userFileType, id);
+				String data = invoker.loadUserFileContent(id);
+				Preferences p = Preferences.deserialize(data);
+				preferances.add(p);
+			}
+			return preferances;
 		}
 		
 		private List<String> loadType(String file) {

@@ -117,18 +117,13 @@ public class MainApplet
 		//**********************
 		
 		cache = new Cache(invoker, userId);
-		String language = null;
 		try {
-			String data = cache.getUserFile(FileTypes.FT_COMMON);
-			Preferences preferences = Preferences.deserialize(data);
-			SingleOption option = preferences.getOption(UserFileConstants.COMMON_LANGUAGE);
-			language = option.getChosenValue();
+			bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (UniformAppletException e) {
 			statusBar.setText(bundle.getString(LanguageConstants.STATUSBAR_LANGUAGE_SETTING_NOT_FOUND));
-			language = "en";
+			bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN, "en");
 		}
-		bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN,
-				language, null);
+		if(bundle == null) return;
 		
 		initGUI();
 		this.addComponentListener(new ComponentListener() {
@@ -783,13 +778,25 @@ public class MainApplet
 		return cache.getCircuitInterfaceFor(projectName, fileName);
 	}
 
-	public String getUserFile(String type) throws UniformAppletException {
-		// TODO getUserFile() metoda u ProjectContaineru treba bit getPreferences i treba vratit Preferences objekt!
-		return cache.getUserFile(type);
+	public Preferences getPreferences(String type) throws UniformAppletException {
+		return cache.getPreferences(type);
 	}
 
-	public ResourceBundle getResourceBundle() {
-		// TODO treba se jos vidjet sto s tim
+	public ResourceBundle getResourceBundle(String baseName) throws UniformAppletException {
+		SingleOption option;
+		Preferences preferences = cache.getPreferences(FileTypes.FT_COMMON);
+		option = preferences.getOption(UserFileConstants.COMMON_LANGUAGE);
+		String language = null;
+		if(option != null) {
+			language = option.getChosenValue(); 
+		}
+		option = preferences.getOption(UserFileConstants.COMMON_COUNTRY);
+		String country = null;
+		if(option != null) {
+			country = option.getChosenValue(); 
+		}
+		
+		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName, language, country);
 		return bundle;
 	}
 	
@@ -945,24 +952,21 @@ public class MainApplet
 	}
 	
 	private void setPaneSize() {
-		// TODO to treba bit u FT_APPLET file typu a ne u common
-		// TODO getUserFile() metoda u ProjectContaineru treba bit getPreferences i treba vratit Preferences objekt!
 		try {
-			String data = cache.getUserFile(FileTypes.FT_COMMON);
-			Preferences preferences = Preferences.deserialize(data);
+			Preferences preferences = cache.getPreferences(FileTypes.FT_APPLET);
 			validate();
 			SingleOption o;
 			double size;
 			
-			o = preferences.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
+			o = preferences.getOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH);
 			size = Double.parseDouble(o.getChosenValue());
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
 			
-			o = preferences.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
+			o = preferences.getOption(UserFileConstants.APPLET_SIDEBAR_WIDTH);
 			size = Double.parseDouble(o.getChosenValue());
 			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
 			
-			o = preferences.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
+			o = preferences.getOption(UserFileConstants.APPLET_VIEW_HEIGHT);
 			size = Double.parseDouble(o.getChosenValue());
 			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
 		} catch (UniformAppletException e) {
@@ -974,23 +978,22 @@ public class MainApplet
 	
 	private void storePaneSize() {
 		try {
-			String type = FileTypes.FT_COMMON;
-			String data = cache.getUserFile(type);
-			Preferences preferences = Preferences.deserialize(data);
+			String type = FileTypes.FT_APPLET;
+			Preferences preferences = cache.getPreferences(type);
 			
-			SingleOption o = preferences.getOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH);
+			SingleOption o = preferences.getOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH);
 			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth(); 
 			o.setChosenValue(String.valueOf(size));
 			
-			o = preferences.getOption(UserFileConstants.COMMON_SIDEBAR_WIDTH);
+			o = preferences.getOption(UserFileConstants.APPLET_SIDEBAR_WIDTH);
 			size = sideBarSplitPane.getDividerLocation() * 1.0 / sideBarSplitPane.getWidth(); 
 			o.setChosenValue(String.valueOf(size));
 
-			o = preferences.getOption(UserFileConstants.COMMON_VIEW_HEIGHT);
+			o = preferences.getOption(UserFileConstants.APPLET_VIEW_HEIGHT);
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
 			o.setChosenValue(String.valueOf(size));
 			
-			cache.saveUserFile(type, preferences.serialize());
+			cache.savePreferences(type, preferences);
 		} catch (UniformAppletException e) {}
 	}
 	
@@ -1150,14 +1153,17 @@ public class MainApplet
 				values.add("hr");
 				SingleOption o = new SingleOption(UserFileConstants.COMMON_LANGUAGE, "Language", "String", values, "en", "en");
 				preferences.setOption(o);
+				invoker.saveUserFile(fileId, preferences.serialize());
 				
-				o = new SingleOption(UserFileConstants.COMMON_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
+				preferences = new Preferences();
+				fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_APPLET);
+				o = new SingleOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
 				preferences.setOption(o);
 				
-				o = new SingleOption(UserFileConstants.COMMON_SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
+				o = new SingleOption(UserFileConstants.APPLET_SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
 				preferences.setOption(o);
 
-				o = new SingleOption(UserFileConstants.COMMON_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
+				o = new SingleOption(UserFileConstants.APPLET_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
 				preferences.setOption(o);
 				
 				invoker.saveUserFile(fileId, preferences.serialize());
@@ -1232,10 +1238,17 @@ public class MainApplet
 					cache.createFile(projectName1, fileName3, fileType3);
 					cache.saveFile(projectName1, fileName3, fileContent3);
 				}
+				
+				Preferences pref = getPreferences(FileTypes.FT_COMMON);
+				// TODO mozda bi mogo defaultValue bit null.
+				// TODO jos neznam sto ce bit s descriptionom
+				SingleOption o = new SingleOption(UserFileConstants.COMMON_ACTIVE_PROJECT, "Active project", "String", null, "", "Project1");
+				pref.setOption(o);
+				cache.savePreferences(FileTypes.FT_COMMON, pref);
 
 				long end = System.currentTimeMillis();
 				
-				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n"+cache.getUserFile(FileTypes.FT_COMMON);
+				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n"+cache.getPreferences(FileTypes.FT_COMMON).serialize();
 				cache.saveFile(projectName1, fileName1, infoData);
 
 				openEditor(projectName1, fileName1, true, false);
