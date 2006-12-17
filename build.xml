@@ -378,7 +378,7 @@
   	<condition property="">
   	  <isset property="${env.CATALINA_HOME}"/>
   	</condition>
-    <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.exec}"
+    <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat5.exec}"
     	spawn="true">
     </exec>
   </target>

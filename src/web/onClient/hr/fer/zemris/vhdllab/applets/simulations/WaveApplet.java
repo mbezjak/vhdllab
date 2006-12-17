@@ -833,7 +833,7 @@ public class WaveApplet extends JPanel
         public void actionPerformed(ActionEvent event) 
         {
             /* ako je veci od 214748364 prekoracio bi max int */ 
-            if (scale.getMaximumDurationInPixels() >= 214748364)
+            if (scale.getScaleEndPointInPixels() >= 214748364)
             {
                 return;
             }
@@ -868,7 +868,7 @@ public class WaveApplet extends JPanel
         public void actionPerformed(ActionEvent event) 
         {
             /** Ako je veci od 1073741824, prekoracio bi max int */
-            if (scale.getMaximumDurationInPixels() >= 1073741824)
+            if (scale.getScaleEndPointInPixels() >= 1073741824)
             {
                 return;
             }
