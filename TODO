@@ -12,7 +12,7 @@ TODO 03) [OPEN]   VcdParser treba implementirati ISimulationParser (15.)
 TODO 04) [OPEN]   CompilationResults treba implementirati ICompilationParser (15.)
 TODO 05) [OPEN]   Maknuti IWizard i IEditor iz CompilationErrors i Miro treba stvoriti (15.) neko novo sucelje za taj panel
 TODO 06) [OPEN]   Iskoristiti klase SimulationResult i CompilationResults (15.) (tu je dilema...)
-TODO 07) [OPEN]   Maknuti iritantni pomak scrolla ako su kursori u vidljivom polju (16.)
+TODO 07) [CLOSED]   Maknuti iritantni pomak scrolla ako su kursori u vidljivom polju (16.)
 TODO 08) [OPEN]   Popraviti verticalScroll u WaveAppletu (16.)
 TODO 09) [OPEN]   Vidjeti o kakvom se bugu radi s popupom biranja boja (16.)
 TODO 10) [OPEN]   Napraviti project viewer za glavni applet (neka bude 20.)

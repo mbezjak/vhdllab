@@ -13,17 +13,17 @@ import javax.swing.JPanel;
  */
 class CursorPanel extends JPanel
 {
-    /* Aktivan je prvi kursor */
+     /* Aktivan je prvi kursor */
     private final byte FIRST = 1;
 
     /** Zavrsna tocka panela  */
     private int panelEndPoint;
      
     /** Pocetna tocka prvog kursora u pikselima */
-    private int firstCursorStartPoint = 100;
+    private int firstCursorStartPoint;
 
     /** Pocetna tocka drugog kursora u pikselima */
-    private int secondCursorStartPoint = 200;
+    private int secondCursorStartPoint;
 
     /** Offset horizntalnog scrollbara */
     private int offset;
@@ -39,6 +39,18 @@ class CursorPanel extends JPanel
     
     /** Vrijednost drugog kursora */
     private double secondValue;
+
+	/** 
+	 * Indeks prvog kursora nakon sto se pozicionira na tja kursor, 
+	 * tj. indeks vrijednosti 
+	 */
+	private int firstValueIndex;
+
+	/**
+	 * Indeks drugog kursora nakon sto se pozicionira na taj kursor, 
+	 * tj. indeks vrijednosti
+	 */
+	private int secondValueIndex;
 
     /** Mjerna jedinica */
     private String measureUnitName;
@@ -75,19 +87,22 @@ class CursorPanel extends JPanel
 	 * @param measureUnitName jedinica
 	 */
 	public void setContent(int panelEndPoint, int offset, double firstValue, 
-			double secondValue, String measureUnitName)
+			double secondValue, int firstCursorStartPoint, 
+			int secondCursorStartPoint, String measureUnitName)
 	{
 		this.panelEndPoint = panelEndPoint;
         this.offset = offset;
 		this.firstValue = firstValue;
 		this.secondValue = secondValue;
+		this.firstCursorStartPoint = firstCursorStartPoint;
+		this.secondCursorStartPoint = secondCursorStartPoint;
         this.measureUnitName = measureUnitName;
 		firstString = firstValue + this.measureUnitName;
         secondString = secondValue + this.measureUnitName;
 	}
 
 
-    /**
+	/**
      * Vraca preferiranu velicinu
      */
     public Dimension getPreferredSize ()
@@ -219,6 +234,38 @@ class CursorPanel extends JPanel
     }
 
 
+	/**
+	 * Postavlja valueIndex prvog kursora
+	 */
+	public void setFirstCursorIndex(int valueIndex) {
+		this.firstValueIndex = valueIndex;
+	}
+
+
+	/**
+	 * Postavlja valueIndex drugog kursora
+	 */
+	public void setSecondCursorIndex(int valueIndex) {
+		this.secondValueIndex = valueIndex;
+	}
+
+
+	/** 
+	 * Vraca valueIndex prvog kursora
+	 */
+	public int getFirstCursorIndex() {
+		return firstValueIndex;
+	}
+
+
+	/**
+	 * Vraca valueIndex drugog kursora
+	 */
+	public int getSecondCursorIndex() {
+		return secondValueIndex;
+	}
+
+
     /**
      * Postavlja novi aktivni kursor
      *
@@ -263,5 +310,4 @@ class CursorPanel extends JPanel
             g.fillRect(secondCursorStartPoint - offset - 4, 21, 9, 9);
         }
     }
-}
-
+} 

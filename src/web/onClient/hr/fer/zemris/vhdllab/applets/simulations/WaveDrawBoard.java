@@ -60,10 +60,10 @@ class WaveDrawBoard extends JPanel
     private int index = -1;
 
     /** Pocetna tocka prvog kursora u pikselima */
-    private int firstCursorStartPoint = 100;
+    private int firstCursorStartPoint;
 
     /** Pocetna tocka drugog kursora u pikselima */
-    private int secondCursorStartPoint = 200;
+    private int secondCursorStartPoint;
 
     /** Aktivni kursor */
     private byte activeCursor = 1;
@@ -103,11 +103,13 @@ class WaveDrawBoard extends JPanel
 	 * @param resultsrezultati koje je parsirao GhdlResults
 	 * @param scale rezultati dobiveni od skale
 	 */
-	public void setContent(GhdlResults results, Scale scale)
+	public void setContent(GhdlResults results, Scale scale, 
+			int firstCursorStartPoint, int secondCursorStartPoint)
 	{
 		this.results = results;
         this.signalValues = results.getSignalValues();
-
+		this.firstCursorStartPoint = firstCursorStartPoint;
+		this.secondCursorStartPoint = secondCursorStartPoint;
         /* skala proracunava sve parametre i panel koristi gotove parametre */
         this.durationsInPixels = scale.getDurationInPixels();
         this.waveEndPointInPixels = scale.getScaleEndPointInPixels();
@@ -388,16 +390,20 @@ class WaveDrawBoard extends JPanel
         if (activeCursor == (byte)1)
         {
             g.setColor(themeColor.getActiveCursor());
-            g.drawLine(firstCursorStartPoint - offsetXAxis, 0, firstCursorStartPoint - offsetXAxis, this.getHeight());
+            g.drawLine(firstCursorStartPoint - offsetXAxis, 0, 
+					firstCursorStartPoint - offsetXAxis, this.getHeight());
             g.setColor(themeColor.getPasiveCursor());
-            g.drawLine(secondCursorStartPoint - offsetXAxis, 0, secondCursorStartPoint - offsetXAxis, this.getHeight());
+            g.drawLine(secondCursorStartPoint - offsetXAxis, 0, 
+					secondCursorStartPoint - offsetXAxis, this.getHeight());
         }
         else
         {
             g.setColor(themeColor.getActiveCursor());
-            g.drawLine(secondCursorStartPoint - offsetXAxis, 0, secondCursorStartPoint - offsetXAxis, this.getHeight());
+            g.drawLine(secondCursorStartPoint - offsetXAxis, 0, 
+					secondCursorStartPoint - offsetXAxis, this.getHeight());
             g.setColor(themeColor.getPasiveCursor());
-            g.drawLine(firstCursorStartPoint - offsetXAxis, 0, firstCursorStartPoint - offsetXAxis, this.getHeight());
+            g.drawLine(firstCursorStartPoint - offsetXAxis, 0, 
+					firstCursorStartPoint - offsetXAxis, this.getHeight());
         }
 
         /* crtanje valova */
@@ -407,7 +413,8 @@ class WaveDrawBoard extends JPanel
 		for (String[] array : signalValues)
 		{
 			waveForm =  new WaveForm(array, durationsInPixels, shapes);
-			waveForm.drawWave(g, this.getWidth(), yAxis, offsetXAxis, durationsInPixels, waveEndPointInPixels);
+			waveForm.drawWave(g, this.getWidth(), yAxis, offsetXAxis, 
+					durationsInPixels, waveEndPointInPixels);
 			yAxis += waveSpringSize;
             
 		}
