@@ -50,7 +50,7 @@ Aleksandar Prokopec
 --------------------------------------------
 TODO 51) [CLOSED]   Serijalizacija sklopova - bit ce gotovo danas
 TODO 52) [CLOSED]   Klasa za zice, sklopove itd. na razini projekta - danas
-//TODO 53) [OPEN]   !BITNO! Pretvorba projekta u nas interni format - Rajakovic je reko da ce ovo napravit
+// TODO 53) [OPEN]   !BITNO! Pretvorba projekta u nas interni format - Rajakovic je reko da ce ovo napravit
 TODO 54) [OPEN]   !BITNO! Pretvorba u VHDL kod - hm...
 TODO 55) [CLOSED]   User Interface za dovlacenje sklopova.... - ucinjeno
 TODO 56) [CLOSED]		Iscrtavanje i povlacenje zica?
@@ -60,7 +60,8 @@ TODO 59) [OPEN]   Napraviti posebni izbornik za odabir klase sklopova - to je do
 TODO 60) [OPEN]   !BITNO! Dovrsiti serijalizaciju kod nekoliko sklopova kod kojih to jos nije dovrseno
 TODO 61) [OPEN]   !BITNO! Promijenit SchemaMainFrame tako da nasljeduje Mirin panel, a ne JFrame
 TODO 62) [CLOSED]   !BITNO! Omoguciti odabir zica, te njihovo brisanje i sirenje...
-TODO 63) [OPEN]   !BITNO! Pomicanje komponenti...
+TODO 63) [OPEN]   Pomicanje komponenti...
+TODO 64) [OPEN]   Automatsko trazenje puta za zice..
 
 Miro Bezjak
 --------------------------------------------

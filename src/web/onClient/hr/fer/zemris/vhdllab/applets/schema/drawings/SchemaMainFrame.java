@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SPair;
+import hr.fer.zemris.vhdllab.applets.schema.wires.SchemaWireException;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire.WireConnection;
 
@@ -26,12 +27,16 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  * Ovaj enkapsulira kompletni UI, ukljucujuci i canvas.
@@ -78,6 +83,9 @@ public class SchemaMainFrame extends JFrame {
 	private AbstractSchemaWire wireBeingDrawed = null;
 	private AbstractSchemaWire wireSelected = null;
 	private JPopupMenu popupMenu = null;
+	private JPopupMenu renameWireMenu = null;
+	private JTextField rwmTextField = null;
+	private boolean turnState = false;
 
 	public SchemaMainFrame(String arg0) throws HeadlessException {
 		super(arg0);
@@ -115,6 +123,7 @@ public class SchemaMainFrame extends JFrame {
 		this.add(optionpanel, BorderLayout.NORTH);
 		
 		popupMenu = new JPopupMenu("Menu");
+		renameWireMenu = new JPopupMenu("Rename...");
 		
 		// tipke
 		this.addKeyListener(new KeyListener() {
@@ -180,6 +189,20 @@ public class SchemaMainFrame extends JFrame {
 		}
 		
 		// pretrazi sve zice i makni im konekcije na ovu komponentu
+		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
+		for (AbstractSchemaWire wire : wlist) {
+			HashSet<WireConnection> subset = new HashSet<WireConnection>();
+			for (WireConnection conn : wire.connections) {
+				if (conn.componentInstanceName.compareTo(toBeRemoved) == 0) {
+					subset.add(conn);
+				}
+			}
+			wire.connections.removeAll(subset);
+//			System.out.print(wire.getWireName() + " - ");
+//			for (WireConnection conn : wire.connections) {
+//				System.out.println("(" + conn.componentInstanceName + ", " + conn.portIndex + ") ");
+//			}
+		}
 	}
 	
 	private void deleteWire() {
@@ -229,6 +252,19 @@ public class SchemaMainFrame extends JFrame {
 			}
 		}
 		return false;
+	}
+	
+	private boolean checkIfPointIsWireEnd(AbstractSchemaWire wire, int x, int y) {
+		Point expand = new Point(x, y);
+		boolean found = false;
+		for (SPair<Point> lin : wire.wireLines) {
+			System.out.println("Hej dzo!" + x + " " + y + " " + lin.first.x + " " + lin.first.y + " " + lin.second.x + " " + lin.second.y);
+			if (lin.first.equals(expand) || lin.second.equals(expand)) {
+				if (found) return false;
+				found = true;
+			}
+		}
+		return found;
 	}
 	
 	private boolean almostEqual(int a, int b) {
@@ -307,12 +343,74 @@ public class SchemaMainFrame extends JFrame {
 		if (extwire != null) {
 			wireBeingDrawed = extwire;
 			drawingCanvas.removeWire(extwire.getWireName());
-			wireBeingDrawed.nodes.add(new Point(x, y));
+			if (!checkIfPointIsWireEnd(extwire, x, y)) wireBeingDrawed.nodes.add(new Point(x, y));
 			currentLine = new SPair<Point>();
 			currentLine.first = new Point(x, y);
 			optionbar.selectDrawWire();
 			drawWireState = DRAW_WIRE_STATE_DRAWING;
 		}
+	}
+	
+	private void renameWire(String oldName, String newName) {
+		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
+		AbstractSchemaWire wire = null;
+		for (int i = 0; i < wlist.size(); i++) {
+			if (wlist.get(i).getWireName().compareTo(oldName) == 0) {
+				wire = wlist.get(i);
+				break;
+			}
+		}
+		if (wire != null) {
+			try {
+				wire.setWireName(newName);
+				//System.out.println("Hej boj!" + newName + " " + oldName);
+			} catch (SchemaWireException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private class ActionedWireRenamer implements ActionListener {
+		private String oldName;
+		private JTextField tf;
+		public ActionedWireRenamer(String wireName, JTextField tfield) {
+			oldName = wireName;
+			tf = tfield;
+		}
+		public void actionPerformed(ActionEvent ae) {
+			// preimenuj zicu
+			renameWire(oldName, tf.getText());
+		}
+	}
+	
+	private class KeyedWireRenamer implements KeyListener {
+		private String wname;
+		public KeyedWireRenamer(String wireName) {
+			wname = wireName;
+		}
+		public void keyTyped(KeyEvent arg0) {
+			if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
+				renameWire(wname, rwmTextField.getText());
+			}
+		}
+		public void keyPressed(KeyEvent arg0) {
+		}
+		public void keyReleased(KeyEvent arg0) {
+		}
+	}
+	
+	public void createRenameWirePopup(String wireName, int xp, int yp) {
+		renameWireMenu.removeAll();
+		
+		rwmTextField = new JTextField(wireName);
+		rwmTextField.addKeyListener(new KeyedWireRenamer(wireName));
+		renameWireMenu.add(rwmTextField);
+		
+		JButton butt = new JButton("Rename");
+		butt.addActionListener(new ActionedWireRenamer(wireName, rwmTextField));
+		renameWireMenu.add(butt);
+		
+		renameWireMenu.show(drawingCanvas, xp, yp);
 	}
 	
 	private class DeleteComponentListener implements ActionListener {
@@ -324,6 +422,19 @@ public class SchemaMainFrame extends JFrame {
 	private class DeleteWireListener implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
 			deleteWire();
+		}
+	}
+	
+	private class RenameWireListener implements ActionListener {
+		private String oldName;
+		private int xp, yp;
+		public RenameWireListener(String wireName, int x, int y) {
+			oldName = wireName;
+			xp = x;
+			yp = y;
+		}
+		public void actionPerformed(ActionEvent ae) {
+			createRenameWirePopup(oldName, xp, yp);
 		}
 	}
 	
@@ -344,7 +455,11 @@ public class SchemaMainFrame extends JFrame {
 		deletePopup(e);
 		selectWire(e);
 		if (wireSelected != null) {
-			JMenuItem item = new JMenuItem("Expand wire");
+			JMenuItem item = new JMenuItem("Rename...");
+			item.addActionListener(new RenameWireListener(wireSelected.getWireName(), e.getX(), e.getY()));
+			popupMenu.add(item);
+			
+			item = new JMenuItem("Expand");
 			item.addActionListener(new ExpandWireListener(e.getX(), e.getY(), wireSelected.getWireName()));
 			popupMenu.add(item);
 			
@@ -433,12 +548,21 @@ public class SchemaMainFrame extends JFrame {
 				currentLine.second = new Point(x, y);
 				SPair<Point> t = new SPair<Point>();
 				SPair<Point> s = new SPair<Point>();
-				t.first = new Point(currentLine.first);
-				t.second = new Point(currentLine.first.x, currentLine.second.y);
-				s.first = new Point(currentLine.first.x, currentLine.second.y);
-				s.second = new Point(currentLine.second);
-				wireBeingDrawed.wireLines.add(t);
-				wireBeingDrawed.wireLines.add(s);
+				if (turnState) {
+					t.first = new Point(currentLine.first);
+					t.second = new Point(currentLine.first.x, currentLine.second.y);
+					s.first = new Point(currentLine.first.x, currentLine.second.y);
+					s.second = new Point(currentLine.second);
+					turnState = false;
+				} else {
+					t.first = new Point(currentLine.first);
+					t.second = new Point(currentLine.second.x, currentLine.first.y);
+					s.first = new Point(currentLine.second.x, currentLine.first.y);
+					s.second = new Point(currentLine.second);
+					turnState = true;
+				}
+				if (!t.first.equals(t.second)) wireBeingDrawed.wireLines.add(t);
+				if (!s.first.equals(s.second)) wireBeingDrawed.wireLines.add(s);
 				currentLine.first = currentLine.second;
 				if (over) handleRightClickOnSchema(e);
 			}
