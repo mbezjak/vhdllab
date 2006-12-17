@@ -51,6 +51,7 @@ public class SchemaMainFrame extends JFrame {
 	private int drawWireState = DRAW_WIRE_STATE_NOTHING;
 	private SPair<Point> currentLine = null; 
 	private AbstractSchemaWire wireBeingDrawed = null;
+	private AbstractSchemaWire wireSelected = null;
 
 	public SchemaMainFrame(String arg0) throws HeadlessException {
 		super(arg0);
@@ -137,7 +138,8 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	private boolean evaluateIfWireCanBeDrawn() {
-		// jos se tu moze nesto dodati
+		// ovdje ide provjera da li zica ide preko neke komponente, itd.
+		// ukoliko je to potrebno
 		return true;
 	}
 	
@@ -174,7 +176,53 @@ public class SchemaMainFrame extends JFrame {
 		return minPort;
 	}
 	
+	private boolean checkIfThisPortIsAlreadyOccupied(String s, Integer portInd) {
+		// ovo se moze rijesiti i pracenjem svih connectiona svih zica, ali buduci da ne
+		// ocekujemo jako velik broj zica, zasad moze i ovako
+		if (wireBeingDrawed != null) {
+			for (WireConnection conn : wireBeingDrawed.connections) {
+				if (conn.componentInstanceName.compareTo(s) == 0 && conn.portIndex == portInd)
+					return true;
+			}
+		}
+		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
+		for (AbstractSchemaWire wire : wlist) {
+			for (WireConnection conn : wire.connections) {
+				if (conn.componentInstanceName.compareTo(s) == 0 && conn.portIndex == portInd)
+					return true;
+			}
+		}
+		return false;
+	}
 	
+	private boolean coordinateWithinLine(int x, int y, SPair<Point> line) {
+		if ((x == line.first.x && x == line.second.x && ((y > line.first.y && y < line.second.y) || (y < line.first.y && y > line.second.y)))
+				|| (y == line.first.y && y == line.second.y && 
+						((x > line.first.x && x < line.second.x) || (x < line.first.x && x > line.second.x))))
+						return true;
+		return false;
+	}
+	
+	private AbstractSchemaWire extractWireAt(int x, int y) {
+		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
+		AbstractSchemaWire wireToExtract = null;
+		boolean exitLoop = false;
+		for (AbstractSchemaWire wire : wlist) {
+			for (SPair<Point> lin : wire.wireLines) {
+				if (coordinateWithinLine(x, y, lin)) {
+					wireToExtract = wire;
+					exitLoop = true;
+					break;
+				}
+			}
+			if (exitLoop) break;
+		}
+		return wireToExtract;
+	}
+	
+	private void selectWire(MouseEvent e) {
+		wireSelected = extractWireAt(e.getX(), e.getY());
+	}
 	
 	// methods called by events
 	
@@ -196,10 +244,14 @@ public class SchemaMainFrame extends JFrame {
 					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
 					if (portIndex != null) {
 						System.out.println("Hej nasel sam ga!");
-						WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
-						wireBeingDrawed.connections.add(conn);
-						currentLine.first.x = ad.realToVirtualRelativeX(env.getPosition().x) + env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
-						currentLine.first.y = ad.realToVirtualRelativeX(env.getPosition().y) + env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
+						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
+							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
+							wireBeingDrawed.connections.add(conn);
+							currentLine.first.x = ad.realToVirtualRelativeX(env.getPosition().x) + 
+								env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
+							currentLine.first.y = ad.realToVirtualRelativeX(env.getPosition().y) + 
+								env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
+						}
 					}
 				}
 				return;
@@ -212,11 +264,13 @@ public class SchemaMainFrame extends JFrame {
 					System.out.println("Opet");
 					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
 					if (portIndex != null) {
-						WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
-						wireBeingDrawed.connections.add(conn);
-						x = ad.realToVirtualRelativeX(env.getPosition().x) + env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
-						y = ad.realToVirtualRelativeX(env.getPosition().y) + env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
-						over = true;
+						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
+							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
+							wireBeingDrawed.connections.add(conn);
+							x = ad.realToVirtualRelativeX(env.getPosition().x) + env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
+							y = ad.realToVirtualRelativeX(env.getPosition().y) + env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
+							over = true;
+						}
 					}
 				}
 				
@@ -235,22 +289,31 @@ public class SchemaMainFrame extends JFrame {
 			return;
 		}
 		String selectedInstStr = compbar.getSelectedComponentName();
-		if (selectedInstStr == null) {
-			AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
-			if (comp != null) propbar.generatePropertiesAndSetAsSelected(comp);
-			else return;
-			drawingCanvas.setSelectedName(comp.getComponentInstanceName());
-		} else {
+		if (selectedInstStr != null) {
 			if (!evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e.getY())) return;
+			SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 			try {
 				AbstractSchemaComponent compi = ComponentFactory.getSchemaComponent(selectedInstStr);
-				drawingCanvas.addComponent(compi, e.getPoint());
+				drawingCanvas.addComponent(compi, 
+						new Point(ad.virtualToRealRelativeX(ad.realToVirtual(e.getX())),
+								ad.virtualToRealRelativeY(ad.realToVirtual(e.getY()))) );
 				propbar.generatePropertiesAndSetAsSelected(compi);
 			} catch (ComponentFactoryException e1) {
 				System.out.println("Nemoguce izgenerirati novu komponentu - " +
 						"ComponentFactory ne prepoznaje ime." + selectedInstStr);
 				e1.printStackTrace();
 			}
+		} else {
+			AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
+			if (comp != null) {
+				propbar.generatePropertiesAndSetAsSelected(comp);
+				drawingCanvas.setSelectedName(comp.getComponentInstanceName());
+			}
+			else {
+				drawingCanvas.setSelectedName(null);
+				selectWire(e);			
+			}
+			
 		}
 	}
 	
@@ -278,6 +341,12 @@ public class SchemaMainFrame extends JFrame {
 						currentLine.second.y,
 						evaluateIfWireCanBeDrawn());
 			}
+			// uokviri sklop iznad kojeg je kursor
+			SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
+			if (env != null)
+				drawingCanvas.addRectToStack(env.getPosition().x, env.getPosition().y, 
+						env.getComponent().getComponentWidth(),
+						env.getComponent().getComponentHeight(), true);
 			return;
 		}
 		String selectedStr = compbar.getSelectedComponentName();

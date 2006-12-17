@@ -93,7 +93,7 @@ public abstract class AbstractSchemaWire {
 			adapter.drawLine(par.first.x, par.first.y, par.second.x, par.second.y);
 		}
 		for (WireConnection conn : connections) {
-			// nesto s portovima
+			// iscrtavanje mjesta connectiona
 		}
 	}
 	
