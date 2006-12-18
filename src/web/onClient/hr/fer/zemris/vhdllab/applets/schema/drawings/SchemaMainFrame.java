@@ -28,7 +28,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -181,6 +180,11 @@ public class SchemaMainFrame extends JFrame {
 		// ovdje ide provjera da li zica ide preko neke komponente, itd.
 		// ukoliko je to potrebno
 		return true;
+	}
+	
+	public void recreateComponentBar(ArrayList<String> cmplist) {
+		if (cmplist == null) compbar.remanufactureAllComponents();
+		else compbar.remanufactureComponents(cmplist);
 	}
 	
 	private void deleteComponent() {
@@ -795,7 +799,7 @@ public class SchemaMainFrame extends JFrame {
 					if (conn.portIndex >= comp.getNumberOfPorts()) subset.add(conn);
 					else {
 						Point pch = comp.getSchemaPort(conn.portIndex).getCoordinate();
-						if (conn.portCoord != pch) {
+						if (!conn.portCoord.equals(pch)) {
 							subset.add(conn);
 //							SPair<Point> lin = new SPair<Point>();
 //							lin.first = new Point(pcomp.x + conn.portCoord.x, pcomp.y + conn.portCoord.y);

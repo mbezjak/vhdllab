@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -74,7 +75,7 @@ public class SComponentBar extends JToolBar {
 		parent = mframe;
 		
 		initComponents();
-		remanufactureComponents();
+		remanufactureAllComponents();
 	}
 	
 	public void initComponents() {
@@ -85,7 +86,37 @@ public class SComponentBar extends JToolBar {
 		new Sklop_MUX2nNA1("Mux2n_na_1");
 	}
 	
-	public void remanufactureComponents() {
+	public void remanufactureComponents(ArrayList<String> cmplist) {
+		this.removeAll();
+		
+		cpanel = new JPanel();
+		cpanel.setLayout(new BoxLayout(cpanel, BoxLayout.X_AXIS));
+		
+		noneButt = new SCBToggleButton("(none)", this);
+		noneButt.setIcon(new SComponentBarIcon("(none)"));
+
+		group = new ButtonGroup();
+		group.add(noneButt);
+		cpanel.add(noneButt);
+		
+		for (String cmpName : cmplist) {
+			SCBToggleButton button = new SCBToggleButton(cmpName, this);
+			if (isDrawingIcons) {
+				button.setIcon(new SComponentBarIcon(cmpName));
+			}
+			group.add(button);
+			cpanel.add(button);
+		}
+		noneButt.setSelected(true);
+		
+		scrpan = new JScrollPane(cpanel);
+		scrpan.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		
+		this.add(scrpan);
+		this.validate();
+	}
+	
+	public void remanufactureAllComponents() {
 		this.removeAll();
 		
 		cpanel = new JPanel();
