@@ -41,7 +41,7 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Project> findByUser(String userID) throws DAOException {
-		String query = "from Project as p where p.ownerID = :userID";
+		String query = "from Project as p where p.ownerId = :userID";
 		String param = "userID";
 		return (List<Project>)getHibernateTemplate().findByNamedParam(query, param, userID);
 	}

@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.AbstractComponentProperty;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 
 import java.awt.Component;
 import java.awt.Dimension;

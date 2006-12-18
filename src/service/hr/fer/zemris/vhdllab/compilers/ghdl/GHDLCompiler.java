@@ -1,5 +1,11 @@
 package hr.fer.zemris.vhdllab.compilers.ghdl;
 
+import hr.fer.zemris.vhdllab.compilers.ICompiler;
+import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
+import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -11,12 +17,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-
-import hr.fer.zemris.vhdllab.compilers.ICompiler;
-import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.service.VHDLLabManager;
-import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
-import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 
 /**
  * @author marcupic

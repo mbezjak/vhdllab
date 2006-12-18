@@ -81,7 +81,7 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
-			Query query = session.createQuery("from Project as p where p.ownerID = :userID")
+			Query query = session.createQuery("from Project as p where p.ownerId = :userID")
 									.setString("userID", userId);
 
 			List<Project> projects = (List<Project>)query.list();

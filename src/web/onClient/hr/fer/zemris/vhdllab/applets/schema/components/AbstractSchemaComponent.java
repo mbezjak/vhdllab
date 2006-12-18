@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
-import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericComboProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NoEditProperty;
