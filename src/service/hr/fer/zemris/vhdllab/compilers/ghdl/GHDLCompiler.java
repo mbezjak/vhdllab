@@ -1,11 +1,4 @@
-package hr.fer.zemris.vhdllab.simulators.ghdl;
-
-import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.service.VHDLLabManager;
-import hr.fer.zemris.vhdllab.simulators.ISimulator;
-import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
-import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
-import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
+package hr.fer.zemris.vhdllab.compilers.ghdl;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,26 +12,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import hr.fer.zemris.vhdllab.compilers.ICompiler;
+import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
+import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
+
 /**
  * @author marcupic
  * 
- * This is implementation of Simulator Wrapper for ghdl. When constructed, 
+ * This is implementation of Compiler Wrapper for ghdl. When constructed, 
  * it will require two parameters in configuration file:
  * <ul>
- * <li><b>executable</b> - full path to simulator program.</li>
+ * <li><b>executable</b> - full path to compiler program.</li>
  * <li><b>tmpRootDir</b> - full path to temporary directory.</li>
  * </ul>
  */
-public class GHDLSimulator implements ISimulator {
-
+public class GHDLCompiler implements ICompiler {
 	private String executable;
 	private String tmpRoot;
-	
-	public GHDLSimulator(Properties params) {
+
+	public GHDLCompiler(Properties params) {
 		super();
 		executable = params.getProperty("executable");
 		if(executable==null) {
-			throw new IllegalArgumentException("Simulator executable file not specified!");
+			throw new IllegalArgumentException("Compiler executable file not specified!");
 		}
 		tmpRoot = params.getProperty("tmpRootDir");
 		if(tmpRoot==null) {
@@ -46,8 +44,8 @@ public class GHDLSimulator implements ISimulator {
 		}
 	}
 
-	public SimulationResult simulate(List<File> dbFiles, List<File> otherFiles,
-			File simFile, VHDLLabManager vhdlman) {
+	public CompilationResult compile(List<File> dbFiles, List<File> otherFiles,
+			File compileFile, VHDLLabManager vhdlman) {
 		java.io.File tmpRootFile = new java.io.File(tmpRoot);
 		java.io.File tmpFile = null;
 		java.io.File tmpDir = null;
@@ -69,7 +67,7 @@ public class GHDLSimulator implements ISimulator {
 					copyFile(f, tmpDir,vhdlman);
 				}
 			}
-			// STEP 3: prepare simulator call
+			// STEP 3: prepare compiler call
 			// -----------------------------------------------------------
 			List<String> cmdList = new ArrayList<String>(dbFiles.size()+(otherFiles==null?0:otherFiles.size())+2);
 			cmdList.add(executable);
@@ -92,32 +90,9 @@ public class GHDLSimulator implements ISimulator {
 			consumer.waitForThreads();
 			int retVal = proc.waitFor();
 			if(retVal != 0) {
-				return new SimulationResult(Integer.valueOf(retVal),false,listToSimMessages(errors),null);
+				return new CompilationResult(Integer.valueOf(retVal),false,listToCompilationMessages(errors));
 			}
-			// OK, here we have added files into project. Now we have to simulate it.
-			// STEP 5: prepare simulator call
-			// -----------------------------------------------------------
-			cmdList.clear();
-			cmdList.add(executable);
-			cmdList.add("--elab-run");
-			cmdList.add(simFile.getFileName());
-			cmdList.add("--vcd=simout.vcd");
-			cmd = new String[cmdList.size()];
-			cmdList.toArray(cmd);
-			// STEP 6: execute the call
-			// -----------------------------------------------------------
-			errors.clear();
-			proc = Runtime.getRuntime().exec(cmd,null,tmpDir);
-			consumer = new InputConsumer(proc.getInputStream(),proc.getErrorStream(),errors,errors);
-			consumer.waitForThreads();
-			retVal = proc.waitFor();
-			String waveform = null;
-			if(retVal==0) {
-				VcdParser vcd = new VcdParser(new java.io.File(tmpDir,"simout.vcd").getAbsolutePath());
-				vcd.parse();
-				waveform = vcd.getResultInString();
-			}
-			return new SimulationResult(Integer.valueOf(retVal),retVal==0,listToSimMessages(errors),waveform);
+			return new CompilationResult(Integer.valueOf(retVal),true,listToCompilationMessages(errors));
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		} catch(Throwable tr) {
@@ -134,24 +109,48 @@ public class GHDLSimulator implements ISimulator {
 				tmpFile.delete();
 			}
 		}
-		
-		return new SimulationResult(1,false,messageToSimMessages("Could not simulate due to exception."),"");
+		return new CompilationResult(Integer.valueOf(-1),false,messageToCompilationMessage("Error running compiler."));
 	}
 
-	private List<? extends SimulationMessage> listToSimMessages(List<String> errors) {
-		List<SimulationMessage> list = new ArrayList<SimulationMessage>(errors.size());
+	private List<? extends CompilationMessage> listToCompilationMessages(List<String> errors) {
+		List<CompilationMessage> list = new ArrayList<CompilationMessage>(errors.size());
 		for(String e : errors) {
-			list.add(new SimulationMessage("",e));
+			String[] line = parseGHDLErrorMessage(e);
+			if(line.length==4) {
+				list.add(new CompilationMessage(line[0],line[3],Integer.parseInt(line[1]),Integer.parseInt(line[2])));
+			} else {
+				list.add(new CompilationMessage("",line[1],1,1));
+			}
 		}
 		return list;
 	}
 
-	private List<? extends SimulationMessage> messageToSimMessages(String error) {
-		List<SimulationMessage> list = new ArrayList<SimulationMessage>(1);
-		list.add(new SimulationMessage("",error));
+	private List<? extends CompilationMessage> messageToCompilationMessage(String error) {
+		List<CompilationMessage> list = new ArrayList<CompilationMessage>(1);
+		list.add(new CompilationMessage("",error,1,1));
 		return list;
 	}
 
+	private String[] parseGHDLErrorMessage(String msg) {
+		String[] res = new String[] {msg,null,null,null};
+		for(int i = 0; i < 3; i++) {
+			int pos = msg.indexOf(':');
+			if(pos!=-1) {
+				res[i] = msg.substring(0,pos);
+				msg = msg.substring(pos+1);
+				res[i+1] = msg;
+			} else {
+				return new String[] {res[0],(res[1]==null?"":res[1])+(res[2]==null?"":":"+res[2])+(res[3]==null?"":":"+res[3])};
+			}
+		}
+		if(res[0].toUpperCase().endsWith(".VHDL")) {
+			res[0] = res[0].substring(0,res[0].length()-5);
+		} else if(res[0].toUpperCase().endsWith(".VHD")) {
+			res[0] = res[0].substring(0,res[0].length()-4);
+		}
+		return res;
+	}
+	
 	private void recursiveDelete(java.io.File tmpDir) {
 		java.io.File[] children = tmpDir.listFiles();
 		if(children!=null) {
@@ -235,5 +234,4 @@ public class GHDLSimulator implements ISimulator {
 			}
 		}
 	}
-	
 }

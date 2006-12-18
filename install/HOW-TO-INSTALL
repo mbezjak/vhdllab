@@ -7,3 +7,11 @@ Following must be done in order to prepare project.
 
    Developers: do not add ../src/service/simulator.properties to svn
    repository! You shoud only customize it and leave it for yourself.
+
+2) copy compiler.properties-sample to ../src/service/compiler.properties
+   Then edit this file and fix paths. Currently, as compiler is choosen
+   ghdl and a wrapper that knows how to run it. ghdl can be obtained from:
+   http://ghdl.free.fr/
+
+   Developers: do not add ../src/service/compiler.properties to svn
+   repository! You shoud only customize it and leave it for yourself.

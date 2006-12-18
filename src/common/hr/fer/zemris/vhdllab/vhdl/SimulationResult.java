@@ -45,4 +45,9 @@ public class SimulationResult extends Result {
 		List<SimulationMessage> messages = (List<SimulationMessage>) result.getMessages();
 		return new SimulationResult(status, isSuccessful, messages, waveform);
 	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + (waveform!=null ? " waveform: "+waveform: "");
+	}
 }

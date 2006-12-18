@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service.impl.dummy;
 
+import hr.fer.zemris.vhdllab.compilers.ICompiler;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
@@ -15,7 +16,6 @@ import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.simulators.ISimulator;
-import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
@@ -44,8 +44,52 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	
 	public VHDLLabManagerImpl() {}
 	
-	public CompilationResult compile(Long fileId) {
-		return new CompilationResult(0, true, new ArrayList<CompilationMessage>());
+	public CompilationResult compile(Long fileId) throws ServiceException {
+		File file = loadFile(fileId);
+		List<File> deps = extractDependencies(file);
+		
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("compiler.properties");
+		if(is == null) {
+			throw new ServiceException("Internal error. Properties file not found.");
+		}
+		Properties allCompilerProps = new Properties();
+		try { 
+			allCompilerProps.load(is); 
+		} catch(Exception ignorable) {
+		}
+		
+		String sClass = allCompilerProps.getProperty("compiler.class");
+		if(sClass==null) {
+			throw new ServiceException("File compiler.properties is incomplete.");
+		}
+		Properties compilerProps = new Properties();
+		for(Object key : allCompilerProps.keySet()) {
+			String k = (String)key;
+			if(k.startsWith("compiler.params.")) {
+				compilerProps.setProperty(k.substring(16), allCompilerProps.getProperty(k));
+			}
+		}
+		
+		ICompiler compiler = null;
+		try {
+			Constructor c = Class.forName(sClass).getConstructor(new Class[] {Properties.class});
+			compiler = (ICompiler)c.newInstance(new Object[] {compilerProps});
+		} catch(Exception ex) {
+			throw new ServiceException("Could not start compiler wrapper.");
+		}
+		
+		return compiler.compile(deps, null, file, this);
+		
+		// This below was previous implementation
+		/*
+		String vcdResult = "src/service/hr/fer/zemris/vhdllab/vhdl/simulations/adder2.vcd";
+		VcdParser vcd = new VcdParser(vcdResult);
+		vcd.parse();
+		String waveform = vcd.getResultInString();
+		SimulationResult result = new SimulationResult(0, true, new ArrayList<SimulationMessage>(), waveform);
+		return result;
+		*/
+		//return new CompilationResult(0, true, new ArrayList<CompilationMessage>());
 	}
 
 	public File createNewFile(Project project, String fileName, String fileType) throws ServiceException {

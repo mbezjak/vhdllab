@@ -1,0 +1,3 @@
+compiler.class = hr.fer.zemris.vhdllab.compilers.ghdl.GHDLCompiler
+compiler.params.executable = /usr/local/bin/ghdl
+compiler.params.tmpRootDir = /tmp/ghdltmp

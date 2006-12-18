@@ -13,8 +13,23 @@ public class CompilationMessage extends Message {
 	private int row;
 	private int column;
 	
+	@Deprecated
 	public CompilationMessage(String message, int row, int column) {
 		super(message);
+		if(row < 0 || column < 0) throw new IllegalArgumentException("Row or column can not be negative.");
+		this.row = row;
+		this.column = column;
+	}
+
+	public CompilationMessage(Message message, int row, int column) {
+		super(message);
+		if(row < 0 || column < 0) throw new IllegalArgumentException("Row or column can not be negative.");
+		this.row = row;
+		this.column = column;
+	}
+
+	public CompilationMessage(String entity, String message, int row, int column) {
+		super(entity, message);
 		if(row < 0 || column < 0) throw new IllegalArgumentException("Row or column can not be negative.");
 		this.row = row;
 		this.column = column;
@@ -46,8 +61,13 @@ public class CompilationMessage extends Message {
 		int column = Integer.parseInt(prop.getProperty(COMPILATION_MESSAGE_COLUMN));
 		String superSerialization = prop.getProperty(COMPILATION_MESSAGE_SUPER);
 		Message msg = Message.deserialize(superSerialization);
-		String messageText = msg.getMessageText();
-		return new CompilationMessage(messageText, row, column);
+		//String messageText = msg.getMessageText();
+		//return new CompilationMessage(messageText, row, column);
+		return new CompilationMessage(msg, row, column);
 	}
 
+	@Override
+	public String toString() {
+		return super.toString()+" @("+row+","+column+")";
+	}
 }

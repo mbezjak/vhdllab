@@ -77,5 +77,9 @@ public class Result {
 		}
 		return new Result(status, isSuccessful, messages);
 	}
-
+	
+	@Override
+	public String toString() {
+		return "Status: "+status+" "+(isSuccessful?"successful" : "failure")+": "+messages;
+	}
 }

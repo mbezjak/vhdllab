@@ -17,4 +17,9 @@ public class CompilationResult extends Result {
 		List<CompilationMessage> messages = (List<CompilationMessage>) result.getMessages();
 		return new CompilationResult(status, isSuccessful, messages);
 	}
+	
+	@Override
+	public String toString() {
+		return super.toString();
+	}
 }
