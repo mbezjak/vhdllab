@@ -11,12 +11,16 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
+
+import javax.swing.JOptionPane;
 
 	public class Cache {
 

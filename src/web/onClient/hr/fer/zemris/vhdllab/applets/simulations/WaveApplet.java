@@ -153,7 +153,7 @@ public class WaveApplet extends JPanel
     private Icon helpIcon = new ImageIcon(getClass().getResource("help.png"));
     private Icon optionsIcon = new ImageIcon(getClass().getResource("options.png"));
 	private Icon gotoIcon = new ImageIcon(getClass().getResource("goto.png"));
-	private Icon gotoPasiveIcon = new ImageIcon(getClass().getResource("gotoPasive.png"));
+	private Icon gotoPasiveIcon = new ImageIcon(getClass().getResource("gotoPasive.PNG"));
 
     /* buttons */
     /** Pokazuje popup za trazenje bridova signala */

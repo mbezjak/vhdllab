@@ -278,7 +278,7 @@ public class MainApplet
 		/**
 		 * Constructor.
 		 * 
-		 * @param bundle {@link ResourceBundle} that contains information about menus
+		 * @param bundle {@link ResourceBundle} that contains localized information about menus
 		 * 		that will be created.
 		 */
 		public PrivateMenuBar(ResourceBundle bundle) {
@@ -667,7 +667,7 @@ public class MainApplet
 		if(cache.compilationHistoryIsEmpty()) {
 			//TODO run compilation wizard
 			String projectName = projectExplorer.getActiveProject();
-			String fileName = JOptionPane.showInputDialog("Which file to simulate?");
+			String fileName = JOptionPane.showInputDialog(this, "Which file to simulate?");
 			simulate(projectName, fileName);
 			
 		}
@@ -708,7 +708,7 @@ public class MainApplet
 		if(cache.simulationHistoryIsEmpty()) {
 			//TODO run simulation wizard
 			String projectName = projectExplorer.getActiveProject();
-			String fileName = JOptionPane.showInputDialog("Which file to simulate?");
+			String fileName = JOptionPane.showInputDialog(this, "Which file to simulate?");
 			simulate(projectName, fileName);
 			
 		}
@@ -933,6 +933,7 @@ public class MainApplet
 		boolean exists = cache.existsFile(projectName, fileName);
 		if(exists) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
+			text = replacePlaceholders(text, new String[] {fileName});
 			statusBar.setText(text);
 			return;
 		}
@@ -1029,13 +1030,7 @@ public class MainApplet
 				String fileName = editor.getFileName();
 				String projectName = editor.getProjectName();
 				String content = editor.getData();
-//				IEditor ed = null;
-//				try {
-//					ed = getEditor("Project1", "File1");
-//				} catch (UniformAppletException e1) {
-//					e1.printStackTrace();
-//				}
-//				ed.setFileContent(new FileContent("Project1", "File1", content));
+				if(content == null) continue;
 				try {
 					cache.saveFile(projectName, fileName, content);
 					resetEditorTitle(false, projectName, fileName);

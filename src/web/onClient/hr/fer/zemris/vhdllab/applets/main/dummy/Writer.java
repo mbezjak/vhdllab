@@ -23,8 +23,6 @@ public class Writer extends JPanel implements IEditor, IWizard {
 
 	private static final long serialVersionUID = 5853551043423675268L;
 	private JTextArea text;
-	private String temp;
-	private boolean change;
 	private boolean savable;
 	private boolean readonly;
 	private boolean modifiedFlag = true;
@@ -34,22 +32,6 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	
 	public Writer() {
 		text = new JTextArea("This is writer area!", 25,50);
-		/*text.addKeyListener(new KeyListener() {
-		
-			public void keyTyped(KeyEvent e) {
-				temp = text.getText();
-			}
-			public void keyReleased(KeyEvent e) {
-				if(!temp.equals(text.getText())) {
-					if(!change) {
-						container.resetEditorTitle(true, content.getProjectName(), content.getFileName());
-					}
-					change = true;
-				}
-			}
-			public void keyPressed(KeyEvent e) {}
-		
-		});*/
 		JScrollPane scroll = new JScrollPane(text);
 		this.setLayout(new BorderLayout());
 		this.add(scroll, BorderLayout.CENTER);
@@ -74,7 +56,6 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	}
 
 	public String getData() {
-		//change = false;
 		modifiedFlag = false;
 		return text.getText();
 	}

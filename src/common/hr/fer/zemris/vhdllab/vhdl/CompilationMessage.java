@@ -21,7 +21,7 @@ public class CompilationMessage extends Message {
 		this.column = column;
 	}
 
-	public CompilationMessage(Message message, int row, int column) {
+	protected CompilationMessage(Message message, int row, int column) {
 		super(message);
 		if(row < 0 || column < 0) throw new IllegalArgumentException("Row or column can not be negative.");
 		this.row = row;
