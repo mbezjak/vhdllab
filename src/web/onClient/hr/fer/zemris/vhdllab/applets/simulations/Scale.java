@@ -157,6 +157,7 @@ class Scale extends JPanel
 	 */
 	public void setContent(GhdlResults results)
 	{
+		this.transitionPoints = results.getTransitionPoints();
 		durationsInFemtoSeconds = new double[transitionPoints.length - 1];
         durationsInTime = new int[durationsInFemtoSeconds.length];
 		durationsInPixels = new int[durationsInFemtoSeconds.length];
