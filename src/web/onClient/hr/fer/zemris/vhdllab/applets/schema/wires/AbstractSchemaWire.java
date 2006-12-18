@@ -119,7 +119,8 @@ public abstract class AbstractSchemaWire {
 		connections.clear();
 		String [] connArray = connStr.split("#");
 		for (String s : connArray) {
-			String [] sfield = s.split("$");
+			if (s.compareTo("") == 0) continue;
+			String [] sfield = s.split(";");
 			WireConnection c = new WireConnection(sfield[0], Integer.parseInt(sfield[1]));
 			connections.add(c);
 		}
@@ -128,25 +129,46 @@ public abstract class AbstractSchemaWire {
 	protected String getConnections() {
 		StringBuilder builder = new StringBuilder();
 		for (WireConnection c : connections) {
-			builder.append('#').append(c.componentInstanceName).append('$').append(c.portIndex);
+			builder.append('#').append(c.componentInstanceName).append(';').append(c.portIndex);
 		}
 		return builder.toString();
+	}
+	
+	protected String getNodesStr() {
+		StringBuilder builder = new StringBuilder();
+		for (Point node : nodes) {
+			builder.append('#').append(node.x).append(';').append(node.y);
+		}
+		return builder.toString();
+	}
+	
+	protected void setNodesStr(String nodeStr) {
+		nodes.clear();
+		String [] nodeArr = nodeStr.split("#");
+		for (String s : nodeArr) {
+			if (s.compareTo("") == 0) continue;
+			String [] sf = s.split(";");
+			Point n = new Point(Integer.parseInt(sf[0]), Integer.parseInt(sf[1]));
+			nodes.add(n);
+		}
 	}
 	
 	protected String getWireLinesStr() {
 		StringBuilder builder = new StringBuilder();
 		for (SPair<Point> par : wireLines) {
-			builder.append('#').append(par.first.x).append('$').append(par.first.y).append('$');
-			builder.append("$").append(par.second.x).append('$').append(par.second.y);
+			builder.append('#').append(par.first.x).append(";").append(par.first.y);
+			builder.append(";").append(par.second.x).append(";").append(par.second.y);
 		}
 		return builder.toString();
 	}
 	
 	protected void setWireLinesStr(String wireStr) {
+		System.out.println(wireStr);
 		wireLines.clear();
 		String [] wireArr = wireStr.split("#");
 		for (String s : wireArr) {
-			String [] sf = s.split("$");
+			if (s.compareTo("") == 0) continue;
+			String [] sf = s.split(";");
 			SPair<Point> par = new SPair<Point>(
 					new Point(Integer.parseInt(sf[0]), Integer.parseInt(sf[1])),
 					new Point(Integer.parseInt(sf[2]), Integer.parseInt(sf[3]))
@@ -167,6 +189,10 @@ public abstract class AbstractSchemaWire {
 		builder.append(getWireLinesStr());
 		builder.append("</wireLines>");
 		
+		builder.append("<nodes>");
+		builder.append(getNodesStr());
+		builder.append("</nodes>");
+		
 		builder.append("<wireSpecific>");
 		builder.append(serializeSpecific());
 		builder.append("</wireSpecific>");
@@ -175,22 +201,34 @@ public abstract class AbstractSchemaWire {
 		return builder.toString();
 	}
 	
+	public void performDeserialization(String wireNameStr, String connStr, String wireLineStr, String nodeStr, String specificStr) {
+		try {
+			setWireName(wireNameStr);
+		} catch (SchemaWireException e) {
+			e.printStackTrace();
+		}
+		System.out.println(connStr);
+		System.out.println(wireLineStr);
+		System.out.println(nodeStr);
+		setConnections(connStr);
+		setWireLinesStr(wireLineStr);
+		setNodesStr(nodeStr);
+		deserializeSpecific(specificStr);
+	}
+	
 	public boolean deserialize(String serial) {
 		Digester digester=new Digester();
 		
 		digester.push(this);
 		
 		// prvo deserijaliziraj opcenite stvari
-		digester.addCallMethod("wire", "setWireName", 1);
+		digester.addCallMethod("wire", "performDeserialization", 5);
 		digester.addCallParam("wire/wireName", 0);
-		digester.addCallMethod("wire", "setConnections", 1);
-		digester.addCallParam("wire/connections", 0);
-		digester.addCallMethod("wire", "setWireLineStr", 1);
-		digester.addCallParam("wire/wireLines", 0);
-		
+		digester.addCallParam("wire/connections", 1);
+		digester.addCallParam("wire/wireLines", 2);
+		digester.addCallParam("wire/nodes", 3);
 		// deserijaliziraj specificno
-		digester.addCallMethod("wire", "deserializeSpecific", 1);
-		digester.addCallParam("wire/wireSpecific", 0);
+		digester.addCallParam("wire/wireSpecific", 4);
 		
 		try {
 			digester.parse(new StringReader(serial));

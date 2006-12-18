@@ -181,14 +181,21 @@ public class Sklop_OR extends AbstractSchemaComponent {
 
 	@Override
 	protected boolean deserializeComponentSpecific(String serial) {
-		// TODO Auto-generated method stub
-		return false;
+		String [] sfield = serial.split("#");
+		
+		try {
+			setBrojUlaza(Integer.parseInt(sfield[1]));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 
 	@Override
 	protected String serializeComponentSpecific() {
-		// TODO Auto-generated method stub
-		return null;
+		return "#" + brojUlaza + "#";
 	}
 	
 }

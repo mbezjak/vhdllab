@@ -81,14 +81,12 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 
 	@Override
 	protected boolean deserializeComponentSpecific(String serial) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	protected String serializeComponentSpecific() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 	
 }

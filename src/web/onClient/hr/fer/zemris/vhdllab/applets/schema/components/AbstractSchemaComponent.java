@@ -295,7 +295,6 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	public boolean deserializeComponent(String serial) {
 		System.out.println(serial);
 		
-		
 		Digester digester=new Digester();
 		
 		digester.push(this);

@@ -17,6 +17,7 @@ import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire.WireConnect
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.MenuItem;
 import java.awt.Point;
@@ -31,6 +32,7 @@ import java.util.HashSet;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -65,7 +67,7 @@ public class SchemaMainFrame extends JFrame {
 		
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
     }
@@ -82,10 +84,12 @@ public class SchemaMainFrame extends JFrame {
 	private SPair<Point> currentLine = null; 
 	private AbstractSchemaWire wireBeingDrawed = null;
 	private AbstractSchemaWire wireSelected = null;
-	private JPopupMenu popupMenu = null;
-	private JPopupMenu renameWireMenu = null;
+	private JPopupMenu popupChoicesMenu = null;
+	private JPopupMenu popupRenameWireMenu = null;
+	private JPopupMenu popupWirePropertiesMenu = null;
 	private JTextField rwmTextField = null;
-	private boolean turnState = false;
+	private Point nodeConfirmed = null;
+	private boolean turnState = false;	
 
 	public SchemaMainFrame(String arg0) throws HeadlessException {
 		super(arg0);
@@ -122,8 +126,9 @@ public class SchemaMainFrame extends JFrame {
 		this.add(canvaspanel, BorderLayout.CENTER);
 		this.add(optionpanel, BorderLayout.NORTH);
 		
-		popupMenu = new JPopupMenu("Menu");
-		renameWireMenu = new JPopupMenu("Rename...");
+		popupChoicesMenu = new JPopupMenu("Menu");
+		popupRenameWireMenu = new JPopupMenu("Rename");
+		popupWirePropertiesMenu = new JPopupMenu("Wire properties"); 
 		
 		// tipke
 		this.addKeyListener(new KeyListener() {
@@ -182,10 +187,9 @@ public class SchemaMainFrame extends JFrame {
 	
 	private void deleteComponent() {
 		String toBeRemoved = propbar.getSelectedComponentInstanceName();
-		if (toBeRemoved != null) {
-			if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
-				propbar.showNoProperties();
-			}
+		if (toBeRemoved == null) return;
+		if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
+			propbar.showNoProperties();
 		}
 		
 		// pretrazi sve zice i makni im konekcije na ovu komponentu
@@ -193,6 +197,7 @@ public class SchemaMainFrame extends JFrame {
 		for (AbstractSchemaWire wire : wlist) {
 			HashSet<WireConnection> subset = new HashSet<WireConnection>();
 			for (WireConnection conn : wire.connections) {
+				System.out.println(conn.componentInstanceName);
 				if (conn.componentInstanceName.compareTo(toBeRemoved) == 0) {
 					subset.add(conn);
 				}
@@ -343,7 +348,10 @@ public class SchemaMainFrame extends JFrame {
 		if (extwire != null) {
 			wireBeingDrawed = extwire;
 			drawingCanvas.removeWire(extwire.getWireName());
-			if (!checkIfPointIsWireEnd(extwire, x, y)) wireBeingDrawed.nodes.add(new Point(x, y));
+			if (!checkIfPointIsWireEnd(extwire, x, y)) {
+				nodeConfirmed = new Point(x, y);
+				wireBeingDrawed.nodes.add(nodeConfirmed);
+			}
 			currentLine = new SPair<Point>();
 			currentLine.first = new Point(x, y);
 			optionbar.selectDrawWire();
@@ -400,17 +408,17 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	public void createRenameWirePopup(String wireName, int xp, int yp) {
-		renameWireMenu.removeAll();
+		popupRenameWireMenu.removeAll();
 		
 		rwmTextField = new JTextField(wireName);
 		rwmTextField.addKeyListener(new KeyedWireRenamer(wireName));
-		renameWireMenu.add(rwmTextField);
+		popupRenameWireMenu.add(rwmTextField);
 		
 		JButton butt = new JButton("Rename");
 		butt.addActionListener(new ActionedWireRenamer(wireName, rwmTextField));
-		renameWireMenu.add(butt);
+		popupRenameWireMenu.add(butt);
 		
-		renameWireMenu.show(drawingCanvas, xp, yp);
+		popupRenameWireMenu.show(drawingCanvas, xp, yp);
 	}
 	
 	private class DeleteComponentListener implements ActionListener {
@@ -451,45 +459,110 @@ public class SchemaMainFrame extends JFrame {
 		}
 	}
 	
+	
+	
+	private class RemoveConnectionListener implements ActionListener {
+		private WireConnection connection;
+		private AbstractSchemaWire wire;
+		private int xp, yp;
+		public RemoveConnectionListener(AbstractSchemaWire w, WireConnection conn, int x, int y) {
+			connection = conn;
+			wire = w;
+			xp = x;
+			yp = y;
+		}
+		public void actionPerformed(ActionEvent ae) {
+			wire.connections.remove(connection);
+			createWirePropertiesPopup(wire, xp, yp);
+			popupWirePropertiesMenu.validate();
+			popupWirePropertiesMenu.repaint();
+		}
+	}
+	
+	void createWirePropertiesPopup(AbstractSchemaWire wire, int x, int y) {
+		popupWirePropertiesMenu.removeAll();
+		popupWirePropertiesMenu.setLayout(new GridLayout(0, 2, 2, 2));
+		
+		JLabel lab = new JLabel(" Wire name:  ");
+		popupWirePropertiesMenu.add(lab);
+		
+		lab = new JLabel(wire.getWireName());
+		popupWirePropertiesMenu.add(lab);
+		
+		lab = new JLabel(" Connections: ");
+		popupWirePropertiesMenu.add(lab);
+		
+		lab = new JLabel((wire.connections.size() > 0) ? "" : "(none)");
+		popupWirePropertiesMenu.add(lab);
+		
+		JButton butt = null;
+		for (WireConnection conn : wire.connections) {
+			lab = new JLabel(" " + conn.componentInstanceName + ", port " + conn.portIndex + "  ");
+			popupWirePropertiesMenu.add(lab);
+			butt = new JButton("Remove");
+			butt.addActionListener(new RemoveConnectionListener(wire, conn, x, y));
+			popupWirePropertiesMenu.add(butt);
+		}
+		
+		popupWirePropertiesMenu.show(drawingCanvas, x, y);
+	}
+	
+	private class WirePropertiesListener implements ActionListener {
+		AbstractSchemaWire wire;
+		int x, y;
+		public WirePropertiesListener(AbstractSchemaWire wire, int x, int y) {
+			this.wire = wire;
+			this.x = x;
+			this.y = y;
+		}
+		public void actionPerformed(ActionEvent arg0) {
+			createWirePropertiesPopup(wire, x, y);
+		}
+	}
+	
 	private void createPopup(MouseEvent e) {
 		deletePopup(e);
 		selectWire(e);
 		if (wireSelected != null) {
 			JMenuItem item = new JMenuItem("Rename...");
 			item.addActionListener(new RenameWireListener(wireSelected.getWireName(), e.getX(), e.getY()));
-			popupMenu.add(item);
+			popupChoicesMenu.add(item);
 			
 			item = new JMenuItem("Expand");
 			item.addActionListener(new ExpandWireListener(e.getX(), e.getY(), wireSelected.getWireName()));
-			popupMenu.add(item);
+			popupChoicesMenu.add(item);
 			
 			item = new JMenuItem("Delete");
 			item.addActionListener(new DeleteWireListener());
-			popupMenu.add(item);
+			popupChoicesMenu.add(item);
 			
-			popupMenu.show(e.getComponent(), e.getX(), e.getY());
+			item = new JMenuItem("Properties");
+			item.addActionListener(new WirePropertiesListener(wireSelected, e.getX(), e.getY()));
+			popupChoicesMenu.add(item);
+			
+			popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
 		else {
 			selectComponent(e);
 			if (propbar.getSelectedComponentInstanceName() != null) {
 				JMenuItem item = new JMenuItem("Delete");
 				item.addActionListener(new DeleteComponentListener());
-				popupMenu.add(item);
+				popupChoicesMenu.add(item);
 				
-				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 			else {
 				JMenuItem item = new JMenuItem("(none)");
-				popupMenu.add(item);
+				popupChoicesMenu.add(item);
 				
-				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 	}
 	
 	private void deletePopup(MouseEvent e) {
-		if (popupMenu != null) {
-			popupMenu.removeAll();
+		if (popupChoicesMenu != null) {
+			popupChoicesMenu.removeAll();
 		}
 	}
 	
@@ -564,6 +637,7 @@ public class SchemaMainFrame extends JFrame {
 				if (!t.first.equals(t.second)) wireBeingDrawed.wireLines.add(t);
 				if (!s.first.equals(s.second)) wireBeingDrawed.wireLines.add(s);
 				currentLine.first = currentLine.second;
+				if (nodeConfirmed != null) nodeConfirmed = null;
 				if (over) handleRightClickOnSchema(e);
 			}
 			return;
@@ -639,6 +713,10 @@ public class SchemaMainFrame extends JFrame {
 	}
 
 	public void handleRightClickOnSchema(MouseEvent e) {
+		if (nodeConfirmed != null) {
+			if (wireBeingDrawed != null) wireBeingDrawed.nodes.remove(nodeConfirmed);
+			nodeConfirmed = null;
+		}
 		boolean noPopup = false;
 		if (optionbar.isDrawWireSelected()) {
 			if (wireBeingDrawed != null && wireBeingDrawed.wireLines.size() > 0) {
@@ -650,6 +728,7 @@ public class SchemaMainFrame extends JFrame {
 			drawWireState = DRAW_WIRE_STATE_NOTHING;
 			noPopup = true;
 		}
+		if (compbar.getSelectedComponentName() != null) noPopup = true;
 		drawWireState = 0;
 		compbar.selectNone();
 		drawingCanvas.setSelectedCompName(null);

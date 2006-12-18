@@ -26,7 +26,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	
 	public Sklop_MUX2nNA1(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
-		setComponentName("MUX2^nNA1");
+		setComponentName("MUX2nNA1");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);
