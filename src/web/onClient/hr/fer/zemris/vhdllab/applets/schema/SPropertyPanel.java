@@ -59,6 +59,7 @@ public class SPropertyPanel extends JPanel implements KeyListener {
 			}
 		}
 		this.validate();
+		this.repaint();
 	}
 
 	public void keyTyped(KeyEvent arg0) {

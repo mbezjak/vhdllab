@@ -21,7 +21,8 @@ public abstract class AbstractSchemaWire {
 	// je tu i HashSet.
 	//
 	// Poznavajuci ime komponente i redni broj porta, moguce je jednoznacno odrediti
-	// koordinate porta.
+	// koordinate porta. Bez obzira na to, tu je dodana tocka koja odreduje port
+	// iz razloga sto to pojednostavljuje stvari pri promjeni koordinata porta.
 	//
 	// Takoder, ono sto svaka zica ima jest niz parova tocaka od kojih se sastoji. Izmedu
 	// tih parova vuku se crte, te se na taj nacin zica iscrtava. Iz tog razloga je tu i
@@ -39,11 +40,13 @@ public abstract class AbstractSchemaWire {
 	public class WireConnection {
 		public String componentInstanceName;
 		public int portIndex;
+		public Point portCoord;
 	
-		public WireConnection(String componentInstanceName, int portIndex) {
+		public WireConnection(String componentInstanceName, int portIndex, Point portCoord) {
 			super();
 			this.componentInstanceName = componentInstanceName;
 			this.portIndex = portIndex;
+			this.portCoord = portCoord;
 		}
 
 		@Override
@@ -121,7 +124,8 @@ public abstract class AbstractSchemaWire {
 		for (String s : connArray) {
 			if (s.compareTo("") == 0) continue;
 			String [] sfield = s.split(";");
-			WireConnection c = new WireConnection(sfield[0], Integer.parseInt(sfield[1]));
+			WireConnection c = new WireConnection(sfield[0], Integer.parseInt(sfield[1]),
+					new Point(Integer.parseInt(sfield[2]), Integer.parseInt(sfield[3])));
 			connections.add(c);
 		}
 	}
@@ -130,6 +134,7 @@ public abstract class AbstractSchemaWire {
 		StringBuilder builder = new StringBuilder();
 		for (WireConnection c : connections) {
 			builder.append('#').append(c.componentInstanceName).append(';').append(c.portIndex);
+			builder.append(';').append(c.portCoord.x).append(';').append(c.portCoord.y);
 		}
 		return builder.toString();
 	}
@@ -243,11 +248,21 @@ public abstract class AbstractSchemaWire {
 	protected abstract String serializeSpecific();
 	protected abstract boolean deserializeSpecific(String serial);
 	
+	
+	// neki getteri i setteri
+	
 	public int getThickness() {
 		return thickness;
 	}
 	public void setThickness(int thickness) {
 		this.thickness = thickness;
+	}
+	
+	public static Integer getCounter() {
+		return counter;
+	}
+	public static void setCounter(Integer counter) {
+		AbstractSchemaWire.counter = counter;
 	}
 	
 

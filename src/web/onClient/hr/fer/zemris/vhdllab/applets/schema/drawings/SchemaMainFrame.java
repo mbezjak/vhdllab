@@ -229,6 +229,7 @@ public class SchemaMainFrame extends JFrame {
 		Integer minPort = null;
 		for (int i = 0; i < comp.getNumberOfPorts(); i++) {
 			AbstractSchemaPort port = comp.getSchemaPort(i);
+			if (port.getTipPorta() == "_boxing") continue;
 			int px = port.getCoordinate().x, py = port.getCoordinate().y;
 			dist = (int) Math.sqrt((cx + px - x) * (cx + px - x) + (cy + py - y) * (cy + py - y));
 			//System.out.println(dist + " " + minDist + " " + port.getCoordinate().x + " " + port.getCoordinate().y + " " + cx + " " + cy + " " + x + " " + y);
@@ -489,15 +490,15 @@ public class SchemaMainFrame extends JFrame {
 		lab = new JLabel(wire.getWireName());
 		popupWirePropertiesMenu.add(lab);
 		
-		lab = new JLabel(" Connections: ");
+		lab = new JLabel(" Connection list: ");
 		popupWirePropertiesMenu.add(lab);
 		
-		lab = new JLabel((wire.connections.size() > 0) ? "" : "(none)");
+		lab = new JLabel((wire.connections.size() > 0) ? "" : "(empty)");
 		popupWirePropertiesMenu.add(lab);
 		
 		JButton butt = null;
 		for (WireConnection conn : wire.connections) {
-			lab = new JLabel(" " + conn.componentInstanceName + ", port " + conn.portIndex + "  ");
+			lab = new JLabel(" " + conn.componentInstanceName + "; (" + conn.portCoord.x  + ",  " + conn.portCoord.y + ") ");
 			popupWirePropertiesMenu.add(lab);
 			butt = new JButton("Remove");
 			butt.addActionListener(new RemoveConnectionListener(wire, conn, x, y));
@@ -589,7 +590,8 @@ public class SchemaMainFrame extends JFrame {
 					if (portIndex != null) {
 						System.out.println("Hej nasel sam ga!");
 						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
-							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
+							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex,
+									new Point(env.getComponent().getSchemaPort(portIndex).getCoordinate()));
 							wireBeingDrawed.connections.add(conn);
 							currentLine.first.x = ad.realToVirtualRelativeX(env.getPosition().x) + 
 								env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
@@ -609,7 +611,8 @@ public class SchemaMainFrame extends JFrame {
 					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
 					if (portIndex != null) {
 						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
-							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex);
+							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex,
+									new Point(env.getComponent().getSchemaPort(portIndex).getCoordinate()));
 							wireBeingDrawed.connections.add(conn);
 							x = ad.realToVirtualRelativeX(env.getPosition().x) + env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
 							y = ad.realToVirtualRelativeX(env.getPosition().y) + env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
@@ -770,20 +773,43 @@ public class SchemaMainFrame extends JFrame {
 	public void handleComponentPropertyChanged(String cmpInstName) {
 		// nadi komponentu koja je promijenjena
 		AbstractSchemaComponent comp = null;
+		Point pcomp = null;
 		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentList();
 		for (SchemaDrawingComponentEnvelope env : clist) {
 			if (env.getComponent().getComponentInstanceName().compareTo(cmpInstName) == 0) {
 				comp = env.getComponent();
+				pcomp = env.getPosition();
 			}
 		}
 		if (comp == null) return;
+		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
+		pcomp = new Point(pcomp);
+		pcomp.x = ad.realToVirtualRelativeX(pcomp.x);
+		pcomp.y = ad.realToVirtualRelativeX(pcomp.y);
 		// prodi sve zice i ako referenciraju ovu komponentu, prilagodi ih po potrebi
+		// makni im konekcije ako taj port ne postoji
+		// a ako mu se promijenila koordinata, onda produzi zicu tako da su spojeni
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		for (AbstractSchemaWire wire : wlist) {
 			HashSet<WireConnection> subset = new HashSet<WireConnection>();
 			for (WireConnection conn : wire.connections) {
 				if (conn.componentInstanceName.compareTo(cmpInstName) == 0) {
 					if (conn.portIndex >= comp.getNumberOfPorts()) subset.add(conn);
+					else {
+						Point pch = comp.getSchemaPort(conn.portIndex).getCoordinate();
+						if (conn.portCoord != pch) {
+							subset.add(conn);
+//							SPair<Point> lin = new SPair<Point>();
+//							lin.first = new Point(pcomp.x + conn.portCoord.x, pcomp.y + conn.portCoord.y);
+//							lin.second = new Point(pcomp.x + pch.x, pcomp.y + pch.y);
+//							SPair<Point> t = new SPair<Point>();
+//							t.first = new Point(lin.first.x, lin.second.y);
+//							t.second = new Point(lin.second.x, lin.second.y);
+//							lin.second.x = lin.first.x;
+//							wire.wireLines.add(lin);
+//							conn.portCoord = new Point(pch);
+						}
+					}
 				}
 			}
 			wire.connections.removeAll(subset);

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericComboProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NoEditProperty;
@@ -30,6 +31,7 @@ import org.apache.commons.digester.Digester;
 public abstract class AbstractSchemaComponent implements ISchemaComponent {	
 	protected LinkedList<AbstractSchemaPort> portlist;
 	protected Ptr<Object> pComponentName;
+	protected int componentDelay;
 	public String getComponentName() {
 		return (String)pComponentName.val;
 	}
@@ -133,6 +135,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		isDrawingPorts = true;
 		isDrawingFrame = true;
 		isDrawingName = true;
+		componentDelay = 10;
 	}
 	
 	
@@ -183,6 +186,29 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 				cbox.insertItemAt("N", 0);
 				cbox.setSelectedIndex(i);
 				((AbstractSchemaComponent)getSklopPtr().val).setSmjer(po);
+			}
+		});
+		cplist.add(new GenericProperty("Kasnjenje sklopa", new Ptr<Object>(this)) {
+			@Override
+			public void onUpdate(JTextField tf) {
+				Integer i = null;
+				try {
+					i = Integer.parseInt(tf.getText());
+				}
+				catch (Exception e) {
+					i = 0;
+				}
+				if (i < 0) {
+					i = ((AbstractSchemaComponent)getSklopPtr().val).getComponentDelay();
+					tf.setText(i.toString());
+					return;
+				}
+				((AbstractSchemaComponent)getSklopPtr().val).setComponentDelay(i);				
+			}
+
+			@Override
+			public void onLoad(JTextField tf) {
+				tf.setText(((AbstractSchemaComponent)getSklopPtr().val).getComponentDelay() + "");	
 			}
 		});
 	}
@@ -240,6 +266,13 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		int indSmj = Integer.parseInt(smj);
 		this.smjer = intToSm(indSmj);
 	}
+
+	public static long getCounter() {
+		return counter;
+	}
+	public static void setCounter(long counter) {
+		AbstractSchemaComponent.counter = counter;
+	}
 	
 	/**
 	 * Updateanje koordinata portova.
@@ -259,6 +292,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
 		drawSpecific(adapter);
 		if (isDrawingPorts) for (AbstractSchemaPort port : portlist) {
+			if (port.getTipPorta() == "_boxing") continue;
 			Point p = port.getCoordinate();
 			adapter.drawCursorPoint(p.x, p.y, null);
 		}
@@ -358,6 +392,14 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	public void setDrawingName(boolean isDrawingName) {
 		this.isDrawingName = isDrawingName;
 	}
+	public int getComponentDelay() {
+		return componentDelay;
+	}
+	public void setComponentDelay(int componentDelay) {
+		this.componentDelay = componentDelay;
+	}
+	
+	
 	
 	
 }
