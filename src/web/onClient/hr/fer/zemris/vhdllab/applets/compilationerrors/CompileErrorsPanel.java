@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -118,7 +119,7 @@ public class CompileErrorsPanel extends JPanel
 	}
 
 
-	public FileContent getInitialFileContent() 
+	public FileContent getInitialFileContent(Component parent) 
 	{
 		return null;
 	}
@@ -302,5 +303,10 @@ public class CompileErrorsPanel extends JPanel
 	public boolean isSavable() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 }

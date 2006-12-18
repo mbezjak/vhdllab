@@ -41,7 +41,7 @@ public class Testpan extends JFrame {
 		aut = new Automat();
 		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
 		//aut.setFileContent(fc);
-		FileContent fc=aut.getInitialFileContent();
+		FileContent fc=aut.getInitialFileContent(this);
 		if (fc!=null)this.getContentPane().add((Component) aut,BorderLayout.CENTER);
 		JButton b1=new JButton("Ispisi interni kod");
 		b1.addActionListener(new ActionListener(){

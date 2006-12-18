@@ -9,10 +9,9 @@ public interface IEditor {
 	 * Note that {@linkplain hr.fer.zemris.vhdllab.constants.FileTypes#FT_VHDL_SOURCE} is also an
 	 * "internal" format. This method is also used to initialize the component that uses internal
 	 * format.
-	 * @param fContent FileContent 
+	 * @param content FileContent 
 	 */
-	void setFileContent(FileContent fContent);
-	//void init();
+	void setFileContent(FileContent content);
 	/**
 	 * Returns an internal format.
 	 * @return an internal format.
@@ -26,6 +25,7 @@ public interface IEditor {
 	void setReadOnly(boolean flag);
 	boolean isReadOnly();
 	public void highlightLine(int line);
-	void setProjectContainer(ProjectContainer pContainer);
+	void setProjectContainer(ProjectContainer container);
+	void init();
 	IWizard getWizard();
 }

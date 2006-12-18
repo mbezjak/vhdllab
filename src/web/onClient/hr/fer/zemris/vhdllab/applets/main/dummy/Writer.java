@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -31,6 +32,10 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	private FileContent content;
 	
 	public Writer() {
+		init();
+	}
+	
+	public void init() {
 		text = new JTextArea("This is writer area!", 25,50);
 		JScrollPane scroll = new JScrollPane(text);
 		this.setLayout(new BorderLayout());
@@ -79,16 +84,16 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		this.container = pContainer;
 	}
 
-	public FileContent getInitialFileContent() {
+	public FileContent getInitialFileContent(Component parent) {
 		try {
 			String projectName;
 			String fileName;
 			do {
-				projectName = JOptionPane.showInputDialog(this,"Enter project name:");
+				projectName = JOptionPane.showInputDialog(parent,"Enter project name:");
 			} while(!container.existsProject(projectName));
 			
 			do {
-				fileName = JOptionPane.showInputDialog(this, "Enter file name:");
+				fileName = JOptionPane.showInputDialog(parent, "Enter file name:");
 			} while(container.existsFile(projectName, fileName));
 
 			String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();

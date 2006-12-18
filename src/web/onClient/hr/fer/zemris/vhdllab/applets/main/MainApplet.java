@@ -920,9 +920,9 @@ public class MainApplet
 	private void createNewFileInstance(String type) throws UniformAppletException {
 		// Initialization of a wizard
 		IWizard wizard = cache.getEditor(type).getWizard();
-		if(wizard == null) throw new NullPointerException("Wizard can not be null.");
+		if(wizard == null) throw new NullPointerException("No wizard for type: " + type);
 		wizard.setProjectContainer(this);
-		FileContent content = wizard.getInitialFileContent();
+		FileContent content = wizard.getInitialFileContent(this);
 		// End of initialization
 		
 		if(content == null) return;

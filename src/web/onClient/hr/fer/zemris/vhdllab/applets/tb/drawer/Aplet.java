@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
@@ -507,10 +508,10 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public FileContent getInitialFileContent() {
+	public FileContent getInitialFileContent(Component parent) {
 		String projectName = container.getActiveProject();
-		String depends = JOptionPane.showInputDialog("Which VHDL file?");
-		String fileName = JOptionPane.showInputDialog("Name of a file?");
+		String depends = JOptionPane.showInputDialog(parent, "Which VHDL file?");
+		String fileName = JOptionPane.showInputDialog(parent, "Name of a file?");
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<file>").append(depends).append("</file>");

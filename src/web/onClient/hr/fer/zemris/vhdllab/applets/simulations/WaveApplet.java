@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -295,7 +296,7 @@ public class WaveApplet extends JPanel
 		this.add(signalValuesScrollbar, "valuesScrollbar");
 	}
 
-	public FileContent getInitialFileContent() 
+	public FileContent getInitialFileContent(Component parent) 
 	{
 		return null;
 	}
@@ -1916,6 +1917,12 @@ public class WaveApplet extends JPanel
 
 	public boolean isSavable() {
 		return savable;
+	}
+
+
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

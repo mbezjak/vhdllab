@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -180,7 +181,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	}
 
 
-	public FileContent getInitialFileContent() {
+	public FileContent getInitialFileContent(Component parent) {
 		createGUI("");
 		if(adrw==null)
 			return null;
@@ -209,6 +210,13 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setSavable(boolean flag) {
 		isSavable=flag;
+	}
+
+
+
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 
