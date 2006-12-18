@@ -40,11 +40,14 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JApplet;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -667,8 +670,8 @@ public class MainApplet
 		if(cache.compilationHistoryIsEmpty()) {
 			//TODO run compilation wizard
 			String projectName = projectExplorer.getActiveProject();
-			String fileName = JOptionPane.showInputDialog(this, "Which file to simulate?");
-			simulate(projectName, fileName);
+			String fileName = JOptionPane.showInputDialog(this, "Which file to compile?");
+			compile(projectName, fileName);
 			
 		}
 		FileIdentifier file = cache.getLastCompilationHistoryTarget();
@@ -698,9 +701,10 @@ public class MainApplet
 		}
 		
 		CompilationResult result = cache.compile(projectName, fileName);
-		IView view = cache.getView(ViewTypes.VT_COMPILATION_ERRORS);
+		/*IView view = cache.getView(ViewTypes.VT_COMPILATION_ERRORS);
 		view.setProjectContainer(this);
-		view.setData(result);
+		view.setData(result);*/
+		JOptionPane.showMessageDialog(this, result);
 		// TODO implement do kraja
 	}
 	

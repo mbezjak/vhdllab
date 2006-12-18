@@ -38,7 +38,7 @@ public class ProjectDAOHibernateImplTest {
 		file.setFileType(FileTypes.FT_VHDL_SOURCE);
 		file.setProject(project);
 		
-		project.setOwnerID("user100");
+		project.setOwnerId("user100");
 		project.setProjectName("simple name of a project");
 		project.setFiles(new TreeSet<File>());
 		project.getFiles().add(file);
@@ -72,7 +72,7 @@ public class ProjectDAOHibernateImplTest {
 		file2.setFileName("sample name2");
 		file2.setFileType(FileTypes.FT_VHDL_TB);
 		Project project2 = new Project();
-		project2.setOwnerID("user101");
+		project2.setOwnerId("user101");
 		project2.setProjectName("simple project2");
 		project2.setFiles(new TreeSet<File>());
 		project2.getFiles().add(file2);
@@ -81,7 +81,7 @@ public class ProjectDAOHibernateImplTest {
 		projects.add(project2);
 		
 		Project project3 = new Project();
-		project3.setOwnerID("user101");
+		project3.setOwnerId("user101");
 		project3.setProjectName("name of third project");
 		project3.setFiles(null);
 		projectDAO.save(project3);

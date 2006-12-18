@@ -10,7 +10,7 @@ public class Project {
 	
 	private Long id;
 	private String projectName;
-	private String ownerID;
+	private String ownerId;
 	private Set<File> files;
 	
 	public Project() {}
@@ -34,10 +34,10 @@ public class Project {
 	 *  not-null="true"
 	 */
 	public String getOwnerId() {
-		return ownerID;
+		return ownerId;
 	}
-	public void setOwnerID(String ownerID) {
-		this.ownerID = ownerID;
+	public void setOwnerId(String ownerID) {
+		this.ownerId = ownerID;
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class Project {
 		
 		if( this.id != null && other.id != null ) return this.id.equals(other.id);
 		else if( this.id == null && other.id == null )
-			return this.ownerID.equals(other.ownerID) &&
+			return this.ownerId.equals(other.ownerId) &&
 					this.projectName.equals(other.projectName) &&
 					this.files.equals(other.files);
 		else return false;
@@ -88,7 +88,7 @@ public class Project {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Project '").append(projectName).append("', id=")
-			.append(id).append(", ownerID=").append(ownerID)
+			.append(id).append(", ownerId=").append(ownerId)
 			.append(", has ").append(files.size()).append(" files:\n");
 		
 		for(File f : files) {

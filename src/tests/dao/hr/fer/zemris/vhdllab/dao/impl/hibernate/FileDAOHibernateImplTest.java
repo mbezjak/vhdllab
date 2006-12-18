@@ -31,7 +31,7 @@ public class FileDAOHibernateImplTest {
 	public void initEachTest() throws DAOException {
 		file = new File();
 		project = new Project();
-		project.setOwnerID("user100");
+		project.setOwnerId("user100");
 		project.setProjectName("simple name of a project");
 		project.setFiles(new TreeSet<File>());
 		project.getFiles().add(file);
@@ -87,6 +87,11 @@ public class FileDAOHibernateImplTest {
 	@Test
 	public void exists4() throws DAOException {
 		assertEquals(true, fileDAO.exists(project.getId(), file.getFileName()));
+	}
+	
+	@Test
+	public void exists5() throws DAOException {
+		assertEquals(true, fileDAO.exists(project.getId(), file.getFileName().toUpperCase()));
 	}
 	
 	@Test

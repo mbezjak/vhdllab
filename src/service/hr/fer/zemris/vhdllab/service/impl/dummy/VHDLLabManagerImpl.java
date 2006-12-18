@@ -294,7 +294,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	public Project createNewProject(String projectName, String ownerId) throws ServiceException {
 		Project project = new Project();
 		project.setProjectName(projectName);
-		project.setOwnerID(ownerId);
+		project.setOwnerId(ownerId);
 		try {
 			projectDAO.save(project);
 		} catch (DAOException e) {
