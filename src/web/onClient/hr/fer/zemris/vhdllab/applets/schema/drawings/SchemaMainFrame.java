@@ -520,7 +520,7 @@ public class SchemaMainFrame extends JFrame {
 		}
 	}
 	
-	private void createPopup(MouseEvent e) {
+	private void createChoicesPopup(MouseEvent e) {
 		deletePopup(e);
 		selectWire(e);
 		if (wireSelected != null) {
@@ -736,7 +736,7 @@ public class SchemaMainFrame extends JFrame {
 		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		wireSelected = null;
 		drawingCanvas.setSelectedWireName(null);
-		if (!noPopup) createPopup(e);
+		if (!noPopup) createChoicesPopup(e);
 	}
 	
 	public void changeCursor(int type) {
@@ -765,6 +765,47 @@ public class SchemaMainFrame extends JFrame {
 	public void handleComponentSelected() {
 		optionbar.selectNoOption();
 		drawWireState = DRAW_WIRE_STATE_NOTHING;
+	}
+	
+	public void handleComponentPropertyChanged(String cmpInstName) {
+		// nadi komponentu koja je promijenjena
+		AbstractSchemaComponent comp = null;
+		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentList();
+		for (SchemaDrawingComponentEnvelope env : clist) {
+			if (env.getComponent().getComponentInstanceName().compareTo(cmpInstName) == 0) {
+				comp = env.getComponent();
+			}
+		}
+		if (comp == null) return;
+		// prodi sve zice i ako referenciraju ovu komponentu, prilagodi ih po potrebi
+		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
+		for (AbstractSchemaWire wire : wlist) {
+			HashSet<WireConnection> subset = new HashSet<WireConnection>();
+			for (WireConnection conn : wire.connections) {
+				if (conn.componentInstanceName.compareTo(cmpInstName) == 0) {
+					if (conn.portIndex >= comp.getNumberOfPorts()) subset.add(conn);
+				}
+			}
+			wire.connections.removeAll(subset);
+		}
+	}
+	
+	public void handleComponentNameChanged(String oldName, String newName) {
+		// prodi sve zice i ako referenciraju komponentu starog imena, prilagodi ih po potrebi
+		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
+		for (AbstractSchemaWire wire : wlist) {
+			HashSet<WireConnection> subset = new HashSet<WireConnection>();
+			for (WireConnection conn : wire.connections) {
+				if (conn.componentInstanceName.compareTo(oldName) == 0) {
+					subset.add(conn);
+				}
+			}
+			wire.connections.removeAll(subset);
+			for (WireConnection conn : subset) {
+				conn.componentInstanceName = newName;
+				wire.connections.add(conn);
+			}
+		}
 	}
 }
 

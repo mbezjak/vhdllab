@@ -20,7 +20,7 @@ public class SPropertyBar extends JToolBar {
 		
 		this.setLayout(new BorderLayout());
 		
-		panel = new SPropertyPanel(null);
+		panel = new SPropertyPanel(null, this);
 		scrpan = new JScrollPane(panel);
 		scrpan.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
@@ -46,6 +46,16 @@ public class SPropertyBar extends JToolBar {
 		panel.removeAll();
 		currentSelectedInstance = null;
 		repaint();
+	}
+	
+	public void handlePropertyUpdate() {
+		if (currentSelectedInstance != null) {
+			parentFrame.handleComponentPropertyChanged(currentSelectedInstance);
+		}
+	}
+	
+	public void handleNameUpdate(String oldName, String newName) {
+		parentFrame.handleComponentNameChanged(oldName, newName);
 	}
 	
 }

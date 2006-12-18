@@ -37,6 +37,10 @@ public class PrivremenaProbnaKlasa {
 		lin.first = new Point(10, 10);
 		lin.second = new Point(10, 50);
 		wire.wireLines.add(lin);
+		lin = new SPair<Point>();
+		lin.first = new Point(10, 50);
+		lin.second = new Point(50, 50);
+		wire.wireLines.add(lin);
 		wire.nodes.add(new Point(10, 40));
 		
 		mframe.drawingCanvas.addWire(wire);
