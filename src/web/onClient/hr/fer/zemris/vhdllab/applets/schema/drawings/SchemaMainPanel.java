@@ -97,7 +97,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		
 		// ovo cemo maknut kad pretvorimo ovo u panel
 		
-		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		// ovo ce trebat maknut
 		init();
@@ -860,11 +860,28 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				wire.connections.add(conn);
 			}
 		}
+	}	
+	
+	public SchemaModelledComponentEntity getEntity() {
+		return entity;
+	}
+
+	public void setEntity(SchemaModelledComponentEntity entity) {
+		this.entity = entity;
 	}
 	
-	private void generateSchemaFromSchemaFile() {
+	
+
+	/**
+	 * Ovdje se generira sadrzaj schematica - tj. sadrzaj drawingCanvasa i sadrzaj
+	 * entitya.
+	 *
+	 */
+	private void generateSchemaContentFromSchemaFile() {
 		// sve sto se znalo o panelu sad se brise!
 		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
+		entity = new SchemaModelledComponentEntity();
+		
 		if (propbar != null) propbar.showNoProperties();
 		
 //		 TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne i interface
@@ -897,7 +914,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 	public void setFileContent(FileContent content) {
 		schemaFile = content;
-		generateSchemaFromSchemaFile();
+		generateSchemaContentFromSchemaFile();
 	}
 
 	public String getProjectName() {
@@ -937,7 +954,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public void init() {
 		this.setLayout(new BorderLayout());
 		
-		generateSchemaFromSchemaFile();
+		generateSchemaContentFromSchemaFile();
 		
 		optionpanel = new JPanel(new BorderLayout());
 		canvaspanel = new JPanel(new BorderLayout());

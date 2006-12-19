@@ -3,6 +3,8 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -15,6 +17,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
@@ -24,6 +27,8 @@ public class SOptionBar extends JToolBar {
 	private JToggleButton drawWireButton;
 	private JComboBox chooseComponentGroup;
 	private SchemaMainPanel parentFrame;
+	private JPopupMenu popupEntitySetup;
+	private SEntitySetupper entitySetupper;
 
 	public SOptionBar(SchemaMainPanel mfr) {
 		super("Option Bar");
@@ -36,10 +41,16 @@ public class SOptionBar extends JToolBar {
 	private void init() {
 		ButtonGroup group = new ButtonGroup();
 		
+		popupEntitySetup = new JPopupMenu("Entity Setup");
+		
 		noneButt = new JToggleButton();
 		group.add(noneButt);
 		
-		setEntityButton = new JButton("Podesi sucelje");
+		setEntityButton = new JButton("Podesi sucelje...");
+		setEntityButton.addActionListener(new StartModifyingEntityListener());
+		this.add(setEntityButton);
+		
+		setEntityButton = new JButton("Korisnicki sklopovi...");
 		this.add(setEntityButton);
 		
 		drawWireButton = new JToggleButton("Crtaj zice");
@@ -109,7 +120,18 @@ public class SOptionBar extends JToolBar {
 		chooseComponentGroup.addItem(new CBarCategory() {
 			@Override
 			public String getCategoryName() {
-				return "Ostalo";
+				return "Dekoderi";
+			}
+			@Override
+			public void takeAction() {
+				ArrayList<String> cmplist = new ArrayList<String>();
+				parentFrame.recreateComponentBar(cmplist);
+			} 
+			});
+		chooseComponentGroup.addItem(new CBarCategory() {
+			@Override
+			public String getCategoryName() {
+				return "Ostali sklopovi";
 			}
 			@Override
 			public void takeAction() {
@@ -135,6 +157,23 @@ public class SOptionBar extends JToolBar {
 				cbcat.takeAction();
 			}
 		});
+	}
+	
+	private class StartModifyingEntityListener implements ActionListener {
+		public StartModifyingEntityListener() {
+		}
+		public void actionPerformed(ActionEvent ae) {
+			popupEntitySetupper();
+		}
+	}
+	
+	public void popupEntitySetupper() {
+		popupEntitySetup.removeAll();
+		
+		entitySetupper = new SEntitySetupper(parentFrame.getEntity(), this);
+		popupEntitySetup.add(entitySetupper);
+
+		popupEntitySetup.show(this, 25, 25);
 	}
 	
 	public void selectNoOption() {
