@@ -57,6 +57,8 @@ public class SchemaModelledComponentPort {
 	}
 
 	public void setPortName(String portName) {
+		if (portName.equals("") || (portName.charAt(0) >= '0' && portName.charAt(0) <= '9')) portName = '_' + portName;
+		portName = portName.replaceAll("[^a-zA-Z0-9_]", "_");
 		this.portName = portName;
 	}
 

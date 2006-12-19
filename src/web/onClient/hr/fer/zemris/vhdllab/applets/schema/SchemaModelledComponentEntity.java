@@ -18,10 +18,12 @@ import java.util.ArrayList;
 public class SchemaModelledComponentEntity {
 	private ArrayList<SchemaModelledComponentPort> portList;
 	private String entityName;
+	private int nameCounter;
 	
 	public SchemaModelledComponentEntity() {
 		entityName = new String("sklop01");
 		portList = new ArrayList<SchemaModelledComponentPort>();
+		nameCounter = -1;
 	}
 
 	public String getEntityName() {
@@ -40,6 +42,11 @@ public class SchemaModelledComponentEntity {
 
 	public void setPortList(ArrayList<SchemaModelledComponentPort> portList) {
 		this.portList = portList;
+	}
+
+	public int getNameCounter() {
+		nameCounter++;
+		return nameCounter;
 	}
 	
 	
