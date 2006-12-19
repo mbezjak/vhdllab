@@ -1,8 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
 
+import java.awt.Point;
 import java.util.Set;
 
 
@@ -16,6 +19,10 @@ public class PrivremenaProbnaKlasa {
 	 */
 	public static void main(String[] args) {
 		SchemaMainFrame mframe = new SchemaMainFrame("Milivoje sine, diko...");
+		
+		Sklop_MUX2nNA1 muxi = new Sklop_MUX2nNA1("Zika");
+		
+		mframe.drawingCanvas.addComponent(muxi, new Point(70, 30));
 		
 		// proba serijalizacije/deserijalizacije
 //		SimpleSchemaWire wire = new SimpleSchemaWire("ZicoMoja");

@@ -52,12 +52,12 @@ public interface ISchemaComponent {
 	/**
 	 * Sirina komponente - za crtanje.
 	 */
-	public int getComponentWidth();
+	public int getComponentWidthSpecific();
 	
 	/**
 	 * Visina komponente - za crtanje.
 	 */
-	public int getComponentHeight();
+	public int getComponentHeightSpecific();
 	
 	/**
 	 * Stvara jedinstven string specifican za svaku komponentu.

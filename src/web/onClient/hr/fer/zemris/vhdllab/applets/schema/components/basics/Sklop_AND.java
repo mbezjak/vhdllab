@@ -72,22 +72,22 @@ public class Sklop_AND extends AbstractSchemaComponent {
 	 */
 	public void drawSpecific(SchemaDrawingAdapter adapter) {		
 		// draw wires to ports
-		int w = getComponentWidth();
-		int h = getComponentHeight();
+		int w = getComponentWidthSpecific();
+		int h = getComponentHeightSpecific();
 		adapter.drawLine(w / 2, h / 2, w, h / 2);
 		for (int i = 0; i < getBrojUlaza(); i++) {
 			adapter.drawLine(0, (i + 1) * RAZMAK_IZMEDU_PORTOVA, w / 2, (i + 1) * RAZMAK_IZMEDU_PORTOVA);
 		}
 		
 		// draw component
-		int diameterY = (getComponentHeight() - 2 * ODMAK_OD_RUBA);
-		int diameterX = (getComponentWidth() - 2 * ODMAK_OD_RUBA);
-		adapter.fillRect(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 - ODMAK_OD_RUBA + 1, getComponentHeight() - ODMAK_OD_RUBA * 2);
-		adapter.fillOvalSegment((getComponentWidth() - diameterX) / 2, (getComponentHeight() - diameterY) / 2, diameterX, diameterY, -90, 180);
-		adapter.drawThickLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA, 1.15f);
-		adapter.drawThickLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, ODMAK_OD_RUBA, 1.15f);
-		adapter.drawThickLine(ODMAK_OD_RUBA, getComponentHeight() - ODMAK_OD_RUBA, getComponentWidth() / 2 + 1, getComponentHeight() - ODMAK_OD_RUBA, 1.15f);
-		adapter.drawOvalSegment((getComponentWidth() - diameterX) / 2, (getComponentHeight() - diameterY) / 2, diameterX, diameterY, -90, 180);
+		int diameterY = (getComponentHeightSpecific() - 2 * ODMAK_OD_RUBA);
+		int diameterX = (getComponentWidthSpecific() - 2 * ODMAK_OD_RUBA);
+		adapter.fillRect(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidthSpecific() / 2 - ODMAK_OD_RUBA + 1, getComponentHeightSpecific() - ODMAK_OD_RUBA * 2);
+		adapter.fillOvalSegment((getComponentWidthSpecific() - diameterX) / 2, (getComponentHeightSpecific() - diameterY) / 2, diameterX, diameterY, -90, 180);
+		adapter.drawThickLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentHeightSpecific() - ODMAK_OD_RUBA, 1.15f);
+		adapter.drawThickLine(ODMAK_OD_RUBA, ODMAK_OD_RUBA, getComponentWidthSpecific() / 2 + 1, ODMAK_OD_RUBA, 1.15f);
+		adapter.drawThickLine(ODMAK_OD_RUBA, getComponentHeightSpecific() - ODMAK_OD_RUBA, getComponentWidthSpecific() / 2 + 1, getComponentHeightSpecific() - ODMAK_OD_RUBA, 1.15f);
+		adapter.drawOvalSegment((getComponentWidthSpecific() - diameterX) / 2, (getComponentHeightSpecific() - diameterY) / 2, diameterX, diameterY, -90, 180);
 	}
 
 	/**
@@ -141,11 +141,11 @@ public class Sklop_AND extends AbstractSchemaComponent {
 		}
 	}
 
-	public int getComponentWidth() {
+	public int getComponentWidthSpecific() {
 		return SIRINA_AND_VRATA;
 	}
 
-	public int getComponentHeight() {
+	public int getComponentHeightSpecific() {
 		return portlist.size() * RAZMAK_IZMEDU_PORTOVA;
 	}
 

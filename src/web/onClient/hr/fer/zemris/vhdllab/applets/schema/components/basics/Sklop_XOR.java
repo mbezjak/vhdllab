@@ -74,8 +74,8 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 	 */
 	public void drawSpecific(SchemaDrawingAdapter adapter) {
 //		 draw wires to ports
-		int w = getComponentWidth();
-		int h = getComponentHeight();
+		int w = getComponentWidthSpecific();
+		int h = getComponentHeightSpecific();
 		adapter.drawLine(w / 2, h / 2, w, h / 2);
 		float koef = (1.5f * ODMAK_OD_RUBA - 0.5f * ODMAK_OD_RUBA) / (h * 0.5f - ODMAK_OD_RUBA);
 		for (int i = 0; i < getBrojUlaza(); i++) {
@@ -177,11 +177,11 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 		}
 	}
 
-	public int getComponentWidth() {
+	public int getComponentWidthSpecific() {
 		return SIRINA_XOR_VRATA;
 	}
 
-	public int getComponentHeight() {
+	public int getComponentHeightSpecific() {
 		return portlist.size() * RAZMAK_IZMEDU_PORTOVA;
 	}
 

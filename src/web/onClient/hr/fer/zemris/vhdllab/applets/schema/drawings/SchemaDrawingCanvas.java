@@ -297,8 +297,8 @@ public class SchemaDrawingCanvas extends JComponent {
 		//y = adapter.realToVirtual(y);
 		//System.out.println("Klik na virtualnu koordinatu " + x + ", " + y);
 		for (SchemaDrawingComponentEnvelope env : components) {
-			int xr = env.getPosition().x + adapter.virtualToReal(env.getComponent().getComponentWidth());
-			int yr = env.getPosition().y + adapter.virtualToReal(env.getComponent().getComponentHeight());
+			int xr = env.getPosition().x + adapter.virtualToReal(env.getComponent().getComponentWidthSpecific());
+			int yr = env.getPosition().y + adapter.virtualToReal(env.getComponent().getComponentHeightSpecific());
 			//System.out.println("Ovaj sklop jeste na koord'nati: " + env.getPosition().x + ", " + env.getPosition().y);
 			//System.out.println("Ovaj sklop idje do koord'nate: " + xr + ", " + yr);
 			if (x >= env.getPosition().x && x <= xr
@@ -316,8 +316,8 @@ public class SchemaDrawingCanvas extends JComponent {
 		//y = adapter.realToVirtual(y);
 		//System.out.println("Klik na virtualnu koordinatu " + x + ", " + y);
 		for (SchemaDrawingComponentEnvelope env : components) {
-			int xr = env.getPosition().x + adapter.virtualToReal(env.getComponent().getComponentWidth());
-			int yr = env.getPosition().y + adapter.virtualToReal(env.getComponent().getComponentHeight());
+			int xr = env.getPosition().x + adapter.virtualToReal(env.getComponent().getComponentWidthSpecific());
+			int yr = env.getPosition().y + adapter.virtualToReal(env.getComponent().getComponentHeightSpecific());
 			//System.out.println("Ovaj sklop jeste na koord'nati: " + env.getPosition().x + ", " + env.getPosition().y);
 			//System.out.println("Ovaj sklop idje do koord'nate: " + xr + ", " + yr);
 			if (x >= env.getPosition().x && x <= xr

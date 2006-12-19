@@ -49,8 +49,8 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 		adapter.draw4gon(
 				ODMAK_HORIZ, VISINA_NOT_VRATA / 2,
 				ODMAK_HORIZ, ODMAK_VERT,
-				getComponentWidth() - ODMAK_HORIZ, VISINA_NOT_VRATA / 2,
-				ODMAK_HORIZ, getComponentHeight() - ODMAK_VERT);
+				getComponentWidthSpecific() - ODMAK_HORIZ, VISINA_NOT_VRATA / 2,
+				ODMAK_HORIZ, getComponentHeightSpecific() - ODMAK_VERT);
 	}
 	
 	/**
@@ -66,11 +66,11 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 		}
 	}
 
-	public int getComponentWidth() {
+	public int getComponentWidthSpecific() {
 		return SIRINA_NOT_VRATA;
 	}
 
-	public int getComponentHeight() {
+	public int getComponentHeightSpecific() {
 		return VISINA_NOT_VRATA;
 	}
 

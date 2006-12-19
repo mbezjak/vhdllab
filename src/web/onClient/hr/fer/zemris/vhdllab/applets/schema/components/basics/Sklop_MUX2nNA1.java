@@ -74,16 +74,16 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 			if (port.getTipPorta() == "POD") {
 				adapter.drawLine(p.x, p.y, p.x + ODMAK_OD_RUBA, p.y);
 			} else if (port.getTipPorta() == "SEL") {
-				adapter.drawLine(p.x, p.y, p.x, p.y - this.getComponentHeight() / 2);
+				adapter.drawLine(p.x, p.y, p.x, p.y - this.getComponentHeightSpecific() / 2);
 			} else if (port.getTipPorta() == "IZL") {
 				adapter.drawLine(p.x, p.y, p.x - ODMAK_OD_RUBA, p.y);
 			}
 		}
 		adapter.draw4gon(
 				ODMAK_OD_RUBA, ODMAK_OD_RUBA,
-				this.getComponentWidth() - ODMAK_OD_RUBA, RAZMAK_IZMEDU_PORTOVA,
-				this.getComponentWidth() - ODMAK_OD_RUBA, this.getComponentHeight() - RAZMAK_IZMEDU_PORTOVA,
-				ODMAK_OD_RUBA, this.getComponentHeight() - ODMAK_OD_RUBA
+				this.getComponentWidthSpecific() - ODMAK_OD_RUBA, RAZMAK_IZMEDU_PORTOVA,
+				this.getComponentWidthSpecific() - ODMAK_OD_RUBA, this.getComponentHeightSpecific() - RAZMAK_IZMEDU_PORTOVA,
+				ODMAK_OD_RUBA, this.getComponentHeightSpecific() - ODMAK_OD_RUBA
 				);
 	}
 
@@ -150,7 +150,7 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 		for (AbstractSchemaPort port : portlist) {
 			if (port.getDirection() == AbstractSchemaPort.PortDirection.OUT) {
 				port.setCoordinate(new Point(SIRINA_MUX2nNA1, 
-						getComponentHeight() / 2));
+						getComponentHeightSpecific() / 2));
 			} else {
 				if (port.getTipPorta() == "SEL") {
 					port.setCoordinate(new Point(
@@ -165,11 +165,11 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 		}
 	}
 
-	public int getComponentWidth() {
+	public int getComponentWidthSpecific() {
 		return SIRINA_MUX2nNA1;
 	}
 
-	public int getComponentHeight() {
+	public int getComponentHeightSpecific() {
 		return (portlist.size() - 10) * RAZMAK_IZMEDU_PORTOVA;
 	}
 

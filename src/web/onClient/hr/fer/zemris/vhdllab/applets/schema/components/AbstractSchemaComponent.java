@@ -288,7 +288,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 * Inace se nece iscrtati tockice koje oznacavaju same portove.
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
-		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidth(), getComponentHeight());
+		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidthSpecific(), getComponentHeightSpecific());
 		drawSpecific(adapter);
 		if (isDrawingPorts) for (AbstractSchemaPort port : portlist) {
 			if (port.getTipPorta() == "_boxing") continue;
@@ -319,9 +319,14 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	
 	protected abstract String serializeComponentSpecific();
 	
-	public void postaviOpcenito(String ime, String ori, String componentSpecific) {
+	public void postaviOpcenito(String ime, String ori, String del, String componentSpecific) {
 		setComponentInstanceName(ime);
 		setSmjerWithInt(ori);
+		try {
+			setComponentDelay(Integer.parseInt(del));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		deserializeComponentSpecific(componentSpecific);
 	}
 	
@@ -333,11 +338,12 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		digester.push(this);
 		
 		// prvo deserijaliziraj opcenite stvari
-		digester.addCallMethod("komponenta", "postaviOpcenito", 3);
+		digester.addCallMethod("komponenta", "postaviOpcenito", 4);
 		digester.addCallParam("komponenta/imeInstanceKomponente", 0);
 		digester.addCallParam("komponenta/orijentacija", 1);
+		digester.addCallParam("komponenta/kasnjenje", 2);
 		// deserijaliziraj component-specific stvari
-		digester.addCallParam("komponenta/componentSpecific", 2);
+		digester.addCallParam("komponenta/componentSpecific", 3);
 		
 		try {
 			digester.parse(new StringReader(serial));
@@ -354,6 +360,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		StringBuilder builder = new StringBuilder("<komponenta>");
 		builder.append("<imeInstanceKomponente>").append(pComponentInstanceName.val).append("</imeInstanceKomponente>");
 		builder.append("<orijentacija>").append(smToInt(smjer)).append("</orijentacija>");
+		builder.append("<kasnjenje>").append(componentDelay).append("</kasnjenje>");
 		
 		// serijaliziraj component-specific stvari
 		builder.append("<componentSpecific>").append(serializeComponentSpecific()).append("</componentSpecific>");
@@ -398,9 +405,13 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		this.componentDelay = componentDelay;
 	}
 	
+	public int getComponentWidth() {
+		return getComponentWidthSpecific();
+	}
 	
-	
-	
+	public int getComponentHeight() {
+		return getComponentHeightSpecific();
+	}
 }
 
 

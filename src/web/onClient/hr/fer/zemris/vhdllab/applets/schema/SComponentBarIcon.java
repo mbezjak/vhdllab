@@ -36,7 +36,7 @@ public class SComponentBarIcon implements Icon {
 				WIDTH, HEIGHT, Transparency.TRANSLUCENT);
 		SchemaDrawingAdapter adapter = new SchemaDrawingAdapter(new SchemaColorProvider(), buffi, 1.d);
 		if (schCmp != null) {
-			adapter.setVirtualGridFactor(WIDTH / schCmp.getComponentWidth());
+			adapter.setVirtualGridFactor(WIDTH / schCmp.getComponentWidthSpecific());
 			schCmp.drawEssential(adapter);
 		} else {
 			adapter.setVirtualGridFactor(1.d);

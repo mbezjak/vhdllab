@@ -51,17 +51,14 @@ public class SchemaMainFrame extends JFrame {
 	public static final int DRAW_WIRE_STATE_DRAWING = 1;
 	
 	class PopupListener extends MouseAdapter {
-
 		@Override
 		public void mousePressed(MouseEvent e) {
 			maybeShowPopup(e);
 		}
-
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			maybeShowPopup(e);
 		}
-		
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
 				popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -78,7 +75,8 @@ public class SchemaMainFrame extends JFrame {
 	private int freePlaceEvalCounter = 0;
 	private boolean lastEvalResult = false;
 	private int drawWireState = DRAW_WIRE_STATE_NOTHING;
-	private SPair<Point> currentLine = null; 
+	private SPair<Point> currentLine = null;
+	private SPair<Point> lastLine = null;
 	private AbstractSchemaWire wireBeingDrawed = null;
 	private AbstractSchemaWire wireSelected = null;
 	private JPopupMenu popupChoicesMenu = null;
@@ -86,7 +84,7 @@ public class SchemaMainFrame extends JFrame {
 	private JPopupMenu popupWirePropertiesMenu = null;
 	private JTextField rwmTextField = null;
 	private Point nodeConfirmed = null;
-	private boolean turnState = false;	
+	private boolean tStateVert = false;
 
 	public SchemaMainFrame(String arg0) throws HeadlessException {
 		super(arg0);
@@ -147,12 +145,12 @@ public class SchemaMainFrame extends JFrame {
 	
 	private boolean checkForIntersection(int x1, int y1, AbstractSchemaComponent c1, SchemaDrawingComponentEnvelope env) {
 		SchemaDrawingAdapter adapter = drawingCanvas.getAdapter();
-		int x2 = x1 + adapter.virtualToReal(c1.getComponentWidth());
-		int y2 = y1 + adapter.virtualToReal(c1.getComponentHeight());
+		int x2 = x1 + adapter.virtualToReal(c1.getComponentWidthSpecific());
+		int y2 = y1 + adapter.virtualToReal(c1.getComponentHeightSpecific());
 		int xs = env.getPosition().x;
 		int ys = env.getPosition().y;
-		int xe = xs + adapter.virtualToReal(env.getComponent().getComponentWidth());
-		int ye = ys + adapter.virtualToReal(env.getComponent().getComponentHeight());
+		int xe = xs + adapter.virtualToReal(env.getComponent().getComponentWidthSpecific());
+		int ye = ys + adapter.virtualToReal(env.getComponent().getComponentHeightSpecific());
 		if (x1 >= xs && x1 <= xe && y1 >= ys && y1 <= ye) return true;
 		if (x2 >= xs && x2 <= xe && y2 >= ys && y2 <= ye) return true;
 		if (x1 >= xs && x1 <= xe && y2 >= ys && y2 <= ye) return true;
@@ -226,7 +224,7 @@ public class SchemaMainFrame extends JFrame {
 		x = ad.realToVirtualRelativeX(x);
 		y = ad.realToVirtualRelativeY(y);
 		int cx = ad.realToVirtualRelativeX(env.getPosition().x), cy = ad.realToVirtualRelativeY(env.getPosition().y);
-		int minDist = comp.getComponentHeight();
+		int minDist = comp.getComponentHeightSpecific();
 		int dist = 0;
 		Integer minPort = null;
 		for (int i = 0; i < comp.getNumberOfPorts(); i++) {
@@ -353,7 +351,8 @@ public class SchemaMainFrame extends JFrame {
 			drawingCanvas.removeWire(extwire.getWireName());
 			if (!checkIfPointIsWireEnd(extwire, x, y)) {
 				nodeConfirmed = new Point(x, y);
-				wireBeingDrawed.nodes.add(nodeConfirmed);
+				if (!wireBeingDrawed.nodes.contains(nodeConfirmed)) wireBeingDrawed.nodes.add(nodeConfirmed);
+				else nodeConfirmed = null;
 			}
 			currentLine = new SPair<Point>();
 			currentLine.first = new Point(x, y);
@@ -580,6 +579,7 @@ public class SchemaMainFrame extends JFrame {
 			x = ad.realToVirtualRelativeX(x);
 			y = ad.realToVirtualRelativeY(y);
 			if (drawWireState == DRAW_WIRE_STATE_NOTHING) {
+				lastLine = null;
 				wireBeingDrawed = new SimpleSchemaWire("Wire0");
 				drawWireState = DRAW_WIRE_STATE_DRAWING;
 				currentLine = new SPair<Point>();
@@ -590,7 +590,7 @@ public class SchemaMainFrame extends JFrame {
 				if (env != null) {
 					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
 					if (portIndex != null) {
-						System.out.println("Hej nasel sam ga!");
+						//System.out.println("Hej nasel sam ga!");
 						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
 							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex,
 									new Point(env.getComponent().getSchemaPort(portIndex).getCoordinate()));
@@ -609,7 +609,7 @@ public class SchemaMainFrame extends JFrame {
 				SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
 				boolean over = false;
 				if (env != null) {
-					System.out.println("Opet");
+					//System.out.println("Opet");
 					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
 					if (portIndex != null) {
 						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
@@ -626,21 +626,40 @@ public class SchemaMainFrame extends JFrame {
 				currentLine.second = new Point(x, y);
 				SPair<Point> t = new SPair<Point>();
 				SPair<Point> s = new SPair<Point>();
-				if (turnState) {
+				if (lastLine != null) { 
+					if (tStateVert) {
+						if (lastLine.first.y > lastLine.second.y) {
+							if (currentLine.first.y < currentLine.second.y) tStateVert = false;
+						} else {
+							if (currentLine.first.y > currentLine.second.y) tStateVert = false;
+						}
+					} else {
+						if (lastLine.first.x < lastLine.second.x) {
+							if (currentLine.first.x > currentLine.second.x) tStateVert = true;
+						} else {
+							if (currentLine.first.x < currentLine.second.x) tStateVert = true;
+						}
+					}
+				}
+				if (tStateVert) {
 					t.first = new Point(currentLine.first);
 					t.second = new Point(currentLine.first.x, currentLine.second.y);
 					s.first = new Point(currentLine.first.x, currentLine.second.y);
 					s.second = new Point(currentLine.second);
-					turnState = false;
+					tStateVert = false;
 				} else {
 					t.first = new Point(currentLine.first);
 					t.second = new Point(currentLine.second.x, currentLine.first.y);
 					s.first = new Point(currentLine.second.x, currentLine.first.y);
 					s.second = new Point(currentLine.second);
-					turnState = true;
+					tStateVert = true;
 				}
 				if (!t.first.equals(t.second)) wireBeingDrawed.wireLines.add(t);
 				if (!s.first.equals(s.second)) wireBeingDrawed.wireLines.add(s);
+				lastLine = new SPair<Point>();
+				lastLine.first = new Point(s.first);
+				lastLine.second = new Point(s.second);
+				//System.out.println(lastLine.first.x + " " + lastLine.first.y + " " + lastLine.second.x + " " + lastLine.second.y);
 				currentLine.first = currentLine.second;
 				if (nodeConfirmed != null) nodeConfirmed = null;
 				if (over) handleRightClickOnSchema(e);
@@ -695,8 +714,8 @@ public class SchemaMainFrame extends JFrame {
 			SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
 			if (env != null)
 				drawingCanvas.addRectToStack(env.getPosition().x, env.getPosition().y, 
-						env.getComponent().getComponentWidth(),
-						env.getComponent().getComponentHeight(), true);
+						env.getComponent().getComponentWidthSpecific(),
+						env.getComponent().getComponentHeightSpecific(), true);
 			return;
 		}
 		String selectedStr = compbar.getSelectedComponentName();
@@ -712,8 +731,8 @@ public class SchemaMainFrame extends JFrame {
 				ok = evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e.getY());
 			
 			drawingCanvas.addRectToStack(e.getX(), e.getY(), 
-					compbar.getSelectedComponent().getComponentWidth(),
-					compbar.getSelectedComponent().getComponentHeight(), ok);
+					compbar.getSelectedComponent().getComponentWidthSpecific(),
+					compbar.getSelectedComponent().getComponentHeightSpecific(), ok);
 		}
 	}
 

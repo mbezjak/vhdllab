@@ -31,12 +31,12 @@ public class TestBasicOR extends AbstractSchemaComponent {
 		
 	}
 
-	public int getComponentWidth() {
+	public int getComponentWidthSpecific() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	public int getComponentHeight() {
+	public int getComponentHeightSpecific() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
