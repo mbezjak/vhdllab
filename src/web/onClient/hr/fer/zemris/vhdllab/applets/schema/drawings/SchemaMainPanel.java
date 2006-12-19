@@ -1,9 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
 import hr.fer.zemris.vhdllab.applets.schema.SOptionBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
+import hr.fer.zemris.vhdllab.applets.schema.SchemaModelledComponentEntity;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
@@ -15,6 +20,7 @@ import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire.WireConnection;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -44,7 +50,7 @@ import javax.swing.JTextField;
  *
  */
 
-public class SchemaMainFrame extends JFrame {
+public class SchemaMainPanel extends JPanel implements IEditor {
 	public static final int DEFAULT_CURSOR_TYPE = 1;
 	public static final int CROSSHAIR_CURSOR_TYPE = 2;
 	public static final int DRAW_WIRE_STATE_NOTHING = 0;
@@ -85,62 +91,16 @@ public class SchemaMainFrame extends JFrame {
 	private JTextField rwmTextField = null;
 	private Point nodeConfirmed = null;
 	private boolean tStateVert = false;
+	private SchemaModelledComponentEntity entity = null;
 
-	public SchemaMainFrame(String arg0) throws HeadlessException {
-		super(arg0);
+	public SchemaMainPanel() throws HeadlessException {
 		
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.pack();
-		this.setVisible(true);
-		this.setMinimumSize(new Dimension(350, 200));
-		this.setSize(new Dimension(550, 400));
+		// ovo cemo maknut kad pretvorimo ovo u panel
+		
 		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
-		initUI();
-		this.validate();
-	}
-	
-	private void initUI() {
-		this.setLayout(new BorderLayout());
-		
-		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
-		
-		optionpanel = new JPanel(new BorderLayout());
-		canvaspanel = new JPanel(new BorderLayout());
-		
-		optionbar = new SOptionBar(this);
-		compbar = new SComponentBar(this);
-		propbar = new SPropertyBar(this);
-		scrpan = new JScrollPane(drawingCanvas);
-		
-		optionpanel.add(optionbar, BorderLayout.PAGE_START);
-		canvaspanel.add(compbar, BorderLayout.PAGE_START);
-		canvaspanel.add(propbar, BorderLayout.EAST);
-		canvaspanel.add(scrpan, BorderLayout.CENTER);
-		
-		this.add(canvaspanel, BorderLayout.CENTER);
-		this.add(optionpanel, BorderLayout.NORTH);
-		
-		popupChoicesMenu = new JPopupMenu("Menu");
-		popupRenameWireMenu = new JPopupMenu("Rename");
-		popupWirePropertiesMenu = new JPopupMenu("Wire properties"); 
-		
-		// tipke
-		this.addKeyListener(new KeyListener() {
-
-			public void keyTyped(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-
-			public void keyPressed(KeyEvent arg0) {
-				handleKeyPressed(arg0);
-			}
-
-			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-			}
-			
-		});
+		// ovo ce trebat maknut
+		init();
 	}
 	
 	private boolean checkForIntersection(int x1, int y1, AbstractSchemaComponent c1, SchemaDrawingComponentEnvelope env) {
@@ -186,6 +146,9 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	private void deleteComponent() {
+		schemaHasBeenModified = true;
+		if (projectContainer != null && schemaFile != null) 
+			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 		String toBeRemoved = propbar.getSelectedComponentInstanceName();
 		if (toBeRemoved == null) return;
 		if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
@@ -211,6 +174,9 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	private void deleteWire() {
+		schemaHasBeenModified = true;
+		if (projectContainer != null && schemaFile != null) 
+			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 		if (wireSelected != null) {
 			drawingCanvas.removeWire(wireSelected.getWireName());
 			wireSelected = null;
@@ -362,6 +328,9 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	private void renameWire(String oldName, String newName) {
+		schemaHasBeenModified = true;
+		if (projectContainer != null && schemaFile != null) 
+			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		AbstractSchemaWire wire = null;
 		for (int i = 0; i < wlist.size(); i++) {
@@ -389,6 +358,9 @@ public class SchemaMainFrame extends JFrame {
 		}
 		public void actionPerformed(ActionEvent ae) {
 			// preimenuj zicu
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			renameWire(oldName, tf.getText());
 		}
 	}
@@ -400,6 +372,9 @@ public class SchemaMainFrame extends JFrame {
 		}
 		public void keyTyped(KeyEvent arg0) {
 			if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
+				schemaHasBeenModified = true;
+				if (projectContainer != null && schemaFile != null) 
+					projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 				renameWire(wname, rwmTextField.getText());
 			}
 		}
@@ -425,12 +400,18 @@ public class SchemaMainFrame extends JFrame {
 	
 	private class DeleteComponentListener implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			deleteComponent();
 		}
 	}
 	
 	private class DeleteWireListener implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			deleteWire();
 		}
 	}
@@ -444,6 +425,9 @@ public class SchemaMainFrame extends JFrame {
 			yp = y;
 		}
 		public void actionPerformed(ActionEvent ae) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			createRenameWirePopup(oldName, xp, yp);
 		}
 	}
@@ -457,6 +441,9 @@ public class SchemaMainFrame extends JFrame {
 			wireName = wireInstanceName;
 		}
 		public void actionPerformed(ActionEvent ae) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			startWireExpansion(xp, yp, wireName);
 		}
 	}
@@ -474,6 +461,9 @@ public class SchemaMainFrame extends JFrame {
 			yp = y;
 		}
 		public void actionPerformed(ActionEvent ae) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			wire.connections.remove(connection);
 			createWirePropertiesPopup(wire, xp, yp);
 			popupWirePropertiesMenu.validate();
@@ -481,7 +471,7 @@ public class SchemaMainFrame extends JFrame {
 		}
 	}
 	
-	void createWirePropertiesPopup(AbstractSchemaWire wire, int x, int y) {
+	private void createWirePropertiesPopup(AbstractSchemaWire wire, int x, int y) {
 		popupWirePropertiesMenu.removeAll();
 		popupWirePropertiesMenu.setLayout(new GridLayout(0, 2, 2, 2));
 		
@@ -574,6 +564,9 @@ public class SchemaMainFrame extends JFrame {
 	public void handleLeftClickOnSchema(MouseEvent e) {
 		deletePopup(e);
 		if (optionbar.isDrawWireSelected()) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 			int x = e.getX(), y = e.getY();
 			x = ad.realToVirtualRelativeX(x);
@@ -668,6 +661,9 @@ public class SchemaMainFrame extends JFrame {
 		}
 		String selectedInstStr = compbar.getSelectedComponentName();
 		if (selectedInstStr != null) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			if (!evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e.getY())) return;
 			SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 			try {
@@ -775,6 +771,9 @@ public class SchemaMainFrame extends JFrame {
 	public void handleKeyPressed(KeyEvent kev) {
 		System.out.println("STISNUL SI: " + kev.getKeyChar());
 		if (kev.getKeyChar() == KeyEvent.VK_DELETE) {
+			schemaHasBeenModified = true;
+			if (projectContainer != null && schemaFile != null) 
+				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			deleteComponent();
 			deleteWire();
 		}
@@ -792,6 +791,10 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	public void handleComponentPropertyChanged(String cmpInstName) {
+		schemaHasBeenModified = true;
+		if (projectContainer != null && schemaFile != null) 
+			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+		
 		// nadi komponentu koja je promijenjena
 		AbstractSchemaComponent comp = null;
 		Point pcomp = null;
@@ -838,6 +841,10 @@ public class SchemaMainFrame extends JFrame {
 	}
 	
 	public void handleComponentNameChanged(String oldName, String newName) {
+		schemaHasBeenModified = true;
+		if (projectContainer != null && schemaFile != null) 
+			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+		
 		// prodi sve zice i ako referenciraju komponentu starog imena, prilagodi ih po potrebi
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		for (AbstractSchemaWire wire : wlist) {
@@ -853,6 +860,147 @@ public class SchemaMainFrame extends JFrame {
 				wire.connections.add(conn);
 			}
 		}
+	}
+	
+	private void generateSchemaFromSchemaFile() {
+		// sve sto se znalo o panelu sad se brise!
+		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
+		if (propbar != null) propbar.showNoProperties();
+		
+//		 TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne i interface
+		if (schemaFile != null) {
+			// ovdje izgenerirati sadrzaj na temelju predanog filea
+		}
+	}
+	
+	
+	/**
+	 * Ova metoda vraca vhdl kod izgeneriran na temelju sklopa
+	 * na shemi.
+	 * @return
+	 */
+	private String generateVHDLCode() {
+		return null;
+	}
+	
+	
+	
+	
+	
+	// OVO DALJE JE IMPLEMENTACIJA ZA IEditor I ZA IWizard
+	
+	private boolean schemaHasBeenModified = false;
+	private ProjectContainer projectContainer = null;
+	private FileContent schemaFile = null;
+	private boolean miro_saveable = false;
+	private boolean miro_readOnly = false;
+
+	public void setFileContent(FileContent content) {
+		schemaFile = content;
+		generateSchemaFromSchemaFile();
+	}
+
+	public String getProjectName() {
+		if (schemaFile != null) return schemaFile.getProjectName();
+		return null;
+	}
+
+	public String getFileName() {
+		if (schemaFile != null) return schemaFile.getFileName();
+		return null;
+	}
+
+	public boolean isModified() {
+		return schemaHasBeenModified;
+	}
+
+	public void setSavable(boolean flag) {
+		miro_saveable = flag;
+	}
+
+	public boolean isSavable() {
+		return miro_saveable;
+	}
+
+	public void setReadOnly(boolean flag) {
+		miro_readOnly = flag;
+	}
+
+	public boolean isReadOnly() {
+		return miro_readOnly;
+	}
+
+	public void highlightLine(int line) {
+		// Ovu metodu po Mirinom nalogu ignoriramo. Hvaljen Isus.
+	}
+	
+	public void init() {
+		this.setLayout(new BorderLayout());
+		
+		generateSchemaFromSchemaFile();
+		
+		optionpanel = new JPanel(new BorderLayout());
+		canvaspanel = new JPanel(new BorderLayout());
+		
+		optionbar = new SOptionBar(this);
+		compbar = new SComponentBar(this);
+		propbar = new SPropertyBar(this);
+		scrpan = new JScrollPane(drawingCanvas);
+		
+		optionpanel.add(optionbar, BorderLayout.PAGE_START);
+		canvaspanel.add(compbar, BorderLayout.PAGE_START);
+		canvaspanel.add(propbar, BorderLayout.EAST);
+		canvaspanel.add(scrpan, BorderLayout.CENTER);
+		
+		this.add(canvaspanel, BorderLayout.CENTER);
+		this.add(optionpanel, BorderLayout.NORTH);
+		
+		popupChoicesMenu = new JPopupMenu("Menu");
+		popupRenameWireMenu = new JPopupMenu("Rename");
+		popupWirePropertiesMenu = new JPopupMenu("Wire properties"); 
+		
+		// tipke
+		this.addKeyListener(new KeyListener() {
+
+			public void keyTyped(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+
+			public void keyPressed(KeyEvent arg0) {
+				handleKeyPressed(arg0);
+			}
+
+			public void keyReleased(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+			
+		});
+	}
+	
+	// Tu se samo postavlja project container.
+	public void setProjectContainer(ProjectContainer container) {
+		projectContainer = container;
+	}
+	
+	
+	// ovo dvoje treba zavrsit
+	
+	// Ovo je Rajakovic reko da ce napravit - radi se o pohranjivanju u interni format, ako sam dobro shvatio.
+	// Dio toga sam vec napravio - sto se tice serijalizacije pojedinih komponenti.
+	public String getData() {
+		// TODO Ovdje moramo izgenerirat podatke koje cemo vratit
+		
+		// stogod da tu napravio, moras promijeniti modification stanje u false
+		schemaHasBeenModified = false;
+		return null;
+	}
+	
+	// logikom stvari, ovo Rajakovic mora napravit, jer on radi pohranu u interni format
+	// U svakom slucaju, wizard za Schematic bi trebao izgenerirati sucelje sklopa koji se
+	// modelira - dakle ulaze i izlaze, te njima pripadne tipove...
+	public IWizard getWizard() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

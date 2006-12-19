@@ -56,13 +56,13 @@ TODO 55) [CLOSED]   User Interface za dovlacenje sklopova.... - ucinjeno
 TODO 56) [CLOSED]		Iscrtavanje i povlacenje zica?
 TODO 57) [CLOSED]   !BITNO! Dodati zabranu zici da se spoji na port na koji je vec neka zica spojena
 TODO 58) [CLOSED]   !BITNO! Dovrsiti serijalizaciju kod nekoliko sklopova kod kojih to jos nije dovrseno
-TODO 59) [OPEN]   !BITNO! Promijenit SchemaMainFrame tako da nasljeduje panel i implementira IEditor, a ne JFrame
+TODO 59) [CLOSED]   !BITNO! Promijenit SchemaMainFrame tako da nasljeduje panel i implementira IEditor, a ne JFrame
 TODO 60) [CLOSED]   !BITNO! Omoguciti odabir zica, te njihovo brisanje i sirenje...
 TODO 61) [CLOSED]   !BITNO! Izvrsiti azuriranje zica pri promjeni svojstva sklopova...
 TODO 62) [CLOSED]		!BITNO! Dodati svojstvo delay sklopovima.
 TODO 63) [OPEN]     User defined komponente...
-TODO 64) [CLOSED]   Napraviti posebni izbornik za odabir klase sklopova - to je dodatak SOptionBaru
-TODO 65) [OPEN]   Podesavanje sucelja sklopa
+TODO 64) [OPEN]   Podesavanje sucelja sklopa
+TODO 65) [CLOSED]   Napraviti posebni izbornik za odabir klase sklopova - to je dodatak SOptionBaru
 TODO 66) [OPEN]   Orijentacija...
 TODO 67) [OPEN]   Ispraviti crtanje zice tako da ne ide sama preko sebe
 TODO 68) [OPEN]   Pomicanje komponenti...

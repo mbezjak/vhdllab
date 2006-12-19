@@ -53,7 +53,8 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 		return (String)pComponentInstanceName.val;
 	}
 	public void setComponentInstanceName(String name) {
-		name = name.replace(' ', '_');
+		if (name.equals("") || (name.charAt(0) >= '0' && name.charAt(0) <= '9')) name = '_' + name;
+		name = name.replaceAll("[^a-zA-Z0-9_]", "_");
 		if (name == pComponentInstanceName.val) return;
 		System.out.println("Postavljam ime na: " + name);
 		if (isInstanceNameInvalid(name)) {
@@ -70,8 +71,8 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	}
 	static protected String generateNewInstanceName(String input) {
 		counter++;
-		if (input.length() > 3) {
-			input = input + counter;
+		if (input.length() > 5) {
+			input = input.substring(0, input.length() - 2) + counter;
 		} else {
 			input = "Sklop_" + counter;
 		}
@@ -166,27 +167,27 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 				tf.setText(comp.getComponentInstanceName());
 			}
 		});
-		cplist.add(new GenericComboProperty("Orijentacija", new Ptr<Object>(this)) {
-			@Override
-			public void onUpdate(JComboBox cbox) {
-				AbstractSchemaPort.PortOrientation po = AbstractSchemaPort.PortOrientation.NORTH;
-				int i = cbox.getSelectedIndex();
-				if (i == 3) po = AbstractSchemaPort.PortOrientation.WEST;
-				if (i == 2) po = AbstractSchemaPort.PortOrientation.EAST;
-				if (i == 1) po = AbstractSchemaPort.PortOrientation.SOUTH;
-				cbox.removeAllItems();
-				if (i == -1) {
-					po = ((AbstractSchemaComponent)getSklopPtr().val).getSmjer();
-					i = smToInt(po);
-				}
-				cbox.insertItemAt("W", 0);
-				cbox.insertItemAt("E", 0);
-				cbox.insertItemAt("S", 0);
-				cbox.insertItemAt("N", 0);
-				cbox.setSelectedIndex(i);
-				((AbstractSchemaComponent)getSklopPtr().val).setSmjer(po);
-			}
-		});
+//		cplist.add(new GenericComboProperty("Orijentacija", new Ptr<Object>(this)) {
+//			@Override
+//			public void onUpdate(JComboBox cbox) {
+//				AbstractSchemaPort.PortOrientation po = AbstractSchemaPort.PortOrientation.NORTH;
+//				int i = cbox.getSelectedIndex();
+//				if (i == 3) po = AbstractSchemaPort.PortOrientation.WEST;
+//				if (i == 2) po = AbstractSchemaPort.PortOrientation.EAST;
+//				if (i == 1) po = AbstractSchemaPort.PortOrientation.SOUTH;
+//				cbox.removeAllItems();
+//				if (i == -1) {
+//					po = ((AbstractSchemaComponent)getSklopPtr().val).getSmjer();
+//					i = smToInt(po);
+//				}
+//				cbox.insertItemAt("W", 0);
+//				cbox.insertItemAt("E", 0);
+//				cbox.insertItemAt("S", 0);
+//				cbox.insertItemAt("N", 0);
+//				cbox.setSelectedIndex(i);
+//				((AbstractSchemaComponent)getSklopPtr().val).setSmjer(po);
+//			}
+//		});
 		cplist.add(new GenericProperty("Kasnjenje sklopa", new Ptr<Object>(this)) {
 			@Override
 			public void onUpdate(JTextField tf) {

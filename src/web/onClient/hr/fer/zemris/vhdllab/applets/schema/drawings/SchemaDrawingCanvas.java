@@ -48,7 +48,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	private SchemaColorProvider colors = null;	
 	private BufferedImage canvas = null;
 	private SchemaDrawingCanvasListeners listeners = null;
-	private SchemaMainFrame mainframe = null;
+	private SchemaMainPanel mainframe = null;
 	private Stack<RectWithBool> rectangleStack = null;
 	private Stack<LineWithBool> lineStack = null;
 	private String selectedCompName;
@@ -58,7 +58,7 @@ public class SchemaDrawingCanvas extends JComponent {
 
 	
 	
-	public SchemaDrawingCanvas(SchemaColorProvider colors, SchemaMainFrame parent) {
+	public SchemaDrawingCanvas(SchemaColorProvider colors, SchemaMainPanel parent) {
 		mainframe = parent;
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
 		wires = new ArrayList<AbstractSchemaWire>();
@@ -69,7 +69,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		initListeners();
 	}
 	
-	public SchemaDrawingCanvas(SchemaColorProvider colors, Dimension dimension, SchemaMainFrame parent){
+	public SchemaDrawingCanvas(SchemaColorProvider colors, Dimension dimension, SchemaMainPanel parent){
 		mainframe = parent;
 		this.dimension=dimension;
 		initGUI();
@@ -283,11 +283,11 @@ public class SchemaDrawingCanvas extends JComponent {
 		grid.repaint();
 	}
 	
-	public SchemaMainFrame getMainframe() {
+	public SchemaMainPanel getMainframe() {
 		return mainframe;
 	}
 
-	public void setMainframe(SchemaMainFrame mainframe) {
+	public void setMainframe(SchemaMainPanel mainframe) {
 		this.mainframe = mainframe;
 	}
 

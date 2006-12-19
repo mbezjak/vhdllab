@@ -8,7 +8,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_NOT;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_OR;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_XOR;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,13 +46,13 @@ public class SComponentBar extends JToolBar {
 			//System.out.println("Mama, stisnuo me!");
 			if (this.getText().compareTo("(none)") == 0) {
 				//System.out.println("Mama, iskljucio me!");
-				parent.getParentToolbar().changeCursor(SchemaMainFrame.DEFAULT_CURSOR_TYPE);
+				parent.getParentToolbar().changeCursor(SchemaMainPanel.DEFAULT_CURSOR_TYPE);
 				setSelectedComponentName(null);
 				parent.getParentFrame().handleComponentSelected();
 			}
 			else {
 				parent.setSelectedComponentName(this.getText());
-				parent.getParentToolbar().changeCursor(SchemaMainFrame.CROSSHAIR_CURSOR_TYPE);
+				parent.getParentToolbar().changeCursor(SchemaMainPanel.CROSSHAIR_CURSOR_TYPE);
 				parent.getParentFrame().handleComponentSelected();
 			}
 		}
@@ -65,9 +65,9 @@ public class SComponentBar extends JToolBar {
 	private String selCompName;
 	private AbstractSchemaComponent selComp;
 	private SCBToggleButton noneButt;
-	private SchemaMainFrame parent;
+	private SchemaMainPanel parent;
 
-	public SComponentBar(SchemaMainFrame mframe) {
+	public SComponentBar(SchemaMainPanel mframe) {
 		super("Component Bar");
 		isDrawingIcons = true;
 		selCompName = null;
@@ -155,7 +155,7 @@ public class SComponentBar extends JToolBar {
 		this.isDrawingIcons = isDrawingIcons;
 	}
 	
-	public SchemaMainFrame getParentToolbar() {
+	public SchemaMainPanel getParentToolbar() {
 		return parent;
 	}
 
@@ -184,7 +184,7 @@ public class SComponentBar extends JToolBar {
 		}
 	}
 	
-	public SchemaMainFrame getParentFrame() {
+	public SchemaMainPanel getParentFrame() {
 		return parent;
 	}
 }

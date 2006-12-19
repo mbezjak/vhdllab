@@ -65,6 +65,8 @@ public abstract class AbstractSchemaWire {
 		return wireName;
 	}
 	public void setWireName(String name) throws SchemaWireException {
+		if (name.charAt(0) >= '0' && name.charAt(0) <= '9') name = '_' + name;
+		name = name.replaceAll("[^a-zA-Z0-9_]", "_");
 		if (name == this.wireName) return;
 		if (nameSet.contains(name)) {
 			name = generateNewName(name);

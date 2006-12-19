@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
@@ -19,11 +20,12 @@ import javax.swing.JToolBar;
 
 public class SOptionBar extends JToolBar {
 	private JToggleButton noneButt;
+	private JButton setEntityButton;
 	private JToggleButton drawWireButton;
 	private JComboBox chooseComponentGroup;
-	private SchemaMainFrame parentFrame;
+	private SchemaMainPanel parentFrame;
 
-	public SOptionBar(SchemaMainFrame mfr) {
+	public SOptionBar(SchemaMainPanel mfr) {
 		super("Option Bar");
 		
 		parentFrame = mfr;
@@ -36,6 +38,9 @@ public class SOptionBar extends JToolBar {
 		
 		noneButt = new JToggleButton();
 		group.add(noneButt);
+		
+		setEntityButton = new JButton("Podesi sucelje");
+		this.add(setEntityButton);
 		
 		drawWireButton = new JToggleButton("Crtaj zice");
 		drawWireButton.addMouseListener(new MouseAdapter() {
@@ -105,6 +110,17 @@ public class SOptionBar extends JToolBar {
 			@Override
 			public String getCategoryName() {
 				return "Ostalo";
+			}
+			@Override
+			public void takeAction() {
+				ArrayList<String> cmplist = new ArrayList<String>();
+				parentFrame.recreateComponentBar(cmplist);
+			} 
+			});
+		chooseComponentGroup.addItem(new CBarCategory() {
+			@Override
+			public String getCategoryName() {
+				return "Korisnicki sklopovi";
 			}
 			@Override
 			public void takeAction() {

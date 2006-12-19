@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainFrame;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.BorderLayout;
 
@@ -12,9 +12,9 @@ public class SPropertyBar extends JToolBar {
 	private SPropertyPanel panel = null;
 	private JScrollPane scrpan = null;
 	private String currentSelectedInstance = null;
-	private SchemaMainFrame parentFrame = null;
+	private SchemaMainPanel parentFrame = null;
 
-	public SPropertyBar(SchemaMainFrame mfr) {
+	public SPropertyBar(SchemaMainPanel mfr) {
 		super("Property Bar");
 		parentFrame = mfr;
 		
