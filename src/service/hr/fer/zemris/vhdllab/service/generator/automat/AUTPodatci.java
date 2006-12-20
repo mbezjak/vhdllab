@@ -1,21 +1,6 @@
-package hr.fer.zemris.vhdllab.applets.automat;
+package hr.fer.zemris.vhdllab.service.generator.automat;
 
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.ReturnData;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
+import hr.fer.zemris.vhdllab.service.generator.automat.EntityParser;
 
 public class AUTPodatci {
 	
@@ -42,16 +27,17 @@ public class AUTPodatci {
 		sirinaUlaza=ep.getInputWidth();
 	}
 
-	private void parseInterfac(String[][] inter) {
+	/*private void parseInterfac(String[][] inter) {
 		EntityParser ep=new EntityParser(ime,inter);
 		interfac=ep.getParsedEntity();
 		sirinaUlaza=ep.getInputWidth();
 		sirinaIzlaza=ep.getOutputWidth();
 	}
 
-	public AUTPodatci(JComponent drawer) {
+	/*public AUTPodatci(JComponent drawer) {
 		super();
 		JLabel label2=new JLabel("Machine type:");
+		JTextField ime=new JTextField();
 		String[] st={"Name","Direction","Type","From","To"};
 		EntityTable interfac=new EntityTable("Interface:",st,"Entity Name: ");
 
@@ -75,21 +61,20 @@ public class AUTPodatci {
 		panel.add(panel2,BorderLayout.CENTER);
 		
 		boolean test=true;
-		String[] options={"ok","pa ne bas"};
 		while(test){
-			JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[1]);
+			JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
 			JDialog dialog=optionPane.createDialog(drawer,"Transition Editor");
 			dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 			dialog.setSize(new Dimension(700,300));
 			dialog.setVisible(true);
 			Object selected=optionPane.getValue();
-			if(selected.equals("ok")){
+			if(selected.equals(JOptionPane.OK_OPTION)){
+				this.ime=ime.getText();
 				this.tip=(String)tip.getSelectedItem();
-				ReturnData inter=interfac.getData();
-				this.ime=inter.getName();
-				parseInterfac(inter.getData());
+				String[][] inter=interfac.getData();
+				parseInterfac(inter);
 				test=false;
-			}else if(selected.equals("pa ne bas")) {
+			}else if(selected.equals(JOptionPane.CANCEL_OPTION)) {
 				this.ime=null;
 				test=false;
 			}

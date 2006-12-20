@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat.VHDLparser;
+package hr.fer.zemris.vhdllab.service.generator.automat;
 
 public class Signal {
 	

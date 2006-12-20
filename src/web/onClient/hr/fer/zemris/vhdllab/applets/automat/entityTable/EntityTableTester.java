@@ -17,9 +17,9 @@ public class EntityTableTester extends JFrame {
 		super();
 		this.getContentPane().setLayout(new BorderLayout());
 		String[] st={"Name","Direction","Type","From","To"};
-		EntityTable table=new EntityTable("Entity declaration:",st);
+		EntityTable table=new EntityTable("Entity declaration:",st,"Entity name: ");
 		this.getContentPane().add(table,BorderLayout.CENTER);
-		this.setSize(new Dimension(500,200));
+		this.setSize(new Dimension(500,300));
 	}
 	/**
 	 * @param args

@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
-import hr.fer.zemris.vhdllab.applets.automat.VHDLparser.VHDLParser;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerator;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -35,24 +35,22 @@ public class Testpan extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		final String jupi=xmlAut;
 		System.out.println(xmlAut);
 		
 		aut = new Automat();
 		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
 		//aut.setFileContent(fc);
-		FileContent fc=aut.getInitialFileContent(this);
+		FileContent fc=aut.getInitialFileContent();
 		if (fc!=null)this.getContentPane().add((Component) aut,BorderLayout.CENTER);
 		JButton b1=new JButton("Ispisi interni kod");
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				String data=aut.getData();
 				System.out.println(aut.getData()+"\n"+aut.isModified());
 				//Automat aut2=new Automat();
 				//aut2.setFileContent(new FileContent("df","safas",data));
 				//getContentPane().add(aut2,BorderLayout.EAST);*/
-				VHDLParser parser=new VHDLParser(aut.getData());
-				System.out.println(parser.getParsedVHDL());
+				//VHDLGenerator parser=new VHDLGenerator(aut.getData());
+				//System.out.println(parser.getParsedVHDL());
 			};
 		});
 		this.add(b1,BorderLayout.NORTH);

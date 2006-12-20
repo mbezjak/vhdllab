@@ -1,14 +1,14 @@
-package hr.fer.zemris.vhdllab.applets.automat.VHDLparser;
+package hr.fer.zemris.vhdllab.service.generator.automat;
 
-import hr.fer.zemris.vhdllab.applets.automat.AUTPodatci;
-import hr.fer.zemris.vhdllab.applets.automat.Prijelaz;
-import hr.fer.zemris.vhdllab.applets.automat.Stanje;
+import hr.fer.zemris.vhdllab.service.generator.automat.AUTPodatci;
+import hr.fer.zemris.vhdllab.service.generator.automat.Prijelaz;
+import hr.fer.zemris.vhdllab.service.generator.automat.Stanje;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
-public class MooreParser implements IAutomatVHDLParser {
+public class MooreParser implements IAutomatVHDLGenerator {
 	
 	private LinkedList<Stanje> stanja;
 	private HashSet<Prijelaz> prijelazi;

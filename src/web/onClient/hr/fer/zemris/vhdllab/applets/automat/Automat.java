@@ -4,11 +4,14 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.automat.AUTPodatci;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -49,23 +52,23 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 		
 			adrw=new AutoDrawer(podatci);
 			if(adrw.getPodatci().ime!=null){
-			Icon ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/AddMode1.png");
+			Icon ic=new ImageIcon(getClass().getResource("AddMode1.png"));
 			JToggleButton dodajNoviSignal=new JToggleButton(ic);
 			dodajNoviSignal.setActionCommand("Dodaj stanje");
 			dodajNoviSignal.setToolTipText("Add state");
-			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/AddMode2.png");
+			ic=new ImageIcon(getClass().getResource("AddMode2.png"));
 			JToggleButton dodajNoviPrijelaz=new JToggleButton(ic);
 			dodajNoviPrijelaz.setActionCommand("Dodaj prijelaz");
 			dodajNoviPrijelaz.setToolTipText("Add transition");
-			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/DeleteMode.png");
+			ic=new ImageIcon(getClass().getResource("DeleteMode.png"));
 			JToggleButton brisi=new JToggleButton(ic);
 			brisi.setActionCommand("Brisi");
 			brisi.setToolTipText("Delete");
-			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/EditMode.png");
+			ic=new ImageIcon(getClass().getResource("EditMode.png"));
 			final JToggleButton normal=new JToggleButton(ic);
 			normal.setActionCommand("Normal");
 			normal.setToolTipText("Editor mode");
-			ic=new ImageIcon("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/StartStateMode.png");
+			ic=new ImageIcon(getClass().getResource("StartStateMode.png"));
 			JToggleButton pocStanje=new JToggleButton(ic);
 			pocStanje.setActionCommand("pocStanje");
 			pocStanje.setToolTipText("Set initial state");
@@ -172,6 +175,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
+		//projectName=pContainer.();
 	}
 
 
@@ -181,12 +185,15 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	}
 
 
-	public FileContent getInitialFileContent(Component parent) {
-		createGUI("");
-		if(adrw==null)
-			return null;
-		FileContent fContent=new FileContent(projectName,adrw.getPodatci().ime,adrw.getData());
-		return fContent;
+	public FileContent getInitialFileContent() {
+		AUTPodatci pod=new AUTPodatci(null);
+		String gen=null;
+		if(pod.ime!=null){
+			LinkedList<Stanje> stanja=new LinkedList<Stanje>();
+			HashSet<Prijelaz> prijelazi=new HashSet<Prijelaz>();
+			gen=new CodeGenerator().generateInternalCode(pod,prijelazi,stanja);
+		} else return null;
+		return new FileContent(projectName,pod.ime,gen);
 	}
 
 
@@ -217,6 +224,13 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	public void init() {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+	public FileContent getInitialFileContent(Component parent) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

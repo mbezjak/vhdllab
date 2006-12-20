@@ -3,16 +3,23 @@ package hr.fer.zemris.vhdllab.applets.automat.entityTable;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -25,21 +32,30 @@ public class EntityTable extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 7533182574459245416L;
-
+	
+	private JTextField imeSklop;
 	/**
 	 * @param header 
 	 * @param args
 	 */
-	public EntityTable(String label,String[] data){
+	public EntityTable(String label,String[] data, String lab2){
 		super();
 		
-		createGUI(label,data);
+		createGUI(label,data,lab2);
 	}
 
-	private void createGUI(String lab1,String[] data) {
-		JLabel label=new JLabel(lab1);
+	private void createGUI(String lab1,String[] data,String lab2) {
+		imeSklop=new JTextField("Sklop");
+		imeSklop.addMouseListener(new Mouse());
+		
 		JPanel panel=new JPanel(new GridLayout(1,2));
-		panel.add(label);
+		panel.add(imeSklop);
+
+		
+		panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(lab2),
+                BorderFactory.createEmptyBorder(5,5,5,5)));
+		
+		//panel.setBorder(BorderFactory.createEmptyBorder(0,10,0,200));
 		this.setLayout(new BorderLayout());
 		this.add(panel,BorderLayout.NORTH);
 		
@@ -63,8 +79,11 @@ public class EntityTable extends JPanel {
 		table.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(brojevi));
 		
 		JScrollPane pane=new JScrollPane(table);
+		pane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(lab1),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
 		pane.setPreferredSize(new Dimension(100,100));
 		this.add(pane,BorderLayout.CENTER);
+		this.setPreferredSize(new Dimension(500,300));
 	}
 	
 	
@@ -95,7 +114,7 @@ public class EntityTable extends JPanel {
 		return cb;
 	}
 	
-	public String[][] getData(){
+	public ReturnData getData(){
 		return model.getData();
 	}
 
@@ -162,11 +181,36 @@ public class EntityTable extends JPanel {
         	data=obj;
         	fireTableDataChanged();
         };
-        public String[][] getData(){
+        public ReturnData getData(){
+        	table.editingStopped(new ChangeEvent(EntityTable.this));
         	String[][] pom=new String[getRowCount()][getColumnCount()];
         	for(int i=0;i<getRowCount();i++)
         		for(int j=0;j<getColumnCount();j++)pom[i][j]=(String) data[i][j];
-        	return  pom;
+        	ReturnData dat=new ReturnData(imeSklop.getText(),pom);
+        	return  dat;
         }
+    }
+    private class Mouse implements MouseListener{
+
+		public void mouseClicked(MouseEvent e) {
+			table.editingStopped(new ChangeEvent(EntityTable.this));
+		}
+
+		public void mousePressed(MouseEvent e) {
+		
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			
+		}
+
+		public void mouseEntered(MouseEvent e) {
+			
+		}
+
+		public void mouseExited(MouseEvent e) {
+			
+		}
+    	
     }
 }

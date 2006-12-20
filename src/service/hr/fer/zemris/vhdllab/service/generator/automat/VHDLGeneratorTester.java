@@ -1,11 +1,11 @@
-package hr.fer.zemris.vhdllab.applets.automat.VHDLparser;
+package hr.fer.zemris.vhdllab.service.generator.automat;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class VHDLParserTester {
+public class VHDLGeneratorTester {
 public static void main(String[] args) {
 	BufferedReader reader = null;
 	try {
@@ -21,7 +21,7 @@ public static void main(String[] args) {
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
-	VHDLParser parser=new VHDLParser(xmlAut);
+	VHDLGenerator parser=new VHDLGenerator(xmlAut);
 	System.out.println(parser.getParsedVHDL());
 }
 }
