@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ResourceBundle;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -99,13 +100,23 @@ public class AutoDrawer extends JPanel{
 	private int stanjeRada=1;
 	public boolean isModified=false;
 	
+	private ResourceBundle bundle;
+	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
 	 * @throws FileNotFoundException 
 	 *
 	 */
 	
-	public AutoDrawer(String strpodatci){
+	public AutoDrawer() {
+		super();
+		this.setOpaque(true);
+		createGUI();
+		this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
+		isModified=false;
+	}
+	
+	/*public AutoDrawer(String strpodatci){
 		super();
 		this.setOpaque(true); 
 		setData(strpodatci);
@@ -114,7 +125,7 @@ public class AutoDrawer extends JPanel{
 			this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
 			isModified=false;
 		}
-	}
+	}*/
 
 	/**
 	 * ova metoda iscrtava za pocetak kako ce izgledati sklop
@@ -201,6 +212,7 @@ public class AutoDrawer extends JPanel{
 	 *@param eventy ako je stanjeRada==4 daje y koordinatu misa
 	 */
 	private void nacrtajSklop(int eventx,int eventy){
+		if(dataSet()){
 		Graphics2D g=(Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(Color.BLACK);
@@ -281,7 +293,7 @@ public class AutoDrawer extends JPanel{
 		
 		repaint();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
-
+		}
 		
 	}
 	/**
@@ -289,6 +301,7 @@ public class AutoDrawer extends JPanel{
 	 *
 	 */
 	private void nacrtajSklop(){
+		if(dataSet()){
 		Graphics2D g=(Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(Color.BLACK);
@@ -361,10 +374,14 @@ public class AutoDrawer extends JPanel{
 		
 		repaint();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
-
+	}
 		
 	}
 	
+
+	private boolean dataSet() {
+		return (prijelazi!=null)&&(podatci!=null)&&(stanja!=null);
+	}
 
 	private void setXYP(int[] xp, int[] yp, Stanje st) {
 		xp[0]=st.ox;
@@ -920,6 +937,10 @@ public class AutoDrawer extends JPanel{
 
 	public AUTPodatci getPodatci() {
 		return podatci;
+	}
+
+	public void setResourceBundle(ResourceBundle bundle) {
+		this.bundle=bundle;
 	}
 
 	

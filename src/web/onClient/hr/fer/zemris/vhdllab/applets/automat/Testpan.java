@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 public class Testpan extends JFrame {
@@ -36,13 +37,7 @@ public class Testpan extends JFrame {
 			e.printStackTrace();
 		}
 		System.out.println(xmlAut);
-		
-		aut = new Automat();
-		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
-		//aut.setFileContent(fc);
-		FileContent fc=aut.getInitialFileContent();
-		if (fc!=null)this.getContentPane().add((Component) aut,BorderLayout.CENTER);
-		JButton b1=new JButton("Ispisi interni kod");
+	JButton b1=new JButton("Ispisi interni kod");
 		b1.addActionListener(new ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 				System.out.println(aut.getData()+"\n"+aut.isModified());
@@ -54,6 +49,17 @@ public class Testpan extends JFrame {
 			};
 		});
 		this.add(b1,BorderLayout.NORTH);
+		
+		aut = new Automat();
+		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
+		//aut.setFileContent(fc);
+		FileContent fc=aut.getInitialFileContent(b1);
+		if (fc!=null){
+			aut.init();
+			aut.setFileContent(fc);
+			this.getContentPane().add((Component) aut,BorderLayout.CENTER);
+		}
+	
 		this.setSize(((Component) aut).getPreferredSize());
 	}
 	

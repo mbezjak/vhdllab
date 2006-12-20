@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.automat.AUTPodatci;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -12,10 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -41,6 +43,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	private ProjectContainer pContainer;
 	private String projectName="default project";
 	private String fileName;
+	private ResourceBundle bundle=null;
 	
 	public Automat() {
 		super();	
@@ -48,10 +51,9 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	
 	
-	private void createGUI(String podatci) {
-		
-			adrw=new AutoDrawer(podatci);
-			if(adrw.getPodatci().ime!=null){
+	private void createGUI() {
+			
+			adrw=new AutoDrawer();
 			Icon ic=new ImageIcon(getClass().getResource("AddMode1.png"));
 			JToggleButton dodajNoviSignal=new JToggleButton(ic);
 			dodajNoviSignal.setActionCommand("Dodaj stanje");
@@ -126,7 +128,6 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			this.setLayout(new BorderLayout());
 			this.add(adrw,BorderLayout.CENTER);
 			this.add(tulbar,BorderLayout.NORTH);
-		}else adrw=null;
 		
 			
 	}
@@ -135,9 +136,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 //*************************************************************************
 	
 	public void setFileContent(FileContent fc) {
-		projectName=fc.getProjectName();
-		createGUI(fc.getContent());
-		
+		if(adrw!=null)adrw.setData(fc.getContent());
 	}
 
 
@@ -175,7 +174,13 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-		//projectName=pContainer.();
+		projectName=pContainer.getActiveProject();
+		try {
+			bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResource");
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+		}
+		if(bundle!=null) adrw.setResourceBundle(bundle);
 	}
 
 
@@ -185,8 +190,8 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	}
 
 
-	public FileContent getInitialFileContent() {
-		AUTPodatci pod=new AUTPodatci(null);
+	public FileContent getInitialFileContent(Component parent) {
+		AUTPodatci pod=new AUTPodatci((JComponent)parent);
 		String gen=null;
 		if(pod.ime!=null){
 			LinkedList<Stanje> stanja=new LinkedList<Stanje>();
@@ -222,16 +227,11 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public void init() {
-		// TODO Auto-generated method stub
+		createGUI();
 		
 	}
 
 
 
-	public FileContent getInitialFileContent(Component parent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 
 }

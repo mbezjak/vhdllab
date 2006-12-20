@@ -4,6 +4,7 @@ package hr.fer.zemris.vhdllab.applets.automat.entityTable;
 
 public class EntityParser {
 	private String parsedEntity=null;
+	private String parsedEntityVHDL=null;
 	private int inputWidth=0;
 	private int outputWidth=0;
 	
@@ -35,7 +36,8 @@ public class EntityParser {
 				buffer.append("\n");
 			}
 		parsedEntity=buffer.toString();
-		/*StringBuffer buffer=new StringBuffer().append("ENTITY ").append(ime).append(" IS  PORT(");
+		
+		buffer=new StringBuffer().append("ENTITY ").append(ime).append(" IS  PORT(");
 		for (int i=0;i<pom.length;i++)
 			if(!pom[i][0].trim().equals("")){
 				buffer.append("\n");
@@ -55,7 +57,7 @@ public class EntityParser {
 			}
 		buffer.deleteCharAt(buffer.length()-1);
 		buffer.append(");\nEND ").append(ime).append(";");
-		parsedEntity=buffer.toString();*/
+		parsedEntityVHDL=buffer.toString();
 	}
 	
 	private void unparseEntity(){
@@ -79,5 +81,8 @@ public class EntityParser {
 	}
 	public int getOutputWidth(){
 		return outputWidth;
+	}
+	public String getParsedEntityVHDL() {
+		return parsedEntityVHDL;
 	}
 }

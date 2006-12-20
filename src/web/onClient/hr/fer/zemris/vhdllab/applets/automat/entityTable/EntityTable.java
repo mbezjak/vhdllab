@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.automat.entityTable;
 
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -11,20 +14,17 @@ import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
-public class EntityTable extends JPanel {
+public class EntityTable extends JPanel implements IEntityWizard{
 
 	private JTable table=null;
 	private MyTableModel model=null;
@@ -190,6 +190,11 @@ public class EntityTable extends JPanel {
         	return  dat;
         }
     }
+    
+    public void updateTable(){
+    	table.editingStopped(new ChangeEvent(EntityTable.this));
+    }
+    
     private class Mouse implements MouseListener{
 
 		public void mouseClicked(MouseEvent e) {
@@ -213,4 +218,14 @@ public class EntityTable extends JPanel {
 		}
     	
     }
+
+	public void setData(TableData data) {
+		// TODO Method still unimplemented
+		
+	}
+
+	public CircuitInterface getCircuitInterface() {
+		EntityParser parser=new EntityParser(imeSklop.getText(),model.getData().getData());
+		return Extractor.extractCircuitInterface(parser.getParsedEntityVHDL());
+	}
 }
