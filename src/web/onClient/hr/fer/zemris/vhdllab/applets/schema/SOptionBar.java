@@ -28,6 +28,7 @@ public class SOptionBar extends JToolBar {
 	private JComboBox chooseComponentGroup;
 	private SchemaMainPanel parentFrame;
 	private JPopupMenu popupEntitySetup;
+	private JPopupMenu popupPortSetup;
 	private SEntitySetupper entitySetupper;
 
 	public SOptionBar(SchemaMainPanel mfr) {
@@ -42,6 +43,7 @@ public class SOptionBar extends JToolBar {
 		ButtonGroup group = new ButtonGroup();
 		
 		popupEntitySetup = new JPopupMenu("Entity Setup");
+		popupPortSetup = new JPopupMenu("Port Setup");
 		
 		noneButt = new JToggleButton();
 		group.add(noneButt);
@@ -174,6 +176,15 @@ public class SOptionBar extends JToolBar {
 		popupEntitySetup.add(entitySetupper);
 
 		popupEntitySetup.show(this, 25, 25);
+	}
+	
+	public void popupPortSetupper(SchemaModelledComponentPort port) {
+		popupPortSetup.removeAll();
+		
+		SPortSetupper portSetupper = new SPortSetupper(port, this);
+		popupPortSetup.add(portSetupper);
+		
+		popupPortSetup.show(this, 25, 25);
 	}
 	
 	public void selectNoOption() {

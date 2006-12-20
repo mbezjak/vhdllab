@@ -17,6 +17,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 
 public class SEntitySetupper extends JPanel {
 	private class ChangeEntityNameListener implements ActionListener {
@@ -42,6 +43,19 @@ public class SEntitySetupper extends JPanel {
 			port.setPortName((name.compareTo("") == 0) ? "port" : name);
 			plist.add(port);
 			correctPortNames();
+		}
+	}
+	
+	private class ModifyPortListener implements ActionListener {
+		private JList list;
+		public ModifyPortListener(JList l) {
+			list = l;
+		}
+		public void actionPerformed(ActionEvent ae) {
+			int index = list.getSelectedIndex();
+			if (index < 0) return;
+			ArrayList<SchemaModelledComponentPort> plist = entity.getPortList();
+			parentBar.popupPortSetupper(plist.get(index));
 		}
 	}
 	
@@ -109,6 +123,7 @@ public class SEntitySetupper extends JPanel {
 		pan2.add(pan, BorderLayout.SOUTH);
 		pan.setLayout(new GridLayout(2, 1, 2, 2));
 		butt = new JButton("Podesi...");
+		butt.addActionListener(new ModifyPortListener(list));
 		pan.add(butt);
 		butt = new JButton("Obrisi");
 		butt.addActionListener(new ActionListener() {
@@ -155,8 +170,8 @@ public class SEntitySetupper extends JPanel {
 	
 	private void deleteSelectedPorts() {
 		int [] indices = list.getSelectedIndices();
-		for (int j = indices.length - 1; j >= 0; j--) {
-			deletePort(j);
+		for (int j = indices.length - 1; j >= 0; j--) {			
+			deletePort(indices[j]);
 		}
 	}
 	
