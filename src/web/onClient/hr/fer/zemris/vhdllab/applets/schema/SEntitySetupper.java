@@ -1,19 +1,24 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -40,9 +45,12 @@ public class SEntitySetupper extends JPanel {
 			ArrayList<SchemaModelledComponentPort> plist = entity.getPortList();
 			SchemaModelledComponentPort port = new SchemaModelledComponentPort();
 			String name = tf.getText();
-			port.setPortName((name.compareTo("") == 0) ? "port" : name);
+			if (name.compareTo("") == 0) return;
+			port.setPortName(name);
+			//port.setPortName((name.compareTo("") == 0) ? "port" : name); druga varijanta
 			plist.add(port);
 			correctPortNames();
+			tf.setText("");
 		}
 	}
 	
@@ -55,12 +63,12 @@ public class SEntitySetupper extends JPanel {
 			int index = list.getSelectedIndex();
 			if (index < 0) return;
 			ArrayList<SchemaModelledComponentPort> plist = entity.getPortList();
-			parentBar.popupPortSetupper(plist.get(index));
+			showPortSetupper(plist.get(index));
 		}
 	}
 	
+	private SchemaMainPanel parentPanel;
 	private SchemaModelledComponentEntity entity;
-	private SOptionBar parentBar;
 	private JPanel upperPanel;
 	private JPanel lowerPanel;
 	private DefaultListModel listModel;
@@ -69,10 +77,10 @@ public class SEntitySetupper extends JPanel {
 	private int nameCounter;
 	private JTextField portNameField;
 	
-	public SEntitySetupper(SchemaModelledComponentEntity ent, SOptionBar parent) {
+	public SEntitySetupper(SchemaModelledComponentEntity ent, SchemaMainPanel panel) {
 		this.entity = ent;
-		this.parentBar = parent;
-		nameCounter = 0;
+		this.parentPanel = panel;
+		this.nameCounter = 0;
 		
 		initUI();
 	}
@@ -119,12 +127,14 @@ public class SEntitySetupper extends JPanel {
 		
 		pan = new JPanel();
 		JPanel pan2 = new JPanel();
+		pan2.setLayout(new BorderLayout(2, 2));
+		pan2.setPreferredSize(new Dimension(100, 20));
 		lowerPanel.add(pan2, BorderLayout.EAST);
-		pan2.add(pan, BorderLayout.SOUTH);
-		pan.setLayout(new GridLayout(2, 1, 2, 2));
-		butt = new JButton("Podesi...");
-		butt.addActionListener(new ModifyPortListener(list));
-		pan.add(butt);
+		pan2.add(pan, BorderLayout.NORTH);
+		pan.setLayout(new GridLayout(1, 1, 2, 2));
+		//butt = new JButton("Podesi...");
+		//butt.addActionListener(new ModifyPortListener(list));
+		//pan.add(butt);
 		butt = new JButton("Obrisi");
 		butt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -132,6 +142,12 @@ public class SEntitySetupper extends JPanel {
 			}
 		});
 		pan.add(butt);
+		pan = new JPanel();
+		pan.setLayout(new GridLayout(1, 1, 2, 2));
+		pan2.add(pan, BorderLayout.SOUTH);
+		butt = new JButton("Ok");
+		pan.add(butt);
+		
 		
 		this.add(upperPanel, BorderLayout.NORTH);
 		this.add(lowerPanel, BorderLayout.CENTER);
@@ -141,7 +157,10 @@ public class SEntitySetupper extends JPanel {
 		listModel.removeAllElements();
 		ArrayList<SchemaModelledComponentPort> plist = entity.getPortList();
 		for (SchemaModelledComponentPort port : plist) {
-			listModel.insertElementAt(port.getPortName(), listModel.size());
+			listModel.insertElementAt(port.getPortName() + " (" + port.getPortDirection() + ", " + port.getPortType()
+					+ ((port.getPortType() == SchemaModelledComponentPort.SMCTip.std_logic_vector) ? 
+							("[" + port.getPortCardinality() + "])") : (")"))
+					, listModel.size());
 		}
 	}
 	
@@ -179,6 +198,16 @@ public class SEntitySetupper extends JPanel {
 		if (index < 0) return;
 		ArrayList<SchemaModelledComponentPort> plist = entity.getPortList();
 		plist.remove(index);
+		refreshListModel();
+	}
+	
+	private void showPortSetupper(SchemaModelledComponentPort p) {
+		Frame frame = JOptionPane.getFrameForComponent(this);
+		JDialog dialogPortSetup = new JDialog(frame, "Port Setup", true);
+		dialogPortSetup.add(new SPortSetupper(p, parentPanel));
+		dialogPortSetup.setBounds(0, 0, 320, 250);
+		dialogPortSetup.setLocation(150, 150);
+		dialogPortSetup.setVisible(true);
 		refreshListModel();
 	}
 }

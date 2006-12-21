@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -10,14 +11,13 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
@@ -27,9 +27,7 @@ public class SOptionBar extends JToolBar {
 	private JToggleButton drawWireButton;
 	private JComboBox chooseComponentGroup;
 	private SchemaMainPanel parentFrame;
-	private JPopupMenu popupEntitySetup;
-	private JPopupMenu popupPortSetup;
-	private SEntitySetupper entitySetupper;
+	private JDialog dialogEntitySetup;
 
 	public SOptionBar(SchemaMainPanel mfr) {
 		super("Option Bar");
@@ -41,9 +39,6 @@ public class SOptionBar extends JToolBar {
 	
 	private void init() {
 		ButtonGroup group = new ButtonGroup();
-		
-		popupEntitySetup = new JPopupMenu("Entity Setup");
-		popupPortSetup = new JPopupMenu("Port Setup");
 		
 		noneButt = new JToggleButton();
 		group.add(noneButt);
@@ -95,7 +90,7 @@ public class SOptionBar extends JToolBar {
 		chooseComponentGroup.addItem(new CBarCategory() {
 			@Override
 			public String getCategoryName() {
-				return "Osnovni sklopovi";
+				return "Osnovni kombinacijski";
 			}
 			@Override
 			public void takeAction() {
@@ -110,7 +105,7 @@ public class SOptionBar extends JToolBar {
 		chooseComponentGroup.addItem(new CBarCategory() {
 			@Override
 			public String getCategoryName() {
-				return "Multipleksori";
+				return "Slozeni kombinacijski";
 			}
 			@Override
 			public void takeAction() {
@@ -122,7 +117,18 @@ public class SOptionBar extends JToolBar {
 		chooseComponentGroup.addItem(new CBarCategory() {
 			@Override
 			public String getCategoryName() {
-				return "Dekoderi";
+				return "Sekvencijski sklopovi";
+			}
+			@Override
+			public void takeAction() {
+				ArrayList<String> cmplist = new ArrayList<String>();
+				parentFrame.recreateComponentBar(cmplist);
+			} 
+			});
+		chooseComponentGroup.addItem(new CBarCategory() {
+			@Override
+			public String getCategoryName() {
+				return "Sklopovi za kasnjenje";
 			}
 			@Override
 			public void takeAction() {
@@ -165,26 +171,17 @@ public class SOptionBar extends JToolBar {
 		public StartModifyingEntityListener() {
 		}
 		public void actionPerformed(ActionEvent ae) {
-			popupEntitySetupper();
+			showEntitySetupper();
 		}
 	}
 	
-	public void popupEntitySetupper() {
-		popupEntitySetup.removeAll();
-		
-		entitySetupper = new SEntitySetupper(parentFrame.getEntity(), this);
-		popupEntitySetup.add(entitySetupper);
-
-		popupEntitySetup.show(this, 25, 25);
-	}
-	
-	public void popupPortSetupper(SchemaModelledComponentPort port) {
-		popupPortSetup.removeAll();
-		
-		SPortSetupper portSetupper = new SPortSetupper(port, this);
-		popupPortSetup.add(portSetupper);
-		
-		popupPortSetup.show(this, 25, 25);
+	public void showEntitySetupper() {
+		Frame frame = JOptionPane.getFrameForComponent(parentFrame);
+		dialogEntitySetup = new JDialog(frame, "Entity Setup", true);
+		dialogEntitySetup.add(new SEntitySetupper(parentFrame.getEntity(), parentFrame));
+		dialogEntitySetup.setBounds(0, 0, 320, 230);
+		dialogEntitySetup.setLocation(150, 150);
+		dialogEntitySetup.setVisible(true);
 	}
 	
 	public void selectNoOption() {
