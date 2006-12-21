@@ -40,6 +40,8 @@ import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -657,6 +659,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 						statusBar.setText(text);
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						throw new NullPointerException(sw.toString());
+
 					}
 				}
 			});
@@ -778,7 +785,7 @@ public class MainApplet
 			String projectName = projectExplorer.getActiveProject();
 			String fileName = JOptionPane.showInputDialog(this, "Which file to compile?");
 			compile(projectName, fileName);
-			
+			return;
 		}
 		FileIdentifier file = cache.getLastCompilationHistoryTarget();
 		compile(file.getProjectName(), file.getFileName());
@@ -807,8 +814,9 @@ public class MainApplet
 		}
 		
 		CompilationResult result = cache.compile(projectName, fileName);
-		IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
-		view.setData(result);
+		// TODO ovo odmontirat kad se napravi view za kompajliranje!
+		//IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
+		//view.setData(result);
 	}
 	
 	private void simulateLastHistoryResult() throws UniformAppletException {
@@ -817,7 +825,7 @@ public class MainApplet
 			String projectName = projectExplorer.getActiveProject();
 			String fileName = JOptionPane.showInputDialog(this, "Which file to simulate?");
 			simulate(projectName, fileName);
-			
+			return;
 		}
 		FileIdentifier file = cache.getLastSimulationHistoryTarget();
 		simulate(file.getProjectName(), file.getFileName());
@@ -846,8 +854,9 @@ public class MainApplet
 		}
 		
 		SimulationResult result = cache.runSimulation(projectName, fileName);
-		IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
-		view.setData(result);
+		// TODO ovo odkomentirat kad se napravi view za simuliranje!
+		//IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
+		//view.setData(result);
 		if(result.getWaveform() != null) {
 			String simulationName = fileName + ".sim";
 			openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
@@ -1018,9 +1027,10 @@ public class MainApplet
 			// Initialization of an editor
 			IEditor editor = cache.getEditor(type);
 			editor.setProjectContainer(this);
-			editor.setFileContent(fileContent);
+			editor.init();
 			editor.setSavable(isSavable);
 			editor.setReadOnly(isReadOnly);
+			editor.setFileContent(fileContent);
 			// End of initialization
 			
 			Component component = editorPane.add(fileName, (JPanel)editor);
