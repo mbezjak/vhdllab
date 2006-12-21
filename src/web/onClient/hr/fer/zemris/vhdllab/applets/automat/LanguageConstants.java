@@ -24,6 +24,8 @@ public class LanguageConstants {
 	public static final String DIALOG_INPUT_STATENAME="dialog.Input.NewStateName";
 	public static final String DIALOG_INPUT_STATEOUT="dialog.Input.NewStateOutput";
 	public static final String DIALOG_INPUT_STATELABEL="dialog.Input.NewStateLabel";
+	public static final String DIALOG_INPUT_STATEEDITLABEL="dialog.Input.StateEditorTitle";
+	public static final String DIALOG_INPUT_MEALYEDITOUTPUT="dialog.Input.MealyStateOutput";
 	public static final String DIALOG_INPUT_TRANSITIONIN="dialog.Input.NewTransitionInput";
 	public static final String DIALOG_INPUT_TRANSITIONOUT="dialog.Input.NewTransitionOutput";
 	public static final String DIALOG_INPUT_TRANSITIONLABEL="dialog.Input.NewTransitionLabel";

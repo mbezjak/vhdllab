@@ -38,6 +38,10 @@ public class VHDLGenerator implements IVHDLGenerator {
 		parsedVHDL=inter.getData();
 	}
 	
+	public VHDLGenerator() {
+		super();
+	}
+
 	public String getParsedVHDL() {
 		return parsedVHDL;
 	}
