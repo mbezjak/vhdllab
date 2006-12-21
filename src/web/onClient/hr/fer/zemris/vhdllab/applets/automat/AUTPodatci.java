@@ -5,11 +5,11 @@ import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.ReturnData;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -48,7 +48,7 @@ public class AUTPodatci {
 		sirinaIzlaza=ep.getOutputWidth();
 	}
 
-	public AUTPodatci(JComponent drawer) {
+	public AUTPodatci(Component drawer) {
 		super();
 		JLabel label2=new JLabel("Machine type:");
 		

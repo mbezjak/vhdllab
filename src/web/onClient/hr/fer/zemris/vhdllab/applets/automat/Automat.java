@@ -54,6 +54,13 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	private void createGUI() {
 			
 			adrw=new AutoDrawer();
+			try {
+				bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
+			} catch (UniformAppletException e) {
+				e.printStackTrace();
+			}
+			if(bundle!=null) adrw.setResourceBundle(bundle);
+			
 			Icon ic=new ImageIcon(getClass().getResource("AddMode1.png"));
 			JToggleButton dodajNoviSignal=new JToggleButton(ic);
 			dodajNoviSignal.setActionCommand("Dodaj stanje");
@@ -136,6 +143,8 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 //*************************************************************************
 	
 	public void setFileContent(FileContent fc) {
+		fileName = fc.getFileName();
+		projectName = fc.getProjectName();
 		if(adrw!=null)adrw.setData(fc.getContent());
 	}
 
@@ -174,13 +183,6 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-		projectName=this.pContainer.getActiveProject();
-		try {
-			bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResource");
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-		}
-		if(bundle!=null) adrw.setResourceBundle(bundle);
 	}
 
 
@@ -191,7 +193,8 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public FileContent getInitialFileContent(Component parent) {
-		AUTPodatci pod=new AUTPodatci((JComponent)parent);
+		projectName=this.pContainer.getActiveProject();
+		AUTPodatci pod=new AUTPodatci(parent);
 		String gen=null;
 		if(pod.ime!=null){
 			LinkedList<Stanje> stanja=new LinkedList<Stanje>();

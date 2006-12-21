@@ -472,6 +472,13 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_NEW_SCHEMA;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
+					} catch (UniformAppletException e1) {}
+				}
+			});
 			submenu.add(menuItem);
 			
 			// New Automat menu item
@@ -986,10 +993,11 @@ public class MainApplet
 			String content = cache.loadFileContent(projectName, fileName);
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 			String type = cache.loadFileType(projectName, fileName);
-			
+
 			// Initialization of an editor
 			IEditor editor = cache.getEditor(type);
 			editor.setProjectContainer(this);
+			editor.init();
 			editor.setSavable(isSavable);
 			editor.setReadOnly(isReadOnly);
 			editor.setFileContent(fileContent);
