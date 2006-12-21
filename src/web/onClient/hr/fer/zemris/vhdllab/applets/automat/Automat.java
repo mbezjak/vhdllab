@@ -57,23 +57,23 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			Icon ic=new ImageIcon(getClass().getResource("AddMode1.png"));
 			JToggleButton dodajNoviSignal=new JToggleButton(ic);
 			dodajNoviSignal.setActionCommand("Dodaj stanje");
-			dodajNoviSignal.setToolTipText("Add state");
+			dodajNoviSignal.setToolTipText(bundle.getString(LanguageConstants.BUTTON_ADDSTATE));
 			ic=new ImageIcon(getClass().getResource("AddMode2.png"));
 			JToggleButton dodajNoviPrijelaz=new JToggleButton(ic);
 			dodajNoviPrijelaz.setActionCommand("Dodaj prijelaz");
-			dodajNoviPrijelaz.setToolTipText("Add transition");
+			dodajNoviPrijelaz.setToolTipText(bundle.getString(LanguageConstants.BUTTON_ADDTRANSITION));
 			ic=new ImageIcon(getClass().getResource("DeleteMode.png"));
 			JToggleButton brisi=new JToggleButton(ic);
 			brisi.setActionCommand("Brisi");
-			brisi.setToolTipText("Delete");
+			brisi.setToolTipText(bundle.getString(LanguageConstants.BUTTON_DELETE));
 			ic=new ImageIcon(getClass().getResource("EditMode.png"));
 			final JToggleButton normal=new JToggleButton(ic);
 			normal.setActionCommand("Normal");
-			normal.setToolTipText("Editor mode");
+			normal.setToolTipText(bundle.getString(LanguageConstants.BUTTON_NORMAL));
 			ic=new ImageIcon(getClass().getResource("StartStateMode.png"));
 			JToggleButton pocStanje=new JToggleButton(ic);
 			pocStanje.setActionCommand("pocStanje");
-			pocStanje.setToolTipText("Set initial state");
+			pocStanje.setToolTipText(bundle.getString(LanguageConstants.BUTTON_SETINITIAL));
 		
 
 		
@@ -174,7 +174,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-		projectName=pContainer.getActiveProject();
+		projectName=this.pContainer.getActiveProject();
 		try {
 			bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResource");
 		} catch (UniformAppletException e) {

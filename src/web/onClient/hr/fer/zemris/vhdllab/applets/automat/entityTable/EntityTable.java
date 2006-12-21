@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.automat.entityTable;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 
@@ -28,6 +29,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 
 	private JTable table=null;
 	private MyTableModel model=null;
+	private ProjectContainer pContainer=null;
 	/**
 	 * 
 	 */
@@ -225,7 +227,12 @@ public class EntityTable extends JPanel implements IEntityWizard{
 	}
 
 	public CircuitInterface getCircuitInterface() {
+		//TODO Rucno napraviti extractCircuitInterface
 		EntityParser parser=new EntityParser(imeSklop.getText(),model.getData().getData());
 		return Extractor.extractCircuitInterface(parser.getParsedEntityVHDL());
+	}
+
+	public void setProjectContainer(ProjectContainer pContainer) {
+		this.pContainer=pContainer;
 	}
 }

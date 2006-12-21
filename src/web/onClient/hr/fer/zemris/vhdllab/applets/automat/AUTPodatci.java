@@ -14,7 +14,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 public class AUTPodatci {
@@ -52,6 +51,8 @@ public class AUTPodatci {
 	public AUTPodatci(JComponent drawer) {
 		super();
 		JLabel label2=new JLabel("Machine type:");
+		
+		//TODO pozivanje entityTable-a kad bude gotov...
 		String[] st={"Name","Direction","Type","From","To"};
 		EntityTable interfac=new EntityTable("Interface:",st,"Entity Name: ");
 

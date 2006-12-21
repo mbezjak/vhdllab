@@ -100,7 +100,7 @@ public class AutoDrawer extends JPanel{
 	private int stanjeRada=1;
 	public boolean isModified=false;
 	
-	private ResourceBundle bundle;
+	private ResourceBundle bundle=null;
 	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
@@ -203,7 +203,10 @@ public class AutoDrawer extends JPanel{
 			if(rijeci[1].toUpperCase().equals("IN")) ulazi=new StringBuffer().append(ulazi).append(rijeci[0]).append("|").toString();
 			else izlazi=new StringBuffer().append(izlazi).append(rijeci[0]).append("|").toString();
 		}
-		legenda=new StringBuffer().append("Legenda:\nUlazi: ").append(ulazi).append("\nIzlazi:").append(izlazi).toString();
+		legenda=new StringBuffer().append(bundle.getString(LanguageConstants.LEGEND_TITLE)).append(":\n")
+		.append(bundle.getString(LanguageConstants.LEGEND_IN)).append(":")
+		.append(ulazi).append("\n").append(bundle.getString(LanguageConstants.LEGEND_OUT))
+		.append(":").append(izlazi).toString();
 	}
 
 	/**
@@ -644,9 +647,9 @@ public class AutoDrawer extends JPanel{
 
 	public void editorPrijelaza(Prijelaz pr) {
 		final Prijelaz pr2=pr;
-		JButton add=new JButton("Add...");
-		JButton delete=new JButton("Delete...");
-		JLabel poruka=new JLabel("List of transitions:");
+		JButton add=new JButton(bundle.getString(LanguageConstants.EDITOR_ADD));
+		JButton delete=new JButton(bundle.getString(LanguageConstants.EDITOR_DELETE));
+		JLabel poruka=new JLabel(bundle.getString(LanguageConstants.EDITOR_LIST)+":");
 		
 		final DefaultListModel listam=new DefaultListModel();
 		for(String st:pr2.pobudaIzlaz)listam.addElement(st);
@@ -680,6 +683,9 @@ public class AutoDrawer extends JPanel{
 				}
 			};
 		});
+		String ok_option=bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
+		String cancel_option=bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
+		String[] options={ok_option,cancel_option};
 		
 		delete.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -689,16 +695,16 @@ public class AutoDrawer extends JPanel{
 						listam.remove(list.getSelectedIndex());
 						pr2.pobudaIzlaz.remove(pom);
 					}
-					else JOptionPane.showMessageDialog(AutoDrawer.this,"List must contain at least one transition!");
+					else JOptionPane.showMessageDialog(AutoDrawer.this,bundle.getString(LanguageConstants.EDITOR_MESSAGE));
 			}	
 		});
 		
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(this,"Transition Editor");
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JDialog dialog=optionPane.createDialog(this,bundle.getString(LanguageConstants.EDITOR_TITLE));
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
-		if(selected.equals(JOptionPane.OK_OPTION)){
+		if(selected.equals(options[0])){
 		 	pr=pr2;
 			nacrtajSklop();
 		}
@@ -795,11 +801,14 @@ public class AutoDrawer extends JPanel{
 							for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
 						if(z2)zastavica=false;
 						else{
-							int x=JOptionPane.showConfirmDialog(AutoDrawer.this,
-									"The state you tried to input alredy exists!\nTry again?",
-									"Warning",
-									JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-							if(x==JOptionPane.NO_OPTION){
+							String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
+									bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
+							JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_STATEEXISTS),
+									JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options,options[0]);
+							JDialog dialog=pane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_WARNING));
+							dialog.setVisible(true);
+							Object reza=pane.getValue();
+							if(reza.equals(options[1])){
 								dodaj=false;
 								stanjeRada=2;
 								stanjeZaDodati=null;

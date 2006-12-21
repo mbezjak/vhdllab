@@ -13,27 +13,37 @@ public class LanguageConstants {
 	/*
 	 * Dialog constants
 	 */
-	public static final String DIALOG_BUTTON_YES="";
-	public static final String DIALOG_BUTTON_NO="";
-	public static final String DIALOG_BUTTON_OK="";
-	public static final String DIALOG_BUTTON_CANCEL="";
+	public static final String DIALOG_BUTTON_YES="dialog.buttonYes";
+	public static final String DIALOG_BUTTON_NO="dialog.buttonNo";
+	public static final String DIALOG_BUTTON_OK="dialog.buttonOK";
+	public static final String DIALOG_BUTTON_CANCEL="dialog.buttonCancel";
 	
-	public static final String DIALOG_MESSAGE_STATEEXISTS="";
-	public static final String DIALOG_MESSAGE_TRANSITIONEXISTS="";
+	public static final String DIALOG_MESSAGE_STATEEXISTS="dialog.Messege.StateExists";
+	public static final String DIALOG_MESSAGE_TRANSITIONEXISTS="dialog.Message.TransitionExists";
 	
-	public static final String DIALOG_INPUT_STATENAME="";
-	public static final String DIALOG_INPUT_STATEOUT="";
-	public static final String DIALOG_INPUT_STATELABEL="";
-	public static final String DIALOG_INPUT_TRANSITIONIN="";
-	public static final String DIALOG_INPUT_TRANSITIONOUT="";
-	public static final String DIALOG_INPUT_TRANSITIONLABEL="";
+	public static final String DIALOG_INPUT_STATENAME="dialog.Input.NewStateName";
+	public static final String DIALOG_INPUT_STATEOUT="dialog.Input.NewStateOutput";
+	public static final String DIALOG_INPUT_STATELABEL="dialog.Input.NewStateLabel";
+	public static final String DIALOG_INPUT_TRANSITIONIN="dialog.Input.NewTransitionInput";
+	public static final String DIALOG_INPUT_TRANSITIONOUT="dialog.Input.NewTransitionOutput";
+	public static final String DIALOG_INPUT_TRANSITIONLABEL="dialog.Input.NewTransitionLabel";
+	public static final String DIALOG_TITLE_WARNING="dialog.warning";
+	
+	/*
+	 * Editor 
+	 */
+	public static final String EDITOR_ADD="editor.add";
+	public static final String EDITOR_DELETE="editor.delete";
+	public static final String EDITOR_LIST="editor.list";
+	public static final String EDITOR_TITLE="editor.title";
+	public static final String EDITOR_MESSAGE="editor.message";
 	
 	/*
 	 * AUTDrawer legend
 	 */
 	
-	public static final String LEGEND_TITLE="";
-	public static final String LEGEND_IN="";
-	public static final String LEGEND_OUT="";
+	public static final String LEGEND_TITLE="legend.title";
+	public static final String LEGEND_IN="legend.input";
+	public static final String LEGEND_OUT="legend.output";
 	
 }
