@@ -769,7 +769,7 @@ public class AutoDrawer extends JPanel{
 			if(stanjeRada==1&&e.getButton()==MouseEvent.BUTTON3){
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
-						st.editStanje2(podatci,AutoDrawer.this, bundle);
+						st.editStanje2(podatci,AutoDrawer.this,bundle);
 						if(!isModified)isModified=true;
 						nacrtajSklop();
 						break;
@@ -788,7 +788,7 @@ public class AutoDrawer extends JPanel{
 					boolean zastavica=true;
 					boolean dodaj=true;
 					while(zastavica){
-						stanjeZaDodati.editStanje(podatci,AutoDrawer.this, bundle);
+						stanjeZaDodati.editStanje(podatci,AutoDrawer.this,bundle);
 						if(stanjeZaDodati.ime==null){
 							stanjeRada=2;
 							dodaj=false;
