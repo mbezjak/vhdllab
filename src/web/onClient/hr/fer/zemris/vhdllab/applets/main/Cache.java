@@ -27,6 +27,8 @@ import java.util.Map.Entry;
 		private Properties editors;
 		private Properties views;
 		
+		private Map<String, IView> cachedViews;
+		
 		private Map<String, Long> fileIdentifiers;
 		private Map<String, Long> userFileIdentifiers;
 		private Map<String, Long> projectIdentifiers;
@@ -34,9 +36,12 @@ import java.util.Map.Entry;
 		private List<Long> compilationHistory;
 		private List<Long> simulationHistory;
 		
+		
+		
 		public Cache(MethodInvoker invoker, String ownerId) {
 			if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
 			if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
+			cachedViews = new HashMap<String, IView>();
 			fileIdentifiers = new HashMap<String, Long>();
 			userFileIdentifiers = new HashMap<String, Long>();
 			projectIdentifiers = new HashMap<String, Long>();
@@ -47,6 +52,10 @@ import java.util.Map.Entry;
 			views = loadResource("views.properties");
 			this.invoker = invoker;
 			this.ownerId = ownerId;
+		}
+		
+		public List<String> getFileTypes() {
+			return new ArrayList<String>(filetypes);
 		}
 		
 		public List<String> findProjects() throws UniformAppletException {
@@ -216,17 +225,30 @@ import java.util.Map.Entry;
 		
 		public IView getView(String type) throws UniformAppletException {
 			if(type == null) throw new NullPointerException("Type can not be null.");
-			String viewName = views.getProperty(type);
-			if(viewName == null) throw new IllegalArgumentException("Can not find view for given type.");
-			IView view = null;
-			try {
-				view = (IView)Class.forName(viewName).newInstance();
-			} catch (Exception e) {
-				throw new UniformAppletException("Can not instantiate view.");
+			IView view = cachedViews.get(type);
+			if(view == null) {
+				String viewName = views.getProperty(type);
+				if(viewName == null) throw new IllegalArgumentException("Can not find view for given type.");
+				try {
+					view = (IView)Class.forName(viewName).newInstance();
+				} catch (Exception e) {
+					throw new UniformAppletException("Can not instantiate view.");
+				}
+				cachedViews.put(type, view);
 			}
 			return view;
 		}
 		
+		public String getViewType(IView view) {
+			if(view == null) throw new NullPointerException("Type can not be null.");
+			for(Entry<String, IView> entry : cachedViews.entrySet()) {
+				if(entry.getValue() == view) {
+					return entry.getKey();
+				}
+			}
+			throw new IllegalArgumentException("Unknown view!");
+		}
+
 		public void savePreferences(String type, Preferences pref) throws UniformAppletException {
 			if(type == null) throw new NullPointerException("Type can not be null.");
 			if(pref == null) throw new NullPointerException("Preferences can not be null.");

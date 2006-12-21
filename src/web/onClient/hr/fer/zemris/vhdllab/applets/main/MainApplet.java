@@ -4,14 +4,15 @@ import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
 import hr.fer.zemris.vhdllab.applets.main.constants.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.UserFileConstants;
+import hr.fer.zemris.vhdllab.applets.main.constants.ViewTypes;
 import hr.fer.zemris.vhdllab.applets.main.dummy.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
-import hr.fer.zemris.vhdllab.applets.main.dummy.StatusExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IStatusBar;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
@@ -22,7 +23,6 @@ import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.preferences.SingleOption;
 import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
-import hr.fer.zemris.vhdllab.vhdl.Message;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -35,6 +35,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -82,11 +84,9 @@ public class MainApplet
 	private Container parentOfMaximizedComponent = null;
 	
 	private IExplorer projectExplorer;
-	private StatusExplorer view;
 	private SideBar sideBar;
 	
 	private JPanel projectExplorerPanel;
-	private JPanel viewPanel;
 	private JPanel sideBarPanel;
 	
 	private JSplitPane projectExplorerSplitPane;
@@ -118,7 +118,6 @@ public class MainApplet
 		try {
 			bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (UniformAppletException e) {
-			statusBar.setText(bundle.getString(LanguageConstants.STATUSBAR_LANGUAGE_SETTING_NOT_FOUND));
 			bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN, "en");
 		}
 		if(bundle == null) return;
@@ -155,7 +154,7 @@ public class MainApplet
 			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
 			statusBar.setText(text);
 		}
-		
+
 	}
 	
 	/* (non-Javadoc)
@@ -235,10 +234,43 @@ public class MainApplet
 			public void mouseReleased(MouseEvent e) {}
 		});
 		
-		//JPanel viewPanel = new JPanel(new BorderLayout());
-		viewPanel = new JPanel(new BorderLayout());
-		view = new StatusExplorer();
-		viewPanel.add(view, BorderLayout.CENTER);
+		viewPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
+		viewPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForViews());
+		viewPane.addMouseListener(new MouseListener() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount() == 2) {
+					maximizeComponent(viewPane);
+				}
+			}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {}
+		});
+		viewPane.addContainerListener(new ContainerListener() {
+			public void componentAdded(ContainerEvent e) {
+				if(viewPane.getTabCount() == 1) {
+					Component[] components = viewSplitPane.getComponents();
+					if(components != null) {
+						boolean contains = false;
+						for(Component c : viewSplitPane.getComponents()) {
+							if(c.equals(viewPane)) {
+								contains = true;
+								break;
+							}
+						}
+						if(!contains) {
+							viewSplitPane.add(viewPane);
+						}
+					}
+				}
+			}
+			public void componentRemoved(ContainerEvent e) {
+				if(viewPane.getTabCount() == 0) {
+					viewSplitPane.remove(viewPane);
+				}
+			}
+		});
 		
 		//JPanel sideBarPanel = new JPanel(new BorderLayout());
 		sideBarPanel = new JPanel(new BorderLayout());
@@ -247,7 +279,7 @@ public class MainApplet
 		
 		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
 		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
-		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, viewPanel);
+		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, null);
 		
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
 		centerComponentsPanel.add(viewSplitPane);
@@ -342,6 +374,44 @@ public class MainApplet
 			return menuBar;
 		}
 		
+		public JPopupMenu setupPopupMenuForViews() {
+			JPopupMenu menuBar = new JPopupMenu();
+			JMenuItem menuItem;
+			String key;
+
+			// Close view
+			key = LanguageConstants.MENU_FILE_CLOSE;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeView((IView)viewPane.getSelectedComponent());
+				}
+			});
+			menuBar.add(menuItem);
+
+			// Close other views
+			key = LanguageConstants.MENU_FILE_CLOSE_OTHER;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeAllButThisView((IView)viewPane.getSelectedComponent());
+				}
+			});
+			menuBar.add(menuItem);
+			
+			// Close all views
+			key = LanguageConstants.MENU_FILE_CLOSE_ALL;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					closeAllViews();
+				}
+			});
+			menuBar.add(menuItem);
+
+			return menuBar;
+		}
+		
 		/**
 		 * Creates and instantiates main menu bar.
 		 * 
@@ -393,7 +463,7 @@ public class MainApplet
 				public void actionPerformed(ActionEvent e) {
 					try {
 						createNewFileInstance(FileTypes.FT_VHDL_TB);
-					} catch (UniformAppletException e1) {}
+					} catch (UniformAppletException ex) {}
 				}
 			});
 			submenu.add(menuItem);
@@ -511,6 +581,40 @@ public class MainApplet
 				}
 			});
 			menu.add(menuItem);
+			menu.addSeparator();
+			
+			// Show View sub menu
+			key = LanguageConstants.MENU_VIEW_SHOW_VIEW;
+			submenu = new JMenu(bundle.getString(key));
+			setCommonMenuAttributes(submenu, key);
+
+			// Show Compilation Errors menu item
+			key = LanguageConstants.MENU_VIEW_SHOW_VIEW_COMPILATION_ERRORS;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						openView(ViewTypes.VT_COMPILATION_ERRORS);
+					} catch (UniformAppletException ex) {}
+				}
+			});
+			submenu.add(menuItem);
+
+			// Show Simulation Errors menu item
+			key = LanguageConstants.MENU_VIEW_SHOW_VIEW_SIMULATION_ERRORS;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						openView(ViewTypes.VT_SIMULATION_ERRORS);
+					} catch (UniformAppletException ex) {}
+				}
+			});
+			submenu.add(menuItem);
+			
+			menu.add(submenu);
 			
 			menuBar.add(menu);
 
@@ -696,11 +800,8 @@ public class MainApplet
 		}
 		
 		CompilationResult result = cache.compile(projectName, fileName);
-		/*IView view = cache.getView(ViewTypes.VT_COMPILATION_ERRORS);
-		view.setProjectContainer(this);
-		view.setData(result);*/
-		JOptionPane.showMessageDialog(this, result);
-		// TODO implement do kraja
+		IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
+		view.setData(result);
 	}
 	
 	private void simulateLastHistoryResult() throws UniformAppletException {
@@ -738,42 +839,42 @@ public class MainApplet
 		}
 		
 		SimulationResult result = cache.runSimulation(projectName, fileName);
-		if(result.getWaveform() == null) {
-			// TODO tu pozvat simulationErrorPanel i predat mu greske...
-			statusBar.setText("Errors!");
-			StringBuilder sb = new StringBuilder();
-			for(Message m : result.getMessages()) {
-				sb.append(m.getMessageText()).append("\n");
-			}
-			IEditor ed = getEditor("Project1", "File1");
-			if(ed != null) {
-				ed.setFileContent(new FileContent("Project1", "File1", sb.toString()));
-			}
-			return;
+		IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
+		view.setData(result);
+		if(result.getWaveform() != null) {
+			String simulationName = fileName + ".sim";
+			openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
 		}
-		String simulationName = fileName + ".sim";
-		//cache.createFile(projectName, simulationName, FileTypes.FT_VHDL_SIMULATION);
-		//cache.saveFile(projectName, simulationName, result.getWaveform());
-		//openEditor(projectName, simulationName, true, false);
-		openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
 	}
 	
 	public List<String> getAllCircuits(String projectName) throws UniformAppletException {
-		// TODO sto s testbench tipom kojeg treba recimo simulation wizard
-		// ili recimo tu nesmiju bit samo VHDL_SOURCE nego i automat i schema koji ce izgenerirat vhdl
 		List<String> fileNames = cache.findFilesByProject(projectName);
 		List<String> circuits = new ArrayList<String>();
+		List<String> fileTypes = cache.getFileTypes();
+		fileTypes.remove(FileTypes.FT_VHDL_TB);
+		fileTypes.remove(FileTypes.FT_VHDL_SIMULATION);
 		for(String name : fileNames) {
 			String type = cache.loadFileType(projectName, name);
-			if(type.equals(FileTypes.FT_VHDL_SOURCE)) {
+			if(fileTypes.contains(type)) {
 				circuits.add(name);
 			}
 		}
 		return circuits;
 	}
+	
+	public List<String> getAllTestbenches(String projectName, String type) throws UniformAppletException {
+		List<String> fileNames = cache.findFilesByProject(projectName);
+		List<String> testbenches = new ArrayList<String>();
+		for(String name : fileNames) {
+			String fileType = cache.loadFileType(projectName, name);
+			if(fileType.equals(type)) {
+				testbenches.add(name);
+			}
+		}
+		return testbenches;
+	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
-		// TODO mozda bi tu trebalo sejvat taj file...
 		return cache.getCircuitInterfaceFor(projectName, fileName);
 	}
 
@@ -803,6 +904,22 @@ public class MainApplet
 		return projectExplorer.getActiveProject();
 	}
 	
+	private int indexOfView(String type) {
+		for(int i = 0; i < viewPane.getTabCount(); i++) {
+			IView view = (IView) viewPane.getComponentAt(i);
+			String viewPaneComponentType = cache.getViewType(view);
+			if(viewPaneComponentType.equals(type)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	private int indexOfView(IView view) {
+		String type = cache.getViewType(view);
+		return indexOfView(type);
+	}
+	
 	private int indexOfEditor(String projectName, String fileName) {
 		for(int i = 0; i < editorPane.getTabCount(); i++) {
 			IEditor editor = (IEditor) editorPane.getComponentAt(i);
@@ -820,6 +937,15 @@ public class MainApplet
 		return indexOfEditor(projectName, fileName);
 	}
 	
+	private List<IView> getAllOpenViews() {
+		List<IView> openedViews = new ArrayList<IView>();
+		for(int i = 0; i < viewPane.getTabCount(); i++) {
+			IView view = (IView) viewPane.getComponentAt(i);
+			openedViews.add(view);
+		}
+		return openedViews;
+	}
+	
 	private List<IEditor> getAllOpenEditors() {
 		List<IEditor> openedEditors = new ArrayList<IEditor>();
 		for(int i = 0; i < editorPane.getTabCount(); i++) {
@@ -828,6 +954,31 @@ public class MainApplet
 		}
 		return openedEditors;
 	}
+	
+	public IView getView(String type) throws UniformAppletException {
+		int index = indexOfView(type);
+		if(index == -1) {
+			openView(type);
+			index = indexOfView(type);
+		}
+		return (IView)viewPane.getComponentAt(index);
+	}
+	
+	public IView openView(String type) throws UniformAppletException {
+		int index = indexOfView(type);
+		if(index == -1) {
+			// Initialization of an editor
+			IView view = cache.getView(type);
+			view.setProjectContainer(this);
+			// End of initialization
+			
+			String title = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + type);
+			viewPane.add(title, (JPanel)view);
+		}
+		viewPane.setSelectedIndex(index);
+		return getView(type);
+	}
+
 	
 	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
 		int index = indexOfEditor(projectName, fileName);
@@ -1049,7 +1200,7 @@ public class MainApplet
 	
 	private void closeEditor(IEditor editor) {
 		if(editor == null) return;
-		List<IEditor> editorsToClose = new ArrayList<IEditor>();
+		List<IEditor> editorsToClose = new ArrayList<IEditor>(1);
 		editorsToClose.add(editor);
 		closeEditors(editorsToClose);
 	}
@@ -1105,6 +1256,33 @@ public class MainApplet
 		for(IEditor editor : editorsToClose) {
 			int index = indexOfEditor(editor);
 			editorPane.remove(index);
+		}
+	}
+	
+	private void closeView(IView view) {
+		if(view == null) return;
+		List<IView> viewsToClose = new ArrayList<IView>(1);
+		viewsToClose.add(view);
+		closeViews(viewsToClose);
+	}
+	
+	private void closeAllViews() {
+		List<IView> openedViews = getAllOpenViews();
+		closeViews(openedViews);
+	}
+	
+	private void closeAllButThisView(IView viewToKeepOpened) {
+		if(viewToKeepOpened == null) return;
+		List<IView> openedViews = getAllOpenViews();
+		openedViews.remove(viewToKeepOpened);
+		closeViews(openedViews);
+	}
+	
+	private void closeViews(List<IView> viewsToClose) {
+		if(viewsToClose == null) return;
+		for(IView view : viewsToClose) {
+			int index = indexOfView(view);
+			viewPane.remove(index);
 		}
 	}
 	

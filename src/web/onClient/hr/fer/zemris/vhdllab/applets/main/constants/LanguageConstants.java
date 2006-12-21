@@ -31,6 +31,12 @@ public class LanguageConstants {
 
 	
 	/**
+	 * Part of a key for view title. In addition to this key user needs
+	 * to append one of view type to this key in order for key to be complete.
+	 */
+	public static final String VIEW_TITLE_FOR = "view.title.for.";
+	
+	/**
 	 * Key for 'File' menu.
 	 */
 	public static final String MENU_FILE = "menu.file";
@@ -121,7 +127,22 @@ public class LanguageConstants {
 	 * Key for 'Maximize Active Window' menu item in 'View' menu.
 	 */
 	public static final String MENU_VIEW_MAXIMIZE_ACTIVE_WINDOW = "menu.view.maximize.active.window";
+
+	/**
+	 * Key for 'Show View' menu item in 'View' menu.
+	 */
+	public static final String MENU_VIEW_SHOW_VIEW = "menu.view.show.view";
 	
+	/**
+	 * Key for 'Compilation Errors' menu item in 'View' menu.
+	 */
+	public static final String MENU_VIEW_SHOW_VIEW_COMPILATION_ERRORS = "menu.view.show.view.compilation.errors";
+
+	/**
+	 * Key for 'Simulation Errors' menu item in 'View' menu.
+	 */
+	public static final String MENU_VIEW_SHOW_VIEW_SIMULATION_ERRORS = "menu.view.show.view.simulation.errors";
+
 	/**
 	 * Key for 'Compile' menu item in 'Tools' menu.
 	 */

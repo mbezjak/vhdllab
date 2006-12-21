@@ -384,7 +384,7 @@
   </target>
 	
   <target name="run-app" depends="tomcat">
-  	<!-- Sleep for tomcat to reload its resources -->
+  	<!-- Sleep for tomcat to reload his resources -->
   	<sleep seconds="1"/>
     <exec executable="${browser}" spawn="true">
       <arg line="${browser.arg}"/>
