@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
+import hr.fer.zemris.vhdllab.applets.main.components.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.constants.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.ViewTypes;
@@ -16,7 +17,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.Preferences;

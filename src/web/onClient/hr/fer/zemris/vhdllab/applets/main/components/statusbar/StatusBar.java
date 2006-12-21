@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.statusbar;
+package hr.fer.zemris.vhdllab.applets.main.components.statusbar;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IStatusBar;
 

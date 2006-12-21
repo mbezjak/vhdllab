@@ -31,10 +31,6 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	private ProjectContainer container;
 	private FileContent content;
 	
-	public Writer() {
-		init();
-	}
-	
 	public void init() {
 		text = new JTextArea("This is writer area!", 25,50);
 		JScrollPane scroll = new JScrollPane(text);

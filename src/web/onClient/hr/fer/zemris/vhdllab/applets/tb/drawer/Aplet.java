@@ -13,7 +13,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -57,11 +56,6 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	
 	
 	
-	
-	
-	public Aplet() throws HeadlessException {
-		super();
-	}
 	
 	
 	public void setCircuitInterface(CircuitInterface i){

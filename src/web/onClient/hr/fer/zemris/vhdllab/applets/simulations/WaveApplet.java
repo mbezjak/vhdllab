@@ -210,21 +210,6 @@ public class WaveApplet extends JPanel
 
 
 
-	/** 
-	 * Constructor
-	 */
-	public WaveApplet()
-	{
-		initializeComponents();
-		initializeNextPreviousEdgePopup();
-		initializeShowValuePopup();
-		initializeToolbar();
-		initializeHelp();
-
-		popupHelp.setPreferredSize(new Dimension(500, 600));
-		popupHelp.add(helpPanel);
-	}
-
 
 	/**
 	 *	Uzima rezultate koji je vratio GHDL simulator, a koji su
@@ -1921,8 +1906,14 @@ public class WaveApplet extends JPanel
 
 
 	public void init() {
-		// TODO Auto-generated method stub
-		
+		initializeComponents();
+		initializeNextPreviousEdgePopup();
+		initializeShowValuePopup();
+		initializeToolbar();
+		initializeHelp();
+
+		popupHelp.setPreferredSize(new Dimension(500, 600));
+		popupHelp.add(helpPanel);
 	}
 
 }
