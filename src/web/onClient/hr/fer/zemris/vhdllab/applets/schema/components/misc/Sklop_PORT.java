@@ -61,7 +61,6 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 		return new Sklop_PORT(port, circint);
 	}
 	
-	
 
 	@Override
 	protected void addPropertiesToComponentPropertyList(ComponentPropertyList cplist) {
