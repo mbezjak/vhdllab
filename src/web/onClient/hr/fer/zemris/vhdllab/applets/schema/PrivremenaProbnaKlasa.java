@@ -3,7 +3,11 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
+import hr.fer.zemris.vhdllab.applets.schema.components.misc.Sklop_PORT;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
+import hr.fer.zemris.vhdllab.vhdl.model.Direction;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -16,12 +20,64 @@ import javax.swing.JFrame;
 //
 // aleksandar
 public class PrivremenaProbnaKlasa {
+	
+	public static Port createTestPort() {
+		return new Port() {
+			public String getName() {
+				return "Probni_port";
+			}
+
+			public Direction getDirection() {
+				return Direction.OUT;
+			}
+
+			public Type getType() {
+				return new Type() {
+
+					public String getTypeName() {
+						return "std_logic_vector";
+					}
+
+					public int getRangeFrom() {
+						return 1;
+					}
+
+					public int getRangeTo() {
+						return 4;
+					}
+
+					public String getVectorDirection() {
+						return "TO";
+					}
+
+					public boolean isScalar() {
+						return false;
+					}
+
+					public boolean isVector() {
+						return true;
+					}
+
+					public boolean hasVectorDirectionDOWNTO() {
+						return false;
+					}
+
+					public boolean hasVectorDirectionTO() {
+						return true;
+					}
+					
+				};
+			}
+			
+		};
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		SchemaMainPanel mpanel = new SchemaMainPanel();
+		mpanel.init();
 		
 		JFrame frame = new JFrame("Povratak milivoja");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,6 +87,12 @@ public class PrivremenaProbnaKlasa {
 		frame.setSize(new Dimension(550, 400));
 		frame.add(mpanel);
 		frame.validate();
+		
+		Port port = createTestPort();
+		
+		Sklop_PORT portic = new Sklop_PORT(port, mpanel.getCircuitInterface());
+		
+		mpanel.drawingCanvas.addComponent(portic, new Point(160, 20));
 		
 		// proba serijalizacije/deserijalizacije
 //		SimpleSchemaWire wire = new SimpleSchemaWire("ZicoMoja");

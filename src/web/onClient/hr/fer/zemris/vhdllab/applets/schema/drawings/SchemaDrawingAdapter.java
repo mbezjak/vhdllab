@@ -378,6 +378,28 @@ public class SchemaDrawingAdapter {
 		return cubic;
 	}
 	
+	public void fillRightBlackTriangle(int virtualX1, int virtualY1, int virtualWid, int virtualHgt) {
+		if (gph == null) return;
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		graph.setColor(Color.BLACK);
+		
+		int [] xcoord = new int[3];
+		int [] ycoord = new int[3];
+		
+		xcoord[0] = virtualToRealRelativeX(virtualX1);
+		xcoord[1] = virtualToRealRelativeX(virtualX1);
+		xcoord[2] = virtualToRealRelativeX(virtualX1 + virtualWid);
+		
+		ycoord[0] = virtualToRealRelativeY(virtualY1);
+		ycoord[1] = virtualToRealRelativeY(virtualY1 + virtualHgt);
+		ycoord[2] = virtualToRealRelativeY(virtualY1 + virtualHgt / 2);
+		
+		graph.fillPolygon(xcoord, ycoord, 3);
+	}
+	
 	public void draw(Shape shape) {
 		if (gph == null) return;
 

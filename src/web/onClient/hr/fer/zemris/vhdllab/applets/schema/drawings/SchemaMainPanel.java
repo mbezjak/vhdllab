@@ -18,6 +18,7 @@ import hr.fer.zemris.vhdllab.applets.schema.wires.SPair;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SchemaWireException;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire.WireConnection;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -92,7 +93,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private JTextField rwmTextField = null;
 	private Point nodeConfirmed = null;
 	private boolean tStateVert = false;
-	private SchemaModelledComponentEntity entity = null;
+	private CircuitInterface circuitInterface = null;
+	//private SchemaModelledComponentEntity entity = null; ovo ipak necemo trebat, koristit cemo CircuitInterface
 
 	public SchemaMainPanel() throws HeadlessException {
 		
@@ -101,7 +103,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		
 		// ovo ce trebat maknut
-		init();
+		//init();
 	}
 	
 	private boolean checkForIntersection(int x1, int y1, AbstractSchemaComponent c1, SchemaDrawingComponentEnvelope env) {
@@ -863,12 +865,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		}
 	}	
 	
-	public SchemaModelledComponentEntity getEntity() {
-		return entity;
+	public CircuitInterface getCircuitInterface() {
+		return circuitInterface;
 	}
 
-	public void setEntity(SchemaModelledComponentEntity entity) {
-		this.entity = entity;
+	public void setCircuitInterface(CircuitInterface interf) {
+		this.circuitInterface = interf;
 	}
 	
 	
@@ -881,7 +883,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private void generateSchemaContentFromSchemaFile() {
 		// sve sto se znalo o panelu sad se brise!
 		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
-		entity = new SchemaModelledComponentEntity();
+		circuitInterface = null;
 		
 		if (propbar != null) propbar.showNoProperties();
 		
@@ -975,7 +977,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		
 		popupChoicesMenu = new JPopupMenu("Menu");
 		popupRenameWireMenu = new JPopupMenu("Rename");
-		popupWirePropertiesMenu = new JPopupMenu("Wire properties"); 
+		popupWirePropertiesMenu = new JPopupMenu("Wire properties");
 		
 		// tipke
 		this.addKeyListener(new KeyListener() {

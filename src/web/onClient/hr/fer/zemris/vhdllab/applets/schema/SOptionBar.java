@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.Dimension;
@@ -136,17 +137,6 @@ public class SOptionBar extends JToolBar {
 				parentFrame.recreateComponentBar(cmplist);
 			} 
 			});
-		chooseComponentGroup.addItem(new CBarCategory() {
-			@Override
-			public String getCategoryName() {
-				return "Ulazi i izlazi";
-			}
-			@Override
-			public void takeAction() {
-				ArrayList<String> cmplist = new ArrayList<String>();
-				parentFrame.recreateComponentBar(cmplist);
-			} 
-			});
 		
 		chooseComponentGroup.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ie) {
@@ -167,10 +157,13 @@ public class SOptionBar extends JToolBar {
 	public void showEntitySetupper() {
 		Frame frame = JOptionPane.getFrameForComponent(parentFrame);
 		dialogEntitySetup = new JDialog(frame, "Entity Setup", true);
-		dialogEntitySetup.add(new SEntitySetupper(parentFrame.getEntity(), parentFrame));
+		String[] st = {"Name","Direction","Type","From","To"};
+		SEntityTable table = new SEntityTable("Entity declaration:",st,"Entity name: ");
+		dialogEntitySetup.add(table);
 		dialogEntitySetup.setBounds(0, 0, 320, 230);
 		dialogEntitySetup.setLocation(150, 150);
 		dialogEntitySetup.setVisible(true);
+		parentFrame.setCircuitInterface(table.getCircuitInterface());
 	}
 	
 	public void selectNoOption() {
