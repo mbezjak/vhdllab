@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.tb.drawer;
+package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;

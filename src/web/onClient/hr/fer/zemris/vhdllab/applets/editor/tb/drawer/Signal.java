@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.tb.drawer;
+package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
 
 public class Signal {
 

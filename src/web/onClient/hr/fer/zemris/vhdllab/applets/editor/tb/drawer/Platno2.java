@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.tb.drawer;
+package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
 
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -12,7 +12,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JComponent;
 
 
-public class Platno extends JComponent {
+public class Platno2 extends JComponent {
 	
 	
 	
@@ -36,7 +36,7 @@ public class Platno extends JComponent {
 	int it=0;
 	boolean prvoCrtanje=true;
 	
-	public Platno(){
+	public Platno2(){
 		super();
 		this.addMouseListener(new MouseListener(){
 
@@ -56,7 +56,8 @@ public class Platno extends JComponent {
 			}
 
 			public void mouseEntered(MouseEvent arg0) {
-				nacrtaj_sve();
+				//nacrtaj_sve();
+				
 			}
 
 			public void mouseExited(MouseEvent arg0) {
@@ -169,7 +170,7 @@ public class Platno extends JComponent {
 		 -polozaj signala: 1 je na vrhu 2 ispod itd.. 
 		 -data u obliku (vrijeme, vrijednost)(vrijeme,vrijednost) npr (100,1)(150,0)*/ 
 
-	private void crtaj_signal(String ime,int polozaj_signala,String data){
+	private void crtaj_signal(String ime,int polozaj_signala,String data, Graphics gp){
 	
 	
 	int x1;
@@ -198,7 +199,7 @@ public class Platno extends JComponent {
 
 
 
-	 Graphics gp =this.getGraphics();
+	 //Graphics gp =this.getGraphics();
 	 Graphics2D g= (Graphics2D) gp;
 
 
@@ -275,9 +276,10 @@ public class Platno extends JComponent {
 	
 	
 	
-	/**crta sve signale pomocu metode za crtanje prvo ul pa iz*/
+	/**crta sve signale pomocu metode za crtanje prvo ul pa iz
+	 * @param g */
 
-	public void nacrtaj_sve(){
+	public void nacrtaj_sve(Graphics g){
 	
 	
 
@@ -285,8 +287,8 @@ public class Platno extends JComponent {
 		
 		
 		//	cisti stare crte
-		Graphics g;
-		g=this.getGraphics().create();
+		
+		//g=this.getGraphics().create();
 		Graphics2D g1= (Graphics2D) g;
 		g.setColor(boja);
 		g1.fillRect(0,0,max_x,max_y+20);
@@ -358,10 +360,10 @@ public class Platno extends JComponent {
 						for(int n=0;n<bitovi.length;n++){
 						
 							if(ul[it].getRange()[0]<=ul[it].getRange()[1]){
-								crtaj_signal(ul[it].ime+"("+(ul[it].getRange()[0]+n)+")",polozaj,bitovi[n]);
+								crtaj_signal(ul[it].ime+"("+(ul[it].getRange()[0]+n)+")",polozaj,bitovi[n],g);
 								polozaj++;
 							}else if(ul[it].getRange()[0]>ul[it].getRange()[1]){	
-								crtaj_signal(ul[it].ime+"("+(ul[it].getRange()[0]-n)+")",polozaj,bitovi[n]);	
+								crtaj_signal(ul[it].ime+"("+(ul[it].getRange()[0]-n)+")",polozaj,bitovi[n],g);	
 								polozaj++;
 							}
 					
@@ -372,12 +374,12 @@ public class Platno extends JComponent {
 					
 				
 					}else{
-						crtaj_signal(ul[it].ime,polozaj,this.vector_data);
+						crtaj_signal(ul[it].ime,polozaj,this.vector_data,g);
 						polozaj++;
 					}
 				
 				}else if(ul[it].tip.contentEquals("scalar")){
-					crtaj_signal(ul[it].ime,polozaj,ul[it].data);
+					crtaj_signal(ul[it].ime,polozaj,ul[it].data,g);
 					polozaj++;
 				}
 		
@@ -598,8 +600,8 @@ public class Platno extends JComponent {
 			}else{
 				ul[redni_broj_u_polju].setBit(signal_sa_unesenom_promjenom,Integer.parseInt(bit));
 			}
-			nacrtaj_sve(); 
-			
+			//TODO nacrtaj_sve(); 
+			repaint();
 		
 		}
 		
@@ -608,8 +610,8 @@ public class Platno extends JComponent {
 
 	@Override
 	public void paint(Graphics arg0){
-		if(this.podatci!=null)this.nacrtaj_sve();
-		this.validate();
+		if(this.podatci!=null)this.nacrtaj_sve(arg0);
+		//this.validate();
 	}
 	
 

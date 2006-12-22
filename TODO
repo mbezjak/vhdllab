@@ -10,8 +10,8 @@ Boris Ozegovic
 --------------------------------------------
 TODO 03) [OPEN]   VcdParser treba implementirati ISimulationParser (15.)
 TODO 04) [OPEN]   CompilationResults treba implementirati ICompilationParser (15.)
-TODO 05) [OPEN]   Maknuti IWizard i IEditor iz CompilationErrors i Miro treba stvoriti (15.) neko novo sucelje za taj panel
-TODO 06) [OPEN]   Iskoristiti klase SimulationResult i CompilationResults (15.) (tu je dilema...)
+TODO 05) [CLOSED]   Maknuti IWizard i IEditor iz CompilationErrors i Miro treba stvoriti (15.) neko novo sucelje za taj panel
+TODO 06) [CLOSED]   Iskoristiti klase SimulationResult i CompilationResults (15.) (tu je dilema...)
 TODO 07) [CLOSED]   Maknuti iritantni pomak scrolla ako su kursori u vidljivom polju (16.)
 TODO 08) [OPEN]   Popraviti verticalScroll u WaveAppletu (16.)
 TODO 09) [OPEN]   Vidjeti o kakvom se bugu radi s popupom biranja boja (16.)
@@ -19,13 +19,13 @@ TODO 10) [OPEN]   Napraviti project viewer za glavni applet (neka bude 20.)
 
 John Doe 2?
 --------------------------------------------
-TODO 11) [OPEN]   Napisat kod za metodu generateVHDL (ona koja ce pozivat odgovarajuce generatore po tipu)
-TODO 12) [OPEN]   Napisat kod za metodu extractCircuitInterface (ona koja ce pozivat odgovarajuce extractore po tipu)
-TODO 13) [OPEN]   Napisat kod za metodu extractDependency (ona koja ce pozivat odgovarajuce extractore(dependency) po tipu)
+TODO 11) [CLOSED]   Napisat kod za metodu generateVHDL (ona koja ce pozivat odgovarajuce generatore po tipu)
+TODO 12) [CLOSED]   Napisat kod za metodu extractCircuitInterface (ona koja ce pozivat odgovarajuce extractore po tipu)
+TODO 13) [CLOSED]   Napisat kod za metodu extractDependency (ona koja ce pozivat odgovarajuce extractore(dependency) po tipu)
 TODO 14) [CLOSED]   Prepravit TestbenchApplet tako da extenda JPanel i implemetira IEditor i IWizard
 TODO 15) [OPEN]   Trebalo bi sklozit onaj dependency u Extractor-u
 TODO 16) [OPEN]   Napravit wizad za new VHDL source
-TODO 17) [OPEN]   Parsiranje cijelog rezulatat sto vraca GHDL (error, warning, status) i stvaranje odgovarajucih objekata (SimulationResult ili CompilationResult)
+TODO 17) [CLOSED]   Parsiranje cijelog rezulatat sto vraca GHDL (error, warning, status) i stvaranje odgovarajucih objekata (SimulationResult ili CompilationResult)
 TODO 18) [OPEN]   Naprisat kod za sidebar - to bi trebalo imat samo par buttona i uglavnom zovu metode iz ProjectContainera (znaci nist strasno)
 TODO 19) [OPEN]   Napravit ProjectExplorer - to je Boris uzeo, mislim da nije to tak komplicirano
 TODO 20) [OPEN]   status bar bi trebalo malo dotjerat (mozda postavit da se ispisuje NUM, CAPS i SCROLL, ono standardno)
@@ -34,7 +34,6 @@ TODO 22) [OPEN]   wizard za compilation
 TODO 23) [OPEN]   wizard za testbench applet + sredit taj applet da bude kak se spada
 TODO 24) [OPEN]   dialog, potpuno isti kao i u eclipse-u (kad hocete nesto radit, pa vam on veli da morate sejvat vise fajlova)
 TODO 25) [OPEN]   mijenjanje preferences-a (potpuno isto ko i u firefoxu)
-TODO 26) [OPEN]   SimulationErrorsPanel (to vam je samo iteriranje kroz listu u prikazivanje u JTextField ili JList, i pritom to mora bit readonly)
 TODO 27) [OPEN]   Statusbar history (slicno ko i ovo gore, znaci isto jedan JTextField ili JList i svaki put kad se promijeni status bar tu se prikaze u obliku vrijeme : statusBarContent)
 
 Davor Delac
@@ -93,5 +92,5 @@ TODO 101) [CLOSED]  Dobro definirat sadrzaj svih globalnih i localnih file-ove
 TODO 102) [OPEN]  Implementirat zatvaranje cijelog appleta (tako da se sve spremi pri zatvaranju)
 TODO 103) [CLOSED]  Rijesit problem pri otvaranju simulatora (tj. nacin otvaranja)
 TODO 104) [OPEN]  File.getFileName mora bit case insensitive!
-
+TODO 105) [CLOSED]   SimulationErrorsPanel (to vam je samo iteriranje kroz listu u prikazivanje u JTextField ili JList, i pritom to mora bit readonly)
 

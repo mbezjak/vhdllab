@@ -82,16 +82,12 @@ public class Writer extends JPanel implements IEditor, IWizard {
 
 	public FileContent getInitialFileContent(Component parent) {
 		try {
-			String projectName;
+			String projectName = container.getActiveProject();
 			String fileName;
-			do {
-				projectName = JOptionPane.showInputDialog(parent,"Enter project name:");
-			} while(!container.existsProject(projectName));
-			
 			do {
 				fileName = JOptionPane.showInputDialog(parent, "Enter file name:");
 			} while(container.existsFile(projectName, fileName));
-
+			
 			String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();
 			FileContent initialContent = new FileContent(projectName, fileName, data);
 			return initialContent;

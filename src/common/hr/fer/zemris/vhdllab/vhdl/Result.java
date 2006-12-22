@@ -28,6 +28,13 @@ public class Result {
 		this.isSuccessful = isSuccessful;
 		this.messages = Collections.unmodifiableList(messages);
 	}
+	
+	protected Result(Result result) {
+		super();
+		this.status = result.status;
+		this.isSuccessful = result.isSuccessful;
+		this.messages = result.messages;
+	}
 
 	public Integer getStatus() {
 		return status;

@@ -16,11 +16,23 @@ public class SimulationResult extends Result {
 		super(status, isSuccessful, messages);
 		this.waveform = waveform;
 	}
+	
+	protected SimulationResult(Result result, String waveform) {
+		super(result);
+		this.waveform = waveform;
+	}
+
 
 	public String getWaveform() {
 		return waveform;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends SimulationMessage> getMessages() {
+		return (List<? extends SimulationMessage>)super.getMessages();
+	}
+
 	@Override
 	public String serialize() {
 		Properties prop = new Properties();
@@ -32,7 +44,6 @@ public class SimulationResult extends Result {
 		return XMLUtil.serializeProperties(prop);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static SimulationResult deserialize(String data) {
 		if(data == null) throw new NullPointerException("Data can not be null.");
 		Properties prop = XMLUtil.deserializeProperties(data);
@@ -40,10 +51,7 @@ public class SimulationResult extends Result {
 		String waveform = prop.getProperty(SIMULATION_RESULT_WAVEFORM);
 		String superSerialization = prop.getProperty(SIMULATION_RESULT_SUPER);
 		Result result = Result.deserialize(superSerialization);
-		Integer status = result.getStatus();
-		boolean isSuccessful = result.isSuccessful();
-		List<SimulationMessage> messages = (List<SimulationMessage>) result.getMessages();
-		return new SimulationResult(status, isSuccessful, messages, waveform);
+		return new SimulationResult(result, waveform);
 	}
 	
 	@Override

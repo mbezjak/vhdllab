@@ -61,8 +61,6 @@ public class CompilationMessage extends Message {
 		int column = Integer.parseInt(prop.getProperty(COMPILATION_MESSAGE_COLUMN));
 		String superSerialization = prop.getProperty(COMPILATION_MESSAGE_SUPER);
 		Message msg = Message.deserialize(superSerialization);
-		//String messageText = msg.getMessageText();
-		//return new CompilationMessage(messageText, row, column);
 		return new CompilationMessage(msg, row, column);
 	}
 

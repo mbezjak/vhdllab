@@ -22,7 +22,6 @@ public class SimulationMessage extends Message {
 	public static SimulationMessage deserialize(String data) {
 		if(data == null) throw new NullPointerException("Data can not be null.");
 		Message msg = Message.deserialize(data);
-		//return new SimulationMessage(msg.getMessageText());
 		return new SimulationMessage(msg);
 	}
 	

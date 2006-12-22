@@ -261,14 +261,15 @@ public class MainApplet
 					Component[] components = viewSplitPane.getComponents();
 					if(components != null) {
 						boolean contains = false;
-						for(Component c : viewSplitPane.getComponents()) {
-							if(c.equals(viewPane)) {
+						for(Component c : components) {
+							if(c == viewPane) {
 								contains = true;
 								break;
 							}
 						}
 						if(!contains) {
 							viewSplitPane.add(viewPane);
+							// TODO postavit velicnu iz preference-a
 						}
 					}
 				}
@@ -280,14 +281,13 @@ public class MainApplet
 			}
 		});
 		
-		//JPanel sideBarPanel = new JPanel(new BorderLayout());
 		sideBarPanel = new JPanel(new BorderLayout());
 		sideBar = new SideBar();
 		sideBarPanel.add(sideBar, BorderLayout.CENTER);
 		
 		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
 		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
-		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, null);
+		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, viewPane);
 		
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
 		centerComponentsPanel.add(viewSplitPane);
@@ -613,7 +613,9 @@ public class MainApplet
 				public void actionPerformed(ActionEvent e) {
 					try {
 						openView(ViewTypes.VT_COMPILATION_ERRORS);
-					} catch (UniformAppletException ex) {}
+					} catch (UniformAppletException ex) {
+						// TODO "Cant open view compilation errors" u statusbar
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -817,9 +819,8 @@ public class MainApplet
 		}
 		
 		CompilationResult result = cache.compile(projectName, fileName);
-		// TODO ovo odmontirat kad se napravi view za kompajliranje!
-		//IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
-		//view.setData(result);
+		IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
+		view.setData(result);
 	}
 	
 	private void simulateLastHistoryResult() throws UniformAppletException {
@@ -857,9 +858,8 @@ public class MainApplet
 		}
 		
 		SimulationResult result = cache.runSimulation(projectName, fileName);
-		// TODO ovo odkomentirat kad se napravi view za simuliranje!
-		//IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
-		//view.setData(result);
+		IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
+		view.setData(result);
 		if(result.getWaveform() != null) {
 			String simulationName = fileName + ".sim";
 			openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
@@ -990,9 +990,10 @@ public class MainApplet
 			IView view = cache.getView(type);
 			view.setProjectContainer(this);
 			// End of initialization
-			
+
 			String title = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + type);
-			viewPane.add(title, (JPanel)view);
+			Component component = viewPane.add(title, (JPanel)view);
+			index = viewPane.indexOfComponent(component);
 		}
 		viewPane.setSelectedIndex(index);
 		return getView(type);

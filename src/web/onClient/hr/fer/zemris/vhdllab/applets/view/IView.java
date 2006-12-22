@@ -24,9 +24,10 @@ public interface IView {
 	void setProjectContainer(ProjectContainer container);
 	
 	/**
-	 * Sets data to display in this view. If data is <code>null</code>
-	 * than this method will throw no exception and will delete its
-	 * contents.
+	 * Sets data to display in this view. If some data was already
+	 * displayed then it should be replaced by this. If data is
+	 * <code>null</code> than this method will throw no exception
+	 * and will delete its contents.
 	 * 
 	 * @param data a data to set.
 	 * @throws IllegalArgumentException if data provided through this method

@@ -8,14 +8,20 @@ public class CompilationResult extends Result {
 		super(status, isSuccessful, messages);
 	}
 	
+	protected CompilationResult(Result result) {
+		super(result);
+	}
+	
 	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends CompilationMessage> getMessages() {
+		return (List<? extends CompilationMessage>)super.getMessages();
+	}
+
 	public static CompilationResult deserialize(String data) {
 		if(data == null) throw new NullPointerException("Data can not be null.");
 		Result result = Result.deserialize(data);
-		Integer status = result.getStatus();
-		boolean isSuccessful = result.isSuccessful();
-		List<CompilationMessage> messages = (List<CompilationMessage>) result.getMessages();
-		return new CompilationResult(status, isSuccessful, messages);
+		return new CompilationResult(result);
 	}
 	
 	@Override
