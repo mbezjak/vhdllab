@@ -21,7 +21,7 @@ public class Platno2 extends JComponent {
 	 */
 	private static final long serialVersionUID = 1L;
 	String podatci;
-	private Signal[] podatci_t;
+	Signal[] podatci_t;
 	CircuitInterface io;
 	Color boja;
 	Color boja_brojeva;
@@ -89,6 +89,36 @@ public class Platno2 extends JComponent {
 	private Signal[] transformiraj_signale(){
 		
 		String data=this.podatci;
+		// remove tags measureUnit, duration and file
+		int start, end;
+		String substr;
+		start = data.indexOf("<measureUnit>");
+		if(start != -1) {
+			end = data.indexOf("</measureUnit>");
+			end += "</measureUnit>".length();
+			substr = data.substring(start, end);
+			data = data.replace(substr, "");
+		}
+		
+		start = data.indexOf("<duration>");
+		if(start != -1) {
+			end = data.indexOf("</duration>");
+			end += "</duration>".length();
+			substr = data.substring(start, end);
+			data = data.replace(substr, "");
+		}
+
+		start = data.indexOf("<file>");
+		if(start != -1) {
+			end = data.indexOf("</file>");
+			end += "</file>".length();
+			substr = data.substring(start, end);
+			data = data.replace(substr, "");
+		}
+
+		data = data.replaceAll("\n", "");
+		data = data.replaceAll("[ ]+", " ");
+		
 		//<signal name="a" type="scalar">(0,0)(100,1)(200,0)(250,1)(430,0)</signal>
 		//<signal name="b">(0,0)(15,1)(200,0)(250,1)(430,0)</signal>
 		//<signal name="c" type="vector" rangeFrom="0" rangeTo="1">(0,00)(100,01)(200,10)(250,11)</signal>
@@ -97,16 +127,15 @@ public class Platno2 extends JComponent {
 		data=data.replace("type=","").replace("rangeFrom=","").replace("rangeTo=","");
 		data=data.replace(">"," ");
 		
-		
 		//a scalar (0,0)(100,1)(200,0)(250,1)(430,0)#
 		//b (0,0)(15,1)(200,0)(250,1)(430,0)#
 		//c vector 0 1 (0,00)(100,01)(100,10)(100,11)#
-		
 		String[] polje = data.split("#");
 		Signal[] bla=new Signal[polje.length]; 
 		String[] p;
 		
 		for(int i=0;i<polje.length;i++){
+			if(polje[0].equals(" ") || polje[0].equals("")) return null;
 			p=polje[i].split(" ");
 			if(p.length==2){
 				bla[i]=new Signal(p[0],"scalar",p[1]);
@@ -257,7 +286,6 @@ public class Platno2 extends JComponent {
 		Signal[] ul=this.podatci_t;
 		
 		
-		
 		//	cisti stare crte
 		
 		//g=this.getGraphics().create();
@@ -341,8 +369,8 @@ public class Platno2 extends JComponent {
 					
 						}
 						
-						k+=bitovi.length;
-						it+=bitovi.length;
+						//k+=bitovi.length;
+						//it+=bitovi.length;
 					
 				
 					}else{
@@ -387,7 +415,7 @@ public class Platno2 extends JComponent {
 						n++;
 					}
 					
-				}else if(!ul[i].exp){
+				}else{
 					polje[n]=ul[i].ime+" "+String.valueOf(-2);
 					n++;
 					

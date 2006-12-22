@@ -1,12 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.automat.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -19,7 +17,6 @@ import java.util.ResourceBundle;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -56,7 +53,11 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	private void createGUI() {
 			
 			adrw=new AutoDrawer();
-
+			try {
+				bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
+			} catch (UniformAppletException e) {
+				e.printStackTrace();
+			}
 			if(bundle!=null) adrw.setResourceBundle(bundle);
 			
 			Icon ic=new ImageIcon(getClass().getResource("AddMode1.png"));
@@ -181,17 +182,6 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-		if(pContainer!=null)
-			projectName=this.pContainer.getActiveProject();
-		else projectName="Default";
-		if(pContainer!=null)
-			try {
-				bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResource");
-			} catch (UniformAppletException e) {
-				bundle = CachedResourceBundles.getBundle("Client_Automat_ApplicationResources", "en");
-				//e.printStackTrace();
-			}
-		else bundle = CachedResourceBundles.getBundle("Client_Automat_ApplicationResources", "en");
 	}
 
 
@@ -202,7 +192,8 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public FileContent getInitialFileContent(Component parent) {
-		AUTPodatci pod=new AUTPodatci((JComponent) parent);
+		projectName=this.pContainer.getActiveProject();
+		AUTPodatci pod=new AUTPodatci(parent);
 		String gen=null;
 		if(pod.ime!=null){
 			LinkedList<Stanje> stanja=new LinkedList<Stanje>();

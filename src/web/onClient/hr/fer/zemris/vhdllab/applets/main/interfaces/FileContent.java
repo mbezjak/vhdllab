@@ -1,13 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 public class FileContent {
+	
 	private String projectName;
 	private String fileName;
 	private String content;
 	
 	public FileContent(String projectName, String fileName, String content) {
 		if(projectName == null || fileName == null || content == null) {
-			throw new NullPointerException("Project name, file name and content can not be null.");
+			throw new NullPointerException("Project name, file name or content can not be null.");
 		}
 		this.projectName = projectName;
 		this.fileName = fileName;
@@ -17,7 +18,6 @@ public class FileContent {
 	public String getContent() {
 		return content;
 	}
-
 	public void setContent(String content) {
 		this.content = content;
 	}

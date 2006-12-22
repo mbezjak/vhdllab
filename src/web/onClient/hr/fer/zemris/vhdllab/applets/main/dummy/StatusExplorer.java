@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.dummy;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.view.IView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,4 +22,6 @@ public class StatusExplorer extends JPanel implements IView {
 	public void setData(Object data) {}
 
 	public void setProjectContainer(ProjectContainer pContainer) {}
+	
+	public void appendData(Object data) {}
 }

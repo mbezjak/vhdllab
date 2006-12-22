@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.compilationerrors;
+package hr.fer.zemris.vhdllab.applets.view.compilation;
 
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
@@ -60,8 +60,8 @@ public class CompileErrorsPanel extends JPanel
     /** ProjectContainer */
     private ProjectContainer projectContainer;
     
-    /** VHDL editor */
-    private VHDLEditor editor;
+    /** editor */
+    private IEditor editor;
 
 
     /**

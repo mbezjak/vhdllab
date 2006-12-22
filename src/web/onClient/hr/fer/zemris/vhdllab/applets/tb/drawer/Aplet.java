@@ -38,7 +38,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	private static final long serialVersionUID = -1428428870309310489L;
 	
 	JPanel panel = new JPanel();
-	Platno in_panel= new Platno();
+	Platno2 in_panel= new Platno2();
 	JScrollPane scrol = new JScrollPane(in_panel);
 	private String data="";
 	String elementGrafa="pozadina";
@@ -149,7 +149,8 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 			in_panel.boja_brojeva=color;
 		}
 		
-		in_panel.nacrtaj_sve();
+		//in_panel.nacrtaj_sve();
+		repaint();
 			
 	}
 	
@@ -180,7 +181,8 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		}
 		System.out.print("5465465"+this.data);
 		in_panel.setData(this.data);
-		in_panel.nacrtaj_sve();
+		repaint();
+		//in_panel.nacrtaj_sve();
 	}
 	
 
@@ -355,7 +357,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 
 			public void actionPerformed(ActionEvent arg0) {
 				resetirajBoje();
-				in_panel.nacrtaj_sve();
+				in_panel.repaint();
 			}
 			
 		});
@@ -368,7 +370,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 				if(in_panel.zoom>1){
 					in_panel.zoom--;
 				}
-				in_panel.nacrtaj_sve();
+				in_panel.repaint();
 			}
 		});
 			
@@ -380,7 +382,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 			public void actionPerformed(ActionEvent e) {
 				
 				in_panel.zoom++;
-				in_panel.nacrtaj_sve();
+				in_panel.repaint();
 			}
 			
 		});

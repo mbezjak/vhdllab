@@ -13,10 +13,10 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.view.IView;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
@@ -40,8 +40,6 @@ import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -234,6 +232,14 @@ public class MainApplet
 			public void mouseExited(MouseEvent e) {}
 			public void mousePressed(MouseEvent e) {}
 			public void mouseReleased(MouseEvent e) {}
+		});
+		editorPane.addContainerListener(new ContainerListener() {
+			public void componentAdded(ContainerEvent e) {}
+			public void componentRemoved(ContainerEvent e) {
+				if(editorPane.getTabCount() == 0 && isMaximized(editorPane)) {
+					maximizeComponent(editorPane);
+				}
+			}
 		});
 		
 		viewPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -586,7 +592,9 @@ public class MainApplet
 					} else if(editorPane.isFocusCycleRoot()) {
 						maximizeComponent(viewPane);
 					}*/
-					maximizeComponent(editorPane);
+					if(editorPane.getTabCount() != 0) {
+						maximizeComponent(editorPane);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -659,11 +667,6 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 						statusBar.setText(text);
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						throw new NullPointerException(sw.toString());
-
 					}
 				}
 			});
@@ -1168,20 +1171,24 @@ public class MainApplet
 	
 	private void maximizeComponent(Component component) {
 		if(component == null) return;
-		if(parentOfMaximizedComponent == null) {
-			storePaneSize();
-			centerPanel.remove(normalCenterPanel);
-			parentOfMaximizedComponent = component.getParent();
-			centerPanel.add(component, BorderLayout.CENTER);
-		} else {
+		if(isMaximized(component)) {
 			centerPanel.remove(component);
 			parentOfMaximizedComponent.add(component);
 			centerPanel.add(normalCenterPanel, BorderLayout.CENTER);
 			parentOfMaximizedComponent = null;
 			setPaneSize();
+		} else {
+			storePaneSize();
+			centerPanel.remove(normalCenterPanel);
+			parentOfMaximizedComponent = component.getParent();
+			centerPanel.add(component, BorderLayout.CENTER);
 		}
 		centerPanel.repaint();
 		centerPanel.validate();
+	}
+	
+	private boolean isMaximized(Component component) {
+		return parentOfMaximizedComponent == component.getParent();
 	}
 	
 	private void saveEditor(IEditor editor) {
@@ -1410,6 +1417,8 @@ public class MainApplet
 				
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor(FileTypes.FT_VHDL_SOURCE);
+				editor.setProjectContainer(MainApplet.this);
+				editor.init();
 				
 				if(!cache.existsProject(projectName1)) {
 					cache.createProject(projectName1);
