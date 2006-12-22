@@ -167,6 +167,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 				tf.setText(comp.getComponentInstanceName());
 			}
 		});
+		// o tom potom
 //		cplist.add(new GenericComboProperty("Orijentacija", new Ptr<Object>(this)) {
 //			@Override
 //			public void onUpdate(JComboBox cbox) {
@@ -196,7 +197,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 					i = Integer.parseInt(tf.getText());
 				}
 				catch (Exception e) {
-					i = 0;
+					i = ((AbstractSchemaComponent)getSklopPtr().val).getComponentDelay();
 				}
 				if (i < 0) {
 					i = ((AbstractSchemaComponent)getSklopPtr().val).getComponentDelay();

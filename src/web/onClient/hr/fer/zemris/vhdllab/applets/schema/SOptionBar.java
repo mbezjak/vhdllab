@@ -128,29 +128,18 @@ public class SOptionBar extends JToolBar {
 		chooseComponentGroup.addItem(new CBarCategory() {
 			@Override
 			public String getCategoryName() {
-				return "Sklopovi za kasnjenje";
-			}
-			@Override
-			public void takeAction() {
-				ArrayList<String> cmplist = new ArrayList<String>();
-				parentFrame.recreateComponentBar(cmplist);
-			} 
-			});
-		chooseComponentGroup.addItem(new CBarCategory() {
-			@Override
-			public String getCategoryName() {
-				return "Ostali sklopovi";
-			}
-			@Override
-			public void takeAction() {
-				ArrayList<String> cmplist = new ArrayList<String>();
-				parentFrame.recreateComponentBar(cmplist);
-			} 
-			});
-		chooseComponentGroup.addItem(new CBarCategory() {
-			@Override
-			public String getCategoryName() {
 				return "Korisnicki sklopovi";
+			}
+			@Override
+			public void takeAction() {
+				ArrayList<String> cmplist = new ArrayList<String>();
+				parentFrame.recreateComponentBar(cmplist);
+			} 
+			});
+		chooseComponentGroup.addItem(new CBarCategory() {
+			@Override
+			public String getCategoryName() {
+				return "Ulazi i izlazi";
 			}
 			@Override
 			public void takeAction() {
