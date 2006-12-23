@@ -34,22 +34,22 @@ public class PrivremenaProbnaKlasa {
 			}
 
 			public Direction getDirection() {
-				return Direction.OUT;
+				return Direction.IN;
 			}
 
 			public Type getType() {
 				return new Type() {
 
 					public String getTypeName() {
-						return "std_logic";
+						return "std_logic_vector";
 					}
 
 					public int getRangeFrom() {
-						return 0;
+						return 7;
 					}
 
 					public int getRangeTo() {
-						return 0;
+						return 2;
 					}
 
 					public String getVectorDirection() {
@@ -65,11 +65,11 @@ public class PrivremenaProbnaKlasa {
 					}
 
 					public boolean hasVectorDirectionDOWNTO() {
-						return false;
+						return true;
 					}
 
 					public boolean hasVectorDirectionTO() {
-						return true;
+						return false;
 					}
 					
 				};

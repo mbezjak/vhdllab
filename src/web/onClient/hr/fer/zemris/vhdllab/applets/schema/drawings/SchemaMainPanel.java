@@ -13,12 +13,15 @@ import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
+import hr.fer.zemris.vhdllab.applets.schema.components.misc.Sklop_PORT;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SPair;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SchemaWireException;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire.WireConnection;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Direction;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -35,6 +38,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -148,11 +153,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		else compbar.remanufactureComponents(cmplist);
 	}
 	
-	private void deleteComponent() {
+	private void deleteComponent(String toBeRemoved) {
 		schemaHasBeenModified = true;
 		if (projectContainer != null && schemaFile != null) 
 			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
-		String toBeRemoved = propbar.getSelectedComponentInstanceName();
 		if (toBeRemoved == null) return;
 		if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
 			propbar.showNoProperties();
@@ -406,7 +410,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			schemaHasBeenModified = true;
 			if (projectContainer != null && schemaFile != null) 
 				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
-			deleteComponent();
+			deleteComponent(propbar.getSelectedComponentInstanceName());
 		}
 	}
 	
@@ -777,7 +781,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			schemaHasBeenModified = true;
 			if (projectContainer != null && schemaFile != null) 
 				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
-			deleteComponent();
+			deleteComponent(propbar.getSelectedComponentInstanceName());
 			deleteWire();
 		}
 	}
@@ -869,8 +873,38 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return circuitInterface;
 	}
 
+	/**
+	 * Treba vidjeti koji sklopovi su vec na platnu, a koji nisu,
+	 * te skladno tome napraviti promjene na canvasu.
+	 * @param interf
+	 */
 	public void setCircuitInterface(CircuitInterface interf) {
-		this.circuitInterface = interf;
+		List<Port> portlist = null;
+		if (circuitInterface != null) {
+			portlist = circuitInterface.getPorts();
+			ArrayList<SchemaDrawingComponentEnvelope> complist = drawingCanvas.getComponentList();
+			for (Port port : portlist) {
+				String pname = port.getName();
+				if (drawingCanvas.existComponent(pname)) {
+					deleteComponent(pname);
+				}
+			}
+		}
+		portlist = interf.getPorts();
+		int counterLeft = 1, counterRight = 1;
+		for (Port port : portlist) {
+			Sklop_PORT portsklop = new Sklop_PORT(port, interf);
+			Point p = null;
+			if (port.getDirection() == Direction.IN) {
+				p = new Point(20, 10 * counterLeft);
+				counterLeft += portsklop.getComponentHeight();
+			} else if (port.getDirection() == Direction.OUT) {
+				p = new Point(720, 10 * counterRight);
+				counterRight += portsklop.getComponentHeight() + 2;
+			}
+			drawingCanvas.addComponent(portsklop, p);
+		}
+		circuitInterface = interf;
 	}
 	
 	

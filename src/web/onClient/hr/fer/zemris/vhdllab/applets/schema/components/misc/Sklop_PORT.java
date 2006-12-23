@@ -19,9 +19,11 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 	private static final int TRIANGLE_WIDTH = 1;
 	private static final int TRIANGLE_HEIGHT = 2;
 	private static final int PER_PORT_HEIGHT = 2;
+	private static final float PORT_INDEX_LENGTH = 1.3f;
 	
 	private Port port;
 	private CircuitInterface circint;
+	private boolean drawPortIndices = true;
 
 	public Sklop_PORT(Port port, CircuitInterface ci) {
 		super(port.getName());
@@ -82,32 +84,42 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 	private void drawWhen_std_logic_vector(SchemaDrawingAdapter adapter) {
 		int w = getComponentWidthSpecific();
 		int h = getComponentHeightSpecific();
+		boolean countUp = port.getType().hasVectorDirectionTO();
+		int count = (port.getType().isVector()) ? (port.getType().getRangeFrom()) : (0);
 		
 		if (port.getDirection() == Direction.IN) {
+			adapter.fillRect(FROM_EDGE, FROM_EDGE,
+					w - 2 * FROM_EDGE - TRIANGLE_WIDTH, h - 2 * FROM_EDGE);
+			adapter.drawRect(FROM_EDGE, FROM_EDGE,
+					w - 2 * FROM_EDGE - TRIANGLE_WIDTH, h - 2 * FROM_EDGE);
 			for (AbstractSchemaPort sp : portlist) {
 				Point p = sp.getCoordinate();
-				adapter.drawLine(p.x, p.y, p.x - COMPONENT_WIDTH / 2, p.y);
+				adapter.drawLine(p.x, p.y, p.x - FROM_EDGE, p.y);
 				adapter.fillRightBlackTriangle(p.x - TRIANGLE_WIDTH - FROM_EDGE, p.y - TRIANGLE_HEIGHT / 2, TRIANGLE_WIDTH, TRIANGLE_HEIGHT);
+				if (drawPortIndices) 
+					adapter.drawSizedString(count + "", p.x - TRIANGLE_WIDTH - FROM_EDGE - PORT_INDEX_LENGTH, p.y + TRIANGLE_HEIGHT / 6.f);
+				if (countUp) count++; else count--;
 			}
+		} else if (port.getDirection() == Direction.OUT) {
 			adapter.fillRect(FROM_EDGE, FROM_EDGE,
 					w - 2 * FROM_EDGE - TRIANGLE_WIDTH, h - 2 * FROM_EDGE);
 			adapter.drawRect(FROM_EDGE, FROM_EDGE,
 					w - 2 * FROM_EDGE - TRIANGLE_WIDTH, h - 2 * FROM_EDGE);
-		} else if (port.getDirection() == Direction.OUT) {
 			for (AbstractSchemaPort sp : portlist) {
 				Point p = sp.getCoordinate();
-				adapter.drawLine(p.x, p.y, p.x + COMPONENT_WIDTH / 2, p.y);
+				adapter.drawLine(p.x, p.y, p.x + FROM_EDGE, p.y);
 				adapter.fillRightBlackTriangle(w - FROM_EDGE - TRIANGLE_WIDTH, p.y - TRIANGLE_HEIGHT / 2, TRIANGLE_WIDTH, TRIANGLE_HEIGHT);
+				if (drawPortIndices) 
+					adapter.drawSizedString(count + "", p.x + FROM_EDGE * 1.1f, p.y + TRIANGLE_HEIGHT / 6.f);
+				if (countUp) count++; else count--;
 			}
-			adapter.fillRect(FROM_EDGE, FROM_EDGE,
-					w - 2 * FROM_EDGE - TRIANGLE_WIDTH, h - 2 * FROM_EDGE);
-			adapter.drawRect(FROM_EDGE, FROM_EDGE,
-					w - 2 * FROM_EDGE - TRIANGLE_WIDTH, h - 2 * FROM_EDGE);
 		}
 	}
 
 	private void drawWhen_std_logic(SchemaDrawingAdapter adapter) {
+		drawPortIndices = false;
 		drawWhen_std_logic_vector(adapter);
+		drawPortIndices = true;
 	}
 
 	@Override

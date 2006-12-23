@@ -115,6 +115,16 @@ public class SchemaDrawingCanvas extends JComponent {
 		this.repaint();
 	}
 	
+	public boolean existComponent(String componentInstanceName) {
+		int posdel = -1;
+		for (int i = 0; i < components.size(); i++) {
+			if (componentInstanceName.compareTo(components.get(i).getComponent().getComponentInstanceName()) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void addWire(AbstractSchemaWire wire) {
 		SchemaDrawingAdapter adapter = this.getAdapter();
 		wires.add(wire);

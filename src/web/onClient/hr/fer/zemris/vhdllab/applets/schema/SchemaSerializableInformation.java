@@ -14,8 +14,7 @@ public class SchemaSerializableInformation {
 	public CircuitInterface circuitInterface;
 	
 	/**
-	 * Ovdje su sve komponente (!OSIM! ulaznih i izlaznih portova), to se
-	 * spremilo vec u circuit interfaceu.
+	 * Ovdje su sve komponente i njihove pozicije.
 	 */
 	public ArrayList<SchemaDrawingComponentEnvelope> envelopeList;
 	

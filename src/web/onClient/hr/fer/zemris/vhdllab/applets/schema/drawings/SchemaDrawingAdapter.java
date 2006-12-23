@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema.SchemaConnectionPoint;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -480,6 +481,21 @@ public class SchemaDrawingAdapter {
 	 */
 	public void setColors(SchemaColorProvider colors) {
 		this.colors = colors;
+	}
+	
+	public void drawSizedString(String s, float virtx, float virty) {
+		if (gph == null) return;
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		graph.setColor(colors.ADAPTER_LINE);
+		Font f = graph.getFont();
+		graph.setFont(new Font("Arial", Font.PLAIN, (int) virtualGridFactor));
+		
+		if (s != null) graph.drawString(s, virtualToRealRelativeX(virtx),
+				   virtualToRealRelativeY(virty));
+		graph.setFont(f);
 	}
 	
 	
