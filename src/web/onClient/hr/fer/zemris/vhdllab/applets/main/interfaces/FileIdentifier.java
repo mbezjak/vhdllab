@@ -34,4 +34,9 @@ public class FileIdentifier {
 	public int hashCode() {
 		return this.projectName.hashCode() ^ this.fileName.hashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return fileName + " [" + projectName + "]";
+	}
 }

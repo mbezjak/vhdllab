@@ -17,7 +17,7 @@ import javax.swing.JScrollPane;
  *
  * @author Boris Ozegovic
  * @version 1.0
- * @date 22.12.2006.
+ * @since 22.12.2006.
  */
 public class SimulateErrorsPanel extends JPanel implements IView {
 	

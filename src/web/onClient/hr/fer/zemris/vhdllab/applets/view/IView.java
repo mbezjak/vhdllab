@@ -19,7 +19,7 @@ public interface IView {
 	 * project container offers.
 	 * 
 	 * @param container a project container
-	 * @see {@link ProjectContainer}
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer
 	 */
 	void setProjectContainer(ProjectContainer container);
 	

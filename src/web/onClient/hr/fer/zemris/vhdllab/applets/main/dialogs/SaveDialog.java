@@ -27,6 +27,44 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+/**
+ * A save dialog that displays to a user files that should be save.
+ * He may chose to save some of displayed files to save. To use this
+ * dialog just use one constructor, modify text to buttons (optional),
+ * add some files to be saved and just invoke method {@link #startDialog()}.
+ * After that controls are locked and youre code will stop at that method.
+ * When user clicks on a button (OK, CANCEL or CLOSE) controls will become
+ * unlocked and youre code will resume just after {@link #startDialog()}
+ * method. To know what button user clicked use {@link #getOption()}
+ * method. It is also a good idea to check if user selected a <code>always
+ * save resources</code> checkbox. And finaly to get what files user selected
+ * use {@link #getSelectedResources()} method.
+ * <p>Here is an example of how to user this dialog:</p>
+ * <code>
+ * <pre>
+ * SaveDialog dialog = new SaveDialog(this, "A title", true);
+ * dialog.setCancelButtonText("Wait a minute, I forgot something");
+ * dialog.setText("Select Resources to save:");
+ * dialog.addItem(true, "A Project", "A file");
+ * dialog.addItem(true, "A Project", "Another file");
+ * dialog.addItem(true, "Another Project", "A third file");
+ * dialog.startDialog();
+ * if(dialog.getOption() == SaveDialog.OK_OPTION) {
+ * 	boolean always = dialog.shouldAlwaysSaveResources();
+ * 	if(always) {
+ * 		...
+ * 	}
+ * 	List<FileIdentifier> identifiers = dialog.getSelectedResources();
+ * 	...
+ * }
+ * ...
+ * </pre>
+ * </code>
+ * 
+ * @author Miro Bezjak
+ * @version 1.0
+ * @since 23.12.2006
+ */
 public class SaveDialog extends JDialog {
 	
 	/**
@@ -46,13 +84,32 @@ public class SaveDialog extends JDialog {
 	/** Height of all buttons */
 	private static final int BUTTON_HEIGHT = 24;
 	
+	/** Label to be displayed above a list of checkboxes */
 	private JLabel label;
+	/** A list of checkboxes displayed to user */
 	private CheckBoxList list;
+	/** Select All button used to select all checkboxes at once */
 	private JButton selectAll;
+	/** Deselect All button used to deselect all checkboxes at once */
 	private JButton deselectAll;
+	/** OK button to end this dialog with {@link #OK_OPTION} */
 	private JButton ok;
+	/** Cancel button to end this dialog with {@link #CANCEL_OPTION} */
 	private JButton cancel;
-	private JCheckBox remember;
+	/**
+	 * Checkbox to check if user does not want this dialog to appear anymore
+	 * (auto save with no user interaction)
+	 */
+	private JCheckBox alwaysSave;
+	/**
+	 * Variable to indicate an option that user chose. Option can
+     * be:
+     * <ul>
+     * <li>{@link #OK_OPTION}</li>
+     * <li>{@link #CANCEL_OPTION}</li>
+     * <li>{@link #CLOSED_OPTION}</li>
+     * </ul>
+	 */
 	private int option = -1;
 	
 	/**
@@ -320,15 +377,15 @@ public class SaveDialog extends JDialog {
     	JPanel actionPanel = new JPanel(new BorderLayout());
     	actionPanel.add(actionBox, BorderLayout.EAST);
     	
-    	remember = new JCheckBox("Always save resources");
-    	remember.setSelected(false);
-    	JPanel rememberPanel = new JPanel(new BorderLayout());
-    	rememberPanel.add(remember, BorderLayout.WEST);
+    	alwaysSave = new JCheckBox("Always save resources");
+    	alwaysSave.setSelected(false);
+    	JPanel alwaysSavePanel = new JPanel(new BorderLayout());
+    	alwaysSavePanel.add(alwaysSave, BorderLayout.WEST);
     	
     	
     	JPanel lowerPanel = new JPanel(new BorderLayout());
     	lowerPanel.add(selectPanel, BorderLayout.NORTH);
-    	lowerPanel.add(rememberPanel, BorderLayout.CENTER);
+    	lowerPanel.add(alwaysSavePanel, BorderLayout.CENTER);
     	lowerPanel.add(actionPanel, BorderLayout.SOUTH);
     	
     	
@@ -339,18 +396,19 @@ public class SaveDialog extends JDialog {
     	messagePanel.add(lowerPanel, BorderLayout.SOUTH);
     	this.getContentPane().add(messagePanel, BorderLayout.CENTER);
     	this.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
-    	setTitle("Save Resources");
     	setText("Select Resources to save:");
     	pack();
     	this.setLocationRelativeTo(owner);
     }
     
     /**
-     * Closes this dialog and releases all screen resources user by this window.
+     * Starts a dialog and locks the control.
      */
-    private void close() {
-    	setVisible(false);
-    	dispose();
+    public void startDialog() {
+    	if(list.isEmpty()) {
+    		throw new IllegalStateException("There are no items to save.");
+    	}
+    	this.setVisible(true);
     }
     
     /**
@@ -380,38 +438,39 @@ public class SaveDialog extends JDialog {
     	
     	List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>();
     	for(SaveItem item : list.getItems()) {
-    		String projectName = item.getProjectName();
-    		String fileName = item.getFileName();
-    		FileIdentifier file = new FileIdentifier(projectName, fileName);
-    		identifiers.add(file);
+    		if(item.isSelected()) {
+	    		String projectName = item.getProjectName();
+	    		String fileName = item.getFileName();
+	    		FileIdentifier file = new FileIdentifier(projectName, fileName);
+	    		identifiers.add(file);
+    		}
     	}
     	return identifiers;
     }
     
     /**
-     * Add item to list so that it can be selected in a checkbox.
-     * @param item item to add
-     * @throws NullPointerException if <code>item</code> is <code>null</code>
+     * Return <code>true</code> if user clicked on a checkbox to always save
+     * resources.
+     * @return <code>true</code> if user clicked on a checkbox to always save
+     * 		resources; <code>false</code> otherwise
      */
-    public void addItem(SaveItem item) {
-    	if(item == null) {
-    		throw new NullPointerException("Item can not be null.");
-    	}
-    	list.addItem(item);
+    public boolean shouldAlwaysSaveResources() {
+    	return alwaysSave.isSelected();
     }
     
     /**
-     * Add items to list so that it can be selected in a checkbox.
-     * @param items list of items to add
-     * @throws NullPointerException if <code>items</code> are <code>null</code>
+     * Add item to list so that it can be selected in a checkbox.
+     * @param seleted indicating if checkbox should be selected or not
+     * @param projectName a name of a project
+     * @param fileName a name of a file
+     * @throws NullPointerException if <code>fileName</code> is <code>null</code>
      */
-    public void addItem(List<SaveItem> items) {
-    	if(items == null) {
-    		throw new NullPointerException("Items can not be null.");
+    public void addItem(boolean seleted, String projectName, String fileName) {
+    	if(projectName == null || fileName == null) {
+    		throw new NullPointerException("Project name or File name can not be null.");
     	}
-    	for(SaveItem item : items) {
-    		addItem(item);
-    	}
+    	SaveItem item = new SaveItem(seleted, projectName, fileName);
+    	list.addItem(item);
     }
     
     /**
@@ -470,34 +529,123 @@ public class SaveDialog extends JDialog {
     }
     
     /**
-     * Set text to be displayed in an <code>remember</code> check box.
-     * If <code>text</code> is <code>null</code> then check box will be set
-     * to an empty string.
+     * Set text to be displayed in a <code>always save resources</code> check
+     * box. If <code>text</code> is <code>null</code> then check box will be
+     * set to an empty string.
      * @param text text to be displayed
      */
-    public void setRememberCheckBoxText(String text) {
+    public void setAlwaysSaveCheckBoxText(String text) {
     	if(text == null) text = "";
-    	remember.setText(text);
+    	alwaysSave.setText(text);
     }
     
-    /* (non-Javadoc)
-     * @see java.awt.Dialog#setTitle(java.lang.String)
+    /**
+     * Set title to be displayed in this dialog. If <code>title</code> is
+     * <code>null</code> then title will be set to an empty string.
+     * @param title text to be displayed
      */
     @Override
     public void setTitle(String title) {
     	if(title == null) title = "";
     	super.setTitle(title);
     }
+    
+    /**
+     * Closes this dialog and releases all screen resources user by this window.
+     */
+    private void close() {
+    	this.setVisible(false);
+    	this.dispose();
+    }
+    
+    /**
+     * Represents an item that should be displayed in SaveDialog. 
+     * 
+     * @author Miro Bezjak
+     * @see SaveDialog
+     */
+    private class SaveItem {
+    	
+    	/** Name of a project displayed next to file name in checkbox */
+    	private String projectName;
+    	/** Name of a file displayed in checkbox */
+    	private String fileName;
+    	/** Indicating if checkbox is selected */
+    	private boolean selected;
+    	
+    	/**
+    	 * Constructor.
+    	 * @param selected whether checkbox should be selected or not
+    	 * @param projectName a name of a project
+    	 * @param fileName a name of a file
+    	 */
+    	public SaveItem(boolean selected, String projectName, String fileName) {
+    		this.selected = selected;
+    		this.projectName = projectName;
+    		this.fileName = fileName;
+		}
 
+		/**
+		 * Getter for selected;
+		 * @return value of selected
+		 */
+    	public boolean isSelected() {
+			return selected;
+		}
+		/**
+		 * Setter for selected.
+		 * @param selected value to be set
+		 */
+		public void setSelected(boolean selected) {
+			this.selected = selected;
+		}
+		
+		/**
+		 * Getter for file name.
+		 * @return file name
+		 */
+		public String getFileName() {
+			return fileName;
+		}
+
+		/**
+		 * Getter for project name.
+		 * @return project name
+		 */
+		public String getProjectName() {
+			return projectName;
+		}
+
+		/**
+		 * Creates text out of project name and file name.
+		 * @return created text
+		 */
+		public String getText() {
+			return fileName + " [" + projectName + "]";
+		}
+    	
+    }
+
+    /**
+     * Class that displays a list of checkboxes.
+     * 
+     * @author Miro Bezjak
+     * @see SaveDialog
+     */
     private class CheckBoxList extends JPanel {
     	
     	/**
-		 * Serial Version UID
+		 * Serial Version UID.
 		 */
 		private static final long serialVersionUID = 4499815884621898659L;
+		/** Items that are displayed to user. */
 		private Map<JCheckBox, SaveItem> items;
+		/** Container of checkboxes. */
     	private Box box;
     	
+    	/**
+    	 * Constructor.
+    	 */
     	public CheckBoxList() {
     		items = new LinkedHashMap<JCheckBox, SaveItem>();
     		box = Box.createVerticalBox();
@@ -507,6 +655,10 @@ public class SaveDialog extends JDialog {
 			this.add(scroll, BorderLayout.CENTER);
 		}
     	
+    	/**
+    	 * Add item to be displayed.
+    	 * @param item item to display
+    	 */
     	public void addItem(SaveItem item) {
     		JCheckBox checkBox = new JCheckBox(item.getText(), item.isSelected());
     		checkBox.setBackground(Color.WHITE);
@@ -514,6 +666,19 @@ public class SaveDialog extends JDialog {
     		items.put(checkBox, item);
     	}
     	
+    	/**
+    	 * Returns <code>true</code> if there are no displayed items.
+    	 * @return <code>true</code> if there are no displayed items;
+    	 * 		<code>false</code> otherwise.
+    	 */
+    	public boolean isEmpty() {
+    		return items.isEmpty();
+    	}
+    	
+    	/**
+    	 * Returns all displayed items.
+    	 * @return all displayed items
+    	 */
     	public List<SaveItem> getItems() {
     		List<SaveItem> list = new ArrayList<SaveItem>();
     		for(Entry<JCheckBox, SaveItem> entry : items.entrySet()) {
@@ -525,6 +690,11 @@ public class SaveDialog extends JDialog {
     		return list;
     	}
     	
+    	/**
+    	 * Sets a selection to all checkboxes to a value of <code>selected</code>.
+    	 * @param selected <code>true</code> if checkboxes should be selected;
+    	 * 			<code>false</code> otherwise
+    	 */
     	public void setSelectionToAll(boolean selected) {
     		for(JCheckBox c : items.keySet()) {
     			c.setSelected(selected);

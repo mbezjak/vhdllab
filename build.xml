@@ -274,7 +274,7 @@
   		notree="false"
   		packagenames="*"
   		source="1.5"
-  		sourcepath="src/dao;src/service;src/web/onServer;src/web/onClient;src/i18n/common"
+  		sourcepath="src/dao;src/service;src/web/onServer;src/web/onClient;src/i18n/common;src/common"
   		splitindex="true"
   		use="true"
   		version="true">
