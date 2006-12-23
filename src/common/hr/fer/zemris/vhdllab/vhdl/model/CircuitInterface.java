@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.tb.Generator;
-
 import java.util.List;
 
 /**
@@ -80,38 +78,4 @@ public interface CircuitInterface {
 	 * @see Port#equals(Object)
 	 */
 	boolean equals(Object o);
-	
-	/**
-	 * Determine compatibility with {@linkplain Generator}. This method is used to
-	 * determine if <code>CircuitInterface's Ports</code> contain the same information 
-	 * as <code>Generator's Signals</code>.
-	 * <p>
-	 * This <code>CircuitInterface</code> and <code>Generator</code> are compatible 
-	 * if following is true:
-	 * <ul>
-	 * <li>CircuitInterface's port collection is the same size as Generator's signal collection 
-	 * (they have the same number of elements)
-	 * <li>for every port in port collection there is exactly one "equal" signal in signal
-	 * collection
-	 * </ul>
-	 * <p>
-	 * A port and a signal are "equal" if following is true:
-	 * <ul>
-	 * <li>a port name is equal (ignore case) to signal name
-	 * <li>if port is a scalar then signal must be a scalar aswell or if port is a vector
-	 * then signal must be a vector aswell and
-	 * 	<ul>
-	 * 	<li>{@link Type#getRangeFrom() port's rangeFrom} must be equal to {@link hr.fer.zemris.vhdllab.vhdl.tb.Signal#getRangeFrom() signal's rangeFrom}
-	 * 	<li>{@link Type#getRangeTo() port's rangeTo} must be equal to {@link hr.fer.zemris.vhdllab.vhdl.tb.Signal#getRangeTo() signal's rangeTo}
-	 * 	</ul>
-	 * </ul>
-	 * 
-	 * @param generator a generator to detemine compatibility with.
-	 * @return <code>true</code> if this interface and <code>generator</code> are compatible; <code>false</code> otherwise.
-	 * @throws NullPointerException if <code>generator</code> is <code>null</code>.
-	 * @see Generator#isCompatible(CircuitInterface)
-	 * @see Port
-	 * @see hr.fer.zemris.vhdllab.vhdl.tb.Signal
-	 */
-	boolean isCompatible(Generator generator);
 }

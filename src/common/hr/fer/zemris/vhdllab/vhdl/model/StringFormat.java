@@ -16,26 +16,6 @@ public class StringFormat {
 	private StringFormat() {}
 	
 	/**
-	 * Ignore case and check if <code>s</code> is vector direction.
-	 * Vector direction is one of the following:
-	 * <ul>
-	 * <li>DOWNTO
-	 * <li>TO
-	 * </ul>
-	 * <p>
-	 * 
-	 * @param s a string that will be checked.
-	 * @return <code>true</code> if <code>s</code> is vector direction; <code>false</code> otherwise.
-	 * @throws NullPointerException if <code>s</code> is <code>null</code>.
-	 */
-	public static boolean isVectorDirection(String s) {
-		if( s == null ) throw new NullPointerException("Vector direction can not be null.");
-		if( s.equalsIgnoreCase("DOWNTO") ||
-			s.equalsIgnoreCase("TO") ) return true;
-		return false;
-	}
-	
-	/**
 	 * Check if <code>s</code> is a measure unit. Case is not ignored.
 	 * Measure unit is one of the following:
 	 * <ul>
@@ -70,7 +50,7 @@ public class StringFormat {
 	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
-	 * <li>it must not contain an underscore character after an underscore character
+	 * <li>it must not contain a tandem of underscore characters
 	 * </ul>
 	 * 
 	 * @param s a string that will be checked.

@@ -64,7 +64,7 @@ public class Testbench implements IVHDLGenerator {
 	private String writeVHDL(CircuitInterface ci, Generator generator, String sourceName) throws ParseException, IncompatibleDataException {
 		if( ci == null ) throw new NullPointerException("Circuit interface can not be null.");
 		if( generator == null ) throw new NullPointerException("Generator can not be null.");
-		if( !ci.isCompatible(generator) ) throw new IncompatibleDataException("Circuit Interface's ports are not compatible with Generator's signals.");
+		if( !generator.isCompatible(ci) ) throw new IncompatibleDataException("Circuit Interface's ports are not compatible with Generator's signals.");
 		
 		StringBuilder vhdl = new StringBuilder( generator.toString().length() );
 		vhdl.append("library IEEE;\n")

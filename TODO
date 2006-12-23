@@ -32,7 +32,6 @@ TODO 20) [OPEN]   status bar bi trebalo malo dotjerat (mozda postavit da se ispi
 TODO 21) [OPEN]   wizard za simulation
 TODO 22) [OPEN]   wizard za compilation
 TODO 23) [OPEN]   wizard za testbench applet + sredit taj applet da bude kak se spada
-TODO 24) [OPEN]   dialog, potpuno isti kao i u eclipse-u (kad hocete nesto radit, pa vam on veli da morate sejvat vise fajlova)
 TODO 25) [OPEN]   mijenjanje preferences-a (potpuno isto ko i u firefoxu)
 TODO 27) [OPEN]   Statusbar history (slicno ko i ovo gore, znaci isto jedan JTextField ili JList i svaki put kad se promijeni status bar tu se prikaze u obliku vrijeme : statusBarContent)
 
@@ -97,4 +96,4 @@ TODO 102) [OPEN]  Implementirat zatvaranje cijelog appleta (tako da se sve sprem
 TODO 103) [CLOSED]  Rijesit problem pri otvaranju simulatora (tj. nacin otvaranja)
 TODO 104) [OPEN]  File.getFileName mora bit case insensitive!
 TODO 105) [CLOSED]   SimulationErrorsPanel (to vam je samo iteriranje kroz listu u prikazivanje u JTextField ili JList, i pritom to mora bit readonly)
-
+TODO 106) [CLOSED]   dialog, potpuno isti kao i u eclipse-u (kad hocete nesto radit, pa vam on veli da morate sejvat vise fajlova)

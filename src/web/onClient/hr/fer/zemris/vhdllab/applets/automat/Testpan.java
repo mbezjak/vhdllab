@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
-import hr.fer.zemris.vhdllab.vhdl.VHDLGenerator;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -13,7 +12,6 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 public class Testpan extends JFrame {

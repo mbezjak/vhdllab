@@ -87,27 +87,4 @@ public class StringFormatTest {
 		assertEquals(false, StringFormat.isMeasureUnit("h"));
 	}
 	
-	/** 
-	 * String is vector direction DOWNTO.
-	 */
-	@Test
-	public void isVectorDirection() {
-		assertEquals(true, StringFormat.isVectorDirection("DOWNTO"));
-	}
-	
-	/** 
-	 * String is vector direction TO.
-	 */
-	@Test
-	public void isVectorDirection2() {
-		assertEquals(true, StringFormat.isVectorDirection("TO"));
-	}
-	
-	/** 
-	 * String is not vector direction.
-	 */
-	@Test
-	public void isVectorDirection3() {
-		assertEquals(false, StringFormat.isVectorDirection("UPTO"));
-	}
 }

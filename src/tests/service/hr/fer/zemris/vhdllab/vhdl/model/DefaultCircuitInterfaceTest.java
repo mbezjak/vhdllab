@@ -2,10 +2,7 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import hr.fer.zemris.vhdllab.vhdl.tb.DefaultGenerator;
-import hr.fer.zemris.vhdllab.vhdl.tb.Generator;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,36 +166,6 @@ public class DefaultCircuitInterfaceTest {
 	@Test(expected=UnsupportedOperationException.class)
 	public void getPorts() {
 		ci.getPorts().add(new DefaultPort("E", Direction.OUT, new DefaultType("std_logic_vector", new int[] {5, 3}, DefaultType.VECTOR_DIRECTION_DOWNTO)));
-	}
-
-	/**
-	 * Generator is <code>null</code>.
-	 */
-	@Test(expected=NullPointerException.class)
-	public void isCompatible() {
-		ci.isCompatible(null);
-	}
-	
-	/**
-	 * Generator is correct
-	 * @throws ParseException
-	 */
-	@Test
-	public void isCompatible2() throws ParseException {
-		ports.add(new DefaultPort("E", Direction.OUT, new DefaultType("std_logic", DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION)));
-		ports.add(new DefaultPort("f", Direction.OUT, new DefaultType("std_logic_vector", new int[] {7, 0}, DefaultType.VECTOR_DIRECTION_DOWNTO)));
-		CircuitInterface ci = new DefaultCircuitInterface("circuit_0", ports);
-		
-		String inducement = new String("<measureUnit>ns</measureUnit>\n" + 
-				"<duration>1000</duration>" + 
-				"<signal name=\"a\" type=\"scalar\">(0, 0)(100, Z)(500, U)(600, 1)(700, 0)</signal>" + 
-				"<signal name=\"B\" type=\"scalar\">(0, 1)(100, Z)(400, U)(600, 0)(700, 1)</signal>" + 
-				"<signal name=\"c\" type=\"vector\" rangeFrom=\"2\" rangeTo=\"0\">(0, 000)(100, Z00)(500, U01)(550, 111)(700, 100)</signal>" + 
-				"<signal name=\"d\" type=\"vector\" rangeFrom=\"0\" rangeTo=\"3\">(0, 0010)(1010, Z000)(500, U011)(550, 11z1)(700, 1010)</signal>" + 
-				"<signal name=\"e\" type=\"scalar\">(0, 1)(100, 1)(200, 0)(350, 1)(500, z)</signal>" + 
-				"<signal name=\"F\" type=\"vector\" rangeFrom=\"7\" rangeTo=\"0\">(0, 0010110)(1010, Z001100)(500, U0zz011)(550, 11011z1)(700, 1011010)</signal>");
-		Generator generator = new DefaultGenerator(inducement);
-		assertEquals(true, ci.isCompatible(generator));		
 	}
 
 	/**

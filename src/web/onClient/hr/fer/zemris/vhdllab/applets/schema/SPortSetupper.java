@@ -3,13 +3,11 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.DefaultListModel;
@@ -20,9 +18,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
-
-import sun.security.tools.KeyTool;
 
 /**
  * Za uredivanje postavki portova.

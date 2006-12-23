@@ -1,10 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
-import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_MUX2nNA1;
-import hr.fer.zemris.vhdllab.applets.schema.components.misc.Sklop_PORT;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
@@ -12,14 +9,10 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Point;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 
 // Ovo ne dirati.

@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema.components.misc;
 
-import java.awt.Point;
-
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
@@ -11,6 +9,8 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
+
+import java.awt.Point;
 
 public class Sklop_PORT extends AbstractSchemaComponent {
 	private static final int FROM_EDGE = 2;

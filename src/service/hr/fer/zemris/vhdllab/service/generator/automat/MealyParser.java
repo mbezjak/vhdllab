@@ -1,9 +1,5 @@
 package hr.fer.zemris.vhdllab.service.generator.automat;
 
-import hr.fer.zemris.vhdllab.service.generator.automat.AUTPodatci;
-import hr.fer.zemris.vhdllab.service.generator.automat.Prijelaz;
-import hr.fer.zemris.vhdllab.service.generator.automat.Stanje;
-
 import java.util.HashSet;
 import java.util.LinkedList;
 

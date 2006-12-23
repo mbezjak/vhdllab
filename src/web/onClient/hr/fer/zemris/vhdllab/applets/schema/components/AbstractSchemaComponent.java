@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema.components;
 
-import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericComboProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericProperty;
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NoEditProperty;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
@@ -11,7 +10,6 @@ import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 import org.apache.commons.digester.Digester;

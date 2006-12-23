@@ -149,7 +149,7 @@ public class DefaultType implements Type {
 		if( !StringFormat.isCorrectName(typeName) ) throw new IllegalArgumentException("Type name is not of correct format.");
 		if( range != null && (range.length != 2 || range[0] < 0 || range[1] < 0) ) throw new IllegalArgumentException("Range does not have two elements or at least one of them is negative.");
 		if( vectorDirection != null ) {
-			if( !StringFormat.isVectorDirection(vectorDirection) ) throw new IllegalArgumentException("Vector direction is incorrect.");
+			if( !isVectorDirection(vectorDirection) ) throw new IllegalArgumentException("Vector direction is incorrect.");
 			if( vectorDirection.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_DOWNTO) 
 				&& range[0] < range[1] ) throw new IllegalArgumentException("First element of range must be greater then second one when vector direction is DOWNTO");
 			if( vectorDirection.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_TO)
@@ -278,5 +278,25 @@ public class DefaultType implements Type {
 		if( isScalar() ) retval.append("scalar (no range)");
 		else retval.append(getRangeFrom()).append(" ").append(vectorDirection).append(" ").append(getRangeTo());
 		return retval.toString();
+	}
+	
+	/**
+	 * Ignore case and check if <code>s</code> is vector direction.
+	 * Vector direction is one of the following:
+	 * <ul>
+	 * <li>DOWNTO
+	 * <li>TO
+	 * </ul>
+	 * <p>
+	 * 
+	 * @param s a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is vector direction; <code>false</code> otherwise.
+	 * @throws NullPointerException if <code>s</code> is <code>null</code>.
+	 */
+	private boolean isVectorDirection(String s) {
+		if( s == null ) throw new NullPointerException("Vector direction can not be null.");
+		if( s.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_DOWNTO) ||
+			s.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_TO) ) return true;
+		return false;
 	}
 }

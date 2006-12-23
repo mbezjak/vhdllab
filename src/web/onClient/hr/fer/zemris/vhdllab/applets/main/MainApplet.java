@@ -25,6 +25,7 @@ import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
@@ -921,6 +922,13 @@ public class MainApplet
 	
 	public String getActiveProject() {
 		return projectExplorer.getActiveProject();
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer#isCorrectEntityName(java.lang.String)
+	 */
+	public boolean isCorrectEntityName(String name) {
+		return StringFormat.isCorrectName(name);
 	}
 	
 	private int indexOfView(String type) {

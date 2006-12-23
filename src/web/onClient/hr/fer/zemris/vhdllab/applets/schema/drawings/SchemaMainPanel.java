@@ -8,7 +8,6 @@ import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
 import hr.fer.zemris.vhdllab.applets.schema.SOptionBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
-import hr.fer.zemris.vhdllab.applets.schema.SchemaModelledComponentEntity;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
@@ -24,9 +23,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Point;
@@ -41,8 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;

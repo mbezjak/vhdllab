@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingComponentEnvelope;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;

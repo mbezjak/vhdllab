@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.vhdl.tb.Generator;
-import hr.fer.zemris.vhdllab.vhdl.tb.Signal;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -234,24 +231,6 @@ public class DefaultCircuitInterface implements CircuitInterface {
 			retval.append(p.toString()).append("\n");
 		}
 		return retval.toString();
-	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface#isCompatible(hr.fer.zemris.vhdllab.vhdl.model.tb.Generator)
-	 */
-	public boolean isCompatible(Generator generator) {
-		if( generator == null ) throw new NullPointerException("Generator can not be null.");
-		for(Signal signal : generator.getSignals()) {
-			Port port = getPort(signal.getName()); //O(1)
-			if( port == null ) return false;
-			
-			if( signal.isScalar() && port.getType().isScalar() ) continue;
-			if( signal.isVector() && port.getType().isVector()
-				&& signal.getRangeFrom() == port.getType().getRangeFrom()
-				&& signal.getRangeTo() == port.getType().getRangeTo() ) continue;
-			return false;
-		}
-		return true;
 	}
 	
 	/**
