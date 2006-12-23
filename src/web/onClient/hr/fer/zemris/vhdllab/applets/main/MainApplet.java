@@ -257,7 +257,7 @@ public class MainApplet
 		});
 		viewPane.addContainerListener(new ContainerListener() {
 			public void componentAdded(ContainerEvent e) {
-				if(viewPane.getTabCount() == 1) {
+				/*if(viewPane.getTabCount() == 1) {
 					Component[] components = viewSplitPane.getComponents();
 					if(components != null) {
 						boolean contains = false;
@@ -272,12 +272,12 @@ public class MainApplet
 							// TODO postavit velicnu iz preference-a
 						}
 					}
-				}
+				}*/
 			}
 			public void componentRemoved(ContainerEvent e) {
-				if(viewPane.getTabCount() == 0) {
+				/*if(viewPane.getTabCount() == 0) {
 					viewSplitPane.remove(viewPane);
-				}
+				}*/
 			}
 		});
 		
