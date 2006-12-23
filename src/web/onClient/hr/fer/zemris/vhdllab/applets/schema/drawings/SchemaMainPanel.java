@@ -893,10 +893,14 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		}
 	}
 	
+	private void refreshComponentsDependentOnCircuitInterface() {
+		
+	}
+	
 	
 	/**
 	 * Ova metoda vraca vhdl kod izgeneriran na temelju sklopa
-	 * na shemi.
+	 * na shemi. Ona je tu samo privremeno.
 	 * @return
 	 */
 	private String generateVHDLCode() {
@@ -907,7 +911,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	
 	
 	
-	// OVO DALJE JE IMPLEMENTACIJA ZA IEditor I ZA IWizard
+	// OVO DALJE JE IMPLEMENTACIJA ZA IEditor
 	
 	private boolean schemaHasBeenModified = false;
 	private ProjectContainer projectContainer = null;

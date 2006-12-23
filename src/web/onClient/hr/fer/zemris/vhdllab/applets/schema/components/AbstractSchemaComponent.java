@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericPropert
 import hr.fer.zemris.vhdllab.applets.schema.components.properties.NoEditProperty;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.StringReader;
 import java.util.HashSet;
@@ -290,7 +291,7 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	 * Inace se nece iscrtati tockice koje oznacavaju same portove.
 	 */
 	public void draw(SchemaDrawingAdapter adapter) {
-		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidthSpecific(), getComponentHeightSpecific());
+		if (isDrawingFrame) adapter.drawRect(0, 0, getComponentWidthSpecific(), getComponentHeightSpecific(), Color.BLUE);
 		drawSpecific(adapter);
 		if (isDrawingPorts) for (AbstractSchemaPort port : portlist) {
 			if (port.getTipPorta() == "_boxing") continue;

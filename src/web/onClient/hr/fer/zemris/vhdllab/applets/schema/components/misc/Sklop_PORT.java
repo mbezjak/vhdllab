@@ -71,10 +71,10 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 
 	@Override
 	public void drawSpecific(SchemaDrawingAdapter adapter) {
-		String typename = port.getType().getTypeName();
-		if (typename.compareTo("std_logic") == 0) {
+		Type tip = port.getType();
+		if (tip.isScalar()) {
 			drawWhen_std_logic(adapter);
-		} else if (typename.compareTo("std_logic_vector") == 0) {
+		} else if (tip.isVector()) {
 			drawWhen_std_logic_vector(adapter);
 		}
 	}
@@ -127,10 +127,10 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 	}
 
 	public int getComponentHeightSpecific() {
-		String typename = port.getType().getTypeName();
-		if (typename.compareTo("std_logic") == 0) {
+		Type tip = port.getType();
+		if (tip.isScalar()) {
 			return height_std_logic();
-		} else if (typename.compareTo("std_logic_vector") == 0) {
+		} else if (tip.isVector()) {
 			return height_std_logic_vector();
 		}
 		return 0;
@@ -173,6 +173,9 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 	private int calculateNumberOfPorts() {
 		Type ptip = port.getType();
 		Integer portnum = 0;
+		if (ptip.isScalar()) {
+			return 1;
+		}
 		if (ptip.hasVectorDirectionTO()) {
 			portnum = ptip.getRangeTo() - ptip.getRangeFrom() + 1;
 		} else if (ptip.hasVectorDirectionDOWNTO()) {

@@ -315,6 +315,28 @@ public class SchemaDrawingAdapter {
 					   virtualToReal(virtualHgt));
 	}
 	
+	/**
+	 * Overload prethodne metode, omogucava dodavanje boje.
+	 * @param virtualX1
+	 * @param virtualY1
+	 * @param virtualWid
+	 * @param virtualHgt
+	 */
+	public void drawRect(int virtualX1, int virtualY1, int virtualWid, int virtualHgt, Color c) {
+		if (gph == null) return;
+		
+		
+		Graphics2D graph=(Graphics2D) gph.getGraphics();
+		graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		graph.setColor(c);
+		
+		graph.drawRect(virtualToRealRelativeX(virtualX1),
+					   virtualToRealRelativeY(virtualY1),
+					   virtualToReal(virtualWid),
+					   virtualToReal(virtualHgt));
+	}
+	
 	public void fillRect(int virtualX1, int virtualY1, int virtualWid, int virtualHgt) {
 		if (gph == null) return;
 		

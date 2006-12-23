@@ -160,7 +160,7 @@ public class SOptionBar extends JToolBar {
 		String[] st = {"Name","Direction","Type","From","To"};
 		SEntityTable table = new SEntityTable("Entity declaration:",st,"Entity name: ");
 		dialogEntitySetup.add(table);
-		dialogEntitySetup.setBounds(0, 0, 320, 230);
+		dialogEntitySetup.setBounds(0, 0, 480, 230);
 		dialogEntitySetup.setLocation(150, 150);
 		dialogEntitySetup.setVisible(true);
 		parentFrame.setCircuitInterface(table.getCircuitInterface());

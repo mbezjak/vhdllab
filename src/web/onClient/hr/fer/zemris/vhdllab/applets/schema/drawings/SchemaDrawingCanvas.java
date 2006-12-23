@@ -253,7 +253,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		// iscrtaj sve pravokutnike koji su dodani
 		while (!rectangleStack.empty()) {
 			RectWithBool rb = rectangleStack.pop();
-			if (rb.b) graph.setColor(Color.BLACK);
+			if (rb.b) graph.setColor(Color.GREEN);
 			else graph.setColor(Color.RED);
 			rb.r.width = adapter.virtualToReal(rb.r.width);
 			rb.r.height = adapter.virtualToReal(rb.r.height);

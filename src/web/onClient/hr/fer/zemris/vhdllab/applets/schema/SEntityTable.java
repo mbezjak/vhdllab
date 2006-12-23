@@ -30,6 +30,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * Ukrah ovo privremeno Davoru.
+ * @author Davor
+ *
+ */
 public class SEntityTable extends JPanel implements IEntityWizard {
 
 	private JTable table=null;
