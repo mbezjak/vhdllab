@@ -802,11 +802,12 @@ public class MainApplet
 		List<IEditor> openedEditors = getEditorsThatHave(projectName);
 		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
 		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-		saveResourcesWithSaveDialog(openedEditors, title, message);
-
-		CompilationResult result = cache.compile(projectName, fileName);
-		IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
-		view.setData(result);
+		boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
+		if(shouldContinue) {
+			CompilationResult result = cache.compile(projectName, fileName);
+			IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
+			view.setData(result);
+		}
 	}
 	
 	private void simulateLastHistoryResult() throws UniformAppletException {
@@ -825,14 +826,15 @@ public class MainApplet
 		List<IEditor> openedEditors = getEditorsThatHave(projectName);
 		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
 		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-		saveResourcesWithSaveDialog(openedEditors, title, message);
-		
-		SimulationResult result = cache.runSimulation(projectName, fileName);
-		IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
-		view.setData(result);
-		if(result.getWaveform() != null) {
-			String simulationName = fileName + ".sim";
-			openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
+		boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
+		if(shouldContinue) {
+			SimulationResult result = cache.runSimulation(projectName, fileName);
+			IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
+			view.setData(result);
+			if(result.getWaveform() != null) {
+				String simulationName = fileName + ".sim";
+				openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
+			}
 		}
 	}
 	
@@ -1245,11 +1247,12 @@ public class MainApplet
 		if(editorsToClose == null) return;
 		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_TITLE);
 		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_MESSAGE);
-		saveResourcesWithSaveDialog(editorsToClose, title, message);
-		
-		for(IEditor editor : editorsToClose) {
-			int index = indexOfEditor(editor);
-			editorPane.remove(index);
+		boolean shouldContinue = saveResourcesWithSaveDialog(editorsToClose, title, message);
+		if(shouldContinue) {
+			for(IEditor editor : editorsToClose) {
+				int index = indexOfEditor(editor);
+				editorPane.remove(index);
+			}
 		}
 	}
 	
@@ -1280,8 +1283,8 @@ public class MainApplet
 		}
 	}
 	
-	private void saveResourcesWithSaveDialog(List<IEditor> openedEditors, String title, String message) {
-		if(openedEditors == null) return;
+	private boolean saveResourcesWithSaveDialog(List<IEditor> openedEditors, String title, String message) {
+		if(openedEditors == null) return false;
 		// create a list of savable and modified editors
 		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
 		for(IEditor editor : openedEditors) {
@@ -1306,7 +1309,7 @@ public class MainApplet
 			List<IEditor> editorsToSave = notSavedEditors;
 			if(!shouldAutoSave) {
 				List<FileIdentifier> filesToSave = showSaveDialog(title, message, notSavedEditors);
-				if(filesToSave == null) return;
+				if(filesToSave == null) return false;
 				
 				// If size of files returned by save dialog equals those of not saved editors
 				// then a list of files are entirely equal to a list of not saved editors and
@@ -1325,6 +1328,7 @@ public class MainApplet
 			
 			saveEditors(editorsToSave);
 		}
+		return true;
 	}
 	
 	private List<FileIdentifier> showSaveDialog(String title, String message, List<IEditor> editorsToBeSaved) {
