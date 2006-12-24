@@ -144,7 +144,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		}
 	}
 	
-	public ArrayList<SchemaDrawingComponentEnvelope> getComponentList(){
+	public ArrayList<SchemaDrawingComponentEnvelope> getComponentEnvList(){
 		return this.components;
 	}
 	

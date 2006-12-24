@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
 import hr.fer.zemris.vhdllab.applets.schema.SOptionBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
+import hr.fer.zemris.vhdllab.applets.schema.SchemaSerializableInformation;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
@@ -126,7 +127,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 	
 	private boolean evaluateIfPlaceIsFreeForSelectedComponent(int x, int y) {
-		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentList();
+		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentEnvList();
 		for (SchemaDrawingComponentEnvelope env : clist) {
 			if (checkForIntersection(x, y, compbar.getSelectedComponent(), env)) {
 				lastEvalResult = false;
@@ -724,8 +725,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			//equals i compare, al to je prevec posla)
 			freePlaceEvalCounter++;
 			boolean ok = lastEvalResult;
-			if (drawingCanvas.getComponentList().size() == 0) ok = true;
-			else if (freePlaceEvalCounter % drawingCanvas.getComponentList().size() == 0)
+			if (drawingCanvas.getComponentEnvList().size() == 0) ok = true;
+			else if (freePlaceEvalCounter % drawingCanvas.getComponentEnvList().size() == 0)
 				ok = evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e.getY());
 			
 			drawingCanvas.addRectToStack(e.getX(), e.getY(), 
@@ -800,7 +801,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		// nadi komponentu koja je promijenjena
 		AbstractSchemaComponent comp = null;
 		Point pcomp = null;
-		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentList();
+		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentEnvList();
 		for (SchemaDrawingComponentEnvelope env : clist) {
 			if (env.getComponent().getComponentInstanceName().compareTo(cmpInstName) == 0) {
 				comp = env.getComponent();
@@ -877,7 +878,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		List<Port> portlist = null;
 		if (circuitInterface != null) {
 			portlist = circuitInterface.getPorts();
-			ArrayList<SchemaDrawingComponentEnvelope> complist = drawingCanvas.getComponentList();
+			ArrayList<SchemaDrawingComponentEnvelope> complist = drawingCanvas.getComponentEnvList();
 			for (Port port : portlist) {
 				String pname = port.getName();
 				if (drawingCanvas.existComponent(pname)) {
@@ -902,6 +903,18 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		circuitInterface = interf;
 	}
 	
+	public SchemaSerializableInformation getSchemaSerializableInfo() {
+		SchemaSerializableInformation info = new SchemaSerializableInformation();
+		
+		info.circuitInterface = circuitInterface;
+		info.componentNameCounter = AbstractSchemaComponent.getCounter();
+		info.wireNameCounter = AbstractSchemaWire.getCounter();
+		info.envelopeList = drawingCanvas.getComponentEnvList();
+		info.wireList = drawingCanvas.getWireList();
+		
+		return info;
+	}
+	
 	
 
 	/**
@@ -923,7 +936,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 	
 	private void refreshComponentsDependentOnCircuitInterface() {
-		
 	}
 	
 	

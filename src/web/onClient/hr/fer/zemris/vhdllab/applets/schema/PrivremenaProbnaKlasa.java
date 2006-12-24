@@ -140,10 +140,14 @@ public class PrivremenaProbnaKlasa {
 //		mframe.drawingCanvas.addWire(wire2);
 		// kraj - cini se da sljaka
 		
-		Set<String> sviSklopovi = ComponentFactory.getAvailableComponents();
-		for (String s : sviSklopovi) {
-			System.out.println(s);
-		}
+//		Set<String> sviSklopovi = ComponentFactory.getAvailableComponents();
+//		for (String s : sviSklopovi) {
+//			System.out.println(s);
+//		}
+		
+		SSInfo2VHDL converter = new SSInfo2VHDL();
+		String vhdlcode = converter.generateVHDLFromSerializableInfo(mpanel.getSchemaSerializableInfo());
+		System.out.println(vhdlcode);
 	}
 
 }

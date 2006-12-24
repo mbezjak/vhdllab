@@ -22,7 +22,7 @@ public class SchemaSerializableInformation {
 	 */
 	public ArrayList<AbstractSchemaWire> wireList;
 	
-	public int componentNameCounter;
+	public long componentNameCounter;
 	public int wireNameCounter;
 }
 
