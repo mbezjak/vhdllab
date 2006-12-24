@@ -90,9 +90,7 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setData(java.lang.Object)
 	 */
 	public void setData(Object data) {
-		if(data == null) {
-			content.clear();
-		}
+		content.clear();
 		if(!(data instanceof SimulationResult)) {
 			throw new IllegalArgumentException("Unknown data!");
 		}

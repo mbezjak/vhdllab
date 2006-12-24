@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.main.components.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.constants.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.ViewTypes;
+import hr.fer.zemris.vhdllab.applets.main.dialogs.SaveDialog;
 import hr.fer.zemris.vhdllab.applets.main.dummy.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
@@ -798,27 +799,11 @@ public class MainApplet
 	}
 	
 	public void compile(String projectName, String fileName) throws UniformAppletException {
-		List<IEditor> openedEditors = getAllOpenEditors();
-		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
-		for(IEditor e : openedEditors) {
-			if(e.isSavable() && e.isModified() &&
-					projectName.equals(e.getProjectName())) {
-				notSavedEditors.add(e);
-			}
-		}
-		
-		if(notSavedEditors.size() != 0) {
-			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-			int option = showOptionDialog(title, message);
-			
-			if(option == JOptionPane.YES_OPTION) {
-				saveEditors(notSavedEditors);
-			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
-				return;
-			}
-		}
-		
+		List<IEditor> openedEditors = getEditorsThatHave(projectName);
+		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
+		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
+		saveResourcesWithSaveDialog(openedEditors, title, message);
+
 		CompilationResult result = cache.compile(projectName, fileName);
 		IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
 		view.setData(result);
@@ -837,26 +822,10 @@ public class MainApplet
 	}
 	
 	public void simulate(String projectName, String fileName) throws UniformAppletException {
-		List<IEditor> openedEditors = getAllOpenEditors();
-		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
-		for(IEditor e : openedEditors) {
-			if(e.isSavable() && e.isModified() &&
-					projectName.equals(e.getProjectName())) {
-				notSavedEditors.add(e);
-			}
-		}
-		
-		if(notSavedEditors.size() != 0) {
-			String title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-			String message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-			int option = showOptionDialog(title, message);
-			
-			if(option == JOptionPane.YES_OPTION) {
-				saveEditors(notSavedEditors);
-			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
-				return;
-			}
-		}
+		List<IEditor> openedEditors = getEditorsThatHave(projectName);
+		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
+		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
+		saveResourcesWithSaveDialog(openedEditors, title, message);
 		
 		SimulationResult result = cache.runSimulation(projectName, fileName);
 		IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
@@ -900,6 +869,10 @@ public class MainApplet
 
 	public Preferences getPreferences(String type) throws UniformAppletException {
 		return cache.getPreferences(type);
+	}
+	
+	public void savePreferences(String type, Preferences pref) throws UniformAppletException {
+		cache.savePreferences(type, pref);
 	}
 
 	public ResourceBundle getResourceBundle(String baseName) throws UniformAppletException {
@@ -964,7 +937,7 @@ public class MainApplet
 		return indexOfEditor(projectName, fileName);
 	}
 	
-	private List<IView> getAllOpenViews() {
+	private List<IView> getAllOpenedViews() {
 		List<IView> openedViews = new ArrayList<IView>();
 		for(int i = 0; i < viewPane.getTabCount(); i++) {
 			IView view = (IView) viewPane.getComponentAt(i);
@@ -973,7 +946,7 @@ public class MainApplet
 		return openedViews;
 	}
 	
-	private List<IEditor> getAllOpenEditors() {
+	private List<IEditor> getAllOpenedEditors() {
 		List<IEditor> openedEditors = new ArrayList<IEditor>();
 		for(int i = 0; i < editorPane.getTabCount(); i++) {
 			IEditor editor = (IEditor) editorPane.getComponentAt(i);
@@ -1113,7 +1086,7 @@ public class MainApplet
 		boolean exists = cache.existsFile(projectName, fileName);
 		if(exists) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
-			text = replacePlaceholders(text, new String[] {fileName});
+			text = Utilities.replacePlaceholders(text, new String[] {fileName});
 			statusBar.setText(text);
 			return;
 		}
@@ -1129,6 +1102,23 @@ public class MainApplet
 			openEditor(projectName, fileName, true, false);
 			index = indexOfEditor(projectName, fileName);
 		}
+		return (IEditor)editorPane.getComponentAt(index);
+	}
+	
+	private List<IEditor> getEditorsThatHave(String projectName) {
+		List<IEditor> openedEditors = getAllOpenedEditors();
+		List<IEditor> editorsThatHaveProject = new ArrayList<IEditor>();
+		for(IEditor e : openedEditors) {
+			String editorsProjectName = e.getProjectName();
+			if(editorsProjectName.equals(projectName)) {
+				editorsThatHaveProject.add(e);
+			}
+		}
+		return editorsThatHaveProject;
+	}
+	
+	private IEditor getOpenedEditor(String projectName, String fileName) {
+		int index = indexOfEditor(projectName, fileName);
 		return (IEditor)editorPane.getComponentAt(index);
 	}
 	
@@ -1174,7 +1164,7 @@ public class MainApplet
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
 			o.setChosenValue(String.valueOf(size));
 			
-			cache.savePreferences(type, preferences);
+			savePreferences(type, preferences);
 		} catch (UniformAppletException e) {}
 	}
 	
@@ -1202,9 +1192,14 @@ public class MainApplet
 	
 	private void saveEditor(IEditor editor) {
 		if(editor == null) return;
-		List<IEditor> editorsToSave = new ArrayList<IEditor>();
+		List<IEditor> editorsToSave = new ArrayList<IEditor>(1);
 		editorsToSave.add(editor);
 		saveEditors(editorsToSave);
+	}
+	
+	private void saveAllEditors() {
+		List<IEditor> openedEditors = getAllOpenedEditors();
+		saveEditors(openedEditors);
 	}
 	
 	private void saveEditors(List<IEditor> editorsToSave) {
@@ -1220,16 +1215,11 @@ public class MainApplet
 					resetEditorTitle(false, projectName, fileName);
 				} catch (UniformAppletException e) {
 					String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
-					text = replacePlaceholders(text, new String[] {fileName});
+					text = Utilities.replacePlaceholders(text, new String[] {fileName});
 					statusBar.setText(text);
 				}
 			}
 		}
-	}
-
-	private void saveAllEditors() {
-		List<IEditor> openedEditors = getAllOpenEditors();
-		saveEditors(openedEditors);
 	}
 	
 	private void closeEditor(IEditor editor) {
@@ -1240,52 +1230,22 @@ public class MainApplet
 	}
 	
 	private void closeAllEditors() {
-		List<IEditor> openedEditors = getAllOpenEditors();
+		List<IEditor> openedEditors = getAllOpenedEditors();
 		closeEditors(openedEditors);
 	}
 	
 	private void closeAllButThisEditor(IEditor editorToKeepOpened) {
 		if(editorToKeepOpened == null) return;
-		List<IEditor> openedEditors = getAllOpenEditors();
+		List<IEditor> openedEditors = getAllOpenedEditors();
 		openedEditors.remove(editorToKeepOpened);
 		closeEditors(openedEditors);
 	}
 	
 	private void closeEditors(List<IEditor> editorsToClose) {
 		if(editorsToClose == null) return;
-		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
-		StringBuilder messageRepresentation = new StringBuilder(editorsToClose.size() * 10);
-		for(IEditor editor : editorsToClose) {
-			if(editor.isSavable() && editor.isModified()) {
-				notSavedEditors.add(editor);
-				messageRepresentation.append(editor.getFileName()).append(" [")
-					.append(editor.getProjectName()).append("]\n");
-			}
-		}
-		int lenght = messageRepresentation.length();
-		if(lenght != 0) {
-			messageRepresentation.replace(lenght-1, lenght, "");
-		}
-		
-		if(notSavedEditors.size() != 0) {
-			String title;
-			String message;
-			if(notSavedEditors.size() == 1) {
-				title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_SINGLE_RESOURCE_TITLE);
-				message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_SINGLE_RESOURCE_MESSAGE);
-			} else {
-				title = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_TITLE);
-				message = bundle.getString(LanguageConstants.DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE);
-			}
-			message = replacePlaceholders(message, new String[] {messageRepresentation.toString()});
-			int option = showOptionDialog(title, message);
-			
-			if(option == JOptionPane.YES_OPTION) {
-				saveEditors(notSavedEditors);
-			} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
-				return;
-			}
-		}
+		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_TITLE);
+		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_MESSAGE);
+		saveResourcesWithSaveDialog(editorsToClose, title, message);
 		
 		for(IEditor editor : editorsToClose) {
 			int index = indexOfEditor(editor);
@@ -1301,13 +1261,13 @@ public class MainApplet
 	}
 	
 	private void closeAllViews() {
-		List<IView> openedViews = getAllOpenViews();
+		List<IView> openedViews = getAllOpenedViews();
 		closeViews(openedViews);
 	}
 	
 	private void closeAllButThisView(IView viewToKeepOpened) {
 		if(viewToKeepOpened == null) return;
-		List<IView> openedViews = getAllOpenViews();
+		List<IView> openedViews = getAllOpenedViews();
 		openedViews.remove(viewToKeepOpened);
 		closeViews(openedViews);
 	}
@@ -1320,25 +1280,131 @@ public class MainApplet
 		}
 	}
 	
-	private int showOptionDialog(String title, String message) {
-		String yes = bundle.getString(LanguageConstants.DIALOG_BUTTON_YES);
-		String no = bundle.getString(LanguageConstants.DIALOG_BUTTON_NO);
-		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-		Object[] options = {yes, no, cancel};
-		int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-		return option;
+	private void saveResourcesWithSaveDialog(List<IEditor> openedEditors, String title, String message) {
+		if(openedEditors == null) return;
+		// create a list of savable and modified editors
+		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
+		for(IEditor editor : openedEditors) {
+			if(editor.isSavable() && editor.isModified()) {
+				notSavedEditors.add(editor);
+			}
+		}
+		
+		if(!notSavedEditors.isEmpty()) {
+			// look in preference and see if there is a need to show save dialog (user might have
+			// checked a "always save resources" checkbox)
+			boolean shouldAutoSave;
+			try {
+				Preferences pref = getPreferences(FileTypes.FT_APPLET);
+				SingleOption singleOption = pref.getOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES);
+				String selected = singleOption.getChosenValue();
+				shouldAutoSave = Boolean.parseBoolean(selected);
+			} catch (UniformAppletException e) {
+				shouldAutoSave = false;
+			}
+			
+			List<IEditor> editorsToSave = notSavedEditors;
+			if(!shouldAutoSave) {
+				List<FileIdentifier> filesToSave = showSaveDialog(title, message, notSavedEditors);
+				if(filesToSave == null) return;
+				
+				// If size of files returned by save dialog equals those of not saved editors
+				// then a list of files are entirely equal to a list of not saved editors and
+				// no transformation is required.
+				if(filesToSave.size() != editorsToSave.size()) {
+					// transform FileIdentifiers to editors
+					editorsToSave = new ArrayList<IEditor>();
+					for(FileIdentifier file : filesToSave) {
+						String projectName = file.getProjectName();
+						String fileName = file.getFileName();
+						IEditor e = getOpenedEditor(projectName, fileName);
+						editorsToSave.add(e);
+					}
+				}
+			}
+			
+			saveEditors(editorsToSave);
+		}
 	}
 	
-	private String replacePlaceholders(String message, String[] replacements) {
-		if(replacements == null) return message;
-		String replaced = message;
-		int i = 0;
-		for(String s : replacements) {
-			replaced = replaced.replace("{" + i + "}", s);
-			i++;
+	private List<FileIdentifier> showSaveDialog(String title, String message, List<IEditor> editorsToBeSaved) {
+		String selectAll = bundle.getString(LanguageConstants.DIALOG_BUTTON_SELECT_ALL);
+		String deselectAll = bundle.getString(LanguageConstants.DIALOG_BUTTON_DESELECT_ALL);
+		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
+		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
+		String alwaysSave = bundle.getString(LanguageConstants.DIALOG_SAVE_CHECKBOX_ALWAYS_SAVE_RESOURCES);
+		
+		SaveDialog dialog = new SaveDialog(this, true);
+		dialog.setTitle(title);
+		dialog.setText(message);
+		dialog.setOKButtonText(ok);
+		dialog.setCancelButtonText(cancel);
+		dialog.setSelectAllButtonText(selectAll);
+		dialog.setDeselectAllButtonText(deselectAll);
+		dialog.setAlwaysSaveCheckBoxText(alwaysSave);
+		for(IEditor editor : editorsToBeSaved) {
+			dialog.addItem(true, editor.getProjectName(), editor.getFileName());
 		}
-		return replaced;
+		dialog.startDialog();
+		// control locked until user clicks on OK, CANCEL or CLOSE button
+		
+		boolean shouldAutoSave = dialog.shouldAlwaysSaveResources();
+		if(shouldAutoSave) {
+			try {
+				Preferences pref = getPreferences(FileTypes.FT_APPLET);
+				SingleOption singleOption = pref.getOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES);
+				singleOption.setChosenValue(String.valueOf(shouldAutoSave));
+				savePreferences(FileTypes.FT_APPLET, pref);
+			} catch (UniformAppletException e) {}
+		}
+		int option = dialog.getOption();
+		if(option != SaveDialog.OK_OPTION) return null;
+		else return dialog.getSelectedResources();
+	}
+	
+	/**
+	 * A collection of utility methods for MainApplet.
+	 *  
+	 * @author Miro Bezjak
+	 */
+	private static class Utilities {
+		
+		/**
+		 * Constructs FileIdentifiers out of <code>editors</code>.
+		 * @param editors editors to construct FileIdentifiers from
+		 * @return FileIdentifiers constructed out of <code>editors</code>
+		 */
+		public static List<FileIdentifier> convertEditorsToFileIdentifers(List<IEditor> editors) {
+			if(editors == null) return null;
+			List<FileIdentifier> files = new ArrayList<FileIdentifier>();
+			for(IEditor e : editors) {
+				String projectName = e.getProjectName();
+				String fileName = e.getFileName();
+				FileIdentifier f = new FileIdentifier(projectName, fileName);
+				files.add(f);
+			}
+			return files;
+		}
+		
+		/**
+		 * Replace placeholders in <code>message</code> with <code>replacements</code>
+		 * string. Look at <code>Client_Main_ApplicationResources_en.properties</code>
+		 * file to learn what placeholders are.
+		 * @param message a message from where to replace placeholders
+		 * @param replacements an array of string to replace placeholders 
+		 * @return modified message
+		 */
+		public static String replacePlaceholders(String message, String[] replacements) {
+			if(replacements == null) return message;
+			String replaced = message;
+			int i = 0; // placeholders starts with 0
+			for(String s : replacements) {
+				replaced = replaced.replace("{" + i + "}", s);
+				i++;
+			}
+			return replaced;
+		}
+		
 	}
 
 	private class ServerInitData {
@@ -1370,6 +1436,12 @@ public class MainApplet
 				preferences.setOption(o);
 
 				o = new SingleOption(UserFileConstants.APPLET_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
+				preferences.setOption(o);
+				
+				values = new ArrayList<String>();
+				values.add("true");
+				values.add("false");
+				o = new SingleOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES, "Always save resources", "Boolean", values, "false", "false");
 				preferences.setOption(o);
 				
 				invoker.saveUserFile(fileId, preferences.serialize());
@@ -1452,7 +1524,7 @@ public class MainApplet
 				// TODO jos neznam sto ce bit s descriptionom
 				SingleOption o = new SingleOption(UserFileConstants.COMMON_ACTIVE_PROJECT, "Active project", "String", null, "", "Project1");
 				pref.setOption(o);
-				cache.savePreferences(FileTypes.FT_COMMON, pref);
+				savePreferences(FileTypes.FT_COMMON, pref);
 
 				long end = System.currentTimeMillis();
 				

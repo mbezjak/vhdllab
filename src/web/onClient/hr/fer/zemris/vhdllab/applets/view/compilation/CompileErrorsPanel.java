@@ -139,9 +139,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setData(java.lang.Object)
 	 */
 	public void setData(Object data) {
-		if(data == null) {
-			content.clear();
-		}
+		content.clear();
 		if(!(data instanceof CompilationResult)) {
 			throw new IllegalArgumentException("Unknown data!");
 		}

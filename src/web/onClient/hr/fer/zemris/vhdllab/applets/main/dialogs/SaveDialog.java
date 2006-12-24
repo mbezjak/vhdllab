@@ -9,6 +9,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.HeadlessException;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -84,6 +86,9 @@ public class SaveDialog extends JDialog {
 	/** Height of all buttons */
 	private static final int BUTTON_HEIGHT = 24;
 	
+	/** Owner of this dialog (used to enable modal dialog) */
+	private Component owner;
+	
 	/** Label to be displayed above a list of checkboxes */
 	private JLabel label;
 	/** A list of checkboxes displayed to user */
@@ -127,7 +132,24 @@ public class SaveDialog extends JDialog {
 	 * Return value from class method if OK is chosen.
 	 */
 	public static final int OK_OPTION = 0;
-
+	
+	/**
+     * Creates a non-modal dialog without a title and without a specified
+     * <code>Frame</code> owner.  A shared, hidden frame will be
+     * set as the owner of the dialog.
+     * <p>
+     * This constructor sets the component's locale property to the value
+     * returned by <code>JComponent.getDefaultLocale</code>.     
+     * 
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+     * returns true.
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     * @see JComponent#getDefaultLocale
+     */
+    public SaveDialog() throws HeadlessException {
+        this((Frame)null, false);
+    }
+    
     /**
      * Creates a non-modal dialog without a title with the
      * specified <code>Frame</code> as its owner.  If <code>owner</code>
@@ -301,11 +323,106 @@ public class SaveDialog extends JDialog {
         super(owner, title, modal);
         saveDialogImpl(owner);
     }
+    
+    /**
+     * Creates a non-modal dialog without a title with the
+     * specified <code>JApplet</code> as its owner.  If <code>owner</code>
+     * is <code>null</code>, a shared, hidden frame will be set as the
+     * owner of the dialog.
+     * <p>
+     * This constructor sets the component's locale property to the value
+     * returned by <code>JComponent.getDefaultLocale</code>.
+     *
+     * @param owner the <code>JApplet</code> from which the dialog is displayed
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+     * returns true.
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     * @see JComponent#getDefaultLocale
+     */
+    public SaveDialog(JApplet owner) throws HeadlessException {
+        this(getAppletFrame(owner), false);
+        saveDialogImpl(owner);
+    }
+
+    /**
+     * Creates a modal or non-modal dialog without a title and
+     * with the specified owner <code>JApplet</code>.  If <code>owner</code>
+     * is <code>null</code>, a shared, hidden frame will be set as the
+     * owner of the dialog.
+     * <p>
+     * This constructor sets the component's locale property to the value
+     * returned by <code>JComponent.getDefaultLocale</code>.     
+     *
+     * @param owner the <code>JApplet</code> from which the dialog is displayed
+     * @param modal  true for a modal dialog, false for one that allows
+     *               others windows to be active at the same time
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+     * returns true.
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     * @see JComponent#getDefaultLocale
+     */
+    public SaveDialog(JApplet owner, boolean modal) throws HeadlessException {
+        this(getAppletFrame(owner), null, modal);
+        saveDialogImpl(owner);
+    }
+
+    /**
+     * Creates a non-modal dialog with the specified title and
+     * with the specified owner frame.  If <code>JApplet</code>
+     * is <code>null</code>, a shared, hidden frame will be set as the
+     * owner of the dialog.
+     * <p>
+     * This constructor sets the component's locale property to the value
+     * returned by <code>JComponent.getDefaultLocale</code>.     
+     *
+     * @param owner the <code>JApplet</code> from which the dialog is displayed
+     * @param title  the <code>String</code> to display in the dialog's
+     *			title bar
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+     * returns true.
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     * @see JComponent#getDefaultLocale
+     */
+    public SaveDialog(JApplet owner, String title) throws HeadlessException {
+        this(getAppletFrame(owner), title, false);
+        saveDialogImpl(owner);
+    }
+
+    /**
+     * Creates a modal or non-modal dialog with the specified title 
+     * and the specified owner <code>JApplet</code>.  If <code>owner</code>
+     * is <code>null</code>, a shared, hidden frame will be set as the
+     * owner of this dialog.  All constructors defer to this one.
+     * <p>
+     * NOTE: Any popup components (<code>JComboBox</code>,
+     * <code>JPopupMenu</code>, <code>JMenuBar</code>)
+     * created within a modal dialog will be forced to be lightweight.
+     * <p>
+     * This constructor sets the component's locale property to the value
+     * returned by <code>JComponent.getDefaultLocale</code>.     
+     *
+     * @param owner the <code>JApplet</code> from which the dialog is displayed
+     * @param title  the <code>String</code> to display in the dialog's
+     *			title bar
+     * @param modal  true for a modal dialog, false for one that allows
+     *               other windows to be active at the same time
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+     * returns true.
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     * @see JComponent#getDefaultLocale
+     */
+    public SaveDialog(JApplet owner, String title, boolean modal)
+        throws HeadlessException {
+        super(getAppletFrame(owner), title, modal);
+        saveDialogImpl(owner);
+    }
 	
     /**
      * Implemetation of a constructor of <code>SaveDialog</code>.
      */
     private void saveDialogImpl(Component owner) {
+    	this.owner = owner;
+    	
     	// setup label
     	label = new JLabel();
     	JPanel labelPanel = new JPanel(new BorderLayout());
@@ -395,10 +512,12 @@ public class SaveDialog extends JDialog {
     	messagePanel.add(tablePanel, BorderLayout.CENTER);
     	messagePanel.add(lowerPanel, BorderLayout.SOUTH);
     	this.getContentPane().add(messagePanel, BorderLayout.CENTER);
+    	this.getRootPane().setDefaultButton(ok);
     	this.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
     	setText("Select Resources to save:");
-    	pack();
-    	this.setLocationRelativeTo(owner);
+    	if(getTitle() == null) {
+    		setTitle("Save Resources");
+    	}
     }
     
     /**
@@ -408,6 +527,8 @@ public class SaveDialog extends JDialog {
     	if(list.isEmpty()) {
     		throw new IllegalStateException("There are no items to save.");
     	}
+    	pack();
+    	this.setLocationRelativeTo(owner);
     	this.setVisible(true);
     }
     
@@ -557,6 +678,25 @@ public class SaveDialog extends JDialog {
     	this.setVisible(false);
     	this.dispose();
     }
+    
+    /**
+     * Creates and positions an owner user by dialog to ensure that dialog
+     * is modal and centered over applet.
+     * 
+     * @return  frame to wrap this dialog with
+     */
+    private static Frame getAppletFrame(JApplet owner) {
+    	if(owner == null) return null;
+		Object parent = owner.getParent();
+		while(!(parent instanceof Frame)) {
+			parent=((Component)parent).getParent();
+		}
+		Frame dialogFrame = (Frame)parent;
+ 
+		Point p = owner.getLocationOnScreen();
+		dialogFrame.setLocation(p.x, p.y);
+		return dialogFrame;
+	}
     
     /**
      * Represents an item that should be displayed in SaveDialog. 

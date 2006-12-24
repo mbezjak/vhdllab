@@ -163,43 +163,51 @@ public class LanguageConstants {
 	 */
 	public static final String DIALOG_BUTTON_NO = "dialog.button.no";
 	/**
+	 * OK button in dialog.
+	 */
+	public static final String DIALOG_BUTTON_OK = "dialog.button.ok";
+	/**
 	 * Cancel button in dialog.
 	 */
 	public static final String DIALOG_BUTTON_CANCEL = "dialog.button.cancel";
+	/**
+	 * Select All button in dialog.
+	 */
+	public static final String DIALOG_BUTTON_SELECT_ALL = "dialog.button.select.all";
+	/**
+	 * Deselect All button in dialog.
+	 */
+	public static final String DIALOG_BUTTON_DESELECT_ALL = "dialog.button.deselect.all";
 	
 	/**
-	 * Title for option dialog when trying to save resource.
+	 * Always save resources checkbox in save dialog.
 	 */
-	public static final String DIALOG_OPTION_SAVE_SINGLE_RESOURCE_TITLE = "dialog.option.save.single.resource.title";
+	public static final String DIALOG_SAVE_CHECKBOX_ALWAYS_SAVE_RESOURCES = "dialog.save.checkbox.always.save.resources";
 	/**
-	 * Message content for option dialog when trying to save resource.
+	 * Title for save dialog when trying to save resources.
 	 */
-	public static final String DIALOG_OPTION_SAVE_SINGLE_RESOURCE_MESSAGE = "dialog.option.save.single.resource.message";
+	public static final String DIALOG_SAVE_RESOURCES_TITLE = "dialog.save.resources.title";
 	/**
-	 * Title for option dialog when trying to save multiple resources.
+	 * Message content for save dialog when trying to save resources.
 	 */
-	public static final String DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_TITLE = "dialog.option.save.multiple.resource.title";
-	/**
-	 * Message content for option dialog when trying to save multiple resources.
-	 */
-	public static final String DIALOG_OPTION_SAVE_MULTIPLE_RESOURCE_MESSAGE = "dialog.option.save.multiple.resource.message";
+	public static final String DIALOG_SAVE_RESOURCES_MESSAGE = "dialog.save.resources.message";
 
 	/**
-	 * Title for option dialog when trying to compile a file.
+	 * Title for save dialog when trying to compile a file.
 	 */
-	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_TITLE = "dialog.option.save.resources.for.compilation.title";
+	public static final String DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE = "dialog.save.resources.for.compilation.title";
 	/**
-	 * Message content for option dialog when trying to compile a file.
+	 * Message content for save dialog when trying to compile a file.
 	 */
-	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE = "dialog.option.save.resources.for.compilation.message";
+	public static final String DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE = "dialog.save.resources.for.compilation.message";
 	/**
-	 * Title for option dialog when trying to simulate a file.
+	 * Title for save dialog when trying to simulate a file.
 	 */
-	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_TITLE = "dialog.option.save.resources.for.simulation.title";
+	public static final String DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE = "dialog.save.resources.for.simulation.title";
 	/**
-	 * Message content for option dialog when trying to simulate a file.
+	 * Message content for save dialog when trying to simulate a file.
 	 */
-	public static final String DIALOG_OPTION_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE = "dialog.option.save.resources.for.simulation.message";
+	public static final String DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE = "dialog.save.resources.for.simulation.message";
 
 	
 	/**
