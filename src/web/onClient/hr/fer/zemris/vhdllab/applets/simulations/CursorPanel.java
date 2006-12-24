@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
 
+import java.awt.Graphics;
 import javax.swing.JPanel;
+import java.awt.Dimension;
 
 
 /**
@@ -13,7 +13,7 @@ import javax.swing.JPanel;
  */
 class CursorPanel extends JPanel
 {
-     /* Aktivan je prvi kursor */
+    /* Aktivan je prvi kursor */
     private final byte FIRST = 1;
 
     /** Zavrsna tocka panela  */
@@ -40,17 +40,17 @@ class CursorPanel extends JPanel
     /** Vrijednost drugog kursora */
     private double secondValue;
 
-	/** 
-	 * Indeks prvog kursora nakon sto se pozicionira na tja kursor, 
-	 * tj. indeks vrijednosti 
-	 */
+	/** Indeks prvog kursora nakon sto se pozicionira na tja kursor, tj. indeks vrijednosti */
 	private int firstValueIndex;
 
-	/**
-	 * Indeks drugog kursora nakon sto se pozicionira na taj kursor, 
-	 * tj. indeks vrijednosti
-	 */
+	/** Indeks drugog kursora nakon sto se pozicionira na tja kursor, tj. indeks vrijednosti */
 	private int secondValueIndex;
+
+	/** Skala */
+	private Scale scale;
+
+	/** Panel s valnim oblicima */
+	private WaveDrawBoard waves;
 
     /** Mjerna jedinica */
     private String measureUnitName;
@@ -69,40 +69,37 @@ class CursorPanel extends JPanel
     /**
      * Constructor
      *
-     * @param panelEndPoint duzina panela u pikselima
-     * @param offset trenutni pomak
-     * @param measureUnitName mjerna jedinica
+	 * @param scale skala
+	 * @param waves valni oblici
+	 * @param themeColor themeColor
      */
-    public CursorPanel (ThemeColor themeColor)
+    public CursorPanel (Scale scale, WaveDrawBoard waves, ThemeColor themeColor)
     {
+		this.scale = scale;
+		this.waves = waves;
         this.themeColor = themeColor;
     }
-
-
+ 
+	
 	/**
-	 * Postavlja vrijednosti potrebne za iscrtavanje panela
-	 *
-	 * @param panelEndPoint zavrsna tocka panela
-	 * @param offset pomak
-	 * @param measureUnitName jedinica
+	 * Metoda mijenja stanje panelu s kursorima.  Panel s kursorima ovisi
+	 * o panelu s valnim oblicima i skali, jer se oslanja na njihova trenutna
+	 * stanja.
 	 */
-	public void setContent(int panelEndPoint, int offset, double firstValue, 
-			double secondValue, int firstCursorStartPoint, 
-			int secondCursorStartPoint, String measureUnitName)
-	{
-		this.panelEndPoint = panelEndPoint;
-        this.offset = offset;
-		this.firstValue = firstValue;
-		this.secondValue = secondValue;
-		this.firstCursorStartPoint = firstCursorStartPoint;
-		this.secondCursorStartPoint = secondCursorStartPoint;
-        this.measureUnitName = measureUnitName;
-		firstString = firstValue + this.measureUnitName;
-        secondString = secondValue + this.measureUnitName;
+	public void setContent() {
+		this.panelEndPoint = scale.getScaleEndPointInPixels();
+		this.offset = waves.getHorizontalOffset();
+		this.firstValue = scale.getScaleStepInTime();
+		this.secondValue = scale.getScaleStepInTime() * 2;
+		this.measureUnitName = scale.getMeasureUnitName();
+		this.firstCursorStartPoint = scale.getDurationInPixels()[0];
+		this.secondCursorStartPoint = scale.getDurationInPixels()[0] + 100;
+		this.firstString = this.firstValue + this.measureUnitName;
+		this.secondString = this.secondValue + this.measureUnitName;
 	}
+		
 
-
-	/**
+    /**
      * Vraca preferiranu velicinu
      */
     public Dimension getPreferredSize ()
@@ -292,8 +289,10 @@ class CursorPanel extends JPanel
         {
             secondCursorStartPoint = 0;
         }
-        g.drawString(firstString, firstCursorStartPoint - offset - (firstString.length() * 6) / 2, 20);
-        g.drawString(secondString, secondCursorStartPoint - offset - (secondString.length() * 6) / 2, 10);
+        g.drawString(firstString, firstCursorStartPoint - offset - 
+				(firstString.length() * 6) / 2, 20);
+        g.drawString(secondString, secondCursorStartPoint - offset - 
+				(secondString.length() * 6) / 2, 10);
 
         if (activeCursor == FIRST)
         {
@@ -310,4 +309,4 @@ class CursorPanel extends JPanel
             g.fillRect(secondCursorStartPoint - offset - 4, 21, 9, 9);
         }
     }
-} 
+}

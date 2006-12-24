@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 
 import java.util.ArrayList;
@@ -160,12 +159,14 @@ public class GhdlResults
 
 		/* ako gore ide obican signal ili neekspandirani vektor*/
 		if (currentVectorIndex.get(index) == -1 || 
-				(currentVectorIndex.get(index) != -1 && !expandedSignalNames.get(currentVectorIndex.get(index))))
+				(currentVectorIndex.get(index) != -1 && 
+				 !expandedSignalNames.get(currentVectorIndex.get(index))))
 		{
 			previousDefaultIndex = currentVectorIndex.get(index - 1);
 			/* ako je iznad obicnog signala bio obican signal ili neekspandirani vektor*/
 			if (previousDefaultIndex == -1 || 
-					(previousDefaultIndex != -1 && !expandedSignalNames.get(previousDefaultIndex)))
+					(previousDefaultIndex != -1 && 
+					 !expandedSignalNames.get(previousDefaultIndex)))
 			{
 				/* promjena poretka imena signala */
 				signalNames.add(index - 1, signalNames.get(index));
@@ -182,7 +183,8 @@ public class GhdlResults
 				index--;
 			}
 			/* inace ako je iznad obicnog signala bio ekspandirani vektor */
-			else if (previousDefaultIndex != -1 && expandedSignalNames.get(previousDefaultIndex) == true)
+			else if (previousDefaultIndex != -1 && 
+					expandedSignalNames.get(previousDefaultIndex) == true)
 			{
 				vectorSize = defaultSignalValues[previousDefaultIndex][0].length();
 				
@@ -195,7 +197,8 @@ public class GhdlResults
 				signalValues.remove(index + 1);
 
 				/* promjena u listi indeksa */
-				currentVectorIndex.add(index - vectorSize, currentVectorIndex.get(index));
+				currentVectorIndex.add(index - vectorSize, 
+						currentVectorIndex.get(index));
 				currentVectorIndex.remove(index + 1);
 
 				index -= vectorSize;
@@ -214,18 +217,22 @@ public class GhdlResults
 
 			/* ako je iznad bio obican signal ili neekspandirani vektor */
 			if (previousDefaultIndex == -1 || 
-				(previousDefaultIndex != -1 && !expandedSignalNames.get(previousDefaultIndex)))
+				(previousDefaultIndex != -1 && 
+				 !expandedSignalNames.get(previousDefaultIndex)))
 			{
 				/* promjena poretka imena signala */
-				signalNames.add(vectorStartIndex + vectorSize, signalNames.get(vectorStartIndex - 1));
+				signalNames.add(vectorStartIndex + vectorSize, 
+						signalNames.get(vectorStartIndex - 1));
 				signalNames.remove(vectorStartIndex - 1);
 
 				/* promjena poretka vrijednosti */
-				signalValues.add(vectorStartIndex + vectorSize, signalValues.get(vectorStartIndex - 1));
+				signalValues.add(vectorStartIndex + vectorSize, 
+						signalValues.get(vectorStartIndex - 1));
 				signalValues.remove(vectorStartIndex - 1);
 
 				/* promjena poretka indeksa u listi */
-				currentVectorIndex.add(vectorStartIndex + vectorSize, currentVectorIndex.get(vectorStartIndex - 1));
+				currentVectorIndex.add(vectorStartIndex + vectorSize, 
+						currentVectorIndex.get(vectorStartIndex - 1));
 				currentVectorIndex.remove(vectorStartIndex - 1);
 
 				index--;
@@ -235,26 +242,30 @@ public class GhdlResults
 			{
 				vectorStartIndex = currentVectorIndex.indexOf(currentVectorIndex.get(index));
 				int vectorSizeUp = defaultSignalValues[currentVectorIndex.get(index)][0].length();
-				int vectorSizeDown = defaultSignalValues[currentVectorIndex.get(vectorStartIndex - 1)][0].length();
+				int vectorSizeDown = 
+					defaultSignalValues[currentVectorIndex.get(vectorStartIndex - 1)][0].length();
 
 				/* promjena poretka imena signala */
 				for (int i = 0; i < vectorSizeDown; i++)
 				{
-					signalNames.add(vectorStartIndex + vectorSizeUp - i, signalNames.get(vectorStartIndex - 1 - i));
+					signalNames.add(vectorStartIndex + vectorSizeUp - i, 
+							signalNames.get(vectorStartIndex - 1 - i));
 					signalNames.remove(vectorStartIndex - i - 1);
 				}
 
 				/* promjena poretka vrijednosti */
 				for (int i = 0; i < vectorSizeDown; i++)
 				{
-					signalValues.add(vectorStartIndex + vectorSizeUp - i, signalValues.get(vectorStartIndex - 1 - i));
+					signalValues.add(vectorStartIndex + vectorSizeUp - i, 
+							signalValues.get(vectorStartIndex - 1 - i));
 					signalValues.remove(vectorStartIndex - i - 1);
 				}
 
 				/* promjena poretka indeksa */
 				for (int i = 0; i < vectorSizeDown; i++)
 				{
-					currentVectorIndex.add(vectorStartIndex + vectorSizeUp - i, currentVectorIndex.get(vectorStartIndex - 1 - i));
+					currentVectorIndex.add(vectorStartIndex + vectorSizeUp - i, 
+							currentVectorIndex.get(vectorStartIndex - 1 - i));
 					currentVectorIndex.remove(vectorStartIndex - i - 1);
 				}
 
@@ -286,12 +297,14 @@ public class GhdlResults
 
 		/* ako dolje ide obican signal ili neekspandirani vektor*/
 		if (currentVectorIndex.get(index) == -1 || 
-				(currentVectorIndex.get(index) != -1 && !expandedSignalNames.get(currentVectorIndex.get(index))))
+				(currentVectorIndex.get(index) != -1 && 
+				 !expandedSignalNames.get(currentVectorIndex.get(index))))
 		{
 			nextDefaultIndex = currentVectorIndex.get(index + 1);
 			/* ako je ispod obicnog signala bio obican signal ili neekspandirani vektor */
 			if (nextDefaultIndex == -1 || 
-					(nextDefaultIndex != -1 && !expandedSignalNames.get(nextDefaultIndex)))
+					(nextDefaultIndex != -1 && 
+					 !expandedSignalNames.get(nextDefaultIndex)))
 			{
 				/* promjena poretka imena signala */
 				signalNames.add(index, signalNames.get(index + 1));
@@ -308,7 +321,8 @@ public class GhdlResults
 				index++;
 			}
 			/* inace ako je ispod obicnog signala bio ekspandirani vektor */
-			else if (nextDefaultIndex != -1 && expandedSignalNames.get(nextDefaultIndex) == true)
+			else if (nextDefaultIndex != -1 && 
+					expandedSignalNames.get(nextDefaultIndex) == true)
 			{
 				vectorSize = defaultSignalValues[nextDefaultIndex][0].length();
 				
@@ -321,7 +335,8 @@ public class GhdlResults
 				signalValues.remove(index);
 
 				/* promjena u listi indeksa */
-				currentVectorIndex.add(index + vectorSize + 1, currentVectorIndex.get(index));
+				currentVectorIndex.add(index + vectorSize + 1, 
+						currentVectorIndex.get(index));
 				currentVectorIndex.remove(index);
 
 				index += vectorSize;
@@ -330,8 +345,10 @@ public class GhdlResults
 		/* Inace ako dolje ide ekspandirani vektor */
 		else
 		{
-			vectorSize = defaultSignalValues[currentVectorIndex.get(index)][0].length();
-			int vectorStartIndex = currentVectorIndex.indexOf(currentVectorIndex.get(index));
+			vectorSize = 
+				defaultSignalValues[currentVectorIndex.get(index)][0].length();
+			int vectorStartIndex = 
+				currentVectorIndex.indexOf(currentVectorIndex.get(index));
 			if (vectorStartIndex + vectorSize - 1 == (signalNames.size() - 1))
 			{
 				return index;
@@ -340,18 +357,22 @@ public class GhdlResults
 
 			/* ako je ispod bio obican signal ili neekspandirani vektor */
 			if (nextDefaultIndex == -1 || 
-				(nextDefaultIndex != -1 && !expandedSignalNames.get(nextDefaultIndex)))
+				(nextDefaultIndex != -1 && 
+				 !expandedSignalNames.get(nextDefaultIndex)))
 			{
 				/* promjena poretka imena signala */
-				signalNames.add(vectorStartIndex, signalNames.get(vectorStartIndex + vectorSize));
+				signalNames.add(vectorStartIndex, 
+						signalNames.get(vectorStartIndex + vectorSize));
 				signalNames.remove(vectorStartIndex + vectorSize + 1);
 
 				/* promjena poretka vrijednosti */
-				signalValues.add(vectorStartIndex, signalValues.get(vectorStartIndex + vectorSize));
+				signalValues.add(vectorStartIndex, 
+						signalValues.get(vectorStartIndex + vectorSize));
 				signalValues.remove(vectorStartIndex + vectorSize + 1);
 
 				/* promjena poretka indeksa u listi */
-				currentVectorIndex.add(vectorStartIndex, currentVectorIndex.get(vectorStartIndex + vectorSize));
+				currentVectorIndex.add(vectorStartIndex, 
+						currentVectorIndex.get(vectorStartIndex + vectorSize));
 				currentVectorIndex.remove(vectorStartIndex + vectorSize + 1);
 
 				index++;
@@ -359,9 +380,13 @@ public class GhdlResults
 			/* ako je ispod bio ekspandirani vektor */
 			else
 			{
-				vectorStartIndex = currentVectorIndex.indexOf(currentVectorIndex.get(index));
-				int vectorSizeDown = defaultSignalValues[currentVectorIndex.get(index)][0].length();
-				int vectorSizeUp = defaultSignalValues[currentVectorIndex.get(vectorStartIndex + vectorSizeDown)][0].length();
+				vectorStartIndex = 
+					currentVectorIndex.indexOf(currentVectorIndex.get(index));
+				int vectorSizeDown = 
+					defaultSignalValues[currentVectorIndex.get(index)][0].length();
+				int vectorSizeUp = 
+					defaultSignalValues[currentVectorIndex.get(vectorStartIndex + 
+							vectorSizeDown)][0].length();
 
 				/* promjena poretka imena signala */
 				for (int i = 0; i < vectorSizeDown; i++)

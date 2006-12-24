@@ -1,10 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
-
+import javax.swing.JScrollBar;
 import javax.swing.JPanel;
 
 
@@ -17,9 +16,7 @@ import javax.swing.JPanel;
  */
 class Scale extends JPanel
 {
-	private static final long	serialVersionUID	= -4934785363261778378L;
-
-   /** 
+    /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * femto sekundama 
      */
@@ -134,31 +131,40 @@ class Scale extends JPanel
     /** Offset trenutni */
     private int offsetXAxis;
 
+	/** Horizontalni scrollbar */
+	private JScrollBar horizontalScrollbar;
+
     /** Boje */
     private ThemeColor themeColor;
+    
+    /** SerialVersionUID */ 
+    private static final long	serialVersionUID = -4934785363261778378L;
+
 
 
     /**
      * Constructor
-     *
-     * @param themeColor defaultna teme 
 	 *
+	 * @param horizontalScrollbar horizontalni scrollbar
+	 * @param themeColor trneutna tema
      */
-    public Scale (ThemeColor themeColor)
+    public Scale (JScrollBar horizontalScrollbar, ThemeColor themeColor)
     {
         this.themeColor = themeColor;
-    }
+		this.horizontalScrollbar = horizontalScrollbar;
+	}
 
 
 	/**
-	 * Postavlja vrijednosti potrebne za iscrtavanje skale
+	 * Metoda postavlja novu vrijednosti skale, u ovisnosti o rezultatu kojeg je
+	 * parsirao GHDLResults
 	 *
-	 * @param results rezultati koje je parsirao GhdlResults
+     * @param results rezultati koje je parsirao GhldResults
 	 */
-	public void setContent(GhdlResults results)
-	{
-		this.transitionPoints = results.getTransitionPoints();
-		durationsInFemtoSeconds = new double[transitionPoints.length - 1];
+	public void setContent(GhdlResults results) {
+        this.transitionPoints = results.getTransitionPoints();
+
+        durationsInFemtoSeconds = new double[transitionPoints.length - 1];
         durationsInTime = new int[durationsInFemtoSeconds.length];
 		durationsInPixels = new int[durationsInFemtoSeconds.length];
         for (int i = 0; i < durationsInFemtoSeconds.length; i++)
@@ -171,6 +177,7 @@ class Scale extends JPanel
             drawDefaultWave();
         }
 	}
+
 
     /**
      * Metoda koja crta pocetne oblike
@@ -384,6 +391,13 @@ class Scale extends JPanel
         super.paintComponent(g);
         setBackground(themeColor.getScale());
         g.setColor(themeColor.getLetters());
+
+		/* postavlja novu vrijednost scrollbara */
+		int horizontalValue = this.scaleEndPointInPixels - 
+				this.getWidth() + 45;
+		if (horizontalValue >= 0) {
+			horizontalScrollbar.setMaximum(horizontalValue);
+		}
 
         /* 
 		 * Bilo koja vrijednost postavlja se na visekratnik broja 100.  Znaci, ako je

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;

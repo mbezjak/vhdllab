@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Graphics;
 
 
@@ -77,8 +78,8 @@ class WaveForm
      * @param durationsInPixels trajanje dobivena iz skale
      * @param waveEndPointInPixels dobivenu iz skale
      */
-	public void drawWave (Graphics g, int screenWidth, int yAxis, int offsetXAxis, int[] durationsInPixels,
-                          int waveEndPointInPixels) 
+	public void drawWave (Graphics g, int screenWidth, int yAxis, int offsetXAxis,
+			int[] durationsInPixels, int waveEndPointInPixels) 
 	{
         /* 
          * postoji sadasnja i sljedeca grupa, jer postoji vise vrsta oblika,

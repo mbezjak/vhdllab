@@ -1,10 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-
 import java.awt.Dimension;
 import java.awt.Graphics;
-
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 
 
 /**
@@ -53,6 +52,9 @@ class SignalValuesPanel extends JPanel
     /** Boje */
     private ThemeColor themeColor;
 
+	/** ScrollBar */
+	private JScrollBar scrollbar;
+
     /** SerialVersionUID */ 
     private static final long serialVersionUID = 9;
 
@@ -62,24 +64,24 @@ class SignalValuesPanel extends JPanel
      *
 	 * @param themeColor Sve raspolozive boje
      */
-    public SignalValuesPanel (ThemeColor themeColor)
+    public SignalValuesPanel (ThemeColor themeColor, JScrollBar scrollbar)
     {
 		super();
+		this.scrollbar = scrollbar;
 		this.themeColor = themeColor;
-		
 	}
 
 
 	/**
-	 * Postavlja vrijednosti potrebne za iscrtavanje panela
+	 * Metoda postavlja novo stanje panela s vrijednostima signala u ovisnosti o 
+	 * rezultatu kojeg vraca GhdlResult
 	 *
-	 * @param results rezultati koje je parsirao GhdlResults
+	 * @param results rezultati koje parsira GhdlResult
 	 */
-	public void setContent(GhdlResults results)
-	{
+	public void setContent(GhdlResults results) {
 		this.results = results;
 		this.maximumVectorSize = results.getMaximumVectorSize();
-		panelWidth = maximumVectorSize * 6;
+		this.panelWidth = this.maximumVectorSize * 6;
 	}
 
 
@@ -106,7 +108,8 @@ class SignalValuesPanel extends JPanel
         }
         else
         {
-            return new Dimension(PANEL_MAX_WIDTH, results.getSignalNames().size() * SIGNAL_NAME_SPRING_HEIGHT);
+            return new Dimension(PANEL_MAX_WIDTH, results.getSignalNames().size() * 
+					SIGNAL_NAME_SPRING_HEIGHT);
         }
     }
 
@@ -233,6 +236,9 @@ class SignalValuesPanel extends JPanel
 	{
 		super.paintComponent(g);
 
+		/* postavi vrijednost scrollbara */
+		scrollbar.setMaximum(this.getMaximumSize().width);
+
         setBackground(themeColor.getSignalNames());
 		/* ako treba oznaciti neki od signala */
         if (isClicked)
@@ -245,9 +251,9 @@ class SignalValuesPanel extends JPanel
 		yAxis = YAXIS_START_POINT - offsetYAxis;
 		for (int i = 0; i < results.getSignalValues().size(); i++)
 		{
-			g.drawString(results.getSignalValues().get(i)[valueIndex], 5 - offsetXAxis, yAxis);
+			g.drawString(results.getSignalValues().get(i)[valueIndex], 5 - 
+					offsetXAxis, yAxis);
 			yAxis += SIGNAL_NAME_SPRING_HEIGHT;
 		}
 	}
 }
-

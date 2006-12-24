@@ -3,10 +3,10 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Klasa koja predstavlja panel po kojem se crtaju valni oblici
@@ -18,8 +18,8 @@ class WaveDrawBoard extends JPanel
     /** Prvi valni oblik pocinje po y-osi od 20. piksela */
     private final int FIRST_WAVE_YAXIS_START = 20;
 
-    /** Svaki spring (elasticni pretinac) vala iznosi 45 piksela */
-    private final int waveSpringSize;
+    /** Svaki spring (elasticni pretinac) vala iznosi 40 piksela */
+    private final int WAVE_SPRING_SIZE;
     
     /** Vrijednosti signala */
     private List<String[]> signalValues;
@@ -65,6 +65,9 @@ class WaveDrawBoard extends JPanel
     /** Pocetna tocka drugog kursora u pikselima */
     private int secondCursorStartPoint;
 
+	/** Vertikalni scrollbar */
+	private JScrollBar verticalScrollbar;
+
     /** Aktivni kursor */
     private byte activeCursor = 1;
 
@@ -72,12 +75,13 @@ class WaveDrawBoard extends JPanel
     private ThemeColor themeColor;
     
     /** Svi valni oblici */
-    private Shape[] shapes = new Shape[] {new Shape1(), new Shape2(), new Shape3(),
-                                          new Shape4(), new Shape5(), new Shape6(), 
-                                          new Shape7(), new Shape8(), new Shape9(),
-                                          new Shape10(), new Shape11(), new Shape12(),
-                                          new Shape13(), new Shape14(), new Shape15(),
-                                          new Shape16()};
+    private Shape[] shapes = new Shape[] {
+		new Shape1(), new Shape2(), new Shape3(),
+        new Shape4(), new Shape5(), new Shape6(), 
+		new Shape7(), new Shape8(), new Shape9(),
+		new Shape10(), new Shape11(), new Shape12(),
+        new Shape13(), new Shape14(), new Shape15(),
+        new Shape16() };
     /** SerialVersionUID */ 
     private static final long serialVersionUID = 3;
 
@@ -87,35 +91,39 @@ class WaveDrawBoard extends JPanel
      * Constructor
      *
      * @param scale skala
-	 * @param waveSpringSize velicina springa
+	 * @param WAVE_SPRING_SIZE visina pretinca u kojem se nalaze valovi
+	 * @param verticalScrollbar vertikalni scrollbar
+	 * @param themecolor trenutna tema
      */
-    public WaveDrawBoard (ThemeColor themeColor, int waveSpringSize)
+    public WaveDrawBoard (Scale scale, int WAVE_SPRING_SIZE, 
+			JScrollBar verticalScrollbar, ThemeColor themeColor)
     {
         super();
+		this.scale = scale;
+        this.WAVE_SPRING_SIZE = WAVE_SPRING_SIZE;
+		this.verticalScrollbar = verticalScrollbar;
         this.themeColor = themeColor;
-		this.waveSpringSize = waveSpringSize;
     }
 
 
 	/**
-	 * Postavljanje vrijednosti za pokretanje panela
+	 * Metoda postavlja novo stanje panela s valnim oblicima u ovisnosti o 
+	 * rezultatu kojeg vraca GhdlResult
 	 *
-	 * @param resultsrezultati koje je parsirao GhdlResults
-	 * @param scale rezultati dobiveni od skale
+	 * @param results rezultati koje vraca GhdlResults
 	 */
-	public void setContent(GhdlResults results, Scale scale, 
-			int firstCursorStartPoint, int secondCursorStartPoint)
-	{
+	public void setContent(GhdlResults results) {
 		this.results = results;
-        this.signalValues = results.getSignalValues();
-		this.firstCursorStartPoint = firstCursorStartPoint;
-		this.secondCursorStartPoint = secondCursorStartPoint;
-        /* skala proracunava sve parametre i panel koristi gotove parametre */
-        this.durationsInPixels = scale.getDurationInPixels();
-        this.waveEndPointInPixels = scale.getScaleEndPointInPixels();
-        this.scale = scale;
-        this.currentVectorIndex = results.getCurrentVectorIndex();
+		this.signalValues = results.getSignalValues();
+
+		/* skala proracunava sve parametre i panel koristi skaline parametre */
+		this.durationsInPixels = this.scale.getDurationInPixels();
+        this.waveEndPointInPixels = this.scale.getScaleEndPointInPixels();
+		this.firstCursorStartPoint = this.scale.getDurationInPixels()[0];
+		this.secondCursorStartPoint = this.scale.getDurationInPixels()[0] + 100;
+        this.currentVectorIndex = this.results.getCurrentVectorIndex();
 	}
+
 
 
     /**
@@ -124,7 +132,8 @@ class WaveDrawBoard extends JPanel
 
     public Dimension getPreferredSize() 
     { 
-        return new Dimension(waveEndPointInPixels, signalValues.size() * waveSpringSize);
+        return new Dimension(waveEndPointInPixels, 
+				signalValues.size() * WAVE_SPRING_SIZE);
     } 
 
 	
@@ -280,6 +289,14 @@ class WaveDrawBoard extends JPanel
         return getWidth();
     }
 
+
+	/**
+	 * Vraca trenutnu visinu panela
+	 */
+	public int getPanelHeight() {
+		return getHeight();
+	}
+
     
     /**
      * Metoda vraca polje valnih oblika
@@ -348,9 +365,14 @@ class WaveDrawBoard extends JPanel
 	public void paintComponent (Graphics g) 
 	{
 		super.paintComponent(g);
-
         setBackground(themeColor.getWaves());
 
+		/* postavi duljinu vertikalnog scrollbara nakon svake promjene */
+		int verticalValue = this.getPreferredSize().height - 
+				this.getHeight() + 45;
+		if (verticalValue >= 0) {
+			verticalScrollbar.setMaximum(verticalValue);
+		}
         waveEndPointInPixels = scale.getScaleEndPointInPixels();
 		yAxis = FIRST_WAVE_YAXIS_START - offsetYAxis;
 
@@ -373,8 +395,8 @@ class WaveDrawBoard extends JPanel
         if (isClicked)
         {
             g.setColor(themeColor.getApplet());
-            g.fillRect(0, index * waveSpringSize + 15 - offsetYAxis,
-                    getPreferredSize().width, waveSpringSize / 2 + 5);
+            g.fillRect(0, index * WAVE_SPRING_SIZE + 15 - offsetYAxis,
+                    getPreferredSize().width, WAVE_SPRING_SIZE / 2 + 5);
         }
         g.setColor(themeColor.getLetters());
         
@@ -415,9 +437,8 @@ class WaveDrawBoard extends JPanel
 			waveForm =  new WaveForm(array, durationsInPixels, shapes);
 			waveForm.drawWave(g, this.getWidth(), yAxis, offsetXAxis, 
 					durationsInPixels, waveEndPointInPixels);
-			yAxis += waveSpringSize;
+			yAxis += WAVE_SPRING_SIZE;
             
 		}
 	}
 }
-

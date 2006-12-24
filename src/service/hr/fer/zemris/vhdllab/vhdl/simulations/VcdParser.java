@@ -246,7 +246,7 @@ public class VcdParser
 			if (isSharpFound) {
 				transitionPoints.add (Long.valueOf(vcdLines[index].substring(1)));
 			} else {
-				transitionPoints.add(transitionPoints.get(transitionPoints.size() - 1));
+				transitionPoints.add(transitionPoints.get(transitionPoints.size() - 1) * 2);
 			}
             Iterator<List<String>> e = signalValues.values().iterator();
             int i = 0;
@@ -356,5 +356,3 @@ public class VcdParser
         resultInString.append(HEAD_LIMITER).append(maximumSignalNameLength);
     }
 }
-
-

@@ -1,12 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -68,6 +67,9 @@ class SignalNamesPanel extends JPanel
     /** Sadrzi indeks trenutno oznacenog signala misem */
     private int index = -1;
 
+	/** ScrollBar */
+	private JScrollBar scrollbar;
+
     /** Boje */
     private ThemeColor themeColor;
 
@@ -75,32 +77,34 @@ class SignalNamesPanel extends JPanel
     private static final long serialVersionUID = 1;
 
 
-   /**
+    /**
      * Constructor
      *
-     * @param themeColor predstavlja temu
-	 */
-    public SignalNamesPanel (ThemeColor themeColor)
+     * @param themeColor trenutna tema
+     */
+    public SignalNamesPanel (ThemeColor themeColor, JScrollBar scrollbar)
     {
         super();
+		this.scrollbar = scrollbar;
         this.themeColor = themeColor;
     }
 
 
 	/**
-	 * Postavlja vrijednosti potrebne za iscrtavanje panela
+	 * Metoda postavlja novo stanje panela s imenima signala u ovisnosti o 
+	 * rezultatu kojeg vraca GhdlResult
 	 *
-	 * @param results rezultati koje je parsirao GhdlResults
+	 * @param results rezultati koje parsira GhdlResult
 	 */
-	public void setContent(GhdlResults results)
-	{
+	public void setContent(GhdlResults results) {
 		this.results = results;
-		this.signalNames = results.getSignalNames();
+        this.signalNames = results.getSignalNames();
         this.expandedSignalNames = results.getExpandedSignalNames();
         this.currentVectorIndex = results.getCurrentVectorIndex();
         this.maximumSignalNameLength = results.getMaximumSignalNameLength();
-        panelWidth = maximumSignalNameLength * 6;
+        this.panelWidth = this.maximumSignalNameLength * 6;
 	}
+
     
       
     /**
@@ -126,7 +130,8 @@ class SignalNamesPanel extends JPanel
         }
         else
         {
-            return new Dimension(PANEL_MAX_WIDTH, signalNames.size() * SIGNAL_NAME_SPRING_HEIGHT);
+            return new Dimension(PANEL_MAX_WIDTH, signalNames.size() * 
+					SIGNAL_NAME_SPRING_HEIGHT);
         }
     }
 
@@ -266,6 +271,14 @@ class SignalNamesPanel extends JPanel
 	}
 
 
+	/**
+	 * Vraca visinu panela u pikselima
+	 */
+	public int getPanelHeightInPixels() {
+		return signalNames.size() * SIGNAL_NAME_SPRING_HEIGHT;
+	}
+
+
     /**
      * Vraca velicinu panela trenutno vidljivog na ekranu
      */
@@ -286,13 +299,16 @@ class SignalNamesPanel extends JPanel
 		/* defaultIndex je index bit-vektora u default polju imena signala s kojim se barata */
 		Integer defaultIndex = currentVectorIndex.get(index);
 		String tempSignalName;
-        int startVector = Integer.valueOf(signalNames.get(index).charAt(signalNames.get(index).length() - 4)) - 48;
-        int endVector = Integer.valueOf(signalNames.get(index).charAt(signalNames.get(index).length() - 2)) - 48;
+        int startVector = Integer.valueOf(signalNames.get(index)
+				.charAt(signalNames.get(index).length() - 4)) - 48;
+        int endVector = Integer.valueOf(signalNames.get(index)
+				.charAt(signalNames.get(index).length() - 2)) - 48;
 
 		/* duljine vektora, s tim da je duljina umanjena za 1 od stvarne duljine */
         int vectorSize = Math.abs(startVector - endVector);
 		/* Izvadi ime vektora bez oznake velicine vektora ([...]) */
-		tempSignalName = signalNames.get(index).substring(1, signalNames.get(index).length() - 5);
+		tempSignalName = signalNames.get(index).substring(1, 
+				signalNames.get(index).length() - 5);
 		signalNames.remove(index);
 		signalNames.add(index, "-" + tempSignalName + "[" + startVector + "]");
 		if (startVector < endVector)
@@ -359,6 +375,9 @@ class SignalNamesPanel extends JPanel
 	{
 		super.paintComponent(g);
 
+		/* postavi vrijednost scrollbara */
+		scrollbar.setMaximum(this.getMaximumSize().width);
+
         setBackground(themeColor.getSignalNames());
 
         /* ako treba oznaciti neki od signala */
@@ -377,15 +396,18 @@ class SignalNamesPanel extends JPanel
 				Integer defaultIndex = currentVectorIndex.get(i);
 				if (expandedSignalNames.get(defaultIndex))
 				{
-					int vectorSize = results.getDefaultSignalValues()[defaultIndex][0].length();
+					int vectorSize = results.getDefaultSignalValues()
+						[defaultIndex][0].length();
 					g.drawString(signalNames.get(i), 5 - offsetXAxis, yAxis);
-					g.drawLine(7 - offsetXAxis, yAxis, 7 - offsetXAxis, yAxis + 10);
+					g.drawLine(7 - offsetXAxis, yAxis, 7 - offsetXAxis, 
+							yAxis + 10);
 					yAxis += SIGNAL_NAME_SPRING_HEIGHT;
       
 					for (int j = 0; j < vectorSize - 1; j++)
 					{   
 						g.drawString(signalNames.get(++i), 5 - offsetXAxis, yAxis);
-						g.drawLine(7 - offsetXAxis, yAxis - 2, 7 - offsetXAxis, yAxis - SIGNAL_NAME_SPRING_HEIGHT);
+						g.drawLine(7 - offsetXAxis, yAxis - 2, 7 - offsetXAxis, 
+								yAxis - SIGNAL_NAME_SPRING_HEIGHT);
 						g.drawLine(7 - offsetXAxis, yAxis - 2, 9 - offsetXAxis, yAxis - 2);
 						yAxis += SIGNAL_NAME_SPRING_HEIGHT;
 					}
@@ -405,4 +427,3 @@ class SignalNamesPanel extends JPanel
 		}
 	}
 }
-

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Color;
 
 
@@ -15,40 +16,52 @@ public class ThemeColor
     private int themeIndex = 0;
 
     /** Background boja panela s imenima signala */
-    private Color[] signalNames = {new Color(141, 176, 221), new Color(141, 176, 221), new Color(214, 214, 214)};
+    private Color[] signalNames = {new Color(141, 176, 221), 
+		new Color(141, 176, 221), new Color(214, 214, 214)};
 
     /** Background boja panela s valnim oblicima */
-    private Color[] waves = {new Color(201, 211, 236), new Color(201, 211, 236), new Color(255, 255, 239)};
+    private Color[] waves = {new Color(201, 211, 236), 
+		new Color(201, 211, 236), new Color(255, 255, 239)};
 
     /** Background boja panela koji sadrzi skalu */
-    private Color[] scale = {new Color(254, 217, 182), new Color(254, 217, 182), new Color(255, 243, 239)};
+    private Color[] scale = {new Color(254, 217, 182), 
+		new Color(254, 217, 182), new Color(255, 243, 239)};
 
     /** Boja isprekidanih crta u panelu s valnim oblicima */
-    private Color[] wavesNet = {new Color(163, 179, 225), new Color(163, 179, 225), new Color(163, 179, 225)};
+    private Color[] wavesNet = {new Color(163, 179, 225), 
+		new Color(163, 179, 225), new Color(163, 179, 225)};
     
     /** Boja pasivnog kursora */
-    private Color[] pasiveCursor = {new Color(129, 82, 182), new Color(129, 82, 182), new Color(129, 82, 182)};
+    private Color[] pasiveCursor = {new Color(129, 82, 182), 
+		new Color(129, 82, 182), new Color(129, 82, 182)};
 
     /** Aktivni kursor */
-    private Color[] activeCursor = {new Color(131, 170, 85), new Color(116, 70, 57), new Color(116, 70, 57)};
+    private Color[] activeCursor = {new Color(131, 170, 85), 
+		new Color(116, 70, 57), new Color(116, 70, 57)};
 
     /** Boja panela s ikonicama za sljedeci/prethodni padajuci/rastuci brid */
-    private Color[] buttonPanel = {new Color(141, 176, 221), new Color(141, 176, 221), new Color(214, 214, 214)};
+    private Color[] buttonPanel = {new Color(141, 176, 221), 
+		new Color(141, 176, 221), new Color(214, 214, 214)};
     
     /** Background boja toolbara */
-    private Color[] toolbar = {new Color(141, 176, 221), new Color(141, 176, 221), new Color(214, 214, 214)};
+    private Color[] toolbar = {new Color(141, 176, 221), 
+		new Color(141, 176, 221), new Color(214, 214, 214)};
     
     /** Background boja citavog appleta */
-    private Color[] applet = {new Color(254, 217, 182), new Color(254, 217, 182), new Color(214, 214, 214)};
+    private Color[] applet = {new Color(254, 217, 182), 
+		new Color(254, 217, 182), new Color(214, 214, 214)};
     
     /** Foreground boja slova */
-    private Color[] letters = {new Color(51, 51, 51), new Color(51, 51, 51), new Color(51, 51, 51)};
+    private Color[] letters = {new Color(51, 51, 51), 
+		new Color(51, 51, 51), new Color(51, 51, 51)};
     
     /** Boja granicnika izmedu panela s imenim signala i valnih oblika */
-    private Color[] divider = {new Color(86, 104, 176), new Color(86, 104, 176), new Color(86, 104, 176)};
+    private Color[] divider = {new Color(86, 104, 176), 
+		new Color(86, 104, 176), new Color(86, 104, 176)};
     
     /** Background boja kursor-panela */
-    private Color[] cursorPanel = {new Color(255, 255, 255), new Color(255, 255, 255), new Color(255, 255, 255)};
+    private Color[] cursorPanel = {new Color(255, 255, 255), 
+		new Color(255, 255, 255), new Color(255, 255, 255)};
     
 
     /**
