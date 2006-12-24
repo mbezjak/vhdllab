@@ -26,7 +26,7 @@ public class Sklop_AND extends AbstractSchemaComponent {
 	
 	public Sklop_AND(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
-		setComponentName("AND sklop");
+		setComponentName("Sklop_AND");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);

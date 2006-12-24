@@ -28,7 +28,7 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	
 	public Sklop_OR(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
-		setComponentName("OR sklop");
+		setComponentName("Sklop_OR");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);

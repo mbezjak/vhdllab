@@ -2,8 +2,10 @@ package hr.fer.zemris.vhdllab.applets.schema.components.misc;
 
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.SchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
@@ -24,11 +26,15 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 	private Port port;
 	private CircuitInterface circint;
 	private boolean drawPortIndices = true;
+	
+	static {
+		ComponentFactory.registerComponent(new Sklop_PORT(null, null));
+	}
 
 	public Sklop_PORT(Port port, CircuitInterface ci) {
-		super(port.getName());
-		setComponentName("PORT sklop");
-		setPort(port);
+		super((port == null) ? "CP_FactoryRegisteredPort" : port.getName());
+		setComponentName("Sklop_PORT");
+		if (port != null) setPort(port);
 		circint = ci;
 	}
 

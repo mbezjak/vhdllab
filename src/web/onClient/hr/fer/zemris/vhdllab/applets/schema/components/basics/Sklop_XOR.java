@@ -28,7 +28,7 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 	
 	public Sklop_XOR(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
-		setComponentName("XOR sklop");
+		setComponentName("Sklop_XOR");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);

@@ -21,7 +21,7 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 	
 	public Sklop_NOT(String imeInstanceSklopa) {
 		super(imeInstanceSklopa);
-		setComponentName("NOT sklop");
+		setComponentName("Sklop_NOT");
 		SchemaPort izlaz = new SchemaPort();
 		izlaz.setName("Izlaz");
 		izlaz.setDirection(AbstractSchemaPort.PortDirection.OUT);
