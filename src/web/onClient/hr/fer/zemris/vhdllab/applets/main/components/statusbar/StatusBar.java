@@ -57,7 +57,11 @@ public class StatusBar extends JPanel implements IStatusBar {
 	}
 	
 	public void setText(String text) {
-		statusText.setText(text);
+		if(text == null) {
+			statusText.setText("");
+		} else {
+			statusText.setText(text);
+		}
 	}
 	
 }

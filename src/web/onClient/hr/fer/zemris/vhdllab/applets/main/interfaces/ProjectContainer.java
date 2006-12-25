@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.view.IView;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -16,7 +17,11 @@ public interface ProjectContainer {
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;
 	boolean existsFile(String projectName, String fileName) throws UniformAppletException;
 	boolean existsProject(String projectName) throws UniformAppletException;
+	void createNewFileInstance(String type) throws UniformAppletException;
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
+	IView getView(String type) throws UniformAppletException;
+	IStatusBar getStatusBar();
+	IProjectExplorer getProjectExplorer();
 	void compile(String projectName, String fileName) throws UniformAppletException;
 	void simulate(String projectName, String fileName) throws UniformAppletException;
 	

@@ -12,7 +12,7 @@ import hr.fer.zemris.vhdllab.applets.main.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplorer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
@@ -85,7 +85,7 @@ public class MainApplet
 	private JPanel normalCenterPanel;
 	private Container parentOfMaximizedComponent = null;
 	
-	private IExplorer projectExplorer;
+	private IProjectExplorer projectExplorer;
 	private SideBar sideBar;
 	
 	private JPanel projectExplorerPanel;
@@ -829,6 +829,7 @@ public class MainApplet
 		boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
 		if(shouldContinue) {
 			SimulationResult result = cache.runSimulation(projectName, fileName);
+			// TODO if result == null set statusbar and exit
 			IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
 			view.setData(result);
 			if(result.getWaveform() != null) {
@@ -897,6 +898,14 @@ public class MainApplet
 	
 	public String getActiveProject() {
 		return projectExplorer.getActiveProject();
+	}
+	
+	public IProjectExplorer getProjectExplorer() {
+		return projectExplorer;
+	}
+	
+	public IStatusBar getStatusBar() {
+		return statusBar;
 	}
 	
 	/* (non-Javadoc)
@@ -1073,7 +1082,7 @@ public class MainApplet
 		return cache.existsProject(projectName);
 	}
 	
-	private void createNewFileInstance(String type) throws UniformAppletException {
+	public void createNewFileInstance(String type) throws UniformAppletException {
 		// Initialization of a wizard
 		IWizard wizard = cache.getEditor(type).getWizard();
 		if(wizard == null) throw new NullPointerException("No wizard for type: " + type);

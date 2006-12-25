@@ -128,16 +128,16 @@ public class WaveApplet extends JPanel
 			.getResource("navigate.png"));
 
 	private Icon rightUpIcon = new ImageIcon(getClass().getResource(
-			"rightUp.png"));
+			"rightUp.PNG"));
 
 	private Icon rightDownIcon = new ImageIcon(getClass().getResource(
-			"rightDown.png"));
+			"rightDown.PNG"));
 
 	private Icon leftUpIcon = new ImageIcon(getClass()
-			.getResource("leftUp.png"));
+			.getResource("leftUp.PNG"));
 
 	private Icon leftDownIcon = new ImageIcon(getClass().getResource(
-			"leftDown.png"));
+			"leftDown.PNG"));
 
 	private Icon zoomInTwoIcon = new ImageIcon(getClass().getResource("+2.png"));
 
@@ -165,7 +165,7 @@ public class WaveApplet extends JPanel
 	private Icon gotoIcon = new ImageIcon(getClass().getResource("goto.png"));
 
 	private Icon gotoPasiveIcon = new ImageIcon(getClass().getResource(
-			"gotoPasive.png"));
+			"gotoPasive.PNG"));
 
 	/* buttons */
 	/** Pokazuje popup za trazenje bridova signala */
@@ -242,6 +242,7 @@ public class WaveApplet extends JPanel
 	/** ProjectContainer */
 	//private ProjectContainer projectContainer;
 
+	public WaveApplet() {}
 	
 	public void init() {
 		//textField.setEditable(false);

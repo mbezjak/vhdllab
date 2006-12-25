@@ -140,6 +140,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
 	 */
 	public void setData(Object data) {
 		content.clear();
+		if(data == null) return;
 		if(!(data instanceof CompilationResult)) {
 			throw new IllegalArgumentException("Unknown data!");
 		}

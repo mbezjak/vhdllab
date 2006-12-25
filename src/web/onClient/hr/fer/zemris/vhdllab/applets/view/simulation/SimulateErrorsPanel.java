@@ -91,6 +91,7 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	 */
 	public void setData(Object data) {
 		content.clear();
+		if(data == null) return;
 		if(!(data instanceof SimulationResult)) {
 			throw new IllegalArgumentException("Unknown data!");
 		}
