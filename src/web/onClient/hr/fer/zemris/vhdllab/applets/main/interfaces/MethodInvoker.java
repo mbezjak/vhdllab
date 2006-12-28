@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.util.List;
 
@@ -57,4 +58,5 @@ public interface MethodInvoker {
 	String generateVHDL(Long fileId) throws UniformAppletException;
 	CircuitInterface extractCircuitInterface(Long fileId) throws UniformAppletException;
 	List<Long> extractDependencies(Long fileId) throws UniformAppletException;
+	Hierarchy extractHierarchy(Long projectId) throws UniformAppletException;
 }

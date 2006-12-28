@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
@@ -269,7 +270,21 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		}
 		return files;
 	}
-
+	
+	public Hierarchy extractHierarchy(Long projectId) throws UniformAppletException {
+		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_EXTRACT_HIERARCHY;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
+		
+		Properties resProperties = initiateAjax(reqProperties);
+		
+		String data = resProperties.getProperty(MethodConstants.PROP_HIERARCHY_SERIALIZATION);
+		Hierarchy h = Hierarchy.deserialize(data);
+		return h;
+	}
+	
 	public Long findFileByName(Long projectId, String name) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		if(name == null) throw new NullPointerException("File name can not be null.");

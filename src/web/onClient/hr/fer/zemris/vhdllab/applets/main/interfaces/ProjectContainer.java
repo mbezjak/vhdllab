@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.view.IView;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -12,6 +13,7 @@ public interface ProjectContainer {
 	
 	List<String> getAllCircuits(String projectName) throws UniformAppletException;
 	List<String> getAllTestbenches(String projectName) throws UniformAppletException;
+	Hierarchy extractHierarchy(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
 	Preferences getPreferences(String type) throws UniformAppletException;
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;

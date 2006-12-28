@@ -195,6 +195,10 @@ public class MethodConstants {
 	 * A status error value for status property when dependencies could not be extracted.
 	 */
 	public static final String SE_CAN_NOT_EXTRACT_DEPENDENCIES = "505";
+	/**
+	 * A status error value for status property when hierarchy could not be extracted.
+	 */
+	public static final String SE_CAN_NOT_EXTRACT_HIERARCHY = "506";
 	
 	
 	
@@ -254,6 +258,11 @@ public class MethodConstants {
 	 * A simulation result serialization property.
 	 */
 	public static final String PROP_RESULT_SIMULATION_SERIALIZATION = "result.simulation.serialization";
+
+	/**
+	 * A hierarchy serialization property.
+	 */
+	public static final String PROP_HIERARCHY_SERIALIZATION = "hierarchy.serialization";
 
 	/**
 	 * A value for generate VHDL property.
@@ -1520,7 +1529,7 @@ public class MethodConstants {
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
 	 * <li>{@link #PROP_RESULT_COMPILATION_SERIALIZATION} - containing serialized
-	 * 			compilation result (deserialize using static method in CompilationResult class
+	 * 			compilation result (deserialize using static method in CompilationResult class)
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -1551,7 +1560,7 @@ public class MethodConstants {
 	 * <li>{@link #PROP_METHOD} - containing this method request
 	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
 	 * <li>{@link #PROP_RESULT_SIMULATION_SERIALIZATION} - containing serialized
-	 * 			simulation result (deserialize using static method in SimulationResult class
+	 * 			simulation result (deserialize using static method in SimulationResult class)
 	 * </ul>
 	 * <p>
 	 * However if error occured, a returned <code>Properties</code> will contain following
@@ -1703,6 +1712,37 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_EXTRACT_DEPENDENCIES = "extract.dependencies";
+	/**
+	 * A "extract hierarchy" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_PROJECT_ID}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_HIERARCHY_SERIALIZATION} - containing serialized
+	 * 			hierarchy (deserialize using static method in Hierarchy class)
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain both parametars
+	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_PROJECT_ID} is not a long int number
+	 * <li>{@link #SE_CAN_NOT_EXTRACT_HIERARCHY} - if hierarchy for project with {@link #PROP_PROJECT_ID} could not be extracted
+	 * </ul>
+	 */
+	public static final String MTD_EXTRACT_HIERARCHY = "extract.hierarchy";
 	
 	/**
 	 * Dont let anyone instantiate this class.

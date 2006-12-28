@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ExtractorTest {
@@ -158,7 +158,7 @@ public class ExtractorTest {
 		assertEquals(tocno,result);
 	}
 	
-	@Ignore("Not yet implemented.")
+	//@Ignore("Not yet implemented.")
 	@Test
 	public void extractHierarchy() throws Exception {
 		List<String> identifiers = new ArrayList<String>();
@@ -168,8 +168,31 @@ public class ExtractorTest {
 		identifiers.add("3");
 		identifiers.add("4");
 		
-		Extractor.extractHierarchy(identifiers, provider);
-		fail("Not yet implemented.");
+		Set<Pair> pairs = new TreeSet<Pair>();
+		Set<String> parents = new TreeSet<String>();
+		pairs.add(new Pair("SKLOPNI_TB", parents));
+		
+		parents = new TreeSet<String>();
+		pairs.add(new Pair("SKLOPNINI", parents));
+		
+		parents = new TreeSet<String>();
+		parents.add("sklopNI");
+		pairs.add(new Pair("SKLOPI", parents));
+		
+		parents = new TreeSet<String>();
+		parents.add("SKLOPNI");
+		pairs.add(new Pair("SKLOPNE", parents));
+		
+		parents = new TreeSet<String>();
+		parents.add("SKLOPNINI");
+		parents.add("SKLOPNI_TB");
+		pairs.add(new Pair("SKLOPNi", parents));
+		
+		Hierarchy expected = new Hierarchy(pairs);
+		
+		Hierarchy h = Extractor.extractHierarchy(identifiers, provider);
+		System.out.println(h);
+		assertEquals(expected, h);
 	}
 
 	/**

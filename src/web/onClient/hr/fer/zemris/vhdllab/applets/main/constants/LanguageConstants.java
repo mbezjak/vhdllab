@@ -315,7 +315,10 @@ public class LanguageConstants {
 	 * Key for StatusBar when simulation could not be run.
 	 */
 	public static final String STATUSBAR_CANT_SIMULATE = "statusbar.cant.simulate";
-
+	/**
+	 * Key for StatusBar when cant open view.
+	 */
+	public static final String STATUSBAR_CANT_OPEN_VIEW = "statusbar.cant.open.view";
 
 
 }

@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,6 +140,13 @@ import java.util.Map.Entry;
 			Long fileIdentifier = getIdentifierFor(projectName, fileName);
 			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 			return invoker.loadFileType(fileIdentifier);
+		}
+		
+		public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			Long projectIdentifier = getIdentifierFor(projectName);
+			if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
+			return invoker.extractHierarchy(projectIdentifier);
 		}
 		
 		public FileIdentifier getLastCompilationHistoryTarget() throws UniformAppletException {

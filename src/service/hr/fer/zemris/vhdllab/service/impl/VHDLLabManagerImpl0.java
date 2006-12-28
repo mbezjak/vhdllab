@@ -20,6 +20,7 @@ import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
 import java.io.InputStream;
@@ -434,6 +435,13 @@ public class VHDLLabManagerImpl0 implements VHDLLabManager {
 			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");
 		}
 		return depExtractor.extractDependencies(file, this);
+	}
+
+
+
+	public Hierarchy extractHierarchy(Project project) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

@@ -27,6 +27,7 @@ import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.applet.Applet;
@@ -614,10 +615,14 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					String viewType = ViewTypes.VT_COMPILATION_ERRORS;
 					try {
-						openView(ViewTypes.VT_COMPILATION_ERRORS);
+						openView(viewType);
 					} catch (UniformAppletException ex) {
-						// TODO "Cant open view compilation errors" u statusbar
+						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
+						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
+						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
+						statusBar.setText(text);
 					}
 				}
 			});
@@ -629,9 +634,15 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					String viewType = ViewTypes.VT_SIMULATION_ERRORS;
 					try {
-						openView(ViewTypes.VT_SIMULATION_ERRORS);
-					} catch (UniformAppletException ex) {}
+						openView(viewType);
+					} catch (UniformAppletException ex) {
+						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
+						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
+						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
+						statusBar.setText(text);
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -965,6 +976,10 @@ public class MainApplet
 	private boolean isTestbench(String projectName, String fileName) throws UniformAppletException {
 		String type = cache.loadFileType(projectName, fileName);
 		return type.equals(FileTypes.FT_VHDL_TB);
+	}
+	
+	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
+		return cache.extractHierarchy(projectName);
 	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {

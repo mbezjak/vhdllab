@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLGenerator;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.util.List;
 
@@ -274,4 +275,12 @@ public interface VHDLLabManager {
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public List<File> extractDependencies(File file) throws ServiceException;
+	
+	/**
+	 * Returns hierarchy of specified project. Return value will never be <code>null</code>.
+	 * @param project a project for which to extract hierarchy
+	 * @return hierarchy of specified project
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public Hierarchy extractHierarchy(Project project) throws ServiceException;
 }

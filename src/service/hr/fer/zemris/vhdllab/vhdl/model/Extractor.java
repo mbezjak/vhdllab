@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * <p>This class contains various static method for VHDL source examination.</p>
@@ -992,7 +993,7 @@ public class Extractor {
 	}
 	
 	
-	public static void extractHierarchy(Collection<String> identifiers, VHDLSourceProvider sourceProvider) throws Exception {
+	public static Hierarchy extractHierarchy(Collection<String> identifiers, VHDLSourceProvider sourceProvider) throws Exception {
 		DefaultEntityIdentifierBundle bundle = new DefaultEntityIdentifierBundle();
 		UsageMap usageMap = new UsageMap();
 		
@@ -1008,7 +1009,24 @@ public class Extractor {
 			}
 		}
 		
-		System.out.println("Hierarchy 1:\n");
+		List<String> rootEntities = new ArrayList<String>();
+		for(EntityIdentifierPair pair : bundle) {
+			if(usageMap.getEntitiesWhichUseEntity(pair.getEntityName().toUpperCase())==null) {
+				rootEntities.add(pair.getEntityName());
+			}
+		}
+		
+		Map<String, Pair> pairs = new HashMap<String, Pair>();
+		for(String name : rootEntities) {
+			createHierarchy(name, usageMap, pairs);
+		}
+		
+		Collection<Pair> c = pairs.values();
+		Hierarchy h = new Hierarchy(new TreeSet<Pair>(c));
+		return h;
+		
+		// previous implementation
+		/*System.out.println("Hierarchy 1:\n");
 		List<String> rootEntities = new ArrayList<String>();
 		for(EntityIdentifierPair pair : bundle) {
 			if(usageMap.getEntitiesWhichUseEntity(pair.getEntityName().toUpperCase())==null) {
@@ -1030,10 +1048,25 @@ public class Extractor {
 		
 		for(String name : rootEntities2) {
 			showTreeEntry2(name, usageMap, "");
+		}*/
+	}
+	
+	private static void createHierarchy(String name, UsageMap usageMap, Map<String, Pair> pairs) {
+		if(pairs.get(name) == null) {
+			pairs.put(name, new Pair(name, new TreeSet<String>()));
+		}
+		Set<String> set = usageMap.getEntitiesUsedByEntity(name);
+		if(set==null) return;
+		for(String name2 : set) {
+			createHierarchy(name2, usageMap, pairs);
+			Set<String> parents = new TreeSet<String>();
+			parents.addAll(pairs.get(name2).getParents());
+			parents.add(name);
+			pairs.put(name2, new Pair(name2, parents));
 		}
 	}
 
-	private static void showTreeEntry(String name, UsageMap usageMap, String indentation) {
+	/*private static void showTreeEntry(String name, UsageMap usageMap, String indentation) {
 		System.out.println(indentation + name);
 		Set<String> set = usageMap.getEntitiesUsedByEntity(name);
 		if(set==null) return;
@@ -1051,7 +1084,7 @@ public class Extractor {
 		for(String name2 :set) {
 			showTreeEntry2(name2, usageMap, indentation);
 		}
-	}
+	}*/
 
 	private final static char[] ch_WORK = "WORK".toCharArray();
 

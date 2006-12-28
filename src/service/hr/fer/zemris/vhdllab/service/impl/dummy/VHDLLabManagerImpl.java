@@ -22,6 +22,7 @@ import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.tb.TestBenchDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
@@ -516,5 +517,68 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		List<File> deps = depExtractor.extractDependencies(file, this);
 		if(deps == null) return Collections.emptyList();
 		return deps;
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#extractHierarchy(hr.fer.zemris.vhdllab.model.Project)
+	 */
+	public Hierarchy extractHierarchy(Project project) throws ServiceException {
+		Set<File> filesInProject = project.getFiles();
+		VHDLProvider provider = new VHDLProvider();
+		List<String> identifiers = new ArrayList<String>();
+		for(File f : filesInProject) {
+			String content = generateVHDL(f);
+			provider.addSource(f.getFileName(), content);
+			identifiers.add(f.getFileName());
+		}
+		
+		Hierarchy h;
+		try {
+			h = Extractor.extractHierarchy(identifiers, provider);
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
+		}
+		return h;
+	}
+	
+	/**
+	 * Privider class for used whern invoking
+	 * {@link Extractor#extractHierarchy(java.util.Collection,
+	 * 		hr.fer.zemris.vhdllab.vhdl.model.Extractor.VHDLSourceProvider)}
+	 * @author Miro Bezjak
+	 */
+	private class VHDLProvider implements Extractor.VHDLSourceProvider {
+		
+		Properties prop;
+		
+		/**
+		 * Constructor.
+		 */
+		public VHDLProvider() {
+			prop = new Properties();
+		}
+		
+		/**
+		 * Adds a vhdl source content so that it can be provided by
+		 * {@link #provide(String)} method.
+		 * @param identifier identifier which indentifies vhdl source
+		 * @param content content of vhdl source
+		 */
+		public void addSource(String identifier, String content) {
+			if(identifier == null) {
+				throw new NullPointerException("Identifier can not be null.");
+			}
+			if(content == null) {
+				throw new NullPointerException("Content can not be null.");
+			}
+			prop.setProperty(identifier, content);
+		}
+		
+		/* (non-Javadoc)
+		 * @see hr.fer.zemris.vhdllab.vhdl.model.Extractor.VHDLSourceProvider#provide(java.lang.String)
+		 */
+		public String provide(String identifier) throws Exception {
+			return prop.getProperty(identifier);
+		}
 	}
 }
