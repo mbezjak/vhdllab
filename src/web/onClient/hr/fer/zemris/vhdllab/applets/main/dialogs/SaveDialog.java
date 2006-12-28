@@ -9,7 +9,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.HeadlessException;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -64,7 +64,7 @@ import javax.swing.JScrollPane;
  * </code>
  * 
  * @author Miro Bezjak
- * @version 1.0
+ * @version 1.01
  * @since 23.12.2006
  */
 public class SaveDialog extends JDialog {
@@ -148,6 +148,7 @@ public class SaveDialog extends JDialog {
      */
     public SaveDialog() throws HeadlessException {
         this((Frame)null, false);
+        saveDialogImpl((Frame)null);
     }
     
     /**
@@ -419,27 +420,28 @@ public class SaveDialog extends JDialog {
 	
     /**
      * Implemetation of a constructor of <code>SaveDialog</code>.
+     * @param owner owner for which the dialog is displayed
      */
     private void saveDialogImpl(Component owner) {
     	this.owner = owner;
     	
     	// setup label
     	label = new JLabel();
-    	JPanel labelPanel = new JPanel(new BorderLayout());
-    	labelPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, 0, BORDER));
-    	labelPanel.add(label, BorderLayout.CENTER);
     	int width = DIALOG_WIDTH - 2 * BORDER;
     	int height = LABEL_HEIGHT - 2 * BORDER;
     	label.setPreferredSize(new Dimension(width, height));
+    	JPanel labelPanel = new JPanel(new BorderLayout());
+    	labelPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, 0, BORDER));
+    	labelPanel.add(label, BorderLayout.CENTER);
     	
     	// setup check box list
     	list = new CheckBoxList();
-    	JPanel tablePanel = new JPanel(new BorderLayout());
-    	tablePanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
-    	tablePanel.add(list, BorderLayout.CENTER);
     	width = DIALOG_WIDTH - 2 * BORDER;
     	height = 0; // because list is a center component and it doesnt need height
     	list.setPreferredSize(new Dimension(width, height));
+    	JPanel listPanel = new JPanel(new BorderLayout());
+    	listPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
+    	listPanel.add(list, BorderLayout.CENTER);
     	
     	// setup select all and deselect all buttons
     	selectAll = new JButton("Select All");
@@ -509,7 +511,7 @@ public class SaveDialog extends JDialog {
     	this.setLayout(new BorderLayout());
     	JPanel messagePanel = new JPanel(new BorderLayout());
     	messagePanel.add(labelPanel, BorderLayout.NORTH);
-    	messagePanel.add(tablePanel, BorderLayout.CENTER);
+    	messagePanel.add(listPanel, BorderLayout.CENTER);
     	messagePanel.add(lowerPanel, BorderLayout.SOUTH);
     	this.getContentPane().add(messagePanel, BorderLayout.CENTER);
     	this.getRootPane().setDefaultButton(ok);
@@ -522,6 +524,7 @@ public class SaveDialog extends JDialog {
     
     /**
      * Starts a dialog and locks the control.
+     * @throws IllegalStateException if there are no items to save
      */
     public void startDialog() {
     	if(list.isEmpty()) {
@@ -686,7 +689,8 @@ public class SaveDialog extends JDialog {
      * @return  frame to wrap this dialog with
      */
     private static Frame getAppletFrame(JApplet owner) {
-    	if(owner == null) return null;
+    	// previous implementation
+    	/*if(owner == null) return null;
 		Object parent = owner.getParent();
 		while(!(parent instanceof Frame)) {
 			parent=((Component)parent).getParent();
@@ -695,7 +699,8 @@ public class SaveDialog extends JDialog {
  
 		Point p = owner.getLocationOnScreen();
 		dialogFrame.setLocation(p.x, p.y);
-		return dialogFrame;
+		return dialogFrame;*/
+    	return JOptionPane.getFrameForComponent(owner);
 	}
     
     /**

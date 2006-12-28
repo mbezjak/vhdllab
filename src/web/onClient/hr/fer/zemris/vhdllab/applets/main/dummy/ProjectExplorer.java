@@ -81,7 +81,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 
 	public List<String> getAllProjects() {
-		return new ArrayList<String>();
+		List<String> projects = new ArrayList<String>(1);
+		projects.add(projectName);
+		return projects;
 	}
 
 

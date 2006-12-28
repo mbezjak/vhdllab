@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.preferences;
 import hr.fer.zemris.ajax.shared.XMLUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,14 +27,18 @@ public class SingleOption {
 		if(name == null) throw new NullPointerException("Name must not be null.");
 		if(description == null) throw new NullPointerException("Description must not be null.");
 		if(valueType == null) throw new NullPointerException("Type of a value must not be null.");
-		if(defaultValue == null) throw new NullPointerException("Default value must not be null.");
-		if(chosenValue == null) throw new NullPointerException("Chosen value must not be null.");
 		if(values != null) {
+			if(defaultValue == null) {
+				throw new NullPointerException("Default value must not be null while a list (values) are not.");
+			}
+			if(chosenValue == null) {
+				throw new NullPointerException("Chosen value must not be null while a list (values) are not.");
+			}
 			if(!values.contains(defaultValue)) {
-				throw new IllegalArgumentException("Default value must be one of values provided in a list.");
+				throw new IllegalArgumentException("Default value must be one of value provided in a list (values).");
 			}
 			if(!values.contains(chosenValue)) {
-				throw new IllegalArgumentException("Chosen value must be one of values provided in a list.");
+				throw new IllegalArgumentException("Chosen value must be one of value provided in a list (values).");
 			}
 		}
 
@@ -57,10 +62,6 @@ public class SingleOption {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getChosenValue() {
 		return chosenValue;
 	}
@@ -74,7 +75,7 @@ public class SingleOption {
 	}
 
 	public List<String> getValues() {
-		return values;
+		return Collections.unmodifiableList(values);
 	}
 
 	public String getValueType() {
@@ -86,8 +87,12 @@ public class SingleOption {
 		p.setProperty(SERIALIZATION_KEY_NAME, name);
 		p.setProperty(SERIALIZATION_KEY_VALUE_TYPE, valueType);
 		p.setProperty(SERIALIZATION_KEY_DESCRIPTION, description);
-		p.setProperty(SERIALIZATION_KEY_DEFALUT_VALUE, defaultValue);
-		p.setProperty(SERIALIZATION_KEY_CHOSEN_VALUE, chosenValue);
+		if(defaultValue != null) {
+			p.setProperty(SERIALIZATION_KEY_DEFALUT_VALUE, defaultValue);
+		}
+		if(chosenValue != null) {
+			p.setProperty(SERIALIZATION_KEY_CHOSEN_VALUE, chosenValue);
+		}
 		if(values != null) {
 			int i = 1;
 			for(String v : values) {
@@ -119,6 +124,9 @@ public class SingleOption {
 		return new SingleOption(name, description, valueType, values, defaultValue, chosenValue);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) return false;
@@ -128,6 +136,9 @@ public class SingleOption {
 		return name.equals(other.name);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return name.hashCode();

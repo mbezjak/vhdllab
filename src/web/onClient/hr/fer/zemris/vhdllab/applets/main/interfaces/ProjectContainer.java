@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
-
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.view.IView;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
@@ -12,6 +11,7 @@ import java.util.ResourceBundle;
 public interface ProjectContainer {
 	
 	List<String> getAllCircuits(String projectName) throws UniformAppletException;
+	List<String> getAllTestbenches(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
 	Preferences getPreferences(String type) throws UniformAppletException;
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;
@@ -21,7 +21,8 @@ public interface ProjectContainer {
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
 	IView getView(String type) throws UniformAppletException;
 	IStatusBar getStatusBar();
-	IProjectExplorer getProjectExplorer();
+	void setActiveProject(String projectName);
+	List<String> getAllProjects();
 	void compile(String projectName, String fileName) throws UniformAppletException;
 	void simulate(String projectName, String fileName) throws UniformAppletException;
 	

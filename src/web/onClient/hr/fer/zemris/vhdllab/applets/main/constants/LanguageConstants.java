@@ -144,14 +144,34 @@ public class LanguageConstants {
 	public static final String MENU_VIEW_SHOW_VIEW_SIMULATION_ERRORS = "menu.view.show.view.simulation.errors";
 
 	/**
-	 * Key for 'Compile' menu item in 'Tools' menu.
+	 * Key for 'Compile...' menu item in 'Tools' menu.
 	 */
-	public static final String MENU_TOOLS_COMPILE = "menu.tools.compile";
+	public static final String MENU_TOOLS_COMPILE_WITH_DIALOG = "menu.tools.compile.with.dialog";
 
 	/**
-	 * Key for 'Simulate' menu item in 'Tools' menu.
+	 * Key for 'Compile Active' menu item in 'Tools' menu.
 	 */
-	public static final String MENU_TOOLS_SIMULATE = "menu.tools.simulate";
+	public static final String MENU_TOOLS_COMPILE_ACTIVE = "menu.tools.compile.active";
+
+	/**
+	 * Key for 'Compile History' menu item in 'Tools' menu.
+	 */
+	public static final String MENU_TOOLS_COMPILE_HISTORY = "menu.tools.compile.history";
+
+	/**
+	 * Key for 'Simulate...' menu item in 'Tools' menu.
+	 */
+	public static final String MENU_TOOLS_SIMULATE_WITH_DIALOG = "menu.tools.simulate.with.dialog";
+
+	/**
+	 * Key for 'Simulate Active' menu item in 'Tools' menu.
+	 */
+	public static final String MENU_TOOLS_SIMULATE_ACTIVE = "menu.tools.simulate.active";
+
+	/**
+	 * Key for 'Simulate History' menu item in 'Tools' menu.
+	 */
+	public static final String MENU_TOOLS_SIMULATE_HISTORY = "menu.tools.simulate.history";
 
 
 	/**
@@ -191,7 +211,6 @@ public class LanguageConstants {
 	 * Message content for save dialog when trying to save resources.
 	 */
 	public static final String DIALOG_SAVE_RESOURCES_MESSAGE = "dialog.save.resources.message";
-
 	/**
 	 * Title for save dialog when trying to compile a file.
 	 */
@@ -208,6 +227,44 @@ public class LanguageConstants {
 	 * Message content for save dialog when trying to simulate a file.
 	 */
 	public static final String DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE = "dialog.save.resources.for.simulation.message";
+
+	/**
+	 * Message title for make active project dialog.
+	 */
+	public static final String DIALOG_MAKE_ACTIVE_PROJECT_TITLE = "dialog.make.active.project.title";
+	/**
+	 * Message content for make active project dialog.
+	 */
+	public static final String DIALOG_MAKE_ACTIVE_PROJECT_MESSAGE = "dialog.make.active.project.message";
+
+	/**
+	 * Active project label in run dialog.
+	 */
+	public static final String DIALOG_RUN_ACTIVE_PROJECT_LABEL = "dialog.run.active.project.label";
+	/**
+	 * Text to be displayed as active project title just above a active project label.
+	 */
+	public static final String DIALOG_RUN_ACTIVE_PROJECT_TITLE = "dialog.run.active.project.title";
+	/**
+	 * Change active project button in run dialog.
+	 */
+	public static final String DIALOG_RUN_CHANGE_ACTIVE_PROJECT_BUTTON = "dialog.run.change.active.project.button";
+	/**
+	 * Text to be displayed as a title of file list when running in compilation mode.
+	 */
+	public static final String DIALOG_RUN_COMPILATION_LIST_TITLE = "dialog.run.compilation.list.title";
+	/**
+	 * Title of run dialog when running in compilation mode.
+	 */
+	public static final String DIALOG_RUN_COMPILATION_TITLE = "dialog.run.compilation.title";
+	/**
+	 * Text to be displayed as a title of file list when running in simulation mode.
+	 */
+	public static final String DIALOG_RUN_SIMULATION_LIST_TITLE = "dialog.run.simulation.list.title";
+	/**
+	 * Title of run dialog when running in compilation mode.
+	 */
+	public static final String DIALOG_RUN_SIMULATION_TITLE = "dialog.run.simulation.title";
 
 	
 	/**

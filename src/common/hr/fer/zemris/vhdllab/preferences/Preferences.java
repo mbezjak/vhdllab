@@ -40,16 +40,19 @@ public class Preferences {
 		if(data == null) throw new NullPointerException("Data can not be null.");
 		Properties p = XMLUtil.deserializeProperties(data);
 		if(p == null) throw new IllegalArgumentException("Unknown serialization format: data");
-		Preferences opt = new Preferences();
+		Preferences pref = new Preferences();
 		for(int i = 1; true; i++) {
 			String s = p.getProperty(SERIALIZATION_KEY_SINGLE_OPTION + "." + i);
 			if(s == null) break;
 			SingleOption o = SingleOption.deserialize(s);
-			opt.setOption(o);
+			pref.setOption(o);
 		}
-		return opt;
+		return pref;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) return false;
@@ -59,6 +62,9 @@ public class Preferences {
 		return preferences.equals(other.preferences);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return preferences.hashCode();
