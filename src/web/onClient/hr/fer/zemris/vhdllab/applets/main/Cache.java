@@ -149,6 +149,14 @@ import java.util.Map.Entry;
 			return invoker.extractHierarchy(projectIdentifier);
 		}
 		
+		public String generateVHDL(String projectName, String fileName) throws UniformAppletException {
+			if(projectName == null) throw new NullPointerException("Project name can not be null.");
+			if(fileName == null) throw new NullPointerException("File name can not be null.");
+			Long fileIdentifier = getIdentifierFor(projectName, fileName);
+			if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+			return invoker.generateVHDL(fileIdentifier);
+		}
+		
 		public FileIdentifier getLastCompilationHistoryTarget() throws UniformAppletException {
 			if(compilationHistory.isEmpty()) throw new UniformAppletException("No history of compilation.");
 			Long last = compilationHistory.get(compilationHistory.size() - 1);

@@ -13,6 +13,7 @@ public interface ProjectContainer {
 	
 	List<String> getAllCircuits(String projectName) throws UniformAppletException;
 	List<String> getAllTestbenches(String projectName) throws UniformAppletException;
+	String getFileType(String projectName, String fileName) throws UniformAppletException;
 	Hierarchy extractHierarchy(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
 	Preferences getPreferences(String type) throws UniformAppletException;
@@ -27,6 +28,7 @@ public interface ProjectContainer {
 	List<String> getAllProjects();
 	void compile(String projectName, String fileName) throws UniformAppletException;
 	void simulate(String projectName, String fileName) throws UniformAppletException;
+	void viewVHDLCode(String projectName, String fileName) throws UniformAppletException;
 	
 	/**
 	 * Gets a resource bundle for the given base name and user's locale.

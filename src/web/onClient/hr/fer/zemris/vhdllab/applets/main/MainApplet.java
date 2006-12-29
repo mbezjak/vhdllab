@@ -969,13 +969,31 @@ public class MainApplet
 		List<String> fileTypes = cache.getFileTypes();
 		fileTypes.remove(FileTypes.FT_VHDL_TB);
 		fileTypes.remove(FileTypes.FT_VHDL_SIMULATION);
-		String type = cache.loadFileType(projectName, fileName);
+		String type = getFileType(projectName, fileName);
 		return fileTypes.contains(type);
 	}
 	
 	private boolean isTestbench(String projectName, String fileName) throws UniformAppletException {
-		String type = cache.loadFileType(projectName, fileName);
+		String type = getFileType(projectName, fileName);
 		return type.equals(FileTypes.FT_VHDL_TB);
+	}
+	
+	private boolean isSimulation(String projectName, String fileName) throws UniformAppletException {
+		String type = getFileType(projectName, fileName);
+		return type.equals(FileTypes.FT_VHDL_SIMULATION);
+	}
+	
+	public String getFileType(String projectName, String fileName) throws UniformAppletException {
+		return cache.loadFileType(projectName, fileName);
+	}
+	
+	public void viewVHDLCode(String projectName, String fileName) throws UniformAppletException {
+		// TODO ovo provjerit dal radi dobro
+		if(isCircuit(projectName, fileName) || 
+				isTestbench(projectName, fileName)) {
+			String vhdl = cache.generateVHDL(projectName, fileName);
+			openEditor(projectName, fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
+		}
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
@@ -1118,7 +1136,7 @@ public class MainApplet
 		if(index == -1) {
 			String content = cache.loadFileContent(projectName, fileName);
 			FileContent fileContent = new FileContent(projectName, fileName, content);
-			String type = cache.loadFileType(projectName, fileName);
+			String type = getFileType(projectName, fileName);
 
 			// Initialization of an editor
 			IEditor editor = cache.getEditor(type);
