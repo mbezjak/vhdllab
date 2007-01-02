@@ -1007,10 +1007,6 @@ public class MainApplet
 	}
 
 	public Preferences getPreferences(String type) throws UniformAppletException {
-		Hierarchy h = null;
-		for(Pair p : h) {
-			
-		}
 		return cache.getPreferences(type);
 	}
 	
@@ -1249,7 +1245,29 @@ public class MainApplet
 		cache.createFile(projectName, fileName, type);
 		cache.saveFile(projectName, fileName, data);
 		projectExplorer.addFile(projectName, fileName);
+		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_CREATED);
+		text = Utilities.replacePlaceholders(text, new String[] {projectName});
+		echoStatusText(text);
 		openEditor(projectName, fileName, true, false);
+	}
+	
+	public void createNewProjectInstance() throws UniformAppletException {
+		String title = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
+		String message = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
+		String projectName = showCreateProjectDialog(title, message);
+		if(projectName == null) return;
+		boolean exists = cache.existsProject(projectName);
+		if(exists) {
+			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
+			text = Utilities.replacePlaceholders(text, new String[] {projectName});
+			echoStatusText(text);
+			return;
+		}
+		cache.createProject(projectName);
+		projectExplorer.addProject(projectName);
+		String text = bundle.getString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
+		text = Utilities.replacePlaceholders(text, new String[] {projectName});
+		echoStatusText(text);
 	}
 	
 	public IEditor getEditor(String projectName, String fileName) throws UniformAppletException {
@@ -1387,14 +1405,7 @@ public class MainApplet
 		}
 		
 		for(String projectName : projects) {
-			try {
-				Hierarchy h = extractHierarchy(projectName);
-				projectExplorer.refreshHierarchy(h);
-			} catch (UniformAppletException e) {
-				String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_RELOAD_HIERARCHY);
-				text = Utilities.replacePlaceholders(text, new String[] {projectName});
-				echoStatusText(text);
-			}
+			projectExplorer.refreshProject(projectName);
 		}
 		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED_ALL);
 		String numberOfFiles = String.valueOf(savedEditors.size());
@@ -1565,6 +1576,21 @@ public class MainApplet
 		// control locked until user clicks on OK, CANCEL or CLOSE button
 		
 		return dialog.getSelectedFile();
+	}
+	
+	private String showCreateProjectDialog(String title, String message) {
+		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
+		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
+		Object[] options = new Object[] {ok, cancel};
+		
+		String projectName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+		try {
+			if(projectName != null && cache.existsProject(projectName)) {
+				return null;
+			}
+		} catch (UniformAppletException e) {
+		}
+		return projectName;
 	}
 	
 	// TODO pocet to koristit

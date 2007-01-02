@@ -238,6 +238,15 @@ public class LanguageConstants {
 	public static final String DIALOG_MAKE_ACTIVE_PROJECT_MESSAGE = "dialog.make.active.project.message";
 
 	/**
+	 * Message title for create new project dialog.
+	 */
+	public static final String DIALOG_CREATE_NEW_PROJECT_TITLE = "dialog.create.new.project.title";
+	/**
+	 * Message content for create new project dialog.
+	 */
+	public static final String DIALOG_CREATE_NEW_PROJECT_MESSAGE = "dialog.create.new.project.message";
+
+	/**
 	 * Active project label in run dialog.
 	 */
 	public static final String DIALOG_RUN_ACTIVE_PROJECT_LABEL = "dialog.run.active.project.label";
@@ -292,6 +301,15 @@ public class LanguageConstants {
 	 */
 	public static final String STATUSBAR_FILE_SAVED_ALL = "statusbar.file.saved.all";
 	/**
+	 * Key for StatusBar when file has been created
+	 */
+	public static final String STATUSBAR_FILE_CREATED = "statusbar.file.created";
+	/**
+	 * Key for StatusBar when project has been created
+	 */
+	public static final String STATUSBAR_PROJECT_CREATED = "statusbar.project.created";
+
+	/**
 	 * Key for StatusBar when file could not be saved.
 	 */
 	public static final String STATUSBAR_CANT_SAVE_FILE = "statusbar.cant.save.file";
@@ -327,10 +345,5 @@ public class LanguageConstants {
 	 * Key for StatusBar when cant open view.
 	 */
 	public static final String STATUSBAR_CANT_OPEN_VIEW = "statusbar.cant.open.view";
-	/**
-	 * Key for StatusBar when cant reload hierarchy.
-	 */
-	public static final String STATUSBAR_CANT_RELOAD_HIERARCHY = "statusbar.cant.reload.hierarchy";
-
 
 }

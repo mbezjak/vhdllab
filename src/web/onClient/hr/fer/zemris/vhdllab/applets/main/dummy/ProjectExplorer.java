@@ -119,11 +119,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		}
 	}
 
-	public void refreshHierarchy(Hierarchy h) {
-	}
-
 	public String getActiveProject() {
 		return projectName;
+	}
+
+	public void refreshProject(String projectName) {
 	}
 	
 }
