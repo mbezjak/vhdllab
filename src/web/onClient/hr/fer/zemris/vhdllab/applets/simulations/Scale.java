@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
@@ -263,6 +264,16 @@ class Scale extends JPanel
 		scaleStepInTime = minimumDurationInTime;
 		pixelFactor = 100 / scaleStepInTime;
 		scaleEndPointInPixels *= pixelFactor;
+
+        for (int i = 0; i < transitionPoints.length; i++) {
+            transitionPoints[i] = (int)(transitionPoints[i] * measureUnit);
+        }
+        // izracunaj durationsInPixels
+        for (int j = 0; j < durationsInPixels.length; j++) {
+            durationsInPixels[j] = (int)(transitionPoints[j + 1] * pixelFactor) -
+                (int)(transitionPoints[j] * pixelFactor);
+        }
+
     }
 
 
@@ -283,10 +294,12 @@ class Scale extends JPanel
         }
 		scaleEndPointInPixels *= pixelFactor;
 
-		int i = 0;
-		for (int interval : durationsInTime) {
-			durationsInPixels[i++] = (int)(interval * pixelFactor);
-		}
+	     // izracunaj durationsInPixels
+        for (int i = 0; i < durationsInPixels.length; i++) {
+            durationsInPixels[i] = (int)(transitionPoints[i + 1] * pixelFactor) -
+                (int)(transitionPoints[i] * pixelFactor);
+        }
+
 	
         this.scaleFactor *= scaleFactor;
     }
@@ -297,10 +310,6 @@ class Scale extends JPanel
      */
     public int[] getDurationInPixels()
     {
-		int i = 0;
-		for (int interval : durationsInTime) {
-			durationsInPixels[i++] = (int)(interval * pixelFactor);
-		}
 		return durationsInPixels;
     }
     
@@ -411,9 +420,7 @@ class Scale extends JPanel
 		 */
         screenSizeInPixels = getWidth() + 200;
         screenEndPointInPixels = screenStartPointInPixels + screenSizeInPixels;
-		//System.out.println(" end screen " + screenEndPointInPixels);
-		//System.out.println(" end scale " + scaleEndPointInPixels);
-		//System.out.println(" facotr scale " + scaleFactor);
+
         scaleFactor = Math.round(scaleFactor * 1e13d) / 1e13d;
 
 
@@ -454,6 +461,7 @@ class Scale extends JPanel
         String tempMeasureUnitName = measureUnitName;
         
         int endPointInPixels = endPoint;
+        int potention = 1; 
         while (x < endPointInPixels)
         {
             /* svaka se vrijednost zaokruzuje na 10 decimala */
@@ -472,6 +480,7 @@ class Scale extends JPanel
                         tempMeasureUnitName = units[i + 1];
                         scaleValue /= 1000.0;
                         tempScaleStepInTime /= 1000;
+                        potention *= 1000;
                         break;
                     }
                 }
@@ -487,6 +496,7 @@ class Scale extends JPanel
                         tempMeasureUnitName = units[i - 1];
 				        scaleValue *= 1000;
 				        tempScaleStepInTime *= 1000;
+                        potention /= 1000;
                         break;
                     }
 				}
@@ -505,7 +515,7 @@ class Scale extends JPanel
                     - offsetXAxis, SCALE_VALUE_YAXIS);
             
 			scaleValue += tempScaleStepInTime;
-            x += SCALE_STEP_IN_PIXELS;   
+            x = (int)(scaleValue * potention * pixelFactor);
         }
 	}
 }
