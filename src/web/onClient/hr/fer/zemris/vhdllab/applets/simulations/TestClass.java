@@ -66,7 +66,7 @@ public class TestClass extends JApplet
 public void init() 
   {
 	
-	  VcdParser parser = new VcdParser("./src/web/onClient/hr/fer/zemris/vhdllab/applets/simulations/adder2.vcd");
+	  VcdParser parser = new VcdParser("./src/web/onClient/hr/fer/zemris/vhdllab/applets/simulations/proba.vcd");
 	  parser.parse();
 
 	  FileContent fileContent = new FileContent("proba", "nana", parser.getResultInString());

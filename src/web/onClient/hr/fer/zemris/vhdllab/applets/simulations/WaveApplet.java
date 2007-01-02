@@ -43,8 +43,7 @@ import javax.swing.event.ListSelectionListener;
 
 
 
-public class WaveApplet extends JPanel 
-		implements IEditor, IWizard {
+public class WaveApplet extends JPanel implements IEditor, IWizard {
 
 	/** Ovaj container */
 	private JPanel cp = this;
@@ -124,48 +123,22 @@ public class WaveApplet extends JPanel
 	private ThemeColor themeColor = new ThemeColor();
 
 	/* ikone */
-	private Icon navigate = new ImageIcon(getClass()
-			.getResource("navigate.png"));
-
-	private Icon rightUpIcon = new ImageIcon(getClass().getResource(
-			"rightUp.PNG"));
-
-	private Icon rightDownIcon = new ImageIcon(getClass().getResource(
-			"rightDown.PNG"));
-
-	private Icon leftUpIcon = new ImageIcon(getClass()
-			.getResource("leftUp.PNG"));
-
-	private Icon leftDownIcon = new ImageIcon(getClass().getResource(
-			"leftDown.PNG"));
-
+	private Icon navigate = new ImageIcon(getClass().getResource("navigate.png"));
+	private Icon rightUpIcon = new ImageIcon(getClass().getResource("rightUp.PNG"));
+	private Icon rightDownIcon = new ImageIcon(getClass().getResource("rightDown.PNG"));
+	private Icon leftUpIcon = new ImageIcon(getClass().getResource("leftUp.PNG"));
+	private Icon leftDownIcon = new ImageIcon(getClass().getResource("leftDown.PNG"));
 	private Icon zoomInTwoIcon = new ImageIcon(getClass().getResource("+2.png"));
-
-	private Icon zoomOutTwoIcon = new ImageIcon(getClass()
-			.getResource("-2.png"));
-
-	private Icon zoomInTenIcon = new ImageIcon(getClass()
-			.getResource("+10.png"));
-
-	private Icon zoomOutTenIcon = new ImageIcon(getClass().getResource(
-			"-10.png"));
-
-	private Icon defaultIcon = new ImageIcon(getClass().getResource(
-			"default.png"));
-
+	private Icon zoomOutTwoIcon = new ImageIcon(getClass().getResource("-2.png"));
+	private Icon zoomInTenIcon = new ImageIcon(getClass().getResource("+10.png"));
+	private Icon zoomOutTenIcon = new ImageIcon(getClass().getResource("-10.png"));
+	private Icon defaultIcon = new ImageIcon(getClass().getResource("default.png"));
 	private Icon upIcon = new ImageIcon(getClass().getResource("up.png"));
-
 	private Icon downIcon = new ImageIcon(getClass().getResource("down.png"));
-
 	private Icon helpIcon = new ImageIcon(getClass().getResource("help.png"));
-
-	private Icon optionsIcon = new ImageIcon(getClass().getResource(
-			"options.png"));
-
+	private Icon optionsIcon = new ImageIcon(getClass().getResource("options.png"));
 	private Icon gotoIcon = new ImageIcon(getClass().getResource("goto.png"));
-
-	private Icon gotoPasiveIcon = new ImageIcon(getClass().getResource(
-			"gotoPasive.PNG"));
+	private Icon gotoPasiveIcon = new ImageIcon(getClass().getResource("gotoPasive.PNG"));
 
 	/* buttons */
 	/** Pokazuje popup za trazenje bridova signala */
@@ -239,14 +212,16 @@ public class WaveApplet extends JPanel
 	private boolean readOnly;
 	private boolean savableFlag;
 
-	/** ProjectContainer */
-	//private ProjectContainer projectContainer;
 
-	public WaveApplet() {}
-	
+	/** ProjectContainer */
+	// private ProjectContainer projectContainer;
+	public WaveApplet() {
+	}
+
+
 	public void init() {
-		//textField.setEditable(false);
-		//textField.setToolTipText("Value");
+		// textField.setEditable(false);
+		// textField.setToolTipText("Value");
 		search.setText("search signal");
 		search.addMouseListener(searchClickListener);
 		search.addActionListener(searchListener);
@@ -277,8 +252,8 @@ public class WaveApplet extends JPanel
 		verticalScrollbar.addAdjustmentListener(verticalScrollListener);
 
 		/* panel s valnim oblicima */
-		waves = new WaveDrawBoard(scale, signalNames
-				.getSignalNameSpringHeight(), verticalScrollbar, themeColor);
+		waves = new WaveDrawBoard(scale, signalNames.getSignalNameSpringHeight(),
+				verticalScrollbar, themeColor);
 		waves.addMouseMotionListener(mouseListener);
 		waves.addMouseListener(mouseWaveListener);
 		waves.addMouseWheelListener(wheelListener);
@@ -372,8 +347,7 @@ public class WaveApplet extends JPanel
 		upButton.setToolTipText("Move signal up");
 		downButton.setToolTipText("Move signal down");
 		navigateSignals.setToolTipText("Move to next/previous right/left edge");
-		optionsButton
-				.setToolTipText("Change current theme/define custom colors");
+		optionsButton.setToolTipText("Change current theme/define custom colors");
 		helpButton.setToolTipText("Help");
 
 		toolbar.add(zoomInTwoButton);
@@ -448,8 +422,7 @@ public class WaveApplet extends JPanel
 
 		JPanel optionsPanel = new JPanel();
 		optionsPanel.setBackground(new Color(238, 238, 238));
-		optionsPanel
-				.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
 		optionsPanel.add(colorChooser);
 		optionsPanel.add(labelPanel);
 		optionsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -499,7 +472,6 @@ public class WaveApplet extends JPanel
 		helpPanel.setContent(waves.getShapes());
 	}
 
-
 	/**
 	 * Listener za vertikalni scrollbar koji pomice panel s valnim oblicima i
 	 * panel s imenima signala
@@ -518,7 +490,6 @@ public class WaveApplet extends JPanel
 			signalValues.repaint();
 		}
 	};
-
 
 	/**
 	 * Slusa kotacic misa i pomice vertikalni scrollbar
@@ -635,8 +606,7 @@ public class WaveApplet extends JPanel
 	 */
 	private ActionListener okListener = new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-			if (listComponents.isSelectionEmpty()
-					&& listShapes.isSelectionEmpty()) {
+			if (listComponents.isSelectionEmpty() && listShapes.isSelectionEmpty()) {
 				return;
 			}
 
@@ -759,15 +729,12 @@ public class WaveApplet extends JPanel
 
 			/* scrollbar ostaje na istom mjestu */
 			horizontalScrollbar.setValue(offset * 10);
-			cursorPanel.setFirstCursorStartPoint(cursorPanel
-					.getFirstCursorStartPoint() * 10);
-			cursorPanel.setSecondCursorStartPoint(cursorPanel
-					.getSecondCursorStartPoint() * 10);
-			waves
-					.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() * 10);
-			waves
-					.setSecondCursorStartPoint(waves
-							.getSecondCursorStartPoint() * 10);
+			cursorPanel
+					.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() * 10);
+			cursorPanel
+					.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() * 10);
+			waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() * 10);
+			waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() * 10);
 			cursorPanel.repaint();
 			scale.repaint();
 			waves.repaint();
@@ -792,15 +759,12 @@ public class WaveApplet extends JPanel
 
 			/* scrollbar ostaje na istom mjestu */
 			horizontalScrollbar.setValue(offset * 2);
-			cursorPanel.setFirstCursorStartPoint(cursorPanel
-					.getFirstCursorStartPoint() * 2);
-			cursorPanel.setSecondCursorStartPoint(cursorPanel
-					.getSecondCursorStartPoint() * 2);
-			waves
-					.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() * 2);
-			waves
-					.setSecondCursorStartPoint(waves
-							.getSecondCursorStartPoint() * 2);
+			cursorPanel
+					.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() * 2);
+			cursorPanel
+					.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() * 2);
+			waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() * 2);
+			waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() * 2);
 			cursorPanel.repaint();
 			scale.repaint();
 			waves.repaint();
@@ -821,15 +785,12 @@ public class WaveApplet extends JPanel
 
 			/* scrollbar ostaje na istom mjestu */
 			horizontalScrollbar.setValue(offset / 10);
-			cursorPanel.setFirstCursorStartPoint(cursorPanel
-					.getFirstCursorStartPoint() / 10);
-			cursorPanel.setSecondCursorStartPoint(cursorPanel
-					.getSecondCursorStartPoint() / 10);
-			waves
-					.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() / 10);
-			waves
-					.setSecondCursorStartPoint(waves
-							.getSecondCursorStartPoint() / 10);
+			cursorPanel
+					.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() / 10);
+			cursorPanel
+					.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() / 10);
+			waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() / 10);
+			waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() / 10);
 			cursorPanel.repaint();
 			scale.repaint();
 			waves.repaint();
@@ -850,15 +811,12 @@ public class WaveApplet extends JPanel
 
 			/* scrollbar ostaje na istom mjestu */
 			horizontalScrollbar.setValue(offset / 2);
-			cursorPanel.setFirstCursorStartPoint(cursorPanel
-					.getFirstCursorStartPoint() / 2);
-			cursorPanel.setSecondCursorStartPoint(cursorPanel
-					.getSecondCursorStartPoint() / 2);
-			waves
-					.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() / 2);
-			waves
-					.setSecondCursorStartPoint(waves
-							.getSecondCursorStartPoint() / 2);
+			cursorPanel
+					.setFirstCursorStartPoint(cursorPanel.getFirstCursorStartPoint() / 2);
+			cursorPanel
+					.setSecondCursorStartPoint(cursorPanel.getSecondCursorStartPoint() / 2);
+			waves.setFirstCursorStartPoint(waves.getFirstCursorStartPoint() / 2);
+			waves.setSecondCursorStartPoint(waves.getSecondCursorStartPoint() / 2);
 			cursorPanel.repaint();
 			scale.repaint();
 			waves.repaint();
@@ -991,14 +949,14 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		/**
 		 * Metoda koja upravlja kursorom
 		 */
 		public void mouseDragged(MouseEvent event) {
 			if (cursorPanel.getActiveCursor() == 1) {
-				waves.setFirstCursorStartPoint(event.getX()
-						+ waves.getHorizontalOffset());
+				waves
+						.setFirstCursorStartPoint(event.getX()
+								+ waves.getHorizontalOffset());
 				cursorPanel.setFirstCursorStartPoint(event.getX()
 						+ waves.getHorizontalOffset());
 			} else {
@@ -1008,12 +966,10 @@ public class WaveApplet extends JPanel
 						+ waves.getHorizontalOffset());
 			}
 
-			int rightBorder = horizontalScrollbar.getValue()
-					+ waves.getPanelWidth();
+			int rightBorder = horizontalScrollbar.getValue() + waves.getPanelWidth();
 			int leftBorder = horizontalScrollbar.getValue();
 			if (event.getX() + waves.getHorizontalOffset() + 20 >= rightBorder) {
-				horizontalScrollbar
-						.setValue(horizontalScrollbar.getValue() + 20);
+				horizontalScrollbar.setValue(horizontalScrollbar.getValue() + 20);
 				if (cursorPanel.getActiveCursor() == 1) {
 					cursorPanel.setFirstCursorStartPoint(rightBorder - 20);
 					waves.setFirstCursorStartPoint(rightBorder - 20);
@@ -1023,8 +979,7 @@ public class WaveApplet extends JPanel
 				}
 			} else if (event.getX() + waves.getHorizontalOffset() < leftBorder
 					&& waves.getHorizontalOffset() != 0) {
-				horizontalScrollbar
-						.setValue(horizontalScrollbar.getValue() - 20);
+				horizontalScrollbar.setValue(horizontalScrollbar.getValue() - 20);
 				if (cursorPanel.getActiveCursor() == 1) {
 					cursorPanel.setFirstCursorStartPoint(leftBorder + 20);
 					waves.setFirstCursorStartPoint(leftBorder + 20);
@@ -1050,17 +1005,13 @@ public class WaveApplet extends JPanel
 				value = 0;
 			}
 			if (cursorPanel.getActiveCursor() == 1) {
-				cursorPanel
-						.setFirstString((Math.round(value * 100000d) / 100000d)
-								+ scale.getMeasureUnitName());
-				cursorPanel
-						.setFirstValue((Math.round(value * 100000d) / 100000d));
+				cursorPanel.setFirstString((Math.round(value * 100000d) / 100000d)
+						+ scale.getMeasureUnitName());
+				cursorPanel.setFirstValue((Math.round(value * 100000d) / 100000d));
 			} else {
-				cursorPanel
-						.setSecondString((Math.round(value * 100000d) / 100000d)
-								+ scale.getMeasureUnitName());
-				cursorPanel
-						.setSecondValue((Math.round(value * 100000d) / 100000d));
+				cursorPanel.setSecondString((Math.round(value * 100000d) / 100000d)
+						+ scale.getMeasureUnitName());
+				cursorPanel.setSecondValue((Math.round(value * 100000d) / 100000d));
 			}
 			double measuredTime = Math.abs(cursorPanel.getSecondValue()
 					- cursorPanel.getFirstValue());
@@ -1141,8 +1092,7 @@ public class WaveApplet extends JPanel
 								signalNames.getIndex())[index];
 						previousValue = results.getSignalValues().get(
 								signalNames.getIndex())[--index];
-						if (presentValue.equals("1")
-								&& previousValue.equals("0")) {
+						if (presentValue.equals("1") && previousValue.equals("0")) {
 							isFound = true;
 							valueIndex = index;
 							break;
@@ -1156,8 +1106,7 @@ public class WaveApplet extends JPanel
 								signalNames.getIndex())[index];
 						previousValue = results.getSignalValues().get(
 								signalNames.getIndex())[--index];
-						if (presentValue.equals("0")
-								&& previousValue.equals("1")) {
+						if (presentValue.equals("0") && previousValue.equals("1")) {
 							isFound = true;
 							valueIndex = index;
 							break;
@@ -1169,8 +1118,7 @@ public class WaveApplet extends JPanel
 					for (; index < results.getSignalValues().get(0).length - 1; index++) {
 						presentValue = results.getSignalValues().get(
 								signalNames.getIndex())[index];
-						nextValue = results.getSignalValues().get(
-								signalNames.getIndex())[index + 1];
+						nextValue = results.getSignalValues().get(signalNames.getIndex())[index + 1];
 						if (presentValue.equals("0") && nextValue.equals("1")) {
 							isFound = true;
 							valueIndex = index;
@@ -1184,8 +1132,7 @@ public class WaveApplet extends JPanel
 					for (; index < results.getSignalValues().get(0).length - 1; index++) {
 						presentValue = results.getSignalValues().get(
 								signalNames.getIndex())[index];
-						nextValue = results.getSignalValues().get(
-								signalNames.getIndex())[index + 1];
+						nextValue = results.getSignalValues().get(signalNames.getIndex())[index + 1];
 						if (presentValue.equals("1") && nextValue.equals("0")) {
 							isFound = true;
 							valueIndex = index;
@@ -1203,8 +1150,7 @@ public class WaveApplet extends JPanel
 						cursorPanel.setFirstCursorIndex(valueIndex);
 						cursorPanel.setFirstCursorStartPoint(transitionPoint);
 						waves.setFirstCursorStartPoint(transitionPoint);
-						value = transitionPoint * scale.getScaleStepInTime()
-								/ 100;
+						value = transitionPoint * scale.getScaleStepInTime() / 100;
 						cursorPanel
 								.setFirstString((Math.round(value * 100000d) / 100000d)
 										+ scale.getMeasureUnitName());
@@ -1214,11 +1160,10 @@ public class WaveApplet extends JPanel
 						cursorPanel.setSecondCursorIndex(valueIndex);
 						cursorPanel.setSecondCursorStartPoint(transitionPoint);
 						waves.setSecondCursorStartPoint(transitionPoint);
-						value = transitionPoint * scale.getScaleStepInTime()
-								/ 100;
-						cursorPanel.setSecondString((Math
-								.round(value * 100000d) / 100000d)
-								+ scale.getMeasureUnitName());
+						value = transitionPoint * scale.getScaleStepInTime() / 100;
+						cursorPanel
+								.setSecondString((Math.round(value * 100000d) / 100000d)
+										+ scale.getMeasureUnitName());
 						cursorPanel
 								.setSecondValue((Math.round(value * 100000d) / 100000d));
 					}
@@ -1241,27 +1186,23 @@ public class WaveApplet extends JPanel
 			// idi na aktivan
 			if (event.getSource().equals(gotoButton)) {
 				if (cursorPanel.getActiveCursor() == 1) {
-					horizontalScrollbar.setValue(cursorPanel
-							.getFirstCursorStartPoint() - 100);
-					signalValues.setValueIndex(cursorPanel
-							.getFirstCursorIndex());
+					horizontalScrollbar
+							.setValue(cursorPanel.getFirstCursorStartPoint() - 100);
+					signalValues.setValueIndex(cursorPanel.getFirstCursorIndex());
 				} else {
-					horizontalScrollbar.setValue(cursorPanel
-							.getSecondCursorStartPoint() - 100);
-					signalValues.setValueIndex(cursorPanel
-							.getSecondCursorIndex());
+					horizontalScrollbar
+							.setValue(cursorPanel.getSecondCursorStartPoint() - 100);
+					signalValues.setValueIndex(cursorPanel.getSecondCursorIndex());
 				}
 			} else {
 				if (cursorPanel.getActiveCursor() == 1) {
-					horizontalScrollbar.setValue(cursorPanel
-							.getSecondCursorStartPoint() - 100);
-					signalValues.setValueIndex(cursorPanel
-							.getSecondCursorIndex());
+					horizontalScrollbar
+							.setValue(cursorPanel.getSecondCursorStartPoint() - 100);
+					signalValues.setValueIndex(cursorPanel.getSecondCursorIndex());
 				} else {
-					horizontalScrollbar.setValue(cursorPanel
-							.getFirstCursorStartPoint() - 100);
-					signalValues.setValueIndex(cursorPanel
-							.getFirstCursorIndex());
+					horizontalScrollbar
+							.setValue(cursorPanel.getFirstCursorStartPoint() - 100);
+					signalValues.setValueIndex(cursorPanel.getFirstCursorIndex());
 				}
 			}
 			cursorPanel.repaint();
@@ -1284,11 +1225,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseReleased(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseEntered(MouseEvent event) {
@@ -1296,11 +1235,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseExited(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseClicked(MouseEvent event) {
@@ -1309,13 +1246,13 @@ public class WaveApplet extends JPanel
 			if (value >= cursorPanel.getFirstCursorStartPoint() - 5
 					&& value <= cursorPanel.getFirstCursorStartPoint() + 5) {
 				/* postavi prvi kursor aktivnim */
-				cursorPanel.setActiveCursor((byte) 1);
-				waves.setActiveCursor((byte) 1);
+				cursorPanel.setActiveCursor((byte)1);
+				waves.setActiveCursor((byte)1);
 			} else if (value >= cursorPanel.getSecondCursorStartPoint() - 5
 					&& value <= cursorPanel.getSecondCursorStartPoint() + 5) {
 				/* postavi drugi kursor aktivnim */
-				cursorPanel.setActiveCursor((byte) 2);
-				waves.setActiveCursor((byte) 2);
+				cursorPanel.setActiveCursor((byte)2);
+				waves.setActiveCursor((byte)2);
 			}
 
 			cursorPanel.repaint();
@@ -1339,7 +1276,6 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		/**
 		 * Mijenja sirinu panela s imenima signala
 		 */
@@ -1352,8 +1288,7 @@ public class WaveApplet extends JPanel
 					|| signalNames.getPanelWidth() + event.getX() >= 650) {
 				return;
 			}
-			signalNames.setPanelWidth(event.getX()
-					+ signalNames.getPanelWidth());
+			signalNames.setPanelWidth(event.getX() + signalNames.getPanelWidth());
 			signalNames.repaint();
 			cp.doLayout();
 		}
@@ -1372,7 +1307,6 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		/**
 		 * Mijenja sirinu panela s imenima signala
 		 */
@@ -1385,8 +1319,7 @@ public class WaveApplet extends JPanel
 					|| signalValues.getPanelWidth() + event.getX() >= 650) {
 				return;
 			}
-			signalValues.setPanelWidth(event.getX()
-					+ signalValues.getPanelWidth());
+			signalValues.setPanelWidth(event.getX() + signalValues.getPanelWidth());
 			signalValues.repaint();
 			cp.doLayout();
 		}
@@ -1404,11 +1337,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseReleased(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseEntered(MouseEvent event) {
@@ -1416,11 +1347,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseExited(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseClicked(MouseEvent event) {
@@ -1448,22 +1377,17 @@ public class WaveApplet extends JPanel
 					signalValues.setIndex(index);
 				}
 
-				Integer defaultVectorIndex = results.getCurrentVectorIndex()
-						.get(index);
+				Integer defaultVectorIndex = results.getCurrentVectorIndex().get(index);
 				/* provjerava je li kliknut plusic na bit-vektoru */
 				if (defaultVectorIndex != -1
-						&& results.getCurrentVectorIndex().indexOf(
-								defaultVectorIndex) == index
+						&& results.getCurrentVectorIndex().indexOf(defaultVectorIndex) == index
 						&& (event.getX() >= 0 && event.getX() <= 15)) {
-					if (!results.getExpandedSignalNames().get(
-							defaultVectorIndex)) {
-						results.getExpandedSignalNames().set(
-								defaultVectorIndex, true);
+					if (!results.getExpandedSignalNames().get(defaultVectorIndex)) {
+						results.getExpandedSignalNames().set(defaultVectorIndex, true);
 						signalNames.expand(index);
 						waves.expand(index);
 					} else {
-						results.getExpandedSignalNames().set(
-								defaultVectorIndex, false);
+						results.getExpandedSignalNames().set(defaultVectorIndex, false);
 						signalNames.collapse(index);
 						waves.collapse(index);
 					}
@@ -1492,11 +1416,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseReleased(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseEntered(MouseEvent event) {
@@ -1504,11 +1426,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseExited(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseClicked(MouseEvent event) {
@@ -1519,16 +1439,15 @@ public class WaveApplet extends JPanel
 			 * trenutni pasivni kursor ce se pomaknuti tocno na mjesto na kojem
 			 * smo kliknuli misem i ostat ce pasivan
 			 */
-			if ((mouseButton == 2 || mouseButton == 3)
-					&& event.getClickCount() == 1) {
+			if ((mouseButton == 2 || mouseButton == 3) && event.getClickCount() == 1) {
 				int xValue = event.getX() + horizontalScrollbar.getValue();
 				double timeValue = xValue * scale.getScaleStepInTime() / 100;
 				if (cursorPanel.getActiveCursor() == 1) {
 					cursorPanel.setSecondCursorStartPoint(xValue);
 					waves.setSecondCursorStartPoint(xValue);
-					cursorPanel.setSecondString((Math
-							.round(timeValue * 100000d) / 100000d)
-							+ scale.getMeasureUnitName());
+					cursorPanel
+							.setSecondString((Math.round(timeValue * 100000d) / 100000d)
+									+ scale.getMeasureUnitName());
 					cursorPanel
 							.setSecondValue((Math.round(timeValue * 100000d) / 100000d));
 				} else {
@@ -1567,8 +1486,7 @@ public class WaveApplet extends JPanel
 					transitionPoint += scale.getDurationInPixels()[valueIndex];
 				}
 				showValue.show(cp, 610, 47);
-				currentValue
-						.setText(results.getSignalValues().get(index)[valueIndex]);
+				currentValue.setText(results.getSignalValues().get(index)[valueIndex]);
 			}
 
 			signalNames.repaint();
@@ -1627,11 +1545,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseReleased(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseEntered(MouseEvent event) {
@@ -1639,11 +1555,9 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void mouseExited(MouseEvent event) {
 			;
 		}
-
 
 
 		public void mouseClicked(MouseEvent event) {
@@ -1671,12 +1585,10 @@ public class WaveApplet extends JPanel
 				verticalScrollbar.setValue(verticalScrollbar.getValue() - 5);
 				break;
 			case 'd' :
-				horizontalScrollbar
-						.setValue(horizontalScrollbar.getValue() + 5);
+				horizontalScrollbar.setValue(horizontalScrollbar.getValue() + 5);
 				break;
 			case 'a' :
-				horizontalScrollbar
-						.setValue(horizontalScrollbar.getValue() - 5);
+				horizontalScrollbar.setValue(horizontalScrollbar.getValue() - 5);
 				break;
 			case 'b' :
 				defaultButton.doClick();
@@ -1706,7 +1618,6 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void keyPressed(KeyEvent event) {
 			int key = event.getKeyCode();
 			switch (key) {
@@ -1717,12 +1628,10 @@ public class WaveApplet extends JPanel
 				verticalScrollbar.setValue(verticalScrollbar.getValue() + 5);
 				break;
 			case KeyEvent.VK_RIGHT :
-				horizontalScrollbar
-						.setValue(horizontalScrollbar.getValue() + 5);
+				horizontalScrollbar.setValue(horizontalScrollbar.getValue() + 5);
 				break;
 			case KeyEvent.VK_LEFT :
-				horizontalScrollbar
-						.setValue(horizontalScrollbar.getValue() - 5);
+				horizontalScrollbar.setValue(horizontalScrollbar.getValue() - 5);
 				break;
 			case KeyEvent.VK_HOME :
 				verticalScrollbar.setValue(0);
@@ -1742,7 +1651,6 @@ public class WaveApplet extends JPanel
 		}
 
 
-
 		public void keyReleased(KeyEvent event) {
 			;
 		}
@@ -1753,41 +1661,51 @@ public class WaveApplet extends JPanel
 		return null;
 	}
 
+
 	public String getFileName() {
 		return fileContent.getFileName();
 	}
+
 
 	public String getProjectName() {
 		return fileContent.getProjectName();
 	}
 
+
 	public IWizard getWizard() {
 		return null;
 	}
 
+
 	public void highlightLine(int line) {
-		;	
+		;
 	}
+
 
 	public boolean isModified() {
 		return false;
 	}
 
+
 	public boolean isReadOnly() {
 		return this.readOnly;
 	}
+
 
 	public boolean isSavable() {
 		return this.savableFlag;
 	}
 
+
 	public void setProjectContainer(ProjectContainer container) {
-		//this.projectContainer = container;
+		// this.projectContainer = container;
 	}
 
+
 	public void setReadOnly(boolean flag) {
-		this.readOnly = flag;	
+		this.readOnly = flag;
 	}
+
 
 	public void setSavable(boolean flag) {
 		this.savableFlag = flag;
