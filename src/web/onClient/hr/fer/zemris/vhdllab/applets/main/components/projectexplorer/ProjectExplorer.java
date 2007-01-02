@@ -747,7 +747,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	}
 
 	public void refreshProject(String projectName) {
-		// TODO Auto-generated method stub
-		
+		addProject(projectName);	
 	}
 }
