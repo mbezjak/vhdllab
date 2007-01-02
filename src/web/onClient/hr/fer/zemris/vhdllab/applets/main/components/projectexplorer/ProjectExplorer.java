@@ -16,11 +16,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -747,5 +744,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 		}
 		return null;
+	}
+
+
+	public void refreshHierarchy(Hierarchy h) {
+		// TODO Auto-generated method stub
+		
 	}
 }

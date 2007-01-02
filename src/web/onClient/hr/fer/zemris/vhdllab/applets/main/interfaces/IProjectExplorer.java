@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+
 import java.util.List;
 
 public interface IProjectExplorer {
@@ -30,6 +32,7 @@ public interface IProjectExplorer {
 	String getActiveProject();
 	List<String> getAllProjects();
 	List<String> getFilesByProject(String projectName);
+	void refreshHierarchy(Hierarchy h);
 	void closeProject(String projectName);
 	void removeProject(String projectName);
 	void removeFile(String projectName, String fileName);

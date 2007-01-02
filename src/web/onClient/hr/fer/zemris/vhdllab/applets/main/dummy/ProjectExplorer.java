@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main.dummy;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -118,7 +119,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		}
 	}
 
-
+	public void refreshHierarchy(Hierarchy h) {
+	}
 
 	public String getActiveProject() {
 		return projectName;

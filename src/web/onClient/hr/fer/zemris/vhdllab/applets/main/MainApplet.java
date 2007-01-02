@@ -28,6 +28,7 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.applet.Applet;
@@ -152,11 +153,11 @@ public class MainApplet
 				}
 			}
 			
-			String statusBarText = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-			statusBar.setText(statusBarText);
+			String text = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
+			echoStatusText(text);
 		} catch (UniformAppletException e) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-			statusBar.setText(text);
+			echoStatusText(text);
 		}
 
 	}
@@ -622,7 +623,7 @@ public class MainApplet
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
 						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -641,7 +642,7 @@ public class MainApplet
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
 						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -666,7 +667,7 @@ public class MainApplet
 						compileWithDialog();
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -682,7 +683,7 @@ public class MainApplet
 						compile((IEditor)editorPane.getSelectedComponent());
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -698,7 +699,7 @@ public class MainApplet
 						compileLastHistoryResult();
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -715,7 +716,7 @@ public class MainApplet
 						simulateWithDialog();
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -731,7 +732,7 @@ public class MainApplet
 						simulate((IEditor)editorPane.getSelectedComponent());
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -747,7 +748,7 @@ public class MainApplet
 						simulateLastHistoryResult();
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-						statusBar.setText(text);
+						echoStatusText(text);
 					}
 				}
 			});
@@ -1006,6 +1007,10 @@ public class MainApplet
 	}
 
 	public Preferences getPreferences(String type) throws UniformAppletException {
+		Hierarchy h = null;
+		for(Pair p : h) {
+			
+		}
 		return cache.getPreferences(type);
 	}
 	
@@ -1043,8 +1048,8 @@ public class MainApplet
 		return projectExplorer.getAllProjects();
 	}
 	
-	public IStatusBar getStatusBar() {
-		return statusBar;
+	public void echoStatusText(String text) {
+		statusBar.setText(text);
 	}
 	
 	/* (non-Javadoc)
@@ -1195,11 +1200,11 @@ public class MainApplet
 				}
 			}
 			
-			String statusBarText = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-			statusBar.setText(statusBarText);
+			String text = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
+			echoStatusText(text);
 		} catch (UniformAppletException e) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-			statusBar.setText(text);
+			echoStatusText(text);
 		}
 	}
 	
@@ -1238,7 +1243,7 @@ public class MainApplet
 		if(exists) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
 			text = Utilities.replacePlaceholders(text, new String[] {fileName});
-			statusBar.setText(text);
+			echoStatusText(text);
 			return;
 		}
 		cache.createFile(projectName, fileName, type);
@@ -1354,23 +1359,47 @@ public class MainApplet
 	}
 	
 	private void saveEditors(List<IEditor> editorsToSave) {
-		if(editorsToSave == null) return;
+		if(editorsToSave == null || editorsToSave.isEmpty()) return;
+		List<IEditor> savedEditors = new ArrayList<IEditor>();
+		List<String> projects = new ArrayList<String>();
 		for(IEditor editor : editorsToSave) {
 			if(editor.isSavable() && editor.isModified()) {
 				String fileName = editor.getFileName();
 				String projectName = editor.getProjectName();
 				String content = editor.getData();
 				if(content == null) continue;
+				savedEditors.add(editor);
+				if(!projects.contains(projectName)) {
+					projects.add(projectName);
+				}
 				try {
 					cache.saveFile(projectName, fileName, content);
 					resetEditorTitle(false, projectName, fileName);
+					String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
+					text = Utilities.replacePlaceholders(text, new String[] {fileName});
+					echoStatusText(text);
 				} catch (UniformAppletException e) {
 					String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
 					text = Utilities.replacePlaceholders(text, new String[] {fileName});
-					statusBar.setText(text);
+					echoStatusText(text);
 				}
 			}
 		}
+		
+		for(String projectName : projects) {
+			try {
+				Hierarchy h = extractHierarchy(projectName);
+				projectExplorer.refreshHierarchy(h);
+			} catch (UniformAppletException e) {
+				String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_RELOAD_HIERARCHY);
+				text = Utilities.replacePlaceholders(text, new String[] {projectName});
+				echoStatusText(text);
+			}
+		}
+		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED_ALL);
+		String numberOfFiles = String.valueOf(savedEditors.size());
+		text = Utilities.replacePlaceholders(text, new String[] {numberOfFiles});
+		echoStatusText(text);
 	}
 	
 	private void closeEditor(IEditor editor) {

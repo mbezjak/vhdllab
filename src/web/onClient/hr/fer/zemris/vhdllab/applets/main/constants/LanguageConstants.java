@@ -284,6 +284,14 @@ public class LanguageConstants {
 	 */
 	public static final String STATUSBAR_EXISTS_PROJECT = "statusbar.exists.project";
 	/**
+	 * Key for StatusBar when file is saved.
+	 */
+	public static final String STATUSBAR_FILE_SAVED = "statusbar.file.saved";
+	/**
+	 * Key for StatusBar when all file are saved.
+	 */
+	public static final String STATUSBAR_FILE_SAVED_ALL = "statusbar.file.saved.all";
+	/**
 	 * Key for StatusBar when file could not be saved.
 	 */
 	public static final String STATUSBAR_CANT_SAVE_FILE = "statusbar.cant.save.file";
@@ -319,6 +327,10 @@ public class LanguageConstants {
 	 * Key for StatusBar when cant open view.
 	 */
 	public static final String STATUSBAR_CANT_OPEN_VIEW = "statusbar.cant.open.view";
+	/**
+	 * Key for StatusBar when cant reload hierarchy.
+	 */
+	public static final String STATUSBAR_CANT_RELOAD_HIERARCHY = "statusbar.cant.reload.hierarchy";
 
 
 }

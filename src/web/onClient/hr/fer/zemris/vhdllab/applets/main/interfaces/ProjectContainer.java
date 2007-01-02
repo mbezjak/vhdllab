@@ -23,7 +23,7 @@ public interface ProjectContainer {
 	void createNewFileInstance(String type) throws UniformAppletException;
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
 	IView getView(String type) throws UniformAppletException;
-	IStatusBar getStatusBar();
+	void echoStatusText(String text);
 	void setActiveProject(String projectName);
 	List<String> getAllProjects();
 	void compile(String projectName, String fileName) throws UniformAppletException;
