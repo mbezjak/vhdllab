@@ -265,9 +265,11 @@ class Scale extends JPanel
 		pixelFactor = 100 / scaleStepInTime;
 		scaleEndPointInPixels *= pixelFactor;
 
+     
         for (int i = 0; i < transitionPoints.length; i++) {
             transitionPoints[i] = (int)(transitionPoints[i] * measureUnit);
         }
+ 
         // izracunaj durationsInPixels
         for (int j = 0; j < durationsInPixels.length; j++) {
             durationsInPixels[j] = (int)(transitionPoints[j + 1] * pixelFactor) -
@@ -393,6 +395,29 @@ class Scale extends JPanel
 
 
     /**
+     * Zumiraj tako da sve stane u jedan prozor
+     */
+    public void fitToWindow() {
+        scaleFactor = (double)800 / scaleEndPointInPixels;
+        setDurationsInPixelsAfterZoom(scaleFactor);
+    }
+
+
+    /**
+     * Metoda vraca u defaultno stanje 
+     */
+    public void unfitToWindow() {
+        scaleFactor = 1;
+        scaleStepInTime = minimumDurationInTime;
+		pixelFactor = 100 / scaleStepInTime;
+		scaleEndPointInPixels *= pixelFactor;
+
+        setDurationsInPixelsAfterZoom(scaleFactor);
+        System.out.println("da");
+    }
+
+
+    /**
      * Crtanje komponente
      */
     public void paintComponent(Graphics g)
@@ -461,7 +486,7 @@ class Scale extends JPanel
         String tempMeasureUnitName = measureUnitName;
         
         int endPointInPixels = endPoint;
-        int potention = 1; 
+        double potention = 1; 
         while (x < endPointInPixels)
         {
             /* svaka se vrijednost zaokruzuje na 10 decimala */
@@ -515,7 +540,10 @@ class Scale extends JPanel
                     - offsetXAxis, SCALE_VALUE_YAXIS);
             
 			scaleValue += tempScaleStepInTime;
+            System.out.println("pixelFactor " + pixelFactor);
+            System.out.println("potention " + potention);
             x = (int)(scaleValue * potention * pixelFactor);
         }
 	}
 }
+

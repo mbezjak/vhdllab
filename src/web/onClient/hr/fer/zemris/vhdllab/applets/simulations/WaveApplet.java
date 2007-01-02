@@ -1613,6 +1613,18 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 			case ')' :
 				zoomOutTenButton.doClick();
 				break;
+            case 'f' :
+                scale.fitToWindow();
+                scale.repaint();
+                waves.repaint();
+                cursorPanel.repaint();
+                break;
+                case 'u' :
+                scale.unfitToWindow();
+                scale.repaint();
+                waves.repaint();
+                cursorPanel.repaint();
+                break;
 			}
 			previousKey = key;
 		}

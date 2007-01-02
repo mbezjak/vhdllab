@@ -133,5 +133,7 @@ class HelpPanel extends JPanel
         g.drawString("pageUp == page up", 5, 510);
         g.drawString("pageDown == page down", 5, 530);
         g.drawString("end and home == end and home", 5, 550);
+        g.drawString("f == fit to window", 5, 570);
+        g.drawString("u == default zoom", 5, 590);
     }
 }
