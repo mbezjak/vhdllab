@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.interfaces;
+package hr.fer.zemris.vhdllab.applets.main.model;
 
 public class FileContent {
 	

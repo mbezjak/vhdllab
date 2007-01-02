@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+
 /**
  * Interface that describes communication between MainApplet and instance that implemets this interface.
  */

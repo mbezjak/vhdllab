@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.dummy;
+package hr.fer.zemris.vhdllab.applets.main.components.dummy;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

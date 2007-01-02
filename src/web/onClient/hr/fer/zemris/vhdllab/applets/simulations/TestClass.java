@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.vhdl.simulations.VcdParser;
 
 import java.awt.Container;

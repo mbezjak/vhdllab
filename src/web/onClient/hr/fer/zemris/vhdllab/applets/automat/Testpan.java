@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

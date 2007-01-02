@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.dialogs;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.FileIdentifier;
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
