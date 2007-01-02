@@ -564,7 +564,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 * Metoda postavlja aktivni projekt
 	 */
 	public void setActiveProject(String projectName) {
-		projectContainer.setActiveProject(projectName);
+		this.projectName = projectName;
 	}
 
 
