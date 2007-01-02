@@ -2,7 +2,9 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,17 +19,28 @@ public class Hierarchy implements Iterable<Pair> {
 
 	/** Serialization key for pair. */
 	private static final String SERIALIZATION_KEY_PAIR = "pair";
+	/** Serialization key for project name. */
+	private static final String SERIALIZATION_KEY_PROJECT_NAME = "project.name";
 	
+	/** A name of a project for whom this hierachy is created */
+	private String projectName;
 	/** A set of pairs that represent this hierarchy */
 	private Set<Pair> pairs;
+	/** A map of pairs for quick access to hierarchy */
+	private Map<String, Pair> pairsMap;
 	
 	/**
 	 * Constructor.
-	 * @param pairs pairs that represents this hierarchy.
+	 * @param projectName a name of a project for whom this hierachy is created
+	 * @throws NullPointerException if <code>projectName</code> is <code>null</code>
 	 */
-	public Hierarchy(Set<Pair> pairs) {
+	public Hierarchy(String projectName) {
+		if(projectName == null) {
+			throw new NullPointerException("Project name or pairs can not be null.");
+		}
 		this.pairs = new TreeSet<Pair>();
-		this.pairs.addAll(pairs);
+		this.pairsMap = new HashMap<String, Pair>();
+		this.projectName = projectName;
 	}
 	
 	/**
@@ -65,6 +78,40 @@ public class Hierarchy implements Iterable<Pair> {
     	}
     	return children;
     }
+    
+    /**
+     * Getter for project name
+     * @return a name of a project
+     */
+    public String getProjectName() {
+		return projectName;
+	}
+    
+    /**
+     * Returns a pair containing <code>fileName</code>. If this hierarchy does
+     * not contain such file name this method will return <code>null</code>.
+     * @param fileName a name of a file for which to return <code>Pair</code>
+     * @return a pair containing <code>fileName</code>
+     */
+    public Pair getPair(String fileName) {
+    	if(fileName == null) {
+    		throw new NullPointerException("File name can not be null.");
+    	}
+		return pairsMap.get(fileName.toUpperCase());
+	}
+    
+    /**
+     * Adds a pair to this hierarchy
+     * @param pair a pair to add
+     * @throws NullPointerException if <code>pair</code> is <code>null</code>
+     */
+    public void addPair(Pair pair) {
+		if(pair == null) {
+			throw new NullPointerException("Pair can not be null.");
+		}
+		pairs.add(pair);
+		pairsMap.put(pair.getFileName().toUpperCase(), pair);
+	}
    
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
@@ -79,6 +126,7 @@ public class Hierarchy implements Iterable<Pair> {
 	 */
 	public String serialize() {
 		Properties p = new Properties();
+		p.setProperty(SERIALIZATION_KEY_PROJECT_NAME, projectName);
 		int i = 1;
 		for(Pair pair : pairs) {
 			p.setProperty(SERIALIZATION_KEY_PAIR + "." + i, pair.serialize());
@@ -96,13 +144,15 @@ public class Hierarchy implements Iterable<Pair> {
 		if(data == null) throw new NullPointerException("Data can not be null.");
 		Properties p = XMLUtil.deserializeProperties(data);
 		if(p == null) throw new IllegalArgumentException("Unknown serialization format: data");
-		Set<Pair> pairs = new TreeSet<Pair>();
+		String projectName = p.getProperty(SERIALIZATION_KEY_PROJECT_NAME);
+		Hierarchy h = new Hierarchy(projectName);
 		for(int i = 1; true; i++) {
-			String pair = p.getProperty(SERIALIZATION_KEY_PAIR + "." + i);
-			if(pair ==  null) break;
-			pairs.add(Pair.deserialize(pair));
+			String serializedPair = p.getProperty(SERIALIZATION_KEY_PAIR + "." + i);
+			if(serializedPair ==  null) break;
+			Pair pair = Pair.deserialize(serializedPair);
+			h.addPair(pair);
 		}
-		return new Hierarchy(pairs);
+		return h;
 	}
 	
 	/* (non-Javadoc)
@@ -114,7 +164,8 @@ public class Hierarchy implements Iterable<Pair> {
 		if (!(obj instanceof Hierarchy)) return false;
 		Hierarchy other = (Hierarchy) obj;
 		
-		return this.pairs.equals(other.pairs);
+		return this.projectName.equals(other.projectName) && 
+			this.pairs.equals(other.pairs);
 	}
 	
 	/* (non-Javadoc)
@@ -122,7 +173,7 @@ public class Hierarchy implements Iterable<Pair> {
 	 */
 	@Override
 	public int hashCode() {
-		return pairs.hashCode();
+		return projectName.hashCode() ^ pairs.hashCode();
 	}
 	
 	/* (non-Javadoc)
@@ -131,11 +182,12 @@ public class Hierarchy implements Iterable<Pair> {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(10 * pairs.size());
-		sb.append("Hierarchy contains ").append(pairs.size()).append(" pairs:\n");
+		sb.append("Hierarchy for project '").append(projectName)
+			.append("' contains ").append(pairs.size()).append(" pairs:\n");
 		for(Pair p : pairs) {
 			sb.append(p.toString()).append("\n");
 		}
-		// remove last chacacter
+		// remove last chacacter (\n)
 		sb.replace(sb.length()-1, sb.length(), "");
 		return sb.toString();
 	}

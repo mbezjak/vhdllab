@@ -60,42 +60,13 @@ public class FileDAOMemoryImpl implements FileDAO {
 	}
 
 	public synchronized boolean exists(Long projectId, String name) throws DAOException {
-		// Better implementation:
 		FileNameIndexKey k = new FileNameIndexKey(name.toUpperCase(),projectId);
 		return nameIndex.containsKey(k);
-		/* Old implementation:
-		Collection<File> c = files.values();
-		List<File> fileList = new ArrayList<File>(c);
-		for(File f : fileList) {
-			if(!f.getFileName().equals(name)) continue;
-			Project p = f.getProject();
-			if(p==null) {
-				if(projectId==null) return true;
-				continue;
-			}
-			if(p.getId().equals(projectId)) return true;
-		}
-		return false;
-		*/
 	}
 
 	public synchronized File findByName(Long projectId, String name) throws DAOException {
-		// Better implementation:
 		FileNameIndexKey k = new FileNameIndexKey(name.toUpperCase(),projectId);
 		return nameIndex.get(k);
-		/* Old implementation:
-		Collection<File> c = files.values();
-		List<File> fileList = new ArrayList<File>(c);
-		for(File f : fileList) {
-			if(!f.getFileName().equals(name)) continue;
-			Project p = f.getProject();
-			if(p==null) {
-				if(projectId==null) return f;
-				continue;
-			}
-			if(p.getId().equals(projectId)) return f;
-		}
-		return null;*/
 	}
 	
 	private static class FileNameIndexKey {

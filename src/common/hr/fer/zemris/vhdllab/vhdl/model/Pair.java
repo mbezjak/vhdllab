@@ -17,6 +17,8 @@ public class Pair implements Comparable<Pair>{
 	
 	/** Serialization key for file name */
 	private static final String SERIALIZATION_KEY_FILE_NAME = "file.name";
+	/** Serialization key for file type */
+	private static final String SERIALIZATION_KEY_FILE_TYPE = "file.type";
 	/** Serialization key for a parent */
 	private static final String SERIALIZATION_KEY_PARENT = "parent";
 
@@ -24,46 +26,26 @@ public class Pair implements Comparable<Pair>{
 	private Set<String> parents;
 	/** A name of a file that this pair represents */
 	private String fileName;
+	/** A file type of <code>fileName</code> */
+	private String fileType;
 	
 	/**
-	 * Constructor. <code>FileName</code> and files in <code>parent</code>
-	 * are case insensitive.
+	 * Constructor. <code>FileName</code> is case insensitive.
 	 * @param fileName a name of a file that this pair represents
-	 * @param parents a set of files in which <code>fileName</code>
-	 * 		is used
-	 * @throws NullPointerException if <code>fileName</code> or
-	 * 		<code>parents</code> are <code>null</code>
-	 * @throws IllegalArgumentException if <code>parents</code>
-	 * 		contains <code>fileName</code> or if <code>parents</code>
-	 * 		contains two equal (case is ignored) files
+	 * @param fileType a type of a file that this pair represents
+	 * @throws NullPointerException if <code>fileName</code>,
+	 * 		<code>fileType</code> or <code>parents</code> is <code>null</code>
 	 */
-	public Pair(String fileName, Set<String> parents) {
+	public Pair(String fileName, String fileType) {
 		if(fileName == null) {
 			throw new NullPointerException("File name can not be null.");
 		}
-		if(parents == null) {
-			throw new NullPointerException("Parents can not be null.");
-		}
-		for(String p : parents) {
-			if(fileName.equalsIgnoreCase(p)) {
-				throw new IllegalArgumentException("File cant depend on itself.");
-			}
-		}
-		int numberOfOccurences = 0;
-		for(String p : parents) {
-			numberOfOccurences = 0;
-			for(String pOther : parents) {
-				if(p.equalsIgnoreCase(pOther)) {
-					numberOfOccurences++;
-				}
-			}
-			if(numberOfOccurences != 1) {
-				throw new IllegalArgumentException("Files are case insensitive!");
-			}
+		if(fileType == null) {
+			throw new NullPointerException("File type can not be null.");
 		}
 		this.fileName = fileName;
+		this.fileType = fileType;
 		this.parents = new TreeSet<String>();
-		this.parents.addAll(parents);
 	}
 
 	/**
@@ -73,6 +55,14 @@ public class Pair implements Comparable<Pair>{
 	 */
 	public String getFileName() {
 		return fileName;
+	}
+	
+	/**
+	 * Getter for file type.
+	 * @return a type of a file
+	 */
+	public String getFileType() {
+		return fileType;
 	}
 
 	/**
@@ -86,12 +76,30 @@ public class Pair implements Comparable<Pair>{
 	}
 	
 	/**
+	 * Add parent to this pair. <code>Parent</code> represents file name of another
+	 * file and therfor is case insensitive.
+	 * @param parent
+	 * @throws NullPointerException if <code>parent</code> is <code>null</code>
+	 */
+	public void addParent(String parent) {
+		if(parent == null)  {
+			throw new NullPointerException("Parent can not be null.");
+		}
+		if(fileName.equalsIgnoreCase(parent)) return;
+		for(String p : parents) {
+			if(parent.equalsIgnoreCase(p)) return;
+		}
+		this.parents.add(parent);
+	}
+	
+	/**
 	 * Serializes this pair.
 	 * @return a serialized string
 	 */
 	public String serialize() {
 		Properties p = new Properties();
 		p.setProperty(SERIALIZATION_KEY_FILE_NAME, fileName);
+		p.setProperty(SERIALIZATION_KEY_FILE_TYPE, fileType);
 		int i = 1;
 		for(String parent : parents) {
 			p.setProperty(SERIALIZATION_KEY_PARENT + "." + i, parent);
@@ -109,13 +117,14 @@ public class Pair implements Comparable<Pair>{
 		Properties p = XMLUtil.deserializeProperties(data);
 		if(p == null) throw new IllegalArgumentException("Unknown serialization format: data");
 		String fileName = p.getProperty(SERIALIZATION_KEY_FILE_NAME);
-		Set<String> parents = new TreeSet<String>();
+		String fileType = p.getProperty(SERIALIZATION_KEY_FILE_TYPE);
+		Pair pair = new Pair(fileName, fileType);
 		for(int i = 1; true; i++) {
 			String parent = p.getProperty(SERIALIZATION_KEY_PARENT + "." + i);
 			if(parent ==  null) break;
-			parents.add(parent);
+			pair.addParent(parent);
 		}
-		return new Pair(fileName, parents);
+		return pair;
 	}
 	
 	/* (non-Javadoc)
@@ -124,10 +133,11 @@ public class Pair implements Comparable<Pair>{
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) return false;
-		if (!(obj instanceof Pair)) return false;
+		if(!(obj instanceof Pair)) return false;
 		Pair other = (Pair) obj;
 		
-		if(!this.fileName.equalsIgnoreCase(other.fileName)) return false;
+		if(!(this.fileName.equalsIgnoreCase(other.fileName) &&
+				this.fileType.equals(other.fileType))) return false;
 		if(this.parents.size() != other.parents.size()) return false;
 		// Compare two sets by ignoring case
 		boolean found = false;
@@ -149,8 +159,9 @@ public class Pair implements Comparable<Pair>{
 	@Override
 	public int hashCode() {
 		int hash = fileName.toUpperCase().hashCode();
+		hash ^= fileType.hashCode();
 		for(String p : parents) {
-			hash += p.toUpperCase().hashCode();
+			hash ^= p.toUpperCase().hashCode();
 		}
 		return hash;
 	}
@@ -161,6 +172,9 @@ public class Pair implements Comparable<Pair>{
 	public int compareTo(Pair o) {
 		if(this.equals(o)) return 0;
 		int compare = this.fileName.compareToIgnoreCase(o.getFileName());
+		if(compare != 0) return compare;
+
+		compare = this.fileType.compareTo(o.fileType);
 		if(compare != 0) return compare;
 
 		compare = parents.size() - o.parents.size();
@@ -186,11 +200,13 @@ public class Pair implements Comparable<Pair>{
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(10 * parents.size());
-		sb.append(fileName).append(" has parents [");
+		sb.append(fileName).append(" with type ").append(fileType)
+			.append(" has ").append(parents.size()).append(" parents:\n");
 		for(String p : parents) {
-			sb.append(p).append(", ");
+			sb.append(p).append("\n");
 		}
-		sb.append("]");
+		// remove last chacacter (\n)
+		sb.replace(sb.length()-1, sb.length(), "");
 		return sb.toString();
 	}
 

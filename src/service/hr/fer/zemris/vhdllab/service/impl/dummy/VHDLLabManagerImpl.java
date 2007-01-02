@@ -523,18 +523,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#extractHierarchy(hr.fer.zemris.vhdllab.model.Project)
 	 */
 	public Hierarchy extractHierarchy(Project project) throws ServiceException {
-		Set<File> filesInProject = project.getFiles();
-		VHDLProvider provider = new VHDLProvider();
-		List<String> identifiers = new ArrayList<String>();
-		for(File f : filesInProject) {
-			String content = generateVHDL(f);
-			provider.addSource(f.getFileName(), content);
-			identifiers.add(f.getFileName());
-		}
-		
 		Hierarchy h;
 		try {
-			h = Extractor.extractHierarchy(identifiers, provider);
+			h = Extractor.extractHierarchy(project, this);
 		} catch (Exception e) {
 			throw new ServiceException(e.getMessage());
 		}

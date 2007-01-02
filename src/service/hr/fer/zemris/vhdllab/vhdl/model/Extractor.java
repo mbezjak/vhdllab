@@ -1,10 +1,13 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
+import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.model.Project;
+import hr.fer.zemris.vhdllab.service.ServiceException;
+import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * <p>This class contains various static method for VHDL source examination.</p>
@@ -855,7 +857,7 @@ public class Extractor {
 	 *         if file could not be read or other error occur.
 	 */
 	public static String readFile(String fileName) {
-		File f = new File(fileName);
+		java.io.File f = new java.io.File(fileName);
 		StringBuilder sb = new StringBuilder((int)f.length());
 		BufferedReader br = null;
 		try {
@@ -992,66 +994,33 @@ public class Extractor {
 		}
 	}
 	
-	
-	public static Hierarchy extractHierarchy(Collection<String> identifiers, VHDLSourceProvider sourceProvider) throws Exception {
-		DefaultEntityIdentifierBundle bundle = new DefaultEntityIdentifierBundle();
-		UsageMap usageMap = new UsageMap();
-		
-		for(String identifier : identifiers) {
-			String source = sourceProvider.provide(identifier);
-			Entity entity = Extractor.extractInterface(source);
-			bundle.addEntityIdentifierPair(new DefaultEntityIdentifierPair(entity.getEntity_name(), identifier));
-			
-			Set<String> usedComponents = Extractor.extractUsedComponents(source);
-			
-			for(String componentName : usedComponents) {
-				usageMap.addUsage(entity.getEntity_name(), componentName);
-			}
+	public static Hierarchy extractHierarchy(Project project, VHDLLabManager labman) throws Exception {
+		Hierarchy h = new Hierarchy(project.getProjectName());
+		for(File f : project.getFiles()) {
+			Pair pair = new Pair(f.getFileName(), f.getFileType());
+			h.addPair(pair);
+			createHierarchy(f, h, labman);
 		}
-		
-		List<String> rootEntities = new ArrayList<String>();
-		for(EntityIdentifierPair pair : bundle) {
-			if(usageMap.getEntitiesWhichUseEntity(pair.getEntityName().toUpperCase())==null) {
-				rootEntities.add(pair.getEntityName());
-			}
-		}
-		
-		Map<String, Pair> pairs = new HashMap<String, Pair>();
-		for(String name : rootEntities) {
-			createHierarchy(name, usageMap, pairs);
-		}
-		
-		Collection<Pair> c = pairs.values();
-		Hierarchy h = new Hierarchy(new TreeSet<Pair>(c));
 		return h;
-		
-		// previous implementation
-		/*System.out.println("Hierarchy 1:\n");
-		List<String> rootEntities = new ArrayList<String>();
-		for(EntityIdentifierPair pair : bundle) {
-			if(usageMap.getEntitiesWhichUseEntity(pair.getEntityName().toUpperCase())==null) {
-				rootEntities.add(pair.getEntityName());
-			}
-		}
-		
-		for(String name : rootEntities) {
-			showTreeEntry(name, usageMap, "");
-		}
-
-		System.out.println("\nHierarchy 2:\n");
-		List<String> rootEntities2 = new ArrayList<String>();
-		for(EntityIdentifierPair pair : bundle) {
-			if(usageMap.getEntitiesUsedByEntity(pair.getEntityName().toUpperCase())==null) {
-				rootEntities2.add(pair.getEntityName());
-			}
-		}
-		
-		for(String name : rootEntities2) {
-			showTreeEntry2(name, usageMap, "");
-		}*/
 	}
 	
-	private static void createHierarchy(String name, UsageMap usageMap, Map<String, Pair> pairs) {
+	private static void createHierarchy(File file, Hierarchy h, VHDLLabManager labman) throws ServiceException {
+		if(file == null) return;
+		String source = labman.generateVHDL(file);
+		Set<String> usedComponents = Extractor.extractUsedComponents(source);
+		for(String component : usedComponents) {
+			File usedComponentFile = labman.findByName(file.getProject().getId(), component);
+			Pair pair = h.getPair(component);
+			if(pair == null) {
+				h.addPair(new Pair(usedComponentFile.getFileName(), usedComponentFile.getFileType()));
+				pair = h.getPair(usedComponentFile.getFileName());
+			}
+			pair.addParent(file.getFileName());
+			createHierarchy(usedComponentFile, h, labman);
+		}
+	}
+	
+	/*private static void createHierarchy(String name, UsageMap usageMap, Map<String, Pair> pairs) {
 		if(pairs.get(name) == null) {
 			pairs.put(name, new Pair(name, new TreeSet<String>()));
 		}
@@ -1063,26 +1032,6 @@ public class Extractor {
 			parents.addAll(pairs.get(name2).getParents());
 			parents.add(name);
 			pairs.put(name2, new Pair(name2, parents));
-		}
-	}
-
-	/*private static void showTreeEntry(String name, UsageMap usageMap, String indentation) {
-		System.out.println(indentation + name);
-		Set<String> set = usageMap.getEntitiesUsedByEntity(name);
-		if(set==null) return;
-		indentation = indentation + "    ";
-		for(String name2 :set) {
-			showTreeEntry(name2, usageMap, indentation);
-		}
-	}
-
-	private static void showTreeEntry2(String name, UsageMap usageMap, String indentation) {
-		System.out.println(indentation + name);
-		Set<String> set = usageMap.getEntitiesWhichUseEntity(name);
-		if(set==null) return;
-		indentation = indentation + "    ";
-		for(String name2 :set) {
-			showTreeEntry2(name2, usageMap, indentation);
 		}
 	}*/
 
