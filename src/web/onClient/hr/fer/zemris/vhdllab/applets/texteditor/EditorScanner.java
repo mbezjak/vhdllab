@@ -9,7 +9,11 @@ import javax.swing.text.StyledEditorKit;
  
 
 public class EditorScanner extends Thread {
-	
+		private boolean stoprequested = false;
+		
+		public void stopScanner() {
+			stoprequested = true;
+		}
 
 		public void run () {
 			//AbstractDocument doc;
@@ -26,6 +30,7 @@ public class EditorScanner extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			if (stoprequested) break;
 		 boolean flag=true;
          int i;
 		 String temp = null;

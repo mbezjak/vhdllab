@@ -2,13 +2,15 @@ package hr.fer.zemris.vhdllab.applets.texteditor;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 public class TextEditorTest extends JFrame {
-	
+	TextEditor editor= null; 
 	/**
 	 * 
 	 */
@@ -21,7 +23,7 @@ public class TextEditorTest extends JFrame {
 
 	private void createGUI() {
 		this.getContentPane().setLayout(new BorderLayout());
-		TextEditor editor = new TextEditor();
+		 editor = new TextEditor();
 		
  
 		 
@@ -45,11 +47,48 @@ public class TextEditorTest extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		TextEditorTest edi = new TextEditorTest();
+		final TextEditorTest edi = new TextEditorTest();
 		edi.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		edi.pack();
 		edi.setVisible(true);
+		edi.addWindowListener(new WindowListener() {
 		
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+		
+			}
+		
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+		
+			}
+		
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+		
+			}
+		
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+		
+			}
+		
+			public void windowClosed(WindowEvent e) {
+				edi.editor.cleanUp();
+				
+			}
+		
+			public void windowClosing(WindowEvent e) {
+				// TODO Auto-generated method stub
+		
+			}
+		
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+		
+			}
+		
+		});
 
 	}
 

@@ -448,15 +448,19 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 			}
 		}
 	}
-
+	InitScanner scanner = new InitScanner();
 	public void run() {
 		initGUI();
-		Runnable runnable = new InitScanner();
 		
-		Thread thread = new Thread(runnable);
+		
+		Thread thread = new Thread(scanner);
 		thread.start();
 	}
 
+	public void cleanUp()
+	{
+		scanner.stopScanner();
+	}
 	public void init() {
 		this.run();
 		
@@ -469,6 +473,11 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 class InitScanner implements Runnable {
 	EditorScanner scanner = new EditorScanner();
+	
+	public void stopScanner() {
+		scanner.stopScanner();
+	}
+	
 	public void run() {
 		
 		
