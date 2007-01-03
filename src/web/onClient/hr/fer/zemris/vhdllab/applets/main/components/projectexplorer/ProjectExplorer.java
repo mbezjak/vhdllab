@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -165,6 +167,13 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	class VHDLCellRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 3562380292516384882L;
 		private String type;
+		private Icon vhdl = new ImageIcon(getClass().getResource("vhdl.png"));
+		private Icon tb = new ImageIcon(getClass().getResource("tb.png"));
+		private Icon automat = new ImageIcon(getClass().getResource("automat.png"));
+		private Icon schema = new ImageIcon(getClass().getResource("schema.png"));
+		private Icon simulation = new ImageIcon(getClass().getResource("simulation.png"));
+		
+		
 
 
 		@Override
@@ -182,19 +191,19 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				e.printStackTrace();
 			}
 			if (FileTypes.FT_VHDL_SOURCE.equals("and")) {
-				setIcon(Icons.VHDL.getIcon());
+				setIcon(vhdl);
 				setToolTipText("VHDL source file");
 			} else if (FileTypes.FT_VHDL_TB.equals(type)) {
-				setIcon(Icons.TB.getIcon());
+				setIcon(tb);
 				setToolTipText("Testbench");
 			} else if (FileTypes.FT_VHDL_AUTOMAT.equals(type)) {
-				setIcon(Icons.AUTOMAT.getIcon());
+				setIcon(automat);
 				setToolTipText("Automat");
 			} else if (FileTypes.FT_VHDL_STRUCT_SCHEMA.equals(type)) {
-				setIcon(Icons.SCHEMA.getIcon());
+				setIcon(schema);
 				setToolTipText("Schema");
 			} else if (FileTypes.FT_VHDL_SIMULATION.equals(type)) {
-				setIcon(Icons.SIMULATION.getIcon());
+				setIcon(simulation);
 				setToolTipText("Simulation");
 			}
 
