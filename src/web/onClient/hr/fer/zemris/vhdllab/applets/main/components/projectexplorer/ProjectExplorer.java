@@ -184,9 +184,23 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					hasFocus);
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+			// provjeri je li to ime projekta, tj. je li cvor projekt
+			boolean isProjectNode = false;
+			DefaultMutableTreeNode parent = null;
+			
+			if (node.isRoot()) {
+				return this;
+			}
+			parent = (DefaultMutableTreeNode)(node.getParent());
+			if (parent.isRoot()) {
+				isProjectNode = true;
+				return this;
+			}
+			
+			
 			// provjeri kojeg je tipa
 			try {
-				type = projectContainer.getFileType(projectName, node.toString());
+				type = projectContainer.getFileType(getProjectName(), node.toString());
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
 			}
