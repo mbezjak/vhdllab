@@ -36,6 +36,12 @@ import javax.swing.tree.TreeSelectionModel;
 
 
 
+/**
+ * Klasa predstavlja 'project explorer'. Project explorer sadrzi popis
+ * projekata, te hijerarhiju datoteka koje se koriste u projektu.
+ * 
+ * @author Boris Ozegovic
+ */
 public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 	private Container cp = this;
@@ -117,7 +123,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		/* inicijalizacija JTree komponente */
 		tree = new JTree(treeModel);
-		//tree.setPreferredSize(new Dimension(500, 600));
+		tree.setPreferredSize(new Dimension(500, 600));
 		tree.addMouseListener(mouseListener);
 		tree.addMouseListener(treeMouse);
 		tree.setEditable(true);
@@ -143,8 +149,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		ToolTipManager.sharedInstance().registerComponent(usedInTree);
 		usedInTreeView = new JScrollPane(usedInTree);
 
-		this.setLayout(new BorderLayout());
-		cp.add(treeView, BorderLayout.CENTER);
+		cp.setLayout(new BorderLayout());
+		cp.add(treeView);
 	}
 
 
@@ -541,11 +547,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		Hierarchy hierarchy = null;
 
 		// dodaj novi cvor, tj. projekt u stablo
-		if (!containsNode(top, projectName)) {
+		if (getNode(top, projectName) == null) {
 			projectNode = new DefaultMutableTreeNode(projectName);
 			this.top.add(projectNode);
 		} else {
-			// mora se inicijalizirat projectNode!!
+			projectNode = getNode(top, projectName);
 		}
 		// dohvaca sve root cvorove tog projekta
 		try {
@@ -555,13 +561,14 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		}
 		DefaultMutableTreeNode rootNode = null;
 		for (String string : hierarchy.getRootNodes()) {
-			if (!containsNode(projectNode, string)) {
+			if (getNode(projectNode, string) == null) {
 				rootNode = new DefaultMutableTreeNode(string);
 				projectNode.add(rootNode);
+			} else {
+				rootNode = getNode(projectNode, string);
 			}
 			addChildren(rootNode, hierarchy);
 		}
-		tree.setRootVisible(true);
 	}
 
 
@@ -600,7 +607,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child);
 
-		if (containsNode(parent, child)) {
+		if (getNode(parent, child) != null) {
 			return childNode;
 		}
 
@@ -628,22 +635,24 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 	/**
 	 * Metoda provjerava djeca ovog roditelja, u ovom slucaju String objekt
+	 * 
+	 * @return cvor, ako postoji, inace null
 	 */
-	public boolean containsNode(DefaultMutableTreeNode parent, Object child) {
+	public DefaultMutableTreeNode getNode(DefaultMutableTreeNode parent, Object child) {
 		DefaultMutableTreeNode temp = null;
 
 		if (parent == null) {
-			return false;
+			return null;
 		}
 
 		// provjera postoji li vec taj cvor
 		for (int i = 0; i < parent.getChildCount(); i++) {
 			temp = (DefaultMutableTreeNode)(parent.getChildAt(i));
 			if (temp.toString().equals((String)child)) {
-				return true;
+				return temp;
 			}
 		}
-		return false;
+		return null;
 	}
 
 
@@ -751,7 +760,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		return null;
 	}
 
+
 	public void refreshProject(String projectName) {
-		addProject(projectName);	
+		addProject(projectName);
 	}
 }
