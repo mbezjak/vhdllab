@@ -2,8 +2,8 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
-import hr.fer.zemris.vhdllab.applets.main.components.dummy.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.components.dummy.SideBar;
+import hr.fer.zemris.vhdllab.applets.main.components.projectexplorer.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.components.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.constants.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.UserFileConstants;
@@ -28,7 +28,6 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
-import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.applet.Applet;
@@ -145,6 +144,7 @@ public class MainApplet
 		
 		try {
 			List<String> projects = cache.findProjects();
+			setActiveProject(projects.get(projects.size()-1));
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
 				List<String> files = cache.findFilesByProject(projectName);
@@ -152,7 +152,7 @@ public class MainApplet
 					projectExplorer.addFile(projectName, fileName);
 				}
 			}
-			
+			//setActiveProject(projects.get(projects.size()-1));
 			String text = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
 			echoStatusText(text);
 		} catch (UniformAppletException e) {

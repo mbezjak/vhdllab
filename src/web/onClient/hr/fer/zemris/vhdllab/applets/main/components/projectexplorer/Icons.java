@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
  * 
  * @author Boris Ozegovic
  */
-enum Icons {
+public enum Icons {
     VHDL(new ImageIcon("./src/web/onClient/hr/fer/zemris/" +
     		"vhdllab/applets/main/components/projectexplorer/vhdl.png")),
     TB(new ImageIcon("./src/web/onClient/hr/fer/zemris/" +

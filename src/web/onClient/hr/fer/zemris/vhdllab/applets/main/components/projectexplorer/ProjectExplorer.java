@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -116,7 +117,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		/* inicijalizacija JTree komponente */
 		tree = new JTree(treeModel);
-		tree.setPreferredSize(new Dimension(500, 600));
+		//tree.setPreferredSize(new Dimension(500, 600));
 		tree.addMouseListener(mouseListener);
 		tree.addMouseListener(treeMouse);
 		tree.setEditable(true);
@@ -142,7 +143,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		ToolTipManager.sharedInstance().registerComponent(usedInTree);
 		usedInTreeView = new JScrollPane(usedInTree);
 
-		cp.add(treeView);
+		this.setLayout(new BorderLayout());
+		cp.add(treeView, BorderLayout.CENTER);
 	}
 
 
@@ -542,6 +544,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		if (!containsNode(top, projectName)) {
 			projectNode = new DefaultMutableTreeNode(projectName);
 			this.top.add(projectNode);
+		} else {
+			// mora se inicijalizirat projectNode!!
 		}
 		// dohvaca sve root cvorove tog projekta
 		try {
@@ -557,6 +561,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			addChildren(rootNode, hierarchy);
 		}
+		tree.setRootVisible(true);
 	}
 
 
