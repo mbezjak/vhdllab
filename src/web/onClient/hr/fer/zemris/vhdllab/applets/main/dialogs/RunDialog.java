@@ -393,7 +393,7 @@ public class RunDialog extends JDialog {
     	if(listModel.isEmpty()) {
     		throw new IllegalStateException("There are no items to run.");
     	}
-    	pack();
+    	this.pack();
     	this.setLocationRelativeTo(owner);
     	this.setVisible(true);
     }
@@ -558,6 +558,7 @@ public class RunDialog extends JDialog {
      * @param projectName a project to make active
      */
     private void changeActiveProject(String projectName) {
+    	if(activeProject == null) return;
     	if(!activeProject.equals(projectName)) {
     		String text = activeProjectLabel.getText().replace(activeProject, projectName);
     		activeProjectLabel.setText(text);

@@ -2,8 +2,8 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
+import hr.fer.zemris.vhdllab.applets.main.components.dummy.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.components.dummy.SideBar;
-import hr.fer.zemris.vhdllab.applets.main.components.projectexplorer.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.components.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.constants.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.UserFileConstants;
@@ -1246,7 +1246,7 @@ public class MainApplet
 		cache.saveFile(projectName, fileName, data);
 		projectExplorer.addFile(projectName, fileName);
 		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_CREATED);
-		text = Utilities.replacePlaceholders(text, new String[] {projectName});
+		text = Utilities.replacePlaceholders(text, new String[] {fileName});
 		echoStatusText(text);
 		openEditor(projectName, fileName, true, false);
 	}
@@ -1258,6 +1258,7 @@ public class MainApplet
 		if(projectName == null) return;
 		boolean exists = cache.existsProject(projectName);
 		if(exists) {
+			// projectName is never null here
 			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
 			text = Utilities.replacePlaceholders(text, new String[] {projectName});
 			echoStatusText(text);
