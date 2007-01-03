@@ -3,6 +3,8 @@ package hr.fer.zemris.vhdllab.applets.automat;
 //TODO prijelaz i equals i kad se koristi lista i dialog i kad se stvara novi prijelaz koji ide iz-u...
 
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -101,6 +103,7 @@ public class AutoDrawer extends JPanel{
 	public boolean isModified=false;
 	
 	private ResourceBundle bundle=null;
+	private ProjectContainer pContainer=null;
 	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
@@ -188,7 +191,7 @@ public class AutoDrawer extends JPanel{
 		}else{
 			stanja=new LinkedList<Stanje>();
 			prijelazi=new HashSet<Prijelaz>();
-			podatci=new AUTPodatci(AutoDrawer.this);
+			podatci=new AUTPodatci(AutoDrawer.this,pContainer,bundle);
 		}
 		if(podatci.ime!=null)
 			parseLegend();
@@ -672,14 +675,14 @@ public class AutoDrawer extends JPanel{
 		add.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				Prijelaz pomocni=new Prijelaz();
-				String str=pomocni.editPrijelaz2(podatci,AutoDrawer.this);
+				String str=pomocni.editPrijelaz2(podatci,AutoDrawer.this,bundle);
 				if(str!=null){
 					pomocni.iz=pr2.iz;
 					pomocni.pobudaIzlaz.add(str);
 					if(listam.indexOf(str)==-1&&!pomocni.equals2(pomocni,prijelazi)){
 						listam.addElement(str);
 						pr2.pobudaIzlaz.add(str);
-					} else pr2.porukaNeDodaj(AutoDrawer.this);
+					} else pr2.porukaNeDodaj(AutoDrawer.this,bundle);
 				}
 			};
 		});
@@ -840,7 +843,7 @@ public class AutoDrawer extends JPanel{
 					for(Stanje sta:stanja)
 						if(jelSelektiran(e,sta)){
 							prijelazZaDodati.u=sta.ime;
-							prijelazZaDodati.editPrijelaz(podatci,AutoDrawer.this);
+							prijelazZaDodati.editPrijelaz(podatci,AutoDrawer.this,bundle);
 							boolean test=true;
 							for(Prijelaz pr:prijelazi)
 								if(pr.equals(prijelazZaDodati)){
@@ -851,7 +854,7 @@ public class AutoDrawer extends JPanel{
 								if(!prijelazZaDodati.equals2(prijelazZaDodati,prijelazi)){
 									prijelazi.add(prijelazZaDodati);
 									}
-							}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this);
+							}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this,bundle);
 							prijelazZaDodati=null;
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;
@@ -948,8 +951,9 @@ public class AutoDrawer extends JPanel{
 		return podatci;
 	}
 
-	public void setResourceBundle(ResourceBundle bundle) {
+	public void setResourceBundle(ProjectContainer pc,ResourceBundle bundle) {
 		this.bundle=bundle;
+		this.pContainer=pc;
 	}
 
 	

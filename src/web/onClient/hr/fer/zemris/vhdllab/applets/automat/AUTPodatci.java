@@ -3,11 +3,13 @@ package hr.fer.zemris.vhdllab.applets.automat;
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.ReturnData;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ResourceBundle;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -48,13 +50,15 @@ public class AUTPodatci {
 		sirinaIzlaza=ep.getOutputWidth();
 	}
 
-	public AUTPodatci(Component drawer) {
+	//TODO dovrsiti lokalizaciju...
+	public AUTPodatci(Component drawer,ProjectContainer pc, ResourceBundle bu) {
 		super();
 		JLabel label2=new JLabel("Machine type:");
 		
 		//TODO pozivanje entityTable-a kad bude gotov...
-		String[] st={"Name","Direction","Type","From","To"};
-		EntityTable interfac=new EntityTable("Interface:",st,"Entity Name: ");
+		EntityTable interfac=new EntityTable();
+		interfac.setProjectContainer(null);
+		interfac.init();
 
 		String[] pom={"Moore","Mealy"};
 		JComboBox tip=new JComboBox(pom);
@@ -76,7 +80,7 @@ public class AUTPodatci {
 		panel.add(panel2,BorderLayout.CENTER);
 		
 		boolean test=true;
-		String[] options={"ok","pa ne bas"};
+		String[] options={bu.getString(LanguageConstants.DIALOG_BUTTON_OK),bu.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)};
 		while(test){
 			JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[1]);
 			JDialog dialog=optionPane.createDialog(drawer,"Transition Editor");
@@ -84,13 +88,13 @@ public class AUTPodatci {
 			dialog.setSize(new Dimension(700,300));
 			dialog.setVisible(true);
 			Object selected=optionPane.getValue();
-			if(selected.equals("ok")){
+			if(selected.equals(options[0])){
 				this.tip=(String)tip.getSelectedItem();
 				ReturnData inter=interfac.getData();
 				this.ime=inter.getName();
 				parseInterfac(inter.getData());
 				test=false;
-			}else if(selected.equals("pa ne bas")) {
+			}else if(selected.equals(options[1])) {
 				this.ime=null;
 				test=false;
 			}

@@ -21,7 +21,7 @@ public interface IEntityWizard {
 	 * name are blank.
 	 * @param data
 	 */
-	public void setData(TableData data);
+	public void setData(CircuitInterface data);
 	
 	/**
 	 * Method provides the mean of getting result formatted as a class implementing
@@ -35,4 +35,17 @@ public interface IEntityWizard {
 	 *
 	 */
 	public void updateTable();
+	
+	/**
+	 * Call this method to test if current data is correct in. Usefull in wizards if
+	 * you want to disable next or finish buttons in order to prevent incorrect data
+	 * input.
+	 */
+	public boolean isDataCorrect();
+	
+	/**
+	 * initialize GUI
+	 *
+	 */
+	public void init();
 }

@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.automat;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 import java.util.TreeSet;
 
 import javax.swing.JDialog;
@@ -49,55 +50,59 @@ public class Prijelaz {
 		return pomocni;
 	}
 	
-	public void editPrijelaz(AUTPodatci podatci,Component obj){
+	public void editPrijelaz(AUTPodatci podatci,Component obj, ResourceBundle bundle){
 		String pom=null;
-		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci);
-		else pom=editMoore(obj,podatci);
+		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci,bundle);
+		else pom=editMoore(obj,podatci,bundle);
 		if(pom!=null)pobudaIzlaz.add(pom);
 	}
 	
-	public String editPrijelaz2(AUTPodatci podatci,Component obj){
+	public String editPrijelaz2(AUTPodatci podatci,Component obj,ResourceBundle bundle){
 		String pom=null;
-		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci);
-		else pom=editMoore(obj,podatci);
+		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci, bundle);
+		else pom=editMoore(obj,podatci, bundle);
 		return pom;
 	}	
 	//TODO ove dve funkcije srediti
-	private String editMealy(Component obj, AUTPodatci podatci) {
+	private String editMealy(Component obj, AUTPodatci podatci, ResourceBundle bundle) {
 		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
 		JTextField izlaz=new CustomTextField("",podatci.sirinaIzlaza,false);
-		JLabel pobudaLab=new JLabel("Input for transition: ");
-		JLabel izlazLabel=new JLabel("Output for transition: ");
+		JLabel pobudaLab=new JLabel(bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONIN));
+		JLabel izlazLabel=new JLabel(bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONOUT));
 		JPanel panel=new JPanel();
 		panel.setLayout(new GridLayout(2,2));
 		panel.add(pobudaLab);
 		panel.add(pobuda);
 		panel.add(izlazLabel);
 		panel.add(izlaz);
-		
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(obj,"Transition Editor");
+		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
+				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
+		};
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JDialog dialog=optionPane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONLABEL));
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
-		if(selected.equals(JOptionPane.CANCEL_OPTION)) return null;
+		if(selected.equals(options[1])) return null;
 		else return new StringBuffer().append(pobuda.getText()).append("/").append(izlaz.getText()).toString();
 	}
-	private String editMoore(Component obj, AUTPodatci podatci) {
+	private String editMoore(Component obj, AUTPodatci podatci, ResourceBundle bundle) {
 		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
-		JLabel pobudaLab=new JLabel("Input for transition: ");
+		JLabel pobudaLab=new JLabel(bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONIN));
 		JPanel panel=new JPanel();
 		panel.setLayout(new GridLayout(1,2));
 		panel.add(pobudaLab);
 		panel.add(pobuda);
 
-		
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(obj,"Transition Editor");
+		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
+				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
+		};
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JDialog dialog=optionPane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONLABEL));
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
-		if(selected.equals(JOptionPane.CANCEL_OPTION)) return null;
+		if(selected.equals(options[1])) return null;
 		else return new StringBuffer().append(pobuda.getText()).toString();
 	}
 	public void dodajPodatak(String pobuda, String izlaz){
@@ -158,10 +163,8 @@ public class Prijelaz {
 	 * poruka za ne dodavanje
 	 * @param drawer
 	 */
-	public void porukaNeDodaj(AutoDrawer drawer) {
-		JOptionPane.showMessageDialog(drawer,"Unesena pobuda vec se koristi!\n" +
-				"Prijelaz se nemože dodati!\n" +
-				"Pokušajte ponovo.");
+	public void porukaNeDodaj(AutoDrawer drawer,ResourceBundle bundle) {
+		JOptionPane.showMessageDialog(drawer,bundle.getString(LanguageConstants.DIALOG_MESSAGE_TRANSITIONEXISTS));
 		
 	}
 
