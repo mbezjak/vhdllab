@@ -41,17 +41,20 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
- 
+import org.junit.runners.Parameterized.RunAllParameterMethods;
 
  
 
-public class TextEditor extends JPanel implements IEditor, IWizard {
+ 
+
+public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 	private static final long serialVersionUID = 5853551043423675268L;
 	static JTextPane text;
@@ -81,7 +84,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard {
 	
  
 	
-	public void init() {
+	public void initGUI() {
 		
 		
 		
@@ -446,11 +449,33 @@ public class TextEditor extends JPanel implements IEditor, IWizard {
 		}
 	}
 
-	 
+	public void run() {
+		initGUI();
+		Runnable runnable = new InitScanner();
+		
+		Thread thread = new Thread(runnable);
+		thread.start();
+	}
 
+	public void init() {
+		this.run();
+		
+	}
+
+	 
+	
 	 
 	}
 
+class InitScanner implements Runnable {
+	EditorScanner scanner = new EditorScanner();
+	public void run() {
+		
+		
+		scanner.run();
+	}
+	
+}
  
 		
  
