@@ -15,7 +15,7 @@ public interface IProjectExplorer {
 	 * the case, <code>projectName</code> may be null and thereby indicating that there is no
 	 * active project.
 	 * @param projectName a project name that should be made active
-	 * @see #getActiveProject()
+	 * @see #getSelectedProject()
 	 */
 	void setActiveProject(String projectName);
 	
@@ -27,7 +27,7 @@ public interface IProjectExplorer {
 	 * @return a current active project or <code>null</code> if there is no active project.
 	 * @see #setActiveProject(String)
 	 */
-	String getActiveProject();
+	String getSelectedProject();
 	List<String> getAllProjects();
 	List<String> getFilesByProject(String projectName);
 	void refreshProject(String projectName);

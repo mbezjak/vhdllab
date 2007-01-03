@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -48,16 +49,12 @@ public class VHDLGenerator implements IVHDLGenerator {
 
 	public String generateVHDL(File f, VHDLLabManager labman) throws ServiceException {
 		AUTParser aut=new AUTParser();
-		BufferedReader reader = null;
+		
 		try {
-			reader = new BufferedReader(new FileReader(f.getFileName()));
-		} catch (FileNotFoundException e1) {
-			// TODO sto ak nema fajla?
-			e1.printStackTrace();
+			aut.AUTParse(f.getContent());
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
 		}
-		
-		
-		aut.AUTParse(reader);
 		
 		LinkedList<Stanje> stanja = aut.stanja;
 		HashSet<Prijelaz> prijelazi = aut.prijelazi;

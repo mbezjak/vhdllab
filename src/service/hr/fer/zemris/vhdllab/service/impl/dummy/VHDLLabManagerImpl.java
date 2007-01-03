@@ -14,7 +14,11 @@ import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
+import hr.fer.zemris.vhdllab.service.dependency.automat.AUTDependancy;
+import hr.fer.zemris.vhdllab.service.extractor.ICircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.extractor.automat.AutCircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
+import hr.fer.zemris.vhdllab.service.generator.automat.VHDLGenerator;
 import hr.fer.zemris.vhdllab.simulators.ISimulator;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -123,6 +127,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			return file.getContent();
 		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
 			IVHDLGenerator generator = new Testbench();
+			return generator.generateVHDL(file, this);
+		} else if(file.getFileType().equals(FileTypes.FT_VHDL_AUTOMAT)) {
+			IVHDLGenerator generator = new VHDLGenerator();
 			return generator.generateVHDL(file, this);
 		}
 		else throw new ServiceException("FileType "+file.getFileType()+" has no registered vhdl generators!");
@@ -483,6 +490,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			
 			File source = vhdlSources.get(0);
 			return Extractor.extractCircuitInterface(source.getContent());
+		} else if (file.getFileType().equals(FileTypes.FT_VHDL_AUTOMAT)) {
+			ICircuitInterfaceExtractor extractor = new AutCircuitInterfaceExtractor();
+			return extractor.extractCircuitInterface(file);
 		} else {
 			return new DefaultCircuitInterface("cicinc");
 		}
@@ -511,6 +521,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			depExtractor = new VHDLDependencyExtractor();
 		} else if(file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
 			depExtractor = new TestBenchDependencyExtractor();
+		} else if(file.getFileType().equals(FileTypes.FT_VHDL_AUTOMAT)) {
+			depExtractor = new AUTDependancy();
 		} else {
 			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");
 		}

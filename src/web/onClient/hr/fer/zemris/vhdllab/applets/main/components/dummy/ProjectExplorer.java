@@ -119,7 +119,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		}
 	}
 
-	public String getActiveProject() {
+	public String getSelectedProject() {
 		return projectName;
 	}
 

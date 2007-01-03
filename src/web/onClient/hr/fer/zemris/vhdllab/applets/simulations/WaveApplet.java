@@ -1727,4 +1727,10 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 	public FileContent getInitialFileContent(Component parent) {
 		return null;
 	}
+
+
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
 }

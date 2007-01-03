@@ -87,6 +87,7 @@ public class AUTPodatci {
 			dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 			dialog.setSize(new Dimension(700,300));
 			dialog.setVisible(true);
+			
 			Object selected=optionPane.getValue();
 			if(selected.equals(options[0])){
 				this.tip=(String)tip.getSelectedItem();

@@ -239,4 +239,19 @@ public class SEntityTable extends JPanel implements IEntityWizard {
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
 	}
+
+	public void setData(CircuitInterface data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isDataCorrect() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
 }

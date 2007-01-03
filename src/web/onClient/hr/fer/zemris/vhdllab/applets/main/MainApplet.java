@@ -44,6 +44,8 @@ import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -103,6 +105,7 @@ public class MainApplet
 	@Override
 	public void init() {
 		super.init();
+		//System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 		String userId = this.getParameter("userId");
 		if(userId==null) {
 			// We must not enter this! If we do, applet should refuse to run!
@@ -597,8 +600,17 @@ public class MainApplet
 					} else if(editorPane.isFocusCycleRoot()) {
 						maximizeComponent(viewPane);
 					}*/
-					if(editorPane.getTabCount() != 0) {
+					/*if(editorPane.getTabCount() != 0) {
 						maximizeComponent(editorPane);
+					}*/
+					IEditor editor = (IEditor)editorPane.getSelectedComponent();
+					try {
+						viewVHDLCode(editor.getProjectName(), editor.getFileName());
+					} catch (UniformAppletException ex) {
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new  PrintWriter(sw);
+						ex.printStackTrace(pw);
+						throw new NullPointerException(sw.toString());
 					}
 				}
 			});
@@ -990,11 +1002,12 @@ public class MainApplet
 	
 	public void viewVHDLCode(String projectName, String fileName) throws UniformAppletException {
 		// TODO ovo provjerit dal radi dobro
-		if(isCircuit(projectName, fileName) || 
-				isTestbench(projectName, fileName)) {
+		/*if(isCircuit(projectName, fileName) || 
+				isTestbench(projectName, fileName)) {*/
 			String vhdl = cache.generateVHDL(projectName, fileName);
-			openEditor(projectName, fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
-		}
+			//JOptionPane.showMessageDialog(this, vhdl);
+			openEditor(projectName, "vhdl:"+fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
+		//}
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
@@ -1033,7 +1046,7 @@ public class MainApplet
 	}
 	
 	public String getActiveProject() {
-		return projectExplorer.getActiveProject();
+		return projectExplorer.getSelectedProject();
 	}
 	
 	public void	setActiveProject(String projectName) {
@@ -1440,6 +1453,7 @@ public class MainApplet
 		boolean shouldContinue = saveResourcesWithSaveDialog(editorsToClose, title, message);
 		if(shouldContinue) {
 			for(IEditor editor : editorsToClose) {
+				editor.cleanUp();
 				int index = indexOfEditor(editor);
 				editorPane.remove(index);
 			}
@@ -1747,6 +1761,76 @@ public class MainApplet
 											"<signal name=\"D\" type=\"vector\" rangeFrom=\"3\" rangeTo=\"0\">(0,0000)(20,1000)(30,1100)(40,1110)(50,1111)(60,0111)(65,0101)(70,0001)(90,0000)(95,0010)(120,1110)(135,1100)(150,0100)(155,0001)(180,0000)(190,1010)(230,0010)(235,0110)(245,0100)(255,0101)(265,1101)(295,1001)(315,1000)(325,1010)(330,0010)(340,0110)(360,1111)(375,1101)(380,1001)(385,1000)</signal>" + "\n" + 
 											"<signal name=\"SEL\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"0\">(0,00)(25,10)(35,11)(70,10)(85,00)(130,01)(165,11)(195,10)(200,00)(250,01)(260,00)(285,10)(310,11)(320,10)(350,00)(360,01)(385,00)(395,10)(410,00)(415,01)(430,00)</signal>" + "\n";
 				
+				final String fileName4 = "Automat1";
+				final String fileType4 = FileTypes.FT_VHDL_AUTOMAT;
+				final String fileContent4 = "<Automat>" + "\n" +
+	"<Podatci_Sklopa>" + "\n" +
+		"<Ime>Automat1</Ime>" + "\n" +
+		"<Tip>Moore</Tip>" + "\n" +
+		"<Interfac>a in std_logic" + "\n" +
+"b out std_logic" + "\n" +
+		"</Interfac>" + "\n" +
+		"<Pocetno_Stanje>A</Pocetno_Stanje>" + "\n" +
+	"</Podatci_Sklopa>" + "\n" +
+
+	"<Stanje>" + "\n" +
+		"<Ime>A</Ime>" + "\n" +
+		"<Izlaz>0</Izlaz>" + "\n" +
+		"<Ox>30</Ox>" + "\n" +
+		"<Oy>30</Oy>" + "\n" +
+	"</Stanje>" + "\n" +
+
+	"<Stanje>" + "\n" +
+		"<Ime>B</Ime>" + "\n" +
+		"<Izlaz>1</Izlaz>" + "\n" +
+		"<Ox>100</Ox>" + "\n" +
+		"<Oy>100</Oy>" + "\n" +
+	"</Stanje>" + "\n" +
+
+	"<Stanje>" + "\n" +
+		"<Ime>C</Ime>" + "\n" +
+		"<Izlaz>1</Izlaz>" + "\n" +
+		"<Ox>30</Ox>" + "\n" +
+		"<Oy>100</Oy>" + "\n" +
+	"</Stanje>" + "\n" +
+
+	"<Prijelaz>" + "\n" +
+		"<Iz>A</Iz>" + "\n" +
+		"<U>B</U>" + "\n" +
+		"<Pobuda>1</Pobuda>" + "\n" +
+	"</Prijelaz>" + "\n" +
+
+	"<Prijelaz>" + "\n" +
+		"<Iz>A</Iz>" + "\n" +
+		"<U>C</U>" + "\n" +
+		"<Pobuda>0</Pobuda>" + "\n" +
+	"</Prijelaz>" + "\n" +
+
+	"<Prijelaz>" + "\n" +
+		"<Iz>B</Iz>" + "\n" +
+		"<U>A</U>" + "\n" +
+		"<Pobuda>1</Pobuda>" + "\n" +
+	"</Prijelaz>" + "\n" +
+
+	"<Prijelaz>" + "\n" +
+		"<Iz>B</Iz>" + "\n" +
+		"<U>C</U>" + "\n" +
+		"<Pobuda>0</Pobuda>" + "\n" +
+	"</Prijelaz>" + "\n" +
+
+	"<Prijelaz>" + "\n" +
+		"<Iz>C</Iz>" + "\n" +
+		"<U>C</U>" + "\n" +
+		"<Pobuda>0</Pobuda>" + "\n" +
+	"</Prijelaz>" + "\n" +
+
+	"<Prijelaz>" + "\n" +
+		"<Iz>C</Iz>" + "\n" +
+		"<U>B</U>" + "\n" +
+		"<Pobuda>1</Pobuda>" + "\n" +
+	"</Prijelaz>" + "\n" +
+"</Automat>";
+				
 				long start = System.currentTimeMillis();
 				IEditor editor = cache.getEditor(FileTypes.FT_VHDL_SOURCE);
 				editor.setProjectContainer(MainApplet.this);
@@ -1770,6 +1854,11 @@ public class MainApplet
 					cache.saveFile(projectName1, fileName3, fileContent3);
 				}
 				
+				if(!cache.existsFile(projectName1,fileName4)) {
+					cache.createFile(projectName1, fileName4, fileType4);
+					cache.saveFile(projectName1, fileName4, fileContent4);
+				}
+				
 				Preferences pref = getPreferences(FileTypes.FT_COMMON);
 				// TODO mozda bi mogo defaultValue bit null.
 				// TODO jos neznam sto ce bit s descriptionom
@@ -1787,6 +1876,7 @@ public class MainApplet
 				openEditor(projectName1, fileName1, true, false);
 				openEditor(projectName1, fileName2, true, false);
 				openEditor(projectName1, fileName3, true, false);
+				openEditor(projectName1, fileName4, true, false);
 				
 			} catch (Exception e) {
 				e.printStackTrace();

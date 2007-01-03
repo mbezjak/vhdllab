@@ -289,7 +289,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 		this.pContainer=pContainer;
 		if(pContainer!=null)
 			try {
-				bundle=pContainer.getResourceBundle("Client_EntityTable_ApplicationResource");
+				bundle=pContainer.getResourceBundle("Client_EntityTable_ApplicationResources");
 			} catch (UniformAppletException e) {
 				bundle = CachedResourceBundles.getBundle("Client_EntityTable_ApplicationResources", "en");
 				//e.printStackTrace();

@@ -370,6 +370,7 @@
       <fileset file="${basedir}/${lib.dir}/*.*" excludes="servlet-api.jar"/>
       <fileset file="${basedir}/${lib.dir}/hibernate/*.*"/>
       <fileset file="${basedir}/${lib.dir}/mysql/*.*"/>
+      <fileset file="${basedir}/${lib.dir}/xdoclet/*.*"/>
     </copy>
   </target>
 	

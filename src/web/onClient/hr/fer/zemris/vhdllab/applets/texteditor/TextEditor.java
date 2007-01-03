@@ -3,10 +3,10 @@ package hr.fer.zemris.vhdllab.applets.texteditor;
  
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,14 +41,11 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
-
-import org.junit.runners.Parameterized.RunAllParameterMethods;
 
  
 
@@ -93,7 +90,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		text = new JTextPane();
 		text.setCaretPosition(0);
 		text.setLocation(25, 50);
-		text.setPreferredSize(new Dimension(300,300));
+		//text.setPreferredSize(new Dimension(300,300));
 		
 		
 		
@@ -467,8 +464,6 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	}
 
 	 
-	
-	 
 	}
 
 class InitScanner implements Runnable {
@@ -481,7 +476,7 @@ class InitScanner implements Runnable {
 	public void run() {
 		
 		
-		scanner.run();
+		//scanner.run();
 	}
 	
 }

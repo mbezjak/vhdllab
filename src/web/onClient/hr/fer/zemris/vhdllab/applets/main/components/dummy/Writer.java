@@ -134,4 +134,9 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	public void setSavable(boolean flag) {
 		savable = flag;
 	}
+
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
 }

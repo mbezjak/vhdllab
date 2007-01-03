@@ -1067,6 +1067,11 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 

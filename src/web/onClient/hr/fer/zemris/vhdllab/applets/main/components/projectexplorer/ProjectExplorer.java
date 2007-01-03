@@ -125,11 +125,10 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		/* inicijalizacija JTree komponente */
 		tree = new JTree(treeModel);
-		tree.setPreferredSize(new Dimension(500, 600));
+		//tree.setPreferredSize(new Dimension(500, 600));
 		tree.addMouseListener(mouseListener);
 		tree.addMouseListener(treeMouse);
 		tree.setEditable(true);
-		tree.setRootVisible(false);
 		tree.expandRow(0);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -424,7 +423,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 * 
 	 * @return projectName aktivni projekt
 	 */
-	public String getActiveProject() {
+	public String getSelectedProject() {
 		return projectName;
 	}
 
@@ -592,6 +591,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			addChildren(rootNode, hierarchy);
 		}
+		//tree.setRootVisible(false);
 	}
 
 

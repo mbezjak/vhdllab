@@ -30,4 +30,5 @@ public interface IEditor {
 	void setProjectContainer(ProjectContainer container);
 	void init();
 	IWizard getWizard();
+	void cleanUp();
 }

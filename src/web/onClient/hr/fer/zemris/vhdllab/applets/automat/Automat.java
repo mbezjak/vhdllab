@@ -18,7 +18,6 @@ import java.util.ResourceBundle;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -185,7 +184,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 		else projectName="Default";
 		if(pContainer!=null)
 			try {
-				bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResource");
+				bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
 			} catch (UniformAppletException e) {
 				bundle = CachedResourceBundles.getBundle("Client_Automat_ApplicationResources", "en");
 				//e.printStackTrace();
@@ -201,7 +200,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public FileContent getInitialFileContent(Component parent) {
-		AUTPodatci pod=new AUTPodatci((JComponent) parent,pContainer,bundle);
+		AUTPodatci pod=new AUTPodatci(parent,pContainer,bundle);
 		String gen=null;
 		if(pod.ime!=null){
 			LinkedList<Stanje> stanja=new LinkedList<Stanje>();
@@ -240,6 +239,8 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 		createGUI();
 		
 	}
+	
+	public void cleanUp() {}
 
 
 

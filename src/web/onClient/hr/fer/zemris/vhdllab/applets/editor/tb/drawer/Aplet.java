@@ -515,5 +515,10 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		
 		return new FileContent(projectName, fileName, sb.toString());
 	}
+
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
