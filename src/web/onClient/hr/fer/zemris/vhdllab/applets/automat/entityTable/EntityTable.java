@@ -44,7 +44,6 @@ public class EntityTable extends JPanel implements IEntityWizard{
 	
 	private JTextField imeSklop;
 	private ResourceBundle bundle;
-	private ProjectContainer pContainer;
 	/**
 	 * @param header 
 	 * @param args
@@ -284,7 +283,6 @@ public class EntityTable extends JPanel implements IEntityWizard{
 	}
 
 	public void setProjectContainer(ProjectContainer pContainer) {
-		this.pContainer=pContainer;
 		bundle=pContainer.getResourceBundle("Client_EntityTable_ApplicationResources");
 	}
 
