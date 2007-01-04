@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentPropertyList;
 import hr.fer.zemris.vhdllab.applets.schema.components.SchemaPort;
-import hr.fer.zemris.vhdllab.applets.schema.components.basics.Sklop_AND;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;

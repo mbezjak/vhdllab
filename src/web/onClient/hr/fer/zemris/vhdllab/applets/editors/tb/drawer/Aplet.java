@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
+package hr.fer.zemris.vhdllab.applets.editors.tb.drawer;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
@@ -505,7 +505,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 
 
 	public FileContent getInitialFileContent(Component parent) {
-		String projectName = container.getActiveProject();
+		String projectName = container.getSelectedProject();
 		String depends = JOptionPane.showInputDialog(parent, "Which VHDL file?");
 		String fileName = JOptionPane.showInputDialog(parent, "Name of a file?");
 		

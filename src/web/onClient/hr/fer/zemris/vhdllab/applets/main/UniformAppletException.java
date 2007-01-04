@@ -1,5 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+/**
+ * Thrown to indicate any kind of error on client application.
+ * 
+ * @author Miro Bezjak
+ */
 public class UniformAppletException extends Exception {
 	
 	/**

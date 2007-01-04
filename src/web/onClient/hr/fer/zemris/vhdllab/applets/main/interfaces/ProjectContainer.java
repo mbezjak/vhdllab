@@ -24,20 +24,19 @@ public interface ProjectContainer {
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
 	IView getView(String type) throws UniformAppletException;
 	void echoStatusText(String text);
-	void setActiveProject(String projectName);
 	List<String> getAllProjects();
 	void compile(String projectName, String fileName) throws UniformAppletException;
 	void simulate(String projectName, String fileName) throws UniformAppletException;
 	void viewVHDLCode(String projectName, String fileName) throws UniformAppletException;
 	
 	/**
-	 * Gets a resource bundle for the given base name and user's locale.
+	 * Gets a resource bundle for the given base name and user's locale. Returned
+	 * value will never be <code>null</code>.
 	 * @param baseName the base name of the resource bundle, a fully qualified
-	 * 		class name
+	 * 		class name (or a name before language suffix)
 	 * @return a resource bundle for the given base name and user's locale.
-	 * @throws UniformAppletException if any error occurred
 	 */
-	ResourceBundle getResourceBundle(String baseName) throws UniformAppletException;
+	ResourceBundle getResourceBundle(String baseName);
 	
 	/**
 	 * Reset editor title to indicate to user that editor's contents are changed
@@ -59,7 +58,7 @@ public interface ProjectContainer {
 	 * @return a current active project or <code>null</code> if there is no active
 	 * 		project.
 	 */
-	String getActiveProject();
+	String getSelectedProject();
 	
 	/**
 	 * Checks to see if entity name is a corrent entity name. Correct name is

@@ -30,7 +30,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
-import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -63,9 +62,14 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 /**
- * 
+ * Main applet that is container for all other modules. This applet also defines
+ * methods that other modules use for communication. Two modules can not
+ * communicate directly! Only through main applet that acts as a mediator. All
+ * methods available to other modules are defined in <code>ProjectContainer</code>
+ * interface.
  * 
  * @author Miro Bezjak
+ * @see ProjectContainer
  */
 public class MainApplet
 		extends JApplet
@@ -79,25 +83,23 @@ public class MainApplet
 	private Cache cache;
 	private ResourceBundle bundle;
 	
-	private JMenuBar menuBar;
-	private JToolBar toolBar;
 	private JTabbedPane editorPane;
 	private JTabbedPane viewPane;
-	
-	private JPanel centerPanel;
-	private JPanel normalCenterPanel;
-	private Container parentOfMaximizedComponent = null;
-	
 	private IProjectExplorer projectExplorer;
 	private SideBar sideBar;
 	private IStatusBar statusBar;
-	
+	private JToolBar toolBar;
+
 	private JPanel projectExplorerPanel;
 	private JPanel sideBarPanel;
 	
 	private JSplitPane projectExplorerSplitPane;
 	private JSplitPane viewSplitPane;
 	private JSplitPane sideBarSplitPane;
+
+	private JPanel centerPanel;
+	private JPanel normalCenterPanel;
+	private Container parentOfMaximizedComponent = null;
 	
 	/* (non-Javadoc)
 	 * @see java.applet.Applet#init()
@@ -105,29 +107,25 @@ public class MainApplet
 	@Override
 	public void init() {
 		super.init();
-		//System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 		String userId = this.getParameter("userId");
 		if(userId==null) {
+			// TODO following should be removed when security is implemented!
 			// We must not enter this! If we do, applet should refuse to run!
 			// Until then:
 			userId = "uid:id-not-set";
+			// future implementation when security is in place
+			// throw new SecurityException();
 		}
 		AjaxMediator ajax = new DefaultAjaxMediator(this);
 		MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 		
 		//**********************
 		ServerInitData server = new ServerInitData();
-		server.init(this);
 		server.writeGlobalFiles();
 		//**********************
 		
 		cache = new Cache(invoker, userId);
-		try {
-			bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-		} catch (Exception e) {
-			bundle = CachedResourceBundles.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN, "en");
-		}
-		if(bundle == null) return;
+		bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		
 		initGUI();
 		this.addComponentListener(new ComponentListener() {
@@ -147,7 +145,6 @@ public class MainApplet
 		
 		try {
 			List<String> projects = cache.findProjects();
-			setActiveProject(projects.get(projects.size()-1));
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
 				List<String> files = cache.findFilesByProject(projectName);
@@ -155,7 +152,6 @@ public class MainApplet
 					projectExplorer.addFile(projectName, fileName);
 				}
 			}
-			//setActiveProject(projects.get(projects.size()-1));
 			String text = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
 			echoStatusText(text);
 		} catch (UniformAppletException e) {
@@ -188,6 +184,7 @@ public class MainApplet
 	@Override
 	public void destroy() {
 		saveAllEditors();
+		//closeAllEditors();
 		cache = null;
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
@@ -198,8 +195,8 @@ public class MainApplet
 	private void initGUI() {
 		JPanel topContainerPanel = new JPanel(new BorderLayout());
 		centerPanel = new JPanel(new BorderLayout());
-		menuBar = new PrivateMenuBar(bundle).setupMainMenu();
-		this.setJMenuBar( menuBar );
+		JMenuBar menuBar = new PrivateMenuBar(bundle).setupMainMenu();
+		this.setJMenuBar(menuBar);
 		
 		toolBar = new PrivateToolBar(bundle).setup();
 		topContainerPanel.add(toolBar, BorderLayout.NORTH);
@@ -881,7 +878,7 @@ public class MainApplet
 		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
 		String fileName = showRunDialog(title, listTitle, RunDialog.COMPILATION_TYPE);
 		if(fileName == null) return;
-		String projectName = getActiveProject();
+		String projectName = getSelectedProject();
 		compile(projectName, fileName);
 	}
 	
@@ -919,7 +916,7 @@ public class MainApplet
 		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
 		String fileName = showRunDialog(title, listTitle, RunDialog.SIMULATION_TYPE);
 		if(fileName == null) return;
-		String projectName = getActiveProject();
+		String projectName = getSelectedProject();
 		simulate(projectName, fileName);
 	}
 	
@@ -1027,30 +1024,32 @@ public class MainApplet
 		cache.savePreferences(type, pref);
 	}
 
-	public ResourceBundle getResourceBundle(String baseName) throws UniformAppletException {
-		SingleOption option;
-		Preferences preferences = cache.getPreferences(FileTypes.FT_COMMON);
-		option = preferences.getOption(UserFileConstants.COMMON_LANGUAGE);
+	public ResourceBundle getResourceBundle(String baseName) {
 		String language = null;
-		if(option != null) {
-			language = option.getChosenValue(); 
-		}
-		option = preferences.getOption(UserFileConstants.COMMON_COUNTRY);
 		String country = null;
-		if(option != null) {
-			country = option.getChosenValue(); 
-		}
+		try {
+			Preferences preferences = cache.getPreferences(FileTypes.FT_COMMON);
+			SingleOption option = preferences.getOption(UserFileConstants.COMMON_LANGUAGE);
+			if(option != null) {
+				language = option.getChosenValue(); 
+			}
+			option = preferences.getOption(UserFileConstants.COMMON_COUNTRY);
+			if(option != null) {
+				country = option.getChosenValue(); 
+			}
+		} catch (UniformAppletException ignored) {}
+		if(language == null) language = "en";
 		
 		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName, language, country);
+		/* This might happen only during developing/testing due to error. It
+		 * should never happen once application is deployed
+		 */
+		if(bundle == null) throw new NullPointerException("Bundle can not be null.");
 		return bundle;
 	}
 	
-	public String getActiveProject() {
+	public String getSelectedProject() {
 		return projectExplorer.getSelectedProject();
-	}
-	
-	public void	setActiveProject(String projectName) {
-		projectExplorer.setActiveProject(projectName);
 	}
 	
 	public List<String> getAllProjects() {
@@ -1193,10 +1192,9 @@ public class MainApplet
 	
 	private void refreshWorkspace() {
 		// TODO to treba jos do kraja napravit, zajedno s refreshProject i refreshFile
-		// TODO tu jos treba stavit da se cita iz userfilea koji je aktivan projekt pa ga stavit aktivnim!!
 		List<String> openedProjects = projectExplorer.getAllProjects();
 		for(String p : openedProjects) {
-			projectExplorer.removeProject(p);
+			projectExplorer.deleteProject(p);
 		}
 		
 		try {
@@ -1575,15 +1573,20 @@ public class MainApplet
 		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
 		String activeProjectTitle = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_TITLE);
 		String changeActiveProjectButton = bundle.getString(LanguageConstants.DIALOG_RUN_CHANGE_ACTIVE_PROJECT_BUTTON);
-		String activeProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL);
-		String projectName = getActiveProject();
-		activeProjectLabel = Utilities.replacePlaceholders(activeProjectLabel, new String[] {projectName});
+		String projectName = getSelectedProject();
+		String activeProjectLabel;
+		if(projectName == null) {
+			activeProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);
+		} else {
+			activeProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL);
+			activeProjectLabel = Utilities.replacePlaceholders(activeProjectLabel, new String[] {projectName});
+		}
 		
 		RunDialog dialog = new RunDialog(this, true, this, dialogType);
 		dialog.setTitle(title);
-		dialog.setActiveProjectTitle(activeProjectTitle);
-		dialog.setActiveProjectButtonText(changeActiveProjectButton);
-		dialog.setActiveProjectText(activeProjectLabel);
+		dialog.setCurrentProjectTitle(activeProjectTitle);
+		dialog.setChangeProjectButtonText(changeActiveProjectButton);
+		dialog.setCurrentProjectText(activeProjectLabel);
 		dialog.setListTitle(listTitle);
 		dialog.setOKButtonText(ok);
 		dialog.setCancelButtonText(cancel);
@@ -1606,25 +1609,6 @@ public class MainApplet
 		} catch (UniformAppletException e) {
 		}
 		return projectName;
-	}
-	
-	// TODO pocet to koristit
-	private boolean showActiveProjectDialog(String projectName) {
-		String title = bundle.getString(LanguageConstants.DIALOG_MAKE_ACTIVE_PROJECT_TITLE);
-		String message = bundle.getString(LanguageConstants.DIALOG_MAKE_ACTIVE_PROJECT_MESSAGE);
-		message = Utilities.replacePlaceholders(message, new String[] {projectName});
-		String yes = bundle.getString(LanguageConstants.DIALOG_BUTTON_YES);
-		String no = bundle.getString(LanguageConstants.DIALOG_BUTTON_NO);
-		Object[] options = new Object[] {yes, no};
-		
-		int option = JOptionPane.showOptionDialog(this, message, title, JOptionPane.YES_NO_OPTION,
-				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-		
-		if(option == JOptionPane.YES_OPTION) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 	
 	/**
@@ -1674,16 +1658,14 @@ public class MainApplet
 
 	private class ServerInitData {
 		
-		public void init(Applet applet) {
-			applet.setSize(new Dimension(1000,650));
-		}
+		private static final String userId = "uid:id-not-set";
 		
 		public void writeGlobalFiles() {
 			try {
 				AjaxMediator ajax = new DefaultAjaxMediator(MainApplet.this);
 				MethodInvoker invoker = new DefaultMethodInvoker(ajax);
 				
-				Long fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_COMMON);
+				Long fileId = invoker.createUserFile(userId, FileTypes.FT_COMMON);
 				Preferences preferences = new Preferences();
 				List<String> values = new ArrayList<String>();
 				values.add("en");
@@ -1693,7 +1675,7 @@ public class MainApplet
 				invoker.saveUserFile(fileId, preferences.serialize());
 				
 				preferences = new Preferences();
-				fileId = invoker.createUserFile("uid:id-not-set", FileTypes.FT_APPLET);
+				fileId = invoker.createUserFile(userId, FileTypes.FT_APPLET);
 				o = new SingleOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
 				preferences.setOption(o);
 				

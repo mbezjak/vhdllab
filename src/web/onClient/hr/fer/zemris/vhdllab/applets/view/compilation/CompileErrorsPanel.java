@@ -117,7 +117,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
         if (matcher.matches())
         {
         	try {
-        		String projectName = projectContainer.getActiveProject();
+        		String projectName = projectContainer.getSelectedProject();
         		String fileName = matcher.group(1);
         		editor = projectContainer.getEditor(projectName, fileName);
 				int temp = Integer.valueOf(matcher.group(2));

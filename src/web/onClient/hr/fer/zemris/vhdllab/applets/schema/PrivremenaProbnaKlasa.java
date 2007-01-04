@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
@@ -9,7 +8,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.Dimension;
-import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;

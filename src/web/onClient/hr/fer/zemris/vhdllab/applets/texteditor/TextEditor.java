@@ -11,7 +11,6 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -238,7 +237,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 	public FileContent getInitialFileContent(Component parent) {
 		try {
-			String projectName = container.getActiveProject();
+			String projectName = container.getSelectedProject();
 			String fileName;
 			do {
 				fileName = JOptionPane.showInputDialog(parent, "Enter file name:");

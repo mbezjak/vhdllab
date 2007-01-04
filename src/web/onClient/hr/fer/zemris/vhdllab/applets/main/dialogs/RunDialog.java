@@ -79,7 +79,7 @@ public class RunDialog extends JDialog {
 	private static final int DIALOG_WIDTH = 300;
 	/** Height of this dialog */
 	private static final int DIALOG_HEIGHT = 400;
-	/** Height of a activeProjectLabel */
+	/** Height of a currentProjectLabel */
 	private static final int LABEL_HEIGHT = 50;
 	/** Width of all buttons */
 	private static final int BUTTON_WIDTH = 70;
@@ -96,22 +96,22 @@ public class RunDialog extends JDialog {
 	private Component owner;
 	/** Project Container to enable communication */
 	private ProjectContainer container;
-	/** Currently active project */
-	private String activeProject;
+	/** Current displayed project */
+	private String currentProject;
 	
 	/** 
 	 * A Popup menu that will contain all projects and will allow
-	 * to change active project
+	 * to change current project
 	 */
 	private JPopupMenu popupMenu;
-	/** Label to contain a name of active project */
-	private JLabel activeProjectLabel;
-	/** Button to change active project */
-	private JButton changeActiveProjectButton;
-	/** Container for activeProjectLabel and changeActiveProjectButton */
-	private JPanel activeProjectPanel;
-	/** Border for activeProjectPanel */
-	private TitledBorder activeProjectBorder;
+	/** Label to contain a name of current displayed project */
+	private JLabel currentProjectLabel;
+	/** Button to change current project */
+	private JButton changeProjectButton;
+	/** Container for currentProjectLabel and changeProjectButton */
+	private JPanel currentProjectPanel;
+	/** Border for currentProjectPanel */
+	private TitledBorder currentProjectBorder;
 	
 	/** A model for fileList */
 	private DefaultListModel listModel;
@@ -272,7 +272,6 @@ public class RunDialog extends JDialog {
     	this.owner = owner;
     	this.container = container;
     	this.dialogType = dialogType;
-    	activeProject = container.getActiveProject();
     	
     	int width = 0;
     	int height = 0;
@@ -294,6 +293,10 @@ public class RunDialog extends JDialog {
     			width = stringWidth;
     		}
     	}
+    	currentProject = container.getSelectedProject();
+    	if(currentProject == null && !allProjects.isEmpty()) {
+    		currentProject = allProjects.get(allProjects.size() - 1);
+    	}
     	if(width > MENU_BAR_MAX_WIDTH) {
     		width = MENU_BAR_MAX_WIDTH;
     	}
@@ -302,24 +305,24 @@ public class RunDialog extends JDialog {
     	}
     	popupMenu.setPreferredSize(new Dimension(width, allProjects.size() * MENU_ITEM_HEIGHT));
     	
-    	// setup active project label
-    	activeProjectPanel = new JPanel(new BorderLayout());
-    	activeProjectLabel = new JLabel();
+    	// setup current project label
+    	currentProjectPanel = new JPanel(new BorderLayout());
+    	currentProjectLabel = new JLabel();
     	width = DIALOG_WIDTH - 2 * BORDER;
     	height = LABEL_HEIGHT - 2 * BORDER;
-    	activeProjectLabel.setPreferredSize(new Dimension(width, height));
-    	changeActiveProjectButton = new JButton("change");
-    	changeActiveProjectButton.addActionListener(new ActionListener() {
+    	currentProjectLabel.setPreferredSize(new Dimension(width, height));
+    	changeProjectButton = new JButton("change");
+    	changeProjectButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			JButton source = (JButton) e.getSource();
     			preformPopupMenuAction(source);
     		}
     	});
-    	activeProjectPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
-    	activeProjectPanel.add(activeProjectLabel, BorderLayout.CENTER);
-    	activeProjectPanel.add(changeActiveProjectButton, BorderLayout.EAST);
-    	activeProjectBorder = BorderFactory.createTitledBorder("Active Project");
-    	activeProjectPanel.setBorder(activeProjectBorder);
+    	currentProjectPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
+    	currentProjectPanel.add(currentProjectLabel, BorderLayout.CENTER);
+    	currentProjectPanel.add(changeProjectButton, BorderLayout.EAST);
+    	currentProjectBorder = BorderFactory.createTitledBorder("Displayed Project");
+    	currentProjectPanel.setBorder(currentProjectBorder);
     	
     	// setup file listModel
     	listModel = new DefaultListModel();
@@ -373,13 +376,13 @@ public class RunDialog extends JDialog {
     	
     	this.setLayout(new BorderLayout());
     	JPanel messagePanel = new JPanel(new BorderLayout());
-    	messagePanel.add(activeProjectPanel, BorderLayout.NORTH);
+    	messagePanel.add(currentProjectPanel, BorderLayout.NORTH);
     	messagePanel.add(listPanel, BorderLayout.CENTER);
     	messagePanel.add(actionPanel, BorderLayout.SOUTH);
     	this.getContentPane().add(messagePanel, BorderLayout.CENTER);
     	this.getRootPane().setDefaultButton(ok);
     	this.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
-    	setActiveProjectButtonText(null);
+    	setChangeProjectButtonText(null);
     	if(getTitle() == null) {
     		setTitle("Run");
     	}
@@ -426,41 +429,41 @@ public class RunDialog extends JDialog {
     }
     
     /**
-     * Set text to be displayed as active project title just above a active
-     * project label. If <code>text</code> is <code>null</code> then active
-     * project label will be set to an empty string.
+     * Set text to be displayed as current project title just above a current
+     * project label. If <code>text</code> is <code>null</code> then current
+     * project title will be set to an empty string.
      * @param text text to be displayed
      */
-    public void setActiveProjectTitle(String text) {
+    public void setCurrentProjectTitle(String text) {
     	if(text == null) text = "";
-    	activeProjectBorder.setTitle(text);
+    	currentProjectBorder.setTitle(text);
     }
     
     /**
-     * Set text to be displayed in a active project label just above a list of files.
-     * If <code>text</code> is <code>null</code> then active project label will
+     * Set text to be displayed in a current project label just above a list of files.
+     * If <code>text</code> is <code>null</code> then current project label will
      * be set to an empty string.
      * @param text text to be displayed
      */
-    public void setActiveProjectText(String text) {
+    public void setCurrentProjectText(String text) {
     	if(text == null) text = "";
-    	activeProjectLabel.setText(text);
+    	currentProjectLabel.setText(text);
     }
     
     /**
-     * Set text to be displayed in a active project button, left to active project
-     * label. If <code>text</code> is <code>null</code> then active project label
+     * Set text to be displayed in a change project button, left to current project
+     * label. If <code>text</code> is <code>null</code> then change project button
      * will be set to an empty string.
      * @param text text to be displayed
      */
-    public void setActiveProjectButtonText(String text) {
+    public void setChangeProjectButtonText(String text) {
     	if(text == null) text = "";
-    	changeActiveProjectButton.setText(text);
+    	changeProjectButton.setText(text);
     }
     
     /**
      * Set text to be displayed as a title of file list. If <code>text</code> is
-     * <code>null</code> then active project label will be set to an empty string.
+     * <code>null</code> then list title will be set to an empty string.
      * @param text text to be displayed
      */
     public void setListTitle(String text) {
@@ -536,9 +539,9 @@ public class RunDialog extends JDialog {
     	List<String> files = null;
     	try {
 			if(dialogType == RunDialog.COMPILATION_TYPE) {
-				files = container.getAllCircuits(activeProject);
+				files = container.getAllCircuits(currentProject);
 			} else if(dialogType == RunDialog.SIMULATION_TYPE) {
-				files = container.getAllTestbenches(activeProject);
+				files = container.getAllTestbenches(currentProject);
 			}
 		} catch (UniformAppletException e) {
 			files = null;
@@ -552,18 +555,18 @@ public class RunDialog extends JDialog {
     }
     
     /**
-     * Changes active project, resets activeProjectLabel and reloads fileList
-     * to match a new active project. If <code>projectName</code> equals to
-     * already active project no action will be taken.
-     * @param projectName a project to make active
+     * Changes current project, resets currentProjectLabel and reloads fileList
+     * to match a new current project. If <code>projectName</code> equals to
+     * already current project no action will be taken.
+     * @param projectName a project to make current
      */
     private void changeActiveProject(String projectName) {
-    	if(activeProject == null) return;
-    	if(!activeProject.equals(projectName)) {
-    		String text = activeProjectLabel.getText().replace(activeProject, projectName);
-    		activeProjectLabel.setText(text);
-    		container.setActiveProject(projectName);
-    		activeProject = projectName;
+    	// current project is null only when there is no project to display
+    	if(currentProject == null) return;
+    	if(!currentProject.equals(projectName)) {
+    		String text = currentProjectLabel.getText().replace(currentProject, projectName);
+    		currentProjectLabel.setText(text);
+    		currentProject = projectName;
     		setupList();
     	}
 	}

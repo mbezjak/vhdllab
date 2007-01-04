@@ -3,10 +3,11 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Klasa koja predstavlja panel po kojem se crtaju valni oblici

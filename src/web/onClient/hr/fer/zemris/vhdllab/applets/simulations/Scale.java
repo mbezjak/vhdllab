@@ -4,8 +4,9 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.Arrays;
-import javax.swing.JScrollBar;
+
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 
 
 /**

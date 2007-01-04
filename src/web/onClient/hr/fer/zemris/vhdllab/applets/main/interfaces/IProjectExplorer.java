@@ -17,7 +17,6 @@ public interface IProjectExplorer {
 	 * @param projectName a project name that should be made active
 	 * @see #getSelectedProject()
 	 */
-	void setActiveProject(String projectName);
 	
 	/**
 	 * Returns a current active project. An active project is a project which user is currently
@@ -32,7 +31,7 @@ public interface IProjectExplorer {
 	List<String> getFilesByProject(String projectName);
 	void refreshProject(String projectName);
 	void closeProject(String projectName);
-	void removeProject(String projectName);
-	void removeFile(String projectName, String fileName);
+	void deleteProject(String projectName);
+	void deleteFile(String projectName, String fileName);
 	
 }

@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
-
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;

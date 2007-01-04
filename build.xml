@@ -357,6 +357,10 @@
     <copy todir="${tomcat.app.dir}" overwrite="true">
       <fileset dir="${basedir}/html/pages"/>
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar"/>
+      <fileset file="${basedir}/${lib.dir}/commons-digester-1.7.jar"/>
+      <fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar"/>
+	  <fileset file="${basedir}/${lib.dir}/hibernate/commons-logging.jar"/>
+      <fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils-1.7.0.jar"/>
     </copy>
   	
     <copy todir="${tomcat.app.dir}${file.separator}WEB-INF" overwrite="true">

@@ -82,7 +82,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 
 	public FileContent getInitialFileContent(Component parent) {
 		try {
-			String projectName = container.getActiveProject();
+			String projectName = container.getSelectedProject();
 			String fileName;
 			do {
 				fileName = JOptionPane.showInputDialog(parent, "Enter file name:");

@@ -1,11 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.automat;
 
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -179,20 +177,9 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-		if(pContainer!=null)
-			projectName=this.pContainer.getActiveProject();
-		else projectName="Default";
-		if(pContainer!=null)
-			try {
-				bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
-			} catch (UniformAppletException e) {
-				bundle = CachedResourceBundles.getBundle("Client_Automat_ApplicationResources", "en");
-				//e.printStackTrace();
-			}
-		else bundle = CachedResourceBundles.getBundle("Client_Automat_ApplicationResources", "en");
+		projectName=pContainer.getSelectedProject();
+		bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
 	}
-
-
 
 	public IWizard getWizard() {
 		return this;

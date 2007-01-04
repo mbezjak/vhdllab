@@ -19,10 +19,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * Default implementation of <code>MethodInvoker</code> interface. Uses
+ * <code>AjaxMediator</code> to initiate requests to server. It also uses
+ * Properties class to create XML documents that are sent and then reassembled
+ * on server. Server also returns XML documents that are reassembled here and
+ * so forth.
+ * @author Miro Bezjak
+ */
 public class DefaultMethodInvoker implements MethodInvoker {
 
+	/** Mediator responsible for initiating requests to server */
 	private AjaxMediator ajax;
 
+	/**
+	 * Constructor.
+	 * @param ajax an <code>AjaxMediator</code> that is responsible for
+	 * 		initiating requests to server
+	 * @throws NullPointerException if <code>ajax</code> is <code>null</code>
+	 */
 	public DefaultMethodInvoker(AjaxMediator ajax) {
 		if(ajax == null) throw new NullPointerException("Ajax mediator can not be null");
 		this.ajax = ajax;

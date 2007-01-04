@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.automat.entityTable;
 
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
@@ -287,14 +285,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-		if(pContainer!=null)
-			try {
-				bundle=pContainer.getResourceBundle("Client_EntityTable_ApplicationResources");
-			} catch (UniformAppletException e) {
-				bundle = CachedResourceBundles.getBundle("Client_EntityTable_ApplicationResources", "en");
-				//e.printStackTrace();
-			}
-		else bundle = CachedResourceBundles.getBundle("Client_EntityTable_ApplicationResources", "en");
+		bundle=pContainer.getResourceBundle("Client_EntityTable_ApplicationResources");
 	}
 
 	public boolean isDataCorrect() {
