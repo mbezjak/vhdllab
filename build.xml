@@ -18,6 +18,7 @@
     <pathelement path="${build.dir}/tests/web/onClient"/>
   	<pathelement path="${build.dir}/i18n"/>
 	<pathelement path="${build.dir}/i18n/common"/>
+	<pathelement path="${build.dir}/common"/>
   </path>
 
   <target name="init">

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-	public class Cache {
+	public class Communicator {
 
 		private MethodInvoker invoker;
 
@@ -40,7 +40,7 @@ import java.util.Map.Entry;
 		
 		
 		
-		public Cache(MethodInvoker invoker, String ownerId) {
+		public Communicator(MethodInvoker invoker, String ownerId) {
 			if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
 			if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
 			cachedViews = new HashMap<String, IView>();

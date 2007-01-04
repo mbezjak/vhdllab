@@ -80,7 +80,7 @@ public class MainApplet
 	 */
 	private static final long serialVersionUID = 4037604752375048576L;
 	
-	private Cache cache;
+	private Communicator communicator;
 	private ResourceBundle bundle;
 	
 	private JTabbedPane editorPane;
@@ -124,7 +124,7 @@ public class MainApplet
 		server.writeGlobalFiles();
 		//**********************
 		
-		cache = new Cache(invoker, userId);
+		communicator = new Communicator(invoker, userId);
 		bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		
 		initGUI();
@@ -144,10 +144,10 @@ public class MainApplet
 		//**********************
 		
 		try {
-			List<String> projects = cache.findProjects();
+			List<String> projects = communicator.findProjects();
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
-				List<String> files = cache.findFilesByProject(projectName);
+				List<String> files = communicator.findFilesByProject(projectName);
 				for(String fileName : files) {
 					projectExplorer.addFile(projectName, fileName);
 				}
@@ -185,7 +185,7 @@ public class MainApplet
 	public void destroy() {
 		saveAllEditors();
 		//closeAllEditors();
-		cache = null;
+		communicator = null;
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
 		this.repaint();
@@ -891,10 +891,10 @@ public class MainApplet
 	}
 	
 	private void compileLastHistoryResult() throws UniformAppletException {
-		if(cache.compilationHistoryIsEmpty()) {
+		if(communicator.compilationHistoryIsEmpty()) {
 			compileWithDialog();
 		} else {
-			FileIdentifier file = cache.getLastCompilationHistoryTarget();
+			FileIdentifier file = communicator.getLastCompilationHistoryTarget();
 			compile(file.getProjectName(), file.getFileName());
 		}
 	}
@@ -905,7 +905,7 @@ public class MainApplet
 		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
 		boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
 		if(shouldContinue) {
-			CompilationResult result = cache.compile(projectName, fileName);
+			CompilationResult result = communicator.compile(projectName, fileName);
 			IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
 			view.setData(result);
 		}
@@ -929,10 +929,10 @@ public class MainApplet
 	}
 	
 	private void simulateLastHistoryResult() throws UniformAppletException {
-		if(cache.simulationHistoryIsEmpty()) {
+		if(communicator.simulationHistoryIsEmpty()) {
 			simulateWithDialog();
 		} else {
-			FileIdentifier file = cache.getLastSimulationHistoryTarget();
+			FileIdentifier file = communicator.getLastSimulationHistoryTarget();
 			simulate(file.getProjectName(), file.getFileName());
 		}
 	}
@@ -943,7 +943,7 @@ public class MainApplet
 		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
 		boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
 		if(shouldContinue) {
-			SimulationResult result = cache.runSimulation(projectName, fileName);
+			SimulationResult result = communicator.runSimulation(projectName, fileName);
 			IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
 			view.setData(result);
 			if(result.getWaveform() != null) {
@@ -954,7 +954,7 @@ public class MainApplet
 	}
 	
 	public List<String> getAllCircuits(String projectName) throws UniformAppletException {
-		List<String> fileNames = cache.findFilesByProject(projectName);
+		List<String> fileNames = communicator.findFilesByProject(projectName);
 		List<String> circuits = new ArrayList<String>();
 		for(String name : fileNames) {
 			if(isCircuit(projectName, name)) {
@@ -965,7 +965,7 @@ public class MainApplet
 	}
 	
 	public List<String> getAllTestbenches(String projectName) throws UniformAppletException {
-		List<String> fileNames = cache.findFilesByProject(projectName);
+		List<String> fileNames = communicator.findFilesByProject(projectName);
 		List<String> testbenches = new ArrayList<String>();
 		for(String name : fileNames) {
 			if(isTestbench(projectName, name)) {
@@ -976,7 +976,7 @@ public class MainApplet
 	}
 	
 	private boolean isCircuit(String projectName, String fileName) throws UniformAppletException {
-		List<String> fileTypes = cache.getFileTypes();
+		List<String> fileTypes = communicator.getFileTypes();
 		fileTypes.remove(FileTypes.FT_VHDL_TB);
 		fileTypes.remove(FileTypes.FT_VHDL_SIMULATION);
 		String type = getFileType(projectName, fileName);
@@ -994,41 +994,41 @@ public class MainApplet
 	}
 	
 	public String getFileType(String projectName, String fileName) throws UniformAppletException {
-		return cache.loadFileType(projectName, fileName);
+		return communicator.loadFileType(projectName, fileName);
 	}
 	
 	public void viewVHDLCode(String projectName, String fileName) throws UniformAppletException {
 		// TODO ovo provjerit dal radi dobro
 		/*if(isCircuit(projectName, fileName) || 
 				isTestbench(projectName, fileName)) {*/
-			String vhdl = cache.generateVHDL(projectName, fileName);
+			String vhdl = communicator.generateVHDL(projectName, fileName);
 			//JOptionPane.showMessageDialog(this, vhdl);
 			openEditor(projectName, "vhdl:"+fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
 		//}
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
-		return cache.extractHierarchy(projectName);
+		return communicator.extractHierarchy(projectName);
 	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
 		// TODO tu mozda sejvat file
-		return cache.getCircuitInterfaceFor(projectName, fileName);
+		return communicator.getCircuitInterfaceFor(projectName, fileName);
 	}
 
 	public Preferences getPreferences(String type) throws UniformAppletException {
-		return cache.getPreferences(type);
+		return communicator.getPreferences(type);
 	}
 	
 	public void savePreferences(String type, Preferences pref) throws UniformAppletException {
-		cache.savePreferences(type, pref);
+		communicator.savePreferences(type, pref);
 	}
 
 	public ResourceBundle getResourceBundle(String baseName) {
 		String language = null;
 		String country = null;
 		try {
-			Preferences preferences = cache.getPreferences(FileTypes.FT_COMMON);
+			Preferences preferences = communicator.getPreferences(FileTypes.FT_COMMON);
 			SingleOption option = preferences.getOption(UserFileConstants.COMMON_LANGUAGE);
 			if(option != null) {
 				language = option.getChosenValue(); 
@@ -1070,7 +1070,7 @@ public class MainApplet
 	private int indexOfView(String type) {
 		for(int i = 0; i < viewPane.getTabCount(); i++) {
 			IView view = (IView) viewPane.getComponentAt(i);
-			String viewPaneComponentType = cache.getViewType(view);
+			String viewPaneComponentType = communicator.getViewType(view);
 			if(viewPaneComponentType.equals(type)) {
 				return i;
 			}
@@ -1079,7 +1079,7 @@ public class MainApplet
 	}
 	
 	private int indexOfView(IView view) {
-		String type = cache.getViewType(view);
+		String type = communicator.getViewType(view);
 		return indexOfView(type);
 	}
 	
@@ -1131,7 +1131,7 @@ public class MainApplet
 		int index = indexOfView(type);
 		if(index == -1) {
 			// Initialization of an editor
-			IView view = cache.getView(type);
+			IView view = communicator.getView(type);
 			view.setProjectContainer(this);
 			// End of initialization
 
@@ -1147,12 +1147,12 @@ public class MainApplet
 	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
 		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
-			String content = cache.loadFileContent(projectName, fileName);
+			String content = communicator.loadFileContent(projectName, fileName);
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 			String type = getFileType(projectName, fileName);
 
 			// Initialization of an editor
-			IEditor editor = cache.getEditor(type);
+			IEditor editor = communicator.getEditor(type);
 			editor.setProjectContainer(this);
 			editor.init();
 			editor.setSavable(isSavable);
@@ -1174,7 +1174,7 @@ public class MainApplet
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 
 			// Initialization of an editor
-			IEditor editor = cache.getEditor(type);
+			IEditor editor = communicator.getEditor(type);
 			editor.setProjectContainer(this);
 			editor.init();
 			editor.setSavable(isSavable);
@@ -1198,10 +1198,10 @@ public class MainApplet
 		}
 		
 		try {
-			List<String> projects = cache.findProjects();
+			List<String> projects = communicator.findProjects();
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
-				List<String> files = cache.findFilesByProject(projectName);
+				List<String> files = communicator.findFilesByProject(projectName);
 				for(String fileName : files) {
 					projectExplorer.addFile(projectName, fileName);
 				}
@@ -1227,16 +1227,16 @@ public class MainApplet
 	}
 	
 	public boolean existsFile(String projectName, String fileName) throws UniformAppletException {
-		return cache.existsFile(projectName, fileName);
+		return communicator.existsFile(projectName, fileName);
 	}
 	
 	public boolean existsProject(String projectName) throws UniformAppletException {
-		return cache.existsProject(projectName);
+		return communicator.existsProject(projectName);
 	}
 	
 	public void createNewFileInstance(String type) throws UniformAppletException {
 		// Initialization of a wizard
-		IWizard wizard = cache.getEditor(type).getWizard();
+		IWizard wizard = communicator.getEditor(type).getWizard();
 		if(wizard == null) throw new NullPointerException("No wizard for type: " + type);
 		wizard.setProjectContainer(this);
 		FileContent content = wizard.getInitialFileContent(this);
@@ -1246,15 +1246,15 @@ public class MainApplet
 		String projectName = content.getProjectName();
 		String fileName = content.getFileName();
 		String data = content.getContent();
-		boolean exists = cache.existsFile(projectName, fileName);
+		boolean exists = communicator.existsFile(projectName, fileName);
 		if(exists) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
 			text = Utilities.replacePlaceholders(text, new String[] {fileName});
 			echoStatusText(text);
 			return;
 		}
-		cache.createFile(projectName, fileName, type);
-		cache.saveFile(projectName, fileName, data);
+		communicator.createFile(projectName, fileName, type);
+		communicator.saveFile(projectName, fileName, data);
 		projectExplorer.addFile(projectName, fileName);
 		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_CREATED);
 		text = Utilities.replacePlaceholders(text, new String[] {fileName});
@@ -1267,7 +1267,7 @@ public class MainApplet
 		String message = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
 		String projectName = showCreateProjectDialog(title, message);
 		if(projectName == null) return;
-		boolean exists = cache.existsProject(projectName);
+		boolean exists = communicator.existsProject(projectName);
 		if(exists) {
 			// projectName is never null here
 			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
@@ -1275,7 +1275,7 @@ public class MainApplet
 			echoStatusText(text);
 			return;
 		}
-		cache.createProject(projectName);
+		communicator.createProject(projectName);
 		projectExplorer.addProject(projectName);
 		String text = bundle.getString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
 		text = Utilities.replacePlaceholders(text, new String[] {projectName});
@@ -1310,7 +1310,7 @@ public class MainApplet
 	
 	private void setPaneSize() {
 		try {
-			Preferences preferences = cache.getPreferences(FileTypes.FT_APPLET);
+			Preferences preferences = communicator.getPreferences(FileTypes.FT_APPLET);
 			validate();
 			SingleOption o;
 			double size;
@@ -1336,7 +1336,7 @@ public class MainApplet
 	private void storePaneSize() {
 		try {
 			String type = FileTypes.FT_APPLET;
-			Preferences preferences = cache.getPreferences(type);
+			Preferences preferences = communicator.getPreferences(type);
 			
 			SingleOption o = preferences.getOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH);
 			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth(); 
@@ -1403,7 +1403,7 @@ public class MainApplet
 					projects.add(projectName);
 				}
 				try {
-					cache.saveFile(projectName, fileName, content);
+					communicator.saveFile(projectName, fileName, content);
 					resetEditorTitle(false, projectName, fileName);
 					String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
 					text = Utilities.replacePlaceholders(text, new String[] {fileName});
@@ -1603,7 +1603,7 @@ public class MainApplet
 		
 		String projectName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 		try {
-			if(projectName != null && cache.existsProject(projectName)) {
+			if(projectName != null && communicator.existsProject(projectName)) {
 				return null;
 			}
 		} catch (UniformAppletException e) {
@@ -1814,31 +1814,31 @@ public class MainApplet
 "</Automat>";
 				
 				long start = System.currentTimeMillis();
-				IEditor editor = cache.getEditor(FileTypes.FT_VHDL_SOURCE);
+				IEditor editor = communicator.getEditor(FileTypes.FT_VHDL_SOURCE);
 				editor.setProjectContainer(MainApplet.this);
 				editor.init();
 				
-				if(!cache.existsProject(projectName1)) {
-					cache.createProject(projectName1);
+				if(!communicator.existsProject(projectName1)) {
+					communicator.createProject(projectName1);
 				}
-				if(!cache.existsFile(projectName1,fileName1)) {
-					cache.createFile(projectName1, fileName1, fileType1);
-					cache.saveFile(projectName1, fileName1, fileContent1);
+				if(!communicator.existsFile(projectName1,fileName1)) {
+					communicator.createFile(projectName1, fileName1, fileType1);
+					communicator.saveFile(projectName1, fileName1, fileContent1);
 				}
 				
-				if(!cache.existsFile(projectName1,fileName2)) {
-					cache.createFile(projectName1, fileName2, fileType2);
-					cache.saveFile(projectName1, fileName2, fileContent2);
+				if(!communicator.existsFile(projectName1,fileName2)) {
+					communicator.createFile(projectName1, fileName2, fileType2);
+					communicator.saveFile(projectName1, fileName2, fileContent2);
 				}
 
-				if(!cache.existsFile(projectName1,fileName3)) {
-					cache.createFile(projectName1, fileName3, fileType3);
-					cache.saveFile(projectName1, fileName3, fileContent3);
+				if(!communicator.existsFile(projectName1,fileName3)) {
+					communicator.createFile(projectName1, fileName3, fileType3);
+					communicator.saveFile(projectName1, fileName3, fileContent3);
 				}
 				
-				if(!cache.existsFile(projectName1,fileName4)) {
-					cache.createFile(projectName1, fileName4, fileType4);
-					cache.saveFile(projectName1, fileName4, fileContent4);
+				if(!communicator.existsFile(projectName1,fileName4)) {
+					communicator.createFile(projectName1, fileName4, fileType4);
+					communicator.saveFile(projectName1, fileName4, fileContent4);
 				}
 				
 				Preferences pref = getPreferences(FileTypes.FT_COMMON);
@@ -1850,10 +1850,10 @@ public class MainApplet
 
 				long end = System.currentTimeMillis();
 				
-				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n"+cache.getPreferences(FileTypes.FT_COMMON).serialize();
+				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n"+communicator.getPreferences(FileTypes.FT_COMMON).serialize();
 				infoData = infoData.replace("&lt;", "<");
 				infoData = infoData.replace("&gt;", ">");
-				cache.saveFile(projectName1, fileName1, infoData);
+				communicator.saveFile(projectName1, fileName1, infoData);
 
 				openEditor(projectName1, fileName1, true, false);
 				openEditor(projectName1, fileName2, true, false);
