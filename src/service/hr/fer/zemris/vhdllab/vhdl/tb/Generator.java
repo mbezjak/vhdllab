@@ -224,7 +224,6 @@ public interface Generator {
 	 * @param ci a circuit interface to detemine compatibility with.
 	 * @return <code>true</code> if this interface and <code>ci</code> are compatible; <code>false</code> otherwise.
 	 * @throws NullPointerException if <code>ci</code> is <code>null</code>.
-	 * @see CircuitInterface#isCompatible(Generator)
 	 * @see Signal
 	 * @see hr.fer.zemris.vhdllab.vhdl.model.Port
 	 */

@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.view.simulation;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.view.IView;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 

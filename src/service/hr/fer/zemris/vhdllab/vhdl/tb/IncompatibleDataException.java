@@ -6,8 +6,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
  * Thrown to indicate that <code>CircuitInterface</code>
  * and <code>Generator</code> are not compatible.
  *
- * @author  Miro Bezjak
- * @see CircuitInterface#isCompatible(Generator)
+ * @author Miro Bezjak
  * @see Generator#isCompatible(CircuitInterface)
  */
 public class IncompatibleDataException extends Exception {

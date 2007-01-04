@@ -1,6 +1,5 @@
-package hr.fer.zemris.vhdllab.applets.view;
+package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 /**
  * Interface that defines methods that every View must have. A View is

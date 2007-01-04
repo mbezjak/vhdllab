@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.components.dummy;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.view.IView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
