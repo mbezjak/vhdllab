@@ -385,6 +385,7 @@
   	<replace file="${user.home}${file.separator}.java.policy" propertyfile="${configuration.properties}">
   	  <replacefilter token="@@vhdllab.server@@" property="app.host"/>
 	  <replacefilter token="@@vhdllab.port@@" property="tomcat.port"/>
+  	  <replacefilter token="@@vhdllab.name@@" property="app.name"/>
   	</replace>
   </target>
 	
