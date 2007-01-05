@@ -81,13 +81,13 @@ public class Testbench implements IVHDLGenerator {
 		vhdl.append("begin\n");
 		populatePortMap(ci, vhdl);
 		vhdl.append("\n")
-			.append("process")
+			.append("\tprocess")
 			.append("\n")
-			.append("begin")
+			.append("\tbegin")
 			.append("\n");
 		populateProcess(ci, generator, vhdl);
 		vhdl.append("\n")
-			.append("end process;\n")
+			.append("\tend process;\n")
 			.append("end structural;");
 		return vhdl.toString();
 	}
@@ -173,21 +173,21 @@ public class Testbench implements IVHDLGenerator {
 		long time = -1;
 		for(Slot slot : list) {
 			if( time != -1 ) {
-				vhdl.append("wait for ").append(slot.getTime() - time).append(" ")
-					.append(gen.getMeasureUnit()).append(";\n");
+				vhdl.append("\t\twait for ").append(slot.getTime() - time).append(" ")
+					.append(gen.getMeasureUnit()).append(";\n\n");
 			}
 			for(ImpulseWithSignalName imp : slot.getList()) {
 				String state = imp.getImpulse().getState();
-				vhdl.append(getTestbenchSignal(imp.getSignalName())).append(" <= ");
+				vhdl.append("\t\t").append(getTestbenchSignal(imp.getSignalName()))
+					.append(" <= ");
 				if( ci.getPort(imp.getSignalName()).getType().isScalar() )
-					vhdl.append("\'").append(state).append("\'; ");
+					vhdl.append("\'").append(state).append("\';\n");
 				else
-					vhdl.append("\"").append(state).append("\"; ");
+					vhdl.append("\"").append(state).append("\";\n");
 			}
-			vhdl.append("\n");
 			time = slot.getTime();
 		}
-		vhdl.append("wait;\n");
+		vhdl.append("\t\twait;\n");
 	}
 	
 	/**

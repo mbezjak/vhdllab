@@ -43,8 +43,6 @@ import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -600,17 +598,8 @@ public class MainApplet
 					} else if(editorPane.isFocusCycleRoot()) {
 						maximizeComponent(viewPane);
 					}*/
-					/*if(editorPane.getTabCount() != 0) {
+					if(editorPane.getTabCount() != 0) {
 						maximizeComponent(editorPane);
-					}*/
-					IEditor editor = (IEditor)editorPane.getSelectedComponent();
-					try {
-						viewVHDLCode(editor.getProjectName(), editor.getFileName());
-					} catch (UniformAppletException ex) {
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new  PrintWriter(sw);
-						ex.printStackTrace(pw);
-						throw new NullPointerException(sw.toString());
 					}
 				}
 			});
@@ -765,6 +754,23 @@ public class MainApplet
 				}
 			});
 			menu.add(menuItem);
+			menu.addSeparator();
+			
+			// View VHDL code
+			key = LanguageConstants.MENU_TOOLS_VIEW_VHDL_CODE;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						viewVHDLCode((IEditor)editorPane.getSelectedComponent());
+					} catch (UniformAppletException ex) {
+						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
+						echoStatusText(text);
+					}
+				}
+			});
+			menu.add(menuItem);
 			
 			
 			menuBar.add(menu);
@@ -886,6 +892,7 @@ public class MainApplet
 	}
 	
 	private void compile(IEditor editor) throws UniformAppletException {
+		if(editor == null) return;
 		String projectName = editor.getProjectName();
 		String fileName = editor.getFileName();
 		if(isCircuit(projectName, fileName)) {
@@ -924,6 +931,7 @@ public class MainApplet
 	}
 	
 	private void simulate(IEditor editor) throws UniformAppletException {
+		if(editor == null) return;
 		String projectName = editor.getProjectName();
 		String fileName = editor.getFileName();
 		if(isTestbench(projectName, fileName)) {
@@ -1007,6 +1015,11 @@ public class MainApplet
 			String vhdl = communicator.generateVHDL(projectName, fileName);
 			openEditor(projectName, "vhdl:"+fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
 		}
+	}
+	
+	public void viewVHDLCode(IEditor editor) throws UniformAppletException {
+		if(editor == null) return;
+		viewVHDLCode(editor.getProjectName(), editor.getFileName());
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
@@ -1093,6 +1106,7 @@ public class MainApplet
 	}
 	
 	private int indexOfView(IView view) {
+		if(view == null) return -1;
 		String type = communicator.getViewType(view);
 		return indexOfView(type);
 	}
@@ -1109,6 +1123,7 @@ public class MainApplet
 	}
 	
 	private int indexOfEditor(IEditor editor) {
+		if(editor == null) return -1;
 		String projectName = editor.getProjectName();
 		String fileName = editor.getFileName();
 		return indexOfEditor(projectName, fileName);
@@ -1211,14 +1226,22 @@ public class MainApplet
 		
 		String projectName = fileContent.getProjectName();
 		String fileName = fileContent.getFileName();
-		Component component = editorPane.add(fileName + "/" + projectName, (JPanel)editor);
+		String title = createEditorTitle(projectName, fileName);
+		Component component = editorPane.add(title, (JPanel)editor);
 		int index = editorPane.indexOfComponent(component);
-		StringBuilder toolTipText = new StringBuilder(20 + projectName.length() + fileName.length());
-		toolTipText.append("");
-		
-		//projectName + "/" + fileName;
-		editorPane.setToolTipTextAt(index, toolTipText.toString());
+		String toolTipText = createEditorToolTip(projectName, fileName);
+		editorPane.setToolTipTextAt(index, toolTipText);
 		return index;
+	}
+	
+	private String createEditorTitle(String projectName, String fileName) {
+		return fileName + "/" + projectName;
+	}
+	
+	private String createEditorToolTip(String projectName, String fileName)	{
+		StringBuilder toolTipText = new StringBuilder(20 + projectName.length() + fileName.length());
+		toolTipText.append(projectName).append("/").append(fileName);
+		return toolTipText.toString();
 	}
 	
 	private void refreshWorkspace() {
@@ -1247,7 +1270,7 @@ public class MainApplet
 	}
 	
 	public void resetEditorTitle(boolean contentChanged, String projectName, String fileName) {
-		String title = fileName;
+		String title = createEditorTitle(projectName, fileName);
 		if(contentChanged) {
 			title = "*" + title;
 		}
@@ -1774,7 +1797,7 @@ public class MainApplet
 											"<signal name=\"D\" type=\"vector\" rangeFrom=\"3\" rangeTo=\"0\">(0,0000)(20,1000)(30,1100)(40,1110)(50,1111)(60,0111)(65,0101)(70,0001)(90,0000)(95,0010)(120,1110)(135,1100)(150,0100)(155,0001)(180,0000)(190,1010)(230,0010)(235,0110)(245,0100)(255,0101)(265,1101)(295,1001)(315,1000)(325,1010)(330,0010)(340,0110)(360,1111)(375,1101)(380,1001)(385,1000)</signal>" + "\n" + 
 											"<signal name=\"SEL\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"0\">(0,00)(25,10)(35,11)(70,10)(85,00)(130,01)(165,11)(195,10)(200,00)(250,01)(260,00)(285,10)(310,11)(320,10)(350,00)(360,01)(385,00)(395,10)(410,00)(415,01)(430,00)</signal>" + "\n";
 				
-				final String fileName4 = "Automat1";
+				/*final String fileName4 = "Automat1";
 				final String fileType4 = FileTypes.FT_VHDL_AUTOMAT;
 				final String fileContent4 = "<Automat>" + "\n" +
 	"<Podatci_Sklopa>" + "\n" +
@@ -1842,7 +1865,7 @@ public class MainApplet
 		"<U>B</U>" + "\n" +
 		"<Pobuda>1</Pobuda>" + "\n" +
 	"</Prijelaz>" + "\n" +
-"</Automat>";
+"</Automat>";*/
 				
 				long start = System.currentTimeMillis();
 				IEditor editor = communicator.getEditor(FileTypes.FT_VHDL_SOURCE);
@@ -1867,10 +1890,10 @@ public class MainApplet
 					communicator.saveFile(projectName1, fileName3, fileContent3);
 				}
 				
-				if(!communicator.existsFile(projectName1,fileName4)) {
+				/*if(!communicator.existsFile(projectName1,fileName4)) {
 					communicator.createFile(projectName1, fileName4, fileType4);
 					communicator.saveFile(projectName1, fileName4, fileContent4);
-				}
+				}*/
 				
 				Preferences pref = getPreferences(FileTypes.FT_COMMON);
 				// TODO mozda bi mogo defaultValue bit null.
@@ -1889,7 +1912,7 @@ public class MainApplet
 				openEditor(projectName1, fileName1, true, false);
 				openEditor(projectName1, fileName2, true, false);
 				openEditor(projectName1, fileName3, true, false);
-				openEditor(projectName1, fileName4, true, false);
+				//openEditor(projectName1, fileName4, true, false);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
