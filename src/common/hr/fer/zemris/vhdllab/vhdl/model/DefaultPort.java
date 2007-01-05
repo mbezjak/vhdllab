@@ -74,7 +74,7 @@ public class DefaultPort implements Port {
 		if( direction == null ) throw new NullPointerException("Direction can not be null.");
 		if( type == null ) throw new NullPointerException("Type can not be null.");
 		
-		if( !StringFormat.isCorrectName(name) ) throw new IllegalArgumentException("Port name is not of correct format.");
+		if( !StringFormat.isCorrectEntityName(name) ) throw new IllegalArgumentException("Port name is not of correct format.");
 		
 		this.portName = name;
 		this.direction = direction;

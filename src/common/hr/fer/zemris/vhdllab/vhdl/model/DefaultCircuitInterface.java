@@ -148,7 +148,7 @@ public class DefaultCircuitInterface implements CircuitInterface {
 	 */
 	private void createDefaultCircuitInterface(String name, List<Port> ports) {
 		if( name == null ) throw new NullPointerException("Name can not be null.");
-		if( !StringFormat.isCorrectName(name) ) throw new IllegalArgumentException("Name is not of correct format.");
+		if( !StringFormat.isCorrectEntityName(name) ) throw new IllegalArgumentException("Name is not of correct format.");
 		
 		this.entityName = name;
 		if( ports != null ) addPortList(ports);

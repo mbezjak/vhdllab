@@ -12,7 +12,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName() {
-		assertEquals(false, StringFormat.isCorrectName(""));
+		assertEquals(false, StringFormat.isCorrectEntityName(""));
 	}
 	
 	/** 
@@ -20,7 +20,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName2() {
-		assertEquals(true, StringFormat.isCorrectName("sklop_2"));
+		assertEquals(true, StringFormat.isCorrectEntityName("sklop_2"));
 	}
 	
 	/** 
@@ -28,7 +28,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName3() {
-		assertEquals(false, StringFormat.isCorrectName("_sklop2"));
+		assertEquals(false, StringFormat.isCorrectEntityName("_sklop2"));
 	}
 	
 	/** 
@@ -36,7 +36,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName4() {
-		assertEquals(false, StringFormat.isCorrectName("6sklop"));
+		assertEquals(false, StringFormat.isCorrectEntityName("6sklop"));
 	}
 	
 	/** 
@@ -44,7 +44,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName5() {
-		assertEquals(false, StringFormat.isCorrectName("sklop__a"));
+		assertEquals(false, StringFormat.isCorrectEntityName("sklop__a"));
 	}
 	
 	/** 
@@ -52,7 +52,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName6() {
-		assertEquals(false, StringFormat.isCorrectName("sklop5_"));
+		assertEquals(false, StringFormat.isCorrectEntityName("sklop5_"));
 	}
 	
 	/** 
@@ -60,7 +60,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName7() {
-		assertEquals(true, StringFormat.isCorrectName("SKLOP_5_drugi"));
+		assertEquals(true, StringFormat.isCorrectEntityName("SKLOP_5_drugi"));
 	}
 	
 	/** 
@@ -68,7 +68,7 @@ public class StringFormatTest {
 	 */
 	@Test
 	public void isCorrectName8() {
-		assertEquals(false, StringFormat.isCorrectName("sklop?drugi"));
+		assertEquals(false, StringFormat.isCorrectEntityName("sklop?drugi"));
 	}
 
 	/** 

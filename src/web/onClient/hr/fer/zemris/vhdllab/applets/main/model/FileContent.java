@@ -75,7 +75,7 @@ public class FileContent {
 		FileContent other = (FileContent) o;
 		
 		return this.projectName.equals(other.projectName) &&
-				this.fileName.equals(other.fileName) &&
+				this.fileName.equalsIgnoreCase(other.fileName) &&
 				this.content.equals(other.content);
 	}
 	
@@ -85,7 +85,7 @@ public class FileContent {
 	@Override
 	public int hashCode() {
 		return this.projectName.hashCode() ^
-				this.fileName.hashCode() ^
+				this.fileName.toUpperCase().hashCode() ^
 				this.content.hashCode();
 	}
 	

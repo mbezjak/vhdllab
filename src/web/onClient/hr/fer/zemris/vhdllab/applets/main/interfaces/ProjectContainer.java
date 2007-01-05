@@ -60,8 +60,8 @@ public interface ProjectContainer {
 	String getSelectedProject();
 	
 	/**
-	 * Checks to see if entity name is a corrent entity name. Correct name is
-	 * a string with the following format:
+	 * Ignore case and check if <code>s</code> is a correct entity name. Correct
+	 * entity name is a string with the following format:
 	 * <ul>
 	 * <li>it must contain only alpha (only letters of english alphabet), numeric
 	 * 		(digits 0 to 9) or underscore (_) characters
@@ -70,11 +70,28 @@ public interface ProjectContainer {
 	 * <li>it must not contain a tandem of underscore characters
 	 * </ul>
 	 * 
-	 * @param name an entity name to check
-	 * @return <code>true</code> if <code>name</code> is a correct name;
+	 * @param s a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is a correct name;
 	 * 		<code>false</code> otherwise.
-	 * @throws NullPointerException is <code>name</code> is <code>null</code>.
+	 * @throws NullPointerException is <code>s</code> is <code>null</code>.
 	 */
 	boolean isCorrectEntityName(String name);
 	
+	/**
+	 * Ignore case and check if <code>s</code> is a correct project name. Correct
+	 * project name is a string with the following format:
+	 * <ul>
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric
+	 * 		(digits 0 to 9) or underscore (_) characters
+	 * <li>it must not start with a non-alpha character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain a tandem of underscore characters
+	 * </ul>
+	 * 
+	 * @param s a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is a correct name;
+	 * 		<code>false</code> otherwise.
+	 * @throws NullPointerException is <code>s</code> is <code>null</code>.
+	 */
+	boolean isCorrectProjectName(String name);
 }

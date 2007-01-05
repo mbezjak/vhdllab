@@ -28,7 +28,8 @@ public class StringFormat {
 	 * </ul>
 	 *
 	 * @param s a string that will be checked.
-	 * @return <code>true</code> if <code>s</code> is a measure unit; <code>false</code> otherwise.
+	 * @return <code>true</code> if <code>s</code> is a measure unit;
+	 * 		<code>false</code> otherwise.
 	 * @throws NullPointerException if <code>s</code> is <code>null</code>.
 	 */
 	public static boolean isMeasureUnit(String s) {
@@ -44,20 +45,22 @@ public class StringFormat {
 
 	
 	/**
-	 * Ignore case and check if <code>s</code> is a correct name. Correct name is
-	 * a string with the following format:
+	 * Ignore case and check if <code>s</code> is a correct entity name. Correct
+	 * entity name is a string with the following format:
 	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet), numeric (digits 0 to 9) or underscore (_) characters
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric
+	 * 		(digits 0 to 9) or underscore (_) characters
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain a tandem of underscore characters
 	 * </ul>
 	 * 
 	 * @param s a string that will be checked.
-	 * @return <code>true</code> if <code>s</code> is a correct name; <code>false</code> otherwise.
+	 * @return <code>true</code> if <code>s</code> is a correct name;
+	 * 		<code>false</code> otherwise.
 	 * @throws NullPointerException is <code>s</code> is <code>null</code>.
 	 */
-	public static boolean isCorrectName(String s) {
+	public static boolean isCorrectEntityName(String s) {
 		if( s == null ) throw new NullPointerException("String can not be null.");
 		char[] chars = s.toCharArray();
 		if( chars.length == 0 ) return false;
@@ -75,6 +78,25 @@ public class StringFormat {
 			return false;
 		}  
 		return true;
+	}
+	
+	/**
+	 * Ignore case and check if <code>s</code> is a correct project name. Correct
+	 * project name is a string with the following format:
+	 * <ul>
+	 * <li>it must contain only alpha (only letters of english alphabet), numeric
+	 * 		(digits 0 to 9) or underscore (_) characters
+	 * <li>it must not start with a non-alpha character
+	 * <li>it must not end with an underscore character
+	 * <li>it must not contain a tandem of underscore characters
+	 * </ul>
+	 * 
+	 * @param s a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is a correct name; <code>false</code> otherwise.
+	 * @throws NullPointerException is <code>s</code> is <code>null</code>.
+	 */
+	public static boolean isCorrectProjectName(String s) {
+		return StringFormat.isCorrectEntityName(s);
 	}
 
 }

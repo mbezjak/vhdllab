@@ -420,7 +420,7 @@ public class Testbench implements IVHDLGenerator {
 		public ImpulseWithSignalName(String name, Impulse impulse) {
 			if( impulse == null ) throw new NullPointerException("Impulse can not be null.");
 			if( name == null ) throw new NullPointerException("Signal name can not be null.");
-			if( !StringFormat.isCorrectName(name) ) throw new IllegalArgumentException("Signal name is not of correct format.");
+			if( !StringFormat.isCorrectEntityName(name) ) throw new IllegalArgumentException("Signal name is not of correct format.");
 			this.signalName = name;
 			this.impulse = impulse;
 		}

@@ -144,7 +144,7 @@ public class MainApplet
 		//**********************
 		
 		try {
-			List<String> projects = communicator.findProjects();
+			List<String> projects = communicator.getAllProjects();
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
 				List<String> files = communicator.findFilesByProject(projectName);
@@ -185,6 +185,9 @@ public class MainApplet
 	public void destroy() {
 		saveAllEditors();
 		//closeAllEditors();
+		try {
+			communicator.cleanUp();
+		} catch (UniformAppletException ignored) {}
 		communicator = null;
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
@@ -628,7 +631,7 @@ public class MainApplet
 					String viewType = ViewTypes.VT_COMPILATION_ERRORS;
 					try {
 						openView(viewType);
-					} catch (UniformAppletException ex) {
+					} catch (Exception ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
 						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
@@ -647,7 +650,7 @@ public class MainApplet
 					String viewType = ViewTypes.VT_SIMULATION_ERRORS;
 					try {
 						openView(viewType);
-					} catch (UniformAppletException ex) {
+					} catch (Exception ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
 						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
@@ -999,12 +1002,11 @@ public class MainApplet
 	
 	public void viewVHDLCode(String projectName, String fileName) throws UniformAppletException {
 		// TODO ovo provjerit dal radi dobro
-		/*if(isCircuit(projectName, fileName) || 
-				isTestbench(projectName, fileName)) {*/
+		if(isCircuit(projectName, fileName) || 
+				isTestbench(projectName, fileName)) {
 			String vhdl = communicator.generateVHDL(projectName, fileName);
-			//JOptionPane.showMessageDialog(this, vhdl);
 			openEditor(projectName, "vhdl:"+fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
-		//}
+		}
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
@@ -1013,6 +1015,11 @@ public class MainApplet
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
 		// TODO tu mozda sejvat file
+		// pitanje je dal s dialogom ili ne?
+		IEditor editor = getEditor(projectName, fileName);
+		if(editor != null) {
+			saveEditor(editor);
+		}
 		return communicator.getCircuitInterfaceFor(projectName, fileName);
 	}
 
@@ -1020,8 +1027,8 @@ public class MainApplet
 		return communicator.getPreferences(type);
 	}
 	
-	public void savePreferences(String type, Preferences pref) throws UniformAppletException {
-		communicator.savePreferences(type, pref);
+	public void savePreferences(Preferences pref) throws UniformAppletException {
+		communicator.savePreferences(pref);
 	}
 
 	public ResourceBundle getResourceBundle(String baseName) {
@@ -1064,7 +1071,14 @@ public class MainApplet
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer#isCorrectEntityName(java.lang.String)
 	 */
 	public boolean isCorrectEntityName(String name) {
-		return StringFormat.isCorrectName(name);
+		return StringFormat.isCorrectEntityName(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer#isCorrectProjectName(java.lang.String)
+	 */
+	public boolean isCorrectProjectName(String name) {
+		return StringFormat.isCorrectProjectName(name);
 	}
 	
 	private int indexOfView(String type) {
@@ -1118,7 +1132,7 @@ public class MainApplet
 		return openedEditors;
 	}
 	
-	public IView getView(String type) throws UniformAppletException {
+	public IView getView(String type) {
 		int index = indexOfView(type);
 		if(index == -1) {
 			openView(type);
@@ -1127,7 +1141,7 @@ public class MainApplet
 		return (IView)viewPane.getComponentAt(index);
 	}
 	
-	public IView openView(String type) throws UniformAppletException {
+	public IView openView(String type) {
 		int index = indexOfView(type);
 		if(index == -1) {
 			// Initialization of an editor
@@ -1145,49 +1159,66 @@ public class MainApplet
 
 	
 	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
+		if(projectName == null) {
+			throw new NullPointerException("Project name can not be null.");
+		}
+		if(fileName == null) {
+			throw new NullPointerException("File name can not be null.");
+		}
 		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			String content = communicator.loadFileContent(projectName, fileName);
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 			String type = getFileType(projectName, fileName);
 
-			// Initialization of an editor
-			IEditor editor = communicator.getEditor(type);
-			editor.setProjectContainer(this);
-			editor.init();
-			editor.setSavable(isSavable);
-			editor.setReadOnly(isReadOnly);
-			editor.setFileContent(fileContent);
-			// End of initialization
-			
-			Component component = editorPane.add(fileName, (JPanel)editor);
-			index = editorPane.indexOfComponent(component);
-			String toolTipText = projectName + "/" + fileName;
-			editorPane.setToolTipTextAt(index, toolTipText);
+			index = openEditorImpl(fileContent, type, isSavable, isReadOnly);
 		}
 		editorPane.setSelectedIndex(index);
 	}
 	
-	private void openEditor(String projectName, String fileName, String content, String type, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
+	private void openEditor(String projectName, String fileName, String content, String type, boolean isSavable, boolean isReadOnly) {
+		if(projectName == null) {
+			throw new NullPointerException("Project name can not be null.");
+		}
+		if(fileName == null) {
+			throw new NullPointerException("File name can not be null.");
+		}
+		if(content == null) {
+			throw new NullPointerException("Content can not be null.");
+		}
 		int index = indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 
-			// Initialization of an editor
-			IEditor editor = communicator.getEditor(type);
-			editor.setProjectContainer(this);
-			editor.init();
-			editor.setSavable(isSavable);
-			editor.setReadOnly(isReadOnly);
+			index = openEditorImpl(fileContent, type, isSavable, isReadOnly);
+		} else {
+			IEditor editor = (IEditor) editorPane.getComponentAt(index);
+			FileContent fileContent = new FileContent(projectName, fileName, content);
 			editor.setFileContent(fileContent);
-			// End of initialization
-			
-			Component component = editorPane.add(fileName, (JPanel)editor);
-			index = editorPane.indexOfComponent(component);
-			String toolTipText = projectName + "/" + fileName;
-			editorPane.setToolTipTextAt(index, toolTipText);
 		}
 		editorPane.setSelectedIndex(index);
+	}
+	
+	private int openEditorImpl(FileContent fileContent, String type, boolean isSavable, boolean isReadOnly)  {
+		// Initialization of an editor
+		IEditor editor = communicator.getEditor(type);
+		editor.setProjectContainer(this);
+		editor.init();
+		editor.setSavable(isSavable);
+		editor.setReadOnly(isReadOnly);
+		editor.setFileContent(fileContent);
+		// End of initialization
+		
+		String projectName = fileContent.getProjectName();
+		String fileName = fileContent.getFileName();
+		Component component = editorPane.add(fileName + "/" + projectName, (JPanel)editor);
+		int index = editorPane.indexOfComponent(component);
+		StringBuilder toolTipText = new StringBuilder(20 + projectName.length() + fileName.length());
+		toolTipText.append("");
+		
+		//projectName + "/" + fileName;
+		editorPane.setToolTipTextAt(index, toolTipText.toString());
+		return index;
 	}
 	
 	private void refreshWorkspace() {
@@ -1198,7 +1229,7 @@ public class MainApplet
 		}
 		
 		try {
-			List<String> projects = communicator.findProjects();
+			List<String> projects = communicator.getAllProjects();
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
 				List<String> files = communicator.findFilesByProject(projectName);
@@ -1350,7 +1381,7 @@ public class MainApplet
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
 			o.setChosenValue(String.valueOf(size));
 			
-			savePreferences(type, preferences);
+			savePreferences(preferences);
 		} catch (UniformAppletException e) {}
 	}
 	
@@ -1560,7 +1591,7 @@ public class MainApplet
 				Preferences pref = getPreferences(FileTypes.FT_APPLET);
 				SingleOption singleOption = pref.getOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES);
 				singleOption.setChosenValue(String.valueOf(shouldAutoSave));
-				savePreferences(FileTypes.FT_APPLET, pref);
+				savePreferences(pref);
 			} catch (UniformAppletException e) {}
 		}
 		int option = dialog.getOption();
@@ -1846,7 +1877,7 @@ public class MainApplet
 				// TODO jos neznam sto ce bit s descriptionom
 				SingleOption o = new SingleOption(UserFileConstants.COMMON_ACTIVE_PROJECT, "Active project", "String", null, "", "Project1");
 				pref.setOption(o);
-				savePreferences(FileTypes.FT_COMMON, pref);
+				savePreferences(pref);
 
 				long end = System.currentTimeMillis();
 				

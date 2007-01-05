@@ -23,6 +23,19 @@ public class FileIdentifier {
 		this.projectName = projectName;
 		this.fileName = fileName;
 	}
+	
+	/**
+	 * Constructor for this class. File name will be set to <code>null</code>.
+	 * This class represents a project instead of a file when file name is
+	 * <code>null</code>.
+	 * @param projectName a name of a project
+	 * @throws NullPointerException if <code>projectName</code> is <code>null</code>
+	 */
+	public FileIdentifier(String projectName) {
+		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+		this.projectName = projectName;
+		this.fileName = null;
+	}
 
 	/**
 	 * Getter for project name.
@@ -84,7 +97,7 @@ public class FileIdentifier {
 	public int hashCode() {
 		int hash = this.projectName.hashCode();
 		if(this.isFile()) {
-			hash ^= this.fileName.hashCode();
+			hash ^= this.fileName.toUpperCase().hashCode();
 		}
 		return hash;
 	}
