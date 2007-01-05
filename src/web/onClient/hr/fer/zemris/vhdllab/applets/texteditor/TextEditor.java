@@ -14,6 +14,8 @@ import java.awt.Component;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -83,7 +85,13 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	public void initGUI() {
 		
 		
-		
+		this.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				text.requestFocusInWindow();
+			}
+			public void focusLost(FocusEvent e) {}
+			
+		});
 		
 		
 		text = new JTextPane();

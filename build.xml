@@ -377,6 +377,15 @@
       <fileset file="${basedir}/${lib.dir}/mysql/*.*"/>
       <fileset file="${basedir}/${lib.dir}/xdoclet/*.*"/>
     </copy>
+  	
+  	<copy todir="${user.home}" overwrite="true">
+  	  <fileset file="${metadata.dir}/.java.policy"/>
+  	</copy>
+  	
+  	<replace file="${user.home}${file.separator}.java.policy" propertyfile="${configuration.properties}">
+  	  <replacefilter token="@@vhdllab.server@@" property="app.host"/>
+	  <replacefilter token="@@vhdllab.port@@" property="tomcat.port"/>
+  	</replace>
   </target>
 	
   <target name="run-tomcat" depends="tomcat">

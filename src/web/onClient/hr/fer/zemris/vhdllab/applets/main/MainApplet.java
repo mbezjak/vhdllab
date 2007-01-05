@@ -233,6 +233,7 @@ public class MainApplet
 				if(e.getClickCount() == 2) {
 					maximizeComponent(editorPane);
 				}
+				editorPane.getSelectedComponent().requestFocusInWindow();
 			}
 			public void mouseEntered(MouseEvent e) {}
 			public void mouseExited(MouseEvent e) {}
@@ -291,7 +292,7 @@ public class MainApplet
 		sideBar = new SideBar();
 		sideBarPanel.add(sideBar, BorderLayout.CENTER);
 		
-		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, sideBarPanel);
+		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, null);
 		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
 		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, viewPane);
 		
@@ -1165,7 +1166,7 @@ public class MainApplet
 			// End of initialization
 
 			String title = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + type);
-			Component component = viewPane.add(title, (JPanel)view);
+			Component component = viewPane.add(title, (Component)view);
 			index = viewPane.indexOfComponent(component);
 		}
 		viewPane.setSelectedIndex(index);
@@ -1227,7 +1228,7 @@ public class MainApplet
 		String projectName = fileContent.getProjectName();
 		String fileName = fileContent.getFileName();
 		String title = createEditorTitle(projectName, fileName);
-		Component component = editorPane.add(title, (JPanel)editor);
+		Component component = editorPane.add(title, (Component)editor);
 		int index = editorPane.indexOfComponent(component);
 		String toolTipText = createEditorToolTip(projectName, fileName);
 		editorPane.setToolTipTextAt(index, toolTipText);
@@ -1797,7 +1798,7 @@ public class MainApplet
 											"<signal name=\"D\" type=\"vector\" rangeFrom=\"3\" rangeTo=\"0\">(0,0000)(20,1000)(30,1100)(40,1110)(50,1111)(60,0111)(65,0101)(70,0001)(90,0000)(95,0010)(120,1110)(135,1100)(150,0100)(155,0001)(180,0000)(190,1010)(230,0010)(235,0110)(245,0100)(255,0101)(265,1101)(295,1001)(315,1000)(325,1010)(330,0010)(340,0110)(360,1111)(375,1101)(380,1001)(385,1000)</signal>" + "\n" + 
 											"<signal name=\"SEL\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"0\">(0,00)(25,10)(35,11)(70,10)(85,00)(130,01)(165,11)(195,10)(200,00)(250,01)(260,00)(285,10)(310,11)(320,10)(350,00)(360,01)(385,00)(395,10)(410,00)(415,01)(430,00)</signal>" + "\n";
 				
-				/*final String fileName4 = "Automat1";
+				final String fileName4 = "Automat1";
 				final String fileType4 = FileTypes.FT_VHDL_AUTOMAT;
 				final String fileContent4 = "<Automat>" + "\n" +
 	"<Podatci_Sklopa>" + "\n" +
@@ -1865,7 +1866,7 @@ public class MainApplet
 		"<U>B</U>" + "\n" +
 		"<Pobuda>1</Pobuda>" + "\n" +
 	"</Prijelaz>" + "\n" +
-"</Automat>";*/
+"</Automat>";
 				
 				long start = System.currentTimeMillis();
 				IEditor editor = communicator.getEditor(FileTypes.FT_VHDL_SOURCE);
@@ -1890,18 +1891,11 @@ public class MainApplet
 					communicator.saveFile(projectName1, fileName3, fileContent3);
 				}
 				
-				/*if(!communicator.existsFile(projectName1,fileName4)) {
+				if(!communicator.existsFile(projectName1,fileName4)) {
 					communicator.createFile(projectName1, fileName4, fileType4);
 					communicator.saveFile(projectName1, fileName4, fileContent4);
-				}*/
+				}
 				
-				Preferences pref = getPreferences(FileTypes.FT_COMMON);
-				// TODO mozda bi mogo defaultValue bit null.
-				// TODO jos neznam sto ce bit s descriptionom
-				SingleOption o = new SingleOption(UserFileConstants.COMMON_ACTIVE_PROJECT, "Active project", "String", null, "", "Project1");
-				pref.setOption(o);
-				savePreferences(pref);
-
 				long end = System.currentTimeMillis();
 				
 				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n"+communicator.getPreferences(FileTypes.FT_COMMON).serialize();
@@ -1912,7 +1906,7 @@ public class MainApplet
 				openEditor(projectName1, fileName1, true, false);
 				openEditor(projectName1, fileName2, true, false);
 				openEditor(projectName1, fileName3, true, false);
-				//openEditor(projectName1, fileName4, true, false);
+				openEditor(projectName1, fileName4, true, false);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
