@@ -43,6 +43,8 @@ import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -454,6 +456,18 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE_NEW_PROJECT;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						createNewProjectInstance();
+					} catch (UniformAppletException ex) {
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						throw new NullPointerException(sw.toString());
+					}
+				}
+			});
 			submenu.add(menuItem);
 			submenu.addSeparator();
 			
@@ -512,10 +526,10 @@ public class MainApplet
 			menu.add(submenu);
 			
 			// Open menu item
-			key = LanguageConstants.MENU_FILE_OPEN;
+			/*key = LanguageConstants.MENU_FILE_OPEN;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
-			menu.add(menuItem);
+			menu.add(menuItem);*/
 			menu.addSeparator();
 			
 			// Save menu item
@@ -906,7 +920,11 @@ public class MainApplet
 			compileWithDialog();
 		} else {
 			FileIdentifier file = communicator.getLastCompilationHistoryTarget();
-			compile(file.getProjectName(), file.getFileName());
+			if(file == null) {
+				compileWithDialog();
+			} else {
+				compile(file.getProjectName(), file.getFileName());
+			}
 		}
 	}
 	
@@ -945,7 +963,11 @@ public class MainApplet
 			simulateWithDialog();
 		} else {
 			FileIdentifier file = communicator.getLastSimulationHistoryTarget();
-			simulate(file.getProjectName(), file.getFileName());
+			if(file == null) {
+				simulateWithDialog();
+			} else {
+				simulate(file.getProjectName(), file.getFileName());
+			}
 		}
 	}
 	
@@ -1656,13 +1678,14 @@ public class MainApplet
 		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
 		Object[] options = new Object[] {ok, cancel};
 		
-		String projectName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-		try {
+		//String projectName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+		String projectName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION);
+		/*try {
 			if(projectName != null && communicator.existsProject(projectName)) {
 				return null;
 			}
 		} catch (UniformAppletException e) {
-		}
+		}*/
 		return projectName;
 	}
 	

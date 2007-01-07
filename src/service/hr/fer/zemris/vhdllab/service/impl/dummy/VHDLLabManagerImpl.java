@@ -176,16 +176,6 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	}
 
 	public SimulationResult runSimulation(Long fileId) throws ServiceException {
-		/*
-		 * InputStream in = this.getClass().getResourceAsStream("adder2.vcd");
-		 * StringBuffer out = new StringBuffer();
-		 * byte[] b = new byte[65536];
-		 * for (int n; (n = in.read(b)) != -1;) {
-		 *     out.append(new String(b, 0, n));
-		 * }
-		 * String vcdResult = out.toString();
-		 */
-		
 		File file = loadFile(fileId);
 		// Pretpostavka: file je po tipu VHDL Source samog testbencha
 		List<File> deps = extractDependencies(file);
