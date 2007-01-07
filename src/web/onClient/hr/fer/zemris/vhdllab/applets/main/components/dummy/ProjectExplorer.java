@@ -103,7 +103,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 
 
-	public void deleteFile(String projectName, String fileName) {
+	public void removeFile(String projectName, String fileName) {
 		if(!this.projectName.equals(projectName)) {
 			return;
 		}
@@ -112,9 +112,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 
 
-	public void deleteProject(String projectName) {
+	public void removeProject(String projectName) {
 		for(String name : getFilesByProject(projectName)) {
-			deleteFile(projectName, name);
+			removeFile(projectName, name);
 		}
 	}
 

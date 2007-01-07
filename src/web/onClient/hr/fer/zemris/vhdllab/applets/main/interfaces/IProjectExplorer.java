@@ -31,7 +31,7 @@ public interface IProjectExplorer {
 	List<String> getFilesByProject(String projectName);
 	void refreshProject(String projectName);
 	void closeProject(String projectName);
-	void deleteProject(String projectName);
-	void deleteFile(String projectName, String fileName);
+	void removeProject(String projectName);
+	void removeFile(String projectName, String fileName);
 	
 }

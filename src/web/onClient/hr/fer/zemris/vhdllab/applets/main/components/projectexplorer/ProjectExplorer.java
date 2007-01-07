@@ -492,7 +492,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 * Metoda brise datoteku iz projekta, ako postoji takav projekt, i ako
 	 * postoji takva datoteka.
 	 */
-	public void deleteFile(String projectName, String fileName) {
+	public void removeFile(String projectName, String fileName) {
 		boolean contains = false;
 		DefaultMutableTreeNode projectNode = null;
 		DefaultMutableTreeNode fileNode = null;
@@ -525,7 +525,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	/**
 	 * Metoda brise projekt, ako takav projekt uopce postoji
 	 */
-	public void deleteProject(String projectName) {
+	public void removeProject(String projectName) {
 		boolean contains = false;
 		DefaultMutableTreeNode projectNode = null;
 

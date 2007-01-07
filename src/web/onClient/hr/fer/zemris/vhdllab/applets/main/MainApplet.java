@@ -1271,7 +1271,7 @@ public class MainApplet
 		// TODO to treba jos do kraja napravit, zajedno s refreshProject i refreshFile
 		List<String> openedProjects = projectExplorer.getAllProjects();
 		for(String p : openedProjects) {
-			projectExplorer.deleteProject(p);
+			projectExplorer.removeProject(p);
 		}
 		
 		try {
