@@ -363,7 +363,7 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeEditor((IEditor)editorPane.getSelectedComponent());
+					closeEditor((IEditor)editorPane.getSelectedComponent(), true);
 				}
 			});
 			menuBar.add(menuItem);
@@ -373,7 +373,7 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllButThisEditor((IEditor)editorPane.getSelectedComponent());
+					closeAllButThisEditor((IEditor)editorPane.getSelectedComponent(), true);
 				}
 			});
 			menuBar.add(menuItem);
@@ -383,7 +383,7 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllEditors();
+					closeAllEditors(true);
 				}
 			});
 			menuBar.add(menuItem);
@@ -561,7 +561,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeEditor((IEditor)editorPane.getSelectedComponent());
+					closeEditor((IEditor)editorPane.getSelectedComponent(), true);
 				}
 			});
 			menu.add(menuItem);
@@ -572,7 +572,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllEditors();
+					closeAllEditors(true);
 				}
 			});
 			menu.add(menuItem);
@@ -1138,7 +1138,7 @@ public class MainApplet
 		for(int i = 0; i < editorPane.getTabCount(); i++) {
 			IEditor editor = (IEditor) editorPane.getComponentAt(i);
 			if(projectName.equals(editor.getProjectName()) &&
-					fileName.equals(editor.getFileName())) {
+					fileName.equalsIgnoreCase(editor.getFileName())) {
 				return i;
 			}
 		}
@@ -1310,6 +1310,30 @@ public class MainApplet
 	public boolean existsProject(String projectName) throws UniformAppletException {
 		return communicator.existsProject(projectName);
 	}
+	
+	public void deleteFile(String projectName, String fileName) throws UniformAppletException {
+		if(projectName == null) {
+			throw new NullPointerException("Project name can not be null.");
+		}
+		if(fileName == null) {
+			throw new NullPointerException("File name can not be null.");
+		}
+		if(fileIsOpened(projectName, fileName)) {
+			IEditor editor = getOpenedEditor(projectName, fileName);
+			closeEditor(editor, false);
+		}
+		projectExplorer.removeFile(projectName, fileName);
+		communicator.deleteFile(projectName, fileName);
+	}
+	
+	public void deleteProject(String projectName) throws UniformAppletException {
+		if(projectName == null) {
+			throw new NullPointerException("Project name can not be null.");
+		}
+		projectExplorer.removeProject(projectName);
+		communicator.deleteProject(projectName);
+	}
+
 	
 	public void createNewFileInstance(String type) throws UniformAppletException {
 		// Initialization of a wizard
@@ -1502,33 +1526,62 @@ public class MainApplet
 		echoStatusText(text);
 	}
 	
-	private void closeEditor(IEditor editor) {
+	private boolean fileIsOpened(IEditor editor) {
+		if(editor == null) return false;
+		return indexOfEditor(editor) != -1;
+	}
+	
+	private boolean fileIsOpened(String projectName, String fileName) {
+		if(projectName == null || fileName == null) return false;
+		return indexOfEditor(projectName, fileName) != -1;
+	}
+	
+	private List<IEditor> pickOpenedEditors(List<IEditor> editors) {
+		List<IEditor> openedEditors = new ArrayList<IEditor>();
+		for(IEditor e : editors) {
+			if(fileIsOpened(e)) {
+				openedEditors.add(e);
+			}
+		}
+		return openedEditors;
+	}
+	
+	private void closeEditor(IEditor editor, boolean showDialog) {
 		if(editor == null) return;
 		List<IEditor> editorsToClose = new ArrayList<IEditor>(1);
 		editorsToClose.add(editor);
-		closeEditors(editorsToClose);
+		closeEditors(editorsToClose, showDialog);
 	}
 	
-	private void closeAllEditors() {
+	private void closeAllEditors(boolean showDialog) {
 		List<IEditor> openedEditors = getAllOpenedEditors();
-		closeEditors(openedEditors);
+		closeEditors(openedEditors, showDialog);
 	}
 	
-	private void closeAllButThisEditor(IEditor editorToKeepOpened) {
+	private void closeAllButThisEditor(IEditor editorToKeepOpened, boolean showDialog) {
 		if(editorToKeepOpened == null) return;
 		List<IEditor> openedEditors = getAllOpenedEditors();
 		openedEditors.remove(editorToKeepOpened);
-		closeEditors(openedEditors);
+		closeEditors(openedEditors, showDialog);
 	}
 	
-	private void closeEditors(List<IEditor> editorsToClose) {
+	private void closeEditors(List<IEditor> editorsToClose, boolean showDialog) {
 		if(editorsToClose == null) return;
 		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_TITLE);
 		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_MESSAGE);
-		boolean shouldContinue = saveResourcesWithSaveDialog(editorsToClose, title, message);
+		editorsToClose = pickOpenedEditors(editorsToClose);
+		boolean shouldContinue;
+		if(showDialog) {
+			shouldContinue = saveResourcesWithSaveDialog(editorsToClose, title, message);
+		} else {
+			shouldContinue = true;
+		}
 		if(shouldContinue) {
 			for(IEditor editor : editorsToClose) {
+				// Clean up of an editor
 				editor.cleanUp();
+				// End of clean up
+				
 				int index = indexOfEditor(editor);
 				editorPane.remove(index);
 			}

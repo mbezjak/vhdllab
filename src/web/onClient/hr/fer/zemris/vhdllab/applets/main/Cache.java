@@ -370,6 +370,8 @@ public class Cache {
 			throw new NullPointerException("File name can not be null.");
 		}
 		FileIdentifier key = makeIdentifier(projectName, fileName);
+		compilationHistory.remove(key);
+		simulationHistory.remove(key);
 		identifiers.remove(key);
 	}
 

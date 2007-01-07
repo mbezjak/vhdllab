@@ -19,6 +19,8 @@ public interface ProjectContainer {
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;
 	boolean existsFile(String projectName, String fileName) throws UniformAppletException;
 	boolean existsProject(String projectName) throws UniformAppletException;
+	void deleteFile(String projectName, String fileName) throws UniformAppletException;
+	void deleteProject(String projectName) throws UniformAppletException;
 	void createNewFileInstance(String type) throws UniformAppletException;
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
 	IView getView(String type) throws UniformAppletException;

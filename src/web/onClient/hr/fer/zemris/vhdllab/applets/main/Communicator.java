@@ -61,7 +61,7 @@ public class Communicator {
 		}
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
 		if(projectIdentifier == null) {
-			throw new IllegalArgumentException("Project does not exists!");
+			throw new UniformAppletException("Project does not exists!");
 		}
 		List<Long> fileIdentifiers =  invoker.findFileByProject(projectIdentifier);
 
@@ -94,6 +94,23 @@ public class Communicator {
 		return invoker.existsProject(projectIdentifier);*/
 		return cache.containsIdentifierFor(projectName);
 	}
+	
+	public void deleteFile(String projectName, String fileName) throws UniformAppletException {
+		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+		if(fileName == null) throw new NullPointerException("File name can not be null.");
+		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		cache.removeItem(projectName, fileName);
+		invoker.deleteFile(fileIdentifier);
+	}
+	
+	public void deleteProject(String projectName) throws UniformAppletException {
+		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+		Long fileIdentifier = cache.getIdentifierFor(projectName);
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		cache.removeItem(projectName);
+		invoker.deleteProject(fileIdentifier);
+	}
 
 	public void createProject(String projectName) throws UniformAppletException {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
@@ -116,7 +133,7 @@ public class Communicator {
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		if(content == null) throw new NullPointerException("File content can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new IllegalArgumentException("File does not exists!");
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		invoker.saveFile(fileIdentifier, content);
 	}
 
@@ -124,7 +141,7 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new IllegalArgumentException("File does not exists!");
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		return invoker.loadFileContent(fileIdentifier);
 	}
 
@@ -132,14 +149,14 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new IllegalArgumentException("File does not exists!");
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		return invoker.loadFileType(fileIdentifier);
 	}
 
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
-		if(projectIdentifier == null) throw new IllegalArgumentException("Project does not exists!");
+		if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
 		return invoker.extractHierarchy(projectIdentifier);
 	}
 
@@ -147,7 +164,7 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new IllegalArgumentException("File does not exists!");
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		return invoker.generateVHDL(fileIdentifier);
 	}
 
@@ -159,7 +176,7 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new IllegalArgumentException("File does not exists!");
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		cache.cacheCompilationTargetToHistory(projectName, fileName);
 		return invoker.compileFile(fileIdentifier);
 	}
@@ -181,7 +198,7 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new IllegalArgumentException("File does not exists!");
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		cache.cacheSimulationTargetToHistory(projectName, fileName);
 		return invoker.runSimulation(fileIdentifier);
 	}
@@ -198,7 +215,7 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new IllegalArgumentException("File does not exists!");
+		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		return invoker.extractCircuitInterface(fileIdentifier);
 	}
 
