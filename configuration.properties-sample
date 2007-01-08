@@ -31,6 +31,9 @@ app.host = localhost
 ### Relative application url pattern for tomcat ###
 app.url = vhdllab.html
 
+### Override java policy in user home dir ###
+override.java.policy = false
+
 ### Full path to browser executable file ###
 browser = c:\\Program Files\\Mozilla Firefox\\firefox.exe
 #browser = c:\\Program Files\\Opera\\opera.exe

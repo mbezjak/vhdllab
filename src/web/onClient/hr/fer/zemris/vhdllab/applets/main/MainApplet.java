@@ -143,6 +143,8 @@ public class MainApplet
 		server.writeServerInitData();
 		//**********************
 		
+		//refreshWorkspace();
+		
 		try {
 			List<String> projects = communicator.getAllProjects();
 			for(String projectName : projects) {
@@ -1278,10 +1280,6 @@ public class MainApplet
 			List<String> projects = communicator.getAllProjects();
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
-				List<String> files = communicator.findFilesByProject(projectName);
-				for(String fileName : files) {
-					projectExplorer.addFile(projectName, fileName);
-				}
 			}
 			
 			String text = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);

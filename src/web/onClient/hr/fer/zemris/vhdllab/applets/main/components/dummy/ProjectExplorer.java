@@ -3,6 +3,8 @@ package hr.fer.zemris.vhdllab.applets.main.components.dummy;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -66,19 +68,23 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	}
 
 	public void addProject(String projectName) {
+		this.projectName = projectName;
+		Hierarchy h = null;
+		try {
+			h = container.extractHierarchy(projectName);
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			return;
+		}
+		//JOptionPane.showMessageDialog(null, h);
+		for(Pair p : h) {
+			//JOptionPane.showMessageDialog(null, "adding project name:" + projectName + " and file name:" + p.getFileName());
+			addFile(projectName, p.getFileName());
+		}
 	}
-
-
-
-	public void setActiveProject(String projectName) {
-	}
-
-
 
 	public void closeProject(String projectName) {
 	}
-
-
 
 	public List<String> getAllProjects() {
 		List<String> projects = new ArrayList<String>(1);
@@ -86,11 +92,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		return projects;
 	}
 
-
-
 	public List<String> getFilesByProject(String projectName) {
-		if(!this.projectName.equals(projectName)) {
-			return null;
+		if(projectName == null || !this.projectName.equals(projectName)) {
+			return new ArrayList<String>(0);
 		}
 		
 		List<String> fileNames = new ArrayList<String>();
@@ -101,16 +105,12 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		return fileNames;
 	}
 
-
-
 	public void removeFile(String projectName, String fileName) {
-		if(!this.projectName.equals(projectName)) {
+		if(projectName == null || !this.projectName.equals(projectName)) {
 			return;
 		}
 		model.removeElement(fileName);
 	}
-
-
 
 	public void removeProject(String projectName) {
 		for(String name : getFilesByProject(projectName)) {
@@ -123,6 +123,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	}
 
 	public void refreshProject(String projectName) {
+		removeProject(projectName);
+		addProject(projectName);
 	}
 	
 }

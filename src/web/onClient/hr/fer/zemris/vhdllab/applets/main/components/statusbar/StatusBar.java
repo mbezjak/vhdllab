@@ -41,6 +41,7 @@ public class StatusBar extends JPanel implements IStatusBar {
 		this.setLayout(new BorderLayout());
 		this.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createRaisedBevelBorder(), BorderFactory.createLoweredBevelBorder()));
+		this.add(new JLabel(" "), BorderLayout.WEST);
 		this.add(statusText, BorderLayout.CENTER);
 		this.add(box, BorderLayout.EAST);
 		this.setPreferredSize(new Dimension(0, 24));

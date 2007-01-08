@@ -74,6 +74,12 @@
   	  <replacefilter token="@@database.connection.pool.size@@" property="database.connection.pool.size"/>
   	  <replacefilter token="@@database.hbm2ddl.auto@@" property="database.hbm2ddl.auto"/>
   	</replace>
+  	
+  	<replace file="${local.dir}${file.separator}.java.policy" propertyfile="${configuration.properties}">
+  	  <replacefilter token="@@vhdllab.server@@" property="app.host"/>
+	  <replacefilter token="@@vhdllab.port@@" property="tomcat.port"/>
+  	  <replacefilter token="@@vhdllab.name@@" property="app.name"/>
+  	</replace>
   </target>
 
   <target name="clean">
@@ -378,15 +384,41 @@
       <fileset file="${basedir}/${lib.dir}/xdoclet/*.*"/>
     </copy>
   	
-  	<copy todir="${user.home}" overwrite="true">
-  	  <fileset file="${metadata.dir}/.java.policy"/>
-  	</copy>
+  	<available property="java.policy.exists" file="${user.home}/.java.policy" />
+  	<condition property="should.override.java.policy">
+  	  <and>
+  	  	<isset property="java.policy.exists" />
+  	  	<equals arg1="true" arg2="${override.java.policy}" casesensitive="false" trim="true"/>
+  	  </and>
+  	</condition>
+  	<condition property="dont.override.java.policy">
+  	  <and>
+  	  	<isset property="java.policy.exists" />
+  	  	<equals arg1="false" arg2="${override.java.policy}" casesensitive="false" trim="true"/>
+  	  </and>
+  	</condition>
+  	<antcall target="copy-java-policy-doesnt-exist" />
+  	<antcall target="override-java-policy" />
+ 	<antcall target="dont-override-java-policy" />
   	
-  	<replace file="${user.home}${file.separator}.java.policy" propertyfile="${configuration.properties}">
-  	  <replacefilter token="@@vhdllab.server@@" property="app.host"/>
-	  <replacefilter token="@@vhdllab.port@@" property="tomcat.port"/>
-  	  <replacefilter token="@@vhdllab.name@@" property="app.name"/>
-  	</replace>
+  </target>
+	
+  <target name="copy-java-policy-doesnt-exist" unless="java.policy.exists">
+  	<echo>File '.java.policy' does not exists in ${user.home}. Copying file...</echo>
+  	<copy todir="${user.home}" verbose="true">
+  	  <fileset file="${local.dir}/.java.policy"/>
+  	</copy>
+  </target>
+	
+  <target name="override-java-policy" if="should.override.java.policy">
+  	<echo>Overring file '${user.home}${file.separator}.java.policy' with '.${file.separator}${local.dir}${file.separator}.java.policy'</echo>
+  	<copy todir="${user.home}" overwrite="true" verbose="true">
+  	  <fileset file="${local.dir}/.java.policy"/>
+  	</copy>
+  </target>
+	
+  <target name="dont-override-java-policy" if="dont.override.java.policy">
+  	<echo>Modify your existing '${user.home}${file.separator}.java.policy' so that it contains contents of '.${file.separator}${local.dir}${file.separator}.java.policy'</echo>
   </target>
 	
   <target name="run-tomcat" depends="tomcat">
