@@ -83,9 +83,9 @@ public class MealyParser implements IAutomatVHDLGenerator {
 					buffer=generirajPrijelaz(buffer,pr);
 			}
 			if(!test)buffer.append("ELSE ");
-			buffer.append("state_next<=").append(st.ime).append("\n\t\tEND IF;");
+			buffer.append("state_next<=").append(st.ime).append(";\n\t\tEND IF;");
 		}
-		buffer.append("\n\t\t WHEN OTHERS state_next=state_present;\n\tEND CASE\nEND PROCESS\n");
+		buffer.append("\n\t\t WHEN OTHERS => state_next <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
 		return buffer;
 	}
 
