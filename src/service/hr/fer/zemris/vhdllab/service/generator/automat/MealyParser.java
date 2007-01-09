@@ -24,7 +24,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 
 	private void createData() {
 		StringBuffer buffer=new StringBuffer();
-		buffer.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL\n\n");
+		buffer.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
 		
 		buffer=addEntity(buffer);
 		buffer.append("\nARCHITECTURE Behavioral OF ").append(podatci.ime).append(" IS\n");
@@ -141,7 +141,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 			buffer.append(";");
 		}
 		buffer.deleteCharAt(buffer.length()-1);
-		buffer.append(")\nEND ").append(podatci.ime).append(";\n");
+		buffer.append(");\nEND ").append(podatci.ime).append(";\n");
 		return buffer;
 	}
 

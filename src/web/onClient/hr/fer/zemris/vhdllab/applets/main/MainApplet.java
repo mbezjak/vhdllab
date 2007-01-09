@@ -143,7 +143,7 @@ public class MainApplet
 		server.writeServerInitData();
 		//**********************
 		
-		//refreshWorkspace();
+//		refreshWorkspace();
 		
 		try {
 			List<String> projects = communicator.getAllProjects();
