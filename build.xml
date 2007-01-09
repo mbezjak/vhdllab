@@ -394,7 +394,10 @@
   	<condition property="dont.override.java.policy">
   	  <and>
   	  	<isset property="java.policy.exists" />
-  	  	<equals arg1="false" arg2="${override.java.policy}" casesensitive="false" trim="true"/>
+  	  	<or>
+  	  	  <isset property="override.java.policy" />
+ 	  	  <equals arg1="false" arg2="${override.java.policy}" casesensitive="false" trim="true"/>
+  	  	</or>
   	  </and>
   	</condition>
   	<antcall target="copy-java-policy-doesnt-exist" />
