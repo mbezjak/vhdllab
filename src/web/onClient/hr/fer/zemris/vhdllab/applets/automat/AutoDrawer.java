@@ -89,7 +89,7 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * radijus krugova za stanja
 	 */
-	private int radijus=25;
+	private int radijus=17;
 	/**
 	 * Stanja rada definirat ce dali se dodaje signal, dodaje prijelaz ili editira slika.
 	 * stanjeRada=1 mjenjanje postojecih objekata
@@ -231,13 +231,13 @@ public class AutoDrawer extends JPanel{
 			g.setColor(stanjeZaDodati.boja);
 			g.fillArc(stanjeZaDodati.ox,stanjeZaDodati.oy,2*radijus,2*radijus,0,360);
 			g.setColor(Color.WHITE);
-			g.fillArc(stanjeZaDodati.ox+5,stanjeZaDodati.oy+5,2*radijus-10,2*radijus-10,0,360);
+			g.fillArc(stanjeZaDodati.ox+radijus/5,stanjeZaDodati.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
 		}
 		for(Stanje st:stanja){
 			g.setColor(st.boja);
 			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
 			g.setColor(Color.WHITE);
-			g.fillArc(st.ox+5,st.oy+5,2*radijus-10,2*radijus-10,0,360);
+			g.fillArc(st.ox+radijus/5,st.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
 			g.setColor(st.boja);
 			if(st.ime.equals(podatci.pocetnoStanje)){
 				g.drawLine(st.ox-17,st.oy+radijus,st.ox,st.oy+radijus);
@@ -320,13 +320,13 @@ public class AutoDrawer extends JPanel{
 			g.setColor(stanjeZaDodati.boja);
 			g.fillArc(stanjeZaDodati.ox,stanjeZaDodati.oy,2*radijus,2*radijus,0,360);
 			g.setColor(Color.WHITE);
-			g.fillArc(stanjeZaDodati.ox+5,stanjeZaDodati.oy+5,2*radijus-10,2*radijus-10,0,360);
+			g.fillArc(stanjeZaDodati.ox+radijus/5,stanjeZaDodati.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
 		}
 		for(Stanje st:stanja){
 			g.setColor(st.boja);
 			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
 			g.setColor(Color.WHITE);
-			g.fillArc(st.ox+5,st.oy+5,2*radijus-10,2*radijus-10,0,360);
+			g.fillArc(st.ox+radijus/5,st.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
 			g.setColor(st.boja);
 			if(st.ime.equals(podatci.pocetnoStanje)){
 				g.drawLine(st.ox-17,st.oy+radijus,st.ox,st.oy+radijus);
