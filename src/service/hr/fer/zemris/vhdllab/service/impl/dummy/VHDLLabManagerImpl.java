@@ -84,17 +84,6 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 		
 		return compiler.compile(deps, null, file, this);
-		
-		// This below was previous implementation
-		/*
-		String vcdResult = "src/service/hr/fer/zemris/vhdllab/vhdl/simulations/adder2.vcd";
-		VcdParser vcd = new VcdParser(vcdResult);
-		vcd.parse();
-		String waveform = vcd.getResultInString();
-		SimulationResult result = new SimulationResult(0, true, new ArrayList<SimulationMessage>(), waveform);
-		return result;
-		*/
-		//return new CompilationResult(0, true, new ArrayList<CompilationMessage>());
 	}
 
 	public File createNewFile(Project project, String fileName, String fileType) throws ServiceException {

@@ -143,9 +143,9 @@ public class MainApplet
 		server.writeServerInitData();
 		//**********************
 		
-//		refreshWorkspace();
+		refreshWorkspace();
 		
-		try {
+		/*try {
 			List<String> projects = communicator.getAllProjects();
 			for(String projectName : projects) {
 				projectExplorer.addProject(projectName);
@@ -159,7 +159,7 @@ public class MainApplet
 		} catch (UniformAppletException e) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
 			echoStatusText(text);
-		}
+		}*/
 
 	}
 	
@@ -931,14 +931,16 @@ public class MainApplet
 	}
 	
 	public void compile(String projectName, String fileName) throws UniformAppletException {
-		List<IEditor> openedEditors = getEditorsThatHave(projectName);
-		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-		boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
-		if(shouldContinue) {
-			CompilationResult result = communicator.compile(projectName, fileName);
-			IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
-			view.setData(result);
+		if(isCircuit(projectName, fileName)) {
+			List<IEditor> openedEditors = getEditorsThatHave(projectName);
+			String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
+			String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
+			boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
+			if(shouldContinue) {
+				CompilationResult result = communicator.compile(projectName, fileName);
+				IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
+				view.setData(result);
+			}
 		}
 	}
 	
@@ -974,17 +976,19 @@ public class MainApplet
 	}
 	
 	public void simulate(String projectName, String fileName) throws UniformAppletException {
-		List<IEditor> openedEditors = getEditorsThatHave(projectName);
-		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-		boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
-		if(shouldContinue) {
-			SimulationResult result = communicator.runSimulation(projectName, fileName);
-			IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
-			view.setData(result);
-			if(result.getWaveform() != null) {
-				String simulationName = fileName + ".sim";
-				openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
+		if(isTestbench(projectName, fileName)) {
+			List<IEditor> openedEditors = getEditorsThatHave(projectName);
+			String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
+			String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
+			boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
+			if(shouldContinue) {
+				SimulationResult result = communicator.runSimulation(projectName, fileName);
+				IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
+				view.setData(result);
+				if(result.getWaveform() != null) {
+					String simulationName = fileName + ".sim";
+					openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
+				}
 			}
 		}
 	}
@@ -1327,6 +1331,12 @@ public class MainApplet
 	public void deleteProject(String projectName) throws UniformAppletException {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
+		}
+		for(String fileName : communicator.findFilesByProject(projectName)) {
+			if(fileIsOpened(projectName, fileName)) {
+				IEditor editor = getOpenedEditor(projectName, fileName);
+				closeEditor(editor, false);
+			}
 		}
 		projectExplorer.removeProject(projectName);
 		communicator.deleteProject(projectName);

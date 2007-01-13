@@ -103,6 +103,7 @@ public class Pair implements Comparable<Pair>{
 		int i = 1;
 		for(String parent : parents) {
 			p.setProperty(SERIALIZATION_KEY_PARENT + "." + i, parent);
+			i++;
 		}
 		return XMLUtil.serializeProperties(p);
 	}

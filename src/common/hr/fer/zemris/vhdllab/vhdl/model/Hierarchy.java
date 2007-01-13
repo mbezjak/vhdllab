@@ -130,6 +130,7 @@ public class Hierarchy implements Iterable<Pair> {
 		int i = 1;
 		for(Pair pair : pairs) {
 			p.setProperty(SERIALIZATION_KEY_PAIR + "." + i, pair.serialize());
+			i++;
 		}
 		return XMLUtil.serializeProperties(p);
 	}
