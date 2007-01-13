@@ -334,7 +334,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public void deleteFile(Long fileId) throws ServiceException {
 		try {
-			fileDAO.delete(fileId);
+			File file = fileDAO.load(fileId);
+			fileDAO.delete(file);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException("Can not delete file.");
@@ -343,7 +344,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public void deleteGlobalFile(Long fileId) throws ServiceException {
 		try {
-			globalFileDAO.delete(fileId);
+			GlobalFile file = globalFileDAO.load(fileId);
+			globalFileDAO.delete(file);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException("Can not delete global file.");
@@ -352,7 +354,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public void deleteProject(Long projectId) throws ServiceException {
 		try {
-			projectDAO.delete(projectId);
+			Project project = projectDAO.load(projectId);
+			projectDAO.delete(project);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException("Can not delete project.");
@@ -361,7 +364,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public void deleteUserFile(Long fileId) throws ServiceException {
 		try {
-			userFileDAO.delete(fileId);
+			UserFile file = userFileDAO.load(fileId);
+			userFileDAO.delete(file);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException("Can not delete user file.");

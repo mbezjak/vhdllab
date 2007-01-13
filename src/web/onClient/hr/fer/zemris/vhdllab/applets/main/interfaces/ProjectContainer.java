@@ -22,6 +22,7 @@ public interface ProjectContainer {
 	void deleteFile(String projectName, String fileName) throws UniformAppletException;
 	void deleteProject(String projectName) throws UniformAppletException;
 	void createNewFileInstance(String type) throws UniformAppletException;
+	void createNewProjectInstance() throws UniformAppletException;
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
 	IView getView(String type) throws UniformAppletException;
 	void echoStatusText(String text);

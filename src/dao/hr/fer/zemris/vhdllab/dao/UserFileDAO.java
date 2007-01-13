@@ -24,11 +24,11 @@ public interface UserFileDAO {
 	 */
 	void save(UserFile file) throws DAOException;
 	/**
-	 * Deletes a user file with specified identifier.
-	 * @param fileId indentifier of a user file.
+	 * Deletes a user file.
+	 * @param file a user file to delete
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	void delete(Long fileId) throws DAOException;
+	void delete(UserFile file) throws DAOException;
 	/**
 	 * Finds all user files whose owner is specified user. Return value will
 	 * never be <code>null</code>, although it can be an empty list.

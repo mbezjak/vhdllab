@@ -24,11 +24,11 @@ public interface GlobalFileDAO {
 	 */
 	void save(GlobalFile file) throws DAOException;
 	/**
-	 * Deletes a global file with specified identifier.
-	 * @param fileId indentifier of a global file.
+	 * Deletes a global file.
+	 * @param file a global file to delete
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	void delete(Long fileId) throws DAOException;
+	void delete(GlobalFile file) throws DAOException;
 	/**
 	 * Finds all global files whose type is specified type. Return value will
 	 * never be <code>null</code>, although it can be an empty list.

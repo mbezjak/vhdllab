@@ -19,22 +19,33 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#load(java.lang.Long)
 	 */
 	public UserFile load(Long id) throws DAOException {
-		return (UserFile)getHibernateTemplate().load(UserFile.class, id);
+		try {
+			return (UserFile)getHibernateTemplate().load(UserFile.class, id);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#save(hr.fer.zemris.vhdllab.model.UserFile)
 	 */
 	public void save(UserFile file) throws DAOException {
-		getHibernateTemplate().saveOrUpdate(file);
+		try {
+			getHibernateTemplate().saveOrUpdate(file);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#delete(hr.fer.zemris.vhdllab.model.UserFile)
 	 */
-	public void delete(Long fileID) throws DAOException {
-		UserFile file = (UserFile)getHibernateTemplate().load(UserFile.class, fileID);
-		getHibernateTemplate().delete(file);
+	public void delete(UserFile file) throws DAOException {
+		try {
+			getHibernateTemplate().delete(file);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -42,18 +53,26 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 	 */
 	@SuppressWarnings("unchecked")
 	public List<UserFile> findByUser(String userID) throws DAOException {
-		String query = "from UserFile as f where f.ownerID = :ownerID";
-		String param = "ownerID";
-		return (List<UserFile>)getHibernateTemplate().findByNamedParam(query, param, userID);
+		try {
+			String query = "from UserFile as f where f.ownerID = :ownerID";
+			String param = "ownerID";
+			return (List<UserFile>)getHibernateTemplate().findByNamedParam(query, param, userID);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileId) throws DAOException {
-		String query = "from UserFile as f where f.id = :fileId";
-		String param = "fileId";
-		UserFile file = (UserFile) getHibernateTemplate().findByNamedParam(query, param, fileId);
-		return file != null;
+		try {
+			String query = "from UserFile as f where f.id = :fileId";
+			String param = "fileId";
+			List list = (List) getHibernateTemplate().findByNamedParam(query, param, fileId);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 }

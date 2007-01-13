@@ -50,7 +50,7 @@ public class UserFileDAOHibernateImplTest {
 	
 	@Test(expected=DAOException.class)
 	public void delete() throws DAOException {
-		fileDAO.delete(file.getId());
+		fileDAO.delete(file);
 		fileDAO.load(file.getId());
 	}
 

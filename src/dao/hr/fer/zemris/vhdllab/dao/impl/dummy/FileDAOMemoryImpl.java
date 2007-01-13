@@ -41,18 +41,18 @@ public class FileDAOMemoryImpl implements FileDAO {
 				project.getFiles().add(file);
 			}
 		}
+		file.getProject().addFile(file);
 		files.put(file.getId(), file);
 		if(k!=null) {
 			nameIndex.put(k, file);
 		}
 	}
 
-	public synchronized void delete(Long fileID) throws DAOException {
-		File file = files.get(fileID);
+	public synchronized void delete(File file) throws DAOException {
 		if(file==null) return;
 		FileNameIndexKey k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
 		nameIndex.remove(k);
-		files.remove(fileID);
+		files.remove(file.getId());
 	}
 
 	public synchronized boolean exists(Long fileId) throws DAOException {

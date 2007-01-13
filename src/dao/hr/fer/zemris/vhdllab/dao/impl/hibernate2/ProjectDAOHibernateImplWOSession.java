@@ -19,21 +19,32 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#load(java.lang.Long)
 	 */
 	public Project load(Long id) throws DAOException {
-		return (Project)getHibernateTemplate().load(Project.class, id);
+		try {
+			return (Project)getHibernateTemplate().load(Project.class, id);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#save(hr.fer.zemris.vhdllab.model.Project)
 	 */
 	public void save(Project project) throws DAOException {
-		getHibernateTemplate().saveOrUpdate(project);
+		try {
+			getHibernateTemplate().saveOrUpdate(project);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#delete(hr.fer.zemris.vhdllab.model.Project)
 	 */
-	public void delete(Long projectID) throws DAOException {
-		Project project = (Project)getHibernateTemplate().load(Project.class, projectID);
-		getHibernateTemplate().delete(project);
+	public void delete(Project project) throws DAOException {
+		try {
+			getHibernateTemplate().delete(project);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -41,15 +52,23 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Project> findByUser(String userID) throws DAOException {
-		String query = "from Project as p where p.ownerId = :userID";
-		String param = "userID";
-		return (List<Project>)getHibernateTemplate().findByNamedParam(query, param, userID);
+		try {
+			String query = "from Project as p where p.ownerId = :userID";
+			String param = "userID";
+			return (List<Project>)getHibernateTemplate().findByNamedParam(query, param, userID);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	public boolean exists(Long projectId) throws DAOException {
-		String query = "from Project as p where p.id = :projectId";
-		String param = "projectId";
-		Project project = (Project) getHibernateTemplate().findByNamedParam(query, param, projectId);
-		return project != null;
+		try {
+			String query = "from Project as p where p.id = :projectId";
+			String param = "projectId";
+			List list = (List) getHibernateTemplate().findByNamedParam(query, param, projectId);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 }

@@ -26,15 +26,22 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#save(hr.fer.zemris.vhdllab.model.GlobalFile)
 	 */
 	public void save(GlobalFile file) throws DAOException {
-		getHibernateTemplate().saveOrUpdate(file);
+		try {
+			getHibernateTemplate().saveOrUpdate(file);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#delete(hr.fer.zemris.vhdllab.model.GlobalFile)
 	 */
-	public void delete(Long fileID) throws DAOException {
-		GlobalFile file = (GlobalFile)getHibernateTemplate().load(GlobalFile.class, fileID);
-		getHibernateTemplate().delete(file);
+	public void delete(GlobalFile file) throws DAOException {
+		try {
+			getHibernateTemplate().delete(file);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -42,18 +49,26 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GlobalFile> findByType(String type) throws DAOException {
-		String query = "from GlobalFile as f where f.type = :filetype";
-		String param = "filetype";
-		return (List<GlobalFile>)getHibernateTemplate().findByNamedParam(query, param, type);
+		try {
+			String query = "from GlobalFile as f where f.type = :filetype";
+			String param = "filetype";
+			return (List<GlobalFile>)getHibernateTemplate().findByNamedParam(query, param, type);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileId) throws DAOException {
-		String query = "from GlobalFile as f where f.id = :fileId";
-		String param = "fileId";
-		GlobalFile file = (GlobalFile) getHibernateTemplate().findByNamedParam(query, param, fileId);
-		return file != null;
+		try {
+			String query = "from GlobalFile as f where f.id = :fileId";
+			String param = "fileId";
+			List list = (List) getHibernateTemplate().findByNamedParam(query, param, fileId);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 }

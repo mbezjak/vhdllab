@@ -28,8 +28,8 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 		projects.put(project.getId(), project);
 	}
 
-	public void delete(Long projectID) throws DAOException {
-		projects.remove(projectID);
+	public void delete(Project project) throws DAOException {
+		projects.remove(project.getId());
 	}
 
 	public List<Project> findByUser(String userId) throws DAOException {

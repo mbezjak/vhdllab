@@ -59,7 +59,7 @@ public class ProjectDAOHibernateImplTest {
 
 	@Test(expected=DAOException.class)
 	public void delete() throws DAOException {
-		projectDAO.delete(project.getId());
+		projectDAO.delete(project);
 		projectDAO.load(project.getId());
 	}
 

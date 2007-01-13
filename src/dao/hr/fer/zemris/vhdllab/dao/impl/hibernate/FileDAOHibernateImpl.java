@@ -3,9 +3,6 @@ package hr.fer.zemris.vhdllab.dao.impl.hibernate;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
-
-import java.util.List;
-
 import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.Transaction;
@@ -45,6 +42,7 @@ public class FileDAOHibernateImpl implements FileDAO {
 			Transaction tx = session.beginTransaction();
 
 			session.saveOrUpdate(file);
+			file.getProject().addFile(file);
 
 			tx.commit();
 			HibernateUtil.closeSession();
@@ -55,15 +53,15 @@ public class FileDAOHibernateImpl implements FileDAO {
 
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#delete(hr.fer.zemris.vhdllab.model.File)
 	 */
-	public void delete(Long fileID) throws DAOException {
+	public void delete(File file) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
-			File f = (File) session.load(File.class, fileID);
-			session.delete(f);
+			file.getProject().removeFile(file);
+			session.delete(file);
 
 			tx.commit();
 			HibernateUtil.closeSession();
@@ -75,7 +73,6 @@ public class FileDAOHibernateImpl implements FileDAO {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#exists(java.lang.Long)
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean exists(Long fileID) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
@@ -83,12 +80,12 @@ public class FileDAOHibernateImpl implements FileDAO {
 
 			Query query = session.createQuery("from File as f where f.id = :fileId")
 									.setLong("fileId", fileID);
-			List<File> files = (List<File>)query.list();
+			File file = (File) query.uniqueResult();
 			
 			tx.commit();
 			HibernateUtil.closeSession();
 			
-			return files.size() != 0;
+			return file != null;
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
 		}
@@ -97,7 +94,6 @@ public class FileDAOHibernateImpl implements FileDAO {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#exists(java.lang.Long, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean exists(Long projectId, String name) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
@@ -106,12 +102,12 @@ public class FileDAOHibernateImpl implements FileDAO {
 			Query query = session.createQuery("from File as f where f.project.id = :projectId and f.fileName = :filename")
 									.setLong("projectId", projectId)
 									.setString("filename", name);
-			List<File> files = (List<File>)query.list();
-
+			File file = (File) query.uniqueResult();
+			
 			tx.commit();
 			HibernateUtil.closeSession();
 			
-			return files.size() != 0;
+			return file != null;
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
 		}
@@ -120,7 +116,6 @@ public class FileDAOHibernateImpl implements FileDAO {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#findByName(java.lang.Long, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	public File findByName(Long projectId, String name) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
@@ -129,12 +124,12 @@ public class FileDAOHibernateImpl implements FileDAO {
 			Query query = session.createQuery("from File as f where f.project.id = :projectId and f.fileName = :filename")
 									.setLong("projectId", projectId)
 									.setString("filename", name);
-			List<File> files = (List<File>)query.list();
+			File file = (File) query.uniqueResult();
 
 			tx.commit();
 			HibernateUtil.closeSession();
 
-			return files.get(0);
+			return file;
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
 		}

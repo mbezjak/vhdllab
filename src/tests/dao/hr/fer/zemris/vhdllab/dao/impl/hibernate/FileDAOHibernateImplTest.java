@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
+import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 
@@ -51,27 +52,43 @@ public class FileDAOHibernateImplTest {
 
 	@Test(expected=DAOException.class)
 	public void load() throws DAOException {
-		fileDAO.load(Long.valueOf(121));
-	}
-	
-	@Test
-	public void save() throws DAOException {
-		file.setProject(null);
-
-		fileDAO.save(file);
-		File file2 = fileDAO.load(file.getId());
-		assertEquals(file, file2);
+		fileDAO.load(Long.valueOf(121000110001101L));
 	}
 	
 	@Test(expected=DAOException.class)
+	public void save() throws DAOException {
+		file.setProject(null);
+		fileDAO.save(file);
+	}
+	
+	@Test//(expected=DAOException.class)
 	public void delete() throws DAOException {
-		fileDAO.delete(file.getId());
-		fileDAO.load(file.getId());
+		File file2 = new File();
+		file2.setContent("dsadsa");
+		file2.setFileName("new file name");
+		file2.setFileType(FileTypes.FT_VHDL_AUTOMAT);
+		file2.setProject(project);
+		fileDAO.save(file2);
+		System.out.println(project);
+		
+		ProjectDAO projectDAO = new ProjectDAOHibernateImpl();
+		project.getFiles().remove(file);
+		projectDAO.save(project);
+		//fileDAO.delete(file.getId());
+		//fileDAO.load(file.getId());
+		System.out.println(project.getId());
+		System.out.println(file.getId());
+		Project project2 = projectDAO.load(project.getId());
+		System.out.println(project2);
+		System.out.println(project);
+		System.out.println(project == project2);
+		System.out.println(project.hashCode() == project2.hashCode());
+		System.out.println(project.equals(project2));
 	}
 
 	@Test
 	public void exists() throws DAOException {
-		assertEquals(false, fileDAO.exists(Long.valueOf(121)));
+		assertEquals(false, fileDAO.exists(Long.valueOf(121000101001110L)));
 	}
 	
 	@Test
@@ -81,7 +98,7 @@ public class FileDAOHibernateImplTest {
 	
 	@Test
 	public void exists3() throws DAOException {
-		assertEquals(false, fileDAO.exists(Long.valueOf(121), file.getFileName()));
+		assertEquals(false, fileDAO.exists(Long.valueOf(121101010100101L), file.getFileName()));
 	}
 	
 	@Test

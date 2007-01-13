@@ -24,11 +24,11 @@ public interface ProjectDAO {
 	 */
 	void save(Project project) throws DAOException;
 	/**
-	 * Deletes a project with specified identifier.
-	 * @param projectId indentifier of a project.
+	 * Deletes a project.
+	 * @param project a project to delete
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	void delete(Long projectId) throws DAOException;
+	void delete(Project project) throws DAOException;
 	/**
 	 * Finds all projects whose owner is specified user. Return value will
 	 * never be <code>null</code>, although it can be an empty list.

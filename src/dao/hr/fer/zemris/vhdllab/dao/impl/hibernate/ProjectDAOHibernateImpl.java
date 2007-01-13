@@ -54,15 +54,14 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#delete(hr.fer.zemris.vhdllab.model.Project)
 	 */
-	public void delete(Long projectID) throws DAOException {
+	public void delete(Project project) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
-			Project p = (Project) session.load(Project.class, projectID);
-			session.delete(p);
+			session.delete(project);
 
 			tx.commit();
 			HibernateUtil.closeSession();
@@ -98,7 +97,6 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#exists(java.lang.Long)
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean exists(Long projectId) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
@@ -106,12 +104,12 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 
 			Query query = session.createQuery("from Project as p where p.id = :projectId")
 									.setLong("projectId", projectId);
-			List<Project> projects = (List<Project>)query.list();
-
+			Project project = (Project) query.uniqueResult();
+			
 			tx.commit();
 			HibernateUtil.closeSession();
 			
-			return projects.size() != 0;
+			return project != null;
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
 		}

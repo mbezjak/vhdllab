@@ -28,8 +28,8 @@ public class UserFileDAOMemoryImpl implements UserFileDAO {
 		files.put(file.getId(), file);
 	}
 
-	public void delete(Long fileID) throws DAOException {
-		files.remove(fileID);
+	public void delete(UserFile file) throws DAOException {
+		files.remove(file.getId());
 	}
 
 	public List<UserFile> findByUser(String userID) throws DAOException {

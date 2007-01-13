@@ -22,11 +22,11 @@ public interface FileDAO {
 	 */
 	void save(File file) throws DAOException;
 	/**
-	 * Deletes a file with specified identifier.
-	 * @param fileId indentifier of a file.
+	 * Deletes a file.
+	 * @param file a file to delete
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	void delete(Long fileId) throws DAOException;
+	void delete(File file) throws DAOException;
 	/**
 	 * Check if a file with specified identifier exists.
 	 * @param fileId indentifier of a file.

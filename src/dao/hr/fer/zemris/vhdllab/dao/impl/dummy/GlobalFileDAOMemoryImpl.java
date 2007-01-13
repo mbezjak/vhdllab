@@ -20,7 +20,6 @@ public class GlobalFileDAOMemoryImpl implements GlobalFileDAO {
 		GlobalFile file = files.get(id);
 		if(file==null) throw new DAOException("Unable to load global file!");
 		return files.get(id);
-
 	}
 
 	public void save(GlobalFile file) throws DAOException {
@@ -28,8 +27,8 @@ public class GlobalFileDAOMemoryImpl implements GlobalFileDAO {
 		files.put(file.getId(), file);
 	}
 
-	public void delete(Long fileID) throws DAOException {
-		files.remove(fileID);
+	public void delete(GlobalFile file) throws DAOException {
+		files.remove(file.getId());
 	}
 
 	public List<GlobalFile> findByType(String type) throws DAOException {

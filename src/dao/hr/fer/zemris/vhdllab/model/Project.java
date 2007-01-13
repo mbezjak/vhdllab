@@ -57,8 +57,8 @@ public class Project {
 	 * @hibernate.set
 	 * 	inverse="true"
 	 *  lazy="false"
-	 *  order-by = "FILE_ID"
-	 *  cascade="all"
+	 *  order-by="FILE_ID"
+	 *  cascade="all-delete-orphan"
 	 * @hibernate.key
 	 *  column="PROJECT_ID"
 	 * @hibernate.one-to-many
@@ -70,7 +70,25 @@ public class Project {
 	public void setFiles(Set<File> files) {
 		this.files = files;
 	}
+	
+	public void addFile(File f) {
+		if(f == null) throw new NullPointerException("File can not be null.");
+		if(f.getProject() != null) {
+			f.getProject().removeFile(f);
+		}
+		f.setProject(this);
+		files.add(f);
+	}
+	
+	public void removeFile(File f) {
+		if(f == null) throw new NullPointerException("File can not be null.");
+		files.remove(f);
+		f.setProject(null);
+	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(!(o instanceof Project)) return false;
@@ -83,7 +101,21 @@ public class Project {
 					this.files.equals(other.files);
 		else return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		if( id != null ) return id.hashCode();
+		else return ownerId.hashCode() ^
+				projectName.hashCode() ^
+				files.hashCode();
+	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

@@ -54,15 +54,14 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#delete(hr.fer.zemris.vhdllab.model.UserFile)
 	 */
-	public void delete(Long fileID) throws DAOException {
+	public void delete(UserFile file) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
-			UserFile f = (UserFile) session.load(UserFile.class, fileID);
-			session.delete(f);
+			session.delete(file);
 
 			tx.commit();
 			HibernateUtil.closeSession();
@@ -98,7 +97,6 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean exists(Long fileID) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
@@ -106,12 +104,12 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 
 			Query query = session.createQuery("from UserFile as f where f.id = :fileId")
 									.setLong("fileId", fileID);
-			List<UserFile> files = (List<UserFile>)query.list();
-
+			UserFile file = (UserFile) query.uniqueResult();
+			
 			tx.commit();
 			HibernateUtil.closeSession();
 
-			return files.size() != 0;
+			return file != null;
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
 		}

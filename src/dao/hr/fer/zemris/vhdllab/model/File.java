@@ -68,7 +68,8 @@ public class File implements Comparable {
 	/**
 	 * @hibernate.many-to-one
 	 *  column="PROJECT_ID"
-	 *  cascade="all"
+	 *  cascade="save-update"
+	 *  not-null="true"
 	 */
 	public Project getProject() {
 		return project;

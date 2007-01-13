@@ -4,6 +4,8 @@ import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
 
+import java.util.List;
+
 import org.springframework.orm.hibernate.support.HibernateDaoSupport;
 
 /**
@@ -17,47 +19,70 @@ public class FileDAOHibernateImplWOSession extends HibernateDaoSupport implement
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#load(java.lang.Long)
 	 */
 	public File load(Long id) throws DAOException {
-		return (File)getHibernateTemplate().load(File.class, id);
+		try {
+			return (File)getHibernateTemplate().load(File.class, id);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#save(hr.fer.zemris.vhdllab.model.File)
 	 */
 	public void save(File file) throws DAOException {
-		getHibernateTemplate().saveOrUpdate(file);
+		try {
+			getHibernateTemplate().saveOrUpdate(file);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#delete(hr.fer.zemris.vhdllab.model.File)
 	 */
-	public void delete(Long fileID) throws DAOException {
-		File file = (File)getHibernateTemplate().load(File.class, fileID);
-		getHibernateTemplate().delete(file);
+	public void delete(File file) throws DAOException {
+		try {
+			getHibernateTemplate().delete(file);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileId) throws DAOException {
-		String query = "from File as f where f.id = :fileId";
-		String param = "fileId";
-		File file = (File) getHibernateTemplate().findByNamedParam(query, param, fileId);
-		return file != null;
+		try {
+			String query = "from File as f where f.id = :fileId";
+			String param = "fileId";
+			List list = (List) getHibernateTemplate().findByNamedParam(query, param, fileId);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	public boolean exists(Long projectId, String name) throws DAOException {
-		String query = "from File as f where f.project.id = :projectId and f.fileName = :filename";
-		String[] params = new String[] {"projectId", "filename"};
-		Object[] values = new Object[] {projectId, name};
-		File file = (File) getHibernateTemplate().findByNamedParam(query, params, values);
-		return file != null;
+		try {
+			String query = "from File as f where f.project.id = :projectId and f.fileName = :filename";
+			String[] params = new String[] {"projectId", "filename"};
+			Object[] values = new Object[] {projectId, name};
+			List list = (List) getHibernateTemplate().findByNamedParam(query, params, values);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	public File findByName(Long projectId, String name) throws DAOException {
-		String query = "from File as f where f.project.id = :projectId and f.fileName = :filename";
-		String[] params = new String[] {"projectId", "filename"};
-		Object[] values = new Object[] {projectId, name};
-		File file = (File) getHibernateTemplate().findByNamedParam(query, params, values);
-		return file;
+		try {
+			String query = "from File as f where f.project.id = :projectId and f.fileName = :filename";
+			String[] params = new String[] {"projectId", "filename"};
+			Object[] values = new Object[] {projectId, name};
+			File file = (File) getHibernateTemplate().findByNamedParam(query, params, values);
+			return file;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 }

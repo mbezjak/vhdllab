@@ -54,15 +54,14 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#delete(java.lang.Long)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#delete(hr.fer.zemris.vhdllab.model.GlobalFile)
 	 */
-	public void delete(Long fileID) throws DAOException {
+	public void delete(GlobalFile file) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
-			GlobalFile f = (GlobalFile) session.load(GlobalFile.class, fileID);
-			session.delete(f);
+			session.delete(file);
 
 			tx.commit();
 			HibernateUtil.closeSession();
@@ -98,7 +97,6 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.Long)
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean exists(Long fileID) throws DAOException {
 		try {
 			Session session = HibernateUtil.currentSession();
@@ -106,12 +104,12 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 
 			Query query = session.createQuery("from GlobalFile as f where f.id = :fileId")
 									.setLong("fileId", fileID);
-			List<GlobalFile> files = (List<GlobalFile>)query.list();
-
+			GlobalFile file = (GlobalFile) query.uniqueResult();
+			
 			tx.commit();
 			HibernateUtil.closeSession();
 			
-			return files.size() != 0;
+			return file != null;
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
 		}
