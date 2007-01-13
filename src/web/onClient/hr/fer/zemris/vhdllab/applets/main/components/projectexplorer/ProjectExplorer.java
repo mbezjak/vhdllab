@@ -68,8 +68,12 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	private JScrollPane usedInTreeView;
 
 	private JMenu newSubMenu;
+	private JMenu newFileSubMenu;
 	private JMenuItem addProject;
-	private JMenuItem addFile;
+	private JMenuItem addVHDL;
+	private JMenuItem addTb;
+	private JMenuItem addSchema;
+	private JMenuItem addAutomat;
 	private JMenuItem compile;
 	private JMenuItem simulate;
 	private JMenuItem setActive;
@@ -83,6 +87,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	/** ProjectContainer */
 	private ProjectContainer projectContainer;
 	private Hierarchy hierarchy;
+	private VHDLCellRenderer renderer;
 
 	private static final long serialVersionUID = 4932799790563214089L;
 
@@ -92,8 +97,12 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 */
 	public ProjectExplorer() {
 		newSubMenu = new JMenu("New");
+		newFileSubMenu = new JMenu("File");
 		addProject = new JMenuItem("Add project");
-		addFile = new JMenuItem("Add file");
+		addVHDL = new JMenuItem("VHDL source");
+		addTb = new JMenuItem("Testbench");
+		addSchema = new JMenuItem("Schema");
+		addAutomat = new JMenuItem("Automat");
 		compile = new JMenuItem("Compile");
 		simulate = new JMenuItem("Simulate");
 		// setActive = new JMenuItem("Set active project");
@@ -103,7 +112,10 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		/* popup meni */
 		addProject.addActionListener(popupListener);
-		addFile.addActionListener(popupListener);
+		addVHDL.addActionListener(popupListener);
+		addTb.addActionListener(popupListener);
+		addSchema.addActionListener(popupListener);
+		addAutomat.addActionListener(popupListener);
 		compile.addActionListener(popupListener);
 		simulate.addActionListener(popupListener);
 		// setActive.addActionListener(popupListener);
@@ -112,7 +124,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		deleteProject.addActionListener(popupListener);
 
 		newSubMenu.add(addProject);
-		newSubMenu.add(addFile);
+		newSubMenu.add(newFileSubMenu);
+		newFileSubMenu.add(addVHDL);
+		newFileSubMenu.add(addTb);
+		newFileSubMenu.add(addSchema);
+		newFileSubMenu.add(addAutomat);
 		optionsPopup.add(newSubMenu);
 		optionsPopup.addSeparator();
 		optionsPopup.add(compile);
@@ -133,14 +149,15 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		// tree.setPreferredSize(new Dimension(500, 600));
 		tree.addMouseListener(mouseListener);
 		tree.addMouseListener(treeMouse);
-		tree.setEditable(true);
+		tree.setEditable(false);
 		tree.setRootVisible(false);
 		tree.expandRow(0);
+		tree.setToggleClickCount(8);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.setShowsRootHandles(true);
 		treeView = new JScrollPane(tree);
-		VHDLCellRenderer renderer = new VHDLCellRenderer();
+		renderer = new VHDLCellRenderer();
 		tree.setCellRenderer(renderer);
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		/* kraj inicijalizacije tree komponente */
@@ -231,6 +248,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			} else if (FileTypes.FT_VHDL_SIMULATION.equals(type)) {
 				setIcon(simulation);
 				setToolTipText("Simulation");
+			} else if (node.toString().equals("jao")) {
+				setIcon(vhdl);
 			}
 
 			return this;
@@ -263,6 +282,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		public void mouseClicked(MouseEvent event) {
 			if (event.getButton() == 3 || event.getButton() == 2) {
+				TreePath selPath = tree.getPathForLocation(event.getX(), event.getY());
+				tree.setSelectionPath(selPath);
 				int borderPanel = 600 / 2;
 				if (event.getY() >= borderPanel) {
 					optionsPopup.show(tree, event.getX(), event.getY()
@@ -287,9 +308,40 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			String name = null;
 
 			if (event.getSource().equals(addProject)) {
-				tree.clearSelection();
-			} else if (event.getSource().equals(addFile)) {
-				addObject("novi cvor kojeg treba provjeriti kojeg je tipa i jadajada");
+				try {
+					projectContainer.createNewProjectInstance();
+				} catch (UniformAppletException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (event.getSource().equals(addVHDL)) {
+				try {
+					projectContainer.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
+				} catch (UniformAppletException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (event.getSource().equals(addTb)) {
+				try {
+					projectContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
+				} catch (UniformAppletException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (event.getSource().equals(addSchema)) {
+				try {
+					projectContainer.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
+				} catch (UniformAppletException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (event.getSource().equals(addAutomat)) {
+				try {
+					projectContainer.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
+				} catch (UniformAppletException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else if (event.getSource().equals(compile)) {
 				fileName = getFileName();
 				if (fileName != null) {
@@ -338,6 +390,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				deleteProject();
 			}
 			tree.repaint();
+			treeModel.reload();
 
 		}
 	};
@@ -440,9 +493,44 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	public void addFile(String projectName, String fileName) {
 		// postavlja aktivni projekt, ovisno o trenutnoj selekciji
 		addObject(fileName);
+		treeModel.reload();
+		tree.setCellRenderer(renderer);
+	}
 
-		// ovdje po potrebi moze bacati IllegalArgumentException
-		// ako se odluci striktno pratiti aktivni projekti
+
+	/**
+	 * Metoda dodaje novi projekt u projectExplorer
+	 * 
+	 * @param projectName ime projekta
+	 */
+	public void addProject(String projectName) {
+		DefaultMutableTreeNode projectNode = null;
+
+		// dodaj novi cvor, tj. projekt u stablo
+		if (getNode(top, projectName) == null) {
+			projectNode = new DefaultMutableTreeNode(projectName);
+			this.top.add(projectNode);
+		} else {
+			projectNode = getNode(top, projectName);
+		}
+		// dohvaca sve root cvorove tog projekta
+		try {
+			hierarchy = projectContainer.extractHierarchy(projectName);
+		} catch (UniformAppletException e) {
+			;
+		}
+		DefaultMutableTreeNode rootNode = null;
+		for (String string : hierarchy.getRootNodes()) {
+			if (getNode(projectNode, string) == null) {
+				rootNode = new DefaultMutableTreeNode(string);
+				projectNode.add(rootNode);
+			} else {
+				rootNode = getNode(projectNode, string);
+			}
+			addChildren(rootNode, hierarchy);
+		}
+		// tree.setRootVisible(true);
+		treeModel.reload();
 	}
 
 
@@ -592,42 +680,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			parent.add(addChildren(new DefaultMutableTreeNode(child), hierarchy));
 		}
 		return parent;
-	}
-
-
-	/**
-	 * Metoda dodaje novi projekt u projectExplorer
-	 * 
-	 * @param projectName ime projekta
-	 */
-	public void addProject(String projectName) {
-		DefaultMutableTreeNode projectNode = null;
-
-		// dodaj novi cvor, tj. projekt u stablo
-		if (getNode(top, projectName) == null) {
-			projectNode = new DefaultMutableTreeNode(projectName);
-			this.top.add(projectNode);
-		} else {
-			projectNode = getNode(top, projectName);
-		}
-		// dohvaca sve root cvorove tog projekta
-		try {
-			hierarchy = projectContainer.extractHierarchy(projectName);
-		} catch (UniformAppletException e) {
-			;
-		}
-		DefaultMutableTreeNode rootNode = null;
-		for (String string : hierarchy.getRootNodes()) {
-			if (getNode(projectNode, string) == null) {
-				rootNode = new DefaultMutableTreeNode(string);
-				projectNode.add(rootNode);
-			} else {
-				rootNode = getNode(projectNode, string);
-			}
-			addChildren(rootNode, hierarchy);
-		}
-		//tree.setRootVisible(true);
-		treeModel.reload();
 	}
 
 
