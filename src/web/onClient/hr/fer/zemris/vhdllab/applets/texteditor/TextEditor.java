@@ -246,6 +246,9 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	public FileContent getInitialFileContent(Component parent) {
 		try {
 			String projectName = container.getSelectedProject();
+			if(projectName == null) {
+				return null;
+			}
 			String fileName;
 			do {
 				fileName = JOptionPane.showInputDialog(parent, "Enter file name:");

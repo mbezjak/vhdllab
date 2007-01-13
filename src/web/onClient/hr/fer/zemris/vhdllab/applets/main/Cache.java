@@ -53,7 +53,7 @@ public class Cache {
 	}
 
 	public FileIdentifier getLastCompilationHistoryTarget() {
-		if(simulationHistoryIsEmpty()) return null;
+		if(compilationHistoryIsEmpty()) return null;
 		FileIdentifier last = compilationHistory.get(compilationHistory.size() - 1);
 		return last;
 	}
