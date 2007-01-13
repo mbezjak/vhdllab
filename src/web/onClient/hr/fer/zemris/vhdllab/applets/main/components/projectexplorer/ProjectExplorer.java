@@ -134,7 +134,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		tree.addMouseListener(mouseListener);
 		tree.addMouseListener(treeMouse);
 		tree.setEditable(true);
-		// tree.setRootVisible(false);
+		tree.setRootVisible(false);
 		tree.expandRow(0);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -626,7 +626,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			addChildren(rootNode, hierarchy);
 		}
-		tree.setRootVisible(true);
+		//tree.setRootVisible(true);
+		treeModel.reload();
 	}
 
 
