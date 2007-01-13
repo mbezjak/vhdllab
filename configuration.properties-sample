@@ -31,6 +31,9 @@ app.host = localhost
 ### Relative application url pattern for tomcat ###
 app.url = vhdllab.html
 
+### When starting browser wait for tomcat to reload its contents (in seconds) ###
+sleep.for.tomcat = 1
+
 ### Override java policy in user home dir ###
 override.java.policy = false
 
