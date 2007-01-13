@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -73,13 +74,15 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	private JMenuItem simulate;
 	private JMenuItem setActive;
 	private JMenuItem viewVHDL;
-	private JMenuItem delete;
+	private JMenuItem deleteFile;
+	private JMenuItem deleteProject;
 
 	/** Aktivni projekt */
 	private String projectName;
 
 	/** ProjectContainer */
 	private ProjectContainer projectContainer;
+	private Hierarchy hierarchy;
 
 	private static final long serialVersionUID = 4932799790563214089L;
 
@@ -93,18 +96,20 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		addFile = new JMenuItem("Add file");
 		compile = new JMenuItem("Compile");
 		simulate = new JMenuItem("Simulate");
-		setActive = new JMenuItem("Set active project");
+		// setActive = new JMenuItem("Set active project");
 		viewVHDL = new JMenuItem("View VHDL");
-		delete = new JMenuItem("Delete");
+		deleteFile = new JMenuItem("Delete file");
+		deleteProject = new JMenuItem("Delete project");
 
 		/* popup meni */
 		addProject.addActionListener(popupListener);
 		addFile.addActionListener(popupListener);
 		compile.addActionListener(popupListener);
 		simulate.addActionListener(popupListener);
-		setActive.addActionListener(popupListener);
+		// setActive.addActionListener(popupListener);
 		viewVHDL.addActionListener(popupListener);
-		delete.addActionListener(popupListener);
+		deleteFile.addActionListener(popupListener);
+		deleteProject.addActionListener(popupListener);
 
 		newSubMenu.add(addProject);
 		newSubMenu.add(addFile);
@@ -113,22 +118,23 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		optionsPopup.add(compile);
 		optionsPopup.add(simulate);
 		optionsPopup.addSeparator();
-		optionsPopup.add(setActive);
+		// optionsPopup.add(setActive);
 		optionsPopup.add(viewVHDL);
 		optionsPopup.addSeparator();
-		optionsPopup.add(delete);
+		optionsPopup.add(deleteFile);
+		optionsPopup.add(deleteProject);
 		/* kraj inicijalizacije popupa menija */
 
-		/* inicijalizacija root cvora i modela */
+		/* filanje stabla */
 		top = new DefaultMutableTreeNode("Vhdllab");
 		treeModel = new DefaultTreeModel(top);
-
 		/* inicijalizacija JTree komponente */
 		tree = new JTree(treeModel);
-		//tree.setPreferredSize(new Dimension(500, 600));
+		// tree.setPreferredSize(new Dimension(500, 600));
 		tree.addMouseListener(mouseListener);
 		tree.addMouseListener(treeMouse);
 		tree.setEditable(true);
+		// tree.setRootVisible(false);
 		tree.expandRow(0);
 		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -146,8 +152,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		usedInTree.setRootVisible(false);
 		usedInTree.expandRow(0);
 		usedInTree.getSelectionModel();
-		usedInTree.setCellRenderer(renderer);
-		ToolTipManager.sharedInstance().registerComponent(usedInTree);
+		// usedInTree.setCellRenderer(renderer);
+		// ToolTipManager.sharedInstance().registerComponent(usedInTree);
 		usedInTreeView = new JScrollPane(usedInTree);
 
 		cp.setLayout(new BorderLayout());
@@ -171,8 +177,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		private Icon automat = new ImageIcon(getClass().getResource("automat.png"));
 		private Icon schema = new ImageIcon(getClass().getResource("schema.png"));
 		private Icon simulation = new ImageIcon(getClass().getResource("simulation.png"));
-		
-		
 
 
 		@Override
@@ -183,26 +187,35 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					hasFocus);
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+			// String name = null;
 			// provjeri je li to ime projekta, tj. je li cvor projekt
-			boolean isProjectNode = false;
 			DefaultMutableTreeNode parent = null;
-			
+
 			if (node.isRoot()) {
 				return this;
 			}
 			parent = (DefaultMutableTreeNode)(node.getParent());
 			if (parent.isRoot()) {
-				isProjectNode = true;
 				return this;
 			}
-			
-			
-			// provjeri kojeg je tipa
-			try {
-				type = projectContainer.getFileType(getProjectName(), node.toString());
-			} catch (UniformAppletException e) {
-				e.printStackTrace();
+
+			Pair pair = hierarchy.getPair(node.toString());
+			if (pair == null) {
+				return this;
+			} else {
+				type = pair.getFileType();
 			}
+
+			// provjeri kojeg je tipa
+			// try {
+			// System.out.println(ProjectExplorer.this.projectName);
+			// name = getProjectName();
+			// if (name != null) {
+			// type = projectContainer.getFileType(name, node.toString());
+			// }
+			// } catch (UniformAppletException e) {
+			// e.printStackTrace();
+			// }
 			if (FileTypes.FT_VHDL_SOURCE.equals("and")) {
 				setIcon(vhdl);
 				setToolTipText("VHDL source file");
@@ -271,6 +284,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		public void actionPerformed(ActionEvent event) {
 
 			String fileName = null;
+			String name = null;
 
 			if (event.getSource().equals(addProject)) {
 				tree.clearSelection();
@@ -280,7 +294,10 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				fileName = getFileName();
 				if (fileName != null) {
 					try {
-						projectContainer.compile(getProjectName(), fileName);
+						name = getProjectName();
+						if (name != null) {
+							projectContainer.compile(name, fileName);
+						}
 					} catch (UniformAppletException ex) {
 						;
 					}
@@ -289,25 +306,36 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				fileName = getFileName();
 				if (fileName != null) {
 					try {
-						projectContainer.simulate(getProjectName(), fileName);
+						name = getProjectName();
+						if (name != null) {
+							projectContainer.simulate(name, fileName);
+						}
 					} catch (UniformAppletException ex) {
 						;
 					}
 				}
 			} else if (event.getSource().equals(setActive)) {
 				// selektirani projekt postaje aktivni projekt
-				getProjectName();
+				name = getProjectName();
+				if (name != null) {
+					projectName = name;
+				}
 			} else if (event.getSource().equals(viewVHDL)) {
 				fileName = getFileName();
 				if (fileName != null) {
 					try {
-						projectContainer.viewVHDLCode(getProjectName(), fileName);
+						name = getProjectName();
+						if (name != null) {
+							projectContainer.viewVHDLCode(name, fileName);
+						}
 					} catch (UniformAppletException ex) {
 						;
 					}
 				}
-			} else if (event.getSource().equals(delete)) {
-				removeNode();
+			} else if (event.getSource().equals(deleteFile)) {
+				deleteFile();
+			} else if (event.getSource().equals(deleteProject)) {
+				deleteProject();
 			}
 			tree.repaint();
 
@@ -328,6 +356,10 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		// samo ako je uopce bio selektiran
 		if (treePath != null) {
 			objectPath = treePath.getPath();
+			// ako je selektiran root cvor
+			if (objectPath.length == 1) {
+				return projectName;
+			}
 			// uzmi ime projekta i ucini ga aktivnim
 			projectName = ((DefaultMutableTreeNode)(objectPath[1])).toString();
 		} else {
@@ -361,20 +393,24 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		public void mousePressed(MouseEvent event) {
 
 			String fileName = null;
+			String name = null;
 			TreePath selPath = tree.getPathForLocation(event.getX(), event.getY());
+
 			if (selPath != null) {
 				if (event.getClickCount() == 1) {
-					// System.out.println("selPath " + selPath);
-					for (Object o1 : selPath.getPath()) {
-						// System.out.println(o1);
+					name = getProjectName();
+					if (name != null) {
+						projectName = name;
 					}
 
 				} else if (event.getClickCount() == 2) {
 					fileName = getFileName();
 					if (fileName != null) {
 						try {
-							projectContainer.openEditor(getProjectName(), fileName, true,
-									false);
+							name = getProjectName();
+							if (name != null) {
+								projectContainer.openEditor(name, fileName, true, false);
+							}
 						} catch (UniformAppletException ex) {
 							;
 						}
@@ -457,7 +493,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		// }
 		boolean contains = false;
 		DefaultMutableTreeNode projectNode = null;
-		DefaultMutableTreeNode fileNode = null;
+
 		List<String> fileNames = new ArrayList<String>();
 
 		for (int i = 0; i < top.getChildCount(); i++) {
@@ -566,7 +602,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 */
 	public void addProject(String projectName) {
 		DefaultMutableTreeNode projectNode = null;
-		Hierarchy hierarchy = null;
 
 		// dodaj novi cvor, tj. projekt u stablo
 		if (getNode(top, projectName) == null) {
@@ -591,7 +626,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			addChildren(rootNode, hierarchy);
 		}
-		//tree.setRootVisible(false);
+		tree.setRootVisible(true);
 	}
 
 
@@ -642,16 +677,52 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	}
 
 
-	private void removeNode() {
-		Object node = null;
+	private void deleteFile() {
+		Object obj = null;
+		DefaultMutableTreeNode node = null;
 
 		TreePath treePath = tree.getSelectionPath();
 		if (treePath == null) {
 			// ako nema selekcije
 			return;
 		} else {
-			node = treePath.getLastPathComponent();
+			obj = treePath.getLastPathComponent();
+			node = (DefaultMutableTreeNode)obj;
+			// ako je to projekt ili root
+			if (node.isRoot() || ((DefaultMutableTreeNode)(node.getParent())).isRoot()) {
+				return;
+			}
+			treeModel.removeNodeFromParent(node);
+			try {
+				projectContainer.deleteFile(projectName, node.toString());
+			} catch (UniformAppletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	private void deleteProject() {
+		Object obj = null;
+		DefaultMutableTreeNode node = null;
+
+		TreePath treePath = tree.getSelectionPath();
+		if (treePath == null) {
+			return;
+		} else {
+			obj = treePath.getLastPathComponent();
+			node = (DefaultMutableTreeNode)obj;
+			if (node.isRoot() || !((DefaultMutableTreeNode)(node.getParent())).isRoot()) {
+				return;
+			}
 			treeModel.removeNodeFromParent((DefaultMutableTreeNode)node);
+			try {
+				projectContainer.deleteProject(projectName);
+			} catch (UniformAppletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
