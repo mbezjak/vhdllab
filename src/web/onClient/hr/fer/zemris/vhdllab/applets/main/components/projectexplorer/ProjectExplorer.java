@@ -68,7 +68,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	private JScrollPane usedInTreeView;
 
 	private JMenu newSubMenu;
-	private JMenu newFileSubMenu;
 	private JMenuItem addProject;
 	private JMenuItem addVHDL;
 	private JMenuItem addTb;
@@ -97,7 +96,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 */
 	public ProjectExplorer() {
 		newSubMenu = new JMenu("New");
-		newFileSubMenu = new JMenu("File");
 		addProject = new JMenuItem("Add project");
 		addVHDL = new JMenuItem("VHDL source");
 		addTb = new JMenuItem("Testbench");
@@ -124,11 +122,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		deleteProject.addActionListener(popupListener);
 
 		newSubMenu.add(addProject);
-		newSubMenu.add(newFileSubMenu);
-		newFileSubMenu.add(addVHDL);
-		newFileSubMenu.add(addTb);
-		newFileSubMenu.add(addSchema);
-		newFileSubMenu.add(addAutomat);
+		newSubMenu.addSeparator();
+		newSubMenu.add(addVHDL);
+		newSubMenu.add(addTb);
+		newSubMenu.add(addSchema);
+		newSubMenu.add(addAutomat);
 		optionsPopup.add(newSubMenu);
 		optionsPopup.addSeparator();
 		optionsPopup.add(compile);
@@ -389,9 +387,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			} else if (event.getSource().equals(deleteProject)) {
 				deleteProject();
 			}
-			tree.repaint();
-			treeModel.reload();
-
+			//TreePath treePath = tree.getSelectionPath();
+			//tree.setExpandedState(treePath, true);
+			//tree.repaint();
+			//treeModel.reload();
+			tree.setExpandsSelectedPaths(true);
 		}
 	};
 
@@ -535,6 +535,49 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 
 	/**
+	 * Metoda koja puni stablo
+	 * 
+	 * @param parent cvor koji predstavlja roditelja
+	 */
+	private DefaultMutableTreeNode addChildren(DefaultMutableTreeNode parent,
+			Hierarchy hierarchy) {
+
+		Set<String> children = hierarchy.getChildrenForParent(parent.toString());
+		for (String child : children) {
+			if (getNode(parent, child) == null) {
+				parent.add(addChildren(new DefaultMutableTreeNode(child), hierarchy));
+			} else {
+				parent.add(addChildren(getNode(parent, child), hierarchy));
+			}
+		}
+		return parent;
+	}
+
+	
+	/**
+	 * Metoda provjerava djeca ovog roditelja, u ovom slucaju String objekt
+	 * 
+	 * @return cvor, ako postoji, inace null
+	 */
+	public DefaultMutableTreeNode getNode(DefaultMutableTreeNode parent, Object child) {
+		DefaultMutableTreeNode temp = null;
+
+		if (parent == null) {
+			return null;
+		}
+
+		// provjera postoji li vec taj cvor
+		for (int i = 0; i < parent.getChildCount(); i++) {
+			temp = (DefaultMutableTreeNode)(parent.getChildAt(i));
+			if (temp.toString().equals((String)child)) {
+				return temp;
+			}
+		}
+		return null;
+	}
+
+
+	/**
 	 * Metoda zatvara projekt
 	 */
 	public void closeProject(String projectName) {
@@ -668,22 +711,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 
 	/**
-	 * Metoda koja puni stablo
-	 * 
-	 * @param parent cvor koji predstavlja roditelja
-	 */
-	private DefaultMutableTreeNode addChildren(DefaultMutableTreeNode parent,
-			Hierarchy hierarchy) {
-
-		Set<String> children = hierarchy.getChildrenForParent(parent.toString());
-		for (String child : children) {
-			parent.add(addChildren(new DefaultMutableTreeNode(child), hierarchy));
-		}
-		return parent;
-	}
-
-
-	/**
 	 * Metoda postavlja aktivni projekt
 	 */
 	public void setActiveProject(String projectName) {
@@ -777,29 +804,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				e.printStackTrace();
 			}
 		}
-	}
-
-
-	/**
-	 * Metoda provjerava djeca ovog roditelja, u ovom slucaju String objekt
-	 * 
-	 * @return cvor, ako postoji, inace null
-	 */
-	public DefaultMutableTreeNode getNode(DefaultMutableTreeNode parent, Object child) {
-		DefaultMutableTreeNode temp = null;
-
-		if (parent == null) {
-			return null;
-		}
-
-		// provjera postoji li vec taj cvor
-		for (int i = 0; i < parent.getChildCount(); i++) {
-			temp = (DefaultMutableTreeNode)(parent.getChildAt(i));
-			if (temp.toString().equals((String)child)) {
-				return temp;
-			}
-		}
-		return null;
 	}
 
 
