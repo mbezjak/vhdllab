@@ -387,11 +387,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			} else if (event.getSource().equals(deleteProject)) {
 				deleteProject();
 			}
-			//TreePath treePath = tree.getSelectionPath();
+			TreePath treePath = tree.getSelectionPath();
 			//tree.setExpandedState(treePath, true);
 			//tree.repaint();
 			//treeModel.reload();
-			tree.setExpandsSelectedPaths(true);
+			tree.scrollPathToVisible(treePath);
 		}
 	};
 
@@ -493,8 +493,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	public void addFile(String projectName, String fileName) {
 		// postavlja aktivni projekt, ovisno o trenutnoj selekciji
 		addObject(fileName);
-		treeModel.reload();
-		tree.setCellRenderer(renderer);
 	}
 
 
@@ -529,7 +527,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			addChildren(rootNode, hierarchy);
 		}
-		// tree.setRootVisible(true);
 		treeModel.reload();
 	}
 
@@ -772,10 +769,10 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			if (node.isRoot() || ((DefaultMutableTreeNode)(node.getParent())).isRoot()) {
 				return;
 			}
-			//treeModel.removeNodeFromParent(node);
+			treeModel.removeNodeFromParent(node);
 			try {
 				// ne radi!!
-				projectContainer.deleteFile(projectName, node.toString());
+				projectContainer.deleteFile(getProjectName(), node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
