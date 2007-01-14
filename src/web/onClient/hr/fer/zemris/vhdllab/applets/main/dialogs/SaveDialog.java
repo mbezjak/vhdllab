@@ -56,7 +56,7 @@ import javax.swing.JScrollPane;
  * 	if(always) {
  * 		...
  * 	}
- * 	List<FileIdentifier> identifiers = dialog.getSelectedResources();
+ * 	List&lt;FileIdentifier&gt; identifiers = dialog.getSelectedResources();
  * 	...
  * }
  * ...
@@ -64,7 +64,7 @@ import javax.swing.JScrollPane;
  * </code>
  * 
  * @author Miro Bezjak
- * @version 1.01
+ * @version 1.03
  * @since 23.12.2006
  */
 public class SaveDialog extends JDialog {
@@ -430,18 +430,14 @@ public class SaveDialog extends JDialog {
     	int width = DIALOG_WIDTH - 2 * BORDER;
     	int height = LABEL_HEIGHT - 2 * BORDER;
     	label.setPreferredSize(new Dimension(width, height));
-    	JPanel labelPanel = new JPanel(new BorderLayout());
-    	labelPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, 0, BORDER));
-    	labelPanel.add(label, BorderLayout.CENTER);
+    	label.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, 0, BORDER));
     	
     	// setup check box list
     	list = new CheckBoxList();
     	width = DIALOG_WIDTH - 2 * BORDER;
     	height = 0; // because list is a center component and it doesnt need height
     	list.setPreferredSize(new Dimension(width, height));
-    	JPanel listPanel = new JPanel(new BorderLayout());
-    	listPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
-    	listPanel.add(list, BorderLayout.CENTER);
+    	list.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
     	
     	// setup select all and deselect all buttons
     	selectAll = new JButton("Select All");
@@ -471,7 +467,11 @@ public class SaveDialog extends JDialog {
     	ok.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
     	ok.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			option = SaveDialog.OK_OPTION;
+    			if(!list.isEmpty()) {
+    				option = SaveDialog.OK_OPTION;
+    			} else {
+    				option = SaveDialog.CANCEL_OPTION;
+    			}
     			close();
     		}
     	});
@@ -510,8 +510,8 @@ public class SaveDialog extends JDialog {
     	
     	this.setLayout(new BorderLayout());
     	JPanel messagePanel = new JPanel(new BorderLayout());
-    	messagePanel.add(labelPanel, BorderLayout.NORTH);
-    	messagePanel.add(listPanel, BorderLayout.CENTER);
+    	messagePanel.add(label, BorderLayout.NORTH);
+    	messagePanel.add(list, BorderLayout.CENTER);
     	messagePanel.add(lowerPanel, BorderLayout.SOUTH);
     	this.getContentPane().add(messagePanel, BorderLayout.CENTER);
     	this.getRootPane().setDefaultButton(ok);
@@ -524,12 +524,8 @@ public class SaveDialog extends JDialog {
     
     /**
      * Starts a dialog and locks the control.
-     * @throws IllegalStateException if there are no items to save
      */
     public void startDialog() {
-    	if(list.isEmpty()) {
-    		throw new IllegalStateException("There are no items to save.");
-    	}
     	pack();
     	this.setLocationRelativeTo(owner);
     	this.setVisible(true);
@@ -664,6 +660,15 @@ public class SaveDialog extends JDialog {
     }
     
     /**
+     * Set always save check box to <code>selected</code> value.
+     * @param selected <code>true</code> to select check box; <code>false</code>
+     * 		otherwise
+     */
+    public void setAlwaysSaveCheckBoxSelection(boolean selected) {
+    	alwaysSave.setSelected(selected);
+    }
+    
+    /**
      * Set title to be displayed in this dialog. If <code>title</code> is
      * <code>null</code> then title will be set to an empty string.
      * @param title text to be displayed
@@ -689,17 +694,6 @@ public class SaveDialog extends JDialog {
      * @return  frame to wrap this dialog with
      */
     private static Frame getAppletFrame(JApplet owner) {
-    	// previous implementation
-    	/*if(owner == null) return null;
-		Object parent = owner.getParent();
-		while(!(parent instanceof Frame)) {
-			parent=((Component)parent).getParent();
-		}
-		Frame dialogFrame = (Frame)parent;
- 
-		Point p = owner.getLocationOnScreen();
-		dialogFrame.setLocation(p.x, p.y);
-		return dialogFrame;*/
     	return JOptionPane.getFrameForComponent(owner);
 	}
     

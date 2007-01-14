@@ -152,7 +152,7 @@ public class Communicator {
 		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		return invoker.loadFileType(fileIdentifier);
 	}
-
+	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		Long projectIdentifier = cache.getIdentifierFor(projectName);

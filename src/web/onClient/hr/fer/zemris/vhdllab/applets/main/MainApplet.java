@@ -902,9 +902,10 @@ public class MainApplet
 	private void compileWithDialog() throws UniformAppletException {
 		String title = bundle.getString(LanguageConstants.DIALOG_RUN_COMPILATION_TITLE);
 		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
-		String fileName = showRunDialog(title, listTitle, RunDialog.COMPILATION_TYPE);
-		if(fileName == null) return;
-		String projectName = getSelectedProject();
+		FileIdentifier file = showRunDialog(title, listTitle, RunDialog.COMPILATION_TYPE);
+		if(file == null) return;
+		String projectName = file.getProjectName();
+		String fileName = file.getFileName();
 		compile(projectName, fileName);
 	}
 	
@@ -947,9 +948,10 @@ public class MainApplet
 	private void simulateWithDialog() throws UniformAppletException {
 		String title = bundle.getString(LanguageConstants.DIALOG_RUN_SIMULATION_TITLE);
 		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
-		String fileName = showRunDialog(title, listTitle, RunDialog.SIMULATION_TYPE);
-		if(fileName == null) return;
-		String projectName = getSelectedProject();
+		FileIdentifier file = showRunDialog(title, listTitle, RunDialog.SIMULATION_TYPE);
+		if(file == null) return;
+		String projectName = file.getProjectName();
+		String fileName = file.getFileName();
 		simulate(projectName, fileName);
 	}
 	
@@ -1052,6 +1054,9 @@ public class MainApplet
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
+		/*Hierarchy h = communicator.extractHierarchy(projectName);
+		JOptionPane.showMessageDialog(this, h.toString());
+		return h;*/
 		return communicator.extractHierarchy(projectName);
 	}
 
@@ -1291,6 +1296,16 @@ public class MainApplet
 		} catch (UniformAppletException e) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
 			echoStatusText(text);
+		}
+	}
+	
+	private void refreshProject(String projectName) throws UniformAppletException {
+		if(projectName == null) {
+			throw new NullPointerException("Project name can not be null.");
+		}
+		projectExplorer.removeProject(projectName);
+		if(communicator.existsProject(projectName)) {
+			projectExplorer.addProject(projectName);
 		}
 	}
 	
@@ -1706,25 +1721,25 @@ public class MainApplet
 		else return dialog.getSelectedResources();
 	}
 	
-	private String showRunDialog(String title, String listTitle, int dialogType) {
+	private FileIdentifier showRunDialog(String title, String listTitle, int dialogType) {
 		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
 		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-		String activeProjectTitle = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_TITLE);
-		String changeActiveProjectButton = bundle.getString(LanguageConstants.DIALOG_RUN_CHANGE_ACTIVE_PROJECT_BUTTON);
+		String currentProjectTitle = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_TITLE);
+		String changeCurrentProjectButton = bundle.getString(LanguageConstants.DIALOG_RUN_CHANGE_ACTIVE_PROJECT_BUTTON);
 		String projectName = getSelectedProject();
-		String activeProjectLabel;
+		String currentProjectLabel;
 		if(projectName == null) {
-			activeProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);
+			currentProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);
 		} else {
-			activeProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL);
-			activeProjectLabel = Utilities.replacePlaceholders(activeProjectLabel, new String[] {projectName});
+			currentProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL);
+			currentProjectLabel = Utilities.replacePlaceholders(currentProjectLabel, new String[] {projectName});
 		}
 		
 		RunDialog dialog = new RunDialog(this, true, this, dialogType);
 		dialog.setTitle(title);
-		dialog.setCurrentProjectTitle(activeProjectTitle);
-		dialog.setChangeProjectButtonText(changeActiveProjectButton);
-		dialog.setCurrentProjectText(activeProjectLabel);
+		dialog.setCurrentProjectTitle(currentProjectTitle);
+		dialog.setChangeProjectButtonText(changeCurrentProjectButton);
+		dialog.setCurrentProjectText(currentProjectLabel);
 		dialog.setListTitle(listTitle);
 		dialog.setOKButtonText(ok);
 		dialog.setCancelButtonText(cancel);

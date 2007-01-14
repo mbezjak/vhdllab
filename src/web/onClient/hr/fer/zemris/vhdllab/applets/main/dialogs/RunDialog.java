@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main.dialogs;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -64,7 +65,7 @@ import javax.swing.border.TitledBorder;
  * </code>
  * 
  * @author Miro Bezjak
- * @version 1.0
+ * @version 1.01
  * @since 28.12.2006
  */
 public class RunDialog extends JDialog {
@@ -96,7 +97,7 @@ public class RunDialog extends JDialog {
 	private Component owner;
 	/** Project Container to enable communication */
 	private ProjectContainer container;
-	/** Current displayed project */
+	/** Currently displayed project */
 	private String currentProject;
 	
 	/** 
@@ -108,9 +109,10 @@ public class RunDialog extends JDialog {
 	private JLabel currentProjectLabel;
 	/** Button to change current project */
 	private JButton changeProjectButton;
-	/** Container for currentProjectLabel and changeProjectButton */
-	private JPanel currentProjectPanel;
-	/** Border for currentProjectPanel */
+	/** 
+	 * Border for currentProjectPanel (container of currentProjectLabel and
+	 * changeProjectButton)
+	 */
 	private TitledBorder currentProjectBorder;
 	
 	/** A model for fileList */
@@ -284,7 +286,7 @@ public class RunDialog extends JDialog {
     		JMenuItem item = new JMenuItem(project);
     		item.addActionListener(new ActionListener() {
     			public void actionPerformed(ActionEvent e) {
-    				changeActiveProject(project);
+    				changeCurrentProjectTo(project);
     			}
     		});
     		popupMenu.add(item);
@@ -293,20 +295,22 @@ public class RunDialog extends JDialog {
     			width = stringWidth;
     		}
     	}
-    	currentProject = container.getSelectedProject();
-    	if(currentProject == null && !allProjects.isEmpty()) {
-    		currentProject = allProjects.get(allProjects.size() - 1);
-    	}
     	if(width > MENU_BAR_MAX_WIDTH) {
     		width = MENU_BAR_MAX_WIDTH;
     	}
     	if(width < MENU_BAR_MIN_WIDTH) {
     		width = MENU_BAR_MIN_WIDTH;
     	}
-    	popupMenu.setPreferredSize(new Dimension(width, allProjects.size() * MENU_ITEM_HEIGHT));
+    	height = allProjects.size() * MENU_ITEM_HEIGHT;
+    	popupMenu.setPreferredSize(new Dimension(width, height));
+    	
+    	currentProject = container.getSelectedProject();
+    	if(currentProject == null && !allProjects.isEmpty()) {
+    		currentProject = allProjects.get(allProjects.size() - 1);
+    	}
     	
     	// setup current project label
-    	currentProjectPanel = new JPanel(new BorderLayout());
+    	JPanel currentProjectPanel = new JPanel(new BorderLayout());
     	currentProjectLabel = new JLabel();
     	width = DIALOG_WIDTH - 2 * BORDER;
     	height = LABEL_HEIGHT - 2 * BORDER;
@@ -318,11 +322,11 @@ public class RunDialog extends JDialog {
     			preformPopupMenuAction(source);
     		}
     	});
-    	currentProjectPanel.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
     	currentProjectPanel.add(currentProjectLabel, BorderLayout.CENTER);
     	currentProjectPanel.add(changeProjectButton, BorderLayout.EAST);
+    	Border outsideProjectBorder = BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER);
     	currentProjectBorder = BorderFactory.createTitledBorder("Displayed Project");
-    	currentProjectPanel.setBorder(currentProjectBorder);
+    	currentProjectPanel.setBorder(BorderFactory.createCompoundBorder(outsideProjectBorder, currentProjectBorder));
     	
     	// setup file listModel
     	listModel = new DefaultListModel();
@@ -382,6 +386,11 @@ public class RunDialog extends JDialog {
     	this.getContentPane().add(messagePanel, BorderLayout.CENTER);
     	this.getRootPane().setDefaultButton(ok);
     	this.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
+    	if(currentProject != null) {
+    		setChangeProjectButtonText("Displayed '" + currentProject + "'");
+    	} else {
+    		setChangeProjectButtonText("No project to display");
+    	}
     	setChangeProjectButtonText(null);
     	if(getTitle() == null) {
     		setTitle("Run");
@@ -390,12 +399,8 @@ public class RunDialog extends JDialog {
     
     /**
      * Starts a dialog and locks the control.
-     * @throws IllegalStateException if there are no items to run
      */
     public void startDialog() {
-    	if(listModel.isEmpty()) {
-    		throw new IllegalStateException("There are no items to run.");
-    	}
     	this.pack();
     	this.setLocationRelativeTo(owner);
     	this.setVisible(true);
@@ -416,16 +421,17 @@ public class RunDialog extends JDialog {
     }
     
     /**
-     * Returns file name that were selected by user to run.
+     * Returns file identifier that was selected by user to run.
      * This method will return <code>null</code> if user did not click
      * on a OK button.
-     * @return a name of a file that was selected
+     * @return a FileIdentifier that represents selected file
      */
-    public String getSelectedFile() {
-    	if(getOption() != RunDialog.OK_OPTION) {
+    public FileIdentifier getSelectedFile() {
+    	if(getOption() != RunDialog.OK_OPTION || currentProject == null) {
     		return null;
     	}
-    	return (String)fileList.getSelectedValue();
+    	String fileName = (String)fileList.getSelectedValue();
+    	return new FileIdentifier(currentProject, fileName);
     }
     
     /**
@@ -560,7 +566,7 @@ public class RunDialog extends JDialog {
      * already current project no action will be taken.
      * @param projectName a project to make current
      */
-    private void changeActiveProject(String projectName) {
+    private void changeCurrentProjectTo(String projectName) {
     	// current project is null only when there is no project to display
     	if(currentProject == null) return;
     	if(!currentProject.equals(projectName)) {

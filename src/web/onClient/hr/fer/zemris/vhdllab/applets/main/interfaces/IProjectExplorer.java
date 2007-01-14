@@ -24,7 +24,6 @@ public interface IProjectExplorer {
 	 * Such case is, for example, when user does not have any projects at all. If there is no
 	 * active project this method will return <code>null</code>.
 	 * @return a current active project or <code>null</code> if there is no active project.
-	 * @see #setActiveProject(String)
 	 */
 	String getSelectedProject();
 	List<String> getAllProjects();
