@@ -213,14 +213,13 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			if (parent.isRoot()) {
 				return this;
 			}
-
 			Pair pair = hierarchy.getPair(node.toString());
 			if (pair == null) {
 				return this;
 			} else {
 				type = pair.getFileType();
 			}
-
+			
 			// provjeri kojeg je tipa
 			// try {
 			// System.out.println(ProjectExplorer.this.projectName);
@@ -489,8 +488,15 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 * @param fileName ime datoteke
 	 */
 	public void addFile(String projectName, String fileName) {
+		try {
+			hierarchy = projectContainer.extractHierarchy(projectName);
+		} catch (UniformAppletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// postavlja aktivni projekt, ovisno o trenutnoj selekciji
 		addObject(fileName);
+
 	}
 
 
@@ -758,7 +764,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		TreePath treePath = tree.getSelectionPath();
 		String name = getProjectName();
-		System.out.println(name);
 		if (treePath == null) {
 			// ako nema selekcije
 			return;
