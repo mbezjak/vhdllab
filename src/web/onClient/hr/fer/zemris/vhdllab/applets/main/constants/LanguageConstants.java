@@ -86,10 +86,10 @@ public class LanguageConstants {
 	public static final String DIALOG_CREATE_NEW_PROJECT_TITLE = "dialog.create.new.project.title";
 	public static final String DIALOG_CREATE_NEW_PROJECT_MESSAGE = "dialog.create.new.project.message";
 
-	public static final String DIALOG_RUN_ACTIVE_PROJECT_LABEL = "dialog.run.active.project.label";
+	public static final String DIALOG_RUN_CURRENT_PROJECT_LABEL = "dialog.run.current.project.label";
 	public static final String DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT = "dialog.run.active.project.label.no.active.project";
-	public static final String DIALOG_RUN_ACTIVE_PROJECT_TITLE = "dialog.run.active.project.title";
-	public static final String DIALOG_RUN_CHANGE_ACTIVE_PROJECT_BUTTON = "dialog.run.change.active.project.button";
+	public static final String DIALOG_RUN_CURRENT_PROJECT_TITLE = "dialog.run.current.project.title";
+	public static final String DIALOG_RUN_CHANGE_CURRENT_PROJECT_BUTTON = "dialog.run.change.current.project.button";
 	public static final String DIALOG_RUN_COMPILATION_LIST_TITLE = "dialog.run.compilation.list.title";
 	public static final String DIALOG_RUN_COMPILATION_TITLE = "dialog.run.compilation.title";
 	public static final String DIALOG_RUN_SIMULATION_LIST_TITLE = "dialog.run.simulation.list.title";

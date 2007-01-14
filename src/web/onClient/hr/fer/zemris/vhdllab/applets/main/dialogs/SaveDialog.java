@@ -430,7 +430,7 @@ public class SaveDialog extends JDialog {
     	int width = DIALOG_WIDTH - 2 * BORDER;
     	int height = LABEL_HEIGHT - 2 * BORDER;
     	label.setPreferredSize(new Dimension(width, height));
-    	label.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, 0, BORDER));
+    	label.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER, BORDER));
     	
     	// setup check box list
     	list = new CheckBoxList();

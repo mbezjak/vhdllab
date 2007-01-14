@@ -1724,14 +1724,14 @@ public class MainApplet
 	private FileIdentifier showRunDialog(String title, String listTitle, int dialogType) {
 		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
 		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-		String currentProjectTitle = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_TITLE);
-		String changeCurrentProjectButton = bundle.getString(LanguageConstants.DIALOG_RUN_CHANGE_ACTIVE_PROJECT_BUTTON);
+		String currentProjectTitle = bundle.getString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_TITLE);
+		String changeCurrentProjectButton = bundle.getString(LanguageConstants.DIALOG_RUN_CHANGE_CURRENT_PROJECT_BUTTON);
 		String projectName = getSelectedProject();
 		String currentProjectLabel;
 		if(projectName == null) {
 			currentProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);
 		} else {
-			currentProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL);
+			currentProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_LABEL);
 			currentProjectLabel = Utilities.replacePlaceholders(currentProjectLabel, new String[] {projectName});
 		}
 		

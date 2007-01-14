@@ -772,8 +772,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			if (node.isRoot() || ((DefaultMutableTreeNode)(node.getParent())).isRoot()) {
 				return;
 			}
-			treeModel.removeNodeFromParent(node);
+			//treeModel.removeNodeFromParent(node);
 			try {
+				// ne radi!!
 				projectContainer.deleteFile(projectName, node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
@@ -798,7 +799,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			treeModel.removeNodeFromParent((DefaultMutableTreeNode)node);
 			try {
-				projectContainer.deleteProject(projectName);
+				projectContainer.deleteProject(node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
