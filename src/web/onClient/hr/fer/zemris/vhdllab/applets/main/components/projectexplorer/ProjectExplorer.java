@@ -231,7 +231,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			// } catch (UniformAppletException e) {
 			// e.printStackTrace();
 			// }
-			if (FileTypes.FT_VHDL_SOURCE.equals("and")) {
+			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
 				setIcon(vhdl);
 				setToolTipText("VHDL source file");
 			} else if (FileTypes.FT_VHDL_TB.equals(type)) {
@@ -246,10 +246,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			} else if (FileTypes.FT_VHDL_SIMULATION.equals(type)) {
 				setIcon(simulation);
 				setToolTipText("Simulation");
-			} else if (node.toString().equals("jao")) {
-				setIcon(vhdl);
 			}
-
 			return this;
 		}
 	}
@@ -452,6 +449,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			if (selPath != null) {
 				if (event.getClickCount() == 1) {
 					name = getProjectName();
+					System.out.println(name);
 					if (name != null) {
 						projectName = name;
 					}
@@ -759,6 +757,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		DefaultMutableTreeNode node = null;
 
 		TreePath treePath = tree.getSelectionPath();
+		String name = getProjectName();
+		System.out.println(name);
 		if (treePath == null) {
 			// ako nema selekcije
 			return;
@@ -772,7 +772,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			treeModel.removeNodeFromParent(node);
 			try {
 				// ne radi!!
-				projectContainer.deleteFile(getProjectName(), node.toString());
+				System.out.println("ime fajla " + node.toString());
+				projectContainer.deleteFile(name, node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
