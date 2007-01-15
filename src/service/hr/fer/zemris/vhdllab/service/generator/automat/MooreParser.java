@@ -40,7 +40,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 
 	private StringBuffer createBlok3(StringBuffer buffer) {
 		buffer.append("PROCESS(clock, reset)\nBEGIN\n\t")
-		.append("IF reset='1' THEN\n\t\tstate_present <= ")
+		.append("IF reset='1' THEN\n\t\tstate_present <= ST_")
 		.append(podatci.pocetnoStanje).append(";\n\t")
 		.append("ELSIF falling_edge(clock) THEN\n\t\t")
 		.append("state_present <= state_next;\n\tEND IF;\n")
@@ -52,7 +52,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		buffer.append("PROCESS(state_present)\nBEGIN\n\t")
 		.append("CASE state_present IS");
 		for(Stanje st:stanja){
-			buffer.append("\n\tWHEN " ).append(st.ime).append(" =>");
+			buffer.append("\n\tWHEN ST_" ).append(st.ime).append(" =>");
 			buffer=generirajIzlaze(st,buffer);
 		}
 		buffer.append("\n\tWHEN OTHERS => "); 
@@ -89,7 +89,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		for (Signal ul:ulazniSignali)buffer.append(", ").append(ul.getImeSignala());
 		buffer.append(")\nBEGIN\n\tCASE state_present IS");
 		for(Stanje st:stanja){
-			buffer.append("\n\t\tWHEN ").append(st.ime).append("=>\n\t\t");
+			buffer.append("\n\t\tWHEN ST_").append(st.ime).append("=>\n\t\t");
 			boolean test=true;
 			for(Prijelaz pr:prijelazi)
 				if(pr.iz.equals(st.ime)){
@@ -114,9 +114,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		for(String pom:pobudaIzlaz){
 			int broj=0;
 			for(Signal sig:ulazniSignali){
-				String navodnici=(sig.getTip()==Signal.STD_LOGIC?"'":"\"");
-				buffer.append(sig.getImeSignala()).append("=").append(navodnici).append(pom.substring(broj,broj+sig.getSirinaSignala()))
-				.append(navodnici).append(" AND ");
+				buffer=createCplxCondition(buffer,sig,pom.substring(broj,broj+sig.getSirinaSignala()));
 				broj+=sig.getSirinaSignala();
 			}
 		}
@@ -127,9 +125,35 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		return buffer;
 	}
 
+	private StringBuffer createCplxCondition(StringBuffer buffer, Signal sig, String pom) {
+		String navodnici=(sig.getTip()==Signal.STD_LOGIC?"'":"\"");
+		StringBuffer pombuf=buffer;
+		if(!pom.matches("*-*"))pombuf.append(sig.getImeSignala()).append("=").append(navodnici).append(pom)
+		.append(navodnici).append(" AND ");
+		else{
+			int state=0;
+			int start=0;
+			for(int i=0;i<pom.length();i++){
+				if(state==0) if(pom.charAt(i)=='0'||pom.charAt(i)=='1'){
+					start=i;
+					state=1;
+				}
+				if(state==1)
+					if(pom.charAt(i)=='-'){
+						buffer.append(sig.getImeSignala());
+						buffer.append("(").append(start).append(" TO ").append(i-1).append(")");
+						buffer.append("=").append(navodnici).append(pom.substring(start,i))
+					    .append(navodnici).append(" AND ");
+						state=0;
+					}
+			}
+		}
+		return pombuf;
+	}
+
 	private StringBuffer createType(StringBuffer buffer) {
 		buffer.append("TYPE stateType IS (");
-		for(Stanje st:stanja)buffer.append(st.ime).append(", ");
+		for(Stanje st:stanja)buffer.append("ST_").append(st.ime).append(", ");
 		buffer.deleteCharAt(buffer.length()-1);
 		buffer.deleteCharAt(buffer.length()-1);
 		buffer.append(");\nSIGNAL state_present, state_next:stateType;\n");

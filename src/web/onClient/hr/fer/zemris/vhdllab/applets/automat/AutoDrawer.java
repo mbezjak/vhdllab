@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -36,6 +37,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import org.xml.sax.SAXException;
@@ -89,7 +91,7 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * radijus krugova za stanja
 	 */
-	private int radijus=17;
+	private int radijus=20;
 	/**
 	 * Stanja rada definirat ce dali se dodaje signal, dodaje prijelaz ili editira slika.
 	 * stanjeRada=1 mjenjanje postojecih objekata
@@ -702,7 +704,7 @@ public class AutoDrawer extends JPanel{
 			}	
 		});
 		
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=optionPane.createDialog(this,bundle.getString(LanguageConstants.EDITOR_TITLE));
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
@@ -853,8 +855,8 @@ public class AutoDrawer extends JPanel{
 							if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0){
 								if(!prijelazZaDodati.equals2(prijelazZaDodati,prijelazi)){
 									prijelazi.add(prijelazZaDodati);
-									}
-							}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this,bundle);
+									}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this,bundle);
+							}
 							prijelazZaDodati=null;
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;
@@ -954,6 +956,68 @@ public class AutoDrawer extends JPanel{
 	public void setResourceBundle(ProjectContainer pc,ResourceBundle bundle) {
 		this.bundle=bundle;
 		this.pContainer=pc;
+	}
+
+	public void dataChange() {
+		JTextField tip=new JTextField(podatci.tip);
+		tip.setEditable(false);
+		tip.setBorder(BorderFactory.createTitledBorder(bundle.getString(LanguageConstants.DIALOG_TEXT_TYPE)));
+		
+		String[] polje=podatci.interfac.split("\n");
+		final DefaultListModel listam=new DefaultListModel();
+		for(String st:polje)listam.addElement(st);
+		final JList list=new JList(listam);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setLayoutOrientation(JList.VERTICAL);
+		list.setVisibleRowCount(-1);
+		list.setSelectedIndex(0);
+		JScrollPane listScroller = new JScrollPane(list);
+		list.setBorder(BorderFactory.createTitledBorder(bundle.getString(LanguageConstants.DIALOG_TEXT_SIGNALS)));
+		listScroller.setPreferredSize(new Dimension(250, 80));
+		
+		JButton change=new JButton("Edit signal");
+		change.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				String pom=(String) list.getSelectedValue();
+				String[] polj=pom.split(" ");
+				polj[0]=editSignal(polj[0]);
+				pom=new StringBuffer().append(polj[0]).append(" ").append(polj[1]).append(" ")
+				.append(polj[2]).toString();
+				listam.set(list.getSelectedIndex(),pom);
+			}
+
+			private String editSignal(String string) {
+				String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
+						bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
+				};
+				JTextField name=new JTextField(string);
+				name.setBorder(BorderFactory.createTitledBorder(bundle.getString(LanguageConstants.DIALOG_TEXT_SIGNALNAME)));
+				JOptionPane optionPane=new JOptionPane(name,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+				JDialog dialog=optionPane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_MACHINEDATA));
+				dialog.setVisible(true);
+				Object selected=optionPane.getValue();
+				
+				if(selected.equals(options[1])) return string;
+				else return name.getText();
+			};
+		});
+		
+		JPanel panel=new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(tip,BorderLayout.NORTH);
+		panel.add(list,BorderLayout.CENTER);
+		panel.add(change,BorderLayout.SOUTH);
+		
+		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
+				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
+		};
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JDialog dialog=optionPane.createDialog(this,bundle.getString(LanguageConstants.DIALOG_TITLE_MACHINEDATA));
+		dialog.setVisible(true);
+		Object selected=optionPane.getValue();
+		
+		if(selected.equals(options[1])) System.out.println("Mali dialog... :)"); //TODO sve ovo
+		
 	}
 
 	

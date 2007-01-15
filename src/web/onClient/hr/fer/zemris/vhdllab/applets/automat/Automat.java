@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -16,7 +17,9 @@ import java.util.ResourceBundle;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 /**
@@ -75,6 +78,8 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			JToggleButton pocStanje=new JToggleButton(ic);
 			pocStanje.setActionCommand("pocStanje");
 			pocStanje.setToolTipText(bundle.getString(LanguageConstants.BUTTON_SETINITIAL));
+			JButton podatci=new JButton("Podatci o automatu");
+			podatci.setToolTipText(bundle.getString(LanguageConstants.BUTTON_DATA));
 		
 
 		
@@ -111,6 +116,14 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 					if(e.getActionCommand().equals("pocStanje"))adrw.setStanjeRada(6);
 				}
 			});
+			
+			podatci.addActionListener(new ActionListener(){
+
+				public void actionPerformed(ActionEvent e) {
+					adrw.dataChange();
+				}
+				
+			});
 	
 			JToolBar tulbar=new JToolBar();
 			final ButtonGroup grupa=new ButtonGroup();
@@ -125,9 +138,10 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			tulbar.add(dodajNoviPrijelaz);
 			tulbar.add(brisi);
 			tulbar.add(pocStanje);
+			tulbar.add(podatci);
 		
 			this.setLayout(new BorderLayout());
-			this.add(adrw,BorderLayout.CENTER);
+			this.add(new JScrollPane(adrw),BorderLayout.CENTER);
 			this.add(tulbar,BorderLayout.NORTH);
 		
 			
@@ -177,8 +191,9 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-		projectName=pContainer.getSelectedProject();
-		bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
+//		projectName=pContainer.getSelectedProject();
+//		bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
+		bundle=CachedResourceBundles.getBundle("Client_Automat_ApplicationResources","en");
 	}
 
 	public IWizard getWizard() {

@@ -69,7 +69,7 @@ public class Stanje {
 		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
-		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATELABEL));
 		dialog.setVisible(true);
 		
@@ -92,7 +92,7 @@ public class Stanje {
 		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
-		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATELABEL));
 		dialog.setVisible(true);
 		
@@ -110,7 +110,7 @@ public class Stanje {
 			String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK)
 			};
 			JOptionPane pane=new JOptionPane(bundle.getString(LanguageConstants.DIALOG_INPUT_MEALYEDITOUTPUT),
-					JOptionPane.INFORMATION_MESSAGE,JOptionPane.DEFAULT_OPTION,null,options,options[0]);
+					JOptionPane.INFORMATION_MESSAGE,JOptionPane.DEFAULT_OPTION,null,options,null);
 			Dialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATEEDITLABEL));
 			dialog.setVisible(true);
 		}
@@ -127,7 +127,7 @@ public class Stanje {
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
 		
-		JOptionPane pane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JOptionPane pane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATEEDITLABEL));
 		dialog.setVisible(true);
 		

@@ -9,6 +9,7 @@ public class LanguageConstants {
 	public static final String BUTTON_NORMAL="buttons.EditMode.toolTipText";
 	public static final String BUTTON_SETINITIAL="buttons.SetInitialState.toolTipText";
 	public static final String BUTTON_DELETE="buttons.Delete.toolTipText";
+	public static final String BUTTON_DATA="buttons.Data.toolTipText";
 	
 	/*
 	 * Dialog constants
@@ -30,6 +31,10 @@ public class LanguageConstants {
 	public static final String DIALOG_INPUT_TRANSITIONOUT="dialog.Input.NewTransitionOutput";
 	public static final String DIALOG_INPUT_TRANSITIONLABEL="dialog.Input.NewTransitionLabel";
 	public static final String DIALOG_TITLE_WARNING="dialog.warning";
+	public static final String DIALOG_TITLE_MACHINEDATA="dialog.DataLabel";
+	public static final String DIALOG_TEXT_TYPE="dialog.Text.MachineType";
+	public static final String DIALOG_TEXT_SIGNALS="dialog.Text.Signals";
+	public static final String DIALOG_TEXT_SIGNALNAME="dialog.Text.SignalName";
 	
 	/*
 	 * Editor 
