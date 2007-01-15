@@ -102,6 +102,9 @@ public class AutoDrawer extends JPanel{
 	 * stanjeRada=6 zadavanje pocetnog stanja
 	 */
 	private int stanjeRada=1;
+	
+	private HashSet<String> listaSignala=null;
+	
 	public boolean isModified=false;
 	
 	private ResourceBundle bundle=null;
@@ -202,9 +205,11 @@ public class AutoDrawer extends JPanel{
 	private void parseLegend() {
 		String ulazi=new String("|");
 		String izlazi=new String("|");
+		listaSignala=new HashSet<String>();
 		String[] redovi=podatci.interfac.split("\n");
 		for(int i=0;i<redovi.length;i++){
 			String[] rijeci=redovi[i].split(" ");
+			listaSignala.add(rijeci[0].toLowerCase());
 			if(rijeci[1].toUpperCase().equals("IN")) ulazi=new StringBuffer().append(ulazi).append(rijeci[0]).append("|").toString();
 			else izlazi=new StringBuffer().append(izlazi).append(rijeci[0]).append("|").toString();
 		}
@@ -802,9 +807,11 @@ public class AutoDrawer extends JPanel{
 							zastavica=false;
 						}
 						boolean z2=true;
-						if(zastavica)
+						if(zastavica){
 							for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
-						if(z2)zastavica=false;
+							if(!pContainer.isCorrectEntityName("st_"+stanjeZaDodati.ime))z2=false;
+						}
+						if(z2&&(!listaSignala.contains("st_"+stanjeZaDodati.ime.toLowerCase())))zastavica=false;
 						else{
 							String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
 									bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
@@ -981,9 +988,11 @@ public class AutoDrawer extends JPanel{
 				String pom=(String) list.getSelectedValue();
 				String[] polj=pom.split(" ");
 				polj[0]=editSignal(polj[0]);
-				pom=new StringBuffer().append(polj[0]).append(" ").append(polj[1]).append(" ")
-				.append(polj[2]).toString();
-				listam.set(list.getSelectedIndex(),pom);
+				StringBuffer buf=new StringBuffer().append(polj[0]).append(" ").append(polj[1]).append(" ")
+				.append(polj[2]);
+				if (polj[2].equalsIgnoreCase("Std_Logic_vector"))buf.append(" ").append(polj[3])
+				.append(" ").append(polj[4]);
+				listam.set(list.getSelectedIndex(),buf.toString());
 			}
 
 			private String editSignal(String string) {
@@ -998,7 +1007,25 @@ public class AutoDrawer extends JPanel{
 				Object selected=optionPane.getValue();
 				
 				if(selected.equals(options[1])) return string;
-				else return name.getText();
+				else {
+					String st=name.getText();
+					if(listaSignala.contains(st.toLowerCase())||!pContainer.isCorrectEntityName(st)){
+						String[] options2={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
+								bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
+						JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_SIGNALEXISTS),
+								JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options2,options[0]);
+						JDialog dialog2=pane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_WARNING));
+						dialog2.setVisible(true);
+						Object reza=pane.getValue();
+						if(reza.equals(options[1])){
+							return string;
+						}else return editSignal(string);
+					}else {
+						listaSignala.remove(string);
+						listaSignala.add(st);
+						return st;
+					}
+				}
 			};
 		});
 		
@@ -1016,8 +1043,14 @@ public class AutoDrawer extends JPanel{
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
-		if(selected.equals(options[1])) System.out.println("Mali dialog... :)"); //TODO sve ovo
-		
+		if(selected.equals(options[0])) {
+			StringBuffer buf=new StringBuffer();
+			for(Object str:listam.toArray())buf.append((String)str).append("\n");
+			buf.deleteCharAt(buf.length()-1);
+			podatci.interfac=buf.toString();
+			parseLegend();
+			nacrtajSklop();
+		}
 	}
 
 	
