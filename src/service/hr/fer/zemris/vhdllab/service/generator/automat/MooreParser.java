@@ -40,9 +40,13 @@ public class MooreParser implements IAutomatVHDLGenerator {
 
 	private StringBuffer createBlok3(StringBuffer buffer) {
 		buffer.append("PROCESS(clock, reset)\nBEGIN\n\t")
-		.append("IF reset='1' THEN\n\t\tstate_present <= ST_")
+		.append("IF reset=").append(podatci.reset).append(" THEN\n\t\tstate_present <= ST_")
 		.append(podatci.pocetnoStanje).append(";\n\t")
-		.append("ELSIF falling_edge(clock) THEN\n\t\t")
+		.append("ELSIF ");
+		if(podatci.clock.equalsIgnoreCase("falling_edge"))buffer.append("falling_edge(clock)");
+		else if(podatci.clock.equalsIgnoreCase("rising_edge"))buffer.append("rising_edge(clock)");
+		else buffer.append("clock=").append(podatci.clock);
+		buffer.append(" THEN\n\t\t")
 		.append("state_present <= state_next;\n\tEND IF;\n")
 		.append("END PROCESS;\n");
 		return buffer;

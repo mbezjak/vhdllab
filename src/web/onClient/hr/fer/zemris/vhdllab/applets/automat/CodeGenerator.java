@@ -49,7 +49,8 @@ public class CodeGenerator {
 	private String generateHead(AUTPodatci podatci, String code) {
 		return new StringBuffer().append(code).append("\n<Podatci_Sklopa>\n<Ime>").append(podatci.ime)
 		.append("</Ime>\n<Tip>").append(podatci.tip).append("</Tip>\n<Interfac>").append(podatci.interfac)
-		.append("</Interfac>\n<Pocetno_Stanje>").append(podatci.pocetnoStanje).append("</Pocetno_Stanje>\n</Podatci_Sklopa>\n")
+		.append("</Interfac>\n<Pocetno_Stanje>").append(podatci.pocetnoStanje).append("</Pocetno_Stanje>\n")
+		.append("<Reset>").append(podatci.reset).append("</Reset>\n<Clock>").append(podatci.clock).append("</Clock>\n</Podatci_Sklopa>\n")
 		.toString();		
 	}
 }

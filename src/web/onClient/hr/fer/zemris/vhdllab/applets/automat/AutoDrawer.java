@@ -4,6 +4,7 @@ package hr.fer.zemris.vhdllab.applets.automat;
 
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.string.StringUtil;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -206,6 +207,8 @@ public class AutoDrawer extends JPanel{
 		String ulazi=new String("|");
 		String izlazi=new String("|");
 		listaSignala=new HashSet<String>();
+		listaSignala.add("clock");
+		listaSignala.add("reset");
 		String[] redovi=podatci.interfac.split("\n");
 		for(int i=0;i<redovi.length;i++){
 			String[] rijeci=redovi[i].split(" ");
@@ -711,6 +714,7 @@ public class AutoDrawer extends JPanel{
 		
 		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=optionPane.createDialog(this,bundle.getString(LanguageConstants.EDITOR_TITLE));
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
@@ -809,7 +813,7 @@ public class AutoDrawer extends JPanel{
 						boolean z2=true;
 						if(zastavica){
 							for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
-							if(!pContainer.isCorrectEntityName("st_"+stanjeZaDodati.ime))z2=false;
+							if(!isCorrectEntityName("st_"+stanjeZaDodati.ime))z2=false;
 						}
 						if(z2&&(!listaSignala.contains("st_"+stanjeZaDodati.ime.toLowerCase())))zastavica=false;
 						else{
@@ -818,6 +822,7 @@ public class AutoDrawer extends JPanel{
 							JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_STATEEXISTS),
 									JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options,options[0]);
 							JDialog dialog=pane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_WARNING));
+							dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 							dialog.setVisible(true);
 							Object reza=pane.getValue();
 							if(reza.equals(options[1])){
@@ -1003,18 +1008,20 @@ public class AutoDrawer extends JPanel{
 				name.setBorder(BorderFactory.createTitledBorder(bundle.getString(LanguageConstants.DIALOG_TEXT_SIGNALNAME)));
 				JOptionPane optionPane=new JOptionPane(name,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 				JDialog dialog=optionPane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_MACHINEDATA));
+				dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 				dialog.setVisible(true);
 				Object selected=optionPane.getValue();
 				
 				if(selected.equals(options[1])) return string;
 				else {
 					String st=name.getText();
-					if(listaSignala.contains(st.toLowerCase())||!pContainer.isCorrectEntityName(st)){
+					if(listaSignala.contains(st.toLowerCase())||!isCorrectEntityName(st)){
 						String[] options2={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
 								bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
 						JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_SIGNALEXISTS),
 								JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options2,options[0]);
 						JDialog dialog2=pane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_WARNING));
+						dialog2.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 						dialog2.setVisible(true);
 						Object reza=pane.getValue();
 						if(reza.equals(options[1])){
@@ -1052,6 +1059,25 @@ public class AutoDrawer extends JPanel{
 			nacrtajSklop();
 		}
 	}
-
+	
+	public static boolean isCorrectEntityName(String s) {
+		if( s == null ) throw new NullPointerException("String can not be null.");
+		char[] chars = s.toCharArray();
+		if( chars.length == 0 ) return false;
+		if( !StringUtil.isAlpha(chars[0]) ) return false;
+		if( StringUtil.isUnderscore(chars[s.length()-1]) ) return false;
+		for(int i = 0; i < chars.length; i++) {      
+			if( StringUtil.isAlpha(chars[i]) ||
+				StringUtil.isNumeric(chars[i]) ) continue;
+			if( StringUtil.isUnderscore(chars[i]) ) {
+				if( (i + 1) < chars.length 
+					&& StringUtil.isUnderscore(chars[i+1]) )
+					return false;
+				continue;
+			}
+			return false;
+		}  
+		return true;
+	}
 	
 }

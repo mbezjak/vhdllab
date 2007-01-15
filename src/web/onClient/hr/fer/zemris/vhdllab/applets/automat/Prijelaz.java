@@ -80,6 +80,7 @@ public class Prijelaz {
 		};
 		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=optionPane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONLABEL));
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
@@ -99,6 +100,7 @@ public class Prijelaz {
 		};
 		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=optionPane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONLABEL));
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		

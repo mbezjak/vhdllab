@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.automat;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.GridLayout;
 import java.util.ResourceBundle;
 
@@ -71,6 +70,7 @@ public class Stanje {
 		};
 		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATELABEL));
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		
 		Object selected=pane.getValue();		
@@ -94,6 +94,7 @@ public class Stanje {
 		};
 		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATELABEL));
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		
 		Object selected=pane.getValue();		
@@ -111,7 +112,8 @@ public class Stanje {
 			};
 			JOptionPane pane=new JOptionPane(bundle.getString(LanguageConstants.DIALOG_INPUT_MEALYEDITOUTPUT),
 					JOptionPane.INFORMATION_MESSAGE,JOptionPane.DEFAULT_OPTION,null,options,null);
-			Dialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATEEDITLABEL));
+			JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATEEDITLABEL));
+			dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 			dialog.setVisible(true);
 		}
 	}
@@ -129,6 +131,7 @@ public class Stanje {
 		
 		JOptionPane pane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATEEDITLABEL));
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		
 		Object selected=pane.getValue();		

@@ -1,5 +1,4 @@
 package hr.fer.zemris.vhdllab.service.generator.automat;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;
@@ -22,11 +21,13 @@ public class AUTParser {
 		
 		digester.push(this);
 		
-		digester.addCallMethod("Automat/Podatci_Sklopa","dodajPodatke",4);
+		digester.addCallMethod("Automat/Podatci_Sklopa","dodajPodatke",6);
 		digester.addCallParam("Automat/Podatci_Sklopa/Ime",0);
 		digester.addCallParam("Automat/Podatci_Sklopa/Tip",1);
 		digester.addCallParam("Automat/Podatci_Sklopa/Interfac",2);
 		digester.addCallParam("Automat/Podatci_Sklopa/Pocetno_Stanje",3);
+		digester.addCallParam("Automat/Podatci_Sklopa/Reset",4);
+		digester.addCallParam("Automat/Podatci_Sklopa/Clock",5);
 		
 		digester.addCallMethod("Automat/Stanje","dodajStanje",4);
 		digester.addCallParam("Automat/Stanje/Ime",0);
@@ -43,8 +44,8 @@ public class AUTParser {
 		digester.parse(new StringReader(podatci));
 	}
 	
-	public void dodajPodatke(String ime,String tip,String interfac,String pocetnoStanje){
-		podatci=new AUTPodatci(ime,tip,interfac,pocetnoStanje);
+	public void dodajPodatke(String ime,String tip,String interfac,String pocetnoStanje,String rs,String cl){
+		podatci=new AUTPodatci(ime,tip,interfac,pocetnoStanje,rs,cl);
 	}
 	public void dodajStanje(String ime, String izlaz, String ox,String oy){
 		Stanje st=new Stanje(ime,izlaz,ox,oy);
@@ -59,37 +60,5 @@ public class AUTParser {
 				test=false;
 			}
 		if(test)prijelazi.add(pr);
-	}
-
-	public void AUTParse(BufferedReader reader) {
-		Digester digester=new Digester();
-		
-		digester.push(this);
-		
-		digester.addCallMethod("Automat/Podatci_Sklopa","dodajPodatke",4);
-		digester.addCallParam("Automat/Podatci_Sklopa/Ime",0);
-		digester.addCallParam("Automat/Podatci_Sklopa/Tip",1);
-		digester.addCallParam("Automat/Podatci_Sklopa/Interfac",2);
-		digester.addCallParam("Automat/Podatci_Sklopa/Pocetno_Stanje",3);
-		
-		digester.addCallMethod("Automat/Stanje","dodajStanje",4);
-		digester.addCallParam("Automat/Stanje/Ime",0);
-		digester.addCallParam("Automat/Stanje/Izlaz",1);
-		digester.addCallParam("Automat/Stanje/Ox",2);
-		digester.addCallParam("Automat/Stanje/Oy",3);
-		
-		digester.addCallMethod("Automat/Prijelaz","dodajPrijelaz",4);
-		digester.addCallParam("Automat/Prijelaz/Iz",0);
-		digester.addCallParam("Automat/Prijelaz/U",1);
-		digester.addCallParam("Automat/Prijelaz/Pobuda",2);
-		digester.addCallParam("Automat/Prijelaz/Izlaz",3);
-		
-		try {
-			digester.parse(reader);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		}
 	}
 }
