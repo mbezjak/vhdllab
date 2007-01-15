@@ -132,9 +132,10 @@ public class MooreParser implements IAutomatVHDLGenerator {
 	private StringBuffer createCplxCondition(StringBuffer buffer, Signal sig, String pom) {
 		String navodnici=(sig.getTip()==Signal.STD_LOGIC?"'":"\"");
 		StringBuffer pombuf=buffer;
-		if(!pom.matches("*-*"))pombuf.append(sig.getImeSignala()).append("=").append(navodnici).append(pom)
-		.append(navodnici).append(" AND ");
-		else{
+		if(!pom.matches(".*[-].*")) {
+			pombuf.append(sig.getImeSignala()).append("=").append(navodnici).append(pom)
+				.append(navodnici).append(" AND ");
+		} else{
 			int state=0;
 			int start=0;
 			for(int i=0;i<pom.length();i++){

@@ -12,7 +12,10 @@ import org.junit.runners.Suite;
 	DefaultTypeTest.class,
 	DefaultPortTest.class,
 	DefaultCircuitInterfaceTest.class,
-	ExtractorTest.class
+	ExtractorTest.class,
+	CompileTest.class,
+	SimulateTest.class,
+	GenerateVHDLTest.class
 })
 public class AllPackageTests extends TestCase {
 	

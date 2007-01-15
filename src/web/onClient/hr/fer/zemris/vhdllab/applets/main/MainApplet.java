@@ -46,6 +46,7 @@ import java.awt.event.MouseListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -1687,6 +1688,7 @@ public class MainApplet
 	}
 	
 	private List<FileIdentifier> showSaveDialog(String title, String message, List<IEditor> editorsToBeSaved) {
+		if(editorsToBeSaved.isEmpty()) return Collections.emptyList();
 		String selectAll = bundle.getString(LanguageConstants.DIALOG_BUTTON_SELECT_ALL);
 		String deselectAll = bundle.getString(LanguageConstants.DIALOG_BUTTON_DESELECT_ALL);
 		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
@@ -1907,6 +1909,8 @@ public class MainApplet
 "b out std_logic" + "\n" +
 		"</Interfac>" + "\n" +
 		"<Pocetno_Stanje>A</Pocetno_Stanje>" + "\n" +
+		"<Reset>1</Reset>" + "\n" + 
+		"<Clock>falling_edge</Clock>" + "\n" +
 	"</Podatci_Sklopa>" + "\n" +
 
 	"<Stanje>" + "\n" +

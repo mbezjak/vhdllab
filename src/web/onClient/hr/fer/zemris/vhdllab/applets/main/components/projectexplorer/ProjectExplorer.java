@@ -17,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -519,7 +521,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		try {
 			hierarchy = projectContainer.extractHierarchy(projectName);
 		} catch (UniformAppletException e) {
-			;
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			throw new NullPointerException(sw.toString());
+			//;
 		}
 		DefaultMutableTreeNode rootNode = null;
 		for (String string : hierarchy.getRootNodes()) {
