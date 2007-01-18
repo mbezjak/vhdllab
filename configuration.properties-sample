@@ -24,6 +24,8 @@ hibernate.hbm.version = 2.0
 tomcat.dir = C:\\Program Files\\Apache\\apache-tomcat-5.5.17
 ### Tomcat executable file ###
 tomcat.exec = startup.bat
+### Tomcat shutdown executable file ###
+tomcat.shutdown.exec = shutdown.bat
 ### Tomcat port ###
 tomcat.port = 8080
 ### Application host ###

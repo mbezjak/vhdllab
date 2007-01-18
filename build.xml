@@ -436,6 +436,12 @@
     </exec>
   </target>
 	
+  <target name="kill-tomcat">
+    <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.shutdown.exec}"
+    	spawn="true">
+    </exec>
+  </target>
+	
   <target name="run-app" depends="tomcat">
   	<!-- Sleep for tomcat to reload his resources -->
   	<sleep seconds="${sleep.for.tomcat}"/>

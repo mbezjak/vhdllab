@@ -83,6 +83,9 @@ public class LanguageConstants {
 	public static final String DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE = "dialog.save.resources.for.simulation.title";
 	public static final String DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE = "dialog.save.resources.for.simulation.message";
 
+	public static final String DIALOG_SAVE_SIMULATION_TITLE = "dialog.save.simulation.title";
+	public static final String DIALOG_SAVE_SIMULATION_MESSAGE = "dialog.save.simulation.message";
+
 	public static final String DIALOG_CREATE_NEW_PROJECT_TITLE = "dialog.create.new.project.title";
 	public static final String DIALOG_CREATE_NEW_PROJECT_MESSAGE = "dialog.create.new.project.message";
 

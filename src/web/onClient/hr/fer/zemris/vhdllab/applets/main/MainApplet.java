@@ -345,7 +345,22 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveEditor((IEditor)editorPane.getSelectedComponent());
+					/*IEditor editor = (IEditor)editorPane.getSelectedComponent();
+					try {
+						if(isSimulation(editor.getProjectName(), editor.getFileName())) {
+							saveSimulation(editor);
+						} else {*/
+							saveEditor((IEditor)editorPane.getSelectedComponent());
+						/*}
+					} catch (UniformAppletException ex) {
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						throw new NullPointerException(sw.toString());
+						/*String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+						text = Utilities.replacePlaceholders(text, new String[] {editor.getFileName()});
+						echoStatusText(text);*/
+					/*}*/
 				}
 			});
 			menuBar.add(menuItem);
@@ -1550,6 +1565,37 @@ public class MainApplet
 		echoStatusText(text);
 	}
 	
+	private void saveSimulation(String projectName, String fileName) throws UniformAppletException {
+		if(projectName == null) {
+			throw new NullPointerException("Project name can not be null.");
+		}
+		if(fileName == null) {
+			throw new NullPointerException("File name can not be null.");
+		}
+		IEditor editor = getOpenedEditor(projectName, fileName);
+		if(editor != null) {
+			saveSimulation(editor);
+		}
+	}
+	
+	private void saveSimulation(IEditor editor) throws UniformAppletException {
+		String fileName = editor.getFileName();
+		String projectName = editor.getProjectName();
+		if(!isSimulation(projectName, fileName)) return;
+		String content = editor.getData();
+		if(content == null) return;
+		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_SIMULATION_TITLE);
+		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_SIMULATION_MESSAGE);
+		fileName = showSaveSimulationDialog(title, message, fileName);
+		if(fileName == null) return;
+		communicator.saveFile(projectName, fileName, content);
+		
+		projectExplorer.refreshProject(projectName);
+		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
+		text = Utilities.replacePlaceholders(text, new String[] {fileName});
+		echoStatusText(text);
+	}
+	
 	private boolean fileIsOpened(IEditor editor) {
 		if(editor == null) return false;
 		return indexOfEditor(editor) != -1;
@@ -1721,6 +1767,11 @@ public class MainApplet
 		int option = dialog.getOption();
 		if(option != SaveDialog.OK_OPTION) return null;
 		else return dialog.getSelectedResources();
+	}
+	
+	private String showSaveSimulationDialog(String title, String message, String suggestedFileName) {
+		String fileName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION);
+		return fileName;
 	}
 	
 	private FileIdentifier showRunDialog(String title, String listTitle, int dialogType) {
