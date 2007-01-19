@@ -107,6 +107,7 @@ public class LanguageConstants {
 	public static final String STATUSBAR_FILE_SAVED_ALL = "statusbar.file.saved.all";
 	public static final String STATUSBAR_FILE_CREATED = "statusbar.file.created";
 	public static final String STATUSBAR_PROJECT_CREATED = "statusbar.project.created";
+	public static final String STATUSBAR_NO_SELECTED_PROJECT = "statusbar.no.selected.project";
 	public static final String STATUSBAR_CANT_SAVE_FILE = "statusbar.cant.save.file";
 	public static final String STATUSBAR_CANT_SAVE_PROJECT = "statusbar.cant.save.project";
 	public static final String STATUSBAR_CANT_CREATE_FILE = "statusbar.cant.create.file";

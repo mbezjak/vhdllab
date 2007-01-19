@@ -1064,7 +1064,7 @@ public class MainApplet
 		}
 	}
 	
-	public void viewVHDLCode(IEditor editor) throws UniformAppletException {
+	private void viewVHDLCode(IEditor editor) throws UniformAppletException {
 		if(editor == null) return;
 		viewVHDLCode(editor.getProjectName(), editor.getFileName());
 	}
@@ -1384,6 +1384,10 @@ public class MainApplet
 		
 		if(content == null) return;
 		String projectName = content.getProjectName();
+		if(projectName == null) {
+			String text = bundle.getString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
+			echoStatusText(text);
+		}
 		String fileName = content.getFileName();
 		String data = content.getContent();
 		boolean exists = communicator.existsFile(projectName, fileName);
