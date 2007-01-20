@@ -23,13 +23,13 @@ public class SSInfo2VHDL {
 	}
 
 	private void appendEntityBlock() {
-		sb.append("ENTITY ").append(info.circuitInterface.getEntityName()).append(" IS\n");
+		sb.append("ENTITY ").append(info.getCircuitInterface().getEntityName()).append(" IS\n");
 		sb.append("\tPORT\n\t\t(\n");
 		
 		// proiterirati circuit interface - srediti portove
 		boolean firstEntry = true;
 		Type porttip = null;
-		List<Port> portlist = info.circuitInterface.getPorts();
+		List<Port> portlist = info.getCircuitInterface().getPorts();
 		for (Port port : portlist) {
 			if (firstEntry) {
 				firstEntry = false;
@@ -48,7 +48,7 @@ public class SSInfo2VHDL {
 			}
 		}
 		
-		sb.append("\n\t\t);\nEND ").append(info.circuitInterface.getEntityName()).append(";");
+		sb.append("\n\t\t);\nEND ").append(info.getCircuitInterface().getEntityName()).append(";");
 	}
 	
 	private void appendEmptyRows() {
@@ -56,7 +56,7 @@ public class SSInfo2VHDL {
 	}
 	
 	private void appendArchitecturalBlock() {
-		sb.append("ARCHITECTURE structural OF ").append(info.circuitInterface.getEntityName()).append(" IS\n");
+		sb.append("ARCHITECTURE structural OF ").append(info.getCircuitInterface().getEntityName()).append(" IS\n");
 		
 		// proiterirati kroz zice i stvoriti na temelju njih signale
 		ArrayList<AbstractSchemaWire> wirelist = info.wireList;

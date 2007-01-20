@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
 import hr.fer.zemris.vhdllab.applets.schema.SOptionBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
+import hr.fer.zemris.vhdllab.applets.schema.SSerialization;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaColorProvider;
 import hr.fer.zemris.vhdllab.applets.schema.SchemaSerializableInformation;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
@@ -54,6 +55,8 @@ import javax.swing.JTextField;
  */
 
 public class SchemaMainPanel extends JPanel implements IEditor {
+	private static final long serialVersionUID = 4510371138646431950L;
+	
 	public static final int DEFAULT_CURSOR_TYPE = 1;
 	public static final int CROSSHAIR_CURSOR_TYPE = 2;
 	public static final int DRAW_WIRE_STATE_NOTHING = 0;
@@ -242,6 +245,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return found;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean almostEqual(int a, int b) {
 		if (Math.abs(a - b) <= 2) return true;
 		return false;
@@ -779,6 +783,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			deleteComponent(propbar.getSelectedComponentInstanceName());
 			deleteWire();
+		}else if(kev.getKeyChar()==KeyEvent.VK_F10){
+			//Tommy: ovo je probe radi, kasnije to treba maknut, ili napravit nekaj korisno s tim..
+			System.out.println("Stisnuo si F10! - SAVE");
+			System.out.println(this.getData());
 		}
 	}
 	
@@ -906,11 +914,20 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public SchemaSerializableInformation getSchemaSerializableInfo() {
 		SchemaSerializableInformation info = new SchemaSerializableInformation();
 		
-		info.circuitInterface = circuitInterface;
-		info.componentNameCounter = AbstractSchemaComponent.getCounter();
-		info.wireNameCounter = AbstractSchemaWire.getCounter();
-		info.envelopeList = drawingCanvas.getComponentEnvList();
-		info.wireList = drawingCanvas.getWireList();
+		info.setCircuitInterface(circuitInterface);		
+		//info.circuitInterface = circuitInterface;
+		
+		info.setComponentNameCounter(AbstractSchemaComponent.getCounter());		
+		//info.componentNameCounter = AbstractSchemaComponent.getCounter();
+		
+		info.setWireNameCounter(AbstractSchemaWire.getCounter());		
+		//info.wireNameCounter = AbstractSchemaWire.getCounter();
+		
+		info.setEnvelopeList(drawingCanvas.getComponentEnvList());		
+		//info.envelopeList = drawingCanvas.getComponentEnvList();
+		
+		info.setWireList(drawingCanvas.getWireList());
+		//info.wireList = drawingCanvas.getWireList();
 		
 		return info;
 	}
@@ -1055,9 +1072,11 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public String getData() {
 		// TODO Ovdje moramo izgenerirat podatke koje cemo vratit
 		
+		SSerialization ser=new SSerialization(this.getSchemaSerializableInfo());
+		
 		// stogod da tu napravio, moras promijeniti modification stanje u false
 		schemaHasBeenModified = false;
-		return null;
+		return ser.getSerializedData();
 	}
 	
 	// logikom stvari, ovo Rajakovic mora napravit, jer on radi pohranu u interni format

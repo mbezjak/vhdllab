@@ -51,6 +51,31 @@ public class SchemaDrawingComponentEnvelope {
 		return false;
 	}
 	
+	/**
+	 * Serijalizira ovaj objekt
+	 * @return XML dio koji opisuje ovaj objekt
+	 */
+	public String serialize(){
+		StringBuffer xmlComponent=new StringBuffer();
+		xmlComponent.append("<component>");
+			xmlComponent.append("<position>");
+				xmlComponent.append("<x>").append(position.x).append("</x>");
+				xmlComponent.append("<y>").append(position.y).append("</y>");
+			xmlComponent.append("</position>");
+		
+			xmlComponent.append("<componentName>").append(component.getComponentName()).append("</componentName>");
+			xmlComponent.append("<componentSource>").append(component.serializeComponent()).append("</componentSource>");			
+		xmlComponent.append("</component>");
+		
+		return xmlComponent.toString();
+	}
 	
-	
+	/**
+	 * Deserijalizira ovaj objekt
+	 * @param src XML dio koji je stvoren sa serialice() metodom i opisuje ovaj objekt
+	 * 
+	 */
+	public void deserialize(String src){
+		//TODO TOMMY: Moram napravit deserijalizaciju
+	}
 }
