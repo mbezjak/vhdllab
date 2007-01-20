@@ -996,6 +996,8 @@ public class Extractor {
 	
 	public static Hierarchy extractHierarchy(Project project, VHDLLabManager labman) throws Exception {
 		Hierarchy h = new Hierarchy(project.getProjectName());
+		Set<File> files = project.getFiles();
+		if(files == null) return h;
 		for(File f : project.getFiles()) {
 			Pair pair = new Pair(f.getFileName(), f.getFileType());
 			h.addPair(pair);

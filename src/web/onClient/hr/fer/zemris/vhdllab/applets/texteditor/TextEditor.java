@@ -85,15 +85,6 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	public void initGUI() {
 		
 		
-		this.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				text.requestFocusInWindow();
-			}
-			public void focusLost(FocusEvent e) {}
-			
-		});
-		
-		
 		text = new JTextPane();
 		text.setCaretPosition(0);
 		text.setLocation(25, 50);

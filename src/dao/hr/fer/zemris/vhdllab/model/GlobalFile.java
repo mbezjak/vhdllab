@@ -30,6 +30,7 @@ public class GlobalFile {
 	 *  column = "NAME"
 	 *  length = "255"
 	 *  not-null = "true"
+	 *  unique = "true"
 	 */
 	public String getName() {
 		return name;

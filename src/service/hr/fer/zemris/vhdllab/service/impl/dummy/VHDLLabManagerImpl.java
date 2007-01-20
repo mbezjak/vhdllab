@@ -282,6 +282,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		Project project = new Project();
 		project.setProjectName(projectName);
 		project.setOwnerId(ownerId);
+		project.setFiles(new HashSet<File>(0));
 		try {
 			projectDAO.save(project);
 		} catch (DAOException e) {
