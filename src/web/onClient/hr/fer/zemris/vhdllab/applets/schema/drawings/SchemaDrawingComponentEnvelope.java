@@ -57,15 +57,15 @@ public class SchemaDrawingComponentEnvelope {
 	 */
 	public String serialize(){
 		StringBuffer xmlComponent=new StringBuffer();
-		xmlComponent.append("<component>");
-			xmlComponent.append("<position>");
-				xmlComponent.append("<x>").append(position.x).append("</x>");
-				xmlComponent.append("<y>").append(position.y).append("</y>");
-			xmlComponent.append("</position>");
+		xmlComponent.append("<component>\n");
+			xmlComponent.append("<position>\n");
+				xmlComponent.append("<x>").append(position.x).append("</x>\n");
+				xmlComponent.append("<y>").append(position.y).append("</y>\n");
+			xmlComponent.append("</position>\n");
 		
-			xmlComponent.append("<componentName>").append(component.getComponentName()).append("</componentName>");
-			xmlComponent.append("<componentSource>").append(component.serializeComponent()).append("</componentSource>");			
-		xmlComponent.append("</component>");
+			xmlComponent.append("<componentName>").append(component.getComponentName()).append("</componentName>\n");
+			xmlComponent.append("<componentSource>\n").append(component.serializeComponent()).append("\n</componentSource>\n");			
+		xmlComponent.append("</component>\n");
 		
 		return xmlComponent.toString();
 	}

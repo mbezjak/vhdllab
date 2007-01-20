@@ -783,9 +783,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
 			deleteComponent(propbar.getSelectedComponentInstanceName());
 			deleteWire();
-		}else if(kev.getKeyChar()==KeyEvent.VK_F10){
+		}else if(kev.getKeyChar()==KeyEvent.VK_1){
 			//Tommy: ovo je probe radi, kasnije to treba maknut, ili napravit nekaj korisno s tim..
-			System.out.println("Stisnuo si F10! - SAVE");
+			System.out.println("Stisnuo si - SAVE!");
 			System.out.println(this.getData());
 		}
 	}
@@ -879,7 +879,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 	/**
 	 * Treba vidjeti koji sklopovi su vec na platnu, a koji nisu,
-	 * te skladno tome napraviti promjene na canvasu.
+	 * te sukladno tome napraviti promjene na canvasu.
 	 * @param interf
 	 */
 	public void setCircuitInterface(CircuitInterface interf) {
@@ -946,7 +946,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		
 		if (propbar != null) propbar.showNoProperties();
 		
-//		 TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne i interface
+		//TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne i interface
 		if (schemaFile != null) {
 			// ovdje izgenerirati sadrzaj na temelju predanog filea
 		}

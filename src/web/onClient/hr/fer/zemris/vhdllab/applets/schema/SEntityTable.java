@@ -230,6 +230,8 @@ public class SEntityTable extends JPanel implements IEntityWizard {
 		
 	}
 
+	
+	//skroz krivo poimanje Extracotra!!!
 	public CircuitInterface getCircuitInterface() {
 		//TODO Rucno napraviti extractCircuitInterface
 		EntityParser parser=new EntityParser(imeSklop.getText(),model.getData().getData());
