@@ -25,7 +25,7 @@ public class Cache {
 	private Map<String, IView> cachedViews;
 
 	private Map<FileIdentifier, Long> identifiers;
-	private Map<String, Long> userFileIdentifiers;
+	private Map<String, List<Long>> userFileIdentifiers;
 
 	private Map<Long, Preferences> preferences;
 	private List<FileIdentifier> compilationHistory;
@@ -35,7 +35,7 @@ public class Cache {
 	public Cache() {
 		cachedViews = new HashMap<String, IView>();
 		identifiers = new HashMap<FileIdentifier, Long>();
-		userFileIdentifiers = new HashMap<String, Long>();
+		userFileIdentifiers = new HashMap<String, List<Long>>();
 		preferences = new HashMap<Long, Preferences>();
 		compilationHistory = new LinkedList<FileIdentifier>();
 		simulationHistory = new LinkedList<FileIdentifier>();
@@ -208,13 +208,22 @@ public class Cache {
 		boolean recached = false;
 		for(Entry<Long, Preferences> entry : preferences.entrySet()) {
 			if(entry.getValue() == pref) {
-				preferences.put(entry.getKey(), pref);
+				cachePreferences(entry.getKey(), pref);
 				recached = true;
 				break;
 			}
 		}
 		if(!recached) {
-			throw new IllegalArgumentException("Preferenced was never saved!");
+			throw new IllegalArgumentException("Preferences was never saved!");
+		}
+	}
+	
+	public void recachePreferences(List<Preferences> prefs) {
+		if(prefs == null) {
+			throw new NullPointerException("Preferences can not be null.");
+		}
+		for(Preferences p : prefs) {
+			recachePreferences(p);
 		}
 	}
 	
@@ -286,7 +295,7 @@ public class Cache {
 		return null;
 	}
 	
-	public Long getIdentifierForUserFile(String type) {
+	public List<Long> getIdentifierForUserFile(String type) {
 		if(type == null) {
 			throw new NullPointerException("Type can not be null.");
 		}
@@ -319,7 +328,23 @@ public class Cache {
 		if(userFileIdentifier == null) {
 			throw new NullPointerException("User file identifier can not be null.");
 		}
-		userFileIdentifiers.put(type, userFileIdentifier);
+		List<Long> ids = userFileIdentifiers.get(type);
+		if(ids == null) {
+			ids = new ArrayList<Long>();
+		}
+		if(!ids.contains(userFileIdentifier)) {
+			ids.add(userFileIdentifier);
+		}
+		userFileIdentifiers.put(type, ids);
+	}
+	
+	public void cacheUserFileItem(String type, List<Long> userFileIdentifiers) {
+		if(userFileIdentifiers == null) {
+			throw new NullPointerException("User file identifier can not be null.");
+		}
+		for(Long id : userFileIdentifiers) {
+			cacheUserFileItem(type, id);
+		}
 	}
 
 	public void cacheItem(String projectName, Long projectIdentifier) {

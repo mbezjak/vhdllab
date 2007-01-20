@@ -587,6 +587,20 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		String ownerId = resProperties.getProperty(MethodConstants.PROP_FILE_OWNER_ID);
 		return ownerId;
 	}
+	
+	public String loadUserFileName(Long fileId) throws UniformAppletException {
+		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_LOAD_USER_FILE_NAME;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
+		
+		Properties resProperties = initiateAjax(reqProperties);
+		
+		String name = resProperties.getProperty(MethodConstants.PROP_FILE_NAME);
+		return name;
+	}
+
 
 	public String loadUserFileType(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");

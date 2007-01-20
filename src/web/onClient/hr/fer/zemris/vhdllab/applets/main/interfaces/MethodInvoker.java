@@ -33,6 +33,7 @@ public interface MethodInvoker {
 	List<Long> findGlobalFilesByType(String type) throws UniformAppletException;
 
 	String loadUserFileOwnerId(Long fileId) throws UniformAppletException;
+	String loadUserFileName(Long fileId) throws UniformAppletException;
 	String loadUserFileType(Long fileId) throws UniformAppletException;
 	String loadUserFileContent(Long fileId) throws UniformAppletException;
 	void saveUserFile(Long fileId, String content) throws UniformAppletException;

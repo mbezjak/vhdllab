@@ -15,7 +15,7 @@ public interface ProjectContainer {
 	String getFileType(String projectName, String fileName) throws UniformAppletException;
 	Hierarchy extractHierarchy(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
-	Preferences getPreferences(String type) throws UniformAppletException;
+	List<Preferences> getPreferences(String type) throws UniformAppletException;
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;
 	boolean existsFile(String projectName, String fileName) throws UniformAppletException;
 	boolean existsProject(String projectName) throws UniformAppletException;

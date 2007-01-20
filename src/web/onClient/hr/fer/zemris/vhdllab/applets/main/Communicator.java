@@ -246,34 +246,44 @@ public class Communicator {
 		}
 		cache.recachePreferences(pref);
 	}
+	
+	public void savePreferences(List<Preferences> prefs) throws UniformAppletException {
+		if(prefs == null) {
+			throw new NullPointerException("Preferences can not be null.");
+		}
+		cache.recachePreferences(prefs);
+	}
 
-	public Preferences getPreferences(String type) throws UniformAppletException {
+	public List<Preferences> getPreferences(String type) throws UniformAppletException {
 		if(type == null) {
 			throw new NullPointerException("Type can not be null.");
 		}
-		Long userFileIdentifier = cache.getIdentifierForUserFile(type);
-		if(userFileIdentifier == null) {
+		List<Long> userFileIdentifiers = cache.getIdentifierForUserFile(type);
+		if(userFileIdentifiers == null) {
+			userFileIdentifiers = new ArrayList<Long>();
 			List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
 			for(Long id : userFiles) {
 				String userFileType = invoker.loadUserFileType(id);
 				if(type.equals(userFileType)) {
 					cache.cacheUserFileItem(userFileType, id);
-					userFileIdentifier = id;
+					userFileIdentifiers.add(id);
 					break;
 				}
 			}
-			if(userFileIdentifier == null) {
+			if(userFileIdentifiers.isEmpty()) {
 				throw new IllegalArgumentException("Can not find preferences for type: " + type);
 			}
 		}
-		Preferences pref = cache.getPreferences(userFileIdentifier);
-		if(pref == null) {
-			String data = invoker.loadUserFileContent(userFileIdentifier);
-			Preferences p = Preferences.deserialize(data);
-			cache.cachePreferences(userFileIdentifier, p);
-			pref = p;
+		List<Preferences> prefs = new ArrayList<Preferences>();
+		for(Long id : userFileIdentifiers) {
+			Preferences p = cache.getPreferences(id);
+			if(p == null) {
+				String data = invoker.loadUserFileContent(id);
+				p = Preferences.deserialize(data);
+				cache.cachePreferences(id, p);
+			}
 		}
-		return pref;
+		return prefs;
 	}
 
 	public List<Preferences> getAllPreferences() throws UniformAppletException {

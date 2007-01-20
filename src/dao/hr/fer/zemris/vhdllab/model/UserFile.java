@@ -8,6 +8,7 @@ public class UserFile {
 	
 	private Long id;
 	private String ownerID;
+	private String name;
 	private String type;
 	private String content;
 	
@@ -36,6 +37,20 @@ public class UserFile {
 	}
 	public void setOwnerID(String ownerID) {
 		this.ownerID = ownerID;
+	}
+	
+	/**
+	 * @hibernate.property
+	 *  column = "NAME"
+	 *  length = "255"
+	 *  not-null = "true"
+	 *  unique = "true"
+	 */
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	/**
