@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema.SComponentBar;
+import hr.fer.zemris.vhdllab.applets.schema.SDeserialization;
 import hr.fer.zemris.vhdllab.applets.schema.SOptionBar;
 import hr.fer.zemris.vhdllab.applets.schema.SPropertyBar;
 import hr.fer.zemris.vhdllab.applets.schema.SSerialization;
@@ -948,8 +949,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		
 		//TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne i interface
 		if (schemaFile != null) {
-			// ovdje izgenerirati sadrzaj na temelju predanog filea
+				@SuppressWarnings("unused")
+				SDeserialization deserialize=new SDeserialization(schemaFile.getContent(),this);		
 		}
+		drawingCanvas.repaint();
 	}
 	
 	private void refreshComponentsDependentOnCircuitInterface() {
@@ -965,7 +968,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return null;
 	}
 	
-	
+	/**
+	 * Dohvaca crtacu povrsinu.
+	 * @return SchemaDrawingCanvas
+	 */
+	public SchemaDrawingCanvas getSchemaDrawingCanvas(){
+		return drawingCanvas;
+	}
 	
 	
 	

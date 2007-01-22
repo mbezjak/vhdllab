@@ -5,7 +5,7 @@ public class SimpleSchemaWire extends AbstractSchemaWire {
 
 	public SimpleSchemaWire(String wireName) {
 		super(wireName);
-	}
+	}	
 
 	@Override
 	protected String serializeSpecific() {

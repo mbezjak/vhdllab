@@ -115,6 +115,7 @@ public class SchemaDrawingCanvas extends JComponent {
 		this.repaint();
 	}
 	
+	
 	public boolean existComponent(String componentInstanceName) {
 		int posdel = -1;
 		for (int i = 0; i < components.size(); i++) {
@@ -125,10 +126,17 @@ public class SchemaDrawingCanvas extends JComponent {
 		return false;
 	}
 	
-	public void addWire(AbstractSchemaWire wire) {
-		SchemaDrawingAdapter adapter = this.getAdapter();
+	public void addWire(AbstractSchemaWire wire) {		
 		wires.add(wire);
 		this.repaint();
+	}
+	
+	/**
+	 * Dodaje vec gotovu SchemaDrawingComponentEnvelope u listu.
+	 * @param envelope
+	 */
+	public void addEnvelope(SchemaDrawingComponentEnvelope envelope){
+		components.add(envelope);
 	}
 	
 	public void removeWire(String wireInstanceName) {

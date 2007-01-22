@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingComponentEnvelope;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -7,9 +8,10 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.util.ArrayList;
+import java.util.Properties;
 
 /**
- * Serijalizacija
+ * Serijalizacija 
  * 
  * @author Tommy
  *
@@ -17,87 +19,99 @@ import java.util.ArrayList;
 public class SSerialization {
 
 	private SchemaSerializableInformation ssInfo; 
-	private StringBuffer xmlCode;
+	private Properties globalProperties;
+	
+	public static final String SCHEMATIC_VERSION = "schematic.version";
+	public static final String SCHEMATIC_ENTITY = "schematic.entity";	
+	public static final String SCHEMATIC_COMPONENTS = "schematic.components";
+	public static final String SCHEMATIC_WIRES = "schematic.wires";
+	
+	public static final String SCHEMATIC_COMPONENTS_COMPONENT = "component";
+	public static final String SCHEMATIC_WIRES_WIRE = "wire";
+
 	
 	public SSerialization(SchemaSerializableInformation SSInfo){
 		ssInfo=SSInfo;
-		xmlCode=new StringBuffer(512);
+		
+		globalProperties=new Properties();		
 		generateXmlCode();
 	}
 	
+	/**
+	 * Dohvaæa XML file generiran na temelju trenutog sadržaja Schematica.
+	 * @return Schematic XML
+	 */
 	public String getSerializedData(){		
-		return xmlCode.toString();
+		return XMLUtil.serializeProperties(globalProperties);
 	}
 
-	private void generateXmlCode() {
-		StringBuffer innerBuffer=new StringBuffer();
+	private void generateXmlCode() {		
 		CircuitInterface circuitInterface= ssInfo.getCircuitInterface();
 		ArrayList<SchemaDrawingComponentEnvelope> envelopeList=ssInfo.getEnvelopeList();
 		ArrayList<AbstractSchemaWire> wireList = ssInfo.getWireList();
 		
-		xmlCode.append(xmlHeader());		
-		innerBuffer.append(xmlEntity(circuitInterface));
-		innerBuffer.append(xmlComponent(envelopeList));
-		innerBuffer.append(xmlWire(wireList));		
-		xmlCode.append(xmlSchema(innerBuffer.toString()));
+		SchematicInformation();
+		globalProperties.setProperty(SCHEMATIC_ENTITY, XMLUtil.serializeProperties(Entity(circuitInterface)));
+		globalProperties.setProperty(SCHEMATIC_COMPONENTS, XMLUtil.serializeProperties(Components(envelopeList)));
+		globalProperties.setProperty(SCHEMATIC_WIRES, XMLUtil.serializeProperties(Wires(wireList)));
 		
 	}
 	
-	private String xmlEntity(CircuitInterface ci){
-		StringBuffer buff=new StringBuffer();
+	private Properties Entity(CircuitInterface ci){		
+		//entity
+		Properties buff=new Properties();
 		
-		buff.append("<entity>\n");
+		buff.setProperty("name", ci.getEntityName());
+
+		int counter=1;
+		for(Port port:ci.getPorts()){
+			buff.setProperty("portName"+counter, port.getName());
+			buff.setProperty("portDirection"+counter, port.getDirection().toString());
+			buff.setProperty("portType"+counter, port.getType().getTypeName());
+			if(port.getType().isVector()){
+				Type tp=port.getType();						
+				buff.setProperty("portRangeFrom"+counter, String.valueOf(tp.getRangeFrom()));
+				buff.setProperty("portRangeTo"+counter, String.valueOf(tp.getRangeTo()));
+				buff.setProperty("portVectorDirection"+counter, tp.getVectorDirection());
+			}else{
+				buff.setProperty("portRangeFrom"+counter, "");
+				buff.setProperty("portRangeTo"+counter, "");
+				buff.setProperty("portVectorDirection"+counter, "");
+			}
+			counter++;
+		}				
 		
-			buff.append("<name>").append(ci.getEntityName()).append("</name>\n\n");
-			buff.append("<portList>\n");
-			
-				for(Port port:ci.getPorts()){
-					buff.append("<port>\n");
-						buff.append("<name>").append(port.getName()).append("</name>\n");
-						buff.append("<direction>").append(port.getDirection()).append("</direction>\n");
-						buff.append("<type>").append(port.getType().getTypeName()).append("</type>\n");
-						if(port.getType().isVector()){
-							Type tp=port.getType();
-							buff.append("<rangeFrom>").append(tp.getRangeFrom()).append("</rangeFrom>\n");
-							buff.append("<rangeTo>").append(tp.getRangeTo()).append("</rangeTo>\n");
-							buff.append("<vectorDirection>").append(tp.getVectorDirection()).append("</vectorDirection>\n");							
-						}
-					buff.append("</port>\n\n");
-				}
-				
-			buff.append("</portList>\n");
-			
-		buff.append("</entity>\n\n");		
-		return buff.toString();
+		return buff;
 	}
 	
-	private String xmlSchema(String xml){
-		return "<schema>\n\n"+xml+"</schema>";
-	}
-	
-	private String xmlHeader(){
-		return "<?xml version=\"1.0\"?>\n";
+	private void SchematicInformation(){
+		globalProperties.setProperty(SCHEMATIC_VERSION, "1.00");
 	}
 
-	private String xmlComponent(ArrayList<SchemaDrawingComponentEnvelope> envelopes){
-		StringBuffer buff=new StringBuffer();
+
+	private Properties Components(ArrayList<SchemaDrawingComponentEnvelope> envelopes){
+		//components
+		Properties buff=new Properties();
 		
-		for(SchemaDrawingComponentEnvelope envelope:envelopes){
-			buff.append(envelope.serialize());
-			buff.append("\n");
+		int counter=1;
+		for(SchemaDrawingComponentEnvelope envelope:envelopes){			
+			buff.setProperty(SCHEMATIC_COMPONENTS_COMPONENT+counter, envelope.serialize());
+			counter++;
 		}
 		
-		return buff.toString();
+		return buff;
 	}
 	
-	private String xmlWire(ArrayList<AbstractSchemaWire> wires){
-		StringBuffer buff=new StringBuffer();
+	private Properties Wires(ArrayList<AbstractSchemaWire> wires){
+		Properties buff=new Properties();
 		
-		for(AbstractSchemaWire wire:wires){
-			buff.append("<wireSource>").append(wire.serialize()).append("</wireSource>\n");
+		int counter=1;
+		for(AbstractSchemaWire wire:wires){			
+			buff.setProperty(SCHEMATIC_WIRES_WIRE+counter, wire.serialize());
+			counter++;
 		}
-		if(!wires.isEmpty()) buff.append("\n");
-		return buff.toString();
+		
+		return buff;
 	}
 	
 }

@@ -3,9 +3,13 @@
  */
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
+import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactory;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 
 import java.awt.Point;
+import java.util.Properties;
 
 /**
  * Razred koji sadrzi sve potrebne informacije o komponenti koja se stavlja 
@@ -18,9 +22,23 @@ public class SchemaDrawingComponentEnvelope {
 	private AbstractSchemaComponent component = null;
 	private Point position = null;
 	
+	/**
+	 * Standardni konstruktor. 
+	 * @param component Komponenta koju ovaj envelope sadrzi.
+	 * @param position Pozicija komponente na canvasu.
+	 */
 	public SchemaDrawingComponentEnvelope(AbstractSchemaComponent component, Point position) {
 		this.component=component;
 		this.position=position;
+	}
+	
+	/**
+	 * Konstruktor za deserijalizaciju
+	 * @param xmlSource
+	 */
+	public SchemaDrawingComponentEnvelope(String xmlSource,SchemaDrawingCanvas canvas){
+		deserialize(xmlSource);
+		canvas.addEnvelope(this);
 	}
 
 	/**
@@ -56,26 +74,35 @@ public class SchemaDrawingComponentEnvelope {
 	 * @return XML dio koji opisuje ovaj objekt
 	 */
 	public String serialize(){
-		StringBuffer xmlComponent=new StringBuffer();
-		xmlComponent.append("<component>\n");
-			xmlComponent.append("<position>\n");
-				xmlComponent.append("<x>").append(position.x).append("</x>\n");
-				xmlComponent.append("<y>").append(position.y).append("</y>\n");
-			xmlComponent.append("</position>\n");
+		Properties prop=new Properties();
 		
-			xmlComponent.append("<componentName>").append(component.getComponentName()).append("</componentName>\n");
-			xmlComponent.append("<componentSource>\n").append(component.serializeComponent()).append("\n</componentSource>\n");			
-		xmlComponent.append("</component>\n");
+		prop.setProperty("compPosX", String.valueOf(position.x));
+		prop.setProperty("compPosY", String.valueOf(position.y));
+		prop.setProperty("compName", component.getComponentName());
+		prop.setProperty("compSource", component.serializeComponent());
 		
-		return xmlComponent.toString();
+		return XMLUtil.serializeProperties(prop);
 	}
 	
 	/**
 	 * Deserijalizira ovaj objekt
 	 * @param src XML dio koji je stvoren sa serialice() metodom i opisuje ovaj objekt
+	 * @throws ComponentFactoryException 
 	 * 
 	 */
 	public void deserialize(String src){
-		//TODO TOMMY: Moram napravit deserijalizaciju
+		Properties prop=XMLUtil.deserializeProperties(src);
+		position=new Point();		
+		
+		position.x=Integer.parseInt(prop.getProperty("compPosX"));
+		position.y=Integer.parseInt(prop.getProperty("compPosY"));
+		
+		try {
+			component=ComponentFactory.getSchemaComponent(prop.getProperty("compName"));
+			component.deserializeComponent(prop.getProperty("compSource"));
+		} catch (ComponentFactoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
