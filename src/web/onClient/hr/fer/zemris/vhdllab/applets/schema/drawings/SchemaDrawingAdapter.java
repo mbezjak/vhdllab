@@ -30,7 +30,7 @@ import java.awt.image.BufferedImage;
  */
 public class SchemaDrawingAdapter {
 
-	private double magnificationFactor;
+	//private double magnificationFactor;
 	private int virtualX, virtualY;
 	private BufferedImage gph = null;
 	private SchemaColorProvider colors = null;
@@ -102,7 +102,7 @@ public class SchemaDrawingAdapter {
 	
 	@Deprecated
 	public void setMagnificationFactor(double mag) {
-		this.magnificationFactor = mag;//beskorisno
+		//this.magnificationFactor = mag;//beskorisno
 		this.virtualGridFactor = 10; //fiksno samo da radi...trebat ce jos dosta mozganja...
 	}
 	

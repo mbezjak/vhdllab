@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicBorders;
 
 public class SPropertyPanel extends JPanel implements KeyListener {
+	private static final long serialVersionUID = -8523367122520795207L;
 	//Ptr<Object> pSklop;
 	private AbstractSchemaComponent selectedCmp;
 	private String selectedCmpName;
@@ -61,8 +62,8 @@ public class SPropertyPanel extends JPanel implements KeyListener {
 		this.repaint();
 	}
 
-	public void keyTyped(KeyEvent arg0) {
-		if (arg0.getKeyChar() == arg0.VK_ENTER) {
+	public void keyTyped(KeyEvent arg0) {		
+		if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 			generatePanel(selectedCmp.getPropertyList());
 			parentBar.handlePropertyUpdate();
 		}

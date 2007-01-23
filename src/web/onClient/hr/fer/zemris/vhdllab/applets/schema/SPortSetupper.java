@@ -25,6 +25,8 @@ import javax.swing.JTextField;
  *
  */
 public class SPortSetupper extends JPanel {
+	private static final long serialVersionUID = -5760660013322232951L;
+
 	private class ChangePortNameListener implements ActionListener {
 		private JTextField tf;
 		public ChangePortNameListener(JTextField t) {
@@ -72,6 +74,7 @@ public class SPortSetupper extends JPanel {
 	}
 	
 	private class NumField extends JTextField {
+		private static final long serialVersionUID = 8609209839058151387L;
 		private Integer valueBefore;
 		public NumField(String startVal) {
 			valueBefore = 0;

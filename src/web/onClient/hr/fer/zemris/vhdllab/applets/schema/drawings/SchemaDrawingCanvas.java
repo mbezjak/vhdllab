@@ -47,6 +47,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	private ArrayList<AbstractSchemaWire> wires = null;
 	private SchemaColorProvider colors = null;	
 	private BufferedImage canvas = null;
+	@SuppressWarnings("unused")
 	private SchemaDrawingCanvasListeners listeners = null;
 	private SchemaMainPanel mainframe = null;
 	private Stack<RectWithBool> rectangleStack = null;
