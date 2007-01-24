@@ -77,7 +77,7 @@ public class PrivremenaProbnaKlasa2Deserijalizacija {
 					
 		mpanel.init();
 		
-		mpanel.setFileContent(improvizeFileContent("/home/studenti/tr41264/vhdllab/src/web/onClient/hr/fer/zemris/vhdllab/applets/schema/SerializationExample3.xml"));
+		mpanel.setFileContent(improvizeFileContent("src/web/onClient/hr/fer/zemris/vhdllab/applets/schema/SerializationExample3.xml"));
 		
 		
 		JFrame frame = new JFrame("Oti�o milivoj :)");
