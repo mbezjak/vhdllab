@@ -19,6 +19,7 @@ import javax.swing.JComponent;
  */
 
 public class SchemaDrawingGrid extends JComponent {
+	private static final long serialVersionUID = -812067795004808918L;
 	
 	private BufferedImage graphics = null;
 	private SchemaDrawingAdapter adapter = null;

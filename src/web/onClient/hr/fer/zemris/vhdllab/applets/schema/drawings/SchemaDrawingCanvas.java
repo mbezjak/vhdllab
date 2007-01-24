@@ -80,6 +80,18 @@ public class SchemaDrawingCanvas extends JComponent {
 	public SchemaDrawingAdapter getAdapter(){
 		return grid.getAdapter();
 	}
+	
+	/**
+	 * Resetira sve sto se nalazi na canvasu.
+	 *
+	 */
+	public void ResetCanvas(){
+		components=new ArrayList<SchemaDrawingComponentEnvelope>();
+		wires = new ArrayList<AbstractSchemaWire>();
+		rectangleStack = new Stack();
+		lineStack = new Stack();
+		initGUI();
+	}
 			
 
 	/**

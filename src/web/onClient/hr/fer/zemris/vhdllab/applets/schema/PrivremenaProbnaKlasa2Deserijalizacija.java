@@ -76,10 +76,11 @@ public class PrivremenaProbnaKlasa2Deserijalizacija {
 		SchemaMainPanel mpanel = new SchemaMainPanel();
 					
 		mpanel.init();
-		mpanel.setFileContent(improvizeFileContent("D:\\JAVA-SOURCE\\TeamJavaProject\\vhdl\\src\\web\\onClient\\hr\\fer\\zemris\\vhdllab\\applets\\schema\\SerializationExample2.xml"));
+		
+		mpanel.setFileContent(improvizeFileContent("/home/studenti/tr41264/vhdllab/src/web/onClient/hr/fer/zemris/vhdllab/applets/schema/SerializationExample3.xml"));
 		
 		
-		JFrame frame = new JFrame("Otišo milivoj :)");
+		JFrame frame = new JFrame("Otiï¿½o milivoj :)");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);

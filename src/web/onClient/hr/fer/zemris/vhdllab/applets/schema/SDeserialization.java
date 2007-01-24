@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
+import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingCanvas;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingComponentEnvelope;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
@@ -43,12 +44,12 @@ public class SDeserialization {
 			portName=entity.getProperty("portName"+i,"");
 			if (portName.equals(""))break;
 			
-			System.out.println("Deserialization: PortName:"+portName);
+			/*System.out.println("Deserialization: PortName:"+portName);
 			System.out.println("Deserialization: PortDirection"+entity.getProperty("portDirection"+i));
 			System.out.println("Deserialization: PortType:"+entity.getProperty("portType"+i));
 			System.out.println("Deserialization: PortRangeFrom:"+entity.getProperty("portRangeFrom"+i,""));
 			System.out.println("Deserialization: PortRangeTo:"+entity.getProperty("portRangeTo"+i,""));
-			System.out.println("Deserialization: PortVectorDirection:"+entity.getProperty("portVectorDirection"+i,""));
+			System.out.println("Deserialization: PortVectorDirection:"+entity.getProperty("portVectorDirection"+i,""));*/
 		}
 	}
 	
@@ -64,7 +65,15 @@ public class SDeserialization {
 			serData=c.getProperty(SSerialization.SCHEMATIC_COMPONENTS_COMPONENT+i);
 			if(serData==null)break;
 			System.out.println("Deserijalizacija: component source:"+serData);
-			env=new SchemaDrawingComponentEnvelope(serData,mainPanel.getSchemaDrawingCanvas());			
+			env=new SchemaDrawingComponentEnvelope();
+			
+			try {
+				env.deserialize(serData);
+				mainPanel.getSchemaDrawingCanvas().addEnvelope(env);
+			} catch (ComponentFactoryException e) {
+				System.err.println("Greska prilikom stvaranje envelope-a");
+				e.printStackTrace();
+			}
 		}		
 	}
 	

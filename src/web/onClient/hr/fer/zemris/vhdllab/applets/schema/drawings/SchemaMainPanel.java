@@ -48,6 +48,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 /**
  * Ovaj enkapsulira kompletni UI, ukljucujuci i canvas.
  * 
@@ -686,7 +688,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				e1.printStackTrace();
 			}
 		} else {
-			selectComponent(e);
+			
 		}
 	}
 	
@@ -942,7 +944,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	 */
 	private void generateSchemaContentFromSchemaFile() {
 		// sve sto se znalo o panelu sad se brise!
-		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
+		//drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
+		drawingCanvas.ResetCanvas();		
 		circuitInterface = null;
 		
 		if (propbar != null) propbar.showNoProperties();
@@ -1028,7 +1031,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public void init() {
 		this.setLayout(new BorderLayout());
 		
-		generateSchemaContentFromSchemaFile();
+		//generateSchemaContentFromSchemaFile();
+		
+		drawingCanvas=new SchemaDrawingCanvas(new SchemaColorProvider(),this);
 		
 		optionpanel = new JPanel(new BorderLayout());
 		canvaspanel = new JPanel(new BorderLayout());

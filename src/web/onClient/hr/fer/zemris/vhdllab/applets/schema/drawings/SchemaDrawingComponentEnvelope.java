@@ -36,9 +36,8 @@ public class SchemaDrawingComponentEnvelope {
 	 * Konstruktor za deserijalizaciju
 	 * @param xmlSource
 	 */
-	public SchemaDrawingComponentEnvelope(String xmlSource,SchemaDrawingCanvas canvas){
-		deserialize(xmlSource);
-		canvas.addEnvelope(this);
+	public SchemaDrawingComponentEnvelope(){
+		//nista ne radi, samo stvori mjesto u memoriji
 	}
 
 	/**
@@ -90,19 +89,14 @@ public class SchemaDrawingComponentEnvelope {
 	 * @throws ComponentFactoryException 
 	 * 
 	 */
-	public void deserialize(String src){
+	public void deserialize(String src) throws ComponentFactoryException{
 		Properties prop=XMLUtil.deserializeProperties(src);
 		position=new Point();		
 		
 		position.x=Integer.parseInt(prop.getProperty("compPosX"));
 		position.y=Integer.parseInt(prop.getProperty("compPosY"));
-		
-		try {
-			component=ComponentFactory.getSchemaComponent(prop.getProperty("compName"));
-			component.deserializeComponent(prop.getProperty("compSource"));
-		} catch (ComponentFactoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+				
+		component=ComponentFactory.getSchemaComponent(prop.getProperty("compName"));
+		component.deserializeComponent(prop.getProperty("compSource"));
 	}
 }
