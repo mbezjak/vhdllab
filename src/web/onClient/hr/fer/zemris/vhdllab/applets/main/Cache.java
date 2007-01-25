@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 
 public class Cache {
 
-	private List<String> filetypes;
 	private Properties editors;
 	private Properties views;
 
@@ -40,16 +39,10 @@ public class Cache {
 		compilationHistory = new LinkedList<FileIdentifier>();
 		simulationHistory = new LinkedList<FileIdentifier>();
 
-		filetypes = loadType("filetypes.properties");
-		if(filetypes == null) throw new IllegalStateException("Cant load filetypes.");
 		editors = loadResource("editors.properties");
 		if(editors == null) throw new IllegalStateException("Cant load editors.");
 		views = loadResource("views.properties");
 		if(views == null) throw new IllegalStateException("Cant load views.");
-	}
-
-	public List<String> getFileTypes() {
-		return new ArrayList<String>(filetypes);
 	}
 
 	public FileIdentifier getLastCompilationHistoryTarget() {
@@ -408,25 +401,6 @@ public class Cache {
 	private FileIdentifier makeIdentifier(String projectName, String fileName) {
 		FileIdentifier identifier = new FileIdentifier(projectName, fileName);
 		return identifier;
-	}
-
-	private List<String> loadType(String file) {
-		List<String> types = new ArrayList<String>();
-		InputStream in = this.getClass().getResourceAsStream(file);
-		if(in == null) throw new NullPointerException("Can not find resource " + file + ".");
-		Properties p = new Properties();
-		try {
-			p.load(in);
-			for(Object o : p.keySet()) {
-				String key = (String) o;
-				types.add(p.getProperty(key));
-			}
-		} catch (IOException e) {
-			return null;
-		} finally {
-			try {in.close();} catch (Throwable ignore) {}
-		}
-		return types;
 	}
 
 	private Properties loadResource(String file) {

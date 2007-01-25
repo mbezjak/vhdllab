@@ -1,8 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.ajax.shared.XMLUtil;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -21,7 +20,7 @@ import java.util.Properties;
 
 /**
  * Default implementation of <code>MethodInvoker</code> interface. Uses
- * <code>AjaxMediator</code> to initiate requests to server. It also uses
+ * <code>Initiator</code> to initiate requests to server. It also uses
  * Properties class to create XML documents that are sent and then reassembled
  * on server. Server also returns XML documents that are reassembled here and
  * so forth.
@@ -29,18 +28,18 @@ import java.util.Properties;
  */
 public class DefaultMethodInvoker implements MethodInvoker {
 
-	/** Mediator responsible for initiating requests to server */
-	private AjaxMediator ajax;
+	/** Initiator for initiating requests to server */
+	private Initiator initiator;
 
 	/**
 	 * Constructor.
-	 * @param ajax an <code>AjaxMediator</code> that is responsible for
+	 * @param initiator an <code>Initiator</code> that is responsible for
 	 * 		initiating requests to server
-	 * @throws NullPointerException if <code>ajax</code> is <code>null</code>
+	 * @throws NullPointerException if <code>initiator</code> is <code>null</code>
 	 */
-	public DefaultMethodInvoker(AjaxMediator ajax) {
-		if(ajax == null) throw new NullPointerException("Ajax mediator can not be null");
-		this.ajax = ajax;
+	public DefaultMethodInvoker(Initiator initiator) {
+		if(initiator == null) throw new NullPointerException("Ajax mediator can not be null");
+		this.initiator = initiator;
 	}
 	
 	public CompilationResult compileFile(Long fileId) throws UniformAppletException {
@@ -50,7 +49,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String data = resProperties.getProperty(MethodConstants.PROP_RESULT_COMPILATION_SERIALIZATION);
 		CompilationResult result = CompilationResult.deserialize(data);
@@ -68,7 +67,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
@@ -84,7 +83,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
@@ -100,23 +99,24 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, name);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String projectId = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID);
 		Long id = Long.parseLong(projectId);
 		return id;
 	}
 
-	public Long createUserFile(String ownerId, String type) throws UniformAppletException {
+	public Long createUserFile(String ownerId, String name, String type) throws UniformAppletException {
 		if(ownerId == null) throw new NullPointerException("User owner identifier can not be null.");
 		if(type == null) throw new NullPointerException("User file type can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_USER_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
+		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
@@ -130,7 +130,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void deleteGlobalFile(Long fileId) throws UniformAppletException {
@@ -140,7 +140,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void deleteProject(Long projectId) throws UniformAppletException {
@@ -150,7 +150,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void deleteUserFile(Long fileId) throws UniformAppletException {
@@ -160,7 +160,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public boolean existsFile(Long projectId, String name) throws UniformAppletException {
@@ -172,7 +172,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
@@ -185,7 +185,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
@@ -198,7 +198,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String exists = resProperties.getProperty(MethodConstants.PROP_PROJECT_EXISTS);
 		return exists.equals("1");
@@ -211,7 +211,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
@@ -224,7 +224,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String ciEntityName = resProperties.getProperty(MethodConstants.PROP_CI_ENTITY_NAME);
 		List<Port> ports = new ArrayList<Port>();
@@ -273,7 +273,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
@@ -293,7 +293,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String data = resProperties.getProperty(MethodConstants.PROP_HIERARCHY_SERIALIZATION);
 		Hierarchy h = Hierarchy.deserialize(data);
@@ -309,21 +309,21 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
 		return id;
 	}
 	
-	public List<Long> findFileByProject(Long projectId) throws UniformAppletException {
+	public List<Long> findFilesByProject(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_FILES_BY_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
@@ -343,7 +343,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
@@ -363,7 +363,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		List<Long> projects = new ArrayList<Long>();
 		int i = 1;
@@ -383,7 +383,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
@@ -395,7 +395,22 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		}
 		return files;
 	}
-
+	
+	public Long getProjectIdentifier(String ownerId, String projectName) throws UniformAppletException {
+		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
+		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_GET_PROJECT_IDENTIFIER;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, projectName);
+		
+		Properties resProperties = initiator.initiateCall(reqProperties);
+		
+		String id = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID);
+		return Long.parseLong(id);
+	}
+	
 	public String generateVHDL(Long fileId) throws UniformAppletException {
 		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
@@ -403,7 +418,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String vhdl = resProperties.getProperty(MethodConstants.PROP_GENERATED_VHDL);
 		return vhdl;
@@ -416,7 +431,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
 		return content;
@@ -429,7 +444,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String name = resProperties.getProperty(MethodConstants.PROP_FILE_NAME);
 		return name;
@@ -442,7 +457,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String projectId = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID);
 		Long id = Long.parseLong(projectId);
@@ -457,7 +472,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String type = resProperties.getProperty(MethodConstants.PROP_FILE_TYPE);
 		return type;
@@ -470,7 +485,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
 		return content;
@@ -483,7 +498,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String name = resProperties.getProperty(MethodConstants.PROP_FILE_NAME);
 		return name;
@@ -496,7 +511,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String type = resProperties.getProperty(MethodConstants.PROP_FILE_TYPE);
 		return type;
@@ -509,7 +524,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
@@ -529,7 +544,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String name = resProperties.getProperty(MethodConstants.PROP_PROJECT_NAME);
 		return name;
@@ -542,7 +557,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String numberOfFiles = resProperties.getProperty(MethodConstants.PROP_PROJECT_NMBR_FILES);
 		Long count = Long.parseLong(numberOfFiles);
@@ -556,7 +571,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String ownerId = resProperties.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID);
 		return ownerId;
@@ -569,7 +584,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
 		return content;
@@ -582,7 +597,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String ownerId = resProperties.getProperty(MethodConstants.PROP_FILE_OWNER_ID);
 		return ownerId;
@@ -595,7 +610,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String name = resProperties.getProperty(MethodConstants.PROP_FILE_NAME);
 		return name;
@@ -609,7 +624,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String type = resProperties.getProperty(MethodConstants.PROP_FILE_TYPE);
 		return type;
@@ -624,7 +639,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void renameGlobalFile(Long fileId, String name) throws UniformAppletException {
@@ -636,7 +651,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void renameProject(Long projectId, String name) throws UniformAppletException {
@@ -648,7 +663,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, name);
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public SimulationResult runSimulation(Long fileId) throws UniformAppletException {
@@ -658,7 +673,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		
-		Properties resProperties = initiateAjax(reqProperties);
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
 		String data = resProperties.getProperty(MethodConstants.PROP_RESULT_SIMULATION_SERIALIZATION);
 		SimulationResult result = SimulationResult.deserialize(data);
@@ -674,7 +689,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void saveGlobalFile(Long fileId, String content) throws UniformAppletException {
@@ -686,7 +701,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void saveProject(Long projectId, List<Long> filesId) throws UniformAppletException {
@@ -703,7 +718,7 @@ public class DefaultMethodInvoker implements MethodInvoker {
 			i++;
 		}
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
 	public void saveUserFile(Long fileId, String content) throws UniformAppletException {
@@ -715,30 +730,50 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
 		
-		initiateAjax(reqProperties);
+		initiator.initiateCall(reqProperties);
 	}
 
-	private Properties initiateAjax(Properties p) throws UniformAppletException {
-		String method = p.getProperty(MethodConstants.PROP_METHOD, "");
-		String response = null;
-		try {
-			response = ajax.initiateSynchronousCall(XMLUtil.serializeProperties(p));
-		} catch (Exception e) {
-			response = null;
-		}
-		if(response == null) throw new UniformAppletException("AJAX connection problems");
+	public boolean existsProject(String ownerId, String projectName) throws UniformAppletException {
+		if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
+		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_EXISTS_PROJECT2;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, projectName);
 		
-		Properties resProperties = XMLUtil.deserializeProperties(response);
-		String resMethod = resProperties.getProperty(MethodConstants.PROP_METHOD);
-		if(!method.equalsIgnoreCase(resMethod)) {
-			throw new UniformAppletException("Wrong method returned! Expected: " + method + " but was: " + resMethod);
-		}
-		String status = resProperties.getProperty(MethodConstants.PROP_STATUS, "");
-		if(!status.equals(MethodConstants.STATUS_OK)) {
-			throw new UniformAppletException(resProperties.getProperty(MethodConstants.PROP_STATUS_CONTENT, "Unknown error."));
-		}
+		Properties resProperties = initiator.initiateCall(reqProperties);
 		
-		return resProperties;
+		String exists = resProperties.getProperty(MethodConstants.PROP_PROJECT_EXISTS);
+		return exists.equals("1");
+	}
+
+	public boolean existsGlobalFile(String name) throws UniformAppletException {
+		if(name == null) throw new NullPointerException("Global file name can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_EXISTS_GLOBAL_FILE2;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
+		
+		Properties resProperties = initiator.initiateCall(reqProperties);
+		
+		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
+		return exists.equals("1");
+	}
+
+	public boolean existsUserFile(String ownerId, String fileName) throws UniformAppletException {
+		if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
+		if(fileName == null) throw new NullPointerException("File name can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_EXISTS_USER_FILE;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
+		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, fileName);
+		
+		Properties resProperties = initiator.initiateCall(reqProperties);
+		
+		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
+		return exists.equals("1");
 	}
 
 }

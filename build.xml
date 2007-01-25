@@ -73,6 +73,9 @@
 	  <replacefilter token="@@database.use.reflection.optimizer@@" property="database.use.reflection.optimizer"/>
   	  <replacefilter token="@@database.connection.pool.size@@" property="database.connection.pool.size"/>
   	  <replacefilter token="@@database.hbm2ddl.auto@@" property="database.hbm2ddl.auto"/>
+      <replacefilter token="@@hibernate.cache.use_query_cache@@" property="hibernate.cache.use_query_cache"/>
+      <replacefilter token="@@hibernate.cache.provider_class@@" property="hibernate.cache.provider_class"/>
+      <replacefilter token="@@hibernate.query.substitutions@@" property="hibernate.query.substitutions"/>
   	</replace>
   	
   	<replace file="${local.dir}${file.separator}.java.policy" propertyfile="${configuration.properties}">
@@ -424,6 +427,13 @@
 	
   <target name="dont-override-java-policy" if="dont.override.java.policy">
   	<echo>Modify your existing '${user.home}${file.separator}.java.policy' so that it contains contents of '.${file.separator}${local.dir}${file.separator}.java.policy'</echo>
+  </target>
+	
+  <target name="clean-tomcat">
+    <property name="tomcat.app.dir" value="${tomcat.dir}${file.separator}webapps${file.separator}${app.name}"/>
+    <delete quiet="true" includeEmptyDirs="true">
+      <fileset dir="${tomcat.app.dir}"/>
+    </delete>
   </target>
 	
   <target name="run-tomcat" depends="tomcat">

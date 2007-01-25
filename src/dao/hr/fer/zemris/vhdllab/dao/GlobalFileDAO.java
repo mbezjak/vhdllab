@@ -44,4 +44,12 @@ public interface GlobalFileDAO {
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	boolean exists(Long fileId) throws DAOException;
+	/**
+	 * Check if a global file with specified name exists.
+	 * @param name a name of global file
+	 * @return <code>true</code> if such global file exists; <code>false</code> otherwise.
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	boolean exists(String name) throws DAOException;
+	
 }

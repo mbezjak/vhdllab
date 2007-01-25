@@ -30,7 +30,7 @@ public class DoMethodCreateNewGlobalFileTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		file = labman.createNewGlobalFile("TestFileName_1", FileTypes.FT_THEME);
 		regMethod = new DoMethodCreateNewGlobalFile();
 		method = MethodConstants.MTD_CREATE_NEW_GLOBAL_FILE;
@@ -84,7 +84,7 @@ public class DoMethodCreateNewGlobalFileTest {
 	 */
 	@Test
 	public void run4() throws ServiceException {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		prop.setProperty(MethodConstants.PROP_FILE_NAME, "NewFileTestName");
 		prop.setProperty(MethodConstants.PROP_FILE_TYPE, file.getType());
 		

@@ -15,7 +15,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import java.util.List;
 
 /**
- * This is an interface representing a VHDL Laboratory Manager. 
+ * This is an interface representing a VHDL Laboratory Manager.
  * This interface defines the communication between the web 
  * and the service layer.
  */
@@ -36,6 +36,15 @@ public interface VHDLLabManager {
 	 */
 	public boolean existsProject(Long projectId) throws ServiceException;
 	/**
+	 * Check if a project with specified <code>ownerId</code> and
+	 * <code>projectName</code> exists.
+	 * @param ownerId owner of project
+	 * @param projectName a name of a project
+	 * @return <code>true</code> if such project exists; <code>false</code> otherwise.
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	boolean existsProject(String ownerId, String projectName) throws ServiceException;
+	/**
 	 * Use this method to create a new project which has name and owner id as
 	 * specified. Collection of files will be set to <code>null</code>. 
 	 * @param projectName name for the project
@@ -52,6 +61,16 @@ public interface VHDLLabManager {
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public List<Project> findProjectsByUser(String userId) throws ServiceException;
+	/**
+	 * Returns a project whose owner and name is specified user and project
+	 * name, respectively.
+	 * @param userId owner of project
+	 * @param projectName a name of a project
+	 * @return a project whose owner and name is specified user and project
+	 * 		name, respectively
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public Project getProject(String userId, String projectName) throws ServiceException;
 	/**
 	 * Saves projects using underlaying persistance layer.
 	 * @param p project to save; must not be null
@@ -147,6 +166,14 @@ public interface VHDLLabManager {
 	 */
 	public boolean existsGlobalFile(Long fileId) throws ServiceException;
 	/**
+	 * Check if a global file with specified name exists.
+	 * @param name a name of global file
+	 * @return <code>true</code> if such global file exists; <code>false</code> otherwise.
+	 * @throws ServiceException 
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	boolean existsGlobalFile(String name) throws ServiceException;
+	/**
 	 * Use this method to create a new global file.
 	 * @param name name for the global file
 	 * @param type type for the global file
@@ -199,13 +226,23 @@ public interface VHDLLabManager {
 	 */
 	public boolean existsUserFile(Long fileId) throws ServiceException;
 	/**
+	 * Check if a user file with specified <code>ownerId</code> and <code>name</code>
+	 * exists.
+	 * @param ownerId owner of user file
+	 * @param name a name of user file
+	 * @return <code>true</code> if such user file exists; <code>false</code> otherwise.
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	boolean existsUserFile(String ownerId, String name) throws ServiceException;
+	/**
 	 * Use this method to create a new user file.
 	 * @param ownerId owner id for the user file
+	 * @param name a name of user file
 	 * @param type type for the user file
 	 * @return created user file
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public UserFile createNewUserFile(String ownerId, String type) throws ServiceException;
+	public UserFile createNewUserFile(String ownerId, String name, String type) throws ServiceException;
 	/**
 	 * Use this method to set a new content for the user file.
 	 * @param fileId identifier of the user file

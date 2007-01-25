@@ -30,8 +30,8 @@ public class DoMethodDeleteUserFileTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile("user1000", FileTypes.FT_THEME);
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
+		file = labman.createNewUserFile("user1000", "noia theme", FileTypes.FT_THEME);
 		regMethod = new DoMethodDeleteUserFile();
 		method = MethodConstants.MTD_DELETE_USER_FILE;
 	}
@@ -72,7 +72,7 @@ public class DoMethodDeleteUserFileTest {
 	 */
 	@Test
 	public void run3() throws ServiceException {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		prop.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file.getId()));
 		
 		Properties p = regMethod.run(prop, mprov);

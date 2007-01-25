@@ -31,10 +31,10 @@ public class DoMethodFindUserFilesByUserTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile("user1500", FileTypes.FT_THEME);
-		file2 = labman.createNewUserFile("user1500", FileTypes.FT_THEME);
-		labman.createNewUserFile("user2000", FileTypes.FT_THEME);
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
+		file = labman.createNewUserFile("user1500", "noia theme", FileTypes.FT_THEME);
+		file2 = labman.createNewUserFile("user1500", "gecko theme", FileTypes.FT_THEME);
+		labman.createNewUserFile("user2000", "noia theme", FileTypes.FT_THEME);
 		regMethod = new DoMethodFindUserFilesByUser();
 		method = MethodConstants.MTD_FIND_USER_FILES_BY_USER;
 	}

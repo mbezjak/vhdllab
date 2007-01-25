@@ -39,7 +39,7 @@ public class DoMethodExtractCircuitInterfaceTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		project = labman.createNewProject("TestProjectName", "user1000");
 		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDL_SOURCE);
 		String content1 = "library IEEE;\n"+
@@ -130,7 +130,7 @@ public class DoMethodExtractCircuitInterfaceTest {
 	 */
 	@Test
 	public void run3() throws ServiceException {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		prop.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file1.getId()));
 		
 		Properties p = regMethod.run(prop, mprov);

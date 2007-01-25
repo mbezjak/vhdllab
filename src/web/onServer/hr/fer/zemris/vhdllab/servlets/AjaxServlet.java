@@ -37,10 +37,13 @@ public class AjaxServlet extends HttpServlet {
 		
 		Properties resProp;
 		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
-		String method = p.getProperty("method");
+		String method = p.getProperty(MethodConstants.PROP_METHOD, "");
 		RegisteredMethod regMethod = MethodFactory.getMethod(method);
-		if(regMethod==null) resProp = errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
-		else resProp = regMethod.run(p,mprov);
+		if(regMethod==null) {
+			resProp = errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
+		} else {
+			resProp = regMethod.run(p,mprov);
+		}
 		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);
 	}
 	

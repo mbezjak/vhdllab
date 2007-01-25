@@ -84,7 +84,7 @@ public class UserFile {
 		UserFile other = (UserFile) o;
 		
 		if( this.id != null && other.id != null ) return this.id.equals(other.id);
-		else if( this.id == null && other.id == null ) return this.content.equals(other.content);
+		else if( this.id == null && other.id == null ) return this.name.equalsIgnoreCase(other.name);
 		else return false;
 	}
 	

@@ -20,7 +20,7 @@ public class DoMethodCreateNewGlobalFile implements RegisteredMethod {
 	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	public Properties run(Properties p, ManagerProvider mprov) {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		String method = p.getProperty(MethodConstants.PROP_METHOD);
 		String fileName = p.getProperty(MethodConstants.PROP_FILE_NAME,null);
 		String fileType = p.getProperty(MethodConstants.PROP_FILE_TYPE,null);

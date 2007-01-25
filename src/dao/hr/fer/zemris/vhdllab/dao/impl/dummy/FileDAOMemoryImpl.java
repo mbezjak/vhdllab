@@ -3,11 +3,9 @@ package hr.fer.zemris.vhdllab.dao.impl.dummy;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.model.Project;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 public class FileDAOMemoryImpl implements FileDAO {
 
@@ -32,15 +30,6 @@ public class FileDAOMemoryImpl implements FileDAO {
 			}
 			file.setId(Long.valueOf(id++));
 		}
-		Project project = file.getProject();
-		if(project!=null) {
-			if(project.getFiles()==null) {
-				project.setFiles(new TreeSet<File>());
-			}
-			if(!project.getFiles().contains(file)) {
-				project.getFiles().add(file);
-			}
-		}
 		file.getProject().addFile(file);
 		files.put(file.getId(), file);
 		if(k!=null) {
@@ -56,7 +45,7 @@ public class FileDAOMemoryImpl implements FileDAO {
 	}
 
 	public synchronized boolean exists(Long fileId) throws DAOException {
-		return files.get(fileId) != null;
+		return files.containsKey(fileId);
 	}
 
 	public synchronized boolean exists(Long projectId, String name) throws DAOException {

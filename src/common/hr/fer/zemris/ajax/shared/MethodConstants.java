@@ -850,12 +850,41 @@ public class MethodConstants {
 	 * <p>
 	 * This method may cause following status errors:
 	 * <ul>
-	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametars
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
 	 * <li>{@link #SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE} - if existance of file can not be determined
 	 * </ul>
 	 */
 	public static final String MTD_EXISTS_GLOBAL_FILE = "exists.global.file";
+	/**
+	 * A "exists global file (2)" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_NAME}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_FILE_EXISTS} - containing <code>1</code> if file exists; <code>0</code> otherwise
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE} - if existance of file can not be determined
+	 * </ul>
+	 */
+	public static final String MTD_EXISTS_GLOBAL_FILE2 = "exists.global.file2";
 	/**
 	 * A "delete global file" method. Expected parametars (written as a property) are
 	 * <ul>
@@ -1081,6 +1110,7 @@ public class MethodConstants {
 	 * A "create user file" method. Expected parametars (written as a property) are
 	 * <ul>
 	 * <li>{@link #PROP_FILE_OWNER_ID}
+	 * <li>{@link #PROP_FILE_NAME}
 	 * <li>{@link #PROP_FILE_TYPE}
 	 * </ul>
 	 * <p>
@@ -1102,7 +1132,7 @@ public class MethodConstants {
 	 * <p>
 	 * This method may cause following status errors:
 	 * <ul>
-	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain both parametars
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain all parametars
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_OWNER_ID} is not a long int number
 	 * <li>{@link #SE_CAN_NOT_CREATE_FILE} - if file could not be created
 	 * </ul>
@@ -1132,12 +1162,42 @@ public class MethodConstants {
 	 * <p>
 	 * This method may cause following status errors:
 	 * <ul>
-	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametars
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
 	 * <li>{@link #SE_PARSE_ERROR} - if {@link #PROP_FILE_ID} is not a long int number
 	 * <li>{@link #SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE} - if existance of file can not be determined
 	 * </ul>
 	 */
 	public static final String MTD_EXISTS_USER_FILE = "exists.user.file";
+	/**
+	 * A "exists user file (2)" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_OWNER_ID}
+	 * <li>{@link #PROP_FILE_NAME}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_FILE_EXISTS} - containing <code>1</code> if file exists; <code>0</code> otherwise
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain both parametars
+	 * <li>{@link #SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE} - if existance of file can not be determined
+	 * </ul>
+	 */
+	public static final String MTD_EXISTS_USER_FILE2 = "exists.user.file2";
 	/**
 	 * A "delete user file" method. Expected parametars (written as a property) are
 	 * <ul>
@@ -1476,6 +1536,36 @@ public class MethodConstants {
 	 */
 	public static final String MTD_EXISTS_PROJECT = "exists.project";
 	/**
+	 * A "exists project (2)" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_PROJECT_OWNER_ID}
+	 * <li>{@link #PROP_PROJECT_NAME}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_PROJECT_EXISTS} - containing <code>1</code> if project exists; <code>0</code> otherwise
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_CAN_NOT_DETERMINE_EXISTANCE_OF_PROJECT} - if existance of project can not be determined
+	 * </ul>
+	 */
+	public static final String MTD_EXISTS_PROJECT2 = "exists.project2";
+	/**
 	 * A "delete project" method. Expected parametars (written as a property) are
 	 * <ul>
 	 * <li>{@link #PROP_PROJECT_ID}
@@ -1546,6 +1636,37 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_FIND_PROJECTS_BY_USER = "find.projects.by.user";
+	/**
+	 * A "get project identifier" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_PROJECT_OWNER_ID}
+	 * <li>{@link #PROP_PROJECT_NAME}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_PROJECT_ID} - containing project identifier
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_NO_SUCH_PROJECT} - if project with {@link #PROP_PROJECT_OWNER_ID} and
+	 * 		{@link #PROP_PROJECT_NAME} could not be found
+	 * </ul>
+	 */
+	public static final String MTD_GET_PROJECT_IDENTIFIER = "get.project.identifier";
 	
 	/**
 	 * A "compile file" method. Expected parametars (written as a property) are

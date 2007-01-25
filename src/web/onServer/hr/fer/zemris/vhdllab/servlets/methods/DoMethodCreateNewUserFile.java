@@ -20,17 +20,19 @@ public class DoMethodCreateNewUserFile implements RegisteredMethod {
 	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	public Properties run(Properties p, ManagerProvider mprov) {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		String method = p.getProperty(MethodConstants.PROP_METHOD);
-		String ownerId = p.getProperty(MethodConstants.PROP_FILE_OWNER_ID,null);
-		String fileType = p.getProperty(MethodConstants.PROP_FILE_TYPE,null);
-		if(ownerId==null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file name specified!");
-		if(fileType==null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file type specified!");
+		String ownerId = p.getProperty(MethodConstants.PROP_FILE_OWNER_ID, null);
+		String fileName = p.getProperty(MethodConstants.PROP_FILE_NAME, null);
+		String fileType = p.getProperty(MethodConstants.PROP_FILE_TYPE, null);
+		if(ownerId == null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file name specified!");
+		if(fileName == null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file name specified!");
+		if(fileType == null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file type specified!");
 		
 		// Create new user file
 		UserFile file = null;
 		try {
-			file = labman.createNewUserFile(ownerId, fileType);
+			file = labman.createNewUserFile(ownerId, fileName, fileType);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse owner ID = '"+ownerId+"'!");
 		} catch (Exception e) {

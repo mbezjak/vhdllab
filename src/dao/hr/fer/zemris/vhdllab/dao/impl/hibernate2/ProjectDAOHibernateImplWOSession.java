@@ -61,11 +61,28 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#exists(java.lang.Long)
+	 */
 	public boolean exists(Long projectId) throws DAOException {
 		try {
 			String query = "from Project as p where p.id = :projectId";
 			String param = "projectId";
 			List list = (List) getHibernateTemplate().findByNamedParam(query, param, projectId);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#exists(java.lang.String, java.lang.String)
+	 */
+	public boolean exists(String ownerId, String projectName) throws DAOException {
+		try {
+			String query = "from Project as p where p.ownerId = :ownerId and p.projectName = :projectName";
+			String[] params = new String[] {"ownerId", "projectName"};
+			Object[] values = new Object[] {ownerId, projectName};
+			List list = (List) getHibernateTemplate().findByNamedParam(query, params, values);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());

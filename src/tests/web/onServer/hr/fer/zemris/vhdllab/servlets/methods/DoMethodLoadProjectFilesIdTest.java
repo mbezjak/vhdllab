@@ -36,7 +36,7 @@ public class DoMethodLoadProjectFilesIdTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		project = labman.createNewProject("TestProjectName", "user1000");
 		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDL_SOURCE);
 		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDL_SOURCE);
@@ -94,7 +94,7 @@ public class DoMethodLoadProjectFilesIdTest {
 		assertEquals(5, p.keySet().size());
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		File f = labman.loadFile(Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID+".1")));
 		assertEquals(true, project.getFiles().contains(f));
 		f = labman.loadFile(Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID+".2")));

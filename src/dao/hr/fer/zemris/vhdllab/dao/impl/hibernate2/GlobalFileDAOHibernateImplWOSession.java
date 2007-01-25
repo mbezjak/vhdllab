@@ -19,7 +19,11 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#load(java.lang.Long)
 	 */
 	public GlobalFile load(Long id) throws DAOException {
-		return (GlobalFile)getHibernateTemplate().load(GlobalFile.class, id);
+		try {
+			return (GlobalFile)getHibernateTemplate().load(GlobalFile.class, id);
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -66,6 +70,20 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 			String query = "from GlobalFile as f where f.id = :fileId";
 			String param = "fileId";
 			List list = (List) getHibernateTemplate().findByNamedParam(query, param, fileId);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.String)
+	 */
+	public boolean exists(String name) throws DAOException {
+		try {
+			String query = "from GlobalFile as f where f.name = :name";
+			String param = "name";
+			List list = (List) getHibernateTemplate().findByNamedParam(query, param, name);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());

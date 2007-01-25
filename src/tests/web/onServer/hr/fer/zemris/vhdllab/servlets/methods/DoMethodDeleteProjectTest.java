@@ -36,7 +36,7 @@ public class DoMethodDeleteProjectTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		project = labman.createNewProject("TestProjectName", "user1000");
 		file1 = labman.createNewFile(project, "TestFileName_1", FileTypes.FT_VHDL_SOURCE);
 		file2 = labman.createNewFile(project, "TestFileName_2", FileTypes.FT_VHDL_SOURCE);
@@ -87,7 +87,7 @@ public class DoMethodDeleteProjectTest {
 	 */
 	@Test
 	public void run3() throws ServiceException {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		prop.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(project.getId()));
 		
 		Properties p = regMethod.run(prop, mprov);

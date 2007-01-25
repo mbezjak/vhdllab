@@ -30,7 +30,7 @@ public class DoMethodSaveGlobalFileTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		file = labman.createNewGlobalFile("TestFileName_1", FileTypes.FT_THEME);
 		regMethod = new DoMethodSaveGlobalFile();
 		method = MethodConstants.MTD_SAVE_GLOBAL_FILE;

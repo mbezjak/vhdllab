@@ -464,7 +464,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 								projectContainer.openEditor(name, fileName, true, false);
 							}
 						} catch (UniformAppletException ex) {
-							;
+							ex.printStackTrace();
 						}
 					}
 				}

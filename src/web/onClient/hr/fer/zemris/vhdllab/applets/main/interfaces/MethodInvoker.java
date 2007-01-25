@@ -20,7 +20,8 @@ public interface MethodInvoker {
 	boolean existsFile(Long projectId, String name) throws UniformAppletException;
 	void deleteFile(Long fileId) throws UniformAppletException;
 	Long findFileByName(Long projectId, String name) throws UniformAppletException;
-	List<Long> findFileByProject(Long projectId) throws UniformAppletException;
+	List<Long> findFilesByProject(Long projectId) throws UniformAppletException;
+	Long getProjectIdentifier(String ownerId, String projectName) throws UniformAppletException;
 
 	String loadGlobalFileName(Long fileId) throws UniformAppletException;
 	String loadGlobalFileType(Long fileId) throws UniformAppletException;
@@ -29,6 +30,7 @@ public interface MethodInvoker {
 	void renameGlobalFile(Long fileId, String name) throws UniformAppletException;
 	Long createGlobalFile(String name, String type) throws UniformAppletException;
 	boolean existsGlobalFile(Long fileId) throws UniformAppletException;
+	boolean existsGlobalFile(String name) throws UniformAppletException;
 	void deleteGlobalFile(Long fileId) throws UniformAppletException;
 	List<Long> findGlobalFilesByType(String type) throws UniformAppletException;
 
@@ -37,8 +39,9 @@ public interface MethodInvoker {
 	String loadUserFileType(Long fileId) throws UniformAppletException;
 	String loadUserFileContent(Long fileId) throws UniformAppletException;
 	void saveUserFile(Long fileId, String content) throws UniformAppletException;
-	Long createUserFile(String ownerId, String type) throws UniformAppletException;
+	Long createUserFile(String ownerId, String name, String type) throws UniformAppletException;
 	boolean existsUserFile(Long fileId) throws UniformAppletException;
+	boolean existsUserFile(String ownerId, String fileName) throws UniformAppletException;
 	void deleteUserFile(Long fileId) throws UniformAppletException;
 	List<Long> findUserFilesByOwner(String ownerId) throws UniformAppletException;
 
@@ -50,6 +53,7 @@ public interface MethodInvoker {
 	void renameProject(Long projectId, String name) throws UniformAppletException;
 	Long createProject(String name, String ownerId) throws UniformAppletException;
 	boolean existsProject(Long projectId) throws UniformAppletException;
+	boolean existsProject(String ownerId, String projectName) throws UniformAppletException;
 	void deleteProject(Long projectId) throws UniformAppletException;
 	List<Long> findProjectsByUser(String ownerId) throws UniformAppletException;
 

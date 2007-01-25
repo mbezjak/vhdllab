@@ -30,7 +30,7 @@ public class DoMethodDeleteGlobalFileTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		file = labman.createNewGlobalFile("TestFileName_1", FileTypes.FT_THEME);
 		regMethod = new DoMethodDeleteGlobalFile();
 		method = MethodConstants.MTD_DELETE_GLOBAL_FILE;
@@ -72,7 +72,7 @@ public class DoMethodDeleteGlobalFileTest {
 	 */
 	@Test
 	public void run3() throws ServiceException {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		prop.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(file.getId()));
 		
 		Properties p = regMethod.run(prop, mprov);

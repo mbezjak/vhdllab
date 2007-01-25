@@ -114,4 +114,26 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			throw new DAOException(e.getMessage());
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.String, java.lang.String)
+	 */
+	public boolean exists(String ownerId, String name) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from UserFile as f where f.ownerID = :ownerId and f.name = :fileName")
+									.setString("ownerId", ownerId)
+									.setString("fileName", name);
+			UserFile file = (UserFile) query.uniqueResult();
+			
+			tx.commit();
+			HibernateUtil.closeSession();
+
+			return file != null;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
 }

@@ -88,16 +88,16 @@ public class Extractor {
 		int i;
 		for(i = 0; i < chs.length-1; i++) {
 			chs[pos] = chs[i];
-			if(chs[i]==' ' || chs[i]=='\n' || chs[i]=='\t') {
+			if(chs[i]==' ' || chs[i]=='\n' || chs[i]=='\t' || chs[i]=='\r') {
 				chs[pos] = ' ';
 				if(pos==0) pos--;
 				char c = chs[i+1];
-				if(c==' ' || c=='\n' || c=='\t') {
+				if(c==' ' || c=='\n' || c=='\t' || chs[i]=='\r') {
 					do {
 						i++;
 						if(i+1>=chs.length) break;
 						c = chs[i+1];
-					} while(c==' ' || c=='\n' || c=='\t');
+					} while(c==' ' || c=='\n' || c=='\t' || chs[i]=='\r');
 				}
 				pos++;
 				continue;
@@ -106,7 +106,7 @@ public class Extractor {
 		}
 		if(i<chs.length) {
 			i = chs.length-1;
-			if(chs[i]!=' ' && chs[i]!='\n' && chs[i]!='\t') {
+			if(chs[i]!=' ' && chs[i]!='\n' && chs[i]!='\t' || chs[i]=='\r') {
 				chs[pos] = chs[i];
 				pos++;
 			}
@@ -998,16 +998,19 @@ public class Extractor {
 		Hierarchy h = new Hierarchy(project.getProjectName());
 		Set<File> files = project.getFiles();
 		if(files == null) return h;
-		for(File f : project.getFiles()) {
-			Pair pair = new Pair(f.getFileName(), f.getFileType());
-			h.addPair(pair);
+		for(File f : files) {
+			Pair pair = h.getPair(f.getFileName());
+			if(pair == null) {
+				pair = new Pair(f.getFileName(), f.getFileType());
+				h.addPair(pair);
+			}
 			createHierarchy(f, h, labman);
 		}
 		return h;
 	}
 	
 	private static void createHierarchy(File file, Hierarchy h, VHDLLabManager labman) throws ServiceException {
-		if(file == null) return;
+		if(file == null || file.getContent() == null) return;
 		String source = labman.generateVHDL(file);
 		Set<String> usedComponents = Extractor.extractUsedComponents(source);
 		for(String component : usedComponents) {

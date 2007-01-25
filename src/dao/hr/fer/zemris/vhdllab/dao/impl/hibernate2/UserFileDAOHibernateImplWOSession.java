@@ -75,4 +75,19 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 			throw new DAOException(e.getMessage());
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.String, java.lang.String)
+	 */
+	public boolean exists(String ownerId, String name) throws DAOException {
+		try {
+			String query = "from UserFile as f where f.ownerID = :ownerId and f.name = :fileName";
+			String[] params = new String[] {"ownerId", "fileName"};
+			Object[] values = new Object[] {ownerId, name};
+			List list = (List) getHibernateTemplate().findByNamedParam(query, params, values);
+			return !list.isEmpty();
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
 }

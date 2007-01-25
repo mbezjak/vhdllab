@@ -31,7 +31,7 @@ public class DoMethodFindGlobalFilesByTypeTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		file = labman.createNewGlobalFile("TestFileName_1", FileTypes.FT_APPLET);
 		file2 = labman.createNewGlobalFile("TestFileName_2", FileTypes.FT_APPLET);
 		labman.createNewGlobalFile("TestFileName_3", FileTypes.FT_THEME);

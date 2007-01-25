@@ -2,7 +2,9 @@ package hr.fer.zemris.vhdllab.preferences;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -16,13 +18,21 @@ public class Preferences {
 		preferences = new HashMap<String, SingleOption>();
 	}
 	
+	public List<SingleOption> getAllOptions() {
+		return new ArrayList<SingleOption>(preferences.values());
+	}
+	
 	public void setOption(SingleOption o) {
-		if(o == null) throw new NullPointerException("Single option must not be null.");
+		if(o == null) {
+			throw new NullPointerException("Single option must not be null.");
+		}
 		preferences.put(o.getName(), o);
 	}
 	
 	public SingleOption getOption(String name) {
-		if(name == null) throw new NullPointerException("Name must not be null.");
+		if(name == null) {
+			throw new NullPointerException("Name must not be null.");
+		}
 		return preferences.get(name);
 	}
 	
@@ -59,7 +69,7 @@ public class Preferences {
 		if(!(obj instanceof Preferences)) return false;
 		Preferences other = (Preferences) obj;
 		
-		return preferences.equals(other.preferences);
+		return this.preferences.equals(other.preferences);
 	}
 	
 	/* (non-Javadoc)

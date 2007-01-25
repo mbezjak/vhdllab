@@ -44,4 +44,14 @@ public interface ProjectDAO {
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	boolean exists(Long projectId) throws DAOException;
+	
+	/**
+	 * Check if a project with specified <code>ownerId</code> and
+	 * <code>projectName</code> exists.
+	 * @param ownerId owner of project
+	 * @param projectName a name of a project
+	 * @return <code>true</code> if such project exists; <code>false</code> otherwise.
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	boolean exists(String ownerId, String projectName) throws DAOException;
 }

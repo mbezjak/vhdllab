@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.applets.main.components.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.components.projectexplorer.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.components.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.constants.LanguageConstants;
-import hr.fer.zemris.vhdllab.applets.main.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.applets.main.constants.ViewTypes;
 import hr.fer.zemris.vhdllab.applets.main.dialogs.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.dialogs.SaveDialog;
@@ -15,11 +14,13 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
+import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.preferences.SingleOption;
@@ -117,16 +118,16 @@ public class MainApplet
 			// future implementation when security is in place
 			// throw new SecurityException();
 		}
-		AjaxMediator ajax = new DefaultAjaxMediator(this);
-		MethodInvoker invoker = new DefaultMethodInvoker(ajax);
-		
-		//**********************
-		ServerInitData server = new ServerInitData();
-		server.writeGlobalFiles();
-		//**********************
-		
-		communicator = new Communicator(invoker, userId);
-		bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		try {
+			AjaxMediator ajax = new DefaultAjaxMediator(this);
+			Initiator initiator = new AjaxInitiator(ajax);
+			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
+			communicator = new Communicator(invoker, userId);
+			bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		initGUI();
 		this.addComponentListener(new ComponentListener() {
@@ -136,32 +137,22 @@ public class MainApplet
 				setPaneSize();
 			}
 			public void componentShown(ComponentEvent e) {}
-			
 		});
 
-		
-		//**********************
-		server.writeServerInitData();
-		//**********************
-		
 		refreshWorkspace();
 		
-		/*try {
-			List<String> projects = communicator.getAllProjects();
-			for(String projectName : projects) {
-				projectExplorer.addProject(projectName);
-				List<String> files = communicator.findFilesByProject(projectName);
-				for(String fileName : files) {
-					projectExplorer.addFile(projectName, fileName);
+		try {
+			List<Preferences> prefs = getPreferences(FileTypes.FT_APPLET);
+			for(Preferences p : prefs) {
+				SingleOption option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
+				if(option == null) continue;
+				List<FileIdentifier> files = Utilities.deserializeEditorInfo(option.getChosenValue());
+				for(FileIdentifier f : files) {
+					openEditor(f.getProjectName(), f.getFileName(), true, false);
 				}
+				break;
 			}
-			String text = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-			echoStatusText(text);
-		} catch (UniformAppletException e) {
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-			echoStatusText(text);
-		}*/
-
+		} catch (UniformAppletException ignored) {}
 	}
 	
 	/* (non-Javadoc)
@@ -188,6 +179,19 @@ public class MainApplet
 	public void destroy() {
 		saveAllEditors();
 		//closeAllEditors();
+		
+		try {
+			List<Preferences> prefs = getPreferences(FileTypes.FT_APPLET);
+			for(Preferences p : prefs) {
+				SingleOption option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
+				if(option == null) continue;
+				String data = Utilities.serializeEditorInfo(getAllOpenedEditors());
+				option.setChosenValue(data);
+				savePreferences(p);
+				break;
+			}
+		} catch (UniformAppletException ignored) {}
+		
 		try {
 			communicator.cleanUp();
 		} catch (UniformAppletException ignored) {}
@@ -1034,21 +1038,18 @@ public class MainApplet
 	}
 	
 	private boolean isCircuit(String projectName, String fileName) throws UniformAppletException {
-		List<String> fileTypes = communicator.getFileTypes();
-		fileTypes.remove(FileTypes.FT_VHDL_TB);
-		fileTypes.remove(FileTypes.FT_VHDL_SIMULATION);
 		String type = getFileType(projectName, fileName);
-		return fileTypes.contains(type);
+		return FileTypes.isCircuit(type);
 	}
 	
 	private boolean isTestbench(String projectName, String fileName) throws UniformAppletException {
 		String type = getFileType(projectName, fileName);
-		return type.equals(FileTypes.FT_VHDL_TB);
+		return FileTypes.isTestbench(type);
 	}
 	
 	private boolean isSimulation(String projectName, String fileName) throws UniformAppletException {
 		String type = getFileType(projectName, fileName);
-		return type.equals(FileTypes.FT_VHDL_SIMULATION);
+		return FileTypes.isSimulation(type);
 	}
 	
 	public String getFileType(String projectName, String fileName) throws UniformAppletException {
@@ -1838,6 +1839,9 @@ public class MainApplet
 	 */
 	private static class Utilities {
 		
+		private static final String PROJECT_FILE_SEPARATOR = "/";
+		private static final String SEPARATOR_FOR_EACH_EDITOR = "\n";
+		
 		/**
 		 * Constructs FileIdentifiers out of <code>editors</code>.
 		 * @param editors editors to construct FileIdentifiers from
@@ -1858,7 +1862,7 @@ public class MainApplet
 		/**
 		 * Replace placeholders in <code>message</code> with <code>replacements</code>
 		 * string. Look at <code>Client_Main_ApplicationResources_en.properties</code>
-		 * file to learn what placeholders are.
+		 * file in src/i18n/client source folder to learn what placeholders are.
 		 * @param message a message from where to replace placeholders
 		 * @param replacements an array of string to replace placeholders 
 		 * @return modified message
@@ -1874,213 +1878,29 @@ public class MainApplet
 			return replaced;
 		}
 		
-	}
-
-	private class ServerInitData {
-		
-		private static final String userId = "uid:id-not-set";
-		
-		public void writeGlobalFiles() {
-			try {
-				AjaxMediator ajax = new DefaultAjaxMediator(MainApplet.this);
-				MethodInvoker invoker = new DefaultMethodInvoker(ajax);
-				
-				Long fileId = invoker.createUserFile(userId, FileTypes.FT_COMMON);
-				Preferences preferences = new Preferences();
-				List<String> values = new ArrayList<String>();
-				values.add("en");
-				values.add("hr");
-				SingleOption o = new SingleOption(UserFileConstants.COMMON_LANGUAGE, "Language", "String", values, "en", "en");
-				preferences.setOption(o);
-				invoker.saveUserFile(fileId, preferences.serialize());
-				
-				preferences = new Preferences();
-				fileId = invoker.createUserFile(userId, FileTypes.FT_APPLET);
-				o = new SingleOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
-				preferences.setOption(o);
-				
-				o = new SingleOption(UserFileConstants.APPLET_SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
-				preferences.setOption(o);
-
-				o = new SingleOption(UserFileConstants.APPLET_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
-				preferences.setOption(o);
-				
-				values = new ArrayList<String>();
-				values.add("true");
-				values.add("false");
-				o = new SingleOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES, "Always save resources", "Boolean", values, "false", "false");
-				preferences.setOption(o);
-				
-				invoker.saveUserFile(fileId, preferences.serialize());
-			} catch (UniformAppletException e) {
-				e.printStackTrace();
+		public static String serializeEditorInfo(List<IEditor> editors) {
+			// expecting file name and project name (together) to be 15 characters
+			StringBuilder sb = new StringBuilder(editors.size() * 15);
+			for(IEditor e : editors) {
+				sb.append(e.getProjectName()).append(PROJECT_FILE_SEPARATOR)
+					.append(e.getFileName()).append(SEPARATOR_FOR_EACH_EDITOR);
 			}
+			sb.deleteCharAt(sb.length() - 1);
+			return sb.toString();
 		}
 		
-		public void writeServerInitData() {
-			try {
-				final String projectName1 = "Project1";
-				final String fileName1 = "File1";
-				final String fileType1 = FileTypes.FT_VHDL_SOURCE;
-				final String fileContent1 = "simple content";
-				final String fileName2 = "mux41";
-				final String fileType2 = FileTypes.FT_VHDL_SOURCE;
-				final String fileContent2 = "library IEEE;" + "\n" +
-											"use IEEE.STD_LOGIC_1164.ALL;" + "\n" + 
-											"\n" +
-											"entity mux41 is" + "\n" +
-											"port ( e :in std_logic;" + "\n" +
-											"d:in std_logic_vector (3 downto 0);" + "\n" +
-											"sel :in std_logic_vector (1 downto 0);" + "\n" +
-											"z :out std_logic);" + "\n" +
-											//");" + "\n" +
-											"end mux41;" + "\n" +
-											"" + "\n" +
-											"architecture Behavioral of mux41 is" + "\n" +
-											"" + "\n" +
-											"begin" + "\n" +
-											"process(d,e,sel)" + "\n" +
-											"begin" + "\n" +
-											"if (e = '1')then" + "\n" + 
-											"case sel is" + "\n" +
-											"when  \"00\" => z <= d(0);" + "\n" +
-											"when  \"01\" => z <= d(1);" + "\n" +
-											"when  \"10\" => z <= d(2);" + "\n" +
-											"when  \"11\" => z <= d(3);" + "\n" +
-											"when others => z <='0';" + "\n" +
-											"end case;" + "\n" +
-											"else z<='0';" + "\n" +
-											"end if;" + "\n" +
-											"end process;" + "\n" +
-											"end Behavioral;";
-				
-				final String fileName3 = "mux41_tb";
-				final String fileType3 = FileTypes.FT_VHDL_TB;
-				final String fileContent3 = "<file>mux41</file>" + "\n" + 
-											"<measureUnit>ns</measureUnit>" + "\n" +
-											"<duration>700</duration>" + "\n" +
-											"<signal name=\"E\" type=\"scalar\">(0,1)</signal>" + "\n" + 
-											"<signal name=\"D\" type=\"vector\" rangeFrom=\"3\" rangeTo=\"0\">(0,0000)(20,1000)(30,1100)(40,1110)(50,1111)(60,0111)(65,0101)(70,0001)(90,0000)(95,0010)(120,1110)(135,1100)(150,0100)(155,0001)(180,0000)(190,1010)(230,0010)(235,0110)(245,0100)(255,0101)(265,1101)(295,1001)(315,1000)(325,1010)(330,0010)(340,0110)(360,1111)(375,1101)(380,1001)(385,1000)</signal>" + "\n" + 
-											"<signal name=\"SEL\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"0\">(0,00)(25,10)(35,11)(70,10)(85,00)(130,01)(165,11)(195,10)(200,00)(250,01)(260,00)(285,10)(310,11)(320,10)(350,00)(360,01)(385,00)(395,10)(410,00)(415,01)(430,00)</signal>" + "\n";
-				
-				final String fileName4 = "Automat1";
-				final String fileType4 = FileTypes.FT_VHDL_AUTOMAT;
-				final String fileContent4 = "<Automat>" + "\n" +
-	"<Podatci_Sklopa>" + "\n" +
-		"<Ime>Automat1</Ime>" + "\n" +
-		"<Tip>Moore</Tip>" + "\n" +
-		"<Interfac>a in std_logic" + "\n" +
-"b out std_logic" + "\n" +
-		"</Interfac>" + "\n" +
-		"<Pocetno_Stanje>A</Pocetno_Stanje>" + "\n" +
-		"<Reset>1</Reset>" + "\n" + 
-		"<Clock>falling_edge</Clock>" + "\n" +
-	"</Podatci_Sklopa>" + "\n" +
-
-	"<Stanje>" + "\n" +
-		"<Ime>A</Ime>" + "\n" +
-		"<Izlaz>0</Izlaz>" + "\n" +
-		"<Ox>30</Ox>" + "\n" +
-		"<Oy>30</Oy>" + "\n" +
-	"</Stanje>" + "\n" +
-
-	"<Stanje>" + "\n" +
-		"<Ime>B</Ime>" + "\n" +
-		"<Izlaz>1</Izlaz>" + "\n" +
-		"<Ox>100</Ox>" + "\n" +
-		"<Oy>100</Oy>" + "\n" +
-	"</Stanje>" + "\n" +
-
-	"<Stanje>" + "\n" +
-		"<Ime>C</Ime>" + "\n" +
-		"<Izlaz>1</Izlaz>" + "\n" +
-		"<Ox>30</Ox>" + "\n" +
-		"<Oy>100</Oy>" + "\n" +
-	"</Stanje>" + "\n" +
-
-	"<Prijelaz>" + "\n" +
-		"<Iz>A</Iz>" + "\n" +
-		"<U>B</U>" + "\n" +
-		"<Pobuda>1</Pobuda>" + "\n" +
-	"</Prijelaz>" + "\n" +
-
-	"<Prijelaz>" + "\n" +
-		"<Iz>A</Iz>" + "\n" +
-		"<U>C</U>" + "\n" +
-		"<Pobuda>0</Pobuda>" + "\n" +
-	"</Prijelaz>" + "\n" +
-
-	"<Prijelaz>" + "\n" +
-		"<Iz>B</Iz>" + "\n" +
-		"<U>A</U>" + "\n" +
-		"<Pobuda>1</Pobuda>" + "\n" +
-	"</Prijelaz>" + "\n" +
-
-	"<Prijelaz>" + "\n" +
-		"<Iz>B</Iz>" + "\n" +
-		"<U>C</U>" + "\n" +
-		"<Pobuda>0</Pobuda>" + "\n" +
-	"</Prijelaz>" + "\n" +
-
-	"<Prijelaz>" + "\n" +
-		"<Iz>C</Iz>" + "\n" +
-		"<U>C</U>" + "\n" +
-		"<Pobuda>0</Pobuda>" + "\n" +
-	"</Prijelaz>" + "\n" +
-
-	"<Prijelaz>" + "\n" +
-		"<Iz>C</Iz>" + "\n" +
-		"<U>B</U>" + "\n" +
-		"<Pobuda>1</Pobuda>" + "\n" +
-	"</Prijelaz>" + "\n" +
-"</Automat>";
-				
-				long start = System.currentTimeMillis();
-				IEditor editor = communicator.getEditor(FileTypes.FT_VHDL_SOURCE);
-				editor.setProjectContainer(MainApplet.this);
-				editor.init();
-				
-				if(!communicator.existsProject(projectName1)) {
-					communicator.createProject(projectName1);
-				}
-				if(!communicator.existsFile(projectName1,fileName1)) {
-					communicator.createFile(projectName1, fileName1, fileType1);
-					communicator.saveFile(projectName1, fileName1, fileContent1);
-				}
-				
-				if(!communicator.existsFile(projectName1,fileName2)) {
-					communicator.createFile(projectName1, fileName2, fileType2);
-					communicator.saveFile(projectName1, fileName2, fileContent2);
-				}
-
-				if(!communicator.existsFile(projectName1,fileName3)) {
-					communicator.createFile(projectName1, fileName3, fileType3);
-					communicator.saveFile(projectName1, fileName3, fileContent3);
-				}
-				
-				if(!communicator.existsFile(projectName1,fileName4)) {
-					communicator.createFile(projectName1, fileName4, fileType4);
-					communicator.saveFile(projectName1, fileName4, fileContent4);
-				}
-				
-				long end = System.currentTimeMillis();
-				
-				String infoData = editor.getData()+(start-end)+"ms\nLoaded Preferences:\n";
-				for(Preferences p : communicator.getPreferences(FileTypes.FT_COMMON)) {
-					infoData += p.serialize();
-				}
-				infoData = infoData.replace("&lt;", "<");
-				infoData = infoData.replace("&gt;", ">");
-				communicator.saveFile(projectName1, fileName1, infoData);
-
-				openEditor(projectName1, fileName1, true, false);
-				openEditor(projectName1, fileName2, true, false);
-				openEditor(projectName1, fileName3, true, false);
-				openEditor(projectName1, fileName4, true, false);
-				
-			} catch (Exception e) {
-				e.printStackTrace();
+		public static List<FileIdentifier> deserializeEditorInfo(String data) {
+			if(data == null) return new ArrayList<FileIdentifier>(0);
+			String[] lines = data.split(SEPARATOR_FOR_EACH_EDITOR);
+			List<FileIdentifier> files = new ArrayList<FileIdentifier>(lines.length);
+			for(String s : lines) {
+				String[] info = s.split(PROJECT_FILE_SEPARATOR);
+				FileIdentifier f = new FileIdentifier(info[0], info[1]);
+				files.add(f);
 			}
+			return files;
 		}
+
 	}
+
 }

@@ -71,7 +71,7 @@ public class GlobalFile {
 		GlobalFile other = (GlobalFile) o;
 		
 		if( this.id != null && other.id != null ) return this.id.equals(other.id);
-		else if( this.id == null && other.id == null ) return this.name.equals(other.name);
+		else if( this.id == null && other.id == null ) return this.name.equalsIgnoreCase(other.name);
 		else return false;
 	}
 	

@@ -44,4 +44,13 @@ public interface UserFileDAO {
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	boolean exists(Long fileId) throws DAOException;
+	/**
+	 * Check if a user file with specified <code>ownerId</code> and <code>name</code>
+	 * exists.
+	 * @param ownerId owner of user file
+	 * @param name a name of user file
+	 * @return <code>true</code> if such user file exists; <code>false</code> otherwise.
+	 * @throws DAOException if exceptional condition occurs.
+	 */
+	boolean exists(String ownerId, String name) throws DAOException;
 }

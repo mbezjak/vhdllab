@@ -133,7 +133,7 @@ public class SingleOption {
 		if(!(obj instanceof SingleOption)) return false;
 		SingleOption other = (SingleOption) obj;
 		
-		return name.equals(other.name);
+		return name.equalsIgnoreCase(other.name);
 	}
 	
 	/* (non-Javadoc)
@@ -141,6 +141,6 @@ public class SingleOption {
 	 */
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return name.toUpperCase().hashCode();
 	}
 }

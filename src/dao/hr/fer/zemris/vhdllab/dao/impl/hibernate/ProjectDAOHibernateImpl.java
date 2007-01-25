@@ -114,5 +114,28 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			throw new DAOException(e.getMessage());
 		}
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#exists(java.lang.String, java.lang.String)
+	 */
+	public boolean exists(String ownerId, String projectName) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from Project as p where p.ownerId = :ownerId and p.projectName = :projectName")
+									.setString("ownerId", ownerId)
+									.setString("projectName", projectName);
+			Project project = (Project) query.uniqueResult();
+			
+			tx.commit();
+			HibernateUtil.closeSession();
+			
+			return project != null;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
 
 }

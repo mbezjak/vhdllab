@@ -277,9 +277,9 @@ public class Signal {
 		
 		String temp=null;
 		if(this.tip.contentEquals("scalar")){
-			temp="<signal name=\""+this.ime+"\" type=\""+this.tip+"\">"+this.data+"</signal>";
+			temp="<signal name=\""+this.ime.trim()+"\" type=\""+this.tip+"\">"+this.data+"</signal>";
 		}else if(this.tip.contentEquals("vector")){
-			temp="<signal name=\""+this.ime+"\" type=\""+this.tip+"\" rangeFrom=\""+this.rangeFrom+"\" rangeTo=\""+this.rangeTo+"\">"+this.data+"</signal>";                           
+			temp="<signal name=\""+this.ime.trim()+"\" type=\""+this.tip+"\" rangeFrom=\""+this.rangeFrom+"\" rangeTo=\""+this.rangeTo+"\">"+this.data+"</signal>";                           
 		}
 		
 		return temp;

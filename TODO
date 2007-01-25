@@ -73,7 +73,7 @@ Miro Bezjak
 --------------------------------------------
 TODO 81) [CLOSED]   Popravit kod za simulaciju
 TODO 82) [CLOSED]   Napisat kod za kompilaciju
-TODO 83) [OPEN]   Napisat kod za refresh workspace
+TODO 83) [CLOSED]   Napisat kod za refresh workspace
 TODO 85) [CLOSED]   Slozit View da se prikazuju u panelima (to je za CompilationErrorsPanel)
 TODO 86) [CLOSED]   Mogucnost maksimizacije nekog panela preko cijelog ekrana (to je jednostavno, vec imam ideju u glavi kak bi to islo)
 TODO 87) [CLOSED]   Pocet koristit statusbar (za sad se ne koristi)

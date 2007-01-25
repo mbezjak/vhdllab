@@ -8,7 +8,7 @@ import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.UserFileDAOMemoryImpl;
-import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
+import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.Map;
  * Provides infomation regarding which implementations will
  * be used for these interfaces:
  * <ul>
- * <li>FileDAO, ProjectDAO : data access objects</li>
+ * <li>FileDAO, ProjectDAO, GlobalFileDAO, UserFileDAO : data access objects</li>
  * <li>VHDLLabManager : service manager</li>
  * </ul>
  */
@@ -36,10 +36,10 @@ public class SampleManagerProvider implements ManagerProvider {
 		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
 		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		
-		/*FileDAO fileDAO = new FileDAOHibernateImpl();
-		ProjectDAO projectDAO = new ProjectDAOHibernateImpl();
-		GlobalFileDAO globalFileDAO = new GlobalFileDAOHibernateImpl();
-		UserFileDAO userFileDAO = new UserFileDAOHibernateImpl();*/
+//		FileDAO fileDAO = new FileDAOHibernateImpl();
+//		ProjectDAO projectDAO = new ProjectDAOHibernateImpl();
+//		GlobalFileDAO globalFileDAO = new GlobalFileDAOHibernateImpl();
+//		UserFileDAO userFileDAO = new UserFileDAOHibernateImpl();
 
 		
 		// Create all service managers, and configure them
@@ -52,7 +52,7 @@ public class SampleManagerProvider implements ManagerProvider {
 		
 		// Remember created managers, so we can later return
 		// a reference to them.
-		beans.put("vhdlLabManager",labManImpl);
+		beans.put(ManagerProvider.VHDL_LAB_MANAGER,labManImpl);
 	}
 	
 	/* (non-Javadoc)

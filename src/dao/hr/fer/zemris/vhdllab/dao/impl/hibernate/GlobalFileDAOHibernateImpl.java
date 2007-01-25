@@ -114,4 +114,25 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 			throw new DAOException(e.getMessage());
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.String)
+	 */
+	public boolean exists(String name) throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from GlobalFile as f where f.name = :name")
+									.setString("name", name);
+			GlobalFile file = (GlobalFile) query.uniqueResult();
+			
+			tx.commit();
+			HibernateUtil.closeSession();
+			
+			return file != null;
+		} catch (Exception e) {
+			throw new DAOException(e.getMessage());
+		}
+	}
 }

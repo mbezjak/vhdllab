@@ -30,8 +30,8 @@ public class DoMethodLoadUserFileTypeTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile("user1000", FileTypes.FT_THEME);
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
+		file = labman.createNewUserFile("user1000", "noia theme", FileTypes.FT_THEME);
 		regMethod = new DoMethodLoadUserFileType();
 		method = MethodConstants.MTD_LOAD_USER_FILE_TYPE;
 	}

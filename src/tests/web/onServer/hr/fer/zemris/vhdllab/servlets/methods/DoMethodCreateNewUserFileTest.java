@@ -30,8 +30,8 @@ public class DoMethodCreateNewUserFileTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		mprov = new SampleManagerProvider();
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
-		file = labman.createNewUserFile("user1000", FileTypes.FT_THEME);
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
+		file = labman.createNewUserFile("user1000", "noia theme", FileTypes.FT_THEME);
 		regMethod = new DoMethodCreateNewUserFile();
 		method = MethodConstants.MTD_CREATE_NEW_USER_FILE;
 	}
@@ -98,7 +98,7 @@ public class DoMethodCreateNewUserFileTest {
 	 */
 	@Test
 	public void run5() throws ServiceException {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get("vhdlLabManager");
+		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		prop.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String.valueOf(file.getOwnerID()));
 		prop.setProperty(MethodConstants.PROP_FILE_TYPE, FileTypes.FT_APPLET);
 		

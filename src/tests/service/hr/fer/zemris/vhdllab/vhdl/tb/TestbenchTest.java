@@ -6,7 +6,7 @@ import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
-import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
+import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 import junit.framework.JUnit4TestAdapter;
@@ -24,7 +24,7 @@ public class TestbenchTest {
 	@BeforeClass
 	public static void init() throws ServiceException {
 		ManagerProvider provider = new SampleManagerProvider();
-		vhdlLabman = (VHDLLabManagerImpl) provider.get("vhdlLabManager");
+		vhdlLabman = (VHDLLabManagerImpl) provider.get(ManagerProvider.VHDL_LAB_MANAGER);
 		
 		project = vhdlLabman.createNewProject("testProject", "user1");
 		vhdlSource = vhdlLabman.createNewFile(project,"mux41",FileTypes.FT_VHDL_SOURCE);

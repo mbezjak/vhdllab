@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,18 @@ public class Communicator {
 		cache = new Cache();
 		this.invoker = invoker;
 		this.ownerId = ownerId;
+		//init();
+	}
+	
+	private void init() throws UniformAppletException {
+		List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
+		for(Long id : userFiles) {
+			String type = invoker.loadUserFileType(id);
+			cache.cacheUserFileItem(type, id);
+			String data = invoker.loadUserFileContent(id);
+			Preferences pref = Preferences.deserialize(data);
+			cache.cachePreferences(id, pref);
+		}
 	}
 	
 	public void cleanUp() throws UniformAppletException {
@@ -33,10 +46,6 @@ public class Communicator {
 			Long id = cache.getIdentifierFor(pref);
 			invoker.saveUserFile(id, data);
 		}
-	}
-
-	public List<String> getFileTypes() {
-		return cache.getFileTypes();
 	}
 
 	public List<String> getAllProjects() throws UniformAppletException {
@@ -63,7 +72,7 @@ public class Communicator {
 		if(projectIdentifier == null) {
 			throw new UniformAppletException("Project does not exists!");
 		}
-		List<Long> fileIdentifiers =  invoker.findFileByProject(projectIdentifier);
+		List<Long> fileIdentifiers =  invoker.findFilesByProject(projectIdentifier);
 
 		List<String> fileNames = new ArrayList<String>();
 		for(Long id : fileIdentifiers) {
@@ -157,7 +166,17 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
 		if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
-		return invoker.extractHierarchy(projectIdentifier);
+		
+		Hierarchy h = invoker.extractHierarchy(projectIdentifier);
+		for(Pair p : h) {
+			String fileName = p.getFileName();
+			Long id = cache.getIdentifierFor(projectName, fileName);
+			if(id == null) {
+				Long fileIdentifier = invoker.findFileByName(projectIdentifier, fileName);
+				cache.cacheItem(projectName, fileName, fileIdentifier);
+			}
+		}
+		return h;
 	}
 
 	public String generateVHDL(String projectName, String fileName) throws UniformAppletException {
@@ -282,11 +301,13 @@ public class Communicator {
 				p = Preferences.deserialize(data);
 				cache.cachePreferences(id, p);
 			}
+			prefs.add(p);
 		}
 		return prefs;
 	}
 
 	public List<Preferences> getAllPreferences() throws UniformAppletException {
+		//return cache.getAllPreferences();
 		List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
 		
 		List<Preferences> preferences = new ArrayList<Preferences>();

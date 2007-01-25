@@ -7,7 +7,7 @@ import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.UserFileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
-import hr.fer.zemris.vhdllab.service.impl.dummy.VHDLLabManagerImpl;
+import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import junit.framework.JUnit4TestAdapter;
 

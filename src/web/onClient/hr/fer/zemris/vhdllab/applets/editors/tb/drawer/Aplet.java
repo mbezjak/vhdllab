@@ -128,7 +128,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		Signal[] signals=this.in_panel.podatci_t;
 		
 		for(Signal s : signals) {
-			data.append(s.toString()).append("\n");
+			data.append(s.toString().trim()).append("\n");
 		}
 		return data.toString();
 	}
