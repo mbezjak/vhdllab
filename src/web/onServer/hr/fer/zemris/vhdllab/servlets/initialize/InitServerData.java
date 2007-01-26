@@ -82,6 +82,9 @@ public class InitServerData {
 
 				o = new SingleOption(UserFileConstants.APPLET_OPENED_EDITORS, "Opened editors", "String", null, null, null);
 				preferences.setOption(o);
+				
+				o = new SingleOption(UserFileConstants.APPLET_OPENED_VIEWS, "Opened views", "String", null, null, null);
+				preferences.setOption(o);
 
 				GlobalFile file = labman.createNewGlobalFile(fileName, FileTypes.FT_APPLET);
 				labman.saveGlobalFile(file.getId(), preferences.serialize());

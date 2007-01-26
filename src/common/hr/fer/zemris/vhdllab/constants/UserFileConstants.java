@@ -10,5 +10,6 @@ public class UserFileConstants {
 	public static final String APPLET_VIEW_HEIGHT = "sidebar.height";
 	public static final String APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES = "save.dialog.always.save.resources";
 	public static final String APPLET_OPENED_EDITORS = "opened.editors";
+	public static final String APPLET_OPENED_VIEWS = "opened.views";
 	
 }

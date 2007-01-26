@@ -144,13 +144,24 @@ public class MainApplet
 		try {
 			List<Preferences> prefs = getPreferences(FileTypes.FT_APPLET);
 			for(Preferences p : prefs) {
-				SingleOption option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
-				if(option == null) continue;
-				List<FileIdentifier> files = Utilities.deserializeEditorInfo(option.getChosenValue());
-				for(FileIdentifier f : files) {
-					openEditor(f.getProjectName(), f.getFileName(), true, false);
+				SingleOption option;
+				
+				option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
+				if(option != null) {
+					List<FileIdentifier> files = Utilities.deserializeEditorInfo(option.getChosenValue());
+					for(FileIdentifier f : files) {
+						openEditor(f.getProjectName(), f.getFileName(), true, false);
+					}
 				}
-				break;
+				
+				option = p.getOption(UserFileConstants.APPLET_OPENED_VIEWS);
+				if(option != null) {
+					List<String> views = Utilities.deserializeViewInfo(option.getChosenValue());
+					for(String s : views) {
+						openView(s);
+					}
+				}
+
 			}
 		} catch (UniformAppletException ignored) {}
 	}
@@ -183,12 +194,26 @@ public class MainApplet
 		try {
 			List<Preferences> prefs = getPreferences(FileTypes.FT_APPLET);
 			for(Preferences p : prefs) {
-				SingleOption option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
-				if(option == null) continue;
-				String data = Utilities.serializeEditorInfo(getAllOpenedEditors());
-				option.setChosenValue(data);
+				SingleOption option;
+				
+				option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
+				if(option != null) {
+					String data = Utilities.serializeEditorInfo(getAllOpenedEditors());
+					option.setChosenValue(data);
+				}
+				
+				option = p.getOption(UserFileConstants.APPLET_OPENED_VIEWS);
+				if(option != null) {
+					List<String> views = new ArrayList<String>();
+					for(IView v : getAllOpenedViews()) {
+						String type = communicator.getViewType(v);
+						views.add(type);
+					}
+					String data = Utilities.serializeViewInfo(views);
+					option.setChosenValue(data);
+				}
+				
 				savePreferences(p);
-				break;
 			}
 		} catch (UniformAppletException ignored) {}
 		
@@ -1609,7 +1634,7 @@ public class MainApplet
 		echoStatusText(text);
 	}
 	
-	private boolean fileIsOpened(IEditor editor) {
+	private boolean editorIsOpened(IEditor editor) {
 		if(editor == null) return false;
 		return indexOfEditor(editor) != -1;
 	}
@@ -1622,7 +1647,7 @@ public class MainApplet
 	private List<IEditor> pickOpenedEditors(List<IEditor> editors) {
 		List<IEditor> openedEditors = new ArrayList<IEditor>();
 		for(IEditor e : editors) {
-			if(fileIsOpened(e)) {
+			if(editorIsOpened(e)) {
 				openedEditors.add(e);
 			}
 		}
@@ -1840,7 +1865,7 @@ public class MainApplet
 	private static class Utilities {
 		
 		private static final String PROJECT_FILE_SEPARATOR = "/";
-		private static final String SEPARATOR_FOR_EACH_EDITOR = "\n";
+		private static final String SEPARATOR_FOR_EACH_ROW = "\n";
 		
 		/**
 		 * Constructs FileIdentifiers out of <code>editors</code>.
@@ -1882,21 +1907,47 @@ public class MainApplet
 			// expecting file name and project name (together) to be 15 characters
 			StringBuilder sb = new StringBuilder(editors.size() * 15);
 			for(IEditor e : editors) {
-				sb.append(e.getProjectName()).append(PROJECT_FILE_SEPARATOR)
-					.append(e.getFileName()).append(SEPARATOR_FOR_EACH_EDITOR);
+				if(e.isSavable()) {
+					sb.append(e.getProjectName()).append(PROJECT_FILE_SEPARATOR)
+						.append(e.getFileName()).append(SEPARATOR_FOR_EACH_ROW);
+				}
 			}
-			sb.deleteCharAt(sb.length() - 1);
+			if(sb.length() != 0) {
+				sb.deleteCharAt(sb.length() - 1);
+			}
 			return sb.toString();
 		}
 		
 		public static List<FileIdentifier> deserializeEditorInfo(String data) {
 			if(data == null) return new ArrayList<FileIdentifier>(0);
-			String[] lines = data.split(SEPARATOR_FOR_EACH_EDITOR);
+			String[] lines = data.split(SEPARATOR_FOR_EACH_ROW);
 			List<FileIdentifier> files = new ArrayList<FileIdentifier>(lines.length);
 			for(String s : lines) {
 				String[] info = s.split(PROJECT_FILE_SEPARATOR);
 				FileIdentifier f = new FileIdentifier(info[0], info[1]);
 				files.add(f);
+			}
+			return files;
+		}
+		
+		public static String serializeViewInfo(List<String> views) {
+			// expecting view type to be 10 characters
+			StringBuilder sb = new StringBuilder(views.size() * 10);
+			for(String s : views) {
+				sb.append(s).append(SEPARATOR_FOR_EACH_ROW);
+			}
+			if(sb.length() != 0) {
+				sb.deleteCharAt(sb.length() - 1);
+			}
+			return sb.toString();
+		}
+		
+		public static List<String> deserializeViewInfo(String data) {
+			if(data == null) return new ArrayList<String>(0);
+			String[] lines = data.split(SEPARATOR_FOR_EACH_ROW);
+			List<String> files = new ArrayList<String>(lines.length);
+			for(String s : lines) {
+				files.add(s);
 			}
 			return files;
 		}
