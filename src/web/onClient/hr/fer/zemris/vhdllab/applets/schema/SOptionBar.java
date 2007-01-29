@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 
 import java.awt.Dimension;
