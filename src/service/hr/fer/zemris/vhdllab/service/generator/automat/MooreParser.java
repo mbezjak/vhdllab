@@ -40,7 +40,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 
 	private StringBuffer createBlok3(StringBuffer buffer) {
 		buffer.append("PROCESS(clock, reset)\nBEGIN\n\t")
-		.append("IF reset=").append(podatci.reset).append(" THEN\n\t\tstate_present <= ST_")
+		.append("IF reset='").append(podatci.reset).append("' THEN\n\t\tstate_present <= ST_")
 		.append(podatci.pocetnoStanje).append(";\n\t")
 		.append("ELSIF ");
 		if(podatci.clock.equalsIgnoreCase("falling_edge"))buffer.append("falling_edge(clock)");
@@ -102,7 +102,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 					buffer=generirajPrijelaz(buffer,pr);
 			}
 			if(!test)buffer.append("ELSE ");
-			buffer.append("state_next<=").append(st.ime).append(";\n\t\tEND IF;");
+			buffer.append("state_next<=ST_").append(st.ime).append(";\n\t\tEND IF;");
 		}
 		buffer.append("\n\t\t WHEN OTHERS => state_next <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
 		return buffer;
@@ -110,7 +110,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 
 	private StringBuffer generirajPrijelaz(StringBuffer buffer, Prijelaz pr) {
 		buffer=createCondition(buffer,pr.pobudaIzlaz);
-		buffer.append(" THEN state_next<=").append(pr.u).append(";\n\t\t");
+		buffer.append(" THEN state_next<=ST_").append(pr.u).append(";\n\t\t");
 		return buffer;
 	}
 
@@ -152,7 +152,14 @@ public class MooreParser implements IAutomatVHDLGenerator {
 						state=0;
 					}
 			}
+			if (state==1){
+				buffer.append(sig.getImeSignala());
+				buffer.append("(").append(start).append(" TO ").append(pom.length()-1).append(")");
+				buffer.append("=").append(navodnici).append(pom.substring(start,pom.length()))
+				.append(navodnici).append(" AND ");
+			}
 		}
+		
 		return pombuf;
 	}
 
