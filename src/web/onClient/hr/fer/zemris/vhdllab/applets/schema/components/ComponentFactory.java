@@ -24,7 +24,7 @@ public class ComponentFactory {
 		AbstractSchemaComponent component = factoryMap.get(componentName);
 		if (component != null) component = component.vCtr();
 		if (component == null)
-			throw new ComponentFactoryException("Component factory unable to generate requested object!");
+			throw new ComponentFactoryException("Component factory unable to generate requested object: " + componentName);
 		else
 			return component;
 	}

@@ -96,10 +96,10 @@ public class SOptionBar extends JToolBar {
 			@Override
 			public void takeAction() {
 				ArrayList<String> cmplist = new ArrayList<String>();
-				cmplist.add("AND sklop");
-				cmplist.add("OR sklop");
-				cmplist.add("XOR sklop");
-				cmplist.add("NOT sklop");
+				cmplist.add("Sklop_AND");
+				cmplist.add("Sklop_OR");
+				cmplist.add("Sklop_XOR");
+				cmplist.add("Sklop_NOT");
 				parentFrame.recreateComponentBar(cmplist);
 			} 
 			});
@@ -111,7 +111,7 @@ public class SOptionBar extends JToolBar {
 			@Override
 			public void takeAction() {
 				ArrayList<String> cmplist = new ArrayList<String>();
-				cmplist.add("MUX2nNA1");
+				cmplist.add("Sklop_MUX2nNA1");
 				parentFrame.recreateComponentBar(cmplist);
 			} 
 			});
@@ -159,8 +159,8 @@ public class SOptionBar extends JToolBar {
 		dialogEntitySetup = new JDialog(frame, "Entity Setup", true);
 		String[] st = {"Name","Direction","Type","From","To"};
 		EntityTable table = new EntityTable("Entity declaration:",st,"Entity name: ");
-		table.init();
 		table.setProjectContainer(parentFrame.getProjectContainer());
+		table.init();		
 		dialogEntitySetup.add(table);
 		dialogEntitySetup.setBounds(0, 0, 480, 230);
 		dialogEntitySetup.setLocation(250, 250);
