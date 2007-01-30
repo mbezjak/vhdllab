@@ -998,6 +998,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		if (schemaFile != null) return schemaFile.getProjectName();
 		return null;
 	}
+	
+	public ProjectContainer getProjectContainer() {
+		return projectContainer;
+	}
 
 	public String getFileName() {
 		if (schemaFile != null) return schemaFile.getFileName();

@@ -93,6 +93,8 @@ public class PrivremenaProbnaKlasa {
 		dialogEntitySetup = new JDialog(frame, "Entity Setup", true);
 		String[] st = {"Name","Direction","Type","From","To"};
 		EntityTable table = new EntityTable("Entity declaration:",st,"Entity name: ");
+		table.init();
+		table.setProjectContainer(null);
 		dialogEntitySetup.add(table);
 		dialogEntitySetup.setBounds(0, 0, 480, 230);
 		dialogEntitySetup.setLocation(150, 150);
