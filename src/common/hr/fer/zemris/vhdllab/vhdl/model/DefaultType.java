@@ -204,23 +204,23 @@ public class DefaultType implements Type {
 	 * @see hr.fer.zemris.vhdllab.vhdl.model.Type#isVector()
 	 */
 	public boolean isVector() {
-		return range != DefaultType.SCALAR_RANGE;
+		return !isScalar();
 	}
 	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.vhdl.model.Type#hasVectorDirectionDOWNTO()
 	 */
 	public boolean hasVectorDirectionDOWNTO() {
-		if( vectorDirection == DefaultType.SCALAR_VECTOR_DIRECTION ) return false;
-		return vectorDirection.equals("DOWNTO");
+		if(isScalar()) return false;
+		return vectorDirection.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_DOWNTO);
 	}
 	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.vhdl.model.Type#hasVectorDirectionTO()
 	 */
 	public boolean hasVectorDirectionTO() {
-		if( vectorDirection == DefaultType.SCALAR_VECTOR_DIRECTION ) return false;
-		return vectorDirection.equals("TO");
+		if(isScalar()) return false;
+		return vectorDirection.equalsIgnoreCase(DefaultType.VECTOR_DIRECTION_TO);
 	}
 	
 	/* (non-Javadoc)
@@ -257,9 +257,15 @@ public class DefaultType implements Type {
 	 */
 	@Override
 	public int hashCode() {
-		if( isVector() ) return typeName.toLowerCase().hashCode() ^ Integer.valueOf(getRangeFrom()).hashCode()
-							^ Integer.valueOf(getRangeTo()).hashCode() ^ vectorDirection.toUpperCase().hashCode();
-		else return typeName.toLowerCase().hashCode();
+		if(isVector()) {
+			return typeName.toLowerCase().hashCode() ^
+					Integer.valueOf(getRangeFrom()).hashCode() ^
+					Integer.valueOf(getRangeTo()).hashCode() ^
+					vectorDirection.toUpperCase().hashCode();
+		}
+		else {
+			return typeName.toLowerCase().hashCode();
+		}
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
@@ -61,6 +62,8 @@ public interface ProjectContainer {
 	 * 		project.
 	 */
 	String getSelectedProject();
+	
+	FileIdentifier getSelectedFile();
 	
 	/**
 	 * Ignore case and check if <code>s</code> is a correct entity name. Correct

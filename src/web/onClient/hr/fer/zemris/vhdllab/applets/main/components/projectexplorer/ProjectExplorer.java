@@ -4,6 +4,7 @@ package hr.fer.zemris.vhdllab.applets.main.components.projectexplorer;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.model.Pair;
@@ -924,5 +925,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 	public void refreshProject(String projectName) {
 		addProject(projectName);
+	}
+
+
+	public FileIdentifier getSelectedFile() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

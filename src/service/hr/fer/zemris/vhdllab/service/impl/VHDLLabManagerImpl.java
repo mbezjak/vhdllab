@@ -282,7 +282,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 		return new ArrayList<File>(visitedFiles);
 	}
-	private List<File> extractDependenciesDisp(File file) throws ServiceException {
+	public List<File> extractDependenciesDisp(File file) throws ServiceException {
 		IDependency depExtractor = null;
 		if(file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			depExtractor = new VHDLDependencyExtractor();

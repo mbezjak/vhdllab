@@ -1011,17 +1011,18 @@ public class Extractor {
 	
 	private static void createHierarchy(File file, Hierarchy h, VHDLLabManager labman) throws ServiceException {
 		if(file == null || file.getContent() == null) return;
-		String source = labman.generateVHDL(file);
-		Set<String> usedComponents = Extractor.extractUsedComponents(source);
-		for(String component : usedComponents) {
-			File usedComponentFile = labman.findByName(file.getProject().getId(), component);
-			Pair pair = h.getPair(component);
+//		String source = labman.generateVHDL(file);
+//		Set<String> usedComponents = Extractor.extractUsedComponents(source);
+		List<File> usedComponents = labman.extractDependenciesDisp(file);
+		usedComponents.remove(file);
+		for(File component : usedComponents) {
+			Pair pair = h.getPair(component.getFileName());
 			if(pair == null) {
-				h.addPair(new Pair(usedComponentFile.getFileName(), usedComponentFile.getFileType()));
-				pair = h.getPair(usedComponentFile.getFileName());
+				h.addPair(new Pair(component.getFileName(), component.getFileType()));
+				pair = h.getPair(component.getFileName());
 			}
 			pair.addParent(file.getFileName());
-			createHierarchy(usedComponentFile, h, labman);
+			createHierarchy(component, h, labman);
 		}
 	}
 	

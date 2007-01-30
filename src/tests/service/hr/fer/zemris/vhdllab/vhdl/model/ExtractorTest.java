@@ -199,7 +199,6 @@ public class ExtractorTest {
 		assertEquals(tocno,result);
 	}
 	
-	//@Ignore("Not yet implemented.")
 	@Test
 	public void extractHierarchy() throws Exception {
 		Hierarchy expected = new Hierarchy(project.getProjectName());

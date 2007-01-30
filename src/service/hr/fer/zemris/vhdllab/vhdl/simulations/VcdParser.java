@@ -182,7 +182,9 @@ public class VcdParser
 			}
 			else 
 			{	
-				scopeName.removeFirst ();
+				if(!scopeName.isEmpty()) {
+					scopeName.removeFirst ();
+				}
 			}
 			index++;
 		}

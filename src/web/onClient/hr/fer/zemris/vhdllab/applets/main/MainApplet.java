@@ -1096,9 +1096,9 @@ public class MainApplet
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
-		/*Hierarchy h = communicator.extractHierarchy(projectName);
-		JOptionPane.showMessageDialog(this, h.toString());
-		return h;*/
+//		Hierarchy h = communicator.extractHierarchy(projectName);
+//		JOptionPane.showMessageDialog(this, h.toString());
+//		return h;
 		return communicator.extractHierarchy(projectName);
 	}
 
@@ -1160,6 +1160,10 @@ public class MainApplet
 	
 	public String getSelectedProject() {
 		return projectExplorer.getSelectedProject();
+	}
+	
+	public FileIdentifier getSelectedFile() {
+		return projectExplorer.getSelectedFile();
 	}
 	
 	public List<String> getAllProjects() {
@@ -1415,6 +1419,10 @@ public class MainApplet
 
 	
 	public void createNewFileInstance(String type) throws UniformAppletException {
+		if(getSelectedProject() == null) {
+			String text = bundle.getString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
+			echoStatusText(text);
+		}
 		// Initialization of a wizard
 		IWizard wizard = communicator.getEditor(type).getWizard();
 		if(wizard == null) throw new NullPointerException("No wizard for type: " + type);

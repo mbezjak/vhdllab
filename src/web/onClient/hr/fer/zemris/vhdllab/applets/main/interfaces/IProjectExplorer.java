@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+
 import java.util.List;
 
 public interface IProjectExplorer {
@@ -26,6 +28,7 @@ public interface IProjectExplorer {
 	 * @return a current active project or <code>null</code> if there is no active project.
 	 */
 	String getSelectedProject();
+	FileIdentifier getSelectedFile();
 	List<String> getAllProjects();
 	List<String> getFilesByProject(String projectName);
 	void refreshProject(String projectName);

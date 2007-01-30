@@ -130,6 +130,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		for(Signal s : signals) {
 			data.append(s.toString().trim()).append("\n");
 		}
+//		JOptionPane.showMessageDialog(this, data.toString());
 		return data.toString();
 	}
 

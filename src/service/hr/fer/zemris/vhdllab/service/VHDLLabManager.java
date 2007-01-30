@@ -304,15 +304,24 @@ public interface VHDLLabManager {
 	public CircuitInterface extractCircuitInterface(File file) throws ServiceException;
 	
 	/**
-	 * Returns a list of files on which specified file depends on. Return value will
-	 * never be <code>null</code>, although it can be an empty list if file has no
-	 * dependencies.
+	 * Returns a list of files on which specified file depends on (including transitive
+	 * dependencies). Return value will never be <code>null</code>, although it can be
+	 * an empty list if file has no dependencies.
 	 * @param file a file for which dependencies must be extracted
 	 * @return a list of files on which specified file depends on
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public List<File> extractDependencies(File file) throws ServiceException;
 	
+	/**
+	 * Returns a list of files on which only specified file depends on (transitive
+	 * dependencies excluded). Return value will never be <code>null</code>, although
+	 * it can be an empty list if file has no dependencies.
+	 * @param file a file for which dependencies must be extracted
+	 * @return a list of files on which only specified file depends on
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public List<File> extractDependenciesDisp(File file) throws ServiceException;
 	/**
 	 * Returns hierarchy of specified project. Return value will never be <code>null</code>.
 	 * @param project a project for which to extract hierarchy
