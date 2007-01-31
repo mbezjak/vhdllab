@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.constants;
+package hr.fer.zemris.vhdllab.applets.main.constant;
 
 /**
  * Constants for helping to deal with resource bundles are declared here.

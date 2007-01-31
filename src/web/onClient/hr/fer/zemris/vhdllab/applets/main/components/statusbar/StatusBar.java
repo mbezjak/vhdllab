@@ -20,9 +20,7 @@ import javax.swing.Timer;
 
 public class StatusBar extends JPanel implements IStatusBar {
 
-	/**
-	 * Serial Version UID
-	 */
+	/** Serial Version UID */
 	private static final long serialVersionUID = 9102232350033953560L;
 
 	private JLabel statusText;

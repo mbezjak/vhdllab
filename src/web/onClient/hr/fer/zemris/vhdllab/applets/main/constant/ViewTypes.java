@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.constants;
+package hr.fer.zemris.vhdllab.applets.main.constant;
 
 public class ViewTypes {
 

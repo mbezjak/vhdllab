@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.dialogs;
+package hr.fer.zemris.vhdllab.applets.main.dialog;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
