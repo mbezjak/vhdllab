@@ -2,9 +2,9 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
-import hr.fer.zemris.vhdllab.applets.main.components.dummy.SideBar;
-import hr.fer.zemris.vhdllab.applets.main.components.projectexplorer.ProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.components.statusbar.StatusBar;
+import hr.fer.zemris.vhdllab.applets.main.component.dummy.SideBar;
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.ProjectExplorer;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constant.ViewTypes;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
