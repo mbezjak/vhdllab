@@ -18,6 +18,10 @@ import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+/**
+ * 
+ * @author Miro Bezjak
+ */
 public class StatusBar extends JPanel implements IStatusBar {
 
 	/** Serial Version UID */
@@ -26,7 +30,7 @@ public class StatusBar extends JPanel implements IStatusBar {
 	private JLabel statusText;
 	private JLabel timeLabel;
 
-	private final String TIME = " HH:mm ";
+	private static final String TIME = " HH:mm ";
     
 	public StatusBar() {
 		statusText = new JLabel();
