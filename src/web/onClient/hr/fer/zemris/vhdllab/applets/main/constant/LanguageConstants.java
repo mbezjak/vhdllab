@@ -59,6 +59,7 @@ public class LanguageConstants {
 	public static final String MENU_VIEW_SHOW_VIEW = "menu.view.show.view";
 	public static final String MENU_VIEW_SHOW_VIEW_COMPILATION_ERRORS = "menu.view.show.view.compilation.errors";
 	public static final String MENU_VIEW_SHOW_VIEW_SIMULATION_ERRORS = "menu.view.show.view.simulation.errors";
+	public static final String MENU_VIEW_SHOW_VIEW_STATUS_HISTORY = "menu.view.show.view.status.history";
 	public static final String MENU_TOOLS_COMPILE_WITH_DIALOG = "menu.tools.compile.with.dialog";
 	public static final String MENU_TOOLS_COMPILE_ACTIVE = "menu.tools.compile.active";
 	public static final String MENU_TOOLS_COMPILE_HISTORY = "menu.tools.compile.history";
