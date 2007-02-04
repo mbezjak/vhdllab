@@ -88,5 +88,10 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 	protected String serializeComponentSpecific() {
 		return "";
 	}
+
+	@Override
+	public boolean isToBeSerialized() {
+		return true;
+	}
 	
 }

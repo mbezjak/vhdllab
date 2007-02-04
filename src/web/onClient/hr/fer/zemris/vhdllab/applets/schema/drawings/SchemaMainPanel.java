@@ -573,6 +573,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	
 	public void handleLeftClickOnSchema(MouseEvent e) {
 		deletePopup(e);
+		System.out.println("Klik.");
 		if (optionbar.isDrawWireSelected()) {
 			schemaHasBeenModified = true;
 			if (projectContainer != null && schemaFile != null) 
@@ -669,6 +670,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			}
 			return;
 		}
+		System.out.println("Klik - zica nije izabrana.");
 		String selectedInstStr = compbar.getSelectedComponentName();
 		if (selectedInstStr != null) {
 			schemaHasBeenModified = true;
@@ -688,7 +690,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				e1.printStackTrace();
 			}
 		} else {
-			
+			selectComponent(e);
 		}
 	}
 	
@@ -917,7 +919,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public SchemaSerializableInformation getSchemaSerializableInfo() {
 		SchemaSerializableInformation info = new SchemaSerializableInformation();
 		
-		info.setCircuitInterface(circuitInterface);		
+		info.setCircuitInterface(circuitInterface);
 		//info.circuitInterface = circuitInterface;
 		
 		info.setComponentNameCounter(AbstractSchemaComponent.getCounter());		
@@ -952,8 +954,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		
 		//TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne i interface
 		if (schemaFile != null) {
-				@SuppressWarnings("unused")
-				SDeserialization deserialize=new SDeserialization(schemaFile.getContent(),this);		
+				try {
+					@SuppressWarnings("unused")
+					SDeserialization deserialize=new SDeserialization(schemaFile.getContent(),this);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
 		}
 		drawingCanvas.repaint();
 	}

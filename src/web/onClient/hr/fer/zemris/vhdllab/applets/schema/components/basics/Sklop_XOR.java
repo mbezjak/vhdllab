@@ -208,5 +208,10 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 	protected String serializeComponentSpecific() {
 		return "#" + brojUlaza + "#";
 	}
+
+	@Override
+	public boolean isToBeSerialized() {
+		return true;
+	}
 	
 }

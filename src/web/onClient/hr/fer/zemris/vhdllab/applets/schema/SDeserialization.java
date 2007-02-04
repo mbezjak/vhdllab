@@ -7,7 +7,14 @@ import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingComponentEnvel
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Direction;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -19,7 +26,7 @@ public class SDeserialization {
 	private Properties globalPropery=null;
 	private SchemaMainPanel mainPanel=null;
 	
-	public SDeserialization(String serializedXml, SchemaMainPanel mainPanel){
+	public SDeserialization(String serializedXml, SchemaMainPanel mainPanel) throws Exception{
 		if(mainPanel!=null && serializedXml.length()!=0){
 			globalPropery=XMLUtil.deserializeProperties(serializedXml);
 			this.mainPanel=mainPanel;
@@ -28,21 +35,29 @@ public class SDeserialization {
 			throw new IllegalArgumentException("Krivi parametri za deserializer");
 	}
 	
-	private void deserialize() {
-		
+	private void deserialize() throws Exception {
+		mainPanel.getSchemaDrawingCanvas().ResetCanvas();
 		entity(XMLUtil.deserializeProperties(globalPropery.getProperty(SSerialization.SCHEMATIC_ENTITY)));
 		components();
 		wire();
 	}
 
-	private void entity(Properties entity){
-		//trenutno neznam kaj bi s ovim!		
-		System.out.println("Deserialization: EntityName:"+entity.getProperty("name"));
-		String portName;
+	private void entity(Properties entity) throws Exception {
+		String entityName = entity.getProperty("name");
+		
+		String portName = null;
+		Direction portDir = null;
+		Type portType = null;
+		List<Port> portlist = new ArrayList<Port>();
 		
 		for(int i=1;true;i++){
 			portName=entity.getProperty("portName"+i,"");
 			if (portName.equals(""))break;
+			
+			String pds = entity.getProperty("portDirection" + i);
+			portDir = getDirection(pds);
+			
+			
 			
 			/*System.out.println("Deserialization: PortName:"+portName);
 			System.out.println("Deserialization: PortDirection"+entity.getProperty("portDirection"+i));
@@ -51,6 +66,17 @@ public class SDeserialization {
 			System.out.println("Deserialization: PortRangeTo:"+entity.getProperty("portRangeTo"+i,""));
 			System.out.println("Deserialization: PortVectorDirection:"+entity.getProperty("portVectorDirection"+i,""));*/
 		}
+		
+		CircuitInterface interf = new DefaultCircuitInterface(entityName);
+		mainPanel.setCircuitInterface(interf);
+	}
+	
+	private Direction getDirection(String pds) throws Exception {
+		if (pds.equals("IN")) return Direction.IN;
+		if (pds.equals("OUT")) return Direction.OUT;
+		if (pds.equals("INOUT")) return Direction.INOUT;
+		if (pds.equals("BUFFER")) return Direction.BUFFER;
+		throw new Exception("Unsupported direction string: " + pds);
 	}
 	
 	

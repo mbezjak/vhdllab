@@ -197,5 +197,10 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	protected String serializeComponentSpecific() {
 		return "#" + brojUlaza + "#";
 	}
+
+	@Override
+	public boolean isToBeSerialized() {
+		return true;
+	}
 	
 }

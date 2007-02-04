@@ -51,6 +51,17 @@ public class SOptionBar extends JToolBar {
 		setEntityButton = new JButton("Korisnicki sklopovi...");
 		this.add(setEntityButton);
 		
+		setEntityButton = new JButton("Izgeneriraj VHDL");
+		this.add(setEntityButton);
+		
+		setEntityButton = new JButton("Serijaliziraj u konzolu");
+		setEntityButton.addActionListener(new SerializeListener());
+		this.add(setEntityButton);
+		
+		setEntityButton = new JButton("Deserijaliziraj...");
+		setEntityButton.addActionListener(new DeserializeListener());
+		this.add(setEntityButton);
+		
 		drawWireButton = new JToggleButton("Crtaj zice");
 		drawWireButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -154,13 +165,42 @@ public class SOptionBar extends JToolBar {
 		}
 	}
 	
+	private class SerializeListener implements ActionListener {
+		public SerializeListener() {
+		}
+		public void actionPerformed(ActionEvent ae) {
+			SchemaSerializableInformation info = parentFrame.getSchemaSerializableInfo();
+			SSerialization serialization = new SSerialization(info);
+			String s = serialization.getSerializedData();
+			System.out.println(s);
+		}
+	}
+	
+	private class DeserializeListener implements ActionListener {
+		public DeserializeListener() {
+		}
+		public void actionPerformed(ActionEvent ae) {
+			SchemaSerializableInformation info = parentFrame.getSchemaSerializableInfo();
+			SSerialization serialization = new SSerialization(info);
+			String s = serialization.getSerializedData();
+			
+			try {
+				SDeserialization deserialization = new SDeserialization(s, parentFrame);
+			} catch (Exception e) {
+				System.out.print(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void showEntitySetupper() {
 		Frame frame = JOptionPane.getFrameForComponent(parentFrame);
 		dialogEntitySetup = new JDialog(frame, "Entity Setup", true);
 		String[] st = {"Name","Direction","Type","From","To"};
 		EntityTable table = new EntityTable("Entity declaration:",st,"Entity name: ");
 		table.setProjectContainer(parentFrame.getProjectContainer());
-		table.init();		
+		table.init();
+		if (parentFrame.getCircuitInterface() != null) table.setData(parentFrame.getCircuitInterface());
 		dialogEntitySetup.add(table);
 		dialogEntitySetup.setBounds(0, 0, 480, 230);
 		dialogEntitySetup.setLocation(250, 250);

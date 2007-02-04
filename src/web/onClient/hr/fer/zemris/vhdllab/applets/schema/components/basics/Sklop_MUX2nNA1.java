@@ -197,5 +197,10 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	protected String serializeComponentSpecific() {
 		return "#" + brojSelUlaza + "#";
 	}
+
+	@Override
+	public boolean isToBeSerialized() {
+		return true;
+	}
 	
 }

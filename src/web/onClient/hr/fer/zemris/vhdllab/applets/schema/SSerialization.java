@@ -54,7 +54,6 @@ public class SSerialization {
 		globalProperties.setProperty(SCHEMATIC_ENTITY, XMLUtil.serializeProperties(Entity(circuitInterface)));
 		globalProperties.setProperty(SCHEMATIC_COMPONENTS, XMLUtil.serializeProperties(Components(envelopeList)));
 		globalProperties.setProperty(SCHEMATIC_WIRES, XMLUtil.serializeProperties(Wires(wireList)));
-		
 	}
 	
 	private Properties Entity(CircuitInterface ci){		
@@ -94,9 +93,11 @@ public class SSerialization {
 		Properties buff=new Properties();
 		
 		int counter=1;
-		for(SchemaDrawingComponentEnvelope envelope:envelopes){			
-			buff.setProperty(SCHEMATIC_COMPONENTS_COMPONENT+counter, envelope.serialize());
-			counter++;
+		for(SchemaDrawingComponentEnvelope envelope:envelopes){		
+			if (envelope.getComponent().isToBeSerialized()) { 
+				buff.setProperty(SCHEMATIC_COMPONENTS_COMPONENT+counter, envelope.serialize());
+				counter++;
+			}
 		}
 		
 		return buff;

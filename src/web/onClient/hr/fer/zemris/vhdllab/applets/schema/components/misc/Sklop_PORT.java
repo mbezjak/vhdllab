@@ -200,4 +200,9 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 		}
 		return portnum;
 	}
+
+	@Override
+	public boolean isToBeSerialized() {
+		return false;
+	}
 }

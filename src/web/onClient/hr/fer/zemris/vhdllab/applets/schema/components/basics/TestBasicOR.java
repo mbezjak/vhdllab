@@ -65,4 +65,10 @@ public class TestBasicOR extends AbstractSchemaComponent {
 		
 	}
 
+	@Override
+	public boolean isToBeSerialized() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

@@ -301,6 +301,8 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	
 	public abstract void drawSpecific(SchemaDrawingAdapter adapter);
 	
+	public abstract boolean isToBeSerialized();
+	
 	/**
 	 * 
 	 * @param serial
