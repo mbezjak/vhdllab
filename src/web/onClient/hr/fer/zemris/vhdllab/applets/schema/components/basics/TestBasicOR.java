@@ -71,4 +71,16 @@ public class TestBasicOR extends AbstractSchemaComponent {
 		return true;
 	}
 
+	@Override
+	public boolean isToBeMapped() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getEntityBlock() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

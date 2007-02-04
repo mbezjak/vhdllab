@@ -202,5 +202,15 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	public boolean isToBeSerialized() {
 		return true;
 	}
+
+	@Override
+	public boolean isToBeMapped() {
+		return true;
+	}
+
+	@Override
+	public String getEntityBlock() {
+		return "/tgeneric()/n/tport()";
+	}
 	
 }

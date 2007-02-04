@@ -205,4 +205,14 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 	public boolean isToBeSerialized() {
 		return false;
 	}
+
+	@Override
+	public boolean isToBeMapped() {
+		return false;
+	}
+
+	@Override
+	public String getEntityBlock() {
+		return null;
+	}
 }

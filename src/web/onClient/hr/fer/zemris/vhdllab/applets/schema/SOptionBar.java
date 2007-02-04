@@ -51,7 +51,8 @@ public class SOptionBar extends JToolBar {
 		setEntityButton = new JButton("Korisnicki sklopovi...");
 		this.add(setEntityButton);
 		
-		setEntityButton = new JButton("Izgeneriraj VHDL");
+		setEntityButton = new JButton("Izgeneriraj VHDL u konzolu");
+		setEntityButton.addActionListener(new VHDLGenerateListener());
 		this.add(setEntityButton);
 		
 		setEntityButton = new JButton("Serijaliziraj u konzolu");
@@ -162,6 +163,16 @@ public class SOptionBar extends JToolBar {
 		}
 		public void actionPerformed(ActionEvent ae) {
 			showEntitySetupper();
+		}
+	}
+	
+	private class VHDLGenerateListener implements ActionListener {
+		public VHDLGenerateListener() {
+		}
+		public void actionPerformed(ActionEvent ae) {
+			SSInfo2VHDL converter = new SSInfo2VHDL();
+			String vhdlcode = converter.generateVHDLFromSerializableInfo(parentFrame.getSchemaSerializableInfo());
+			System.out.println(vhdlcode);
 		}
 	}
 	

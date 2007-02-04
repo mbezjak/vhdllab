@@ -253,6 +253,7 @@ public abstract class AbstractSchemaWire {
 	
 	protected abstract String serializeSpecific();
 	protected abstract boolean deserializeSpecific(String serial);
+	public abstract String getSignalType();
 	
 	
 	// neki getteri i setteri

@@ -17,4 +17,9 @@ public class SimpleSchemaWire extends AbstractSchemaWire {
 		return true;
 	}
 
+	@Override
+	public String getSignalType() {
+		return "STD_LOGIC";
+	}
+
 }

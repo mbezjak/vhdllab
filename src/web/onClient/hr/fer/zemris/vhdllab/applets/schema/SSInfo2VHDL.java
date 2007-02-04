@@ -59,16 +59,27 @@ public class SSInfo2VHDL {
 		sb.append("ARCHITECTURE structural OF ").append(info.getCircuitInterface().getEntityName()).append(" IS\n");
 		
 		// proiterirati kroz zice i stvoriti na temelju njih signale
-		ArrayList<AbstractSchemaWire> wirelist = info.wireList;
-		for (AbstractSchemaWire wire : wirelist) {
-			sb.append("\tSIGNAL\t").append(wire.getWireName()).append("\t: STD_LOGIC;\n");
-		}
+		appendComponents();
+		appendSignals();
 		
 		sb.append("\nBEGIN\n");
 		
-		// proiterirati kroz sklopove i realizirati mapiranje
+		appendMappings();
 		
-		sb.append("\nEND\n");
+		sb.append("\nEND structural;\n");
+	}
+	
+	private void appendComponents() {
+	}
+	
+	private void appendSignals() {
+		ArrayList<AbstractSchemaWire> wirelist = info.wireList;
+		for (AbstractSchemaWire wire : wirelist) {
+			sb.append("\tSIGNAL\t").append(wire.getWireName()).append("\t: " + wire.getSignalType() + ";\n");
+		}
+	}
+	
+	private void appendMappings() {
 	}
 }
 

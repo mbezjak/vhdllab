@@ -307,6 +307,10 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	
 	public abstract boolean isToBeSerialized();
 	
+	public abstract boolean isToBeMapped();
+	
+	public abstract String getEntityBlock();
+	
 	/**
 	 * 
 	 * @param serial

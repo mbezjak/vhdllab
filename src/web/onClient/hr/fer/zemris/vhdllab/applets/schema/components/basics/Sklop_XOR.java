@@ -213,5 +213,15 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 	public boolean isToBeSerialized() {
 		return true;
 	}
+
+	@Override
+	public boolean isToBeMapped() {
+		return true;
+	}
+
+	@Override
+	public String getEntityBlock() {
+		return "/tgeneric()/n/tport()";
+	}
 	
 }
