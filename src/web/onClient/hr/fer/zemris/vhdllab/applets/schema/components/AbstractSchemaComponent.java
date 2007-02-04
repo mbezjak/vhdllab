@@ -47,6 +47,10 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	static {
 		instanceNameSet = new HashSet();
 	}
+	public static void clearInstanceNameSet() {
+		if (instanceNameSet != null) instanceNameSet.clear();
+	}
+	
 	protected Ptr<Object> pComponentInstanceName;
 	public String getComponentInstanceName() {
 		return (String)pComponentInstanceName.val;

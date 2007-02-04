@@ -77,16 +77,20 @@ public abstract class AbstractSchemaWire {
 		this.wireName = name;
 	}
 	
-	static protected HashSet<String> nameSet;
-	static protected Integer counter;
+	protected static HashSet<String> nameSet;
+	protected static Integer counter;
 	static {
 		nameSet = new HashSet<String>();
 		counter = 0;
 	}
-	static protected String generateNewName(String oldname) {
+	protected static String generateNewName(String oldname) {
 		counter++;
 		return oldname + counter.toString();
 	}
+	public static void clearWireNameSet() {
+		if (nameSet != null) nameSet.clear();
+	}
+	
 	
 	// KONSTRUKTORI
 	

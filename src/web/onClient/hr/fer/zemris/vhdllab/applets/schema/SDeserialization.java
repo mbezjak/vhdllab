@@ -128,7 +128,7 @@ public class SDeserialization {
 			serData=c.getProperty(SSerialization.SCHEMATIC_WIRES_WIRE+i);
 			if(serData==null)break;
 			System.out.println("Deserijalizacija: wire source:"+serData);
-			wire=new SimpleSchemaWire("w");//prilicno blesavo, ja neznam unaprijed ime zice
+			wire=new SimpleSchemaWire("wssdkgnsdsmasmnfxzsasdqwhjksyopfgh");//prilicno blesavo, ja neznam unaprijed ime zice
 			wire.deserialize(serData);
 			canvas.addWire(wire);
 		}	

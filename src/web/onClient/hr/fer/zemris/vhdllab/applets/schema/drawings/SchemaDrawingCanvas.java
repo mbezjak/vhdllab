@@ -90,6 +90,9 @@ public class SchemaDrawingCanvas extends JComponent {
 		wires = new ArrayList<AbstractSchemaWire>();
 		rectangleStack = new Stack();
 		lineStack = new Stack();
+		AbstractSchemaComponent.clearInstanceNameSet();
+		AbstractSchemaWire.clearWireNameSet();
+				
 		initGUI();
 	}
 			
