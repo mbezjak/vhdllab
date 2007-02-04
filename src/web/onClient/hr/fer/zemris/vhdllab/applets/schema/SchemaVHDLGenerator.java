@@ -12,10 +12,8 @@ import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
  */
 public class SchemaVHDLGenerator implements IVHDLGenerator {
 	public String generateVHDL(File f, VHDLLabManager labman) throws ServiceException {
-		// TODO Auto-generated method stub
-		// SchemaSerializableInformation info = getSerializableInfo(f, labman); Rajakovic
-		// return generateVHDLFromSerializableInfo(info);
-		return null;
+		SchemaSerializableInformation info = getSerializableInfo(f, labman);
+		return generateVHDLFromSerializableInfo(info);
 	}
 	
 	// iz internog formata gradi SchemaSerializableInformation

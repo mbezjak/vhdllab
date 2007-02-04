@@ -9,6 +9,8 @@ import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema.wires.SimpleSchemaWire;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
@@ -57,17 +59,30 @@ public class SDeserialization {
 			String pds = entity.getProperty("portDirection" + i);
 			portDir = getDirection(pds);
 			
+			String stip = entity.getProperty("portType"+i);
+			int[] range = null;
+			String vecdir = null;
+			if (!stip.equalsIgnoreCase("std_logic")) {
+				int firstbound = Integer.parseInt(entity.getProperty("portRangeFrom"+i,""));
+				int secondbound = Integer.parseInt(entity.getProperty("portRangeTo"+i,""));
+				int[] arr = {firstbound, secondbound};
+				range = arr;
+				vecdir = entity.getProperty("portVectorDirection"+i,"");
+			}
+			Type tip = new DefaultType(stip, range, vecdir);
+			
+			portlist.add(new DefaultPort(portName, portDir, tip));
 			
 			
-			/*System.out.println("Deserialization: PortName:"+portName);
-			System.out.println("Deserialization: PortDirection"+entity.getProperty("portDirection"+i));
+			System.out.println("Deserialization: PortName: "+portName);
+			System.out.println("Deserialization: PortDirection "+entity.getProperty("portDirection"+i));
 			System.out.println("Deserialization: PortType:"+entity.getProperty("portType"+i));
 			System.out.println("Deserialization: PortRangeFrom:"+entity.getProperty("portRangeFrom"+i,""));
 			System.out.println("Deserialization: PortRangeTo:"+entity.getProperty("portRangeTo"+i,""));
-			System.out.println("Deserialization: PortVectorDirection:"+entity.getProperty("portVectorDirection"+i,""));*/
+			System.out.println("Deserialization: PortVectorDirection:"+entity.getProperty("portVectorDirection"+i,""));
 		}
 		
-		CircuitInterface interf = new DefaultCircuitInterface(entityName);
+		CircuitInterface interf = new DefaultCircuitInterface(entityName, portlist);
 		mainPanel.setCircuitInterface(interf);
 	}
 	
