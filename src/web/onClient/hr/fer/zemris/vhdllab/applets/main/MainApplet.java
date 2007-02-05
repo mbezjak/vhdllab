@@ -1533,14 +1533,17 @@ public class MainApplet
 			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH);
 			size = Double.parseDouble(o.getChosenValue());
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
+			savePreferences(o.getParent());
 
 			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_SIDEBAR_WIDTH);
 			size = Double.parseDouble(o.getChosenValue());
 			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
+			savePreferences(o.getParent());
 			
 			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_VIEW_HEIGHT);
 			size = Double.parseDouble(o.getChosenValue());
 			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
+			savePreferences(o.getParent());
 		} catch (Exception e) {
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * 0.15));
 			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * 0.75));
@@ -1833,6 +1836,7 @@ public class MainApplet
 			try {
 				SingleOption singleOption = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES);
 				singleOption.setChosenValue(String.valueOf(shouldAutoSave));
+				savePreferences(singleOption.getParent());
 			} catch (UniformAppletException e) {}
 		}
 		int option = dialog.getOption();

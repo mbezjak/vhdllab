@@ -102,26 +102,7 @@ public class StatusHistoryView extends JPanel implements IView {
 	 * This method is ignored since this View has much better way of accessing
 	 * information.
 	 */
-	public void appendData(Object data) {
-		/*if(data == null) return;
-		if(!(data instanceof String)) {
-			throw new IllegalArgumentException("Unknown data!");
-		}
-		String text = (String) data;
-		StringBuilder sb = new StringBuilder(text.length() + 10);
-		sb.append(getCurrentTime()).append("  ")
-		.append(text).append("\n");
-		StyledDocument doc = (StyledDocument) textPane.getDocument();
-		Style style = doc.addStyle("new Style", null);
-		StyleConstants.setForeground(style, Color.RED);
-		try {
-			doc.insertString(doc.getLength(), sb.toString(), style);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-		textPane.setCaretPosition(doc.getLength());*/
-
-	}
+	public void appendData(Object data) {}
 
 	/**
 	 * This method is ignored since this View has much better way of accessing

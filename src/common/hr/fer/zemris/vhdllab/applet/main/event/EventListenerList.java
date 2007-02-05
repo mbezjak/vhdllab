@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main.event;
+package hr.fer.zemris.vhdllab.applet.main.event;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +20,14 @@ public class EventListenerList<T extends EventListener> {
 	 */
 	public EventListenerList() {
 		this.listenerList = new ArrayList<T>();
+	}
+	
+	/**
+	 * Constructor.
+	 * @param size initial size of event listeners
+	 */
+	public EventListenerList(int size) {
+		this.listenerList = new ArrayList<T>(size);
 	}
 
 	/**

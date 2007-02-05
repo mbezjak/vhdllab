@@ -55,6 +55,7 @@ public class Preferences {
 			String s = p.getProperty(SERIALIZATION_KEY_SINGLE_OPTION + "." + i);
 			if(s == null) break;
 			SingleOption o = SingleOption.deserialize(s);
+			o.setParent(pref);
 			pref.setOption(o);
 		}
 		return pref;

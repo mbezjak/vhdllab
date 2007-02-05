@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.component.statusbar;
 
-import hr.fer.zemris.vhdllab.applets.main.event.EventListenerList;
+import hr.fer.zemris.vhdllab.applet.main.event.EventListenerList;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -135,7 +135,7 @@ public class StatusBar extends JPanel implements IStatusBar {
 	 */
 	protected void fireStatusChanged() {
 		StatusContent c = new StatusContent(statusText.getText(), messageType);
-		for(StatusListener l : statusListenerList.getListeners()) {
+		for(StatusListener l : getStatusListeners()) {
 			l.statusChanged(c);
 		}
 	}

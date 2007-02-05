@@ -80,10 +80,10 @@ public class InitServerData {
 				o = new SingleOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES, "Always save resources", "Boolean", values, "false", "false");
 				preferences.setOption(o);
 
-				o = new SingleOption(UserFileConstants.APPLET_OPENED_EDITORS, "Opened editors", "String", null, null, null);
+				o = new SingleOption(UserFileConstants.APPLET_OPENED_EDITORS, "Opened editors", false, "String", null, null, null);
 				preferences.setOption(o);
 				
-				o = new SingleOption(UserFileConstants.APPLET_OPENED_VIEWS, "Opened views", "String", null, null, null);
+				o = new SingleOption(UserFileConstants.APPLET_OPENED_VIEWS, "Opened views", false, "String", null, null, null);
 				preferences.setOption(o);
 
 				GlobalFile file = labman.createNewGlobalFile(fileName, FileTypes.FT_APPLET);
@@ -111,7 +111,7 @@ public class InitServerData {
 				sb.append("Project1/mux41\n")
 					.append("Project1/mux41_tb\n")
 					.append("Project1/Automat1\n");
-				SingleOption o = new SingleOption(UserFileConstants.APPLET_OPENED_EDITORS, "Opened editors", "String", null, null, sb.toString());
+				SingleOption o = new SingleOption(UserFileConstants.APPLET_OPENED_EDITORS, "Opened editors", false, "String", null, null, sb.toString());
 				preferences.setOption(o);
 
 				UserFile file = labman.createNewUserFile(userId, "Applet Settings", FileTypes.FT_APPLET);
