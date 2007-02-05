@@ -1,19 +1,28 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
+import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingComponentEnvelope;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SSInfo2VHDL {
 	private StringBuilder sb = null;
 	private SchemaSerializableInformation info;
+	private Map<String, HashMap<Integer, String>> mapping;
+	private Set<String> compTypeSet;
 	
 	public String generateVHDLFromSerializableInfo(SchemaSerializableInformation ssInfo) {
 		sb = new StringBuilder();
 		info = ssInfo;
+		mapping = new HashMap<String, HashMap<Integer, String>>();
+		compTypeSet = new HashSet<String>();
 		
 		appendEntityBlock();
 		appendEmptyRows();
@@ -59,7 +68,7 @@ public class SSInfo2VHDL {
 		sb.append("ARCHITECTURE structural OF ").append(info.getCircuitInterface().getEntityName()).append(" IS\n");
 		
 		// proiterirati kroz zice i stvoriti na temelju njih signale
-		appendComponents();
+		appendAndMapComponents();
 		appendSignals();
 		
 		sb.append("\nBEGIN\n");
@@ -69,17 +78,41 @@ public class SSInfo2VHDL {
 		sb.append("\nEND structural;\n");
 	}
 	
-	private void appendComponents() {
-	}
-	
-	private void appendSignals() {
-		ArrayList<AbstractSchemaWire> wirelist = info.wireList;
-		for (AbstractSchemaWire wire : wirelist) {
-			sb.append("\tSIGNAL\t").append(wire.getWireName()).append("\t: " + wire.getSignalType() + ";\n");
+	private void appendAndMapComponents() {
+		List<SchemaDrawingComponentEnvelope> envlist = info.getEnvelopeList();
+		for (SchemaDrawingComponentEnvelope env : envlist) {
+			AbstractSchemaComponent comp = env.getComponent();
+			String compTypeName = comp.getComponentName();
+			
+			if (!compTypeSet.contains(compTypeName)) {
+				compTypeSet.add(compTypeName);
+				if (comp.hasComponentBlock()) {
+					sb.append("COMPONENT ").append(compTypeName).append('\n');
+					sb.append(comp.getEntityBlock());
+					sb.append("\nEND COMPONENT;\n");
+				}
+			}
+			
+			mapping.put(comp.getComponentInstanceName(), new HashMap<Integer, String>());
 		}
 	}
 	
+	private void appendSignals() {
+		List<AbstractSchemaWire> wirelist = info.wireList;
+		for (AbstractSchemaWire wire : wirelist) {
+			sb.append("SIGNAL\t").append(wire.getWireName()).append("\t: " + wire.getSignalType() + ";\n");
+		}
+	}
+	
+	private void mapSignalsToComponents() {
+	}
+	
 	private void appendMappings() {
+		List<SchemaDrawingComponentEnvelope> envlist = info.getEnvelopeList();
+		for (SchemaDrawingComponentEnvelope env : envlist) {
+			AbstractSchemaComponent comp = env.getComponent();
+			sb.append(comp.getMapping(mapping.get(comp.getComponentInstanceName())));
+		}
 	}
 }
 

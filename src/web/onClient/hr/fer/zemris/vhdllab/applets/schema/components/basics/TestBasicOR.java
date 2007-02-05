@@ -3,6 +3,8 @@
  */
 package hr.fer.zemris.vhdllab.applets.schema.components.basics;
 
+import java.util.Map;
+
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
@@ -73,14 +75,25 @@ public class TestBasicOR extends AbstractSchemaComponent {
 
 	@Override
 	public boolean isToBeMapped() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public String getEntityBlock() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getMapping(Map<Integer, String> signalList) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasComponentBlock() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

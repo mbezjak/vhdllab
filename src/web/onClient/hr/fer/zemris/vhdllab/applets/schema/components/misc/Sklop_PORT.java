@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.Point;
+import java.util.Map;
 
 public class Sklop_PORT extends AbstractSchemaComponent {
 	private static final int FROM_EDGE = 2;
@@ -208,11 +209,21 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 
 	@Override
 	public boolean isToBeMapped() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public String getEntityBlock() {
 		return null;
+	}
+
+	@Override
+	public boolean hasComponentBlock() {
+		return false;
+	}
+
+	@Override
+	public String getMapping(Map<Integer, String> signalList) {
+		return "";
 	}
 }

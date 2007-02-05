@@ -7,8 +7,10 @@ import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.StringReader;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.swing.JTextField;
 
@@ -309,7 +311,11 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	
 	public abstract boolean isToBeMapped();
 	
+	public abstract boolean hasComponentBlock();
+	
 	public abstract String getEntityBlock();
+	
+	public abstract String getMapping(Map<Integer, String> signalList);
 	
 	/**
 	 * 

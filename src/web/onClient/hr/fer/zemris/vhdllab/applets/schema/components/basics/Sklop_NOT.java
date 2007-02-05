@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
+import java.util.Map;
 
 public class Sklop_NOT extends AbstractSchemaComponent {
 	private final static int SIRINA_NOT_VRATA = 9;
@@ -101,7 +102,17 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 
 	@Override
 	public String getEntityBlock() {
-		return "/tgeneric()/n/tport()";
+		return "/tport()";
+	}
+
+	@Override
+	public boolean hasComponentBlock() {
+		return true;
+	}
+
+	@Override
+	public String getMapping(Map<Integer, String> signalList) {
+		return "";
 	}
 	
 }

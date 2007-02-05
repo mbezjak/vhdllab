@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema.components.properties.GenericPropert
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
 
 import java.awt.Point;
+import java.util.Map;
 
 import javax.swing.JTextField;
 
@@ -210,7 +211,17 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 
 	@Override
 	public String getEntityBlock() {
-		return "/tgeneric()/n/tport()";
+		return "\tgeneric(\n\tdel : time;\n\tbrSelUlaza: natural)\n\tport()";
+	}
+
+	@Override
+	public boolean hasComponentBlock() {
+		return true;
+	}
+
+	@Override
+	public String getMapping(Map<Integer, String> signalList) {
+		return " generic map (" + getComponentDelay() + ", " + getBrojSelUlaza() + ") ";
 	}
 	
 }
