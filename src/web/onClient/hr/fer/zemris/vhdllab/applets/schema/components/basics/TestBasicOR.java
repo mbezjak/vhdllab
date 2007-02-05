@@ -96,4 +96,10 @@ public class TestBasicOR extends AbstractSchemaComponent {
 		return false;
 	}
 
+	@Override
+	public String getAdditionalSignals() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

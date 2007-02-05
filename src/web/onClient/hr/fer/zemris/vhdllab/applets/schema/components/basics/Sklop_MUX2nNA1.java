@@ -211,7 +211,10 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 
 	@Override
 	public String getEntityBlock() {
-		return "\tgeneric(\n\tdel : time;\n\tbrSelUlaza: natural)\n\tport()";
+		return "\tgeneric(\n\tdel : time;\n\tbrSelUlaza: natural);\n\t" +
+				"port(\n\tsel: STD_LOGIC_VECTOR((brSelUlaza - 1) DOWNTO 0);" +
+				"\n\tdata: STD_LOGIC_VECTOR((2 ** brSelUlaza - 1) DOWNTO 0);" +
+				"\n\toutput: STD_LOGIC);";
 	}
 
 	@Override
@@ -221,7 +224,28 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 
 	@Override
 	public String getMapping(Map<Integer, String> signalList) {
-		return " generic map (" + getComponentDelay() + ", " + getBrojSelUlaza() + ") ";
+		String s = "";
+		s += this.getComponentInstanceName() + ": " + this.getComponentName();
+		s += " generic port(" + this.getComponentDelay() + ", " + this.getBrojSelUlaza() + ")";
+		s += " port map(";
+		int i = 0;
+		for (AbstractSchemaPort port : portlist) {
+			
+		}
+		s += ");";
+		return s;
+	}
+
+	@Override
+	public String getAdditionalSignals() {
+		int dvaNaN = 1;
+		for (int i = 0; i < brojSelUlaza; i++) {
+			dvaNaN *= 2;
+		}
+		String s = "";
+		s += "SIGNAL " + this.getComponentInstanceName() + "_selvector: STD_LOGIC_VECTOR(" + (brojSelUlaza - 1) + " DOWNTO 0);\n";
+		s += "SIGNAL " + this.getComponentInstanceName() + "_podvector: STD_LOGIC_VECTOR(" + (dvaNaN - 1) + " DOWNTO 0);";
+		return s;
 	}
 	
 }

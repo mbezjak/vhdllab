@@ -102,7 +102,7 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 
 	@Override
 	public String getEntityBlock() {
-		return "/tport()";
+		return "\tport\n\t(ulaz: STD_LOGIC;\n\tizlaz: STD_LOGIC_VECTOR\n\t);";
 	}
 
 	@Override
@@ -112,6 +112,17 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 
 	@Override
 	public String getMapping(Map<Integer, String> signalList) {
+		String s = this.getComponentInstanceName() + ": " + this.getComponentName();
+		s += " port map(";
+		if (signalList.containsKey(1)) s += signalList.get(1) + ", ";
+		else s += "open, ";
+		if (signalList.containsKey(0)) s += signalList.get(0) + ");";
+		else s += "open);";
+		return s;
+	}
+
+	@Override
+	public String getAdditionalSignals() {
 		return "";
 	}
 	

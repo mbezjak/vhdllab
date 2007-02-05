@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema;
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingComponentEnvelope;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;
+import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire.WireConnection;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
@@ -69,7 +70,9 @@ public class SSInfo2VHDL {
 		
 		// proiterirati kroz zice i stvoriti na temelju njih signale
 		appendAndMapComponents();
+		mapSignalsToComponents();
 		appendSignals();
+		appendComponentSignals();
 		
 		sb.append("\nBEGIN\n");
 		
@@ -104,14 +107,29 @@ public class SSInfo2VHDL {
 		}
 	}
 	
+	private void appendComponentSignals() {
+		List<SchemaDrawingComponentEnvelope> envlist = info.getEnvelopeList();
+		for (SchemaDrawingComponentEnvelope env : envlist) {
+			AbstractSchemaComponent comp = env.getComponent();
+			String sigs = comp.getAdditionalSignals();
+			if (sigs != null) sb.append(sigs).append('\n');
+		}
+	}
+	
 	private void mapSignalsToComponents() {
+		List<AbstractSchemaWire> wirelist = info.getWireList();
+		for (AbstractSchemaWire wire : wirelist) {
+			for (WireConnection conn : wire.connections) {
+				mapping.get(conn.componentInstanceName).put(conn.portIndex, wire.getWireName());
+			}
+		}
 	}
 	
 	private void appendMappings() {
 		List<SchemaDrawingComponentEnvelope> envlist = info.getEnvelopeList();
 		for (SchemaDrawingComponentEnvelope env : envlist) {
 			AbstractSchemaComponent comp = env.getComponent();
-			sb.append(comp.getMapping(mapping.get(comp.getComponentInstanceName())));
+			sb.append(comp.getMapping(mapping.get(comp.getComponentInstanceName()))).append('\n');
 		}
 	}
 }

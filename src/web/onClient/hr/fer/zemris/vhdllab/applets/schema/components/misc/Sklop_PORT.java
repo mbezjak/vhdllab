@@ -224,6 +224,38 @@ public class Sklop_PORT extends AbstractSchemaComponent {
 
 	@Override
 	public String getMapping(Map<Integer, String> signalList) {
-		return "";
+		String s = "";
+		if (port.getType().isScalar()) {
+			s += this.getComponentInstanceName();
+			if (port.getDirection() == Direction.IN) {
+				s += " => ";
+			} else if (port.getDirection() == Direction.OUT) {
+				s += " <= ";
+			}
+			if (signalList.containsKey(0)) s += signalList.get(0) + ";";
+			else s += "open;";
+		} else if (port.getType().isVector()) {
+			boolean countUp = port.getType().hasVectorDirectionTO();
+			int count = port.getType().getRangeFrom(), i = 0;
+			
+			for (AbstractSchemaPort schport : portlist) {
+				s += this.getComponentInstanceName() + "(" + count + ")";
+				if (port.getDirection() == Direction.IN) {
+					s += " => ";
+				} else if (port.getDirection() == Direction.OUT) {
+					s += " <= ";
+				}
+				if (signalList.containsKey(i)) s += signalList.get(i) + ";\n";
+				else s += "open;\n";
+				i++;
+				if (countUp) count++; else count--;
+			}
+		}
+		return s;
+	}
+
+	@Override
+	public String getAdditionalSignals() {
+		return null;
 	}
 }

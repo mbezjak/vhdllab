@@ -211,7 +211,7 @@ public class Sklop_OR extends AbstractSchemaComponent {
 
 	@Override
 	public String getEntityBlock() {
-		return "\tgeneric(\n\tdel : time;\n\tbrUlaza: natural)\n\tport()";
+		return "\tgeneric(\n\tdel : time;\n\tbrUlaza: natural);\n\tport(\n\tulazi: STD_LOGIC_VECTOR(brUlaza DOWNTO 1)\n\tizlaz: STD_LOGIC;\n\t);";
 	}
 
 	@Override
@@ -221,7 +221,23 @@ public class Sklop_OR extends AbstractSchemaComponent {
 
 	@Override
 	public String getMapping(Map<Integer, String> signalList) {
-		return " generic map (" + getComponentDelay() + ", " + getBrojUlaza() + ") ";
+		String s = "";
+		for (int i = brojUlaza; i >= 1; i--) {
+			s += this.getComponentInstanceName() + "_vector(" + i + ") <= ";
+			if (signalList.containsKey(i)) s += signalList.get(i) + ";\n";
+			else s += "open;\n";
+		}
+		s += this.getComponentInstanceName() + ": " + this.getComponentName();
+		s += " generic map (" + this.getComponentDelay() + ", " + getBrojUlaza() + ") ";
+		s += " port map(" + this.getComponentInstanceName() + "_vector, ";
+		if (signalList.containsKey(0)) s += signalList.get(0) + ");";
+		else s += "open);";
+		return s;
+	}
+
+	@Override
+	public String getAdditionalSignals() {
+		return "SIGNAL " + this.getComponentInstanceName() + "_vector\t: STD_LOGIC_VECTOR(" + this.getBrojUlaza() + " DOWNTO 1);";
 	}
 	
 }

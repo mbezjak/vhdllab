@@ -317,6 +317,8 @@ public abstract class AbstractSchemaComponent implements ISchemaComponent {
 	
 	public abstract String getMapping(Map<Integer, String> signalList);
 	
+	public abstract String getAdditionalSignals();
+	
 	/**
 	 * 
 	 * @param serial
