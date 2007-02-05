@@ -96,6 +96,10 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	}
 	
 	public Integer getBrojPodUlaza() {
+//		int dvaNaN = 1;
+//		for (int i = 0; i < brojSelUlaza; i++) {
+//			dvaNaN *= 2;
+//		} ?? radi boxinga..
 		return portlist.size() - 1 - brojSelUlaza;
 	}
 
@@ -212,9 +216,9 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 	@Override
 	public String getEntityBlock() {
 		return "\tgeneric(\n\tdel : time;\n\tbrSelUlaza: natural);\n\t" +
-				"port(\n\tsel: STD_LOGIC_VECTOR((brSelUlaza - 1) DOWNTO 0);" +
-				"\n\tdata: STD_LOGIC_VECTOR((2 ** brSelUlaza - 1) DOWNTO 0);" +
-				"\n\toutput: STD_LOGIC);";
+				"port(\n\tsel: IN STD_LOGIC_VECTOR((brSelUlaza - 1) DOWNTO 0);" +
+				"\n\tdata: IN STD_LOGIC_VECTOR((2 ** brSelUlaza - 1) DOWNTO 0);" +
+				"\n\toutput: OUT STD_LOGIC);";
 	}
 
 	@Override
@@ -224,15 +228,26 @@ public class Sklop_MUX2nNA1 extends AbstractSchemaComponent {
 
 	@Override
 	public String getMapping(Map<Integer, String> signalList) {
-		String s = "";
+		String s = "", inst_name = this.getComponentInstanceName();
+		for (int i = 1; i <= brojSelUlaza; i++) {
+			s += inst_name + "_selvector(" + (brojSelUlaza - i) + ") <= ";
+			if (signalList.containsKey(i)) s += signalList.get(i) + ";\n";
+			else s += "open;\n";
+		}
+		int brojPodUlaza = 1;
+		for (int i = 0; i < brojSelUlaza; i++) {
+			brojPodUlaza *= 2;
+		}
+		for (int i = 11; (i - 10) <= brojPodUlaza; i++) {
+			s += inst_name + "_podvector(" + (i - 11) + ") <= ";
+			if (signalList.containsKey(i)) s += signalList.get(i) + ";\n";
+			else s += "open;\n";
+		}
 		s += this.getComponentInstanceName() + ": " + this.getComponentName();
 		s += " generic port(" + this.getComponentDelay() + ", " + this.getBrojSelUlaza() + ")";
-		s += " port map(";
-		int i = 0;
-		for (AbstractSchemaPort port : portlist) {
-			
-		}
-		s += ");";
+		s += " port map(" + inst_name + "_selvector, " + inst_name + "_podvector, ";
+		if (signalList.containsKey(0)) s += signalList.get(0) + ");";
+		else s += "open);";
 		return s;
 	}
 

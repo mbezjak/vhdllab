@@ -102,7 +102,7 @@ public class Sklop_NOT extends AbstractSchemaComponent {
 
 	@Override
 	public String getEntityBlock() {
-		return "\tport\n\t(ulaz: STD_LOGIC;\n\tizlaz: STD_LOGIC_VECTOR\n\t);";
+		return "\tport\n\t(ulaz: IN STD_LOGIC;\n\tizlaz: OUT STD_LOGIC_VECTOR\n\t);";
 	}
 
 	@Override

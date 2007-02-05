@@ -222,7 +222,7 @@ public class Sklop_XOR extends AbstractSchemaComponent {
 
 	@Override
 	public String getEntityBlock() {
-		return "\tgeneric(\n\tdel : time;\n\tbrUlaza: natural);\n\tport(\n\tulazi: STD_LOGIC_VECTOR(brUlaza DOWNTO 1)\n\tizlaz: STD_LOGIC;\n\t);";
+		return "\tgeneric(\n\tdel : time;\n\tbrUlaza: natural);\n\tport(\n\tulazi: IN STD_LOGIC_VECTOR(brUlaza DOWNTO 1)\n\tizlaz: OUT STD_LOGIC\n\t);";
 	}
 
 	@Override
