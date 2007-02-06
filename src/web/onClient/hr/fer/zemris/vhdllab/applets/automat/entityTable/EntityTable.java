@@ -291,7 +291,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 
 	public boolean isDataCorrect() {
 		// TODO Unimplemented at the moment...
-		return false;
+		return true;
 	}
 
 	public void init() {

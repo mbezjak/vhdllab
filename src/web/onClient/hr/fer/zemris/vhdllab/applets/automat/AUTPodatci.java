@@ -20,6 +20,8 @@ import javax.swing.WindowConstants;
 
 public class AUTPodatci {
 	
+	private static final int CONST_SIR = 300;
+	private static final int CONST_VIS = 300;
 	public String ime;
 	public String tip;
 	public String interfac;
@@ -28,8 +30,10 @@ public class AUTPodatci {
 	public String clock;
 	public int sirinaUlaza;
 	public int sirinaIzlaza;
+	public int sirina;
+	public int visina;
 	
-	public AUTPodatci(String ime,String tip,String interfac,String pocSt,String rs,String cl){
+	public AUTPodatci(String ime,String tip,String interfac,String pocSt,String rs,String cl,String s,String v){
 		super();
 		this.ime=ime;
 		this.tip=tip;
@@ -38,6 +42,8 @@ public class AUTPodatci {
 		clock=cl;
 		reset=rs;
 		parseInterfac(interfac);
+		sirina=Integer.parseInt(s);
+		visina=Integer.parseInt(v);
 	}
 
 	private void parseInterfac(String interfac2) {
@@ -128,6 +134,8 @@ public class AUTPodatci {
 				}
 			}
 		}else this.ime=null;
+		sirina=CONST_SIR;
+		visina=CONST_VIS;
 	}
 /*bit ce da netreba :) 
 	/**

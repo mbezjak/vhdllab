@@ -741,10 +741,10 @@ public class AutoDrawer extends JPanel{
 				if(!isModified)isModified=true;
 					selektiran.ox=e.getX()-radijus;
 					selektiran.oy=e.getY()-radijus;
-					if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
+					/*if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
 					if(selektiran.ox<0)selektiran.ox=0;
 					if(selektiran.oy>img.getHeight()-2*radijus) selektiran.oy=img.getHeight()-2*radijus;
-					if(selektiran.oy<0)selektiran.oy=0;
+					if(selektiran.oy<0)selektiran.oy=0;*/
 					nacrtajSklop();
 			}
 		}
@@ -935,13 +935,33 @@ public class AutoDrawer extends JPanel{
 		 */
 		public void mouseReleased(MouseEvent e) {	
 			
+			if(e.getX()>AutoDrawer.this.getWidth())AutoDrawer.this.setSize(e.getX(),AutoDrawer.this.getHeight());
+			if(e.getY()>AutoDrawer.this.getHeight())AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),e.getY());
+			
+			if(e.getX()<0||e.getY()<0) moveAll(e.getX(),e.getY());
+			
 			if(pressed){
+				if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
+				if(selektiran.ox<0)selektiran.ox=0;
+				if(selektiran.oy>img.getHeight()-2*radijus) selektiran.oy=img.getHeight()-2*radijus;
+				if(selektiran.oy<0)selektiran.oy=0;
 				selektiran.boja=Color.BLACK;
 				selektiran=null;
 				nacrtajSklop();
 				pressed=false;
 			}
+			podatci.sirina=AutoDrawer.this.getWidth();
+			podatci.visina=AutoDrawer.this.getHeight();
 			
+		}
+
+		private void moveAll(int x, int y) {
+			for(Stanje s:stanja){
+				s.ox-=(x<0?x:0);
+				s.oy-=(y<0?y:0);
+			}
+			if(x<0)AutoDrawer.this.setSize(AutoDrawer.this.getWidth()-x,AutoDrawer.this.getHeight());
+			if(y<0)AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),AutoDrawer.this.getHeight()-y);
 		}
 
 		/**
