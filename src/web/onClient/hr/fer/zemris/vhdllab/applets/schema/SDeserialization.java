@@ -26,22 +26,22 @@ import java.util.Properties;
  */
 public class SDeserialization {
 	private Properties globalPropery=null;
-	private SchemaMainPanel mainPanel=null;
+	private SchemaSerializableInformation schinfo = null;
 	
-	public SDeserialization(String serializedXml, SchemaMainPanel mainPanel) throws Exception{
-		if(mainPanel!=null && serializedXml.length()!=0){
+	public SDeserialization(String serializedXml, SchemaMainPanel mpanel) throws Exception{
+		if(serializedXml.length()!=0){
+			mpanel.getSchemaDrawingCanvas().ResetCanvas();
 			globalPropery=XMLUtil.deserializeProperties(serializedXml);
-			this.mainPanel=mainPanel;
-			deserialize();
 		}else
 			throw new IllegalArgumentException("Krivi parametri za deserializer");
 	}
 	
-	private void deserialize() throws Exception {
-		mainPanel.getSchemaDrawingCanvas().ResetCanvas();
+	public SchemaSerializableInformation deserialize() throws Exception {
+		schinfo = new SchemaSerializableInformation();
 		entity(XMLUtil.deserializeProperties(globalPropery.getProperty(SSerialization.SCHEMATIC_ENTITY)));
 		components();
 		wire();
+		return schinfo;
 	}
 
 	private void entity(Properties entity) throws Exception {
@@ -83,7 +83,7 @@ public class SDeserialization {
 		}
 		
 		CircuitInterface interf = new DefaultCircuitInterface(entityName, portlist);
-		mainPanel.setCircuitInterface(interf);
+		schinfo.setCircuitInterface(interf);
 	}
 	
 	private Direction getDirection(String pds) throws Exception {
@@ -101,6 +101,7 @@ public class SDeserialization {
 		String serData;
 		@SuppressWarnings("unused")
 		SchemaDrawingComponentEnvelope env;
+		ArrayList<SchemaDrawingComponentEnvelope> envlist = new ArrayList();
 		
 		for(int i=1;true;i++){
 			serData=c.getProperty(SSerialization.SCHEMATIC_COMPONENTS_COMPONENT+i);
@@ -110,19 +111,21 @@ public class SDeserialization {
 			
 			try {
 				env.deserialize(serData);
-				mainPanel.getSchemaDrawingCanvas().addEnvelope(env);
+				envlist.add(env);
 			} catch (ComponentFactoryException e) {
 				System.err.println("Greska prilikom stvaranje envelope-a");
 				e.printStackTrace();
 			}
-		}		
+		}
+		
+		schinfo.setEnvelopeList(envlist);
 	}
 	
 	private void wire(){
 		Properties c=XMLUtil.deserializeProperties(globalPropery.getProperty(SSerialization.SCHEMATIC_WIRES));
 		String serData;
 		AbstractSchemaWire wire=null;
-		SchemaDrawingCanvas canvas=mainPanel.getSchemaDrawingCanvas();
+		ArrayList<AbstractSchemaWire> wirelist = new ArrayList<AbstractSchemaWire>();
 		
 		for(int i=1;true;i++){
 			serData=c.getProperty(SSerialization.SCHEMATIC_WIRES_WIRE+i);
@@ -130,7 +133,9 @@ public class SDeserialization {
 			System.out.println("Deserijalizacija: wire source:"+serData);
 			wire=new SimpleSchemaWire("wssdkgnsdsmasmnfxzsasdqwhjksyopfgh");//prilicno blesavo, ja neznam unaprijed ime zice
 			wire.deserialize(serData);
-			canvas.addWire(wire);
-		}	
+			wirelist.add(wire);
+		}
+		
+		schinfo.setWireList(wirelist);
 	}
 }

@@ -197,6 +197,8 @@ public class SOptionBar extends JToolBar {
 			
 			try {
 				SDeserialization deserialization = new SDeserialization(s, parentFrame);
+				SchemaSerializableInformation infoBack = deserialization.deserialize();
+				parentFrame.setSchemaSerializableInfo(infoBack);
 			} catch (Exception e) {
 				System.out.print(e.getMessage());
 				e.printStackTrace();

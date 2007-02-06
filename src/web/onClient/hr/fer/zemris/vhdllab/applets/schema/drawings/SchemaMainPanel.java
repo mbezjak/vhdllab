@@ -937,6 +937,17 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return info;
 	}
 	
+	public void setSchemaSerializableInfo(SchemaSerializableInformation info) {
+		this.getSchemaDrawingCanvas().ResetCanvas();
+		this.setCircuitInterface(info.getCircuitInterface());
+		for (SchemaDrawingComponentEnvelope env : info.getEnvelopeList()) {
+			this.getSchemaDrawingCanvas().addEnvelope(env);
+		}
+		for (AbstractSchemaWire wire : info.getWireList()) {
+			this.getSchemaDrawingCanvas().addWire(wire);
+		}
+	}
+	
 	
 
 	/**
@@ -956,7 +967,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		if (schemaFile != null) {
 				try {
 					@SuppressWarnings("unused")
-					SDeserialization deserialize=new SDeserialization(schemaFile.getContent(),this);
+					SDeserialization deserialize=new SDeserialization(schemaFile.getContent(), this);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1122,6 +1133,68 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 
 
-
-
-
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="schematic.version">1.00</entry>
+<entry key="schematic.entity">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
+&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;&#13;
+&lt;properties&gt;&#13;
+&lt;entry key="portType3"&gt;Std_Logic_Vector&lt;/entry&gt;&#13;
+&lt;entry key="portType2"&gt;Std_Logic_Vector&lt;/entry&gt;&#13;
+&lt;entry key="portType1"&gt;Std_Logic&lt;/entry&gt;&#13;
+&lt;entry key="portName3"&gt;c&lt;/entry&gt;&#13;
+&lt;entry key="portName2"&gt;b&lt;/entry&gt;&#13;
+&lt;entry key="portVectorDirection3"&gt;DOWNTO&lt;/entry&gt;&#13;
+&lt;entry key="portName1"&gt;a&lt;/entry&gt;&#13;
+&lt;entry key="portVectorDirection2"&gt;TO&lt;/entry&gt;&#13;
+&lt;entry key="portDirection3"&gt;OUT&lt;/entry&gt;&#13;
+&lt;entry key="portVectorDirection1"&gt;&lt;/entry&gt;&#13;
+&lt;entry key="portDirection2"&gt;IN&lt;/entry&gt;&#13;
+&lt;entry key="portDirection1"&gt;IN&lt;/entry&gt;&#13;
+&lt;entry key="portRangeFrom3"&gt;3&lt;/entry&gt;&#13;
+&lt;entry key="portRangeFrom2"&gt;0&lt;/entry&gt;&#13;
+&lt;entry key="portRangeFrom1"&gt;&lt;/entry&gt;&#13;
+&lt;entry key="portRangeTo3"&gt;0&lt;/entry&gt;&#13;
+&lt;entry key="portRangeTo2"&gt;2&lt;/entry&gt;&#13;
+&lt;entry key="portRangeTo1"&gt;&lt;/entry&gt;&#13;
+&lt;entry key="name"&gt;Circuit&lt;/entry&gt;&#13;
+&lt;/properties&gt;&#13;
+</entry>
+<entry key="schematic.components">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
+&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;&#13;
+&lt;properties&gt;&#13;
+&lt;entry key="component2"&gt;&amp;lt;?xml version="1.0" encoding="UTF-8"?&amp;gt;&amp;#13;&#13;
+&amp;lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&amp;gt;&amp;#13;&#13;
+&amp;lt;properties&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compSource"&amp;gt;&amp;amp;lt;komponenta&amp;amp;gt;&amp;amp;lt;imeInstanceKomponente&amp;amp;gt;Notter&amp;amp;lt;/imeInstanceKomponente&amp;amp;gt;&amp;amp;lt;orijentacija&amp;amp;gt;3&amp;amp;lt;/orijentacija&amp;amp;gt;&amp;amp;lt;kasnjenje&amp;amp;gt;10&amp;amp;lt;/kasnjenje&amp;amp;gt;&amp;amp;lt;componentSpecific&amp;amp;gt;&amp;amp;lt;/componentSpecific&amp;amp;gt;&amp;amp;lt;/komponenta&amp;amp;gt;&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compPosY"&amp;gt;30&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compPosX"&amp;gt;460&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compName"&amp;gt;Sklop_NOT&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;/properties&amp;gt;&amp;#13;&#13;
+&lt;/entry&gt;&#13;
+&lt;entry key="component1"&gt;&amp;lt;?xml version="1.0" encoding="UTF-8"?&amp;gt;&amp;#13;&#13;
+&amp;lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&amp;gt;&amp;#13;&#13;
+&amp;lt;properties&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compSource"&amp;gt;&amp;amp;lt;komponenta&amp;amp;gt;&amp;amp;lt;imeInstanceKomponente&amp;amp;gt;Sklop_MUX2&amp;amp;lt;/imeInstanceKomponente&amp;amp;gt;&amp;amp;lt;orijentacija&amp;amp;gt;3&amp;amp;lt;/orijentacija&amp;amp;gt;&amp;amp;lt;kasnjenje&amp;amp;gt;10&amp;amp;lt;/kasnjenje&amp;amp;gt;&amp;amp;lt;componentSpecific&amp;amp;gt;#2#&amp;amp;lt;/componentSpecific&amp;amp;gt;&amp;amp;lt;/komponenta&amp;amp;gt;&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compPosY"&amp;gt;100&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compPosX"&amp;gt;310&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;entry key="compName"&amp;gt;Sklop_MUX2nNA1&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+&amp;lt;/properties&amp;gt;&amp;#13;&#13;
+&lt;/entry&gt;&#13;
+&lt;/properties&gt;&#13;
+</entry>
+<entry key="schematic.wires">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
+&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;&#13;
+&lt;properties&gt;&#13;
+&lt;entry key="wire6"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire05&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#c;1;0;5#c;3;0;9#Sklop_MUX2;0;12;12#c;2;0;7&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#43;11;67;11#67;11;72;11#72;11;72;10#69;11;69;8#43;22;43;11#69;8;72;8#69;6;72;6#69;8;69;6&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#69;11#69;8&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+&lt;entry key="wire5"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire03&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;2;10;7#Sklop_MUX2;1;4;25#Sklop_MUX2;14;0;20#Sklop_MUX2;2;6;25&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#35;37;37;37#24;37;32;37#12;14;24;14#24;14;24;30#24;30;31;30#24;30;24;37#32;37;35;37#35;37;35;35#37;37;37;35&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#35;37#24;30&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+&lt;entry key="wire4"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire04&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#Notter;0;9;3#c;0;0;3&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#55;6;67;6#67;6;67;4#67;4;72;4&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+&lt;entry key="wire3"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire0&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#Sklop_MUX2;11;0;5#Notter;1;0;3#a;0;10;3&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#40;6;46;6#12;4;27;4#27;4;40;4#40;4;40;6#27;14;27;15#27;15;31;15#27;4;27;14&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#27;4&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+&lt;entry key="wire2"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire02&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;1;10;5#Sklop_MUX2;13;0;15&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#25;25;31;25#12;12;25;12#25;22;25;25#25;12;25;22&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+&lt;entry key="wire1"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire01&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;0;10;3#Sklop_MUX2;12;0;10&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#26;16;26;20#26;20;31;20#12;10;26;10#26;10;26;16&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+&lt;/properties&gt;&#13;
+</entry>
+</properties>
+*/

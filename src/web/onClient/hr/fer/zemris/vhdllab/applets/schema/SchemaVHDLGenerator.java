@@ -18,7 +18,13 @@ public class SchemaVHDLGenerator implements IVHDLGenerator {
 	
 	// iz internog formata gradi SchemaSerializableInformation
 	private SchemaSerializableInformation getSerializableInfo(File f, VHDLLabManager labman) {
-		// TODO Ovo je Rajakovicev posel
+		// ne kuzim kak da iz tog labmana izvadim svoju shemu. Al recimo da je imam - na
+		// prvo mjesto umjesto null ide njezin string.
+		try {
+			SDeserialization deser = new SDeserialization(null, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
