@@ -48,8 +48,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 /**
  * Ovaj enkapsulira kompletni UI, ukljucujuci i canvas.
  * 

@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.schema.components.ComponentFactoryException;
-import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingCanvas;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingComponentEnvelope;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.applets.schema.wires.AbstractSchemaWire;

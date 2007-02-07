@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
 import javax.swing.JPanel;
 
 

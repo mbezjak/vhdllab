@@ -3,10 +3,10 @@
  */
 package hr.fer.zemris.vhdllab.applets.schema.components.basics;
 
-import java.util.Map;
-
 import hr.fer.zemris.vhdllab.applets.schema.components.AbstractSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter;
+
+import java.util.Map;
 
 /**
  * @author Tommy

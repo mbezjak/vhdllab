@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema;
 
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.IEntityWizard;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.NumberBox;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.ReturnData;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.TableData;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityParser;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.IEntityWizard;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.NumberBox;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.ReturnData;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.TableData;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
