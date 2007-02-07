@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.service.generator.automat;
 
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
-
 public class AUTPodatci {
 	
 	public String ime;

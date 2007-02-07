@@ -32,6 +32,14 @@ public class FileTypes {
 	public static boolean isNotVHDL(String type) {
 		return !(isSimulation(type) || isTestbench(type) || isCircuit(type));
 	}
+	
+	public static boolean isCompilable(String type) {
+		return FileTypes.isCircuit(type);
+	}
+	
+	public static boolean isSimulatable(String type) {
+		return FileTypes.isTestbench(type);
+	}
 
 	public static List<String> values() {
 		List<String> values = new ArrayList<String>();

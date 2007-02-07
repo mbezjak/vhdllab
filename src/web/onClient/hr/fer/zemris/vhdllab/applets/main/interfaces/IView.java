@@ -5,8 +5,8 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
  * Interface that defines methods that every View must have. A View is
  * a component that is (most likely) situated on a far south of main
  * applet window, just above status bar. It is used to display useful
- * information to a user. View is read only and its contents will never
- * be saved.
+ * information to a user. View is read only (meaning user can not change
+ * view's contents) and its contents will never be saved.
  * 
  * @author Miro Bezjak
  */

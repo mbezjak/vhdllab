@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE Automat [
 	<!ELEMENT Automat (Podatci_Sklopa,Stanje*,Prijelaz*)>
-	<!ELEMENT Podatci_Sklopa (Ime,Tip,Interfac,Pocetno_Stanje,Reset,Clock)>
+	<!ELEMENT Podatci_Sklopa (Ime,Tip,Interfac,Pocetno_Stanje,Reset,Clock,Sirina,Visina)>
 	<!ELEMENT Prijelaz (Iz,U,Pobuda,Izlaz?)>
 	<!ELEMENT Stanje (Ime,Izlaz?,Ox,Oy)>
 	<!ELEMENT Ime (#PCDATA)>
@@ -26,6 +26,8 @@ b out std_logic
 		<Pocetno_Stanje>A</Pocetno_Stanje>
 		<Reset>1</Reset>
 		<Clock>falling_edge</Clock>
+		<Sirina>300</Sirina>
+		<Visina>300</Visina>
 	</Podatci_Sklopa>
 
 	<Stanje>

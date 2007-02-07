@@ -60,7 +60,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
@@ -86,8 +85,8 @@ public class MainApplet
 	private Communicator communicator;
 	private ResourceBundle bundle;
 	
-	private JTabbedPane editorPane;
-	private JTabbedPane viewPane;
+	private EditorPane editorPane;
+	private ViewPane viewPane;
 	private IProjectExplorer projectExplorer;
 	private SideBar sideBar;
 	private IStatusBar statusBar;
@@ -190,7 +189,7 @@ public class MainApplet
 	@Override
 	public void destroy() {
 		saveAllEditors();
-		//closeAllEditors();
+//		closeAllEditors();
 		
 		try {
 			List<Preferences> prefs = getPreferences(FileTypes.FT_APPLET);
@@ -199,14 +198,14 @@ public class MainApplet
 				
 				option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
 				if(option != null) {
-					String data = Utilities.serializeEditorInfo(getAllOpenedEditors());
+					String data = Utilities.serializeEditorInfo(editorPane.getAllOpenedEditors());
 					option.setChosenValue(data);
 				}
 				
 				option = p.getOption(UserFileConstants.APPLET_OPENED_VIEWS);
 				if(option != null) {
 					List<String> views = new ArrayList<String>();
-					for(IView v : getAllOpenedViews()) {
+					for(IView v : viewPane.getAllOpenedViews()) {
 						String type = communicator.getViewType(v);
 						views.add(type);
 					}
@@ -261,7 +260,7 @@ public class MainApplet
 		projectExplorerPanel = new JPanel(new BorderLayout());
 		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
 		
-		editorPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
+		editorPane = new EditorPane(EditorPane.TOP, EditorPane.SCROLL_TAB_LAYOUT);
 		editorPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForEditors());
 		editorPane.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
@@ -284,7 +283,7 @@ public class MainApplet
 			}
 		});
 		
-		viewPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
+		viewPane = new ViewPane(ViewPane.TOP, ViewPane.SCROLL_TAB_LAYOUT);
 		viewPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForViews());
 		viewPane.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
@@ -998,7 +997,7 @@ public class MainApplet
 	
 	public void compile(String projectName, String fileName) throws UniformAppletException {
 		if(isCircuit(projectName, fileName)) {
-			List<IEditor> openedEditors = getOpenedEditorsThatHave(projectName);
+			List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
 			String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
 			String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
 			boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
@@ -1044,7 +1043,7 @@ public class MainApplet
 	
 	public void simulate(String projectName, String fileName) throws UniformAppletException {
 		if(isTestbench(projectName, fileName)) {
-			List<IEditor> openedEditors = getOpenedEditorsThatHave(projectName);
+			List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
 			String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
 			String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
 			boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
@@ -1095,6 +1094,16 @@ public class MainApplet
 	private boolean isSimulation(String projectName, String fileName) throws UniformAppletException {
 		String type = getFileType(projectName, fileName);
 		return FileTypes.isSimulation(type);
+	}
+	
+	public boolean isCompilable(String projectName, String fileName) throws UniformAppletException {
+		String type = getFileType(projectName, fileName);
+		return FileTypes.isCompilable(type);
+	}
+	
+	public boolean isSimulatable(String projectName, String fileName) throws UniformAppletException {
+		String type = getFileType(projectName, fileName);
+		return FileTypes.isSimulatable(type);
 	}
 	
 	public String getFileType(String projectName, String fileName) throws UniformAppletException {
@@ -1212,70 +1221,25 @@ public class MainApplet
 		return StringFormat.isCorrectProjectName(name);
 	}
 	
-	private int indexOfView(String type) {
-		for(int i = 0; i < viewPane.getTabCount(); i++) {
-			IView view = (IView) viewPane.getComponentAt(i);
-			String viewPaneComponentType = communicator.getViewType(view);
-			if(viewPaneComponentType.equals(type)) {
-				return i;
-			}
+	public IEditor getEditor(String projectName, String fileName) throws UniformAppletException {
+		if(!editorPane.editorIsOpened(projectName, fileName)) {
+			// TODO treba se tablica savable-readonly za svaki file type napravit pa tu samo to gledat.
+			openEditor(projectName, fileName, true, false);
 		}
-		return -1;
+		return editorPane.getOpenedEditor(projectName, fileName);
 	}
-	
-	private int indexOfView(IView view) {
-		if(view == null) return -1;
-		String type = communicator.getViewType(view);
-		return indexOfView(type);
-	}
-	
-	private int indexOfEditor(String projectName, String fileName) {
-		for(int i = 0; i < editorPane.getTabCount(); i++) {
-			IEditor editor = (IEditor) editorPane.getComponentAt(i);
-			if(projectName.equals(editor.getProjectName()) &&
-					fileName.equalsIgnoreCase(editor.getFileName())) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
-	private int indexOfEditor(IEditor editor) {
-		if(editor == null) return -1;
-		String projectName = editor.getProjectName();
-		String fileName = editor.getFileName();
-		return indexOfEditor(projectName, fileName);
-	}
-	
-	private List<IView> getAllOpenedViews() {
-		List<IView> openedViews = new ArrayList<IView>();
-		for(int i = 0; i < viewPane.getTabCount(); i++) {
-			IView view = (IView) viewPane.getComponentAt(i);
-			openedViews.add(view);
-		}
-		return openedViews;
-	}
-	
-	private List<IEditor> getAllOpenedEditors() {
-		List<IEditor> openedEditors = new ArrayList<IEditor>();
-		for(int i = 0; i < editorPane.getTabCount(); i++) {
-			IEditor editor = (IEditor) editorPane.getComponentAt(i);
-			openedEditors.add(editor);
-		}
-		return openedEditors;
-	}
-	
+
 	public IView getView(String type) {
-		int index = indexOfView(type);
+		int index = viewPane.indexOfView(type);
 		if(index == -1) {
 			openView(type);
-			index = indexOfView(type);
+			index = viewPane.indexOfView(type);
 		}
-		return (IView)viewPane.getComponentAt(index);
+		return viewPane.getViewAt(index);
 	}
 	
 	public IView openView(String type) {
-		int index = indexOfView(type);
+		int index = viewPane.indexOfView(type);
 		if(index == -1) {
 			// Initialization of an editor
 			IView view = communicator.getView(type);
@@ -1283,7 +1247,7 @@ public class MainApplet
 			// End of initialization
 
 			String title = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + type);
-			Component component = viewPane.add(title, (Component)view);
+			Component component = viewPane.add(title, (Component)view, type);
 			index = viewPane.indexOfComponent(component);
 		}
 		viewPane.setSelectedIndex(index);
@@ -1298,7 +1262,7 @@ public class MainApplet
 		if(fileName == null) {
 			throw new NullPointerException("File name can not be null.");
 		}
-		int index = indexOfEditor(projectName, fileName);
+		int index = editorPane.indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			String content = communicator.loadFileContent(projectName, fileName);
 			FileContent fileContent = new FileContent(projectName, fileName, content);
@@ -1319,7 +1283,7 @@ public class MainApplet
 		if(content == null) {
 			throw new NullPointerException("Content can not be null.");
 		}
-		int index = indexOfEditor(projectName, fileName);
+		int index = editorPane.indexOfEditor(projectName, fileName);
 		if(index == -1) {
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 
@@ -1398,7 +1362,7 @@ public class MainApplet
 		if(contentChanged) {
 			title = "*" + title;
 		}
-		int index = indexOfEditor(projectName, fileName);
+		int index = editorPane.indexOfEditor(projectName, fileName);
 		if(index != -1)  {
 			editorPane.setTitleAt(index, title);
 		}
@@ -1419,8 +1383,8 @@ public class MainApplet
 		if(fileName == null) {
 			throw new NullPointerException("File name can not be null.");
 		}
-		if(fileIsOpened(projectName, fileName)) {
-			IEditor editor = getOpenedEditor(projectName, fileName);
+		if(editorPane.editorIsOpened(projectName, fileName)) {
+			IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
 			closeEditor(editor, false);
 		}
 		projectExplorer.removeFile(projectName, fileName);
@@ -1432,8 +1396,8 @@ public class MainApplet
 			throw new NullPointerException("Project name can not be null.");
 		}
 		for(String fileName : communicator.findFilesByProject(projectName)) {
-			if(fileIsOpened(projectName, fileName)) {
-				IEditor editor = getOpenedEditor(projectName, fileName);
+			if(editorPane.editorIsOpened(projectName, fileName)) {
+				IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
 				closeEditor(editor, false);
 			}
 		}
@@ -1496,32 +1460,6 @@ public class MainApplet
 		String text = bundle.getString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
 		text = Utilities.replacePlaceholders(text, new String[] {projectName});
 		echoStatusText(text, MessageEnum.Successfull);
-	}
-	
-	public IEditor getEditor(String projectName, String fileName) throws UniformAppletException {
-		int index = indexOfEditor(projectName, fileName);
-		if(index == -1) {
-			openEditor(projectName, fileName, true, false);
-			index = indexOfEditor(projectName, fileName);
-		}
-		return (IEditor)editorPane.getComponentAt(index);
-	}
-	
-	private List<IEditor> getOpenedEditorsThatHave(String projectName) {
-		List<IEditor> openedEditors = getAllOpenedEditors();
-		List<IEditor> editorsThatHaveProject = new ArrayList<IEditor>();
-		for(IEditor e : openedEditors) {
-			String editorsProjectName = e.getProjectName();
-			if(editorsProjectName.equals(projectName)) {
-				editorsThatHaveProject.add(e);
-			}
-		}
-		return editorsThatHaveProject;
-	}
-	
-	private IEditor getOpenedEditor(String projectName, String fileName) {
-		int index = indexOfEditor(projectName, fileName);
-		return (IEditor)editorPane.getComponentAt(index);
 	}
 	
 	private void setPaneSize() {
@@ -1597,7 +1535,7 @@ public class MainApplet
 	}
 	
 	private void saveAllEditors() {
-		List<IEditor> openedEditors = getAllOpenedEditors();
+		List<IEditor> openedEditors = editorPane.getAllOpenedEditors();
 		saveEditors(openedEditors);
 	}
 	
@@ -1645,7 +1583,7 @@ public class MainApplet
 		if(fileName == null) {
 			throw new NullPointerException("File name can not be null.");
 		}
-		IEditor editor = getOpenedEditor(projectName, fileName);
+		IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
 		if(editor != null) {
 			saveSimulation(editor);
 		}
@@ -1669,20 +1607,10 @@ public class MainApplet
 		echoStatusText(text, MessageEnum.Successfull);
 	}
 	
-	private boolean editorIsOpened(IEditor editor) {
-		if(editor == null) return false;
-		return indexOfEditor(editor) != -1;
-	}
-	
-	private boolean fileIsOpened(String projectName, String fileName) {
-		if(projectName == null || fileName == null) return false;
-		return indexOfEditor(projectName, fileName) != -1;
-	}
-	
 	private List<IEditor> pickOpenedEditors(List<IEditor> editors) {
 		List<IEditor> openedEditors = new ArrayList<IEditor>();
 		for(IEditor e : editors) {
-			if(editorIsOpened(e)) {
+			if(editorPane.editorIsOpened(e)) {
 				openedEditors.add(e);
 			}
 		}
@@ -1697,13 +1625,13 @@ public class MainApplet
 	}
 	
 	private void closeAllEditors(boolean showDialog) {
-		List<IEditor> openedEditors = getAllOpenedEditors();
+		List<IEditor> openedEditors = editorPane.getAllOpenedEditors();
 		closeEditors(openedEditors, showDialog);
 	}
 	
 	private void closeAllButThisEditor(IEditor editorToKeepOpened, boolean showDialog) {
 		if(editorToKeepOpened == null) return;
-		List<IEditor> openedEditors = getAllOpenedEditors();
+		List<IEditor> openedEditors = editorPane.getAllOpenedEditors();
 		openedEditors.remove(editorToKeepOpened);
 		closeEditors(openedEditors, showDialog);
 	}
@@ -1725,8 +1653,7 @@ public class MainApplet
 				editor.cleanUp();
 				// End of clean up
 				
-				int index = indexOfEditor(editor);
-				editorPane.remove(index);
+				editorPane.closeEditor(editor);
 			}
 		}
 	}
@@ -1739,13 +1666,13 @@ public class MainApplet
 	}
 	
 	private void closeAllViews() {
-		List<IView> openedViews = getAllOpenedViews();
+		List<IView> openedViews = viewPane.getAllOpenedViews();
 		closeViews(openedViews);
 	}
 	
 	private void closeAllButThisView(IView viewToKeepOpened) {
 		if(viewToKeepOpened == null) return;
-		List<IView> openedViews = getAllOpenedViews();
+		List<IView> openedViews = viewPane.getAllOpenedViews();
 		openedViews.remove(viewToKeepOpened);
 		closeViews(openedViews);
 	}
@@ -1753,8 +1680,7 @@ public class MainApplet
 	private void closeViews(List<IView> viewsToClose) {
 		if(viewsToClose == null) return;
 		for(IView view : viewsToClose) {
-			int index = indexOfView(view);
-			viewPane.remove(index);
+			viewPane.closeView(view);
 		}
 	}
 	
@@ -1798,7 +1724,7 @@ public class MainApplet
 					for(FileIdentifier file : filesToSave) {
 						String projectName = file.getProjectName();
 						String fileName = file.getFileName();
-						IEditor e = getOpenedEditor(projectName, fileName);
+						IEditor e = editorPane.getOpenedEditor(projectName, fileName);
 						editorsToSave.add(e);
 					}
 				}
@@ -1940,7 +1866,7 @@ public class MainApplet
 		}
 		
 		public static String serializeEditorInfo(List<IEditor> editors) {
-			// expecting file name and project name (together) to be 15 characters
+			// guessing file name and project name (together) to be 15 characters
 			StringBuilder sb = new StringBuilder(editors.size() * 15);
 			for(IEditor e : editors) {
 				if(e.isSavable()) {
@@ -1967,7 +1893,7 @@ public class MainApplet
 		}
 		
 		public static String serializeViewInfo(List<String> views) {
-			// expecting view type to be 10 characters
+			// guessing view type to be 10 characters
 			StringBuilder sb = new StringBuilder(views.size() * 10);
 			for(String s : views) {
 				sb.append(s).append(SEPARATOR_FOR_EACH_ROW);
