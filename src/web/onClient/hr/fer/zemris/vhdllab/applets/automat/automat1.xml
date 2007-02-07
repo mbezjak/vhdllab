@@ -27,7 +27,7 @@ b out std_logic
 		<Reset>1</Reset>
 		<Clock>falling_edge</Clock>
 		<Sirina>300</Sirina>
-		<visina>300</Visina>
+		<Visina>300</Visina>
 	</Podatci_Sklopa>
 
 	<Stanje>

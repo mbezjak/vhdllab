@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.service.generator.automat;
 
-
+import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
 
 public class AUTPodatci {
 	
@@ -12,8 +12,10 @@ public class AUTPodatci {
 	public String clock;
 	public int sirinaUlaza;
 	public int sirinaIzlaza;
+	public int sirina;
+	public int visina;
 	
-	public AUTPodatci(String ime,String tip,String interfac,String pocSt,String rs,String cl){
+	public AUTPodatci(String ime,String tip,String interfac,String pocSt,String rs,String cl,String s,String v){
 		super();
 		this.ime=ime;
 		this.tip=tip;
@@ -22,6 +24,8 @@ public class AUTPodatci {
 		clock=cl;
 		reset=rs;
 		parseInterfac(interfac);
+		sirina=Integer.parseInt(s);
+		visina=Integer.parseInt(v);
 	}
 
 	private void parseInterfac(String interfac2) {

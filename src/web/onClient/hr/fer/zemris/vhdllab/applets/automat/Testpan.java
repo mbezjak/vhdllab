@@ -49,15 +49,15 @@ public class Testpan extends JFrame {
 		this.add(b1,BorderLayout.NORTH);
 		
 		aut = new Automat();
-		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
-		//aut.setFileContent(fc);
+		FileContent fc=new FileContent("ljd","skadh",xmlAut);
+		aut.setFileContent(fc);
 		aut.setProjectContainer(null);
-		FileContent fc=aut.getInitialFileContent(b1);
-		if (fc!=null){
+		//FileContent fc=aut.getInitialFileContent(b1);
+		//if (fc!=null){
 			aut.init();
 			aut.setFileContent(fc);
 			this.getContentPane().add((Component) aut,BorderLayout.CENTER);
-		}
+		//}
 	
 		this.setSize(((Component) aut).getPreferredSize());
 	}
