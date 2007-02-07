@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.applets.automat.entityTable.ReturnData;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityParser;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.ReturnData;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 
 import java.awt.BorderLayout;

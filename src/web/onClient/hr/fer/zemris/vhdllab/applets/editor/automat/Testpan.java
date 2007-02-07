@@ -25,7 +25,7 @@ public class Testpan extends JFrame {
 		this.getContentPane().setLayout(new BorderLayout());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
-		BufferedReader reader=new BufferedReader(new FileReader("./src/web/onClient/hr/fer/zemris/vhdllab/applets/automat/automat1.xml"));
+		BufferedReader reader=new BufferedReader(new FileReader("./src/web/onClient/hr/fer/zemris/vhdllab/applets/editor/automat/automat1.xml"));
 		//BufferedReader reader=new BufferedReader(new FileReader("c:\\dd.txt"));
 		String xmlAut=new String();
 		String pom=new String();
