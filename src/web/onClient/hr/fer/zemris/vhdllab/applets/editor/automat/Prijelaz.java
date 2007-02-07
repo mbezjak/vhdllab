@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat;
+package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import java.awt.Component;
 import java.awt.GridLayout;

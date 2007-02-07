@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat.entityTable;
+package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
 public class ReturnData {
 	private String[][] data;

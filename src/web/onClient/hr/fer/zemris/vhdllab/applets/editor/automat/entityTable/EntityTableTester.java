@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat.entityTable;
+package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

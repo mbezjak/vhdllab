@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat;
+package hr.fer.zemris.vhdllab.applets.editor.automat;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;

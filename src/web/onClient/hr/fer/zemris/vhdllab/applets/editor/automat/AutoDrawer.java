@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat;
+package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 //TODO prijelaz i equals i kad se koristi lista i dialog i kad se stvara novi prijelaz koji ide iz-u...
 

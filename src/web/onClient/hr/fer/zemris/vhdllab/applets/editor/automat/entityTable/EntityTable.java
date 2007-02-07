@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat.entityTable;
+package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.automat;
+package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityParser;
 import hr.fer.zemris.vhdllab.applets.automat.entityTable.EntityTable;
