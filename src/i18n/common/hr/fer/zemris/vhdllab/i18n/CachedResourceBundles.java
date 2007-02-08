@@ -21,7 +21,7 @@ public class CachedResourceBundles {
  
 	public static ResourceBundle getBundle(String name, String language, String country) {
 		String key = "N="+name+"|L="+language+"|C="+country;
-		WeakReference ref = cache.get(key);
+		WeakReference<ResourceBundle> ref = cache.get(key);
 		ResourceBundle bundle = null;
 		if(ref!=null) {
 			bundle = (ResourceBundle)ref.get();

@@ -68,7 +68,7 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 		try {
 			String query = "from Project as p where p.id = :projectId";
 			String param = "projectId";
-			List list = (List) getHibernateTemplate().findByNamedParam(query, param, projectId);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, projectId);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
@@ -82,7 +82,7 @@ public class ProjectDAOHibernateImplWOSession extends HibernateDaoSupport implem
 			String query = "from Project as p where p.ownerId = :ownerId and p.projectName = :projectName";
 			String[] params = new String[] {"ownerId", "projectName"};
 			Object[] values = new Object[] {ownerId, projectName};
-			List list = (List) getHibernateTemplate().findByNamedParam(query, params, values);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, params, values);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());

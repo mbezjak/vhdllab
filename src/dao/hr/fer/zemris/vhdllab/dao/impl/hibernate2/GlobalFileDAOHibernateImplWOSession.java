@@ -69,7 +69,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 		try {
 			String query = "from GlobalFile as f where f.id = :fileId";
 			String param = "fileId";
-			List list = (List) getHibernateTemplate().findByNamedParam(query, param, fileId);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, fileId);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
@@ -83,7 +83,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 		try {
 			String query = "from GlobalFile as f where f.name = :name";
 			String param = "name";
-			List list = (List) getHibernateTemplate().findByNamedParam(query, param, name);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, name);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());

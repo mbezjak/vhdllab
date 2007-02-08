@@ -69,7 +69,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 		try {
 			String query = "from UserFile as f where f.id = :fileId";
 			String param = "fileId";
-			List list = (List) getHibernateTemplate().findByNamedParam(query, param, fileId);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, fileId);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
@@ -84,7 +84,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 			String query = "from UserFile as f where f.ownerID = :ownerId and f.name = :fileName";
 			String[] params = new String[] {"ownerId", "fileName"};
 			Object[] values = new Object[] {ownerId, name};
-			List list = (List) getHibernateTemplate().findByNamedParam(query, params, values);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, params, values);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());

@@ -78,7 +78,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		
 		ICompiler compiler = null;
 		try {
-			Constructor c = Class.forName(sClass).getConstructor(new Class[] {Properties.class});
+			Constructor<?> c = Class.forName(sClass).getConstructor(new Class[] {Properties.class});
 			compiler = (ICompiler)c.newInstance(new Object[] {compilerProps});
 		} catch(Exception ex) {
 			throw new ServiceException("Could not start compiler wrapper.");
@@ -520,7 +520,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		
 		ISimulator simulator = null;
 		try {
-			Constructor c = Class.forName(sClass).getConstructor(new Class[] {Properties.class});
+			Constructor<?> c = Class.forName(sClass).getConstructor(new Class[] {Properties.class});
 			simulator = (ISimulator)c.newInstance(new Object[] {simProps});
 		} catch(Exception ex) {
 			throw new ServiceException("Could not start simulator wrapper.");

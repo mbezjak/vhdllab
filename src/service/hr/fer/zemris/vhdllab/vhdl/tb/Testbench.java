@@ -249,7 +249,7 @@ public class Testbench implements IVHDLGenerator {
 	 * @author Miro Bezjak
 	 * @see ImpulseWithSignalName
 	 */
-	private class Slot implements Comparable {
+	private class Slot implements Comparable<Slot> {
 		
 		private long time;
 		private List<ImpulseWithSignalName> list = new ArrayList<ImpulseWithSignalName>();
@@ -322,9 +322,7 @@ public class Testbench implements IVHDLGenerator {
 		 * @throws ClassCastException if the specified object's type prevents
 		 *         it from being compared to this Slot.
 		 */
-		public int compareTo(Object o) {
-			if( !(o instanceof Slot) ) throw new ClassCastException("Object must be instance of Slot.");
-			Slot other = (Slot) o;
+		public int compareTo(Slot other) {
 			long res = this.time - other.getTime();
 			if(res<0) return -1;
 			else if(res>0) return 1;

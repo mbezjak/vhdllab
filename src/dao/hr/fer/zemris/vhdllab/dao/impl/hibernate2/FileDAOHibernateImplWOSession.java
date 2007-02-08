@@ -55,19 +55,20 @@ public class FileDAOHibernateImplWOSession extends HibernateDaoSupport implement
 		try {
 			String query = "from File as f where f.id = :fileId";
 			String param = "fileId";
-			List list = (List) getHibernateTemplate().findByNamedParam(query, param, fileId);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, fileId);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean exists(Long projectId, String name) throws DAOException {
 		try {
 			String query = "from File as f where f.project.id = :projectId and f.fileName = :filename";
 			String[] params = new String[] {"projectId", "filename"};
 			Object[] values = new Object[] {projectId, name};
-			List list = (List) getHibernateTemplate().findByNamedParam(query, params, values);
+			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, params, values);
 			return !list.isEmpty();
 		} catch (Exception e) {
 			throw new DAOException(e.getMessage());

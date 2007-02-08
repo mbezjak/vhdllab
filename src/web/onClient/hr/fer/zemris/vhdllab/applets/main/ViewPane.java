@@ -42,7 +42,7 @@ public class ViewPane extends JTabbedPane {
 	public int indexOfView(IView view) {
 		for(int i = 0; i < getTabCount(); i++) {
 			IView viewComponent = getViewAt(i);
-			if(view.hashCode() == viewComponent.hashCode()) {
+			if(view == viewComponent) {
 				return i;
 			}
 		}

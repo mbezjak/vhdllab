@@ -58,6 +58,8 @@
     <mkdir dir="${doc.dir}"/>
     <mkdir dir="${local.dir}"/>
     <mkdir dir="${hibernate.dir}"/>
+  	<mkdir dir="${reports}"/>
+  	<mkdir dir="${reports.tests}"/>
   	
   	<copy todir="${local.dir}" overwrite="true">
   	  <fileset dir="${metadata.dir}"/>
@@ -93,6 +95,8 @@
       <fileset dir="${doc.dir}"/>
       <fileset dir="${hibernate.hbm.dir}"/>
       <fileset dir="${local.dir}"/>
+   	  <fileset dir="${reports.tests}"/>
+   	  <fileset dir="${reports}"/>
     </delete>
   </target>
 
@@ -229,6 +233,26 @@
       </classpath>
     </java>
   </target>
+	
+	  <target name="r" depends="package-dao,package-tests-dao" if="junit.jar.present">
+	  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+	  	  <classpath>
+	      	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
+	        <pathelement location="${jlib-tests.dir}/${app.name}-tests-dao.jar"/>
+	        <pathelement location="${java.class.path}"/>
+	      	<path refid="src.class.path"/>
+	  	  </classpath>
+
+	  	  <formatter type="plain"/>
+
+	  	  <batchtest fork="no" todir="${reports.tests}">
+	  	    <fileset dir="src/tests/dao">
+	  	      <include name="**/*Test*.java"/>
+	  	      <exclude name="**/All*Tests.java"/>
+	  	    </fileset>
+	  	  </batchtest>
+	  	</junit>
+	  </target>
 	
   <target name="run-tests-service" depends="package-dao,package-service,package-tests-service" if="junit.jar.present">
     <java fork="yes" classname="org.junit.runner.JUnitCore" taskname="junit" failonerror="true">

@@ -4,7 +4,7 @@ package hr.fer.zemris.vhdllab.model;
  * @hibernate.class
  *  table="FILES"
  */
-public class File implements Comparable {
+public class File implements Comparable<File> {
 	
 	private Long id;
 	private String fileName;
@@ -94,10 +94,7 @@ public class File implements Comparable {
 		else return false;
 	}
 	
-	public int compareTo(Object o) {
-		if(!(o instanceof File)) return 1;
-		File other = (File) o;
-		
+	public int compareTo(File other) {
 		long val = 0;
 		
 		/* File name ordering */

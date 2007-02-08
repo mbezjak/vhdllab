@@ -13,6 +13,8 @@ jlib-tests.dir = ${jlib.dir}/tests
 doc.dir = docs
 local.dir = local
 metadata.dir = metadata
+reports = reports
+reports.tests = ${reports}/tests
 
 ### properties for "Model".hbm.xml files ###
 hibernate.dir = ${local.dir}/hibernate
