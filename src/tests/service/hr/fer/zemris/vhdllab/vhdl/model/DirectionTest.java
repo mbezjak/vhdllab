@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -133,10 +132,6 @@ public class DirectionTest {
 		System.out.println("Testing method toString():");
 		System.out.println(Direction.IN.toString());
 		System.out.println("********************");
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DirectionTest.class);
 	}
 	
 }

@@ -15,8 +15,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,9 +91,5 @@ public class DoMethodExistsProjectTest {
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
 		assertEquals("1", p.getProperty(MethodConstants.PROP_PROJECT_EXISTS, ""));
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DoMethodExistsProjectTest.class);
 	}
 }

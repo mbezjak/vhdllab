@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -585,10 +583,6 @@ public class DefaultSignalTest {
 		System.out.println("Testing method toString():");
 		System.out.println(signal);
 		System.out.println("********************");
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DefaultSignalTest.class);
 	}
 	
 }

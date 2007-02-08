@@ -9,7 +9,6 @@ import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,10 +90,6 @@ public class TestbenchTest {
 	public void writeVHDL3() throws ServiceException {
 		IVHDLGenerator generator = new Testbench();
 		generator.generateVHDL(testbench, null);
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(TestbenchTest.class);
 	}
 	
 }

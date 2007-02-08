@@ -9,7 +9,6 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -205,10 +204,6 @@ public class SimulateTest {
 				}
 			}
 		};
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(SimulateTest.class);
 	}
 
 }

@@ -15,8 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -347,9 +345,5 @@ public class ExtractorTest {
 				}
 			}
 		};
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(ExtractorTest.class);
 	}
 }

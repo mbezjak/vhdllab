@@ -12,8 +12,6 @@ import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
 import java.util.Properties;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -80,9 +78,5 @@ public class DoMethodDeleteUserFileTest {
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
 		assertEquals(false, labman.existsUserFile(file.getId()));
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DoMethodDeleteUserFileTest.class);
 	}
 }

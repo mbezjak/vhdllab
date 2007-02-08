@@ -1,3 +1,4 @@
+
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
 import static org.junit.Assert.assertEquals;
@@ -14,8 +15,6 @@ import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -126,9 +125,5 @@ public class SimpleMethodDispatcherTest {
 		assertEquals(3, prop.keySet().size());
 		assertEquals("mtd", prop.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.SE_INVALID_METHOD_CALL, prop.getProperty(MethodConstants.PROP_STATUS, ""));
-	}
-
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(SimpleMethodDispatcherTest.class);
 	}
 }

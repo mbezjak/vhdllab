@@ -15,8 +15,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -101,9 +99,5 @@ public class DoMethodLoadProjectFilesIdTest {
 		assertEquals(true, project.getFiles().contains(f));
 		f = labman.loadFile(Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID+".3")));
 		assertEquals(true, project.getFiles().contains(f));
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DoMethodLoadProjectFilesIdTest.class);
 	}
 }

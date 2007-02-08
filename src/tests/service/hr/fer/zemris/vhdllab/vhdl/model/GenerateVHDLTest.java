@@ -9,7 +9,6 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -130,9 +129,5 @@ public class GenerateVHDLTest {
 				}
 			}
 		};
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(GenerateVHDLTest.class);
 	}
 }

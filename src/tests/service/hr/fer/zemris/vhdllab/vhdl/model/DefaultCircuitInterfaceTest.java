@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -247,10 +245,6 @@ public class DefaultCircuitInterfaceTest {
 		System.out.println("Testing method toString():");
 		System.out.println(ci);
 		System.out.println("********************");
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DefaultCircuitInterfaceTest.class);
 	}
 	
 }

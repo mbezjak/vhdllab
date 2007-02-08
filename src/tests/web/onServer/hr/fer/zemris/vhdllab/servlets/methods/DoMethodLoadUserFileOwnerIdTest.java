@@ -12,8 +12,6 @@ import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
 import java.util.Properties;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -78,9 +76,5 @@ public class DoMethodLoadUserFileOwnerIdTest {
 		assertEquals(method, p.getProperty(MethodConstants.PROP_METHOD, ""));
 		assertEquals(MethodConstants.STATUS_OK, p.getProperty(MethodConstants.PROP_STATUS, ""));
 		assertEquals(String.valueOf(file.getOwnerID()), p.getProperty(MethodConstants.PROP_FILE_OWNER_ID, ""));
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DoMethodLoadUserFileOwnerIdTest.class);
 	}
 }

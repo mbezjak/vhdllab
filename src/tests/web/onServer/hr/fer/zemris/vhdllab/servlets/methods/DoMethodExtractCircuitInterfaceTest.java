@@ -18,8 +18,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -150,9 +148,5 @@ public class DoMethodExtractCircuitInterfaceTest {
 			assertEquals(type.getVectorDirection(), MethodConstants.PROP_CI_PORT_TYPE_VECTOR_DIRECTION+".1");
 			i++;
 		}
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DoMethodExtractCircuitInterfaceTest.class);
 	}
 }

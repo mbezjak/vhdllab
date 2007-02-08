@@ -13,8 +13,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -670,10 +668,6 @@ public class DefaultGeneratorTest {
 		System.out.println("Testing method toString():");
 		System.out.println(gen);
 		System.out.println("********************");
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DefaultGeneratorTest.class);
 	}
 	
 }

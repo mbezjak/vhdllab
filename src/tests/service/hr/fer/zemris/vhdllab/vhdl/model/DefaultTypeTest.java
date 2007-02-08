@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -298,10 +297,6 @@ public class DefaultTypeTest {
 		System.out.println("Testing method toString():");
 		System.out.println(type2);
 		System.out.println("********************");
-	}
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(DefaultTypeTest.class);
 	}
 	
 }
