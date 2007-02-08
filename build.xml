@@ -60,6 +60,7 @@
     <mkdir dir="${hibernate.dir}"/>
   	<mkdir dir="${reports}"/>
   	<mkdir dir="${reports.tests}"/>
+  	<mkdir dir="${reports.tests.html}"/>
   	
   	<copy todir="${local.dir}" overwrite="true">
   	  <fileset dir="${metadata.dir}"/>
@@ -95,6 +96,7 @@
       <fileset dir="${doc.dir}"/>
       <fileset dir="${hibernate.hbm.dir}"/>
       <fileset dir="${local.dir}"/>
+   	  <fileset dir="${reports.tests.html}"/>
    	  <fileset dir="${reports.tests}"/>
    	  <fileset dir="${reports}"/>
     </delete>
@@ -222,79 +224,107 @@
     </jar>
   </target>
 	
-  <target name="run-tests-dao" depends="package-dao,package-tests-dao" if="junit.jar.present">
-    <java fork="yes" classname="org.junit.runner.JUnitCore" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllDAOJUnitTests"/>
-      <classpath>
+  <target name="run-tests-dao" depends="package-server,package-tests-dao" if="junit.jar.present">
+  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+  	  <classpath>
+        <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
+	  	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-dao.jar"/>
         <pathelement location="${java.class.path}"/>
       	<path refid="src.class.path"/>
-      </classpath>
-    </java>
+  	  </classpath>
+
+  	  <formatter type="xml"/>
+
+  	  <batchtest fork="no" todir="${reports.tests}">
+  	    <fileset dir="${build.dir}/tests/dao">
+  	      <include name="**/*Test*.class"/>
+  	      <exclude name="**/All*Tests.class"/>
+  	    </fileset>
+  	  </batchtest>
+  	</junit>
   </target>
 	
-	  <target name="r" depends="package-dao,package-tests-dao" if="junit.jar.present">
-	  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
-	  	  <classpath>
-	      	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
-	        <pathelement location="${jlib-tests.dir}/${app.name}-tests-dao.jar"/>
-	        <pathelement location="${java.class.path}"/>
-	      	<path refid="src.class.path"/>
-	  	  </classpath>
-
-	  	  <formatter type="plain"/>
-
-	  	  <batchtest fork="no" todir="${reports.tests}">
-	  	    <fileset dir="src/tests/dao">
-	  	      <include name="**/*Test*.java"/>
-	  	      <exclude name="**/All*Tests.java"/>
-	  	    </fileset>
-	  	  </batchtest>
-	  	</junit>
-	  </target>
-	
-  <target name="run-tests-service" depends="package-dao,package-service,package-tests-service" if="junit.jar.present">
-    <java fork="yes" classname="org.junit.runner.JUnitCore" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllServiceJUnitTests"/>
-      <classpath>
-      	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
+  <target name="run-tests-service" depends="package-server,package-tests-service" if="junit.jar.present">
+  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+	  <classpath>
+        <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
+	  	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-service.jar"/>
         <pathelement location="${java.class.path}"/>
       	<path refid="src.class.path"/>
-      </classpath>
-    </java>
+	  </classpath>
+	
+	  <formatter type="xml"/>
+	
+	  <batchtest fork="no" todir="${reports.tests}">
+	    <fileset dir="${build.dir}/tests/service">
+	      <include name="**/*Test*.class"/>
+	      <exclude name="**/All*Tests.class"/>
+	    </fileset>
+	  </batchtest>
+	</junit>
   </target>
      
-  <target name="run-tests-web-onServer" depends="package-dao,package-service,package-web-onServer,package-tests-web-onServer" if="junit.jar.present">
-    <java fork="yes" classname="org.junit.runner.JUnitCore" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllOnServerJUnitTests"/>
-      <classpath>
+  <target name="run-tests-web-onServer" depends="package-server,package-tests-web-onServer" if="junit.jar.present">
+  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+	  <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onServer.jar"/>
         <pathelement location="${java.class.path}"/>
       	<path refid="src.class.path"/>
-      </classpath>
-    </java>
+	  </classpath>
+	
+	  <formatter type="xml"/>
+	
+	  <batchtest fork="no" todir="${reports.tests}">
+	    <fileset dir="${build.dir}/tests/web/onServer">
+	      <include name="**/*Test*.class"/>
+	      <exclude name="**/All*Tests.class"/>
+	    </fileset>
+	  </batchtest>
+	</junit>
   </target>
 	
-  <target name="run-tests-web-onClient" depends="package-dao,package-service,package-web-onClient,package-tests-web-onClient" if="junit.jar.present">
-    <java fork="yes" classname="org.junit.runner.JUnitCore" taskname="junit" failonerror="true">
-      <arg value="hr.fer.zemris.vhdllab.AllOnClientJUnitTests"/>
-      <classpath>
+  <target name="run-tests-web-onClient" depends="package-client,package-tests-web-onClient" if="junit.jar.present">
+  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+	  <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
-      	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
-      	<pathelement location="${jlib.dir}/${app.name}-dao.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar"/>
         <pathelement location="${java.class.path}"/>
       	<path refid="src.class.path"/>
-      </classpath>
-    </java>
+	  </classpath>
+	
+	  <formatter type="xml"/>
+	
+	  <batchtest fork="no" todir="${reports.tests}">
+	    <fileset dir="${build.dir}/tests/web/onClient">
+	      <include name="**/*Test*.class"/>
+	      <exclude name="**/All*Tests.class"/>
+	    </fileset>
+	  </batchtest>
+	</junit>
   </target>
 	
+  <target name="tests-report">
+  	<junitreport todir="${reports.tests.html}">
+      <fileset dir="${reports.tests}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${reports.tests.html}"/>
+	</junitreport>
+  </target>
+
+  <target name="show-tests-report" depends="tests-report">
+    <exec executable="${browser.exec}" spawn="true">
+      <arg line="./${reports.tests.html}/index.html"/>
+    </exec>
+  </target>
+
   <target name="doc">
   	<javadoc 
   		access="public"
@@ -479,21 +509,27 @@
   <target name="run-app" depends="tomcat">
   	<!-- Sleep for tomcat to reload his resources -->
   	<sleep seconds="${sleep.for.tomcat}"/>
-    <exec executable="${browser}" spawn="true">
+    <exec executable="${browser.exec}" spawn="true">
       <arg line="${browser.arg}"/>
       <arg line="http://${app.host}:${tomcat.port}/${app.name}/${app.url}"/>
     </exec>
   </target>
-
+	
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
 	
   <target name="compile-tests" depends="compile-tests-dao,compile-tests-service,compile-tests-web-onServer,compile-tests-web-onClient"/>
 	
-  <target name="package" depends="package-dao,package-service,package-web-onServer,package-web-onClient"/>
+  <target name="package-server" depends="package-dao,package-service,package-web-onServer"/>
+	
+  <target name="package-client" depends="package-web-onClient"/>
+	
+  <target name="package" depends="package-server, package-client"/>
 
   <target name="package-tests" depends="package-tests-dao,package-tests-service,package-tests-web-onServer,package-tests-web-onClient"/>
 	
-  <target name="run-tests" depends="run-tests-dao,run-tests-service,run-tests-web-onServer,run-tests-web-onClient"/>
+  <target name="run-tests" depends="run-tests-dao,run-tests-service,run-tests-web-onServer,run-tests-web-onClient,tests-report"/>
+	
+  <target name="test" depends="run-tests,show-tests-report"/>
 
   <target name="default" depends="package"/>
 	

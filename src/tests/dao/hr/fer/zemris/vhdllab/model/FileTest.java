@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -391,8 +390,4 @@ public class FileTest {
 		assertEquals("FileSimple".compareTo("SimpleFile"), file.compareTo(file2));
 	}
 	
-	
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(FileTest.class);
-	}
 }

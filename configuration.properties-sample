@@ -15,6 +15,7 @@ local.dir = local
 metadata.dir = metadata
 reports = reports
 reports.tests = ${reports}/tests
+reports.tests.html = ${reports.tests}/html
 
 ### properties for "Model".hbm.xml files ###
 hibernate.dir = ${local.dir}/hibernate
@@ -42,8 +43,8 @@ sleep.for.tomcat = 1
 override.java.policy = false
 
 ### Full path to browser executable file ###
-browser = c:\\Program Files\\Mozilla Firefox\\firefox.exe
-#browser = c:\\Program Files\\Opera\\opera.exe
+browser.exec = c:\\Program Files\\Mozilla Firefox\\firefox.exe
+#browser.exec = c:\\Program Files\\Opera\\opera.exe
 
 ### Command line argument ###
 ### Firefox ###

@@ -10,8 +10,6 @@ import hr.fer.zemris.vhdllab.model.Project;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,7 +89,4 @@ public class GlobalFileDAOHibernateImplTest {
 		assertEquals(true, fileDAO.exists(file.getId()));
 	}
 
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(GlobalFileDAOHibernateImplTest.class);
-	}
 }
