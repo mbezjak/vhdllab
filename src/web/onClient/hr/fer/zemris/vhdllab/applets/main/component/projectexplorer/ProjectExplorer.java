@@ -7,12 +7,10 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
-import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,7 +19,12 @@ import java.awt.event.MouseListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -33,6 +36,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -51,24 +56,42 @@ import javax.swing.tree.TreeSelectionModel;
 public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 	private Container cp = this;
+	private static final String X_USES_Y = "xusesY";
+	private static final String X_USED_IN_Y = "xusedInY";
+	private static final String FLAT = "flat";
 
 	/** Popup za prikaz menija */
 	private JPopupMenu optionsPopup = new JPopupMenu();
 
-	/** JTree root node */
+	/** x uses y root node */
 	private DefaultMutableTreeNode top;
 
-	/** Used in root node */
-	private DefaultMutableTreeNode root;
+	/** x used in y root node */
+	private DefaultMutableTreeNode topInverse;
 
-	/** Model kojeg koristi JTree */
+	/** flat root node */
+	private DefaultMutableTreeNode topFlat;
+
+	/** Model kojeg koristi x uses y JTree */
 	private DefaultTreeModel treeModel;
+
+	/** Model kojeg koristi x uses y JTree */
+	private DefaultTreeModel treeModelNormal;
+
+	/** Model kojeg koristi x used in y JTree */
+	private DefaultTreeModel treeModelInverse;
+
+	/** Model kojeg koristi flat JTree */
+	private DefaultTreeModel treeModelFlat;
 
 	/** JTree */
 	private JTree tree;
-	private JTree usedInTree;
+	private JTree treeNormal;
+	private JTree treeInverse;
+	private JTree treeFlat;
 	private JScrollPane treeView;
-	private JScrollPane usedInTreeView;
+	private JScrollPane treeViewInverse;
+	private JScrollPane treeViewFlat;
 
 	private JMenu newSubMenu;
 	private JMenuItem addProject;
@@ -82,22 +105,46 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	private JMenuItem viewVHDL;
 	private JMenuItem deleteFile;
 	private JMenuItem deleteProject;
+	private JMenuItem xusesY;
+	private JMenuItem xusedInY;
+	private JMenuItem flat;
+	private JMenu hierarchySubMenu;
+	private String currentHierarchy = X_USES_Y;
+
 
 	/** Aktivni projekt */
 	private String projectName;
 
+	/** Aktivna hijerarhija */
+	private Hierarchy hierarchy;
+
 	/** ProjectContainer */
 	private ProjectContainer projectContainer;
-	private Hierarchy hierarchy;
 	private VHDLCellRenderer renderer;
 
+
+	private TreePath workingTreePath;
+	private boolean isNowExpanded;
+	private boolean isNowCollapse;
+
+	/** This collection contains paths to collapse nodes */
+	private Collection<TreePath> expandedNodes;
+
 	private static final long serialVersionUID = 4932799790563214089L;
+
+	// pitaj miru zakaj se projectContainer.getAllProject blesira i o cemu ona ovisi?!
+	// do tada interna kolekcija projekata
+	private List<String> allProjects;
 
 
 	/**
 	 * Default Constructor
 	 */
 	public ProjectExplorer() {
+		// create set of expanded treepaths 
+		expandedNodes = new HashSet<TreePath>();
+		allProjects = new ArrayList<String>();
+
 		newSubMenu = new JMenu("New");
 		addProject = new JMenuItem("Add project");
 		addVHDL = new JMenuItem("VHDL source");
@@ -110,6 +157,10 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		viewVHDL = new JMenuItem("View VHDL");
 		deleteFile = new JMenuItem("Delete file");
 		deleteProject = new JMenuItem("Delete project");
+		hierarchySubMenu = new JMenu("Hierarchies");
+		xusesY = new JMenuItem("X uses Y");
+		xusedInY = new JMenuItem("X is-used-by Y");
+		flat = new JMenuItem("Flat");
 
 		/* popup meni */
 		addProject.addActionListener(popupListener);
@@ -123,6 +174,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		viewVHDL.addActionListener(popupListener);
 		deleteFile.addActionListener(popupListener);
 		deleteProject.addActionListener(popupListener);
+		xusesY.addActionListener(popupListener);
+		xusedInY.addActionListener(popupListener);
+		flat.addActionListener(popupListener);
 
 		newSubMenu.add(addProject);
 		newSubMenu.addSeparator();
@@ -140,42 +194,88 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		optionsPopup.addSeparator();
 		optionsPopup.add(deleteFile);
 		optionsPopup.add(deleteProject);
+		optionsPopup.addSeparator();
+		optionsPopup.add(hierarchySubMenu);
+		hierarchySubMenu.add(xusesY);
+		hierarchySubMenu.add(xusedInY);
+		hierarchySubMenu.add(flat);
 		/* kraj inicijalizacije popupa menija */
+
 
 		/* filanje stabla */
 		top = new DefaultMutableTreeNode("Vhdllab");
-		treeModel = new DefaultTreeModel(top);
+		treeModelNormal = new DefaultTreeModel(top);
 		/* inicijalizacija JTree komponente */
-		tree = new JTree(treeModel);
+		treeNormal = new JTree(treeModelNormal);
 		// tree.setPreferredSize(new Dimension(500, 600));
-		tree.addMouseListener(mouseListener);
-		tree.addMouseListener(treeMouse);
-		tree.setEditable(false);
-		tree.setRootVisible(false);
-		tree.expandRow(0);
-		tree.setToggleClickCount(8);
-		tree.getSelectionModel().setSelectionMode(
+		treeNormal.addMouseListener(mouseListener);
+		treeNormal.addMouseListener(treeMouse);
+		treeNormal.addTreeExpansionListener(treeExpansionListener);
+		treeNormal.setEditable(false);
+		treeNormal.setRootVisible(false);
+		treeNormal.expandRow(0);
+		treeNormal.setToggleClickCount(8);
+		treeNormal.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.setShowsRootHandles(true);
-		treeView = new JScrollPane(tree);
+		treeNormal.setShowsRootHandles(true);
+		treeView = new JScrollPane(treeNormal);
 		renderer = new VHDLCellRenderer();
-		tree.setCellRenderer(renderer);
-		ToolTipManager.sharedInstance().registerComponent(tree);
+		treeNormal.setCellRenderer(renderer);
+		ToolTipManager.sharedInstance().registerComponent(treeNormal);
+
+		// u startu je prvo stablo normalno stablo
+		tree = treeNormal;
 		/* kraj inicijalizacije tree komponente */
 
-		/* inicijalizacija transformirane JTree komponente */
-		usedInTree = new JTree(root);
-		usedInTree.setPreferredSize(new Dimension(500, 600));
-		usedInTree.setEditable(false);
-		usedInTree.setRootVisible(false);
-		usedInTree.expandRow(0);
-		usedInTree.getSelectionModel();
-		// usedInTree.setCellRenderer(renderer);
-		// ToolTipManager.sharedInstance().registerComponent(usedInTree);
-		usedInTreeView = new JScrollPane(usedInTree);
+		/* inicijalizacija inverznog stabla JTree komponente */
+		topInverse = new DefaultMutableTreeNode("Vhdllab");
+		treeModelInverse = new DefaultTreeModel(topInverse);
+		treeInverse = new JTree(treeModelInverse);
+		treeInverse.addMouseListener(mouseListener);
+		treeInverse.addMouseListener(treeMouse);
+		treeInverse.addTreeExpansionListener(treeExpansionListener);
+		treeInverse.setEditable(false);
+		treeInverse.setRootVisible(false);
+		treeInverse.expandRow(0);
+		treeInverse.setToggleClickCount(8);
+		treeInverse.getSelectionModel().setSelectionMode(
+				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		treeInverse.setShowsRootHandles(true);
+		treeViewInverse = new JScrollPane(treeInverse);
+		renderer = new VHDLCellRenderer();
+		treeInverse.setCellRenderer(renderer);
+		ToolTipManager.sharedInstance().registerComponent(treeInverse);
+
+		/* inicijalizacija flat stabla */
+		topFlat = new DefaultMutableTreeNode("Vhdllab");
+		treeModelFlat = new DefaultTreeModel(topFlat);
+		treeFlat = new JTree(treeModelFlat);
+		treeFlat.addMouseListener(mouseListener);
+		treeFlat.addMouseListener(treeMouse);
+		treeFlat.addTreeExpansionListener(treeExpansionListener);
+		treeFlat.setEditable(false);
+		treeFlat.setRootVisible(false);
+		treeFlat.expandRow(0);
+		treeFlat.setToggleClickCount(8);
+		treeFlat.getSelectionModel().setSelectionMode(
+				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		treeFlat.setShowsRootHandles(true);
+		treeViewFlat = new JScrollPane(treeFlat);
+		renderer = new VHDLCellRenderer();
+		treeFlat.setCellRenderer(renderer);
+		ToolTipManager.sharedInstance().registerComponent(treeFlat);
+
 
 		cp.setLayout(new BorderLayout());
 		cp.add(treeView);
+		treeModel = treeModelNormal;
+
+	//	cp.add(treeViewInverse);	
+	//	currentHierarchy = X_USED_IN_Y;
+	//	tree = treeInverse;
+	//	treeModel = treeModelInverse;
+
+
 	}
 
 
@@ -216,23 +316,30 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			if (parent.isRoot()) {
 				return this;
 			}
-			Pair pair = hierarchy.getPair(node.toString());
-			if (pair == null) {
-				return this;
-			} else {
-				type = pair.getFileType();
-			}
+			TreeNode[] treeNode = node.getPath();
+			String nodeProjectName = (String)((DefaultMutableTreeNode)(treeNode[1])).getUserObject();
+			
+//            try {
+//                hierarchy = projectContainer.extractHierarchy(nodeProjectName);
+//            } catch (UniformAppletException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+			
+//            Pair pair = hierarchy.getPair(node.toString());
+//            if (pair == null) {
+//                return this;
+//            } else {
+//                type = pair.getFileType();
+//            }
 			
 			// provjeri kojeg je tipa
-			// try {
-			// System.out.println(ProjectExplorer.this.projectName);
-			// name = getProjectName();
-			// if (name != null) {
-			// type = projectContainer.getFileType(name, node.toString());
-			// }
-			// } catch (UniformAppletException e) {
-			// e.printStackTrace();
-			// }
+			 try {
+				type = projectContainer.getFileType(nodeProjectName, node.toString());
+			 } catch (UniformAppletException e) {
+			 	e.printStackTrace();
+			 }
+
 			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
 				setIcon(vhdl);
 				setToolTipText("VHDL source file");
@@ -281,6 +388,12 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			if (event.getButton() == 3 || event.getButton() == 2) {
 				TreePath selPath = tree.getPathForLocation(event.getX(), event.getY());
 				tree.setSelectionPath(selPath);
+				workingTreePath = selPath;
+				String name = getProjectName();
+				if (name != null) {
+					projectName = name;
+				}
+
 				int borderPanel = 600 / 2;
 				if (event.getY() >= borderPanel) {
 					optionsPopup.show(tree, event.getX(), event.getY()
@@ -294,6 +407,20 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			cp.requestFocusInWindow();
 		}
 	};
+
+
+ 	private TreeExpansionListener treeExpansionListener = new TreeExpansionListener() {
+        public void treeExpanded(TreeExpansionEvent event) {
+			isNowExpanded = true;
+        }
+
+
+        public void treeCollapsed(TreeExpansionEvent e) {
+			isNowCollapse = true;
+		}
+	};
+
+
 
 	/**
 	 * Listener popup menija
@@ -385,6 +512,89 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				deleteFile();
 			} else if (event.getSource().equals(deleteProject)) {
 				deleteProject();
+			} else if (event.getSource().equals(xusesY)) {
+				if (currentHierarchy.equals(X_USES_Y)) {
+					return;
+				}
+				List<String> projects = projectContainer.getAllProjects();
+				currentHierarchy = X_USES_Y;
+				tree = treeNormal;
+				treeModel = treeModelNormal;
+
+				// obrisi sve prijasnje projekte iz stabla i napravi nove
+				top.removeAllChildren();
+				treeModel.reload();
+				// nakon toga dohvati sve projekte is project containera i kreiraj
+				// podstablo za taj projekt
+				for (String project : projects) {
+					DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(project);
+					treeModelNormal.insertNodeInto(tempNode, top, top.getChildCount());
+				//	topInverse.add(tempNode);
+					buildXusesYForOneProject(project, tempNode);
+				}	
+	
+				treeModel.reload();
+				cp.removeAll();
+				cp.setLayout(new BorderLayout());
+				cp.add(treeView);
+				cp.repaint();
+				cp.validate();
+			} else if (event.getSource().equals(xusedInY)) {
+				if (currentHierarchy.equals(X_USED_IN_Y)) {
+					return;
+				}
+				List<String> projects = projectContainer.getAllProjects();
+				currentHierarchy = X_USED_IN_Y;
+				tree = treeInverse;
+				treeModel = treeModelInverse;
+
+				// obrisi sve prijasnje projekte iz stabla i napravi nove
+				topInverse.removeAllChildren();
+				treeModel.reload();
+				// nakon toga dohvati sve projekte is project containera i kreiraj
+				// podstablo za taj projekt
+				for (String project : projects) {
+					DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(project);
+					treeModelInverse.insertNodeInto(tempNode, topInverse, topInverse.getChildCount());
+				//	topInverse.add(tempNode);
+					buildXusedInYForOneProject(project, tempNode);
+				}	
+
+				treeModel.reload();
+				// izbrisi prethodno stablo iz panela i dodaj novo
+				cp.removeAll();
+				cp.setLayout(new BorderLayout());
+				cp.add(treeViewInverse);
+				cp.repaint();
+				cp.validate();
+			} else if (event.getSource().equals(flat)) {
+				if (currentHierarchy.equals(FLAT)) {
+					return;
+				}
+				List<String> projects = projectContainer.getAllProjects();
+				currentHierarchy = FLAT;
+				tree = treeFlat;
+				treeModel = treeModelFlat;
+				
+				// obrisi sve prijasnje projekte iz stabla i napravi nove
+				topFlat.removeAllChildren();
+				treeModel.reload();
+				// nakon toga dohvati sve projekte is project containera i kreiraj
+				// podstablo za taj projekt
+				for (String project : projects) {
+					DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(project);
+					treeModelFlat.insertNodeInto(tempNode, topFlat, topFlat.getChildCount());
+				//	topInverse.add(tempNode);
+					buildFlatForOneProject(project, tempNode);
+				}	
+
+				treeModel.reload();
+				// izbrisi prethodno stablo iz panela i dodaj novo
+				cp.removeAll();
+				cp.setLayout(new BorderLayout());
+				cp.add(treeViewFlat);
+				cp.repaint();
+				cp.validate();
 			}
 			TreePath treePath = tree.getSelectionPath();
 			//tree.setExpandedState(treePath, true);
@@ -393,6 +603,53 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			tree.scrollPathToVisible(treePath);
 		}
 	};
+
+
+	/**
+	 * Listener JTree
+	 */
+	private MouseListener treeMouse = new MouseAdapter() {
+		public void mousePressed(MouseEvent event) {
+
+			String fileName = null;
+			String name = null;
+			TreePath selPath = tree.getPathForLocation(event.getX(), event.getY());
+
+			workingTreePath = tree.getClosestPathForLocation(event.getX(), event.getY());
+			if (isNowExpanded) {
+				isNowExpanded = false;
+				expandedNodes.add(workingTreePath);
+			}
+			if (isNowCollapse) {
+				isNowCollapse = false;
+				expandedNodes.remove(workingTreePath);
+			}
+
+			if (selPath != null) {
+				if (event.getClickCount() == 1) {
+					name = getProjectName();
+					if (name != null) {
+						projectName = name;
+					}
+
+				} else if (event.getClickCount() == 2) {
+					fileName = getFileName();
+					if (fileName != null) {
+						try {
+							name = getProjectName();
+							if (name != null) {
+								projectContainer.openEditor(name, fileName, true, false);
+							}
+						} catch (UniformAppletException ex) {
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
+
+		}
+	};
+
 
 
 	/**
@@ -414,9 +671,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			// uzmi ime projekta i ucini ga aktivnim
 			projectName = ((DefaultMutableTreeNode)(objectPath[1])).toString();
-		} else {
-			projectName = null;
-		}
+		} 
 		this.setActiveProject(projectName);
 		return projectName;
 	}
@@ -437,41 +692,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		}
 		return fileName;
 	}
-
-	/**
-	 * Listener JTree
-	 */
-	private MouseListener treeMouse = new MouseAdapter() {
-		public void mousePressed(MouseEvent event) {
-
-			String fileName = null;
-			String name = null;
-			TreePath selPath = tree.getPathForLocation(event.getX(), event.getY());
-
-			if (selPath != null) {
-				if (event.getClickCount() == 1) {
-					name = getProjectName();
-					System.out.println(name);
-					if (name != null) {
-						projectName = name;
-					}
-
-				} else if (event.getClickCount() == 2) {
-					fileName = getFileName();
-					if (fileName != null) {
-						try {
-							name = getProjectName();
-							if (name != null) {
-								projectContainer.openEditor(name, fileName, true, false);
-							}
-						} catch (UniformAppletException ex) {
-							ex.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-	};
 
 
 	/**
@@ -510,14 +730,88 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	 */
 	public void addProject(String projectName) {
 		DefaultMutableTreeNode projectNode = null;
+		DefaultMutableTreeNode topNode = null;
+		this.allProjects.add(projectName);
+
+		// nadi prikaz hijerarhije i stavljaj na njen root cvor
+		if (currentHierarchy.equals(X_USES_Y)) {
+			topNode = top;
+		} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+			topNode = topInverse;
+		} else {
+			topNode = topFlat;
+		}
 
 		// dodaj novi cvor, tj. projekt u stablo
-		if (getNode(top, projectName) == null) {
+		if (getNode(topNode, projectName) == null) {
 			projectNode = new DefaultMutableTreeNode(projectName);
-			this.top.add(projectNode);
+			treeModel.insertNodeInto(projectNode, topNode, topNode.getChildCount());
+		//	this.topNode.add(projectNode);  moze i tako, ili pomocu inserInto
 		} else {
-			projectNode = getNode(top, projectName);
+			projectNode = getNode(topNode, projectName);
 		}
+
+		// izgradi podstablo u ovisnosti o hijerarhiji
+		if (currentHierarchy.equals(X_USES_Y)) {
+			this.buildXusesYForOneProject(projectName, projectNode);
+		} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+			this.buildXusedInYForOneProject(projectName, projectNode);
+		} else {
+			this.buildFlatForOneProject(projectName, projectNode);
+		}
+		treeModel.reload();
+		for (TreePath treePath : expandedNodes) {
+			tree.expandPath(treePath);
+		}
+	}
+
+
+	public void refreshProject(String projectName) {
+		// delete all previuos nodes from this projectName
+		DefaultMutableTreeNode projectNode = null;
+		DefaultMutableTreeNode topNode = null;
+
+		// nadi prikaz hijerarhije i stavljaj na njen root cvor
+		if (currentHierarchy.equals(X_USES_Y)) {
+			topNode = top;
+		} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+			topNode = topInverse;
+		} else {
+			topNode = topFlat;
+		}
+
+		for (int i = 0; i < topNode.getChildCount(); i++) {
+			projectNode = (DefaultMutableTreeNode)(topNode.getChildAt(i));
+			if (projectNode.getUserObject().equals("projectName")) {
+				projectNode.removeAllChildren();
+				// dohvaca sve root cvorove tog projekta
+			
+				// izgradi podstablo u ovisnosti o hijerarhiji
+				if (currentHierarchy.equals(X_USES_Y)) {
+					this.buildXusesYForOneProject(projectName, projectNode);
+				} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+					this.buildXusedInYForOneProject(projectName, projectNode);
+				} else {
+					this.buildFlatForOneProject(projectName, projectNode);
+				}
+			}
+		}
+		treeModel.reload();
+		for (TreePath treePath : expandedNodes) {
+			tree.expandPath(treePath);
+		}
+	}
+
+
+	/** 
+	 * pomocna funkcija koja gradi stablo x uses y za jedan projekt
+	 *
+	 * @param projectName ime projekta za kojeg se radi hijerarhija stabla
+	 * @param projectNode
+	 */
+	private void buildXusesYForOneProject(String projectName, 
+			DefaultMutableTreeNode projectNode) {
+
 		// dohvaca sve root cvorove tog projekta
 		try {
 			hierarchy = projectContainer.extractHierarchy(projectName);
@@ -526,20 +820,167 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			throw new NullPointerException(sw.toString());
-			//;
 		}
 		DefaultMutableTreeNode rootNode = null;
 		for (String string : hierarchy.getRootNodes()) {
 			if (getNode(projectNode, string) == null) {
 				rootNode = new DefaultMutableTreeNode(string);
-				projectNode.add(rootNode);
+				//projectNode.add(rootNode);
+				treeModel.insertNodeInto(rootNode, projectNode, projectNode.getChildCount());
+
 			} else {
 				rootNode = getNode(projectNode, string);
 			}
 			addChildren(rootNode, hierarchy);
 		}
-		treeModel.reload();
 	}
+
+
+	/** 
+	 * pomocna funkcija koja gradi stablo x used in y za jedan projekt
+	 *
+	 * @param projectName ime projekta za kojeg se radi hijerarhija stabla
+	 * @param projectNode cvor projekta
+	 */
+	private void buildXusedInYForOneProject(String projectName,
+			DefaultMutableTreeNode projectNode) {
+
+		// kolekcija sadrzi sve leafove koji se vec nalaze u podstablu
+		Map<String, DefaultMutableTreeNode> leafsInTree = 
+			new HashMap<String, DefaultMutableTreeNode>();
+		// lista sadrzi cvorove koji cine stazu do leafa
+		LinkedList<String> nodesUsesLeaf = new LinkedList<String>();
+
+		DefaultMutableTreeNode rootNode = null;
+		
+		try {
+			hierarchy = projectContainer.extractHierarchy(projectName);
+		} catch (UniformAppletException e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			throw new NullPointerException(sw.toString());
+		}
+
+		// dohvaca sve root cvorove tog projekta i nakon sto dohvati rootove
+		// one rootove koji su leafovi stavlja odmah u stablo, a ostalima rekurzivno
+		// trazi kraj
+		for (String string : hierarchy.getRootNodes()) {
+			nodesUsesLeaf.clear();
+			Set<String> children = hierarchy.getChildrenForParent(string);
+			if (children.isEmpty()) {
+				rootNode = new DefaultMutableTreeNode(string);
+				treeModel.insertNodeInto(rootNode, projectNode, projectNode.getChildCount());
+			}
+			else {
+				nodesUsesLeaf.add(string);
+				traverseNonLeaf(string, children, nodesUsesLeaf, leafsInTree, hierarchy, projectNode);
+			}
+		}
+	}
+
+
+	/**
+	 * Metoda uzima cvor i pretrazuje stablo dok ne nade sve krajnje cvorove.
+	 * Kada nade pojedini krajnji cvor, provjerava je li taj cvor vec dodan u inverse stablo
+	 * ako je, onda dodaje samo cvorove kojima se doslo do tog cvora, inace dodaje krajnji i 
+	 * sve ostale.
+	 *
+	 * @param parent cvor cije se podstablo pretrazuje
+	 * @param children djeca tog roditelja
+	 * @param nodesUsesLeaf lista cvorova kojima se doslo do krajnjeg
+	 * @param leafsInTree mapa krajnjih koji se vec nalaze u inverznom stablu
+	 * @param hierarchy hijerarhija ovog projekta
+	 * @param projectNode cvor projekta
+	 */
+	private void traverseNonLeaf(String parent, Set<String> children, 
+			LinkedList<String> nodesUsesLeaf,
+			Map<String, DefaultMutableTreeNode> leafsInTree, Hierarchy hierarchy, 
+			DefaultMutableTreeNode projectNode) {
+
+		DefaultMutableTreeNode currentTop = null;
+		DefaultMutableTreeNode node = null;
+
+		for (String child : children) {
+			Set<String> childChildren = hierarchy.getChildrenForParent(child);
+			// ako dijete nema djece
+			if (childChildren.isEmpty()) {
+				// ako kraj postoji vec u stablu
+				if (leafsInTree.containsKey(child)) {
+					// uzmi taj cvor iz mape
+					node = leafsInTree.get(child);
+				
+				} else {
+					node = new DefaultMutableTreeNode(child);
+					leafsInTree.put(child, node);
+					treeModel.insertNodeInto(node, projectNode, projectNode.getChildCount());
+				}
+				currentTop = node;
+				for (int i = 0; i < nodesUsesLeaf.size(); i++) {
+					DefaultMutableTreeNode tempNode = 
+						new DefaultMutableTreeNode(nodesUsesLeaf.getLast());
+					nodesUsesLeaf.removeLast();
+					treeModel.insertNodeInto(tempNode, currentTop, currentTop.getChildCount());
+					currentTop = tempNode;
+				}
+			} else {
+				nodesUsesLeaf.add(child);
+				traverseNonLeaf(child, childChildren, nodesUsesLeaf, 
+						leafsInTree, hierarchy, projectNode);
+			}
+		}
+	}
+
+
+	/** 
+	 * pomocna funkcija koja gradi stablo flat hijerarhije za jedan projekt
+	 *
+	 * @param projectName ime projekta za kojeg se radi hijerarhija stabla
+	 */
+	private void buildFlatForOneProject(String projectName, 
+			DefaultMutableTreeNode projectNode) {
+		
+		Set<String> nodesInTree = new HashSet<String>();
+		DefaultMutableTreeNode rootNode = null;
+		
+		try {
+			hierarchy = projectContainer.extractHierarchy(projectName);
+		} catch (UniformAppletException e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			throw new NullPointerException(sw.toString());
+		}
+
+		for (String string : hierarchy.getRootNodes()) {
+			rootNode = new DefaultMutableTreeNode(string);
+			treeModel.insertNodeInto(rootNode, projectNode, projectNode.getChildCount());
+			traverseTree(string, nodesInTree, hierarchy, projectNode);
+		}
+	}
+
+
+	/** 
+	 * Metoda prolazi kroz sve cvorove stabla i stavlja ih u projectNode
+	 *
+	 * @param parent
+	 * @param nodesInTree
+	 * @param projectNode
+	 */
+	private void traverseTree(String parent, Set<String> nodesInTree,
+		   	Hierarchy hierarchy, DefaultMutableTreeNode projectNode) {
+
+		Set<String> children = hierarchy.getChildrenForParent(parent);
+		for (String child : children) {
+			if (!nodesInTree.contains(child)) {
+				DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(child);
+				treeModel.insertNodeInto(tempNode, projectNode, projectNode.getChildCount());
+				nodesInTree.add(child);
+			}
+			traverseTree(child, nodesInTree, hierarchy, projectNode);
+		}
+	}
+
 
 
 	/**
@@ -553,9 +994,14 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		Set<String> children = hierarchy.getChildrenForParent(parent.toString());
 		for (String child : children) {
 			if (getNode(parent, child) == null) {
-				parent.add(addChildren(new DefaultMutableTreeNode(child), hierarchy));
+				treeModel.insertNodeInto(addChildren(new DefaultMutableTreeNode(child), hierarchy), 
+							parent, parent.getChildCount());
+				//parent.add(addChildren(new DefaultMutableTreeNode(child), hierarchy));
 			} else {
-				parent.add(addChildren(getNode(parent, child), hierarchy));
+				//parent.add(addChildren(getNode(parent, child), hierarchy));
+				treeModel.insertNodeInto(addChildren(getNode(parent, child), hierarchy), 
+							parent, parent.getChildCount());
+
 			}
 		}
 		return parent;
@@ -611,12 +1057,23 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	public List<String> getAllProjects() {
 		List<String> projects = new ArrayList<String>();
 		DefaultMutableTreeNode projectNode = null;
+		DefaultMutableTreeNode topNode = null;
+		
+		if (currentHierarchy.equals(X_USES_Y)) {
+			topNode = top;
+		} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+			topNode = topInverse;
+		} else {
+			topNode = topFlat;
+		}
 
-		for (int i = 0; i < top.getChildCount(); i++) {
-			projectNode = (DefaultMutableTreeNode)(top.getChildAt(i));
+
+		for (int i = 0; i < topNode.getChildCount(); i++) {
+			projectNode = (DefaultMutableTreeNode)(topNode.getChildAt(i));
 			projects.add(projectNode.toString());
 		}
 		return projects;
+		//return allProjects;
 	}
 
 
@@ -632,11 +1089,21 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		// }
 		boolean contains = false;
 		DefaultMutableTreeNode projectNode = null;
+		DefaultMutableTreeNode topNode = null;
+
+		if (currentHierarchy.equals(X_USES_Y)) {
+			topNode = top;
+		} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+			topNode = topInverse;
+		} else {
+			topNode = topFlat;
+		}
+
 
 		List<String> fileNames = new ArrayList<String>();
 
-		for (int i = 0; i < top.getChildCount(); i++) {
-			projectNode = (DefaultMutableTreeNode)(top.getChildAt(i));
+		for (int i = 0; i < topNode.getChildCount(); i++) {
+			projectNode = (DefaultMutableTreeNode)(topNode.getChildAt(i));
 			if (projectNode.toString().equals((String)projectName)) {
 				contains = true;
 				break;
@@ -671,9 +1138,20 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		boolean contains = false;
 		DefaultMutableTreeNode projectNode = null;
 		DefaultMutableTreeNode fileNode = null;
+		DefaultMutableTreeNode topNode = null;
 
-		for (int i = 0; i < top.getChildCount(); i++) {
-			projectNode = (DefaultMutableTreeNode)(top.getChildAt(i));
+		// nadi prikaz hijerarhije i stavljaj na njen root cvor
+		if (currentHierarchy.equals(X_USES_Y)) {
+			topNode = top;
+		} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+			topNode = topInverse;
+		} else {
+			topNode = topFlat;
+		}
+
+
+		for (int i = 0; i < topNode.getChildCount(); i++) {
+			projectNode = (DefaultMutableTreeNode)(topNode.getChildAt(i));
 			if (projectNode.toString().equals((String)projectName)) {
 				contains = true;
 				break;
@@ -683,6 +1161,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			return;
 		}
 		contains = false;
+		//TODO ovdje ici rekurzivno sve fajlove, a ne samo top level!!!
 		for (int i = 0; i < projectNode.getChildCount(); i++) {
 			fileNode = (DefaultMutableTreeNode)(projectNode.getChildAt(i));
 			if (fileNode.toString().equals((String)fileName)) {
@@ -703,9 +1182,20 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	public void removeProject(String projectName) {
 		boolean contains = false;
 		DefaultMutableTreeNode projectNode = null;
+		DefaultMutableTreeNode topNode = null;
 
-		for (int i = 0; i < top.getChildCount(); i++) {
-			projectNode = (DefaultMutableTreeNode)(top.getChildAt(i));
+		// nadi prikaz hijerarhije i stavljaj na njen root cvor
+		if (currentHierarchy.equals(X_USES_Y)) {
+			topNode = top;
+		} else if (currentHierarchy.equals(X_USED_IN_Y)) {
+			topNode = topInverse;
+		} else {
+			topNode = topFlat;
+		}
+
+
+		for (int i = 0; i < topNode.getChildCount(); i++) {
+			projectNode = (DefaultMutableTreeNode)(topNode.getChildAt(i));
 			if (projectNode.toString().equals((String)projectName)) {
 				contains = true;
 				break;
@@ -715,6 +1205,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			return;
 		}
 		treeModel.removeNodeFromParent((DefaultMutableTreeNode)projectNode);
+		allProjects.remove(projectName);
 	}
 
 
@@ -784,7 +1275,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			treeModel.removeNodeFromParent(node);
 			try {
 				// ne radi!!
-				System.out.println("ime fajla " + node.toString());
 				projectContainer.deleteFile(name, node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
@@ -810,6 +1300,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			treeModel.removeNodeFromParent((DefaultMutableTreeNode)node);
 			try {
 				projectContainer.deleteProject(node.toString());
+				allProjects.remove(node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -821,84 +1312,23 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	/**
 	 * Metoda stvara used in relation stablo
 	 */
-	private void createUsedInTree() {
-		// create used in relation tree
-		root = new DefaultMutableTreeNode("Projekti");
-		for (int i = 0; i < top.getChildCount(); i++) {
-			root.add(new DefaultMutableTreeNode(((DefaultMutableTreeNode)(top
-					.getChildAt(i))).toString()));
-		}
-		for (int i = 0; i < root.getChildCount(); i++) {
-			transformTree((DefaultMutableTreeNode)(top.getChildAt(i)),
-					(DefaultMutableTreeNode)(root.getChildAt(i)));
-		}
-	}
-
-
-	/**
-	 * Metoda stvara novo stablo iz danog stabla, s tim da je poredak obrnut
-	 * View by 'used in' relation. Prvi
-	 * 
-	 * @param parent korijenski cvor, tj. sam projekt
-	 * @param usedInTree novo podstablo
-	 * @return DefaultMutableTreeNode vraca podstablo
-	 */
-	public void transformTree(DefaultMutableTreeNode parent,
-			DefaultMutableTreeNode usedInTree) {
-
-		if (parent == null) {
-			return;
-		}
-		DefaultMutableTreeNode child;
-		DefaultMutableTreeNode tempNode;
-		DefaultMutableTreeNode[] tempNodes;
-		boolean isUsed = true;
-		;
-		for (int i = 0; i < parent.getChildCount(); i++) {
-			child = (DefaultMutableTreeNode)parent.getChildAt(i);
-			isUsed = true;
-			if (child.isLeaf()) {
-				// uzmi sve pretke, ukljucujuci s trenutnim cvorom
-				TreeNode[] nodes = child.getPath();
-				tempNodes = new DefaultMutableTreeNode[nodes.length];
-				// ako postoje samo root, project i trenutni cvor
-				if (nodes.length <= 3) {
-					isUsed = false;
-				} else {
-					// stvaranje novih cvorova
-					for (int j = tempNodes.length - 2; j >= 2; j--) {
-						tempNodes[j] = new DefaultMutableTreeNode(nodes[j].toString());
-					}
-					// stvaranje podstabla
-					for (int j = tempNodes.length - 2; j >= 3; j--) {
-						tempNodes[j].add(tempNodes[j - 1]);
-					}
-				}
-				// ako taj cvor postoji u 'used in' podstablu
-				tempNode = searchTree(usedInTree, child);
-				if (tempNode != null) {
-					if (isUsed) {
-						tempNode.add(tempNodes[tempNodes.length - 2]);
-					}
-				} else {
-					DefaultMutableTreeNode temp = new DefaultMutableTreeNode(child
-							.toString());
-					if (isUsed) {
-						temp.add(tempNodes[tempNodes.length - 2]);
-					}
-					usedInTree.add(temp);
-				}
-			} else {
-				transformTree(child, usedInTree);
-			}
-		}
-	}
+//	private void createUsedInTree() {
+//		// create used in relation tree
+//		for (int i = 0; i < top.getChildCount(); i++) {
+//			topInverse.add(new DefaultMutableTreeNode(((DefaultMutableTreeNode)(top
+//					.getChildAt(i))).toString()));  // vadi ime projekta i stvara novi cvor (ne trebam to)
+//		}
+//		for (int i = 0; i < topInverse.getChildCount(); i++) {  // za svaki projekt 
+//			transformTree((DefaultMutableTreeNode)(top.getChildAt(i)), // hijerarhija za taj projekt
+//					(DefaultMutableTreeNode)(topInverse.getChildAt(i))); // sam projekt
+//		}
+//	}
 
 
 	/**
 	 * Metoda koje pretrazuje stablo.
 	 * 
-	 * @param parent stablo koje se pretrazuje
+	 * @param parent stablo koje se pretrazuje, uzima projectNode
 	 * @param node cvor koji se tazi
 	 * @return DefaultMutableTreeNode cvor, ako je naden
 	 */
@@ -920,11 +1350,6 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 		}
 		return null;
-	}
-
-
-	public void refreshProject(String projectName) {
-		addProject(projectName);
 	}
 
 
