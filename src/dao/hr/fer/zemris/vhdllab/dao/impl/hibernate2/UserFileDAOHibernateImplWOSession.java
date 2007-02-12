@@ -22,7 +22,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 		try {
 			return (UserFile)getHibernateTemplate().load(UserFile.class, id);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -33,7 +33,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 		try {
 			getHibernateTemplate().saveOrUpdate(file);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -44,7 +44,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 		try {
 			getHibernateTemplate().delete(file);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 			String param = "ownerID";
 			return (List<UserFile>)getHibernateTemplate().findByNamedParam(query, param, userID);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 	
@@ -72,7 +72,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, fileId);
 			return !list.isEmpty();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -87,7 +87,7 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, params, values);
 			return !list.isEmpty();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 }

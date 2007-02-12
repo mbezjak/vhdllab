@@ -24,11 +24,14 @@ public class FileDAOHibernateImpl implements FileDAO {
 			File file = (File) session.load(File.class, id);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 
 			return file;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -45,9 +48,12 @@ public class FileDAOHibernateImpl implements FileDAO {
 			file.getProject().addFile(file);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -64,9 +70,12 @@ public class FileDAOHibernateImpl implements FileDAO {
 			session.delete(file);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -83,11 +92,14 @@ public class FileDAOHibernateImpl implements FileDAO {
 			File file = (File) query.uniqueResult();
 			
 			tx.commit();
-			HibernateUtil.closeSession();
 			
 			return file != null;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -95,6 +107,12 @@ public class FileDAOHibernateImpl implements FileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#exists(java.lang.Long, java.lang.String)
 	 */
 	public boolean exists(Long projectId, String name) throws DAOException {
+		if(projectId == null) {
+			throw new DAOException("Project identifier can not be null.");
+		}
+		if(name == null) {
+			throw new DAOException("File name can not be null.");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
@@ -105,11 +123,14 @@ public class FileDAOHibernateImpl implements FileDAO {
 			File file = (File) query.uniqueResult();
 			
 			tx.commit();
-			HibernateUtil.closeSession();
 			
 			return file != null;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -117,6 +138,12 @@ public class FileDAOHibernateImpl implements FileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#findByName(java.lang.Long, java.lang.String)
 	 */
 	public File findByName(Long projectId, String name) throws DAOException {
+		if(projectId == null) {
+			throw new DAOException("Project identifier can not be null.");
+		}
+		if(name == null) {
+			throw new DAOException("File name can not be null.");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
@@ -127,11 +154,14 @@ public class FileDAOHibernateImpl implements FileDAO {
 			File file = (File) query.uniqueResult();
 
 			tx.commit();
-			HibernateUtil.closeSession();
 
 			return file;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 }

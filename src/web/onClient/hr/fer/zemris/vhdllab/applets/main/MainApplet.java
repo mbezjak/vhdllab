@@ -1125,9 +1125,6 @@ public class MainApplet
 	}
 	
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
-//		Hierarchy h = communicator.extractHierarchy(projectName);
-//		JOptionPane.showMessageDialog(this, h.toString());
-//		return h;
 		return communicator.extractHierarchy(projectName);
 	}
 
@@ -1435,7 +1432,12 @@ public class MainApplet
 		}
 		communicator.createFile(projectName, fileName, type);
 		communicator.saveFile(projectName, fileName, data);
-		projectExplorer.addFile(projectName, fileName);
+		// TODO this is temp solution
+		if(isTestbench(projectName, fileName)) {
+			projectExplorer.refreshProject(projectName);
+		} else {
+			projectExplorer.addFile(projectName, fileName);
+		}
 		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_CREATED);
 		text = Utilities.replacePlaceholders(text, new String[] {fileName});
 		echoStatusText(text, MessageEnum.Successfull);

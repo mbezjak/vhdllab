@@ -25,7 +25,10 @@ public class TestBenchDependencyExtractor implements IDependency {
 		List<File> list = new ArrayList<File>(1);
 		File sklop = findMatchingFile(f.getProject(), imeSklopa);
 		if(sklop==null) {
-			throw new ServiceException("Invalid testbench!");
+			// current implementation
+			return new ArrayList<File>(0);
+			// previous implementation
+//			throw new ServiceException("Invalid testbench!");
 		}
 		list.add(sklop);
 		return list;

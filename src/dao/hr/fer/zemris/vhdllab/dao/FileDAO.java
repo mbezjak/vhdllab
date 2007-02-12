@@ -15,18 +15,23 @@ public interface FileDAO {
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	File load(Long id) throws DAOException;
+
 	/**
-	 * Saves (or updates) a file.
+	 * Saves (or updates) a file. File must also have constraints as
+	 * described by annotations.
 	 * @param file a file that will be saved (or updated).
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	void save(File file) throws DAOException;
+
 	/**
-	 * Deletes a file.
+	 * Deletes a file. If file does not exists then this method will throw
+	 * <code>DAOException</code>.
 	 * @param file a file to delete
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	void delete(File file) throws DAOException;
+
 	/**
 	 * Check if a file with specified identifier exists.
 	 * @param fileId indentifier of a file.
@@ -34,6 +39,7 @@ public interface FileDAO {
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	boolean exists(Long fileId) throws DAOException;
+
 	/**
 	 * Checks to see if specified project contains a file with given name.
 	 * @param projectId identifier of the project
@@ -42,9 +48,11 @@ public interface FileDAO {
 	 * @throws DAOException if exceptional condition occurs.
 	 */
 	boolean exists(Long projectId, String name) throws DAOException;
-	
+
+
 	/**
-	 * Returns a file with specified project identifier and file name.
+	 * Returns a file with specified project identifier and file name. If such
+	 * file does not exist then return value will be <code>null</code>.
 	 * @param projectId project identifier
 	 * @param name a name of a file
 	 * @return a file with specified project identifier and file name

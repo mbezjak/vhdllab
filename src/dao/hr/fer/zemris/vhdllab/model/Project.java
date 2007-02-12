@@ -7,14 +7,14 @@ import java.util.Set;
  *  table="PROJECTS"
  */
 public class Project {
-	
+
 	private Long id;
 	private String projectName;
 	private String ownerId;
 	private Set<File> files;
-	
+
 	public Project() {}
-	
+
 	/**
 	 * @hibernate.id
 	 *  generator-class="native"
@@ -52,7 +52,7 @@ public class Project {
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
-	
+
 	/**
 	 * @hibernate.set
 	 * 	inverse="true"
@@ -70,7 +70,7 @@ public class Project {
 	public void setFiles(Set<File> files) {
 		this.files = files;
 	}
-	
+
 	public void addFile(File f) {
 		if(f == null) throw new NullPointerException("File can not be null.");
 		if(f.getProject() != null) {
@@ -79,7 +79,7 @@ public class Project {
 		f.setProject(this);
 		files.add(f);
 	}
-	
+
 	public void removeFile(File f) {
 		if(f == null) throw new NullPointerException("File can not be null.");
 		files.remove(f);
@@ -93,24 +93,25 @@ public class Project {
 	public boolean equals(Object o) {
 		if(!(o instanceof Project)) return false;
 		Project other = (Project) o;
-		
-		if( this.id != null && other.id != null ) return this.id.equals(other.id);
-		else if( this.id == null && other.id == null )
-			return this.ownerId.equals(other.ownerId) &&
-					this.projectName.equals(other.projectName) &&
-					this.files.equals(other.files);
+
+		if( this.id != null && other.id != null ) {
+			return this.id.equals(other.id);
+		}
+		else if( this.id == null && other.id == null ) {
+			return this.ownerId.equalsIgnoreCase(other.ownerId) &&
+					this.projectName.equalsIgnoreCase(other.projectName);
+		}
 		else return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		if( id != null ) return id.hashCode();
-		else return ownerId.hashCode() ^
-				projectName.hashCode() ^
-				files.hashCode();
+		else return ownerId.toUpperCase().hashCode() ^
+					projectName.toUpperCase().hashCode();
 	}
 
 	/* (non-Javadoc)
@@ -120,13 +121,13 @@ public class Project {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Project '").append(projectName).append("', id=")
-			.append(id).append(", ownerId=").append(ownerId)
-			.append(", has ").append(files.size()).append(" files:\n");
-		
+		.append(id).append(", ownerId=").append(ownerId)
+		.append(", has ").append(files.size()).append(" files:\n");
+
 		for(File f : files) {
 			sb.append(f).append("\n");
 		}
-		
+
 		return sb.toString();
 	}
 }

@@ -27,11 +27,14 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			UserFile file = (UserFile) session.load(UserFile.class, id);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 
 			return file;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -47,9 +50,12 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			session.saveOrUpdate(file);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -64,9 +70,12 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			session.delete(file);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -86,11 +95,14 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			List<UserFile> files = (List<UserFile>)query.list();
 
 			tx.commit();
-			HibernateUtil.closeSession();
 
 			return files;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 	
@@ -107,11 +119,14 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			UserFile file = (UserFile) query.uniqueResult();
 			
 			tx.commit();
-			HibernateUtil.closeSession();
 
 			return file != null;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -129,11 +144,14 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 			UserFile file = (UserFile) query.uniqueResult();
 			
 			tx.commit();
-			HibernateUtil.closeSession();
 
 			return file != null;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 }

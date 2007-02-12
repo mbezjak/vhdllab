@@ -56,7 +56,7 @@ public class GlobalFile {
 	 * @hibernate.property
 	 *  column = "CONTENT"
 	 *  type = "text"
-	 *  length = "65536"
+	 *  length = "65535"
 	 */
 	public String getContent() {
 		return content;
@@ -65,16 +65,35 @@ public class GlobalFile {
 		this.content = content;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(!(o instanceof GlobalFile)) return false;
 		GlobalFile other = (GlobalFile) o;
 		
-		if( this.id != null && other.id != null ) return this.id.equals(other.id);
-		else if( this.id == null && other.id == null ) return this.name.equalsIgnoreCase(other.name);
+		if( this.id != null && other.id != null ) {
+			return this.id.equals(other.id);
+		}
+		else if( this.id == null && other.id == null ) {
+			return this.name.equalsIgnoreCase(other.name);
+		}
 		else return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		if( id != null ) return id.hashCode();
+		else return name.toUpperCase().hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

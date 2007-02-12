@@ -15,8 +15,6 @@ import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -200,12 +198,8 @@ public class InitServerData {
 				sb.append(buf,0,read);
 			}
 		} catch(Exception ex) {
-//			ex.printStackTrace();
-//			return null;
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ex.printStackTrace(pw);
-			throw new NullPointerException(sw.toString());
+			ex.printStackTrace();
+			return null;
 		} finally {
 			if(br!=null) try {br.close();} catch(Exception ex) {}
 		}

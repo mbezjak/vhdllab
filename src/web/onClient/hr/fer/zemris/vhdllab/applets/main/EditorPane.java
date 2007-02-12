@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.model.ModelUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +36,8 @@ public class EditorPane extends JTabbedPane {
 		if(projectName == null || fileName == null) return -1;
 		for(int i = 0; i < getTabCount(); i++) {
 			IEditor editor = getEditorAt(i);
-			if(VHDLUtilities.equalsProjectNames(projectName, editor.getProjectName()) &&
-					VHDLUtilities.equalsFileNames(fileName, editor.getFileName())) {
+			if(ModelUtil.projectNamesAreEqual(projectName, editor.getProjectName()) &&
+					ModelUtil.fileNamesAreEqual(fileName, editor.getFileName())) {
 
 				return i;
 			}
@@ -76,7 +77,7 @@ public class EditorPane extends JTabbedPane {
 		List<IEditor> editorsHavingSpecifiedProject = new ArrayList<IEditor>();
 		for(IEditor e : openedEditors) {
 			String editorProjectName = e.getProjectName();
-			if(VHDLUtilities.equalsProjectNames(editorProjectName, projectName)) {
+			if(ModelUtil.projectNamesAreEqual(editorProjectName, projectName)) {
 				editorsHavingSpecifiedProject.add(e);
 			}
 		}

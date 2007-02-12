@@ -1,9 +1,8 @@
-package hr.fer.zemris.vhdllab.dao.impl.hibernate;
+package hr.fer.zemris.vhdllab.dao;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import hr.fer.zemris.vhdllab.dao.DAOException;
-import hr.fer.zemris.vhdllab.dao.UserFileDAO;
+import hr.fer.zemris.vhdllab.dao.impl.hibernate.UserFileDAOHibernateImpl;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.model.UserFile;
 
@@ -14,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class UserFileDAOHibernateImplTest {
+public class UserFileDAOTest {
 
 	private static UserFileDAO fileDAO;
 

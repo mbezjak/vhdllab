@@ -44,7 +44,6 @@ public class UserFile {
 	 *  column = "NAME"
 	 *  length = "255"
 	 *  not-null = "true"
-	 *  unique = "true"
 	 */
 	public String getName() {
 		return name;
@@ -69,7 +68,7 @@ public class UserFile {
 	 * @hibernate.property
 	 *  column = "CONTENT"
 	 *  type = "text"
-	 *  length = "65536"
+	 *  length = "65535"
 	 */
 	public String getContent() {
 		return content;
@@ -78,16 +77,35 @@ public class UserFile {
 		this.content = content;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(!(o instanceof UserFile)) return false;
 		UserFile other = (UserFile) o;
 		
-		if( this.id != null && other.id != null ) return this.id.equals(other.id);
-		else if( this.id == null && other.id == null ) return this.name.equalsIgnoreCase(other.name);
+		if( this.id != null && other.id != null ) {
+			return this.id.equals(other.id);
+		}
+		else if( this.id == null && other.id == null ) {
+			return this.name.equalsIgnoreCase(other.name);
+		}
 		else return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		if( id != null ) return id.hashCode();
+		else return name.toUpperCase().hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

@@ -27,11 +27,14 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			Project project = (Project) session.load(Project.class, id);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 
 			return project;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -47,9 +50,12 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			session.saveOrUpdate(project);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
@@ -64,40 +70,22 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			session.delete(project);
 
 			tx.commit();
-			HibernateUtil.closeSession();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#findByUser(java.lang.Long)
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Project> findByUser(String userId) throws DAOException {
-		Session session = null;
-		try {
-			session = HibernateUtil.currentSession();
-			Transaction tx = session.beginTransaction();
-
-			Query query = session.createQuery("from Project as p where p.ownerId = :userID")
-									.setString("userID", userId);
-
-			List<Project> projects = (List<Project>)query.list();
-
-			tx.commit();
-			HibernateUtil.closeSession();
-
-			return projects;
-		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long projectId) throws DAOException {
+		if(projectId == null) {
+			throw new DAOException("Project identifier can not be null.");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
@@ -107,11 +95,14 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			Project project = (Project) query.uniqueResult();
 			
 			tx.commit();
-			HibernateUtil.closeSession();
 			
 			return project != null;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 	
@@ -120,6 +111,12 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#exists(java.lang.String, java.lang.String)
 	 */
 	public boolean exists(String ownerId, String projectName) throws DAOException {
+		if(ownerId == null) {
+			throw new DAOException("Owner identifier can not be null");
+		}
+		if(projectName == null) {
+			throw new DAOException("Project name can not be null.");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
@@ -130,11 +127,44 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 			Project project = (Project) query.uniqueResult();
 			
 			tx.commit();
-			HibernateUtil.closeSession();
 			
 			return project != null;
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#findByUser(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Project> findByUser(String userId) throws DAOException {
+		if(userId == null) {
+			throw new DAOException("User identifier can not be null.");
+		}
+		Session session = null;
+		try {
+			session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+	
+			Query query = session.createQuery("from Project as p where p.ownerId = :userID")
+									.setString("userID", userId);
+	
+			List<Project> projects = (List<Project>)query.list();
+	
+			tx.commit();
+	
+			return projects;
+		} catch (Exception e) {
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
 		}
 	}
 

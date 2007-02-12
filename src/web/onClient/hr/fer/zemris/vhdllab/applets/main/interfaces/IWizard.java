@@ -39,7 +39,7 @@ public interface IWizard {
 	 * Returns an initial <code>FileContent</code> where initial means file
 	 * content created as a result of what user selected/wrote in a wizard.
 	 * <p>
-	 * For example: Initial file content of VHDL source editor should be project
+	 * For example: Initial file content of VHDL source editor may be project
 	 * and file name chosen by user, along with written entity block of vhdl
 	 * code. Other editors will (most likey) not have vhdl code written in file
 	 * content, but rather an intern format that they know how to display.

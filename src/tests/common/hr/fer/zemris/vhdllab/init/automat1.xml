@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!DOCTYPE Automat [
+	<!ELEMENT Automat (Podatci_Sklopa,Stanje*,Prijelaz*)>
+	<!ELEMENT Podatci_Sklopa (Ime,Tip,Interfac,Pocetno_Stanje,Reset,Clock,Sirina,Visina)>
+	<!ELEMENT Prijelaz (Iz,U,Pobuda,Izlaz?)>
+	<!ELEMENT Stanje (Ime,Izlaz?,Ox,Oy)>
+	<!ELEMENT Ime (#PCDATA)>
+	<!ELEMENT Tip (#PCDATA)>
+	<!ELEMENT Broj_Bitova_Ulaz (#PCDATA)>
+	<!ELEMENT Broj_Bitova_Izlaz (#PCDATA)>
+	<!ELEMENT Iz (#PCDATA)>
+	<!ELEMENT U (#PCDATA)>
+	<!ELEMENT Izlaz (#PCDATA)>
+	<!ELEMENT Ox (#PCDATA)>
+	<!ELEMENT Oy (#PCDATA)>
+	<!ELEMENT Pobuda (#PCDATA)>
+]>
+<Automat>
+
+	<Podatci_Sklopa>
+		<Ime>Automat1</Ime>
+		<Tip>Moore</Tip>
+		<Interfac>a in std_logic
+b out std_logic
+		</Interfac>
+		<Pocetno_Stanje>A</Pocetno_Stanje>
+		<Reset>1</Reset>
+		<Clock>falling_edge</Clock>
+		<Sirina>300</Sirina>
+		<Visina>300</Visina>
+	</Podatci_Sklopa>
+
+	<Stanje>
+		<Ime>A</Ime>
+		<Izlaz>0</Izlaz>
+		<Ox>30</Ox>
+		<Oy>30</Oy>
+	</Stanje>
+
+	<Stanje>
+		<Ime>B</Ime>
+		<Izlaz>1</Izlaz>
+		<Ox>100</Ox>
+		<Oy>100</Oy>
+	</Stanje>
+
+	<Stanje>
+		<Ime>C</Ime>
+		<Izlaz>1</Izlaz>
+		<Ox>30</Ox>
+		<Oy>100</Oy>
+	</Stanje>
+
+	<Prijelaz>
+		<Iz>A</Iz>
+		<U>B</U>
+		<Pobuda>1</Pobuda>
+	</Prijelaz>
+
+	<Prijelaz>
+		<Iz>A</Iz>
+		<U>C</U>
+		<Pobuda>0</Pobuda>
+	</Prijelaz>
+
+	<Prijelaz>
+		<Iz>B</Iz>
+		<U>A</U>
+		<Pobuda>1</Pobuda>
+	</Prijelaz>
+
+	<Prijelaz>
+		<Iz>B</Iz>
+		<U>C</U>
+		<Pobuda>0</Pobuda>
+	</Prijelaz>
+
+	<Prijelaz>
+		<Iz>C</Iz>
+		<U>C</U>
+		<Pobuda>0</Pobuda>
+	</Prijelaz>
+
+	<Prijelaz>
+		<Iz>C</Iz>
+		<U>B</U>
+		<Pobuda>1</Pobuda>
+	</Prijelaz>
+</Automat>

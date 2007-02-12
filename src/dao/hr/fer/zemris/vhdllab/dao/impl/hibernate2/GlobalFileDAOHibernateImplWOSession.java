@@ -22,7 +22,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 		try {
 			return (GlobalFile)getHibernateTemplate().load(GlobalFile.class, id);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -33,7 +33,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 		try {
 			getHibernateTemplate().saveOrUpdate(file);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -44,7 +44,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 		try {
 			getHibernateTemplate().delete(file);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 			String param = "filetype";
 			return (List<GlobalFile>)getHibernateTemplate().findByNamedParam(query, param, type);
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 	
@@ -72,7 +72,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, fileId);
 			return !list.isEmpty();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 
@@ -86,7 +86,7 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 			List<?> list = (List<?>) getHibernateTemplate().findByNamedParam(query, param, name);
 			return !list.isEmpty();
 		} catch (Exception e) {
-			throw new DAOException(e.getMessage());
+			throw new DAOException(e);
 		}
 	}
 }

@@ -15,13 +15,20 @@ public class FileDAOMemoryImpl implements FileDAO {
 	Map<FileNameIndexKey, File> nameIndex = new HashMap<FileNameIndexKey, File>(); 
 
 	public synchronized File load(Long id) throws DAOException {
+		if(id == null) throw new DAOException("File identifier can not be null.");
 		File file = files.get(id);
 		if(file==null) throw new DAOException("Unable to load file!");
 		return file;
 	}
 
 	public synchronized void save(File file) throws DAOException {
-		if(file.getFileType()==null) throw new DAOException("FileType can not be null!");		
+		if(file == null) throw new DAOException("File can not be null.");
+		if(file.getFileType()==null) throw new DAOException("File type can not be null!");
+		if(file.getFileName()==null) throw new DAOException("File name can not be null!");
+		if(file.getProject() == null) throw new DAOException("File must have project as a parent.");
+		if(file.getContent()!=null && file.getContent().length() > 65536) throw new DAOException("File content too long");
+		if(file.getFileName().length() > 255) throw new DAOException("File name too long");
+		if(file.getFileType().length() > 255) throw new DAOException("File type too long");
 		FileNameIndexKey k = null;
 		if(file.getId()==null) {
 			k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
@@ -38,22 +45,30 @@ public class FileDAOMemoryImpl implements FileDAO {
 	}
 
 	public synchronized void delete(File file) throws DAOException {
-		if(file==null) return;
-		FileNameIndexKey k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
-		nameIndex.remove(k);
+		if(file==null) throw new DAOException("File can not be null.");
+		if(!files.containsKey(file.getId())) throw new DAOException("Can not delete unexisting file.");
+		if(file.getProject() != null && file.getFileName() != null) {
+			FileNameIndexKey k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
+			nameIndex.remove(k);
+		}
 		files.remove(file.getId());
 	}
 
 	public synchronized boolean exists(Long fileId) throws DAOException {
+		if(fileId == null) throw new DAOException("File identifier can not be null.");
 		return files.containsKey(fileId);
 	}
 
 	public synchronized boolean exists(Long projectId, String name) throws DAOException {
+		if(projectId == null) throw new DAOException("Project identifier can not be null."); 
+		if(name == null) throw new DAOException("File name can not be null."); 
 		FileNameIndexKey k = new FileNameIndexKey(name.toUpperCase(),projectId);
 		return nameIndex.containsKey(k);
 	}
 
 	public synchronized File findByName(Long projectId, String name) throws DAOException {
+		if(projectId == null) throw new DAOException("Project identifier can not be null."); 
+		if(name == null) throw new DAOException("File name can not be null."); 
 		FileNameIndexKey k = new FileNameIndexKey(name.toUpperCase(),projectId);
 		return nameIndex.get(k);
 	}

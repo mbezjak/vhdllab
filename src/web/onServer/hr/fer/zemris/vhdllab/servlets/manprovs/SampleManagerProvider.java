@@ -2,12 +2,12 @@ package hr.fer.zemris.vhdllab.servlets.manprovs;
 
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
-import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.ProjectDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.UserFileDAOMemoryImpl;
+import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 
@@ -32,7 +32,8 @@ public class SampleManagerProvider implements ManagerProvider {
 	public SampleManagerProvider() {
 		// Create all data access objects.
 		FileDAO fileDAO = new FileDAOMemoryImpl();
-		ProjectDAO projectDAO = new ProjectDAOMemoryImpl();
+		ProjectDAOMemoryImpl projectDAO = new ProjectDAOMemoryImpl();
+		projectDAO.setFileDAO(fileDAO);
 		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
 		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		
@@ -52,7 +53,11 @@ public class SampleManagerProvider implements ManagerProvider {
 		
 		// Remember created managers, so we can later return
 		// a reference to them.
-		beans.put(ManagerProvider.VHDL_LAB_MANAGER,labManImpl);
+		setVHDLLabManager(labManImpl);
+	}
+	
+	public void setVHDLLabManager(VHDLLabManager labman) {
+		beans.put(ManagerProvider.VHDL_LAB_MANAGER, labman);
 	}
 	
 	/* (non-Javadoc)
