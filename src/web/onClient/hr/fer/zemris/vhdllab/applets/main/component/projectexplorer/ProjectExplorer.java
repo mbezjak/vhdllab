@@ -142,17 +142,12 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	private List<String> allProjects;
 
 
-//	private Icon normal = new ImageIcon(getClass().getResource("normal.png"));
-//    private Icon inverse = new ImageIcon(getClass().getResource("inverse.png"));
-//    private Icon flatIcon = new ImageIcon(getClass().getResource("flat.png"));
-//    private JButton normalButton = new JButton(normal);
-//    private JButton inverseButton = new JButton(inverse);
-//    private JButton flatButton = new JButton(flatIcon);
-    private JButton normalButton = new JButton();
-    private JButton inverseButton = new JButton();
-    private JButton flatButton = new JButton();
-
-
+	private Icon normal = new ImageIcon(getClass().getResource("normal.png"));
+    private Icon inverse = new ImageIcon(getClass().getResource("inverse.png"));
+    private Icon flatIcon = new ImageIcon(getClass().getResource("flat.png"));
+    private JButton normalButton = new JButton(normal);
+    private JButton inverseButton = new JButton(inverse);
+    private JButton flatButton = new JButton(flatIcon);
 
 	/**
 	 * Default Constructor
