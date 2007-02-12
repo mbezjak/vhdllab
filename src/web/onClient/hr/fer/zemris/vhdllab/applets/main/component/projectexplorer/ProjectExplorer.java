@@ -462,7 +462,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					return;
 				}
 //                List<String> projects = projectContainer.getAllProjects();
-	            List<String> projects = allProjects;  
+	            List<String> projects = allProjects;
+			  	expandedNodes.clear();	
 				currentHierarchy = X_USES_Y;
 				tree = treeNormal;
 				treeModel = treeModelNormal;
@@ -493,6 +494,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				}
 				//List<String> projects = projectContainer.getAllProjects();
 				List<String> projects = allProjects;  
+			  	expandedNodes.clear();	
 		
 				currentHierarchy = X_USED_IN_Y;
 				tree = treeInverse;
@@ -525,6 +527,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				}
 			//	List<String> projects = projectContainer.getAllProjects();
 				List<String> projects = allProjects;  
+			  	expandedNodes.clear();	
 
 				currentHierarchy = FLAT;
 				tree = treeFlat;
@@ -650,6 +653,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					return;
 				}
 				List<String> projects = allProjects;
+			  	expandedNodes.clear();	
 				currentHierarchy = X_USES_Y;
 				tree = treeNormal;
 				treeModel = treeModelNormal;
@@ -678,6 +682,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					return;
 				}
 				List<String> projects = allProjects;
+			  	expandedNodes.clear();	
 				currentHierarchy = X_USED_IN_Y;
 				tree = treeInverse;
 				treeModel = treeModelInverse;
@@ -707,6 +712,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					return;
 				}
 				List<String> projects = allProjects;
+			  	expandedNodes.clear();	
 				currentHierarchy = FLAT;
 				tree = treeFlat;
 				treeModel = treeModelFlat;
@@ -1411,12 +1417,18 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			treeModel.removeNodeFromParent(node);
 			try {
 				// ne radi!!
+				System.out.println(name + " " + node.toString());
 				projectContainer.deleteFile(name, node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		treeModel.reload();
+		for (TreePath treePath1 : expandedNodes) {
+			tree.expandPath(treePath1);
+		}
+
 	}
 
 
