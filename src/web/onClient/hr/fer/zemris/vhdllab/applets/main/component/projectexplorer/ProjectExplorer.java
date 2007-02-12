@@ -8,9 +8,9 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -27,13 +27,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeExpansionEvent;
@@ -110,6 +113,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	private JMenuItem flat;
 	private JMenu hierarchySubMenu;
 	private String currentHierarchy = X_USES_Y;
+	private JToolBar toolbar;
+	private JPanel toolbarPanel;
 
 
 	/** Aktivni projekt */
@@ -135,6 +140,15 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	// pitaj miru zakaj se projectContainer.getAllProject blesira i o cemu ona ovisi?!
 	// do tada interna kolekcija projekata
 	private List<String> allProjects;
+
+
+	private Icon normal = new ImageIcon(getClass().getResource("normal.png"));
+    private Icon inverse = new ImageIcon(getClass().getResource("inverse.png"));
+    private Icon flatIcon = new ImageIcon(getClass().getResource("flat.png"));
+    private JButton normalButton = new JButton(normal);
+    private JButton inverseButton = new JButton(inverse);
+    private JButton flatButton = new JButton(flatIcon);
+
 
 
 	/**
@@ -265,8 +279,26 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		treeFlat.setCellRenderer(renderer);
 		ToolTipManager.sharedInstance().registerComponent(treeFlat);
 
-
-		cp.setLayout(new BorderLayout());
+		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+		//cp.setLayout(new FlowLayout());
+		toolbarPanel = new JPanel();
+		toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS));
+		toolbarPanel.setPreferredSize(new Dimension(100, 35));
+		toolbarPanel.setMaximumSize(new Dimension(400, 60));
+		toolbar = new JToolBar();
+		toolbar.setPreferredSize(new Dimension(100, 30));
+		toolbar.setFloatable(false);
+		toolbar.add(normalButton);
+		toolbar.add(inverseButton);
+		toolbar.add(flatButton);
+		toolbarPanel.add(toolbar);
+		normalButton.addActionListener(buttonListener);
+		normalButton.setToolTipText("X uses Y hierarchy");
+		inverseButton.addActionListener(buttonListener);
+		inverseButton.setToolTipText("X used in Y hierarchy");
+		flatButton.addActionListener(buttonListener);
+		flatButton.setToolTipText("Flat hierarchy");
+		cp.add(toolbarPanel);
 		cp.add(treeView);
 		treeModel = treeModelNormal;
 
@@ -421,6 +453,109 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	};
 
 
+	/**
+	 * Listener popup menija
+	 */
+	private ActionListener buttonListener = new ActionListener() {
+		public void actionPerformed(ActionEvent event) {
+			JButton source = (JButton)(event.getSource());
+			if (source.equals(normalButton)) {
+				if (currentHierarchy.equals(X_USES_Y)) {
+					return;
+				}
+//                List<String> projects = projectContainer.getAllProjects();
+	            List<String> projects = allProjects;  
+				currentHierarchy = X_USES_Y;
+				tree = treeNormal;
+				treeModel = treeModelNormal;
+
+				// obrisi sve prijasnje projekte iz stabla i napravi nove
+				top.removeAllChildren();
+				treeModel.reload();
+				// nakon toga dohvati sve projekte is project containera i kreiraj
+				// podstablo za taj projekt
+				for (String project : projects) {
+					DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(project);
+					treeModelNormal.insertNodeInto(tempNode, top, top.getChildCount());
+				//	topInverse.add(tempNode);
+					buildXusesYForOneProject(project, tempNode);
+				}	
+	
+				treeModel.reload();
+				cp.removeAll();
+				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+				cp.add(toolbarPanel);
+				cp.add(treeView);
+				cp.repaint();
+				cp.validate();
+
+			} else if (source.equals(inverseButton)) {
+				if (currentHierarchy.equals(X_USED_IN_Y)) {
+					return;
+				}
+				//List<String> projects = projectContainer.getAllProjects();
+				List<String> projects = allProjects;  
+		
+				currentHierarchy = X_USED_IN_Y;
+				tree = treeInverse;
+				treeModel = treeModelInverse;
+
+				// obrisi sve prijasnje projekte iz stabla i napravi nove
+				topInverse.removeAllChildren();
+				treeModel.reload();
+				// nakon toga dohvati sve projekte is project containera i kreiraj
+				// podstablo za taj projekt
+				for (String project : projects) {
+					DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(project);
+					treeModelInverse.insertNodeInto(tempNode, topInverse, topInverse.getChildCount());
+				//	topInverse.add(tempNode);
+					buildXusedInYForOneProject(project, tempNode);
+				}	
+
+				treeModel.reload();
+				// izbrisi prethodno stablo iz panela i dodaj novo
+				cp.removeAll();
+				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+				cp.add(toolbarPanel);
+				cp.add(treeViewInverse);
+				cp.repaint();
+				cp.validate();
+
+			} else {
+				if (currentHierarchy.equals(FLAT)) {
+						return;
+				}
+			//	List<String> projects = projectContainer.getAllProjects();
+				List<String> projects = allProjects;  
+
+				currentHierarchy = FLAT;
+				tree = treeFlat;
+				treeModel = treeModelFlat;
+				
+				// obrisi sve prijasnje projekte iz stabla i napravi nove
+				topFlat.removeAllChildren();
+				treeModel.reload();
+				// nakon toga dohvati sve projekte is project containera i kreiraj
+				// podstablo za taj projekt
+				for (String project : projects) {
+					DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(project);
+					treeModelFlat.insertNodeInto(tempNode, topFlat, topFlat.getChildCount());
+				//	topInverse.add(tempNode);
+					buildFlatForOneProject(project, tempNode);
+				}	
+
+				treeModel.reload();
+				// izbrisi prethodno stablo iz panela i dodaj novo
+				cp.removeAll();
+				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+				cp.add(toolbarPanel);
+				cp.add(treeViewFlat);
+				cp.repaint();
+				cp.validate();
+			}
+		}
+	};
+
 
 	/**
 	 * Listener popup menija
@@ -516,7 +651,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				if (currentHierarchy.equals(X_USES_Y)) {
 					return;
 				}
-				List<String> projects = projectContainer.getAllProjects();
+				List<String> projects = allProjects;
 				currentHierarchy = X_USES_Y;
 				tree = treeNormal;
 				treeModel = treeModelNormal;
@@ -535,7 +670,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	
 				treeModel.reload();
 				cp.removeAll();
-				cp.setLayout(new BorderLayout());
+				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+				cp.add(toolbarPanel);
 				cp.add(treeView);
 				cp.repaint();
 				cp.validate();
@@ -543,7 +679,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				if (currentHierarchy.equals(X_USED_IN_Y)) {
 					return;
 				}
-				List<String> projects = projectContainer.getAllProjects();
+				List<String> projects = allProjects;
 				currentHierarchy = X_USED_IN_Y;
 				tree = treeInverse;
 				treeModel = treeModelInverse;
@@ -563,7 +699,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				treeModel.reload();
 				// izbrisi prethodno stablo iz panela i dodaj novo
 				cp.removeAll();
-				cp.setLayout(new BorderLayout());
+				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+				cp.add(toolbarPanel);
 				cp.add(treeViewInverse);
 				cp.repaint();
 				cp.validate();
@@ -571,7 +708,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				if (currentHierarchy.equals(FLAT)) {
 					return;
 				}
-				List<String> projects = projectContainer.getAllProjects();
+				List<String> projects = allProjects;
 				currentHierarchy = FLAT;
 				tree = treeFlat;
 				treeModel = treeModelFlat;
@@ -591,7 +728,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				treeModel.reload();
 				// izbrisi prethodno stablo iz panela i dodaj novo
 				cp.removeAll();
-				cp.setLayout(new BorderLayout());
+				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+				cp.add(toolbarPanel);
 				cp.add(treeViewFlat);
 				cp.repaint();
 				cp.validate();
@@ -1072,8 +1210,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			projectNode = (DefaultMutableTreeNode)(topNode.getChildAt(i));
 			projects.add(projectNode.toString());
 		}
-		return projects;
-		//return allProjects;
+		//return projects;
+		return allProjects;
 	}
 
 
