@@ -26,18 +26,6 @@ public class Communicator {
 		cache = new Cache();
 		this.invoker = invoker;
 		this.ownerId = ownerId;
-		//init();
-	}
-	
-	private void init() throws UniformAppletException {
-		List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
-		for(Long id : userFiles) {
-			String type = invoker.loadUserFileType(id);
-			cache.cacheUserFileItem(type, id);
-			String data = invoker.loadUserFileContent(id);
-			Preferences pref = Preferences.deserialize(data);
-			cache.cachePreferences(id, pref);
-		}
 	}
 	
 	public void cleanUp() throws UniformAppletException {

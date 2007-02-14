@@ -88,8 +88,7 @@ public class File implements Comparable<File> {
 
 		if( this.id != null && other.id != null ) {
 			return this.id.equals(other.id);
-		}
-		else if( this.id == null && other.id == null ) {
+		} else if( this.id == null && other.id == null ) {
 			return this.fileName.equalsIgnoreCase(other.fileName);
 		}
 		else return false;

@@ -47,10 +47,9 @@ public class FileDAOMemoryImpl implements FileDAO {
 	public synchronized void delete(File file) throws DAOException {
 		if(file==null) throw new DAOException("File can not be null.");
 		if(!files.containsKey(file.getId())) throw new DAOException("Can not delete unexisting file.");
-		if(file.getProject() != null && file.getFileName() != null) {
-			FileNameIndexKey k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
-			nameIndex.remove(k);
-		}
+		FileNameIndexKey k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
+		nameIndex.remove(k);
+		file.getProject().removeFile(file);
 		files.remove(file.getId());
 	}
 
@@ -96,4 +95,5 @@ public class FileDAOMemoryImpl implements FileDAO {
 			return fileName.hashCode() ^ projectId.hashCode();
 		}
 	}
+	
 }

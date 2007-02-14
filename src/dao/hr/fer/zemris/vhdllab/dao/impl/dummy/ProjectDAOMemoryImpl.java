@@ -59,9 +59,9 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 		if(project == null) {
 			throw new DAOException("Project can not be null.");
 		}
-		for(File f : project.getFiles()) {
+		/*for(File f : project.getFiles()) {
 			fileDAO.delete(f);
-		}
+		}*/
 		projects.remove(project.getId());
 	}
 
