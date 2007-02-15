@@ -20,6 +20,7 @@
   	<pathelement path="${build.dir}/i18n"/>
 	<pathelement path="${build.dir}/i18n/common"/>
 	<pathelement path="${build.dir}/common"/>
+  	<pathelement path="${local.dir}"/>
   </path>
 
   <target name="init">
