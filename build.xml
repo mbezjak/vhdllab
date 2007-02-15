@@ -87,6 +87,10 @@
 	  <replacefilter token="@@vhdllab.port@@" property="tomcat.port"/>
   	  <replacefilter token="@@vhdllab.name@@" property="app.name"/>
   	</replace>
+  	
+  	<copy todir="${build.dir}">
+  	  <fileset file="${local.dir}/log4j.properties"/>
+  	</copy>
   </target>
 
   <target name="clean">
@@ -100,11 +104,12 @@
    	  <fileset dir="${reports.tests.html}"/>
    	  <fileset dir="${reports.tests}"/>
    	  <fileset dir="${reports}"/>
+   	  <fileset file="${app.name}.war"/>
     </delete>
   </target>
 
   <target name="compile-dao" depends="init">
-    <javac destdir="${build.dir}/dao" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+    <javac destdir="${build.dir}/dao" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/dao"/>
       <src path="src/common"/>
       <classpath refid="src.class.path"/>
@@ -112,7 +117,7 @@
   </target>
 
   <target name="compile-service" depends="compile-dao">
-    <javac destdir="${build.dir}/service" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+    <javac destdir="${build.dir}/service" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/service"/>
       <src path="src/common"/>
       <classpath refid="src.class.path"/>
@@ -120,7 +125,7 @@
   </target>
 
   <target name="compile-web-onServer" depends="compile-service">
-    <javac destdir="${build.dir}/web/onServer" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+    <javac destdir="${build.dir}/web/onServer" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/web/onServer"/>
       <src path="src/common"/>
       <src path="src/i18n/common"/>
@@ -129,22 +134,18 @@
   </target>
 	
   <target name="compile-web-onClient" depends="compile-service">
-    <javac destdir="${build.dir}/web/onClient" includes="**/*java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+    <javac destdir="${build.dir}/web/onClient" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/web/onClient"/>
       <src path="src/common"/>
       <src path="src/i18n/common"/>
       <classpath refid="src.class.path"/>
     </javac>
-  	<copy todir="src/web/onClient/hr/fer/zemris/vhdllab/applets/main" overwrite="true">
-  	  <fileset dir="src/common/hr/fer/zemris/vhdllab/constants" excludes="**/*.java"/>
-  	</copy>
   </target>
 
   <target name="package-dao" depends="compile-dao,hibernate-hbm">
     <jar destfile="${jlib.dir}/${app.name}-dao.jar">
       <fileset dir="${build.dir}/dao" includes="**/*.class"/>
       <fileset dir="src/dao" excludes="**/*.java"/>
-	  <fileset dir="${local.dir}" includes="*.*"/>
 	  <fileset dir="${hibernate.dir}"/>
     </jar>
   </target>
@@ -167,7 +168,7 @@
   <target name="package-web-onClient" depends="compile-web-onClient">
   	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar">
   	  <fileset dir="${build.dir}/web/onClient" includes="**/*.class"/>
-          <fileset dir="src/web/onClient" excludes="**/*.java"/>
+      <fileset dir="src/web/onClient" excludes="**/*.java"/>
    	  <fileset dir="src/i18n/client" includes="**/*"/>
    	  <metainf dir="metadata/onClient/META-INF"/>
   	</jar>
@@ -226,6 +227,7 @@
   <target name="package-tests-web-onClient" depends="compile-tests-web-onClient">
     <jar destfile="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar">
       <fileset dir="${build.dir}/tests/web/onClient" includes="**/*.class"/>
+  	  <fileset dir="${local.dir}" includes="log4j.properties"/>
     </jar>
   </target>
 	
@@ -394,10 +396,8 @@
   </target>
   	
   <target name="schema-export" depends="hibernate-hbm">
-  	<input
-	  message="Danger! Running this task will destroy existing database shema and create a new one. Loss of data is imminent! Are you sure you want to proceed?"
-  	  validargs="y,n"
-  	  addproperty="hibernate.run.task"/>
+  	<input validargs="y,n"
+  		addproperty="hibernate.run.task">Danger! Running this task will destroy existing database shema at address '${database.url}' and create a new one. Loss of data is imminent! Are you sure you want to proceed?</input>
   	<condition property="do.abort">
   	  <equals arg1="n" arg2="${hibernate.run.task}"/>
   	</condition>
@@ -422,10 +422,13 @@
   </target>
 	
   <target name="tomcat" depends="package">
+  	<fail unless="tomcat.dir">Tomcat directory not set! Edit this information in configuration.properties file.
+  	</fail>
   	<property name="tomcat.app.dir" value="${tomcat.dir}${file.separator}webapps${file.separator}${app.name}"/>
   	<mkdir dir="${tomcat.app.dir}"/>
   	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF"/>
   	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}lib"/>
+  	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}classes"/>
   	
     <copy todir="${tomcat.app.dir}" overwrite="true">
       <fileset dir="${basedir}/html/pages"/>
@@ -449,6 +452,10 @@
       <fileset file="${basedir}/${lib.dir}/mysql/*.*"/>
       <fileset file="${basedir}/${lib.dir}/xdoclet/*.*"/>
     </copy>
+  	
+  	<copy todir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}classes" overwrite="true">
+  	  <fileset file="${local.dir}/log4j.properties"/>
+  	</copy>
   	
   	<available property="java.policy.exists" file="${user.home}/.java.policy" />
   	<condition property="should.override.java.policy">
@@ -501,9 +508,6 @@
 	
   <target name="run-tomcat" depends="tomcat">
   	<property environment="env"/>
-  	<condition property="">
-  	  <isset property="${env.CATALINA_HOME}"/>
-  	</condition>
     <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.exec}"
     	spawn="true">
     </exec>
@@ -516,12 +520,34 @@
   </target>
 	
   <target name="run-app" depends="tomcat">
-  	<!-- Sleep for tomcat to reload his resources -->
+  	<fail unless="browser.exec">Browser executable not set! Edit this information in configuration.properties file.
+  	</fail>
+ 	<!-- Sleep for tomcat to reload his resources -->
   	<sleep seconds="${sleep.for.tomcat}"/>
     <exec executable="${browser.exec}" spawn="true">
       <arg line="${browser.arg}"/>
       <arg line="http://${app.host}:${tomcat.port}/${app.name}/${app.url}"/>
     </exec>
+  </target>
+	
+  <target name="war" depends="package">
+    <war destfile="${app.name}.war"
+    	webxml="${metadata.dir}/web/web.xml">
+    	
+    <!-- TODO: When security constraints are in place vhdllab.html will
+    	have to be excluded from war (also its jar dependencies) -->>
+    <fileset dir="${html.pages.dir}" includes="*"/>
+    <fileset dir="${jlib.dir}" includes="vhdllab-web-onClient.jar"/>
+    <fileset dir="${lib.dir}" includes="commons-digester-1.7.jar"/>
+    <fileset dir="${lib.dir}/xdoclet" includes="commons-beanutils-1.7.0.jar"/>
+    <fileset dir="${lib.dir}/hibernate" includes="commons-collections.jar,commons-logging.jar"/>
+	<lib dir="${jlib.dir}" includes="*.jar"/>
+    <lib dir="${lib.dir}" includes="*.jar"/>
+    <lib dir="${lib.dir}/hibernate" includes="*.jar"/>
+    <lib dir="${lib.dir}/mysql" includes="*.jar"/>
+    <lib dir="${lib.dir}/xdoclet" includes="*.jar"/>
+    <classes file="${local.dir}/log4j.properties"/>
+    </war>
   </target>
 	
   <target name="compile" depends="compile-dao,compile-service,compile-web-onServer,compile-web-onClient"/>
@@ -540,10 +566,14 @@
 	
   <target name="test" depends="run-tests,show-tests-report"/>
 
+  <target name="clean-all" depends="clean, clean-tomcat"/>
+
   <target name="default" depends="package"/>
 	
   <target name="hibernate" depends="schema-export"/>
 	
+  <target name="install" depends="hibernate, war"/>
+
   <target name="all" depends="package,doc,run-tests"/>
 	
   <target name="rebuild" depends="clean,package"/>

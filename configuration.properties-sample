@@ -8,6 +8,7 @@ app.name = vhdllab
 ### directories in ${basedir} ###
 build.dir = build
 lib.dir = libs
+html.pages.dir = html/pages
 jlib.dir = jlibs
 jlib-tests.dir = ${jlib.dir}/tests
 doc.dir = docs
@@ -24,7 +25,7 @@ hibernate.hbm.force = true
 hibernate.hbm.version = 2.0
 
 ### Tomcat directory ###
-tomcat.dir = C:\\Program Files\\Apache\\apache-tomcat-5.5.17
+#tomcat.dir = C:\\Program Files\\Apache\\apache-tomcat-5.5.17
 ### Tomcat executable file ###
 tomcat.exec = startup.bat
 ### Tomcat shutdown executable file ###
@@ -43,7 +44,7 @@ sleep.for.tomcat = 1
 override.java.policy = false
 
 ### Full path to browser executable file ###
-browser.exec = c:\\Program Files\\Mozilla Firefox\\firefox.exe
+#browser.exec = c:\\Program Files\\Mozilla Firefox\\firefox.exe
 #browser.exec = c:\\Program Files\\Opera\\opera.exe
 
 ### Command line argument ###
