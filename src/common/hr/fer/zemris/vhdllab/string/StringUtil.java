@@ -105,4 +105,50 @@ public class StringUtil {
 		if( c == '_' ) return true;
 		return false;
 	}
+	
+	/**
+	 * Use this method to replace any succession of whitespaces with a single
+	 * whitespace sign. Whitespaces include tabs, spaces, CR and LF.
+	 * 
+	 * @param a source from where to remove white spaces
+	 * @return a new string where multiple white spaces are removed
+	 */
+	public static String removeWhiteSpaces(String source) {
+		if(source==null) {
+			throw new NullPointerException("No source given!");
+		}
+		char[] chs = source.toCharArray();
+		int pos = 0;
+		int i;
+		for(i = 0; i < chs.length-1; i++) {
+			chs[pos] = chs[i];
+			if(chs[i]==' ' || chs[i]=='\n' || chs[i]=='\t' || chs[i]=='\r') {
+				chs[pos] = ' ';
+				if(pos==0) pos--;
+				char c = chs[i+1];
+				if(c==' ' || c=='\n' || c=='\t' || chs[i]=='\r') {
+					do {
+						i++;
+						if(i+1>=chs.length) break;
+						c = chs[i+1];
+					} while(c==' ' || c=='\n' || c=='\t' || chs[i]=='\r');
+				}
+				pos++;
+				continue;
+			}
+			pos++;
+		}
+		if(i<chs.length) {
+			i = chs.length-1;
+			if(chs[i]!=' ' && chs[i]!='\n' && chs[i]!='\t' || chs[i]=='\r') {
+				chs[pos] = chs[i];
+				pos++;
+			}
+		}
+		if(pos==0) return new String();
+		if(chs[pos-1]==' ') pos--;
+		if(pos==0) return new String();
+		return new String(chs,0,pos);
+	}
+	
 }

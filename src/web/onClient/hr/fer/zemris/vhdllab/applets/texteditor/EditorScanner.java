@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
 import java.awt.Color;
-import java.util.Scanner;
 
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.StyledEditorKit;
@@ -50,22 +49,22 @@ public class EditorScanner extends Thread {
 				"sll", "sra", "srl", "subtype", "then", "to", "transport", "type",
 				"unaffected", "units", "until", "use", "variable", "wait", "when",
 				"while", "with", "xnor", "xor" };
-	     Scanner s = new Scanner(TextEditor.text.getText());
-	     
-	     while(s.hasNext()) {
-	    	 temp = s.next();
-	    	 for (i=0; i<vhdlWords.length; i++)	{ 
-	    		 					if ((temp.toString()).equals(vhdlWords[i])){
-	    		 						System.out.println(temp + "- ovo je prepoznato");
-	    		 						flag=false;
-	    		 						break;
-	    		 						} else {flag=true;}
-	    	 
-	    	 }
-	    	 if (flag) {
-	    	     System.out.println(temp +"- ovo nije prepoznato");
-	    	     flag=true;}
-         }
+//	     Scanner s = new Scanner(text.getText());
+//	     
+//	     while(s.hasNext()) {
+//	    	 temp = s.next();
+//	    	 for (i=0; i<vhdlWords.length; i++)	{ 
+//	    		 					if ((temp.toString()).equals(vhdlWords[i])){
+//	    		 						System.out.println(temp + "- ovo je prepoznato");
+//	    		 						flag=false;
+//	    		 						break;
+//	    		 						} else {flag=true;}
+//	    	 
+//	    	 }
+//	    	 if (flag) {
+//	    	     System.out.println(temp +"- ovo nije prepoznato");
+//	    	     flag=true;}
+//         }
 	     
 	     
 	     

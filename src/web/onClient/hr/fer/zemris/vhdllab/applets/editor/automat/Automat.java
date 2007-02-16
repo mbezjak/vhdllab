@@ -203,6 +203,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public FileContent getInitialFileContent(Component parent) {
 		AUTPodatci pod=new AUTPodatci(parent,pContainer,bundle);
+		projectName = pContainer.getSelectedProject();
 		String gen=null;
 		if(pod.ime!=null){
 			LinkedList<Stanje> stanja=new LinkedList<Stanje>();

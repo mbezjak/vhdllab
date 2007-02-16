@@ -2,11 +2,16 @@ package hr.fer.zemris.vhdllab.applets.texteditor;
 
  
 
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,10 +22,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -34,12 +38,17 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
 import javax.swing.undo.CannotRedoException;
@@ -53,10 +62,11 @@ import javax.swing.undo.UndoManager;
 public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 	private static final long serialVersionUID = 5853551043423675268L;
-	static JTextPane text;
+	JTextPane text;
 	private boolean savable;
 	private boolean readonly;
 	private boolean modifiedFlag = true;
+	private Object highlighted;
 	
 	AbstractDocument doc;
 	
@@ -88,6 +98,14 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		text.setLocation(25, 50);
 		//text.setPreferredSize(new Dimension(300,300));
 		
+		text.addCaretListener(new CaretListener() {
+			public void caretUpdate(CaretEvent e) {
+				if(highlighted != null) {
+					text.getHighlighter().removeHighlight(highlighted);
+					highlighted = null;
+				}
+			}
+		});
 		
 		
 		//create pop up menu
@@ -213,10 +231,10 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		return modifiedFlag;
 	}
 
-	public static StyledDocument getDocument() {
+	public StyledDocument getDocument() {
 		return text.getStyledDocument();
 	}
-	public static void setDocument(StyledDocument doc) {
+	public void setDocument(StyledDocument doc) {
 		text.setStyledDocument(doc);
 		 
 	}
@@ -233,23 +251,54 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	}
 
 	public FileContent getInitialFileContent(Component parent) {
-		try {
+		String[] options = new String[] {"OK", "Cancel"};
+		int optionType = JOptionPane.OK_CANCEL_OPTION;
+		int messageType = JOptionPane.PLAIN_MESSAGE;
+		EntityTable table = new EntityTable();
+		table.setProjectContainer(container);
+		table.init();
+		int option = JOptionPane.showOptionDialog(parent, table, "New VHDL source", optionType, messageType, null, options, options[0]);
+		if(option == JOptionPane.OK_OPTION) {
 			String projectName = container.getSelectedProject();
-			if(projectName == null) {
-				return null;
+			if(projectName == null) return null;
+			CircuitInterface ci = table.getCircuitInterface();
+			try {
+				if(container.existsFile(projectName, ci.getEntityName())) {
+					container.echoStatusText(ci.getEntityName() + " already exists!", MessageEnum.Information);
+				}
+			} catch (UniformAppletException e) {
+				e.printStackTrace();
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				JOptionPane.showMessageDialog(parent, sw.toString());
 			}
-			String fileName;
-			do {
-				fileName = JOptionPane.showInputDialog(parent, "Enter file name:");
-			} while(container.existsFile(projectName, fileName));
+			StringBuilder sb = new StringBuilder(100 + ci.getPorts().size() * 20);
+			sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
+			sb.append("ENTITY ").append(ci.getEntityName()).append(" IS PORT (\n");
+			for(Port p : ci.getPorts()) {
+				Type type = p.getType();
+				sb.append("\t").append(p.getName()).append(" : ")
+					.append(p.getDirection().toString()).append(" ")
+					.append(type.getTypeName());
+				if(type.isVector()) {
+					sb.append(" (").append(type.getRangeFrom())
+						.append(" ").append(type.getVectorDirection())
+						.append(" ").append(type.getRangeTo()).append(")");
+				}
+				sb.append(";\n");
+			}
+			if(ci.getPorts().size() == 0) {
+				sb.replace(sb.length()-8, sb.length(), "\n");
+			} else {
+				sb.replace(sb.length()-2, sb.length()-1, ");");
+			}
+			sb.append("end ").append(ci.getEntityName()).append(";\n\n");
+			sb.append("ARCHITECTURE arch OF ").append(ci.getEntityName())
+				.append(" IS \n\nBEGIN\n\nEND arch;");
 			
-			String data = "new file named '" + fileName + "' that belongs to '" +projectName +"' was created in: " + getCurrentDateAndTime();
-			FileContent initialContent = new FileContent(projectName, fileName, data);
-			return initialContent;
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-		}
-		return null;
+			return new FileContent(projectName, ci.getEntityName(), sb.toString());
+		} else return null;
 	}
 	
 	public String getFileName() {
@@ -260,16 +309,32 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		return content.getProjectName();
 	}
 	
-	private String getCurrentDateAndTime() {
-		Calendar cal = Calendar.getInstance(TimeZone.getDefault());
-		final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-		sdf.setTimeZone(TimeZone.getDefault());
-		return sdf.format(cal.getTime());
+	public void highlightLine(int line) {
+		int caret = text.getCaretPosition();
+		Highlighter h = text.getHighlighter();
+		h.removeAllHighlights();
+		String content = text.getText();
+		content = content.replaceAll("\r+", "");
+		text.setText(content);
+		text.setCaretPosition(caret);
+		int pos = 0;
+		line--;
+		while(line != 0) {
+			pos = content.indexOf('\n', pos) + 1;
+			line--;
+		}
+		int last = content.indexOf('\n', pos) + 1;
+		try {
+			highlighted = h.addHighlight(pos, last, new DefaultHighlighter.DefaultHighlightPainter(new Color(180, 210, 238)));
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
+		}
 	}
-
-	public void highlightLine(int line) {}
-
+	
 	public void setReadOnly(boolean flag) {
 		this.readonly = flag;
 	}

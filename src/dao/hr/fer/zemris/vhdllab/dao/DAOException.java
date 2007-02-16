@@ -31,8 +31,8 @@ public class DAOException extends Exception {
 	}
 	
 	/**
-	 * Returns a string representation of complete error message.
-	 * @return a string representation of complete error message
+	 * Returns a string representation of complete stack trace.
+	 * @return a string representation of complete stack trace
 	 */
 	public String getStackTraceAsString() {
 		StringWriter sw = new StringWriter();

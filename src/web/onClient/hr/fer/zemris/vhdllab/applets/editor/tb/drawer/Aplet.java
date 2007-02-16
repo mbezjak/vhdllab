@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
@@ -47,6 +48,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	private ProjectContainer container;
 	private String projectName;
 	private String fileName;
+	private String backupData;
 	private boolean isSavable;
 	private boolean isReadOnly;
 	
@@ -75,7 +77,6 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	}
 	
 	public void init(){
-		
 			//scrol.setIgnoreRepaint(true);
 			
 			//stvoriSignal();
@@ -121,6 +122,12 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 
 
 	public String getData() {
+		String data = createData();
+		backupData = data;
+		return data;
+	}
+	
+	private String createData() {
 		StringBuilder data = new StringBuilder();
 		data.append("<file>").append(fileDepends).append("</file>\n");
 		data.append("<measureUnit>").append(measureUnit != null ? measureUnit : "ns").append("</measureUnit>\n");
@@ -130,7 +137,6 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		for(Signal s : signals) {
 			data.append(s.toString().trim()).append("\n");
 		}
-//		JOptionPane.showMessageDialog(this, data.toString());
 		return data.toString();
 	}
 
@@ -436,8 +442,14 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 
 
 	public boolean isModified() {
-		// TODO Auto-generated method stub
-		return true;
+		String data = createData();
+		data = StringUtil.removeWhiteSpaces(data);
+		backupData = StringUtil.removeWhiteSpaces(backupData);
+		if(backupData.equals(data)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 
@@ -455,8 +467,8 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		projectName = fContent.getProjectName();
 		fileName = fContent.getFileName();
 		String data = fContent.getContent();
-		
 		int start, end;
+		
 		start = data.indexOf("<file>");
 		start += "<file>".length();
 		end = data.indexOf("</file>");
@@ -469,6 +481,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 			measureUnit = data.substring(start, end);
 		}
 
+		start = data.indexOf("<duration>");
 		if(start != -1) {
 			start = data.indexOf("<duration>");
 			start += "<duration>".length();
@@ -483,10 +496,11 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 				setCircuitInterface(ci);
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
-				return;
+				in_panel.podatci_t = new Signal[0];
 			}
 		}
 		init();
+		backupData = data;
 	}
 
 

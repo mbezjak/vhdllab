@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.view.compilation;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
@@ -114,10 +115,13 @@ public class CompileErrorsPanel extends JPanel implements IView {
     public void highlightError(String error) {
         Pattern pattern = Pattern.compile("([^:]+):([^:]+):([^:]+):(.+)");
         Matcher matcher = pattern.matcher(error);
-        if (matcher.matches())
-        {
+        if (matcher.matches()) {
         	try {
         		String projectName = projectContainer.getSelectedProject();
+        		if(projectName == null) {
+        			projectContainer.echoStatusText("Select a project to highlight a line!", MessageEnum.Error);
+        			return;
+        		}
         		String fileName = matcher.group(1);
         		editor = projectContainer.getEditor(projectName, fileName);
 				int temp = Integer.valueOf(matcher.group(2));

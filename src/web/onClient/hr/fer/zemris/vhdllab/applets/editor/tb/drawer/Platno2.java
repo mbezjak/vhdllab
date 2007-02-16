@@ -89,6 +89,9 @@ public class Platno2 extends JComponent {
 	private Signal[] transformiraj_signale(){
 		
 		String data=this.podatci;
+		if(data == null) {
+			return new Signal[0];
+		}
 		// remove tags measureUnit, duration and file
 		int start, end;
 		String substr;

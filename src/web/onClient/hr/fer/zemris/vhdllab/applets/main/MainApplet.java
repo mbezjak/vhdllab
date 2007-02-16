@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  * @author Miro Bezjak
  * @see ProjectContainer
  */
-public class MainApplet
+public final class MainApplet
 		extends JApplet
 		implements ProjectContainer {
 	
@@ -125,8 +125,11 @@ public class MainApplet
 			communicator = new Communicator(invoker, userId);
 			bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
 		}
 		
 		initGUI();
@@ -139,6 +142,8 @@ public class MainApplet
 			public void componentShown(ComponentEvent e) {}
 		});
 
+		// FIXME ovo mozda spretnije rijesit
+		openView(ViewTypes.VT_STATUS_HISTORY);
 		refreshWorkspace();
 		
 		try {
@@ -163,7 +168,13 @@ public class MainApplet
 				}
 
 			}
-		} catch (UniformAppletException ignored) {}
+		} catch (UniformAppletException ignored) {
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ignored.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -215,11 +226,24 @@ public class MainApplet
 				
 				savePreferences(p);
 			}
-		} catch (UniformAppletException ignored) {}
+		} catch (UniformAppletException ignored) {
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ignored.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
+		}
 		
+		// TODO vidjet sto tocno s ovim. kakva je implementacija i mozda poboljsat implementaciju
 		try {
 			communicator.cleanUp();
-		} catch (UniformAppletException ignored) {}
+		} catch (UniformAppletException ignored) {
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ignored.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
+		}
 		communicator = null;
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
@@ -340,7 +364,7 @@ public class MainApplet
 	/**
 	 * Stop all internet traffic and destroy application.
 	 */
-	protected void exitApplication() {
+	private void exitApplication() {
 		stop();
 		destroy();
 	}
@@ -508,10 +532,11 @@ public class MainApplet
 					try {
 						createNewProjectInstance();
 					} catch (UniformAppletException ex) {
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 						StringWriter sw = new StringWriter();
 						PrintWriter pw = new PrintWriter(sw);
 						ex.printStackTrace(pw);
-						throw new NullPointerException(sw.toString());
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -526,7 +551,13 @@ public class MainApplet
 				public void actionPerformed(ActionEvent e) {
 					try {
 						createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
-					} catch (UniformAppletException e1) {}
+					} catch (UniformAppletException ex) {
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -539,7 +570,13 @@ public class MainApplet
 				public void actionPerformed(ActionEvent e) {
 					try {
 						createNewFileInstance(FileTypes.FT_VHDL_TB);
-					} catch (UniformAppletException ex) {}
+					} catch (UniformAppletException ex) {
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -552,7 +589,13 @@ public class MainApplet
 				public void actionPerformed(ActionEvent e) {
 					try {
 						createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
-					} catch (UniformAppletException e1) {}
+					} catch (UniformAppletException ex) {
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -565,7 +608,13 @@ public class MainApplet
 				public void actionPerformed(ActionEvent e) {
 					try {
 						createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
-					} catch (UniformAppletException ex) {}
+					} catch (UniformAppletException ex) {
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -750,6 +799,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
 						echoStatusText(text, MessageEnum.Error);
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -766,6 +820,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
 						echoStatusText(text, MessageEnum.Error);
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -782,6 +841,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
 						echoStatusText(text, MessageEnum.Error);
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -799,6 +863,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 						echoStatusText(text, MessageEnum.Error);
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -815,6 +884,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 						echoStatusText(text, MessageEnum.Error);
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -831,6 +905,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 						echoStatusText(text, MessageEnum.Error);
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -848,6 +927,11 @@ public class MainApplet
 					} catch (UniformAppletException ex) {
 						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
 						echoStatusText(text, MessageEnum.Error);
+						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						ex.printStackTrace(pw);
+						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
 					}
 				}
 			});
@@ -1173,7 +1257,13 @@ public class MainApplet
 			if(option != null) {
 				country = option.getChosenValue(); 
 			}
-		} catch (UniformAppletException ignored) {}
+		} catch (UniformAppletException ignored) {
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ignored.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
+		}
 		if(language == null) language = "en";
 		
 		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName, language, country);
@@ -1196,7 +1286,7 @@ public class MainApplet
 		return projectExplorer.getAllProjects();
 	}
 	
-	protected void echoStatusText(String text, MessageEnum type) {
+	public void echoStatusText(String text, MessageEnum type) {
 		statusBar.setMessage(text, type);
 	}
 	
@@ -1341,6 +1431,11 @@ public class MainApplet
 		} catch (UniformAppletException e) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
 			echoStatusText(text, MessageEnum.Error);
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
 		}
 	}
 	
@@ -1504,7 +1599,13 @@ public class MainApplet
 			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_VIEW_HEIGHT);
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
 			o.setChosenValue(String.valueOf(size));
-		} catch (UniformAppletException e) {}
+		} catch (UniformAppletException e) {
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			JOptionPane.showMessageDialog(this, sw.toString());
+		}
 	}
 	
 	private void maximizeComponent(Component component) {
@@ -1565,6 +1666,11 @@ public class MainApplet
 					String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
 					text = Utilities.replacePlaceholders(text, new String[] {fileName});
 					echoStatusText(text, MessageEnum.Error);
+					// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+					StringWriter sw = new StringWriter();
+					PrintWriter pw = new PrintWriter(sw);
+					e.printStackTrace(pw);
+					JOptionPane.showMessageDialog(this, sw.toString());
 				}
 			}
 		}
@@ -1572,10 +1678,12 @@ public class MainApplet
 		for(String projectName : projects) {
 			projectExplorer.refreshProject(projectName);
 		}
-		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED_ALL);
-		String numberOfFiles = String.valueOf(savedEditors.size());
-		text = Utilities.replacePlaceholders(text, new String[] {numberOfFiles});
-		echoStatusText(text, MessageEnum.Successfull);
+		if(savedEditors.size() != 0) {
+			String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED_ALL);
+			String numberOfFiles = String.valueOf(savedEditors.size());
+			text = Utilities.replacePlaceholders(text, new String[] {numberOfFiles});
+			echoStatusText(text, MessageEnum.Successfull);
+		}
 	}
 	
 	private void saveSimulation(String projectName, String fileName) throws UniformAppletException {
@@ -1710,6 +1818,11 @@ public class MainApplet
 				}
 			} catch (UniformAppletException e) {
 				shouldAutoSave = false;
+				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				JOptionPane.showMessageDialog(this, sw.toString());
 			}
 			
 			List<IEditor> editorsToSave = notSavedEditors;
@@ -1765,7 +1878,13 @@ public class MainApplet
 				SingleOption singleOption = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES);
 				singleOption.setChosenValue(String.valueOf(shouldAutoSave));
 				savePreferences(singleOption.getParent());
-			} catch (UniformAppletException e) {}
+			} catch (UniformAppletException ignored) {
+				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				ignored.printStackTrace(pw);
+				JOptionPane.showMessageDialog(this, sw.toString());
+			}
 		}
 		int option = dialog.getOption();
 		if(option != SaveDialog.OK_OPTION) return null;
