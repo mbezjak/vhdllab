@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.swing.JTabbedPane;
 
-public class ViewPane extends JTabbedPane {
+public final class ViewPane extends JTabbedPane {
 
 	/**
 	 * Serial version UID.

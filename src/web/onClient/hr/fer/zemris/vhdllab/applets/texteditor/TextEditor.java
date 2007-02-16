@@ -272,6 +272,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 				PrintWriter pw = new PrintWriter(sw);
 				e.printStackTrace(pw);
 				JOptionPane.showMessageDialog(parent, sw.toString());
+				return null;
 			}
 			StringBuilder sb = new StringBuilder(100 + ci.getPorts().size() * 20);
 			sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");

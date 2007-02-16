@@ -4,7 +4,7 @@ package hr.fer.zemris.vhdllab.applets.main.model;
  * Represents a one file and its content.
  * @author Miro Bezjak
  */
-public class FileContent {
+public final class FileContent {
 	
 	/** A name of a project */
 	private String projectName;

@@ -1502,6 +1502,7 @@ public final class MainApplet
 		if(getSelectedProject() == null) {
 			String text = bundle.getString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
 			echoStatusText(text, MessageEnum.Information);
+			return;
 		}
 		// Initialization of a wizard
 		IWizard wizard = communicator.getEditor(type).getWizard();

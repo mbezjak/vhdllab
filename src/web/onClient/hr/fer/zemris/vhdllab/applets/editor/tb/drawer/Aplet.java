@@ -1,10 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.string.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
@@ -521,19 +524,36 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 
 	public FileContent getInitialFileContent(Component parent) {
 		String projectName = container.getSelectedProject();
-		String depends = JOptionPane.showInputDialog(parent, "Which VHDL file?");
-		String fileName = JOptionPane.showInputDialog(parent, "Name of a file?");
-		
+		if(projectName == null) {
+			container.echoStatusText("Select a project to run testbench wizard!", MessageEnum.Information);
+			return null;
+		}
+		RunDialog dialog = new RunDialog(parent, true, container, RunDialog.COMPILATION_TYPE);
+		dialog.setChangeProjectButtonText("change");
+		dialog.startDialog();
+		if(dialog.getOption() != RunDialog.OK_OPTION) return null;
+		FileIdentifier file = dialog.getSelectedFile();
+		if(!projectName.equalsIgnoreCase(file.getProjectName())) {
+			container.echoStatusText("Cant create testbench for file outside of '"+projectName+"'", MessageEnum.Information);
+			return null;
+		}
+		String testbench = JOptionPane.showInputDialog(parent, "Enter a name of a testbench");
+		if(testbench == null) return null;
 		StringBuilder sb = new StringBuilder();
-		sb.append("<file>").append(depends).append("</file>");
+		sb.append("<file>").append(file.getFileName()).append("</file>");
+		return new FileContent(projectName, testbench, sb.toString());
 		
-		
-		return new FileContent(projectName, fileName, sb.toString());
+//		String projectName = container.getSelectedProject();
+//		String depends = 
+//		String fileName = JOptionPane.showInputDialog(parent, "Name of a file?");
+//		
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("<file>").append(depends).append("</file>");
+//		
+//		
+//		return new FileContent(projectName, fileName, sb.toString());
 	}
 
-	public void cleanUp() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void cleanUp() {}
 	
 }

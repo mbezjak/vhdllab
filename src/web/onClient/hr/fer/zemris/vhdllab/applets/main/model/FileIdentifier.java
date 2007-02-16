@@ -4,7 +4,7 @@ package hr.fer.zemris.vhdllab.applets.main.model;
  * This class uniquely identifies either a project or a file.
  * @author Miro Bezjak
  */
-public class FileIdentifier {
+public final class FileIdentifier {
 
 	/** A name of a project */
 	private String projectName;

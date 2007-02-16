@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.swing.JTabbedPane;
 
-public class EditorPane extends JTabbedPane {
+public final class EditorPane extends JTabbedPane {
 
 	/**
 	 * Serial version UID.

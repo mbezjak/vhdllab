@@ -190,6 +190,36 @@ public class RunDialog extends JDialog {
 	 * <li>{@link #SIMULATION_TYPE}</li>
 	 * </ul>
      *
+     * @param owner the <code>Component</code> from which the dialog is displayed.
+     * @param modal  true for a modal dialog, false for one that allows
+     *               others windows to be active at the same time
+     * @param container project container to enable communication
+     * @param dialogType a type of this dialog
+     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+     * returns true.
+     * @see java.awt.GraphicsEnvironment#isHeadless
+     * @see JComponent#getDefaultLocale
+     */
+    public RunDialog(Component owner, boolean modal, ProjectContainer container, int dialogType) throws HeadlessException {
+    	super(JOptionPane.getFrameForComponent(owner), null, modal);
+        runDialogImpl(owner, container, dialogType);
+    }
+    
+	/**
+     * Creates a modal or non-modal dialog without a title and
+     * with the specified owner <code>Frame</code>.  If <code>owner</code>
+     * is <code>null</code>, a shared, hidden frame will be set as the
+     * owner of the dialog.
+     * <p>
+     * This constructor sets the component's locale property to the value
+     * returned by <code>JComponent.getDefaultLocale</code>.
+     * <p>
+     * Dialog type can be:
+	 * <ul>
+	 * <li>{@link #COMPILATION_TYPE}</li>
+	 * <li>{@link #SIMULATION_TYPE}</li>
+	 * </ul>
+     *
      * @param owner the <code>Frame</code> from which the dialog is displayed
      * @param modal  true for a modal dialog, false for one that allows
      *               others windows to be active at the same time
