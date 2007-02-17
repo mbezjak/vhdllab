@@ -42,9 +42,8 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#save(hr.fer.zemris.vhdllab.model.GlobalFile)
 	 */
 	public void save(GlobalFile file) throws DAOException {
-		Session session = null;
 		try {
-			session = HibernateUtil.currentSession();
+			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			session.saveOrUpdate(file);
@@ -84,9 +83,11 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GlobalFile> findByType(String type) throws DAOException {
-		Session session = null;
+		if(type == null) {
+			throw new DAOException("Global file type can not be null.");
+		}
 		try {
-			session = HibernateUtil.currentSession();
+			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			Query query = session.createQuery("from GlobalFile as f where f.type = :filetype")
@@ -110,6 +111,9 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileID) throws DAOException {
+		if(fileID == null) {
+			throw new DAOException("Global file identifier can not be null");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
@@ -134,6 +138,9 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.String)
 	 */
 	public boolean exists(String name) throws DAOException {
+		if(name == null) {
+			throw new DAOException("Global file name can not be null.");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();

@@ -53,6 +53,9 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GlobalFile> findByType(String type) throws DAOException {
+		if(type == null) {
+			throw new DAOException("Global file type can not be null.");
+		}
 		try {
 			String query = "from GlobalFile as f where f.type = :filetype";
 			String param = "filetype";
@@ -66,6 +69,9 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileId) throws DAOException {
+		if(fileId == null) {
+			throw new DAOException("Global file identifier can not be null.");
+		}
 		try {
 			String query = "from GlobalFile as f where f.id = :fileId";
 			String param = "fileId";
@@ -80,6 +86,9 @@ public class GlobalFileDAOHibernateImplWOSession extends HibernateDaoSupport imp
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#exists(java.lang.String)
 	 */
 	public boolean exists(String name) throws DAOException {
+		if(name == null) {
+			throw new DAOException("Global file name can not be null.");
+		}
 		try {
 			String query = "from GlobalFile as f where f.name = :name";
 			String param = "name";

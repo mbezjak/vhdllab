@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.model.Project;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -21,7 +22,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(value = Parameterized.class)
 public class ProjectDAOTest {
 
-	private TestManager testManager;
+	private TestManager man;
 	private FileDAO fileDAO;
 	private ProjectDAO projectDAO;
 	private GlobalFileDAO globalFileDAO;
@@ -30,7 +31,7 @@ public class ProjectDAOTest {
 
 	@Parameters
 	public static Collection<Object[]> data() {
-		return TestManager.getDAOMemoryParametars();
+		return TestManager.getDAOParametars();
 	}
 
 	public ProjectDAOTest(FileDAO fileDAO, ProjectDAO projectDAO,
@@ -44,14 +45,14 @@ public class ProjectDAOTest {
 
 	@Before
 	public void initEachTest() {
-		testManager = new TestManager(fileDAO, projectDAO, globalFileDAO, userFileDAO);
-		userId = testManager.getUnusedUserId();
-		testManager.initProjects(userId);
+		man = new TestManager(fileDAO, projectDAO, globalFileDAO, userFileDAO);
+		userId = man.getUnusedUserId();
+		man.initProjects(userId);
 	}
 
 	@After
 	public void cleanEachTest() {
-		testManager.cleanProjects(userId);
+		man.cleanProjects(userId);
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class ProjectDAOTest {
 	 * everything ok
 	 */
 	public void load2() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		Project loadedProject = projectDAO.load(project.getId());
 		assertEquals(project, loadedProject);
 	}
@@ -76,7 +77,7 @@ public class ProjectDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void load3() throws DAOException {
-		projectDAO.load(testManager.getUnusedProjectId());
+		projectDAO.load(man.getUnusedProjectId());
 	}
 
 	/**
@@ -84,7 +85,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void load4() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		project.setFiles(null);
 		projectDAO.save(project);
 		project.setFiles(new TreeSet<File>());
@@ -105,7 +106,7 @@ public class ProjectDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save2() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		project.setOwnerId(null);
 		projectDAO.save(project);
 	}
@@ -115,7 +116,7 @@ public class ProjectDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save3() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		project.setOwnerId(TestManager.generateOverMaxJunkOwnerId());
 		projectDAO.save(project);
 	}
@@ -125,7 +126,7 @@ public class ProjectDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save4() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		project.setProjectName(null);
 		projectDAO.save(project);
 	}
@@ -135,7 +136,7 @@ public class ProjectDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save5() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		project.setProjectName(TestManager.generateOverMaxJunkProjectName());
 		projectDAO.save(project);
 	}
@@ -145,10 +146,11 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void save6() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		project.setFiles(null);
 		projectDAO.save(project);
-		assertEquals(new ArrayList<Project>(0), projectDAO.load(project.getId()));
+		project.setFiles(new HashSet<File>());
+		assertEquals(project, projectDAO.load(project.getId()));
 	}
 
 	/**
@@ -156,7 +158,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void save7() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		project.setProjectName("abc");
 		projectDAO.save(project);
 	}
@@ -166,9 +168,9 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void save8() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		Project previousProject = file.getProject();
-		Project project = testManager.pickRandomEmptyProject(userId);
+		Project project = man.pickRandomEmptyProject(userId);
 		project.addFile(file);
 		projectDAO.save(project);
 		assertEquals(true, project.getFiles().contains(file));
@@ -182,12 +184,23 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void save9() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		Project project = file.getProject();
 		project.removeFile(file);
 		projectDAO.save(project);
 		assertEquals(false, project.getFiles().contains(file));
-		assertEquals(false, fileDAO.exists(file.getId()));
+	}
+	
+	/**
+	 * test project name casing
+	 */
+	@Test
+	public void save10() throws DAOException {
+		Project project = man.pickRandomProject(userId);
+		String projectName = project.getProjectName().toUpperCase();
+		project.setProjectName(projectName);
+		projectDAO.save(project);
+		assertEquals(projectName, projectDAO.load(project.getId()).getProjectName());
 	}
 
 	/**
@@ -203,7 +216,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void delete2() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		projectDAO.delete(project);
 		assertEquals(false, projectDAO.exists(project.getId()));
 	}
@@ -213,8 +226,8 @@ public class ProjectDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void delete3() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
-		project.setId(testManager.getUnusedProjectId());
+		Project project = man.pickRandomProject(userId);
+		project.setId(man.getUnusedProjectId());
 		projectDAO.delete(project);
 	}
 
@@ -231,7 +244,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void exists2() throws DAOException {
-		assertEquals(false, projectDAO.exists(testManager.getUnusedProjectId()));
+		assertEquals(false, projectDAO.exists(man.getUnusedProjectId()));
 	}
 
 	/**
@@ -239,7 +252,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void exists3() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		assertEquals(true, projectDAO.exists(project.getId()));
 	}
 
@@ -248,7 +261,7 @@ public class ProjectDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void exists4() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		projectDAO.exists(null, project.getProjectName());
 	}
 
@@ -265,7 +278,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void exists6() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		assertEquals(true, projectDAO.exists(userId, project.getProjectName()));
 	}
 
@@ -274,7 +287,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void exists7() throws DAOException {
-		assertEquals(false, projectDAO.exists(userId, testManager.getUnusedProjectName(userId)));
+		assertEquals(false, projectDAO.exists(userId, man.getUnusedProjectName(userId)));
 	}
 
 	/**
@@ -282,8 +295,8 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void exists8() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
-		assertEquals(false, projectDAO.exists(testManager.getUnusedUserId(), project.getProjectName()));
+		Project project = man.pickRandomProject(userId);
+		assertEquals(false, projectDAO.exists(man.getUnusedUserId(), project.getProjectName()));
 	}
 
 	/**
@@ -291,7 +304,7 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void exists9() throws DAOException {
-		Project project = testManager.pickRandomProject(userId);
+		Project project = man.pickRandomProject(userId);
 		assertEquals(true, projectDAO.exists(userId, project.getProjectName().toUpperCase()));
 	}
 
@@ -308,15 +321,15 @@ public class ProjectDAOTest {
 	 */
 	@Test
 	public void findByUser2() throws DAOException {
-		assertEquals(new ArrayList<Project>(0), projectDAO.findByUser(testManager.getUnusedUserId()));
+		assertEquals(new ArrayList<Project>(0), projectDAO.findByUser(man.getUnusedUserId()));
 	}
 
 	/**
-	 * non-existing user id
+	 * everything ok
 	 */
 	@Test
 	public void findByUser3() throws DAOException {
-		List<Project> expectedProjects = testManager.getProjectsByUser(userId);
+		List<Project> expectedProjects = man.getProjectsByUser(userId);
 		assertEquals(expectedProjects, projectDAO.findByUser(userId));
 	}
 

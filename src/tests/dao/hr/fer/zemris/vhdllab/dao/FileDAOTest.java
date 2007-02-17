@@ -17,7 +17,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(value = Parameterized.class)
 public class FileDAOTest {
 
-	private TestManager testManager;
+	private TestManager man;
 	private FileDAO fileDAO;
 	private ProjectDAO projectDAO;
 	private GlobalFileDAO globalFileDAO;
@@ -40,14 +40,14 @@ public class FileDAOTest {
 
 	@Before
 	public void initEachTest() {
-		testManager = new TestManager(fileDAO, projectDAO, globalFileDAO, userFileDAO);
-		userId = testManager.getUnusedUserId();
-		testManager.initProjects(userId);
+		man = new TestManager(fileDAO, projectDAO, globalFileDAO, userFileDAO);
+		userId = man.getUnusedUserId();
+		man.initProjects(userId);
 	}
 
 	@After
 	public void cleanEachTest() {
-		testManager.cleanProjects(userId);
+		man.cleanProjects(userId);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void load2() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		File loadedFile = fileDAO.load(file.getId());
 		assertEquals(file, loadedFile);
 	}
@@ -73,7 +73,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void load3() throws DAOException {
-		fileDAO.load(testManager.getUnusedFileId());
+		fileDAO.load(man.getUnusedFileId());
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save2() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setProject(null);
 		fileDAO.save(file);
 	}
@@ -99,7 +99,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void save3() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setContent(null);
 		fileDAO.save(file);
 	}
@@ -109,7 +109,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save4() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setContent(TestManager.generateOverMaxJunkFileContent());
 		fileDAO.save(file);
 	}
@@ -119,7 +119,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save5() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setFileName(null);
 		fileDAO.save(file);
 	}
@@ -129,7 +129,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save6() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setFileName(TestManager.generateOverMaxJunkFileName());
 		fileDAO.save(file);
 	}
@@ -139,7 +139,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save7() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setFileType(null);
 		fileDAO.save(file);
 	}
@@ -149,7 +149,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void save8() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setFileType(TestManager.generateOverMaxJunkFileType());
 		fileDAO.save(file);
 	}
@@ -159,7 +159,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void save9() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setContent("abc");
 		fileDAO.save(file);
 		assertEquals(file, fileDAO.load(file.getId()));
@@ -170,7 +170,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void save10() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setFileType("abc");
 		fileDAO.save(file);
 		assertEquals(file, fileDAO.load(file.getId()));
@@ -181,7 +181,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void save11() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		file.setFileName("abc");
 		fileDAO.save(file);
 		assertEquals(file, fileDAO.load(file.getId()));
@@ -192,8 +192,8 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void save12() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
-		file.setProject(testManager.pickRandomEmptyProject(userId));
+		File file = man.pickRandomFile(userId);
+		file.setProject(man.pickRandomEmptyProject(userId));
 		fileDAO.save(file);
 		assertEquals(file, fileDAO.load(file.getId()));
 	}
@@ -203,7 +203,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void save13() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		Project project = file.getProject();
 		fileDAO.delete(file);
 		file.setId(null);
@@ -218,7 +218,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void save14() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		String fileName = file.getFileName().toUpperCase();
 		file.setFileName(fileName);
 		fileDAO.save(file);
@@ -238,7 +238,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void delete2() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		fileDAO.delete(file);
 		assertEquals(false, fileDAO.exists(file.getId()));
 	}
@@ -248,8 +248,8 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void delete3() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
-		file.setId(testManager.getUnusedFileId());
+		File file = man.pickRandomFile(userId);
+		file.setId(man.getUnusedFileId());
 		fileDAO.delete(file);
 	}
 
@@ -266,7 +266,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists2() throws DAOException {
-		assertEquals(false, fileDAO.exists(testManager.getUnusedFileId()));
+		assertEquals(false, fileDAO.exists(man.getUnusedFileId()));
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists3() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		assertEquals(true, fileDAO.exists(file.getId()));
 	}
 
@@ -283,7 +283,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void exists4() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		fileDAO.exists(null, file.getFileName());
 	}
 
@@ -292,7 +292,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void exists5() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		fileDAO.exists(file.getProject().getId(), null);
 	}
 
@@ -301,8 +301,8 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists6() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
-		assertEquals(false, fileDAO.exists(testManager.getUnusedFileId(), file.getFileName()));
+		File file = man.pickRandomFile(userId);
+		assertEquals(false, fileDAO.exists(man.getUnusedFileId(), file.getFileName()));
 	}
 
 	/**
@@ -310,7 +310,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists7() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		assertEquals(true, fileDAO.exists(file.getProject().getId(), file.getFileName()));
 	}
 
@@ -319,8 +319,8 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists8() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
-		assertEquals(false, fileDAO.exists(file.getProject().getId(), testManager.getUnusedFileName(file.getProject())));
+		File file = man.pickRandomFile(userId);
+		assertEquals(false, fileDAO.exists(file.getProject().getId(), man.getUnusedFileName(file.getProject())));
 	}
 
 	/**
@@ -328,7 +328,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists9() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		assertEquals(true, fileDAO.exists(file.getProject().getId(), file.getFileName().toUpperCase()));
 	}
 
@@ -337,8 +337,8 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists10() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
-		assertEquals(false, fileDAO.exists(testManager.getUnusedProjectId(), file.getFileName()));
+		File file = man.pickRandomFile(userId);
+		assertEquals(false, fileDAO.exists(man.getUnusedProjectId(), file.getFileName()));
 	}
 	
 	/**
@@ -346,7 +346,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void exists11() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		Project project = file.getProject();
 		projectDAO.delete(project);
 		for(File f : project.getFiles()) {
@@ -359,7 +359,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void findByName() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		fileDAO.findByName(null, file.getFileName());
 	}
 
@@ -368,7 +368,7 @@ public class FileDAOTest {
 	 */
 	@Test(expected=DAOException.class)
 	public void findByName2() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		fileDAO.findByName(file.getProject().getId(), null);
 	}
 
@@ -377,7 +377,7 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void findByName3() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		assertEquals(file, fileDAO.findByName(file.getProject().getId(), file.getFileName()));
 	}
 
@@ -386,9 +386,9 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void findByName4() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
+		File file = man.pickRandomFile(userId);
 		Long projectId = file.getProject().getId();
-		String name = testManager.getUnusedFileName(file.getProject());
+		String name = man.getUnusedFileName(file.getProject());
 		assertEquals(null, fileDAO.findByName(projectId, name));
 	}
 
@@ -397,8 +397,8 @@ public class FileDAOTest {
 	 */
 	@Test
 	public void findByName5() throws DAOException {
-		File file = testManager.pickRandomFile(userId);
-		assertEquals(null, fileDAO.findByName(testManager.getUnusedProjectId(), file.getFileName()));
+		File file = man.pickRandomFile(userId);
+		assertEquals(null, fileDAO.findByName(man.getUnusedProjectId(), file.getFileName()));
 	}
 
 }

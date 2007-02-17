@@ -23,14 +23,12 @@ TODO 11) [CLOSED]   Napisat kod za metodu generateVHDL (ona koja ce pozivat odgo
 TODO 12) [CLOSED]   Napisat kod za metodu extractCircuitInterface (ona koja ce pozivat odgovarajuce extractore po tipu)
 TODO 13) [CLOSED]   Napisat kod za metodu extractDependency (ona koja ce pozivat odgovarajuce extractore(dependency) po tipu)
 TODO 14) [CLOSED]   Prepravit TestbenchApplet tako da extenda JPanel i implemetira IEditor i IWizard
-TODO 16) [OPEN]   Napravit wizard za new VHDL source
 TODO 17) [CLOSED]   Parsiranje cijelog rezulatat sto vraca GHDL (error, warning, status) i stvaranje odgovarajucih objekata (SimulationResult ili CompilationResult)
 TODO 18) [OPEN]   Naprisat kod za sidebar - to bi trebalo imat samo par buttona i uglavnom zovu metode iz ProjectContainera (znaci nist strasno)
 TODO 19) [OPEN]   Napravit ProjectExplorer - to je Boris uzeo, mislim da nije to tak komplicirano
 TODO 20) [OPEN]   status bar bi trebalo malo dotjerat (mozda postavit da se ispisuje NUM, CAPS i SCROLL, ono standardno)
 TODO 23) [OPEN]   wizard za testbench applet + sredit taj applet da bude kak se spada
 TODO 25) [OPEN]   mijenjanje preferences-a (potpuno isto ko i u firefoxu)
-TODO 27) [OPEN]   Statusbar history (slicno ko i ovo gore, znaci isto jedan JTextField ili JList i svaki put kad se promijeni status bar tu se prikaze u obliku vrijeme : statusBarContent)
 
 Davor Delac
 --------------------------------------------
@@ -96,4 +94,6 @@ TODO 105) [CLOSED]   SimulationErrorsPanel (to vam je samo iteriranje kroz listu
 TODO 106) [CLOSED]   dialog, potpuno isti kao i u eclipse-u (kad hocete nesto radit, pa vam on veli da morate sejvat vise fajlova)
 TODO 107) [CLOSED]   wizard za simulation
 TODO 108) [CLOSED]   wizard za compilation
-TODO 109) [CLOSED]   Trebalo bi sklozit onaj dependency u Extractor-u
+TODO 109) [CLOSED]   Trebalo bi slozit onaj dependency u Extractor-u
+TODO 110) [CLOSED]   Napravit wizard za new VHDL source
+TODO 111) [CLOSED]   Statusbar history (slicno ko i ovo gore, znaci isto jedan JTextField ili JList i svaki put kad se promijeni status bar tu se prikaze u obliku vrijeme : statusBarContent)

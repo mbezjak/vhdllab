@@ -20,7 +20,7 @@ public interface GlobalFileDAO {
 
 	/**
 	 * Saves (or updates) a global file. Global file must also have constraints
-	 * as described by annotations.
+	 * as described by annotations in a {@link GlobalFile} model.
 	 * @param file a global file that will be saved (or updated).
 	 * @throws DAOException if exceptional condition occurs.
 	 */

@@ -42,9 +42,8 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.ProjectDAO#save(hr.fer.zemris.vhdllab.model.Project)
 	 */
 	public void save(Project project) throws DAOException {
-		Session session = null;
 		try {
-			session = HibernateUtil.currentSession();
+			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			session.saveOrUpdate(project);
@@ -146,9 +145,8 @@ public class ProjectDAOHibernateImpl implements ProjectDAO {
 		if(userId == null) {
 			throw new DAOException("User identifier can not be null.");
 		}
-		Session session = null;
 		try {
-			session = HibernateUtil.currentSession();
+			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 	
 			Query query = session.createQuery("from Project as p where p.ownerId = :userID")

@@ -13,6 +13,13 @@ public class GlobalFile {
 	
 	public GlobalFile() {}
 	
+	public GlobalFile(GlobalFile file) {
+		this.id = file.getId();
+		this.name = file.getName();
+		this.type = file.getType();
+		this.content = file.getContent();
+	}
+	
 	/**
 	 * @hibernate.id
 	 *  column = "GLOBAL_FILE_ID"

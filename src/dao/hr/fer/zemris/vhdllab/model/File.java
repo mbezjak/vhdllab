@@ -13,6 +13,15 @@ public class File implements Comparable<File> {
 	private Project project;
 
 	public File() {}
+	
+	public File(File f) {
+		this.id = f.getId();
+		this.fileName = f.getFileName();
+		this.fileType = f.getFileType();
+		this.content = f.getContent();
+		this.project = f.getProject();
+		this.project.addFile(this);
+	}
 
 	/**
 	 * @hibernate.id

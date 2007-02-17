@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets.manprovs;
 
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
+import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.FileDAOMemoryImpl;
 import hr.fer.zemris.vhdllab.dao.impl.dummy.GlobalFileDAOMemoryImpl;
@@ -32,8 +33,7 @@ public class SampleManagerProvider implements ManagerProvider {
 	public SampleManagerProvider() {
 		// Create all data access objects.
 		FileDAO fileDAO = new FileDAOMemoryImpl();
-		ProjectDAOMemoryImpl projectDAO = new ProjectDAOMemoryImpl();
-		projectDAO.setFileDAO(fileDAO);
+		ProjectDAO projectDAO = new ProjectDAOMemoryImpl(fileDAO);
 		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
 		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		

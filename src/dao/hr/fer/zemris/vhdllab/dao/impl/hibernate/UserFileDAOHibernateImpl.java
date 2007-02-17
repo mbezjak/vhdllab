@@ -42,9 +42,8 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#save(hr.fer.zemris.vhdllab.model.UserFile)
 	 */
 	public void save(UserFile file) throws DAOException {
-		Session session = null;
 		try {
-			session = HibernateUtil.currentSession();
+			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			session.saveOrUpdate(file);
@@ -84,9 +83,11 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<UserFile> findByUser(String userID) throws DAOException {
-		Session session = null;
+		if(userID == null) {
+			throw new DAOException("User identifier can not be null.");
+		}
 		try {
-			session = HibernateUtil.currentSession();
+			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			Query query = session.createQuery("from UserFile as f where f.ownerID = :ownerID")
@@ -110,6 +111,9 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileID) throws DAOException {
+		if(fileID == null) {
+			throw new DAOException("User file identifier can not be null");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
@@ -134,6 +138,12 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.String, java.lang.String)
 	 */
 	public boolean exists(String ownerId, String name) throws DAOException {
+		if(ownerId == null) {
+			throw new DAOException("Owner identifier can not be null.");
+		}
+		if(name == null) {
+			throw new DAOException("User file name can not be null.");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();

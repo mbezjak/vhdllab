@@ -14,6 +14,13 @@ public class Project {
 	private Set<File> files;
 
 	public Project() {}
+	
+	public Project(Project p) {
+		this.id = p.getId();
+		this.projectName = p.getProjectName();
+		this.ownerId = p.getOwnerId();
+		this.files = p.getFiles();
+	}
 
 	/**
 	 * @hibernate.id

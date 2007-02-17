@@ -20,7 +20,7 @@ public interface ProjectDAO {
 
 	/**
 	 * Saves (or updates) a project. Project must also have constraints as
-	 * described by annotations.
+	 * described by annotations in a {@link Project} model.
 	 * @param project a project that will be saved (or updated).
 	 * @throws DAOException if exceptional condition occurs.
 	 */

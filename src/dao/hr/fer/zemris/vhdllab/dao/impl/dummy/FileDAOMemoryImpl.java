@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.dao.impl.dummy;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
+import hr.fer.zemris.vhdllab.model.ModelUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,14 +12,14 @@ public class FileDAOMemoryImpl implements FileDAO {
 
 	private long id = 0;
 
-	Map<Long, File> files = new HashMap<Long, File>();
-	Map<FileNameIndexKey, File> nameIndex = new HashMap<FileNameIndexKey, File>(); 
+	private Map<Long, File> files = new HashMap<Long, File>();
+	private Map<FileNameIndexKey, File> nameIndex = new HashMap<FileNameIndexKey, File>(); 
 
 	public synchronized File load(Long id) throws DAOException {
 		if(id == null) throw new DAOException("File identifier can not be null.");
 		File file = files.get(id);
 		if(file==null) throw new DAOException("Unable to load file!");
-		return file;
+		return new File(file);
 	}
 
 	public synchronized void save(File file) throws DAOException {
@@ -26,9 +27,9 @@ public class FileDAOMemoryImpl implements FileDAO {
 		if(file.getFileType()==null) throw new DAOException("File type can not be null!");
 		if(file.getFileName()==null) throw new DAOException("File name can not be null!");
 		if(file.getProject() == null) throw new DAOException("File must have project as a parent.");
-		if(file.getContent()!=null && file.getContent().length() > 65536) throw new DAOException("File content too long");
-		if(file.getFileName().length() > 255) throw new DAOException("File name too long");
-		if(file.getFileType().length() > 255) throw new DAOException("File type too long");
+		if(file.getContent()!=null && file.getContent().length() > ModelUtil.FILE_CONTENT_SIZE) throw new DAOException("File content too long");
+		if(file.getFileName().length() > ModelUtil.FILE_NAME_SIZE) throw new DAOException("File name too long");
+		if(file.getFileType().length() > ModelUtil.FILE_TYPE_SIZE) throw new DAOException("File type too long");
 		FileNameIndexKey k = null;
 		if(file.getId()==null) {
 			k = new FileNameIndexKey(file.getFileName().toUpperCase(),file.getProject().getId());
@@ -38,9 +39,10 @@ public class FileDAOMemoryImpl implements FileDAO {
 			file.setId(Long.valueOf(id++));
 		}
 		file.getProject().addFile(file);
-		files.put(file.getId(), file);
+		File f = new File(file);
+		files.put(file.getId(), f);
 		if(k!=null) {
-			nameIndex.put(k, file);
+			nameIndex.put(k, f);
 		}
 	}
 
@@ -69,7 +71,9 @@ public class FileDAOMemoryImpl implements FileDAO {
 		if(projectId == null) throw new DAOException("Project identifier can not be null."); 
 		if(name == null) throw new DAOException("File name can not be null."); 
 		FileNameIndexKey k = new FileNameIndexKey(name.toUpperCase(),projectId);
-		return nameIndex.get(k);
+		File f = nameIndex.get(k);
+		if(f == null) return null;
+		else return new File(nameIndex.get(k));
 	}
 	
 	private static class FileNameIndexKey {

@@ -39,9 +39,8 @@ public class FileDAOHibernateImpl implements FileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#save(hr.fer.zemris.vhdllab.model.File)
 	 */
 	public void save(File file) throws DAOException {
-		Session session = null;
 		try {
-			session = HibernateUtil.currentSession();
+			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
 
 			session.saveOrUpdate(file);
@@ -83,6 +82,9 @@ public class FileDAOHibernateImpl implements FileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileID) throws DAOException {
+		if(fileID == null) {
+			throw new DAOException("File identifier can not be null");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();

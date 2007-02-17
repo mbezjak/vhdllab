@@ -14,6 +14,14 @@ public class UserFile {
 	
 	public UserFile() {}
 	
+	public UserFile(UserFile file) {
+		this.id = file.getId();
+		this.ownerID = file.getOwnerID();
+		this.name = file.getName();
+		this.type = file.getType();
+		this.content = file.getContent();
+	}
+	
 	/**
 	 * @hibernate.id
 	 *  column = "USER_FILE_ID"
@@ -55,6 +63,7 @@ public class UserFile {
 	/**
 	 * @hibernate.property
 	 *  column = "TYPE"
+	 *  length = "255"
 	 *  not-null = "true"
 	 */
 	public String getType() {

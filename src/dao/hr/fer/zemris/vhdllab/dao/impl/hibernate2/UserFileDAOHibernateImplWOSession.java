@@ -53,6 +53,9 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 	 */
 	@SuppressWarnings("unchecked")
 	public List<UserFile> findByUser(String userID) throws DAOException {
+		if(userID == null) {
+			throw new DAOException("User identifier can not be null.");
+		}
 		try {
 			String query = "from UserFile as f where f.ownerID = :ownerID";
 			String param = "ownerID";
@@ -66,6 +69,9 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileId) throws DAOException {
+		if(fileId == null) {
+			throw new DAOException("User file identifier can not be null");
+		}
 		try {
 			String query = "from UserFile as f where f.id = :fileId";
 			String param = "fileId";
@@ -80,6 +86,12 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.String, java.lang.String)
 	 */
 	public boolean exists(String ownerId, String name) throws DAOException {
+		if(ownerId == null) {
+			throw new DAOException("Owner identifier can not be null.");
+		}
+		if(name == null) {
+			throw new DAOException("User file name can not be null.");
+		}
 		try {
 			String query = "from UserFile as f where f.ownerID = :ownerId and f.name = :fileName";
 			String[] params = new String[] {"ownerId", "fileName"};

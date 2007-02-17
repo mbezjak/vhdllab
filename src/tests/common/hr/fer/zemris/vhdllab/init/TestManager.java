@@ -46,18 +46,18 @@ import net.sf.hibernate.cfg.Configuration;
  * Helper class used when initializing each test.
  * @author Miro Bezjak
  */
-public class TestManager {
+public final class TestManager {
 	
 	/** VHDLLab Manager helping with initialization. */
-	protected final VHDLLabManager labman;
+	private final VHDLLabManager labman;
 	/** A DAO for file model */
-	protected final FileDAO fileDAO;
+	private final FileDAO fileDAO;
 	/** A DAO for project model */
-	protected final ProjectDAO projectDAO;
+	private final ProjectDAO projectDAO;
 	/** A DAO for global file model */
-	protected final GlobalFileDAO globalFileDAO;
+	private final GlobalFileDAO globalFileDAO;
 	/** A DAO for user file model */
-	protected final UserFileDAO userFileDAO;
+	private final UserFileDAO userFileDAO;
 	
 	/**
 	 * Constructor.
@@ -145,8 +145,7 @@ public class TestManager {
 	public static List<Object[]> getDAOMemoryParametars() {
 		List<Object[]> params = new ArrayList<Object[]>();
 		FileDAO fileDAO = new FileDAOMemoryImpl();
-		ProjectDAOMemoryImpl projectDAO = new ProjectDAOMemoryImpl();
-		projectDAO.setFileDAO(fileDAO);
+		ProjectDAO projectDAO = new ProjectDAOMemoryImpl(fileDAO);
 		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
 		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		params.add(new Object[] {fileDAO, projectDAO, globalFileDAO, userFileDAO});
@@ -216,7 +215,7 @@ public class TestManager {
 		List<Object[]> params = new ArrayList<Object[]>();
 		VHDLLabManagerImpl labman = new VHDLLabManagerImpl();
 		FileDAO fileDAO = new FileDAOMemoryImpl();
-		ProjectDAO projectDAO = new ProjectDAOMemoryImpl();
+		ProjectDAO projectDAO = new ProjectDAOMemoryImpl(fileDAO);
 		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
 		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		labman.setFileDAO(fileDAO);
@@ -250,7 +249,7 @@ public class TestManager {
 		SampleManagerProvider mprov = new SampleManagerProvider();
 		VHDLLabManagerImpl labman = new VHDLLabManagerImpl();
 		FileDAO fileDAO = new FileDAOMemoryImpl();
-		ProjectDAO projectDAO = new ProjectDAOMemoryImpl();
+		ProjectDAO projectDAO = new ProjectDAOMemoryImpl(fileDAO);
 		GlobalFileDAO globalFileDAO = new GlobalFileDAOMemoryImpl();
 		UserFileDAO userFileDAO = new UserFileDAOMemoryImpl();
 		labman.setFileDAO(fileDAO);
@@ -684,7 +683,7 @@ public class TestManager {
 	 * @return a junk string with size <code>size</code>
 	 * @throws IllegalArgumentException is <code>size</code> is negative
 	 */
-	protected static String generateJunkContent(int size) {
+	private static String generateJunkContent(int size) {
 		if(size < 0) throw new IllegalArgumentException("Size can not be negative.");
 		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < size; i++) {
@@ -702,10 +701,58 @@ public class TestManager {
 	}
 	
 	/**
+	 * Generates a global file name that is larger then maximum allowed global
+	 * file name.
+	 * @return a global file name that is larger then maximum allowed global
+	 * 		file name
+	 */
+	public static String generateOverMaxJunkGlobalFileName() {
+		return generateJunkContent(255 + 10);
+	}
+	
+	/**
+	 * Generates a user file name that is larger then maximum allowed user
+	 * file name.
+	 * @return a user file name that is larger then maximum allowed user
+	 * 		file name
+	 */
+	public static String generateOverMaxJunkUserFileName() {
+		return generateJunkContent(255 + 10);
+	}
+	
+	/**
+	 * Generates a project name that is larger then maximum allowed project name.
+	 * @return a project name that is larger then maximum allowed project name
+	 */
+	public static String generateOverMaxJunkProjectName() {
+		return generateJunkContent(255 + 10);
+	}
+	
+	/**
 	 * Generates a file type that is larger then maximum allowed file type.
 	 * @return a file type that is larger then maximum allowed file type
 	 */
 	public static String generateOverMaxJunkFileType() {
+		return generateJunkContent(255 + 10);
+	}
+	
+	/**
+	 * Generates a global file type that is larger then maximum allowed global
+	 * file type.
+	 * @return a global file type that is larger then maximum allowed global
+	 * 		file type
+	 */
+	public static String generateOverMaxJunkGlobalFileType() {
+		return generateJunkContent(255 + 10);
+	}
+	
+	/**
+	 * Generates a user file type that is larger then maximum allowed user
+	 * file type.
+	 * @return a user file type that is larger then maximum allowed user
+	 * 		file type
+	 */
+	public static String generateOverMaxJunkUserFileType() {
 		return generateJunkContent(255 + 10);
 	}
 	
@@ -718,18 +765,30 @@ public class TestManager {
 	}
 	
 	/**
+	 * Generates a global file content that is larger then maximum allowed global
+	 * file content.
+	 * @return a global file content that is larger then maximum allowed global
+	 * 		file content
+	 */
+	public static String generateOverMaxJunkGlobalFileContent() {
+		return generateJunkContent(65536 + 10);
+	}
+	
+	/**
+	 * Generates a user file content that is larger then maximum allowed user
+	 * file content.
+	 * @return a user file content that is larger then maximum allowed user
+	 * 		file content
+	 */
+	public static String generateOverMaxJunkUserFileContent() {
+		return generateJunkContent(65536 + 10);
+	}
+	
+	/**
 	 * Generates a owner identifier that is larger then maximum allowed owner identifier.
 	 * @return a owner identifier that is larger then maximum allowed owner identifier
 	 */
 	public static String generateOverMaxJunkOwnerId() {
-		return generateJunkContent(255 + 10);
-	}
-	
-	/**
-	 * Generates a project name that is larger then maximum allowed project name.
-	 * @return a project name that is larger then maximum allowed project name
-	 */
-	public static String generateOverMaxJunkProjectName() {
 		return generateJunkContent(255 + 10);
 	}
 	
@@ -753,6 +812,44 @@ public class TestManager {
 	}
 	
 	/**
+	 * Returns all global files containing specified <code>type</code>. If any
+	 * error, in DAO layer occures then return value will be <code>null</code>.
+	 * @param type a global file type
+	 * @return all global files containing specified <code>type</code>
+	 * @throws NullPointerException is <code>type</code> is <code>null</code>
+	 */
+	public List<GlobalFile> getGlobalFilesByType(String type) {
+		if(type == null) {
+			throw new NullPointerException("Global file type can not be null.");
+		}
+		try {
+			return globalFileDAO.findByType(type);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns all user files containing specified user identifier. If any
+	 * error, in DAO layer occures then return value will be <code>null</code>.
+	 * @param userId a user identifier
+	 * @return all user files containing specified <code>userId</code>
+	 * @throws NullPointerException is <code>userId</code> is <code>null</code>
+	 */
+	public List<UserFile> getUserFilesByUser(String userId) {
+		if(userId == null) {
+			throw new NullPointerException("User identifier can not be null.");
+		}
+		try {
+			return userFileDAO.findByUser(userId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns a file identifier that is not in use. Meaning there is no file
 	 * containing that particular identifier. If, after cirtain amount of
 	 * iterations (more then 1000) this method can not find such file identifier
@@ -765,6 +862,48 @@ public class TestManager {
 			Random rand = new Random();
 			for(int i = 1; i<2001; i++) {
 				boolean exists = fileDAO.exists(id);
+				if(!exists) return id;
+				long newValue = id.longValue() + rand.nextInt(123456789 * i);
+				id = Long.valueOf(newValue);
+			}
+		} catch (DAOException e) {}
+		return null;
+	}
+	
+	/**
+	 * Returns a global file identifier that is not in use. Meaning there is no
+	 * global file containing that particular identifier. If, after cirtain amount
+	 * of iterations (more then 1000) this method can not find such global file
+	 * identifier then returned value will be <code>null</code>. 
+	 * @return a global file identifier that is not in use
+	 */
+	public Long getUnusedGlobalFileId() {
+		Long id = Long.valueOf(1234567890123L);
+		try {
+			Random rand = new Random();
+			for(int i = 1; i<2001; i++) {
+				boolean exists = globalFileDAO.exists(id);
+				if(!exists) return id;
+				long newValue = id.longValue() + rand.nextInt(123456789 * i);
+				id = Long.valueOf(newValue);
+			}
+		} catch (DAOException e) {}
+		return null;
+	}
+
+	/**
+	 * Returns a user file identifier that is not in use. Meaning there is no
+	 * user file containing that particular identifier. If, after cirtain amount
+	 * of iterations (more then 1000) this method can not find such user file
+	 * identifier then returned value will be <code>null</code>. 
+	 * @return a user file identifier that is not in use
+	 */
+	public Long getUnusedUserFileId() {
+		Long id = Long.valueOf(1234567890123L);
+		try {
+			Random rand = new Random();
+			for(int i = 1; i<2001; i++) {
+				boolean exists = userFileDAO.exists(id);
 				if(!exists) return id;
 				long newValue = id.longValue() + rand.nextInt(123456789 * i);
 				id = Long.valueOf(newValue);
@@ -802,23 +941,14 @@ public class TestManager {
 	 * @return a user identifier that is not in use
 	 */
 	public String getUnusedUserId() {
-		/*
-		 * There is one asumption in this algorithm. It asumes that if method
-		 * findProjectsByUser(String) in VHDLLabManager returns an empty list
-		 * that userId is never used! This algorithm will not check for user
-		 * files.
-		 * 
-		 * However, current implementation of VHDLLabManager allows this asumption
-		 * and even if user exists (he has records of user file) VHDLLabManager
-		 * will later add all deleted user files (they will be deleted by cleanDAO
-		 * method in this class). So no damage to DAO persistance will be done. Plus
-		 * chances of something like that happening are pretty low.
-		 */
 		String userId = "uid:id-not-set";
 		try {
 			for(int i = 1; i<2001; i++) {
 				List<Project> projects = labman.findProjectsByUser(userId);
-				if(projects.isEmpty()) return userId;
+				if(projects.isEmpty()) {
+					List<UserFile> files = labman.findUserFilesByUser(userId);
+					if(files.isEmpty()) return userId;
+				}
 				userId = userId + "::" + i;
 			}
 		} catch (ServiceException e) {}
@@ -850,6 +980,49 @@ public class TestManager {
 			if(!equals) return fileName;
 			fileName = fileName + "::" + i;
 		}
+		return null;
+	}
+	
+	/**
+	 * Returns a global file name that is not in use. Meaning there is no
+	 * global file with that name in DAO layer. If, after cirtain amount
+	 * of iterations (more then 1000) this method can not find such global
+	 * file name then returned value will be <code>null</code>.
+	 * @return a global file name that is not in use
+	 */
+	public String getUnusedGlobalFileName() {
+		String name = "a never used global file name";
+		try {
+			for(int i = 1; i<2001; i++) {
+				boolean exists = globalFileDAO.exists(name);
+				if(!exists) return name;
+				name = name + "::" + i;
+			}
+		} catch (DAOException e) {}
+		return null;
+	}
+	
+	/**
+	 * Returns a user file name that is not in use. Meaning there is no
+	 * user file with that name in DAO layer. If, after cirtain amount
+	 * of iterations (more then 1000) this method can not find such user
+	 * file name then returned value will be <code>null</code>.
+	 * @param userId a user identifier for whom to user files
+	 * @return a user file name that is not in use
+	 * @throws NullPointerException is <code>userId</code> is <code>null</code>
+	 */
+	public String getUnusedUserFileName(String userId) {
+		if(userId == null) {
+			throw new NullPointerException("User identifier can not be null.");
+		}
+		String name = "a never used user file name";
+		try {
+			for(int i = 1; i<2001; i++) {
+				boolean exists = userFileDAO.exists(userId, name);
+				if(!exists) return name;
+				name = name + "::" + i;
+			}
+		} catch (DAOException e) {}
 		return null;
 	}
 	
@@ -892,6 +1065,25 @@ public class TestManager {
 	}
 	
 	/**
+	 * Returns a global file type that is not in use. Meaning there is no
+	 * global files with that type in DAO layer. If, after cirtain amount
+	 * of iterations (more then 1000) this method can not find such global
+	 * file type then returned value will be <code>null</code>.
+	 * @return a global file type that is not in use
+	 */
+	public String getUnusedGlobalFileType() {
+		String type = "a never used global file type";
+		try {
+			for(int i = 1; i<2001; i++) {
+				List<GlobalFile> files = globalFileDAO.findByType(type);
+				if(files.isEmpty()) return type;
+				type = type + "::" + i;
+			}
+		} catch (DAOException e) {}
+		return null;
+	}
+	
+	/**
 	 * Helper method. This method reads contents of given file
 	 * and return it as a string.
 	 * @param fileName name of file to read
@@ -899,7 +1091,7 @@ public class TestManager {
 	 *         if file could not be read or other error occur.
 	 * @throws NullPointerException if <code>fileName</code> is <code>null</code>
 	 */
-	protected String readFile(String fileName) {
+	private String readFile(String fileName) {
 		if(fileName == null) {
 			throw new NullPointerException("File name can not be null.");
 		}

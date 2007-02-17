@@ -8,8 +8,8 @@ import hr.fer.zemris.vhdllab.model.File;
 public interface FileDAO {
 
 	/**
-	 * Retrieves file with specified identifier. An exception will be thrown if file
-	 * with specified identifier does not exists.
+	 * Retrieves file with specified identifier. An exception will be thrown if
+	 * file with specified identifier does not exists.
 	 * @param id indentifier of a file.
 	 * @return a file with specified identifier. 
 	 * @throws DAOException if exceptional condition occurs.
@@ -18,7 +18,7 @@ public interface FileDAO {
 
 	/**
 	 * Saves (or updates) a file. File must also have constraints as
-	 * described by annotations.
+	 * described by annotations in a {@link File} model.
 	 * @param file a file that will be saved (or updated).
 	 * @throws DAOException if exceptional condition occurs.
 	 */

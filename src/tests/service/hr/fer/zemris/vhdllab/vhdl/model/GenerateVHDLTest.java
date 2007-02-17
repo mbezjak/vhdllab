@@ -20,7 +20,7 @@ public class GenerateVHDLTest {
 		VHDLLabManagerImpl vhdlLabman = new VHDLLabManagerImpl();
 		vhdlLabman.setFileDAO(new FileDAOMemoryImpl());
 		vhdlLabman.setGlobalFileDAO(new GlobalFileDAOMemoryImpl());
-		vhdlLabman.setProjectDAO(new ProjectDAOMemoryImpl());
+		vhdlLabman.setProjectDAO(new ProjectDAOMemoryImpl(new FileDAOMemoryImpl()));
 		vhdlLabman.setUserFileDAO(new UserFileDAOMemoryImpl());
 		
 		Project proj = vhdlLabman.createNewProject("testProject", "user1");

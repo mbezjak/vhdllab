@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.dao.impl.dummy;
 
+import static hr.fer.zemris.vhdllab.model.ModelUtil.projectNamesAreEqual;
+import static hr.fer.zemris.vhdllab.model.ModelUtil.userIdAreEqual;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
@@ -9,17 +11,22 @@ import hr.fer.zemris.vhdllab.model.Project;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class ProjectDAOMemoryImpl implements ProjectDAO {
 
 	private long id = 0;
-
-	Map<Long, Project> projects = new HashMap<Long, Project>();
-
+	private Map<Long, Project> projects = new HashMap<Long, Project>();
+	
 	private FileDAO fileDAO;
+	
+	public ProjectDAOMemoryImpl(FileDAO fileDAO) {
+		this.fileDAO = fileDAO;
+	}
 
 	public synchronized Project load(Long id) throws DAOException {
 		if(id == null) {
@@ -27,7 +34,7 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 		}
 		Project project = projects.get(id);
 		if(project==null) throw new DAOException("Unable to load project!");
-		return project;
+		return new Project(project);
 	}
 
 	public synchronized void save(Project project) throws DAOException {
@@ -52,17 +59,24 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 		if(project.getFiles() == null) {
 			project.setFiles(new TreeSet<File>());
 		}
-		projects.put(project.getId(), project);
+		projects.put(project.getId(), new Project(project));
 	}
 
 	public synchronized void delete(Project project) throws DAOException {
 		if(project == null) {
 			throw new DAOException("Project can not be null.");
 		}
-		/*for(File f : project.getFiles()) {
+		Set<File> files = project.getFiles();
+		Iterator<File> it = files.iterator();
+		while(it.hasNext()) {
+			File f = it.next();
+			it.remove();
 			fileDAO.delete(f);
-		}*/
-		projects.remove(project.getId());
+		}
+		Project p = projects.remove(project.getId());
+		if(p == null) {
+			throw new DAOException("Project doesnt exist!");
+		}
 	}
 
 	public synchronized List<Project> findByUser(String userId) throws DAOException {
@@ -72,7 +86,7 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 		List<Project> projectList = new ArrayList<Project>();
 		for(Project p : projects.values()) {
 			if(ModelUtil.userIdAreEqual(p.getOwnerId(), userId)) {
-				projectList.add(p);
+				projectList.add(new Project(p));
 			}
 		}
 		return projectList;
@@ -93,15 +107,12 @@ public class ProjectDAOMemoryImpl implements ProjectDAO {
 			throw new DAOException("Project name can not be null.");
 		}
 		for(Project p : projects.values()) {
-			if(p.getProjectName().equals(projectName)) {
+			if(projectNamesAreEqual(p.getProjectName(), projectName) &&
+					userIdAreEqual(p.getOwnerId(), ownerId)) {
 				return true;
 			}
 		}
 		return false;
-	}
-	
-	public void setFileDAO(FileDAO fileDAO) {
-		this.fileDAO = fileDAO;
 	}
 
 }

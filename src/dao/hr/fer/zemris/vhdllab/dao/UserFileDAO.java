@@ -12,15 +12,15 @@ public interface UserFileDAO {
 	/**
 	 * Retrieves user file with specified identifier. An exception will be
 	 * thrown if user file with specified identifier does not exists.
-	 * @param ownerId indentifier of a global file.
+	 * @param fileId indentifier of a global file.
 	 * @return a user file with specified identifier.
 	 * @throws DAOException if exceptional condition occurs.
 	 */
-	UserFile load(Long ownerId) throws DAOException;
+	UserFile load(Long fileId) throws DAOException;
 
 	/**
 	 * Saves (or updates) a user file. User File must also have constraints as
-	 * described by annotations.
+	 * described by annotations in a {@link UserFile} model.
 	 * @param file a user file that will be saved (or updated).
 	 * @throws DAOException if exceptional condition occurs.
 	 */
