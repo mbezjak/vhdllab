@@ -337,6 +337,9 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	}
 	
 	public void setReadOnly(boolean flag) {
+		if(flag) {
+			text.setEditable(false);
+		}
 		this.readonly = flag;
 	}
 

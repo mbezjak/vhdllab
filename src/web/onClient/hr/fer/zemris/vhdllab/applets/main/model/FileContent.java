@@ -38,7 +38,7 @@ public final class FileContent {
 		return content;
 	}
 	/**
-	 * Setter for content
+	 * Setter for content.
 	 * @param content a conent to set this <code>FileContent</code>
 	 * @throws NullPointerException is <code>content</code> is <code>null</code>
 	 */

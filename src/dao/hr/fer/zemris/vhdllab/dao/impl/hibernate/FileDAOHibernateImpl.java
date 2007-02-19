@@ -39,6 +39,9 @@ public class FileDAOHibernateImpl implements FileDAO {
 	 * @see hr.fer.zemris.vhdllab.dao.FileDAO#save(hr.fer.zemris.vhdllab.model.File)
 	 */
 	public void save(File file) throws DAOException {
+		if(file != null && file.getProject() == null) {
+			throw new DAOException("File must belong to a project!");
+		}
 		try {
 			Session session = HibernateUtil.currentSession();
 			Transaction tx = session.beginTransaction();
