@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  * @author Miro Bezjak
  * @see ProjectContainer
  */
-public final class MainApplet
+public class MainApplet
 		extends JApplet
 		implements ProjectContainer {
 	

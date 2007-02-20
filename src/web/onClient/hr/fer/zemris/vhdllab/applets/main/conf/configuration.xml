@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<editors>
+		<editor name="VHDL Source" fileType="vhdl_source"
+			class="hr.fer.zemris.vhdllab.applets.texteditor.TextEditor"
+			savable="true" readonly="false">
+		</editor>
+
+		<editor name="Simulation" fileType="vhdl_simulation"
+			class="hr.fer.zemris.vhdllab.applets.simulations.WaveApplet"
+			savable="false" readonly="true">
+			<explicitSave enabled="true" class="to.be.constructed" />
+		</editor>
+
+		<editor name="Automat" fileType="vhdl_automat"
+			class="hr.fer.zemris.vhdllab.applets.editor.automat.Automat"
+			savable="true" readonly="false">
+		</editor>
+
+		<editor name="Testbench" fileType="vhdl_tb"
+			class="hr.fer.zemris.vhdllab.applets.editor.tb.drawer.Aplet"
+			savable="true" readonly="false">
+		</editor>
+
+		<editor name="Schema" fileType="vhdl_struct_schema"
+			class="hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel"
+			savable="true" readonly="false">
+		</editor>
+	</editors>
+
+	<views>
+		<view name="Status History" viewType="status.history"
+			class="hr.fer.zemris.vhdllab.applets.view.status.history.StatusHistoryView"
+			singleton="true">
+		</view>
+
+		<view name="Compilation Errors"
+			viewType="vhdl.compilation.errors"
+			class="hr.fer.zemris.vhdllab.applets.view.compilation.CompileErrorsPanel"
+			singleton="true">
+		</view>
+
+		<view name="Simulation Errors" viewType="vhdl.simulation.errors"
+			class="hr.fer.zemris.vhdllab.applets.view.simulation.SimulateErrorsPanel"
+			singleton="true">
+		</view>
+	</views>
+</configuration>
