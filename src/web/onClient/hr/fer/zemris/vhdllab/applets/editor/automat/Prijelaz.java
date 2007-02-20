@@ -54,7 +54,10 @@ public class Prijelaz {
 		String pom=null;
 		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci,bundle);
 		else pom=editMoore(obj,podatci,bundle);
-		if(pom!=null)pobudaIzlaz.add(pom);
+		if(pom!=null){
+			if(pom.split("/")[0].matches("[-]*"))pobudaIzlaz.add("ELSE"+(podatci.tip.equalsIgnoreCase("Mealy")?"/"+pom.split("/")[1]:""));
+			else pobudaIzlaz.add(pom);
+		}
 	}
 	
 	public String editPrijelaz2(AUTPodatci podatci,Component obj,ResourceBundle bundle){
@@ -109,7 +112,7 @@ public class Prijelaz {
 	}
 	public void dodajPodatak(String pobuda, String izlaz){
 		String pomocni=pobuda;
-		if(izlaz!=null)pomocni=new StringBuffer().append("/").append(izlaz).toString();
+		if(izlaz!=null)pomocni=new StringBuffer().append(pomocni).append("/").append(izlaz).toString();
 		pobudaIzlaz.add(pomocni);
 	}
 	

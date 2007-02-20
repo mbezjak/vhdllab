@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.service.generator.automat.VHDLGenerator;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -42,22 +43,22 @@ public class Testpan extends JFrame {
 				//Automat aut2=new Automat();
 				//aut2.setFileContent(new FileContent("df","safas",data));
 				//getContentPane().add(aut2,BorderLayout.EAST);*/
-				//VHDLGenerator parser=new VHDLGenerator(aut.getData());
-				//System.out.println(parser.getParsedVHDL());
+				VHDLGenerator parser=new VHDLGenerator(aut.getData());
+				System.out.println(parser.getParsedVHDL());
 			};
 		});
 		this.add(b1,BorderLayout.NORTH);
 		
 		aut = new Automat();
-		FileContent fc=new FileContent("ljd","skadh",xmlAut);
-		aut.setFileContent(fc);
+		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
+		//aut.setFileContent(fc);
 		aut.setProjectContainer(null);
-		//FileContent fc=aut.getInitialFileContent(b1);
-		//if (fc!=null){
+		FileContent fc=aut.getInitialFileContent(b1);
+		if (fc!=null){
 			aut.init();
 			aut.setFileContent(fc);
 			this.getContentPane().add((Component) aut,BorderLayout.CENTER);
-		//}
+		}
 	
 		this.setSize(((Component) aut).getPreferredSize());
 	}

@@ -191,9 +191,11 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public void setProjectContainer(ProjectContainer pContainer) {
 		this.pContainer=pContainer;
-//		projectName=pContainer.getSelectedProject();
-//		bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
-		bundle=CachedResourceBundles.getBundle("Client_Automat_ApplicationResources","en");
+		if(pContainer!=null){
+			projectName=pContainer.getSelectedProject();
+			bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
+		}else
+			bundle=CachedResourceBundles.getBundle("Client_Automat_ApplicationResources","en");
 	}
 
 	public IWizard getWizard() {
@@ -203,7 +205,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 	public FileContent getInitialFileContent(Component parent) {
 		AUTPodatci pod=new AUTPodatci(parent,pContainer,bundle);
-		projectName = pContainer.getSelectedProject();
+		//TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
 		String gen=null;
 		if(pod.ime!=null){
 			LinkedList<Stanje> stanja=new LinkedList<Stanje>();

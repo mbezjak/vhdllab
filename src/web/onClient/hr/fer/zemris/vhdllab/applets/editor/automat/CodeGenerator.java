@@ -41,7 +41,11 @@ public class CodeGenerator {
 			if(podatci.tip.equals("Moore"))buffer.append("<Izlaz>")
 			.append(st.izlaz).append("</Izlaz>\n").toString();
 			buffer.append("<Ox>").append(st.ox).append("</Ox>\n<Oy>").append(st.oy).append("</Oy>\n")
-			.append("</Stanje>\n");
+			.append("<Else>").append(st.els).append("</Else>\n");
+			if(podatci.tip.equalsIgnoreCase("Mealy"))
+				buffer.append("<ElseIzlaz>").append(st.eIz)
+				.append("</ElseIzlaz>\n");
+			buffer.append("</Stanje>\n");
 		}
 		return buffer.toString();
 		

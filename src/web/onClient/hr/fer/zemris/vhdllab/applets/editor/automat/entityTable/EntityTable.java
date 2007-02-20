@@ -33,7 +33,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-//TODO ako se samo pokrene a ne stavi ni jedan ulaz!!!!
+
+/*TODO ako se samo pokrene a ne stavi ni jedan ulaz!!!!
+ * -napravi isDataCorrect KASNIJE
+ */
+
 public class EntityTable extends JPanel implements IEntityWizard{
 
 	private JTable table=null;
@@ -258,7 +262,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 	}
 
 	public CircuitInterface getCircuitInterface() {
-		//TODO Rucno napraviti extractCircuitInterface
+		//TODO Rucno napraviti extractCircuitInterface GOTOVO
 		List<Port> lista=new ArrayList<Port>();
 		ReturnData data=model.getData();
 		String[][] pomData=data.getData();

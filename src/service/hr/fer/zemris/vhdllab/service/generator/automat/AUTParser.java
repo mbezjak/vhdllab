@@ -31,11 +31,13 @@ public class AUTParser {
 		digester.addCallParam("Automat/Podatci_Sklopa/Sirina",6);
 		digester.addCallParam("Automat/Podatci_Sklopa/Visina",7);
 		
-		digester.addCallMethod("Automat/Stanje","dodajStanje",4);
+		digester.addCallMethod("Automat/Stanje","dodajStanje",6);
 		digester.addCallParam("Automat/Stanje/Ime",0);
 		digester.addCallParam("Automat/Stanje/Izlaz",1);
 		digester.addCallParam("Automat/Stanje/Ox",2);
 		digester.addCallParam("Automat/Stanje/Oy",3);
+		digester.addCallParam("Automat/Stanje/Else",4);
+		digester.addCallParam("Automat/Stanje/ElseIzlaz",5);
 		
 		digester.addCallMethod("Automat/Prijelaz","dodajPrijelaz",4);
 		digester.addCallParam("Automat/Prijelaz/Iz",0);
@@ -49,8 +51,8 @@ public class AUTParser {
 	public void dodajPodatke(String ime,String tip,String interfac,String pocetnoStanje,String rs,String cl,String s, String v){
 		podatci=new AUTPodatci(ime,tip,interfac,pocetnoStanje,rs,cl, s, v);
 	}
-	public void dodajStanje(String ime, String izlaz, String ox,String oy){
-		Stanje st=new Stanje(ime,izlaz,ox,oy);
+	public void dodajStanje(String ime, String izlaz, String ox,String oy,String el,String eIz){
+		Stanje st=new Stanje(ime,izlaz,ox,oy,el,eIz);
 		stanja.add(st);
 	}
 	public void dodajPrijelaz(String iz,String u,String pobuda,String izlaz){

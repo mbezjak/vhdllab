@@ -1,15 +1,7 @@
 package hr.fer.zemris.vhdllab.service.generator.automat;
 
-import java.awt.Component;
-import java.awt.GridLayout;
 import java.util.HashSet;
 import java.util.TreeSet;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class Prijelaz {
 	public String iz;
@@ -49,60 +41,9 @@ public class Prijelaz {
 		return pomocni;
 	}
 	
-	public void editPrijelaz(AUTPodatci podatci,Component obj){
-		String pom=null;
-		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci);
-		else pom=editMoore(obj,podatci);
-		if(pom!=null)pobudaIzlaz.add(pom);
-	}
-	
-	public String editPrijelaz2(AUTPodatci podatci,Component obj){
-		String pom=null;
-		if(podatci.tip.equals("Mealy")) pom=editMealy(obj,podatci);
-		else pom=editMoore(obj,podatci);
-		return pom;
-	}	
-	//TODO ove dve funkcije srediti
-	private String editMealy(Component obj, AUTPodatci podatci) {
-		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
-		JTextField izlaz=new CustomTextField("",podatci.sirinaIzlaza,false);
-		JLabel pobudaLab=new JLabel("Input for transition: ");
-		JLabel izlazLabel=new JLabel("Output for transition: ");
-		JPanel panel=new JPanel();
-		panel.setLayout(new GridLayout(2,2));
-		panel.add(pobudaLab);
-		panel.add(pobuda);
-		panel.add(izlazLabel);
-		panel.add(izlaz);
-		
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(obj,"Transition Editor");
-		dialog.setVisible(true);
-		Object selected=optionPane.getValue();
-		
-		if(selected.equals(JOptionPane.CANCEL_OPTION)) return null;
-		else return new StringBuffer().append(pobuda.getText()).append("/").append(izlaz.getText()).toString();
-	}
-	private String editMoore(Component obj, AUTPodatci podatci) {
-		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
-		JLabel pobudaLab=new JLabel("Input for transition: ");
-		JPanel panel=new JPanel();
-		panel.setLayout(new GridLayout(1,2));
-		panel.add(pobudaLab);
-		panel.add(pobuda);
-
-		
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION);
-		JDialog dialog=optionPane.createDialog(obj,"Transition Editor");
-		dialog.setVisible(true);
-		Object selected=optionPane.getValue();
-		
-		if(selected.equals(JOptionPane.CANCEL_OPTION)) return null;
-		else return new StringBuffer().append(pobuda.getText()).toString();
-	}
 	public void dodajPodatak(String pobuda, String izlaz){
 		String pomocni=pobuda;
-		if(izlaz!=null)pomocni=new StringBuffer().append("/").append(izlaz).toString();
+		if(izlaz!=null)pomocni=new StringBuffer().append(pomocni).append("/").append(izlaz).toString();
 		pobudaIzlaz.add(pomocni);
 	}
 	

@@ -3,7 +3,7 @@
 	<!ELEMENT Automat (Podatci_Sklopa,Stanje*,Prijelaz*)>
 	<!ELEMENT Podatci_Sklopa (Ime,Tip,Interfac,Pocetno_Stanje,Reset,Clock,Sirina,Visina)>
 	<!ELEMENT Prijelaz (Iz,U,Pobuda,Izlaz?)>
-	<!ELEMENT Stanje (Ime,Izlaz?,Ox,Oy)>
+	<!ELEMENT Stanje (Ime,Izlaz?,Ox,Oy,Else,ElseIzlaz?)>
 	<!ELEMENT Ime (#PCDATA)>
 	<!ELEMENT Tip (#PCDATA)>
 	<!ELEMENT Broj_Bitova_Ulaz (#PCDATA)>
@@ -35,6 +35,7 @@ b out std_logic
 		<Izlaz>0</Izlaz>
 		<Ox>30</Ox>
 		<Oy>30</Oy>
+		<Else>A</Else>
 	</Stanje>
 
 	<Stanje>
@@ -42,6 +43,7 @@ b out std_logic
 		<Izlaz>1</Izlaz>
 		<Ox>100</Ox>
 		<Oy>100</Oy>
+		<Else>A</Else>
 	</Stanje>
 
 	<Stanje>
@@ -49,6 +51,7 @@ b out std_logic
 		<Izlaz>1</Izlaz>
 		<Ox>30</Ox>
 		<Oy>100</Oy>
+		<Else>B</Else>
 	</Stanje>
 
 	<Prijelaz>

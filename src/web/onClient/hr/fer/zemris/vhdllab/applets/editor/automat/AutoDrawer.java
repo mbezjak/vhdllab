@@ -1,6 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 //TODO prijelaz i equals i kad se koristi lista i dialog i kad se stvara novi prijelaz koji ide iz-u...
+/*TODO strijelice srediti da ne bijeze..., elseprijelaz izlaz
+ * else prijelaz ispis kad ide iz jednog u drugo stanje,
+ * interni kod!! OK
+ * VHDL OK
+ * resize!!! !!!!!!!!!!!
+ */
 
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
@@ -161,6 +167,12 @@ public class AutoDrawer extends JPanel{
 			//Graphics2D gr=(Graphics2D)img.getGraphics();
 			nacrtajSklop();
 		} else {
+			/*int x=0; TODO resize!!!!!
+			int y=0;
+			for(Stanje st:stanja){
+				if(st.ox>x) x=st.ox;
+				if(st.oy>y) y=st.oy;
+			}*/
 			if (img.getHeight()!=this.getHeight()||img.getWidth()!=this.getWidth()){
 				img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
 				nacrtajSklop();
@@ -282,6 +294,11 @@ public class AutoDrawer extends JPanel{
 			nacrtajPrijelaz(iz, ka,pr);
 		}
 		
+		//crtanje else prijelaza
+		for(Stanje st1:stanja) 
+			for(Stanje st2:stanja) 
+				if(st1.els.equalsIgnoreCase(st2.ime))nacrtajPrijelaz(st1,st2,null);
+		
 		if(stanjeRada==4){
 			for(Stanje st:stanja) if(st.ime==prijelazZaDodati.iz){
 				g.setColor(Color.CYAN);
@@ -371,6 +388,12 @@ public class AutoDrawer extends JPanel{
 			nacrtajPrijelaz(iz, ka,pr);
 		}
 		
+		//crtanje else prijelaza
+		
+		for(Stanje st1:stanja) 
+			for(Stanje st2:stanja) 
+				if(st1.els.equalsIgnoreCase(st2.ime))nacrtajPrijelaz(st1,st2,null);
+		
 		g.setColor(Color.BLACK);
 		String[] legendic=legenda.split("\n");
 		g.setFont(new Font("Arial", Font.BOLD, 10));
@@ -426,27 +449,40 @@ public class AutoDrawer extends JPanel{
 			if(ka.oy<iz.oy)fi=Math.PI+fi;
 		}
 		double strOdm=0.2;
+		if(pr==null)strOdm=0.5;
 		x1=ka.ox+radijus-(int)(Math.cos(fi+strOdm)*radijus);
 		y1=ka.oy+radijus-(int)(Math.sin(fi+strOdm)*radijus);
 		x2=iz.ox+radijus+(int)(Math.cos(fi-strOdm)*radijus);
 		y2=iz.oy+radijus+(int)(Math.sin(fi-strOdm)*radijus);
 		Graphics2D g=(Graphics2D) img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		//boje
 		if(ka.equals(selektiran)||iz.equals(selektiran)) g.setColor(Color.ORANGE); 
 		else g.setColor(Color.BLACK);
+		if(pr==null)g.setColor(Color.BLUE);
 		double l=radijus/2;
+		if(pr==null)l=radijus*2;
 		int x3=(int)(Math.abs(x2+(x1-x2)/2)+Math.cos(Math.PI/2-fi)*l);
 		int y3=(int)(Math.abs(y2+(y1-y2)/2)-Math.sin(Math.PI/2-fi)*l);
 		if(ka.equals(iz)){
+			l=radijus/2;
 			strOdm=0.7;
 			x1=ka.ox+radijus-(int)(Math.cos(fi+strOdm)*radijus);
 			y1=ka.oy+radijus-(int)(Math.sin(fi+strOdm)*radijus);
 			x2=iz.ox+radijus-(int)(Math.cos(fi-strOdm)*radijus);
 			y2=iz.oy+radijus-(int)(Math.sin(fi-strOdm)*radijus);
-			x3=(int)(Math.abs(x2+(x1-x2)/2));
-			y3=(int)(Math.abs(y2+(y1-y2)/2)-7*l);
+			if(pr==null){
+				x1=ka.ox+radijus+(int)(Math.cos(fi+strOdm)*radijus);
+				y2=iz.oy+radijus+(int)(Math.sin(fi-strOdm)*radijus);
+				x3=(int)(Math.abs(x2+(x1-x2)/2)-7*l);
+				y3=(int)(Math.abs(y2+(y1-y2)/2));
+			}
+			else{	
+				x3=(int)(Math.abs(x2+(x1-x2)/2));
+				y3=(int)(Math.abs(y2+(y1-y2)/2)-7*l);
+			}
 			strOdm=-0.2;
-			
+			fi-=Math.PI/2;
 		}
 		
 		//crtanje prijelaza.....
@@ -488,7 +524,9 @@ public class AutoDrawer extends JPanel{
 	private void upisiPodatkePrijelaza(Stanje iz, Stanje ka, Prijelaz pr, int x3, int y3, double fi) {
 		Graphics2D g=(Graphics2D) img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-		String tekst=pr.toString();
+		String tekst="";
+		if(pr!=null)tekst=pr.toString();
+		else tekst="ELSE";
 		g.setFont(new Font("Helvetica", Font.PLAIN, 2*radijus/5));
 		
 		
@@ -500,7 +538,11 @@ public class AutoDrawer extends JPanel{
 		int ytekst=y3+fm.getAscent()/2;
 		
 		if(iz.equals(ka)) {
-			ytekst+=(int)(3*radijus/2.2);
+			if(pr==null){
+				xtekst+=(int)(3*radijus/2.5);
+				ytekst-=(int)((double)fm.getAscent()/2*Math.cos(fi));
+			}
+			else ytekst+=(int)(3*radijus/2.2);
 		}else{
 			xtekst+=(int)((double)fm.stringWidth(tekst)/2*Math.sin(fi));
 			ytekst-=(int)((double)fm.getAscent()/2*Math.cos(fi));
@@ -835,6 +877,8 @@ public class AutoDrawer extends JPanel{
 						}
 					}
 					if(dodaj){
+						stanjeZaDodati.els=stanjeZaDodati.ime;
+						stanjeZaDodati.eIz="0";
 						stanja.add(stanjeZaDodati);
 						if(!isModified)isModified=true;
 					}
@@ -858,17 +902,27 @@ public class AutoDrawer extends JPanel{
 						if(jelSelektiran(e,sta)){
 							prijelazZaDodati.u=sta.ime;
 							prijelazZaDodati.editPrijelaz(podatci,AutoDrawer.this,bundle);
-							boolean test=true;
-							for(Prijelaz pr:prijelazi)
-								if(pr.equals(prijelazZaDodati)){
-									test=false;
-									pr.dodajPodatak(prijelazZaDodati,prijelazi);
-								}
-							if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0){
-								if(!prijelazZaDodati.equals2(prijelazZaDodati,prijelazi)){
-									prijelazi.add(prijelazZaDodati);
-									}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this,bundle);
+							if(!prijelazZaDodati.pobudaIzlaz.first().split("/")[0].equalsIgnoreCase("ELSE")){
+									boolean test=true;
+									for(Prijelaz pr:prijelazi)
+										if(pr.equals(prijelazZaDodati)){
+											test=false;
+											pr.dodajPodatak(prijelazZaDodati,prijelazi);
+										}
+									if(test&&prijelazZaDodati.pobudaIzlaz.size()!=0){
+										if(!prijelazZaDodati.equals2(prijelazZaDodati,prijelazi)){
+											prijelazi.add(prijelazZaDodati);
+										}else prijelazZaDodati.porukaNeDodaj(AutoDrawer.this,bundle);
+									}
+							}else{
+								for(Stanje st:stanja)
+									if(st.ime.equalsIgnoreCase(prijelazZaDodati.iz)){
+										st.els=prijelazZaDodati.u;
+										if(podatci.tip.equalsIgnoreCase("Mealy"))
+											st.eIz=prijelazZaDodati.pobudaIzlaz.first().split("/")[1];
+									}
 							}
+							
 							prijelazZaDodati=null;
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;
