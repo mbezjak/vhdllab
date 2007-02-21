@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
+import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
@@ -26,6 +27,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
@@ -52,86 +54,126 @@ import javax.swing.JTextField;
  * Ovaj enkapsulira kompletni UI, ukljucujuci i canvas.
  * 
  * @author Axel
- *
+ * 
  */
 
-public class SchemaMainPanel extends JPanel implements IEditor {
+public class SchemaMainPanel extends JPanel implements IEditor, IWizard {
 	private static final long serialVersionUID = 4510371138646431950L;
-	
+
 	public static final int DEFAULT_CURSOR_TYPE = 1;
+
 	public static final int CROSSHAIR_CURSOR_TYPE = 2;
+
 	public static final int DRAW_WIRE_STATE_NOTHING = 0;
+
 	public static final int DRAW_WIRE_STATE_DRAWING = 1;
-	
+
 	class PopupListener extends MouseAdapter {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			maybeShowPopup(e);
 		}
+
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			maybeShowPopup(e);
 		}
+
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
 				popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
-    }
-	
+	}
+
 	private SComponentBar compbar;
+
 	private SOptionBar optionbar;
+
 	private SPropertyBar propbar;
+
 	private JScrollPane scrpan;
+
 	private JPanel optionpanel, canvaspanel;
+
 	public SchemaDrawingCanvas drawingCanvas;
+
 	private int freePlaceEvalCounter = 0;
+
 	private boolean lastEvalResult = false;
+
 	private int drawWireState = DRAW_WIRE_STATE_NOTHING;
+
 	private SPair<Point> currentLine = null;
+
 	private SPair<Point> lastLine = null;
+
 	private AbstractSchemaWire wireBeingDrawed = null;
+
 	private AbstractSchemaWire wireSelected = null;
+
 	private JPopupMenu popupChoicesMenu = null;
+
 	private JPopupMenu popupRenameWireMenu = null;
+
 	private JPopupMenu popupWirePropertiesMenu = null;
+
 	private JTextField rwmTextField = null;
+
 	private Point nodeConfirmed = null;
+
 	private boolean tStateVert = false;
+
 	private CircuitInterface circuitInterface = null;
-	//private SchemaModelledComponentEntity entity = null; ovo ipak necemo trebat, koristit cemo CircuitInterface
+
+	// private SchemaModelledComponentEntity entity = null; ovo ipak necemo
+	// trebat, koristit cemo CircuitInterface
 
 	public SchemaMainPanel() throws HeadlessException {
-		
+
 		// ovo cemo maknut kad pretvorimo ovo u panel
-		
+
 		// this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		
+
 		// ovo ce trebat maknut
-		//init();
+		// init();
 	}
-	
-	private boolean checkForIntersection(int x1, int y1, AbstractSchemaComponent c1, SchemaDrawingComponentEnvelope env) {
+
+	private boolean checkForIntersection(int x1, int y1,
+			AbstractSchemaComponent c1, SchemaDrawingComponentEnvelope env) {
 		SchemaDrawingAdapter adapter = drawingCanvas.getAdapter();
 		int x2 = x1 + adapter.virtualToReal(c1.getComponentWidthSpecific());
 		int y2 = y1 + adapter.virtualToReal(c1.getComponentHeightSpecific());
 		int xs = env.getPosition().x;
 		int ys = env.getPosition().y;
-		int xe = xs + adapter.virtualToReal(env.getComponent().getComponentWidthSpecific());
-		int ye = ys + adapter.virtualToReal(env.getComponent().getComponentHeightSpecific());
-		if (x1 >= xs && x1 <= xe && y1 >= ys && y1 <= ye) return true;
-		if (x2 >= xs && x2 <= xe && y2 >= ys && y2 <= ye) return true;
-		if (x1 >= xs && x1 <= xe && y2 >= ys && y2 <= ye) return true;
-		if (x2 >= xs && x2 <= xe && y1 >= ys && y1 <= ye) return true;
-		if (xs >= x1 && xs <= x2 && ys >= y1 && ys <= y2) return true;
-		if (xe >= x1 && xe <= x2 && ye >= y1 && ye <= y2) return true;
-		if (xe >= x1 && xe <= x2 && ys >= y1 && ys <= y2) return true;
-		if (xs >= x1 && xs <= x2 && ye >= y1 && ye <= y2) return true;
+		int xe = xs
+				+ adapter.virtualToReal(env.getComponent()
+						.getComponentWidthSpecific());
+		int ye = ys
+				+ adapter.virtualToReal(env.getComponent()
+						.getComponentHeightSpecific());
+		if (x1 >= xs && x1 <= xe && y1 >= ys && y1 <= ye)
+			return true;
+		if (x2 >= xs && x2 <= xe && y2 >= ys && y2 <= ye)
+			return true;
+		if (x1 >= xs && x1 <= xe && y2 >= ys && y2 <= ye)
+			return true;
+		if (x2 >= xs && x2 <= xe && y1 >= ys && y1 <= ye)
+			return true;
+		if (xs >= x1 && xs <= x2 && ys >= y1 && ys <= y2)
+			return true;
+		if (xe >= x1 && xe <= x2 && ye >= y1 && ye <= y2)
+			return true;
+		if (xe >= x1 && xe <= x2 && ys >= y1 && ys <= y2)
+			return true;
+		if (xs >= x1 && xs <= x2 && ye >= y1 && ye <= y2)
+			return true;
 		return false;
 	}
-	
+
 	private boolean evaluateIfPlaceIsFreeForSelectedComponent(int x, int y) {
-		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentEnvList();
+		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas
+				.getComponentEnvList();
 		for (SchemaDrawingComponentEnvelope env : clist) {
 			if (checkForIntersection(x, y, compbar.getSelectedComponent(), env)) {
 				lastEvalResult = false;
@@ -141,27 +183,31 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		lastEvalResult = true;
 		return true;
 	}
-	
+
 	private boolean evaluateIfWireCanBeDrawn() {
 		// ovdje ide provjera da li zica ide preko neke komponente, itd.
 		// ukoliko je to potrebno
 		return true;
 	}
-	
+
 	public void recreateComponentBar(ArrayList<String> cmplist) {
-		if (cmplist == null) compbar.remanufactureAllComponents();
-		else compbar.remanufactureComponents(cmplist);
+		if (cmplist == null)
+			compbar.remanufactureAllComponents();
+		else
+			compbar.remanufactureComponents(cmplist);
 	}
-	
+
 	private void deleteComponent(String toBeRemoved) {
 		schemaHasBeenModified = true;
-		if (projectContainer != null && schemaFile != null) 
-			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
-		if (toBeRemoved == null) return;
+		if (projectContainer != null && schemaFile != null)
+			projectContainer.resetEditorTitle(true,
+					schemaFile.getProjectName(), schemaFile.getFileName());
+		if (toBeRemoved == null)
+			return;
 		if (drawingCanvas.removeComponentInstance(toBeRemoved)) {
 			propbar.showNoProperties();
 		}
-		
+
 		// pretrazi sve zice i makni im konekcije na ovu komponentu
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		for (AbstractSchemaWire wire : wlist) {
@@ -173,39 +219,47 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				}
 			}
 			wire.connections.removeAll(subset);
-//			System.out.print(wire.getWireName() + " - ");
-//			for (WireConnection conn : wire.connections) {
-//				System.out.println("(" + conn.componentInstanceName + ", " + conn.portIndex + ") ");
-//			}
+			// System.out.print(wire.getWireName() + " - ");
+			// for (WireConnection conn : wire.connections) {
+			// System.out.println("(" + conn.componentInstanceName + ", " +
+			// conn.portIndex + ") ");
+			// }
 		}
 	}
-	
+
 	private void deleteWire() {
 		schemaHasBeenModified = true;
-		if (projectContainer != null && schemaFile != null) 
-			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+		if (projectContainer != null && schemaFile != null)
+			projectContainer.resetEditorTitle(true,
+					schemaFile.getProjectName(), schemaFile.getFileName());
 		if (wireSelected != null) {
 			drawingCanvas.removeWire(wireSelected.getWireName());
 			wireSelected = null;
 			drawingCanvas.setSelectedWireName(null);
 		}
 	}
-	
-	private Integer findPortIndexClosestToXY(SchemaDrawingComponentEnvelope env, int x, int y) {
+
+	private Integer findPortIndexClosestToXY(
+			SchemaDrawingComponentEnvelope env, int x, int y) {
 		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 		AbstractSchemaComponent comp = env.getComponent();
 		x = ad.realToVirtualRelativeX(x);
 		y = ad.realToVirtualRelativeY(y);
-		int cx = ad.realToVirtualRelativeX(env.getPosition().x), cy = ad.realToVirtualRelativeY(env.getPosition().y);
+		int cx = ad.realToVirtualRelativeX(env.getPosition().x), cy = ad
+				.realToVirtualRelativeY(env.getPosition().y);
 		int minDist = comp.getComponentHeightSpecific();
 		int dist = 0;
 		Integer minPort = null;
 		for (int i = 0; i < comp.getNumberOfPorts(); i++) {
 			AbstractSchemaPort port = comp.getSchemaPort(i);
-			if (port.getTipPorta() == "_boxing") continue;
+			if (port.getTipPorta() == "_boxing")
+				continue;
 			int px = port.getCoordinate().x, py = port.getCoordinate().y;
-			dist = (int) Math.sqrt((cx + px - x) * (cx + px - x) + (cy + py - y) * (cy + py - y));
-			//System.out.println(dist + " " + minDist + " " + port.getCoordinate().x + " " + port.getCoordinate().y + " " + cx + " " + cy + " " + x + " " + y);
+			dist = (int) Math.sqrt((cx + px - x) * (cx + px - x)
+					+ (cy + py - y) * (cy + py - y));
+			// System.out.println(dist + " " + minDist + " " +
+			// port.getCoordinate().x + " " + port.getCoordinate().y + " " + cx
+			// + " " + cy + " " + x + " " + y);
 			if (dist < minDist) {
 				minDist = dist;
 				minPort = i;
@@ -213,59 +267,62 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		}
 		return minPort;
 	}
-	
+
 	private boolean checkIfThisPortIsAlreadyOccupied(String s, Integer portInd) {
-		// ovo se moze rijesiti i pracenjem svih connectiona svih zica, ali buduci da ne
+		// ovo se moze rijesiti i pracenjem svih connectiona svih zica, ali
+		// buduci da ne
 		// ocekujemo jako velik broj zica, zasad moze i ovako
 		if (wireBeingDrawed != null) {
 			for (WireConnection conn : wireBeingDrawed.connections) {
-				if (conn.componentInstanceName.compareTo(s) == 0 && conn.portIndex == portInd)
+				if (conn.componentInstanceName.compareTo(s) == 0
+						&& conn.portIndex == portInd)
 					return true;
 			}
 		}
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		for (AbstractSchemaWire wire : wlist) {
 			for (WireConnection conn : wire.connections) {
-				if (conn.componentInstanceName.compareTo(s) == 0 && conn.portIndex == portInd)
+				if (conn.componentInstanceName.compareTo(s) == 0
+						&& conn.portIndex == portInd)
 					return true;
 			}
 		}
 		return false;
 	}
-	
+
 	private boolean checkIfPointIsWireEnd(AbstractSchemaWire wire, int x, int y) {
 		Point expand = new Point(x, y);
 		boolean found = false;
 		for (SPair<Point> lin : wire.wireLines) {
-			System.out.println("Hej dzo!" + x + " " + y + " " + lin.first.x + " " + lin.first.y + " " + lin.second.x + " " + lin.second.y);
+			System.out.println("Hej dzo!" + x + " " + y + " " + lin.first.x
+					+ " " + lin.first.y + " " + lin.second.x + " "
+					+ lin.second.y);
 			if (lin.first.equals(expand) || lin.second.equals(expand)) {
-				if (found) return false;
+				if (found)
+					return false;
 				found = true;
 			}
 		}
 		return found;
 	}
-	
+
 	@SuppressWarnings("unused")
 	private boolean almostEqual(int a, int b) {
-		if (Math.abs(a - b) <= 2) return true;
+		if (Math.abs(a - b) <= 2)
+			return true;
 		return false;
 	}
-	
+
 	private boolean coordinateWithinLine(int x, int y, SPair<Point> line) {
-		//System.out.println("x = " + x + "; y = " + y + ";");
-		//System.out.println("linija: (" + line.first.x + ", " + line.first.y + ") (" + line.second.x + ", " + line.second.y + ")");
-		if (
-				(x == line.first.x && x == line.second.x 
-				&& ((y >= line.first.y && y <= line.second.y) || (y <= line.first.y && y >= line.second.y)))
-				|| 
-				(y == line.first.y && y == line.second.y
-				&& ((x >= line.first.x && x <= line.second.x) || (x <= line.first.x && x >= line.second.x)))
-				)
-						return true;
+		// System.out.println("x = " + x + "; y = " + y + ";");
+		// System.out.println("linija: (" + line.first.x + ", " + line.first.y +
+		// ") (" + line.second.x + ", " + line.second.y + ")");
+		if ((x == line.first.x && x == line.second.x && ((y >= line.first.y && y <= line.second.y) || (y <= line.first.y && y >= line.second.y)))
+				|| (y == line.first.y && y == line.second.y && ((x >= line.first.x && x <= line.second.x) || (x <= line.first.x && x >= line.second.x))))
+			return true;
 		return false;
 	}
-	
+
 	private AbstractSchemaWire extractWireAt(int x, int y) {
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		AbstractSchemaWire wireToExtract = null;
@@ -279,11 +336,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 					break;
 				}
 			}
-			if (exitLoop) break;
+			if (exitLoop)
+				break;
 		}
 		return wireToExtract;
 	}
-	
+
 	private void selectWire(MouseEvent e) {
 		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 		int x = ad.realToVirtualRelativeX(e.getX());
@@ -294,21 +352,21 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			propbar.showNoProperties();
 		}
 	}
-	
+
 	private void selectComponent(MouseEvent e) {
-		AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e.getX(), e.getY());
+		AbstractSchemaComponent comp = drawingCanvas.getSchemaComponentAt(e
+				.getX(), e.getY());
 		if (comp != null) {
 			propbar.generatePropertiesAndSetAsSelected(comp);
 			drawingCanvas.setSelectedCompName(comp.getComponentInstanceName());
 			wireSelected = null;
 			drawingCanvas.setSelectedWireName(null);
-		}
-		else {
+		} else {
 			drawingCanvas.setSelectedCompName(null);
-			selectWire(e);			
+			selectWire(e);
 		}
 	}
-	
+
 	public void startWireExpansion(int x, int y, String wireName) {
 		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 		x = ad.realToVirtualRelativeX(x);
@@ -325,8 +383,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			drawingCanvas.removeWire(extwire.getWireName());
 			if (!checkIfPointIsWireEnd(extwire, x, y)) {
 				nodeConfirmed = new Point(x, y);
-				if (!wireBeingDrawed.nodes.contains(nodeConfirmed)) wireBeingDrawed.nodes.add(nodeConfirmed);
-				else nodeConfirmed = null;
+				if (!wireBeingDrawed.nodes.contains(nodeConfirmed))
+					wireBeingDrawed.nodes.add(nodeConfirmed);
+				else
+					nodeConfirmed = null;
 			}
 			currentLine = new SPair<Point>();
 			currentLine.first = new Point(x, y);
@@ -334,11 +394,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			drawWireState = DRAW_WIRE_STATE_DRAWING;
 		}
 	}
-	
+
 	private void renameWire(String oldName, String newName) {
 		schemaHasBeenModified = true;
-		if (projectContainer != null && schemaFile != null) 
-			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+		if (projectContainer != null && schemaFile != null)
+			projectContainer.resetEditorTitle(true,
+					schemaFile.getProjectName(), schemaFile.getFileName());
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		AbstractSchemaWire wire = null;
 		for (int i = 0; i < wlist.size(); i++) {
@@ -350,232 +411,261 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		if (wire != null) {
 			try {
 				wire.setWireName(newName);
-				//System.out.println("Hej boj!" + newName + " " + oldName);
+				// System.out.println("Hej boj!" + newName + " " + oldName);
 			} catch (SchemaWireException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	private class ActionedWireRenamer implements ActionListener {
 		private String oldName;
+
 		private JTextField tf;
+
 		public ActionedWireRenamer(String wireName, JTextField tfield) {
 			oldName = wireName;
 			tf = tfield;
 		}
+
 		public void actionPerformed(ActionEvent ae) {
 			// preimenuj zicu
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			renameWire(oldName, tf.getText());
 		}
 	}
-	
+
 	private class KeyedWireRenamer implements KeyListener {
 		private String wname;
+
 		public KeyedWireRenamer(String wireName) {
 			wname = wireName;
 		}
+
 		public void keyTyped(KeyEvent arg0) {
 			if (arg0.getKeyChar() == KeyEvent.VK_ENTER) {
 				schemaHasBeenModified = true;
-				if (projectContainer != null && schemaFile != null) 
-					projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+				if (projectContainer != null && schemaFile != null)
+					projectContainer.resetEditorTitle(true, schemaFile
+							.getProjectName(), schemaFile.getFileName());
 				renameWire(wname, rwmTextField.getText());
 			}
 		}
+
 		public void keyPressed(KeyEvent arg0) {
 		}
+
 		public void keyReleased(KeyEvent arg0) {
 		}
 	}
-	
+
 	public void createRenameWirePopup(String wireName, int xp, int yp) {
 		popupRenameWireMenu.removeAll();
-		
+
 		rwmTextField = new JTextField(wireName);
 		rwmTextField.addKeyListener(new KeyedWireRenamer(wireName));
 		popupRenameWireMenu.add(rwmTextField);
-		
+
 		JButton butt = new JButton("Rename");
 		butt.addActionListener(new ActionedWireRenamer(wireName, rwmTextField));
 		popupRenameWireMenu.add(butt);
-		
+
 		popupRenameWireMenu.show(drawingCanvas, xp, yp);
 	}
-	
+
 	private class DeleteComponentListener implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			deleteComponent(propbar.getSelectedComponentInstanceName());
 		}
 	}
-	
+
 	private class DeleteWireListener implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			deleteWire();
 		}
 	}
-	
+
 	private class RenameWireListener implements ActionListener {
 		private String oldName;
+
 		private int xp, yp;
+
 		public RenameWireListener(String wireName, int x, int y) {
 			oldName = wireName;
 			xp = x;
 			yp = y;
 		}
+
 		public void actionPerformed(ActionEvent ae) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			createRenameWirePopup(oldName, xp, yp);
 		}
 	}
-	
+
 	private class ExpandWireListener implements ActionListener {
 		private int xp, yp;
+
 		private String wireName;
+
 		public ExpandWireListener(int x, int y, String wireInstanceName) {
 			xp = x;
 			yp = y;
 			wireName = wireInstanceName;
 		}
+
 		public void actionPerformed(ActionEvent ae) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			startWireExpansion(xp, yp, wireName);
 		}
 	}
-	
-	
-	
+
 	private class RemoveConnectionListener implements ActionListener {
 		private WireConnection connection;
+
 		private AbstractSchemaWire wire;
+
 		private int xp, yp;
-		public RemoveConnectionListener(AbstractSchemaWire w, WireConnection conn, int x, int y) {
+
+		public RemoveConnectionListener(AbstractSchemaWire w,
+				WireConnection conn, int x, int y) {
 			connection = conn;
 			wire = w;
 			xp = x;
 			yp = y;
 		}
+
 		public void actionPerformed(ActionEvent ae) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			wire.connections.remove(connection);
 			createWirePropertiesPopup(wire, xp, yp);
 			popupWirePropertiesMenu.validate();
 			popupWirePropertiesMenu.repaint();
 		}
 	}
-	
+
 	private void createWirePropertiesPopup(AbstractSchemaWire wire, int x, int y) {
 		popupWirePropertiesMenu.removeAll();
 		popupWirePropertiesMenu.setLayout(new GridLayout(0, 2, 2, 2));
-		
+
 		JLabel lab = new JLabel(" Wire name:  ");
 		popupWirePropertiesMenu.add(lab);
-		
+
 		lab = new JLabel(wire.getWireName());
 		popupWirePropertiesMenu.add(lab);
-		
+
 		lab = new JLabel(" Connection list: ");
 		popupWirePropertiesMenu.add(lab);
-		
+
 		lab = new JLabel((wire.connections.size() > 0) ? "" : "(empty)");
 		popupWirePropertiesMenu.add(lab);
-		
+
 		JButton butt = null;
 		for (WireConnection conn : wire.connections) {
-			lab = new JLabel(" " + conn.componentInstanceName + "; (" + conn.portCoord.x  + ",  " + conn.portCoord.y + ") ");
+			lab = new JLabel(" " + conn.componentInstanceName + "; ("
+					+ conn.portCoord.x + ",  " + conn.portCoord.y + ") ");
 			popupWirePropertiesMenu.add(lab);
 			butt = new JButton("Remove");
-			butt.addActionListener(new RemoveConnectionListener(wire, conn, x, y));
+			butt.addActionListener(new RemoveConnectionListener(wire, conn, x,
+					y));
 			popupWirePropertiesMenu.add(butt);
 		}
-		
+
 		popupWirePropertiesMenu.show(drawingCanvas, x, y);
 	}
-	
+
 	private class WirePropertiesListener implements ActionListener {
 		AbstractSchemaWire wire;
+
 		int x, y;
+
 		public WirePropertiesListener(AbstractSchemaWire wire, int x, int y) {
 			this.wire = wire;
 			this.x = x;
 			this.y = y;
 		}
+
 		public void actionPerformed(ActionEvent arg0) {
 			createWirePropertiesPopup(wire, x, y);
 		}
 	}
-	
+
 	private void createChoicesPopup(MouseEvent e) {
 		deletePopup(e);
 		selectWire(e);
 		if (wireSelected != null) {
 			JMenuItem item = new JMenuItem("Rename...");
-			item.addActionListener(new RenameWireListener(wireSelected.getWireName(), e.getX(), e.getY()));
+			item.addActionListener(new RenameWireListener(wireSelected
+					.getWireName(), e.getX(), e.getY()));
 			popupChoicesMenu.add(item);
-			
+
 			item = new JMenuItem("Expand");
-			item.addActionListener(new ExpandWireListener(e.getX(), e.getY(), wireSelected.getWireName()));
+			item.addActionListener(new ExpandWireListener(e.getX(), e.getY(),
+					wireSelected.getWireName()));
 			popupChoicesMenu.add(item);
-			
+
 			item = new JMenuItem("Delete");
 			item.addActionListener(new DeleteWireListener());
 			popupChoicesMenu.add(item);
-			
+
 			item = new JMenuItem("Properties");
-			item.addActionListener(new WirePropertiesListener(wireSelected, e.getX(), e.getY()));
+			item.addActionListener(new WirePropertiesListener(wireSelected, e
+					.getX(), e.getY()));
 			popupChoicesMenu.add(item);
-			
+
 			popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
-		}
-		else {
+		} else {
 			selectComponent(e);
 			if (propbar.getSelectedComponentInstanceName() != null) {
 				JMenuItem item = new JMenuItem("Delete");
 				item.addActionListener(new DeleteComponentListener());
 				popupChoicesMenu.add(item);
-				
+
 				popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
-			}
-			else {
+			} else {
 				JMenuItem item = new JMenuItem("(none)");
 				popupChoicesMenu.add(item);
-				
+
 				popupChoicesMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 	}
-	
+
 	private void deletePopup(MouseEvent e) {
 		if (popupChoicesMenu != null) {
 			popupChoicesMenu.removeAll();
 		}
 	}
-	
-	
+
 	// methods called by events
-	
+
 	public void handleLeftClickOnSchema(MouseEvent e) {
 		deletePopup(e);
 		System.out.println("Klik.");
 		if (optionbar.isDrawWireSelected()) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 			int x = e.getX(), y = e.getY();
 			x = ad.realToVirtualRelativeX(x);
@@ -586,21 +676,33 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				drawWireState = DRAW_WIRE_STATE_DRAWING;
 				currentLine = new SPair<Point>();
 				currentLine.first = new Point(x, y);
-				
+
 				// spajanja s komponentama
-				SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
+				SchemaDrawingComponentEnvelope env = drawingCanvas
+						.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
 				if (env != null) {
-					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
+					Integer portIndex = findPortIndexClosestToXY(env, e.getX(),
+							e.getY());
 					if (portIndex != null) {
-						//System.out.println("Hej nasel sam ga!");
-						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
-							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex,
-									new Point(env.getComponent().getSchemaPort(portIndex).getCoordinate()));
+						// System.out.println("Hej nasel sam ga!");
+						if (!checkIfThisPortIsAlreadyOccupied(env
+								.getComponent().getComponentInstanceName(),
+								portIndex)) {
+							WireConnection conn = wireBeingDrawed.new WireConnection(
+									env.getComponent()
+											.getComponentInstanceName(),
+									portIndex, new Point(env.getComponent()
+											.getSchemaPort(portIndex)
+											.getCoordinate()));
 							wireBeingDrawed.connections.add(conn);
-							currentLine.first.x = ad.realToVirtualRelativeX(env.getPosition().x) + 
-								env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
-							currentLine.first.y = ad.realToVirtualRelativeX(env.getPosition().y) + 
-								env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
+							currentLine.first.x = ad.realToVirtualRelativeX(env
+									.getPosition().x)
+									+ env.getComponent().getSchemaPort(
+											portIndex).getCoordinate().x;
+							currentLine.first.y = ad.realToVirtualRelativeX(env
+									.getPosition().y)
+									+ env.getComponent().getSchemaPort(
+											portIndex).getCoordinate().y;
 						}
 					}
 				}
@@ -608,63 +710,88 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			}
 			if (drawWireState == DRAW_WIRE_STATE_DRAWING) {
 				// spajanja s komponentama
-				SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
+				SchemaDrawingComponentEnvelope env = drawingCanvas
+						.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
 				boolean over = false;
 				if (env != null) {
-					//System.out.println("Opet");
-					Integer portIndex = findPortIndexClosestToXY(env, e.getX(), e. getY());
+					// System.out.println("Opet");
+					Integer portIndex = findPortIndexClosestToXY(env, e.getX(),
+							e.getY());
 					if (portIndex != null) {
-						if (!checkIfThisPortIsAlreadyOccupied(env.getComponent().getComponentInstanceName(), portIndex)) {
-							WireConnection conn = wireBeingDrawed.new WireConnection(env.getComponent().getComponentInstanceName(), portIndex,
-									new Point(env.getComponent().getSchemaPort(portIndex).getCoordinate()));
+						if (!checkIfThisPortIsAlreadyOccupied(env
+								.getComponent().getComponentInstanceName(),
+								portIndex)) {
+							WireConnection conn = wireBeingDrawed.new WireConnection(
+									env.getComponent()
+											.getComponentInstanceName(),
+									portIndex, new Point(env.getComponent()
+											.getSchemaPort(portIndex)
+											.getCoordinate()));
 							wireBeingDrawed.connections.add(conn);
-							x = ad.realToVirtualRelativeX(env.getPosition().x) + env.getComponent().getSchemaPort(portIndex).getCoordinate().x;
-							y = ad.realToVirtualRelativeX(env.getPosition().y) + env.getComponent().getSchemaPort(portIndex).getCoordinate().y;
+							x = ad.realToVirtualRelativeX(env.getPosition().x)
+									+ env.getComponent().getSchemaPort(
+											portIndex).getCoordinate().x;
+							y = ad.realToVirtualRelativeX(env.getPosition().y)
+									+ env.getComponent().getSchemaPort(
+											portIndex).getCoordinate().y;
 							over = true;
 						}
 					}
 				}
-				
+
 				currentLine.second = new Point(x, y);
 				SPair<Point> t = new SPair<Point>();
 				SPair<Point> s = new SPair<Point>();
-				if (lastLine != null) { 
+				if (lastLine != null) {
 					if (tStateVert) {
 						if (lastLine.first.y > lastLine.second.y) {
-							if (currentLine.first.y < currentLine.second.y) tStateVert = false;
+							if (currentLine.first.y < currentLine.second.y)
+								tStateVert = false;
 						} else {
-							if (currentLine.first.y > currentLine.second.y) tStateVert = false;
+							if (currentLine.first.y > currentLine.second.y)
+								tStateVert = false;
 						}
 					} else {
 						if (lastLine.first.x < lastLine.second.x) {
-							if (currentLine.first.x > currentLine.second.x) tStateVert = true;
+							if (currentLine.first.x > currentLine.second.x)
+								tStateVert = true;
 						} else {
-							if (currentLine.first.x < currentLine.second.x) tStateVert = true;
+							if (currentLine.first.x < currentLine.second.x)
+								tStateVert = true;
 						}
 					}
 				}
 				if (tStateVert) {
 					t.first = new Point(currentLine.first);
-					t.second = new Point(currentLine.first.x, currentLine.second.y);
-					s.first = new Point(currentLine.first.x, currentLine.second.y);
+					t.second = new Point(currentLine.first.x,
+							currentLine.second.y);
+					s.first = new Point(currentLine.first.x,
+							currentLine.second.y);
 					s.second = new Point(currentLine.second);
 					tStateVert = false;
 				} else {
 					t.first = new Point(currentLine.first);
-					t.second = new Point(currentLine.second.x, currentLine.first.y);
-					s.first = new Point(currentLine.second.x, currentLine.first.y);
+					t.second = new Point(currentLine.second.x,
+							currentLine.first.y);
+					s.first = new Point(currentLine.second.x,
+							currentLine.first.y);
 					s.second = new Point(currentLine.second);
 					tStateVert = true;
 				}
-				if (!t.first.equals(t.second)) wireBeingDrawed.wireLines.add(t);
-				if (!s.first.equals(s.second)) wireBeingDrawed.wireLines.add(s);
+				if (!t.first.equals(t.second))
+					wireBeingDrawed.wireLines.add(t);
+				if (!s.first.equals(s.second))
+					wireBeingDrawed.wireLines.add(s);
 				lastLine = new SPair<Point>();
 				lastLine.first = new Point(s.first);
 				lastLine.second = new Point(s.second);
-				//System.out.println(lastLine.first.x + " " + lastLine.first.y + " " + lastLine.second.x + " " + lastLine.second.y);
+				// System.out.println(lastLine.first.x + " " + lastLine.first.y
+				// + " " + lastLine.second.x + " " + lastLine.second.y);
 				currentLine.first = currentLine.second;
-				if (nodeConfirmed != null) nodeConfirmed = null;
-				if (over) handleRightClickOnSchema(e);
+				if (nodeConfirmed != null)
+					nodeConfirmed = null;
+				if (over)
+					handleRightClickOnSchema(e);
 			}
 			return;
 		}
@@ -672,79 +799,90 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		String selectedInstStr = compbar.getSelectedComponentName();
 		if (selectedInstStr != null) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
-			if (!evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e.getY())) return;
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
+			if (!evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e.getY()))
+				return;
 			SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 			try {
-				AbstractSchemaComponent compi = ComponentFactory.getSchemaComponent(selectedInstStr);
-				drawingCanvas.addComponent(compi, 
-						new Point(ad.virtualToRealRelativeX(ad.realToVirtual(e.getX())),
-								ad.virtualToRealRelativeY(ad.realToVirtual(e.getY()))) );
+				AbstractSchemaComponent compi = ComponentFactory
+						.getSchemaComponent(selectedInstStr);
+				drawingCanvas.addComponent(compi, new Point(ad
+						.virtualToRealRelativeX(ad.realToVirtual(e.getX())), ad
+						.virtualToRealRelativeY(ad.realToVirtual(e.getY()))));
 				propbar.generatePropertiesAndSetAsSelected(compi);
 			} catch (ComponentFactoryException e1) {
-				System.out.println("Nemoguce izgenerirati novu komponentu - " +
-						"ComponentFactory ne prepoznaje ime." + selectedInstStr);
+				System.out.println("Nemoguce izgenerirati novu komponentu - "
+						+ "ComponentFactory ne prepoznaje ime."
+						+ selectedInstStr);
 				e1.printStackTrace();
 			}
 		} else {
 			selectComponent(e);
 		}
 	}
-	
+
 	public void handleMouseDownOnSchema(MouseEvent e) {
 	}
-	
+
 	public void handleMouseOverSchema(MouseEvent e) {
 		if (optionbar.isDrawWireSelected()) {
 			if (currentLine != null) {
 				SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
-				int x = ad.realToVirtualRelativeX(e.getX()), y = ad.realToVirtualRelativeY(e.getY());
+				int x = ad.realToVirtualRelativeX(e.getX()), y = ad
+						.realToVirtualRelativeY(e.getY());
 				for (SPair<Point> lin : wireBeingDrawed.wireLines) {
-					drawingCanvas.addLineToStack(
-							lin.first.x,
-							lin.first.y,
-							lin.second.x,
-							lin.second.y,
+					drawingCanvas.addLineToStack(lin.first.x, lin.first.y,
+							lin.second.x, lin.second.y,
 							evaluateIfWireCanBeDrawn());
 				}
 				currentLine.second = new Point(x, y);
-				drawingCanvas.addLineToStack(
-						currentLine.first.x,
-						currentLine.first.y,
-						currentLine.second.x,
-						currentLine.second.y,
-						evaluateIfWireCanBeDrawn());
+				drawingCanvas.addLineToStack(currentLine.first.x,
+						currentLine.first.y, currentLine.second.x,
+						currentLine.second.y, evaluateIfWireCanBeDrawn());
 			}
 			// uokviri sklop iznad kojeg je kursor
-			SchemaDrawingComponentEnvelope env = drawingCanvas.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
+			SchemaDrawingComponentEnvelope env = drawingCanvas
+					.getSchemaComponentEnvelopeAt(e.getX(), e.getY());
 			if (env != null)
-				drawingCanvas.addRectToStack(env.getPosition().x, env.getPosition().y, 
-						env.getComponent().getComponentWidthSpecific(),
-						env.getComponent().getComponentHeightSpecific(), true);
+				drawingCanvas.addRectToStack(env.getPosition().x, env
+						.getPosition().y, env.getComponent()
+						.getComponentWidthSpecific(), env.getComponent()
+						.getComponentHeightSpecific(), true);
 			return;
 		}
 		String selectedStr = compbar.getSelectedComponentName();
 		if (selectedStr != null) {
-			//iteriraj kroz listu i odluci da li sklop prekriva neki vec postojeci
-			//medutim, nemoj to raditi precesto - ucestalost neka bude obrnuto proporcionalna
-			//broju sklopova na shemi (druga bi varijanta bio drvo ili hashmapa s modificiranim
-			//equals i compare, al to je prevec posla)
+			// iteriraj kroz listu i odluci da li sklop prekriva neki vec
+			// postojeci
+			// medutim, nemoj to raditi precesto - ucestalost neka bude obrnuto
+			// proporcionalna
+			// broju sklopova na shemi (druga bi varijanta bio drvo ili hashmapa
+			// s modificiranim
+			// equals i compare, al to je prevec posla)
 			freePlaceEvalCounter++;
 			boolean ok = lastEvalResult;
-			if (drawingCanvas.getComponentEnvList().size() == 0) ok = true;
-			else if (freePlaceEvalCounter % drawingCanvas.getComponentEnvList().size() == 0)
-				ok = evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e.getY());
-			
-			drawingCanvas.addRectToStack(e.getX(), e.getY(), 
-					compbar.getSelectedComponent().getComponentWidthSpecific(),
-					compbar.getSelectedComponent().getComponentHeightSpecific(), ok);
+			if (drawingCanvas.getComponentEnvList().size() == 0)
+				ok = true;
+			else if (freePlaceEvalCounter
+					% drawingCanvas.getComponentEnvList().size() == 0)
+				ok = evaluateIfPlaceIsFreeForSelectedComponent(e.getX(), e
+						.getY());
+
+			drawingCanvas
+					.addRectToStack(e.getX(), e.getY(),
+							compbar.getSelectedComponent()
+									.getComponentWidthSpecific(), compbar
+									.getSelectedComponent()
+									.getComponentHeightSpecific(), ok);
 		}
 	}
 
 	public void handleRightClickOnSchema(MouseEvent e) {
 		if (nodeConfirmed != null) {
-			if (wireBeingDrawed != null) wireBeingDrawed.nodes.remove(nodeConfirmed);
+			if (wireBeingDrawed != null)
+				wireBeingDrawed.nodes.remove(nodeConfirmed);
 			nodeConfirmed = null;
 		}
 		boolean noPopup = false;
@@ -758,7 +896,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			drawWireState = DRAW_WIRE_STATE_NOTHING;
 			noPopup = true;
 		}
-		if (compbar.getSelectedComponentName() != null) noPopup = true;
+		if (compbar.getSelectedComponentName() != null)
+			noPopup = true;
 		drawWireState = 0;
 		compbar.selectNone();
 		drawingCanvas.setSelectedCompName(null);
@@ -766,9 +905,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		wireSelected = null;
 		drawingCanvas.setSelectedWireName(null);
-		if (!noPopup) createChoicesPopup(e);
+		if (!noPopup)
+			createChoicesPopup(e);
 	}
-	
+
 	public void changeCursor(int type) {
 		if (type == DEFAULT_CURSOR_TYPE) {
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -777,75 +917,86 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 		}
 	}
-	
+
 	public void handleKeyPressed(KeyEvent kev) {
 		System.out.println("STISNUL SI: " + kev.getKeyChar());
 		if (kev.getKeyChar() == KeyEvent.VK_DELETE) {
 			schemaHasBeenModified = true;
-			if (projectContainer != null && schemaFile != null) 
-				projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
+			if (projectContainer != null && schemaFile != null)
+				projectContainer.resetEditorTitle(true, schemaFile
+						.getProjectName(), schemaFile.getFileName());
 			deleteComponent(propbar.getSelectedComponentInstanceName());
 			deleteWire();
-		}else if(kev.getKeyChar()==KeyEvent.VK_1){
-			//Tommy: ovo je probe radi, kasnije to treba maknut, ili napravit nekaj korisno s tim..
+		} else if (kev.getKeyChar() == KeyEvent.VK_1) {
+			// Tommy: ovo je probe radi, kasnije to treba maknut, ili napravit
+			// nekaj korisno s tim..
 			System.out.println("Stisnuo si - SAVE!");
 			System.out.println(this.getData());
 		}
 	}
-	
+
 	public void handleDrawWiresSelected() {
 		this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 		compbar.selectNone();
 	}
-	
-	
+
 	public void handleComponentSelected() {
 		optionbar.selectNoOption();
 		drawWireState = DRAW_WIRE_STATE_NOTHING;
 	}
-	
+
 	public void handleComponentPropertyChanged(String cmpInstName) {
 		schemaHasBeenModified = true;
-		if (projectContainer != null && schemaFile != null) 
-			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
-		
+		if (projectContainer != null && schemaFile != null)
+			projectContainer.resetEditorTitle(true,
+					schemaFile.getProjectName(), schemaFile.getFileName());
+
 		// nadi komponentu koja je promijenjena
 		AbstractSchemaComponent comp = null;
 		Point pcomp = null;
-		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas.getComponentEnvList();
+		ArrayList<SchemaDrawingComponentEnvelope> clist = drawingCanvas
+				.getComponentEnvList();
 		for (SchemaDrawingComponentEnvelope env : clist) {
-			if (env.getComponent().getComponentInstanceName().compareTo(cmpInstName) == 0) {
+			if (env.getComponent().getComponentInstanceName().compareTo(
+					cmpInstName) == 0) {
 				comp = env.getComponent();
 				pcomp = env.getPosition();
 			}
 		}
-		if (comp == null) return;
+		if (comp == null)
+			return;
 		SchemaDrawingAdapter ad = drawingCanvas.getAdapter();
 		pcomp = new Point(pcomp);
 		pcomp.x = ad.realToVirtualRelativeX(pcomp.x);
 		pcomp.y = ad.realToVirtualRelativeX(pcomp.y);
-		// prodi sve zice i ako referenciraju ovu komponentu, prilagodi ih po potrebi
+		// prodi sve zice i ako referenciraju ovu komponentu, prilagodi ih po
+		// potrebi
 		// makni im konekcije ako taj port ne postoji
-		// a ako mu se promijenila koordinata, onda produzi zicu tako da su spojeni
+		// a ako mu se promijenila koordinata, onda produzi zicu tako da su
+		// spojeni
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		for (AbstractSchemaWire wire : wlist) {
 			HashSet<WireConnection> subset = new HashSet<WireConnection>();
 			for (WireConnection conn : wire.connections) {
 				if (conn.componentInstanceName.compareTo(cmpInstName) == 0) {
-					if (conn.portIndex >= comp.getNumberOfPorts()) subset.add(conn);
+					if (conn.portIndex >= comp.getNumberOfPorts())
+						subset.add(conn);
 					else {
-						Point pch = comp.getSchemaPort(conn.portIndex).getCoordinate();
+						Point pch = comp.getSchemaPort(conn.portIndex)
+								.getCoordinate();
 						if (!conn.portCoord.equals(pch)) {
 							subset.add(conn);
-//							SPair<Point> lin = new SPair<Point>();
-//							lin.first = new Point(pcomp.x + conn.portCoord.x, pcomp.y + conn.portCoord.y);
-//							lin.second = new Point(pcomp.x + pch.x, pcomp.y + pch.y);
-//							SPair<Point> t = new SPair<Point>();
-//							t.first = new Point(lin.first.x, lin.second.y);
-//							t.second = new Point(lin.second.x, lin.second.y);
-//							lin.second.x = lin.first.x;
-//							wire.wireLines.add(lin);
-//							conn.portCoord = new Point(pch);
+							// SPair<Point> lin = new SPair<Point>();
+							// lin.first = new Point(pcomp.x + conn.portCoord.x,
+							// pcomp.y + conn.portCoord.y);
+							// lin.second = new Point(pcomp.x + pch.x, pcomp.y +
+							// pch.y);
+							// SPair<Point> t = new SPair<Point>();
+							// t.first = new Point(lin.first.x, lin.second.y);
+							// t.second = new Point(lin.second.x, lin.second.y);
+							// lin.second.x = lin.first.x;
+							// wire.wireLines.add(lin);
+							// conn.portCoord = new Point(pch);
 						}
 					}
 				}
@@ -853,13 +1004,15 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			wire.connections.removeAll(subset);
 		}
 	}
-	
+
 	public void handleComponentNameChanged(String oldName, String newName) {
 		schemaHasBeenModified = true;
-		if (projectContainer != null && schemaFile != null) 
-			projectContainer.resetEditorTitle(true, schemaFile.getProjectName(), schemaFile.getFileName());
-		
-		// prodi sve zice i ako referenciraju komponentu starog imena, prilagodi ih po potrebi
+		if (projectContainer != null && schemaFile != null)
+			projectContainer.resetEditorTitle(true,
+					schemaFile.getProjectName(), schemaFile.getFileName());
+
+		// prodi sve zice i ako referenciraju komponentu starog imena, prilagodi
+		// ih po potrebi
 		ArrayList<AbstractSchemaWire> wlist = drawingCanvas.getWireList();
 		for (AbstractSchemaWire wire : wlist) {
 			HashSet<WireConnection> subset = new HashSet<WireConnection>();
@@ -874,22 +1027,24 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				wire.connections.add(conn);
 			}
 		}
-	}	
-	
+	}
+
 	public CircuitInterface getCircuitInterface() {
 		return circuitInterface;
 	}
 
 	/**
-	 * Treba vidjeti koji sklopovi su vec na platnu, a koji nisu,
-	 * te sukladno tome napraviti promjene na canvasu.
+	 * Treba vidjeti koji sklopovi su vec na platnu, a koji nisu, te sukladno
+	 * tome napraviti promjene na canvasu.
+	 * 
 	 * @param interf
 	 */
 	public void setCircuitInterface(CircuitInterface interf) {
 		List<Port> portlist = null;
 		if (circuitInterface != null) {
 			portlist = circuitInterface.getPorts();
-			ArrayList<SchemaDrawingComponentEnvelope> complist = drawingCanvas.getComponentEnvList();
+			ArrayList<SchemaDrawingComponentEnvelope> complist = drawingCanvas
+					.getComponentEnvList();
 			for (Port port : portlist) {
 				String pname = port.getName();
 				if (drawingCanvas.existComponent(pname)) {
@@ -913,28 +1068,28 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		}
 		circuitInterface = interf;
 	}
-	
+
 	public SchemaSerializableInformation getSchemaSerializableInfo() {
 		SchemaSerializableInformation info = new SchemaSerializableInformation();
-		
+
 		info.setCircuitInterface(circuitInterface);
-		//info.circuitInterface = circuitInterface;
-		
-		info.setComponentNameCounter(AbstractSchemaComponent.getCounter());		
-		//info.componentNameCounter = AbstractSchemaComponent.getCounter();
-		
-		info.setWireNameCounter(AbstractSchemaWire.getCounter());		
-		//info.wireNameCounter = AbstractSchemaWire.getCounter();
-		
-		info.setEnvelopeList(drawingCanvas.getComponentEnvList());		
-		//info.envelopeList = drawingCanvas.getComponentEnvList();
-		
+		// info.circuitInterface = circuitInterface;
+
+		info.setComponentNameCounter(AbstractSchemaComponent.getCounter());
+		// info.componentNameCounter = AbstractSchemaComponent.getCounter();
+
+		info.setWireNameCounter(AbstractSchemaWire.getCounter());
+		// info.wireNameCounter = AbstractSchemaWire.getCounter();
+
+		info.setEnvelopeList(drawingCanvas.getComponentEnvList());
+		// info.envelopeList = drawingCanvas.getComponentEnvList();
+
 		info.setWireList(drawingCanvas.getWireList());
-		//info.wireList = drawingCanvas.getWireList();
-		
+		// info.wireList = drawingCanvas.getWireList();
+
 		return info;
 	}
-	
+
 	public void setSchemaSerializableInfo(SchemaSerializableInformation info) {
 		this.getSchemaDrawingCanvas().ResetCanvas();
 		this.setCircuitInterface(info.getCircuitInterface());
@@ -945,64 +1100,78 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			this.getSchemaDrawingCanvas().addWire(wire);
 		}
 	}
-	
-	
 
 	/**
-	 * Ovdje se generira sadrzaj schematica - tj. sadrzaj drawingCanvasa i sadrzaj
-	 * entitya.
+	 * Sve sto se nalazi na crtacoj povrsini se brise.
 	 *
 	 */
-	private void generateSchemaContentFromSchemaFile() {
+	private void ResetSchemaContent() {
 		// sve sto se znalo o panelu sad se brise!
-		//drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
-		drawingCanvas.ResetCanvas();		
+		// drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(),
+		// this);
+		drawingCanvas.ResetCanvas();
 		circuitInterface = null;
-		
-		if (propbar != null) propbar.showNoProperties();
-		
-		//TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne i interface
+	}
+
+	/**
+	 * Ovdje se generira sadrzaj schematica - tj. sadrzaj drawingCanvasa i
+	 * sadrzaj entitya.
+	 * 
+	 */
+	private void generateSchemaContentFromSchemaFile() {
+
+		ResetSchemaContent();
+
+		if (propbar != null)
+			propbar.showNoProperties();
+
+		// TODO Ovdje treba izgenerirati shemu iz predanog filea, ali nikako ne
+		// i interface
 		if (schemaFile != null) {
-				try {
-					@SuppressWarnings("unused")
-					SDeserialization deserialize=new SDeserialization(schemaFile.getContent(), this);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
+			try {
+				@SuppressWarnings("unused")
+				SDeserialization deserialize = new SDeserialization(schemaFile
+						.getContent(), this);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		drawingCanvas.repaint();
 	}
-	
+
 	private void refreshComponentsDependentOnCircuitInterface() {
 	}
-	
-	
+
 	/**
-	 * Ova metoda vraca vhdl kod izgeneriran na temelju sklopa
-	 * na shemi. Ona je tu samo privremeno.
+	 * Ova metoda vraca vhdl kod izgeneriran na temelju sklopa na shemi. Ona je
+	 * tu samo privremeno.
+	 * 
 	 * @return
 	 */
 	private String generateVHDLCode() {
 		return null;
 	}
-	
+
 	/**
 	 * Dohvaca crtacu povrsinu.
+	 * 
 	 * @return SchemaDrawingCanvas
 	 */
-	public SchemaDrawingCanvas getSchemaDrawingCanvas(){
+	public SchemaDrawingCanvas getSchemaDrawingCanvas() {
 		return drawingCanvas;
 	}
-	
-	
-	
+
 	// OVO DALJE JE IMPLEMENTACIJA ZA IEditor
-	
+
 	private boolean schemaHasBeenModified = false;
+
 	private ProjectContainer projectContainer = null;
+
 	private FileContent schemaFile = null;
+
 	private boolean miro_saveable = false;
+
 	private boolean miro_readOnly = false;
 
 	public void setFileContent(FileContent content) {
@@ -1011,16 +1180,18 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public String getProjectName() {
-		if (schemaFile != null) return schemaFile.getProjectName();
+		if (schemaFile != null)
+			return schemaFile.getProjectName();
 		return null;
 	}
-	
+
 	public ProjectContainer getProjectContainer() {
 		return projectContainer;
 	}
 
 	public String getFileName() {
-		if (schemaFile != null) return schemaFile.getFileName();
+		if (schemaFile != null)
+			return schemaFile.getFileName();
 		return null;
 	}
 
@@ -1047,34 +1218,34 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public void highlightLine(int line) {
 		// Ovu metodu po Mirinom nalogu ignoriramo. Hvaljen Isus.
 	}
-	
+
 	public void init() {
 		this.setLayout(new BorderLayout());
-		
-		//generateSchemaContentFromSchemaFile();
-		
-		drawingCanvas=new SchemaDrawingCanvas(new SchemaColorProvider(),this);
-		
+
+		// generateSchemaContentFromSchemaFile();
+
+		drawingCanvas = new SchemaDrawingCanvas(new SchemaColorProvider(), this);
+
 		optionpanel = new JPanel(new BorderLayout());
 		canvaspanel = new JPanel(new BorderLayout());
-		
+
 		optionbar = new SOptionBar(this);
 		compbar = new SComponentBar(this);
 		propbar = new SPropertyBar(this);
 		scrpan = new JScrollPane(drawingCanvas);
-		
+
 		optionpanel.add(optionbar, BorderLayout.PAGE_START);
 		canvaspanel.add(compbar, BorderLayout.PAGE_START);
 		canvaspanel.add(propbar, BorderLayout.EAST);
 		canvaspanel.add(scrpan, BorderLayout.CENTER);
-		
+
 		this.add(canvaspanel, BorderLayout.CENTER);
 		this.add(optionpanel, BorderLayout.NORTH);
-		
+
 		popupChoicesMenu = new JPopupMenu("Menu");
 		popupRenameWireMenu = new JPopupMenu("Rename");
 		popupWirePropertiesMenu = new JPopupMenu("Wire properties");
-		
+
 		// tipke
 		this.addKeyListener(new KeyListener() {
 
@@ -1089,32 +1260,31 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			public void keyReleased(KeyEvent arg0) {
 				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
-	
-	// Tu se samo postavlja project container.
-	public void setProjectContainer(ProjectContainer container) {
-		projectContainer = container;
-	}
-	
-	
+
 	// ovo dvoje treba zavrsit
-	
-	// Ovo je Rajakovic reko da ce napravit - radi se o pohranjivanju u interni format, ako sam dobro shvatio.
-	// Dio toga sam vec napravio - sto se tice serijalizacije pojedinih komponenti.
+
+	// Ovo je Rajakovic reko da ce napravit - radi se o pohranjivanju u interni
+	// format, ako sam dobro shvatio.
+	// Dio toga sam vec napravio - sto se tice serijalizacije pojedinih
+	// komponenti.
 	public String getData() {
 		// TODO Ovdje moramo izgenerirat podatke koje cemo vratit
-		
-		SSerialization ser=new SSerialization(this.getSchemaSerializableInfo());
-		
+
+		SSerialization ser = new SSerialization(this
+				.getSchemaSerializableInfo());
+
 		// stogod da tu napravio, moras promijeniti modification stanje u false
 		schemaHasBeenModified = false;
 		return ser.getSerializedData();
 	}
-	
-	// logikom stvari, ovo Rajakovic mora napravit, jer on radi pohranu u interni format
-	// U svakom slucaju, wizard za Schematic bi trebao izgenerirati sucelje sklopa koji se
+
+	// logikom stvari, ovo Rajakovic mora napravit, jer on radi pohranu u
+	// interni format
+	// U svakom slucaju, wizard za Schematic bi trebao izgenerirati sucelje
+	// sklopa koji se
 	// modelira - dakle ulaze i izlaze, te njima pripadne tipove...
 	public IWizard getWizard() {
 		// TODO Auto-generated method stub
@@ -1122,77 +1292,88 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public void cleanUp() {
-		// TODO Auto-generated method stub
+		ResetSchemaContent();
+	}
+
+	// zasad ostalo neimplementirano
+	public FileContent getInitialFileContent(Component parent) {
+		/*String[] st = {"Name","Direction","Type","From","To"};
+		EntityTable table = new EntityTable("Entity declaration:",st,"Entity name: ");
+		table.setProjectContainer(null);
+		table.init();*/
 		
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// Tu se samo postavlja project container.
+	public void setProjectContainer(ProjectContainer container) {
+		projectContainer = container;
 	}
 }
 
-
-
-
-
 /*
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-<entry key="schematic.version">1.00</entry>
-<entry key="schematic.entity">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
-&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;&#13;
-&lt;properties&gt;&#13;
-&lt;entry key="portType3"&gt;Std_Logic_Vector&lt;/entry&gt;&#13;
-&lt;entry key="portType2"&gt;Std_Logic_Vector&lt;/entry&gt;&#13;
-&lt;entry key="portType1"&gt;Std_Logic&lt;/entry&gt;&#13;
-&lt;entry key="portName3"&gt;c&lt;/entry&gt;&#13;
-&lt;entry key="portName2"&gt;b&lt;/entry&gt;&#13;
-&lt;entry key="portVectorDirection3"&gt;DOWNTO&lt;/entry&gt;&#13;
-&lt;entry key="portName1"&gt;a&lt;/entry&gt;&#13;
-&lt;entry key="portVectorDirection2"&gt;TO&lt;/entry&gt;&#13;
-&lt;entry key="portDirection3"&gt;OUT&lt;/entry&gt;&#13;
-&lt;entry key="portVectorDirection1"&gt;&lt;/entry&gt;&#13;
-&lt;entry key="portDirection2"&gt;IN&lt;/entry&gt;&#13;
-&lt;entry key="portDirection1"&gt;IN&lt;/entry&gt;&#13;
-&lt;entry key="portRangeFrom3"&gt;3&lt;/entry&gt;&#13;
-&lt;entry key="portRangeFrom2"&gt;0&lt;/entry&gt;&#13;
-&lt;entry key="portRangeFrom1"&gt;&lt;/entry&gt;&#13;
-&lt;entry key="portRangeTo3"&gt;0&lt;/entry&gt;&#13;
-&lt;entry key="portRangeTo2"&gt;2&lt;/entry&gt;&#13;
-&lt;entry key="portRangeTo1"&gt;&lt;/entry&gt;&#13;
-&lt;entry key="name"&gt;Circuit&lt;/entry&gt;&#13;
-&lt;/properties&gt;&#13;
-</entry>
-<entry key="schematic.components">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
-&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;&#13;
-&lt;properties&gt;&#13;
-&lt;entry key="component2"&gt;&amp;lt;?xml version="1.0" encoding="UTF-8"?&amp;gt;&amp;#13;&#13;
-&amp;lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&amp;gt;&amp;#13;&#13;
-&amp;lt;properties&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compSource"&amp;gt;&amp;amp;lt;komponenta&amp;amp;gt;&amp;amp;lt;imeInstanceKomponente&amp;amp;gt;Notter&amp;amp;lt;/imeInstanceKomponente&amp;amp;gt;&amp;amp;lt;orijentacija&amp;amp;gt;3&amp;amp;lt;/orijentacija&amp;amp;gt;&amp;amp;lt;kasnjenje&amp;amp;gt;10&amp;amp;lt;/kasnjenje&amp;amp;gt;&amp;amp;lt;componentSpecific&amp;amp;gt;&amp;amp;lt;/componentSpecific&amp;amp;gt;&amp;amp;lt;/komponenta&amp;amp;gt;&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compPosY"&amp;gt;30&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compPosX"&amp;gt;460&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compName"&amp;gt;Sklop_NOT&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;/properties&amp;gt;&amp;#13;&#13;
-&lt;/entry&gt;&#13;
-&lt;entry key="component1"&gt;&amp;lt;?xml version="1.0" encoding="UTF-8"?&amp;gt;&amp;#13;&#13;
-&amp;lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&amp;gt;&amp;#13;&#13;
-&amp;lt;properties&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compSource"&amp;gt;&amp;amp;lt;komponenta&amp;amp;gt;&amp;amp;lt;imeInstanceKomponente&amp;amp;gt;Sklop_MUX2&amp;amp;lt;/imeInstanceKomponente&amp;amp;gt;&amp;amp;lt;orijentacija&amp;amp;gt;3&amp;amp;lt;/orijentacija&amp;amp;gt;&amp;amp;lt;kasnjenje&amp;amp;gt;10&amp;amp;lt;/kasnjenje&amp;amp;gt;&amp;amp;lt;componentSpecific&amp;amp;gt;#2#&amp;amp;lt;/componentSpecific&amp;amp;gt;&amp;amp;lt;/komponenta&amp;amp;gt;&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compPosY"&amp;gt;100&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compPosX"&amp;gt;310&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;entry key="compName"&amp;gt;Sklop_MUX2nNA1&amp;lt;/entry&amp;gt;&amp;#13;&#13;
-&amp;lt;/properties&amp;gt;&amp;#13;&#13;
-&lt;/entry&gt;&#13;
-&lt;/properties&gt;&#13;
-</entry>
-<entry key="schematic.wires">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
-&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;&#13;
-&lt;properties&gt;&#13;
-&lt;entry key="wire6"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire05&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#c;1;0;5#c;3;0;9#Sklop_MUX2;0;12;12#c;2;0;7&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#43;11;67;11#67;11;72;11#72;11;72;10#69;11;69;8#43;22;43;11#69;8;72;8#69;6;72;6#69;8;69;6&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#69;11#69;8&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
-&lt;entry key="wire5"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire03&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;2;10;7#Sklop_MUX2;1;4;25#Sklop_MUX2;14;0;20#Sklop_MUX2;2;6;25&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#35;37;37;37#24;37;32;37#12;14;24;14#24;14;24;30#24;30;31;30#24;30;24;37#32;37;35;37#35;37;35;35#37;37;37;35&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#35;37#24;30&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
-&lt;entry key="wire4"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire04&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#Notter;0;9;3#c;0;0;3&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#55;6;67;6#67;6;67;4#67;4;72;4&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
-&lt;entry key="wire3"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire0&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#Sklop_MUX2;11;0;5#Notter;1;0;3#a;0;10;3&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#40;6;46;6#12;4;27;4#27;4;40;4#40;4;40;6#27;14;27;15#27;15;31;15#27;4;27;14&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#27;4&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
-&lt;entry key="wire2"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire02&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;1;10;5#Sklop_MUX2;13;0;15&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#25;25;31;25#12;12;25;12#25;22;25;25#25;12;25;22&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
-&lt;entry key="wire1"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire01&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;0;10;3#Sklop_MUX2;12;0;10&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#26;16;26;20#26;20;31;20#12;10;26;10#26;10;26;16&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
-&lt;/properties&gt;&#13;
-</entry>
-</properties>
-*/
+ * <?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE properties SYSTEM
+ * "http://java.sun.com/dtd/properties.dtd"> <properties> <entry
+ * key="schematic.version">1.00</entry> <entry key="schematic.entity">&lt;?xml
+ * version="1.0" encoding="UTF-8"?&gt;&#13; &lt;!DOCTYPE properties SYSTEM
+ * "http://java.sun.com/dtd/properties.dtd"&gt;&#13; &lt;properties&gt;&#13;
+ * &lt;entry key="portType3"&gt;Std_Logic_Vector&lt;/entry&gt;&#13; &lt;entry
+ * key="portType2"&gt;Std_Logic_Vector&lt;/entry&gt;&#13; &lt;entry
+ * key="portType1"&gt;Std_Logic&lt;/entry&gt;&#13; &lt;entry
+ * key="portName3"&gt;c&lt;/entry&gt;&#13; &lt;entry
+ * key="portName2"&gt;b&lt;/entry&gt;&#13; &lt;entry
+ * key="portVectorDirection3"&gt;DOWNTO&lt;/entry&gt;&#13; &lt;entry
+ * key="portName1"&gt;a&lt;/entry&gt;&#13; &lt;entry
+ * key="portVectorDirection2"&gt;TO&lt;/entry&gt;&#13; &lt;entry
+ * key="portDirection3"&gt;OUT&lt;/entry&gt;&#13; &lt;entry
+ * key="portVectorDirection1"&gt;&lt;/entry&gt;&#13; &lt;entry
+ * key="portDirection2"&gt;IN&lt;/entry&gt;&#13; &lt;entry
+ * key="portDirection1"&gt;IN&lt;/entry&gt;&#13; &lt;entry
+ * key="portRangeFrom3"&gt;3&lt;/entry&gt;&#13; &lt;entry
+ * key="portRangeFrom2"&gt;0&lt;/entry&gt;&#13; &lt;entry
+ * key="portRangeFrom1"&gt;&lt;/entry&gt;&#13; &lt;entry
+ * key="portRangeTo3"&gt;0&lt;/entry&gt;&#13; &lt;entry
+ * key="portRangeTo2"&gt;2&lt;/entry&gt;&#13; &lt;entry
+ * key="portRangeTo1"&gt;&lt;/entry&gt;&#13; &lt;entry
+ * key="name"&gt;Circuit&lt;/entry&gt;&#13; &lt;/properties&gt;&#13; </entry>
+ * <entry key="schematic.components">&lt;?xml version="1.0"
+ * encoding="UTF-8"?&gt;&#13; &lt;!DOCTYPE properties SYSTEM
+ * "http://java.sun.com/dtd/properties.dtd"&gt;&#13; &lt;properties&gt;&#13;
+ * &lt;entry key="component2"&gt;&amp;lt;?xml version="1.0"
+ * encoding="UTF-8"?&amp;gt;&amp;#13;&#13; &amp;lt;!DOCTYPE properties SYSTEM
+ * "http://java.sun.com/dtd/properties.dtd"&amp;gt;&amp;#13;&#13;
+ * &amp;lt;properties&amp;gt;&amp;#13;&#13; &amp;lt;entry
+ * key="compSource"&amp;gt;&amp;amp;lt;komponenta&amp;amp;gt;&amp;amp;lt;imeInstanceKomponente&amp;amp;gt;Notter&amp;amp;lt;/imeInstanceKomponente&amp;amp;gt;&amp;amp;lt;orijentacija&amp;amp;gt;3&amp;amp;lt;/orijentacija&amp;amp;gt;&amp;amp;lt;kasnjenje&amp;amp;gt;10&amp;amp;lt;/kasnjenje&amp;amp;gt;&amp;amp;lt;componentSpecific&amp;amp;gt;&amp;amp;lt;/componentSpecific&amp;amp;gt;&amp;amp;lt;/komponenta&amp;amp;gt;&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;entry key="compPosY"&amp;gt;30&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;entry key="compPosX"&amp;gt;460&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;entry
+ * key="compName"&amp;gt;Sklop_NOT&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;/properties&amp;gt;&amp;#13;&#13; &lt;/entry&gt;&#13; &lt;entry
+ * key="component1"&gt;&amp;lt;?xml version="1.0"
+ * encoding="UTF-8"?&amp;gt;&amp;#13;&#13; &amp;lt;!DOCTYPE properties SYSTEM
+ * "http://java.sun.com/dtd/properties.dtd"&amp;gt;&amp;#13;&#13;
+ * &amp;lt;properties&amp;gt;&amp;#13;&#13; &amp;lt;entry
+ * key="compSource"&amp;gt;&amp;amp;lt;komponenta&amp;amp;gt;&amp;amp;lt;imeInstanceKomponente&amp;amp;gt;Sklop_MUX2&amp;amp;lt;/imeInstanceKomponente&amp;amp;gt;&amp;amp;lt;orijentacija&amp;amp;gt;3&amp;amp;lt;/orijentacija&amp;amp;gt;&amp;amp;lt;kasnjenje&amp;amp;gt;10&amp;amp;lt;/kasnjenje&amp;amp;gt;&amp;amp;lt;componentSpecific&amp;amp;gt;#2#&amp;amp;lt;/componentSpecific&amp;amp;gt;&amp;amp;lt;/komponenta&amp;amp;gt;&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;entry key="compPosY"&amp;gt;100&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;entry key="compPosX"&amp;gt;310&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;entry
+ * key="compName"&amp;gt;Sklop_MUX2nNA1&amp;lt;/entry&amp;gt;&amp;#13;&#13;
+ * &amp;lt;/properties&amp;gt;&amp;#13;&#13; &lt;/entry&gt;&#13;
+ * &lt;/properties&gt;&#13; </entry> <entry key="schematic.wires">&lt;?xml
+ * version="1.0" encoding="UTF-8"?&gt;&#13; &lt;!DOCTYPE properties SYSTEM
+ * "http://java.sun.com/dtd/properties.dtd"&gt;&#13; &lt;properties&gt;&#13;
+ * &lt;entry
+ * key="wire6"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire05&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#c;1;0;5#c;3;0;9#Sklop_MUX2;0;12;12#c;2;0;7&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#43;11;67;11#67;11;72;11#72;11;72;10#69;11;69;8#43;22;43;11#69;8;72;8#69;6;72;6#69;8;69;6&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#69;11#69;8&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+ * &lt;entry
+ * key="wire5"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire03&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;2;10;7#Sklop_MUX2;1;4;25#Sklop_MUX2;14;0;20#Sklop_MUX2;2;6;25&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#35;37;37;37#24;37;32;37#12;14;24;14#24;14;24;30#24;30;31;30#24;30;24;37#32;37;35;37#35;37;35;35#37;37;37;35&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#35;37#24;30&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+ * &lt;entry
+ * key="wire4"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire04&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#Notter;0;9;3#c;0;0;3&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#55;6;67;6#67;6;67;4#67;4;72;4&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+ * &lt;entry
+ * key="wire3"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire0&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#Sklop_MUX2;11;0;5#Notter;1;0;3#a;0;10;3&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#40;6;46;6#12;4;27;4#27;4;40;4#40;4;40;6#27;14;27;15#27;15;31;15#27;4;27;14&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;#27;4&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+ * &lt;entry
+ * key="wire2"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire02&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;1;10;5#Sklop_MUX2;13;0;15&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#25;25;31;25#12;12;25;12#25;22;25;25#25;12;25;22&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+ * &lt;entry
+ * key="wire1"&gt;&amp;lt;wire&amp;gt;&amp;lt;wireName&amp;gt;Wire01&amp;lt;/wireName&amp;gt;&amp;lt;connections&amp;gt;#b;0;10;3#Sklop_MUX2;12;0;10&amp;lt;/connections&amp;gt;&amp;lt;wireLines&amp;gt;#26;16;26;20#26;20;31;20#12;10;26;10#26;10;26;16&amp;lt;/wireLines&amp;gt;&amp;lt;nodes&amp;gt;&amp;lt;/nodes&amp;gt;&amp;lt;wireSpecific&amp;gt;&amp;lt;/wireSpecific&amp;gt;&amp;lt;/wire&amp;gt;&lt;/entry&gt;&#13;
+ * &lt;/properties&gt;&#13; </entry> </properties>
+ */
