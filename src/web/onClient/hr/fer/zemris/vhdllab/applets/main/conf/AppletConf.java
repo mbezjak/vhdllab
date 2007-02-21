@@ -21,4 +21,12 @@ public class AppletConf {
 		views.put(view.getViewType(), view);
 	}
 	
+	public EditorProperties getEditorProperties(String type) {
+		return editors.get(type);
+	}
+	
+	public ViewProperties getViewProperties(String type) {
+		return views.get(type);
+	}
+	
 }

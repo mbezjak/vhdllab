@@ -7,6 +7,10 @@ import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.ProjectExplo
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
+import hr.fer.zemris.vhdllab.applets.main.conf.AppletConf;
+import hr.fer.zemris.vhdllab.applets.main.conf.ConfParser;
+import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
+import hr.fer.zemris.vhdllab.applets.main.conf.ViewProperties;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constant.ViewTypes;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
@@ -84,6 +88,7 @@ public class MainApplet
 	
 	private Communicator communicator;
 	private ResourceBundle bundle;
+	private AppletConf conf;
 	
 	private EditorPane editorPane;
 	private ViewPane viewPane;
@@ -119,6 +124,7 @@ public class MainApplet
 			// throw new SecurityException();
 		}
 		try {
+			conf = ConfParser.getConfiguration();
 			AjaxMediator ajax = new DefaultAjaxMediator(this);
 			Initiator initiator = new AjaxInitiator(ajax);
 			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
@@ -1341,8 +1347,21 @@ public class MainApplet
 		return getView(type);
 	}
 
+	public void openEditor(String projectName, String fileName) throws UniformAppletException {
+		if(projectName == null) {
+			throw new NullPointerException("Project name can not be null.");
+		}
+		if(fileName == null) {
+			throw new NullPointerException("File name can not be null.");
+		}
+		String type = getFileType(projectName, fileName);
+		EditorProperties ep = conf.getEditorProperties(type);
+		boolean savable = ep.isSavable();
+		boolean readOnly = ep.isReadonly();
+		openEditor(projectName, fileName, savable, readOnly);
+	}
 	
-	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
+	public void openEditor(String projectName, String fileName, boolean savable, boolean readOnly) throws UniformAppletException {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -1355,7 +1374,7 @@ public class MainApplet
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 			String type = getFileType(projectName, fileName);
 
-			index = openEditorImpl(fileContent, type, isSavable, isReadOnly);
+			index = openEditorImpl(fileContent, type, savable, readOnly);
 		}
 		editorPane.setSelectedIndex(index);
 	}
@@ -1383,13 +1402,13 @@ public class MainApplet
 		editorPane.setSelectedIndex(index);
 	}
 	
-	private int openEditorImpl(FileContent fileContent, String type, boolean isSavable, boolean isReadOnly)  {
+	private int openEditorImpl(FileContent fileContent, String type, boolean savable, boolean readOnly)  {
 		// Initialization of an editor
 		IEditor editor = communicator.getEditor(type);
 		editor.setProjectContainer(this);
 		editor.init();
-		editor.setSavable(isSavable);
-		editor.setReadOnly(isReadOnly);
+		editor.setSavable(savable);
+		editor.setReadOnly(readOnly);
 		editor.setFileContent(fileContent);
 		// End of initialization
 		
@@ -1404,7 +1423,9 @@ public class MainApplet
 	}
 	
 	private String createEditorTitle(String projectName, String fileName) {
-		return fileName + "/" + projectName;
+		StringBuilder title = new StringBuilder(20 + projectName.length() + fileName.length());
+		title.append(projectName).append("/").append(fileName);
+		return title.toString();
 	}
 	
 	private String createEditorToolTip(String projectName, String fileName)	{

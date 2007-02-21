@@ -12,10 +12,6 @@ public class EditorProperties {
 	
 	public EditorProperties() {}
 	
-	public EditorProperties(String t) {
-		System.out.println("sdadsadsadsads");
-	}
-	
 	
 	public String getName() {
 		return name;

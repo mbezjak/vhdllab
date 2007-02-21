@@ -1,7 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
-import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
@@ -30,7 +31,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Point;
@@ -40,12 +40,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -1295,28 +1296,32 @@ public class SchemaMainPanel extends JPanel implements IEditor, IWizard {
 
 
 	public FileContent getInitialFileContent(Component parent) {
-		Frame f = JOptionPane.getFrameForComponent(parent);
-
-		JDialog dialogEntitySetup = null;
-		dialogEntitySetup=new JDialog();
-		dialogEntitySetup = new JDialog(f,"Entity Setup", true);
-		
-		String[] st = {"Name","Direction","Type","From","To"};
-		EntityTable table = new EntityTable("Entity declaration:",st,"Entity name: ");
-		table.setProjectContainer(null);
-		table.init();		
-		dialogEntitySetup.add(table);
-		dialogEntitySetup.setBounds(0, 0, 480, 230);
-		dialogEntitySetup.setLocation(150, 150);
-		dialogEntitySetup.setVisible(true);
-		CircuitInterface circint = table.getCircuitInterface();
-				
-		if(circint==null)
-			return null;
-
-		SSerialization ser=new SSerialization(circint);		
-		
-		return new FileContent(projectContainer.getSelectedProject(),table.getData().getName(),ser.getSerializedData());
+		String[] options = new String[] {"OK", "Cancel"};
+		int optionType = JOptionPane.OK_CANCEL_OPTION;
+		int messageType = JOptionPane.PLAIN_MESSAGE;
+		EntityTable table = new EntityTable();
+		table.setProjectContainer(projectContainer);
+		table.init();
+		int option = JOptionPane.showOptionDialog(parent, table, "New Struct Schema", optionType, messageType, null, options, options[0]);
+		if(option == JOptionPane.OK_OPTION) {
+			String projectName = projectContainer.getSelectedProject();
+			if(projectName == null) return null;
+			CircuitInterface ci = table.getCircuitInterface();
+			try {
+				if(projectContainer.existsFile(projectName, ci.getEntityName())) {
+					projectContainer.echoStatusText(ci.getEntityName() + " already exists!", MessageEnum.Information);
+				}
+			} catch (UniformAppletException e) {
+				e.printStackTrace();
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				JOptionPane.showMessageDialog(parent, sw.toString());
+				return null;
+			}
+			SSerialization ser=new SSerialization(ci);
+			return new FileContent(projectName,ci.getEntityName(),ser.getSerializedData());
+		} else return null;
 	}
 
 	// Tu se samo postavlja project container.
