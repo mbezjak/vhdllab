@@ -38,6 +38,21 @@ public class SSerialization {
 	}
 	
 	/**
+	 * Konstruktor za kratku serijalizaciju (potrebe getInitialFileContent-a)
+	 * @param ci CircuitInterface
+	 */
+	public SSerialization(CircuitInterface ci){
+		CircuitInterface circuitInterface=ci;
+		globalProperties=new Properties();
+		
+		globalProperties.setProperty(SCHEMATIC_VERSION, "1.00");
+		globalProperties.setProperty(SCHEMATIC_ENTITY, XMLUtil.serializeProperties(Entity(circuitInterface)));
+		globalProperties.setProperty(SCHEMATIC_COMPONENTS, "");
+		globalProperties.setProperty(SCHEMATIC_WIRES, "");
+		
+	}
+	
+	/**
 	 * Dohvaæa XML file generiran na temelju trenutog sadržaja Schematica.
 	 * @return Schematic XML
 	 */

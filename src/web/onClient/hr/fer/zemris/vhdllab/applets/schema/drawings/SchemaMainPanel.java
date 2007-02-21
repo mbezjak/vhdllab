@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema.drawings;
 
+import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -29,6 +30,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Point;
@@ -43,8 +45,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -1281,29 +1285,38 @@ public class SchemaMainPanel extends JPanel implements IEditor, IWizard {
 		return ser.getSerializedData();
 	}
 
-	// logikom stvari, ovo Rajakovic mora napravit, jer on radi pohranu u
-	// interni format
-	// U svakom slucaju, wizard za Schematic bi trebao izgenerirati sucelje
-	// sklopa koji se
-	// modelira - dakle ulaze i izlaze, te njima pripadne tipove...
 	public IWizard getWizard() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	public void cleanUp() {
 		ResetSchemaContent();
 	}
 
-	// zasad ostalo neimplementirano
+
 	public FileContent getInitialFileContent(Component parent) {
-		/*String[] st = {"Name","Direction","Type","From","To"};
+		Frame f = JOptionPane.getFrameForComponent(parent);
+
+		JDialog dialogEntitySetup = null;
+		dialogEntitySetup=new JDialog();
+		dialogEntitySetup = new JDialog(f,"Entity Setup", true);
+		
+		String[] st = {"Name","Direction","Type","From","To"};
 		EntityTable table = new EntityTable("Entity declaration:",st,"Entity name: ");
 		table.setProjectContainer(null);
-		table.init();*/
+		table.init();		
+		dialogEntitySetup.add(table);
+		dialogEntitySetup.setBounds(0, 0, 480, 230);
+		dialogEntitySetup.setLocation(150, 150);
+		dialogEntitySetup.setVisible(true);
+		CircuitInterface circint = table.getCircuitInterface();
+				
+		if(circint==null)
+			return null;
+
+		SSerialization ser=new SSerialization(circint);		
 		
-		// TODO Auto-generated method stub
-		return null;
+		return new FileContent(projectContainer.getSelectedProject(),table.getData().getName(),ser.getSerializedData());
 	}
 
 	// Tu se samo postavlja project container.
