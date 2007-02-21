@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 public class SPropertyBar extends JToolBar {
+	private static final long serialVersionUID = -5059349265915617141L;
 	private SPropertyPanel panel = null;
 	private JScrollPane scrpan = null;
 	private String currentSelectedInstance = null;

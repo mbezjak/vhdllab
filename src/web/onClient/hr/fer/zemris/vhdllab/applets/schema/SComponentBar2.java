@@ -10,6 +10,7 @@ import javax.swing.JToolBar;
 
 @Deprecated
 public class SComponentBar2 extends JToolBar {
+	private static final long serialVersionUID = 5388984927315486821L;
 	private boolean isDrawingIcons;
 
 	public SComponentBar2() {

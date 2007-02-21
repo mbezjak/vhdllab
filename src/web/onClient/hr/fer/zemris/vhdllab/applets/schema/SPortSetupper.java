@@ -104,6 +104,7 @@ public class SPortSetupper extends JPanel {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private class ConnectionListListener implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
 			int index = vectorList.getSelectedIndex();

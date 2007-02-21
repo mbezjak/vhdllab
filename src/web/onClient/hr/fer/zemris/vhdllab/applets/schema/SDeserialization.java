@@ -48,7 +48,7 @@ public class SDeserialization {
 		
 		String portName = null;
 		Direction portDir = null;
-		Type portType = null;
+		//Type portType = null;
 		List<Port> portlist = new ArrayList<Port>();
 		
 		for(int i=1;true;i++){
@@ -100,7 +100,7 @@ public class SDeserialization {
 		String serData;
 		@SuppressWarnings("unused")
 		SchemaDrawingComponentEnvelope env;
-		ArrayList<SchemaDrawingComponentEnvelope> envlist = new ArrayList();
+		ArrayList<SchemaDrawingComponentEnvelope> envlist =new ArrayList<SchemaDrawingComponentEnvelope>();
 		
 		for(int i=1;true;i++){
 			serData=c.getProperty(SSerialization.SCHEMATIC_COMPONENTS_COMPONENT+i);

@@ -63,8 +63,8 @@ public class SchemaDrawingCanvas extends JComponent {
 		mainframe = parent;
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
 		wires = new ArrayList<AbstractSchemaWire>();
-		rectangleStack = new Stack();
-		lineStack = new Stack();
+		rectangleStack = new Stack<RectWithBool>();
+		lineStack = new Stack<LineWithBool>();
 		this.colors=colors;		
 		initGUI();
 		initListeners();
@@ -88,8 +88,8 @@ public class SchemaDrawingCanvas extends JComponent {
 	public void ResetCanvas(){
 		components=new ArrayList<SchemaDrawingComponentEnvelope>();
 		wires = new ArrayList<AbstractSchemaWire>();
-		rectangleStack = new Stack();
-		lineStack = new Stack();
+		rectangleStack = new Stack<RectWithBool>();
+		lineStack = new Stack<LineWithBool>();
 		AbstractSchemaComponent.clearInstanceNameSet();
 		AbstractSchemaWire.clearWireNameSet();
 				
@@ -133,7 +133,7 @@ public class SchemaDrawingCanvas extends JComponent {
 	
 	
 	public boolean existComponent(String componentInstanceName) {
-		int posdel = -1;
+		//int posdel = -1;
 		for (int i = 0; i < components.size(); i++) {
 			if (componentInstanceName.compareTo(components.get(i).getComponent().getComponentInstanceName()) == 0) {
 				return true;

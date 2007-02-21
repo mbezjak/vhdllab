@@ -22,6 +22,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 public class SEntitySetupper extends JPanel {
+	private static final long serialVersionUID = -3728690652818924451L;
+
 	private class ChangeEntityNameListener implements ActionListener {
 		private JTextField tf;
 		public ChangeEntityNameListener(JTextField t) {
@@ -51,6 +53,7 @@ public class SEntitySetupper extends JPanel {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private class ModifyPortListener implements ActionListener {
 		private JList list;
 		public ModifyPortListener(JList l) {
@@ -71,13 +74,13 @@ public class SEntitySetupper extends JPanel {
 	private DefaultListModel listModel;
 	private JScrollPane scrpan;
 	private JList list;
-	private int nameCounter;
+	//private int nameCounter;
 	private JTextField portNameField;
 	
 	public SEntitySetupper(SchemaModelledComponentEntity ent, SchemaMainPanel panel) {
 		this.entity = ent;
 		this.parentPanel = panel;
-		this.nameCounter = 0;
+		//this.nameCounter = 0;
 		
 		initUI();
 	}

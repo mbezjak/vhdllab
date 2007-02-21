@@ -23,6 +23,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 public class SOptionBar extends JToolBar {
+	private static final long serialVersionUID = 6179216563860495502L;
 	private JToggleButton noneButt;
 	private JButton setEntityButton;
 	private JToggleButton drawWireButton;
