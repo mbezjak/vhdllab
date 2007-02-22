@@ -1196,8 +1196,13 @@ public class MainApplet
 		return FileTypes.isSimulatable(type);
 	}
 	
-	public String getFileType(String projectName, String fileName) throws UniformAppletException {
-		return communicator.loadFileType(projectName, fileName);
+	public String getFileType(String projectName, String fileName) {
+		try {
+			return communicator.loadFileType(projectName, fileName);
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public void viewVHDLCode(String projectName, String fileName) throws UniformAppletException {
