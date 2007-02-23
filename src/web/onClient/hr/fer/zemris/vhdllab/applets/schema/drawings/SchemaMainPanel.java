@@ -1295,7 +1295,7 @@ public class SchemaMainPanel extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public FileContent getInitialFileContent(Component parent) {
+	public FileContent getInitialFileContent(Component parent, String projectName) {
 		String[] options = new String[] {"OK", "Cancel"};
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
@@ -1304,7 +1304,6 @@ public class SchemaMainPanel extends JPanel implements IEditor, IWizard {
 		table.init();
 		int option = JOptionPane.showOptionDialog(parent, table, "New Struct Schema", optionType, messageType, null, options, options[0]);
 		if(option == JOptionPane.OK_OPTION) {
-			String projectName = projectContainer.getSelectedProject();
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {

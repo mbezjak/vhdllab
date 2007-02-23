@@ -15,25 +15,30 @@ public interface ProjectContainer {
 	
 	List<String> getAllCircuits(String projectName) throws UniformAppletException;
 	List<String> getAllTestbenches(String projectName) throws UniformAppletException;
-	String getFileType(String projectName, String fileName) throws UniformAppletException;
+	String getFileType(String projectName, String fileName);
 	Hierarchy extractHierarchy(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
 	List<Preferences> getPreferences(String type) throws UniformAppletException;
+	boolean isCircuit(String projectName, String fileName);
+	boolean isTestbench(String projectName, String fileName);
+	boolean isSimulation(String projectName, String fileName);
+	boolean isCompilable(String projectName, String fileName);
+	boolean isSimulatable(String projectName, String fileName);
 	void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException;
 	boolean existsFile(String projectName, String fileName) throws UniformAppletException;
 	boolean existsProject(String projectName) throws UniformAppletException;
 	void deleteFile(String projectName, String fileName) throws UniformAppletException;
 	void deleteProject(String projectName) throws UniformAppletException;
-	void createNewFileInstance(String type) throws UniformAppletException;
-	void createNewProjectInstance() throws UniformAppletException;
+	void createNewFileInstance(String type);
+	void createNewProjectInstance();
 	void echoStatusText(String text, MessageEnum type);
 	IEditor getEditor(String projectName, String fileName) throws UniformAppletException;
 	IView getView(String type) throws UniformAppletException;
 	IStatusBar getStatusBar();
 	List<String> getAllProjects();
-	void compile(String projectName, String fileName) throws UniformAppletException;
-	void simulate(String projectName, String fileName) throws UniformAppletException;
-	void viewVHDLCode(String projectName, String fileName) throws UniformAppletException;
+	void compile(String projectName, String fileName);
+	void simulate(String projectName, String fileName);
+	void viewVHDLCode(String projectName, String fileName);
 	
 	/**
 	 * Gets a resource bundle for the given base name and user's locale. Returned

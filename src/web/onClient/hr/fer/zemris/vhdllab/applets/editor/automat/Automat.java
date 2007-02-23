@@ -203,7 +203,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	}
 
 
-	public FileContent getInitialFileContent(Component parent) {
+	public FileContent getInitialFileContent(Component parent, String projectName) {
 		AUTPodatci pod=new AUTPodatci(parent,pContainer,bundle);
 		//TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
 		String gen=null;

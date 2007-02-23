@@ -117,6 +117,8 @@ public class LanguageConstants {
 	public static final String STATUSBAR_CANT_LOAD_WORKSPACE = "statusbar.cant.load.workspace";
 	public static final String STATUSBAR_CANT_COMPILE = "statusbar.cant.compile";
 	public static final String STATUSBAR_CANT_SIMULATE = "statusbar.cant.simulate";
+	public static final String STATUSBAR_COMPILED = "statusbar.compiled";
+	public static final String STATUSBAR_SIMULATED = "statusbar.simulated";
 	public static final String STATUSBAR_CANT_OPEN_VIEW = "statusbar.cant.open.view";
 	public static final String STATUSBAR_CANT_VIEW_VHDL_CODE = "statusbar.cant.view.vhdl.code";
 	

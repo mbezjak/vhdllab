@@ -9,8 +9,13 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 
 import java.awt.BorderLayout;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +78,14 @@ public class CompileErrorsPanel extends JPanel implements IView {
                 }
             }
         });
+        this.addComponentListener(new ComponentListener() {
+			public void componentHidden(ComponentEvent e) {}
+			public void componentMoved(ComponentEvent e) {}
+			public void componentResized(ComponentEvent e) {
+				scrollPane.setPreferredSize(CompileErrorsPanel.this.getSize());
+			}
+			public void componentShown(ComponentEvent e) {}
+		});
         
         scrollPane = new JScrollPane(listContent);
         
@@ -87,7 +100,9 @@ public class CompileErrorsPanel extends JPanel implements IView {
      */
     public void setContent(CompilationResult result) {
     	if(result.isSuccessful()) {
-    		content.addElement("Compilation finished successfully.");
+    		Format formatter = new SimpleDateFormat("HH:mm:ss");
+    		String time = formatter.format(new Date());
+    		content.addElement(time + "  Compilation finished successfully.");
     		return;
     	}
     	
@@ -119,6 +134,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
         	try {
         		String projectName = projectContainer.getSelectedProject();
         		if(projectName == null) {
+        			// FIXME ovo stvarno treba drugacije napravit!!
         			projectContainer.echoStatusText("Select a project to highlight a line!", MessageEnum.Error);
         			return;
         		}
@@ -143,11 +159,10 @@ public class CompileErrorsPanel extends JPanel implements IView {
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setData(java.lang.Object)
 	 */
 	public void setData(Object data) {
-		content.clear();
-		if(data == null) return;
 		if(!(data instanceof CompilationResult)) {
 			throw new IllegalArgumentException("Unknown data!");
 		}
+//		content.clear();
 		setContent((CompilationResult)data);
 	}
 

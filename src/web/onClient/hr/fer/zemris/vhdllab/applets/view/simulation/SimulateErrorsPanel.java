@@ -6,6 +6,11 @@ import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
 import java.awt.BorderLayout;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -53,6 +58,15 @@ public class SimulateErrorsPanel extends JPanel implements IView {
         listContent.setFixedCellHeight(15);
         scrollPane = new JScrollPane(listContent);
         
+        this.addComponentListener(new ComponentListener() {
+			public void componentHidden(ComponentEvent e) {}
+			public void componentMoved(ComponentEvent e) {}
+			public void componentResized(ComponentEvent e) {
+				scrollPane.setPreferredSize(SimulateErrorsPanel.this.getSize());
+			}
+			public void componentShown(ComponentEvent e) {}
+		});
+        
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);
     }
@@ -66,10 +80,13 @@ public class SimulateErrorsPanel extends JPanel implements IView {
     {
     	if(result.isSuccessful()) {
     		// TODO ovo ucitat iz bundle-a
-    		content.addElement("Simulation finished successfully.");
+    		Format formatter = new SimpleDateFormat("HH:mm:ss");
+    		String time = formatter.format(new Date());
+    		content.addElement(time + "  Simulation finished successfully.");
     		return;
     	}
     	
+    	content.clear();
         for(SimulationMessage msg : result.getMessages()) {
         	StringBuilder sb = new StringBuilder(msg.getMessageText().length() + 20);
         	sb.append(msg.getMessageEntity()).append(":")
@@ -90,11 +107,10 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setData(java.lang.Object)
 	 */
 	public void setData(Object data) {
-		content.clear();
-		if(data == null) return;
 		if(!(data instanceof SimulationResult)) {
 			throw new IllegalArgumentException("Unknown data!");
 		}
+//		content.clear();
 		setContent((SimulationResult)data);
 	}
 

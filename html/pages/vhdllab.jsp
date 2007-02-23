@@ -7,7 +7,7 @@
 </head>
 <body>
   <div>
-    <applet archive="vhdllab-web-onClient.jar"
+    <applet archive="vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils-1.7.0.jar,commons-digester-1.7.jar"
       code="hr.fer.zemris.vhdllab.applets.main.MainApplet"
       mayscript="mayscript"
       height="100%"

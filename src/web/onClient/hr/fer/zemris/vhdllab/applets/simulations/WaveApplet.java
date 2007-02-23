@@ -1724,7 +1724,7 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public FileContent getInitialFileContent(Component parent) {
+	public FileContent getInitialFileContent(Component parent, String projectName) {
 		return null;
 	}
 

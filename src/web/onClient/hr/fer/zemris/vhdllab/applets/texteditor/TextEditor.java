@@ -250,7 +250,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		this.container = pContainer;
 	}
 
-	public FileContent getInitialFileContent(Component parent) {
+	public FileContent getInitialFileContent(Component parent, String projectName) {
 		String[] options = new String[] {"OK", "Cancel"};
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
@@ -259,7 +259,6 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		table.init();
 		int option = JOptionPane.showOptionDialog(parent, table, "New VHDL source", optionType, messageType, null, options, options[0]);
 		if(option == JOptionPane.OK_OPTION) {
-			String projectName = container.getSelectedProject();
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {

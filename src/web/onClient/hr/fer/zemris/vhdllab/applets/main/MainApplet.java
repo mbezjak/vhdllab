@@ -10,7 +10,6 @@ import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.conf.AppletConf;
 import hr.fer.zemris.vhdllab.applets.main.conf.ConfParser;
 import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
-import hr.fer.zemris.vhdllab.applets.main.conf.ViewProperties;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.constant.ViewTypes;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
@@ -27,6 +26,7 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.model.ModelUtil;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.preferences.SingleOption;
 import hr.fer.zemris.vhdllab.string.StringUtil;
@@ -297,7 +297,9 @@ public class MainApplet
 				if(e.getClickCount() == 2) {
 					maximizeComponent(editorPane);
 				}
-				editorPane.getSelectedComponent().requestFocusInWindow();
+				editorPane.requestFocusToSelectedEditor();
+				// TODO  Future impl
+//				editorPane.getSelectedEditor().requestFocusInWindow();
 			}
 			public void mouseEntered(MouseEvent e) {}
 			public void mouseExited(MouseEvent e) {}
@@ -307,7 +309,7 @@ public class MainApplet
 		editorPane.addContainerListener(new ContainerListener() {
 			public void componentAdded(ContainerEvent e) {}
 			public void componentRemoved(ContainerEvent e) {
-				if(editorPane.getTabCount() == 0 && isMaximized(editorPane)) {
+				if(editorPane.isEmpty() && isMaximized(editorPane)) {
 					maximizeComponent(editorPane);
 				}
 			}
@@ -409,7 +411,7 @@ public class MainApplet
 						if(isSimulation(editor.getProjectName(), editor.getFileName())) {
 							saveSimulation(editor);
 						} else {*/
-							saveEditor((IEditor)editorPane.getSelectedComponent());
+							saveEditor(editorPane.getSelectedEditor());
 						/*}
 					} catch (UniformAppletException ex) {
 						StringWriter sw = new StringWriter();
@@ -440,7 +442,7 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeEditor((IEditor)editorPane.getSelectedComponent(), true);
+					closeEditor(editorPane.getSelectedEditor(), true);
 				}
 			});
 			menuBar.add(menuItem);
@@ -450,7 +452,7 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllButThisEditor((IEditor)editorPane.getSelectedComponent(), true);
+					closeAllButThisEditor(editorPane.getSelectedEditor(), true);
 				}
 			});
 			menuBar.add(menuItem);
@@ -478,7 +480,7 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeView((IView)viewPane.getSelectedComponent());
+					closeView(viewPane.getSelectedView());
 				}
 			});
 			menuBar.add(menuItem);
@@ -488,7 +490,7 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllButThisView((IView)viewPane.getSelectedComponent());
+					closeAllButThisView(viewPane.getSelectedView());
 				}
 			});
 			menuBar.add(menuItem);
@@ -535,15 +537,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						createNewProjectInstance();
-					} catch (UniformAppletException ex) {
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					createNewProjectInstance();
 				}
 			});
 			submenu.add(menuItem);
@@ -555,15 +549,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
-					} catch (UniformAppletException ex) {
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
 				}
 			});
 			submenu.add(menuItem);
@@ -574,15 +560,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						createNewFileInstance(FileTypes.FT_VHDL_TB);
-					} catch (UniformAppletException ex) {
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					createNewFileInstance(FileTypes.FT_VHDL_TB);
 				}
 			});
 			submenu.add(menuItem);
@@ -593,15 +571,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
-					} catch (UniformAppletException ex) {
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
 				}
 			});
 			submenu.add(menuItem);
@@ -612,15 +582,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
-					} catch (UniformAppletException ex) {
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
 				}
 			});
 			submenu.add(menuItem);
@@ -640,7 +602,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveEditor((IEditor)editorPane.getSelectedComponent());
+					saveEditor(editorPane.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
@@ -663,7 +625,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeEditor((IEditor)editorPane.getSelectedComponent(), true);
+					closeEditor(editorPane.getSelectedEditor(), true);
 				}
 			});
 			menu.add(menuItem);
@@ -715,7 +677,7 @@ public class MainApplet
 					} else if(editorPane.isFocusCycleRoot()) {
 						maximizeComponent(viewPane);
 					}*/
-					if(editorPane.getTabCount() != 0) {
+					if(!editorPane.isEmpty()) {
 						maximizeComponent(editorPane);
 					}
 				}
@@ -800,17 +762,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						compileWithDialog();
-					} catch (UniformAppletException ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-						echoStatusText(text, MessageEnum.Error);
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					compileWithDialog();
 				}
 			});
 			menu.add(menuItem);
@@ -821,17 +773,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						compile((IEditor)editorPane.getSelectedComponent());
-					} catch (UniformAppletException ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-						echoStatusText(text, MessageEnum.Error);
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					compile(editorPane.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
@@ -842,17 +784,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						compileLastHistoryResult();
-					} catch (UniformAppletException ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-						echoStatusText(text, MessageEnum.Error);
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					compileLastHistoryResult();
 				}
 			});
 			menu.add(menuItem);
@@ -864,17 +796,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						simulateWithDialog();
-					} catch (UniformAppletException ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-						echoStatusText(text, MessageEnum.Error);
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					simulateWithDialog();
 				}
 			});
 			menu.add(menuItem);
@@ -885,17 +807,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						simulate((IEditor)editorPane.getSelectedComponent());
-					} catch (UniformAppletException ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-						echoStatusText(text, MessageEnum.Error);
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					simulate(editorPane.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
@@ -906,17 +818,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						simulateLastHistoryResult();
-					} catch (UniformAppletException ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-						echoStatusText(text, MessageEnum.Error);
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					simulateLastHistoryResult();
 				}
 			});
 			menu.add(menuItem);
@@ -928,17 +830,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						viewVHDLCode((IEditor)editorPane.getSelectedComponent());
-					} catch (UniformAppletException ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
-						echoStatusText(text, MessageEnum.Error);
-						// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						JOptionPane.showMessageDialog(MainApplet.this, sw.toString());
-					}
+					viewVHDLCode(editorPane.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
@@ -1053,7 +945,7 @@ public class MainApplet
 		}
 	}
 	
-	private void compileWithDialog() throws UniformAppletException {
+	private void compileWithDialog() {
 		String title = bundle.getString(LanguageConstants.DIALOG_RUN_COMPILATION_TITLE);
 		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
 		FileIdentifier file = showRunDialog(title, listTitle, RunDialog.COMPILATION_TYPE);
@@ -1063,7 +955,7 @@ public class MainApplet
 		compile(projectName, fileName);
 	}
 	
-	private void compile(IEditor editor) throws UniformAppletException {
+	private void compile(IEditor editor) {
 		if(editor == null) return;
 		String projectName = editor.getProjectName();
 		String fileName = editor.getFileName();
@@ -1072,7 +964,7 @@ public class MainApplet
 		}
 	}
 	
-	private void compileLastHistoryResult() throws UniformAppletException {
+	private void compileLastHistoryResult() {
 		if(communicator.compilationHistoryIsEmpty()) {
 			compileWithDialog();
 		} else {
@@ -1085,21 +977,30 @@ public class MainApplet
 		}
 	}
 	
-	public void compile(String projectName, String fileName) throws UniformAppletException {
-		if(isCircuit(projectName, fileName)) {
-			List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
-			String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-			String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-			boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
-			if(shouldContinue) {
-				CompilationResult result = communicator.compile(projectName, fileName);
-				IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
-				view.setData(result);
+	public void compile(String projectName, String fileName) {
+		try {
+			if(isCircuit(projectName, fileName)) {
+				List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
+				String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
+				String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
+				boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
+				if(shouldContinue) {
+					CompilationResult result = communicator.compile(projectName, fileName);
+					String text = bundle.getString(LanguageConstants.STATUSBAR_COMPILED);
+					text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
+					echoStatusText(text, MessageEnum.Information);
+					IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
+					view.setData(result);
+				}
 			}
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
+			echoStatusText(text, MessageEnum.Error);
 		}
 	}
 	
-	private void simulateWithDialog() throws UniformAppletException {
+	private void simulateWithDialog() {
 		String title = bundle.getString(LanguageConstants.DIALOG_RUN_SIMULATION_TITLE);
 		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
 		FileIdentifier file = showRunDialog(title, listTitle, RunDialog.SIMULATION_TYPE);
@@ -1109,7 +1010,7 @@ public class MainApplet
 		simulate(projectName, fileName);
 	}
 	
-	private void simulate(IEditor editor) throws UniformAppletException {
+	private void simulate(IEditor editor) {
 		if(editor == null) return;
 		String projectName = editor.getProjectName();
 		String fileName = editor.getFileName();
@@ -1118,7 +1019,7 @@ public class MainApplet
 		}
 	}
 	
-	private void simulateLastHistoryResult() throws UniformAppletException {
+	private void simulateLastHistoryResult() {
 		if(communicator.simulationHistoryIsEmpty()) {
 			simulateWithDialog();
 		} else {
@@ -1131,21 +1032,30 @@ public class MainApplet
 		}
 	}
 	
-	public void simulate(String projectName, String fileName) throws UniformAppletException {
-		if(isTestbench(projectName, fileName)) {
-			List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
-			String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-			String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-			boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
-			if(shouldContinue) {
-				SimulationResult result = communicator.runSimulation(projectName, fileName);
-				IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
-				view.setData(result);
-				if(result.getWaveform() != null) {
-					String simulationName = fileName + ".sim";
-					openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
+	public void simulate(String projectName, String fileName) {
+		try {
+			if(isTestbench(projectName, fileName)) {
+				List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
+				String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
+				String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
+				boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
+				if(shouldContinue) {
+					SimulationResult result = communicator.runSimulation(projectName, fileName);
+					String text = bundle.getString(LanguageConstants.STATUSBAR_SIMULATED);
+					text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
+					echoStatusText(text, MessageEnum.Information);
+					IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
+					view.setData(result);
+					if(result.getWaveform() != null) {
+						String simulationName = fileName + ".sim";
+						openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
+					}
 				}
 			}
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
+			echoStatusText(text, MessageEnum.Error);
 		}
 	}
 	
@@ -1171,27 +1081,27 @@ public class MainApplet
 		return testbenches;
 	}
 	
-	private boolean isCircuit(String projectName, String fileName) throws UniformAppletException {
+	public boolean isCircuit(String projectName, String fileName) {
 		String type = getFileType(projectName, fileName);
 		return FileTypes.isCircuit(type);
 	}
 	
-	private boolean isTestbench(String projectName, String fileName) throws UniformAppletException {
+	public boolean isTestbench(String projectName, String fileName) {
 		String type = getFileType(projectName, fileName);
 		return FileTypes.isTestbench(type);
 	}
 	
-	private boolean isSimulation(String projectName, String fileName) throws UniformAppletException {
+	public boolean isSimulation(String projectName, String fileName) {
 		String type = getFileType(projectName, fileName);
 		return FileTypes.isSimulation(type);
 	}
 	
-	public boolean isCompilable(String projectName, String fileName) throws UniformAppletException {
+	public boolean isCompilable(String projectName, String fileName) {
 		String type = getFileType(projectName, fileName);
 		return FileTypes.isCompilable(type);
 	}
 	
-	public boolean isSimulatable(String projectName, String fileName) throws UniformAppletException {
+	public boolean isSimulatable(String projectName, String fileName) {
 		String type = getFileType(projectName, fileName);
 		return FileTypes.isSimulatable(type);
 	}
@@ -1200,21 +1110,27 @@ public class MainApplet
 		try {
 			return communicator.loadFileType(projectName, fileName);
 		} catch (UniformAppletException e) {
+			// TODO rijesit ovaj exception tako da se u statubaru ispise da se neka greska desila...
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public void viewVHDLCode(String projectName, String fileName) throws UniformAppletException {
-		// TODO ovo provjerit dal radi dobro
-		if(isCircuit(projectName, fileName) || 
-				isTestbench(projectName, fileName)) {
-			String vhdl = communicator.generateVHDL(projectName, fileName);
-			openEditor(projectName, "vhdl:"+fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
+	public void viewVHDLCode(String projectName, String fileName) {
+		try {
+			if(isCircuit(projectName, fileName) || 
+					isTestbench(projectName, fileName)) {
+				String vhdl = communicator.generateVHDL(projectName, fileName);
+				openEditor(projectName, "vhdl:"+fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
+			}
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
+			echoStatusText(text, MessageEnum.Error);
 		}
 	}
 	
-	private void viewVHDLCode(IEditor editor) throws UniformAppletException {
+	private void viewVHDLCode(IEditor editor) {
 		if(editor == null) return;
 		viewVHDLCode(editor.getProjectName(), editor.getFileName());
 	}
@@ -1320,7 +1236,7 @@ public class MainApplet
 	}
 	
 	public IEditor getEditor(String projectName, String fileName) throws UniformAppletException {
-		if(!editorPane.editorIsOpened(projectName, fileName)) {
+		if(!editorPane.isEditorOpened(projectName, fileName)) {
 			// TODO treba se tablica savable-readonly za svaki file type napravit pa tu samo to gledat.
 			openEditor(projectName, fileName, true, false);
 		}
@@ -1345,8 +1261,8 @@ public class MainApplet
 			// End of initialization
 
 			String title = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + type);
-			Component component = viewPane.add(title, (Component)view, type);
-			index = viewPane.indexOfComponent(component);
+			viewPane.add(title, (Component)view, type);
+			index = viewPane.indexOfView(view);
 		}
 		viewPane.setSelectedIndex(index);
 		return getView(type);
@@ -1400,7 +1316,7 @@ public class MainApplet
 
 			index = openEditorImpl(fileContent, type, isSavable, isReadOnly);
 		} else {
-			IEditor editor = (IEditor) editorPane.getComponentAt(index);
+			IEditor editor = editorPane.getEditorAt(index);
 			FileContent fileContent = new FileContent(projectName, fileName, content);
 			editor.setFileContent(fileContent);
 		}
@@ -1420,8 +1336,8 @@ public class MainApplet
 		String projectName = fileContent.getProjectName();
 		String fileName = fileContent.getFileName();
 		String title = createEditorTitle(projectName, fileName);
-		Component component = editorPane.add(title, (Component)editor);
-		int index = editorPane.indexOfComponent(component);
+		editorPane.add(title, (Component)editor);
+		int index = editorPane.indexOfEditor(editor);
 		String toolTipText = createEditorToolTip(projectName, fileName);
 		editorPane.setToolTipTextAt(index, toolTipText);
 		return index;
@@ -1501,7 +1417,7 @@ public class MainApplet
 		if(fileName == null) {
 			throw new NullPointerException("File name can not be null.");
 		}
-		if(editorPane.editorIsOpened(projectName, fileName)) {
+		if(editorPane.isEditorOpened(projectName, fileName)) {
 			IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
 			closeEditor(editor, false);
 		}
@@ -1514,7 +1430,7 @@ public class MainApplet
 			throw new NullPointerException("Project name can not be null.");
 		}
 		for(String fileName : communicator.findFilesByProject(projectName)) {
-			if(editorPane.editorIsOpened(projectName, fileName)) {
+			if(editorPane.isEditorOpened(projectName, fileName)) {
 				IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
 				closeEditor(editor, false);
 			}
@@ -1524,66 +1440,82 @@ public class MainApplet
 	}
 
 	
-	public void createNewFileInstance(String type) throws UniformAppletException {
-		if(getSelectedProject() == null) {
-			String text = bundle.getString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
-			echoStatusText(text, MessageEnum.Information);
-			return;
-		}
-		// Initialization of a wizard
-		IWizard wizard = communicator.getEditor(type).getWizard();
-		if(wizard == null) throw new NullPointerException("No wizard for type: " + type);
-		wizard.setProjectContainer(this);
-		FileContent content = wizard.getInitialFileContent(this);
-		// End of initialization
-		
-		if(content == null) return;
-		String projectName = content.getProjectName();
-		if(projectName == null) {
-			String text = bundle.getString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
-			echoStatusText(text, MessageEnum.Information);
-		}
-		String fileName = content.getFileName();
-		String data = content.getContent();
-		boolean exists = communicator.existsFile(projectName, fileName);
-		if(exists) {
-			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
+	public void createNewFileInstance(String type) {
+		try {
+			String projectName = getSelectedProject();
+			if(projectName == null) {
+				String text = bundle.getString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
+				echoStatusText(text, MessageEnum.Information);
+				return;
+			}
+			// Initialization of a wizard
+			IWizard wizard = communicator.getEditor(type).getWizard();
+			if(wizard == null) throw new NullPointerException("No wizard for type: " + type);
+			wizard.setProjectContainer(this);
+			FileContent content = wizard.getInitialFileContent(this, projectName);
+			// End of initialization
+			
+			if(content == null) return;
+			// FIXME ovo treba popravit. naime glupo je da getInitalFileContent prima projectName koji n
+			// njemu nist ne znaci (ili mozda znaci) i onda tocno to mora vratit. mozda je bolje da 
+			// FileContent sadrzi samo file name i content. tj ne mijenjat FileConent nego napravit novi objekt!
+			// BTW trebalo bi FileContent napravit immutabilnim!
+			String returnedProjectName = content.getProjectName();
+			if(!ModelUtil.projectNamesAreEqual(projectName, returnedProjectName)) {
+				throw new IllegalStateException("Returned project name is incorrect. Follow IWizard's javadoc rules!");
+			}
+			String fileName = content.getFileName();
+			String data = content.getContent();
+			boolean exists = communicator.existsFile(projectName, fileName);
+			if(exists) {
+				String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
+				text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
+				echoStatusText(text, MessageEnum.Information);
+				return;
+			}
+			communicator.createFile(projectName, fileName, type);
+			communicator.saveFile(projectName, fileName, data);
+			// TODO this is temp solution
+//			if(isTestbench(projectName, fileName)) {
+//				projectExplorer.refreshProject(projectName);
+//			} else {
+				projectExplorer.addFile(projectName, fileName);
+//			}
+			String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_CREATED);
 			text = Utilities.replacePlaceholders(text, new String[] {fileName});
-			echoStatusText(text, MessageEnum.Information);
-			return;
+			echoStatusText(text, MessageEnum.Successfull);
+			openEditor(projectName, fileName, true, false);
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_CREATE_FILE);
+			echoStatusText(text, MessageEnum.Error);
 		}
-		communicator.createFile(projectName, fileName, type);
-		communicator.saveFile(projectName, fileName, data);
-		// TODO this is temp solution
-		if(isTestbench(projectName, fileName)) {
-			projectExplorer.refreshProject(projectName);
-		} else {
-			projectExplorer.addFile(projectName, fileName);
-		}
-		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_CREATED);
-		text = Utilities.replacePlaceholders(text, new String[] {fileName});
-		echoStatusText(text, MessageEnum.Successfull);
-		openEditor(projectName, fileName, true, false);
 	}
 	
-	public void createNewProjectInstance() throws UniformAppletException {
-		String title = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
-		String message = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
-		String projectName = showCreateProjectDialog(title, message);
-		if(projectName == null) return;
-		boolean exists = communicator.existsProject(projectName);
-		if(exists) {
-			// projectName is never null here
-			String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
+	public void createNewProjectInstance() {
+		try {
+			String title = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
+			String message = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
+			String projectName = showCreateProjectDialog(title, message);
+			if(projectName == null) return;
+			boolean exists = communicator.existsProject(projectName);
+			if(exists) {
+				// projectName is never null here
+				String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
+				text = Utilities.replacePlaceholders(text, new String[] {projectName});
+				echoStatusText(text, MessageEnum.Information);
+				return;
+			}
+			communicator.createProject(projectName);
+			projectExplorer.addProject(projectName);
+			String text = bundle.getString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
 			text = Utilities.replacePlaceholders(text, new String[] {projectName});
-			echoStatusText(text, MessageEnum.Information);
-			return;
+			echoStatusText(text, MessageEnum.Successfull);
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_CREATE_PROJECT);
+			echoStatusText(text, MessageEnum.Error);
 		}
-		communicator.createProject(projectName);
-		projectExplorer.addProject(projectName);
-		String text = bundle.getString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
-		text = Utilities.replacePlaceholders(text, new String[] {projectName});
-		echoStatusText(text, MessageEnum.Successfull);
 	}
 	
 	private void setPaneSize() {
@@ -1747,7 +1679,7 @@ public class MainApplet
 	private List<IEditor> pickOpenedEditors(List<IEditor> editors) {
 		List<IEditor> openedEditors = new ArrayList<IEditor>();
 		for(IEditor e : editors) {
-			if(editorPane.editorIsOpened(e)) {
+			if(editorPane.isEditorOpened(e)) {
 				openedEditors.add(e);
 			}
 		}

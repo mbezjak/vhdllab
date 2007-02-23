@@ -13,7 +13,7 @@ public class SchemaWizard implements IWizard {
 		
 	}
 
-	public FileContent getInitialFileContent(Component parent) {
+	public FileContent getInitialFileContent(Component parent, String projectName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

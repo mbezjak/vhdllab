@@ -24,8 +24,8 @@ public class InitManagerProvider implements ServletContextListener {
 		// initialize server data
 		InitServerData initData = new InitServerData(prov);
 		initData.initGlobalFiles();
-		initData.initUserFiles();
-		initData.initDummyProjects();
+//		initData.initUserFiles();
+//		initData.initDummyProjects();
 	}
 
 	/* (non-Javadoc)

@@ -522,14 +522,11 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public FileContent getInitialFileContent(Component parent) {
-		String projectName = container.getSelectedProject();
-		if(projectName == null) {
-			container.echoStatusText("Select a project to run testbench wizard!", MessageEnum.Information);
-			return null;
-		}
+	public FileContent getInitialFileContent(Component parent, String projectName) {
 		RunDialog dialog = new RunDialog(parent, true, container, RunDialog.COMPILATION_TYPE);
 		dialog.setChangeProjectButtonText("change");
+		dialog.setTitle("Select a file for which to create testbench");
+		dialog.setListTitle("Select a file for which to create testbench");
 		dialog.startDialog();
 		if(dialog.getOption() != RunDialog.OK_OPTION) return null;
 		FileIdentifier file = dialog.getSelectedFile();
@@ -542,16 +539,6 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<file>").append(file.getFileName()).append("</file>");
 		return new FileContent(projectName, testbench, sb.toString());
-		
-//		String projectName = container.getSelectedProject();
-//		String depends = 
-//		String fileName = JOptionPane.showInputDialog(parent, "Name of a file?");
-//		
-//		StringBuilder sb = new StringBuilder();
-//		sb.append("<file>").append(depends).append("</file>");
-//		
-//		
-//		return new FileContent(projectName, fileName, sb.toString());
 	}
 
 	public void cleanUp() {}

@@ -53,7 +53,7 @@ public class StatusHistoryView extends JPanel implements IView {
 	 * Constructor.
 	 */
 	public StatusHistoryView() {
-		formatter = new SimpleDateFormat(timeFormat);		
+		formatter = new SimpleDateFormat(timeFormat);
 		textPane = new JTextPane();
 		textPane.setEditable(false);
 		textPane.setAutoscrolls(true);

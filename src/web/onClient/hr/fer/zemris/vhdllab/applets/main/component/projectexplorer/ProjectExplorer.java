@@ -369,11 +369,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					.getUserObject();
 
 			// provjeri kojeg je tipa
-			try {
-				type = projectContainer.getFileType(nodeProjectName, node.toString());
-			} catch (UniformAppletException e) {
-				e.printStackTrace();
-			}
+			type = projectContainer.getFileType(nodeProjectName, node.toString());
 
 			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
 				setIcon(vhdl);
@@ -533,63 +529,29 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			String name = null;
 
 			if (event.getSource().equals(addProject)) {
-				try {
-					projectContainer.createNewProjectInstance();
-				} catch (UniformAppletException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				projectContainer.createNewProjectInstance();
 			} else if (event.getSource().equals(addVHDL)) {
-				try {
-					projectContainer.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
-				} catch (UniformAppletException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
 			} else if (event.getSource().equals(addTb)) {
-				try {
-					projectContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
-				} catch (UniformAppletException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
 			} else if (event.getSource().equals(addSchema)) {
-				try {
-					projectContainer
-							.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
-				} catch (UniformAppletException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
 			} else if (event.getSource().equals(addAutomat)) {
-				try {
-					projectContainer.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
-				} catch (UniformAppletException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
 			} else if (event.getSource().equals(compile)) {
 				fileName = getFileName();
 				if (fileName != null) {
-					try {
-						name = getProjectName();
-						if (name != null) {
-							projectContainer.compile(name, fileName);
-						}
-					} catch (UniformAppletException ex) {
-						;
+					name = getProjectName();
+					if (name != null) {
+						projectContainer.compile(name, fileName);
 					}
 				}
 			} else if (event.getSource().equals(simulate)) {
 				fileName = getFileName();
 				if (fileName != null) {
-					try {
-						name = getProjectName();
-						if (name != null) {
-							projectContainer.simulate(name, fileName);
-						}
-					} catch (UniformAppletException ex) {
-						;
+					name = getProjectName();
+					if (name != null) {
+						projectContainer.simulate(name, fileName);
 					}
 				}
 			} else if (event.getSource().equals(setActive)) {
@@ -601,13 +563,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			} else if (event.getSource().equals(viewVHDL)) {
 				fileName = getFileName();
 				if (fileName != null) {
-					try {
-						name = getProjectName();
-						if (name != null) {
-							projectContainer.viewVHDLCode(name, fileName);
-						}
-					} catch (UniformAppletException ex) {
-						;
+					name = getProjectName();
+					if (name != null) {
+						projectContainer.viewVHDLCode(name, fileName);
 					}
 				}
 			} else if (event.getSource().equals(deleteFile)) {
@@ -876,7 +834,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	public void addFile(String projectName, String fileName) {
 		/* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
 		this.filesByProjects.get(projectName).add(fileName);
-		this.refreshProject(projectName);
+		if(projectContainer.isTestbench(projectName, fileName)) {
+			this.refreshProject(projectName);
+		}
 	}
 
 

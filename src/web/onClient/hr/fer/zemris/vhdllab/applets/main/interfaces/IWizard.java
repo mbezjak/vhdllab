@@ -42,7 +42,10 @@ public interface IWizard {
 	 * For example: Initial file content of VHDL source editor may be project
 	 * and file name chosen by user, along with written entity block of vhdl
 	 * code. Other editors will (most likey) not have vhdl code written in file
-	 * content, but rather an intern format that they know how to display.
+	 * content, but rather an intern format that they know how to display. Note
+	 * that name of entity block in VHDL file must be the same as retured
+	 * <code>FileContent</code>'s file name because <code>Server</code> dictates
+	 * this rule!
 	 * <p>
 	 * This method should only diplay a wizard! Not actual editors to display
 	 * returning file content (do not invoke method 
@@ -53,8 +56,11 @@ public interface IWizard {
 	 * button and does not want to create new file instance.
 	 * 
 	 * @param parent a parent component used to enable modal dialog
+	 * @param projectName a name of a project that must be a part of returning
+	 * 		<code>FileContent</code>; this indicates in which project should
+	 * 		created file be placed
 	 * @return an initial <code>FileContent</code>
 	 */
-	FileContent getInitialFileContent(Component parent);
+	FileContent getInitialFileContent(Component parent, String projectName);
 	
 }

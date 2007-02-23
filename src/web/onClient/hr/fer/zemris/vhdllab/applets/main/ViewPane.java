@@ -10,21 +10,45 @@ import java.util.Map;
 
 import javax.swing.JTabbedPane;
 
-public final class ViewPane extends JTabbedPane {
+public class ViewPane extends JTabbedPane {
 
 	/**
 	 * Serial version UID.
 	 */
 	private static final long serialVersionUID = -8311136559571388001L;
 
+	/**
+     * Creates an empty <code>ViewPane</code> with a default
+     * tab placement of <code>ViewPane.TOP</code>.
+     */
 	public ViewPane() {
 		super();
 	}
 
+	/**
+     * Creates an empty <code>ViewPane</code> with the specified tab placement
+     * of either: <code>ViewPane.TOP</code>, <code>ViewPane.BOTTOM</code>,
+     * <code>ViewPane.LEFT</code>, or <code>ViewPane.RIGHT</code>.
+     *
+     * @param tabPlacement the placement for the tabs relative to the content
+     */
 	public ViewPane(int tabPlacement) {
 		super(tabPlacement);
 	}
 
+	/**
+     * Creates an empty <code>ViewPane</code> with the specified tab placement
+     * and tab layout policy.  Tab placement may be either: 
+     * <code>ViewPane.TOP</code>, <code>ViewPane.BOTTOM</code>,
+     * <code>ViewPane.LEFT</code>, or <code>ViewPane.RIGHT</code>.
+     * Tab layout policy may be either: <code>ViewPane.WRAP_TAB_LAYOUT</code>
+     * or <code>ViewPane.SCROLL_TAB_LAYOUT</code>.
+     *
+     * @param tabPlacement the placement for the tabs relative to the content
+     * @param tabLayoutPolicy the policy for laying out tabs when all tabs will not fit on one run
+     * @throws IllegalArgumentException if tab placement or tab layout policy are not
+     *            one of the above supported values
+     */
 	public ViewPane(int tabPlacement, int tabLayoutPolicy) {
 		super(tabPlacement, tabLayoutPolicy);
 	}
@@ -33,6 +57,10 @@ public final class ViewPane extends JTabbedPane {
 	public Component add(String title, Component c, String type) {
 		views.put(type, c);
 		return add(title, c);
+	}
+	
+	public IView getSelectedView() {
+		return (IView) getSelectedComponent();
 	}
 
 	public IView getViewAt(int index) {
@@ -55,7 +83,7 @@ public final class ViewPane extends JTabbedPane {
 	}
 
 
-	public boolean viewIsOpened(IView view) {
+	public boolean isViewOpened(IView view) {
 		if(view == null) return false;
 		return indexOfView(view) != -1;
 	}
