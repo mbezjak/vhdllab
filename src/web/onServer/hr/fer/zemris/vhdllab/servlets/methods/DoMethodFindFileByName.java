@@ -31,7 +31,7 @@ public class DoMethodFindFileByName implements RegisteredMethod {
 		File file;
 		try {
 			Long id = Long.parseLong(projectID);
-			file = labman.findByName(id, fileName);
+			file = labman.findFileByName(id, fileName);
 		} catch (NumberFormatException e) {
 			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID = '"+projectID+"'!");
 		} catch (Exception e) {

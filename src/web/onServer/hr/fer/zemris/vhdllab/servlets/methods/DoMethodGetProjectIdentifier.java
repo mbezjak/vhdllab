@@ -30,7 +30,7 @@ public class DoMethodGetProjectIdentifier implements RegisteredMethod {
 		// Get project
 		Project project = null;
 		try {
-			project = labman.getProject(ownerId, projectName);
+			project = labman.findProjectByName(ownerId, projectName);
 		} catch (Exception e) {
 			project = null;
 		}

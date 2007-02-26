@@ -301,7 +301,7 @@ public final class TestManager {
 			if(!labman.existsProject(userId, projectName)) {
 				project = labman.createNewProject(projectName, userId);
 			} else {
-				project = labman.getProject(userId, projectName);
+				project = labman.findProjectByName(userId, projectName);
 			}
 
 			fileName = "mux41";

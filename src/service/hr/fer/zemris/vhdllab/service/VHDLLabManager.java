@@ -70,7 +70,7 @@ public interface VHDLLabManager {
 	 * 		name, respectively
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public Project getProject(String userId, String projectName) throws ServiceException;
+	public Project findProjectByName(String userId, String projectName) throws ServiceException;
 	/**
 	 * Saves projects using underlaying persistance layer.
 	 * @param p project to save; must not be null
@@ -114,7 +114,7 @@ public interface VHDLLabManager {
 	 * @return a file with specified project identifier and file name
 	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public File findByName(Long projectId, String name) throws ServiceException;
+	public File findFileByName(Long projectId, String name) throws ServiceException;
 	/**
 	 * Use this method to create a new file which is member of specified
 	 * project, and has name and type as specified. Content will be set

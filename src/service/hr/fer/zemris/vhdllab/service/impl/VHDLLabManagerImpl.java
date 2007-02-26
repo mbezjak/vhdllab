@@ -309,7 +309,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return h;
 	}
 
-	public File findByName(Long projectId, String name) throws ServiceException {
+	public File findFileByName(Long projectId, String name) throws ServiceException {
 		try {
 			return fileDAO.findByName(projectId,name);
 		} catch (DAOException e) {
@@ -404,7 +404,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return globalFileDAO;
 	}
 
-	public Project getProject(String userId, String projectName) throws ServiceException {
+	public Project findProjectByName(String userId, String projectName) throws ServiceException {
 		List<Project> projects = findProjectsByUser(userId);
 		for(Project p : projects) {
 			if(p.getProjectName().equals(projectName)) {
