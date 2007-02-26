@@ -828,7 +828,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	/**
 	 * Dodaje novu datoteku u neki projekt.
 	 * 
-	 * @param projectContainer ime projekta u koji ide datoteka
+	 * @param projectName ime projekta u koji ide datoteka
 	 * @param fileName ime datoteke
 	 */
 	public void addFile(String projectName, String fileName) {
@@ -836,6 +836,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		this.filesByProjects.get(projectName).add(fileName);
 		if(projectContainer.isTestbench(projectName, fileName)) {
 			this.refreshProject(projectName);
+		} else {
+			addFileInProject(projectName, fileName);
 		}
 	}
 
@@ -879,13 +881,38 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 
 	/**
-	 * Metoda refresha stablo.  
-	 *
-	 * @param projectName ime projekta koji se refresha
+	 * Metoda dodaje novu datoteku u projekt bez refreshanja samog projekta
+	 */
+	private void addFileInProject(String projectName, String fileName) {
+		PeNode projectNode = null;
+
+		// nadi cvor ciji je objekt jednak imenu projekta iz argumenata
+		for (int i = 0; i < root.getChildCount(); i++) {
+			projectNode = (PeNode)(root.getChildAt(i));
+			if (projectNode.getUserObject().equals(projectName)) {
+				PeNode fileNode = new PeNode(fileName);
+				treeModel.insertNodeInto(fileNode, projectNode, projectNode
+						.getChildCount());
+				treeModel.reload();
+				for (TreePath treePath : expandedNodes) {
+					tree.expandPath(treePath);
+				}
+				break;
+			}
+		}
+	}
+
+
+
+
+		/**
+		 * Metoda refresha stablo.  
+		 *
+		 * @param projectName ime projekta koji se refresha
 	 */
 	public void refreshProject(String projectName) {
 		/*
-		 *Interakcijom s korinsikom u stablo se mogu
+		 * Interakcijom s korinsikom u stablo se mogu
 		 * dodavati, brisati elementi.  Ti elementi, s druge strane, imaju
 		 * razlicitu hijerarhiju prikaza (source iz kojeg je napravljen testbench
 		 * cini dijete testbencha i slicno) pa je potrebno svaki put pozivati
