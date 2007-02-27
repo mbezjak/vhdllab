@@ -476,13 +476,15 @@ public class AutoDrawer extends JPanel{
 				y2=iz.oy+radijus+(int)(Math.sin(fi-strOdm)*radijus);
 				x3=(int)(Math.abs(x2+(x1-x2)/2)-7*l);
 				y3=(int)(Math.abs(y2+(y1-y2)/2));
+				fi-=Math.PI/2;
+				strOdm=-0.3;
 			}
 			else{	
 				x3=(int)(Math.abs(x2+(x1-x2)/2));
 				y3=(int)(Math.abs(y2+(y1-y2)/2)-7*l);
+				strOdm=-0.2;
 			}
-			strOdm=-0.2;
-			fi-=Math.PI/2;
+						
 		}
 		
 		//crtanje prijelaza.....
@@ -526,7 +528,7 @@ public class AutoDrawer extends JPanel{
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		String tekst="";
 		if(pr!=null)tekst=pr.toString();
-		else tekst="ELSE";
+		else tekst="E";
 		g.setFont(new Font("Helvetica", Font.PLAIN, 2*radijus/5));
 		
 		
@@ -546,6 +548,7 @@ public class AutoDrawer extends JPanel{
 		}else{
 			xtekst+=(int)((double)fm.stringWidth(tekst)/2*Math.sin(fi));
 			ytekst-=(int)((double)fm.getAscent()/2*Math.cos(fi));
+			if(pr==null)ytekst+=radijus*4/5;
 		}
 		
 		g.drawString(tekst,xtekst,ytekst);

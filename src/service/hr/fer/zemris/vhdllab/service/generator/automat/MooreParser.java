@@ -104,9 +104,10 @@ public class MooreParser implements IAutomatVHDLGenerator {
 					buffer=generirajPrijelaz(buffer,pr);
 			}
 			if(!test)buffer.append("ELSE ");
-			buffer.append("state_next<=ST_").append(st.els).append(";\n\t\tEND IF;");
+			buffer.append("state_next<=ST_").append(st.els).append(";");
+			if(!test)buffer.append("\n\t\tEND IF;");
 		}
-		buffer.append("\n\t\t WHEN OTHERS => state_next <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
+		buffer.append("\n\t\tWHEN OTHERS => state_next <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
 		return buffer;
 	}
 

@@ -182,7 +182,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 */
 
         public boolean isCellEditable(int row, int col) {
-        	if(col>2&&getValueAt(row,2).equals("Std_Logic"))return false;
+        	if(col>2&&getValueAt(row,2).equals("std_logic"))return false;
             return true;
         }
 
