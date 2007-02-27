@@ -93,8 +93,6 @@ public class GHDLCompiler implements ICompiler {
 				return new CompilationResult(Integer.valueOf(retVal),false,listToCompilationMessages(errors));
 			}
 			return new CompilationResult(Integer.valueOf(retVal),true,listToCompilationMessages(errors));
-		} catch(Exception ex) {
-			ex.printStackTrace();
 		} catch(Throwable tr) {
 			tr.printStackTrace();
 		} finally {

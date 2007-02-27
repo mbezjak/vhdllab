@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.vhdl;
 
 import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
@@ -31,7 +30,7 @@ public class VHDLDependencyExtractor implements IDependency {
 		String  source = f.getContent();
 		Set<String> usedComponents = Extractor.extractUsedComponents(source);
 		for(String componentName : usedComponents) {
-			File component  = findMatchingFile(f.getProject(), componentName);
+			File component  = labman.findFileByName(f.getProject().getId(), componentName);
 			if(component==null) {
 				throw new ServiceException("VHDL source points to non project file!");
 			}
@@ -40,17 +39,4 @@ public class VHDLDependencyExtractor implements IDependency {
 		return result;
 	}
 
-	/**
-	 * Helper method which searches all project files for file with given filename,
-	 * ignoring filename casing.
-	 * @param p project
-	 * @param filename filename
-	 * @return requested file if found, or null otherwise
-	 */
-	private File findMatchingFile(Project p, String filename) {
-		for(File f : p.getFiles()) {
-			if(f.getFileName().equalsIgnoreCase(filename)) return f;
-		}
-		return null;
-	}
 }

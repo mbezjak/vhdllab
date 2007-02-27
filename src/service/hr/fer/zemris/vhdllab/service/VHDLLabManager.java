@@ -266,6 +266,17 @@ public interface VHDLLabManager {
 	public List<UserFile> findUserFilesByUser(String userId) throws ServiceException;
 
 	/**
+	 * Returns predefined file or throws <code>ServiceException</code> if
+	 * predefined file with <code>fileName</code> does not exists.
+	 * @param fileName a name of a file
+	 * @param retrieveFileBody if file content should be set
+	 * @return a predefined file or throws <code>ServiceException</code> if 
+	 * 		predefined file with <code>fileName</code> does not exists  
+	 * @throws ServiceException if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public File getPredefinedFile(String fileName, boolean retrieveFileBody) throws ServiceException;
+	
+	/**
 	 * Use this method to compile specified file.
 	 * @param fileId identifier of the file
 	 * @return compilation result

@@ -118,8 +118,6 @@ public class GHDLSimulator implements ISimulator {
 				waveform = vcd.getResultInString();
 			}
 			return new SimulationResult(Integer.valueOf(retVal),retVal==0,listToSimMessages(errors),waveform);
-		} catch(Exception ex) {
-			ex.printStackTrace();
 		} catch(Throwable tr) {
 			tr.printStackTrace();
 		} finally {

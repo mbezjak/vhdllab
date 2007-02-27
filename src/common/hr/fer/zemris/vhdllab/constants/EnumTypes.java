@@ -7,6 +7,7 @@ public enum EnumTypes {
 	FT_VHDL_STRUCT_SCHEMA("vhdl_struct_schema", Role.CIRCUIT),
 	FT_VHDL_TB("vhdl_tb", Role.TESTBENCH),
 	FT_VHDL_SIMULATION("vhdl_simulation", Role.SIMULATION),
+	FT_PREDEFINED("predefined", Role.NOT_VHDL),
 	FT_THEME("theme", Role.NOT_VHDL),
 	FT_APPLET("applet", Role.NOT_VHDL),
 	FT_COMMON("common", Role.NOT_VHDL);

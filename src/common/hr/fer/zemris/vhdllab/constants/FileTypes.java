@@ -11,6 +11,8 @@ public class FileTypes {
 	public static final String FT_VHDL_TB = "vhdl_tb";
 	public static final String FT_VHDL_SIMULATION = "vhdl_simulation";
 
+	public static final String FT_PREDEFINED = "predefined";
+	
 	public static final String FT_THEME = "theme";
 	public static final String FT_APPLET = "applet";
 	public static final String FT_COMMON = "common";
@@ -28,6 +30,11 @@ public class FileTypes {
 				type.equals(FileTypes.FT_VHDL_STRUCT_SCHEMA) ||
 				type.equals(FileTypes.FT_VHDL_AUTOMAT);
 	}
+	
+	public static boolean isPredefined(String type) {
+		return type.equals(FileTypes.FT_PREDEFINED);
+	}
+
 
 	public static boolean isNotVHDL(String type) {
 		return !(isSimulation(type) || isTestbench(type) || isCircuit(type));
@@ -48,6 +55,7 @@ public class FileTypes {
 		values.add(FileTypes.FT_VHDL_STRUCT_SCHEMA);
 		values.add(FileTypes.FT_VHDL_TB);
 		values.add(FileTypes.FT_VHDL_SIMULATION);
+		values.add(FileTypes.FT_PREDEFINED);
 		values.add(FileTypes.FT_THEME);
 		values.add(FileTypes.FT_APPLET);
 		values.add(FileTypes.FT_COMMON);

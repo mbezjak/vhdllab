@@ -290,6 +290,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			depExtractor = new TestBenchDependencyExtractor();
 		} else if(file.getFileType().equals(FileTypes.FT_VHDL_AUTOMAT)) {
 			depExtractor = new AUTDependancy();
+		} else if(file.getFileType().equals(FileTypes.FT_VHDL_STRUCT_SCHEMA)) {
+			return Collections.emptyList();
 		} else {
 			throw new ServiceException("FileType "+file.getFileType()+" has no registered dependency extractors!");
 		}
@@ -585,6 +587,19 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public void setUserFileDAO(UserFileDAO userFileDAO) {
 		this.userFileDAO = userFileDAO;
+	}
+
+	public File getPredefinedFile(String fileName, boolean retrieveFileBody) throws ServiceException {
+		if(fileName == null) { 
+			throw new ServiceException("File name can not be null.");
+		}
+		File f = new File();
+		f.setFileName(fileName);
+		f.setFileType(FileTypes.FT_PREDEFINED);
+		if(retrieveFileBody) {
+			// TODO treba napravit
+		}
+		return f;
 	}
 
 }
