@@ -296,7 +296,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		toolbarPanel = new JPanel();
 		toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS));
 		toolbarPanel.setPreferredSize(new Dimension(100, 35));
-		toolbarPanel.setMaximumSize(new Dimension(400, 60));
+		// ovo s dimenzijama mi se nije dalo gnjaviti s layoutima, vidio da pali
+		// pa sam osinuo 3000 i gotovo.  ako se stavi manje, npr: 400 onda ce se
+		// toolbar pomicati udesno prilikom resizeanja.  S 3000 je fiksan k'o
+		// pingvin koji sjedi na jajetu.
+		toolbarPanel.setMaximumSize(new Dimension(3000, 60));
 		toolbar = new JToolBar();
 		toolbar.setPreferredSize(new Dimension(100, 30));
 		toolbar.setFloatable(false);
@@ -343,6 +347,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		private Icon automat = new ImageIcon(getClass().getResource("automat.png"));
 		private Icon schema = new ImageIcon(getClass().getResource("schema.png"));
 		private Icon simulation = new ImageIcon(getClass().getResource("simulation.png"));
+		private Icon project = new ImageIcon(getClass().getResource("project.png"));
 
 
 		@Override
@@ -362,6 +367,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			parent = (PeNode)(node.getParent());
 			if (parent.isRoot()) {
+				setIcon(project);
+				setToolTipText("Project file");
 				return this;
 			}
 			TreeNode[] treeNode = node.getPath();
@@ -686,9 +693,11 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 			String fileName = null;
 			String name = null;
-			TreePath selPath = tree.getPathForLocation(event.getX(), event.getY());
-
+			//TreePath selPath = tree.getPathForLocation(event.getX(), event.getY());
+			TreePath selPath;	
 			workingTreePath = tree.getClosestPathForLocation(event.getX(), event.getY());
+			tree.setSelectionPath(workingTreePath);
+			selPath = workingTreePath;
 			if (isNowExpanded) {
 				isNowExpanded = false;
 				expandedNodes.add(workingTreePath);
