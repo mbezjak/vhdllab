@@ -81,7 +81,7 @@ public class Prijelaz {
 		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=optionPane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONLABEL));
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
@@ -101,7 +101,7 @@ public class Prijelaz {
 		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=optionPane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_TRANSITIONLABEL));
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);

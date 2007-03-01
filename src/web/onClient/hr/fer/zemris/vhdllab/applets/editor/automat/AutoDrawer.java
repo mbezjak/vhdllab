@@ -1,3 +1,4 @@
+
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 //TODO prijelaz i equals i kad se koristi lista i dialog i kad se stvara novi prijelaz koji ide iz-u...
@@ -5,7 +6,8 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
  * else prijelaz ispis kad ide iz jednog u drugo stanje,
  * interni kod!! OK
  * VHDL OK
- * resize!!! !!!!!!!!!!!
+ * farbica ak niuje sve kak stima!!! OK
+ * resize!!! !!!!!!!!!!! samo jos dati minimume!!!
  */
 
 
@@ -96,7 +98,7 @@ public class AutoDrawer extends JPanel{
 	 */
 	private Prijelaz prijelazZaDodati=null;
 	/**
-	 * radijus krugova za stanja
+	 * radijus krugova za stanja DEFAULT=20
 	 */
 	private int radijus=20;
 	/**
@@ -109,6 +111,14 @@ public class AutoDrawer extends JPanel{
 	 * stanjeRada=6 zadavanje pocetnog stanja
 	 */
 	private int stanjeRada=1;
+	
+	private boolean isOK=false;
+	
+	/**
+	 * Minimalne dimenzije do kojih se smije smanjivat editor.
+	 */
+	private int minX=0;
+	private int minY=0;
 	
 	private HashSet<String> listaSignala=null;
 	
@@ -241,9 +251,11 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void nacrtajSklop(int eventx,int eventy){
 		if(dataSet()){
+		checkOKness();
+		resizeComponent();
 		Graphics2D g=(Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(Color.BLACK);
+		g.setColor(getOKColor());
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
 		g.setColor(Color.WHITE);
 		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
@@ -329,15 +341,40 @@ public class AutoDrawer extends JPanel{
 		}
 		
 	}
+	
+	private void resizeComponent() {
+		int maxX=minX;
+		int maxY=minY;
+		for(Stanje st:stanja){
+			if(st.ox+2*radijus+10>maxX)maxX=st.ox+2*radijus+10;
+			if(st.oy+2*radijus+10>maxY)maxY=st.oy+2*radijus+10;
+		}
+		//if(maxX!=minX||maxY!=minY)
+			this.setSize(maxX,maxY);
+			//System.out.println(minX+" "+minY+":"+this.getWidth()+" "+this.getHeight());
+	}
+
+	/**
+	 * Funkcija postavlja boju u crvenu ako je automat trenutno neispravan za 
+	 * generiranje VHDL-a, inace se boja postavlja na crnu.
+	 * @return color black or white
+	 */
+	private Color getOKColor() {
+		if (isOK) return Color.BLACK;
+		return Color.RED;
+	}
+
 	/**
 	 * crta automat bez moguceg stanjaRada4
 	 *
 	 */
 	private void nacrtajSklop(){
 		if(dataSet()){
+		checkOKness();
+		resizeComponent();
 		Graphics2D g=(Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(Color.BLACK);
+		g.setColor(getOKColor());
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
 		g.setColor(Color.WHITE);
 		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
@@ -417,6 +454,15 @@ public class AutoDrawer extends JPanel{
 		
 	}
 	
+	/**
+	 * Postavlja isOK zastavicu na true ako je moguce napraviti
+	 * VHDL iz trenutnog automata, inace false.
+	 *
+	 */
+	private void checkOKness() {
+		if(stanja.size()==0||podatci.pocetnoStanje.equals(""))isOK=false;
+		else isOK=true;
+	}
 
 	private boolean dataSet() {
 		return (prijelazi!=null)&&(podatci!=null)&&(stanja!=null);
@@ -574,8 +620,10 @@ public class AutoDrawer extends JPanel{
 	@Override
 	public Dimension getPreferredSize() {
 		int x,y;
-		if(this.getWidth()<100) x=100; else x=this.getWidth();
-		if(this.getHeight()<100) y=100; else y=this.getHeight();
+		x=this.getWidth();
+		y=this.getHeight();
+		if(x==0)x=1;
+		if(y==0)y=1;
 		return new Dimension(x,y);
 	}
 
@@ -704,6 +752,7 @@ public class AutoDrawer extends JPanel{
 	}
 
 	public void editorPrijelaza(Prijelaz pr) {
+		//TODO:sredujem da se izbrise prijelaz ako nama nista na njemu.....
 		final Prijelaz pr2=pr;
 		JButton add=new JButton(bundle.getString(LanguageConstants.EDITOR_ADD));
 		JButton delete=new JButton(bundle.getString(LanguageConstants.EDITOR_DELETE));
@@ -748,26 +797,51 @@ public class AutoDrawer extends JPanel{
 		delete.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				if(list.getSelectedIndex()>-1)
-					if (listam.size()>1) {
+					if (listam.size()>0) {
 						String pom=(String)list.getSelectedValue();
 						listam.remove(list.getSelectedIndex());
 						pr2.pobudaIzlaz.remove(pom);
 					}
-					else JOptionPane.showMessageDialog(AutoDrawer.this,bundle.getString(LanguageConstants.EDITOR_MESSAGE));
+					//else JOptionPane.showMessageDialog(AutoDrawer.this,bundle.getString(LanguageConstants.EDITOR_MESSAGE));
 			}	
 		});
 		
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=optionPane.createDialog(this,bundle.getString(LanguageConstants.EDITOR_TITLE));
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
 		if(selected.equals(options[0])){
-		 	pr=pr2;
+		 	if(pr2.pobudaIzlaz.size()>0)
+		 		pr=pr2;
+		 	else prijelazi.remove(pr);
 			nacrtajSklop();
 		}
 	}
+	
+	/**
+	 * niz funkcija koje sreduju resize i sl
+	 * @param x
+	 * @param y
+	 */
+	private void pomjeriSliku(int x, int y) {
+		if(x>AutoDrawer.this.getWidth())AutoDrawer.this.setSize(x,AutoDrawer.this.getHeight());
+		if(y>AutoDrawer.this.getHeight())AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),y);
+
+		if(x<3.3*radijus||y<3.3*radijus) moveAll(x,y);	//TODO i tu je odmak!!!
+	}
+
+	private void moveAll(int x, int y) {
+		final int odmak=(int) (3.3*radijus);
+		for(Stanje s:stanja){
+			s.ox-=(x<odmak?x-odmak:0);
+			s.oy-=(y<odmak?y-odmak:0);
+		}
+		if(x<odmak)AutoDrawer.this.setSize(AutoDrawer.this.getWidth()-x+odmak,AutoDrawer.this.getHeight());
+		if(y<odmak)AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),AutoDrawer.this.getHeight()-y+odmak);
+	}
+	
 	
 //****************************NESTED CLASESS****************************************
 	
@@ -783,14 +857,15 @@ public class AutoDrawer extends JPanel{
 		 */
 		public void mouseDragged(MouseEvent e) {
 			if(pressed){
+				//pomjeriSliku(e.getX(),e.getY());
 				if(!isModified)isModified=true;
-					selektiran.ox=e.getX()-radijus;
-					selektiran.oy=e.getY()-radijus;
+				selektiran.ox=e.getX()-radijus;
+				selektiran.oy=e.getY()-radijus;
 					/*if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
 					if(selektiran.ox<0)selektiran.ox=0;
 					if(selektiran.oy>img.getHeight()-2*radijus) selektiran.oy=img.getHeight()-2*radijus;
 					if(selektiran.oy<0)selektiran.oy=0;*/
-					nacrtajSklop();
+				nacrtajSklop();
 			}
 		}
 		
@@ -936,7 +1011,7 @@ public class AutoDrawer extends JPanel{
 			if(stanjeRada==5){
 				for(Stanje st:stanja)
 					if (jelSelektiran(e,st)) {
-						if(st.ime.equals(podatci.pocetnoStanje))podatci.pocetnoStanje=null;
+						if(st.ime.equals(podatci.pocetnoStanje))podatci.pocetnoStanje="";
 						brisiStanje(st);
 						if(!isModified)isModified=true;
 						nacrtajSklop();
@@ -992,12 +1067,16 @@ public class AutoDrawer extends JPanel{
 		 */
 		public void mouseReleased(MouseEvent e) {	
 			
-			if(e.getX()>AutoDrawer.this.getWidth())AutoDrawer.this.setSize(e.getX(),AutoDrawer.this.getHeight());
-			if(e.getY()>AutoDrawer.this.getHeight())AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),e.getY());
-			
-			if(e.getX()<0||e.getY()<0) moveAll(e.getX(),e.getY());
 			
 			if(pressed){
+				
+				pomjeriSliku(e.getX(),e.getY());
+				/*if(e.getX()>AutoDrawer.this.getWidth())AutoDrawer.this.setSize(e.getX(),AutoDrawer.this.getHeight());
+				if(e.getY()>AutoDrawer.this.getHeight())AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),e.getY());
+				
+				if(e.getX()<0||e.getY()<0) moveAll(e.getX(),e.getY());
+				*/
+				
 				if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
 				if(selektiran.ox<0)selektiran.ox=0;
 				if(selektiran.oy>img.getHeight()-2*radijus) selektiran.oy=img.getHeight()-2*radijus;
@@ -1012,14 +1091,6 @@ public class AutoDrawer extends JPanel{
 			
 		}
 
-		private void moveAll(int x, int y) {
-			for(Stanje s:stanja){
-				s.ox-=(x<0?x:0);
-				s.oy-=(y<0?y:0);
-			}
-			if(x<0)AutoDrawer.this.setSize(AutoDrawer.this.getWidth()-x,AutoDrawer.this.getHeight());
-			if(y<0)AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),AutoDrawer.this.getHeight()-y);
-		}
 
 		/**
 		 * nis ne radi...
@@ -1083,7 +1154,7 @@ public class AutoDrawer extends JPanel{
 				};
 				JTextField name=new JTextField(string);
 				name.setBorder(BorderFactory.createTitledBorder(bundle.getString(LanguageConstants.DIALOG_TEXT_SIGNALNAME)));
-				JOptionPane optionPane=new JOptionPane(name,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+				JOptionPane optionPane=new JOptionPane(name,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 				JDialog dialog=optionPane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_MACHINEDATA));
 				dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 				dialog.setVisible(true);
@@ -1092,7 +1163,7 @@ public class AutoDrawer extends JPanel{
 				if(selected.equals(options[1])) return string;
 				else {
 					String st=name.getText();
-					if(listaSignala.contains(st.toLowerCase())||!isCorrectEntityName(st)){
+					if((listaSignala.contains(st.toLowerCase())||!isCorrectEntityName(st))&&!st.equalsIgnoreCase(string)){
 						String[] options2={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
 								bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
 						JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_SIGNALEXISTS),
@@ -1122,7 +1193,7 @@ public class AutoDrawer extends JPanel{
 		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
-		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=optionPane.createDialog(this,bundle.getString(LanguageConstants.DIALOG_TITLE_MACHINEDATA));
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
@@ -1156,5 +1227,9 @@ public class AutoDrawer extends JPanel{
 		}  
 		return true;
 	}
-	
+
+	public void setMinXY(int minX,int minY) {
+		this.minX = minX;
+		this.minY=minY;
+	}
 }

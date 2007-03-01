@@ -74,7 +74,7 @@ public class Stanje {
 		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
-		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATELABEL));
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
@@ -98,7 +98,7 @@ public class Stanje {
 		String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK),
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
-		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JOptionPane pane=new JOptionPane(panel,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATELABEL));
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
@@ -117,7 +117,7 @@ public class Stanje {
 			String[] options={bundle.getString(LanguageConstants.DIALOG_BUTTON_OK)
 			};
 			JOptionPane pane=new JOptionPane(bundle.getString(LanguageConstants.DIALOG_INPUT_MEALYEDITOUTPUT),
-					JOptionPane.INFORMATION_MESSAGE,JOptionPane.DEFAULT_OPTION,null,options,null);
+					JOptionPane.INFORMATION_MESSAGE,JOptionPane.DEFAULT_OPTION,null,options,options[0]);
 			JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATEEDITLABEL));
 			dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 			dialog.setVisible(true);
@@ -135,7 +135,7 @@ public class Stanje {
 				bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)
 		};
 		
-		JOptionPane pane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,null);
+		JOptionPane pane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=pane.createDialog(obj,bundle.getString(LanguageConstants.DIALOG_INPUT_STATEEDITLABEL));
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);

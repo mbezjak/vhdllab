@@ -24,6 +24,7 @@ public class LanguageConstants {
 	public static final String DIALOG_MESSAGE_STATEEXISTS="dialog.Messege.StateExists";
 	public static final String DIALOG_MESSAGE_TRANSITIONEXISTS="dialog.Message.TransitionExists";
 	public static final String DIALOG_MESSAGE_SIGNALEXISTS="dialog.Message.SignalExists";
+	public static final String DIALOG_MESSAGE_WIZARDINCORRECT="dialog.Message.WizardIncorrect";
 	
 	public static final String DIALOG_INPUT_STATENAME="dialog.Input.NewStateName";
 	public static final String DIALOG_INPUT_STATEOUT="dialog.Input.NewStateOutput";

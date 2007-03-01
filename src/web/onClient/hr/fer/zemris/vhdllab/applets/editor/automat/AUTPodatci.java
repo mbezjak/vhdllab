@@ -92,7 +92,7 @@ public class AUTPodatci {
 		panel1.add(clock);
 		
 		String[] options1={bu.getString(LanguageConstants.DIALOG_BUTTONNEXT),bu.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)};
-		JOptionPane optionPane1=new JOptionPane(panel1,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options1,options1[1]);
+		JOptionPane optionPane1=new JOptionPane(panel1,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options1,options1[0]);
 		JDialog dialog1=optionPane1.createDialog(drawer,bu.getString(LanguageConstants.DIALOG_TITLE_WIZARD));
 		dialog1.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 //		dialog1.setSize(new Dimension(700,300));
@@ -113,7 +113,8 @@ public class AUTPodatci {
 			boolean test=true;
 			String[] options={bu.getString(LanguageConstants.DIALOG_BUTTONFINISH),bu.getString(LanguageConstants.DIALOG_BUTTON_CANCEL)};
 			while(test){
-				JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[1]);
+				JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0
+				                                                                                                                         ]);
 				JDialog dialog=optionPane.createDialog(drawer,bu.getString(LanguageConstants.DIALOG_TITLE_WIZARD));
 				dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 				dialog.setSize(new Dimension(700,300));
@@ -126,12 +127,27 @@ public class AUTPodatci {
 					this.ime=inter.getName();
 					this.reset=(String)reset.getSelectedItem();
 					this.clock=(String)clock.getSelectedItem();
-					parseInterfac(inter.getData());
-					test=false;
+					String[][] data=inter.getData();
+					if(dataOK(data)){
+						parseInterfac(data);
+						test=false;
+					}else{
+						this.ime=null;
+						String[] optionsX={bu.getString(LanguageConstants.DIALOG_BUTTON_YES),bu.getString(LanguageConstants.DIALOG_BUTTON_NO)};
+						JOptionPane pa=new JOptionPane(bu.getString(LanguageConstants.DIALOG_MESSAGE_WIZARDINCORRECT),JOptionPane.QUESTION_MESSAGE,JOptionPane.YES_NO_OPTION,null,optionsX,optionsX[0]);
+						JDialog dialog2=pa.createDialog(drawer,bu.getString(LanguageConstants.DIALOG_TITLE_WIZARD));
+						dialog2.setVisible(true);
+						
+						selected=pa.getValue();
+						if(selected.equals(optionsX[0]))
+							test=true;
+						else test=false;
+					}
 				}else if(selected.equals(options[1])) {
 					this.ime=null;
 					test=false;
 				}
+				//dodati dialog provjere
 			}
 		}else this.ime=null;
 		sirina=CONST_SIR;
@@ -166,4 +182,16 @@ public class AUTPodatci {
 			}
 		return test;
 	}*/
+
+	private boolean dataOK(String[][] data) {
+		boolean markerIn=false;
+		boolean markerOut=false;
+		
+		for(int i=0;i<data.length;i++){
+			if(data[i][1].equalsIgnoreCase("in"))markerIn=true;
+			if(data[i][1].equalsIgnoreCase("out"))markerOut=true;
+		}
+			
+		return markerIn&&markerOut;
+	}
 }

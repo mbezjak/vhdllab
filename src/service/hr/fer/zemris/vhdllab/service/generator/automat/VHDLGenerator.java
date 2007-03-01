@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 public class VHDLGenerator implements IVHDLGenerator {
 	protected String parsedVHDL;
 	
-	public VHDLGenerator(String data) {
+	public VHDLGenerator(String data) throws ServiceException {
 		super();
 		AUTParser aut=new AUTParser();
 		try {
@@ -27,11 +27,15 @@ public class VHDLGenerator implements IVHDLGenerator {
 		LinkedList<Stanje> stanja = aut.stanja;
 		HashSet<Prijelaz> prijelazi = aut.prijelazi;
 		AUTPodatci podatci = aut.podatci;
-		
 		IAutomatVHDLGenerator inter=null;
-		if(podatci.tip.toUpperCase().equals("MOORE"))
-			 inter=new MooreParser(stanja,podatci,prijelazi);
-		else inter=new MealyParser(stanja,podatci,prijelazi);
+		if(provjera(stanja, podatci)){
+			if(podatci.tip.toUpperCase().equals("MOORE"))
+			 	inter=new MooreParser(stanja,podatci,prijelazi);
+			else inter=new MealyParser(stanja,podatci,prijelazi);
+			parsedVHDL=inter.getData();
+		}else
+			throw new ServiceException("nemoguce generirati VHDL");
+
 		parsedVHDL=inter.getData();
 	}
 	
@@ -56,12 +60,20 @@ public class VHDLGenerator implements IVHDLGenerator {
 		HashSet<Prijelaz> prijelazi = aut.prijelazi;
 		AUTPodatci podatci = aut.podatci;
 		
-		IAutomatVHDLGenerator inter=null;
-		if(podatci.tip.toUpperCase().equals("MOORE"))
-			 inter=new MooreParser(stanja,podatci,prijelazi);
-		else inter=new MealyParser(stanja,podatci,prijelazi);
-		parsedVHDL=inter.getData();
+		if(provjera(stanja, podatci)){
+			IAutomatVHDLGenerator inter=null;
+			if(podatci.tip.toUpperCase().equals("MOORE"))
+			 	inter=new MooreParser(stanja,podatci,prijelazi);
+			else inter=new MealyParser(stanja,podatci,prijelazi);
+			parsedVHDL=inter.getData();
+		}else
+			throw new ServiceException("nemoguce generirati VHDL");
 		return parsedVHDL;
+	}
+
+	private boolean provjera(LinkedList<Stanje> stanja, AUTPodatci podatci) {
+		if(stanja.size()==0||podatci.pocetnoStanje.equals(""))return false;
+		return true;
 	}
 	
 }
