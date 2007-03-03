@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
+import hr.fer.zemris.vhdllab.applets.main.component.about.About;
 import hr.fer.zemris.vhdllab.applets.main.component.dummy.SideBar;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
@@ -107,6 +108,8 @@ public class MainApplet
 	private JPanel centerPanel;
 	private JPanel normalCenterPanel;
 	private Container parentOfMaximizedComponent = null;
+	
+	private About about;
 	
 	/* (non-Javadoc)
 	 * @see java.applet.Applet#init()
@@ -285,6 +288,7 @@ public class MainApplet
 	private JPanel setupCenterPanel() {
 		ProjectExplorer projectExplorer = new ProjectExplorer();
 		this.projectExplorer = projectExplorer;
+		about = new About(MainApplet.this);
 		projectExplorer.setProjectContainer(this);
 		//JPanel projectExplorerPanel = new JPanel(new BorderLayout());
 		projectExplorerPanel = new JPanel(new BorderLayout());
@@ -841,6 +845,14 @@ public class MainApplet
 			// Help menu
 			key = LanguageConstants.MENU_HELP;
 			menu = new JMenu(bundle.getString(key));
+			key = LanguageConstants.MENU_HELP_ABOUT;
+			menuItem = new JMenuItem(bundle.getString(key));
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					about.setVisible(true);
+				}
+			});
+			menu.add(menuItem);
 			setCommonMenuAttributes(menu, key);
 			menuBar.add(menu);
 			

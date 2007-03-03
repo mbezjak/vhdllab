@@ -67,6 +67,7 @@ public class LanguageConstants {
 	public static final String MENU_TOOLS_SIMULATE_ACTIVE = "menu.tools.simulate.active";
 	public static final String MENU_TOOLS_SIMULATE_HISTORY = "menu.tools.simulate.history";
 	public static final String MENU_TOOLS_VIEW_VHDL_CODE = "menu.tools.view.vhdl.code";
+	public static final String MENU_HELP_ABOUT = "menu.help.about";
 
 	
 	public static final String DIALOG_BUTTON_YES = "dialog.button.yes";
