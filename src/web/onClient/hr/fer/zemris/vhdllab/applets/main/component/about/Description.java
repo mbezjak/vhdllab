@@ -14,7 +14,7 @@ public enum Description {
 			" ,project explorer i compile errorse"),
 	PROKOPEC("Student 3. godine racunarstva.  Schematic je njegovih ruku djelo.  Jos jedan" +
 			" 5 nulas.  A mi ne volimo 5 nulase.  :)"),
-	RAJAKOVIC("Student 3. godine racunarstva.  Bio moralna podrka, ali ocekuje se njegov" +
+	RAJAKOVIC("Student 3. godine racunarstva.  Bio moralna podrska, ali ocekuje se njegov" +
 			" brutalno mocni editor."),
 	VIGNJEVIC("Studentica 3. godine racunarstva.  Ceka se njen sinopsis razgovora s Majom Botincan" +
 			" poradi OOP-a.  Na projektu bila zlocesta i podbadala ekipu.  :P");
