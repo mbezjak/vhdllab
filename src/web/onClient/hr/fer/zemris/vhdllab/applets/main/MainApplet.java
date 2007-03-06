@@ -1959,7 +1959,7 @@ public class MainApplet
 		
 		public static String serializeEditorInfo(List<IEditor> editors) {
 			// guessing file name and project name (together) to be 15 characters
-			StringBuilder sb = new StringBuilder(editors.size() * 15);
+			StringBuilder sb = new StringBuilder(editors.size() * 20);
 			for(IEditor e : editors) {
 				if(e.isSavable()) {
 					sb.append(e.getProjectName()).append(PROJECT_FILE_SEPARATOR)

@@ -1,6 +1,6 @@
-######################
-### ant properties ###
-######################
+####################################
+### ant configuration properties ###
+####################################
 
 ### application name ###
 app.name = vhdllab

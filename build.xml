@@ -438,6 +438,7 @@
       <fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar"/>
 	  <fileset file="${basedir}/${lib.dir}/hibernate/commons-logging.jar"/>
       <fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils-1.7.0.jar"/>
+      <fileset file="${basedir}/${local.dir}/.java.policy"/>
     </copy>
   	
     <copy todir="${tomcat.app.dir}${file.separator}WEB-INF" overwrite="true">
@@ -536,12 +537,13 @@
     	webxml="${metadata.dir}/web/web.xml">
     	
     <!-- TODO: When security constraints are in place vhdllab.html will
-    	have to be excluded from war (also its jar dependencies) -->>
+    	have to be excluded from war (also its jar dependencies) -->
     <fileset dir="${html.pages.dir}" includes="*"/>
     <fileset dir="${jlib.dir}" includes="vhdllab-web-onClient.jar"/>
     <fileset dir="${lib.dir}" includes="commons-digester-1.7.jar"/>
     <fileset dir="${lib.dir}/xdoclet" includes="commons-beanutils-1.7.0.jar"/>
     <fileset dir="${lib.dir}/hibernate" includes="commons-collections.jar,commons-logging.jar"/>
+    <fileset dir="${local.dir}" includes=".java.policy"/>
 	<lib dir="${jlib.dir}" includes="*.jar"/>
     <lib dir="${lib.dir}" includes="*.jar"/>
     <lib dir="${lib.dir}/hibernate" includes="*.jar"/>
