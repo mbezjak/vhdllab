@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidOperationException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidCommandOperationException;
 
 
 
@@ -13,6 +13,17 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidOperationExceptio
  */
 public interface ICommand {
 	
+	/**
+	 * Vraca jedinstveno ime za neku implementaciju
+	 * ICommanda.
+	 * 
+	 * @return
+	 * Vraca jedinstveno ime klase komandi.
+	 * Pritom, programer je odgovoran da to ime zaista
+	 * bude jedinstveno
+	 * @see CCommandNames
+	 */
+	String getCommandName();
 	
 	/**
 	 * Odreduje da li je navedena komanda,
@@ -37,6 +48,9 @@ public interface ICommand {
 	 * objektu, te vraca objekt koji govori
 	 * o tome da li je promjena izvedena uspjesno ili
 	 * ne.
+	 * OPREZ: Ako je komanda neuspjesno izvedena, onda ona
+	 * NE SMIJE niposto napraviti bilo kakvu promjenu na info
+	 * objektu. 
 	 * 
 	 * @param info
 	 * Objekt koji sadrzi informacije o sklopovima,
@@ -57,7 +71,7 @@ public interface ICommand {
 	 * Objekt koji govori o uspjesnosti obavljanja
 	 * inverzne operacije.
 	 */
-	ICommandResponse undoCommand(ISchemaInfo info) throws InvalidOperationException;
+	ICommandResponse undoCommand(ISchemaInfo info) throws InvalidCommandOperationException;
 }
 
 

@@ -11,21 +11,21 @@ package hr.fer.zemris.vhdllab.applets.schema2.exceptions;
  * @author Axel
  *
  */
-public class InvalidOperationException extends Exception {
+public class InvalidCommandOperationException extends Exception {
 
-	public InvalidOperationException() {
+	public InvalidCommandOperationException() {
 		super();
 	}
 
-	public InvalidOperationException(String arg0, Throwable arg1) {
+	public InvalidCommandOperationException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 
-	public InvalidOperationException(String arg0) {
+	public InvalidCommandOperationException(String arg0) {
 		super(arg0);
 	}
 
-	public InvalidOperationException(Throwable arg0) {
+	public InvalidCommandOperationException(Throwable arg0) {
 		super(arg0);
 	}
 
