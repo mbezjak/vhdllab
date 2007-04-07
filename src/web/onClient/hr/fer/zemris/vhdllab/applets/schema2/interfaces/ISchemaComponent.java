@@ -69,10 +69,11 @@ public interface ISchemaComponent extends ISerializable {
 	 * OPREZ: Pritom je bitno naglasiti da 
 	 * metoda getEntityName() vraca istu 
 	 * vrijednost kao i istoimena metoda
-	 * objekta koji vraca getCircuitInterface.
+	 * objekta koji vraca getCircuitInterface().
 	 * 
 	 * U protivnom je interface ISchemaComponent
-	 * lose implementiran.
+	 * lose implementiran i o tome se brine
+	 * programer, a ne kompajler, stoga OPREZ!
 	 * 
 	 * @return
 	 * Sucelje sklopa.

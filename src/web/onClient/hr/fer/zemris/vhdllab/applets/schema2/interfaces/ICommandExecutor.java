@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
+
 import java.util.List;
 
 
@@ -19,9 +21,9 @@ public interface ICommandExecutor {
 	/**
 	 * Obavlja navedenu komandu.
 	 * Ako je ona uspjesno izvedena, i ako command.isUndoable()
-	 * vraca true, stavlja je na listu komandi, a lista
+	 * vraca true, stavlja je na stog undo komandi, a stog
 	 * redo komandi se brise.
-	 * Ako command.isUndoable() vraca false, lista prethodno
+	 * Ako command.isUndoable() vraca false, stog prethodno
 	 * izvedenih komandi se brise.
 	 * 
 	 * @return
@@ -35,7 +37,7 @@ public interface ICommandExecutor {
 	 * Za odredivanje da li je moguc undo.
 	 * 
 	 * @return
-	 * Ako lista prethodno izvedenih komandi nije
+	 * Ako stog prethodno izvedenih komandi nije
 	 * prazna, vraca true, u protivnom false.
 	 * 
 	 */
@@ -54,6 +56,8 @@ public interface ICommandExecutor {
 	/**
 	 * Vraca listu naziva komandi
 	 * koje su prethodno obavljene.
+	 * Vraca praznu listu, ako takvih
+	 * nema.
 	 * 
 	 * @return
 	 * Jasno samo po sebi.
@@ -65,6 +69,8 @@ public interface ICommandExecutor {
 	/**
 	 * Vraca listu naziva komandi
 	 * koje ce tek biti obavljene.
+	 * Ako takvih nema, vraca praznu
+	 * listu.
 	 * 
 	 * @return
 	 * Jasno samo po sebi.
@@ -73,7 +79,43 @@ public interface ICommandExecutor {
 	List<String> getRedoList();
 	
 	
+	/**
+	 * Obavlja komandu na vrhu stoga
+	 * undo komandi, i ako je rezultat
+	 * uspjesan, popne je i stavi na
+	 * stog redo komandi.
+	 * OPREZ: U principu se ne bi trebalo dogoditi
+	 * da je rezultat izvodenja neuspjesan,
+	 * no ako se to dogodi, brisu se
+	 * oba stoga, i undo i redo stog.
+	 * 
+	 * @throws CommandExecutorException
+	 * Ako je stog undo komandi prazan.
+	 * 
+	 * @return
+	 * Objekt koji govori o uspjesnosti
+	 * izvodenja undo komande.
+	 */
+	ICommandResponse undo() throws CommandExecutorException;
+	
+
+	/**
+	 * Obavlja komandu s vrha redo stoga
+	 * i stavlja je na undo stog.
+	 * 
+	 * @throws CommandExecutorException
+	 * Slicno kao i prethodno, samo za redo stog.
+	 * 
+	 * @return
+	 * Vidi prethodnu metodu.
+	 */
+	ICommandResponse redo() throws CommandExecutorException;
+	
+	
 }
+
+
+
 
 
 
