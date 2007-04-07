@@ -36,8 +36,9 @@ public abstract class AbstractSchemaWire {
 	// I na kraju - serijalizacija, treba dodati podrsku za pohranu zice u obliku stringa,
 	// i, obratno, rekonstrukciju njenih svojstava na temelju stringa.
 	//
-	// Svaka zica se moze i sama iscrtavati pozivom metode draw.
+	// Svaka zica se moze i sama iscrtavati pozivom metode draw..
 	public class WireConnection {
+		
 		public String componentInstanceName;
 		public int portIndex;
 		public Point portCoord;
