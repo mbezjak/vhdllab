@@ -946,8 +946,9 @@ public final class TestManager {
 			for(int i = 1; i<2001; i++) {
 				List<Project> projects = labman.findProjectsByUser(userId);
 				if(projects.isEmpty()) {
-					List<UserFile> files = labman.findUserFilesByUser(userId);
-					if(files.isEmpty()) return userId;
+					return userId;
+//					List<UserFile> files = labman.findUserFilesByUser(userId);
+//					if(files.isEmpty()) return userId;
 				}
 				userId = userId + "::" + i;
 			}

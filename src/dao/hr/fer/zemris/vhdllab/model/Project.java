@@ -64,7 +64,6 @@ public class Project {
 	 * @hibernate.set
 	 * 	inverse="true"
 	 *  lazy="false"
-	 *  order-by="FILE_ID"
 	 *  cascade="all-delete-orphan"
 	 * @hibernate.key
 	 *  column="PROJECT_ID"
