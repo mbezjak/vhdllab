@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 
 
 /**
@@ -11,7 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
  *
  */
 public class SchemaError {
-	private EErrorTypes errorcode;
+	private EErrorTypes errcode;
 	private String message;
 	
 	public SchemaError() {
@@ -20,7 +19,7 @@ public class SchemaError {
 	}
 	
 	public SchemaError(EErrorTypes errorCode) {
-		errorCode = errorCode;
+		errcode = errorCode;
 	}
 	
 	public SchemaError(EErrorTypes errorCode, String errorMessage) {
@@ -29,11 +28,11 @@ public class SchemaError {
 	}
 
 	private void setErrorcode(EErrorTypes errorcode) {
-		this.errorcode = errorcode;
+		this.errcode = errorcode;
 	}
 
 	private EErrorTypes getErrorcode() {
-		return errorcode;
+		return errcode;
 	}
 
 	private void setMessage(String message) {

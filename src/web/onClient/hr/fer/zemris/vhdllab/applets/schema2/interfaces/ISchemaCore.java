@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.util.List;
+
 
 
 /**
@@ -28,4 +30,63 @@ public interface ISchemaCore {
 	 */
 	ICommandResponse receiveCommand(ICommand command);
 	
+	/**
+	 * Tipicno proslijeduje poziv
+	 * odgovorajucoj metodi ICommandExecutora.
+	 * 
+	 * @see ICommandExecutor
+	 */
+	boolean canUndoCommand();
+	
+	/**
+	 * Tipicno proslijeduje poziv
+	 * odgovorajucoj metodi ICommandExecutora.
+	 * 
+	 * @see ICommandExecutor
+	 */
+	boolean canRedoCommand();
+	
+	/**
+	 * Tipicno proslijeduje poziv
+	 * odgovorajucoj metodi ICommandExecutora.
+	 * 
+	 * @see ICommandExecutor
+	 */
+	List<String> getUndoCommandList();
+	
+	/**
+	 * Tipicno proslijeduje poziv
+	 * odgovorajucoj metodi ICommandExecutora.
+	 * 
+	 * @see ICommandExecutor
+	 */
+	List<String> getRedoCommandList();
+	
+	/**
+	 * Tipicno proslijeduje poziv
+	 * odgovorajucoj metodi ICommandExecutora.
+	 * 
+	 * @see ICommandExecutor
+	 */
+	ICommandResponse undoCommand();
+
+	/**
+	 * Tipicno proslijeduje poziv
+	 * odgovorajucoj metodi ICommandExecutora.
+	 * 
+	 * @see ICommandExecutor
+	 */
+	ICommandResponse redoCommand();
 }
+
+
+
+
+
+
+
+
+
+
+
+
