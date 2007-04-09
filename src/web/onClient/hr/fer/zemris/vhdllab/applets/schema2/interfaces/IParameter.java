@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import java.security.InvalidParameterException;
-
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
 
