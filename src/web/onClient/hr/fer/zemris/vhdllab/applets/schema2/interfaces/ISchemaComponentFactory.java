@@ -36,3 +36,11 @@ public interface ISchemaComponentFactory {
 	 */
 	ISchemaComponent generateSchemaComponent(String genericBlock, String entityBlock);
 }
+
+
+
+
+
+
+
+
