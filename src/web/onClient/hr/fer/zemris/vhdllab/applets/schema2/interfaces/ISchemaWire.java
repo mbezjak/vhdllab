@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.util.List;
+
+import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 
@@ -12,6 +16,17 @@ import hr.fer.zemris.vhdllab.vhdl.model.Type;
  *
  */
 public interface ISchemaWire extends ISerializable {
+	
+	/**
+	 * Virtualni copy konstruktor.
+	 * Koristi se u ISchemaPrototypeCollection.
+	 * 
+	 * @returns
+	 * Deep copy zadane zice.
+	 * 
+	 */
+	ISchemaWire copyCtor();
+	
 
 	/**
 	 * Za dohvat parametara komponente,
@@ -26,24 +41,6 @@ public interface ISchemaWire extends ISerializable {
 	
 	
 	/**
-	 * Vraca ime zice (signala).
-	 * OPREZ: Ova metoda je samo POKRATA
-	 * za dohvat imena preko kolekcije 
-	 * parametara koju vraca getParameters().
-	 * 
-	 * @return
-	 * Ime zice (signala) - ista se vrijednost
-	 * u svakom trenutku MORA dobiti sljedecim
-	 * pozivom:
-	 * 
-	 * getParameters().getValue(ParamKeys.NAME);
-	 * ili
-	 * getParameters().getValue("NAME");
-	 */
-	String getName();
-	
-	
-	/**
 	 * Za dohvat tipa signala.
 	 * 
 	 * @see Type
@@ -55,6 +52,28 @@ public interface ISchemaWire extends ISerializable {
 	 * 
 	 */
 	Type getType();
+	
+	
+	/**
+	 * Vraca listu svih racvalista
+	 * zice.
+	 * 
+	 * @return
+	 * Lista koordinata svih racvalista.
+	 * 
+	 */
+	List<XYLocation> getNodes();
+	
+	
+	/**
+	 * Vraca listu svih segmenata zice.
+	 * 
+	 * 
+	 * @return
+	 * Lista segmenata.
+	 * 
+	 */
+	List<WireSegment> getSegments();
 }
 
 

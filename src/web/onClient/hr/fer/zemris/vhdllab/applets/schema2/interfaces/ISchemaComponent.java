@@ -14,8 +14,30 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 public interface ISchemaComponent extends ISerializable {
 	
 	/**
+	 * Virtualni copy konstruktor.
+	 * 
+	 * @return
+	 * Vraca jedan objekt tipa ISchemaComponent,
+	 * cija je klasa upravo ona klasa koja
+	 * implementira ovu metodu.
+	 * Pritom se svi private clanovi moraju
+	 * prekopirati u novonastalu klasu (i to
+	 * NE kao copy by reference, vec kao
+	 * copy by value).
+	 * 
+	 * Ova metoda se ne zove u normalnim okolnostima,
+	 * vec iskljucivo ako:
+	 * 1) Netko kopira postojecu komponentu na shemi.
+	 * 2) Objekt ove klase koristi se kao prototip u
+	 *    ISchemaPrototypeCollection.
+	 * 
+	 */
+	ISchemaComponent copyCtor();
+	
+	
+	/**
 	 * Za dohvat parametara komponente,
-	 * npr. imena komponente, kasnjenja
+	 * npr. broja portova, kasnjenja
 	 * komponente, itd.
 	 * 
 	 * @return
@@ -26,40 +48,15 @@ public interface ISchemaComponent extends ISerializable {
 	
 	
 	/**
-	 * Vraca ime instance sklopa.
-	 * OPREZ: Ova metoda je samo POKRATA
-	 * za dohvat imena preko kolekcije 
-	 * parametara koju vraca getParameters().
-	 * 
-	 * @return
-	 * Ime instance sklopa - ista se vrijednost
-	 * u svakom trenutku MORA dobiti sljedecim
-	 * pozivom:
-	 * 
-	 * getParameters().getValue(ParamKeys.NAME);
-	 * ili
-	 * getParameters().getValue("NAME");
-	 */
-	String getName();
-	
-	
-	/**
 	 * Vraca ime sucelja, tj. ime tipa
 	 * same komponente.
-	 * OPREZ: Ova metoda je samo POKRATA
-	 * za dohvat imena entity bloka (tipa komponente)
-	 * preko kolekcije parametara koju vraca getParameters().
 	 *  
 	 * @return
-	 * Ime tipa sklopa - ista se vrijednost
-	 * u svakom trenutku MORA dobiti sljedecim
-	 * pozivom:
+	 * Ime tipa sklopa koje je jedinstveno unutar schematica
+	 * za taj tip sklopa.
 	 * 
-	 * getParameters().getValue(ParamKeys.ENTITY_NAME);
-	 * ili
-	 * getParameters().getValue("ENTITY_NAME");
 	 */
-	String getEntityName();
+	String getTypeName();
 	
 	
 	/**
@@ -67,8 +64,8 @@ public interface ISchemaComponent extends ISerializable {
 	 * CircuitInterface koji opisuje sucelje
 	 * sklopa.
 	 * OPREZ: Pritom je bitno naglasiti da 
-	 * metoda getEntityName() vraca istu 
-	 * vrijednost kao i istoimena metoda
+	 * metoda getTypeName() vraca istu 
+	 * vrijednost kao i getEntityName() metoda
 	 * objekta koji vraca getCircuitInterface().
 	 * 
 	 * U protivnom je interface ISchemaComponent

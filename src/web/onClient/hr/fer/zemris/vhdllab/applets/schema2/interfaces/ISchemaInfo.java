@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.util.List;
+
 
 
 /**
@@ -54,6 +56,14 @@ public interface ISchemaInfo extends ISerializable {
 	 * @return
 	 */
 	ISchemaEntity getEntity();	
+	
+	
+	/**
+	 * Vraca listu imena prototipova.
+	 * 
+	 * @return
+	 */
+	List<String> getPrototypes();
 }
 
 
