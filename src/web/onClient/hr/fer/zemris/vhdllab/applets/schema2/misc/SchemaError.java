@@ -27,19 +27,19 @@ public class SchemaError {
 		setMessage(errorMessage);
 	}
 
-	private void setErrorcode(EErrorTypes errorcode) {
+	public void setErrorcode(EErrorTypes errorcode) {
 		this.errcode = errorcode;
 	}
 
-	private EErrorTypes getErrorcode() {
+	public EErrorTypes getErrorcode() {
 		return errcode;
 	}
 
-	private void setMessage(String message) {
+	public void setMessage(String message) {
 		this.message = message;
 	}
 
-	private String getMessage() {
+	public String getMessage() {
 		return message;
 	}
 }

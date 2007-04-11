@@ -21,7 +21,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundExcepti
  * @author Axel
  *
  */
-public interface IParameterCollection extends ISerializable {
+public interface IParameterCollection extends ISerializable, Iterable<IParameter> {
 	
 	/**
 	 * Vraca IParameter objekt za

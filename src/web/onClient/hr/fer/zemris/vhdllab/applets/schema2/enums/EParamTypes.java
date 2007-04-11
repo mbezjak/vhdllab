@@ -19,5 +19,5 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  *
  */
 public enum EParamTypes {
-	BOOLEAN, INTEGER, FLOAT, TEXT
+	BOOLEAN, INTEGER, FLOAT, TEXT, TIME
 }

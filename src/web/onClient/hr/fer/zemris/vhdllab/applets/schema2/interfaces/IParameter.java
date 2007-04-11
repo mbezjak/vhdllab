@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 
 
 
@@ -39,6 +40,68 @@ public interface IParameter {
 	 * castati u potrebni tip.
 	 */
 	Object getValue();
+	
+	
+	/**
+	 * Sam obavlja cast ako je
+	 * tog tipa i vraca vrijednost.
+	 * 
+	 * @return
+	 * @throws ClassCastException
+	 * Ako vrijednost nije tog navedenog
+	 * tipa, nece se parsirati ili convertati
+	 * vec ce se baciti exception.
+	 */
+	int getValueAsInteger() throws ClassCastException;
+	
+	/**
+	 * Sam obavlja cast ako je
+	 * tog tipa i vraca vrijednost.
+	 * 
+	 * @return
+	 * @throws ClassCastException
+	 * Ako vrijednost nije tog navedenog
+	 * tipa, nece se parsirati ili convertati
+	 * vec ce se baciti exception.
+	 */
+	String getValueAsString() throws ClassCastException;
+	
+	/**
+	 * Sam obavlja cast ako je
+	 * tog tipa i vraca vrijednost.
+	 * 
+	 * @return
+	 * @throws ClassCastException
+	 * Ako vrijednost nije tog navedenog
+	 * tipa, nece se parsirati ili convertati
+	 * vec ce se baciti exception.
+	 */
+	double getValueAsDouble() throws ClassCastException;
+	
+	/**
+	 * Sam obavlja cast ako je
+	 * tog tipa i vraca vrijednost.
+	 * 
+	 * @return
+ 	 * @throws ClassCastException
+	 * Ako vrijednost nije tog navedenog
+	 * tipa, nece se parsirati ili convertati
+	 * vec ce se baciti exception.
+	 */
+	boolean getValueAsBoolean() throws ClassCastException;
+	
+	/**
+	 * Sam obavlja cast ako je
+	 * tog tipa i vraca vrijednost.
+	 * 
+	 * @return
+	 * @throws ClassCastException
+	 * Ako vrijednost nije tog navedenog
+	 * tipa, nece se parsirati ili convertati
+	 * vec ce se baciti exception.
+	 */
+	Time getValueAsTime() throws ClassCastException;
+	
 	
 	/**
 	 * Postavlja vrijednost parametra.
@@ -87,7 +150,20 @@ public interface IParameter {
 	 * String vrijednost parametra koja se
 	 * sama isparsira ako je to moguce.
 	 */
-	void setWithString(String stringValue) throws InvalidParameterValueException;
+	void setAsString(String stringValue) throws InvalidParameterValueException;
+	
+	
+	/**
+	 * Odgovara na pitanje da li je konkretna
+	 * vrijednost parsabilna.
+	 * Primjer, za cjelobrojni integer je '5'
+	 * parsabilno, ali '153sdag4' nije.
+	 * 
+	 * @param stringValue
+	 * @return
+	 * Uvijek vraca false ako isParsable() vraca false.
+	 */
+	boolean checkStringValue(String stringValue);
 	
 	
 	/**

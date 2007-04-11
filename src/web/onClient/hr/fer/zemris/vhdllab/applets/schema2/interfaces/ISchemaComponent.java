@@ -23,7 +23,8 @@ public interface ISchemaComponent extends ISerializable {
 	 * Pritom se svi private clanovi moraju
 	 * prekopirati u novonastalu klasu (i to
 	 * NE kao copy by reference, vec kao
-	 * copy by value).
+	 * copy by value). Dakle, vraca se deep copy
+	 * objekta.
 	 * 
 	 * Ova metoda se ne zove u normalnim okolnostima,
 	 * vec iskljucivo ako:
@@ -75,8 +76,28 @@ public interface ISchemaComponent extends ISerializable {
 	 * @return
 	 * Sucelje sklopa.
 	 */
-	CircuitInterface getCircuitInterface(); 
+	CircuitInterface getCircuitInterface();
+	
+	
+	/**
+	 * Vraca objekt koji ce generirati dijelove
+	 * VHDL koda.
+	 * 
+	 * @return
+	 * Objekt koji ce generirati dijelove koda.
+	 */
+	IVHDLSegmentProvider getVHDLSegmentProvider();
+	
+	
+	
 }
+
+
+
+
+
+
+
 
 
 
