@@ -9,7 +9,46 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  */
 public enum ETimeMetrics {
 	// bitan redoslijed, ne mijenjati, inace ce bit svasta!!!
-	femto, pico, nano, micro, mili, sec;
+	femto() {
+		@Override
+		public String toString() {
+			return "fs";
+		}
+	},
+	pico() {
+		@Override
+		public String toString() {
+			return "ps";
+		}
+	},
+	nano() {
+		@Override
+		public String toString() {
+			return "ns";
+		}
+	},
+	micro() {
+		@Override
+		public String toString() {
+			return "mics";
+		}
+	},
+	mili() {
+		@Override
+		public String toString() {
+			return "ms";
+		}
+	},
+	sec() {
+		@Override
+		public String toString() {
+			return "s";
+		}
+	};
+	
+		
+	
+	
 	
 	/**
 	 * Vraca omjer ove metrike i metrike
@@ -45,23 +84,4 @@ public enum ETimeMetrics {
 		return factor;
 	}
 	
-	@Override
-	public String toString() {
-		switch (this) {
-		case femto:
-			return "fs";
-		case pico:
-			return "ps";
-		case nano:
-			return "ns";
-		case micro:
-			return "mics";
-		case mili: 
-			return "ms";
-		case sec:
-			return "s";
-		default:
-			return "undefined time type";
-		}
-	}
 }

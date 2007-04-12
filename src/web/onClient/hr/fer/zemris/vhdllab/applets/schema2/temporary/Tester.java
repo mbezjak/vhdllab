@@ -13,6 +13,9 @@ public class Tester {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		ETimeMetrics met = ETimeMetrics.femto;
+		
+		System.out.println(met.toString());
 	}
 
 }
