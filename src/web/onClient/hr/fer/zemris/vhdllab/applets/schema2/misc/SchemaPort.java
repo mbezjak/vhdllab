@@ -8,7 +8,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
  * @author Axel
  *
  */
-public class SchemaPort {
+public final class SchemaPort {
 	
 	private XYLocation loc;
 	private String name;
@@ -34,7 +34,7 @@ public class SchemaPort {
 	 * 
 	 * @return
 	 */
-	XYLocation getOffset() {
+	public final XYLocation getOffset() {
 		return loc;
 	}
 	
@@ -44,18 +44,47 @@ public class SchemaPort {
 	 * 
 	 * @param offset
 	 */
-	void setOffset(XYLocation offset) {
+	public final void setOffset(XYLocation offset) {
 		loc = offset;
 	}
 
 	
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public final void setName(String name) {
 		this.name = name;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public final boolean equals(Object arg0) {
+		if (arg0 == null) return false;
+		if (!(arg0 instanceof SchemaPort)) return false;
+		SchemaPort port = (SchemaPort)arg0;
+		return (port.loc.equals(this.loc) && port.name.equals(this.name));
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public final int hashCode() {
+		return 119 * loc.hashCode() + name.hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		return super.toString();
+	}
+	
+	
 	
 	
 	

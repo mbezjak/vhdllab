@@ -7,7 +7,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
  * @author Axel
  *
  */
-public class XYLocation {
+public final class XYLocation {
 	public int x;
 	public int y;
 	
@@ -27,7 +27,7 @@ public class XYLocation {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (obj == null || !(obj instanceof XYLocation)) return false;
 		XYLocation loc = (XYLocation)obj;
 		if (loc.x == x && loc.y == y) return true;
@@ -35,12 +35,12 @@ public class XYLocation {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return 37 * x + y;
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return '(' + x + ", " + y + ')';
 	}
 	

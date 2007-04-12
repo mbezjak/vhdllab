@@ -9,7 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
  * @author Axel
  *
  */
-public class Time {
+public final class Time {
 	private double timeInterval;
 	private ETimeMetrics timeMetric;
 	
@@ -42,7 +42,7 @@ public class Time {
 	 * 
 	 * @param metric
 	 */
-	public void convertMetric(ETimeMetrics metric) {
+	public final void convertMetric(ETimeMetrics metric) {
 		if (metric != timeMetric) {
 			double factor = this.timeMetric.getRatio(metric);
 			this.timeInterval *= factor;
@@ -60,7 +60,7 @@ public class Time {
 	 * 
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (!(obj instanceof Time)) return false;
 		Time t_obj = (Time)obj;
@@ -75,7 +75,7 @@ public class Time {
 	 * 
 	 */
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		double factor = this.timeMetric.getRatio(ETimeMetrics.femto);
 		long time = (long)(timeInterval * factor);
 		
@@ -83,7 +83,7 @@ public class Time {
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return (long)this.timeInterval + " " + this.timeMetric.toString();  
 	}
 	

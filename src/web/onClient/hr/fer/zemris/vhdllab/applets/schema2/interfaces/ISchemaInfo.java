@@ -55,11 +55,11 @@ public interface ISchemaInfo extends ISerializable {
 	 * 
 	 * @return
 	 */
-	ISchemaEntity getEntity();	
+	ISchemaEntity getEntity();
 	
 	
 	/**
-	 * Vraca listu imena prototipova.
+	 * Vraca listu imena prototipova sklopova unutar sheme.
 	 * 
 	 * @return
 	 */

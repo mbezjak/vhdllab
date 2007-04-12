@@ -1,6 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+
+import java.util.Set;
 
 
 
@@ -97,9 +101,28 @@ public interface ISchemaComponent extends ISerializable {
 	
 	
 	/**
+	 * Dohvaca orijentaciju komponente.
+	 * 
+	 * @return
+	 */
+	EOrientation getComponentOrientation();
+	
+	
+	/**
+	 * Postavlja orijentaciju komponente.
+	 * 
+	 * @param orient
+	 */
+	void setComponentOrientation(EOrientation orient);
+	
+	
+	/**
 	 * Vraca visinu komponente na shemi.
 	 * 
 	 * @return
+	 * Vraca visinu komponente. Ako se promijeni
+	 * orijentacija komponente, mogu
+	 * se zamijeniti visina i sirina.
 	 */
 	int getHeight();
 	
@@ -108,8 +131,51 @@ public interface ISchemaComponent extends ISerializable {
 	 * Vraca sirinu komponente na shemi.
 	 * 
 	 * @return
+	 * Sirinu komponente. Ako se promijeni
+	 * orijentacija komponente, mogu
+	 * se zamijeniti visina i sirina.
 	 */
 	int getWidth();
+	
+	
+	/**
+	 * Dohvaca najblizi port na komponenti, ovisno
+	 * o orijentaciji, naravno.
+	 * 
+	 * @param xoffset
+	 * Odmak od gornjeg lijevog ruba komponente
+	 * po x-osi.
+	 * @param yoffset
+	 * Odmak od gornjeg lijevog ruba komponente
+	 * po y-osi.
+	 * @param dist
+	 * Maksimalna udaljenost od porta do specificiranih
+	 * koordinata.
+	 * @return
+	 * Null ako takav ne postoji, a port inace.
+	 */
+	SchemaPort getSchemaPort(int xoffset, int yoffset, int dist);
+	
+	
+	/**
+	 * Dohvaca port po imenu.
+	 * 
+	 * @param name
+	 * @return
+	 * Port komponente, ili
+	 * null ako ne postoji port
+	 * tog imena.
+	 */
+	SchemaPort getSchemaPort(String name);
+	
+	/**
+	 * Vraca imena svih portove na komponenti.
+	 * 
+	 * @return
+	 * Genericka lista unutar koje
+	 * su imena portova.
+	 */
+	Set<String> getAllPorts();
 	
 	
 	/**
@@ -120,6 +186,7 @@ public interface ISchemaComponent extends ISerializable {
 	 * Objekt koji ce generirati dijelove koda.
 	 */
 	IVHDLSegmentProvider getVHDLSegmentProvider();
+	
 	
 	
 	

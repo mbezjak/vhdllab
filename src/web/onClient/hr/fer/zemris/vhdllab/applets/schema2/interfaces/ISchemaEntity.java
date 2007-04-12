@@ -50,6 +50,7 @@ public interface ISchemaEntity {
 	 */
 	void setParameters(IParameterCollection parameters);
 	
+	
 }
 
 
