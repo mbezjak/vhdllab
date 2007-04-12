@@ -76,6 +76,28 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 */
 	boolean containsAt(int x, int y);
 	
+	
+	/**
+	 * Dodaje komponentu na shemu,
+	 * na zadane koordinate.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param component
+	 * 
+	 * 
+	 */
+	void addComponent(int x, int y, ISchemaComponent component);
+	
+	/**
+	 * Zadanu komponentu mice sa sheme.
+	 * 
+	 * @param name
+	 * Jedinstveni identifikator komponente
+	 * koja ce biti removeana sa sheme.
+	 */
+	void removeComponent(String name);
+	
 }
 
 

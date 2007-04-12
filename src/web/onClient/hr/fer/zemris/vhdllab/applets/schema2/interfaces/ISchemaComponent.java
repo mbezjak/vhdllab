@@ -40,6 +40,9 @@ public interface ISchemaComponent extends ISerializable {
 	 * Za dohvat parametara komponente,
 	 * npr. broja portova, kasnjenja
 	 * komponente, itd.
+	 * Jedan clan koji uvijek ovdje mora postojati
+	 * jest pod kljucem CParamKeys.NAME - pri
+	 * stvaranju sklopa isti se mora unijeti.
 	 * 
 	 * @return
 	 * Objekt navedenog tipa koji se ponasa kao
@@ -61,6 +64,20 @@ public interface ISchemaComponent extends ISerializable {
 	
 	
 	/**
+	 * Vraca identifier koji odreduje ime
+	 * instance komponente.
+	 * 
+	 * @return
+	 * Ime instance komponente. U parameter
+	 * kolekciji uvijek postoji identifier
+	 * CParamKeys.NAME. Ova metoda je pokrata
+	 * za dohvacanje te vrijednosti.
+	 * 
+	 */
+	String getName();
+	
+	
+	/**
 	 * Vraca jedan objekt tipa
 	 * CircuitInterface koji opisuje sucelje
 	 * sklopa.
@@ -77,6 +94,22 @@ public interface ISchemaComponent extends ISerializable {
 	 * Sucelje sklopa.
 	 */
 	CircuitInterface getCircuitInterface();
+	
+	
+	/**
+	 * Vraca visinu komponente na shemi.
+	 * 
+	 * @return
+	 */
+	int getHeight();
+	
+	
+	/**
+	 * Vraca sirinu komponente na shemi.
+	 * 
+	 * @return
+	 */
+	int getWidth();
 	
 	
 	/**
