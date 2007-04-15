@@ -18,7 +18,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
  * @author Axel
  *
  */
-public interface IParameter {
+public interface IParameter extends ISerializable {
 	/**
 	 * Za odredivanje tipa parametra.
 	 * 
@@ -52,7 +52,7 @@ public interface IParameter {
 	 * tipa, nece se parsirati ili convertati
 	 * vec ce se baciti exception.
 	 */
-	int getValueAsInteger() throws ClassCastException;
+	Integer getValueAsInteger() throws ClassCastException;
 	
 	/**
 	 * Sam obavlja cast ako je
@@ -76,7 +76,7 @@ public interface IParameter {
 	 * tipa, nece se parsirati ili convertati
 	 * vec ce se baciti exception.
 	 */
-	double getValueAsDouble() throws ClassCastException;
+	Double getValueAsDouble() throws ClassCastException;
 	
 	/**
 	 * Sam obavlja cast ako je
@@ -88,7 +88,7 @@ public interface IParameter {
 	 * tipa, nece se parsirati ili convertati
 	 * vec ce se baciti exception.
 	 */
-	boolean getValueAsBoolean() throws ClassCastException;
+	Boolean getValueAsBoolean() throws ClassCastException;
 	
 	/**
 	 * Sam obavlja cast ako je
@@ -136,7 +136,7 @@ public interface IParameter {
 	 * Ako isParsable() vraca true onda je
 	 * ovom metodom moguce postaviti vrijednost
 	 * parametra proslijedivanjem stringa.
-	 * Ako
+	 * 
 	 * 
 	 * @throws
 	 * Navedenu iznimku ako isParsable() vraca false,

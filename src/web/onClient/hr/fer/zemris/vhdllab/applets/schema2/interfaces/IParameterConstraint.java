@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EConstraintExplanation;
+
 import java.util.Set;
 
 
@@ -43,7 +45,7 @@ public interface IParameterConstraint {
 	 * zasto nije moguce pridruziti navedenu
 	 * vrijednost.
 	 */
-	String getExplanation(Object object);
+	EConstraintExplanation getExplanation(Object object);
 	
 	/**
 	 * Odreduje skup vrijednosti koje
@@ -56,11 +58,11 @@ public interface IParameterConstraint {
 	 * koje parametar moze poprimiti.
 	 * Ako taj skup nije konacan, vraca
 	 * null!!!
-	 * Ako je taj skup vracan, tad naprosto
+	 * Ako je taj skup prazan, tad naprosto
 	 * vraca prazan skup.
 	 *  
 	 */
-	Set<Object> getPossibleValues();	
+	Set<Object> getPossibleValues();
 }
 
 

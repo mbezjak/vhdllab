@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
-import org.apache.commons.digester.xmlrules.XmlLoadException;
-
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 
 

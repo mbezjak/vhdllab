@@ -25,6 +25,19 @@ public final class XYLocation {
 		x = location.x;
 		y = location.y;
 	}
+	
+	/**
+	 * Da li je komponenta u bounding boxu odredenom
+	 * sa specificiranim pravokutnikom.
+	 * @param xpos
+	 * @param ypos
+	 * @param wdt
+	 * @param hgt
+	 * @return
+	 */
+	public final boolean in(int xpos, int ypos, int wdt, int hgt) {
+		return (x >= xpos && x <= (xpos + wdt) && y >= ypos && y <= (ypos + hgt));
+	}
 
 	@Override
 	public final boolean equals(Object obj) {

@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
+
 
 
 /**
@@ -74,6 +77,29 @@ public interface ISchemaWireCollection extends ISerializable {
 	 * 
 	 */
 	boolean containsAt(int x, int y, int dist);
+	
+	
+	/**
+	 * Dodaje zicu u kolekciju.
+	 * 
+	 * @param wire
+	 * Zica jedinstvenog imena.
+	 * @return
+	 * @throws DuplicateKeyException
+	 * Ako postoji zica tog imena u kolekciji.
+	 */
+	void addWire(ISchemaWire wire) throws DuplicateKeyException;
+	
+	/**
+	 * Mice zicu iz kolekcije.
+	 * 
+	 * @param wireName
+	 * Ime zice.
+	 * @throws UnknownKeyException
+	 * Ako zica (signal) tog imena ne postoji
+	 * u kolekciji.
+	 */
+	void removeWire(String wireName) throws UnknownKeyException;
 }
 
 

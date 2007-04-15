@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateParameterException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
+
 
 
 /**
@@ -85,9 +89,11 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * @param y
 	 * @param component
 	 * 
+	 * @throws DuplicateKeyException
+	 * Ako postoji komponenta tog imena.
 	 * 
 	 */
-	void addComponent(int x, int y, ISchemaComponent component);
+	void addComponent(int x, int y, ISchemaComponent component) throws DuplicateKeyException;
 	
 	/**
 	 * Zadanu komponentu mice sa sheme.
@@ -95,8 +101,11 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * @param name
 	 * Jedinstveni identifikator komponente
 	 * koja ce biti removeana sa sheme.
+	 * @throws UnknownKeyException
+	 * Ako ne postoji komponenta tog imena.
+	 * 
 	 */
-	void removeComponent(String name);
+	void removeComponent(String name) throws UnknownKeyException;
 	
 }
 
