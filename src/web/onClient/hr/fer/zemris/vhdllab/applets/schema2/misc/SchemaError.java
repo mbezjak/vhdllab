@@ -9,7 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
  * @author Axel
  *
  */
-public class SchemaError {
+public final class SchemaError {
 	private EErrorTypes errcode;
 	private String message;
 	
@@ -27,19 +27,19 @@ public class SchemaError {
 		setMessage(errorMessage);
 	}
 
-	public void setErrorcode(EErrorTypes errorcode) {
+	public final void setErrorcode(EErrorTypes errorcode) {
 		this.errcode = errorcode;
 	}
 
-	public EErrorTypes getErrorcode() {
+	public final EErrorTypes getErrorcode() {
 		return errcode;
 	}
 
-	public void setMessage(String message) {
+	public final void setMessage(String message) {
 		this.message = message;
 	}
 
-	public String getMessage() {
+	public final String getMessage() {
 		return message;
 	}
 }

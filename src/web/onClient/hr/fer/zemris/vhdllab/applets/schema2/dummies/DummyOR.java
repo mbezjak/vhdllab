@@ -147,14 +147,20 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
 	public String serialize() {
 		// TODO
 		throw new NotImplementedException(); 
 	}
 
+
+
+	public Caseless getMappingForPort(Caseless name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
 	
 }
 	

@@ -169,6 +169,21 @@ public interface ISchemaComponent extends ISerializable {
 	 */
 	SchemaPort getSchemaPort(Caseless name);
 	
+	
+	/**
+	 * Za navedeni port vraca informaciju o tome na
+	 * koju je zicu spojen.
+	 * 
+	 * @param name
+	 * Port za koji se ispituje da li je spojen
+	 * i na koju zicu.
+	 * @return
+	 * Caseless ime signala na koji je spojen
+	 * ili null ako nije spojen ni na sto.
+	 */
+	Caseless getMappingForPort(Caseless name);
+	
+	
 	/**
 	 * Vraca imena svih portove na komponenti.
 	 * 
