@@ -11,19 +11,19 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
 public final class SchemaPort {
 	
 	private XYLocation loc;
-	private String name;
+	private Caseless name;
 	
 	public SchemaPort() {
 		loc = new XYLocation();
-		name = "";
+		name = new Caseless("");
 	}
 	
 	public SchemaPort(int xoffset, int yoffset) {
 		loc = new XYLocation(xoffset, yoffset);
-		name = "";
+		name = new Caseless("");
 	}
 	
-	public SchemaPort(int xoffset, int yoffset, String portname) {
+	public SchemaPort(int xoffset, int yoffset, Caseless portname) {
 		loc = new XYLocation(xoffset, yoffset);
 		name = portname;
 	}
@@ -49,11 +49,11 @@ public final class SchemaPort {
 	}
 
 	
-	public final String getName() {
+	public final Caseless getName() {
 		return name;
 	}
 
-	public final void setName(String name) {
+	public final void setName(Caseless name) {
 		this.name = name;
 	}
 

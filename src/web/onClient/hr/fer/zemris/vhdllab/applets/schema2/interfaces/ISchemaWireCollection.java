@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 
 
@@ -31,7 +32,7 @@ public interface ISchemaWireCollection extends ISerializable {
 	 * je moguce dohvacati zice.
 	 * 
 	 */
-	ISchemaWire fetchWire(String wireName);
+	ISchemaWire fetchWire(Caseless wireName);
 	
 	
 	/**
@@ -45,7 +46,7 @@ public interface ISchemaWireCollection extends ISerializable {
 	 * postoji u kolekciji, false inace.
 	 * 
 	 */
-	boolean containsName(String wireName);
+	boolean containsName(Caseless wireName);
 	
 	
 	/**
@@ -99,7 +100,7 @@ public interface ISchemaWireCollection extends ISerializable {
 	 * Ako zica (signal) tog imena ne postoji
 	 * u kolekciji.
 	 */
-	void removeWire(String wireName) throws UnknownKeyException;
+	void removeWire(Caseless wireName) throws UnknownKeyException;
 }
 
 

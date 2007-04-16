@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import java.util.List;
 
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
@@ -26,6 +27,16 @@ public interface ISchemaWire extends ISerializable {
 	 * 
 	 */
 	ISchemaWire copyCtor();
+	
+	
+	/**
+	 * Vraca ime zice.
+	 * 
+	 * @return
+	 * Jedinstveno ime zice za
+	 * koje casing nije vazan.
+	 */
+	Caseless getName();
 	
 
 	/**

@@ -1,18 +1,18 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 
@@ -40,9 +40,6 @@ public class DummyOR implements ISchemaComponent {
 	
 	
 	
-	
-	
-	
 
 	
 	public ISchemaComponent copyCtor() {
@@ -51,9 +48,6 @@ public class DummyOR implements ISchemaComponent {
 		return dork;
 	}
 
-	
-	
-	
 	
 	public Set<String> getAllPorts() {
 		return ports.keySet(); 
@@ -68,22 +62,9 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
-
-
-
-
 	public EOrientation getComponentOrientation() {
 		return orient;
 	}
-
-
-
-
-
-
 
 
 
@@ -94,22 +75,9 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
-
-
-
-
-	public String getName() {
-		return circinterf.getEntityName();
+	public Caseless getName() {
+		return new Caseless(circinterf.getEntityName());
 	}
-
-
-
-
-
-
 
 
 
@@ -123,11 +91,6 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
-
-
 	public SchemaPort getSchemaPort(int xoffset, int yoffset, int dist) {
 		// TODO
 		throw new NotImplementedException();		
@@ -136,13 +99,7 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
-
-
-
-	public SchemaPort getSchemaPort(String name) {
+	public SchemaPort getSchemaPort(Caseless name) {
 		return ports.get(name);
 	}
 
@@ -150,18 +107,9 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
-
-
-	public String getTypeName() {
-		return "DummyOR";
+	public Caseless getTypeName() {
+		return new Caseless("DummyOR");
 	}
-
-
-
-
 
 
 
@@ -177,20 +125,9 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
-
-
 	public int getWidth() {
 		return WIDTH;
 	}
-
-
-
-
-
-
 
 
 
@@ -202,19 +139,10 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-
-
-
-
-
-
 	public void deserialize(String code) {
 		// TODO
 		throw new NotImplementedException();		
 	}
-
-
-
 
 
 

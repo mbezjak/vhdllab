@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateParameterException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 
 
@@ -32,7 +32,7 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * je moguce dohvacati komponente.
 	 * 
 	 */
-	ISchemaComponent fetchComponent(String componentName);
+	ISchemaComponent fetchComponent(Caseless componentName);
 	
 	
 	/**
@@ -46,7 +46,7 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * postoji u kolekciji, false inace.
 	 * 
 	 */
-	boolean containsName(String componentName);
+	boolean containsName(Caseless componentName);
 	
 	
 	/**
@@ -105,7 +105,7 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * Ako ne postoji komponenta tog imena.
 	 * 
 	 */
-	void removeComponent(String name) throws UnknownKeyException;
+	void removeComponent(Caseless name) throws UnknownKeyException;
 	
 }
 

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
@@ -64,7 +65,7 @@ public interface ISchemaComponent extends ISerializable {
 	 * za taj tip sklopa.
 	 * 
 	 */
-	String getTypeName();
+	Caseless getTypeName();
 	
 	
 	/**
@@ -78,7 +79,7 @@ public interface ISchemaComponent extends ISerializable {
 	 * za dohvacanje te vrijednosti.
 	 * 
 	 */
-	String getName();
+	Caseless getName();
 	
 	
 	/**
@@ -166,7 +167,7 @@ public interface ISchemaComponent extends ISerializable {
 	 * null ako ne postoji port
 	 * tog imena.
 	 */
-	SchemaPort getSchemaPort(String name);
+	SchemaPort getSchemaPort(Caseless name);
 	
 	/**
 	 * Vraca imena svih portove na komponenti.

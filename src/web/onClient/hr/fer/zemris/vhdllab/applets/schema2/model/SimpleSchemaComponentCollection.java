@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 
@@ -29,12 +30,12 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		public XYLocation pos;
 	}
 	
-	private Map<String, CpWrapper> components;
+	private Map<Caseless, CpWrapper> components;
 	
 	
 	
 	public SimpleSchemaComponentCollection() {
-		components = new HashMap<String, CpWrapper>();
+		components = new HashMap<Caseless, CpWrapper>();
 	}
 	
 	
@@ -57,7 +58,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		XYLocation loc = new XYLocation(x, y);
 		XYLocation start;
 		ISchemaComponent comp;
-		for (Entry<String, CpWrapper> entry : components.entrySet()) {
+		for (Entry<Caseless, CpWrapper> entry : components.entrySet()) {
 			comp = entry.getValue().comp;
 			start = entry.getValue().pos;
 			if (loc.in(start.x, start.y, comp.getWidth(), comp.getHeight())) return true;
@@ -65,7 +66,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		return false;
 	}
 
-	public boolean containsName(String componentName) {
+	public boolean containsName(Caseless componentName) {
 		return components.containsKey(componentName);
 	}
 
@@ -73,7 +74,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		XYLocation loc = new XYLocation(x, y);
 		XYLocation start;
 		ISchemaComponent comp;
-		for (Entry<String, CpWrapper> entry : components.entrySet()) {
+		for (Entry<Caseless, CpWrapper> entry : components.entrySet()) {
 			comp = entry.getValue().comp;
 			start = entry.getValue().pos;
 			if (loc.in(start.x, start.y, comp.getWidth(), comp.getHeight())) return comp;
@@ -81,11 +82,11 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		return null;
 	}
 
-	public ISchemaComponent fetchComponent(String componentName) {
+	public ISchemaComponent fetchComponent(Caseless componentName) {
 		return components.get(componentName).comp;
 	}
 
-	public void removeComponent(String name) throws UnknownKeyException {
+	public void removeComponent(Caseless name) throws UnknownKeyException {
 		if (!components.containsKey(name)) throw new UnknownKeyException();
 		components.remove(name);
 	}
