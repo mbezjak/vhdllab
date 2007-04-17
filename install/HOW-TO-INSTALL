@@ -15,3 +15,10 @@ Following must be done in order to prepare project.
 
    Developers: do not add ../src/service/compiler.properties to svn
    repository! You shoud only customize it and leave it for yourself.
+
+2) copy predefinedFiles.properties-sample to
+   ../src/service/predefinedFiles.properties. Then edit this file and fix
+   path. 
+
+   Developers: do not add ../src/service/predefinedFiles.properties to svn
+   repository! You shoud only customize it and leave it for yourself.
