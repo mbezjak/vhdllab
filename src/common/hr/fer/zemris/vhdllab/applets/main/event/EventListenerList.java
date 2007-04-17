@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applet.main.event;
+package hr.fer.zemris.vhdllab.applets.main.event;
 
 import java.util.ArrayList;
 import java.util.Collections;

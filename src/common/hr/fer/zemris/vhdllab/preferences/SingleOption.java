@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.preferences;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
-import hr.fer.zemris.vhdllab.applet.main.event.EventListenerList;
+import hr.fer.zemris.vhdllab.applets.main.event.EventListenerList;
 import hr.fer.zemris.vhdllab.preferences.verifier.AlwaysTrueVerifier;
 
 import java.util.ArrayList;

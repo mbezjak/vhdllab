@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<componentList>
+   <component>
+        <parameterName>AND_gate</parameterName>
+        <codeFileName>AND_gate.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.onClient.applets.schema2.gui.drawing.AND_Drawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <type>TIME</type>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValueSet isFinite="false">
+              </allowedValueSet>
+           </parameter>
+
+           <parameter>
+              <generic>true</generic>
+              <type>INTEGER</type>
+              <name>input_port_num</name>
+              <value>2</value>
+              <allowedValueSet isFinite="false">
+              </allowedValueSet>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>input_ports</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vectorAscension>ascend</vectorAscension>
+              <lowerBound>0</lowerBound>
+              <upperBound>input_port_num</upperBound>
+           </port>
+
+           <port>
+              <name>output_port</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+</componentList>
