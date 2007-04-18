@@ -191,7 +191,7 @@ public interface ISchemaComponent extends ISerializable {
 	 * Genericka lista unutar koje
 	 * su imena portova.
 	 */
-	Set<String> getAllPorts();
+	Set<Caseless> getAllPorts();
 	
 	
 	/**
@@ -203,6 +203,28 @@ public interface ISchemaComponent extends ISerializable {
 	 */
 	IVHDLSegmentProvider getVHDLSegmentProvider();
 	
+	
+	/**
+	 * Za dohvat kategorije unutar koje
+	 * ce biti smjesten sklop.
+	 * Ovo je bitno za eventualni
+	 * view (gui) jer su sklopovi
+	 * logicki odvojeni u skupine.
+	 * 
+	 * @return
+	 * Vraca ime kategorije u koju
+	 * ce biti smjesten sklop (komponenta).
+	 */
+	String getCategoryName();
+	
+	
+	/**
+	 * Vraca objekt za iscrtavanje.
+	 * 
+	 * @return
+	 * Vidi opis ovog sucelja.
+	 */
+	IComponentDrawer getDrawer();
 	
 	
 	

@@ -85,6 +85,16 @@ public interface ISchemaWire extends ISerializable {
 	 * 
 	 */
 	List<WireSegment> getSegments();
+	
+	
+	/**
+	 * Vraca objekt za
+	 * iscrtavanje komponente.
+	 * 
+	 * @return
+	 * @see IWireDrawer
+	 */
+	IWireDrawer getDrawer();
 }
 
 

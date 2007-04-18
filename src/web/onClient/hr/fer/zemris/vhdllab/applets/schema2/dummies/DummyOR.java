@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
@@ -24,14 +25,14 @@ public class DummyOR implements ISchemaComponent {
 	private final static int WIDTH = 50;
 	private final static int HEIGHT_PER_PORT = 20;
 	
-	private Map<String, SchemaPort> ports;
+	private Map<Caseless, SchemaPort> ports;
 	private CircuitInterface circinterf;
 	private EOrientation orient;
 	
 	
 	
 	public DummyOR(String name) {
-		ports = new HashMap<String, SchemaPort>();
+		ports = new HashMap<Caseless, SchemaPort>();
 		circinterf = new DefaultCircuitInterface(name);
 		orient = EOrientation.NORTH;
 	}
@@ -49,7 +50,7 @@ public class DummyOR implements ISchemaComponent {
 	}
 
 	
-	public Set<String> getAllPorts() {
+	public Set<Caseless> getAllPorts() {
 		return ports.keySet(); 
 	}
 
@@ -157,6 +158,27 @@ public class DummyOR implements ISchemaComponent {
 	public Caseless getMappingForPort(Caseless name) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+
+
+
+
+
+	public String getCategoryName() {
+		return "BasicGates";
+	}
+
+
+
+
+
+
+
+	public IComponentDrawer getDrawer() {
+		// TODO Auto-generated method stub
+		throw new NotImplementedException();
 	}
 
 	

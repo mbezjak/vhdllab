@@ -49,6 +49,15 @@ public interface ISchemaInfo extends ISerializable {
 	
 	
 	/**
+	 * Vraca objekt u kojem je moguce pohranjivati
+	 * propertye vezane uz shemu.
+	 * 
+	 * @return
+	 */
+	ISchemaProperties getProperties();
+	
+	
+	/**
 	 * Vraca objekt koji sadrzi CircuitInterface
 	 * modeliranog objekta, i jos neke dodatne
 	 * podatke, npr. parametre generic bloka.
@@ -63,7 +72,14 @@ public interface ISchemaInfo extends ISerializable {
 	 * 
 	 * @return
 	 */
-	List<String> getPrototypes();
+	List<String> getPrototypeNames();
+	
+	/**
+	 * Vraca listu prototipova u shemi.
+	 * 
+	 * @return
+	 */
+	List<ISchemaComponent> getPrototypes();
 }
 
 
