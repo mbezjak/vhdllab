@@ -21,7 +21,6 @@ import hr.fer.zemris.vhdllab.dao.impl.hibernate2.ProjectDAOHibernateImplWOSessio
 import hr.fer.zemris.vhdllab.dao.impl.hibernate2.UserFileDAOHibernateImplWOSession;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
-import hr.fer.zemris.vhdllab.model.ModelUtil;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
@@ -31,6 +30,7 @@ import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
+import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

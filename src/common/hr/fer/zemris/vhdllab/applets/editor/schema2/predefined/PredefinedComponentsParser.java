@@ -11,16 +11,21 @@ import org.apache.commons.digester.Digester;
 
 public class PredefinedComponentsParser {
 	
-	public static PredefinedConf conf = null;
+	private PredefinedConf conf = null;
+	private String pathToConfigurationFile = null;
 	
-	public static PredefinedConf getConfiguration() {
+	public PredefinedComponentsParser(String pathToConfigurationFile) {
+		this.pathToConfigurationFile = pathToConfigurationFile;
+	}
+	
+	public PredefinedConf getConfiguration() {
 		if(conf == null) {
 			conf = parseConfiguration();
 		}
 		return conf;
 	}
 	
-	private static PredefinedConf parseConfiguration() {
+	private PredefinedConf parseConfiguration() {
 		Digester digester = new Digester();
 		digester.setValidating(false);
 		digester.addObjectCreate("componentList", PredefinedConf.class);
@@ -51,8 +56,7 @@ public class PredefinedComponentsParser {
 		
 		digester.addSetNext("componentList/component", "addPredefinedComponent");
 		
-		PredefinedComponentsParser c = new PredefinedComponentsParser();
-		InputStream is = c.getClass().getResourceAsStream("configuration.xml");
+		InputStream is = this.getClass().getResourceAsStream(pathToConfigurationFile);
 		try {
 			return (PredefinedConf) digester.parse(is);
 		} catch (Exception e) {

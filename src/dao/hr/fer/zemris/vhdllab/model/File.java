@@ -157,11 +157,17 @@ public class File implements Comparable<File> {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("File '").append(fileName).append("', id=")
-		.append(id).append(", filetype=").append(fileType)
-		.append(", belongs to Project '").append(project.getProjectName())
-		.append("'(").append(project.getId()).append("), has content:\n")
-		.append(content);
+		sb.append("File '").append(fileName).append("', id=").append(id)
+				.append(", filetype=").append(fileType)
+				.append(", belongs to Project '");
+		if (project != null) {
+			sb.append(project.getProjectName()).append("'(")
+					.append(project.getId()).append(")");
+		} else {
+			sb.append("null'");
+		}
+		sb.append(", has content:\n").append(content);
 		return sb.toString();
 	}
+	
 }

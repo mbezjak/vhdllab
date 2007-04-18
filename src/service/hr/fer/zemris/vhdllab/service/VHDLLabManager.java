@@ -538,7 +538,7 @@ public interface VHDLLabManager {
 	 * 
 	 * @param fileName
 	 *            a name of a file. If <code>fileName</code> contains path
-	 *            elements then it must not contain any <code>..</code>
+	 *            elements then it must not contain any <code>../</code>
 	 *            characters. Also this path will be considered relative, never
 	 *            absolute.
 	 * @return a default file matching <code>fileName</code>

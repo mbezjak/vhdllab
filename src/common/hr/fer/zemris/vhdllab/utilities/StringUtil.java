@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.string;
+package hr.fer.zemris.vhdllab.utilities;
 
 
 /**
@@ -6,7 +6,7 @@ package hr.fer.zemris.vhdllab.string;
  * 
  * @author Miro Bezjak
  */
-public class StringUtil {
+public final class StringUtil {
 	
 	/**
 	 * Don't let anyone instantiate this class.

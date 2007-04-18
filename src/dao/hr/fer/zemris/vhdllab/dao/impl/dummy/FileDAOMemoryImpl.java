@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.dao.impl.dummy;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.model.ModelUtil;
+import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
 import java.util.HashMap;
 import java.util.Map;

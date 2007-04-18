@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.vhdllab.string.StringUtil;
+import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
 
 /**

@@ -22,6 +22,7 @@ import hr.fer.zemris.vhdllab.service.extractor.automat.AutCircuitInterfaceExtrac
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.service.generator.automat.VHDLGenerator;
 import hr.fer.zemris.vhdllab.simulators.ISimulator;
+import hr.fer.zemris.vhdllab.utilities.FileUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
@@ -31,10 +32,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.tb.TestBenchDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -593,61 +590,26 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		this.userFileDAO = userFileDAO;
 	}
 
-	public File getPredefinedFile(String fileName, boolean retrieveFileBody) throws ServiceException {
-		if(fileName == null) { 
+	public File getPredefinedFile(String fileName, boolean retrieveFileBody)
+			throws ServiceException {
+		if (fileName == null) {
 			throw new ServiceException("File name can not be null.");
 		}
 		File f = new File();
 		f.setFileName(fileName);
 		f.setFileType(FileTypes.FT_PREDEFINED);
-		if(retrieveFileBody) {
-			fileName = filterMaliciousPath(fileName);
-			InputStream is = this.getClass().getClassLoader().getResourceAsStream("predefinedFiles.properties");
-			Properties p = new Properties();
-			try {
-				p.load(is);
-			} catch (IOException e) {
-				throw new ServiceException(e);
+		if (retrieveFileBody) {
+			InputStream is = this.getClass().getClassLoader()
+					.getResourceAsStream("predefinedFiles.properties");
+			Properties p = FileUtil.getProperties(is);
+			if (p == null) {
+				throw new ServiceException("Can not read properties file.");
 			}
 			String predefDir = p.getProperty("predefined.files.tmpDir");
-			if(!predefDir.endsWith("/")) {
-				predefDir += "/";
-			}
-			predefDir += fileName;
-			f.setContent(getPredefinedFileContent(fileName));
+			String pathToFile = FileUtil.mergePaths(predefDir, fileName);
+			f.setContent(FileUtil.readFile(pathToFile));
 		}
 		return f;
 	}
 	
-	private String getPredefinedFileContent(String fileName) throws ServiceException {
-		DataInputStream data = null;
-		String content = null;
-		try {
-			data = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)));
-			java.io.File file = new java.io.File(fileName);
-			byte[] bytes = new byte[(int) file.length()];
-			data.readFully(bytes);
-			content = String.valueOf(bytes);
-		} catch (Exception e) {
-			throw new ServiceException(e);
-		} finally {
-			if(data != null) {
-				try {
-					data.close();
-				} catch (Throwable ignore) {}
-			}
-		}
-		return content;
-	}
-
-	/**
-	 * Removes all <code>../</code> characters so that <code>path</code>
-	 * could not point to higher hierarchical directory.  
-	 * @param path a path to a file
-	 * @return a filtered path
-	 */
-	private String filterMaliciousPath(String path) {
-		return path.replaceAll("(\\.\\.){0,2}/", "");
-	}
-
 }

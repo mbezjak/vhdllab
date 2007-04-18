@@ -8,7 +8,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.string.StringUtil;
+import hr.fer.zemris.vhdllab.utilities.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 

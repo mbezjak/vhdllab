@@ -1,13 +1,13 @@
 package hr.fer.zemris.vhdllab.dao.impl.dummy;
 
-import static hr.fer.zemris.vhdllab.model.ModelUtil.projectNamesAreEqual;
-import static hr.fer.zemris.vhdllab.model.ModelUtil.userIdAreEqual;
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.projectNamesAreEqual;
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.userIdAreEqual;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.model.File;
-import hr.fer.zemris.vhdllab.model.ModelUtil;
 import hr.fer.zemris.vhdllab.model.Project;
+import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.model;
+package hr.fer.zemris.vhdllab.utilities;
 
 /**
  * Any change in this class must reflect upon a change in adequate model

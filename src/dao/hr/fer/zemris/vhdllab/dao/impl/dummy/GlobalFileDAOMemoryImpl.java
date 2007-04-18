@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.dao.impl.dummy;
 
-import static hr.fer.zemris.vhdllab.model.ModelUtil.globalFileNamesAreEqual;
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.globalFileNamesAreEqual;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
-import hr.fer.zemris.vhdllab.model.ModelUtil;
+import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

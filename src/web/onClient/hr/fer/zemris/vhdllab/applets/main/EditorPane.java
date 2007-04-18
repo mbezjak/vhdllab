@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.model.ModelUtil;
+import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
