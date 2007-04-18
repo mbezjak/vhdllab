@@ -24,7 +24,6 @@ public class Communicator {
 		if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
 		if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
 		cache = new Cache();
-		this.invoker = invoker;
 		this.ownerId = ownerId;
 	}
 	
@@ -140,6 +139,11 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
 		return invoker.loadFileContent(fileIdentifier);
+	}
+	
+	public String loadPredefinedFileContent(String fileName) throws UniformAppletException {
+		if(fileName == null) throw new NullPointerException("File name can not be null.");
+		return invoker.loadPredefinedFileContent(fileName);
 	}
 
 	public String loadFileType(String projectName, String fileName) throws UniformAppletException {

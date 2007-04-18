@@ -16,6 +16,7 @@ public interface ProjectContainer {
 	List<String> getAllCircuits(String projectName) throws UniformAppletException;
 	List<String> getAllTestbenches(String projectName) throws UniformAppletException;
 	String getFileType(String projectName, String fileName);
+	String getPredefinedFileContent(String fileName) throws UniformAppletException;
 	Hierarchy extractHierarchy(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
 	List<Preferences> getPreferences(String type) throws UniformAppletException;

@@ -1894,6 +1894,35 @@ public class MethodConstants {
 	 * </ul>
 	 */
 	public static final String MTD_EXTRACT_HIERARCHY = "extract.hierarchy";
+	/**
+	 * A "load predefined file content" method. Expected parametars (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_NAME}
+	 * </ul>
+	 * <p>
+	 * If no error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * <li>{@link #PROP_FILE_CONTENT} - containing file content or empty string if file content is <code>null</code>.
+	 * </ul>
+	 * <p>
+	 * However if error occured, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_NO_SUCH_FILE} - if file with {@link #PROP_FILE_ID} could not be found
+	 * </ul>
+	 */
+	public static final String MTD_LOAD_PREDEFINED_FILE_CONTENT = "load.predefined.file.content";
 	
 	/**
 	 * Dont let anyone instantiate this class.

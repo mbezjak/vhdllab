@@ -63,4 +63,6 @@ public interface MethodInvoker {
 	CircuitInterface extractCircuitInterface(Long fileId) throws UniformAppletException;
 	List<Long> extractDependencies(Long fileId) throws UniformAppletException;
 	Hierarchy extractHierarchy(Long projectId) throws UniformAppletException;
+	String loadPredefinedFileContent(String fileName) throws UniformAppletException;
+
 }

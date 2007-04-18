@@ -1171,6 +1171,10 @@ public class MainApplet
 		}
 		return option;
 	}
+	
+	public String getPredefinedFileContent(String fileName) throws UniformAppletException {
+		return communicator.loadPredefinedFileContent(fileName);
+	}
 
 	public List<Preferences> getPreferences(String type) throws UniformAppletException {
 		return communicator.getPreferences(type);

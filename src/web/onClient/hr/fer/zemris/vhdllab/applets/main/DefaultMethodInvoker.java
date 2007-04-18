@@ -516,6 +516,19 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		String type = resProperties.getProperty(MethodConstants.PROP_FILE_TYPE);
 		return type;
 	}
+	
+	public String loadPredefinedFileContent(String fileName) throws UniformAppletException {
+		if(fileName == null) throw new NullPointerException("File name can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_LOAD_PREDEFINED_FILE_CONTENT;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, fileName);
+		
+		Properties resProperties = initiator.initiateCall(reqProperties);
+		
+		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
+		return content;
+	}
 
 	public List<Long> loadProjectFilesId(Long projectId) throws UniformAppletException {
 		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
