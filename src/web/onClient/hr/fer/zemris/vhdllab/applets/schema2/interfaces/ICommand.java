@@ -50,7 +50,8 @@ public interface ICommand {
 	 * ne.
 	 * OPREZ: Ako je komanda neuspjesno izvedena, onda ona
 	 * NE SMIJE niposto napraviti bilo kakvu promjenu na info
-	 * objektu. 
+	 * objektu - ovo je bitno za one koji implementiraju
+	 * ovo sucelje. 
 	 * 
 	 * @param info
 	 * Objekt koji sadrzi informacije o sklopovima,

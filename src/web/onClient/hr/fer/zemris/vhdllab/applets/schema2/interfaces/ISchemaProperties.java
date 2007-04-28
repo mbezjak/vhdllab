@@ -6,8 +6,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 
 
 /**
- * Sucelje za objekt koji sadrzi 
- * sve propertye vezane uz shemu.
+ * Bit ce obrisano.
  * 
  * @author brijest
  *

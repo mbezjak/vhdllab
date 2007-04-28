@@ -1,6 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import java.util.List;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+
+import java.util.Collection;
+import java.util.Set;
 
 
 
@@ -49,15 +52,6 @@ public interface ISchemaInfo extends ISerializable {
 	
 	
 	/**
-	 * Vraca objekt u kojem je moguce pohranjivati
-	 * propertye vezane uz shemu.
-	 * 
-	 * @return
-	 */
-	ISchemaProperties getProperties();
-	
-	
-	/**
 	 * Vraca objekt koji sadrzi CircuitInterface
 	 * modeliranog objekta, i jos neke dodatne
 	 * podatke, npr. parametre generic bloka.
@@ -72,14 +66,14 @@ public interface ISchemaInfo extends ISerializable {
 	 * 
 	 * @return
 	 */
-	List<String> getPrototypeNames();
+	Set<Caseless> getPrototypeNames();
 	
 	/**
 	 * Vraca listu prototipova u shemi.
 	 * 
 	 * @return
 	 */
-	List<ISchemaComponent> getPrototypes();
+	Collection<ISchemaComponent> getPrototypes();
 }
 
 

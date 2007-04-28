@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateParameterException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
@@ -28,12 +29,12 @@ public class SchemaParameterCollection implements IParameterCollection {
 	
 	public void deserialize(String code) {
 		// TODO Auto-generated method stub
-		
+		throw new NotImplementedException();
 	}
 
 	public String serialize() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	public void addParameter(String key, IParameter parameter) throws DuplicateParameterException {

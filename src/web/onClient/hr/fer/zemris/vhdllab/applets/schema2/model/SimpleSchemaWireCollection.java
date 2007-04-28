@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
@@ -9,6 +11,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 
 
@@ -17,9 +21,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	private Map<Caseless, ISchemaWire> wires;
+	private int xlkp, ylkp;
 	
 	
 	
+	
+	// public metode
 	
 	
 	public SimpleSchemaWireCollection() {
@@ -39,8 +46,14 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	}
 
 	public boolean containsAt(int x, int y, int dist) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		for (Entry<Caseless, ISchemaWire> entry : wires.entrySet()) {
+			List<WireSegment> segments = entry.getValue().getSegments();
+			
+			for (WireSegment seg : segments) {
+				if (seg.calcDist(x, y) <= dist) return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean containsName(Caseless wireName) {
@@ -48,8 +61,14 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	}
 
 	public ISchemaWire fetchWire(int x, int y, int dist) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		for (Entry<Caseless, ISchemaWire> entry : wires.entrySet()) {
+			List<WireSegment> segments = entry.getValue().getSegments();
+			
+			for (WireSegment seg : segments) {
+				if (seg.calcDist(x, y) <= dist) return entry.getValue();
+			}
+		}
+		return null;
 	}
 
 	public ISchemaWire fetchWire(Caseless wireName) {
@@ -66,6 +85,9 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 		throw new NotImplementedException();
 	}
 
+	
+	
+	
 }
 
 

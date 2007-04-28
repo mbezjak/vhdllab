@@ -1,8 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import java.util.List;
-
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownComponentPrototypeException;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+
+import java.util.Collection;
+import java.util.Set;
 
 
 
@@ -30,16 +33,25 @@ public interface ISchemaPrototypeCollection {
 	 * Deep copy prototipa.
 	 * 
 	 */
-	ISchemaComponent clonePrototype(String componentTypeName) throws UnknownComponentPrototypeException;
+	ISchemaComponent clonePrototype(Caseless componentTypeName) throws UnknownComponentPrototypeException;
 	
 	
 	/**
-	 * Vraca listu imena prototipova koji se nalaze
+	 * Vraca skup imena prototipova koji se nalaze
 	 * u kolekciji.
 	 * 
 	 * @return
 	 */
-	List<String> getPrototypeNames();
+	Set<Caseless> getPrototypeNames();
+	
+	/**
+	 * Vraca skup prototipova.
+	 * Mijenjanje dobivenog skupa utjece
+	 * na sadrzaj komponenata.
+	 * 
+	 * @return
+	 */
+	Collection<ISchemaComponent> getPrototypes();
 	
 	
 	/**
@@ -52,9 +64,11 @@ public interface ISchemaPrototypeCollection {
 	 * u shemi, jer ce nove kopije biti
 	 * kopije trenutnog stanja komponente koja
 	 * je trenutno na shemi.
-	 * 
+	 * @throws DuplicateKeyException
+	 * Baca ovaj exception ako se ustanovi
+	 * da prototip tog istog tipa vec postoji.
 	 */
-	void addPrototype(ISchemaComponent componentPrototype);
+	void addPrototype(ISchemaComponent componentPrototype) throws DuplicateKeyException;
 }
 
 

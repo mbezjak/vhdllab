@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Axel
  *
  */
-public class InfoMap {
+public final class InfoMap {
 	private Map<String, Object> map;
 	
 	public InfoMap() {
@@ -31,7 +31,7 @@ public class InfoMap {
 	 * netko pohranio null pod tim kljucem.
 	 * 
 	 */
-	public Object get(String key) {
+	public final Object get(String key) {
 		return map.get(key);
 	}
 	
@@ -43,9 +43,10 @@ public class InfoMap {
 	 * @param object
 	 * Objekt.
 	 */
-	public void set(String key, Object object) {
+	public final void set(String key, Object object) {
 		map.put(key, object);
 	}
+	
 }
 
 

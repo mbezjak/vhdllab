@@ -3,7 +3,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.exceptions;
 
 
 /**
- * Bacaju se od strane ICommandExecutora.
+ * Bacaju se kad izvodenje komande bude
+ * iz nekog razloga neuspjesno.
  * 
  * @author brijest
  *
