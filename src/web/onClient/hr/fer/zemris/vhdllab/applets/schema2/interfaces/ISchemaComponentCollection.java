@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
@@ -91,9 +92,11 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * 
 	 * @throws DuplicateKeyException
 	 * Ako postoji komponenta tog imena.
+	 * @throws OverlapException
+	 * Ako dolazi do preklapanja.
 	 * 
 	 */
-	void addComponent(int x, int y, ISchemaComponent component) throws DuplicateKeyException;
+	void addComponent(int x, int y, ISchemaComponent component) throws DuplicateKeyException, OverlapException;
 	
 	/**
 	 * Zadanu komponentu mice sa sheme.

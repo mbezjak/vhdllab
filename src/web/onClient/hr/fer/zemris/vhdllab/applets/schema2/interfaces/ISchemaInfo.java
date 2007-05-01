@@ -2,9 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 
 
@@ -67,6 +65,14 @@ public interface ISchemaInfo extends ISerializable {
 	 * @return
 	 */
 	Map<Caseless, ISchemaComponent> getPrototypes();
+	
+	/**
+	 * Vraca objekt s kojim je moguce instancirati
+	 * nove komponente.
+	 * 
+	 * @return
+	 */
+	ISchemaPrototypeCollection getPrototyper();
 }
 
 

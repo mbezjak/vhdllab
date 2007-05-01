@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
@@ -88,8 +89,10 @@ public interface ISchemaWireCollection extends ISerializable {
 	 * @return
 	 * @throws DuplicateKeyException
 	 * Ako postoji zica tog imena u kolekciji.
+	 * @throws OverlapException
+	 * Ako dolazi do preklapanja s postojecim zicama.
 	 */
-	void addWire(ISchemaWire wire) throws DuplicateKeyException;
+	void addWire(ISchemaWire wire) throws DuplicateKeyException, OverlapException;
 	
 	/**
 	 * Mice zicu iz kolekcije.

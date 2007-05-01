@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
@@ -43,7 +44,8 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	
 	
 	
-	public void addComponent(int x, int y, ISchemaComponent component) throws DuplicateKeyException {
+	public void addComponent(int x, int y, ISchemaComponent component) 
+	throws DuplicateKeyException, OverlapException {
 		if (components.containsKey(component.getName())) throw new DuplicateKeyException();
 		
 		// eventualna provjera overlappinga dode ovdje

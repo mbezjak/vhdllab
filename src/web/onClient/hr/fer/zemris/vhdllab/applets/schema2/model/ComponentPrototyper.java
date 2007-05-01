@@ -6,10 +6,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaPrototypeCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
 
@@ -30,10 +28,15 @@ public class ComponentPrototyper implements ISchemaPrototypeCollection {
 		prototypes.put(componentPrototype.getTypeName(), componentPrototype);
 	}
 
-	public ISchemaComponent clonePrototype(Caseless componentTypeName) throws UnknownComponentPrototypeException {
+	public ISchemaComponent clonePrototype(Caseless componentTypeName, Caseless instanceName)
+	throws UnknownComponentPrototypeException {
 		if (!prototypes.containsKey(componentTypeName))
 			throw new UnknownComponentPrototypeException();
-		return prototypes.get(componentTypeName).copyCtor();
+		
+		ISchemaComponent comp = prototypes.get(componentTypeName).copyCtor();
+		comp.setName(instanceName);
+		
+		return comp;
 	}
 
 	public Map<Caseless, ISchemaComponent> getPrototypes() {

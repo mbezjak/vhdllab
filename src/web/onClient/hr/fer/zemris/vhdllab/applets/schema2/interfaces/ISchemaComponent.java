@@ -81,6 +81,15 @@ public interface ISchemaComponent extends ISerializable {
 	 */
 	Caseless getName();
 	
+	/**
+	 * Postavlja ime instance komponente.
+	 * Pokrata za postavljanje odgovarajuce
+	 * vrijednosti u parameter kolekciji.
+	 * 
+	 * @param name
+	 */
+	void setName(Caseless name);
+	
 	
 	/**
 	 * Vraca jedan objekt tipa

@@ -50,6 +50,10 @@ public class SchemaInfo implements ISchemaInfo {
 	public void setWires(ISchemaWireCollection wires) {
 		this.wires = wires;
 	}
+	
+	public ISchemaPrototypeCollection getPrototyper() {
+		return prototypes;
+	}
 
 	public void deserialize(String code) {
 		throw new NotImplementedException();

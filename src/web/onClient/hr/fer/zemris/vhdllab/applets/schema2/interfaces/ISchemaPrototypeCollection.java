@@ -26,13 +26,16 @@ public interface ISchemaPrototypeCollection {
 	 * za svaki tip komponente.
 	 * 
 	 * @param componentTypeName
-	 * Ime tipa komponente.
+     * Ime tipa komponente.
+     * @param instanceName
+     * Ime nove instance.
 	 * 
 	 * @return
 	 * Deep copy prototipa.
 	 * 
 	 */
-	ISchemaComponent clonePrototype(Caseless componentTypeName) throws UnknownComponentPrototypeException;
+	ISchemaComponent clonePrototype(Caseless componentTypeName, Caseless instanceName)
+	throws UnknownComponentPrototypeException;
 	
 	
 	/**

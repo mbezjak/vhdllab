@@ -103,13 +103,13 @@ public class SchemaCore implements ISchemaCore {
 		if (!response.isCommandSuccessful()) {
 			undolist.clear();
 			redolist.clear();
-			throw new CommandExecutorException("Cannot undo command.");
+			throw new CommandExecutorException("Cannot undo command. Reason: "
+					+ response.getError().toString());
 		}
 		else redolist.add(comm);
 		
 		return response;
 	}
-
 
 	public void addListener(EPropertyChange changeType, PropertyChangeListener listener) {
 		if (EPropertyChange.ANY_CHANGE == changeType) {

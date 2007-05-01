@@ -1,18 +1,18 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 
@@ -21,7 +21,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	private Map<Caseless, ISchemaWire> wires;
-	private int xlkp, ylkp;
 	
 	
 	
@@ -35,7 +34,7 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	
 	
 	
-	public void addWire(ISchemaWire wire) throws DuplicateKeyException {
+	public void addWire(ISchemaWire wire) throws DuplicateKeyException, OverlapException {
 		if (wires.containsKey(wire.getName())) throw new DuplicateKeyException();
 		wires.put(wire.getName(), wire);
 	}

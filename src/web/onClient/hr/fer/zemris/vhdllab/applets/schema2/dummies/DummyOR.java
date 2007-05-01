@@ -176,6 +176,15 @@ public class DummyOR implements ISchemaComponent {
 
 
 
+	public void setName(Caseless name) {
+	}
+
+
+
+
+
+
+
 	public IComponentDrawer getDrawer() {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
