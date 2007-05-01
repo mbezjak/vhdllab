@@ -14,7 +14,7 @@ public final class SchemaError {
 	private String message;
 	
 	public SchemaError() {
-		setErrorcode(EErrorTypes.NO_ERROR);
+		setErrorcode(EErrorTypes.UNKNOWN_TYPE);
 		setMessage(null);
 	}
 	
@@ -43,3 +43,9 @@ public final class SchemaError {
 		return message;
 	}
 }
+
+
+
+
+
+

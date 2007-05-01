@@ -1,8 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
+
 
 /**
  * Ovaj interface propisuje nacin funkcioniranja same logike schematica. Njegove
@@ -90,4 +93,38 @@ public interface ISchemaCore {
 	 * @return Vidi prethodnu metodu.
 	 */
 	ICommandResponse redo() throws CommandExecutorException;
+	
+	
+	/**
+	 * Dodaje novi listener. Pri bilo kakvoj
+	 * promjeni u modelu sheme svi ce listeneri
+	 * biti obavijesteni.
+	 * 
+	 * @param listener
+	 * @param changeType
+	 * Tip promjene za koji se listener aktivira.
+	 * ANY_CHANGE za sve vrste promjena.
+	 */
+	void addListener(EPropertyChange changeType, PropertyChangeListener listener);
+	
+	
+	/**
+	 * Mice listener s popisa.
+	 * 
+	 * @param listener
+	 */
+	void removeListener(PropertyChangeListener listener);
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+

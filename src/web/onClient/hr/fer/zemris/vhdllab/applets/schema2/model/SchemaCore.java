@@ -1,11 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,11 +24,14 @@ public class SchemaCore implements ISchemaCore {
 	private ISchemaInfo info;
 	private List<ICommand> undolist;
 	private List<ICommand> redolist;
+	private PropertyChangeSupport support;
+	
 	
 	public SchemaCore() {
 		info = new SchemaInfo();
 		undolist = new LinkedList<ICommand>();
 		redolist = new LinkedList<ICommand>();
+		support = new PropertyChangeSupport(this);
 	}
 	
 	
@@ -104,6 +110,23 @@ public class SchemaCore implements ISchemaCore {
 		return response;
 	}
 
+
+	public void addListener(EPropertyChange changeType, PropertyChangeListener listener) {
+		if (EPropertyChange.ANY_CHANGE == changeType) {
+			support.addPropertyChangeListener(listener);
+		} else {
+			support.addPropertyChangeListener(changeType.toString(), listener);
+		}
+	}
+
+
+	public void removeListener(PropertyChangeListener listener) {
+		support.removePropertyChangeListener(listener);
+	}
+
+	
+	
+	
 }
 
 

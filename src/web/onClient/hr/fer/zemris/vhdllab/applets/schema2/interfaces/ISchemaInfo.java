@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -60,20 +61,12 @@ public interface ISchemaInfo extends ISerializable {
 	 */
 	ISchemaEntity getEntity();
 	
-	
-	/**
-	 * Vraca listu imena prototipova sklopova unutar sheme.
-	 * 
-	 * @return
-	 */
-	Set<Caseless> getPrototypeNames();
-	
 	/**
 	 * Vraca listu prototipova u shemi.
 	 * 
 	 * @return
 	 */
-	Collection<ISchemaComponent> getPrototypes();
+	Map<Caseless, ISchemaComponent> getPrototypes();
 }
 
 

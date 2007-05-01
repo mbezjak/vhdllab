@@ -3,19 +3,18 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
 
 
 
-public enum EConstraintExplanation {
-	NO_INFORMATION() {
+public enum EPropertyChange {
+	ANY_CHANGE,
+	CANVAS_CHANGE() {
 		@Override
 		public String toString() {
-			return "No information."; 
+			return "CANVAS_CHANGE";
 		}
 	},
-	
-	WRONG_TYPE() {
+	COMPONENT_PROPERTY_CHANGE() {
 		@Override
 		public String toString() {
-			return "Wrong parameter value type.";
+			return "COMPONENT_PROPERTY_CHANGE";
 		}
 	}
-	
 }

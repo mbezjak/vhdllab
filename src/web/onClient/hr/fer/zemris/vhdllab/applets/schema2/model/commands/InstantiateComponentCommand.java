@@ -1,9 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.commands;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidCommandOperationException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
+import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
 
 
@@ -16,19 +20,36 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
  *
  */
 public class InstantiateComponentCommand implements ICommand {
+	private Caseless cpType;
+	private Caseless instName;
+	
+	
+	public final String COMMAND_NAME = "InstantiateComponentCommand";
+	
+	public InstantiateComponentCommand(Caseless componentTypeName, Caseless instanceName) {
+		cpType = componentTypeName;
+		instName = instanceName;
+	}
+	
+	
+	
 
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return COMMAND_NAME;
 	}
 
 	public boolean isUndoable() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public ICommandResponse performCommand(ISchemaInfo info) {
-		// TODO Auto-generated method stub
+		if (info.getComponents().containsName(instName)) {
+			ICommandResponse resp = new CommandResponse(
+					new SchemaError(EErrorTypes.DUPLICATE_COMPONENT_NAME, "Component name not unique."));
+			
+			return resp;
+		}
+		
 		return null;
 	}
 
@@ -39,3 +60,8 @@ public class InstantiateComponentCommand implements ICommand {
 	}
 
 }
+
+
+
+
+

@@ -9,5 +9,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  *
  */
 public enum EErrorTypes {
-	NO_ERROR, UNKNOWN_TYPE
+	NO_ERROR, UNKNOWN_TYPE,
+	DUPLICATE_COMPONENT_NAME,
+	NONEXISTING_PROTOTYPE
 }

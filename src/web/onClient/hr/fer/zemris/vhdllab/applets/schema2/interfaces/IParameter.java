@@ -122,7 +122,7 @@ public interface IParameter extends ISerializable {
 	/**
 	 * Odreduje da li je moguce isparsirati vrijednost
 	 * parametra na temelju proslijedenog stringa,
-	 * a ne objekta.
+	 * umjesto objekta.
 	 * 
 	 * @return
 	 * Vraca true ako je vrijednost parametra

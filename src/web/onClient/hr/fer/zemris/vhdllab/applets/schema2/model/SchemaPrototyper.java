@@ -36,12 +36,8 @@ public class SchemaPrototyper implements ISchemaPrototypeCollection {
 		return prototypes.get(componentTypeName).copyCtor();
 	}
 
-	public Set<Caseless> getPrototypeNames() {
-		return prototypes.keySet();
-	}
-	
-	public Collection<ISchemaComponent> getPrototypes() {
-		return prototypes.values();
+	public Map<Caseless, ISchemaComponent> getPrototypes() {
+		return prototypes;
 	}
 
 }

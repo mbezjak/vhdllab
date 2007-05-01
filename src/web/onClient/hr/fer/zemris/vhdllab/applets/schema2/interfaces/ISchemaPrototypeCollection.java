@@ -4,8 +4,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownComponentPrototypeException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Map;
 
 
 
@@ -37,21 +36,12 @@ public interface ISchemaPrototypeCollection {
 	
 	
 	/**
-	 * Vraca skup imena prototipova koji se nalaze
+	 * Vraca mapu prototipova koji se nalaze
 	 * u kolekciji.
 	 * 
 	 * @return
 	 */
-	Set<Caseless> getPrototypeNames();
-	
-	/**
-	 * Vraca skup prototipova.
-	 * Mijenjanje dobivenog skupa utjece
-	 * na sadrzaj komponenata.
-	 * 
-	 * @return
-	 */
-	Collection<ISchemaComponent> getPrototypes();
+	Map<Caseless, ISchemaComponent> getPrototypes();
 	
 	
 	/**

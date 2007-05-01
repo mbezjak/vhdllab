@@ -16,16 +16,18 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
  */
 public interface IVHDLSegmentProvider {
 	/**
-	 * Bit ce opisano.
+	 * Vraca kod za signale koji su potrebni
+	 * za prospajanje zica na komponentu.
 	 * 
 	 * @return
 	 */
 	String getSignalDefinitions();
 	
 	/**
-	 * Bit ce opisano.
+	 * Vraca linije koda vezanu uz instanciranje
+	 * komponente i prospajanje zica.
 	 * 
 	 * @return
 	 */
-	String getPortMapDefinitions();
+	String getInstantiation();
 }

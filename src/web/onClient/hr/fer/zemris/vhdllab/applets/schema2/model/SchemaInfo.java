@@ -9,8 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaPrototypeCollecti
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Map;
 
 
 
@@ -35,12 +34,8 @@ public class SchemaInfo implements ISchemaInfo {
 	public ISchemaEntity getEntity() {
 		return entity;
 	}
-
-	public Set<Caseless> getPrototypeNames() {
-		return prototypes.getPrototypeNames();
-	}
-
-	public Collection<ISchemaComponent> getPrototypes() {
+	
+	public Map<Caseless, ISchemaComponent> getPrototypes() {
 		return prototypes.getPrototypes();
 	}
 
