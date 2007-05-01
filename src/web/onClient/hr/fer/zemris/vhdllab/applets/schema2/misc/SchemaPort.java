@@ -12,20 +12,24 @@ public final class SchemaPort {
 	
 	private XYLocation loc;
 	private Caseless name;
+	private Caseless mappedto;
 	
 	public SchemaPort() {
 		loc = new XYLocation();
 		name = new Caseless("");
+		mappedto = null;
 	}
 	
 	public SchemaPort(int xoffset, int yoffset) {
 		loc = new XYLocation(xoffset, yoffset);
 		name = new Caseless("");
+		mappedto = null;
 	}
 	
 	public SchemaPort(int xoffset, int yoffset, Caseless portname) {
 		loc = new XYLocation(xoffset, yoffset);
 		name = portname;
+		mappedto = null;
 	}
 	
 	/**
@@ -48,13 +52,46 @@ public final class SchemaPort {
 		loc = offset;
 	}
 
-	
+	/**
+	 * Dobavlja ime porta.
+	 * 
+	 * @return
+	 */
 	public final Caseless getName() {
 		return name;
 	}
 
+	/**
+	 * Postavlja ime porta.
+	 * 
+	 * @param name
+	 */
 	public final void setName(Caseless name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Vraca zicu na koju je spojen port.
+	 * 
+	 * @return
+	 * Null ako nije spojen ni na sto,
+	 * ime signala inace.
+	 */
+	public final Caseless getMapping() {
+		return mappedto;
+	}
+	
+	/**
+	 * Spaja port na signal (zicu)
+	 * danog imena.
+	 * 
+	 * @param signalToMapTo
+	 * Ime signala (zice). Null odspaja
+	 * port od signala ako je na njega
+	 * bio spojen.
+	 */
+	public final void setMapping(Caseless signalToMapTo) {
+		mappedto = signalToMapTo;
 	}
 
 	/* (non-Javadoc)

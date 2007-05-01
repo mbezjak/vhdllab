@@ -5,7 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
-import java.util.Set;
+import java.util.List;
 
 
 
@@ -168,39 +168,25 @@ public interface ISchemaComponent extends ISerializable {
 	
 	
 	/**
-	 * Dohvaca port po imenu.
+	 * Dohvaca port po rednom broju.
 	 * 
 	 * @param name
 	 * @return
 	 * Port komponente, ili
 	 * null ako ne postoji port
-	 * tog imena.
+	 * tog indeksa.
 	 */
-	SchemaPort getSchemaPort(Caseless name);
+	SchemaPort getSchemaPort(int index);
 	
 	
 	/**
-	 * Za navedeni port vraca informaciju o tome na
-	 * koju je zicu spojen.
-	 * 
-	 * @param name
-	 * Port za koji se ispituje da li je spojen
-	 * i na koju zicu.
-	 * @return
-	 * Caseless ime signala na koji je spojen
-	 * ili null ako nije spojen ni na sto.
-	 */
-	Caseless getMappingForPort(Caseless name);
-	
-	
-	/**
-	 * Vraca imena svih portove na komponenti.
+	 * Vraca sve portove na komponenti.
 	 * 
 	 * @return
 	 * Genericka lista unutar koje
 	 * su imena portova.
 	 */
-	Set<Caseless> getAllPorts();
+	List<SchemaPort> getPorts();
 	
 	
 	/**

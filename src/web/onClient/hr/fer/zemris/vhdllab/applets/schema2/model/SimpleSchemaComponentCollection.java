@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
@@ -92,9 +94,13 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		if (!components.containsKey(name)) throw new UnknownKeyException();
 		components.remove(name);
 	}
+	
+	public Set<Caseless> getComponentNames() {
+		return components.keySet();
+	}
 
-	
-	
+
+
 	public void deserialize(String code) {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
@@ -105,5 +111,4 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		throw new NotImplementedException();
 	}
 	
-
 }

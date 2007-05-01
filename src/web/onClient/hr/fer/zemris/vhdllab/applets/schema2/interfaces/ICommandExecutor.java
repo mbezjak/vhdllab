@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
-
-import java.util.List;
 
 
 

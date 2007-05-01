@@ -11,9 +11,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 
 
@@ -25,14 +24,14 @@ public class DummyOR implements ISchemaComponent {
 	private final static int WIDTH = 50;
 	private final static int HEIGHT_PER_PORT = 20;
 	
-	private Map<Caseless, SchemaPort> ports;
+	private List<SchemaPort> ports;
 	private CircuitInterface circinterf;
 	private EOrientation orient;
 	
 	
 	
 	public DummyOR(String name) {
-		ports = new HashMap<Caseless, SchemaPort>();
+		ports = new LinkedList<SchemaPort>();
 		circinterf = new DefaultCircuitInterface(name);
 		orient = EOrientation.NORTH;
 	}
@@ -50,8 +49,8 @@ public class DummyOR implements ISchemaComponent {
 	}
 
 	
-	public Set<Caseless> getAllPorts() {
-		return ports.keySet(); 
+	public List<SchemaPort> getPorts() {
+		return null;
 	}
 
 	
@@ -100,8 +99,8 @@ public class DummyOR implements ISchemaComponent {
 
 
 
-	public SchemaPort getSchemaPort(Caseless name) {
-		return ports.get(name);
+	public SchemaPort getSchemaPort(int index) {
+		return ports.get(index);
 	}
 
 

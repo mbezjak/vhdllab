@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.util.Set;
+
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
@@ -110,6 +112,15 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 */
 	void removeComponent(Caseless name) throws UnknownKeyException;
 	
+	
+	/**
+	 * Vraca skup imena komponenata na shemi,
+	 * preko kojeg je moguce iterirati po
+	 * komponentama.
+	 * 
+	 * @return
+	 */
+	Set<Caseless> getComponentNames();
 }
 
 
