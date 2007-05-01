@@ -16,11 +16,11 @@ import java.util.Set;
 
 
 
-public class SchemaPrototyper implements ISchemaPrototypeCollection {
+public class ComponentPrototyper implements ISchemaPrototypeCollection {
 	private Map<Caseless, ISchemaComponent> prototypes;
 	
 	
-	public SchemaPrototyper() {
+	public ComponentPrototyper() {
 		prototypes = new HashMap<Caseless, ISchemaComponent>();
 	}
 
