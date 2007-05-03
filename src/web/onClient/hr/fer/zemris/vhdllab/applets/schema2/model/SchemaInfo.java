@@ -20,10 +20,10 @@ public class SchemaInfo implements ISchemaInfo {
 	private ISchemaPrototypeCollection prototypes;
 	
 	
-	public SchemaInfo() {
+	public SchemaInfo(Caseless entityName) {
 		wires = new SimpleSchemaWireCollection();
 		components = new SimpleSchemaComponentCollection();
-		entity = new SchemaEntity();
+		entity = new SchemaEntity(entityName);
 	}
 	
 

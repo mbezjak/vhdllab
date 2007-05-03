@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 
@@ -12,8 +13,14 @@ public class SchemaEntity implements ISchemaEntity {
 	private IParameterCollection parameters;
 	
 	
-	public SchemaEntity() {
-		circint = new DefaultCircuitInterface("");
+	/**
+	 * Stvara entity.
+	 * 
+	 * @param circIntName
+	 * Ocekuje se Caseless ime sucelja sklopa.
+	 */
+	public SchemaEntity(Caseless circIntName) {
+		circint = new DefaultCircuitInterface(circIntName.toString());
 		parameters = new SchemaParameterCollection();
 	}
 	

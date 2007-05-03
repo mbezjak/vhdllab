@@ -6,6 +6,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -26,9 +28,17 @@ public class SchemaCore implements ISchemaCore {
 	private List<ICommand> redolist;
 	private PropertyChangeSupport support;
 	
+	private void reportChanges(List<ChangeTuple> changes) {
+		if (changes != null) {
+			for (ChangeTuple change : changes) {
+				change.changetype.firePropertyChanges(support, change.oldval, change.oldval);
+			}
+		}
+	}
+	
 	
 	public SchemaCore() {
-		info = new SchemaInfo();
+		info = new SchemaInfo(new Caseless("Default"));
 		undolist = new LinkedList<ICommand>();
 		redolist = new LinkedList<ICommand>();
 		support = new PropertyChangeSupport(this);
@@ -49,17 +59,18 @@ public class SchemaCore implements ISchemaCore {
 
 	public ICommandResponse executeCommand(ICommand command) {
 		ICommandResponse response = command.performCommand(info);
-		if (!response.isCommandSuccessful()) return response;
-		else {
+		if (response.isCommandSuccessful()) {
 			redolist.clear();
 			if (command.isUndoable()) {
 				undolist.add(command);
-				return response;
 			} else {
 				undolist.clear();
-				return response;
 			}
 		}
+		
+		reportChanges(response.getPropertyChanges());
+		
+		return response;
 	}
 
 	public List<String> getRedoList() {
@@ -91,6 +102,8 @@ public class SchemaCore implements ISchemaCore {
 		}
 		else undolist.add(comm);
 		
+		reportChanges(response.getPropertyChanges());
+		
 		return response;
 	}
 
@@ -108,15 +121,13 @@ public class SchemaCore implements ISchemaCore {
 		}
 		else redolist.add(comm);
 		
+		reportChanges(response.getPropertyChanges());
+		
 		return response;
 	}
 
 	public void addListener(EPropertyChange changeType, PropertyChangeListener listener) {
-		if (EPropertyChange.ANY_CHANGE == changeType) {
-			support.addPropertyChangeListener(listener);
-		} else {
-			support.addPropertyChangeListener(changeType.toString(), listener);
-		}
+		changeType.assignListenerToSupport(listener, support);
 	}
 
 

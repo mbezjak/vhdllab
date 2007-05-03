@@ -20,7 +20,7 @@ import java.util.List;
  * @author Axel
  *
  */
-public class Schema2VHDLProcessor {
+public class SchemaInfo2VHDL {
 	StringBuilder sb;
 	ISchemaInfo info;
 	CircuitInterface circint;
@@ -76,6 +76,7 @@ public class Schema2VHDLProcessor {
 		sb.append("ARCHITECTURE ").append(archName).append(" OF ").append(circint.getEntityName());
 		sb.append(" IS\n");
 		
+		// pripremiti
 		for (Caseless name : info.getComponents().getComponentNames()) {
 			ISchemaComponent comp = info.getComponents().fetchComponent(name);
 			
@@ -86,11 +87,19 @@ public class Schema2VHDLProcessor {
 		sb.append("\nBEGIN\n");
 		
 		// mapirati
+		for (Caseless name : info.getComponents().getComponentNames()) {
+			ISchemaComponent comp = info.getComponents().fetchComponent(name);
+			
+			sb.append(comp.getVHDLSegmentProvider().getInstantiation());
+			sb.append('\n');
+		}
 		
 		sb.append("END ARCHITECTURE ").append(archName).append(";\n");
 	}
 		
 }
+
+
 
 
 

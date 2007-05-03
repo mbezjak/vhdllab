@@ -2,8 +2,11 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.InfoMap;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
+
+import java.util.List;
 
 
 
@@ -11,6 +14,7 @@ public class CommandResponse implements ICommandResponse {
 	private SchemaError error;
 	private boolean success;
 	private InfoMap info;
+	private List<ChangeTuple> changes;
 	
 	/**
 	 * Defaultni konstruktor
@@ -21,6 +25,7 @@ public class CommandResponse implements ICommandResponse {
 		error = null;
 		success = true;
 		info = new InfoMap();
+		changes = null;
 	}
 	
 	/**
@@ -34,6 +39,7 @@ public class CommandResponse implements ICommandResponse {
 		success = isSuccessful;
 		error = (success) ? (null) : (new SchemaError(EErrorTypes.UNKNOWN_TYPE));
 		info = new InfoMap();
+		changes = null;
 	}
 	
 	/**
@@ -49,6 +55,21 @@ public class CommandResponse implements ICommandResponse {
 		success = (responseError == null) ? (true) : (false);
 		error = responseError;
 		info = new InfoMap();
+		changes = null;
+	}
+	
+	/**
+	 * Buduci da postavlja listu promjena,
+	 * automatski pretpostavlja da je zahtjev
+	 * bio uspjesan.
+	 * 
+	 * @param changelist
+	 */
+	public CommandResponse(List<ChangeTuple> changelist) {
+		changes = changelist;
+		success = true;
+		error = null;
+		info = new InfoMap();
 	}
 
 	public SchemaError getError() {
@@ -62,7 +83,10 @@ public class CommandResponse implements ICommandResponse {
 	public boolean isCommandSuccessful() {
 		return success;
 	}
-	
+
+	public List<ChangeTuple> getPropertyChanges() {
+		return changes;
+	}
 
 }
 

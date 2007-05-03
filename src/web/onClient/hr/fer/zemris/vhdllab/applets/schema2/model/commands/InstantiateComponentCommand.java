@@ -1,6 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidCommandOperationException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
@@ -11,6 +15,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
@@ -81,7 +86,9 @@ public class InstantiateComponentCommand implements ICommand {
 				"Duplicate component name."));
 		}
 		
-		return new CommandResponse(true);
+		List<ChangeTuple> clist = new ArrayList<ChangeTuple>();
+		clist.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
+		return new CommandResponse(clist);
 	}
 
 	public ICommandResponse undoCommand(ISchemaInfo info)
@@ -95,7 +102,9 @@ public class InstantiateComponentCommand implements ICommand {
 			return resp;
 		}
 		
-		return new CommandResponse(true);
+		List<ChangeTuple> clist = new ArrayList<ChangeTuple>();
+		clist.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
+		return new CommandResponse(clist);
 	}
 
 }

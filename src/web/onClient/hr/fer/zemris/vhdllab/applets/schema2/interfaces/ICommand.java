@@ -20,7 +20,7 @@ public interface ICommand {
 	 * @return
 	 * Vraca jedinstveno ime klase komandi.
 	 * Pritom, programer je odgovoran da to ime zaista
-	 * bude jedinstveno
+	 * bude jedinstveno.
 	 * @see CCommandNames
 	 */
 	String getCommandName();

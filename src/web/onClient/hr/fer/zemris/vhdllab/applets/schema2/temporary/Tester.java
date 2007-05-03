@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
+import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
 
 
 
@@ -12,9 +14,9 @@ public class Tester {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ETimeMetrics met = ETimeMetrics.femto;
+		ISchemaCore core = new SchemaCore();
 		
-		System.out.println(met.toString());
+		core.addListener(EPropertyChange.ANY_CHANGE, new TestListener());
 	}
 
 }

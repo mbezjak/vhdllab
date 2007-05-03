@@ -1,7 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.InfoMap;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
+
+import java.util.List;
 
 
 
@@ -47,6 +50,16 @@ public interface ICommandResponse {
 	 * @return
 	 */
 	InfoMap getInfoMap();
+	
+	/**
+	 * Vraca listu svojstava koja su promijenjena
+	 * ovom komandom. Na temelju te liste ISchemaCore
+	 * aktivira odgovarajuce registrirane listenere.
+	 * 
+	 * @return
+	 * Praznu listu ili null ako nista nije promijenjeno.
+	 */
+	List<ChangeTuple> getPropertyChanges();
 }
 
 
