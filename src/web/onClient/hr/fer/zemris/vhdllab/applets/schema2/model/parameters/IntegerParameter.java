@@ -13,7 +13,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.Intege
 
 
 public class IntegerParameter implements IParameter {
-	
+	private Integer val;
+	private IntegerConstraint constraint;
+	private boolean isgeneric;
 	
 	
 	public void deserialize(String code) {
@@ -25,9 +27,6 @@ public class IntegerParameter implements IParameter {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
 	}
-
-	private Integer val;
-	private IntegerConstraint constraint;
 	
 	
 	public IntegerParameter() {
@@ -107,6 +106,16 @@ public class IntegerParameter implements IParameter {
 		
 		val = (Integer)value;
 	}
+
+	public String getVHDLGenericEntry() {
+		return val.toString();
+	}
+
+	public boolean isGeneric() {
+		return isgeneric;
+	}
+	
+	
 
 	
 }

@@ -167,6 +167,27 @@ public interface IParameter extends ISerializable {
 	
 	
 	/**
+	 * Odgovara na pitanje da li je parametar
+	 * genericki.
+	 * Ako je parametar generickog tipa, tad ce
+	 * se njegova vrijednost koristiti u 
+	 * GENERIC MAP dijelu instanciranja komponente
+	 * kojoj on pripada.
+	 *  
+	 * @return
+	 */
+	boolean isGeneric();
+	
+	/**
+	 * Vraca string koji se koristi u GENERIC MAP
+	 * dijelu instanciranja komponente u VHDL
+	 * kodu.
+	 * 
+	 * @return
+	 */
+	String getVHDLGenericEntry();
+	
+	/**
 	 * Sluzi za odredivanje eventualnih ogranicenja
 	 * na vrijednosti parametra.
 	 * 

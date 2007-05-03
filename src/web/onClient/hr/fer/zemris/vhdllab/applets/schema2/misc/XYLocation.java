@@ -27,7 +27,7 @@ public final class XYLocation {
 	}
 	
 	/**
-	 * Da li je komponenta u bounding boxu odredenom
+	 * Da li je lokacija u bounding boxu odredenom
 	 * sa specificiranim pravokutnikom.
 	 * @param xpos
 	 * @param ypos

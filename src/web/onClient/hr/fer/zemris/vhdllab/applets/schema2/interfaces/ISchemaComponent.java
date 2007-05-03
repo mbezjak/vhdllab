@@ -190,6 +190,14 @@ public interface ISchemaComponent extends ISerializable {
 	
 	
 	/**
+	 * Vraca broj portova na komponenti.
+	 * 
+	 * @return
+	 */
+	int portCount();
+	
+	
+	/**
 	 * Vraca objekt koji ce generirati dijelove
 	 * VHDL koda.
 	 * 

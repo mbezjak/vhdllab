@@ -19,6 +19,9 @@ public interface ISchemaCore {
 
 	/**
 	 * Dohvaca podatke o shemi.
+	 * Podaci o shemi ne smiju se mijenjati
+	 * izravno, vec iskljucivo slanjem ICommand
+	 * objekata metodi executeCommand.
 	 * 
 	 * @return
 	 */

@@ -68,8 +68,8 @@ public class SchemaInfo2VHDL {
 			sb.append('\n');
 		}
 		
-		sb.append(");\n");
-		sb.append("END ENTITY ").append(circint.getEntityName()).append(";\n\n");
+		sb.append("\t);\n");
+		sb.append("END ENTITY ").append(circint.getEntityName()).append(";\n\n\n\n");
 	}
 	
 	private void appendArchitecturalBlock(String archName) {
@@ -84,7 +84,7 @@ public class SchemaInfo2VHDL {
 			sb.append('\n');
 		}
 		
-		sb.append("\nBEGIN\n");
+		sb.append("BEGIN\n");
 		
 		// mapirati
 		for (Caseless name : info.getComponents().getComponentNames()) {

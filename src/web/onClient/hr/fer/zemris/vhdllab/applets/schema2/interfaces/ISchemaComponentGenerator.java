@@ -2,12 +2,14 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 
 /**
+ * 
  * Sucelje koje opisuje tvornice
  * koje stvaraju objekte.
  * 
  * @author Axel
  *
  */
+@Deprecated
 public interface ISchemaComponentGenerator {
 	/**
 	 * Kreira jedan objekt tipa

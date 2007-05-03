@@ -7,10 +7,13 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaParameterCollection;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,174 +24,100 @@ import java.util.List;
 
 
 public class DummyOR implements ISchemaComponent {
+	public class DummyVHDLProvider implements IVHDLSegmentProvider {
+		public String getInstantiation() {
+			return "dummy_or_1: COMPONENT DummyOR PORT MAP(traalala);\n";
+		}
+		public String getSignalDefinitions() {
+			return "signal s1: std_logic;\n";
+		}
+	}
+	
 	private final static int WIDTH = 50;
 	private final static int HEIGHT_PER_PORT = 20;
+	private final static Caseless TYPENAME = new Caseless("DummyOR");
 	
-	private List<SchemaPort> ports;
-	private CircuitInterface circinterf;
+	private CircuitInterface circint;
 	private EOrientation orient;
+	private IParameterCollection parameters;
+	private List<SchemaPort> ports;
 	
-	
-	
-	public DummyOR(String name) {
+	public DummyOR(String instanceName) {
+		circint = new DefaultCircuitInterface(instanceName);
+		orient = EOrientation.EAST;
+		parameters = new SchemaParameterCollection();
 		ports = new LinkedList<SchemaPort>();
-		circinterf = new DefaultCircuitInterface(name);
-		orient = EOrientation.NORTH;
 	}
 	
 	
-	
-	
-	
-
 	
 	public ISchemaComponent copyCtor() {
-		DummyOR dork = new DummyOR(circinterf.getEntityName());
-		
-		return dork;
-	}
-
-	
-	public List<SchemaPort> getPorts() {
+		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
-	
-	
-	public CircuitInterface getCircuitInterface() {
-		return circinterf;
+	public String getCategoryName() {
+		return "Basic";
 	}
-
-
-
+	public CircuitInterface getCircuitInterface() {
+		return circint;
+	}
 	public EOrientation getComponentOrientation() {
 		return orient;
 	}
-
-
-
-
-	public int getHeight() {
-		return ports.size() * HEIGHT_PER_PORT;
-	}
-
-
-
-	public Caseless getName() {
-		return new Caseless(circinterf.getEntityName());
-	}
-
-
-
-
-	public IParameterCollection getParameters() {
-		// TODO
-		throw new NotImplementedException();
-	}
-
-
-
-
-
-	public SchemaPort getSchemaPort(int xoffset, int yoffset, int dist) {
-		// TODO
-		throw new NotImplementedException();		
-	}
-
-
-
-
-	public SchemaPort getSchemaPort(int index) {
-		return ports.get(index);
-	}
-
-
-
-
-
-	public Caseless getTypeName() {
-		return new Caseless("DummyOR");
-	}
-
-
-
-
-
-
-	public IVHDLSegmentProvider getVHDLSegmentProvider() {
-		// TODO
-		throw new NotImplementedException();
-	}
-
-
-
-
-
-	public int getWidth() {
-		return WIDTH;
-	}
-
-
-
-
-	public void setComponentOrientation(EOrientation orient) {
-		this.orient = orient;		
-	}
-
-
-
-
-	public void deserialize(String code) {
-		// TODO
-		throw new NotImplementedException();		
-	}
-
-
-
-
-	public String serialize() {
-		// TODO
-		throw new NotImplementedException(); 
-	}
-
-
-
-	public Caseless getMappingForPort(Caseless name) {
+	public IComponentDrawer getDrawer() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-
-
-
-
-
-	public String getCategoryName() {
-		return "BasicGates";
+	public int getHeight() {
+		return HEIGHT_PER_PORT * (ports.size() - 1);
 	}
-
-
-
-
-
-
-
+	public Caseless getName() {
+		return new Caseless(circint.getEntityName());
+	}
+	public IParameterCollection getParameters() {
+		return parameters;
+	}
+	public List<SchemaPort> getPorts() {
+		return ports;
+	}
+	public SchemaPort getSchemaPort(int xoffset, int yoffset, int dist) {
+		int index = SMath.calcClosestPort(xoffset, yoffset, dist, ports);
+		
+		if (index == -1) return null;
+		else return ports.get(index);
+	}
+	public SchemaPort getSchemaPort(int index){
+		try {
+			return ports.get(index);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+	public int portCount() {
+		return ports.size();
+	}
+	public Caseless getTypeName() {
+		return TYPENAME; 
+	}
+	public IVHDLSegmentProvider getVHDLSegmentProvider() {
+		return new DummyVHDLProvider();
+	}
+	public int getWidth() {
+		return WIDTH;
+	}
+	public void setComponentOrientation(EOrientation orientation) {
+		orient = orientation;
+	}
 	public void setName(Caseless name) {
+		// TODO hm, ovo bi mogao biti problem s obzirom na CircuitInterface
 	}
-
-
-
-
-
-
-
-	public IComponentDrawer getDrawer() {
-		// TODO Auto-generated method stub
+	public void deserialize(String code) {
 		throw new NotImplementedException();
 	}
-
+	public String serialize() {
+		throw new NotImplementedException();
+	}
+	
 	
 	
 	

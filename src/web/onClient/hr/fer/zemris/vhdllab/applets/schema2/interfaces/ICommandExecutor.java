@@ -10,10 +10,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
  * @author Axel
  *
  */
+@Deprecated
 public interface ICommandExecutor {
-	
-	
-	
 	
 }
 
