@@ -15,7 +15,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 
 public class DefaultSchemaComponent implements ISchemaComponent {
-	
+	private PredefinedComponent predefcomp;
 	
 	
 	
@@ -28,7 +28,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	 * koje se konstruira ova klasa.
 	 */
 	public DefaultSchemaComponent(PredefinedComponent predefComponent) {
-		// TODO Auto-generated constructor stub
+		predefcomp = predefComponent;
 	}
 
 
