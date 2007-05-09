@@ -30,7 +30,7 @@ public class PredefinedComponentsParser {
 		digester.setValidating(false);
 		digester.addObjectCreate("componentList", PredefinedConf.class);
 		digester.addObjectCreate("componentList/component", PredefinedComponent.class);
-		digester.addBeanPropertySetter("componentList/component/parameterName");
+		digester.addBeanPropertySetter("componentList/component/componentName");
 		digester.addBeanPropertySetter("componentList/component/codeFileName");
 		digester.addBeanPropertySetter("componentList/component/drawerName");
 		digester.addBeanPropertySetter("componentList/component/categoryName");

@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
@@ -76,11 +77,16 @@ public class SchemaInfo2VHDL {
 		sb.append("ARCHITECTURE ").append(archName).append(" OF ").append(circint.getEntityName());
 		sb.append(" IS\n");
 		
+		IVHDLSegmentProvider provider = null;
+		
 		// pripremiti
 		for (Caseless name : info.getComponents().getComponentNames()) {
 			ISchemaComponent comp = info.getComponents().fetchComponent(name);
 			
-			sb.append(comp.getVHDLSegmentProvider().getSignalDefinitions());
+			provider = comp.getVHDLSegmentProvider();
+			if (provider == null) continue;
+			
+			sb.append(provider.getSignalDefinitions());
 			sb.append('\n');
 		}
 		
@@ -90,7 +96,9 @@ public class SchemaInfo2VHDL {
 		for (Caseless name : info.getComponents().getComponentNames()) {
 			ISchemaComponent comp = info.getComponents().fetchComponent(name);
 			
-			sb.append(comp.getVHDLSegmentProvider().getInstantiation());
+			provider = comp.getVHDLSegmentProvider();
+			
+			sb.append(provider.getInstantiation());
 			sb.append('\n');
 		}
 		

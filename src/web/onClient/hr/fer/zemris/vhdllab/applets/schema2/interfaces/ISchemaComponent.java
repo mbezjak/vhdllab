@@ -203,6 +203,7 @@ public interface ISchemaComponent extends ISerializable {
 	 * 
 	 * @return
 	 * Objekt koji ce generirati dijelove koda.
+	 * Vraca null ako ne treba nista izgenerirati.
 	 */
 	IVHDLSegmentProvider getVHDLSegmentProvider();
 	

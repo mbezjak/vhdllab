@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class PredefinedComponent {
 
-	private String parameterName;
+	private String componentName;
 	private String codeFileName;
 	private String drawerName;
 	private String categoryName;
@@ -18,15 +18,15 @@ public class PredefinedComponent {
 		ports = new HashSet<Port>();
 	}
 
-	public String getParameterName() {
-		return parameterName;
+	public String getComponentName() {
+		return componentName;
 	}
 
-	public void setParameterName(String parameterName) {
+	public void setComponentName(String parameterName) {
 		if (parameterName.trim().equals("")) {
 			parameterName = null;
 		}
-		this.parameterName = parameterName;
+		this.componentName = parameterName;
 	}
 
 	public String getCodeFileName() {
@@ -96,7 +96,7 @@ public class PredefinedComponent {
 
 	@Override
 	public String toString() {
-		return "Predefined Component {\n" + parameterName + "\n" + codeFileName
+		return "Predefined Component {\n" + componentName + "\n" + codeFileName
 				+ "\n" + drawerName + "\n" + categoryName + "\n"
 				+ genericComponent + "\n" + parameters + "\n" + ports + "\n}";
 	}

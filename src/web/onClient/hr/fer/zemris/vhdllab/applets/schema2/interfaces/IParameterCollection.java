@@ -24,6 +24,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundExcepti
  *
  */
 public interface IParameterCollection extends ISerializable, Iterable<Entry<String, IParameter>> {
+	// TODO izbaciti dohvat parametra i dodati funkcije za dohvat i postavljanje vrijednosti
+	// TODO dodati event listener support
 	
 	/**
 	 * Vraca IParameter objekt za

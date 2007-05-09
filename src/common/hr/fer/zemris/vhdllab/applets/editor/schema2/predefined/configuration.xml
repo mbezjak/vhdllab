@@ -2,7 +2,7 @@
 
 <componentList>
    <component>
-        <parameterName>AND_gate</parameterName>
+        <componentName>AND_gate</componentName>
         <codeFileName>AND_gate.vhdl</codeFileName>
         <drawerName>hr.fer.zemris.vhdllab.onClient.applets.schema2.gui.drawing.AND_Drawer</drawerName>
         <categoryName>BasicGates</categoryName>

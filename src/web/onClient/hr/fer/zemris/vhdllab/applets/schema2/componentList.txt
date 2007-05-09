@@ -10,7 +10,7 @@ Datoteka koja je u tom obliku nalazi se na serveru.
 
 Za svaku komponentu trebaju biti navedene sljedece stavke:
 
-<parameterName/> <!-- ime komponente - mora biti JEDINSTVENO!!! -->
+<componentName/> <!-- ime komponente - mora biti JEDINSTVENO!!! -->
 <codeFileName/>   <!-- ime datoteke u kojoj je datoteka opisana u VHDLu -->
 <IDrawerName/>    <!-- ime drawera, ako je ispusteno, uzima se DefaultDrawer -->
 <categoryName/>   <!-- ime kategorije u kojoj ce se naci sklop -->
@@ -66,7 +66,7 @@ Primjer citave datoteke (s jednom definiranom komponentom, tj. sklopom):
 
 
 
-        <parameterName>AND_gate</parameterName>
+        <componentName>AND_gate</componentName>
         <codeFileName>AND_gate.vhdl</codeFileName>
         <IDrawerName>hr.fer.zemris.vhdllab.onClient.applets.schema2.gui.drawing.AND_Drawer</IDrawerName>
         <categoryName>BasicGates</categoryName>
