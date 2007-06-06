@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 
 
@@ -50,6 +51,19 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * 
 	 */
 	boolean containsName(Caseless componentName);
+	
+	/**
+	 * Dohvaca komponentu danog imena i vraca njenu
+	 * lokaciju.
+	 * 
+	 * @param componentName
+	 * Caseless ime komponente.
+	 * 
+	 * @return
+	 * Null ako takva komponenta ne postoji, a
+	 * lokacija komponente inace.
+	 */
+	XYLocation getComponentLocation(Caseless componentName);
 	
 	
 	/**

@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.util.Set;
+
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
@@ -104,6 +106,15 @@ public interface ISchemaWireCollection extends ISerializable {
 	 * u kolekciji.
 	 */
 	void removeWire(Caseless wireName) throws UnknownKeyException;
+	
+	/**
+	 * Vraca skup imena zica na shemi,
+	 * preko kojeg je moguce iterirati
+	 * po zicama.
+	 * 
+	 * @return
+	 */
+	Set<Caseless> getWireNames();
 }
 
 

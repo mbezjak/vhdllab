@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 
@@ -82,6 +83,12 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	public String serialize() {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
+	}
+
+
+
+	public Set<Caseless> getWireNames() {
+		return wires.keySet();
 	}
 
 	

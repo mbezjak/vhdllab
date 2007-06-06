@@ -46,7 +46,8 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	
 	
 	public void addComponent(int x, int y, ISchemaComponent component) 
-	throws DuplicateKeyException, OverlapException {
+		throws DuplicateKeyException, OverlapException
+	{
 		if (components.containsKey(component.getName())) throw new DuplicateKeyException();
 		
 		// eventualna provjera overlappinga dode ovdje
@@ -88,6 +89,16 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	public ISchemaComponent fetchComponent(Caseless componentName) {
 		return components.get(componentName).comp;
 	}
+	
+	
+	public XYLocation getComponentLocation(Caseless componentName) {
+		CpWrapper cpw = components.get(componentName);
+		
+		if (cpw == null) return null;
+		else return cpw.pos;
+	}
+
+
 
 	public void removeComponent(Caseless name) throws UnknownKeyException {
 		if (!components.containsKey(name)) throw new UnknownKeyException();
@@ -97,6 +108,8 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	public Set<Caseless> getComponentNames() {
 		return components.keySet();
 	}
+	
+	
 
 
 
@@ -111,3 +124,8 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	}
 	
 }
+
+
+
+
+
