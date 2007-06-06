@@ -117,7 +117,6 @@ public interface IParameterCollection extends ISerializable, Iterable<Entry<Stri
 	 * Pritom je povratna vrijednost nenegativna,
 	 * no vraca se int radi jednostavnosti pisanja
 	 * for petlji :)
-	 *
 	 */
 	int count();
 	

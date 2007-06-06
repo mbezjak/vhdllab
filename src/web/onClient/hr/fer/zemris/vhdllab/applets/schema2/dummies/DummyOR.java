@@ -29,7 +29,7 @@ public class DummyOR implements ISchemaComponent {
 			StringBuilder sb = new StringBuilder();
 			boolean first = true;
 			
-			sb.append(circint.getEntityName()).append(": COMPONENT ");
+			sb.append(entityName).append(": COMPONENT ");
 			sb.append(getTypeName()).append(" PORT MAP(");
 			for (SchemaPort port : ports) {
 				if (first) first = false; else sb.append(", ");
@@ -38,12 +38,10 @@ public class DummyOR implements ISchemaComponent {
 			}
 			sb.append(");\n");
 			
-			circint.getEntityName();
-			
 			return sb.toString();
 		}
 		public String getSignalDefinitions() {
-			return "signal s1: std_logic;\n";
+			return "signal sig_" + entityName + "_1: std_logic;\n";
 		}
 	}
 	
@@ -51,42 +49,63 @@ public class DummyOR implements ISchemaComponent {
 	private final static int HEIGHT_PER_PORT = 20;
 	private final static Caseless TYPENAME = new Caseless("DummyOR");
 	
-	private CircuitInterface circint;
+	private Caseless entityName;
 	private EOrientation orient;
 	private IParameterCollection parameters;
 	private List<SchemaPort> ports;
 	
-	public DummyOR(String instanceName) {
-		circint = new DefaultCircuitInterface(instanceName);
+	
+	public DummyOR(String name) {
+		create_dor(name, 2);
+	}
+	
+	public DummyOR(String name, int numOfPorts) {
+		create_dor(name, numOfPorts);
+	}
+	
+	private void create_dor(String name, int numOfPorts) {
+		// set ports
+		entityName = new Caseless(name);
+		
+		// set orientation
 		orient = EOrientation.EAST;
+		
+		// set parameters
 		parameters = new SchemaParameterCollection();
+		
+		// set ports
 		ports = new LinkedList<SchemaPort>();
+		SchemaPort port;
+		for (int i = 0; i < numOfPorts; i++) { // ulazi
+			port = new SchemaPort(0, HEIGHT_PER_PORT, new Caseless("in_or" + i));
+			ports.add(port);
+		}
+		port = new SchemaPort(WIDTH, (numOfPorts + 1) * HEIGHT_PER_PORT, new Caseless("out_or"));
+		ports.add(port);
 	}
 	
 	
 	
 	public ISchemaComponent copyCtor() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 	public String getCategoryName() {
 		return "Basic";
 	}
 	public CircuitInterface getCircuitInterface() {
-		return circint;
+		throw new NotImplementedException("Must create circuit interface.");
 	}
 	public EOrientation getComponentOrientation() {
 		return orient;
 	}
 	public IComponentDrawer getDrawer() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 	public int getHeight() {
 		return HEIGHT_PER_PORT * (ports.size() - 1);
 	}
 	public Caseless getName() {
-		return new Caseless(circint.getEntityName());
+		return entityName;
 	}
 	public IParameterCollection getParameters() {
 		return parameters;
@@ -111,7 +130,7 @@ public class DummyOR implements ISchemaComponent {
 		return ports.size();
 	}
 	public Caseless getTypeName() {
-		return TYPENAME; 
+		return TYPENAME;
 	}
 	public IVHDLSegmentProvider getVHDLSegmentProvider() {
 		return new DummyVHDLProvider();
@@ -123,7 +142,7 @@ public class DummyOR implements ISchemaComponent {
 		orient = orientation;
 	}
 	public void setName(Caseless name) {
-		// TODO hm, ovo bi mogao biti problem s obzirom na CircuitInterface
+		entityName = name;
 	}
 	public void deserialize(String code) {
 		throw new NotImplementedException();

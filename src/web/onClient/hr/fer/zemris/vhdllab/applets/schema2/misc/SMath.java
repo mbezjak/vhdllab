@@ -89,6 +89,32 @@ public class SMath {
 				location.y - componentCoord.y);
 	}
 	
+	/**
+	 * Vraca manji od dva broja.
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 * Manji broj. Ako su jednaki, vraca b.
+	 */
+	public static int min(int a, int b) {
+		if (a < b) return a;
+		return b;
+	}
+	
+	/**
+	 * Vraca veci od dva broja.
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 * Veci broj. Ako su jednaki, vraca b.
+	 */
+	public static int max(int a, int b) {
+		if (a > b) return a;
+		return b;
+	}
+	
 }
 
 

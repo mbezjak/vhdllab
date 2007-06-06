@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidCommandOperationException;
 
 
@@ -73,6 +74,15 @@ public interface ICommand {
 	 * inverzne operacije.
 	 */
 	ICommandResponse undoCommand(ISchemaInfo info) throws InvalidCommandOperationException;
+	
+	/**
+	 * Vraca tip promjene koju ce uciniti
+	 * odredena implementacija ICommand objekta.
+	 * 
+	 * @return
+	 * NO_CHANGE ako se ovim objektom nista ne mijenja.
+	 */
+	EPropertyChange getChangeType();
 }
 
 

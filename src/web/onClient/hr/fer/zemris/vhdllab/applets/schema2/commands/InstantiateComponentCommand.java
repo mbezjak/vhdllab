@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.commands;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidCommandOperationException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
@@ -16,6 +17,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
  *
  */
 public class InstantiateComponentCommand implements ICommand {
+
+	public EPropertyChange getChangeType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	public String getCommandName() {
 		// TODO Auto-generated method stub

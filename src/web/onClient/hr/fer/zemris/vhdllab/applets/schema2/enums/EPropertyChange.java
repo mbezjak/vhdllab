@@ -23,9 +23,13 @@ public enum EPropertyChange {
 		@Override
 		public String toString() {
 			return "COMPONENT_PROPERTY_CHANGE";
+		}	
+	},
+	NO_CHANGE() {
+		@Override
+		public void assignListenerToSupport(PropertyChangeListener listener, PropertyChangeSupport support) {
+			// notify nobody
 		}
-		
-		
 	};
 	
 	/**

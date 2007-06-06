@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.awt.Rectangle;
 import java.util.Set;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
@@ -66,6 +67,20 @@ public interface ISchemaWireCollection extends ISerializable {
 	 * 
 	 */
 	ISchemaWire fetchWire(int x, int y, int dist);
+	
+	
+	
+	/**
+	 * Za zicu danog imena vraca pravokutnik
+	 * koji je obuhvaca.
+	 * 
+	 * @param wireName
+	 * @return
+	 * Minimalni pravokutnik koji obuhvaca
+	 * zicu, a null zica tog imena ne postoji.
+	 */
+	Rectangle getBounds(Caseless wireName);
+	
 	
 	
 	/**

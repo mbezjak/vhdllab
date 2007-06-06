@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollecti
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -95,7 +96,24 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		CpWrapper cpw = components.get(componentName);
 		
 		if (cpw == null) return null;
-		else return cpw.pos;
+		else return new XYLocation(cpw.pos);
+	}
+
+
+	public Rectangle getComponentBounds(Caseless componentName) {
+		CpWrapper cpw = components.get(componentName);
+		
+		if (cpw == null) return null;
+		else {
+			Rectangle bounds = new Rectangle();
+			
+			bounds.x = cpw.pos.x;
+			bounds.y = cpw.pos.y;
+			bounds.width = cpw.comp.getWidth();
+			bounds.height = cpw.comp.getHeight();
+			
+			return bounds;
+		}
 	}
 
 

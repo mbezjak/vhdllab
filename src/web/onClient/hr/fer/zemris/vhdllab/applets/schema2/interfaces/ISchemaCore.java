@@ -97,26 +97,16 @@ public interface ISchemaCore {
 	 */
 	ICommandResponse redo() throws CommandExecutorException;
 	
-	
 	/**
-	 * Dodaje novi listener. Pri bilo kakvoj
-	 * promjeni u modelu sheme svi ce listeneri
-	 * biti obavijesteni.
+	 * Registrira kontroler na model. Kad se dogodi neka promjena,
+	 * ona ce biti proslijedena kontroleru.
 	 * 
-	 * @param listener
-	 * @param changeType
-	 * Tip promjene za koji se listener aktivira.
-	 * ANY_CHANGE za sve vrste promjena.
+	 * @param controller
+	 * Kontroler kojem ce se slati obavijesti o promjenama.
+	 * Ako se postavi null, obavijesti se nece slati.
 	 */
-	void addListener(EPropertyChange changeType, PropertyChangeListener listener);
+	void registerController(ISchemaController controller);
 	
-	
-	/**
-	 * Mice listener s popisa.
-	 * 
-	 * @param listener
-	 */
-	void removeListener(PropertyChangeListener listener);
 	
 }
 

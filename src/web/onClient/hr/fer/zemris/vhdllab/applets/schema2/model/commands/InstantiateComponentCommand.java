@@ -107,7 +107,27 @@ public class InstantiateComponentCommand implements ICommand {
 		return new CommandResponse(clist);
 	}
 
+
+
+
+	public EPropertyChange getChangeType() {
+		return EPropertyChange.CANVAS_CHANGE;
+	}
+	
+	
+
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

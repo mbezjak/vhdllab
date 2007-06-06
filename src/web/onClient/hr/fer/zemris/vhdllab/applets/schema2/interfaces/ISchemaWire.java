@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.awt.Rectangle;
 import java.util.List;
 
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
@@ -51,19 +52,6 @@ public interface ISchemaWire extends ISerializable {
 	IParameterCollection getParameters();
 	
 	
-	/**
-	 * Za dohvat tipa signala.
-	 * 
-	 * @see Type
-	 * 
-	 * @return
-	 * Vraca tip signala, treba
-	 * prouciti navedeni Mirin
-	 * interface.
-	 * 
-	 */
-	Type getType();
-	
 	
 	/**
 	 * Vraca listu svih racvalista
@@ -95,6 +83,16 @@ public interface ISchemaWire extends ISerializable {
 	 * @see IWireDrawer
 	 */
 	IWireDrawer getDrawer();
+	
+	
+	/**
+	 * Vraca minimalni pravokutnik unutar
+	 * kojeg stane zica.
+	 * 
+	 * @return
+	 * Bounding box, pravokutnik!
+	 */
+	Rectangle getBounds();
 }
 
 

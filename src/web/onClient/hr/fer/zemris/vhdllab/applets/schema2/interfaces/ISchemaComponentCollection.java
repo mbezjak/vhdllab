@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.awt.Rectangle;
 import java.util.Set;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
@@ -64,6 +65,21 @@ public interface ISchemaComponentCollection extends ISerializable {
 	 * lokacija komponente inace.
 	 */
 	XYLocation getComponentLocation(Caseless componentName);
+	
+	
+	/**
+	 * Dohvaca pravokutnik koji obuhvaca komponentu
+	 * danog imena.
+	 * 
+	 * @param componentName
+	 * Caseless ime komponente.
+	 * @return
+	 * Null ako komponenta tog imena ne postoji,
+	 * a minimalni pravokutnik koji obuhvaca
+	 * komponentu inace.
+	 */
+	Rectangle getComponentBounds(Caseless componentName); 
+	
 	
 	
 	/**

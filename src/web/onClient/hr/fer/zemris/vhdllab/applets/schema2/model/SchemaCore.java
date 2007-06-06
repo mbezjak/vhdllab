@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
@@ -26,14 +27,10 @@ public class SchemaCore implements ISchemaCore {
 	private ISchemaInfo info;
 	private List<ICommand> undolist;
 	private List<ICommand> redolist;
-	private PropertyChangeSupport support;
+	private ISchemaController controller_listener;
 	
 	private void reportChanges(List<ChangeTuple> changes) {
-		if (changes != null) {
-			for (ChangeTuple change : changes) {
-				change.changetype.firePropertyChanges(support, change.oldval, change.oldval);
-			}
-		}
+		
 	}
 	
 	
@@ -41,7 +38,20 @@ public class SchemaCore implements ISchemaCore {
 		info = new SchemaInfo(new Caseless("Default"));
 		undolist = new LinkedList<ICommand>();
 		redolist = new LinkedList<ICommand>();
-		support = new PropertyChangeSupport(this);
+		controller_listener = null;
+	}
+	
+	/**
+	 * Automatski postavlja controller-a
+	 * kojem ce se slati obavijesti o promjenama.
+	 * 
+	 * @param controller
+	 */
+	public SchemaCore(ISchemaController controller) {
+		info = new SchemaInfo(new Caseless("Default"));
+		undolist = new LinkedList<ICommand>();
+		redolist = new LinkedList<ICommand>();
+		controller_listener = controller;
 	}
 	
 	
@@ -126,15 +136,14 @@ public class SchemaCore implements ISchemaCore {
 		return response;
 	}
 
-	public void addListener(EPropertyChange changeType, PropertyChangeListener listener) {
-		changeType.assignListenerToSupport(listener, support);
+
+	public void registerController(ISchemaController controller) {
+		// TODO Auto-generated method stub
+		
 	}
 
-
-	public void removeListener(PropertyChangeListener listener) {
-		support.removePropertyChangeListener(listener);
-	}
-
+	
+	
 	
 	
 	

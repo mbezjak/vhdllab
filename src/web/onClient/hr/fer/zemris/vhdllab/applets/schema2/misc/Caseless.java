@@ -3,9 +3,13 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
 
 
+// TODO rijesiti problem razmaka i posebnih znakova
+
 /**
- * U principu String za koji je
- * case nebitan.
+ * U principu String za koji je case nebitan.
+ * Pozivom toString() dobiva se originalni string na temelju
+ * kojeg je Caseless stvoren - case je ocuvan. Usporedba pomocu
+ * equals(), s druge strane, ignorira case.
  * 
  * @author brijest
  *

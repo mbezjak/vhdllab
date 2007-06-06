@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,17 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	public ISchemaWire fetchWire(Caseless wireName) {
 		return wires.get(wireName); 
 	}
+	
+	
+
+	public Rectangle getBounds(Caseless wireName) {
+		ISchemaWire wire = wires.get(wireName);
+		
+		if (wire == null) return null;
+		else return wire.getBounds();
+	}
+
+
 
 	public void deserialize(String code) {
 		// TODO Auto-generated method stub
