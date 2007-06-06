@@ -10,6 +10,12 @@ import java.awt.Graphics2D;
  * Objekt koji implementira ovo sucelje vraca
  * svaka komponenta.
  * 
+ * Drawer u nacelu ne smije mijenjati stanje
+ * graphics objekta, ili ga u najgorem slucaju
+ * smije ostaviti u istom stanju u kakvom ga je
+ * dobio (npr. smije promijeniti stanje, ali ga
+ * onda mora vratiti u prvotno).
+ * 
  * @author brijest
  *
  */

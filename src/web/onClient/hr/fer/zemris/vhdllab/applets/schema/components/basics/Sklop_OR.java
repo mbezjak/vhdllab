@@ -73,7 +73,7 @@ public class Sklop_OR extends AbstractSchemaComponent {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.schema.components.ISchemaComponent#draw(hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaDrawingAdapter)
 	 */
-	// ljudi moji, polomio sam k*** rebra da ovo dolje nacrtam. Ali uspio sam.
+	// ljudi moji, polomio sam ** ** da ovo dolje nacrtam. Ali uspio sam.
 	public void drawSpecific(SchemaDrawingAdapter adapter) {
 		// draw wires to ports
 		int w = getComponentWidthSpecific();
