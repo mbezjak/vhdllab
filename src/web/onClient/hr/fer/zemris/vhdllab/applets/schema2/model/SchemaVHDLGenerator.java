@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -23,7 +24,8 @@ public class SchemaVHDLGenerator implements IVHDLGenerator {
 		
 		SchemaInfo2VHDL vhdlgen = new SchemaInfo2VHDL();
 		
-		return vhdlgen.generateVHDL(info);
+		throw new NotImplementedException("Citanje iz datoteke i deserijalizaciju obaviti!");
+		//return vhdlgen.generateVHDL(info);
 	}
 
 }

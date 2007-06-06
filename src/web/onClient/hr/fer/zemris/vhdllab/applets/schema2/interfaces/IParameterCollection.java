@@ -1,10 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import java.util.Map.Entry;
-
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateParameterException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
+
+import java.util.Set;
+import java.util.Map.Entry;
 
 
 
@@ -119,6 +120,13 @@ public interface IParameterCollection extends ISerializable, Iterable<Entry<Stri
 	 *
 	 */
 	int count();
+	
+	/**
+	 * Vraca listu svih imena parametara.
+	 * 
+	 * @return
+	 */
+	Set<String> getParameterNames();
 }
 
 

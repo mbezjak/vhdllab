@@ -26,7 +26,7 @@ public final class Caseless {
 	public Caseless(String val) {
 		if (val == null) inner = "";
 		else {
-			this.inner = val.toLowerCase();
+			this.inner = val;
 		}
 	}
 	
@@ -43,12 +43,18 @@ public final class Caseless {
 		}
 	}
 
+	/**
+	 * Moguce je obaviti equals provjeru
+	 * i sa stringom, ne iskljucivo s drugim
+	 * Caselessom. U oba slucaja se casing
+	 * ignorira.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (obj instanceof Caseless) {
 			Caseless cas = (Caseless)obj;
-			if (this.inner.equals(cas.inner)) return true;
+			if (this.inner.equalsIgnoreCase(cas.inner)) return true;
 		} else if (obj instanceof String) {
 			String str = (String)obj;
 			return (this.inner.equalsIgnoreCase(str));
@@ -58,7 +64,14 @@ public final class Caseless {
 
 	@Override
 	public int hashCode() {
-		return inner.hashCode();
+		int hash = 0;
+		char ch;
+		for (int i = 0; i < inner.length(); i++) {
+			ch = inner.charAt(i);
+			if (ch >= 'a' && ch <= 'z') ch -= 32;
+			hash = hash * 41 + (int)(ch);
+		}
+		return hash;
 	}
 
 	@Override

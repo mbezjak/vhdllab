@@ -2,7 +2,9 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateParameterException;
@@ -69,5 +71,11 @@ public class SchemaParameterCollection implements IParameterCollection {
 	public Iterator<Entry<String, IParameter>> iterator() {
 		return parameters.entrySet().iterator();
 	}
+
+	public Set<String> getParameterNames() {
+		return parameters.keySet();
+	}
+	
+	
 
 }

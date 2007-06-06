@@ -33,8 +33,8 @@ public class SchemaInfo2VHDL {
 	 * @return
 	 */
 	public String generateVHDL(ISchemaInfo schemaInfo) {
-		info = schemaInfo;
 		sb = new StringBuilder();
+		info = schemaInfo;
 		circint = info.getEntity().getCircuitInterface();
 		
 		appendEntityBlock();
@@ -84,7 +84,6 @@ public class SchemaInfo2VHDL {
 			ISchemaComponent comp = info.getComponents().fetchComponent(name);
 			
 			provider = comp.getVHDLSegmentProvider();
-			if (provider == null) continue;
 			
 			sb.append(provider.getSignalDefinitions());
 			sb.append('\n');

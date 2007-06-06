@@ -26,7 +26,21 @@ import java.util.List;
 public class DummyOR implements ISchemaComponent {
 	public class DummyVHDLProvider implements IVHDLSegmentProvider {
 		public String getInstantiation() {
-			return "dummy_or_1: COMPONENT DummyOR PORT MAP(traalala);\n";
+			StringBuilder sb = new StringBuilder();
+			boolean first = true;
+			
+			sb.append(circint.getEntityName()).append(": COMPONENT ");
+			sb.append(getTypeName()).append(" PORT MAP(");
+			for (SchemaPort port : ports) {
+				if (first) first = false; else sb.append(", ");
+				Caseless wire = port.getMapping();
+				sb.append(port.getName()).append(" => ").append((wire == null) ? "open" : wire.toString());
+			}
+			sb.append(");\n");
+			
+			circint.getEntityName();
+			
+			return sb.toString();
 		}
 		public String getSignalDefinitions() {
 			return "signal s1: std_logic;\n";
