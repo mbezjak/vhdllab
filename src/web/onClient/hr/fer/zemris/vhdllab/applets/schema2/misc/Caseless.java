@@ -64,14 +64,17 @@ public final class Caseless {
 
 	@Override
 	public int hashCode() {
-		int hash = 0;
-		char ch;
-		for (int i = 0; i < inner.length(); i++) {
-			ch = inner.charAt(i);
-			if (ch >= 'a' && ch <= 'z') ch -= 32;
-			hash = hash * 41 + (int)(ch);
-		}
-		return hash;
+//		int hash = 0;
+//		char ch;
+//		for (int i = 0; i < inner.length(); i++) {
+//			ch = inner.charAt(i);
+//			if (ch >= 'a' && ch <= 'z') ch -= 32;
+//			hash = hash * 41 + (int)(ch);
+//		}
+//		return hash;
+		
+		// ne efikasnije, ali sigurnije
+		return inner.toLowerCase().hashCode();
 	}
 
 	@Override
