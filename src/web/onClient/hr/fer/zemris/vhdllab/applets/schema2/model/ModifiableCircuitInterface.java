@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import java.util.List;
+import java.util.Map;
 
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
@@ -16,14 +17,27 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
  *
  */
 public class ModifiableCircuitInterface implements CircuitInterface {
-
+	private String entityName;
+	private List<Port> ports;
+	private Map<String, Port> portmap;
+	
+	
+	public ModifiableCircuitInterface(String name) {
+		if (name == null) throw new NullPointerException("Name cannot be null");
+		
+	}
+	
+	
+	
 	public String getEntityName() {
-		// TODO Auto-generated method stub
-		return null;
+		return entityName;
+	}
+	
+	public void setEntityName(String name) {
+		entityName = name;
 	}
 
 	public Port getPort(String portName) {
-		DefaultCircuitInterface s;
 		// TODO Auto-generated method stub
 		return null;
 	}
