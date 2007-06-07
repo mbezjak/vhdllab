@@ -68,6 +68,17 @@ public interface ISchemaController {
 	 * @param listener
 	 */
 	void removeListener(PropertyChangeListener listener);
+	
+	
+	/**
+	 * Read-only objekt.
+	 * 
+	 * @return
+	 * Objekt koji je moguce iskljucivo citati.
+	 * Nikakve promjene se ne smiju raditi izravno
+	 * na ovom objektu.
+	 */
+	ISchemaInfo getSchemaInfo();
 }
 
 

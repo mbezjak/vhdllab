@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 
 import java.beans.PropertyChangeListener;
@@ -66,6 +67,12 @@ public class LocalController implements ISchemaController {
 			}
 		}
 	}
+
+	public ISchemaInfo getSchemaInfo() {
+		return core.getSchemaInfo();
+	}
+	
+	
 
 }
 
