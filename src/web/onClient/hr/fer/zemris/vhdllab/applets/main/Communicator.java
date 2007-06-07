@@ -24,6 +24,7 @@ public class Communicator {
 		if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
 		if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
 		cache = new Cache();
+		this.invoker = invoker;
 		this.ownerId = ownerId;
 	}
 	

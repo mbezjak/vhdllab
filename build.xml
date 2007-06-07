@@ -233,7 +233,7 @@
   </target>
 	
   <target name="run-tests-dao" depends="package-server,package-tests-dao" if="junit.jar.present">
-  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+  	<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
   	  <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
 	  	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
@@ -256,7 +256,7 @@
   </target>
 	
   <target name="run-tests-service" depends="package-server,package-tests-service" if="junit.jar.present">
-  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+  	<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
 	  <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
 	  	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
@@ -279,7 +279,7 @@
   </target>
      
   <target name="run-tests-web-onServer" depends="package-server,package-tests-web-onServer" if="junit.jar.present">
-  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+  	<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
 	  <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onServer.jar"/>
       	<pathelement location="${jlib.dir}/${app.name}-service.jar"/>
@@ -302,7 +302,7 @@
   </target>
 	
   <target name="run-tests-web-onClient" depends="package-client,package-tests-web-onClient" if="junit.jar.present">
-  	<junit fork="yes" printsummary="no" haltonfailure="no" haltonerror="no">
+  	<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
 	  <classpath>
         <pathelement location="${jlib.dir}/${app.name}-web-onClient.jar"/>
         <pathelement location="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar"/>
