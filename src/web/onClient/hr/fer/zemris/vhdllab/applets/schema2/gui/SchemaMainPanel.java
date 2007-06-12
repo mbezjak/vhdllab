@@ -25,7 +25,6 @@ public class SchemaMainPanel extends JPanel {
 		core = new SchemaCore();
 		controller = new LocalController();
 		
-		core.registerController(controller);
 		controller.registerCore(core);
 	}
 	

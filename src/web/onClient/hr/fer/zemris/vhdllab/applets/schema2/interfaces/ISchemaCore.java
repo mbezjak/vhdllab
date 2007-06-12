@@ -97,15 +97,6 @@ public interface ISchemaCore {
 	 */
 	ICommandResponse redo() throws CommandExecutorException;
 	
-	/**
-	 * Registrira kontroler na model. Kad se dogodi neka promjena,
-	 * ona ce biti proslijedena kontroleru.
-	 * 
-	 * @param controller
-	 * Kontroler kojem ce se slati obavijesti o promjenama.
-	 * Ako se postavi null, obavijesti se nece slati.
-	 */
-	void registerController(ISchemaController controller);
 	
 	
 }

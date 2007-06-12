@@ -24,7 +24,6 @@ public class Tester {
 		ISchemaController controller = new LocalController();
 		
 		controller.registerCore(core);
-		core.registerController(controller);
 		
 		controller.addListener(EPropertyChange.ANY_CHANGE, new TestListener());
 		

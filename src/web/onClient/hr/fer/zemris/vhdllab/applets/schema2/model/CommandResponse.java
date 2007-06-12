@@ -80,7 +80,7 @@ public class CommandResponse implements ICommandResponse {
 		return info;
 	}
 
-	public boolean isCommandSuccessful() {
+	public boolean isSuccessful() {
 		return success;
 	}
 

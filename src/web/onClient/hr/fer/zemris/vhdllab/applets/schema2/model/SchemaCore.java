@@ -69,7 +69,7 @@ public class SchemaCore implements ISchemaCore {
 
 	public ICommandResponse executeCommand(ICommand command) {
 		ICommandResponse response = command.performCommand(info);
-		if (response.isCommandSuccessful()) {
+		if (response.isSuccessful()) {
 			redolist.clear();
 			if (command.isUndoable()) {
 				undolist.add(command);
@@ -105,7 +105,7 @@ public class SchemaCore implements ISchemaCore {
 		redolist.remove(redolist.size() - 1);
 		
 		ICommandResponse response = comm.performCommand(info);
-		if (!response.isCommandSuccessful()) {
+		if (!response.isSuccessful()) {
 			undolist.clear();
 			redolist.clear();
 			throw new CommandExecutorException("Cannot redo command.");
@@ -123,7 +123,7 @@ public class SchemaCore implements ISchemaCore {
 		undolist.remove(undolist.size() - 1);
 		
 		ICommandResponse response = comm.performCommand(info);
-		if (!response.isCommandSuccessful()) {
+		if (!response.isSuccessful()) {
 			undolist.clear();
 			redolist.clear();
 			throw new CommandExecutorException("Cannot undo command. Reason: "
@@ -134,12 +134,6 @@ public class SchemaCore implements ISchemaCore {
 		reportChanges(response.getPropertyChanges());
 		
 		return response;
-	}
-
-
-	public void registerController(ISchemaController controller) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	

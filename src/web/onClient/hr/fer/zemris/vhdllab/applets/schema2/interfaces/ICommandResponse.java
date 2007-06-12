@@ -25,7 +25,7 @@ public interface ICommandResponse {
 	 * True ako je komanda uspjesna,
 	 * false ako nije.
 	 */
-	boolean isCommandSuccessful();
+	boolean isSuccessful();
 	
 	/**
 	 * Vraca poruku greske.

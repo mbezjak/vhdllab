@@ -44,7 +44,15 @@ public class LocalController implements ISchemaController {
 	
 
 	public ICommandResponse send(ICommand command) {
-		return core.executeCommand(command);
+		ICommandResponse response = core.executeCommand(command);
+		
+		if (response.isSuccessful()) {
+			for (ChangeTuple ct : response.getPropertyChanges()) {
+				ct.changetype.firePropertyChanges(support, ct.oldval, ct.newval);
+			}
+		}
+		
+		return response;
 	}
 
 	public void registerCore(ISchemaCore coreToSendTo) {

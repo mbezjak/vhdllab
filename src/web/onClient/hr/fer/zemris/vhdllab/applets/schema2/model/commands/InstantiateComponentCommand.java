@@ -106,14 +106,6 @@ public class InstantiateComponentCommand implements ICommand {
 		clist.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 		return new CommandResponse(clist);
 	}
-
-
-
-
-	public EPropertyChange getChangeType() {
-		return EPropertyChange.CANVAS_CHANGE;
-	}
-	
 	
 
 }
