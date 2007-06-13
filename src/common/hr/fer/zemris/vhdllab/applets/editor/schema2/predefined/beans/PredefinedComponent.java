@@ -11,11 +11,11 @@ public class PredefinedComponent {
 	private String categoryName;
 	private Boolean genericComponent;
 	private Set<Parameter> parameters;
-	private Set<Port> ports;
+	private Set<PortWrapper> ports;
 
 	public PredefinedComponent() {
 		parameters = new HashSet<Parameter>();
-		ports = new HashSet<Port>();
+		ports = new HashSet<PortWrapper>();
 	}
 
 	public String getComponentName() {
@@ -82,15 +82,15 @@ public class PredefinedComponent {
 		this.parameters = parameters;
 	}
 
-	public void addPort(Port p) {
+	public void addPort(PortWrapper p) {
 		ports.add(p);
 	}
 
-	public Set<Port> getPorts() {
+	public Set<PortWrapper> getPorts() {
 		return ports;
 	}
 
-	public void setPorts(Set<Port> ports) {
+	public void setPorts(Set<PortWrapper> ports) {
 		this.ports = ports;
 	}
 

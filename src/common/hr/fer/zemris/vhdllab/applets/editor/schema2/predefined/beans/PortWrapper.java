@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
-public class Port {
+public class PortWrapper {
 
 	private String name;
 	private String orientation;
@@ -10,7 +10,7 @@ public class Port {
 	private String lowerBound;
 	private String upperBound;
 
-	public Port() {
+	public PortWrapper() {
 	}
 
 	public String getName() {

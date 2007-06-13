@@ -9,7 +9,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.exceptions;
  * @author Axel
  *
  */
-public class DuplicateParameterException extends Exception {
+public class DuplicateParameterException extends RuntimeException {
 
 	public DuplicateParameterException() {
 		super();

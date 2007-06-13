@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Parameter;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Port;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedConf;
 
@@ -44,7 +44,7 @@ public class PredefinedComponentsParser {
 		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/allowedValueSet");
 		digester.addSetNext("componentList/component/parameterList/parameter", "addParameter");
 		
-		digester.addObjectCreate("componentList/component/portList/port", Port.class);
+		digester.addObjectCreate("componentList/component/portList/port", PortWrapper.class);
 		digester.addBeanPropertySetter("componentList/component/portList/port/name");
 		digester.addBeanPropertySetter("componentList/component/portList/port/orientation");
 		digester.addBeanPropertySetter("componentList/component/portList/port/direction");
