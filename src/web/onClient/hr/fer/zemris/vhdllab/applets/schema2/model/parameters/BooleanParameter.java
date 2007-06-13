@@ -12,8 +12,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.Intege
 
 
 
-public class IntegerParameter implements IParameter {
-	private Integer val;
+public class BooleanParameter implements IParameter {
+	private Boolean val;
 	private IntegerConstraint constraint;
 	private boolean generic;
 	private String name;
@@ -32,15 +32,15 @@ public class IntegerParameter implements IParameter {
 	
 	
 	
-	public IntegerParameter(boolean isGeneric, String parameterName) {
-		val = new Integer(0);
+	public BooleanParameter(boolean isGeneric, String parameterName) {
+		val = new Boolean(false);
 		constraint = new IntegerConstraint();
 		name = parameterName;
 		generic = isGeneric;
 	}
 	
-	public IntegerParameter(boolean isGeneric, String parameterName, int value) {
-		val = new Integer(value);
+	public BooleanParameter(boolean isGeneric, String parameterName, boolean value) {
+		val = new Boolean(value);
 		constraint = new IntegerConstraint();
 		name = parameterName;
 		generic = isGeneric;
@@ -59,7 +59,7 @@ public class IntegerParameter implements IParameter {
 		if (stringValue == null) return false;
 		
 		try {
-			Integer.parseInt(stringValue);
+			Boolean.parseBoolean(stringValue);
 		} catch (NumberFormatException e) {
 			return false;
 		}
@@ -71,7 +71,7 @@ public class IntegerParameter implements IParameter {
 	}
 
 	public EParamTypes getType() {
-		return EParamTypes.INTEGER;
+		return EParamTypes.BOOLEAN;
 	}
 
 	public Object getValue() {
@@ -79,7 +79,7 @@ public class IntegerParameter implements IParameter {
 	}
 
 	public Boolean getValueAsBoolean() throws ClassCastException {
-		throw new ClassCastException();
+		return val;
 	}
 
 	public Double getValueAsDouble() throws ClassCastException {
@@ -87,7 +87,7 @@ public class IntegerParameter implements IParameter {
 	}
 
 	public Integer getValueAsInteger() throws ClassCastException {
-		return val;
+		throw new ClassCastException();
 	}
 
 	public String getValueAsString() throws ClassCastException {
@@ -105,7 +105,7 @@ public class IntegerParameter implements IParameter {
 	public void setAsString(String stringValue) throws InvalidParameterValueException {
 		if (stringValue == null) throw new InvalidParameterValueException("Null passed.");
 		
-		Integer newval = Integer.parseInt(stringValue);
+		Boolean newval = Boolean.parseBoolean(stringValue);
 		
 		if (!constraint.checkValue(newval)) {
 			throw new InvalidParameterValueException("Correctly parsed, but not allowed by constraint.");
@@ -115,11 +115,11 @@ public class IntegerParameter implements IParameter {
 	}
 
 	public void setValue(Object value) throws InvalidParameterValueException {
-		if (value == null || !(value instanceof Integer)) throw new InvalidParameterValueException("Non-integer passed.");
+		if (value == null || !(value instanceof Boolean)) throw new InvalidParameterValueException("Non-integer passed.");
 		
 		if (!(constraint.checkValue(value))) throw new InvalidParameterValueException("Not allowed by constraint.");
 		
-		val = (Integer)value;
+		val = (Boolean)value;
 	}
 
 	public String getVHDLGenericEntry() {

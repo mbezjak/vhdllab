@@ -63,6 +63,16 @@ public interface IParameterConstraint {
 	 *  
 	 */
 	Set<Object> getPossibleValues();
+	
+	
+	/**
+	 * Postavlja dozvoljeni skup vrijednosti.
+	 * Ako se postavi null, prihvacaju se sve
+	 * vrijednosti.
+	 * 
+	 * @param possibleValues
+	 */
+	void setPossibleValues(Set<Object> possibleValues);
 }
 
 

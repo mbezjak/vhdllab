@@ -9,7 +9,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.exceptions;
  * @author Axel
  *
  */
-public class InvalidParameterValueException extends Exception {
+public class InvalidParameterValueException extends RuntimeException {
 
 	public InvalidParameterValueException() {
 		super();

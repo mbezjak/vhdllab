@@ -30,6 +30,13 @@ public interface IParameter extends ISerializable {
 	EParamTypes getType();
 	
 	/**
+	 * Dohvaca ime parametra.
+	 * 
+	 * @return
+	 */
+	String getName();
+	
+	/**
 	 * Za dobivanje vrijednosti
 	 * parametra.
 	 * 
