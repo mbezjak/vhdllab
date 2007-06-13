@@ -1,11 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sun.org.apache.xerces.internal.util.DraconianErrorHandler;
-
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
@@ -15,7 +9,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultWireDrawer;
-import hr.fer.zemris.vhdllab.vhdl.model.Type;
+
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 
 

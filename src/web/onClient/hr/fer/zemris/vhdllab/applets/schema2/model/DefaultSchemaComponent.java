@@ -23,7 +23,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	private PredefinedComponent predefcomp;
 	private IComponentDrawer compdrawer;
 	private EOrientation orientation;
-	private CircuitInterface circint;
+	private CircuitInterface circint; // TODO izbaci
 	private IParameterCollection parameters;
 	private List<SchemaPort> ports;
 	

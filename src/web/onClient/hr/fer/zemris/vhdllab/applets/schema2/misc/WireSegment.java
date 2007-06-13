@@ -71,7 +71,7 @@ public final class WireSegment {
 
 	@Override
 	public int hashCode() {
-		return 119 * loc1.hashCode() + loc2.hashCode();
+		return loc1.hashCode() << 16 + loc2.hashCode();
 	}
 	
 	
