@@ -47,9 +47,18 @@ public final class SchemaPort {
 	 * Postavlja offset porta.
 	 * 
 	 * @param offset
+	 * Ako je null, bit ce ocuvana stara vrijednost.
 	 */
 	public final void setOffset(XYLocation offset) {
-		loc = offset;
+		if (offset != null) loc = offset;
+	}
+	
+	public final void setXOffset(int x) {
+		loc.x = x;
+	}
+	
+	public final void setYOffset(int y) {
+		loc.y = y;
 	}
 
 	/**

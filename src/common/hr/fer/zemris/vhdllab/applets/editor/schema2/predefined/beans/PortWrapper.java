@@ -1,6 +1,18 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
 public class PortWrapper {
+	
+	public static final String STD_LOGIC = "std_logic";
+	public static final String STD_LOGIC_VECTOR = "std_logic_vector";
+	public static final String DIRECTION_IN = "IN";
+	public static final String DIRECTION_OUT = "OUT";
+	public static final String ORIENTATION_NORTH = "NORTH";
+	public static final String ORIENTATION_SOUTH = "SOUTH";
+	public static final String ORIENTATION_WEST = "WEST";
+	public static final String ORIENTATION_EAST = "EAST";
+	public static final String ASCEND = "ascend";
+	public static final String DESCEND = "descend";
+	
 
 	private String name;
 	private String orientation;
