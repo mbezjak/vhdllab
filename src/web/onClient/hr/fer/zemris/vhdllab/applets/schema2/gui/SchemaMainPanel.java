@@ -17,11 +17,11 @@ public class SchemaMainPanel extends JPanel {
 	
 	
 	public SchemaMainPanel() {
-		init();
+		initStatic();
 	}
 
 
-	private void init() {
+	private void initStatic() {
 		core = new SchemaCore();
 		controller = new LocalController();
 		

@@ -10,6 +10,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
  *
  */
 public interface ISerializable {
+	
 	/**
 	 * Serijalizira objekt.
 	 * 
@@ -26,5 +27,6 @@ public interface ISerializable {
 	 * @param code
 	 * Kod na temelju kojeg se rekonstruira objekt.
 	 */
-	boolean deserialize(String code);
+	void deserialize(String code);
+	
 }

@@ -4,70 +4,61 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
-import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.IntegerConstraint;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.CaselessConstraint;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.TextConstraint;
 
+public class CaselessParameter implements IParameter {
+	
+	/* static fields */
+	
+	
 
-
-
-
-public class IntegerParameter implements IParameter {
-	private Integer val;
-	private IntegerConstraint constraint;
-	private boolean generic;
+	/* private fields */
 	private String name;
-	
-	
-	
-	
+	private Caseless value;
+	private boolean generic;
+	private CaselessConstraint constraint;
 	
 
-	public IntegerParameter(boolean isGeneric, String parameterName) {
-		val = new Integer(0);
-		constraint = new IntegerConstraint();
+	/* ctors */
+	
+	public CaselessParameter(String parameterName, boolean isGeneric) {
 		name = parameterName;
+		value = new Caseless("");
 		generic = isGeneric;
+		constraint = new CaselessConstraint();
 	}
 	
-	public IntegerParameter(boolean isGeneric, String parameterName, int value) {
-		val = new Integer(value);
-		constraint = new IntegerConstraint();
+	public CaselessParameter(String parameterName, boolean isGeneric, Caseless initialValue) {
 		name = parameterName;
+		value = initialValue;
 		generic = isGeneric;
+		constraint = new CaselessConstraint();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	public String getName() {
-		return name;
-	}
+
+	/* methods */
 
 	public boolean checkStringValue(String stringValue) {
-		if (stringValue == null) return false;
-		
-		try {
-			Integer.parseInt(stringValue);
-		} catch (NumberFormatException e) {
-			return false;
-		}
 		return true;
 	}
-	
+
 	public IParameterConstraint getConstraint() {
 		return constraint;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public EParamTypes getType() {
-		return EParamTypes.INTEGER;
+		return EParamTypes.CASELESS;
 	}
 
 	public Object getValue() {
-		return val;
+		return value;
 	}
 
 	public Boolean getValueAsBoolean() throws ClassCastException {
@@ -79,15 +70,23 @@ public class IntegerParameter implements IParameter {
 	}
 
 	public Integer getValueAsInteger() throws ClassCastException {
-		return val;
+		throw new ClassCastException();
 	}
 
 	public String getValueAsString() throws ClassCastException {
-		throw new ClassCastException();
+		return value.toString();
 	}
 
 	public Time getValueAsTime() throws ClassCastException {
 		throw new ClassCastException();
+	}
+
+	public String getVHDLGenericEntry() {
+		return value.toString();
+	}
+
+	public boolean isGeneric() {
+		return generic;
 	}
 
 	public boolean isParsable() {
@@ -96,50 +95,25 @@ public class IntegerParameter implements IParameter {
 
 	public void setAsString(String stringValue) throws InvalidParameterValueException {
 		if (stringValue == null) throw new InvalidParameterValueException("Null passed.");
-		
-		Integer newval = Integer.parseInt(stringValue);
-		
-		if (!constraint.checkValue(newval)) {
-			throw new InvalidParameterValueException("Correctly parsed, but not allowed by constraint.");
-		}
-		
-		val = newval;
+		value = new Caseless(stringValue);
 	}
 
-	public void setValue(Object value) throws InvalidParameterValueException {
-		if (value == null || !(value instanceof Integer))
-			throw new InvalidParameterValueException("Non-integer passed.");
+	public void setValue(Object val) throws InvalidParameterValueException {
+		if (val == null || !(val instanceof Caseless))
+			throw new InvalidParameterValueException("Non-string passed.");
 		
-		if (!(constraint.checkValue(value)))
+		if (!(constraint.checkValue(val)))
 			throw new InvalidParameterValueException("Not allowed by constraint.");
 		
-		val = (Integer)value;
-	}
-
-	public String getVHDLGenericEntry() {
-		return val.toString();
-	}
-
-	public boolean isGeneric() {
-		return generic;
+		value = (Caseless)val;
 	}
 
 	public String getValueClassName() {
-		return Integer.class.getName();
+		return Caseless.class.getName();
 	}
+
+	
 	
 	
 
-	
 }
-
-
-
-
-
-
-
-
-
-
-

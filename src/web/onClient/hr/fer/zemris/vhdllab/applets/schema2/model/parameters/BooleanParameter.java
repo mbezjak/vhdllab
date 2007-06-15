@@ -40,16 +40,6 @@ public class BooleanParameter implements IParameter {
 	
 	
 	
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public String getName() {
 		return name;
 	}
@@ -127,6 +117,10 @@ public class BooleanParameter implements IParameter {
 
 	public boolean isGeneric() {
 		return generic;
+	}
+
+	public String getValueClassName() {
+		return Boolean.class.getName();
 	}
 	
 	

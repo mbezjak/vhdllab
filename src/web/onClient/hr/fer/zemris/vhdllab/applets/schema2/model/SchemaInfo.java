@@ -1,10 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaPrototypeCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
@@ -13,17 +16,20 @@ import java.util.Map;
 
 
 public class SchemaInfo implements ISchemaInfo {
+	
 	private ISchemaWireCollection wires;
 	private ISchemaComponentCollection components;
 	private ISchemaEntity entity;
 	private ISchemaPrototypeCollection prototypes;
 	
 	
-	public SchemaInfo(Caseless entityName) {
+
+	public SchemaInfo() {
 		wires = new SimpleSchemaWireCollection();
 		components = new SimpleSchemaComponentCollection();
-		entity = new SchemaEntity(entityName);
+		entity = new SchemaEntity(new Caseless(""));
 	}
+	
 	
 
 	public ISchemaComponentCollection getComponents() {
@@ -33,7 +39,7 @@ public class SchemaInfo implements ISchemaInfo {
 	public ISchemaEntity getEntity() {
 		return entity;
 	}
-	
+
 	public Map<Caseless, ISchemaComponent> getPrototypes() {
 		return prototypes.getPrototypes();
 	}
@@ -49,20 +55,41 @@ public class SchemaInfo implements ISchemaInfo {
 	public void setWires(ISchemaWireCollection wires) {
 		this.wires = wires;
 	}
-	
+
 	public ISchemaPrototypeCollection getPrototyper() {
 		return prototypes;
 	}
 	
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
+	public void addWire(ISchemaWire wire) {
+		try {
+			wires.addWire(wire);
+		} catch (DuplicateKeyException e) {
+			throw new IllegalStateException();
+		} catch (OverlapException e) {
+			throw new IllegalStateException();
+		}
 	}
-	
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

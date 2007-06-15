@@ -127,16 +127,6 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	}
 
 	
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	
 }

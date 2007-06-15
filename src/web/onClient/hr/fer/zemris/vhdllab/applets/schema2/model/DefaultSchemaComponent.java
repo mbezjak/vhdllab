@@ -11,15 +11,16 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.IntList;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
-import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.TextParameter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
@@ -43,6 +44,20 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		public PortRelation(Port p) {
 			port = p;
 			relatedTo = new ArrayList<SchemaPort>();
+		}
+	}
+	
+	private static class Orientation implements ISerializable {
+		public EOrientation orientation = EOrientation.NORTH;
+		
+		public Orientation() { }
+		public Orientation(EOrientation ori) { orientation = ori; }
+		
+		public void deserialize(String code) {
+			orientation = EOrientation.parse(code);
+		}
+		public String serialize() {
+			return orientation.serialize();
 		}
 	}
 	
@@ -108,13 +123,14 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	private void initDefaultParameters(String name) {
 		// default parameter - name
-		TextParameter textpar = new TextParameter(ISchemaComponent.KEY_NAME, false, name);
+		CaselessParameter textpar =
+			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(name));
 		parameters.addParameter(textpar.getName(), textpar);
 		
 		// default parameter - component orientation
-		GenericParameter<EOrientation> orientpar =
-			new GenericParameter<EOrientation>(ISchemaComponent.KEY_ORIENTATION, false,
-					EOrientation.NORTH);
+		GenericParameter<Orientation> orientpar =
+			new GenericParameter<Orientation>(ISchemaComponent.KEY_ORIENTATION, false,
+					new Orientation());
 		parameters.addParameter(orientpar.getName(), orientpar);
 	}
 
@@ -320,9 +336,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	public EOrientation getComponentOrientation() {
 		try {
-			return (EOrientation)(parameters.getValue(ISchemaComponent.KEY_ORIENTATION));
+			return ((Orientation)(parameters.getValue(ISchemaComponent.KEY_ORIENTATION))).orientation;
 		} catch (ParameterNotFoundException e) {
-			throw new RuntimeException("Name could not be set.");
+			throw new RuntimeException("Orientation parameter not found.");
 		}
 	}
 
@@ -336,9 +352,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	public Caseless getName() {
 		try {
-			return new Caseless((String)(parameters.getValue(ISchemaComponent.KEY_NAME)));
+			return (Caseless)(parameters.getValue(ISchemaComponent.KEY_NAME));
 		} catch (ParameterNotFoundException e) {
-			return null;
+			throw new RuntimeException("Name parameter not found.");
 		}
 	}
 
@@ -379,7 +395,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	public void setComponentOrientation(EOrientation orient) {
 		try {
-			parameters.setValue(ISchemaComponent.KEY_NAME, orient);
+			parameters.setValue(ISchemaComponent.KEY_ORIENTATION, new Orientation(orient));
 		} catch (InvalidParameterValueException e) {
 			throw new RuntimeException("Orientation could not be set - invalid value.", e);
 		} catch (ParameterNotFoundException e) {
@@ -389,23 +405,14 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	public void setName(Caseless name) {
 		try {
-			parameters.setValue(ISchemaComponent.KEY_NAME, name.toString());
+			parameters.setValue(ISchemaComponent.KEY_NAME, name);
 		} catch (InvalidParameterValueException e) {
 			throw new RuntimeException("Name could not be set - invalid value.", e);
 		} catch (ParameterNotFoundException e) {
 			throw new RuntimeException("Name could not be set.", e);
 		}
 	}
-
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	
 

@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
@@ -89,19 +88,6 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 
 	
 
-
-
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 

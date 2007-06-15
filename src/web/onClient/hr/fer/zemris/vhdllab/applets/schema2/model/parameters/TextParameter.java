@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
@@ -27,12 +26,14 @@ public class TextParameter implements IParameter {
 		name = parameterName;
 		value = "";
 		generic = isGeneric;
+		constraint = new TextConstraint();
 	}
 	
 	public TextParameter(String parameterName, boolean isGeneric, String initialValue) {
 		name = parameterName;
 		value = initialValue;
 		generic = isGeneric;
+		constraint = new TextConstraint();
 	}
 	
 
@@ -105,14 +106,8 @@ public class TextParameter implements IParameter {
 		value = (String)val;
 	}
 
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getValueClassName() {
+		return String.class.getName();
 	}
 
 	

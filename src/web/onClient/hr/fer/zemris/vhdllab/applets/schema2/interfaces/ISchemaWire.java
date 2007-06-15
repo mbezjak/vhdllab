@@ -17,7 +17,14 @@ import hr.fer.zemris.vhdllab.vhdl.model.Type;
  * @author Axel
  *
  */
-public interface ISchemaWire extends ISerializable {
+public interface ISchemaWire {
+	
+	/**
+	 * Kljuc koji bi se trebao naci u svakoj kolekciji
+	 * parametara.
+	 */
+	public static final String KEY_NAME = "Name";
+	
 	
 	/**
 	 * Virtualni copy konstruktor.

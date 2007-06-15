@@ -18,7 +18,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
  * @author Axel
  *
  */
-public interface IParameter extends ISerializable {
+public interface IParameter {
 	/**
 	 * Za odredivanje tipa parametra.
 	 * 
@@ -208,6 +208,14 @@ public interface IParameter extends ISerializable {
 	 * 
 	 */
 	IParameterConstraint getConstraint();
+	
+	/**
+	 * Vraca puno ime klase pohranjenog objekta.
+	 * Koristi se kod serijalizacije.
+	 * 
+	 * @return
+	 */
+	String getValueClassName();
 }
 
 

@@ -116,15 +116,15 @@ public class GenericParameter<T extends ISerializable> implements IParameter {
 		}
 	}
 
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
+
+
+	public String getValueClassName() {
+		return value.getClass().getName();
 	}
 
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
+
+	
 
 	
 

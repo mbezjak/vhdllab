@@ -17,7 +17,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
  * @author Axel
  *
  */
-public interface ISchemaWireCollection extends ISerializable {
+public interface ISchemaWireCollection {
 	
 	/**
 	 * Dohvaca zicu zadanog imena.

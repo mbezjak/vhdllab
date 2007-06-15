@@ -23,7 +23,7 @@ public class SchemaCore implements ISchemaCore {
 	
 
 	public SchemaCore() {
-		info = new SchemaInfo(new Caseless("Default"));
+		info = new SchemaInfo();
 		undolist = new LinkedList<ICommand>();
 		redolist = new LinkedList<ICommand>();
 	}

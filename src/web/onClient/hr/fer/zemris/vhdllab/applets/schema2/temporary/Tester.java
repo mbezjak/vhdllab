@@ -1,15 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
-import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyOR;
-import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
-import hr.fer.zemris.vhdllab.applets.schema2.model.LocalController;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaDeserializer;
+
+
+
 
 
 
@@ -21,7 +20,26 @@ public class Tester {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println(ISchemaComponent.class.toString());
+		testSD();
+	}
+	
+	private static void testPredef() {
+		PredefinedComponentsParser pcp = new PredefinedComponentsParser("configuration.xml");
+		
+		pcp.getConfiguration();
+	}
+	
+	private static void testSD() {
+		SchemaDeserializer sd = new SchemaDeserializer();
+		FileInputStream fs = null;
+		try {
+			fs = new FileInputStream("d:/sample.xml");
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+			System.exit(1);
+		}
+		
+		ISchemaInfo info = sd.deserializeSchema(fs);
 	}
 
 }

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.enums;
 
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+
 
 
 /**
@@ -9,7 +10,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
  * @author brijest
  *
  */
-public enum EOrientation implements ISerializable {
+public enum EOrientation {
+	
 	NORTH() {
 
 		@Override
@@ -17,16 +19,10 @@ public enum EOrientation implements ISerializable {
 			return SOUTH;
 		}
 
-		public boolean deserialize(String code) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
+		@Override
 		public String serialize() {
-			// TODO Auto-generated method stub
-			return null;
+			return "NORTH";
 		}
-		
 		
 	},
 	SOUTH() {
@@ -36,16 +32,10 @@ public enum EOrientation implements ISerializable {
 			return NORTH;
 		}
 
-		public boolean deserialize(String code) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
+		@Override
 		public String serialize() {
-			// TODO Auto-generated method stub
-			return null;
+			return "SOUTH";
 		}
-		
 		
 	},
 	WEST() {
@@ -55,17 +45,11 @@ public enum EOrientation implements ISerializable {
 			return EAST;
 		}
 
-		public boolean deserialize(String code) {
-			// TODO Auto-generated method stub
-			return false;
+		@Override
+		public String serialize() {
+			return "WEST";
 		}
 
-		public String serialize() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-		
 	},
 	EAST() {
 
@@ -74,20 +58,25 @@ public enum EOrientation implements ISerializable {
 			return WEST;
 		}
 
-		public boolean deserialize(String code) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
+		@Override
 		public String serialize() {
-			// TODO Auto-generated method stub
-			return null;
+			return "EAST";
 		}
-		
 		
 	};
 	
+	
+	
 	public abstract EOrientation opposite();
+	public abstract String serialize();
+	
+	public static EOrientation parse(String ocode) {
+		if (ocode.equals("SOUTH")) return EOrientation.SOUTH;
+		if (ocode.equals("NORTH")) return EOrientation.NORTH;
+		if (ocode.equals("EAST")) return EOrientation.EAST;
+		if (ocode.equals("WEST")) return EOrientation.WEST;
+		throw new NotImplementedException("Orientation '" + ocode + "' is unknown.");
+	}
 }
 
 

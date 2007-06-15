@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IWireDrawer;
@@ -9,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultWireDrawer;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -19,7 +21,6 @@ import java.util.List;
 
 public class SchemaWire implements ISchemaWire {
 
-	private Caseless name;
 	private List<XYLocation> nodes;
 	private IParameterCollection parameters;
 	private List<WireSegment> segments;
@@ -29,12 +30,15 @@ public class SchemaWire implements ISchemaWire {
 	
 	
 	public SchemaWire(Caseless wireName) {
-		name = wireName;
-		
 		create();
+		initDefaultParameters(wireName);
 	}
 	
-	
+	private void initDefaultParameters(Caseless wireName) {
+		CaselessParameter caspar = new CaselessParameter(ISchemaWire.KEY_NAME, false, wireName);
+		parameters.addParameter(ISchemaWire.KEY_NAME, caspar);
+	}
+
 	private void create() {
 		nodes = new ArrayList<XYLocation>();
 		parameters = new SchemaParameterCollection();
@@ -82,7 +86,11 @@ public class SchemaWire implements ISchemaWire {
 	}
 
 	public Caseless getName() {
-		return name;
+		try {
+			return (Caseless)(parameters.getValue(ISchemaWire.KEY_NAME));
+		} catch (ParameterNotFoundException e) {
+			throw new RuntimeException("Name parameter not found.");
+		}
 	}
 
 	public List<XYLocation> getNodes() {
@@ -97,19 +105,21 @@ public class SchemaWire implements ISchemaWire {
 		return segments;
 	}
 	
+	public void addNode(XYLocation node) {
+		nodes.add(node);
+	}
 	
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
+	public void addWireSegment(WireSegment segment) {
+		segments.add(segment);
 	}
 
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setName(String name) {
+		try {
+			parameters.setValue(ISchemaWire.KEY_NAME, new Caseless(name));
+		} catch (ParameterNotFoundException e) {
+			throw new RuntimeException("Parameter name could not be set.");
+		}
 	}
-
-	
-
 	
 
 }

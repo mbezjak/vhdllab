@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Axel
  *
  */
-public interface ISchemaInfo extends ISerializable {
+public interface ISchemaInfo {
 	
 	/**
 	 * Vraca objekt koji sadrzi sve komponente.

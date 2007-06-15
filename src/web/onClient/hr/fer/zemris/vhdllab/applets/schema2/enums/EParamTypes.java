@@ -10,9 +10,10 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  * te se nalaze unutar svakog sklopa
  * (ili zice).
  * 
- * Tipovi koji iziskuju objasnjenje:
+ * Tipovi koji traze objasnjenje:
+ * CASELESS - String za koji nije bitan case.
  * TEXT - radi se o vrijednosti String.
- * OBJECT - bilo koji drugi objekt.
+ * OBJECT - bilo koji drugi objekt
  * 
  * Ostali objasnjavaju sami sebe.
  * 
@@ -20,5 +21,5 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  *
  */
 public enum EParamTypes {
-	BOOLEAN, INTEGER, DECIMAL, TEXT, TIME, OBJECT
+	CASELESS, BOOLEAN, INTEGER, DECIMAL, TEXT, TIME, OBJECT
 }

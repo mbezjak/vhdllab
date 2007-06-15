@@ -18,7 +18,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
  * @author Axel
  *
  */
-public interface ISchemaComponentCollection extends ISerializable {
+public interface ISchemaComponentCollection {
 		
 	/**
 	 * Dohvaca komponentu zadanog imena.

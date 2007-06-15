@@ -16,7 +16,7 @@ import java.util.List;
  * @author Axel
  *
  */
-public interface ISchemaComponent extends ISerializable {
+public interface ISchemaComponent {
 	
 	/**
 	 * Parametar koji bi trebao biti prisutan u svakoj kolekciji

@@ -29,16 +29,6 @@ public class SchemaParameterCollection implements IParameterCollection {
 	
 	
 
-	public boolean deserialize(String code) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void addParameter(String key, IParameter parameter) throws DuplicateParameterException {
 		if (parameters.containsKey(key)) throw new DuplicateParameterException();
 		parameters.put(key, parameter);
