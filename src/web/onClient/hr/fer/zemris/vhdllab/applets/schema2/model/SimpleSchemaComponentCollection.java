@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -126,20 +125,19 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	public Set<Caseless> getComponentNames() {
 		return components.keySet();
 	}
+
 	
-	
-
-
-
-	public void deserialize(String code) {
+	public boolean deserialize(String code) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		return false;
 	}
 
 	public String serialize() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		return null;
 	}
+
+
 	
 }
 

@@ -1,10 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EConstraintExplanation;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
+
+import java.util.Set;
 
 
 
@@ -40,6 +39,7 @@ public class IntegerConstraint implements IParameterConstraint {
 	
 	
 	public boolean checkValue(Object object) {
+		if (object == null) return false;
 		if (!(object instanceof Integer)) return false;
 		if (validset == null) return true;
 		Integer val = (Integer)object;
@@ -48,8 +48,12 @@ public class IntegerConstraint implements IParameterConstraint {
 	}
 
 	public EConstraintExplanation getExplanation(Object object) {
+		if (object == null) return EConstraintExplanation.NULL_PASSED;
 		if (!(object instanceof Integer)) return EConstraintExplanation.WRONG_TYPE;
-		return EConstraintExplanation.NO_INFORMATION;
+		if (validset == null) return EConstraintExplanation.ALLOWED;
+		Integer val = (Integer)object;
+		if (!(validset.contains(val))) return EConstraintExplanation.CONSTRAINT_BANNED;
+		return EConstraintExplanation.ALLOWED;
 	}
 
 	public Set<Object> getPossibleValues() {
@@ -61,3 +65,18 @@ public class IntegerConstraint implements IParameterConstraint {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

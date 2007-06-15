@@ -4,7 +4,9 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Parameter;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
@@ -15,7 +17,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.IntList;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.TextParameter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
@@ -30,8 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.management.Notification;
-
 public class DefaultSchemaComponent implements ISchemaComponent {
 
 	private static class PortRelation {
@@ -43,6 +45,19 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			relatedTo = new ArrayList<SchemaPort>();
 		}
 	}
+	
+	private class DefaultSchemaComponentVHDLProvider implements IVHDLSegmentProvider {
+
+		public String getInstantiation() {
+			throw new NotImplementedException();
+		}
+
+		public String getSignalDefinitions() {
+			throw new NotImplementedException();
+		}
+		
+	}
+	
 
 	private static final int WIDTH_PER_PORT = 20;
 	private static final int HEIGHT_PER_PORT = 20;
@@ -60,7 +75,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	private List<SchemaPort> schemaports;
 	private List<PortRelation> portrelations;
 	private int width, height;
-	private EOrientation orientation;
 	
 	
 
@@ -87,9 +101,22 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 		// ports
 		initPorts(predefComp);
+		
+		// add default parameters
+		initDefaultParameters(name);
 	}
 
-	/* methods */
+	private void initDefaultParameters(String name) {
+		// default parameter - name
+		TextParameter textpar = new TextParameter(ISchemaComponent.KEY_NAME, false, name);
+		parameters.addParameter(textpar.getName(), textpar);
+		
+		// default parameter - component orientation
+		GenericParameter<EOrientation> orientpar =
+			new GenericParameter<EOrientation>(ISchemaComponent.KEY_ORIENTATION, false,
+					EOrientation.NORTH);
+		parameters.addParameter(orientpar.getName(), orientpar);
+	}
 
 	private void initPorts(PredefinedComponent predefComp) {
 		schemaports = new ArrayList<SchemaPort>();
@@ -269,6 +296,10 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			}
 		}
 	}
+	
+	
+	
+	/* methods */
 
 	public ISchemaComponent copyCtor() {
 		// TODO Auto-generated method stub
@@ -288,7 +319,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	public EOrientation getComponentOrientation() {
-		return orientation;
+		try {
+			return (EOrientation)(parameters.getValue(ISchemaComponent.KEY_ORIENTATION));
+		} catch (ParameterNotFoundException e) {
+			throw new RuntimeException("Name could not be set.");
+		}
 	}
 
 	public IComponentDrawer getDrawer() {
@@ -300,7 +335,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	public Caseless getName() {
-		throw new NotImplementedException();
+		try {
+			return new Caseless((String)(parameters.getValue(ISchemaComponent.KEY_NAME)));
+		} catch (ParameterNotFoundException e) {
+			return null;
+		}
 	}
 
 	public IParameterCollection getParameters() {
@@ -327,7 +366,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	public IVHDLSegmentProvider getVHDLSegmentProvider() {
-		throw new NotImplementedException();
+		return new DefaultSchemaComponentVHDLProvider();
 	}
 
 	public int getWidth() {
@@ -339,16 +378,28 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	public void setComponentOrientation(EOrientation orient) {
-		orientation = orient;
+		try {
+			parameters.setValue(ISchemaComponent.KEY_NAME, orient);
+		} catch (InvalidParameterValueException e) {
+			throw new RuntimeException("Orientation could not be set - invalid value.", e);
+		} catch (ParameterNotFoundException e) {
+			throw new RuntimeException("Orientation could not be set.", e);
+		}
 	}
 
 	public void setName(Caseless name) {
-		throw new NotImplementedException();
+		try {
+			parameters.setValue(ISchemaComponent.KEY_NAME, name.toString());
+		} catch (InvalidParameterValueException e) {
+			throw new RuntimeException("Name could not be set - invalid value.", e);
+		} catch (ParameterNotFoundException e) {
+			throw new RuntimeException("Name could not be set.", e);
+		}
 	}
 
-	public void deserialize(String code) {
+	public boolean deserialize(String code) {
 		// TODO Auto-generated method stub
-
+		return false;
 	}
 
 	public String serialize() {
@@ -356,4 +407,18 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		return null;
 	}
 
+	
+
 }
+
+
+
+
+
+
+
+
+
+
+
+

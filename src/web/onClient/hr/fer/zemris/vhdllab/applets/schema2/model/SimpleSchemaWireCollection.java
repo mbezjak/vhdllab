@@ -87,14 +87,20 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 
 
 
-	public void deserialize(String code) {
+	
+
+
+
+	public boolean deserialize(String code) {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		return false;
 	}
+
+
 
 	public String serialize() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		return null;
 	}
 
 

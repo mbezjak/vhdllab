@@ -39,6 +39,7 @@ public class BooleanConstraint implements IParameterConstraint {
 	
 	
 	public boolean checkValue(Object object) {
+		if (object == null) return false;
 		if (!(object instanceof Boolean)) return false;
 		if (validset == null) return true;
 		Boolean val = (Boolean)object;
@@ -47,8 +48,12 @@ public class BooleanConstraint implements IParameterConstraint {
 	}
 
 	public EConstraintExplanation getExplanation(Object object) {
+		if (object == null) return EConstraintExplanation.NULL_PASSED;
 		if (!(object instanceof Boolean)) return EConstraintExplanation.WRONG_TYPE;
-		return EConstraintExplanation.NO_INFORMATION;
+		if (validset == null) return EConstraintExplanation.ALLOWED;
+		Boolean val = (Boolean)object;
+		if (!(validset.contains(val))) return EConstraintExplanation.CONSTRAINT_BANNED;
+		return EConstraintExplanation.ALLOWED;
 	}
 
 	public Set<Object> getPossibleValues() {

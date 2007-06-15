@@ -144,12 +144,17 @@ public class DummyOR implements ISchemaComponent {
 	public void setName(Caseless name) {
 		entityName = name;
 	}
-	public void deserialize(String code) {
-		throw new NotImplementedException();
+
+	public boolean deserialize(String code) {
+		// TODO Auto-generated method stub
+		return false;
 	}
+
 	public String serialize() {
-		throw new NotImplementedException();
+		// TODO Auto-generated method stub
+		return null;
 	}
+	
 	
 	
 	

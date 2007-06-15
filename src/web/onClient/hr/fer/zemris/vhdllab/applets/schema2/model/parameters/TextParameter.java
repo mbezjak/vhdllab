@@ -1,0 +1,122 @@
+package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
+
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.TextConstraint;
+
+public class TextParameter implements IParameter {
+	
+	/* static fields */
+	
+	
+
+	/* private fields */
+	private String name;
+	private String value;
+	private boolean generic;
+	private TextConstraint constraint;
+	
+
+	/* ctors */
+	
+	public TextParameter(String parameterName, boolean isGeneric) {
+		name = parameterName;
+		value = "";
+		generic = isGeneric;
+	}
+	
+	public TextParameter(String parameterName, boolean isGeneric, String initialValue) {
+		name = parameterName;
+		value = initialValue;
+		generic = isGeneric;
+	}
+	
+
+	/* methods */
+
+	public boolean checkStringValue(String stringValue) {
+		return true;
+	}
+
+	public IParameterConstraint getConstraint() {
+		return constraint;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public EParamTypes getType() {
+		return EParamTypes.TEXT;
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public Boolean getValueAsBoolean() throws ClassCastException {
+		throw new ClassCastException();
+	}
+
+	public Double getValueAsDouble() throws ClassCastException {
+		throw new ClassCastException();
+	}
+
+	public Integer getValueAsInteger() throws ClassCastException {
+		throw new ClassCastException();
+	}
+
+	public String getValueAsString() throws ClassCastException {
+		return value;
+	}
+
+	public Time getValueAsTime() throws ClassCastException {
+		throw new ClassCastException();
+	}
+
+	public String getVHDLGenericEntry() {
+		return value;
+	}
+
+	public boolean isGeneric() {
+		return generic;
+	}
+
+	public boolean isParsable() {
+		return true;
+	}
+
+	public void setAsString(String stringValue) throws InvalidParameterValueException {
+		if (stringValue == null) throw new InvalidParameterValueException("Null passed.");
+		value = stringValue;
+	}
+
+	public void setValue(Object val) throws InvalidParameterValueException {
+		if (val == null || !(val instanceof String))
+			throw new InvalidParameterValueException("Non-string passed.");
+		
+		if (!(constraint.checkValue(val)))
+			throw new InvalidParameterValueException("Not allowed by constraint.");
+		
+		value = (String)val;
+	}
+
+	public boolean deserialize(String code) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String serialize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	
+
+}

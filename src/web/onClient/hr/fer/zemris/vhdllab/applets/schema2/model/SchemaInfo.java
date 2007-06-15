@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
@@ -54,13 +53,15 @@ public class SchemaInfo implements ISchemaInfo {
 	public ISchemaPrototypeCollection getPrototyper() {
 		return prototypes;
 	}
-
-	public void deserialize(String code) {
-		throw new NotImplementedException();
+	
+	public boolean deserialize(String code) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-
+	
 	public String serialize() {
-		throw new NotImplementedException();
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

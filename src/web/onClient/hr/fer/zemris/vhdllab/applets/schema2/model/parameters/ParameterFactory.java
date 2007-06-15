@@ -38,8 +38,21 @@ public class ParameterFactory {
 	}
 
 	private IParameter createText(Parameter parwrapper) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		IParameter parameter = new TextParameter(parwrapper.getName(), parwrapper.isGeneric());
+		
+		String val = parwrapper.getValue();
+		parameter.setValue(val);
+		
+		if (parwrapper.getAllowedValueSet() != null) {
+			Set<Object> allowed = new HashSet<Object>();
+			String[] sfield = parwrapper.getAllowedValueSet().split(" "); // TODO: vidjeti format stringova
+			for (int i = 0; i < sfield.length; i++) {
+				allowed.add(sfield[i]);
+			}
+			parameter.getConstraint().setPossibleValues(allowed);
+		}
+		
+		return parameter;
 	}
 
 	private IParameter createDecimal(Parameter parwrapper) {

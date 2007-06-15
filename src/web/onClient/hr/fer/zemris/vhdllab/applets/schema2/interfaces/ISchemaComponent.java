@@ -19,6 +19,16 @@ import java.util.List;
 public interface ISchemaComponent extends ISerializable {
 	
 	/**
+	 * Parametar koji bi trebao biti prisutan u svakoj kolekciji
+	 * parametara, a odnosi se na ime komponente.
+	 */
+	public static final String KEY_NAME = "Name";
+	/**
+	 * Odnosi se na orijentaciju komponente.
+	 */
+	public static final String KEY_ORIENTATION = "Orientation";
+	
+	/**
 	 * Virtualni copy konstruktor.
 	 * 
 	 * @return

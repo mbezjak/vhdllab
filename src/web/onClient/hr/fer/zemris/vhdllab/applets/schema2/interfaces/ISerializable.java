@@ -26,5 +26,5 @@ public interface ISerializable {
 	 * @param code
 	 * Kod na temelju kojeg se rekonstruira objekt.
 	 */
-	void deserialize(String code);
+	boolean deserialize(String code);
 }

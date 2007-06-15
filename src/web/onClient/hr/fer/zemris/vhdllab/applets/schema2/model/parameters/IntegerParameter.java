@@ -19,19 +19,10 @@ public class IntegerParameter implements IParameter {
 	private String name;
 	
 	
-	public void deserialize(String code) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
-	}
+	
+	
+	
 
-	public String serialize() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
-	}
-	
-	
-	
-	
 	public IntegerParameter(boolean isGeneric, String parameterName) {
 		val = new Integer(0);
 		constraint = new IntegerConstraint();
@@ -50,6 +41,17 @@ public class IntegerParameter implements IParameter {
 	
 	
 	
+	
+	
+	public boolean deserialize(String code) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String serialize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	public String getName() {
 		return name;
@@ -115,9 +117,11 @@ public class IntegerParameter implements IParameter {
 	}
 
 	public void setValue(Object value) throws InvalidParameterValueException {
-		if (value == null || !(value instanceof Integer)) throw new InvalidParameterValueException("Non-integer passed.");
+		if (value == null || !(value instanceof Integer))
+			throw new InvalidParameterValueException("Non-integer passed.");
 		
-		if (!(constraint.checkValue(value))) throw new InvalidParameterValueException("Not allowed by constraint.");
+		if (!(constraint.checkValue(value)))
+			throw new InvalidParameterValueException("Not allowed by constraint.");
 		
 		val = (Integer)value;
 	}

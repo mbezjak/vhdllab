@@ -1,18 +1,16 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateParameterException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 
 
@@ -29,14 +27,16 @@ public class SchemaParameterCollection implements IParameterCollection {
 	
 	
 	
-	public void deserialize(String code) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
-	}
+	
 
+	public boolean deserialize(String code) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
 	public String serialize() {
 		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		return null;
 	}
 
 	public void addParameter(String key, IParameter parameter) throws DuplicateParameterException {

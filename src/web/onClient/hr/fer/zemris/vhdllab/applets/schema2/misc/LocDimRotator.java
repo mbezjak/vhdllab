@@ -22,7 +22,7 @@ public final class LocDimRotator {
 	 * vraca istu vrijednost.
 	 * Ako je SOUTH, WEST ili EAST,
 	 * XYLocation se rotira na odgovarajucu
-	 * stranu, tako da 0 ostaje 0.
+	 * stranu.
 	 */
 	public final XYLocation rotateLocation(XYLocation location, Dimension2d dimension, EOrientation orientation) {
 		return rotateLocation(location.x, location.y, dimension.width, dimension.height, orientation);

@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.enums;
 
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
+
 
 /**
  * Popis orijentacija komponente.
@@ -7,13 +9,24 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  * @author brijest
  *
  */
-public enum EOrientation {
+public enum EOrientation implements ISerializable {
 	NORTH() {
 
 		@Override
 		public EOrientation opposite() {
 			return SOUTH;
 		}
+
+		public boolean deserialize(String code) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public String serialize() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		
 	},
 	SOUTH() {
@@ -22,6 +35,17 @@ public enum EOrientation {
 		public EOrientation opposite() {
 			return NORTH;
 		}
+
+		public boolean deserialize(String code) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public String serialize() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		
 	},
 	WEST() {
@@ -30,6 +54,17 @@ public enum EOrientation {
 		public EOrientation opposite() {
 			return EAST;
 		}
+
+		public boolean deserialize(String code) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public String serialize() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		
 	},
 	EAST() {
@@ -38,8 +73,31 @@ public enum EOrientation {
 		public EOrientation opposite() {
 			return WEST;
 		}
+
+		public boolean deserialize(String code) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public String serialize() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		
 	};
 	
 	public abstract EOrientation opposite();
 }
+
+
+
+
+
+
+
+
+
+
+
+

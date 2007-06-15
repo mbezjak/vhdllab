@@ -17,10 +17,10 @@ import java.util.List;
  */
 public class SchemaCore implements ISchemaCore {
 	private ISchemaInfo info;
-
 	private List<ICommand> undolist;
-
 	private List<ICommand> redolist;
+	
+	
 
 	public SchemaCore() {
 		info = new SchemaInfo(new Caseless("Default"));
@@ -107,3 +107,21 @@ public class SchemaCore implements ISchemaCore {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

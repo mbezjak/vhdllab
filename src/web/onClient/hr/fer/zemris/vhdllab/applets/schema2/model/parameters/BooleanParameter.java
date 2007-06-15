@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
@@ -19,19 +18,9 @@ public class BooleanParameter implements IParameter {
 	private String name;
 	
 	
-	public void deserialize(String code) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
-	}
+	
+	
 
-	public String serialize() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
-	}
-	
-	
-	
-	
 	public BooleanParameter(boolean isGeneric, String parameterName) {
 		val = new Boolean(false);
 		constraint = new IntegerConstraint();
@@ -50,6 +39,16 @@ public class BooleanParameter implements IParameter {
 	
 	
 	
+	
+	public boolean deserialize(String code) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String serialize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	public String getName() {
 		return name;

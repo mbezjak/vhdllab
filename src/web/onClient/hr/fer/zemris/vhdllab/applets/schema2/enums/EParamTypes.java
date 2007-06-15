@@ -12,6 +12,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  * 
  * Tipovi koji iziskuju objasnjenje:
  * TEXT - radi se o vrijednosti String.
+ * OBJECT - bilo koji drugi objekt.
  * 
  * Ostali objasnjavaju sami sebe.
  * 
@@ -19,5 +20,5 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  *
  */
 public enum EParamTypes {
-	BOOLEAN, INTEGER, FLOAT, TEXT, TIME
+	BOOLEAN, INTEGER, DECIMAL, TEXT, TIME, OBJECT
 }
