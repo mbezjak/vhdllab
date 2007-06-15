@@ -26,6 +26,26 @@ public final class XYLocation {
 		y = location.y;
 	}
 	
+	
+	
+	
+	
+	public final int getX() {
+		return x;
+	}
+	
+	public final void setX(int xloc) {
+		x = xloc;
+	}
+	
+	public final int getY() {
+		return y;
+	}
+	
+	public final void setY(int yloc) {
+		y = yloc;
+	}
+	
 	/**
 	 * Da li je lokacija u bounding boxu odredenom
 	 * sa specificiranim pravokutnikom.

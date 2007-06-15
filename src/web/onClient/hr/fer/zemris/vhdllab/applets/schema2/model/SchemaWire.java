@@ -28,11 +28,18 @@ public class SchemaWire implements ISchemaWire {
 	
 	
 	
+	public SchemaWire() {
+		create();
+		initDefaultParameters(new Caseless(""));
+	}
 	
 	public SchemaWire(Caseless wireName) {
 		create();
 		initDefaultParameters(wireName);
 	}
+	
+	
+	
 	
 	private void initDefaultParameters(Caseless wireName) {
 		CaselessParameter caspar = new CaselessParameter(ISchemaWire.KEY_NAME, false, wireName);

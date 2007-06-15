@@ -24,6 +24,22 @@ public final class WireSegment {
 		return (loc1.x == loc2.x);
 	}
 	
+	public final void setX1(int x1) {
+		loc1.x = x1;
+	}
+	
+	public final void setY1(int y1) {
+		loc1.y = y1;
+	}
+	
+	public final void setX2(int x2) {
+		loc2.x = x2;
+	}
+	
+	public final void setY2(int y2) {
+		loc2.y = y2;
+	}
+	
 	/**
 	 * Vraca udaljenost segmenta
 	 * od neke tocke.

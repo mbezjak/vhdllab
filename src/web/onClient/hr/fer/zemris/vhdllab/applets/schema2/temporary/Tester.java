@@ -1,11 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaDeserializer;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 
 
@@ -40,6 +40,8 @@ public class Tester {
 		}
 		
 		ISchemaInfo info = sd.deserializeSchema(fs);
+		
+		System.out.println("Ok, parsed.");
 	}
 
 }

@@ -23,13 +23,6 @@ public interface ISchemaEntity {
 	 */
 	CircuitInterface getCircuitInterface();
 	
-	/**
-	 * Postavlja sucelje sklopa.
-	 * 
-	 * @param circuitInterface
-	 */
-	void setCircuitInterface(CircuitInterface circuitInterface);
-	
 	
 	/**
 	 * Vraca mapu parametara komponente
