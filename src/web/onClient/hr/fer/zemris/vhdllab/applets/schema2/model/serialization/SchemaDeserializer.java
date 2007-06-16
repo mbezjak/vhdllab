@@ -64,6 +64,7 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/paramType", "paramType");
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/name", "name");
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/value", "value");
+		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/valueType", "valueType");
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/allowedValues", "allowedValues");
 		digester.addSetNext("schemaInfo/wires/schemaWire/parameters/parameter", "addParameter");
 		
@@ -90,6 +91,7 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/paramType", "paramType");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/name", "name");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/value", "value");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/valueType", "valueType");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/allowedValues", "allowedValues");
 		digester.addSetNext("schemaInfo/components/schemaComponent/parameters/parameter", "addParameterWrapper");
 		
@@ -125,6 +127,7 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/paramType", "paramType");
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/name", "name");
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/value", "value");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/valueType", "valueType");
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/allowedValues", "allowedValues");
 		digester.addSetNext("schemaInfo/entity/parameters/parameter", "addParameterWrapper");
 		

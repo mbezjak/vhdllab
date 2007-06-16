@@ -13,6 +13,7 @@ public class ParameterWrapper {
 	private String paramType;
 	private String name;
 	private String value;
+	private String valueType;
 	private String allowedValues;
 	
 	public void setParamClassName(String paramClassName) {
@@ -51,6 +52,12 @@ public class ParameterWrapper {
 	}
 	public String getAllowedValues() {
 		return allowedValues;
+	}
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
+	}
+	public String getValueType() {
+		return valueType;
 	}
 
 }

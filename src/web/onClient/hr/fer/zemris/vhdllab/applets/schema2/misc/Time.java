@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 
 
 /**
@@ -50,6 +51,10 @@ public final class Time {
 		}
 	}
 	
+	
+	public static final Time parseTime(String code) {
+		throw new NotImplementedException(); // TODO
+	}
 
 	/**
 	 * Testira jednakost time objekta
@@ -64,8 +69,13 @@ public final class Time {
 		if (obj == null) return false;
 		if (!(obj instanceof Time)) return false;
 		Time t_obj = (Time)obj;
+		ETimeMetrics met = t_obj.timeMetric;
 		t_obj.convertMetric(this.timeMetric);
-		if (this.timeInterval == t_obj.timeInterval) return true;
+		if (this.timeInterval == t_obj.timeInterval) {
+			t_obj.convertMetric(met);
+			return true;
+		}
+		t_obj.convertMetric(met);
 		return false;
 	}
 

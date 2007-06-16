@@ -5,7 +5,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -24,10 +26,12 @@ public interface ISchemaComponent {
 	 * parametara, a odnosi se na ime komponente.
 	 */
 	public static final String KEY_NAME = "Name";
+	
 	/**
 	 * Odnosi se na orijentaciju komponente.
 	 */
 	public static final String KEY_ORIENTATION = "Orientation";
+	
 	
 	/**
 	 * Virtualni copy konstruktor.
@@ -86,7 +90,7 @@ public interface ISchemaComponent {
 	 * @return
 	 * Ime instance komponente. U parameter
 	 * kolekciji uvijek postoji identifier
-	 * CParamKeys.NAME. Ova metoda je pokrata
+	 * ISchemaComponent.NAME. Ova metoda je pokrata
 	 * za dohvacanje te vrijednosti.
 	 * 
 	 */
@@ -241,6 +245,22 @@ public interface ISchemaComponent {
 	 */
 	IComponentDrawer getDrawer();
 	
+	/**
+	 * Vraca ime datoteke u kojoj se nalazi vhdl
+	 * opis komponente.
+	 * 
+	 * @return
+	 */
+	String getCodeFileName();
+	
+	/**
+	 * Da li je komponenta genericka - da li
+	 * u svom sucelju sadrzi GENERIC blok.
+	 * 
+	 * @return
+	 */
+	boolean isGeneric();
+	
 	
 	/**
 	 * Koristi se pri deserijalizaciji.
@@ -248,6 +268,23 @@ public interface ISchemaComponent {
 	 * @param compwrap
 	 */
 	void deserialize(ComponentWrapper compwrap);
+	
+	
+	/**
+	 * Sluzi za iteriranje kroz portove koji
+	 * se pojavljuju u sucelju.
+	 * 
+	 * @see <code>getSchemaPorts()</code> 
+	 */
+	Iterator<Port> portIterator();
+	
+	/**
+	 * Sluzi za iteriranje kroz fizicke portove
+	 * komponente u shemi.
+	 * 
+	 * @return
+	 */
+	Iterator<SchemaPort> schemaPortIterator();
 	
 }
 

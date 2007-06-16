@@ -32,13 +32,13 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	
 	
 	
-	private class ComponentIterator implements Iterator<ISchemaComponent> {
+	private class ComponentIterator implements Iterator<PlacedComponent> {
 		private Iterator<Entry<Caseless, PlacedComponent>> pit = components.entrySet().iterator();
 		public boolean hasNext() {
 			return pit.hasNext();
 		}
-		public ISchemaComponent next() {
-			return pit.next().getValue().comp;
+		public PlacedComponent next() {
+			return pit.next().getValue();
 		}
 		public void remove() {
 			pit.remove();
@@ -63,7 +63,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	{
 		if (components.containsKey(component.getName())) throw new DuplicateKeyException();
 		
-		// eventualna provjera overlappinga dode ovdje
+		// TODO: eventualna provjera overlappinga dode ovdje
 		
 		PlacedComponent wrapper = new PlacedComponent();
 		wrapper.comp = component;
@@ -140,7 +140,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	}
 	
 
-	public Iterator<ISchemaComponent> iterator() {
+	public Iterator<PlacedComponent> iterator() {
 		return new ComponentIterator();
 	}
 

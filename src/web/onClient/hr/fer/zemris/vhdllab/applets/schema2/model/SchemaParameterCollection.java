@@ -16,8 +16,30 @@ import java.util.Map.Entry;
 
 
 public class SchemaParameterCollection implements IParameterCollection {
+	
+	private class ParameterIterator implements Iterator<IParameter> {
+		private Iterator<Entry<String, IParameter>> pit = parameters.entrySet().iterator();
+		public boolean hasNext() {
+			return pit.hasNext();
+		}
+
+		public IParameter next() {
+			return pit.next().getValue();
+		}
+
+		public void remove() {
+			pit.remove();
+		}
+	}
+	
+	
+	
+	/* private fields */
 	private Map<String, IParameter> parameters; 
 	
+	
+	
+	/* ctors */
 	
 	public SchemaParameterCollection() {
 		parameters = new HashMap<String, IParameter>();
@@ -27,7 +49,7 @@ public class SchemaParameterCollection implements IParameterCollection {
 	
 	
 	
-	
+	/* methods */
 
 	public void addParameter(IParameter parameter) throws DuplicateParameterException {
 		String key = parameter.getName();
@@ -59,8 +81,8 @@ public class SchemaParameterCollection implements IParameterCollection {
 		parameters.get(key).setValue(value);
 	}
 
-	public Iterator<Entry<String, IParameter>> iterator() {
-		return parameters.entrySet().iterator();
+	public Iterator<IParameter> iterator() {
+		return new ParameterIterator();
 	}
 
 	public Set<String> getParameterNames() {

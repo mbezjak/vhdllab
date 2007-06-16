@@ -24,7 +24,7 @@ import java.util.Map.Entry;
  * @author Axel
  *
  */
-public interface IParameterCollection extends Iterable<Entry<String, IParameter>> {
+public interface IParameterCollection extends Iterable<IParameter> {
 	
 	/**
 	 * Vraca IParameter objekt za

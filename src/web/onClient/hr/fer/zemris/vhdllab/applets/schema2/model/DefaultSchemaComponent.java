@@ -33,10 +33,11 @@ import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class DefaultSchemaComponent implements ISchemaComponent {
-
+	
 	private static class PortRelation {
 		public Port port;
 		public List<SchemaPort> relatedTo;
@@ -58,6 +59,19 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 		public String serialize() {
 			return orientation.serialize();
+		}
+	}
+	
+	private class PortIterator implements Iterator<Port> {
+		private Iterator<PortRelation> prit = portrelations.iterator();
+		public boolean hasNext() {
+			return prit.hasNext();
+		}
+		public Port next() {
+			return prit.next().port;
+		}
+		public void remove() {
+			prit.remove();
 		}
 	}
 	
@@ -301,10 +315,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	private void initParameters(List<ParameterWrapper> params) {
 		parameters = new SchemaParameterCollection();
 		if (params != null) {
-			ParameterFactory parfactory = new ParameterFactory();
 			IParameter par;
 			for (ParameterWrapper parwrap : params) {
-				par = parfactory.createParameter(parwrap);
+				par = ParameterFactory.createParameter(parwrap);
 				parameters.addParameter(par);
 			}
 		}
@@ -454,6 +467,22 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 	private Port createPortFromWrapper(PortWrapper portwrap) {
 		return PortFactory.createPort(portwrap);
+	}
+	
+	public String getCodeFileName() {
+		return codeFileName;
+	}
+
+	public Iterator<Port> portIterator() {
+		return new PortIterator();
+	}
+
+	public Iterator<SchemaPort> schemaPortIterator() {
+		return schemaports.iterator();
+	}
+
+	public boolean isGeneric() {
+		return generic;
 	}
 	
 

@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 
@@ -18,7 +19,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
  * @author Axel
  *
  */
-public interface ISchemaComponentCollection extends Iterable<ISchemaComponent> {
+public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 		
 	/**
 	 * Dohvaca komponentu zadanog imena.

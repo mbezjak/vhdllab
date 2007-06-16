@@ -15,7 +15,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  * Tipovi koji traze objasnjenje:
  * CASELESS - String za koji nije bitan case.
  * TEXT - radi se o vrijednosti String.
- * OBJECT - bilo koji drugi objekt
+ * OBJECT - bilo koji drugi objekt koji implementira sucelje ISerializable
  * 
  * Ostali objasnjavaju sami sebe.
  * 

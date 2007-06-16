@@ -13,8 +13,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -99,6 +101,11 @@ public class DummyOR implements ISchemaComponent {
 	public EOrientation getComponentOrientation() {
 		return orient;
 	}
+	public Iterator<Port> portIterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public IComponentDrawer getDrawer() {
 		throw new NotImplementedException();
 	}
@@ -127,6 +134,12 @@ public class DummyOR implements ISchemaComponent {
 			return null;
 		}
 	}
+	
+	public Iterator<SchemaPort> schemaPortIterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public int portCount() {
 		return ports.size();
 	}
@@ -149,6 +162,16 @@ public class DummyOR implements ISchemaComponent {
 	public void deserialize(ComponentWrapper compwrap) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public String getCodeFileName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean isGeneric() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	
