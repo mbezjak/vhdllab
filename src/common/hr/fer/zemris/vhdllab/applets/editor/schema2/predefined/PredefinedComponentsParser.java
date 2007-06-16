@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Parameter;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedConf;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 
 import java.io.InputStream;
 
@@ -36,12 +36,12 @@ public class PredefinedComponentsParser {
 		digester.addBeanPropertySetter("componentList/component/categoryName");
 		digester.addBeanPropertySetter("componentList/component/genericComponent");
 
-		digester.addObjectCreate("componentList/component/parameterList/parameter", Parameter.class);
+		digester.addObjectCreate("componentList/component/parameterList/parameter", ParameterWrapper.class);
 		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/generic");
-		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/type");
+		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/paramType");
 		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/name");
 		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/value");
-		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/allowedValueSet");
+		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/allowedValues");
 		digester.addSetNext("componentList/component/parameterList/parameter", "addParameter");
 		
 		digester.addObjectCreate("componentList/component/portList/port", PortWrapper.class);

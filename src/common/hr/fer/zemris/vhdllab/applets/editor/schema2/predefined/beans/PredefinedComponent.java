@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,11 +13,11 @@ public class PredefinedComponent {
 	private String drawerName;
 	private String categoryName;
 	private Boolean genericComponent;
-	private Set<Parameter> parameters;
+	private Set<ParameterWrapper> parameters;
 	private Set<PortWrapper> ports;
 
 	public PredefinedComponent() {
-		parameters = new HashSet<Parameter>();
+		parameters = new HashSet<ParameterWrapper>();
 		ports = new HashSet<PortWrapper>();
 	}
 
@@ -70,15 +73,15 @@ public class PredefinedComponent {
 		this.genericComponent = genericComponent;
 	}
 
-	public void addParameter(Parameter p) {
+	public void addParameter(ParameterWrapper p) {
 		parameters.add(p);
 	}
 
-	public Set<Parameter> getParameters() {
+	public Set<ParameterWrapper> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(Set<Parameter> parameters) {
+	public void setParameters(Set<ParameterWrapper> parameters) {
 		this.parameters = parameters;
 	}
 

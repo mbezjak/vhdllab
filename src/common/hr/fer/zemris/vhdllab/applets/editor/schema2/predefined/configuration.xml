@@ -11,20 +11,20 @@
         <parameterList>
            <parameter>
               <generic>true</generic>
-              <type>TIME</type>
+              <paramType>TIME</paramType>
               <name>delay</name>
               <value>0 ns</value>
-              <allowedValueSet isFinite="false">
-              </allowedValueSet>
+              <allowedValues isFinite="false">
+              </allowedValues>
            </parameter>
 
            <parameter>
               <generic>true</generic>
-              <type>INTEGER</type>
+              <paramType>INTEGER</paramType>
               <name>input_port_num</name>
               <value>2</value>
-              <allowedValueSet isFinite="false">
-              </allowedValueSet>
+              <allowedValues isFinite="false">
+              </allowedValues>
            </parameter>
         </parameterList>
        

@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.enums;
 
 
+
+
 /**
  * Popis razlicitih tipova
  * vrijednosti koje parametri

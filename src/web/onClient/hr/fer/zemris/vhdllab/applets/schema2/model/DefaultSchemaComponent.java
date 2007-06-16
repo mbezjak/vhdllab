@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Parameter;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
@@ -21,6 +20,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawe
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
@@ -302,11 +303,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	private void initParameters(PredefinedComponent predefComp) {
 		parameters = new SchemaParameterCollection();
-		Set<Parameter> params = predefComp.getParameters();
+		Set<ParameterWrapper> params = predefComp.getParameters();
 		if (params != null) {
 			ParameterFactory parfactory = new ParameterFactory();
 			IParameter par;
-			for (Parameter parwrap : params) {
+			for (ParameterWrapper parwrap : params) {
 				par = parfactory.createParameter(parwrap);
 				parameters.addParameter(par.getName(), par);
 			}

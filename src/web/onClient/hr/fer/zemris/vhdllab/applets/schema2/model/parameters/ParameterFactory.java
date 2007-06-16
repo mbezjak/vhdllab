@@ -6,46 +6,72 @@ import java.util.Set;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Parameter;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 
 
 
 
 public class ParameterFactory {
+	
 	/* static fields */
+	public static final String PAR_INTEGER = "INTEGER";
+	public static final String PAR_BOOLEAN = "BOOLEAN";
+	public static final String PAR_DECIMAL = "DECIMAL";
+	public static final String PAR_TEXT = "TEXT";
+	public static final String PAR_TIME = "TIME";
+	public static final String PAR_CASELESS = "CASELESS";
+	public static final String PAR_OBJECT = "OBJECT";
 
+
+	
 	/* private fields */
+	
+	
 
 	/* ctors */
+	
+	
 
 	/* methods */
-	public IParameter createParameter(Parameter parwrapper) {
+	public IParameter createParameter(ParameterWrapper parwrapper) {
 		IParameter parameter;
 		
-		String partype = parwrapper.getType();
-		if (partype.equals(Parameter.PAR_BOOLEAN)) parameter = createBoolean(parwrapper);
-		else if (partype.equals(Parameter.PAR_INTEGER)) parameter = createInteger(parwrapper);
-		else if (partype.equals(Parameter.PAR_DECIMAL)) parameter = createDecimal(parwrapper);
-		else if (partype.equals(Parameter.PAR_TEXT)) parameter = createText(parwrapper);
-		else if (partype.equals(Parameter.PAR_TIME)) parameter = createTime(parwrapper);
+		String partype = parwrapper.getParamType();
+		if (partype.equals(ParameterFactory.PAR_BOOLEAN)) parameter = createBoolean(parwrapper);
+		else if (partype.equals(ParameterFactory.PAR_INTEGER)) parameter = createInteger(parwrapper);
+		else if (partype.equals(ParameterFactory.PAR_DECIMAL)) parameter = createDecimal(parwrapper);
+		else if (partype.equals(ParameterFactory.PAR_TEXT)) parameter = createText(parwrapper);
+		else if (partype.equals(ParameterFactory.PAR_TIME)) parameter = createTime(parwrapper);
+		else if (partype.equals(ParameterFactory.PAR_CASELESS)) parameter = createCaseless(parwrapper);
+		else if (partype.equals(ParameterFactory.PAR_TIME)) parameter = createObject(parwrapper);
 		else throw new NotImplementedException("Parameter type '" + partype + "' not implemented.");
 		
 		return parameter;
 	}
 
-	private IParameter createTime(Parameter parwrapper) {
+	private IParameter createObject(ParameterWrapper parwrapper) {
+		throw new NotImplementedException();
+	}
+
+	private IParameter createCaseless(ParameterWrapper parwrapper) {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
 	}
 
-	private IParameter createText(Parameter parwrapper) {
-		IParameter parameter = new TextParameter(parwrapper.getName(), parwrapper.isGeneric());
+	private IParameter createTime(ParameterWrapper parwrapper) {
+		// TODO Auto-generated method stub
+		throw new NotImplementedException();
+	}
+
+	private IParameter createText(ParameterWrapper parwrapper) {
+		IParameter parameter = new TextParameter(parwrapper.getName(), parwrapper.getGeneric());
 		
 		String val = parwrapper.getValue();
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValueSet() != null) {
+		if (parwrapper.getAllowedValues() != null) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValueSet().split(" "); // TODO: vidjeti format stringova
+			String[] sfield = parwrapper.getAllowedValues().split(" "); // TODO: vidjeti format stringova
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(sfield[i]);
 			}
@@ -55,22 +81,26 @@ public class ParameterFactory {
 		return parameter;
 	}
 
-	private IParameter createDecimal(Parameter parwrapper) {
+	private IParameter createDecimal(ParameterWrapper parwrapper) {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
 	}
 
-	private IParameter createInteger(Parameter parwrapper) {		
-		IParameter parameter = new IntegerParameter(parwrapper.isGeneric(), parwrapper.getName());
+	private IParameter createInteger(ParameterWrapper parwrapper) {		
+		IParameter parameter = new IntegerParameter(parwrapper.getGeneric(), parwrapper.getName());
 		
 		Integer val = new Integer(Integer.parseInt(parwrapper.getValue()));
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValueSet() != null) {
+		if (parwrapper.getAllowedValues() != null) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValueSet().split(" ");
+			String[] sfield = parwrapper.getAllowedValues().split(" ");
 			for (int i = 0; i < sfield.length; i++) {
-				allowed.add(new Integer(Integer.parseInt(sfield[i])));
+				try {
+					allowed.add(new Integer(Integer.parseInt(sfield[i])));
+				} catch (NumberFormatException nfe) {
+					continue;
+				}
 			}
 			parameter.getConstraint().setPossibleValues(allowed);
 		}
@@ -78,15 +108,15 @@ public class ParameterFactory {
 		return parameter;
 	}
 
-	private IParameter createBoolean(Parameter parwrapper) {
-		IParameter parameter = new BooleanParameter(parwrapper.isGeneric(), parwrapper.getName());
+	private IParameter createBoolean(ParameterWrapper parwrapper) {
+		IParameter parameter = new BooleanParameter(parwrapper.getGeneric(), parwrapper.getName());
 		
 		Boolean val = new Boolean(Boolean.parseBoolean(parwrapper.getValue()));
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValueSet() != null) {
+		if (parwrapper.getAllowedValues() != null) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValueSet().split(" ");
+			String[] sfield = parwrapper.getAllowedValues().split(" ");
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(new Boolean(Boolean.parseBoolean(sfield[i])));
 			}

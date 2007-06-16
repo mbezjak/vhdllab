@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IWireDrawer;
@@ -11,8 +12,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultWireDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 
 import java.awt.Rectangle;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +28,8 @@ public class SchemaWire implements ISchemaWire {
 	private List<XYLocation> nodes;
 	private IParameterCollection parameters;
 	private List<WireSegment> segments;
-	private DefaultWireDrawer wiredrawer;
-	
+	private IWireDrawer wiredrawer;
+	private ParameterFactory paramFactory;
 	
 	
 	public SchemaWire() {
@@ -126,6 +130,26 @@ public class SchemaWire implements ISchemaWire {
 		} catch (ParameterNotFoundException e) {
 			throw new RuntimeException("Parameter name could not be set.");
 		}
+	}
+	
+	public void setDrawer(String drawerName) {
+		try {
+			Class cls = Class.forName(drawerName);
+			Class[] partypes = new Class[1];
+			partypes[0] = ISchemaWire.class;
+			Constructor<IWireDrawer> ct = cls.getConstructor(partypes);
+			wiredrawer = ct.newInstance();
+		} catch (Exception e) {
+			wiredrawer = new DefaultWireDrawer(this);
+		}
+	}
+	
+	public void addParameter(ParameterWrapper pw) {
+		if (paramFactory == null) paramFactory = new ParameterFactory();
+		
+		IParameter param = paramFactory.createParameter(pw);
+		
+		parameters.addParameter(param.getName(), param);
 	}
 	
 

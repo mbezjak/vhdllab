@@ -1,13 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
+
+@Deprecated
 public class Parameter {
 	
-	public static final String PAR_INTEGER = "INTEGER";
-	public static final String PAR_BOOLEAN = "BOOLEAN";
-	public static final String PAR_DECIMAL = "DECIMAL";
-	public static final String PAR_TEXT = "TEXT";
-	public static final String PAR_TIME = "TIME";
-
 	private Boolean generic;
 	private String type;
 	private String name;

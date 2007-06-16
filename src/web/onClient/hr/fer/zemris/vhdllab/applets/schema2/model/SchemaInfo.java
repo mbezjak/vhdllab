@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaPrototypeCollecti
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 
 import java.util.Map;
 
@@ -68,6 +69,10 @@ public class SchemaInfo implements ISchemaInfo {
 		} catch (OverlapException e) {
 			throw new IllegalStateException();
 		}
+	}
+	
+	public void addComponent(ComponentWrapper compwrap) {
+		System.out.println("Added component.");
 	}
 
 }
