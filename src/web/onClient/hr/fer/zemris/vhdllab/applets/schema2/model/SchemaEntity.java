@@ -42,7 +42,7 @@ public class SchemaEntity implements ISchemaEntity {
 	
 	
 	/**
-	 * Stvara entity.
+	 * Stvara entity. Dodaje defaultne parametre.
 	 * 
 	 * @param circIntName
 	 * Ocekuje se Caseless ime sucelja sklopa.

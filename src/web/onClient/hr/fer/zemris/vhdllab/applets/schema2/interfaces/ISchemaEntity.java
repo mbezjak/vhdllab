@@ -1,6 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import java.util.List;
+
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 
 
@@ -43,6 +46,19 @@ public interface ISchemaEntity {
 	 */
 	void setParameters(IParameterCollection parameters);
 	
+	/**
+	 * Postavlja portove za sucelje modelirane komponente.
+	 * 
+	 * @param ports
+	 */
+	public void setPorts(List<Port> ports);
+	
+	/**
+	 * Dohvaca portove sucelja modelirane komponente.
+	 * 
+	 * @return
+	 */
+	public List<Port> getPorts();
 	
 }
 

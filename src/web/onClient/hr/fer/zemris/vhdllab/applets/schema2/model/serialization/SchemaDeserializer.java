@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaEntity;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaWire;
 
@@ -125,8 +124,8 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/generic", "generic");
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/paramType", "paramType");
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/name", "name");
-		digester.addBeanPropertySetter("schemaInfo/entity/parameter/value", "value");
-		digester.addBeanPropertySetter("schemaInfo/entity/parameter/allowedValues", "allowedValues");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/value", "value");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/allowedValues", "allowedValues");
 		digester.addSetNext("schemaInfo/entity/parameters/parameter", "addParameterWrapper");
 		
 		digester.addObjectCreate("schemaInfo/entity/portList/port", PortWrapper.class);

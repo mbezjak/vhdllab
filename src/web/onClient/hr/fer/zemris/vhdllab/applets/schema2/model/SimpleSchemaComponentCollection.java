@@ -6,10 +6,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -27,17 +29,28 @@ import java.util.Map.Entry;
  *
  */
 public class SimpleSchemaComponentCollection implements ISchemaComponentCollection {
-	private class CpWrapper {
-		public ISchemaComponent comp;
-		public XYLocation pos;
+	
+	
+	
+	private class ComponentIterator implements Iterator<ISchemaComponent> {
+		private Iterator<Entry<Caseless, PlacedComponent>> pit = components.entrySet().iterator();
+		public boolean hasNext() {
+			return pit.hasNext();
+		}
+		public ISchemaComponent next() {
+			return pit.next().getValue().comp;
+		}
+		public void remove() {
+			pit.remove();
+		}
 	}
 	
-	private Map<Caseless, CpWrapper> components;
+	private Map<Caseless, PlacedComponent> components;
 	
 	
 	
 	public SimpleSchemaComponentCollection() {
-		components = new HashMap<Caseless, CpWrapper>();
+		components = new HashMap<Caseless, PlacedComponent>();
 	}
 	
 	
@@ -52,7 +65,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		
 		// eventualna provjera overlappinga dode ovdje
 		
-		CpWrapper wrapper = new CpWrapper();
+		PlacedComponent wrapper = new PlacedComponent();
 		wrapper.comp = component;
 		wrapper.pos = new XYLocation(x, y);
 		components.put(component.getName(), wrapper);
@@ -62,7 +75,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		XYLocation loc = new XYLocation(x, y);
 		XYLocation start;
 		ISchemaComponent comp;
-		for (Entry<Caseless, CpWrapper> entry : components.entrySet()) {
+		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
 			comp = entry.getValue().comp;
 			start = entry.getValue().pos;
 			if (loc.in(start.x, start.y, comp.getWidth(), comp.getHeight())) return true;
@@ -78,7 +91,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		XYLocation loc = new XYLocation(x, y);
 		XYLocation start;
 		ISchemaComponent comp;
-		for (Entry<Caseless, CpWrapper> entry : components.entrySet()) {
+		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
 			comp = entry.getValue().comp;
 			start = entry.getValue().pos;
 			if (loc.in(start.x, start.y, comp.getWidth(), comp.getHeight())) return comp;
@@ -92,7 +105,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	
 	
 	public XYLocation getComponentLocation(Caseless componentName) {
-		CpWrapper cpw = components.get(componentName);
+		PlacedComponent cpw = components.get(componentName);
 		
 		if (cpw == null) return null;
 		else return new XYLocation(cpw.pos);
@@ -100,7 +113,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 
 
 	public Rectangle getComponentBounds(Caseless componentName) {
-		CpWrapper cpw = components.get(componentName);
+		PlacedComponent cpw = components.get(componentName);
 		
 		if (cpw == null) return null;
 		else {
@@ -114,16 +127,21 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 			return bounds;
 		}
 	}
-
-
+	
 
 	public void removeComponent(Caseless name) throws UnknownKeyException {
 		if (!components.containsKey(name)) throw new UnknownKeyException();
 		components.remove(name);
 	}
 	
+	
 	public Set<Caseless> getComponentNames() {
 		return components.keySet();
+	}
+	
+
+	public Iterator<ISchemaComponent> iterator() {
+		return new ComponentIterator();
 	}
 
 	

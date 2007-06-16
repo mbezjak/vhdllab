@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,19 +22,34 @@ import java.util.Map.Entry;
 
 
 public class SimpleSchemaWireCollection implements ISchemaWireCollection {
+	
+	private class WireIterator implements Iterator<ISchemaWire> {
+		private Iterator<Entry<Caseless, ISchemaWire>> pit = wires.entrySet().iterator();
+		public boolean hasNext() {
+			return pit.hasNext();
+		}
+		public ISchemaWire next() {
+			return pit.next().getValue();
+		}
+		public void remove() {
+			pit.remove();
+		}
+	}
+	
+	
+	/* private fields */
 	private Map<Caseless, ISchemaWire> wires;
 	
 	
 	
-	
-	// public metode
-	
+	/* ctors */
 	
 	public SimpleSchemaWireCollection() {
 		wires = new HashMap<Caseless, ISchemaWire>();
 	}
 	
 	
+	/* methods */
 	
 	public void addWire(ISchemaWire wire) throws DuplicateKeyException, OverlapException {
 		if (wires.containsKey(wire.getName())) throw new DuplicateKeyException();
@@ -86,13 +102,14 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 
 
 
-	
-
-
-
-
 	public Set<Caseless> getWireNames() {
 		return wires.keySet();
+	}
+
+
+
+	public Iterator<ISchemaWire> iterator() {
+		return new WireIterator();
 	}
 
 	

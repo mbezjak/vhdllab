@@ -7,7 +7,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.CaselessConstraint;
-import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.TextConstraint;
 
 public class CaselessParameter implements IParameter {
 	
@@ -95,6 +94,11 @@ public class CaselessParameter implements IParameter {
 
 	public void setAsString(String stringValue) throws InvalidParameterValueException {
 		if (stringValue == null) throw new InvalidParameterValueException("Null passed.");
+		
+		Caseless nval = new Caseless(stringValue);
+		if (!(constraint.checkValue(nval)))
+				throw new InvalidParameterValueException("Not allowed by constraint.");
+		
 		value = new Caseless(stringValue);
 	}
 
@@ -111,9 +115,21 @@ public class CaselessParameter implements IParameter {
 	public String getValueClassName() {
 		return Caseless.class.getName();
 	}
-
-	
-	
 	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
