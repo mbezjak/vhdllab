@@ -241,6 +241,14 @@ public interface ISchemaComponent {
 	 */
 	IComponentDrawer getDrawer();
 	
+	
+	/**
+	 * Koristi se pri deserijalizaciji.
+	 * 
+	 * @param compwrap
+	 */
+	void deserialize(ComponentWrapper compwrap);
+	
 }
 
 

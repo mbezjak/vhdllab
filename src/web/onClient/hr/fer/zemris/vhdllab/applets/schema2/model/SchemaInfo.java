@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 
 
@@ -72,7 +73,17 @@ public class SchemaInfo implements ISchemaInfo {
 	}
 	
 	public void addComponent(ComponentWrapper compwrap) {
-		System.out.println("Added component.");
+		try {
+			Class cls = Class.forName(compwrap.getComponentClassName());
+			Class[] partypes = new Class[0];
+			Constructor<ISchemaComponent> ct = cls.getConstructor(partypes);
+			ISchemaComponent cmp = ct.newInstance();
+			cmp.deserialize(compwrap);
+			components.addComponent(compwrap.getX(), compwrap.getY(), cmp);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Could not create component.", e);
+		}
 	}
 
 }

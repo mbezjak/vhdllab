@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Parameter;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
@@ -20,6 +19,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawe
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -95,6 +95,10 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 
 	/* ctors */
+	
+	public DefaultSchemaComponent() {
+		
+	}
 
 	/**
 	 * @param name
@@ -285,7 +289,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			Class[] partypes = new Class[1];
 			partypes[0] = ISchemaComponent.class;
 			Constructor<IComponentDrawer> ct = cls.getConstructor(partypes);
-			drawer = ct.newInstance();
+			Object[] params = new Object[1];
+			params[0] = this;
+			drawer = ct.newInstance(params);
 		} catch (ClassNotFoundException cnfe) {
 			drawer = new DefaultComponentDrawer(this);
 		} catch (NoSuchMethodException nsme) {
@@ -413,6 +419,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			throw new RuntimeException("Name could not be set.", e);
 		}
 	}
+
+	public void deserialize(ComponentWrapper compwrap) {
+		// TODO:
+	}
+	
 	
 
 	

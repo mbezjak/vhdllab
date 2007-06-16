@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaParameterCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 
@@ -145,17 +146,11 @@ public class DummyOR implements ISchemaComponent {
 		entityName = name;
 	}
 
-	public boolean deserialize(String code) {
+	public void deserialize(ComponentWrapper compwrap) {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
 	
 	
 	

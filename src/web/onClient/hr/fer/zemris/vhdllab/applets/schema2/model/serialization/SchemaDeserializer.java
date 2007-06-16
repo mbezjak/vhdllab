@@ -72,7 +72,7 @@ public class SchemaDeserializer {
 		// components
 		digester.addObjectCreate("schemaInfo/components/schemaComponent", ComponentWrapper.class);
 		
-		
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/componentClassName", "componentClassName");
 		
 		digester.addSetNext("schemaInfo/components/schemaComponent", "addComponent");
 		
