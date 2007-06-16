@@ -12,15 +12,15 @@ import java.util.List;
 public class ComponentWrapper {
 	
 	private String componentClassName;
-	private Integer x, y;
-	private String name;
+	private Integer x, y, width, height;
+	private String componentName;
 	private String codeFileName;
+	private String categoryName;
 	private String drawerName;
 	private Boolean genericComponent;
 	private List<ParameterWrapper> paramWrappers;
 	private List<PortWrapper> portWrappers;
 	private List<SchemaPort> schemaPorts;
-	private String orientation;
 	
 	
 	public ComponentWrapper() {
@@ -60,13 +60,13 @@ public class ComponentWrapper {
 	}
 
 
-	public void setName(String name) {
-		this.name = name;
+	public void setComponentName(String name) {
+		this.componentName = name;
 	}
 
 
-	public String getName() {
-		return name;
+	public String getComponentName() {
+		return componentName;
 	}
 
 
@@ -98,16 +98,6 @@ public class ComponentWrapper {
 	public Boolean getGenericComponent() {
 		return genericComponent;
 	}
-
-
-	public void setOrientation(String orientation) {
-		this.orientation = orientation;
-	}
-
-
-	public String getOrientation() {
-		return orientation;
-	}
 	
 	
 	public void addPortWrapper(PortWrapper pw) {
@@ -122,6 +112,66 @@ public class ComponentWrapper {
 	
 	public void addSchemaPort(SchemaPort sp) {
 		schemaPorts.add(sp);
+	}
+
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+
+	public void setParamWrappers(List<ParameterWrapper> paramWrappers) {
+		this.paramWrappers = paramWrappers;
+	}
+
+
+	public List<ParameterWrapper> getParamWrappers() {
+		return paramWrappers;
+	}
+
+
+	public void setPortWrappers(List<PortWrapper> portWrappers) {
+		this.portWrappers = portWrappers;
+	}
+
+
+	public List<PortWrapper> getPortWrappers() {
+		return portWrappers;
+	}
+
+
+	public void setSchemaPorts(List<SchemaPort> schemaPorts) {
+		this.schemaPorts = schemaPorts;
+	}
+
+
+	public List<SchemaPort> getSchemaPorts() {
+		return schemaPorts;
+	}
+
+
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+
+	public Integer getWidth() {
+		return width;
+	}
+
+
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+
+	public Integer getHeight() {
+		return height;
 	}
 	
 }

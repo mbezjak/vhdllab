@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
@@ -10,9 +11,16 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaPrototypeCollecti
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.EntityWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Map;
 
 
@@ -57,6 +65,10 @@ public class SchemaInfo implements ISchemaInfo {
 	public void setWires(ISchemaWireCollection wires) {
 		this.wires = wires;
 	}
+	
+	public void setEntity(ISchemaEntity schemaEntity) {
+		entity = schemaEntity;
+	}
 
 	public ISchemaPrototypeCollection getPrototyper() {
 		return prototypes;
@@ -75,15 +87,35 @@ public class SchemaInfo implements ISchemaInfo {
 	public void addComponent(ComponentWrapper compwrap) {
 		try {
 			Class cls = Class.forName(compwrap.getComponentClassName());
-			Class[] partypes = new Class[0];
+			Class[] partypes = new Class[1];
+			partypes[0] = ComponentWrapper.class;
 			Constructor<ISchemaComponent> ct = cls.getConstructor(partypes);
-			ISchemaComponent cmp = ct.newInstance();
-			cmp.deserialize(compwrap);
+			Object[] params = new Object[1];
+			params[0] = compwrap;
+			ISchemaComponent cmp = ct.newInstance(params);
 			components.addComponent(compwrap.getX(), compwrap.getY(), cmp);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Could not create component.", e);
 		}
+	}
+	
+	public void setEntityFromWrapper(EntityWrapper entwrap) {
+		SchemaEntity ent = new SchemaEntity();
+		
+		// fill with parameters
+		IParameterCollection params = ent.getParameters();
+		for (ParameterWrapper paramwrap : entwrap.getParameters()) {
+			params.addParameter(ParameterFactory.createParameter(paramwrap));
+		}
+		
+		// fill with ports
+		List<Port> ports = ent.getPorts();
+		for (PortWrapper portwrap : entwrap.getPortwrappers()) {
+			ports.add(PortFactory.createPort(portwrap));
+		}
+		
+		entity = ent;
 	}
 
 }

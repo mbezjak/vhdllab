@@ -29,8 +29,9 @@ public class SchemaParameterCollection implements IParameterCollection {
 	
 	
 
-	public void addParameter(String key, IParameter parameter) throws DuplicateParameterException {
-		if (parameters.containsKey(key)) throw new DuplicateParameterException();
+	public void addParameter(IParameter parameter) throws DuplicateParameterException {
+		String key = parameter.getName();
+		if (parameters.containsKey(key)) throw new DuplicateParameterException("Key '" + key + "' is duplicate.");
 		parameters.put(key, parameter);
 	}
 
@@ -39,22 +40,22 @@ public class SchemaParameterCollection implements IParameterCollection {
 	}
 
 	public IParameter getParameter(String key) throws ParameterNotFoundException {
-		if (!parameters.containsKey(key)) throw new ParameterNotFoundException();
+		if (!parameters.containsKey(key)) throw new ParameterNotFoundException("Key '" + key + "' is not found.");
 		return parameters.get(key);
 	}
 
 	public Object getValue(String key) throws ParameterNotFoundException {
-		if (!parameters.containsKey(key)) throw new ParameterNotFoundException();
+		if (!parameters.containsKey(key)) throw new ParameterNotFoundException("Key '" + key + "' is not found.");
 		return parameters.get(key).getValue();
 	}
 
 	public void removeParameter(String key) throws ParameterNotFoundException {
-		if (!parameters.containsKey(key)) throw new ParameterNotFoundException();
+		if (!parameters.containsKey(key)) throw new ParameterNotFoundException("Key '" + key + "' is not found.");
 		parameters.remove(key);
 	}
 
 	public void setValue(String key, Object value) throws ParameterNotFoundException, InvalidParameterValueException {
-		if (!parameters.containsKey(key)) throw new ParameterNotFoundException();
+		if (!parameters.containsKey(key)) throw new ParameterNotFoundException("Key '" + key + "' is not found.");
 		parameters.get(key).setValue(value);
 	}
 
@@ -69,3 +70,22 @@ public class SchemaParameterCollection implements IParameterCollection {
 	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

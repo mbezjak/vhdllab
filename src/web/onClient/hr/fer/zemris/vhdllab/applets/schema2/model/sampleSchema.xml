@@ -1,6 +1,99 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 
 <schemaInfo>
 
+	<entity>
+		<parameters>
+		</parameters>
+		<portlist>
+		</portlist>
+	</entity>
+
+	<wires>
+		<schemaWire>
+			<nodes>
+				<node><x>5</x><y>12</y></node>
+			</nodes>
+			<segments>
+				<segment>
+					<x1>5</x1><y1>12</y1>
+					<x2>10</x2><y2>12</y2>
+				</segment>
+				<segment>
+					<x1>5</x1><y1>12</y1>
+					<x2>2</x2><y2>12</y2>
+				</segment>
+				<segment>
+					<x1>5</x1><y1>12</y1>
+					<x2>5</x2><y2>17</y2>
+				</segment>
+			</segments>
+			<drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultWireDrawer</drawerName>
+			<parameters>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>CASELESS</paramType>
+					<name>Name</name>
+					<value>wire54</value>
+					<allowedValues></allowedValues>
+				</parameter>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.IntegerParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>INTEGER</paramType>
+					<name>SomeNumber</name>
+					<value>10</value>
+					<allowedValues>5 6 7</allowedValues>
+				</parameter>
+			</parameters>
+		</schemaWire>
+	</wires>
+	
+	<components>
+		<schemaComponent>
+			<componentClassName>hr.fer.zemris.vhdllab.applets.schema2.model.DefaultSchemaComponent</componentClassName>
+			<x>10</x>
+			<y>20</y>
+			<componentName>cmp10</componentName>
+			<codeFileName>cmp10.vhdl</codeFileName>
+			<categoryName>Basic</categoryName>
+			<drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+			<genericComponent>false</genericComponent>
+			<orientation>NORTH</orientation>
+			<width>30</width>
+			<height>50</height>
+			<parameters>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>CASELESS</paramType>
+					<name>Name</name>
+					<value>SomeCompi</value>
+					<allowedValues></allowedValues>
+				</parameter>
+			</parameters>
+			<portList>
+				<port>
+					<name>some_port</name>
+					<direction>IN</direction>
+					<type>std_logic</type>
+					<vectorAscension></vectorAscension>
+					<lowerBound></lowerBound>
+					<upperBound></upperBound>
+				</port>
+			</portList>
+			<schemaPortList>
+				<schemaPort>
+				 <x>0</x>
+				 <y>30</y>
+				 <name>some_port_1</name>
+				 <mapping>wire54</mapping>
+				 <portIndex>0</portIndex>
+				</schemaPort>
+			</schemaPortList>
+		</schemaComponent>
+	</components>
+	
 </schemaInfo>

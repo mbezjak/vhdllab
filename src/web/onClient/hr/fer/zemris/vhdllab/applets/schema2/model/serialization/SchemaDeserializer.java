@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
 
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
+import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaEntity;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaWire;
 
@@ -73,8 +75,73 @@ public class SchemaDeserializer {
 		digester.addObjectCreate("schemaInfo/components/schemaComponent", ComponentWrapper.class);
 		
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/componentClassName", "componentClassName");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/x", "x");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/y", "y");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/width", "width");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/height", "height");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/componentName", "componentName");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/codeFileName", "codeFileName");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/categoryName", "categoryName");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/drawerName", "drawerName");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/genericComponent", "genericComponent");
+		
+		digester.addObjectCreate("schemaInfo/components/schemaComponent/parameters/parameter", ParameterWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/paramClassName", "paramClassName");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/generic", "generic");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/paramType", "paramType");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/name", "name");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/value", "value");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/allowedValues", "allowedValues");
+		digester.addSetNext("schemaInfo/components/schemaComponent/parameters/parameter", "addParameterWrapper");
+		
+		digester.addObjectCreate("schemaInfo/components/schemaComponent/portList/port", PortWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/name", "name");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/direction", "direction");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/type", "type");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/vectorAscension", "vectorAscension");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/lowerBound", "lowerBound");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/upperBound", "upperBound");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/relations", "relations");
+		digester.addSetNext("schemaInfo/components/schemaComponent/portList/port", "addPortWrapper");
+		
+		digester.addObjectCreate("schemaInfo/components/schemaComponent/schemaPortList/schemaPort", SchemaPort.class);
+		digester.addCallMethod("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/x", "setXOffset", 1);
+		digester.addCallParam("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/x", 0);
+		digester.addCallMethod("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/y", "setYOffset", 1);
+		digester.addCallParam("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/y", 0);
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/name", "stringName");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/mappedto", "stringMapping");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/portIndex", "portindex");
+		digester.addSetNext("schemaInfo/components/schemaComponent/schemaPortList/schemaPort", "addSchemaPort");
 		
 		digester.addSetNext("schemaInfo/components/schemaComponent", "addComponent");
+		
+		
+		// entity
+		digester.addObjectCreate("schemaInfo/entity", EntityWrapper.class);
+		
+		digester.addObjectCreate("schemaInfo/entity/parameters/parameter", ParameterWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/paramClassName", "paramClassName");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/generic", "generic");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/paramType", "paramType");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/name", "name");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameter/value", "value");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameter/allowedValues", "allowedValues");
+		digester.addSetNext("schemaInfo/entity/parameters/parameter", "addParameterWrapper");
+		
+		digester.addObjectCreate("schemaInfo/entity/portList/port", PortWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/name", "name");
+		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/direction", "direction");
+		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/type", "type");
+		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/vectorAscension", "vectorAscension");
+		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/lowerBound", "lowerBound");
+		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/upperBound", "upperBound");
+		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/relations", "relations");
+		digester.addSetNext("schemaInfo/entity/portList/port", "addPortWrapper");
+		
+		digester.addSetNext("schemaInfo/entity", "setEntityFromWrapper");
+		
+		
 		
 		
 		try {

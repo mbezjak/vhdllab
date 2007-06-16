@@ -32,6 +32,8 @@ public class Tester {
 	private static void testSD() {
 		SchemaDeserializer sd = new SchemaDeserializer();
 		FileInputStream fs = null;
+		ISchemaInfo info;
+		
 		try {
 			fs = new FileInputStream("d:/sample.xml");
 		} catch (FileNotFoundException e) {
@@ -39,7 +41,12 @@ public class Tester {
 			System.exit(1);
 		}
 		
-		ISchemaInfo info = sd.deserializeSchema(fs);
+		try {
+			info = sd.deserializeSchema(fs);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 		
 		System.out.println("Ok, parsed.");
 	}

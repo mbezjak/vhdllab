@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.Parameter;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 
@@ -33,7 +33,7 @@ public class ParameterFactory {
 	
 
 	/* methods */
-	public IParameter createParameter(ParameterWrapper parwrapper) {
+	public static IParameter createParameter(ParameterWrapper parwrapper) {
 		IParameter parameter;
 		
 		String partype = parwrapper.getParamType();
@@ -49,21 +49,34 @@ public class ParameterFactory {
 		return parameter;
 	}
 
-	private IParameter createObject(ParameterWrapper parwrapper) {
+	private static IParameter createObject(ParameterWrapper parwrapper) {
 		throw new NotImplementedException();
 	}
 
-	private IParameter createCaseless(ParameterWrapper parwrapper) {
+	private static IParameter createCaseless(ParameterWrapper parwrapper) {
+		IParameter parameter = new CaselessParameter(parwrapper.getName(), parwrapper.getGeneric());
+		
+		Caseless val = new Caseless(parwrapper.getValue());
+		parameter.setValue(val);
+		
+		if (parwrapper.getAllowedValues() != null) {
+			Set<Object> allowed = new HashSet<Object>();
+			String[] sfield = parwrapper.getAllowedValues().split(" "); // TODO: vidjeti format stringova
+			for (int i = 0; i < sfield.length; i++) {
+				allowed.add(new Caseless(sfield[i]));
+			}
+			parameter.getConstraint().setPossibleValues(allowed);
+		}
+		
+		return parameter;
+	}
+
+	private static IParameter createTime(ParameterWrapper parwrapper) {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
 	}
 
-	private IParameter createTime(ParameterWrapper parwrapper) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
-	}
-
-	private IParameter createText(ParameterWrapper parwrapper) {
+	private static IParameter createText(ParameterWrapper parwrapper) {
 		IParameter parameter = new TextParameter(parwrapper.getName(), parwrapper.getGeneric());
 		
 		String val = parwrapper.getValue();
@@ -81,12 +94,12 @@ public class ParameterFactory {
 		return parameter;
 	}
 
-	private IParameter createDecimal(ParameterWrapper parwrapper) {
+	private static IParameter createDecimal(ParameterWrapper parwrapper) {
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
 	}
 
-	private IParameter createInteger(ParameterWrapper parwrapper) {		
+	private static IParameter createInteger(ParameterWrapper parwrapper) {		
 		IParameter parameter = new IntegerParameter(parwrapper.getGeneric(), parwrapper.getName());
 		
 		Integer val = new Integer(Integer.parseInt(parwrapper.getValue()));
@@ -108,7 +121,7 @@ public class ParameterFactory {
 		return parameter;
 	}
 
-	private IParameter createBoolean(ParameterWrapper parwrapper) {
+	private static IParameter createBoolean(ParameterWrapper parwrapper) {
 		IParameter parameter = new BooleanParameter(parwrapper.getGeneric(), parwrapper.getName());
 		
 		Boolean val = new Boolean(Boolean.parseBoolean(parwrapper.getValue()));

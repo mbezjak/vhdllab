@@ -21,6 +21,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
@@ -31,10 +32,8 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DefaultSchemaComponent implements ISchemaComponent {
 
@@ -96,8 +95,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	/* ctors */
 	
-	public DefaultSchemaComponent() {
-		
+	/**
+	 * Ovaj se konstruktor koristi pri deserijalizaciji.
+	 */
+	public DefaultSchemaComponent(ComponentWrapper compwrap) {
+		deserialize(compwrap);
 	}
 
 	/**
@@ -114,13 +116,13 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		generic = predefComp.isGenericComponent();
 
 		// drawer
-		initDrawer(predefComp);
+		initDrawer(predefComp.getDrawerName());
 
 		// parameters
-		initParameters(predefComp);
+		initParameters(predefComp.getParameters());
 
 		// ports
-		initPorts(predefComp);
+		initPorts(predefComp.getPorts());
 		
 		// add default parameters
 		initDefaultParameters(name);
@@ -130,19 +132,18 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		// default parameter - name
 		CaselessParameter textpar =
 			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(name));
-		parameters.addParameter(textpar.getName(), textpar);
+		parameters.addParameter(textpar);
 		
 		// default parameter - component orientation
 		GenericParameter<Orientation> orientpar =
 			new GenericParameter<Orientation>(ISchemaComponent.KEY_ORIENTATION, false,
 					new Orientation());
-		parameters.addParameter(orientpar.getName(), orientpar);
+		parameters.addParameter(orientpar);
 	}
 
-	private void initPorts(PredefinedComponent predefComp) {
+	private void initPorts(List<PortWrapper> portwrappers) {
 		schemaports = new ArrayList<SchemaPort>();
 		portrelations = new ArrayList<PortRelation>();
-		Set<PortWrapper> portwrappers = predefComp.getPorts();
 		if (portwrappers == null) return;
 		
 		SchemaPort schport;
@@ -283,39 +284,28 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		else throw new NotImplementedException("Ascension '" + ascend + "' unknown.");
 	}
 
-	private void initDrawer(PredefinedComponent predefComp) {
+	private void initDrawer(String drawerName) {
 		try {
-			Class cls = Class.forName(predefComp.getDrawerName());
+			Class cls = Class.forName(drawerName);
 			Class[] partypes = new Class[1];
 			partypes[0] = ISchemaComponent.class;
 			Constructor<IComponentDrawer> ct = cls.getConstructor(partypes);
 			Object[] params = new Object[1];
 			params[0] = this;
 			drawer = ct.newInstance(params);
-		} catch (ClassNotFoundException cnfe) {
-			drawer = new DefaultComponentDrawer(this);
-		} catch (NoSuchMethodException nsme) {
-			drawer = new DefaultComponentDrawer(this);
-		} catch (IllegalArgumentException e) {
-			drawer = new DefaultComponentDrawer(this);
-		} catch (InstantiationException e) {
-			drawer = new DefaultComponentDrawer(this);
-		} catch (IllegalAccessException e) {
-			drawer = new DefaultComponentDrawer(this);
-		} catch (InvocationTargetException e) {
+		} catch (Exception e) {
 			drawer = new DefaultComponentDrawer(this);
 		}
 	}
 
-	private void initParameters(PredefinedComponent predefComp) {
+	private void initParameters(List<ParameterWrapper> params) {
 		parameters = new SchemaParameterCollection();
-		Set<ParameterWrapper> params = predefComp.getParameters();
 		if (params != null) {
 			ParameterFactory parfactory = new ParameterFactory();
 			IParameter par;
 			for (ParameterWrapper parwrap : params) {
 				par = parfactory.createParameter(parwrap);
-				parameters.addParameter(par.getName(), par);
+				parameters.addParameter(par);
 			}
 		}
 	}
@@ -421,14 +411,65 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	public void deserialize(ComponentWrapper compwrap) {
-		// TODO:
+		// basic
+		componentName = new Caseless(compwrap.getComponentName());
+		codeFileName = compwrap.getCodeFileName();
+		categoryName = compwrap.getCategoryName();
+		generic = compwrap.getGenericComponent();
+		width = compwrap.getWidth();
+		height = compwrap.getHeight();
+		
+		// draw
+		initDrawer(compwrap.getDrawerName());
+		
+		// parameters
+		initParameters(compwrap.getParamWrappers());
+		
+		// ports
+		initPortsOnly(compwrap.getPortWrappers());
+		
+		// physical schema ports
+		initSchemaPortsOnly(compwrap.getSchemaPorts());
 	}
 	
+	private void initPortsOnly(List<PortWrapper> portwrappers) {
+		portrelations = new ArrayList<PortRelation>();
+		
+		Port port;
+		PortRelation portrel;
+		for (PortWrapper portwrap : portwrappers) {
+			port = createPortFromWrapper(portwrap);
+			portrel = new PortRelation(port);
+			portrelations.add(portrel);
+		}
+	}
+	
+	private void initSchemaPortsOnly(List<SchemaPort> ports) {
+		schemaports = ports;
+		for (int i = 0, sz = schemaports.size(); i < sz; i++) {
+			SchemaPort sp = schemaports.get(i);
+			if (sp.getPortindex() != SchemaPort.NO_PORT) portrelations.get(sp.getPortindex()).relatedTo.add(sp);
+		}
+	}
+	
+	private Port createPortFromWrapper(PortWrapper portwrap) {
+		return PortFactory.createPort(portwrap);
+	}
 	
 
 	
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

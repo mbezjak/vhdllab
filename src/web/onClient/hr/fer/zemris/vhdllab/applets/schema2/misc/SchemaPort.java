@@ -10,26 +10,32 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
  */
 public final class SchemaPort {
 	
+	public static final int NO_PORT = Integer.MIN_VALUE;
+	
 	private XYLocation loc;
 	private Caseless name;
 	private Caseless mappedto;
+	private int portindex;
 	
 	public SchemaPort() {
 		loc = new XYLocation();
 		name = new Caseless("");
 		mappedto = null;
+		portindex = NO_PORT;
 	}
 	
 	public SchemaPort(int xoffset, int yoffset) {
 		loc = new XYLocation(xoffset, yoffset);
 		name = new Caseless("");
 		mappedto = null;
+		portindex = NO_PORT;
 	}
 	
 	public SchemaPort(int xoffset, int yoffset, Caseless portname) {
 		loc = new XYLocation(xoffset, yoffset);
 		name = portname;
 		mappedto = null;
+		portindex = NO_PORT;
 	}
 	
 	/**
@@ -53,12 +59,20 @@ public final class SchemaPort {
 		if (offset != null) loc = offset;
 	}
 	
-	public final void setXOffset(int x) {
+	public final void setXOffset(Integer x) {
 		loc.x = x;
 	}
 	
-	public final void setYOffset(int y) {
+	public final void setYOffset(Integer y) {
 		loc.y = y;
+	}
+	
+	public final void setXOffset(String xStr) {
+		loc.x = Integer.parseInt(xStr);
+	}
+	
+	public final void setYOffset(String yStr) {
+		loc.y = Integer.parseInt(yStr);
 	}
 
 	/**
@@ -91,8 +105,7 @@ public final class SchemaPort {
 	}
 	
 	/**
-	 * Spaja port na signal (zicu)
-	 * danog imena.
+	 * Spaja port na signal (zicu) danog imena.
 	 * 
 	 * @param signalToMapTo
 	 * Ime signala (zice). Null odspaja
@@ -101,6 +114,23 @@ public final class SchemaPort {
 	 */
 	public final void setMapping(Caseless signalToMapTo) {
 		mappedto = signalToMapTo;
+	}
+	
+	/**
+	 * Spaja port na signal (zicu) danog imena.
+	 * 
+	 * @param signalToMapTo
+	 * Ime signala (zice). Null, string od samih praznina
+	 * ili prazan string odspajaju.
+	 */
+	public final void setStringMapping(String signalToMapTo) {
+		if (signalToMapTo.trim().equals("")) this.mappedto = null;
+		else this.mappedto = new Caseless(signalToMapTo);
+	}
+	
+	public final void setStringName(String name) {
+		if (name == null) this.name = new Caseless("");
+		else this.name = new Caseless(name);
 	}
 
 	/* (non-Javadoc)
@@ -129,12 +159,30 @@ public final class SchemaPort {
 	public final String toString() {
 		return super.toString();
 	}
+
+	public final void setPortindex(int portindex) {
+		this.portindex = portindex;
+	}
+
+	public final int getPortindex() {
+		return portindex;
+	}
 	
 	
 	
 	
 	
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

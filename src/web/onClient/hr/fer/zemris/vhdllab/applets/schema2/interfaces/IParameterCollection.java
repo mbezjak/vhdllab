@@ -46,14 +46,12 @@ public interface IParameterCollection extends Iterable<Entry<String, IParameter>
 	/**
 	 * Dodaje parametar u kolekciju.
 	 * 
-	 * @param key
-	 * Kljuc pod kojim ce parametar biti dodan (njegovo ime).
 	 * @param parameter
-	 * Sam parametar.
+	 * Sam parametar. Za kljuc se uzima ime parametra.
 	 * @throws DuplicateParameterException
 	 * Ako parametar vec postoji pod tim kljucem.
 	 */
-	void addParameter(String key, IParameter parameter) throws DuplicateParameterException;
+	void addParameter(IParameter parameter) throws DuplicateParameterException;
 	
 	
 	/**

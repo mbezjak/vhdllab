@@ -21,6 +21,7 @@ public class PortWrapper {
 	private String vectorAscension;
 	private String lowerBound;
 	private String upperBound;
+	private String relations;
 
 	public PortWrapper() {
 	}
@@ -112,6 +113,14 @@ public class PortWrapper {
 			vectorAscension + ", " + 
 			lowerBound + ", " + 
 			upperBound + "}"; 
+	}
+
+	public void setRelations(String relations) {
+		this.relations = relations;
+	}
+
+	public String getRelations() {
+		return relations;
 	}
 	
 }

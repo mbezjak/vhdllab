@@ -34,7 +34,6 @@ public class SchemaWire implements ISchemaWire {
 	
 	public SchemaWire() {
 		create();
-		initDefaultParameters(new Caseless(""));
 	}
 	
 	public SchemaWire(Caseless wireName) {
@@ -47,7 +46,7 @@ public class SchemaWire implements ISchemaWire {
 	
 	private void initDefaultParameters(Caseless wireName) {
 		CaselessParameter caspar = new CaselessParameter(ISchemaWire.KEY_NAME, false, wireName);
-		parameters.addParameter(ISchemaWire.KEY_NAME, caspar);
+		parameters.addParameter(caspar);
 	}
 
 	private void create() {
@@ -149,7 +148,7 @@ public class SchemaWire implements ISchemaWire {
 		
 		IParameter param = paramFactory.createParameter(pw);
 		
-		parameters.addParameter(param.getName(), param);
+		parameters.addParameter(param);
 	}
 	
 

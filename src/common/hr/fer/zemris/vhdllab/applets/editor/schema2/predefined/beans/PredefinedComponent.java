@@ -3,8 +3,8 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PredefinedComponent {
 
@@ -13,12 +13,12 @@ public class PredefinedComponent {
 	private String drawerName;
 	private String categoryName;
 	private Boolean genericComponent;
-	private Set<ParameterWrapper> parameters;
-	private Set<PortWrapper> ports;
+	private List<ParameterWrapper> parameters;
+	private List<PortWrapper> ports;
 
 	public PredefinedComponent() {
-		parameters = new HashSet<ParameterWrapper>();
-		ports = new HashSet<PortWrapper>();
+		parameters = new ArrayList<ParameterWrapper>();
+		ports = new ArrayList<PortWrapper>();
 	}
 
 	public String getComponentName() {
@@ -77,11 +77,11 @@ public class PredefinedComponent {
 		parameters.add(p);
 	}
 
-	public Set<ParameterWrapper> getParameters() {
+	public List<ParameterWrapper> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(Set<ParameterWrapper> parameters) {
+	public void setParameters(List<ParameterWrapper> parameters) {
 		this.parameters = parameters;
 	}
 
@@ -89,11 +89,11 @@ public class PredefinedComponent {
 		ports.add(p);
 	}
 
-	public Set<PortWrapper> getPorts() {
+	public List<PortWrapper> getPorts() {
 		return ports;
 	}
 
-	public void setPorts(Set<PortWrapper> ports) {
+	public void setPorts(List<PortWrapper> ports) {
 		this.ports = ports;
 	}
 
