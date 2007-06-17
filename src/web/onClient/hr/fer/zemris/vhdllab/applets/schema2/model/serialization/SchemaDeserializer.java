@@ -66,6 +66,7 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/value", "value");
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/valueType", "valueType");
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/allowedValues", "allowedValues");
+		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/parameters/parameter/eventName", "eventName");
 		digester.addSetNext("schemaInfo/wires/schemaWire/parameters/parameter", "addParameter");
 		
 		digester.addSetNext("schemaInfo/wires/schemaWire", "addWire");
@@ -93,6 +94,7 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/value", "value");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/valueType", "valueType");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/allowedValues", "allowedValues");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/parameters/parameter/eventName", "eventName");
 		digester.addSetNext("schemaInfo/components/schemaComponent/parameters/parameter", "addParameterWrapper");
 		
 		digester.addObjectCreate("schemaInfo/components/schemaComponent/portList/port", PortWrapper.class);
@@ -129,6 +131,7 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/value", "value");
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/valueType", "valueType");
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/allowedValues", "allowedValues");
+		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/eventName", "eventName");
 		digester.addSetNext("schemaInfo/entity/parameters/parameter", "addParameterWrapper");
 		
 		digester.addObjectCreate("schemaInfo/entity/portList/port", PortWrapper.class);

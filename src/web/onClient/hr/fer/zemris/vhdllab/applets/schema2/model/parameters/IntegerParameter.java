@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.IntegerConstraint;
@@ -11,7 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.Intege
 
 
 
-public class IntegerParameter implements IParameter {
+public class IntegerParameter extends AbstractParameter {
 	private Integer val;
 	private IntegerConstraint constraint;
 	private boolean generic;

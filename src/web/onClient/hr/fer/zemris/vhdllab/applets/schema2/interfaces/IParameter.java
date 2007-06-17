@@ -210,6 +210,26 @@ public interface IParameter {
 	IParameterConstraint getConstraint();
 	
 	/**
+	 * Vraca event pridruzen ovom parametru.
+	 * 
+	 * @return
+	 */
+	IParameterEvent getParameterEvent();
+	
+	/**
+	 * Pridruzuje event parametru.
+	 */
+	void setParameterEvent(IParameterEvent event);
+	
+	/**
+	 * Postavlja event parametru putem njegovog
+	 * Java identifikatora.
+	 * 
+	 * @param string
+	 */
+	void setParameterEvent(String eventName);
+	
+	/**
 	 * Vraca puno ime klase pohranjenog objekta.
 	 * Koristi se kod serijalizacije.
 	 * 

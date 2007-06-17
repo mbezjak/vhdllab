@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
@@ -18,7 +17,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.Generi
  *
  * @param <T>
  */
-public class GenericParameter<T extends ISerializable> implements IParameter {
+public class GenericParameter<T extends ISerializable> extends AbstractParameter {
 
 	/* static fields */
 

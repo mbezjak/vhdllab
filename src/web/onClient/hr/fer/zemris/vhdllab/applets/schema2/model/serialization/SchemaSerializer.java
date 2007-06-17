@@ -273,7 +273,7 @@ public class SchemaSerializer {
 			ISerializable serializable_object = (ISerializable)parameter.getValue();
 			writer.append("<value>").append(serializable_object.serialize()).append("</value>");
 		} else {
-			writer.append("<value>").append(parameter.toString()).append("</value>");
+			writer.append("<value>").append(parameter.getValue().toString()).append("</value>");
 		}
 		appendLine(writer);
 		writer.append("<valueType>").append(parameter.getValue().getClass().getName()).append("</valueType>");
@@ -294,6 +294,9 @@ public class SchemaSerializer {
 			}
 		}
 		writer.append("</allowedValues>");
+		appendLine(writer);
+		writer.append("<eventName>").append((parameter.getParameterEvent() != null) 
+				? (parameter.getParameterEvent().getClass().getName()) : ("")).append("</eventName>");
 		appendLine(writer);
 		
 		writer.append("</parameter>");

@@ -77,7 +77,7 @@ public final class Caseless {
 //		}
 //		return hash;
 		
-		// ne efikasnije, ali sigurnije
+		// neefikasnije, ali sigurnije
 		return inner.toLowerCase().hashCode();
 	}
 

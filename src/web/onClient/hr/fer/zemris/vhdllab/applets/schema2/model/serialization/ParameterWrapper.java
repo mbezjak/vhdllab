@@ -15,6 +15,7 @@ public class ParameterWrapper {
 	private String value;
 	private String valueType;
 	private String allowedValues;
+	private String eventName;
 	
 	public void setParamClassName(String paramClassName) {
 		this.paramClassName = paramClassName;
@@ -58,6 +59,12 @@ public class ParameterWrapper {
 	}
 	public String getValueType() {
 		return valueType;
+	}
+	public void setEventName(String eventName) {
+		this.eventName = eventName;
+	}
+	public String getEventName() {
+		return eventName;
 	}
 
 }
