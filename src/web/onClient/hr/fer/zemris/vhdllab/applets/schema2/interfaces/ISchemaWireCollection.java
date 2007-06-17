@@ -130,6 +130,15 @@ public interface ISchemaWireCollection extends Iterable<ISchemaWire> {
 	 * @return
 	 */
 	Set<Caseless> getWireNames();
+	
+	
+	/**
+	 * Brise sve zice iz kolekcije.
+	 *
+	 */
+	void clear();
+	
+	
 }
 
 

@@ -152,6 +152,13 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 * @return
 	 */
 	Set<Caseless> getComponentNames();
+	
+	/**
+	 * Brise sve komponente iz kolekcije.
+	 *
+	 */
+	void clear();
+	
 }
 
 

@@ -78,6 +78,12 @@ public class SchemaEntity implements ISchemaEntity {
 	public List<Port> getPorts() {
 		return ports;
 	}
+
+	public void reset() {
+		ports.clear();
+		parameters.clear();
+		initDefaultParameters();
+	}
 	
 	
 }

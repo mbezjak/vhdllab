@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaWire;
 
 import java.io.InputStream;
+import java.io.Reader;
 
 import org.apache.commons.digester.Digester;
 
@@ -31,7 +32,7 @@ public class SchemaDeserializer {
 	
 	/* methods */
 	
-	public SchemaInfo deserializeSchema(InputStream is) {
+	public SchemaInfo deserializeSchema(Reader reader) {
 		Digester digester = new Digester();
 		digester.setValidating(false);
 		
@@ -150,7 +151,7 @@ public class SchemaDeserializer {
 		
 		
 		try {
-			return (SchemaInfo)digester.parse(is);
+			return (SchemaInfo)digester.parse(reader);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

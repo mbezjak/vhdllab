@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
@@ -9,10 +8,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -26,18 +25,30 @@ import java.util.List;
  *
  */
 public class LocalController implements ISchemaController {
+	
+	/* private fields */
 	private PropertyChangeSupport support;
 	private ISchemaCore core;
+	private List<ICommand> undolist;
+	private List<ICommand> redolist;
 	
+	
+	
+	
+	/* ctors */
 	
 	public LocalController() {
 		support = new PropertyChangeSupport(this);
 		core = null;
+		undolist = new LinkedList<ICommand>();
+		redolist = new LinkedList<ICommand>();
 	}
 	
 	public LocalController(ISchemaCore coreToSendTo) {
 		support = new PropertyChangeSupport(this);
 		core = coreToSendTo;
+		undolist = new LinkedList<ICommand>();
+		redolist = new LinkedList<ICommand>();
 	}
 	
 	
@@ -46,17 +57,8 @@ public class LocalController implements ISchemaController {
 	
 	
 
-	public ICommandResponse send(ICommand command) {
-		ICommandResponse response = core.executeCommand(command);
-		
-		if (response.isSuccessful()) {
-			for (ChangeTuple ct : response.getPropertyChanges()) {
-				ct.changetype.firePropertyChanges(support, ct.oldval, ct.newval);
-			}
-		}
-		
-		return response;
-	}
+	
+	/* methods */
 
 	public void registerCore(ISchemaCore coreToSendTo) {
 		core = coreToSendTo;
@@ -83,24 +85,85 @@ public class LocalController implements ISchemaController {
 		return core.getSchemaInfo();
 	}
 	
-	public ICommandResponse redo() {
-		try {
-			return core.redo();
-		} catch(CommandExecutorException e) {
-			ICommandResponse resp = new CommandResponse(new SchemaError(EErrorTypes.CANNOT_REDO));
-			return resp;
+	public ICommandResponse send(ICommand command) {
+		ICommandResponse response = core.executeCommand(command);
+		if (response.isSuccessful()) {
+			redolist.clear();
+			if (command.isUndoable()) {
+				undolist.add(command);
+			} else {
+				undolist.clear();
+			}
 		}
+
+		return response;
 	}
 	
-	public ICommandResponse undo() {
-		try {
-			return core.undo();
-		} catch(CommandExecutorException e) {
-			ICommandResponse resp = new CommandResponse(new SchemaError(EErrorTypes.CANNOT_UNDO));
-			return resp;
-		}
-		
+	public boolean canRedo() {
+		return (!redolist.isEmpty());
 	}
+
+	public boolean canUndo() {
+		return (!undolist.isEmpty() && undolist.get(undolist.size() - 1)
+				.isUndoable());
+	}
+
+	public List<String> getRedoList() {
+		List<String> list = new LinkedList<String>();
+		for (ICommand comm : redolist) {
+			list.add(comm.getCommandName());
+		}
+		return list;
+	}
+
+	public List<String> getUndoList() {
+		List<String> list = new LinkedList<String>();
+		for (ICommand comm : undolist) {
+			list.add(comm.getCommandName());
+		}
+		return list;
+	}
+
+	public ICommandResponse redo() throws CommandExecutorException {
+		if (redolist.isEmpty())
+			throw new CommandExecutorException("Empty redo command stack.");
+		ICommand comm = redolist.get(redolist.size() - 1);
+		redolist.remove(redolist.size() - 1);
+
+		ICommandResponse response = core.executeCommand(comm);
+		if (!response.isSuccessful()) {
+			undolist.clear();
+			redolist.clear();
+			throw new CommandExecutorException("Cannot redo command.");
+		} else
+			undolist.add(comm);
+
+		return response;
+	}
+
+	public ICommandResponse undo() throws CommandExecutorException {
+		if (undolist.isEmpty())
+			throw new CommandExecutorException("Empty undo command stack.");
+		ICommand comm = undolist.get(undolist.size() - 1);
+		undolist.remove(undolist.size() - 1);
+
+		ICommandResponse response = core.executeCommand(comm);
+		if (!response.isSuccessful()) {
+			undolist.clear();
+			redolist.clear();
+			throw new CommandExecutorException("Cannot undo command. Reason: "
+					+ response.getError().toString());
+		} else
+			redolist.add(comm);
+
+		return response;
+	}
+
+	public void clearCommandCache() {
+		undolist.clear();
+		redolist.clear();
+	}
+	
 
 }
 

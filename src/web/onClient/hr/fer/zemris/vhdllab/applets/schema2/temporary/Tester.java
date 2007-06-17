@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerialize
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -35,18 +36,18 @@ public class Tester {
 	
 	private static void testSD() {
 		SchemaDeserializer sd = new SchemaDeserializer();
-		FileInputStream fs = null;
+		FileReader fr = null;
 		ISchemaInfo info = null;
 		
 		try {
-			fs = new FileInputStream("d:/sample.xml");
+			fr = new FileReader("d:/sample.xml");
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found");
 			System.exit(1);
 		}
 		
 		try {
-			info = sd.deserializeSchema(fs);
+			info = sd.deserializeSchema(fr);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

@@ -111,6 +111,10 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	public Iterator<ISchemaWire> iterator() {
 		return new WireIterator();
 	}
+	
+	public void clear() {
+		wires.clear();
+	}
 
 	
 	

@@ -88,6 +88,10 @@ public class SchemaParameterCollection implements IParameterCollection {
 	public Set<String> getParameterNames() {
 		return parameters.keySet();
 	}
+
+	public void clear() {
+		parameters.clear();
+	}
 	
 	
 

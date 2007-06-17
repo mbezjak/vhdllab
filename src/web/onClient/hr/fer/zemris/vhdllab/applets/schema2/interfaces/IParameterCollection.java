@@ -122,6 +122,13 @@ public interface IParameterCollection extends Iterable<IParameter> {
 	 * @return
 	 */
 	Set<String> getParameterNames();
+	
+	
+	/**
+	 * Brise sve parametre u kolekciji.
+	 *
+	 */
+	void clear();
 }
 
 

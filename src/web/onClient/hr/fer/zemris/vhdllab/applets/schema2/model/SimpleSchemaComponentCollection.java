@@ -144,6 +144,11 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		return new ComponentIterator();
 	}
 
+
+	public void clear() {
+		components.clear();
+	}
+
 	
 
 	

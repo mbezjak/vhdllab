@@ -1,10 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
-
-import java.beans.PropertyChangeListener;
-import java.util.List;
 
 
 /**
@@ -21,11 +16,19 @@ public interface ISchemaCore {
 	 * Dohvaca podatke o shemi.
 	 * Podaci o shemi ne smiju se mijenjati
 	 * izravno, vec iskljucivo slanjem ICommand
-	 * objekata metodi executeCommand.
+	 * objekata metodi <code>send</code>, koja se
+	 * nalazi u ISchemaController-u.
 	 * 
 	 * @return
 	 */
 	ISchemaInfo getSchemaInfo();
+	
+	/**
+	 * Postavlja sve podatke vezane uz shemu.
+	 * 
+	 * @param info
+	 */
+	void setSchemaInfo(ISchemaInfo info);
 
 	/**
 	 * Obavlja navedenu komandu. Ako je ona uspjesno izvedena, i ako
@@ -38,64 +41,15 @@ public interface ISchemaCore {
 	 */
 	ICommandResponse executeCommand(ICommand command);
 
+	
 	/**
-	 * Za odredivanje da li je moguc undo.
-	 * 
-	 * @return Ako stog prethodno izvedenih komandi nije prazna, vraca true, u
-	 *         protivnom false.
-	 * 
+	 * Resetira citavu jezgru schematica
+	 * u inicijalno stanje.
+	 *
 	 */
-	boolean canUndo();
-
-	/**
-	 * Za odredivanje da li je moguc redo.
-	 * 
-	 * @return Slicno kao i prethodna metoda.
-	 */
-	boolean canRedo();
-
-	/**
-	 * Vraca listu naziva komandi koje su prethodno obavljene. Vraca praznu
-	 * listu, ako takvih nema.
-	 * 
-	 * @return Jasno samo po sebi.
-	 * 
-	 */
-	List<String> getUndoList();
-
-	/**
-	 * Vraca listu naziva komandi koje ce tek biti obavljene. Ako takvih nema,
-	 * vraca praznu listu.
-	 * 
-	 * @return Jasno samo po sebi.
-	 * 
-	 */
-	List<String> getRedoList();
-
-	/**
-	 * Obavlja komandu na vrhu stoga undo komandi, i ako je rezultat uspjesan,
-	 * popne je i stavi na stog redo komandi. OPREZ: U principu se ne bi trebalo
-	 * dogoditi da je rezultat izvodenja neuspjesan, no ako se to dogodi, brisu
-	 * se oba stoga, i undo i redo stog.
-	 * 
-	 * @throws CommandExecutorException
-	 * Ako je stog undo komandi prazan, ili se dogodila neka druga greska.
-	 * Pritom odmah cisti oba stoga.
-	 * 
-	 * @return Objekt koji govori o uspjesnosti izvodenja undo komande.
-	 */
-	ICommandResponse undo() throws CommandExecutorException;
-
-	/**
-	 * Obavlja komandu s vrha redo stoga i stavlja je na undo stog.
-	 * 
-	 * @throws CommandExecutorException
-	 * Slicno kao i prethodno, samo za redo stog.
-	 * Pritom odmah cisti oba stoga.
-	 * 
-	 * @return Vidi prethodnu metodu.
-	 */
-	ICommandResponse redo() throws CommandExecutorException;
+	void reset();
+	
+	
 	
 	
 	

@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 
 import java.util.List;
 
@@ -41,12 +40,12 @@ public interface IParameterEvent {
 	 * 
 	 * @param parameter
 	 * @param info
-	 * @param arg
-	 * Ovisan o tipu eventa - to moze biti ime sklopa
-	 * na kojem se promijenila vrijednost parametra,
-	 * ili ime zice.
+	 * @param wire
+	 * Ako je parametar dio zice, inace null.
+	 * @param component
+	 * Ako je parametar dio komponente, inace null.
 	 */
-	void performChange(IParameter parameter, ISchemaInfo info, String arg);
+	void performChange(IParameter parameter, ISchemaInfo info, ISchemaWire wire, ISchemaComponent component);
 	
 }
 

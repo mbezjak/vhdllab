@@ -30,7 +30,7 @@ public interface ISchemaEntity {
 	/**
 	 * Vraca mapu parametara komponente
 	 * koja se modelira u schematicu.
-	 * Na temelju ove kolekcije biti ce kasnije
+	 * Na temelju dijela ove kolekcije biti ce kasnije
 	 * izgraden generic blok pri generiranju
 	 * strukturnog VHDLa.
 	 * 
@@ -59,6 +59,12 @@ public interface ISchemaEntity {
 	 * @return
 	 */
 	public List<Port> getPorts();
+	
+	/**
+	 * Brise portove i ne-defaultne parametre.
+	 *
+	 */
+	void reset();
 	
 }
 
