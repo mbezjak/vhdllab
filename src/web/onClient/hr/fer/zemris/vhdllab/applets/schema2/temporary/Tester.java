@@ -10,9 +10,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
+import java.awt.BorderLayout;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
+
+import javax.swing.JFrame;
 
 
 
@@ -31,10 +34,25 @@ public class Tester {
 	}
 	
 	private static void testSchema() {
+		// test init
 		SchemaMainPanel mpanel = new SchemaMainPanel();
 		ProjectContainer dummypc = new DummyProjectContainer();
 		mpanel.setProjectContainer(dummypc);
 		mpanel.init();
+		
+		// test setFileContent
+		DummyWizard wiz = new DummyWizard();
+		FileContent fc = wiz.getInitialFileContent(null, "dummyProject");
+		mpanel.setFileContent(fc);
+		
+		// create frame
+		JFrame frame = new JFrame();
+		
+		frame.setLayout(new BorderLayout());
+		frame.add(mpanel, BorderLayout.CENTER);
+		
+		frame.setVisible(true);
+		frame.pack();
 	}
 	
 	private static void testDummyWiz() {
