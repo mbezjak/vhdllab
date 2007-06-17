@@ -5,17 +5,17 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedC
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 
-import java.io.InputStream;
+import java.io.StringReader;
 
 import org.apache.commons.digester.Digester;
 
 public class PredefinedComponentsParser {
 	
 	private PredefinedConf conf = null;
-	private String pathToConfigurationFile = null;
+	private StringReader reader = null;
 	
-	public PredefinedComponentsParser(String pathToConfigurationFile) {
-		this.pathToConfigurationFile = pathToConfigurationFile;
+	public PredefinedComponentsParser(String fileContent) {
+		reader = new StringReader(fileContent);
 	}
 	
 	public PredefinedConf getConfiguration() {
@@ -34,6 +34,7 @@ public class PredefinedComponentsParser {
 		digester.addBeanPropertySetter("componentList/component/codeFileName");
 		digester.addBeanPropertySetter("componentList/component/drawerName");
 		digester.addBeanPropertySetter("componentList/component/categoryName");
+		digester.addBeanPropertySetter("componentList/component/preferredName");
 		digester.addBeanPropertySetter("componentList/component/genericComponent");
 
 		digester.addObjectCreate("componentList/component/parameterList/parameter", ParameterWrapper.class);
@@ -42,6 +43,7 @@ public class PredefinedComponentsParser {
 		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/name");
 		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/value");
 		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/allowedValues");
+		digester.addBeanPropertySetter("componentList/component/parameterList/parameter/eventName");
 		digester.addSetNext("componentList/component/parameterList/parameter", "addParameter");
 		
 		digester.addObjectCreate("componentList/component/portList/port", PortWrapper.class);
@@ -56,9 +58,8 @@ public class PredefinedComponentsParser {
 		
 		digester.addSetNext("componentList/component", "addPredefinedComponent");
 		
-		InputStream is = this.getClass().getResourceAsStream(pathToConfigurationFile);
 		try {
-			return (PredefinedConf) digester.parse(is);
+			return (PredefinedConf) digester.parse(reader);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}

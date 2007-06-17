@@ -122,7 +122,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	 * @param predefComp
 	 *            Wrapper za predefinirane komponente.
 	 */
-	public DefaultSchemaComponent(String name, PredefinedComponent predefComp) {
+	public DefaultSchemaComponent(PredefinedComponent predefComp) {
 		// basic properties
 		componentName = new Caseless(predefComp.getComponentName());
 		codeFileName = predefComp.getCodeFileName();
@@ -139,7 +139,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		initPorts(predefComp.getPorts());
 		
 		// add default parameters
-		initDefaultParameters(name);
+		initDefaultParameters(predefComp.getPreferredName());
 	}
 
 	private void initDefaultParameters(String name) {

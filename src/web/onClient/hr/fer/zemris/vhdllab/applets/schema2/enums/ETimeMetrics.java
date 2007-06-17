@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.enums;
 
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.TimeFormatException;
+
 
 /**
  * Metrika vremena.
@@ -30,7 +32,7 @@ public enum ETimeMetrics {
 	micro() {
 		@Override
 		public String toString() {
-			return "mics";
+			return "us";
 		}
 	},
 	mili() {
@@ -84,4 +86,24 @@ public enum ETimeMetrics {
 		return factor;
 	}
 	
+	public static ETimeMetrics parseMetric(String metric) {
+		if (metric.equals("fs")) return ETimeMetrics.femto;
+		else if (metric.equals("ps")) return ETimeMetrics.pico;
+		else if (metric.equals("ns")) return ETimeMetrics.nano;
+		else if (metric.equals("us")) return ETimeMetrics.micro;
+		else if (metric.equals("ms")) return ETimeMetrics.mili;
+		else if (metric.equals("s")) return ETimeMetrics.sec;
+		else throw new TimeFormatException("Metric '" + metric + "' is unimplemented.");
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+

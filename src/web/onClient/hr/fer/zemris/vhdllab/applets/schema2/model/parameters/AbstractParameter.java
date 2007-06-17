@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
-import java.lang.reflect.Constructor;
-
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterEvent;
+
+import java.lang.reflect.Constructor;
 
 
 

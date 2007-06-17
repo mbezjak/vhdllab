@@ -38,6 +38,7 @@ public class SchemaInfo implements ISchemaInfo {
 		wires = new SimpleSchemaWireCollection();
 		components = new SimpleSchemaComponentCollection();
 		entity = new SchemaEntity(new Caseless(""));
+		prototypes = new ComponentPrototyper();
 	}
 	
 	

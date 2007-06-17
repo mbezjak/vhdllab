@@ -51,9 +51,8 @@ public class InstantiateComponentCommand implements ICommand {
 	 * @param y
 	 * Ovo je y pozicija na canvasu.
 	 */
-	public InstantiateComponentCommand(Caseless componentTypeName, Caseless instanceName, int x, int y) {
+	public InstantiateComponentCommand(Caseless componentTypeName, int x, int y) {
 		cpType = componentTypeName;
-		instName = instanceName;
 		xpos = x;
 		ypos = y;
 	}
@@ -72,7 +71,10 @@ public class InstantiateComponentCommand implements ICommand {
 	public ICommandResponse performCommand(ISchemaInfo info) {
 		
 		try {
-			ISchemaComponent component = info.getPrototyper().clonePrototype(cpType, instName);
+			ISchemaComponent component = info.getPrototyper().clonePrototype(cpType, info.getComponents().getComponentNames());
+			
+			// remember chosen instance name, so you can remove it on undo
+			instName = component.getName();
 			
 			info.getComponents().addComponent(xpos, ypos, component);
 		} catch (UnknownComponentPrototypeException e) {

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
+
 <componentList>
    <component>
         <componentName>AND_gate</componentName>
@@ -37,7 +39,7 @@
               <type>std_logic_vector</type>
               <vectorAscension>ascend</vectorAscension>
               <lowerBound>0</lowerBound>
-              <upperBound>input_port_num</upperBound>
+              <upperBound>1</upperBound>
            </port>
 
            <port>
@@ -49,3 +51,15 @@
         </portList>
    </component>
 </componentList>
+
+
+
+
+
+
+
+
+
+
+
+

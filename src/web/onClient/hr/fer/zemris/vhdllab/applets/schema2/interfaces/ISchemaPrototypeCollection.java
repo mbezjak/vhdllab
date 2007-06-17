@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownComponentPrototyp
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.util.Map;
+import java.util.Set;
 
 
 
@@ -34,8 +35,8 @@ public interface ISchemaPrototypeCollection {
 	 * Deep copy prototipa.
 	 * 
 	 */
-	ISchemaComponent clonePrototype(Caseless componentTypeName, Caseless instanceName)
-	throws UnknownComponentPrototypeException;
+	ISchemaComponent clonePrototype(Caseless componentTypeName, Set<Caseless> takennames)
+		throws UnknownComponentPrototypeException;
 	
 	
 	/**

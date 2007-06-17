@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 
 import java.util.HashSet;
@@ -61,19 +62,38 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split(" "); // TODO: vidjeti format stringova
+			String[] sfield = parwrapper.getAllowedValues().split("#"); // TODO: vidjeti format stringova
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(new Caseless(sfield[i]));
 			}
 			parameter.getConstraint().setPossibleValues(allowed);
 		}
 		
+		String eventName = parwrapper.getEventName();
+		if (eventName != null) parameter.setParameterEvent(eventName);
+		
 		return parameter;
 	}
 
 	private static IParameter createTime(ParameterWrapper parwrapper) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		IParameter parameter = new TimeParameter(parwrapper.getName(), parwrapper.getGeneric());
+		
+		String val = parwrapper.getValue();
+		parameter.setAsString(val);
+		
+		if (parwrapper.getAllowedValues() != null) {
+			Set<Object> allowed = new HashSet<Object>();
+			String[] sfield = parwrapper.getAllowedValues().split("#"); // TODO: vidjeti format stringova
+			for (int i = 0; i < sfield.length; i++) {
+				allowed.add(Time.parseTime(sfield[i]));
+			}
+			parameter.getConstraint().setPossibleValues(allowed);
+		}
+		
+		String eventName = parwrapper.getEventName();
+		if (eventName != null) parameter.setParameterEvent(eventName);
+		
+		return parameter;
 	}
 
 	private static IParameter createText(ParameterWrapper parwrapper) {
@@ -84,12 +104,15 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split(" "); // TODO: vidjeti format stringova
+			String[] sfield = parwrapper.getAllowedValues().split("#"); // TODO: vidjeti format stringova
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(sfield[i]);
 			}
 			parameter.getConstraint().setPossibleValues(allowed);
 		}
+		
+		String eventName = parwrapper.getEventName();
+		if (eventName != null) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -107,7 +130,7 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split(" ");
+			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
 				try {
 					allowed.add(new Integer(Integer.parseInt(sfield[i])));
@@ -117,6 +140,9 @@ public class ParameterFactory {
 			}
 			parameter.getConstraint().setPossibleValues(allowed);
 		}
+		
+		String eventName = parwrapper.getEventName();
+		if (eventName != null) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -129,12 +155,15 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split(" ");
+			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(new Boolean(Boolean.parseBoolean(sfield[i])));
 			}
 			parameter.getConstraint().setPossibleValues(allowed);
 		}
+		
+		String eventName = parwrapper.getEventName();
+		if (eventName != null) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}

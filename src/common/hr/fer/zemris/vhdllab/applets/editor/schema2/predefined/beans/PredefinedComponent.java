@@ -12,6 +12,7 @@ public class PredefinedComponent {
 	private String codeFileName;
 	private String drawerName;
 	private String categoryName;
+	private String preferredName;
 	private Boolean genericComponent;
 	private List<ParameterWrapper> parameters;
 	private List<PortWrapper> ports;
@@ -102,6 +103,14 @@ public class PredefinedComponent {
 		return "Predefined Component {\n" + componentName + "\n" + codeFileName
 				+ "\n" + drawerName + "\n" + categoryName + "\n"
 				+ genericComponent + "\n" + parameters + "\n" + ports + "\n}";
+	}
+
+	public void setPreferredName(String preferredName) {
+		this.preferredName = preferredName;
+	}
+
+	public String getPreferredName() {
+		return preferredName;
 	}
 
 }

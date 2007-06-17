@@ -1,15 +1,17 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyProjectContainer;
+import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 
@@ -25,7 +27,22 @@ public class Tester {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		testSD();
+		testSchema();
+	}
+	
+	private static void testSchema() {
+		SchemaMainPanel mpanel = new SchemaMainPanel();
+		ProjectContainer dummypc = new DummyProjectContainer();
+		mpanel.setProjectContainer(dummypc);
+		mpanel.init();
+	}
+	
+	private static void testDummyWiz() {
+		DummyWizard wiz = new DummyWizard();
+		
+		FileContent fc = wiz.getInitialFileContent(null, "dummyProject");
+		
+		System.out.println(fc.getContent());
 	}
 	
 	private static void testPredef() {

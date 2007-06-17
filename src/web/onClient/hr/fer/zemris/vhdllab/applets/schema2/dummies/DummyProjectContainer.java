@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -100,8 +104,23 @@ public class DummyProjectContainer implements ProjectContainer {
 	}
 
 	public String getPredefinedFileContent(String fileName) throws UniformAppletException {
-		// TODO Auto-generated method stub
-		return null;
+		if (!fileName.equals("predefined.xml")) throw new RuntimeException("Dummy only supports 'predefined.xml'.");
+		
+		InputStream stream = this.getClass().getResourceAsStream(fileName);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+		StringBuilder sb = new StringBuilder("");
+		String s;
+		
+		try {
+			while ((s = reader.readLine()) != null) {
+				sb.append(s);
+				sb.append('\n');
+			}
+		} catch (IOException e) {
+			return "";
+		}
+		
+		return sb.toString();
 	}
 
 	public List<Preferences> getPreferences(String type) throws UniformAppletException {

@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.TimeFormatException;
 
 
 /**
@@ -53,7 +53,21 @@ public final class Time {
 	
 	
 	public static final Time parseTime(String code) {
-		throw new NotImplementedException(); // TODO
+		String[] sf = code.split(" ");
+		Double val;
+		ETimeMetrics metric;
+		
+		if (sf.length != 2) throw new TimeFormatException();
+		
+		try {
+			val = Double.parseDouble(sf[0]);
+		} catch(NumberFormatException nfe) {
+			throw new TimeFormatException(nfe);
+		}
+		
+		metric = ETimeMetrics.parseMetric(sf[1]);
+		
+		return new Time(val, metric);
 	}
 
 	/**

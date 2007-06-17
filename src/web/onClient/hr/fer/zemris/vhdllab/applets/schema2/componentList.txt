@@ -14,6 +14,7 @@ Za svaku komponentu trebaju biti navedene sljedece stavke:
 <codeFileName/>   <!-- ime datoteke u kojoj je datoteka opisana u VHDLu -->
 <IDrawerName/>    <!-- ime drawera, ako je ispusteno, uzima se DefaultDrawer -->
 <categoryName/>   <!-- ime kategorije u kojoj ce se naci sklop -->
+<preferredName/>  <!-- preferirano ime instance komponente -->
 <isComponentGeneric/> <!-- da li je komponenta genericka - da li ce imati GENERIC MAP kad se bude instancirala -->
 
 
@@ -23,9 +24,9 @@ Za svaku komponentu trebaju biti navedene sljedece stavke:
       <type/>         <!-- moze biti INTEGER, BOOLEAN, DECIMAL, TEXT, TIME -->
       <name/>       <!-- ime parametra - MORA biti jedinstveno za ovu komponentu -->
       <value/>       <!-- inicijalna vrijednost - string u formatu koji IParameter moze isparsirati (za sve tipove koji su gore navedeni pod <type/> ovo vrijedi) -->
-      <allowedValueSet isFinite=""> <!-- isFinite je true ili false, a odreduje da li je skup vrijednosti koje ovaj parametar moze poprimiti konacan -->
+      <allowedValueSet>
           <!-- ako je skup dozvoljenih vrijednosti konacan onda se ovdje moraju navesti vrijednosti koje su dozvoljene -->
-          <!-- ako skup dozvoljenih vrijednosti nije konacan, prihvacat ce se sve vrijednosti -->
+          <!-- ako skup dozvoljenih vrijednosti nije konacan, prihvacat ce se sve vrijednosti, i tada tu treba navesti apsolutno nista (praznine) -->
       </allowedValueSet>
    </parameter>
    <!-- ponavljaj zadnji tag kolko god puta zelis -->
@@ -70,6 +71,7 @@ Primjer citave datoteke (s jednom definiranom komponentom, tj. sklopom):
         <codeFileName>AND_gate.vhdl</codeFileName>
         <IDrawerName>hr.fer.zemris.vhdllab.onClient.applets.schema2.gui.drawing.AND_Drawer</IDrawerName>
         <categoryName>BasicGates</categoryName>
+        <preferredName>AND_gate_instance</preferredName>
         <isComponentGeneric>true</isComponentGeneric>
 
 
@@ -79,7 +81,7 @@ Primjer citave datoteke (s jednom definiranom komponentom, tj. sklopom):
               <type>TIME</type>
               <name>delay</name>
               <value>0 ns</value>
-              <allowedValueSet isFinite="false">
+              <allowedValueSet>
               </allowedValueSet>
            </parameter>
 
@@ -88,7 +90,7 @@ Primjer citave datoteke (s jednom definiranom komponentom, tj. sklopom):
               <type>INTEGER</type>
               <name>input_port_num</name>
               <value>2</value>
-              <allowedValueSet isFinite="false">
+              <allowedValueSet>
               </allowedValueSet>
            </parameter>
 
