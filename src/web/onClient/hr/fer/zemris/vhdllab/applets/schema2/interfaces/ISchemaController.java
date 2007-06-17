@@ -40,15 +40,7 @@ public interface ISchemaController {
 	 * Ako se proslijedi null, zahtjevi nece biti proslijedivani.
 	 */
 	void registerCore(ISchemaCore core);
-	
-	/**
-	 * Ovom metodom model dojavljuje controlleru promjene.
-	 * 
-	 * @param changes
-	 * Lista promjena. Za null ili praznu listu se
-	 * nista nece prijaviti.
-	 */
-	void handleChanges(List<ChangeTuple> changes);
+
 
 	/**
 	 * Dodaje novi listener. Pri bilo kakvoj

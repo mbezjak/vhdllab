@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeseriali
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
@@ -52,6 +53,8 @@ public class Tester {
 		frame.add(mpanel, BorderLayout.CENTER);
 		
 		frame.setVisible(true);
+		frame.setPreferredSize(new Dimension(350, 200));
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 	}
 	

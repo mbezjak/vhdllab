@@ -95,8 +95,16 @@ public class LocalController implements ISchemaController {
 				undolist.clear();
 			}
 		}
+		
+		reportChanges(response);
 
 		return response;
+	}
+	
+	private void reportChanges(ICommandResponse response) {
+		for (ChangeTuple ct : response.getPropertyChanges()) {
+			ct.changetype.firePropertyChanges(support, ct.oldval, ct.newval);
+		}
 	}
 	
 	public boolean canRedo() {
@@ -137,6 +145,8 @@ public class LocalController implements ISchemaController {
 			throw new CommandExecutorException("Cannot redo command.");
 		} else
 			undolist.add(comm);
+		
+		reportChanges(response);
 
 		return response;
 	}
@@ -155,6 +165,8 @@ public class LocalController implements ISchemaController {
 					+ response.getError().toString());
 		} else
 			redolist.add(comm);
+		
+		reportChanges(response);
 
 		return response;
 	}
