@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
@@ -40,7 +42,11 @@ public class GenericParameter<T extends ISerializable> extends AbstractParameter
 	
 
 	/* methods */
-	
+
+	public IParameter copyCtor() {
+		throw new NotImplementedException();
+	}
+
 	public boolean checkStringValue(String stringValue) {
 		return false;
 	}

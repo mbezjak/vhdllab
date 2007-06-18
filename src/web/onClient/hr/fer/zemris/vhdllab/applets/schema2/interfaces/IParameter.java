@@ -30,6 +30,14 @@ public interface IParameter {
 	EParamTypes getType();
 	
 	/**
+	 * Stvara kopiju ovog parametra.
+	 * Koristi se kod kopiranja komponenti.
+	 * 
+	 * @return
+	 */
+	IParameter copyCtor();
+	
+	/**
 	 * Dohvaca ime parametra.
 	 * 
 	 * @return

@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.IntegerConstraint;
@@ -38,7 +40,11 @@ public class BooleanParameter extends AbstractParameter {
 	
 	
 	
-	
+
+	public IParameter copyCtor() {
+		throw new NotImplementedException();
+	}
+
 	public String getName() {
 		return name;
 	}
