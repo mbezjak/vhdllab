@@ -3,12 +3,14 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.TimeFormatException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.TimeConstraint;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TimeParameter extends AbstractParameter {
 	
@@ -43,7 +45,14 @@ public class TimeParameter extends AbstractParameter {
 	/* methods */
 	
 	public IParameter copyCtor() {
-		throw new NotImplementedException();
+		TimeParameter tp = new TimeParameter(this.name, this.generic);
+		Set<Object> allowed = this.constraint.getPossibleValues();
+		allowed = (allowed != null) ? (new HashSet<Object>(allowed)) : (null);
+		
+		tp.value = new Time(this.value);
+		tp.constraint = new TimeConstraint(allowed);
+		
+		return tp;
 	}
 
 	public boolean checkStringValue(String stringValue) {

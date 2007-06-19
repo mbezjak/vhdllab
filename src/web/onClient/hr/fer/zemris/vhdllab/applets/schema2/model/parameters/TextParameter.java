@@ -2,11 +2,13 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.TextConstraint;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TextParameter extends AbstractParameter {
 	
@@ -41,7 +43,14 @@ public class TextParameter extends AbstractParameter {
 	/* methods */
 	
 	public IParameter copyCtor() {
-		throw new NotImplementedException();
+		TextParameter tp = new TextParameter(this.name, this.generic);
+		Set<Object> allowed = this.constraint.getPossibleValues();
+		allowed = (allowed != null) ? (new HashSet<Object>(allowed)) : (null);
+		
+		tp.value = this.value;
+		tp.constraint = new TextConstraint(allowed);
+		
+		return tp;
 	}
 
 	public boolean checkStringValue(String stringValue) {

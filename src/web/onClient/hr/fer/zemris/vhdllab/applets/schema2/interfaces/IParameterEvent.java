@@ -47,6 +47,14 @@ public interface IParameterEvent {
 	 */
 	void performChange(IParameter parameter, ISchemaInfo info, ISchemaWire wire, ISchemaComponent component);
 	
+	
+	/**
+	 * Odgovara da li su promjene koje izvrsi ovaj event
+	 * funkcija ISKLJUCIVO vrijednosti parametra koji je specificiran.
+	 * 
+	 * @return
+	 */
+	boolean isUndoable();
 }
 
 

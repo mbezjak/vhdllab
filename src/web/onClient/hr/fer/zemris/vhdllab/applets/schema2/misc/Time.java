@@ -38,6 +38,11 @@ public final class Time {
 		timeMetric = metric;
 	}
 	
+	public Time(Time other) {
+		this.timeInterval = other.timeInterval;
+		this.timeMetric = other.timeMetric;
+	}
+	
 	/**
 	 * Pretvara iz jedne metrike u drugu.
 	 * 

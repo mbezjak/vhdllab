@@ -38,6 +38,14 @@ public final class SchemaPort {
 		portindex = NO_PORT;
 	}
 	
+	public SchemaPort(SchemaPort other) {
+		this.loc = new XYLocation(other.loc);
+		this.name = other.name;
+		this.mappedto = other.mappedto;
+		this.portindex = other.portindex;
+	}
+	
+	
 	/**
 	 * Vraca offset porta od gornjeg
 	 * lijevog kuta komponente.

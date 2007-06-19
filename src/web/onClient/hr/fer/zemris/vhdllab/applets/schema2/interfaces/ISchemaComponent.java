@@ -51,6 +51,11 @@ public interface ISchemaComponent {
 	 * 1) Netko kopira postojecu komponentu na shemi.
 	 * 2) Objekt ove klase koristi se kao prototip u
 	 *    ISchemaPrototypeCollection.
+	 *    
+	 * Za kraj, ovaj konstruktor kopije NECE prekopirati
+	 * informaciju o tome na koje zice je komponenta
+	 * spojena - novonastali SchemaPort-ovi nece biti
+	 * spojeni ni na sto.
 	 * 
 	 */
 	ISchemaComponent copyCtor();

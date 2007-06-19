@@ -13,6 +13,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.IntList;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PortRelation;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer;
@@ -37,16 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DefaultSchemaComponent implements ISchemaComponent {
-	
-	private static class PortRelation {
-		public Port port;
-		public List<SchemaPort> relatedTo;
-
-		public PortRelation(Port p) {
-			port = p;
-			relatedTo = new ArrayList<SchemaPort>();
-		}
-	}
 	
 	private static class Orientation implements ISerializable {
 		public EOrientation orientation = EOrientation.NORTH;
@@ -108,6 +99,16 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 
 	/* ctors */
+	
+	/**
+	 * Privatni ctor, koristi se kod copyCtor-a.
+	 * 
+	 */
+	private DefaultSchemaComponent() {
+		parameters = new SchemaParameterCollection();
+		schemaports = new ArrayList<SchemaPort>();
+		portrelations = new ArrayList<PortRelation>();
+	}
 	
 	/**
 	 * Ovaj se konstruktor koristi pri deserijalizaciji.
@@ -325,11 +326,42 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 	
 	
+	
+	
 	/* methods */
 
 	public ISchemaComponent copyCtor() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		DefaultSchemaComponent dsc = new DefaultSchemaComponent();
+		
+		dsc.componentName = this.componentName;
+		dsc.codeFileName = this.codeFileName;
+		dsc.categoryName = this.categoryName;
+		dsc.generic = this.generic;
+		dsc.width = this.width;
+		dsc.height = this.height;
+		dsc.initDrawer(this.drawer.getClass().getName());
+		
+		// copy schema ports and port relations
+		PortRelation npr;
+		SchemaPort nsp;
+		for (PortRelation portrel : this.portrelations) {
+			npr = new PortRelation(new DefaultPort(portrel.port.getName(),
+					portrel.port.getDirection(), portrel.port.getType()));
+			for (SchemaPort sp : portrel.relatedTo) {
+				nsp = new SchemaPort(sp);
+				nsp.setMapping(null);
+				npr.relatedTo.add(nsp);
+				dsc.schemaports.add(nsp);
+			}
+			dsc.portrelations.add(npr);
+		}
+		
+		// copy parameters
+		for (IParameter param : this.parameters) {
+			dsc.parameters.addParameter(param.copyCtor());
+		}
+		
+		return dsc;
 	}
 
 	public String getCategoryName() {
