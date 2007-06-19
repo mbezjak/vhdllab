@@ -102,7 +102,7 @@ public class LocalController implements ISchemaController {
 	}
 	
 	private void reportChanges(ICommandResponse response) {
-		for (ChangeTuple ct : response.getPropertyChanges()) {
+		if (response.getPropertyChanges() != null) for (ChangeTuple ct : response.getPropertyChanges()) {
 			ct.changetype.firePropertyChanges(support, ct.oldval, ct.newval);
 		}
 	}
@@ -112,8 +112,7 @@ public class LocalController implements ISchemaController {
 	}
 
 	public boolean canUndo() {
-		return (!undolist.isEmpty() && undolist.get(undolist.size() - 1)
-				.isUndoable());
+		return (!undolist.isEmpty() && undolist.get(undolist.size() - 1).isUndoable());
 	}
 
 	public List<String> getRedoList() {

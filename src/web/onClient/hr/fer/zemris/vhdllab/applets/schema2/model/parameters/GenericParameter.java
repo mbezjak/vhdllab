@@ -1,25 +1,30 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.GenericConstraint;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.TextConstraint;
 
 
 /**
  * Generic u smislu da moze sadrzavati
  * bilo kakav Java objekt koji implementira
- * sucelje ISerializable.
+ * sucelje IGenericValue.
  * 
  * @author Axel
  *
  * @param <T>
  */
-public class GenericParameter<T extends ISerializable> extends AbstractParameter {
+public class GenericParameter<T extends IGenericValue> extends AbstractParameter {
 
 	/* static fields */
 
@@ -44,7 +49,13 @@ public class GenericParameter<T extends ISerializable> extends AbstractParameter
 	/* methods */
 
 	public IParameter copyCtor() {
-		throw new NotImplementedException();
+		GenericParameter<T> param = new GenericParameter<T>(this.name, this.generic, (T)this.value.copyCtor());
+		Set<Object> allowed = this.constraint.getPossibleValues();
+		allowed = (allowed != null) ? (new HashSet<Object>(allowed)) : (null);
+		
+		param.constraint = new GenericConstraint<T>(allowed);
+		
+		return param;
 	}
 
 	public boolean checkStringValue(String stringValue) {

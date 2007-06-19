@@ -195,6 +195,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			
 			core.setSchemaInfo(sd.deserializeSchema(stread));
 		}
+		initPrototypes();
 	}
 
 	public void setProjectContainer(ProjectContainer container) {

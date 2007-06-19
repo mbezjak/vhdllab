@@ -6,10 +6,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueExc
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.IntList;
@@ -39,7 +39,7 @@ import java.util.List;
 
 public class DefaultSchemaComponent implements ISchemaComponent {
 	
-	private static class Orientation implements ISerializable {
+	private static class Orientation implements IGenericValue {
 		public EOrientation orientation = EOrientation.NORTH;
 		
 		public Orientation() { }
@@ -50,6 +50,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 		public String serialize() {
 			return orientation.serialize();
+		}
+		public IGenericValue copyCtor() {
+			return new Orientation(this.orientation);
 		}
 	}
 	

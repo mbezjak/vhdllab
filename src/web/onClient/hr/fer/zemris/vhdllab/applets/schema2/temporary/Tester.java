@@ -6,7 +6,10 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyProjectContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
@@ -56,6 +59,9 @@ public class Tester {
 		frame.setPreferredSize(new Dimension(350, 200));
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
+		
+		ICommandResponse resp = mpanel.getController().send(new InstantiateComponentCommand(new Caseless("AND_gate"), 100, 100));
+		System.out.println(resp.isSuccessful());
 	}
 	
 	private static void testDummyWiz() {

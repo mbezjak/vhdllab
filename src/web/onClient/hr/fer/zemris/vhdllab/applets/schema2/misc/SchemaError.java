@@ -14,8 +14,8 @@ public final class SchemaError {
 	private String message;
 	
 	public SchemaError() {
-		setErrorcode(EErrorTypes.UNKNOWN_TYPE);
-		setMessage(null);
+		errcode = EErrorTypes.UNKNOWN_TYPE;
+		message = null;
 	}
 	
 	public SchemaError(EErrorTypes errorCode) {
@@ -23,8 +23,8 @@ public final class SchemaError {
 	}
 	
 	public SchemaError(EErrorTypes errorCode, String errorMessage) {
-		setErrorcode(errorCode);
-		setMessage(errorMessage);
+		errcode = errorCode;
+		message = errorMessage;
 	}
 
 	public final void setErrorcode(EErrorTypes errorcode) {
