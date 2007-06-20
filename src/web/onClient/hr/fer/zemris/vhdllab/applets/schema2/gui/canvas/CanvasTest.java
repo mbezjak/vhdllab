@@ -1,5 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaWireCollection;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
@@ -14,7 +21,20 @@ public class CanvasTest extends JFrame {
 
 
 	public CanvasTest() {
-		SchemaCanvas can = new SchemaCanvas();
+		ISchemaComponentCollection comp = new SimpleSchemaComponentCollection();
+		ISchemaWireCollection wir = new SimpleSchemaWireCollection();
+	/*	
+		try {
+			comp.addComponent(10, 10, new DummyOR("OR1"));
+		} catch (DuplicateKeyException e) {
+			System.out.println("Nemogu napraviti komponentu");
+			e.printStackTrace();
+		} catch (OverlapException e) {
+			System.out.println("Nemogu napraviti komponentu");
+			e.printStackTrace();
+		}
+		*/
+		SchemaCanvas can = new SchemaCanvas(comp, wir);
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(can);
 	}
