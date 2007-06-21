@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.model.DefaultSchemaComponent;
@@ -20,6 +21,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
+import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -51,9 +53,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private static final String PREDEFINED_FILE_NAME = "predefined.xml";
 	
 	
-	/* private fields */
+	/* model private fields */
 	private ISchemaCore core;
 	private ISchemaController controller;
+	
+	/* GUI private fields */
+	private SchemaCanvas canvas;
 	
 	/* IEditor private fields */
 	private ProjectContainer projectContainer;
@@ -117,6 +122,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 	
 	private void initGUI() {
+		this.setLayout(new BorderLayout());
+		
+		/* init canvas */
+		canvas = new SchemaCanvas();
+		canvas.setConteroler(controller);
+		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
+		this.add(canvas, BorderLayout.CENTER);
 	}
 	
 	private void resetSchema() {

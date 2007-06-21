@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 
@@ -26,6 +27,12 @@ import java.awt.Graphics2D;
  */
 public class DefaultComponentDrawer implements IComponentDrawer {
 	
+	
+	/* static fields */
+	public static final int PORT_SIZE = 4;
+	
+	
+	/* private fields */
 	private ISchemaComponent comp_to_draw;
 
 	
@@ -50,11 +57,15 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			if (offset.y == 0 || offset.y == h) {
 				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
 			}
-			graphics.drawOval(offset.x, offset.y, 3, 3);
+			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
 		}
 		
 		// iscrtaj pravokutnik
-		graphics.drawRect(w / 10, h / 10, w * 9 / 10, h * 9 / 10);
+		Color c = graphics.getColor();
+		graphics.setColor(Color.WHITE);
+		graphics.fillRect(w / 10, h / 10, w * 8 / 10, h * 8 / 10);
+		graphics.setColor(c);
+		graphics.drawRect(w / 10, h / 10, w * 8 / 10, h * 8 / 10);
 	}
 	
 }

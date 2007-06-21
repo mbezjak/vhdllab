@@ -59,9 +59,6 @@ public class Tester {
 		frame.setPreferredSize(new Dimension(350, 200));
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
-		
-		ICommandResponse resp = mpanel.getController().send(new InstantiateComponentCommand(new Caseless("AND_gate"), 100, 100));
-		System.out.println(resp.isSuccessful());
 	}
 	
 	private static void testDummyWiz() {

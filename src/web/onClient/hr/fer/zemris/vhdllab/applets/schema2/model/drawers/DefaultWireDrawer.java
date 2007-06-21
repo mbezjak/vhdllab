@@ -14,6 +14,11 @@ import java.awt.Graphics2D;
 
 public class DefaultWireDrawer implements IWireDrawer {
 	
+	/* static fields */
+	public static final int NODE_SIZE = 4;
+	
+	
+	/* private fields */
 	private ISchemaWire wire_to_draw; 
 	
 	
@@ -28,7 +33,7 @@ public class DefaultWireDrawer implements IWireDrawer {
 					segment.loc2.x, segment.loc2.y);
 		}
 		for (XYLocation node : wire_to_draw.getNodes()) {
-			graphics.drawOval(node.x, node.y, 2, 2);
+			graphics.fillOval(node.x - NODE_SIZE / 2, node.y - NODE_SIZE / 2, NODE_SIZE, NODE_SIZE);
 		}
 	}
 	
