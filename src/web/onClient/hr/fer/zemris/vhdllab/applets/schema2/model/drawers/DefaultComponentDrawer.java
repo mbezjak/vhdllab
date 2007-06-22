@@ -29,7 +29,7 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 	
 	
 	/* static fields */
-	public static final int PORT_SIZE = 4;
+	public static final int PORT_SIZE = 5;
 	
 	
 	/* private fields */

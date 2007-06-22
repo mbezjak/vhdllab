@@ -15,7 +15,7 @@ import java.awt.Graphics2D;
 public class DefaultWireDrawer implements IWireDrawer {
 	
 	/* static fields */
-	public static final int NODE_SIZE = 4;
+	public static final int NODE_SIZE = 5;
 	
 	
 	/* private fields */
