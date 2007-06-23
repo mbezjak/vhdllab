@@ -6,10 +6,10 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyProjectContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteComponentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
@@ -59,6 +59,9 @@ public class Tester {
 		frame.setPreferredSize(new Dimension(350, 200));
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
+		
+		ICommand delete = new DeleteComponentCommand(new Caseless("SomeCompi"));
+		mpanel.getController().send(delete);
 	}
 	
 	private static void testDummyWiz() {

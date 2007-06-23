@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.InfoMap;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -67,6 +68,23 @@ public class CommandResponse implements ICommandResponse {
 	 */
 	public CommandResponse(List<ChangeTuple> changelist) {
 		changes = changelist;
+		success = true;
+		error = null;
+		info = new InfoMap();
+	}
+	
+	/**
+	 * Automatski stvara listu promjena i dodaje
+	 * u tu listu navedenu promjenu. Sluzi kako
+	 * bi olaksao stvaranje responsea u slucaju
+	 * samo jedne promjene.
+	 * Naravno, pretpostavlja uspjesnost zahtjeva.
+	 * 
+	 * @param oneTuple
+	 */
+	public CommandResponse(ChangeTuple oneTuple) {
+		changes = new ArrayList<ChangeTuple>();
+		changes.add(oneTuple);
 		success = true;
 		error = null;
 		info = new InfoMap();

@@ -72,6 +72,9 @@ TODO 76) [OPEN]		parameter eventi
 TODO 77) [OPEN]		ulazne komponente
 TODO 78) [OPEN]		Command - za promjenu vrijednosti parametara
 TODO 79) [OPEN]		user komponente
+TODO 80) [OPEN]		IVHDLSegmentProvider-i - implementirati
+TODO 81) [OPEN]		Dodati provjeru promjene CircuitInterfacea i INVALIDATED stanje komponenti
+
 
 Miro Bezjak
 --------------------------------------------

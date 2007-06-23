@@ -30,12 +30,15 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
  *
  */
 public class InstantiateComponentCommand implements ICommand {
+	
+	public final String COMMAND_NAME = "InstantiateComponentCommand";
+	
+	
 	private Caseless cpType;
 	private Caseless instName;
 	private int xpos, ypos;
 	
 	
-	public final String COMMAND_NAME = "InstantiateComponentCommand";
 	
 	
 	/**
@@ -94,7 +97,8 @@ public class InstantiateComponentCommand implements ICommand {
 	}
 
 	public ICommandResponse undoCommand(ISchemaInfo info)
-			throws InvalidCommandOperationException {
+			throws InvalidCommandOperationException
+	{
 		try {
 			info.getComponents().removeComponent(instName);
 		} catch (UnknownKeyException e) {
