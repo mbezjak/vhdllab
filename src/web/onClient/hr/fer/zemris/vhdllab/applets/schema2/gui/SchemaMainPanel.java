@@ -13,7 +13,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
-import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
@@ -32,7 +31,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 
 
