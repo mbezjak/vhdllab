@@ -25,6 +25,11 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	 */
 	public static final String PROPERTY_CHANGE_SELECTION = "ChangeSelection";
 
+	/**
+	 * 
+	 */
+	public static final String PROPERTY_CHANGE_STATE = "ChangeState";
+	
 	private PropertyChangeSupport support = null;
 
 	private ECanvasState state = ECanvasState.ADD_COMPONENT_STATE;
@@ -107,7 +112,7 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	public void setState(ECanvasState state) {
 		ECanvasState temp = this.state;
 		this.state = state;
-		support.firePropertyChange(PROPERTY_CHANGE_COMPONENT_TO_ADD, temp,
+		support.firePropertyChange(PROPERTY_CHANGE_STATE, temp,
 				state);
 	}
 	

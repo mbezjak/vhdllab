@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
@@ -26,6 +27,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeseriali
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
 import java.awt.BorderLayout;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -33,6 +36,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class SchemaMainPanel extends JPanel implements IEditor {
 
@@ -92,12 +96,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		componentToAddToolbar = new ComponentToAddToolbar(controller,
 				localGUIController);
 
+		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
 		localGUIController.addListener(canvas);
-		localGUIController.addListener(componentPropertyToolbar);
+		localGUIController.addListener(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,componentPropertyToolbar);
 
 		canvas.registerLocalController(localGUIController);
 		canvas.registerSchemaController(controller);
-		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
 	}
 
 	private void initDynamic() {
@@ -137,7 +141,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		this.setLayout(new BorderLayout());
 
 		/* init canvas */
-		this.add(canvas, BorderLayout.CENTER);
+		JScrollPane pane = new JScrollPane(canvas);
+		this.add(pane, BorderLayout.CENTER);
 		this.add(componentPropertyToolbar, BorderLayout.EAST);
 		this.add(componentToAddToolbar, BorderLayout.NORTH);
 	}
