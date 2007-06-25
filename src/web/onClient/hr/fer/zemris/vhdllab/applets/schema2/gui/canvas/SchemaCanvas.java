@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
@@ -8,7 +9,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
@@ -96,6 +96,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	public SchemaCanvas() {
 		state = ECanvasState.ADD_COMPONENT_STATE;	//init state
 		this.addMouseListener(new Mouse1());
+		this.addMouseMotionListener(new Mose2());
 		this.setOpaque(true);
 	}
 
@@ -194,12 +195,21 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println(evt.getPropertyName());
-		
-		ISchemaInfo inf = ((ISchemaController) evt.getSource()).getSchemaInfo();
-		components = inf.getComponents();
-		wires = inf.getWires();
-		drawComponents();
+		System.out.println("Canvas registered:"+evt.getPropertyName());
+
+		if(evt.getPropertyName().equals(EPropertyChange.CANVAS_CHANGE.toString())){
+			drawComponents();
+		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_COMPONENT_TO_ADD)){
+			//TODO property change component to add!!!!
+			ILocalGuiController tempCont = (CanvasToolbarLocalGUIController) evt.getSource();
+			state = tempCont.getState();
+			System.out.println("Canvas registered:" + tempCont);
+		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION)){
+			//TODO property change selection!!!
+			ILocalGuiController tempCont = (CanvasToolbarLocalGUIController) evt.getSource();
+			state = tempCont.getState();
+			System.out.println("Canvas registered:" + tempCont);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -237,8 +247,16 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				}
 				else if(state.equals(ECanvasState.MOVE_STATE)){
 					//TODO move
+					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY());
+					if(comp != null){
+						localController.setSelectedComponent(comp.getName());
+					}
+					
 				}
+			}else if(e.getButton()==MouseEvent.BUTTON3){
+				localController.setState(ECanvasState.MOVE_STATE);
 			}
+				
 		}
 
 		public void mouseEntered(MouseEvent e) {}
@@ -250,11 +268,12 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		public void mouseReleased(MouseEvent e) {}
 		
 	}
+	
 	private class Mose2 implements MouseMotionListener{
 
 		public void mouseDragged(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
+			// TODO Auto-generated method stub ima lažnu funkcionalnost!!!
+			localController.setState(ECanvasState.ADD_COMPONENT_STATE);
 		}
 
 		public void mouseMoved(MouseEvent e) {

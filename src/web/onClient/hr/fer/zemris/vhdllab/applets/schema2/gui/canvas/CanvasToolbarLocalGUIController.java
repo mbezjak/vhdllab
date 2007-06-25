@@ -110,4 +110,9 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 		support.firePropertyChange(PROPERTY_CHANGE_COMPONENT_TO_ADD, temp,
 				state);
 	}
+	
+	@Override
+	public String toString() {
+		return "State:"+state+"|ComponentToAdd:"+componentToAdd+"|SelectedComponent:"+selectedComponent;
+	}
 }
