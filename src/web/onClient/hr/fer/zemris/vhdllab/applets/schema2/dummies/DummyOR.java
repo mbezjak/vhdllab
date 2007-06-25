@@ -12,10 +12,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;

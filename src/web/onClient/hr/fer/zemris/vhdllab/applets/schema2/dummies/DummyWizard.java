@@ -1,18 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.CharBuffer;
-
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 
 
 

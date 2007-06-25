@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaComponentCollection;
