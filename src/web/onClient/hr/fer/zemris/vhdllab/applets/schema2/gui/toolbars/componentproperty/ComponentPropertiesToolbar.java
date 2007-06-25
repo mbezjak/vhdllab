@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
-import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.SwingComponent.JTableX;
-import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.SwingComponent.RowEditorModel;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.JTableX;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
