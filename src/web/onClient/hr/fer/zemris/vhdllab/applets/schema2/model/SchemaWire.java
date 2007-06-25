@@ -68,21 +68,21 @@ public class SchemaWire implements ISchemaWire {
 		int xmax = 0, ymax = 0;
 		
 		if (segments.size() > 0) {
-			r.x = SMath.min(segments.get(0).loc1.x, segments.get(0).loc2.x);
-			xmax = SMath.max(segments.get(0).loc1.x, segments.get(0).loc2.x);
-			r.y = SMath.min(segments.get(0).loc1.y, segments.get(0).loc2.y);
-			ymax = SMath.max(segments.get(0).loc1.y, segments.get(0).loc2.y);
+			r.x = SMath.min(segments.get(0).getStart().x, segments.get(0).getEnd().x);
+			xmax = SMath.max(segments.get(0).getStart().x, segments.get(0).getEnd().x);
+			r.y = SMath.min(segments.get(0).getStart().y, segments.get(0).getEnd().y);
+			ymax = SMath.max(segments.get(0).getStart().y, segments.get(0).getEnd().y);
 		}
 		
 		for (int i = 1; i < segments.size(); i++) {
-			r.x = SMath.min(segments.get(i).loc1.x, r.x);
-			r.x = SMath.min(segments.get(i).loc2.x, r.x);
-			xmax = SMath.max(segments.get(i).loc1.x, xmax);
-			xmax = SMath.max(segments.get(i).loc2.x, xmax);
-			r.y = SMath.min(segments.get(i).loc1.y, r.y);
-			r.y = SMath.min(segments.get(i).loc2.y, r.y);
-			ymax = SMath.max(segments.get(i).loc1.y, ymax);
-			ymax = SMath.max(segments.get(i).loc2.y, ymax);
+			r.x = SMath.min(segments.get(i).getStart().x, r.x);
+			r.x = SMath.min(segments.get(i).getEnd().x, r.x);
+			xmax = SMath.max(segments.get(i).getStart().x, xmax);
+			xmax = SMath.max(segments.get(i).getEnd().x, xmax);
+			r.y = SMath.min(segments.get(i).getStart().y, r.y);
+			r.y = SMath.min(segments.get(i).getEnd().y, r.y);
+			ymax = SMath.max(segments.get(i).getStart().y, ymax);
+			ymax = SMath.max(segments.get(i).getEnd().y, ymax);
 		}
 		
 		r.width = xmax - r.x;
@@ -115,10 +115,105 @@ public class SchemaWire implements ISchemaWire {
 		return segments;
 	}
 	
+	/**
+	 * Dodaje cvor u listu cvorova.
+	 * 
+	 * @param node
+	 */
 	public void addNode(XYLocation node) {
 		nodes.add(node);
 	}
 	
+	public void insertSegment(WireSegment segment) {
+		List<XYLocation> segnodes = findNodesForSegment(segment, false, true);
+		
+		segments.add(segment);
+		for (XYLocation node : segnodes) {
+			nodes.add(node);
+		}
+	}
+	
+	public boolean removeSegment(WireSegment segment) {
+		if (!segments.contains(segment)) return false;
+		
+		List<XYLocation> segnodes = findNodesForSegment(segment, true, true);
+		
+		segments.remove(segment);
+		for (XYLocation node : segnodes) {
+			nodes.remove(node);
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Trazi cvorove koji su povezani s ovim segmentom.
+	 * 
+	 * @param segadded
+	 * Ako je segment vec u listi segmenata, ovaj parametar
+	 * mora biti true. U tom slucaju ce se vratiti samo oni
+	 * cvorovi koji postoje radi ovog segmenta, i ujedno su
+	 * u listi cvorova. U protivnom se nadeni cvorovi nece
+	 * usporedivati s listom postojecih cvorova.
+	 * 
+	 * @param exclusive
+	 * Ako je naveden true, funkcija ce vratiti samo one cvorove
+	 * koji su vezani iskljucivo uz navedeni segment.
+	 */
+	private List<XYLocation> findNodesForSegment(WireSegment segment, boolean segadded, boolean exclusive) {
+		List<XYLocation> segnodes = new ArrayList<XYLocation>();
+		
+		for (WireSegment otherseg : segments) {
+			if (segadded && segment.equals(otherseg)) continue;
+			
+			// find a crosspoint, see if it is exclusive
+			XYLocation crosspoint = segment.intersection(otherseg);
+			if (crosspoint != null) {
+				if (segadded && !nodes.contains(crosspoint)) continue;
+				
+				if (exclusive) {
+					// see if other segments cause this intersection
+					boolean found = false;
+					for (WireSegment anyother : segments) {
+						if (anyother.equals(segment) || anyother.equals(otherseg)) continue;
+						if (anyother.intersection(otherseg) != null) {
+							found = true;
+							break;
+						}
+					}
+					if (found) continue;
+				}
+				segnodes.add(crosspoint);
+				continue;
+			}
+			
+			// find an edgepoint
+			crosspoint = segment.edgepoint(otherseg);
+			if (crosspoint != null) {
+				if (segadded && !nodes.contains(crosspoint)) continue;
+				
+				// now see whether this edgepoint is shared, and by how many segments
+				int count = 0;
+				for (WireSegment anyother : segments) {
+					if (anyother.equals(segment) || anyother.equals(otherseg)) continue;
+					if (anyother.edgepoint(otherseg) != null) count++;
+				}
+				if (count == 0) continue;
+				if (exclusive && count > 1) continue;
+				segnodes.add(crosspoint);
+			}
+		}
+		
+		return segnodes;
+	}
+	
+
+	/**
+	 * Dodaje segment zice u listu segmenata,
+	 * ne dodajuci pritom cvorove na presjecista.
+	 * 
+	 * @param segment
+	 */
 	public void addWireSegment(WireSegment segment) {
 		segments.add(segment);
 	}
@@ -150,6 +245,7 @@ public class SchemaWire implements ISchemaWire {
 		
 		parameters.addParameter(param);
 	}
+
 	
 
 }

@@ -74,7 +74,7 @@ public final class XYLocation {
 
 	@Override
 	public final String toString() {
-		return '(' + x + ", " + y + ')';
+		return "(" + x + ", " + y + ")";
 	}
 	
 	

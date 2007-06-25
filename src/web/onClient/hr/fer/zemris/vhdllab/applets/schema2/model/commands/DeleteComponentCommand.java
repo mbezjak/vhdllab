@@ -93,6 +93,7 @@ public class DeleteComponentCommand implements ICommand {
 				"Component would overlap at (" + x + ", " + y + ")."));
 		}
 		
+		deleted = null;
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}
 	

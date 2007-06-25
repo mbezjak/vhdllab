@@ -67,8 +67,9 @@ TODO 72) [OPEN]     Visejezicnost... lokalizacija...
 TODO 73) [OPEN]     Expand wire kao defaultna akcija
 TODO 74) [OPEN]     Opcija brisanja samo segmenta zice
 
-TODO 75) [OPEN]		Command - crtanje zica, brisanje komponenti, micanje, prosirenje zice
-TODO 76) [OPEN]		parameter eventi
+TODO 75) [CLOSED]	Command - crtanje zica, brisanje komponenti, prosirenje zice
+TODO 75b)[OPEN]		Command - micanje
+TODO 76) [OPEN]		parameter eventi - za promjenu imena sklopova, zica, i za promjenu broja portova
 TODO 77) [OPEN]		ulazne komponente
 TODO 78) [OPEN]		Command - za promjenu vrijednosti parametara
 TODO 79) [OPEN]		user komponente

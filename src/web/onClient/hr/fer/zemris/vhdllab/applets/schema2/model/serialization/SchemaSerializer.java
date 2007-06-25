@@ -228,11 +228,11 @@ public class SchemaSerializer {
 		for (WireSegment segment : wire.getSegments()) {
 			writer.append("<segment>");
 			appendLine(writer);
-			writer.append("<x1>").append(Integer.toString(segment.loc1.x)).append("</x1>");
-			writer.append("<y1>").append(Integer.toString(segment.loc1.y)).append("</y1>");
+			writer.append("<x1>").append(Integer.toString(segment.getStart().x)).append("</x1>");
+			writer.append("<y1>").append(Integer.toString(segment.getStart().y)).append("</y1>");
 			appendLine(writer);
-			writer.append("<x2>").append(Integer.toString(segment.loc2.x)).append("</x2>");
-			writer.append("<y2>").append(Integer.toString(segment.loc2.y)).append("</y2>");
+			writer.append("<x2>").append(Integer.toString(segment.getEnd().x)).append("</x2>");
+			writer.append("<y2>").append(Integer.toString(segment.getEnd().y)).append("</y2>");
 			appendLine(writer);
 			writer.append("</segment>");
 			appendLine(writer);

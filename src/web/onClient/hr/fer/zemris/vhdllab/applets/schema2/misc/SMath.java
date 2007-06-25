@@ -115,7 +115,62 @@ public class SMath {
 		return b;
 	}
 	
+	/**
+	 * Vraca true ako je num u zatvorenom
+	 * intervalu [a, b].
+	 * 
+	 */
+	public static boolean within(int num, int a, int b) {
+		return (num >= a && num <= b);
+	}
+	
+	/**
+	 * Vraca true ako je num u zatvorenom
+	 * intervalu [a, b] ako je a <= b,
+	 * ili u zatvorenom intervalu [b, a] ako
+	 * je a > b.
+	 * 
+	 */
+	public static boolean withinOrd(int num, int a, int b) {
+		if (a > b) {
+			int t = b;
+			b = a;
+			a = t;
+		}
+		return (num >= a && num <= b);
+	}
+	
+	/**
+	 * Vraca true ako je num u otvorenom
+	 * intervalu (a, b).
+	 * 
+	 */
+	public static boolean inside(int num, int a, int b) {
+		return (num > a && num < b);
+	}
+	
+	/**
+	 * Vraca true ako je num u otvorenom
+	 * intervalu (a, b) ako je a <= b,
+	 * ili u otvorenom intervalu (b, a) ako
+	 * je a > b.
+	 * 
+	 */
+	public static boolean insideOrd(int num, int a, int b) {
+		if (a > b) {
+			int t = b;
+			b = a;
+			a = t;
+		}
+		return (num > a && num < b);
+	}
 }
+
+
+
+
+
+
 
 
 

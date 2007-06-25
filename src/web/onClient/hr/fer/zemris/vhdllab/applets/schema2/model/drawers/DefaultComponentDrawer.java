@@ -48,7 +48,7 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 		int h = comp_to_draw.getHeight();
 		XYLocation offset;
 		
-		// iscrtaj izlaze
+		// iscrtaj portove, za rubne portove nacrtaj i zice do tih portova
 		for (SchemaPort port : comp_to_draw.getPorts()) {
 			offset = port.getOffset();
 			if (offset.x == 0 || offset.x == w) {

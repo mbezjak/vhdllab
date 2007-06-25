@@ -99,6 +99,27 @@ public interface ISchemaWire {
 	 * Bounding box, pravokutnik!
 	 */
 	Rectangle getBounds();
+	
+	
+	/**
+	 * Dodaje segment zice. Pritom
+	 * po potrebi dodaje cvorove na
+	 * mjesta gdje je to potrebno.
+	 * 
+	 * @param segment
+	 */
+	void insertSegment(WireSegment segment);
+	
+	/**
+	 * Brise iz liste segmenata navedeni segment.
+	 * Pritom po potrebi mice cvorove koji postaju
+	 * suvisni.
+	 * 
+	 * @param segment
+	 * @return
+	 * Vraca false ako segment nije naden.
+	 */
+	boolean removeSegment(WireSegment segment);
 }
 
 

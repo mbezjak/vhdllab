@@ -29,8 +29,8 @@ public class DefaultWireDrawer implements IWireDrawer {
 
 	public void draw(Graphics2D graphics) {
 		for (WireSegment segment : wire_to_draw.getSegments()) {
-			graphics.drawLine(segment.loc1.x, segment.loc1.y,
-					segment.loc2.x, segment.loc2.y);
+			graphics.drawLine(segment.getStart().x, segment.getStart().y,
+					segment.getEnd().x, segment.getEnd().y);
 		}
 		for (XYLocation node : wire_to_draw.getNodes()) {
 			graphics.fillOval(node.x - NODE_SIZE / 2, node.y - NODE_SIZE / 2, NODE_SIZE, NODE_SIZE);
