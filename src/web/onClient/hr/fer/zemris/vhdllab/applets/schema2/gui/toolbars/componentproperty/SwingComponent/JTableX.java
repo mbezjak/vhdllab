@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.SwingComponent;
+package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent;
 
 import java.util.Vector;
 

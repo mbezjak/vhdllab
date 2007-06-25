@@ -1,6 +1,5 @@
-package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars;
+package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
-import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyOR;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.model.LocalController;
 
@@ -36,7 +35,7 @@ public class PropertiesToolbarTest {
 		ComponentPropertiesToolbar propertyToolbar = new ComponentPropertiesToolbar(
 				controller);
 
-		propertyToolbar.showPropertyFor(new DummyOR("dummy_or"));
+		propertyToolbar.showPropertyFor(null);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());

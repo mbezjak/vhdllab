@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars;
+package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 

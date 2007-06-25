@@ -1,15 +1,18 @@
-package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars;
+package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.SwingComponent.JTableX;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.SwingComponent.RowEditorModel;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.awt.BorderLayout;
-import java.util.Map;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JPanel;
@@ -20,9 +23,11 @@ import javax.swing.JTable;
  * 
  * @author Garfield
  */
-public class ComponentPropertiesToolbar extends JPanel {
+public class ComponentPropertiesToolbar extends JPanel implements
+		PropertyChangeListener {
 	private static final long serialVersionUID = 2407077708960921188L;
 
+	
 	private static final int TOOLBAR_RESIZE_MODE = JTable.AUTO_RESIZE_ALL_COLUMNS;
 
 	/**
@@ -45,7 +50,6 @@ public class ComponentPropertiesToolbar extends JPanel {
 			throw new NullPointerException("Controller cannot be null!");
 
 		this.controller = controller;
-
 		initToolbar();
 	}
 
@@ -53,10 +57,9 @@ public class ComponentPropertiesToolbar extends JPanel {
 	 * Init
 	 */
 	private void initToolbar() {
-
 		// init panel
-		setOpaque(true);
 
+		setOpaque(true);
 	}
 
 	private void initTable() {
@@ -84,12 +87,16 @@ public class ComponentPropertiesToolbar extends JPanel {
 		// model koji drzi do izgleda tabele
 		ComponentPropertiesToolbarTableModel tableModel = null;
 
+		if (component == null)
+			throw new NullPointerException("Schema component cannot be null!");
+
 		paramCollection = component.getParameters();
 
 		clearTable();
 		tableModel = buildTableModel(paramCollection);
 		resetTableModel(tableModel);
 		resetTableRowEditors(tableModel.getTableLines());
+		repaint();
 	}
 
 	private void resetTableRowEditors(IParameter[] parameters) {
@@ -142,5 +149,24 @@ public class ComponentPropertiesToolbar extends JPanel {
 			remove(propertiesTable);
 
 		propertiesTable = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent evt) {
+		ISchemaComponentCollection componentCollection = null;
+		ISchemaComponent component = null;
+		ISchemaInfo info = null;
+		Caseless componentName = null;
+
+		componentName = (Caseless) evt.getNewValue();
+		info = controller.getSchemaInfo();
+		componentCollection = info.getComponents();
+		component = componentCollection.fetchComponent(componentName);
+
+		showPropertyFor(component);
 	}
 }
