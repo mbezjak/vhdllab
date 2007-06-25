@@ -1,12 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import java.awt.Rectangle;
-import java.util.List;
-
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
-import hr.fer.zemris.vhdllab.vhdl.model.Type;
+
+import java.awt.Rectangle;
+import java.util.List;
 
 
 

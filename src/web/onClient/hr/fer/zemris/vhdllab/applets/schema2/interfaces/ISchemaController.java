@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;

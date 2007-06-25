@@ -14,6 +14,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.ComponentPropertiesToolbar;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.ComponentToAddToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
@@ -32,54 +34,43 @@ import java.io.StringWriter;
 
 import javax.swing.JPanel;
 
-
-
-
 public class SchemaMainPanel extends JPanel implements IEditor {
-	
+
 	private class ModificationListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
 			modified = true;
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6643347269051956602L;
-	
-	
-	
+
 	/* static fields */
 	private static final String PREDEFINED_FILE_NAME = "predefined.xml";
-	
-	
+
 	/* model private fields */
 	private ISchemaCore core;
 	private ISchemaController controller;
-	
+
 	/* GUI private fields */
 	private SchemaCanvas canvas;
 	private ILocalGuiController localGUIController;
-	
+	private ComponentPropertiesToolbar componentPropertyToolbar;
+	private ComponentToAddToolbar componentToAddToolbar;
+
 	/* IEditor private fields */
 	private ProjectContainer projectContainer;
 	private FileContent filecontent;
 	private boolean readonly, saveable, modified;
-	
-	
-	
+
 	/* ctors */
-	
+
 	public SchemaMainPanel() {
 		initStatic();
 	}
 
-	
-	
-	
-	
 	/* methods */
 
 	private void initStatic() {
@@ -92,66 +83,74 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		readonly = false;
 		saveable = false;
 		modified = false;
-		
+
 		controller.registerCore(core);
-		controller.addListener(EPropertyChange.ANY_CHANGE, new ModificationListener());
+		controller.addListener(EPropertyChange.ANY_CHANGE,
+				new ModificationListener());
+
+		componentPropertyToolbar = new ComponentPropertiesToolbar(controller);
+		componentToAddToolbar = new ComponentToAddToolbar(controller,
+				localGUIController);
+
 		localGUIController.addListener(canvas);
+		localGUIController.addListener(componentPropertyToolbar);
+
 		canvas.registerLocalController(localGUIController);
 		canvas.registerSchemaController(controller);
 		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
 	}
-	
+
 	private void initDynamic() {
 		// init prototype components
 		initPrototypes();
-		
+
 		// init gui
 		initGUI();
 	}
-	
+
 	private void initPrototypes() {
 		String predefined;
-		
+
 		try {
-			predefined = projectContainer.getPredefinedFileContent(PREDEFINED_FILE_NAME);
+			predefined = projectContainer
+					.getPredefinedFileContent(PREDEFINED_FILE_NAME);
 		} catch (UniformAppletException e) {
-			throw new SchemaException("Could not open predefined component file.", e);
+			throw new SchemaException(
+					"Could not open predefined component file.", e);
 		}
-		
-		PredefinedComponentsParser predefparser = new PredefinedComponentsParser(predefined);
+
+		PredefinedComponentsParser predefparser = new PredefinedComponentsParser(
+				predefined);
 		PredefinedConf predefconf = predefparser.getConfiguration();
-		
+
 		for (PredefinedComponent pc : predefconf.getComponents()) {
 			try {
-				core.getSchemaInfo().getPrototyper().addPrototype(new DefaultSchemaComponent(pc));
+				core.getSchemaInfo().getPrototyper().addPrototype(
+						new DefaultSchemaComponent(pc));
 			} catch (DuplicateKeyException e) {
 				throw new SchemaException("Duplicate component.", e);
 			}
 		}
 	}
-	
+
 	private void initGUI() {
 		this.setLayout(new BorderLayout());
-		
-		/* init canvas */
-		
-		this.add(canvas, BorderLayout.CENTER);
 
+		/* init canvas */
+		this.add(canvas, BorderLayout.CENTER);
+		this.add(componentPropertyToolbar, BorderLayout.EAST);
+		this.add(componentToAddToolbar, BorderLayout.NORTH);
 	}
-	
+
 	private void resetSchema() {
 		core.reset();
 		controller.clearCommandCache();
 	}
-	
+
 	public ISchemaController getController() {
 		return controller;
 	}
 
-
-
-	
-	
 	/* IEditor methods */
 
 	public void cleanUp() {
@@ -161,23 +160,25 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public String getData() {
 		SchemaSerializer ss = new SchemaSerializer();
 		StringWriter writer = new StringWriter(500);
-		
+
 		try {
 			ss.serializeSchema(writer, core.getSchemaInfo());
 		} catch (IOException e) {
 			return "<schemaInfo></schemaInfo>";
 		}
-		
+
 		return writer.toString();
 	}
 
 	public String getFileName() {
-		if (filecontent != null) return filecontent.getFileName();
+		if (filecontent != null)
+			return filecontent.getFileName();
 		return null;
 	}
 
 	public String getProjectName() {
-		if (filecontent != null) return filecontent.getProjectName();
+		if (filecontent != null)
+			return filecontent.getProjectName();
 		return null;
 	}
 
@@ -212,7 +213,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		if (filecontent != null) {
 			SchemaDeserializer sd = new SchemaDeserializer();
 			StringReader stread = new StringReader(filecontent.getContent());
-			
+
 			core.setSchemaInfo(sd.deserializeSchema(stread));
 		}
 		initPrototypes();
@@ -221,39 +222,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public void setProjectContainer(ProjectContainer container) {
 		projectContainer = container;
 	}
-	
+
 	public void setReadOnly(boolean flag) {
 		readonly = flag;
 	}
-	
+
 	public void setSavable(boolean flag) {
 		saveable = flag;
 	}
-	
-	
-	
-	
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

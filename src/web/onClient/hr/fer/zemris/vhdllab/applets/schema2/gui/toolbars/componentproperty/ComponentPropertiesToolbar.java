@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
@@ -27,7 +28,6 @@ public class ComponentPropertiesToolbar extends JPanel implements
 		PropertyChangeListener {
 	private static final long serialVersionUID = 2407077708960921188L;
 
-	
 	private static final int TOOLBAR_RESIZE_MODE = JTable.AUTO_RESIZE_ALL_COLUMNS;
 
 	/**
@@ -60,6 +60,7 @@ public class ComponentPropertiesToolbar extends JPanel implements
 		// init panel
 
 		setOpaque(true);
+		add(new JLabel("No component selected"), BorderLayout.NORTH);
 	}
 
 	private void initTable() {
@@ -145,8 +146,12 @@ public class ComponentPropertiesToolbar extends JPanel implements
 	 * Clears content of table
 	 */
 	private void clearTable() {
-		if (propertiesTable != null)
+
+		if (propertiesTable != null) {
 			remove(propertiesTable);
+		} else {
+			removeAll();
+		}
 
 		propertiesTable = null;
 	}

@@ -32,7 +32,7 @@ public class ComponentPropertiesToolbarTableModel extends DefaultTableModel {
 	public ComponentPropertiesToolbarTableModel(String[] columnNames,
 			IParameterCollection parameters) {
 		super(((parameters.count() > 0) ? columnNames : new String[] { "" }),
-				parameters.count() + 1);
+				((parameters.count() == 0) ? 1 : parameters.count()));
 
 		this.parameters = parameters;
 		lines = new IParameter[parameters.count()];
@@ -91,14 +91,16 @@ public class ComponentPropertiesToolbarTableModel extends DefaultTableModel {
 		return super.isCellEditable(row, column);
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.table.DefaultTableModel#setValueAt(java.lang.Object, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.DefaultTableModel#setValueAt(java.lang.Object,
+	 *      int, int)
 	 */
 	@Override
 	public void setValueAt(Object value, int row, int column) {
 		// TODO Auto-generated method stub
 		super.setValueAt(value, row, column);
 	}
-	
-	
+
 }
