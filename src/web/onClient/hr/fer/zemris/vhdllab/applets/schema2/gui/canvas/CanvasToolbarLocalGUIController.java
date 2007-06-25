@@ -28,7 +28,7 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	private PropertyChangeSupport support = null;
 
 	private ECanvasState state = ECanvasState.ADD_COMPONENT_STATE;
-	private Caseless componentToAdd = null;
+	private Caseless componentToAdd = new Caseless("AND_gate");
 	private Caseless selectedComponent = null;
 
 	public CanvasToolbarLocalGUIController() {

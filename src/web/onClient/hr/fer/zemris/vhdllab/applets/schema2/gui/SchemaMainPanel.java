@@ -12,7 +12,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.model.DefaultSchemaComponent;
@@ -29,6 +32,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 
 
@@ -59,6 +63,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	
 	/* GUI private fields */
 	private SchemaCanvas canvas;
+	private ILocalGuiController localGUIController;
 	
 	/* IEditor private fields */
 	private ProjectContainer projectContainer;
@@ -82,6 +87,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private void initStatic() {
 		core = new SchemaCore();
 		controller = new LocalController();
+		canvas = new SchemaCanvas();
+		localGUIController = new CanvasToolbarLocalGUIController();
 		projectContainer = null;
 		filecontent = null;
 		readonly = false;
@@ -90,6 +97,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		
 		controller.registerCore(core);
 		controller.addListener(EPropertyChange.ANY_CHANGE, new ModificationListener());
+		localGUIController.addListener(canvas);
+		canvas.registerLocalController(localGUIController);
+		canvas.registerSchemaController(controller);
+		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
 	}
 	
 	private void initDynamic() {
@@ -125,10 +136,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		this.setLayout(new BorderLayout());
 		
 		/* init canvas */
-		canvas = new SchemaCanvas();
-		canvas.setConteroler(controller);
-		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
+		
 		this.add(canvas, BorderLayout.CENTER);
+
 	}
 	
 	private void resetSchema() {

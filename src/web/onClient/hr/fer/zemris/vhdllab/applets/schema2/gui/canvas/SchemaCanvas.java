@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
@@ -21,6 +23,7 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -28,7 +31,7 @@ import java.util.Set;
 
 import javax.swing.JPanel;
 
-public class SchemaCanvas extends JPanel implements PropertyChangeListener {
+public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISchemaCanvas {
 
 	/**
 	 * Generated serial ID
@@ -52,10 +55,23 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener {
 	 */
 	private ISchemaWireCollection wires = new SimpleSchemaWireCollection();
 
-
+	/**
+	 * controller na razini schema-editora
+	 */
 	private ISchemaController controller;
 	
+	/**
+	 * controller na razini GUI-a
+	 */
+	private ILocalGuiController localController;
+	
+	/**
+	 * Stanje u kojem se canvas nalazi.
+	 */
+	private ECanvasState state;
 
+	
+	//constrictors
 	public SchemaCanvas(ISchemaCore core) {
 		this();
 		
@@ -78,10 +94,16 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener {
 
 
 	public SchemaCanvas() {
+		state = ECanvasState.ADD_COMPONENT_STATE;	//init state
 		this.addMouseListener(new Mouse1());
 		this.setOpaque(true);
 	}
 
+	//##########################
+	
+	
+	//#########################PROTECTED METHODS###################################
+	
 	/**
 	 * Overriden method for painting the canvas.
 	 */
@@ -101,6 +123,13 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener {
 			g.drawImage(img, in.left, in.right, img.getWidth(), img.getHeight(), null);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	//##################PRIVATE METHODS#############################
 
 	/**
 	 * Private method responsible for drawing all components and wires contained in components
@@ -110,6 +139,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener {
 	private void drawComponents() {
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		components = controller.getSchemaInfo().getComponents();
+		wires = controller.getSchemaInfo().getWires(); 
 		
 		//Color prevColor = g.getColor();
 		g.setColor(Color.WHITE);
@@ -129,7 +161,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener {
 		}
 		
 		
-		//TODO dal treba translacija i ovdije?
 		names=wires.getWireNames();
 		for(Caseless name: names){
 			wires.fetchWire(name).getDrawer().draw(g);
@@ -149,6 +180,13 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
+	
+	
+	
+	//###########################PUBLIC METHODS##########################
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas#setDummyStuff(hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection, hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection)
+	 */
 	public void setDummyStuff(ISchemaComponentCollection components, ISchemaWireCollection wires) {
 		this.components = components;
 		this.wires = wires;
@@ -164,36 +202,62 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener {
 		drawComponents();
 	}
 
-	public void setConteroler(ISchemaController controller) {
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas#setConteroler(hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController)
+	 */
+	public void registerSchemaController(ISchemaController controller) {
 		this.controller=controller;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas#registerLocalController(hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController)
+	 */
+	public void registerLocalController(ILocalGuiController cont){
+		localController = cont;
+	}
+	
+	
+	
+	//#############NESTED CLASSES##############
 	private class Mouse1 implements MouseListener{
 
 		public void mouseClicked(MouseEvent e) {
-			ICommand instantiate = new InstantiateComponentCommand(new Caseless("AND_gate"), e.getX(), e.getY());
-
-//			 controller je LocalController
-			ICommandResponse response = controller.send(instantiate);
-			System.out.println (response.isSuccessful());
+			if(e.getButton()==MouseEvent.BUTTON1){
+				if(state.equals(ECanvasState.ADD_COMPONENT_STATE)){
+					Caseless comp = localController.getComponentToAdd();
+					ICommand instantiate = new InstantiateComponentCommand(comp, e.getX(), e.getY());
+					ICommandResponse response = controller.send(instantiate);
+					System.out.println (response.isSuccessful());
+				}
+				else if(state.equals(ECanvasState.ADD_WIRE_STATE)){
+					//TODO add wire
+				}
+				else if(state.equals(ECanvasState.DELETE_STATE)){
+					//TODO delete
+				}
+				else if(state.equals(ECanvasState.MOVE_STATE)){
+					//TODO move
+				}
+			}
 		}
 
-		public void mouseEntered(MouseEvent e) {
+		public void mouseEntered(MouseEvent e) {}
+
+		public void mouseExited(MouseEvent e) {}
+
+		public void mousePressed(MouseEvent e) {}
+
+		public void mouseReleased(MouseEvent e) {}
+		
+	}
+	private class Mose2 implements MouseMotionListener{
+
+		public void mouseDragged(MouseEvent e) {
 			// TODO Auto-generated method stub
 			
 		}
 
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public void mouseReleased(MouseEvent e) {
+		public void mouseMoved(MouseEvent e) {
 			// TODO Auto-generated method stub
 			
 		}
