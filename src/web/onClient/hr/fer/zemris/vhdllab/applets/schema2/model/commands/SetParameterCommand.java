@@ -120,6 +120,8 @@ public class SetParameterCommand implements ICommand {
 	
 	private IParameter fetchParameter(ISchemaInfo info) {
 		IParameterCollection params = fetchParameters(info);
+		
+		if (params == null) return null;
 		try {
 			return params.getParameter(paramname);
 		} catch (ParameterNotFoundException e) {

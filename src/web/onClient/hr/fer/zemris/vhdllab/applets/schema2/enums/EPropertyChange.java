@@ -12,6 +12,17 @@ public enum EPropertyChange {
 		public void assignListenerToSupport(PropertyChangeListener listener, PropertyChangeSupport support) {
 			support.addPropertyChangeListener(listener);
 		}
+		@Override
+		public void firePropertyChanges(PropertyChangeSupport support, Object oldval, Object newval) {
+			for (EPropertyChange epc : EPropertyChange.values()) {
+				if (epc == NO_CHANGE || epc == ANY_CHANGE) continue;
+				support.firePropertyChange(epc.toString(), oldval, newval);
+			}
+		}
+		@Override
+		public String toString() {
+			return "ANY_CHANGE";
+		}
 	},
 	CANVAS_CHANGE() {
 		@Override

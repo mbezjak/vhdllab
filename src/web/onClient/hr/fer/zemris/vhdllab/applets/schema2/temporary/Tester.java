@@ -64,6 +64,8 @@ public class Tester {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		
+		ICommand delete = new DeleteComponentCommand(new Caseless("SomeCompi"));
+		mpanel.getController().send(delete);
 		ICommand addwire = new AddWireCommand(new Caseless("MyWire"), 50, 350, 450, 350);
 		mpanel.getController().send(addwire);
 		ICommand expandwire = new ExpandWireCommand(new Caseless("MyWire"), 50, 350, 50, 450);

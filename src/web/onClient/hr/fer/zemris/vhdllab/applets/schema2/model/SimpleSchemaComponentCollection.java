@@ -100,7 +100,10 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	}
 
 	public ISchemaComponent fetchComponent(Caseless componentName) {
-		return components.get(componentName).comp;
+		PlacedComponent placedcomp = components.get(componentName);
+		
+		if (placedcomp == null) return null;
+		return placedcomp.comp;
 	}
 	
 	
