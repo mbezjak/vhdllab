@@ -49,7 +49,7 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 		XYLocation offset;
 		
 		// iscrtaj portove, za rubne portove nacrtaj i zice do tih portova
-		for (SchemaPort port : comp_to_draw.getPorts()) {
+		for (SchemaPort port : comp_to_draw.getSchemaPorts()) {
 			offset = port.getOffset();
 			if (offset.x == 0 || offset.x == w) {
 				graphics.drawLine(offset.x, offset.y, w/2, offset.y);

@@ -206,7 +206,7 @@ public interface ISchemaComponent {
 	 * Genericka lista unutar koje
 	 * su imena portova.
 	 */
-	List<SchemaPort> getPorts();
+	List<SchemaPort> getSchemaPorts();
 	
 	
 	/**

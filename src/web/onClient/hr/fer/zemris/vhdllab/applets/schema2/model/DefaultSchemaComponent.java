@@ -407,7 +407,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		return parameters;
 	}
 
-	public List<SchemaPort> getPorts() {
+	public List<SchemaPort> getSchemaPorts() {
 		return schemaports;
 	}
 

@@ -116,7 +116,7 @@ public class DummyOR implements ISchemaComponent {
 	public IParameterCollection getParameters() {
 		return parameters;
 	}
-	public List<SchemaPort> getPorts() {
+	public List<SchemaPort> getSchemaPorts() {
 		return ports;
 	}
 	public SchemaPort getSchemaPort(int xoffset, int yoffset, int dist) {
