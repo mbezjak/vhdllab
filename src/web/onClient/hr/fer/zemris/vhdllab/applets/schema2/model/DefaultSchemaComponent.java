@@ -458,6 +458,13 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 	}
 
+	public SchemaPort getSchemaPort(Caseless name) {
+		for (SchemaPort sp : schemaports) {
+			if (sp.getName().equals(name)) return sp;
+		}
+		return null;
+	}
+
 	public void deserialize(ComponentWrapper compwrap) {
 		// basic
 		componentName = new Caseless(compwrap.getComponentName());

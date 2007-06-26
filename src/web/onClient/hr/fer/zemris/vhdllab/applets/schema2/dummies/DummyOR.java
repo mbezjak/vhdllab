@@ -87,6 +87,13 @@ public class DummyOR implements ISchemaComponent {
 	
 	
 	
+	
+	
+	public SchemaPort getSchemaPort(Caseless name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public ISchemaComponent copyCtor() {
 		throw new NotImplementedException();
 	}
@@ -170,6 +177,11 @@ public class DummyOR implements ISchemaComponent {
 	public boolean isGeneric() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public List<SchemaPort> getPorts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

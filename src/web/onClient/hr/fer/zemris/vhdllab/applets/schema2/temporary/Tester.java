@@ -10,10 +10,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteComponentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ConnectWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.SetParameterCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.SetParameterCommand.EParameterHolder;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
@@ -60,12 +58,11 @@ public class Tester {
 		frame.add(mpanel, BorderLayout.CENTER);
 		
 		frame.setVisible(true);
-		frame.setPreferredSize(new Dimension(350, 200));
+		frame.setPreferredSize(new Dimension(550, 400));
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		
-		ICommand delete = new DeleteComponentCommand(new Caseless("SomeCompi"));
-		mpanel.getController().send(delete);
+		
 		ICommand addwire = new AddWireCommand(new Caseless("MyWire"), 50, 350, 450, 350);
 		mpanel.getController().send(addwire);
 		ICommand expandwire = new ExpandWireCommand(new Caseless("MyWire"), 50, 350, 50, 450);
@@ -74,11 +71,8 @@ public class Tester {
 		mpanel.getController().send(expandwire);
 		expandwire = new ExpandWireCommand(new Caseless("MyWire"), 150, 350, 150, 450);
 		mpanel.getController().send(expandwire);
-		ICommand setparameter = new SetParameterCommand(new Caseless("SomeCompi"), "Name",
-				EParameterHolder.component, new Caseless("MyBeatifulCompi"),
-				mpanel.getController().getSchemaInfo());
-		mpanel.getController().send(setparameter);
-		System.out.println("Ohoj.");
+		ICommand connect = new ConnectWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port"));
+		mpanel.getController().send(connect);
 	}
 	
 	private static void testDummyWiz() {

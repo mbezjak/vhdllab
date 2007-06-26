@@ -111,7 +111,7 @@
 				<schemaPort>
 				 <x>0</x>
 				 <y>30</y>
-				 <name>some_port_1</name>
+				 <name>some_port</name>
 				 <mapping>wire54</mapping>
 				 <portIndex>0</portIndex>
 				</schemaPort>

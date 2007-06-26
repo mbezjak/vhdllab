@@ -198,6 +198,15 @@ public interface ISchemaComponent {
 	 */
 	SchemaPort getSchemaPort(int index);
 	
+	/**
+	 * Dohvaca port po imenu.
+	 * 
+	 * @param name
+	 * @return
+	 * Null ako ne postoji port tog imena.
+	 */
+	SchemaPort getSchemaPort(Caseless name);
+	
 	
 	/**
 	 * Vraca sve portove na komponenti.
