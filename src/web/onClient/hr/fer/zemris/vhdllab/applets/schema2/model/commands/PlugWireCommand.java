@@ -16,7 +16,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
 
 
-public class ConnectWireCommand implements ICommand {
+public class PlugWireCommand implements ICommand {
 
 	/* static fields */
 	public static final String COMMAND_NAME = "ConnectWireCommand";
@@ -29,7 +29,7 @@ public class ConnectWireCommand implements ICommand {
 	
 	/* ctors */
 
-	public ConnectWireCommand(Caseless componentName, Caseless schemaWireName, Caseless schemaPortName) {
+	public PlugWireCommand(Caseless componentName, Caseless schemaWireName, Caseless schemaPortName) {
 		cmpname = componentName;
 		wirename = schemaWireName;
 		portname = schemaPortName;

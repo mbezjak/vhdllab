@@ -10,7 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ConnectWireCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.PlugWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
@@ -71,7 +71,7 @@ public class Tester {
 		mpanel.getController().send(expandwire);
 		expandwire = new ExpandWireCommand(new Caseless("MyWire"), 150, 350, 150, 450);
 		mpanel.getController().send(expandwire);
-		ICommand connect = new ConnectWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port"));
+		ICommand connect = new PlugWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port"));
 		mpanel.getController().send(connect);
 	}
 	
