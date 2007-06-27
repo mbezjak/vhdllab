@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.AutoRenamer;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
@@ -38,8 +39,10 @@ public class AddWireCommand implements ICommand {
 	 * Za komande koje stvaraju zicu sa samo jednim horizontalnim
 	 * ili vertikalnim segmentom.
 	 * 
+	 * 
+	 * @throws IllegalArgumentException
 	 * Ako segment nije horizontalan ili vertikalan, bit ce bacen
-	 * exception.
+	 * navedeni exception.
 	 * 
 	 */
 	public AddWireCommand(Caseless wirename, int x1, int y1, int x2, int y2)
@@ -49,7 +52,25 @@ public class AddWireCommand implements ICommand {
 			throw new IllegalArgumentException("Can only create horizontal and vertical segments.");
 		
 		wire = new SchemaWire(wirename);
+		wire.insertSegment(new WireSegment(x1, y1, x2, y2));
+	}
+	
+	/**
+	 * Konstruktor koji stvara novu zicu i automatski joj odreduje
+	 * jedinstveno ime.
+	 * 
+	 * @param info
+	 * Potrebno ga je proslijediti kako bi se moglo utvrditi
+	 * jedinstveno ime.
+	 * 
+	 * @throws IllegalArgumentException
+	 * Ako segment nije horizontalan ili vertikalan.
+	 * 
+	 */
+	public AddWireCommand(ISchemaInfo info, int x1, int y1, int x2, int y2) {
+		Caseless wirename = AutoRenamer.getFreeName(new Caseless("wire"), info.getWires().getWireNames());
 		
+		wire = new SchemaWire(wirename);
 		wire.insertSegment(new WireSegment(x1, y1, x2, y2));
 	}
 	

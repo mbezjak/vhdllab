@@ -9,8 +9,12 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
  *
  */
 public enum EErrorTypes {
-	CANNOT_REDO, CANNOT_UNDO,
+	/* special */
 	NO_ERROR, UNKNOWN_TYPE,
+	USER_DEFINED,
+	
+	/* normal */
+	CANNOT_REDO, CANNOT_UNDO,
 	DUPLICATE_COMPONENT_NAME,
 	DUPLICATE_WIRE_NAME,
 	NONEXISTING_PROTOTYPE,
@@ -21,5 +25,6 @@ public enum EErrorTypes {
 	NONEXISTING_PORT_NAME,
 	PARAMETER_NOT_FOUND,
 	PARAMETER_CONSTRAINT_BAN,
-	MAPPING_ERROR
+	MAPPING_ERROR,
+	EVENT_NOT_COMPLETED
 }

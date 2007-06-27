@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.commands;
 
-import java.util.List;
-
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EConstraintExplanation;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
@@ -20,6 +18,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
+
+import java.util.List;
 
 
 
@@ -167,7 +167,11 @@ public class SetParameterCommand implements ICommand {
 		if (pe != null) {
 			changes = pe.getChanges();
 			SchemaError error = fireEvent(info, param, pe);
-			if (error != null) return new CommandResponse(error);
+			if (error != null) {
+				// return old value if something went wrong
+				param.setValue(oldval);
+				return new CommandResponse(error);
+			}
 		}
 		
 		if (changes == null)
@@ -199,7 +203,9 @@ public class SetParameterCommand implements ICommand {
 			break;
 		}
 		
-		pe.performChange(oldval, param, info, wire, component);
+		if (!pe.performChange(oldval, param, info, wire, component))
+			return new SchemaError(EErrorTypes.EVENT_NOT_COMPLETED,
+					"Parameter value could not be changed.");
 		
 		return null;
 	}

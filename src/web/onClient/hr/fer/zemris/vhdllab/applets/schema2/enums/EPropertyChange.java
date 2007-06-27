@@ -7,10 +7,16 @@ import java.beans.PropertyChangeSupport;
 
 
 public enum EPropertyChange {
+	
+	/**
+	 * Bilo koja promjena - u slucaju promjene se obavjestavaju
+	 * svi listeneri registrirani na sve EPropertyChange
+	 * vrijednosti osim ANY_CHANGE i NO_CHANGE.
+	 */
 	ANY_CHANGE() {
 		@Override
 		public void assignListenerToSupport(PropertyChangeListener listener, PropertyChangeSupport support) {
-			support.addPropertyChangeListener(listener);
+			support.addPropertyChangeListener(ALL_CHANGES_KEY, listener);
 		}
 		@Override
 		public void firePropertyChanges(PropertyChangeSupport support, Object oldval, Object newval) {
@@ -18,6 +24,7 @@ public enum EPropertyChange {
 				if (epc == NO_CHANGE || epc == ANY_CHANGE) continue;
 				support.firePropertyChange(epc.toString(), oldval, newval);
 			}
+			support.firePropertyChange(ALL_CHANGES_KEY, oldval, newval);
 		}
 		@Override
 		public String toString() {
@@ -44,6 +51,11 @@ public enum EPropertyChange {
 	};
 	
 	/**
+	 * Za sve listenere koji slusaju sve promjene.
+	 */
+	private static final String ALL_CHANGES_KEY = "EVERY_CHANGE";
+	
+	/**
 	 * Ovisno o tipu svojstva cija se promjena ocekuje,
 	 * PropertyChange postavlja listener na support.
 	 * 
@@ -62,6 +74,7 @@ public enum EPropertyChange {
 	 */
 	public void firePropertyChanges(PropertyChangeSupport support, Object oldval, Object newval) {
 		support.firePropertyChange(this.toString(), oldval, newval);
+		support.firePropertyChange(ALL_CHANGES_KEY, oldval, newval);
 	}
 }
 
