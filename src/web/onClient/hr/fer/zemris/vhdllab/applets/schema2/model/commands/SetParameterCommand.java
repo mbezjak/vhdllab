@@ -166,7 +166,7 @@ public class SetParameterCommand implements ICommand {
 		List<ChangeTuple> changes = null;
 		if (pe != null) {
 			changes = pe.getChanges();
-			SchemaError error = fireEvent(info, param, pe);
+			SchemaError error = fireEvent(info, param, pe, oldval);
 			if (error != null) {
 				// return old value if something went wrong
 				param.setValue(oldval);
@@ -185,10 +185,49 @@ public class SetParameterCommand implements ICommand {
 	public ICommandResponse undoCommand(ISchemaInfo info) throws InvalidCommandOperationException {
 		if (!undoable) throw new InvalidCommandOperationException("Parameter event is not undoable.");
 		
-		return null;
+		IParameter param = fetchParameter(info);
+		
+		if (param == null) return new CommandResponse(new SchemaError(EErrorTypes.PARAMETER_NOT_FOUND,
+			"No such wire, component or parameter."));
+		
+		// check constraint
+		IParameterConstraint constraint = param.getConstraint();
+		EConstraintExplanation cttresult = constraint.getExplanation(oldval);
+		
+		if (cttresult != EConstraintExplanation.ALLOWED) {
+			CommandResponse response = new CommandResponse(
+					new SchemaError(EErrorTypes.PARAMETER_CONSTRAINT_BAN, 
+							"Parameter value not allowed by constraint."));
+			response.getInfoMap().set(KEY_CONSTRAINT_EXPLANATION, cttresult);
+			return response;
+		}
+		
+		// change value
+		param.setValue(oldval);
+		
+		// fire event if it exists
+		IParameterEvent pe = param.getParameterEvent();
+		List<ChangeTuple> changes = null;
+		if (pe != null) {
+			changes = pe.getChanges();
+			SchemaError error = fireEvent(info, param, pe, val);
+			if (error != null) {
+				// return old value if something went wrong
+				param.setValue(val);
+				return new CommandResponse(error);
+			}
+		}
+		
+		if (changes == null)
+			return new CommandResponse(new ChangeTuple(EPropertyChange.COMPONENT_PROPERTY_CHANGE));
+		else {
+			changes.add(new ChangeTuple(EPropertyChange.COMPONENT_PROPERTY_CHANGE));
+			return new CommandResponse(changes);
+		}
 	}
 	
-	private SchemaError fireEvent(ISchemaInfo info, IParameter param, IParameterEvent pe) {
+	private SchemaError fireEvent(ISchemaInfo info, IParameter param, IParameterEvent pe,
+			Object oldvalue) {
 		ISchemaComponent component = null;
 		ISchemaWire wire = null;
 		
@@ -203,7 +242,7 @@ public class SetParameterCommand implements ICommand {
 			break;
 		}
 		
-		if (!pe.performChange(oldval, param, info, wire, component))
+		if (!pe.performChange(oldvalue, param, info, wire, component))
 			return new SchemaError(EErrorTypes.EVENT_NOT_COMPLETED,
 					"Parameter value could not be changed.");
 		

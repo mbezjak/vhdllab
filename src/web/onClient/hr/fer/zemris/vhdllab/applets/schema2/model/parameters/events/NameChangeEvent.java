@@ -10,8 +10,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.util.ArrayList;
@@ -72,13 +75,44 @@ public class NameChangeEvent implements IParameterEvent {
 	private boolean performWireNameChange(Caseless oldname, ISchemaInfo info,
 			ISchemaWire wire, IParameter parameter)
 	{
-		return false;
+		ISchemaWireCollection wires = info.getWires();
+		
+		if (wires.containsName(wire.getName())) return false;
+		
+		try {
+			wires.removeWire(oldname);
+		} catch (UnknownKeyException e) {
+			return false;
+		}
+		
+		try {
+			wires.addWire(wire);
+		} catch (DuplicateKeyException e) {
+			throw new IllegalStateException("Wire could not be placed " +
+					"back to the same location.");
+		} catch (OverlapException e) {
+			throw new IllegalStateException("Wire could not be placed " +
+					"back to the same location.");
+		}
+		
+		// unplug old wire from this one, and plug new one to components
+		Caseless newname = wire.getName();
+		for (PlacedComponent placed : info.getComponents()) {
+			for (SchemaPort sp : placed.comp.getSchemaPorts()) {
+				if (sp.getMapping().equals(oldname)) sp.setMapping(newname);
+			}
+		}
+		
+		return true;
 	}
 
 	private boolean performComponentNameChange(Caseless oldname, ISchemaInfo info,
 			ISchemaComponent cmp, IParameter parameter)
 	{
 		ISchemaComponentCollection components = info.getComponents();
+		
+		if (components.containsName(cmp.getName())) return false;
+		
 		XYLocation loc = components.getComponentLocation(oldname);
 		
 		if (loc == null) return false;
