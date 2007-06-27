@@ -37,6 +37,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
+
+
+
+
+
 public class DefaultSchemaComponent implements ISchemaComponent {
 	
 	private static class Orientation implements IGenericValue {
@@ -72,16 +78,102 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	private class DefaultSchemaComponentVHDLProvider implements IVHDLSegmentProvider {
 
 		public String getInstantiation() {
-			throw new NotImplementedException();
+			StringBuilder sb = new StringBuilder();
+			
+			// bind to helper signals
+			int i = 0;
+			String name = getName().toString();
+			for (PortRelation portrel : portrelations) {
+				Type tp = portrel.port.getType();
+				String signame = "sig_" + name + "_" + i;
+				if (tp.isVector()) {
+					int vecpos = 0;
+					for (SchemaPort related : portrel.relatedTo) {
+						if (related.getMapping() != null) {
+							sb.append(signame).append('(').append(vecpos).append(')');
+							sb.append(" <= ").append(related.getMapping().toString());
+							sb.append(";\n");
+						}
+						vecpos++;
+					}
+					
+				}
+				i++;
+			}
+			
+			
+			// instantiate
+			
+			sb.append(getName()).append(": entity work.").append(getTypeName());
+			
+			// handle generic map
+			boolean first = true;
+			for (IParameter param : parameters) {
+				if (!param.isGeneric()) continue;
+				if (first) {
+					sb.append(" GENERIC MAP(");
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				sb.append(param.getName()).append(" => ").append(param.getValue().toString());
+			}
+			if (!first) sb.append(")");
+			
+			// handle port map
+			if (portrelations.size() > 0) {
+				sb.append(" PORT MAP(");
+				
+				first = true;
+				i = 0;
+				for (PortRelation portrel : portrelations) {
+					if (first) first = false; else sb.append(", ");
+					sb.append(portrel.port.getName()).append(" => ");
+					
+					Type tp = portrel.port.getType();
+					if (tp.isScalar()) {
+						Caseless mappedto = portrel.relatedTo.get(0).getMapping();
+						sb.append((mappedto != null) ? (mappedto) : ("open"));
+					} else {
+						sb.append("sig_" + name + "_" + i);
+					}
+				}
+				i++;
+				
+				sb.append(')');
+			}
+			
+			sb.append(";\n");
+			
+			return sb.toString();
 		}
 
 		public String getSignalDefinitions() {
-			throw new NotImplementedException();
+			StringBuilder sb = new StringBuilder();
+			
+			int i = 0;
+			String name = getName().toString();
+			for (PortRelation portrel : portrelations) {
+				Type tp = portrel.port.getType();
+				if (tp.isVector()) {
+					sb.append("SIGNAL ").append("sig_").append(name).append('_').append(i).append(": std_logic_vector(");
+					if (tp.hasVectorDirectionTO()) {
+						sb.append(tp.getRangeFrom()).append(" TO ").append(tp.getRangeTo());
+					} else {
+						sb.append(tp.getRangeFrom()).append(" DOWNTO ").append(tp.getRangeTo());
+					}
+					sb.append(");\n");
+				}
+				i++;
+			}
+			
+			return sb.toString();
 		}
 		
 	}
 	
 
+	/* static fields */
 	private static final int WIDTH_PER_PORT = 20;
 	private static final int HEIGHT_PER_PORT = 20;
 	private static final int EDGE_OFFSET = 40;
@@ -176,7 +268,10 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				int[] range = new int[2];
 				range[0] = Integer.parseInt(pw.getLowerBound());
 				range[1] = Integer.parseInt(pw.getUpperBound());
-				tp = new DefaultType(PortWrapper.STD_LOGIC_VECTOR, range, toVecDir(pw.getVectorAscension()));
+				
+				String vecdir = toVecDir(pw.getVectorAscension());
+				
+				tp = new DefaultType(PortWrapper.STD_LOGIC_VECTOR, range, vecdir);
 				if (pw.getDirection().equals(PortWrapper.DIRECTION_IN)) dir = Direction.IN;
 				else if (pw.getDirection().equals(PortWrapper.DIRECTION_OUT)) dir = Direction.OUT;
 				else throw new NotImplementedException("Direction '" + pw.getDirection() + "' unknown.");
@@ -253,6 +348,12 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 	}
 	
+	private static void swapTwoElemArr(int[] arr) {
+		int t = arr[0];
+		arr[0] = arr[1];
+		arr[1] = t;
+	}
+	
 	private final int createSchPortsFor(Type tp, PortRelation pr, EOrientation ori, IntList toBeMoved,
 			int stor, int stpos)
 	{
@@ -276,7 +377,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				pr.relatedTo.add(schport);
 			}
 		} else {
-			for (int i = to; i >= from; i--) {
+			for (int i = to; i <= from; i++) {
 				if (ori == EOrientation.NORTH || ori == EOrientation.SOUTH) {
 					schport = new SchemaPort(EDGE_OFFSET + stor * WIDTH_PER_PORT, 0,
 							new Caseless(pr.port.getName() + "_" + i));

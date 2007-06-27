@@ -83,8 +83,8 @@
 			<categoryName>Basic</categoryName>
 			<drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
 			<genericComponent>false</genericComponent>
-			<width>30</width>
-			<height>50</height>
+			<width>40</width>
+			<height>150</height>
 			<parameters>
 				<parameter>
 					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter</paramClassName>
@@ -101,6 +101,14 @@
 				<port>
 					<name>some_port</name>
 					<direction>IN</direction>
+					<type>std_logic_vector</type>
+					<vectorAscension>descend</vectorAscension>
+					<lowerBound>3</lowerBound>
+					<upperBound>0</upperBound>
+				</port>
+				<port>
+					<name>some_out_port</name>
+					<direction>OUT</direction>
 					<type>std_logic</type>
 					<vectorAscension></vectorAscension>
 					<lowerBound></lowerBound>
@@ -111,12 +119,51 @@
 				<schemaPort>
 				 <x>0</x>
 				 <y>30</y>
-				 <name>some_port</name>
+				 <name>some_port_0</name>
 				 <mapping>wire54</mapping>
 				 <portIndex>0</portIndex>
+				</schemaPort>
+				<schemaPort>
+				 <x>0</x>
+				 <y>60</y>
+				 <name>some_port_1</name>
+				 <mapping>wire54</mapping>
+				 <portIndex>0</portIndex>
+				</schemaPort>
+				<schemaPort>
+				 <x>0</x>
+				 <y>90</y>
+				 <name>some_port_2</name>
+				 <mapping>wire54</mapping>
+				 <portIndex>0</portIndex>
+				</schemaPort>
+				<schemaPort>
+				 <x>0</x>
+				 <y>120</y>
+				 <name>some_port_3</name>
+				 <mapping>wire54</mapping>
+				 <portIndex>0</portIndex>
+				</schemaPort>
+				<schemaPort>
+				 <x>40</x>
+				 <y>75</y>
+				 <name>some_out_port</name>
+				 <mapping></mapping>
+				 <portIndex>1</portIndex>
 				</schemaPort>
 			</schemaPortList>
 		</schemaComponent>
 	</components>
 	
 </schemaInfo>
+
+
+
+
+
+
+
+
+
+
+

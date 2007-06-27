@@ -54,7 +54,7 @@ public class SchemaInfo2VHDL {
 		List<Port> ports = circint.getPorts();
 		for (int i = 0; i < ports.size(); i++) {
 			p = ports.get(i);
-			sb.append("\t\t").append(p.getName()).append(":\t").append(p.getDirection());
+			sb.append("\t\t").append(p.getName()).append(": ").append(p.getDirection()).append(' ');
 			pt = p.getType();
 			if (pt.isScalar()) {
 				sb.append(pt.getTypeName());

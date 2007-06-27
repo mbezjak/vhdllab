@@ -1,12 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.ArrayList;
@@ -60,7 +62,12 @@ public class SchemaEntity implements ISchemaEntity {
 	
 
 	public CircuitInterface getCircuitInterface() {
-		throw new NotImplementedException();
+		try {
+			return new DefaultCircuitInterface(((Caseless)(parameters.getParameter(KEY_NAME).getValue())).toString(),
+					new ArrayList<Port>(ports));
+		} catch (ParameterNotFoundException e) {
+			throw new IllegalStateException("No name parameter within entity.", e);
+		}
 	}
 
 	public IParameterCollection getParameters() {

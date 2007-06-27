@@ -15,6 +15,9 @@ import java.util.List;
 /**
  * Sucelje koje opisuje bilo koji sklop (komponentu)
  * na shemi.
+ * Svaki ISchemaComponent za potrebe deserijalizacije
+ * mora imati jedan konstruktor koji kao parametar
+ * prima ComponentWrapper.
  * 
  * @author Axel
  *

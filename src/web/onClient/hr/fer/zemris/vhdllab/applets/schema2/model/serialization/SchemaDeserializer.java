@@ -114,7 +114,7 @@ public class SchemaDeserializer {
 		digester.addCallMethod("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/y", "setYOffset", 1);
 		digester.addCallParam("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/y", 0);
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/name", "stringName");
-		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/mappedto", "stringMapping");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/mapping", "stringMapping");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/portIndex", "portindex");
 		digester.addSetNext("schemaInfo/components/schemaComponent/schemaPortList/schemaPort", "addSchemaPort");
 		

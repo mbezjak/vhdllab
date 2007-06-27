@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.PlugWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
@@ -73,6 +74,9 @@ public class Tester {
 		mpanel.getController().send(expandwire);
 		ICommand connect = new PlugWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port"));
 		mpanel.getController().send(connect);
+		
+		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
+		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));
 	}
 	
 	private static void testDummyWiz() {

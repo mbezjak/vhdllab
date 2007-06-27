@@ -69,11 +69,12 @@ TODO 74) [OPEN]     Opcija brisanja samo segmenta zice
 
 TODO 75) [CLOSED]	Command - crtanje zica, brisanje komponenti, prosirenje zice
 TODO 75b)[OPEN]		Command - micanje
-TODO 76) [OPEN]		parameter eventi - za promjenu imena sklopova, zica, i za promjenu broja portova
-TODO 77) [OPEN]		ulazne komponente
-TODO 78) [OPEN]		Command - za promjenu vrijednosti parametara
+TODO 76) [CLOSED]	parameter eventi - za promjenu imena sklopova, zica...
+TODO 76b)[OPEN]		...i za promjenu broja portova
+TODO 77) [CLOSED]	ulazne komponente
+TODO 78) [CLOSED]	Command - za promjenu vrijednosti parametara
 TODO 79) [OPEN]		user komponente
-TODO 80) [OPEN]		IVHDLSegmentProvider-i - implementirati
+TODO 80) [CLOSED]	IVHDLSegmentProvider-i - implementirati
 TODO 81) [OPEN]		Dodati provjeru promjene CircuitInterfacea i INVALIDATED stanje komponenti
 
 

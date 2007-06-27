@@ -9,7 +9,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
-import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
@@ -27,8 +26,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeseriali
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
 import java.awt.BorderLayout;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -38,8 +35,19 @@ import java.io.StringWriter;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+
+
 public class SchemaMainPanel extends JPanel implements IEditor {
 
+	{
+		try {
+			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	private class ModificationListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
 			modified = true;

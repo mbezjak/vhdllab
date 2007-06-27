@@ -30,16 +30,43 @@ public class PortFactory {
 			return new DefaultPort(portwrap.getName(), dir, tp);
 		} else if (portwrap.getType().equals(PortWrapper.STD_LOGIC_VECTOR)) {
 			Direction dir;
-			int[] range = new int[2];
-			range[0] = Integer.parseInt(portwrap.getLowerBound());
-			range[1] = Integer.parseInt(portwrap.getUpperBound());
-			Type tp = new DefaultType(PortWrapper.STD_LOGIC_VECTOR, range, toVecDir(portwrap.getVectorAscension()));
 			if (portwrap.getDirection().equals(PortWrapper.DIRECTION_IN)) dir = Direction.IN;
 			else if (portwrap.getDirection().equals(PortWrapper.DIRECTION_OUT)) dir = Direction.OUT;
 			else throw new NotImplementedException("Direction '" + portwrap.getDirection() + "' unknown.");
+			
+			int[] range = new int[2];
+			range[0] = Integer.parseInt(portwrap.getLowerBound());
+			range[1] = Integer.parseInt(portwrap.getUpperBound());
+			
+			String vecdir = toVecDir(portwrap.getVectorAscension());
+			
+			Type tp = new DefaultType(PortWrapper.STD_LOGIC_VECTOR, range, vecdir);
 			
 			return new DefaultPort(portwrap.getName(), dir, tp);
 		} else throw new NotImplementedException("Port type '" + portwrap.getType() + "' is unknown.");
 	}
 	
+	private static void swapTwoElemArr(int[] arr) {
+		int t = arr[0];
+		arr[0] = arr[1];
+		arr[1] = t;
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
