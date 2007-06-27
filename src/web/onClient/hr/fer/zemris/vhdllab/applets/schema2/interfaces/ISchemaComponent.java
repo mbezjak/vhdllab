@@ -267,6 +267,10 @@ public interface ISchemaComponent {
 	 * opis komponente.
 	 * 
 	 * @return
+	 * Moze vratiti null ako je komponenta samo
+	 * surogat u smislu da nema svoj vhdl opis,
+	 * vec samo sluzi kao olaksica u modeliranju
+	 * sklopa u schematicu (primjer - ui komponente).
 	 */
 	String getCodeFileName();
 	
