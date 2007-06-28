@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class DummyOR implements ISchemaComponent {
 	public class DummyVHDLProvider implements IVHDLSegmentProvider {
-		public String getInstantiation() {
+		public String getInstantiation(ISchemaInfo info) {
 			StringBuilder sb = new StringBuilder();
 			boolean first = true;
 			
@@ -41,7 +42,7 @@ public class DummyOR implements ISchemaComponent {
 			
 			return sb.toString();
 		}
-		public String getSignalDefinitions() {
+		public String getSignalDefinitions(ISchemaInfo info) {
 			return "signal sig_" + entityName + "_1: std_logic;\n";
 		}
 	}

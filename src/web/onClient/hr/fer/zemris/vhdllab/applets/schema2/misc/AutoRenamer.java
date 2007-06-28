@@ -28,6 +28,21 @@ public class AutoRenamer {
 	}
 	
 	
+	/**
+	 * Ako u procesu generiranja VHDLa neka komponenta
+	 * zeli pomocni signal, treba zvati ovu metodu.
+	 * 
+	 * @param componentName
+	 * @param wirenames
+	 * @param index
+	 * @return
+	 */
+	public static Caseless generateHelpSignalName(Caseless componentName, Set<Caseless> wirenames, int index) {
+		componentName = new Caseless("sig_" + componentName.toString() + "_" + index);
+		return getFreeName(componentName, wirenames);
+	}
+	
+	
 }
 
 

@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.AutoRenamer;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.IntList;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.PortRelation;
@@ -36,6 +38,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 
 
@@ -76,16 +79,15 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 	
 	private class DefaultSchemaComponentVHDLProvider implements IVHDLSegmentProvider {
-
-		public String getInstantiation() {
+		
+		public String getInstantiation(ISchemaInfo info) {
 			StringBuilder sb = new StringBuilder();
 			
 			// bind to helper signals
 			int i = 0;
-			String name = getName().toString();
 			for (PortRelation portrel : portrelations) {
 				Type tp = portrel.port.getType();
-				String signame = "sig_" + name + "_" + i;
+				String signame = signames.get(i);
 				if (tp.isVector()) {
 					int vecpos = 0;
 					for (SchemaPort related : portrel.relatedTo) {
@@ -116,7 +118,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				} else {
 					sb.append(", ");
 				}
-				sb.append(param.getName()).append(" => ").append(param.getValue().toString());
+				sb.append(param.getName()).append(" => ").append(param.getVHDLGenericEntry());
 			}
 			if (!first) sb.append(")");
 			
@@ -135,7 +137,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 						Caseless mappedto = portrel.relatedTo.get(0).getMapping();
 						sb.append((mappedto != null) ? (mappedto) : ("open"));
 					} else {
-						sb.append("sig_" + name + "_" + i);
+						sb.append(signames.get(i));
 					}
 				}
 				i++;
@@ -148,22 +150,27 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			return sb.toString();
 		}
 
-		public String getSignalDefinitions() {
+		public String getSignalDefinitions(ISchemaInfo info) {
+			signames.clear();
+			
 			StringBuilder sb = new StringBuilder();
 			
 			int i = 0;
-			String name = getName().toString();
+			String hlpsigname = null;
+			Set<Caseless> wirenames = info.getWires().getWireNames();
 			for (PortRelation portrel : portrelations) {
 				Type tp = portrel.port.getType();
 				if (tp.isVector()) {
-					sb.append("SIGNAL ").append("sig_").append(name).append('_').append(i).append(": std_logic_vector(");
+					hlpsigname = AutoRenamer.generateHelpSignalName(getName(), wirenames, i).toString();
+					sb.append("SIGNAL ").append(hlpsigname).append(": std_logic_vector(");
 					if (tp.hasVectorDirectionTO()) {
 						sb.append(tp.getRangeFrom()).append(" TO ").append(tp.getRangeTo());
 					} else {
 						sb.append(tp.getRangeFrom()).append(" DOWNTO ").append(tp.getRangeTo());
 					}
 					sb.append(");\n");
-				}
+				} else hlpsigname = null;
+				signames.add(hlpsigname);
 				i++;
 			}
 			
@@ -181,6 +188,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 
 	/* private fields */
+	private List<String> signames = new ArrayList<String>();
 	private Caseless componentName;
 	private String codeFileName;
 	private String categoryName;

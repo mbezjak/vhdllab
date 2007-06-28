@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -79,13 +80,18 @@ public class SchemaInfo2VHDL {
 		
 		IVHDLSegmentProvider provider = null;
 		
-		// pripremiti
+		// pripremiti signale
+		for (ISchemaWire wire : info.getWires()) {
+			sb.append("SIGNAL ").append(wire.getName()).append(": std_logic;\n");
+		}
+		
+		// pripremiti komponente
 		for (Caseless name : info.getComponents().getComponentNames()) {
 			ISchemaComponent comp = info.getComponents().fetchComponent(name);
 			
 			provider = comp.getVHDLSegmentProvider();
 			
-			sb.append(provider.getSignalDefinitions());
+			sb.append(provider.getSignalDefinitions(info));
 			sb.append('\n');
 		}
 		
@@ -97,7 +103,7 @@ public class SchemaInfo2VHDL {
 			
 			provider = comp.getVHDLSegmentProvider();
 			
-			sb.append(provider.getInstantiation());
+			sb.append(provider.getInstantiation(info));
 			sb.append('\n');
 		}
 		
