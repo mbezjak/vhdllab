@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -42,7 +43,8 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	
 	/* ctors */
 
-	
+	public InOutSchemaComponent(ComponentWrapper wrapper) {
+	}
 	
 	
 	
@@ -65,7 +67,6 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 
 	public String getCategoryName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -75,13 +76,11 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 
 	public String getCodeFileName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public EOrientation getComponentOrientation() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	public IComponentDrawer getDrawer() {
@@ -160,8 +159,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 
 	public void setComponentOrientation(EOrientation orient) {
-		// TODO Auto-generated method stub
-		
+		throw new NotImplementedException();
 	}
 
 	public void setName(Caseless name) {

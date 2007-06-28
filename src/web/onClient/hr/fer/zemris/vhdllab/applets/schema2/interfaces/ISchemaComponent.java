@@ -15,9 +15,9 @@ import java.util.List;
 /**
  * Sucelje koje opisuje bilo koji sklop (komponentu)
  * na shemi.
- * Svaki ISchemaComponent za potrebe deserijalizacije
- * mora imati jedan konstruktor koji kao parametar
- * prima ComponentWrapper.
+ * BITNO: Svaki ISchemaComponent za potrebe deserijalizacije
+ * mora imati jedan konstruktor koji kao jedini parametar
+ * prima objekt tipa ComponentWrapper.
  * 
  * @author Axel
  *
@@ -250,6 +250,8 @@ public interface ISchemaComponent {
 	 * @return
 	 * Vraca ime kategorije u koju
 	 * ce biti smjesten sklop (komponenta).
+	 * Vratit ce null ako komponentu nije moguce
+	 * izravno instancirati (npr. InOutSchemaComponent).
 	 */
 	String getCategoryName();
 	
