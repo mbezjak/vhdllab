@@ -2,39 +2,44 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
-import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.BooleanConstraint;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.DecimalConstraint;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 
 
 
-public class BooleanParameter extends AbstractParameter {
-	private Boolean val;
-	private BooleanConstraint constraint;
+public class DecimalParameter extends AbstractParameter {
+	private Double val;
+	private DecimalConstraint constraint;
 	private boolean generic;
 	private String name;
 	
 	
 	
 	
+	
 
-	public BooleanParameter(boolean isGeneric, String parameterName) {
-		val = new Boolean(false);
-		constraint = new BooleanConstraint();
+	public DecimalParameter(boolean isGeneric, String parameterName) {
+		val = new Double(0);
+		constraint = new DecimalConstraint();
 		name = parameterName;
 		generic = isGeneric;
 	}
 	
-	public BooleanParameter(boolean isGeneric, String parameterName, boolean value) {
-		val = new Boolean(value);
-		constraint = new BooleanConstraint();
+	public DecimalParameter(boolean isGeneric, String parameterName, int value) {
+		val = new Double(value);
+		constraint = new DecimalConstraint();
 		name = parameterName;
 		generic = isGeneric;
 	}
+	
+	
 	
 	
 	
@@ -42,9 +47,16 @@ public class BooleanParameter extends AbstractParameter {
 	
 
 	public IParameter copyCtor() {
-		throw new NotImplementedException();
+		DecimalParameter tp = new DecimalParameter(this.generic, this.name);
+		Set<Object> allowed = this.constraint.getPossibleValues();
+		allowed = (allowed != null) ? (new HashSet<Object>(allowed)) : (null);
+		
+		tp.val = this.val;
+		tp.constraint = new DecimalConstraint(allowed);
+		
+		return tp;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -53,7 +65,7 @@ public class BooleanParameter extends AbstractParameter {
 		if (stringValue == null) return false;
 		
 		try {
-			Boolean.parseBoolean(stringValue);
+			Integer.parseInt(stringValue);
 		} catch (NumberFormatException e) {
 			return false;
 		}
@@ -65,7 +77,7 @@ public class BooleanParameter extends AbstractParameter {
 	}
 
 	public EParamTypes getType() {
-		return EParamTypes.BOOLEAN;
+		return EParamTypes.DECIMAL;
 	}
 
 	public Object getValue() {
@@ -73,11 +85,11 @@ public class BooleanParameter extends AbstractParameter {
 	}
 
 	public Boolean getValueAsBoolean() throws ClassCastException {
-		return val;
+		throw new ClassCastException();
 	}
 
 	public Double getValueAsDouble() throws ClassCastException {
-		throw new ClassCastException();
+		return val;
 	}
 
 	public Integer getValueAsInteger() throws ClassCastException {
@@ -99,7 +111,7 @@ public class BooleanParameter extends AbstractParameter {
 	public void setAsString(String stringValue) throws InvalidParameterValueException {
 		if (stringValue == null) throw new InvalidParameterValueException("Null passed.");
 		
-		Boolean newval = Boolean.parseBoolean(stringValue);
+		Double newval = Double.parseDouble(stringValue);
 		
 		if (!constraint.checkValue(newval)) {
 			throw new InvalidParameterValueException("Correctly parsed, but not allowed by constraint.");
@@ -109,11 +121,13 @@ public class BooleanParameter extends AbstractParameter {
 	}
 
 	public void setValue(Object value) throws InvalidParameterValueException {
-		if (value == null || !(value instanceof Boolean)) throw new InvalidParameterValueException("Non-integer passed.");
+		if (value == null || !(value instanceof Double))
+			throw new InvalidParameterValueException("Non-double passed.");
 		
-		if (!(constraint.checkValue(value))) throw new InvalidParameterValueException("Not allowed by constraint.");
+		if (!(constraint.checkValue(value)))
+			throw new InvalidParameterValueException("Not allowed by constraint.");
 		
-		val = (Boolean)value;
+		val = (Double)value;
 	}
 
 	public String getVHDLGenericEntry() {
@@ -125,7 +139,7 @@ public class BooleanParameter extends AbstractParameter {
 	}
 
 	public String getValueClassName() {
-		return Boolean.class.getName();
+		return Double.class.getName();
 	}
 	
 	

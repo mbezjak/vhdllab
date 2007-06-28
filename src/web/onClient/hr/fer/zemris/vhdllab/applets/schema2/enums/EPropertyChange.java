@@ -43,6 +43,12 @@ public enum EPropertyChange {
 			return "COMPONENT_PROPERTY_CHANGE";
 		}	
 	},
+	PROTOTYPES_CHANGE() {
+		@Override
+		public String toString() {
+			return "PROTOTYPES_CHANGE";
+		}
+	},
 	NO_CHANGE() {
 		@Override
 		public void assignListenerToSupport(PropertyChangeListener listener, PropertyChangeSupport support) {

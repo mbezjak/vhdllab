@@ -1,18 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISerializable;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.GenericConstraint;
-import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.TextConstraint;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**

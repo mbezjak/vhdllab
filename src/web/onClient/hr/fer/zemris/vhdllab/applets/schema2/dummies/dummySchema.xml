@@ -13,7 +13,7 @@
 					<value>MyComponent</value>
 					<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
 					<allowedValues></allowedValues>
-					<eventName></eventName>
+					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>
 				</parameter>
 		</parameters>
 		<portList>
@@ -57,7 +57,7 @@
 					<value>wire54</value>
 					<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
 					<allowedValues></allowedValues>
-					<eventName></eventName>
+					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>
 				</parameter>
 				<parameter>
 					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.IntegerParameter</paramClassName>
@@ -94,7 +94,67 @@
 					<value>SomeCompi</value>
 					<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
 					<allowedValues></allowedValues>
-					<eventName></eventName>
+					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>					
+				</parameter>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>OBJECT</paramType>
+					<name>MojFloatic</name>
+					<value>3.14f</value>
+					<valueType>hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyGenericValue</valueType>
+					<allowedValues></allowedValues>
+					<eventName></eventName>					
+				</parameter>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>OBJECT</paramType>
+					<name>MojOgraniceniFloatic</name>
+					<value>2.69f</value>
+					<valueType>hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyGenericValue</valueType>
+					<allowedValues>1.41f#2.69f#3.14f</allowedValues>
+					<eventName></eventName>					
+				</parameter>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.DecimalParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>DECIMAL</paramType>
+					<name>DecimalniBroj</name>
+					<value>15.5</value>
+					<valueType>java.lang.Double</valueType>
+					<allowedValues></allowedValues>
+					<eventName></eventName>					
+				</parameter>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.BooleanParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>BOOLEAN</paramType>
+					<name>VarijablaIstinitosti</name>
+					<value>true</value>
+					<valueType>java.lang.Boolean</valueType>
+					<allowedValues></allowedValues>
+					<eventName></eventName>					
+				</parameter>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.TextParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>TEXT</paramType>
+					<name>OpisSklopa</name>
+					<value>Ovo je pokazni sklop s mnogo raznih tipova parametara.</value>
+					<valueType>java.lang.String</valueType>
+					<allowedValues></allowedValues>
+					<eventName></eventName>					
+				</parameter>
+				<parameter>
+					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.TimeParameter</paramClassName>
+					<generic>false</generic>
+					<paramType>TIME</paramType>
+					<name>Kasnjenje</name>
+					<value>15 ns</value>
+					<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Time</valueType>
+					<allowedValues></allowedValues>
+					<eventName></eventName>					
 				</parameter>
 			</parameters>
 			<portList>

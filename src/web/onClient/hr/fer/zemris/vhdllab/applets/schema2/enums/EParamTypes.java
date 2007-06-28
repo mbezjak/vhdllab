@@ -25,3 +25,22 @@ package hr.fer.zemris.vhdllab.applets.schema2.enums;
 public enum EParamTypes {
 	CASELESS, BOOLEAN, INTEGER, DECIMAL, TEXT, TIME, OBJECT
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
