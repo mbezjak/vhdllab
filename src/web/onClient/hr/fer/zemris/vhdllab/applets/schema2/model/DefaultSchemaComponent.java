@@ -110,7 +110,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			
 			// handle generic map
 			boolean first = true;
-			for (IParameter param : parameters) {
+			if (isGeneric()) for (IParameter param : parameters) {
 				if (!param.isGeneric()) continue;
 				if (first) {
 					sb.append(" GENERIC MAP(");
