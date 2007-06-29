@@ -76,6 +76,9 @@ TODO 78) [CLOSED]	Command - za promjenu vrijednosti parametara
 TODO 79) [OPEN]		user komponente
 TODO 80) [CLOSED]	IVHDLSegmentProvider-i - implementirati
 TODO 81) [OPEN]		Dodati provjeru promjene CircuitInterfacea i INVALIDATED stanje komponenti
+TODO 82) [OPEN]		Skup svih zauzetih identifikatora
+TODO 83) [OPEN]		Zice koje se pretvaraju u std_logic_vector umjesto std_logic
+TODO 84) [OPEN]		Ispis imena sklopa i portova kod defaultnog drawer-a
 
 
 Miro Bezjak
