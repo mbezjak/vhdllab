@@ -57,12 +57,10 @@ public class Tester {
 		
 		frame.setLayout(new BorderLayout());
 		frame.add(mpanel, BorderLayout.CENTER);
-		
 		frame.setVisible(true);
 		frame.setPreferredSize(new Dimension(550, 400));
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
-		
 		
 		ICommand addwire = new AddWireCommand(new Caseless("MyWire"), 50, 350, 450, 350);
 		mpanel.getController().send(addwire);

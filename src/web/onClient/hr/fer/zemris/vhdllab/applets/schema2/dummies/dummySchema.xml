@@ -16,16 +16,6 @@
 					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>
 				</parameter>
 		</parameters>
-		<portList>
-			<port>
-					<name>mainport</name>
-					<direction>OUT</direction>
-					<type>std_logic</type>
-					<vectorAscension></vectorAscension>
-					<lowerBound></lowerBound>
-					<upperBound></upperBound>
-				</port>
-		</portList>
 	</entity>
 
 	<wires>

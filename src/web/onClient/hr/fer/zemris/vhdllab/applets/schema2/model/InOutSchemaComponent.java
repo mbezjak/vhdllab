@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 import java.util.Iterator;
 import java.util.List;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
@@ -165,6 +166,10 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	public void setName(Caseless name) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public EComponentType getComponentType() {
+		return EComponentType.IN_OUT;
 	}
 	
 }

@@ -87,14 +87,14 @@ public class SchemaSerializer {
 		appendLine(writer);
 		appendLine(writer);
 		
-		writer.append("<portList>");
-		appendLine(writer);
-		for (Port port : entity.getPorts()) {
-			serializePort(writer, port);
-		}
-		writer.append("</portList>");
-		appendLine(writer);
-		appendLine(writer);
+//		writer.append("<portList>");
+//		appendLine(writer);
+//		for (Port port : entity.getPorts()) {
+//			serializePort(writer, port);
+//		}
+//		writer.append("</portList>");
+//		appendLine(writer);
+//		appendLine(writer);
 		
 		writer.append("</entity>");
 		appendLine(writer);

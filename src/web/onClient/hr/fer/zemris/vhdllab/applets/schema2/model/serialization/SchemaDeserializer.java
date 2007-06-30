@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaWire;
 
-import java.io.InputStream;
 import java.io.Reader;
 
 import org.apache.commons.digester.Digester;
@@ -135,15 +134,15 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/entity/parameters/parameter/eventName", "eventName");
 		digester.addSetNext("schemaInfo/entity/parameters/parameter", "addParameterWrapper");
 		
-		digester.addObjectCreate("schemaInfo/entity/portList/port", PortWrapper.class);
-		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/name", "name");
-		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/direction", "direction");
-		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/type", "type");
-		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/vectorAscension", "vectorAscension");
-		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/lowerBound", "lowerBound");
-		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/upperBound", "upperBound");
-		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/relations", "relations");
-		digester.addSetNext("schemaInfo/entity/portList/port", "addPortWrapper");
+//		digester.addObjectCreate("schemaInfo/entity/portList/port", PortWrapper.class);
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/name", "name");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/direction", "direction");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/type", "type");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/vectorAscension", "vectorAscension");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/lowerBound", "lowerBound");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/upperBound", "upperBound");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/relations", "relations");
+//		digester.addSetNext("schemaInfo/entity/portList/port", "addPortWrapper");
 		
 		digester.addSetNext("schemaInfo/entity", "setEntityFromWrapper");
 		

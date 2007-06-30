@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
@@ -635,8 +636,12 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	public boolean isGeneric() {
 		return generic;
 	}
-	
 
+	public EComponentType getComponentType() {
+		return EComponentType.PREDEFINED;
+	}
+
+	
 	
 
 }

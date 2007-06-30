@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
@@ -65,6 +66,13 @@ public class DummyOR implements ISchemaComponent {
 		create_dor(name, numOfPorts);
 	}
 	
+	
+	
+	public EComponentType getComponentType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private void create_dor(String name, int numOfPorts) {
 		// set ports
 		entityName = new Caseless(name);

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
@@ -135,11 +136,22 @@ public interface ISchemaComponent {
 	
 	/**
 	 * Dohvaca orijentaciju komponente.
+	 * Informacija o ovome je tipicno pohranjena
+	 * unutar kolekcije parametara.
 	 * 
 	 * @return
 	 */
 	EOrientation getComponentOrientation();
 	
+	/**
+	 * Vraca tip komponente.
+	 * Najvise se koristi za odredivanje
+	 * da li komponenta modelira ulaz i izlaz,
+	 * ili je komponenta standardna.
+	 * 
+	 * @return
+	 */
+	EComponentType getComponentType();
 	
 	/**
 	 * Postavlja orijentaciju komponente.

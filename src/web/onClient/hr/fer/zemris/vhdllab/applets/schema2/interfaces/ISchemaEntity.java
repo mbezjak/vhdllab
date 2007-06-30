@@ -47,13 +47,6 @@ public interface ISchemaEntity {
 	void setParameters(IParameterCollection parameters);
 	
 	/**
-	 * Postavlja portove za sucelje modelirane komponente.
-	 * 
-	 * @param ports
-	 */
-	public void setPorts(List<Port> ports);
-	
-	/**
 	 * Dohvaca portove sucelja modelirane komponente.
 	 * 
 	 * @return
