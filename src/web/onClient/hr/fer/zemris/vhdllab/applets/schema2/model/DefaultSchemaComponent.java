@@ -7,7 +7,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueExc
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -23,6 +22,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawe
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.Orientation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
@@ -49,23 +49,6 @@ import java.util.Set;
 
 public class DefaultSchemaComponent implements ISchemaComponent {
 	
-	private static class Orientation implements IGenericValue {
-		public EOrientation orientation = EOrientation.NORTH;
-		
-		public Orientation() { }
-		public Orientation(EOrientation ori) { orientation = ori; }
-		
-		public void deserialize(String code) {
-			orientation = EOrientation.parse(code);
-		}
-		public String serialize() {
-			return orientation.serialize();
-		}
-		public IGenericValue copyCtor() {
-			return new Orientation(this.orientation);
-		}
-	}
-	
 	private class PortIterator implements Iterator<Port> {
 		private Iterator<PortRelation> prit = portrelations.iterator();
 		public boolean hasNext() {
@@ -79,7 +62,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 	}
 	
-	private class DefaultSchemaComponentVHDLProvider implements IVHDLSegmentProvider {
+	private class DefaultVHDLSegmentProvider implements IVHDLSegmentProvider {
 		
 		public String getInstantiation(ISchemaInfo info) {
 			StringBuilder sb = new StringBuilder();
@@ -249,9 +232,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	private void initDefaultParameters(String name) {
 		// default parameter - name
-		CaselessParameter textpar =
-			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(name));
-		parameters.addParameter(textpar);
+		CaselessParameter cslpar =
+			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(name)); // TODO: add event
+		parameters.addParameter(cslpar);
 		
 		// default parameter - component orientation
 		GenericParameter<Orientation> orientpar =
@@ -537,14 +520,14 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	public IVHDLSegmentProvider getVHDLSegmentProvider() {
-		return new DefaultSchemaComponentVHDLProvider();
+		return new DefaultVHDLSegmentProvider();
 	}
 
 	public int getWidth() {
 		return width;
 	}
 
-	public int portCount() {
+	public int schemaPortCount() {
 		return schemaports.size();
 	}
 

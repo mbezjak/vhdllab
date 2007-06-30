@@ -238,7 +238,7 @@ public interface ISchemaComponent {
 	 * 
 	 * @return
 	 */
-	int portCount();
+	int schemaPortCount();
 	
 	
 	/**
@@ -262,8 +262,6 @@ public interface ISchemaComponent {
 	 * @return
 	 * Vraca ime kategorije u koju
 	 * ce biti smjesten sklop (komponenta).
-	 * Vratit ce null ako komponentu nije moguce
-	 * izravno instancirati (npr. InOutSchemaComponent).
 	 */
 	String getCategoryName();
 	

@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 import java.awt.Rectangle;
 import java.util.Set;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
@@ -99,6 +100,13 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 */
 	ISchemaComponent fetchComponent(int x, int y);
 	
+	/**
+	 * Dohvaca sve komponente zadanog tipa.
+	 * 
+	 * @param componentType
+	 * @return
+	 */
+	Set<ISchemaComponent> fetchComponents(EComponentType componentType);
 	
 	/**
 	 * Odreduje da li postoji komponenta

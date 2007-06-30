@@ -16,6 +16,9 @@ import java.awt.Graphics2D;
  * dobio (npr. smije promijeniti stanje, ali ga
  * onda mora vratiti u prvotno).
  * 
+ * Svaka implementacija Drawer-a MORA imati jedan
+ * konstruktor koji prima ISchemaComponent.
+ * 
  * @author brijest
  *
  */

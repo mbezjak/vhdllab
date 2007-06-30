@@ -154,7 +154,7 @@ public class DummyOR implements ISchemaComponent {
 		return null;
 	}
 
-	public int portCount() {
+	public int schemaPortCount() {
 		return ports.size();
 	}
 	public Caseless getTypeName() {

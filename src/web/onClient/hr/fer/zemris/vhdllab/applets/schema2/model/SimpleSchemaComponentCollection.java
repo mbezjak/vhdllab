@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
@@ -11,6 +12,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -105,8 +107,20 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		if (placedcomp == null) return null;
 		return placedcomp.comp;
 	}
+
+	public Set<ISchemaComponent> fetchComponents(EComponentType componentType) {
+		Set<ISchemaComponent> comps = new HashSet<ISchemaComponent>();
+		
+		PlacedComponent plc;
+		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
+			plc = entry.getValue();
+			if (plc.comp.getComponentType() == componentType) comps.add(plc.comp);
+		}
+		
+		return comps;
+	}
 	
-	
+
 	public XYLocation getComponentLocation(Caseless componentName) {
 		PlacedComponent cpw = components.get(componentName);
 		

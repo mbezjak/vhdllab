@@ -29,7 +29,8 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 	
 	
 	/* static fields */
-	public static final int PORT_SIZE = 5;
+	public static final int PORT_SIZE = 4;
+	public static final int PIN_LENGTH = 15;
 	
 	
 	/* private fields */
@@ -48,7 +49,7 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 		int h = comp_to_draw.getHeight();
 		XYLocation offset;
 		
-		// iscrtaj portove, za rubne portove nacrtaj i zice do tih portova
+		// draw ports and wires to those ports
 		for (SchemaPort port : comp_to_draw.getSchemaPorts()) {
 			offset = port.getOffset();
 			if (offset.x == 0 || offset.x == w) {
@@ -57,15 +58,19 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			if (offset.y == 0 || offset.y == h) {
 				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
 			}
+			Color c = graphics.getColor();
+			graphics.setColor(Color.WHITE);
 			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
+			graphics.setColor(c);
+			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
 		}
 		
-		// iscrtaj pravokutnik
+		// draw a rectangle
 		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);
-		graphics.fillRect(w / 10, h / 10, w * 8 / 10, h * 8 / 10);
+		graphics.fillRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
 		graphics.setColor(c);
-		graphics.drawRect(w / 10, h / 10, w * 8 / 10, h * 8 / 10);
+		graphics.drawRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
 	}
 	
 }
