@@ -115,7 +115,7 @@ public class DeleteWireCommand implements ICommand {
 			spit = placed.comp.schemaPortIterator();
 			while (spit.hasNext()) {
 				sp = spit.next();
-				if (sp.getMapping().equals(name)) {
+				if (name.equals(sp.getMapping())) {
 					cachedconnections.add(new ConnectionInfo(placed.comp.getName(), sp.getName()));
 					sp.setMapping(null);
 				}
