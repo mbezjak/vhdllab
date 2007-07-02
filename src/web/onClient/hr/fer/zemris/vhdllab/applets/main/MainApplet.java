@@ -1474,7 +1474,7 @@ public class MainApplet
 			if(content == null) return;
 			// FIXME ovo treba popravit. naime glupo je da getInitalFileContent prima projectName koji n
 			// njemu nist ne znaci (ili mozda znaci) i onda tocno to mora vratit. mozda je bolje da 
-			// FileContent sadrzi samo file name i content. tj ne mijenjat FileConent nego napravit novi objekt!
+			// FileContent sadrzi samo file name i content. tj ne mijenjat FileContent nego napravit novi objekt!
 			// BTW trebalo bi FileContent napravit immutabilnim!
 			String returnedProjectName = content.getProjectName();
 			if(!ModelUtil.projectNamesAreEqual(projectName, returnedProjectName)) {
