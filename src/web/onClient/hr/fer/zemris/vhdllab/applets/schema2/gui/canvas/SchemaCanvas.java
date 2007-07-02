@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownComponentPrototypeException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
@@ -9,17 +10,21 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaWireCollection;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteComponentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -31,9 +36,11 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISchemaCanvas {
 
@@ -75,10 +82,39 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	private ECanvasState state;
 	
 	/**
-	 * broj klikova za dodavanje zice.
+	 * komponenta koja se iscrtava kao komponenta za dodati
 	 */
-	private int clickNumber=0;
+	private ISchemaComponent addComponentComponent = null;
 
+	/**
+	 * Lokacija komponente za dodati
+	 */
+	private int addComponentX = 0, addComponentY = 0;
+	
+	/**
+	 * Sadržani svi podatci o zici za dodati...
+	 */
+	private WirePreLocator preLoc = null;
+	
+	/**
+	 * trenutni critical point nad kojim je mis
+	 */
+	private CriticalPoint point = null;
+	
+	/**
+	 * akcija za animaciju critical point-a
+	 */
+	private Decrementer decrementer = null;
+	
+	/**
+	 * critical point sa kojeg je zica krenula
+	 */
+	private CriticalPoint wireBeginning = null;
+	
+	/**
+	 * critical point gdije je zica zavrsila
+	 */
+	private CriticalPoint wireEnding = null;
 	
 	//constrictors
 	public SchemaCanvas(ISchemaCore core) {
@@ -103,7 +139,10 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 
 	public SchemaCanvas() {
-		state = ECanvasState.ADD_COMPONENT_STATE;	//init state
+		state = ECanvasState.MOVE_STATE;	//init state
+		decrementer = new Decrementer(20);
+		Timer tim = new Timer(70,decrementer);
+		tim.start();
 		this.addMouseListener(new Mouse1());
 		this.addMouseMotionListener(new Mose2());
 		this.setOpaque(true);
@@ -128,8 +167,8 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					img.getWidth()!=this.getWidth()-in.left-in.right){
 				img=new BufferedImage(this.getWidth()-in.left-in.right,this.getHeight()-in.left-in.right
 						, BufferedImage.TYPE_3BYTE_BGR);
-				drawComponents();
 			}
+			drawComponents();
 			g.drawImage(img, in.left, in.right, img.getWidth(), img.getHeight(), null);
 		}
 	}
@@ -149,7 +188,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		components = controller.getSchemaInfo().getComponents();
 		wires = controller.getSchemaInfo().getWires(); 
 		
-		//Color prevColor = g.getColor();
 		g.setColor(Color.WHITE);
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
 		g.setColor(Color.BLACK);
@@ -168,7 +206,14 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			g.translate(componentLocation.x, componentLocation.y);
 			comp.getDrawer().draw(g);
 			g.translate(-componentLocation.x, -componentLocation.y);
+			
+			String text = name.toString();
 			Rectangle rect = components.getComponentBounds(name);
+			FontMetrics fm = g.getFontMetrics();
+			int tx=rect.x+rect.width/2-fm.stringWidth(text)/2;
+			int ty=rect.y;
+			g.drawString(text,tx,ty);
+
 			if(rect.x + rect.width + 10 > sizeX)sizeX =rect.x + rect.width + 10;
 			if(rect.y + rect.height + 10 > sizeY)sizeY =rect.y + rect.height + 10;
 		}
@@ -182,13 +227,29 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			if(rect.y + rect.height + 10 > sizeY)sizeY =rect.y + rect.height + 10;
 		}
 		
-		/*TODO:problem, kako dohvatiti poziciju komponente? treba za resize!!!
-		 * kako iteriram kroz zice? fali mi getWireNames!!!! RIJESENO
-		 * kako se registriram na listener
-		 * dali postoje default draweri?
-		 * dogovoriti potrebno sucelje i ostatak GUI-a kako ce biti izveden, tko ce ga raditi
-		 * 		i kako ce izgledati.
-		 */
+		if(addComponentComponent!= null){
+			Color temp = g.getColor();
+			g.setColor(Color.RED);
+			g.translate(addComponentX, addComponentY);
+			addComponentComponent.getDrawer().draw(g);
+			g.translate(-addComponentX, -addComponentY);
+			g.setColor(temp);
+		}
+		
+		if(preLoc != null){
+			Color temp = g.getColor();
+			g.setColor(Color.CYAN);
+			preLoc.draw(g);
+			g.setColor(temp);			
+		}
+		
+		if(point!=null){
+			point.draw(g, decrementer.getIznos());
+		}
+		
+		if(state.equals(ECanvasState.MOVE_STATE) && localController.getSelectedComponent()!=null){
+			drawSelection(localController.getSelectedComponent(),g);
+		}
 		
 		setCanvasSize(sizeX,sizeY);
 		
@@ -197,6 +258,12 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	}
 
 	
+	private void drawSelection(Caseless selectedComponent, Graphics2D g) {
+		Rectangle rect = components.getComponentBounds(selectedComponent);
+		g.setColor(Color.RED);
+		g.drawArc(rect.x-10, rect.y-10, rect.width+20, rect.height+20, 0, 360);
+	}
+
 	private void setCanvasSize(int sizeX, int sizeY) {
 		Insets in = this.getInsets();
 		this.setPreferredSize(new Dimension(sizeX+in.left+in.right, sizeY+in.top+in.bottom));
@@ -223,11 +290,26 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION)){
 			System.out.println("Canvas registered: localControler.PROPERTY_CHANGE_SELECTION");
 		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)){
+			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			addComponentComponent = null;
+			preLoc = null;
+			point = null;
+			addComponentX = 0;
+			addComponentY = 0;
 			ILocalGuiController tempCont = (CanvasToolbarLocalGUIController) evt.getSource();
 			state = tempCont.getState();
-			clickNumber = 0;
+			if(state.equals(ECanvasState.ADD_COMPONENT_STATE)){
+				this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				try {
+					addComponentComponent = controller.getSchemaInfo().getPrototyper().clonePrototype(tempCont.getComponentToAdd(), new HashSet<Caseless>());
+				} catch (UnknownComponentPrototypeException e) {
+					System.out.println("Canvas Property change | illegal action on component initialization.");
+					e.printStackTrace();
+				}
+			}
 			System.out.println("Canvas registered:" + tempCont);
 		}
+		repaint();
 	}
 
 	/* (non-Javadoc)
@@ -249,9 +331,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	//#############NESTED CLASSES##############
 	private class Mouse1 implements MouseListener{
 		
-		private int x0 = 0;
-		private int y0 = 0;;
-		
 		public void mouseClicked(MouseEvent e) {
 			if(e.getButton()==MouseEvent.BUTTON1){
 				if(state.equals(ECanvasState.ADD_COMPONENT_STATE)){
@@ -260,23 +339,19 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					ICommandResponse response = controller.send(instantiate);
 					System.out.println ("canvas report| component instantiate succesful: "+response.isSuccessful());
 				}
-				else if(state.equals(ECanvasState.ADD_WIRE_STATE)){
-					if(clickNumber == 0){
-						clickNumber++;
-						x0 = e.getX();
-						y0 = e.getY();
-					}else{
-						clickNumber = 0;
-						instantiateWire(x0,y0,e.getX(),e.getY());
-					}
-				}
 				else if(state.equals(ECanvasState.DELETE_STATE)){
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY());
 					if(comp != null){
 						ICommand instantiate = new DeleteComponentCommand(comp.getName());
 						ICommandResponse response = controller.send(instantiate);
 						System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
-
+					}else{
+						ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
+						if(wire != null){
+							ICommand instantiate = new DeleteWireCommand(wire.getName());
+							ICommandResponse response = controller.send(instantiate);
+							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+						}
 					}
 				}
 				else if(state.equals(ECanvasState.MOVE_STATE)){
@@ -297,40 +372,71 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 		public void mouseExited(MouseEvent e) {}
 
-		public void mousePressed(MouseEvent e) {}
+		public void mousePressed(MouseEvent e) {
+			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&e.getButton()==MouseEvent.BUTTON1){
+				wireBeginning = getCriticalPoint(e.getX(),e.getY());
+				int x = e.getX();
+				int y = e.getY();
+				if(wireBeginning!=null){
+					x=wireBeginning.getX();
+					y=wireBeginning.getY();
+				}
+				preLoc = new WirePreLocator(x,y,x,y);
+			}
+		}
 
-		public void mouseReleased(MouseEvent e) {}
-		
+		public void mouseReleased(MouseEvent e) {
+			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&e.getButton()==MouseEvent.BUTTON1){
+				wireEnding = getCriticalPoint(e.getX(),e.getY());
+				int x = e.getX();
+				int y = e.getY();
+				if(wireEnding!=null){
+					x=wireEnding.getX();
+					y=wireEnding.getY();
+				}
+				preLoc.setX2(x);
+				preLoc.setY2(y);
+				if(preLoc.isWireInstance()){
+					preLoc.instantiateWire(controller, wireBeginning, wireEnding);
+				}
+				preLoc = null;
+				repaint();
+			}
+		}
+
 	}
 	
 	private class Mose2 implements MouseMotionListener{
 
 		public void mouseDragged(MouseEvent e) {
-			// TODO Auto-generated method stub ima lažnu funkcionalnost!!!
+			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&preLoc!=null){
+				preLoc.setX2(e.getX());
+				preLoc.setY2(e.getY());
+				
+				if(state.equals(ECanvasState.ADD_WIRE_STATE)){
+					point = getCriticalPoint(e.getX(), e.getY());
+				}
+			}
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			// TODO Auto-generated method stub
+			
+			if(state.equals(ECanvasState.ADD_COMPONENT_STATE)){
+				int x = e.getX();
+				int y = e.getY();
+				if(x > 0 && y > 0 && x < img.getWidth() && y < img.getHeight()) {
+					addComponentX = x;
+					addComponentY = y;
+					repaint();
+				}
+			}
+			
+			if(state.equals(ECanvasState.ADD_WIRE_STATE)){
+				point = getCriticalPoint(e.getX(), e.getY());
+			}
 			
 		}
 		
-	}
-
-	private void instantiateWire(int x1, int y1, int x2, int y2) {
-		if (x1 != x2 && y1 != y2) {
-			ICommand instantiate = new AddWireCommand(createName(x1,y1,x1,y2),x1,y1,x1,y2);
-			ICommandResponse response = controller.send(instantiate);
-			System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
-			
-			instantiate = new AddWireCommand(createName(x1, y2, x2, y2),x1,y2,x2,y2);
-			response = controller.send(instantiate);
-			System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
-		}
-		else{
-			ICommand instantiate = new AddWireCommand(createName(x1, y1, x2, y2),x1,y1,x2,y2);
-			ICommandResponse response = controller.send(instantiate);
-			System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
-		}
 	}
 
 	private void dummyStateChanger() {
@@ -344,10 +450,28 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			localController.setState(ECanvasState.ADD_COMPONENT_STATE);
 	}
 
-	private Caseless createName(int x1, int y1, int x2, int y2) {
-		StringBuilder build = new StringBuilder("WIRE");
-		build.append(x1).append("-").append(y1).append("-")
-			.append(x2).append("-").append("y2");
-		return new Caseless(build.toString());
+	public CriticalPoint getCriticalPoint(int x, int y) {
+		CriticalPoint point = null;
+		ISchemaComponent comp = components.fetchComponent(x,y);
+		if(comp!=null){
+			Rectangle rect = components.getComponentBounds(comp.getName());
+			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, 5);
+			if(port != null){
+				point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
+						CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
+				decrementer.reset();
+			}else{
+				point = null;
+			}
+		}else{
+			ISchemaWire wire = wires.fetchWire(x, y, 10);
+			if(wire != null){
+				point = new CriticalPoint(wire, x, y);
+			}else{
+				return null;
+			}
+		}
+		return point;
 	}
+
 }

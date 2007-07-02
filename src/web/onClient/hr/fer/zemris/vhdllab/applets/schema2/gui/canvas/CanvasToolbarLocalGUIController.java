@@ -20,6 +20,7 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	 * Bilo koja promjena
 	 */
 	public static final String PROPERTY_CHANGE_COMPONENT_TO_ADD = "ChangeComponentToAdd";
+	
 	/**
 	 * Promjena oznacene komponente (ComponentPropertyToolbar)
 	 */
@@ -32,7 +33,7 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	
 	private PropertyChangeSupport support = null;
 
-	private ECanvasState state = ECanvasState.ADD_COMPONENT_STATE;
+	private ECanvasState state = ECanvasState.MOVE_STATE;
 	private Caseless componentToAdd = new Caseless("AND_gate");
 	private Caseless selectedComponent = null;
 
