@@ -84,13 +84,13 @@ public class LocalController implements ISchemaController {
 		support.removePropertyChangeListener(listener);
 	}
 	
-	public void handleChanges(List<ChangeTuple> changes) {
-		if (changes != null) {
-			for (ChangeTuple change : changes) {
-				change.changetype.firePropertyChanges(support, change.oldval, change.oldval);
-			}
-		}
-	}
+//	public void handleChanges(List<ChangeTuple> changes) {
+//		if (changes != null) {
+//			for (ChangeTuple change : changes) {
+//				change.changetype.firePropertyChanges(support, change.oldval, change.oldval);
+//			}
+//		}
+//	}
 
 	public ISchemaInfo getSchemaInfo() {
 		return core.getSchemaInfo();
@@ -113,14 +113,15 @@ public class LocalController implements ISchemaController {
 	}
 	
 	public IQueryResult send(IQuery query) {
-		IQueryResult queryresult = querycache.get(query);
+		boolean iscacheable = query.isCacheable();
+		IQueryResult queryresult = (iscacheable) ? (querycache.get(query)) : (null);
 		
 		if (queryresult != null) return queryresult;
 		
 		queryresult = query.performQuery(core.getSchemaInfo());
 
 		// cache query if successful
-		if (queryresult.isSuccessful()) {
+		if (queryresult.isSuccessful() && iscacheable) {
 			querycache.put(query, queryresult);
 			
 			EPropertyChange propdep = query.getPropertyDependency();
