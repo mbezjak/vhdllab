@@ -49,6 +49,16 @@ public interface ISchemaCore {
 	 */
 	void reset();
 	
+	/**
+	 * Iz navedenog stringa deserijalizira skup
+	 * prototipova.
+	 * Odredene implementacije pritom smiju
+	 * dodati i svoje vlastite komponente u skup
+	 * prototipova.
+	 * 
+	 * @param serializedPrototypes
+	 */
+	void initPrototypes(String serializedPrototypes);
 	
 	
 	

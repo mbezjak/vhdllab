@@ -30,6 +30,18 @@ public interface ISchemaController {
 	ICommandResponse send(ICommand command);
 	
 	/**
+	 * Obavlja upit nad modelom i cacheira upit ako
+	 * je to moguce. Ako je potpuno isti upit vec
+	 * obavljen, a u meduvremenu nije bilo promjena
+	 * nad modelom, vraca rezultate prethodno izvedenog
+	 * i cacheiranog upita.
+	 * 
+	 * @param query
+	 * @return
+	 */
+	IQueryResult send(IQuery query);
+	
+	/**
 	 * Registrira core na controller. Ako se core ne registrira
 	 * na controller, zahtjevi od view-ova nece biti proslijedeni
 	 * nikome.
@@ -137,6 +149,11 @@ public interface ISchemaController {
 	 *
 	 */
 	void clearCommandCache();
+	
+	/**
+	 * Brise cacheirane upite.
+	 */
+	void clearQueryCache();
 	
 	
 }

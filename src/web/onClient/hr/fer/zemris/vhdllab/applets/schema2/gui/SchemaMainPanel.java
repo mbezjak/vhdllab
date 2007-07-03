@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedConf;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -10,7 +7,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
@@ -19,7 +15,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.Compon
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
-import hr.fer.zemris.vhdllab.applets.schema2.model.DefaultSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.model.LocalController;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
@@ -124,25 +119,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		String predefined;
 
 		try {
-			predefined = projectContainer
-					.getPredefinedFileContent(PREDEFINED_FILE_NAME);
+			predefined = projectContainer.getPredefinedFileContent(PREDEFINED_FILE_NAME);
 		} catch (UniformAppletException e) {
 			throw new SchemaException(
 					"Could not open predefined component file.", e);
 		}
-
-		PredefinedComponentsParser predefparser = new PredefinedComponentsParser(
-				predefined);
-		PredefinedConf predefconf = predefparser.getConfiguration();
-
-		for (PredefinedComponent pc : predefconf.getComponents()) {
-			try {
-				core.getSchemaInfo().getPrototyper().addPrototype(
-						new DefaultSchemaComponent(pc));
-			} catch (DuplicateKeyException e) {
-				throw new SchemaException("Duplicate component.", e);
-			}
-		}
+		
+		core.initPrototypes(predefined);
 	}
 
 	private void initGUI() {

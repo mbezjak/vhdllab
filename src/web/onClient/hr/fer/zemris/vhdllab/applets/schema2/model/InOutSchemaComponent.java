@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueExc
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -107,6 +108,22 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		}
 		public String getSignalDefinitions(ISchemaInfo info) {
 			return "";
+		}
+	}
+	
+	public static class ParamPort implements IGenericValue {
+		private DefaultPort port;
+		public IGenericValue copyCtor() {
+			// TODO Auto-generated method stub
+			throw new NotImplementedException();
+		}
+		public void deserialize(String code) {
+			// TODO Auto-generated method stub
+			throw new NotImplementedException();
+		}
+		public String serialize() {
+			// TODO Auto-generated method stub
+			throw new NotImplementedException();
 		}
 	}
 	
@@ -223,6 +240,8 @@ public class InOutSchemaComponent implements ISchemaComponent {
 			new GenericParameter<Orientation>(ISchemaComponent.KEY_ORIENTATION, false,
 					new Orientation());
 		parameters.addParameter(orientpar);
+		
+		// default parameter - component port
 	}
 	
 	private void initDrawer(String drawerName) {

@@ -4,6 +4,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.CommandExecutorException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQuery;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
@@ -11,8 +13,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 
@@ -31,6 +36,8 @@ public class LocalController implements ISchemaController {
 	private ISchemaCore core;
 	private List<ICommand> undolist;
 	private List<ICommand> redolist;
+	private Map<IQuery, IQueryResult> querycache;
+	private Map<EPropertyChange, List<IQuery>> queryindex;
 	
 	
 	
@@ -42,6 +49,8 @@ public class LocalController implements ISchemaController {
 		core = null;
 		undolist = new LinkedList<ICommand>();
 		redolist = new LinkedList<ICommand>();
+		querycache = new HashMap<IQuery, IQueryResult>();
+		queryindex = new HashMap<EPropertyChange, List<IQuery>>();
 	}
 	
 	public LocalController(ISchemaCore coreToSendTo) {
@@ -49,6 +58,8 @@ public class LocalController implements ISchemaController {
 		core = coreToSendTo;
 		undolist = new LinkedList<ICommand>();
 		redolist = new LinkedList<ICommand>();
+		querycache = new HashMap<IQuery, IQueryResult>();
+		queryindex = new HashMap<EPropertyChange, List<IQuery>>();
 	}
 	
 	
@@ -101,9 +112,45 @@ public class LocalController implements ISchemaController {
 		return response;
 	}
 	
+	public IQueryResult send(IQuery query) {
+		IQueryResult queryresult = querycache.get(query);
+		
+		if (queryresult != null) return queryresult;
+		
+		queryresult = query.performQuery(core.getSchemaInfo());
+
+		// cache query if successful
+		if (queryresult.isSuccessful()) {
+			querycache.put(query, queryresult);
+			
+			EPropertyChange propdep = query.getPropertyDependency();
+			List<IQuery> qlist = queryindex.get(propdep);
+			
+			if (qlist == null) {
+				qlist = new ArrayList<IQuery>();
+				queryindex.put(propdep, qlist);
+			}
+			qlist.add(query);
+		}
+		
+		return queryresult;
+	}
+	
+	private void clearCacheFor(EPropertyChange propchange) {
+		List<IQuery> tobedel = queryindex.get(propchange);
+		
+		if (tobedel == null) return;
+		
+		for (IQuery q : tobedel) {
+			querycache.remove(q);
+		}
+		tobedel.clear();
+	}
+
 	private void reportChanges(ICommandResponse response) {
 		if (response.getPropertyChanges() != null) for (ChangeTuple ct : response.getPropertyChanges()) {
 			ct.changetype.firePropertyChanges(support, ct.oldval, ct.newval);
+			clearCacheFor(ct.changetype);
 		}
 	}
 	
@@ -174,6 +221,13 @@ public class LocalController implements ISchemaController {
 		undolist.clear();
 		redolist.clear();
 	}
+
+	public void clearQueryCache() {
+		querycache.clear();
+		queryindex.clear();
+	}
+	
+	
 	
 
 }
