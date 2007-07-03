@@ -120,7 +120,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	 */
 	private CriticalPoint wireEnding = null;
 	
-	private Timer timer = null;
+	//private Timer timer = null;
 	
 	//constrictors
 	public SchemaCanvas(ISchemaCore core) {
@@ -147,7 +147,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	public SchemaCanvas() {
 		state = ECanvasState.MOVE_STATE;	//init state
 		decrementer = new Decrementer(20);
-		timer = new Timer(70,decrementer);
+		//timer = new Timer(70,decrementer);
 		this.addMouseListener(new Mouse1());
 		this.addMouseMotionListener(new Mose2());
 		this.setOpaque(true);
@@ -459,11 +459,11 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	}
 
 	public void modifyTimerStatus() {
-		if(point==null)timer.stop();
+	/*	if(point==null)timer.stop();
 		else{
 			decrementer.reset();
 			timer.start();
-		}
+		}*/
 	}
 
 	public CriticalPoint getCriticalPoint(int x, int y) {
