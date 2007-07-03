@@ -129,7 +129,9 @@ public class SchemaWire implements ISchemaWire {
 		
 		segments.add(segment);
 		for (XYLocation node : segnodes) {
-			nodes.add(node);
+			if (!nodes.contains(node)) {
+				nodes.add(node);
+			}
 		}
 	}
 	

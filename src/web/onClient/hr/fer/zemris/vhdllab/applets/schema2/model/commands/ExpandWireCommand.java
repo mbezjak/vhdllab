@@ -16,6 +16,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
 
 
+/**
+ * Sluzi za prosirivanje zice novim segmentom.
+ * 
+ * @author brijest
+ *
+ */
 public class ExpandWireCommand implements ICommand {
 
 	/* static fields */

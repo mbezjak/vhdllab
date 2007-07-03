@@ -42,7 +42,31 @@ public final class SchemaError {
 	public final String getMessage() {
 		return message;
 	}
+
+	@Override
+	public String toString() {
+		return errcode.toString() + " " + message;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (!(obj instanceof SchemaError)) return false;
+		SchemaError other = (SchemaError)obj;
+		return other.errcode.equals(this.errcode) && other.message.equals(this.message);
+	}
+
+	@Override
+	public int hashCode() {
+		return errcode.hashCode() << 16 + message.hashCode();
+	}
+	
+	
+	
 }
+
+
+
 
 
 
