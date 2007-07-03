@@ -19,12 +19,13 @@ public class AutoRenamer {
 	public static Caseless getFreeName(Caseless offered, Set<Caseless> taken) {
 		int i = 1;
 		
-		while (taken.contains(offered)) {
-			offered = new Caseless(offered.toString() + ((i < 100) ? ("0" + i) : (i)));
+		Caseless potname = offered;
+		while (taken.contains(potname)) {
+			potname = new Caseless(offered.toString() + ((i < 100) ? ("0" + i) : (i)));
 			i++;
 		}
 		
-		return offered;
+		return potname;
 	}
 	
 	
