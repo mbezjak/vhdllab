@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;

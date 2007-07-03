@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
+package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
 
 

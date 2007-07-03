@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedConf;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 
 import java.io.StringReader;
 

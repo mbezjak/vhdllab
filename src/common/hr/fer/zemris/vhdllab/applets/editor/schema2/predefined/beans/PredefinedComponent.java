@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 
 import java.util.ArrayList;
 import java.util.List;

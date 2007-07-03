@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 
 import java.lang.reflect.Constructor;
 import java.util.HashSet;

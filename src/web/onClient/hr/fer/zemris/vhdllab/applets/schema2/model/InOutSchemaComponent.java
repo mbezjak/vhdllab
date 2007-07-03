@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
@@ -21,10 +24,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.Orientation;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;

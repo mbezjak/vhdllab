@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;

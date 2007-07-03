@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
@@ -13,7 +14,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultWireDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 
 import java.awt.Rectangle;
 import java.lang.reflect.Constructor;

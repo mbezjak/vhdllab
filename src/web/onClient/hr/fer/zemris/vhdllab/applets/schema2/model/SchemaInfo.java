@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
@@ -12,11 +15,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.EntityWrapper;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortWrapper;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.lang.reflect.Constructor;
