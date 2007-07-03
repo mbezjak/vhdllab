@@ -30,6 +30,10 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -116,7 +120,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	 */
 	private CriticalPoint wireEnding = null;
 	
-	Timer timer = null;
+	private Timer timer = null;
 	
 	//constrictors
 	public SchemaCanvas(ISchemaCore core) {
@@ -144,8 +148,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		state = ECanvasState.MOVE_STATE;	//init state
 		decrementer = new Decrementer(20);
 		timer = new Timer(70,decrementer);
-		timer.start();
-		timer.stop();
 		this.addMouseListener(new Mouse1());
 		this.addMouseMotionListener(new Mose2());
 		this.setOpaque(true);
@@ -294,6 +296,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			System.out.println("Canvas registered: localControler.PROPERTY_CHANGE_SELECTION");
 		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)){
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			modifyTimerStatus();
 			addComponentComponent = null;
 			preLoc = null;
 			point = null;
@@ -418,6 +421,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				
 				if(state.equals(ECanvasState.ADD_WIRE_STATE)){
 					point = getCriticalPoint(e.getX(), e.getY());
+					modifyTimerStatus();
 				}
 			}
 		}
@@ -436,6 +440,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			
 			if(state.equals(ECanvasState.ADD_WIRE_STATE)){
 				point = getCriticalPoint(e.getX(), e.getY());
+				modifyTimerStatus();
 			}
 			
 		}
@@ -451,6 +456,14 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			localController.setState(ECanvasState.MOVE_STATE);
 		else if(state.equals(ECanvasState.MOVE_STATE))
 			localController.setState(ECanvasState.ADD_COMPONENT_STATE);
+	}
+
+	public void modifyTimerStatus() {
+		if(point==null)timer.stop();
+		else{
+			decrementer.reset();
+			timer.start();
+		}
 	}
 
 	public CriticalPoint getCriticalPoint(int x, int y) {
