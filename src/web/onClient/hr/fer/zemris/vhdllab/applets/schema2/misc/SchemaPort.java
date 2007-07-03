@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
+
 
 
 /**
@@ -43,6 +45,18 @@ public final class SchemaPort {
 		this.name = other.name;
 		this.mappedto = other.mappedto;
 		this.portindex = other.portindex;
+	}
+	
+	/**
+	 * Za potrebe deserijalizacije iskljucivo.
+	 * 
+	 * @param spwrapper
+	 */
+	public SchemaPort(SchemaPortWrapper spwrapper) {
+		this.loc = new XYLocation(spwrapper.getXOffset(), spwrapper.getYOffset());
+		this.name = new Caseless(spwrapper.getName());
+		this.mappedto = new Caseless(spwrapper.getMapping());
+		this.portindex = spwrapper.getPortindex();
 	}
 	
 	

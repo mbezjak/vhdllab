@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
@@ -311,7 +312,8 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		
 		// create schema ports
 		schemaports.clear();
-		for (SchemaPort sp : compwrap.getSchemaPorts()) {
+		for (SchemaPortWrapper spw : compwrap.getSchemaPorts()) {
+			SchemaPort sp = new SchemaPort(spw);
 			portrel.relatedTo.add(sp);
 			schemaports.add(sp);
 		}

@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
 
-import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +18,13 @@ public class ComponentWrapper {
 	private Boolean genericComponent;
 	private List<ParameterWrapper> paramWrappers;
 	private List<PortWrapper> portWrappers;
-	private List<SchemaPort> schemaPorts;
+	private List<SchemaPortWrapper> schemaPorts;
 	
 	
 	public ComponentWrapper() {
 		paramWrappers = new ArrayList<ParameterWrapper>();
 		portWrappers = new ArrayList<PortWrapper>();
-		schemaPorts = new ArrayList<SchemaPort>();
+		schemaPorts = new ArrayList<SchemaPortWrapper>();
 	}
 
 
@@ -110,7 +108,7 @@ public class ComponentWrapper {
 	}
 	
 	
-	public void addSchemaPort(SchemaPort sp) {
+	public void addSchemaPort(SchemaPortWrapper sp) {
 		schemaPorts.add(sp);
 	}
 
@@ -145,12 +143,12 @@ public class ComponentWrapper {
 	}
 
 
-	public void setSchemaPorts(List<SchemaPort> schemaPorts) {
+	public void setSchemaPorts(List<SchemaPortWrapper> schemaPorts) {
 		this.schemaPorts = schemaPorts;
 	}
 
 
-	public List<SchemaPort> getSchemaPorts() {
+	public List<SchemaPortWrapper> getSchemaPorts() {
 		return schemaPorts;
 	}
 

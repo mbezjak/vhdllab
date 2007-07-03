@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
@@ -592,8 +593,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 	}
 	
-	private void initSchemaPortsOnly(List<SchemaPort> ports) {
-		schemaports = ports;
+	private void initSchemaPortsOnly(List<SchemaPortWrapper> portwrappers) {
+		schemaports = new ArrayList<SchemaPort>();
+		for (SchemaPortWrapper spw : portwrappers) {
+			schemaports.add(new SchemaPort(spw));
+		}
 		for (int i = 0, sz = schemaports.size(); i < sz; i++) {
 			SchemaPort sp = schemaports.get(i);
 			if (sp.getPortindex() != SchemaPort.NO_PORT) portrelations.get(sp.getPortindex()).relatedTo.add(sp);

@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
@@ -110,7 +110,7 @@ public class SchemaDeserializer {
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/relations", "relations");
 		digester.addSetNext("schemaInfo/components/schemaComponent/portList/port", "addPortWrapper");
 		
-		digester.addObjectCreate("schemaInfo/components/schemaComponent/schemaPortList/schemaPort", SchemaPort.class);
+		digester.addObjectCreate("schemaInfo/components/schemaComponent/schemaPortList/schemaPort", SchemaPortWrapper.class);
 		digester.addCallMethod("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/x", "setXOffset", 1);
 		digester.addCallParam("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/x", 0);
 		digester.addCallMethod("schemaInfo/components/schemaComponent/schemaPortList/schemaPort/y", "setYOffset", 1);
