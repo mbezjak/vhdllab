@@ -142,7 +142,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 	public SchemaCanvas() {
 		state = ECanvasState.MOVE_STATE;	//init state
-		decrementer = new Decrementer(20);
+		decrementer = new Decrementer(20, this);
 		timer = new Timer(70,decrementer);
 		
 		this.addMouseListener(new Mouse1());
@@ -255,7 +255,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		
 		setCanvasSize(sizeX,sizeY);
 		
-		repaint();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
@@ -420,6 +419,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				if(state.equals(ECanvasState.ADD_WIRE_STATE)){
 					point = getCriticalPoint(e.getX(), e.getY());
 					modifyTimerStatus();
+					repaint();
 				}
 			}
 		}
@@ -439,6 +439,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			if(state.equals(ECanvasState.ADD_WIRE_STATE)){
 				point = getCriticalPoint(e.getX(), e.getY());
 				modifyTimerStatus();
+				repaint();
 			}
 			
 		}

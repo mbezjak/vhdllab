@@ -7,10 +7,12 @@ public class Decrementer implements ActionListener {
 	
 	private int maxIznos;
 	private int iznos;
+	private SchemaCanvas can;
 	
-	public Decrementer(int maxIznos) {
+	public Decrementer(int maxIznos, SchemaCanvas can) {
 		this.maxIznos = maxIznos;
 		iznos = maxIznos;
+		this.can=can;
 	}
 	
 	public int getIznos() {
@@ -26,5 +28,6 @@ public class Decrementer implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		iznos--;
 		if(iznos == maxIznos/2) iznos = maxIznos;
+		can.repaint();
 	}
 }
