@@ -29,6 +29,7 @@ import java.io.StringWriter;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 
 
 
@@ -101,7 +102,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
 		localGUIController.addListener(canvas);
-		localGUIController.addListener(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,componentPropertyToolbar);
+		localGUIController.addListener(
+				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,
+				componentPropertyToolbar);
 
 		canvas.registerLocalController(localGUIController);
 		canvas.registerSchemaController(controller);
@@ -131,10 +134,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private void initGUI() {
 		this.setLayout(new BorderLayout());
 
+		JToolBar componentPropertyToolbarTB = new JToolBar("Property");
+		componentPropertyToolbarTB.add(componentPropertyToolbar);
+
 		/* init canvas */
 		JScrollPane pane = new JScrollPane(canvas);
 		this.add(pane, BorderLayout.CENTER);
-		this.add(componentPropertyToolbar, BorderLayout.EAST);
+		this.add(componentPropertyToolbarTB, BorderLayout.EAST);
 		this.add(componentToAddToolbar, BorderLayout.NORTH);
 	}
 

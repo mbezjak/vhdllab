@@ -11,12 +11,14 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 /**
@@ -30,10 +32,6 @@ public class ComponentPropertiesToolbar extends JPanel implements
 
 	private static final int TOOLBAR_RESIZE_MODE = JTable.AUTO_RESIZE_ALL_COLUMNS;
 
-	/**
-	 * Default names for only 2 columns
-	 */
-	private static final String[] TOOLBAR_TABLE_HEADER = { "Name", "Value" };
 	/**
 	 * Table
 	 */
@@ -63,7 +61,7 @@ public class ComponentPropertiesToolbar extends JPanel implements
 		add(new JLabel("No component selected"), BorderLayout.NORTH);
 	}
 
-	private void initTable() {
+	private void initTable(ComponentPropertiesToolbarTableModel tableModel) {
 		propertiesTable = new JTableX();
 
 		// look
@@ -71,8 +69,18 @@ public class ComponentPropertiesToolbar extends JPanel implements
 		propertiesTable.setRowSelectionAllowed(false);
 		propertiesTable.setColumnSelectionAllowed(false);
 
+		JScrollPane sPane = new JScrollPane(propertiesTable);
+		sPane
+				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		sPane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
 		// put table on panel
-		add(propertiesTable, BorderLayout.CENTER);
+		add(sPane, BorderLayout.CENTER);
+		add(new JLabel(((Caseless) tableModel.getTableLines()[1].getValue())
+				.toString()), BorderLayout.NORTH);
+		setPreferredSize(new Dimension(250, getHeight()));
+		revalidate();
 	}
 
 	/**
@@ -94,7 +102,8 @@ public class ComponentPropertiesToolbar extends JPanel implements
 		paramCollection = component.getParameters();
 
 		clearTable();
-		tableModel = buildTableModel(paramCollection);
+		tableModel = buildTableModel(paramCollection, component, controller
+				.getSchemaInfo());
 		resetTableModel(tableModel);
 		resetTableRowEditors(tableModel.getTableLines());
 		repaint();
@@ -124,7 +133,7 @@ public class ComponentPropertiesToolbar extends JPanel implements
 	 * @param tableModel
 	 */
 	private void resetTableModel(ComponentPropertiesToolbarTableModel tableModel) {
-		initTable();
+		initTable(tableModel);
 		propertiesTable.setModel(tableModel);
 	}
 
@@ -133,13 +142,18 @@ public class ComponentPropertiesToolbar extends JPanel implements
 	 * 
 	 * @param paramCollection
 	 *            list of parameters
+	 * @param schemaInfo
+	 * @param component
 	 * @return new table model
 	 */
 	private ComponentPropertiesToolbarTableModel buildTableModel(
-			IParameterCollection paramCollection) {
+			IParameterCollection paramCollection, ISchemaComponent component,
+			ISchemaInfo schemaInfo) {
 
-		return new ComponentPropertiesToolbarTableModel(TOOLBAR_TABLE_HEADER,
-				paramCollection);
+		Caseless componentName = component.getName();
+
+		return new ComponentPropertiesToolbarTableModel(paramCollection,
+				componentName, schemaInfo);
 	}
 
 	/**
@@ -147,12 +161,7 @@ public class ComponentPropertiesToolbar extends JPanel implements
 	 */
 	private void clearTable() {
 
-		if (propertiesTable != null) {
-			remove(propertiesTable);
-		} else {
-			removeAll();
-		}
-
+		removeAll();
 		propertiesTable = null;
 	}
 
