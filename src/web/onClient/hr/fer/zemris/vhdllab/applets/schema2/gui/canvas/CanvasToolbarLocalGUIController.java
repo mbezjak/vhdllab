@@ -31,11 +31,16 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	 */
 	public static final String PROPERTY_CHANGE_STATE = "ChangeState";
 	
+	public static final int TYPE_WIRE = 1;
+	public static final int TYPE_COMPONENT = 0;
+	public static final int TYPE_NOTHING_SELECTED = 2;
+	
 	private PropertyChangeSupport support = null;
 
 	private ECanvasState state = ECanvasState.MOVE_STATE;
 	private Caseless componentToAdd = new Caseless("AND_gate");
-	private Caseless selectedComponent = null;
+	private Caseless selectedComponent = new Caseless("");
+	private int selectedType = 0;
 
 	public CanvasToolbarLocalGUIController() {
 		support = new PropertyChangeSupport(this);
@@ -89,8 +94,9 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ILocalGuiController#setSelectedComponent(hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless)
 	 */
-	public void setSelectedComponent(Caseless selectedComponent) {
+	public void setSelectedComponent(Caseless selectedComponent, int compOrWire) {
 		Caseless temp = this.selectedComponent;
+		this.selectedType = compOrWire;
 		this.selectedComponent = selectedComponent;
 		support.firePropertyChange(PROPERTY_CHANGE_SELECTION, temp,
 				selectedComponent);
@@ -120,5 +126,9 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	@Override
 	public String toString() {
 		return "State:"+state+"|ComponentToAdd:"+componentToAdd+"|SelectedComponent:"+selectedComponent;
+	}
+
+	public int getSelectedType() {
+		return selectedType;
 	}
 }

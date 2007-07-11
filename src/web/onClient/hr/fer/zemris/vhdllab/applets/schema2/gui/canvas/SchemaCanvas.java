@@ -43,7 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISchemaCanvas {
-
+//TODO delselektiranje!!!
 	/**
 	 * Generated serial ID
 	 */
@@ -202,9 +202,15 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		int sizeX = 0;
 		int sizeY = 0;
 		
+		Caseless sel = localController.getSelectedComponent();//TODO nastavi!!!
+		int type = localController.getSelectedType();
+		
 		for(Caseless name: names){
 			ISchemaComponent comp = components.fetchComponent(name);
 			XYLocation componentLocation = components.getComponentLocation(name);
+			Color cl = g.getColor();
+			g.setColor(type == CanvasToolbarLocalGUIController.TYPE_COMPONENT && name.equals(sel)?Color.GREEN:Color.BLACK);
+			
 			g.translate(componentLocation.x, componentLocation.y);
 			comp.getDrawer().draw(g);
 			g.translate(-componentLocation.x, -componentLocation.y);
@@ -218,15 +224,19 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 			if(rect.x + rect.width + 10 > sizeX)sizeX =rect.x + rect.width + 10;
 			if(rect.y + rect.height + 10 > sizeY)sizeY =rect.y + rect.height + 10;
+			g.setColor(cl);
 		}
 		
 		
 		names=wires.getWireNames();
 		for(Caseless name: names){
+			Color cl = g.getColor();
+			g.setColor(type == CanvasToolbarLocalGUIController.TYPE_WIRE && name.equals(sel)?Color.GREEN:Color.BLACK);
 			wires.fetchWire(name).getDrawer().draw(g);
 			Rectangle rect = wires.getBounds(name);
 			if(rect.x + rect.width + 10 > sizeX)sizeX =rect.x + rect.width + 10;
 			if(rect.y + rect.height + 10 > sizeY)sizeY =rect.y + rect.height + 10;
+			g.setColor(cl);
 		}
 		
 		if(addComponentComponent!= null){
@@ -240,7 +250,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		
 		if(preLoc != null){
 			Color temp = g.getColor();
-			g.setColor(Color.CYAN);
+			g.setColor(preLoc.isWireInstantiable()?Color.CYAN:Color.RED);
 			preLoc.draw(g);
 			g.setColor(temp);			
 		}
@@ -249,22 +259,12 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			point.draw(g, decrementer.getIznos());
 		}
 		
-		if(state.equals(ECanvasState.MOVE_STATE) && localController.getSelectedComponent()!=null){
-			drawSelection(localController.getSelectedComponent(),g);
-		}
-		
 		setCanvasSize(sizeX,sizeY);
 		
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
 	
-	private void drawSelection(Caseless selectedComponent, Graphics2D g) {
-		Rectangle rect = components.getComponentBounds(selectedComponent);
-		g.setColor(Color.RED);
-		g.drawArc(rect.x-10, rect.y-10, rect.width+20, rect.height+20, 0, 360);
-	}
-
 	private void setCanvasSize(int sizeX, int sizeY) {
 		Insets in = this.getInsets();
 		this.setPreferredSize(new Dimension(sizeX+in.left+in.right, sizeY+in.top+in.bottom));
@@ -293,6 +293,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)){
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			modifyTimerStatus();
+			localController.setSelectedComponent(new Caseless(""), CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED);
 			addComponentComponent = null;
 			preLoc = null;
 			point = null;
@@ -337,7 +338,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			if(e.getButton()==MouseEvent.BUTTON1){
 				if(state.equals(ECanvasState.ADD_COMPONENT_STATE)){
 					Caseless comp = localController.getComponentToAdd();
-					ICommand instantiate = new InstantiateComponentCommand(comp, e.getX(), e.getY());
+					ICommand instantiate = new InstantiateComponentCommand(comp, addComponentX, addComponentY);
 					ICommandResponse response = controller.send(instantiate);
 					System.out.println ("canvas report| component instantiate succesful: "+response.isSuccessful());
 				}
@@ -360,12 +361,24 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					//TODO move
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY());
 					if(comp != null){
-						localController.setSelectedComponent(comp.getName());
+						localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
+					}else{
+						ISchemaWire wir = wires.fetchWire(e.getX(), e.getY(),10);
+						if(wir!=null)
+							localController.setSelectedComponent(wir.getName(), CanvasToolbarLocalGUIController.TYPE_WIRE);
 					}
 					
 				}
 			}else if(e.getButton()==MouseEvent.BUTTON3){
-				dummyStateChanger();
+				//dummyStateChanger();
+				if(state.equals(ECanvasState.MOVE_STATE)){
+					localController.setSelectedComponent(new Caseless(""), CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED);
+				}else if(state.equals(ECanvasState.ADD_WIRE_STATE)){
+					preLoc = null;
+					wireBeginning = null;
+					wireEnding = null;
+					repaint();
+				}
 			}
 				
 		}
@@ -399,10 +412,14 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				}
 				preLoc.setX2(x);
 				preLoc.setY2(y);
+				preLoc.setWireInstantiable(wireBeginning,wireEnding);
+				
 				if(preLoc.isWireInstance()){
 					preLoc.instantiateWire(controller, wireBeginning, wireEnding);
 				}
 				preLoc = null;
+				wireBeginning = null;
+				wireEnding = null;
 				repaint();
 			}
 		}
@@ -415,12 +432,13 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&preLoc!=null){
 				preLoc.setX2(e.getX());
 				preLoc.setY2(e.getY());
-				
-				if(state.equals(ECanvasState.ADD_WIRE_STATE)){
-					point = getCriticalPoint(e.getX(), e.getY());
-					modifyTimerStatus();
-					repaint();
-				}
+
+				point = getCriticalPoint(e.getX(), e.getY());
+				preLoc.setWireInstantiable(wireBeginning,point);
+				preLoc.setWireOrientation();
+				modifyTimerStatus();
+				repaint();
+
 			}
 		}
 
@@ -429,9 +447,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			if(state.equals(ECanvasState.ADD_COMPONENT_STATE)){
 				int x = e.getX();
 				int y = e.getY();
-				if(x > 0 && y > 0 && x < img.getWidth() && y < img.getHeight()) {
-					addComponentX = x;
-					addComponentY = y;
+				if(x > addComponentComponent.getWidth()/2 && y > addComponentComponent.getHeight()/2 && x < img.getWidth() && y < img.getHeight()) {
+					addComponentX = x-addComponentComponent.getWidth()/2;
+					addComponentY = y-addComponentComponent.getHeight()/2;
 					repaint();
 				}
 			}
@@ -446,16 +464,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		
 	}
 
-	private void dummyStateChanger() {
-		if(state.equals(ECanvasState.ADD_COMPONENT_STATE))
-			localController.setState(ECanvasState.ADD_WIRE_STATE);
-		else if(state.equals(ECanvasState.ADD_WIRE_STATE))
-			localController.setState(ECanvasState.DELETE_STATE);
-		else if(state.equals(ECanvasState.DELETE_STATE))
-			localController.setState(ECanvasState.MOVE_STATE);
-		else if(state.equals(ECanvasState.MOVE_STATE))
-			localController.setState(ECanvasState.ADD_COMPONENT_STATE);
-	}
 
 	public void modifyTimerStatus() {
 		if(point==null)timer.stop();

@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.ComponentPropertiesToolbar;
@@ -64,6 +65,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 	/* GUI private fields */
 	private SchemaCanvas canvas;
+	private CanvasToolbar canTool;
 	private ILocalGuiController localGUIController;
 	private ComponentPropertiesToolbar componentPropertyToolbar;
 	private ComponentToAddToolbar componentToAddToolbar;
@@ -108,6 +110,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 		canvas.registerLocalController(localGUIController);
 		canvas.registerSchemaController(controller);
+		
+		canTool = new CanvasToolbar(null);
+		canTool.registerController(localGUIController);
+		localGUIController.addListener(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE, canTool);
 	}
 
 	private void initDynamic() {
@@ -139,7 +145,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 		/* init canvas */
 		JScrollPane pane = new JScrollPane(canvas);
-		this.add(pane, BorderLayout.CENTER);
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(canTool, BorderLayout.NORTH);
+		panel.add(pane, BorderLayout.CENTER);
+		this.add(panel, BorderLayout.CENTER);
 		this.add(componentPropertyToolbarTB, BorderLayout.EAST);
 		this.add(componentToAddToolbar, BorderLayout.NORTH);
 	}

@@ -63,14 +63,14 @@ public interface ILocalGuiController {
 	 */
 	public Caseless getSelectedComponent();
 
+
 	/**
 	 * Metoda postavlja polje selectedComponent. Ovu metodu će vjerojatno
 	 * pozivati Canvas, a obavjestit će sve listenere o promjeni.
-	 * 
-	 * @param selectedComponent
-	 *            selektirana komponenta (identifikator selektirane komponente)
+	 * @param selectedComponent selektirana komponenta
+	 * @param selectionType tip selekcije (komponenta, zica ili nista_selektirano)
 	 */
-	public void setSelectedComponent(Caseless selectedComponent);
+	public void setSelectedComponent(Caseless selectedComponent, int selectionType);
 
 	/**
 	 * Dohvaća stanje rada u kojem je trenutno Canvas. Stanje rada predstavlja
@@ -92,4 +92,12 @@ public interface ILocalGuiController {
 	 */
 	public void setState(ECanvasState state);
 
+	/**
+	 * Vraca tip selektiranog objekta na platnu (wire, component ili nista od selektiranog)
+	 * 0-komponenta
+	 * 1-zica
+	 * 2-nista nije selektirano
+	 * @return
+	 */
+	public int getSelectedType();
 }
