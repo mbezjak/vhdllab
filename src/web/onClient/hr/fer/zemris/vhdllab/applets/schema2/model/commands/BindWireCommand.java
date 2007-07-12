@@ -144,7 +144,7 @@ public class BindWireCommand implements ICommand {
 	public ICommandResponse undoCommand(ISchemaInfo info)
 			throws InvalidCommandOperationException
 	{
-		ISchemaWire oldwire = info.getWires().fetchWire(wtobind);
+		ISchemaWire oldwire = cachedwire;
 		ISchemaWire tobindtowire = info.getWires().fetchWire(tobindto);
 		
 		if (oldwire == null) return new CommandResponse(new SchemaError(EErrorTypes.NONEXISTING_WIRE_NAME,
