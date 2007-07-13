@@ -22,6 +22,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -129,11 +130,14 @@ public class MoveComponentCommand implements ICommand {
 		
 		// add new wire segments
 		ISchemaWireCollection wires = info.getWires();
+		List<SchemaPort> ports = cmp.getSchemaPorts();
 		for (Entry<Caseless, Integer> entry : toexpand.entrySet()) {
 			ISchemaWire wire = wires.fetchWire(entry.getKey());
 			if (wire == null) throw new IllegalStateException("Port was mapped to '" + entry.getKey() + "' and this wire does not exist.");
-			wire.insertSegment(new WireSegment(oldloc.x, oldloc.y, oldloc.x, loc.y));
-			wire.insertSegment(new WireSegment(oldloc.x, loc.y, loc.x, loc.y));
+			SchemaPort sp = ports.get(entry.getValue());
+			XYLocation portoffset = sp.getOffset();
+			wire.insertSegment(new WireSegment(oldloc.x + portoffset.x, oldloc.y + portoffset.y, oldloc.x + portoffset.x, loc.y  + portoffset.y));
+			wire.insertSegment(new WireSegment(oldloc.x + portoffset.x, loc.y + portoffset.y, loc.x + portoffset.x, loc.y + portoffset.y));
 		}
 		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));

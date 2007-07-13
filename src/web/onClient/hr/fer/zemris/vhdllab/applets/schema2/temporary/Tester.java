@@ -9,9 +9,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.BindWireCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.MoveComponentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.PlugWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
@@ -71,8 +73,10 @@ public class Tester {
 		mpanel.getController().send(expandwire);
 		expandwire = new ExpandWireCommand(new Caseless("MyWire"), 150, 350, 150, 450);
 		mpanel.getController().send(expandwire);
-		ICommand plug = new PlugWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port"));
-		mpanel.getController().send(plug);
+		ICommand plug = new PlugWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port_0"));
+		System.out.println("Plug result: " + mpanel.getController().send(plug).getError());
+		ICommand move = new MoveComponentCommand(new Caseless("SomeCompi"), new XYLocation(160, 180));
+		mpanel.getController().send(move);
 		
 		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));

@@ -64,7 +64,7 @@ public class PlugWireCommand implements ICommand {
 		if (port == null) return new CommandResponse(new SchemaError(EErrorTypes.NONEXISTING_PORT_NAME,
 				"Port '" + portname.toString() + "' could not be found on component '" + cmpname.toString() + "'."));
 		
-		if (port.getMapping() != null) return new CommandResponse(new SchemaError(EErrorTypes.MAPPING_ERROR,
+		if (!Caseless.isNullOrEmpty(port.getMapping())) return new CommandResponse(new SchemaError(EErrorTypes.MAPPING_ERROR,
 				"Port '" + portname.toString() + "' already mapped to wire '" + port.getMapping().toString() + "'."));
 		
 		port.setMapping(wire.getName());
