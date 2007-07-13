@@ -15,6 +15,15 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
  *
  */
 public final class Caseless {
+	
+	public static final Caseless Empty = new Caseless("");
+	
+	public static boolean isNullOrEmpty(Caseless caseless) {
+		return (caseless == null || caseless.equals(Empty));
+	}
+	
+	
+	
 	private String inner;
 	
 	public Caseless() {
@@ -46,6 +55,7 @@ public final class Caseless {
 			this.inner = other.inner;
 		}
 	}
+	
 
 	/**
 	 * Moguce je obaviti equals provjeru
@@ -88,3 +98,9 @@ public final class Caseless {
 
 	
 }
+
+
+
+
+
+

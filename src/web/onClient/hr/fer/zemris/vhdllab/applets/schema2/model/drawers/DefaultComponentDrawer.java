@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.drawers;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
@@ -51,6 +52,8 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 		
 		// draw ports and wires to those ports
 		for (SchemaPort port : comp_to_draw.getSchemaPorts()) {
+			Caseless mapping = port.getMapping();
+			
 			offset = port.getOffset();
 			if (offset.x == 0 || offset.x == w) {
 				graphics.drawLine(offset.x, offset.y, w/2, offset.y);
@@ -58,6 +61,9 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			if (offset.y == 0 || offset.y == h) {
 				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
 			}
+			
+			if (!Caseless.isNullOrEmpty(mapping)) continue;
+			
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
 			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);

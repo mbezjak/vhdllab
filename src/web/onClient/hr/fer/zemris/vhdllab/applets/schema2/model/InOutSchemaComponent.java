@@ -64,7 +64,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 			
 			if (portrel.port.getType().isScalar()) {
 				Caseless mappedto = schemaports.get(0).getMapping();
-				if (mappedto != null) {
+				if (!Caseless.isNullOrEmpty(mappedto)) {
 					Direction dir = portrel.port.getDirection();
 					if (dir.equals(Direction.IN)) {
 						sb.append(mappedto.toString()).append(" <= ");
@@ -82,7 +82,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 					int i = 0;
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
-						if (mappedto != null) {
+						if (!Caseless.isNullOrEmpty(mappedto)) {
 							sb.append(mappedto.toString()).append(" <= ");
 							sb.append(portrel.port.getName()).append("(").append(i).append(");\n");
 						}
@@ -92,9 +92,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 					int i = 0;
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
-						if (mappedto != null) {
+						if (!Caseless.isNullOrEmpty(mappedto)) {
 							sb.append(portrel.port.getName()).append("(").append(i).append(")");
-							sb.append(" <= ").append(mappedto.toString());
+							sb.append(" <= ").append(mappedto.toString()).append('\n');
 						}
 						i++;
 					}
@@ -130,9 +130,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	
 	
 	/* static fields */
-	private static final int WIDTH = 80;
-	private static final int HEIGHT_PER_PORT = 20;
-	private static final int EDGE_OFFSET = 40;
+	private static final int WIDTH = Constants.GRID_SIZE * 4;
+	private static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
+	private static final int EDGE_OFFSET = Constants.GRID_SIZE * 2;
 	
 	
 	/* private fields */

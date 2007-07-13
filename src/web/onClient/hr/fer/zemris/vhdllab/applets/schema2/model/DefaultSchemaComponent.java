@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
@@ -76,7 +77,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				if (tp.isVector()) {
 					int vecpos = 0;
 					for (SchemaPort related : portrel.relatedTo) {
-						if (related.getMapping() != null) {
+						if (!Caseless.isNullOrEmpty(related.getMapping())) {
 							sb.append(signame).append('(').append(vecpos).append(')');
 							sb.append(" <= ").append(related.getMapping().toString());
 							sb.append(";\n");
@@ -166,9 +167,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 
 	/* static fields */
-	private static final int WIDTH_PER_PORT = 20;
-	private static final int HEIGHT_PER_PORT = 20;
-	private static final int EDGE_OFFSET = 40;
+	private static final int WIDTH_PER_PORT = Constants.GRID_SIZE;
+	private static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
+	private static final int EDGE_OFFSET = Constants.GRID_SIZE * 2;
 	
 	
 

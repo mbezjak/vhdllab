@@ -54,8 +54,69 @@ TODO 81) [OPEN]		Dodati provjeru promjene CircuitInterfacea i INVALIDATED stanje
 TODO 82) [OPEN]		Skup svih zauzetih identifikatora
 TODO 83) [OPEN]		Zice koje se pretvaraju u std_logic_vector umjesto std_logic
 TODO 84) [OPEN]		Ispis imena sklopa i portova kod defaultnog drawer-a
-TODO 85) [OPEN]		U drawer-u - ne iscrtavati kruzice za spojene pinove
+TODO 85) [CLOSED]	U drawer-u - ne iscrtavati kruzice za spojene pinove
 TODO 86) [OPEN]		Provjera da li su svi IN portovi popunjeni
+TODO 87) [OPEN]		Undoable check u controller-u i pripadni dijalog obavijesti
+TODO 88) [OPEN]		Prije AutoConnect-a DOBRO provjerit Nodeove
+
+1) Jos uvijek nema "toolbara" s raspolozivim komponentama
+
+2) Dodavanje zica nije rijeseno (primjerice, pritisnem mis, vucem kamo
+zelim i cijelo vrijeme vidim tu novu zicu kako se rasteze, ako pridem
+blizu nekom pinu, pin pocrveni i sl, i kada pustim, ili se spoji na
+najblizi pin, ili s spoji sa nekom zicom, ili ostane nespojen ako nicega
+nema u blizini - u tom slucaju kraj zice zavrsava s malim supljim
+kruzicem)
+
+3) Dodavanje komponenti radi, pa, cudno. Naime, kada negdje kliknem,
+komponenta se doda negdje desno ispod, ali zapravo covjek nikad ne zna
+tocno procijeniti gdje; moze li se ta komponenta dodati tako da je gornji
+lijevi nacrtani kut na mjestu misa, ili pak "teziste" komponente, da ne
+kazem centar, na mjestu misa?) Jos bi bolje bilo kada bi se komponenta
+iscrtavala i prije no sto covjek stisne mis, tako da je moze tocno
+pozicionirati prije no sto stisne tipku.
+
+4) Micanje komponenti ne radi
+
+5) Kod crtanja komponenti, na komponenti nisu ispisana imena pinova, kao
+niti ime primjerka, odnosno ime razreda komponente
+
+6) uocio sam da su se na shemi inicijalno pojavila dva izlaza, i nula
+ulaza, na kojima medutim ne pisu imena (nego samo nekakvi brojevi)
+
+7) zice jos nemaju svojstva
+
+8) Cini mi se da editiranje svojstava ne radi kako je bilo zamisljeno?
+Primjerice, editiranje kasnjenja se svodi na editiranje stringa - nije li
+bilo rijeci da ce se moci odabrati mjerna jedinica i posebno odabrati
+vrijeme? Orijentacija ne moze ispisivati java razred...
+
+9) U tablici u kojoj su ispisana svojstva, sirina tablice i stupaca je
+fiksna, pa se primjerice neki nazivi ne mogu uopce procitati. Npr. kod
+jedne komponente u prvom retku vidim da se svojstvo zove "input_port_..."
+i ne postoji nacin da otkrijem citav naziv; kao vrijednost pise 2; ako to
+promijenim na 3, nista se ne dogodi (resetira se na 2)
+
+10) kada ce krenuti integracija u sam vhdllab u obliku editora?
+
+11) u service sloju: extract dependencies za shemu ne postoji
+
+12) u service sloju: extract circuit interface za shemu ne postoji
+
+13) u service sloju: generate vhdl za shemu ne postoji
+
+14) Nema "toolbara" s alatima za promjenu stanja (zelim li micati,
+brisati, selektirati, dodavati i sl)
+
+15) rijesiti prikaz standardnih sklopova (I,ILI,NI,NILI,EX-ILI,Ex-NILI,NE)
+standardnim simbolima (pod obavezno IEC simbole; Aleks je spomenuo
+mogucnost da korisnik sam tijekom rada moze odabrati da mu se simboli
+crtaju i po onom starom nacinu, ali to kao daleki daleki TODO)
+
+
+
+
+
 
 
 Miro Bezjak
