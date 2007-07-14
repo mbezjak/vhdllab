@@ -7,24 +7,26 @@ import java.util.List;
 
 public class SMath {
 	
+	public static final int ERROR = Integer.MIN_VALUE;
+	
 	/**
 	 * Vraca najblizi port od lokacije
 	 * (x, y) u sustavu komponente
 	 * ako je takav udaljen manje od
 	 * dist. Ako je udaljen vise od dist
-	 * ili ne postoji, vraca se -1.
+	 * ili ne postoji, vraca se ERROR.
 	 * 
 	 * @param x
 	 * @param y
 	 * @param dist
 	 * @param ports
-	 * Lista portova. Vraca se -1 za null.
+	 * Lista portova. Vraca se ERROR za null.
 	 * @return
 	 */
 	public static int calcClosestPort(int x, int y, int dist, List<SchemaPort> ports) {
-		if (ports == null) return -1;
+		if (ports == null) return ERROR;
 		
-		int index = -1, i = 0;
+		int index = ERROR, i = 0;
 		double mindist = dist;
 		double ndist = 0.f;
 		
@@ -46,17 +48,49 @@ public class SMath {
 	 * location u sustavu komponente
 	 * ako je takav udaljen manje od
 	 * dist. Ako je udaljen vise od dist
-	 * ili ne postoji, vraca se -1.
+	 * ili ne postoji, vraca se ERROR.
 	 * 
 	 * @param x
 	 * @param y
 	 * @param dist
 	 * @param ports
-	 * Lista portova. Vraca se -1 za null.
+	 * Lista portova. Vraca se ERROR za null.
 	 * @return
 	 */
 	public static int calcClosestPort(XYLocation location, int dist, List<SchemaPort> ports) {
 		return calcClosestPort(location.x, location.y, dist, ports);
+	}
+	
+	/**
+	 * Vraca najblizi segment od lokacije
+	 * location ako je takav udaljen manje od
+	 * dist. Ako je udaljen vise ili jednako od
+	 * dist ili ne postoji, vraca se ERROR.
+	 * 
+	 * @param location
+	 * @param dist
+	 * @param segments
+	 * Ako je null, vratit ce se ERROR.
+	 * @return
+	 * Indeks segmenta zice ako postoji
+	 * segment u blizini location, a
+	 * ERROR inace.
+	 */
+	public static int calcClosestSegment(XYLocation location, int dist, List<WireSegment> segments) {
+		if (segments == null) return ERROR;
+		
+		int index = ERROR, i = 0, mindist = dist;
+		
+		for (WireSegment ws : segments) {
+			int ndist = ws.calcDist(location.x, location.y);
+			if (ndist < mindist) {
+				mindist = ndist;
+				index = i;
+			}
+			i++;
+		}
+		
+		return index;
 	}
 	
 	/**

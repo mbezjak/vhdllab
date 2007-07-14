@@ -233,6 +233,12 @@ public final class WireSegment {
 		return loc1.hashCode() << 16 + loc2.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return "WireSegment[(" + loc1.x + ", " + loc1.y + "), (" + loc2.x + ", " + loc2.y + ")";
+	}
+
+	
 
 
 
