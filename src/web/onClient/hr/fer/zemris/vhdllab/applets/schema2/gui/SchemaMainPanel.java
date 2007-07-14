@@ -11,7 +11,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
-import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.ComponentPropertiesToolbar;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.CPToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.ComponentToAddToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
@@ -32,19 +32,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
-
-
 public class SchemaMainPanel extends JPanel implements IEditor {
 
 	{
 		try {
-			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-		} catch(Exception e) {
+			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
+					.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	private class ModificationListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
 			modified = true;
@@ -67,7 +65,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private SchemaCanvas canvas;
 	private CanvasToolbar canTool;
 	private ILocalGuiController localGUIController;
-	private ComponentPropertiesToolbar componentPropertyToolbar;
+	private CPToolbar componentPropertyToolbar;
 	private ComponentToAddToolbar componentToAddToolbar;
 
 	/* IEditor private fields */
@@ -98,11 +96,14 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		controller.addListener(EPropertyChange.ANY_CHANGE,
 				new ModificationListener());
 
-		componentPropertyToolbar = new ComponentPropertiesToolbar(controller);
+		componentPropertyToolbar = new CPToolbar(localGUIController, controller);
 		componentToAddToolbar = new ComponentToAddToolbar(controller,
 				localGUIController);
 
 		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
+		controller.addListener(EPropertyChange.PROTOTYPES_CHANGE,
+				componentToAddToolbar);
+
 		localGUIController.addListener(canvas);
 		localGUIController.addListener(
 				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,
@@ -110,10 +111,11 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 		canvas.registerLocalController(localGUIController);
 		canvas.registerSchemaController(controller);
-		
+
 		canTool = new CanvasToolbar(null);
 		canTool.registerController(localGUIController);
-		localGUIController.addListener(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE, canTool);
+		localGUIController.addListener(
+				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE, canTool);
 	}
 
 	private void initDynamic() {
@@ -128,12 +130,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		String predefined;
 
 		try {
-			predefined = projectContainer.getPredefinedFileContent(PREDEFINED_FILE_NAME);
+			predefined = projectContainer
+					.getPredefinedFileContent(PREDEFINED_FILE_NAME);
 		} catch (UniformAppletException e) {
 			throw new SchemaException(
 					"Could not open predefined component file.", e);
 		}
-		
+
 		core.initPrototypes(predefined);
 	}
 

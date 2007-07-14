@@ -1,14 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Set;
+import java.util.Map;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
@@ -21,6 +22,8 @@ public class ComponentToAddToolbar extends JPanel implements
 		PropertyChangeListener {
 
 	private static final long serialVersionUID = -4549154212847889157L;
+
+	public static final boolean DEBUG_MODE = true;
 
 	/**
 	 * Schema controller
@@ -92,22 +95,27 @@ public class ComponentToAddToolbar extends JPanel implements
 	 * @return
 	 */
 	private AbstractListModel getListBoxModel() {
-		ISchemaComponentCollection componentCollection = null;
-		Set<Caseless> componentNames = null;
+		ISchemaInfo si = schemaController.getSchemaInfo();
+		Map<Caseless, ISchemaComponent> prototypes = si.getPrototypes();
 		DefaultListModel listModel = new DefaultListModel();
 
-		componentCollection = schemaController.getSchemaInfo().getComponents();
-		componentNames = componentCollection.getComponentNames();
-		System.out.println("Number of registered components:"
-				+ componentNames.size());
-		for (Caseless name : componentNames) {
-			listModel.addElement(name.toString());
+		if (DEBUG_MODE) {
+			System.out.println("ComponentToAddToolbar: numberOfPrototypes="
+					+ prototypes.size());
+		}
+
+		for (Map.Entry<Caseless, ISchemaComponent> elem : prototypes.entrySet()) {
+			listModel.addElement(elem.getKey());
 		}
 
 		return listModel;
 	}
 
 	public void RefreshList() {
+		if (DEBUG_MODE) {
+			System.out
+					.println("ComponentToAddToolbar: propertyChangeEvent-refreshing list");
+		}
 		remove(list);
 
 		initList();
@@ -123,8 +131,13 @@ public class ComponentToAddToolbar extends JPanel implements
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		// ako ce ikada u buducnosti trebati komunikacija sa lokalnim
-		// kontrolerom i u ovom smjeru
+		if (DEBUG_MODE) {
+			System.out.println("ComponentToAddToolbar: propertyChangeEvent");
+			System.out.println("ComponentToAddToolbar: propertyNewValue="
+					+ evt.getNewValue().toString());
+		}
+
+		RefreshList();
 	}
 
 }

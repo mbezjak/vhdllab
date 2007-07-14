@@ -31,10 +31,10 @@ public class ComponentPropertiesToolbarChange {
 	}
 
 	public boolean ChangeProperty(IParameter parameter, Object value) {
-		explanation = "";		
+		explanation = "";
 		ICommand command = new SetParameterCommand(component, parameter
-				.getName(), EParameterHolder.component, value,
-				schemaInfo);
+				.getName(), EParameterHolder.component, Integer
+				.parseInt((String) value), schemaInfo);
 		ICommandResponse response = command.performCommand(schemaInfo);
 
 		if (DEBUG_MODE) {
