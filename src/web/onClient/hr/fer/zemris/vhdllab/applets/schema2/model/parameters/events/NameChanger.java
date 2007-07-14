@@ -29,7 +29,7 @@ import java.util.List;
  * @author Axel
  * 
  */
-public class NameChangeEvent implements IParameterEvent {
+public class NameChanger implements IParameterEvent {
 
 	/* static fields */
 
@@ -40,7 +40,7 @@ public class NameChangeEvent implements IParameterEvent {
 
 	/* ctors */
 
-	public NameChangeEvent() {
+	public NameChanger() {
 	}
 
 

@@ -13,7 +13,7 @@
 				<value>MyComponent</value>
 				<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
 				<allowedValues></allowedValues>
-				<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>
+				<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger</eventName>
 			</parameter>
 		</parameters>
 	</entity>
@@ -47,7 +47,7 @@
 					<value>wire54</value>
 					<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
 					<allowedValues></allowedValues>
-					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>
+					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger</eventName>
 				</parameter>
 				<parameter>
 					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.IntegerParameter</paramClassName>
@@ -80,7 +80,7 @@
 					<value>MainPortComponent</value>
 					<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
 					<allowedValues></allowedValues>
-					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>					
+					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger</eventName>					
 				</parameter>
 			</parameters>
 			<portList>
@@ -131,7 +131,7 @@
 					<value>SomeCompi</value>
 					<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
 					<allowedValues></allowedValues>
-					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChangeEvent</eventName>					
+					<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger</eventName>					
 				</parameter>
 				<parameter>
 					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter</paramClassName>

@@ -15,8 +15,8 @@
               <paramType>TIME</paramType>
               <name>delay</name>
               <value>0 ns</value>
-              <allowedValues>
-              </allowedValues>
+              <allowedValues></allowedValues>
+			  <eventName></eventName>
            </parameter>
 
            <parameter>
@@ -24,8 +24,8 @@
               <paramType>INTEGER</paramType>
               <name>input_port_num</name>
               <value>2</value>
-              <allowedValues>
-              </allowedValues>
+              <allowedValues></allowedValues>
+			  <eventName></eventName>
            </parameter>
         </parameterList>
        
