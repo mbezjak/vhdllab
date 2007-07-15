@@ -114,6 +114,10 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	
 	
 	/* static fields */
+	private static final String STD_LOGIC_IN = "Input_scalar";
+	private static final String STD_LOGIC_OUT = "Output_scalar";
+	private static final String STD_LOGIC_VECTOR_IN = "Input_vector";
+	private static final String STD_LOGIC_VECTOR_OUT = "Output_vector";
 	private static final int WIDTH = Constants.GRID_SIZE * 4;
 	private static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
 	private static final int EDGE_OFFSET = Constants.GRID_SIZE * 2;
@@ -124,6 +128,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	private List<SchemaPort> schemaports;
 	private IParameterCollection parameters;
 	private IComponentDrawer drawer;
+	private Caseless cmptypename;
 	private int width, height;
 	
 	
@@ -136,8 +141,25 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		schemaports = new ArrayList<SchemaPort>();
 		width = WIDTH;
 		
+		setComponentTypeName();
 		initDefaultParameters();
 		buildSchemaPorts();
+	}
+	
+	private void setComponentTypeName() {
+		if (portrel.port.getType().isScalar()) {
+			if (portrel.port.getDirection().equals(Direction.IN)) {
+				cmptypename = new Caseless(STD_LOGIC_IN);
+			} else {
+				cmptypename = new Caseless(STD_LOGIC_OUT);
+			}
+		} else {
+			if (portrel.port.getDirection().equals(Direction.IN)) {
+				cmptypename = new Caseless(STD_LOGIC_VECTOR_IN);
+			} else {
+				cmptypename = new Caseless(STD_LOGIC_VECTOR_OUT);
+			}
+		}
 	}
 
 	private void buildSchemaPorts() {
@@ -391,7 +413,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 
 	public Caseless getTypeName() {
-		return new Caseless(Constants.TypeNames.IN_OUT_COMPONENT);
+		return cmptypename;
 	}
 
 	public IVHDLSegmentProvider getVHDLSegmentProvider() {

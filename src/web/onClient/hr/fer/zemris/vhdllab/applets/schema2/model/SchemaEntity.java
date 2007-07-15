@@ -12,6 +12,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
+import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.ArrayList;
@@ -86,7 +89,13 @@ public class SchemaEntity implements ISchemaEntity {
 		List<Port> ports = new ArrayList<Port>();
 		
 		for (ISchemaComponent cmp : inouts) {
-			ports.add(cmp.getPort(0));
+			Port tocopy = cmp.getPort(0);
+			ports.add(tocopy);
+//			ports.add(new DefaultPort(
+//					tocopy.getName(),
+//					(tocopy.getDirection().equals(Direction.IN)) ? (Direction.OUT) : (Direction.IN),
+//					tocopy.getType()
+//					));
 		}
 		
 		return ports;

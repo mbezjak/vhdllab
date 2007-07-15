@@ -31,9 +31,10 @@ public class ComponentPrototyper implements ISchemaPrototypeCollection {
 	}
 
 	public ISchemaComponent clonePrototype(Caseless componentTypeName, Set<Caseless> takennames)
-	throws UnknownComponentPrototypeException {
+		throws UnknownComponentPrototypeException
+	{
 		if (!prototypes.containsKey(componentTypeName))
-			throw new UnknownComponentPrototypeException();
+			throw new UnknownComponentPrototypeException("Cannot find prototype '" + componentTypeName + "'.");
 		
 		ISchemaComponent comp = prototypes.get(componentTypeName).copyCtor();
 		comp.setName(AutoRenamer.getFreeName(comp.getName(), takennames));

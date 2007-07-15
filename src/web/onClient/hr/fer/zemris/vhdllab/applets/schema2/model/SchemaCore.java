@@ -13,7 +13,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaPrototypeCollecti
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
-import hr.fer.zemris.vhdllab.vhdl.model.Type;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 /**
  * 
@@ -48,6 +48,7 @@ public class SchemaCore implements ISchemaCore {
 		info.getEntity().reset();
 	}
 
+	ISchemaPrototypeCollection prototyper = null;
 	public void initPrototypes(String serializedPrototypes) {
 		// deserialize prototypes from given list
 		
@@ -55,7 +56,7 @@ public class SchemaCore implements ISchemaCore {
 			new PredefinedComponentsParser(serializedPrototypes);
 		PredefinedConf predefconf = predefparser.getConfiguration();
 
-		ISchemaPrototypeCollection prototyper = info.getPrototyper();
+		prototyper = info.getPrototyper();
 		for (PredefinedComponent pc : predefconf.getComponents()) {
 			try {
 				prototyper.addPrototype(new DefaultSchemaComponent(pc));
@@ -66,10 +67,19 @@ public class SchemaCore implements ISchemaCore {
 		
 		
 		// add InOutSchemaComponents to list - this is unique for this implementation
-		DefaultPort dp = new DefaultPort("Input", Direction.IN, new DefaultType("std_logic_vector",
-				new int[] {0, 5}, DefaultType.VECTOR_DIRECTION_TO));
+		addInOutComponent(new DefaultPort("input_v", Direction.IN, new DefaultType("std_logic_vector",
+				new int[] {0, 3}, DefaultType.VECTOR_DIRECTION_TO)));
+		addInOutComponent(new DefaultPort("output_v", Direction.OUT, new DefaultType("std_logic_vector",
+				new int[] {0, 3}, DefaultType.VECTOR_DIRECTION_TO)));
+		addInOutComponent(new DefaultPort("input_s", Direction.IN, new DefaultType("std_logic",
+				DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION)));
+		addInOutComponent(new DefaultPort("output_s", Direction.OUT, new DefaultType("std_logic",
+				DefaultType.SCALAR_RANGE, DefaultType.SCALAR_VECTOR_DIRECTION)));
+	}
+	
+	private void addInOutComponent(Port p) {
 		try {
-			prototyper.addPrototype(new InOutSchemaComponent(dp));
+			prototyper.addPrototype(new InOutSchemaComponent(p));
 		} catch (DuplicateKeyException e) {
 			e.printStackTrace();
 		}
