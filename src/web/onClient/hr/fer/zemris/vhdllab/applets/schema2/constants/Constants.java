@@ -11,6 +11,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.constants;
 
 public class Constants {
 	
+	public static final String PREDEFINED_FILENAME = "predefined.xml";
+	
 	public static final int GRID_SIZE = 20;
 	
 	public static class Categories {
