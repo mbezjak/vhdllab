@@ -24,7 +24,7 @@ public interface ISchemaEntity {
 	 * 
 	 * @return
 	 */
-	CircuitInterface getCircuitInterface();
+	CircuitInterface getCircuitInterface(ISchemaInfo info);
 	
 	
 	/**
@@ -51,7 +51,7 @@ public interface ISchemaEntity {
 	 * 
 	 * @return
 	 */
-	public List<Port> getPorts();
+	public List<Port> getPorts(ISchemaInfo info);
 	
 	/**
 	 * Brise portove i ne-defaultne parametre.

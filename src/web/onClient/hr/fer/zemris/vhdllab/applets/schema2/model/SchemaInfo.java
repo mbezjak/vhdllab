@@ -111,7 +111,7 @@ public class SchemaInfo implements ISchemaInfo {
 		}
 		
 		// fill with ports
-		List<Port> ports = ent.getPorts();
+		List<Port> ports = ent.getPorts(this);
 		for (PortWrapper portwrap : entwrap.getPortwrappers()) {
 			ports.add(PortFactory.createPort(portwrap));
 		}

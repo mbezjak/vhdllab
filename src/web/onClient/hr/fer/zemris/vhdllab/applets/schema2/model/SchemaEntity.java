@@ -1,10 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -13,6 +16,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 
@@ -25,7 +29,6 @@ public class SchemaEntity implements ISchemaEntity {
 	
 	/* private fields */
 	private IParameterCollection parameters;
-	private List<Port> ports;
 	
 	
 	
@@ -37,7 +40,6 @@ public class SchemaEntity implements ISchemaEntity {
 	 */
 	public SchemaEntity() {
 		parameters = new SchemaParameterCollection();
-		ports = new ArrayList<Port>();
 	}
 	
 	
@@ -49,7 +51,6 @@ public class SchemaEntity implements ISchemaEntity {
 	 */
 	public SchemaEntity(Caseless circIntName) {
 		parameters = new SchemaParameterCollection();
-		ports = new ArrayList<Port>();
 		initDefaultParameters();
 	}
 	
@@ -61,10 +62,11 @@ public class SchemaEntity implements ISchemaEntity {
 	
 	
 
-	public CircuitInterface getCircuitInterface() {
+	public CircuitInterface getCircuitInterface(ISchemaInfo info) {
 		try {
-			return new DefaultCircuitInterface(((Caseless)(parameters.getParameter(KEY_NAME).getValue())).toString(),
-					new ArrayList<Port>(ports));
+			return new DefaultCircuitInterface(
+					((Caseless)(parameters.getParameter(KEY_NAME).getValue())).toString(),
+					getPorts(info));
 		} catch (ParameterNotFoundException e) {
 			throw new IllegalStateException("No name parameter within entity.", e);
 		}
@@ -77,17 +79,20 @@ public class SchemaEntity implements ISchemaEntity {
 	public void setParameters(IParameterCollection parameterCollection) {
 		parameters = parameterCollection;
 	}
-
-	public void setPorts(List<Port> ports) {
-		this.ports = ports;
-	}
 	
-	public List<Port> getPorts() {
+	public List<Port> getPorts(ISchemaInfo info) {
+		ISchemaComponentCollection components = info.getComponents();
+		Set<ISchemaComponent> inouts = components.fetchComponents(EComponentType.IN_OUT);
+		List<Port> ports = new ArrayList<Port>();
+		
+		for (ISchemaComponent cmp : inouts) {
+			ports.add(cmp.getPort(0));
+		}
+		
 		return ports;
 	}
 
 	public void reset() {
-		ports.clear();
 		parameters.clear();
 		initDefaultParameters();
 	}

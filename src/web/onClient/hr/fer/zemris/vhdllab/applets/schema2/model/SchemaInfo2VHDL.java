@@ -36,7 +36,7 @@ public class SchemaInfo2VHDL {
 	public String generateVHDL(ISchemaInfo schemaInfo) {
 		sb = new StringBuilder();
 		info = schemaInfo;
-		circint = info.getEntity().getCircuitInterface();
+		circint = info.getEntity().getCircuitInterface(schemaInfo);
 		
 		appendEntityBlock();
 		appendArchitecturalBlock("structural");
@@ -62,8 +62,8 @@ public class SchemaInfo2VHDL {
 			}
 			if (pt.isVector()) {
 				sb.append(pt.getTypeName()).append('(');
-				b1 = (pt.hasVectorDirectionTO()) ? (pt.getRangeFrom()) : (pt.getRangeTo());
-				b2 = (pt.hasVectorDirectionTO()) ? (pt.getRangeTo()) : (pt.getRangeFrom());
+				b1 = pt.getRangeFrom(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeFrom()) : (pt.getRangeTo());
+				b2 = pt.getRangeTo(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeTo()) : (pt.getRangeFrom());
 				sb.append(b1).append(' ').append(pt.getVectorDirection()).append(' ').append(b2).append(")");
 			}
 			if (i != (ports.size() - 1)) sb.append(';');
