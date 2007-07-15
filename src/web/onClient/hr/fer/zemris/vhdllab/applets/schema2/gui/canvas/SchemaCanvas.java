@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownComponentPrototypeException;
@@ -13,13 +14,17 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteComponentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteSegmentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.MoveComponentCommand;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -39,11 +44,14 @@ import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISchemaCanvas {
-//TODO delselektiranje!!!
 	/**
 	 * Generated serial ID
 	 */
@@ -117,6 +125,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	private CriticalPoint wireEnding = null;
 	
 	private Timer timer = null;
+	private Caseless componentToMove = null;
+	
+	private boolean isGridOn =true;
 	
 	//constrictors
 	public SchemaCanvas(ISchemaCore core) {
@@ -148,6 +159,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		this.addMouseListener(new Mouse1());
 		this.addMouseMotionListener(new Mose2());
 		this.setOpaque(true);
+		this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
 	}
 
 	//##########################
@@ -161,13 +173,13 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	protected void paintComponent(Graphics g) {
 		Insets in = this.getInsets();
 		if(img == null) {
-			img=new BufferedImage(this.getWidth()-in.left-in.right,this.getHeight()-in.left-in.right
+			img=new BufferedImage(this.getWidth()-in.left-in.right,this.getHeight()-in.top-in.bottom
 					, BufferedImage.TYPE_3BYTE_BGR);
 			drawComponents();
 		} else {
-			if (img.getHeight()!=this.getHeight()-in.left-in.right ||
+			if (img.getHeight()!=this.getHeight()-in.top-in.bottom ||
 					img.getWidth()!=this.getWidth()-in.left-in.right){
-				img=new BufferedImage(this.getWidth()-in.left-in.right,this.getHeight()-in.left-in.right
+				img=new BufferedImage(this.getWidth()-in.left-in.right,this.getHeight()-in.top-in.bottom
 						, BufferedImage.TYPE_3BYTE_BGR);
 			}
 			drawComponents();
@@ -190,11 +202,15 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		components = controller.getSchemaInfo().getComponents();
 		wires = controller.getSchemaInfo().getWires(); 
 		
-		g.setColor(Color.WHITE);
+		g.setColor(CanvasColorProvider.CANVAS_BACKGROUND);
 		g.fillRect(0,0,img.getWidth(),img.getHeight());
-		g.setColor(Color.BLACK);
 		
-		//TODO nacrtaj mrezu, pitaj za sensitivnost mreze, neznam, jos nesto, sjeti se!!
+		int dist = Constants.GRID_SIZE;
+		g.setColor(CanvasColorProvider.GRID_DOT);
+		for(int i = 0; i<=img.getWidth()/dist;i++)
+			for(int j=0;j<=img.getHeight()/dist;j++){
+				g.fillOval(i*dist-2, j*dist-2, 4, 4);
+			}
 		
 		
 		Set<Caseless> names = components.getComponentNames();
@@ -202,14 +218,16 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		int sizeX = 0;
 		int sizeY = 0;
 		
-		Caseless sel = localController.getSelectedComponent();//TODO nastavi!!!
+		Caseless sel = localController.getSelectedComponent();
 		int type = localController.getSelectedType();
 		
 		for(Caseless name: names){
 			ISchemaComponent comp = components.fetchComponent(name);
 			XYLocation componentLocation = components.getComponentLocation(name);
 			Color cl = g.getColor();
-			g.setColor(type == CanvasToolbarLocalGUIController.TYPE_COMPONENT && name.equals(sel)?Color.GREEN:Color.BLACK);
+			g.setColor(type == CanvasToolbarLocalGUIController.TYPE_COMPONENT && name.equals(sel)?
+					CanvasColorProvider.COMPONENT_SELECTED:
+						CanvasColorProvider.COMPONENT);
 			
 			g.translate(componentLocation.x, componentLocation.y);
 			comp.getDrawer().draw(g);
@@ -231,7 +249,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		names=wires.getWireNames();
 		for(Caseless name: names){
 			Color cl = g.getColor();
-			g.setColor(type == CanvasToolbarLocalGUIController.TYPE_WIRE && name.equals(sel)?Color.GREEN:Color.BLACK);
+			g.setColor(type == CanvasToolbarLocalGUIController.TYPE_WIRE && name.equals(sel)?
+					CanvasColorProvider.SIGNAL_LINE_SELECTED:
+						CanvasColorProvider.SIGNAL_LINE);
 			wires.fetchWire(name).getDrawer().draw(g);
 			Rectangle rect = wires.getBounds(name);
 			if(rect.x + rect.width + 10 > sizeX)sizeX =rect.x + rect.width + 10;
@@ -241,7 +261,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		
 		if(addComponentComponent!= null){
 			Color temp = g.getColor();
-			g.setColor(Color.RED);
+			g.setColor(CanvasColorProvider.COMPONENT_TO_ADD);
 			g.translate(addComponentX, addComponentY);
 			addComponentComponent.getDrawer().draw(g);
 			g.translate(-addComponentX, -addComponentY);
@@ -250,7 +270,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		
 		if(preLoc != null){
 			Color temp = g.getColor();
-			g.setColor(preLoc.isWireInstantiable()?Color.CYAN:Color.RED);
+			g.setColor(preLoc.isWireInstantiable()?
+					CanvasColorProvider.SIGNAL_LINE_TO_ADD:
+						CanvasColorProvider.SIGNAL_LINE_ERROR);
 			preLoc.draw(g);
 			g.setColor(temp);			
 		}
@@ -286,11 +308,12 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 		if(evt.getPropertyName().equals(EPropertyChange.CANVAS_CHANGE.toString())){
 			drawComponents();
-		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_COMPONENT_TO_ADD)){
-			System.out.println("Canvas registered: localControler.PROPERTY_CHANGE_COMPONENT_TO_ADD");
+		}else if(evt.getPropertyName().equalsIgnoreCase("GRID")){
+			isGridOn = localController.isGridON();
 		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION)){
 			System.out.println("Canvas registered: localControler.PROPERTY_CHANGE_SELECTION");
-		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)){
+		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)
+				||evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_COMPONENT_TO_ADD)){
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			modifyTimerStatus();
 			localController.setSelectedComponent(new Caseless(""), CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED);
@@ -338,7 +361,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			if(e.getButton()==MouseEvent.BUTTON1){
 				if(state.equals(ECanvasState.ADD_COMPONENT_STATE)){
 					Caseless comp = localController.getComponentToAdd();
-					ICommand instantiate = new InstantiateComponentCommand(comp, addComponentX, addComponentY);
+					ICommand instantiate = new InstantiateComponentCommand(comp, alignToGrid(addComponentX), alignToGrid(addComponentY));
 					ICommandResponse response = controller.send(instantiate);
 					System.out.println ("canvas report| component instantiate succesful: "+response.isSuccessful());
 				}
@@ -351,14 +374,15 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					}else{
 						ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
 						if(wire != null){
-							ICommand instantiate = new DeleteWireCommand(wire.getName());
-							ICommandResponse response = controller.send(instantiate);
+							int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
+							WireSegment seg = wire.getSegments().get(segNo);
+							ICommand deleteSegment = new DeleteSegmentCommand(wire.getName(),seg);
+							ICommandResponse response = controller.send(deleteSegment);
 							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
 						}
 					}
 				}
 				else if(state.equals(ECanvasState.MOVE_STATE)){
-					//TODO move
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY());
 					if(comp != null){
 						localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
@@ -370,7 +394,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					
 				}
 			}else if(e.getButton()==MouseEvent.BUTTON3){
-				//dummyStateChanger();
 				if(state.equals(ECanvasState.MOVE_STATE)){
 					localController.setSelectedComponent(new Caseless(""), CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED);
 				}else if(state.equals(ECanvasState.ADD_WIRE_STATE)){
@@ -378,6 +401,15 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					wireBeginning = null;
 					wireEnding = null;
 					repaint();
+				}else if(state.equals(ECanvasState.DELETE_STATE)){
+					ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
+					if(wire != null){
+						if(doDeleteWire()){
+							ICommand delete = new DeleteWireCommand(wire.getName());
+							ICommandResponse response = controller.send(delete);
+							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+						}
+					}
 				}
 			}
 				
@@ -389,38 +421,49 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		public void mouseExited(MouseEvent e) {}
 
 		public void mousePressed(MouseEvent e) {
-			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&e.getButton()==MouseEvent.BUTTON1){
-				wireBeginning = getCriticalPoint(e.getX(),e.getY());
-				int x = e.getX();
-				int y = e.getY();
-				if(wireBeginning!=null){
-					x=wireBeginning.getX();
-					y=wireBeginning.getY();
+			if(e.getButton() == MouseEvent.BUTTON1){
+				if(state.equals(ECanvasState.ADD_WIRE_STATE)){
+					wireBeginning = getCriticalPoint(e.getX(),e.getY());
+					int x = alignToGrid(e.getX());
+					int y = alignToGrid(e.getY());
+					if(wireBeginning!=null){
+						x=wireBeginning.getX();
+						y=wireBeginning.getY();
+					}
+					preLoc = new WirePreLocator(x,y,x,y);
+				}else if(state.equals(ECanvasState.MOVE_STATE)){
+					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY());
+					if(comp!=null){
+						componentToMove = comp.getName();
+					}
 				}
-				preLoc = new WirePreLocator(x,y,x,y);
 			}
 		}
 
 		public void mouseReleased(MouseEvent e) {
-			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&e.getButton()==MouseEvent.BUTTON1){
-				wireEnding = getCriticalPoint(e.getX(),e.getY());
-				int x = e.getX();
-				int y = e.getY();
-				if(wireEnding!=null){
-					x=wireEnding.getX();
-					y=wireEnding.getY();
+			if(e.getButton()==MouseEvent.BUTTON1){
+				if(state.equals(ECanvasState.ADD_WIRE_STATE)&&preLoc!=null){
+					wireEnding = getCriticalPoint(e.getX(),e.getY());
+					int x = alignToGrid(e.getX());
+					int y = alignToGrid(e.getY());
+					if(wireEnding!=null){
+						x=wireEnding.getX();
+						y=wireEnding.getY();
+					}
+					preLoc.setX2(x);
+					preLoc.setY2(y);
+					preLoc.setWireInstantiable(wireBeginning,wireEnding);
+
+					if(preLoc.isWireInstance()){
+						preLoc.instantiateWire(controller, wireBeginning, wireEnding);
+					}
+					preLoc = null;
+					wireBeginning = null;
+					wireEnding = null;
+					repaint();
+				}else if(state.equals(ECanvasState.MOVE_STATE)){
+					componentToMove = null;
 				}
-				preLoc.setX2(x);
-				preLoc.setY2(y);
-				preLoc.setWireInstantiable(wireBeginning,wireEnding);
-				
-				if(preLoc.isWireInstance()){
-					preLoc.instantiateWire(controller, wireBeginning, wireEnding);
-				}
-				preLoc = null;
-				wireBeginning = null;
-				wireEnding = null;
-				repaint();
 			}
 		}
 
@@ -430,15 +473,25 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 		public void mouseDragged(MouseEvent e) {
 			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&preLoc!=null){
-				preLoc.setX2(e.getX());
-				preLoc.setY2(e.getY());
+				preLoc.setX2(alignToGrid(e.getX()));
+				preLoc.setY2(alignToGrid(e.getY()));
 
 				point = getCriticalPoint(e.getX(), e.getY());
 				preLoc.setWireInstantiable(wireBeginning,point);
 				preLoc.setWireOrientation();
 				modifyTimerStatus();
 				repaint();
-
+			}else if(state.equals(ECanvasState.MOVE_STATE)&&componentToMove!=null){
+				ISchemaComponent comp = components.fetchComponent(componentToMove);
+				if(e.getX()>comp.getWidth()/2&&e.getY()>comp.getHeight()/2){
+					ICommand move = new MoveComponentCommand(
+							componentToMove,new XYLocation(
+									alignToGrid(e.getX()-comp.getWidth()/2),alignToGrid(e.getY()-comp.getHeight()/2)
+							)
+					);
+					ICommandResponse response = controller.send(move);
+					System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+				}
 			}
 		}
 
@@ -448,8 +501,8 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				int x = e.getX();
 				int y = e.getY();
 				if(x > addComponentComponent.getWidth()/2 && y > addComponentComponent.getHeight()/2 && x < img.getWidth() && y < img.getHeight()) {
-					addComponentX = x-addComponentComponent.getWidth()/2;
-					addComponentY = y-addComponentComponent.getHeight()/2;
+					addComponentX = alignToGrid(x-addComponentComponent.getWidth()/2);
+					addComponentY = alignToGrid(y-addComponentComponent.getHeight()/2);
 					repaint();
 				}
 			}
@@ -464,7 +517,19 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		
 	}
 
-
+	private boolean doDeleteWire() {
+		String[] options={"Yes",
+				"No"
+		};
+		JLabel name=new JLabel("Delete entire wire?");
+		JOptionPane optionPane=new JOptionPane(name,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
+		JDialog dialog=optionPane.createDialog(this,"VHDLLAB");
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		dialog.setVisible(true);
+		Object selected=optionPane.getValue();
+		return selected.equals(options[0]);
+	}
+	
 	public void modifyTimerStatus() {
 		if(point==null)timer.stop();
 		else{
@@ -489,7 +554,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		}else{
 			ISchemaWire wire = wires.fetchWire(x, y, 10);
 			if(wire != null){
-				point = new CriticalPoint(wire, x, y);
+				point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));
 			}else{
 				return null;
 			}
@@ -497,5 +562,11 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		return point;
 	}
 	
+	private int alignToGrid(int x){
+		if(isGridOn)
+			return Math.round((float)x/Constants.GRID_SIZE)*Constants.GRID_SIZE;
+		else
+			return x;
+	}
 
 }

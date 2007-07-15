@@ -41,6 +41,11 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	private Caseless componentToAdd = new Caseless("AND_gate");
 	private Caseless selectedComponent = new Caseless("");
 	private int selectedType = 0;
+	
+	//TODO makni kasnije
+	private boolean gridON = true;
+	
+	//#########
 
 	public CanvasToolbarLocalGUIController() {
 		support = new PropertyChangeSupport(this);
@@ -130,5 +135,14 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 
 	public int getSelectedType() {
 		return selectedType;
+	}
+
+	public boolean isGridON() {
+		return gridON;
+	}
+
+	public void setGridON(boolean gridON) {
+		this.gridON = gridON;
+		support.firePropertyChange("GRID", null, null);
 	}
 }

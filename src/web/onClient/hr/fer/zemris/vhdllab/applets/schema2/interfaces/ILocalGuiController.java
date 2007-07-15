@@ -100,4 +100,7 @@ public interface ILocalGuiController {
 	 * @return
 	 */
 	public int getSelectedType();
+	
+	public boolean isGridON();
+	public void setGridON(boolean gridON);
 }

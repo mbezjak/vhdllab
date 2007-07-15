@@ -64,6 +64,25 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 			}
 			
 		});
+		
+		final JToggleButton b = new JToggleButton("GRID ON");
+		b.setSelected(true);
+		b.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				if(localController.isGridON()){
+					b.setText("GRID OFF");
+					b.setSelected(false);
+					localController.setGridON(false);
+				}else{
+					b.setText("GRID ON");
+					b.setSelected(true);
+					localController.setGridON(true);
+				}
+			}
+			
+		});
+		
 		//############################
 		
 		this.add(selactState);
@@ -72,6 +91,7 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 		
 		//#####
 		this.add(button);
+		this.add(b);
 		//#####
 		
 	}

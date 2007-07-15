@@ -49,7 +49,9 @@ public class CriticalPoint {
 
 	public void draw(Graphics2D g,int radius){
 		Color cl = g.getColor();
-		g.setColor(type == ON_COMPONENT_PLUG?Color.RED:Color.BLUE);
+		g.setColor(type == ON_COMPONENT_PLUG?
+				CanvasColorProvider.CRITICAL_PORT:
+					CanvasColorProvider.CRITICAL_WIRE);
 		g.drawOval(x-radius/2, y-radius/2, radius, radius);
 		g.setColor(cl);
 	}

@@ -1,10 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.BindWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.PlugWireCommand;
 
@@ -207,15 +209,26 @@ public class WirePreLocator {
 				}catch (NullPointerException e) {}
 				System.out.println ("canvas report| wire instantiate & plug succesful: "+response.isSuccessful()+" "+message);
 			}else{
-				System.out.println("canvas report| wire instantiate & plug expand wire");
+				if(point.getType() == CriticalPoint.ON_WIRE_PLUG && !point.getName().equals(wireName)){
+					Caseless wireToBindName = point.getName();
+					ICommand plug = new BindWireCommand(wireToBindName, wireName);
+					ICommandResponse response = controller.send(plug);
+					String message = "";
+					try{
+						message = response.getError().getMessage(); 
+					}catch (NullPointerException e) {}
+					System.out.println ("canvas report| wire instantiate & plug succesful: "+response.isSuccessful()+" "+message);
+				}else{
+					System.out.println("canvas report| wire instantiate & plug expand wire");
+				}
 			}
 		}
 	}
 
 	private Caseless createName(int x1, int y1, int x2, int y2) {
-		StringBuilder build = new StringBuilder("WIRE");
-		build.append(x1).append("-").append(y1).append("-")
-			.append(x2).append("-").append("y2");
+		StringBuilder build = new StringBuilder("WIRE_");
+		build.append(x1).append("_").append(y1).append("_")
+			.append(x2).append("_").append(y2);
 		return new Caseless(build.toString());
 	}
 
@@ -264,7 +277,7 @@ public class WirePreLocator {
 
 	public void setWireOrientation() {
 		double d = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-		if(d>9&&d<11){
+		if(d>Constants.GRID_SIZE-1&&d<Constants.GRID_SIZE+1){
 			if(Math.abs(x1-x2)>Math.abs(y1-y2)) 
 				orientation = WirePreLocator.HORIZ_FIRST;
 			else 
