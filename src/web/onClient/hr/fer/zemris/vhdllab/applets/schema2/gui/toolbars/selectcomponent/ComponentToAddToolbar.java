@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
@@ -146,6 +147,13 @@ public class ComponentToAddToolbar extends JPanel implements
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (DEBUG_MODE) {
 			System.out.println("ComponentToAddToolbar: propertyChangeEvent");
+		}
+
+		if (evt.getPropertyName().equals(
+				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)) {
+			if (localController.getSelectedComponent() == null) {
+				setFirstComponent();
+			}
 		}
 
 		refreshList();
