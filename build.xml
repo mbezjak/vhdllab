@@ -121,6 +121,8 @@
     <javac destdir="${build.dir}/service" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/service"/>
       <src path="src/common"/>
+    	<!-- only temporary solution!! -->
+      <src path="src/web/onClient"/>
       <classpath refid="src.class.path"/>
     </javac>
   </target>
