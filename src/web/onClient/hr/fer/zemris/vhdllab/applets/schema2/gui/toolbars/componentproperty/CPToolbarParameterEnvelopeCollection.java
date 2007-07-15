@@ -128,6 +128,7 @@ public class CPToolbarParameterEnvelopeCollection {
 		}
 
 		private void buildComboBoxForBoolean(EParamTypes pType) {
+			possibleValues = new JComboBox();
 			possibleValues.addItem("true");
 			possibleValues.addItem("false");
 
