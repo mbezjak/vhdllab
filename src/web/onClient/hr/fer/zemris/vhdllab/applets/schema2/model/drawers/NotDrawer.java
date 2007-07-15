@@ -52,15 +52,16 @@ public class NotDrawer implements IComponentDrawer {
 	public void draw(Graphics2D graphics) {
 		int w = comp_to_draw.getWidth();
 		int h = comp_to_draw.getHeight();
-		XYLocation offset;
+		int specialh = 0;
 		
 		// draw ports and wires to those ports
 		for (SchemaPort port : comp_to_draw.getSchemaPorts()) {
 			Caseless mapping = port.getMapping();
 			
-			offset = port.getOffset();
+			XYLocation offset = port.getOffset();
 			if (offset.x == 0 || offset.x == w) {
 				graphics.drawLine(offset.x, offset.y, w/2, offset.y);
+				if (offset.x == w) specialh = offset.y;
 			}
 			if (offset.y == 0 || offset.y == h) {
 				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
@@ -79,11 +80,10 @@ public class NotDrawer implements IComponentDrawer {
 		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);
 		graphics.fillRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		graphics.fillOval(w - PIN_LENGTH, (h - NEGATE_SIZE) / 2, NEGATE_SIZE, NEGATE_SIZE);
+		graphics.fillOval(w - PIN_LENGTH, specialh - NEGATE_SIZE / 2, NEGATE_SIZE, NEGATE_SIZE);
 		graphics.setColor(c);
 		graphics.drawRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		graphics.drawOval(w - PIN_LENGTH, (h - NEGATE_SIZE) / 2, NEGATE_SIZE, NEGATE_SIZE);
-		
+		graphics.drawOval(w - PIN_LENGTH, specialh - NEGATE_SIZE / 2, NEGATE_SIZE, NEGATE_SIZE);
 		
 		// draw insignia
 		Font oldf = graphics.getFont(), f = new Font("Serif", Font.PLAIN, INSIGNIA_SIZE);

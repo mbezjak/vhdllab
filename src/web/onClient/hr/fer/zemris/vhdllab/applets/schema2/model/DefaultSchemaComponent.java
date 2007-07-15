@@ -335,8 +335,8 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 		
 		// calculate width and height and set ports appropriately
-		width = (((nc > sc) ? (nc) : (sc)) - 1) * WIDTH_PER_PORT + EDGE_OFFSET * 2;
-		height = (((wc > ec) ? (wc) : (ec)) - 1) * HEIGHT_PER_PORT + EDGE_OFFSET * 2;
+		width = (((nc > sc) ? (nc) : (sc))) * WIDTH_PER_PORT + EDGE_OFFSET * 2;
+		height = (((wc > ec) ? (wc) : (ec))) * HEIGHT_PER_PORT + EDGE_OFFSET * 2;
 		
 		pos = toBeMoved.size();
 		for (int i = 0; i < pos; i++) {

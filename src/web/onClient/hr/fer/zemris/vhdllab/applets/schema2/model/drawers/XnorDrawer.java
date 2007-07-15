@@ -2,11 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.drawers;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
@@ -27,7 +23,7 @@ import java.awt.Graphics2D;
  * @author Axel
  *
  */
-public class XnorDrawer implements IComponentDrawer {
+public class XnorDrawer extends GateDrawer implements IComponentDrawer {
 	
 	
 	/* static fields */
@@ -45,44 +41,16 @@ public class XnorDrawer implements IComponentDrawer {
 	
 	
 	public XnorDrawer(ISchemaComponent componentToDraw) {
+		super(componentToDraw);
 		comp_to_draw = componentToDraw;
 	}
 	
 	
 	public void draw(Graphics2D graphics) {
+		super.draw(graphics, true);
+		
 		int w = comp_to_draw.getWidth();
 		int h = comp_to_draw.getHeight();
-		XYLocation offset;
-		
-		// draw ports and wires to those ports
-		for (SchemaPort port : comp_to_draw.getSchemaPorts()) {
-			Caseless mapping = port.getMapping();
-			
-			offset = port.getOffset();
-			if (offset.x == 0 || offset.x == w) {
-				graphics.drawLine(offset.x, offset.y, w/2, offset.y);
-			}
-			if (offset.y == 0 || offset.y == h) {
-				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
-			}
-			
-			if (!Caseless.isNullOrEmpty(mapping)) continue;
-			
-			Color c = graphics.getColor();
-			graphics.setColor(Color.WHITE);
-			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
-			graphics.setColor(c);
-			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
-		}
-		
-		// draw a rectangle
-		Color c = graphics.getColor();
-		graphics.setColor(Color.WHITE);
-		graphics.fillRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		graphics.fillOval(w - PIN_LENGTH, (h - NEGATE_SIZE) / 2, NEGATE_SIZE, NEGATE_SIZE);
-		graphics.setColor(c);
-		graphics.drawRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		graphics.drawOval(w - PIN_LENGTH, (h - NEGATE_SIZE) / 2, NEGATE_SIZE, NEGATE_SIZE);
 		
 		// draw insignia
 		Font oldf = graphics.getFont(), f = new Font("Serif", Font.PLAIN, INSIGNIA_SIZE);
