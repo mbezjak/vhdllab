@@ -11,53 +11,94 @@ public class CPToolbarTableModel extends DefaultTableModel {
 	private CPToolbarParameterEnvelopeCollection pec = null;
 
 	public CPToolbarTableModel(CPToolbarParameterEnvelopeCollection pec) {
+		if (pec == null)
+			throw new IllegalArgumentException(
+					"CPToolbarParameterEnvelopeCollection nemoze biti null!");
 		this.pec = pec;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.DefaultTableModel#getColumnCount()
 	 */
 	@Override
 	public int getColumnCount() {
-		// TODO Auto-generated method stub
-		return super.getColumnCount();
+		if (pec != null) {
+			return pec.getNumberOfColumns();
+		} else
+			return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.DefaultTableModel#getRowCount()
 	 */
 	@Override
 	public int getRowCount() {
-		// TODO Auto-generated method stub
-		return super.getRowCount();
+		if (pec != null) {
+			return pec.getNumberOfRows();
+		} else
+			return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.DefaultTableModel#getValueAt(int, int)
 	 */
 	@Override
 	public Object getValueAt(int row, int column) {
-		// TODO Auto-generated method stub
-		return super.getValueAt(row, column);
+		if (pec != null) {
+			return pec.getValueAt(row, column);
+		} else
+			return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
 	 */
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		// TODO Auto-generated method stub
-		return super.isCellEditable(row, column);
+		if (column == 0) {
+			return false;
+		} else
+			return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.table.DefaultTableModel#setValueAt(java.lang.Object, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.DefaultTableModel#setValueAt(java.lang.Object,
+	 *      int, int)
 	 */
 	@Override
 	public void setValueAt(Object value, int row, int column) {
-		// TODO Auto-generated method stub
-		super.setValueAt(value, row, column);
+		if (pec != null) {
+			pec.setValueAt(row, column, value);
+		} else {
+			if (CPToolbar.DEBUG_MODE) {
+				System.err
+						.println("CPToolbarTableModel: trying to set while CPToolbarParameterEnvelopeCollection is null");
+			}
+		}
 	}
-	
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.DefaultTableModel#getColumnName(int)
+	 */
+	@Override
+	public String getColumnName(int column) {
+		if (column < 2) {
+			return CPToolbar.TOOLBAR_TABLE_HEADER[column];
+		} else {
+			return super.getColumnName(column);
+		}
+	}
+
 }

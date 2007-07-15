@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.JTableX;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
@@ -9,14 +10,15 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class CPToolbar extends JPanel implements PropertyChangeListener {
 	private static final long serialVersionUID = -6615541360994680172L;
@@ -25,6 +27,16 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 * Sluzi za debug/retail mode ove komponente
 	 */
 	public static final boolean DEBUG_MODE = true;
+
+	/**
+	 * Ime stupaca tabele
+	 */
+	public static final String[] TOOLBAR_TABLE_HEADER = { "Name", "Value" };
+
+	/**
+	 * Ponasanje tabele
+	 */
+	public static final int TOOLBAR_RESIZE_MODE = JTable.AUTO_RESIZE_ALL_COLUMNS;
 
 	/**
 	 * Controller
@@ -36,11 +48,6 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 */
 	private ILocalGuiController lgc = null;
 
-	/**
-	 * Tabela za prikaz parametara
-	 */
-	private JTableX tabela = null;
-
 	public CPToolbar(ILocalGuiController lgc, ISchemaController controller) {
 		this.lgc = lgc;
 		this.controller = controller;
@@ -48,11 +55,13 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		initGUI();
 	}
 
+	/**
+	 * Inicijalizira graficki dio ovog toolbara
+	 */
 	private void initGUI() {
-		setLayout(new GridLayout(3, 1));
-		setOpaque(true);
-		setBackground(Color.green);
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setPreferredSize(new Dimension(200, 100));
+		setAlignmentX(LEFT_ALIGNMENT);
 	}
 
 	/**
@@ -65,6 +74,8 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		Caseless componentName = null;
 
 		componentName = (Caseless) evt.getNewValue();
+
+		// dali je komponenta ili zica
 		if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE) {
 			if (DEBUG_MODE) {
 				System.out.println("CPToolbar: selectedType=WIRE");
@@ -85,7 +96,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	}
 
 	/**
-	 * graficki prikaz parametara za komponentu ZICA
+	 * Graficki prikaz parametara za komponentu ZICA
 	 * 
 	 * @param componentName
 	 *            ime zice
@@ -99,8 +110,10 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 * Graficki prikaz za komponentu KOMPONENTA
 	 * 
 	 * @param component
+	 *            komponenta koja se prikazuje
 	 */
 	public void showPropertyForComponent(ISchemaComponent component) {
+		JTableX tabela = null;
 		if (DEBUG_MODE) {
 			String componentName = component.getName().toString();
 			int numberOfParameters = component.getParameters().count();
@@ -109,24 +122,48 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 					+ numberOfParameters);
 		}
 
-		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
-				component);
-
 		cleanUpGui();
-		createJTableForComponent(component);
+		tabela = createJTableForComponent(component);
 		printComponentName(component.getName().toString());
+		faceLiftingForTable(tabela);
+		printTable(tabela);
 	}
 
-	private void createJTableForComponent(ISchemaComponent component) {
-		
+	private void faceLiftingForTable(JTableX tabela) {
+		tabela.setAutoResizeMode(TOOLBAR_RESIZE_MODE);
+		tabela.setRowSelectionAllowed(false);
+		tabela.setColumnSelectionAllowed(false);
+	}
+
+	private JTableX createJTableForComponent(ISchemaComponent component) {
+		// izgenerirani envelope za sve parametre sa svim potrebnim vizualnim
+		// komponentama
+		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
+				component);
+		// na temelju envelopea, gradi se model za JTableX
+		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
+		// na temelju envelopea, izgradio se i RowEditor model za JTableX
+		RowEditorModel rowModel = pCollection.getRowEditorModel();
+
+		JTableX tabela = new JTableX(tableModel, rowModel);
+
+		return tabela;
+	}
+
+	private void printTable(JTableX tabela) {
+		JScrollPane sPane = new JScrollPane(tabela);
+		sPane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		sPane
+				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		add(sPane);
+		revalidate();
 	}
 
 	private void printComponentName(String componentName) {
 
 		// dodaj labelu na panel
-		JLabel labelComponentName = new JLabel("Selection: " + componentName,
-				JLabel.LEFT);
-
+		JLabel labelComponentName = new JLabel("Selection: " + componentName);
 		add(labelComponentName);
 		revalidate();
 	}
