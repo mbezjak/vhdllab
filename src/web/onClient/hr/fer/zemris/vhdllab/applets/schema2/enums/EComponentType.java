@@ -32,7 +32,7 @@ public enum EComponentType {
 	 */
 	IN_OUT,
 	/**
-	 * Rezervirano za buduce dorade.
+	 * Rezervirano za buduce promjene.
 	 */
 	NON_BASIC
 	

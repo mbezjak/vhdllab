@@ -10,22 +10,22 @@
         <genericComponent>true</genericComponent>
 
         <parameterList>
-           <parameter>
+			<parameter>
               <generic>true</generic>
               <paramType>TIME</paramType>
-              <name>delay</name>
+              <name>Delay</name>
               <value>0 ns</value>
               <allowedValues></allowedValues>
 			  <eventName></eventName>
-           </parameter>
+           	</parameter>
 
            <parameter>
               <generic>true</generic>
               <paramType>INTEGER</paramType>
-              <name>input_port_num</name>
+              <name>Input_port_num</name>
               <value>2</value>
               <allowedValues></allowedValues>
-			  <eventName></eventName>
+			  <eventName>hr.fer.zemris.vhdllab.onClient.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
            </parameter>
         </parameterList>
        

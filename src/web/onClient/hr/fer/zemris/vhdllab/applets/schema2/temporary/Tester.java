@@ -74,8 +74,6 @@ public class Tester {
 		mpanel.getController().send(expandwire);
 		ICommand plug = new PlugWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port_0"));
 		System.out.println("Plug result: " + mpanel.getController().send(plug).getError());
-		ICommand move = new MoveComponentCommand(new Caseless("SomeCompi"), new XYLocation(160, 180));
-		mpanel.getController().send(move);
 		
 		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));

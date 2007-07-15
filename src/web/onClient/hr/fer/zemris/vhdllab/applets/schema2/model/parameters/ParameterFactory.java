@@ -84,7 +84,7 @@ public class ParameterFactory {
 		parameter.setValue(genval);
 		
 		// set constraint's allowedValuesSet
-		if (parwrapper.getAllowedValues() != null) {
+		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
@@ -107,7 +107,7 @@ public class ParameterFactory {
 		Caseless val = new Caseless(parwrapper.getValue());
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValues() != null) {
+		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
@@ -128,7 +128,7 @@ public class ParameterFactory {
 		String val = parwrapper.getValue();
 		parameter.setAsString(val);
 		
-		if (parwrapper.getAllowedValues() != null) {
+		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
@@ -149,7 +149,7 @@ public class ParameterFactory {
 		String val = parwrapper.getValue();
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValues() != null) {
+		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
@@ -170,7 +170,7 @@ public class ParameterFactory {
 		Double val = new Double(Double.parseDouble(parwrapper.getValue()));
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValues() != null) {
+		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
@@ -195,7 +195,7 @@ public class ParameterFactory {
 		Integer val = new Integer(Integer.parseInt(parwrapper.getValue()));
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValues() != null) {
+		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {
@@ -220,7 +220,7 @@ public class ParameterFactory {
 		Boolean val = new Boolean(Boolean.parseBoolean(parwrapper.getValue()));
 		parameter.setValue(val);
 		
-		if (parwrapper.getAllowedValues() != null) {
+		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split("#");
 			for (int i = 0; i < sfield.length; i++) {

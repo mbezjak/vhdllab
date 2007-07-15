@@ -26,7 +26,7 @@ public abstract class AbstractParameter implements IParameter {
 	}
 
 	public void setParameterEvent(String eventName) {
-		if (eventName == null || eventName.equals("")) return;
+		if (eventName == null || eventName.trim().equals("")) return;
 		
 		IParameterEvent ne;
 		
@@ -35,6 +35,7 @@ public abstract class AbstractParameter implements IParameter {
 			Constructor<IParameterEvent> ctor = cls.getConstructor();
 			ne = ctor.newInstance();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return;
 		}
 		

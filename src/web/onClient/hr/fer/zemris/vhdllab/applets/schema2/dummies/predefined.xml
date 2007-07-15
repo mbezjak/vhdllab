@@ -6,7 +6,7 @@
    <component>
         <componentName>AND_gate</componentName>
         <codeFileName>AND_gate.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.onClient.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>AND_gate_instance</preferredName>
         <genericComponent>true</genericComponent>
@@ -15,19 +15,18 @@
            <parameter>
               <generic>true</generic>
               <paramType>TIME</paramType>
-              <name>delay</name>
+              <name>Delay</name>
               <value>0 ns</value>
-              <allowedValues>
-              </allowedValues>
+              <allowedValues></allowedValues>
            </parameter>
 
            <parameter>
               <generic>true</generic>
               <paramType>INTEGER</paramType>
-              <name>input_port_num</name>
+              <name>Input_port_num</name>
               <value>2</value>
-              <allowedValues>
-              </allowedValues>
+              <allowedValues></allowedValues>
+			  <eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
            </parameter>
         </parameterList>
        
