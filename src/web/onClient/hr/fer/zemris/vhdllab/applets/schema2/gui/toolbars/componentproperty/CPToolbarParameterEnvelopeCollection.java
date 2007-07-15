@@ -148,7 +148,18 @@ public class CPToolbarParameterEnvelopeCollection {
 	}
 
 	private Object getNewValue(Object value, int row) {
-		EParamTypes pType;
+		EParamTypes pType = parameters.get(row).getParameterType();
+
+		if (pType == EParamTypes.BOOLEAN) {
+			return new Boolean(value.toString());
+		} else if (pType == EParamTypes.CASELESS) {
+			return new Caseless(value.toString());
+		} else if (pType == EParamTypes.TEXT) {
+			return new String(value.toString());
+		} else if (pType == EParamTypes.INTEGER) {
+			return Integer.parseInt(value.toString());
+		} else if (pType == EParamTypes.DECIMAL) {
+		}
 
 		return null;
 	}

@@ -20,7 +20,7 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	 * Bilo koja promjena
 	 */
 	public static final String PROPERTY_CHANGE_COMPONENT_TO_ADD = "ChangeComponentToAdd";
-	
+
 	/**
 	 * Promjena oznacene komponente (ComponentPropertyToolbar)
 	 */
@@ -30,22 +30,22 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	 * 
 	 */
 	public static final String PROPERTY_CHANGE_STATE = "ChangeState";
-	
+
 	public static final int TYPE_WIRE = 1;
 	public static final int TYPE_COMPONENT = 0;
 	public static final int TYPE_NOTHING_SELECTED = 2;
-	
+
 	private PropertyChangeSupport support = null;
 
 	private ECanvasState state = ECanvasState.MOVE_STATE;
-	private Caseless componentToAdd = new Caseless("AND_gate");
+	private Caseless componentToAdd = null;
 	private Caseless selectedComponent = new Caseless("");
 	private int selectedType = 0;
-	
-	//TODO makni kasnije
+
+	// TODO makni kasnije
 	private boolean gridON = true;
-	
-	//#########
+
+	// #########
 
 	public CanvasToolbarLocalGUIController() {
 		support = new PropertyChangeSupport(this);
@@ -124,13 +124,13 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	public void setState(ECanvasState state) {
 		ECanvasState temp = this.state;
 		this.state = state;
-		support.firePropertyChange(PROPERTY_CHANGE_STATE, temp,
-				state);
+		support.firePropertyChange(PROPERTY_CHANGE_STATE, temp, state);
 	}
-	
+
 	@Override
 	public String toString() {
-		return "State:"+state+"|ComponentToAdd:"+componentToAdd+"|SelectedComponent:"+selectedComponent;
+		return "State:" + state + "|ComponentToAdd:" + componentToAdd
+				+ "|SelectedComponent:" + selectedComponent;
 	}
 
 	public int getSelectedType() {
