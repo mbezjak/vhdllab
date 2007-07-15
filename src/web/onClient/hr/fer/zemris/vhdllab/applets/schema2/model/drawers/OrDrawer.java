@@ -27,15 +27,15 @@ import java.awt.Graphics2D;
  * @author Axel
  *
  */
-public class NotDrawer implements IComponentDrawer {
+public class OrDrawer implements IComponentDrawer {
 	
 	
 	/* static fields */
 	public static final int PORT_SIZE = 4;
 	public static final int NEGATE_SIZE = 4;
 	public static final int PIN_LENGTH = 15;
-	public static final int INSIGNIA_SIZE = 18;
-	public static final String INSIGNIA = "1";
+	public static final int INSIGNIA_SIZE = 20;
+	public static final String INSIGNIA = "\u22651";
 	
 	
 	/* private fields */
@@ -44,7 +44,7 @@ public class NotDrawer implements IComponentDrawer {
 	
 	
 	
-	public NotDrawer(ISchemaComponent componentToDraw) {
+	public OrDrawer(ISchemaComponent componentToDraw) {
 		comp_to_draw = componentToDraw;
 	}
 	
@@ -75,22 +75,18 @@ public class NotDrawer implements IComponentDrawer {
 			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
 		}
 		
-		// draw a rectangle and not circle
+		// draw a rectangle
 		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);
 		graphics.fillRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		graphics.fillOval(w - PIN_LENGTH, (h - NEGATE_SIZE) / 2, NEGATE_SIZE, NEGATE_SIZE);
 		graphics.setColor(c);
 		graphics.drawRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		graphics.drawOval(w - PIN_LENGTH, (h - NEGATE_SIZE) / 2, NEGATE_SIZE, NEGATE_SIZE);
-		
 		
 		// draw insignia
 		Font oldf = graphics.getFont(), f = new Font("Serif", Font.PLAIN, INSIGNIA_SIZE);
 		graphics.setFont(f);
-		graphics.drawString(INSIGNIA, w / 2 - f.getSize() * INSIGNIA.length() / 4, h / 2 + f.getSize() / 2);
+		graphics.drawString(INSIGNIA, w / 2 - f.getSize() * INSIGNIA.length() / 3, h / 2 + f.getSize() / 2);
 		graphics.setFont(oldf);
-		
 	}
 	
 }

@@ -100,7 +100,7 @@
    <component>
         <componentName>VL_OR</componentName>
         <codeFileName>VL_OR.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.OrDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>VL_OR_instance</preferredName>
         <genericComponent>true</genericComponent>
@@ -147,7 +147,7 @@
    <component>
         <componentName>VL_NOR</componentName>
         <codeFileName>VL_NOR.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.NorDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>VL_NOR_instance</preferredName>
         <genericComponent>true</genericComponent>
@@ -194,7 +194,7 @@
    <component>
         <componentName>VL_XOR</componentName>
         <codeFileName>VL_XOR.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.XorDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>VL_XOR_instance</preferredName>
         <genericComponent>true</genericComponent>
@@ -241,7 +241,7 @@
    <component>
         <componentName>VL_XNOR</componentName>
         <codeFileName>VL_XNOR.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.XnorDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>VL_XNOR_instance</preferredName>
         <genericComponent>true</genericComponent>
