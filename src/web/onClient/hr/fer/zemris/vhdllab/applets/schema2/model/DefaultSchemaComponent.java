@@ -506,7 +506,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	public SchemaPort getSchemaPort(int xoffset, int yoffset, int dist) {
 		int ind = SMath.calcClosestPort(xoffset, yoffset, dist, schemaports);
-		if (ind == -1) return null;
+		if (ind == SMath.ERROR) return null;
 		return schemaports.get(ind);
 	}
 
