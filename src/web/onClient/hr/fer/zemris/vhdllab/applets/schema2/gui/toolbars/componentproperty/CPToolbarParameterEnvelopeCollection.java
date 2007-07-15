@@ -2,11 +2,16 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.SetParameterCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.SetParameterCommand.EParameterHolder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,12 +47,19 @@ public class CPToolbarParameterEnvelopeCollection {
 	private RowEditorModel rowModel = null;
 
 	/**
+	 * Controller
+	 */
+	private ISchemaController controller = null;
+
+	/**
 	 * Konstruktor
 	 * 
 	 * @param component
 	 *            instanca komponente
 	 */
-	public CPToolbarParameterEnvelopeCollection(ISchemaComponent component) {
+	public CPToolbarParameterEnvelopeCollection(ISchemaComponent component,
+			ISchemaController controller) {
+		this.controller = controller;
 		this.component = component;
 
 		buildParameters();
@@ -117,16 +129,46 @@ public class CPToolbarParameterEnvelopeCollection {
 	 */
 	public boolean setValueAt(int row, int column, Object value) {
 		if (CPToolbar.DEBUG_MODE) {
-			System.out.println("CPToolbarModel: setValueAt detected on row="
-					+ row + ", columnt=" + column + ", newValue="
-					+ value.toString());
+			System.out.println("---");
 		}
-
 		Caseless objectName = component.getName();
 		String parameterName = getValueAt(row, 0);
-		Object newValue = null;
 
-		return false;
+		if (CPToolbar.DEBUG_MODE) {
+			System.out
+					.println("CPToolbarParameterEnvelopeCollection: setValueAt detected on row="
+							+ row
+							+ ", column="
+							+ column
+							+ ", newValue="
+							+ value.toString());
+			System.out
+					.println("CPToolbarParameterEnvelopeCollection: objectName="
+							+ objectName.toString()
+							+ ", parameterName="
+							+ parameterName);
+		}
+		// FIXME neispravno uneseni brojevi
+		Object newValue = getNewValue(value, row);
+
+		ICommand command = new SetParameterCommand(objectName, parameterName,
+				EParameterHolder.component, newValue, controller
+						.getSchemaInfo());
+		ICommandResponse response = command.performCommand(controller
+				.getSchemaInfo());
+
+		if (CPToolbar.DEBUG_MODE) {
+			System.out
+					.println("CPToolbarParameterEnvelopeCollection: commandResponseIsSuccessful="
+							+ response.isSuccessful());
+			if (!response.isSuccessful()) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: commandResponseExplain="
+								+ response.getError().getMessage());
+			}
+		}
+
+		return response.isSuccessful();
 	}
 
 	/**
@@ -151,14 +193,52 @@ public class CPToolbarParameterEnvelopeCollection {
 		EParamTypes pType = parameters.get(row).getParameterType();
 
 		if (pType == EParamTypes.BOOLEAN) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: parameterType=BOOLEAN");
+			}
 			return new Boolean(value.toString());
 		} else if (pType == EParamTypes.CASELESS) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: parameterType=CASELESS");
+			}
 			return new Caseless(value.toString());
 		} else if (pType == EParamTypes.TEXT) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: parameterType=TEXT");
+			}
 			return new String(value.toString());
 		} else if (pType == EParamTypes.INTEGER) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: parameterType=INTEGER");
+			}
 			return Integer.parseInt(value.toString());
 		} else if (pType == EParamTypes.DECIMAL) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: parameterType=DECIMAL");
+			}
+			return Double.parseDouble(value.toString());
+		} else if (pType == EParamTypes.TIME) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: parameterType=TIME");
+			}
+			System.err
+					.println("CPToolbarParameterEnvelopeCollection: neugradjena funkcija za Time tip parametra!");
+			// FIXME Ovdje cu se morat poigrat sa tabelom
+			return null;
+		} else if (pType == EParamTypes.OBJECT) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: parameterType=OBJECT");
+			}
+			System.err
+					.println("CPToolbarParameterEnvelopeCollection: neugradjena funkcija za Object tip parametra!");
+			return null;
 		}
 
 		return null;
@@ -216,14 +296,10 @@ public class CPToolbarParameterEnvelopeCollection {
 				if (pType == EParamTypes.BOOLEAN) {
 					buildComboBoxForBoolean(pType);
 					isEnumerate = true;
-				} else if (pType == EParamTypes.CASELESS) {
-
-				} else if (pType == EParamTypes.TEXT) {
-
-				} else if (pType == EParamTypes.INTEGER) {
-
-				} else if (pType == EParamTypes.DECIMAL) {
-
+				} else if (pType == EParamTypes.OBJECT) {
+					// TODO Napraviti podrsku za object tipove parametara
+				} else if (pType == EParamTypes.TIME) {
+					// TODO Napraviti podrsku za TIME tipove parametara
 				}
 			}
 		}

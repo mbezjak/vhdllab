@@ -131,16 +131,16 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		controller.addListener(EPropertyChange.PROTOTYPES_CHANGE,
 				componentToAddToolbar);
 
+		// component selection toolbar
+		localGUIController.addListener(
+				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE,
+				componentToAddToolbar);
 		// canvas toolbar
 		localGUIController.addListener(canvas);
 		// property toolbar
 		localGUIController.addListener(
 				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,
 				componentPropertyToolbar);
-		// component selection toolbar
-		localGUIController.addListener(
-				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE,
-				componentToAddToolbar);
 
 		canvas.registerLocalController(localGUIController);
 		canvas.registerSchemaController(controller);

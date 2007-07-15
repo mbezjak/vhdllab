@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -89,7 +90,10 @@ public class ComponentToAddToolbar extends JPanel implements
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		list.addListSelectionListener(this);
-		setFirstComponent();
+
+		if (localController.getState() == ECanvasState.ADD_COMPONENT_STATE) {
+			setFirstComponent();
+		}
 	}
 
 	/**
@@ -120,11 +124,10 @@ public class ComponentToAddToolbar extends JPanel implements
 
 	private void setFirstComponent() {
 		if (list.getModel().getSize() > 0) {
-			if (localController.getState() == ECanvasState.ADD_COMPONENT_STATE) {
-				localController.setComponentToAdd(new Caseless(list.getModel()
-						.getElementAt(0).toString()));
-				list.setSelectedIndex(0);
-			}
+			localController.setComponentToAdd(new Caseless(list.getModel()
+					.getElementAt(0).toString()));
+			list.setSelectedIndex(0);
+
 		}
 	}
 
@@ -146,17 +149,25 @@ public class ComponentToAddToolbar extends JPanel implements
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (DEBUG_MODE) {
-			System.out.println("ComponentToAddToolbar: propertyChangeEvent");
+			System.out
+					.println("ComponentToAddToolbar: propertyChangeEvent, eventName="
+							+ evt.getPropertyName());
 		}
 
 		if (evt.getPropertyName().equals(
 				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)) {
-			if (localController.getSelectedComponent() == null) {
+			if (localController.getComponentToAdd() == null) {
+				if (ComponentToAddToolbar.DEBUG_MODE) {
+					System.out
+							.println("ComponentToAddToolbar: settingFirstComponent");
+				}
 				setFirstComponent();
+				return;
 			}
+		} else if (evt.getPropertyName().equals(
+				EPropertyChange.PROTOTYPES_CHANGE)) {
+			refreshList();
 		}
-
-		refreshList();
 	}
 
 	public void valueChanged(ListSelectionEvent e) {

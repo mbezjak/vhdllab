@@ -48,10 +48,14 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 */
 	private ILocalGuiController lgc = null;
 
+	/**
+	 * Ime oznacene komponente
+	 */
+	private JLabel labelComponentName = new JLabel("");
+
 	public CPToolbar(ILocalGuiController lgc, ISchemaController controller) {
 		this.lgc = lgc;
 		this.controller = controller;
-
 		initGUI();
 	}
 
@@ -86,6 +90,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		} else if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT) {
 			if (DEBUG_MODE) {
 				System.out.println("CPToolbar: selectedType=COMPONENT");
+				System.out.println("CPToolbar: componentName=" + componentName);
 			}
 
 			info = controller.getSchemaInfo();
@@ -139,7 +144,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		// izgenerirani envelope za sve parametre sa svim potrebnim vizualnim
 		// komponentama
 		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
-				component);
+				component, controller);
 		// na temelju envelopea, gradi se model za JTableX
 		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
 		// na temelju envelopea, izgradio se i RowEditor model za JTableX
@@ -163,7 +168,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	private void printComponentName(String componentName) {
 
 		// dodaj labelu na panel
-		JLabel labelComponentName = new JLabel("Selection: " + componentName);
+		labelComponentName.setText("Selection: " + componentName);
 		add(labelComponentName);
 		revalidate();
 	}
