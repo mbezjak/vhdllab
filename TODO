@@ -58,6 +58,7 @@ TODO 85) [CLOSED]	U drawer-u - ne iscrtavati kruzice za spojene pinove
 TODO 86) [OPEN]		Provjera da li su svi IN portovi popunjeni
 TODO 87) [OPEN]		Undoable check u controller-u i pripadni dijalog obavijesti
 TODO 88) [OPEN]		Prije AutoConnect-a DOBRO provjerit Nodeove
+TODO 89) [OPEN]		Prebaciti ispisivanje imena u drawer-u uz odgovarajuce preinake u sucelju drawer-a
 
 1) Jos uvijek nema "toolbara" s raspolozivim komponentama
 

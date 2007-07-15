@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PortRelation;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaParameterCollection;
@@ -98,6 +99,22 @@ public class DummyOR implements ISchemaComponent {
 	
 	
 	
+	
+	public Port getPort(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setPort(int index, Port port) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public int portCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	public SchemaPort getSchemaPort(Caseless name) {
 		// TODO Auto-generated method stub
 		return null;
@@ -188,7 +205,7 @@ public class DummyOR implements ISchemaComponent {
 		return false;
 	}
 
-	public List<SchemaPort> getPorts() {
+	public List<PortRelation> getPorts() {
 		// TODO Auto-generated method stub
 		return null;
 	}

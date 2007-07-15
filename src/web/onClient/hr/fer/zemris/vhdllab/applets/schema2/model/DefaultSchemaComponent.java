@@ -27,6 +27,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawe
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.Orientation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -39,8 +40,10 @@ import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -121,7 +124,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 					Type tp = portrel.port.getType();
 					if (tp.isScalar()) {
 						Caseless mappedto = portrel.relatedTo.get(0).getMapping();
-						sb.append((mappedto != null) ? (mappedto) : ("open"));
+						sb.append((!Caseless.isNullOrEmpty(mappedto)) ? (mappedto) : ("open"));
 					} else {
 						sb.append(signames.get(i));
 					}
@@ -235,7 +238,8 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	private void initDefaultParameters(String name) {
 		// default parameter - name
 		CaselessParameter cslpar =
-			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(name)); // TODO: add event
+			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(name));
+		cslpar.setParameterEvent(new NameChanger());
 		parameters.addParameter(cslpar);
 		
 		// default parameter - component orientation
@@ -340,12 +344,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			if (schport.getOffset().x == 0) schport.setXOffset(width);
 			else schport.setYOffset(height);
 		}
-	}
-	
-	private static void swapTwoElemArr(int[] arr) {
-		int t = arr[0];
-		arr[0] = arr[1];
-		arr[1] = t;
 	}
 	
 	private final int createSchPortsFor(Type tp, PortRelation pr, EOrientation ori, IntList toBeMoved,
@@ -619,6 +617,44 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	public Iterator<SchemaPort> schemaPortIterator() {
 		return schemaports.iterator();
+	}
+
+	public int portCount() {
+		return portrelations.size();
+	}
+
+	public Port getPort(int index) {
+		return portrelations.get(index).port;
+	}
+
+	public void setPort(int index, Port nport) {
+		if (index < 0 || index >= portrelations.size()) throw new IndexOutOfBoundsException();
+		
+		// cache all SchemaPorts because of their mappings
+		Map<Caseless, SchemaPort> cached = new HashMap<Caseless, SchemaPort>();
+		for (SchemaPort sp : schemaports) {
+			cached.put(sp.getName(), sp);
+		}
+		
+		// put the new port at desired index
+		portrelations.get(index).port = nport;
+		
+		// create a list of PortWrappers
+		List<PortWrapper> portwrappers = new ArrayList<PortWrapper>();
+		for (PortRelation pr : portrelations) {
+			PortWrapper pw = new PortWrapper(pr.port);
+			portwrappers.add(pw);
+		}
+		
+		// init ports once more
+		initPorts(portwrappers);
+		
+		// search for new SchemaPorts with same old names and append mappings
+		for (SchemaPort sp : schemaports) {
+			SchemaPort oldsp = cached.get(sp.getName());
+			if (oldsp == null) continue;
+			sp.setMapping(oldsp.getMapping());
+		}
 	}
 
 	public boolean isGeneric() {

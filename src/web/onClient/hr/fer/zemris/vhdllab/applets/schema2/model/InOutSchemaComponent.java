@@ -11,7 +11,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueExc
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -25,6 +24,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawe
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.Orientation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -56,7 +56,6 @@ import java.util.NoSuchElementException;
  *
  */
 public class InOutSchemaComponent implements ISchemaComponent {
-	
 	
 	private class InOutVHDLSegmentProvider implements IVHDLSegmentProvider {
 		public String getInstantiation(ISchemaInfo info) {
@@ -111,21 +110,6 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		}
 	}
 	
-	public static class ParamPort implements IGenericValue {
-		private DefaultPort port;
-		public IGenericValue copyCtor() {
-			// TODO Auto-generated method stub
-			throw new NotImplementedException();
-		}
-		public void deserialize(String code) {
-			// TODO Auto-generated method stub
-			throw new NotImplementedException();
-		}
-		public String serialize() {
-			// TODO Auto-generated method stub
-			throw new NotImplementedException();
-		}
-	}
 	
 	
 	
@@ -232,7 +216,8 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	private void initDefaultParameters() {
 		// default parameter - name
 		CaselessParameter cslpar =
-			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(portrel.port.getName())); // TODO: add event
+			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(portrel.port.getName()));
+		cslpar.setParameterEvent(new NameChanger());
 		parameters.addParameter(cslpar);
 		
 		// default parameter - component orientation
@@ -423,6 +408,22 @@ public class InOutSchemaComponent implements ISchemaComponent {
 
 	public int schemaPortCount() {
 		return schemaports.size();
+	}
+
+	public Port getPort(int index) {
+		if (index != 0) throw new IndexOutOfBoundsException();
+		return portrel.port;
+	}
+
+	public void setPort(int index, Port port) {
+		if (index != 0) throw new IndexOutOfBoundsException();
+		schemaports.clear();
+		portrel.port = port;
+		buildSchemaPorts();
+	}
+
+	public int portCount() {
+		return 1;
 	}
 
 	public Iterator<Port> portIterator() {

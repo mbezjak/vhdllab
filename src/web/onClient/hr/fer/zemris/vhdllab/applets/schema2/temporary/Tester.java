@@ -12,10 +12,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.BindWireCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.MoveComponentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.PlugWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 

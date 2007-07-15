@@ -224,11 +224,11 @@ public interface ISchemaComponent {
 	
 	
 	/**
-	 * Vraca sve portove na komponenti.
+	 * Vraca sve fizicke portove na komponenti.
 	 * 
 	 * @return
 	 * Genericka lista unutar koje
-	 * su imena portova.
+	 * su portovi.
 	 */
 	List<SchemaPort> getSchemaPorts();
 	
@@ -239,6 +239,32 @@ public interface ISchemaComponent {
 	 * @return
 	 */
 	int schemaPortCount();
+	
+	/**
+	 * Dohvaca port pod zadanim indeksom.
+	 * 
+	 * @param index
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
+	Port getPort(int index);
+	
+	/**
+	 * Postavlja port pod zadanim indeksom,
+	 * dodajuci (i brisuci) pritom
+	 * odgovarajuce pinove.
+	 * 
+	 * @param index
+	 * @param port
+	 */
+	void setPort(int index, Port port);
+	
+	/**
+	 * Vraca broj portova na komponenti.
+	 * 
+	 * @return
+	 */
+	int portCount();
 	
 	
 	/**
@@ -310,6 +336,7 @@ public interface ISchemaComponent {
 	 * @see <code>getSchemaPorts()</code> 
 	 */
 	Iterator<Port> portIterator();
+	
 	
 	/**
 	 * Sluzi za iteriranje kroz fizicke portove

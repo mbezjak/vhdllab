@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.Type;
+
 public class PortWrapper {
 	
 	public static final String STD_LOGIC = "std_logic";
@@ -24,6 +27,20 @@ public class PortWrapper {
 	private String relations;
 
 	public PortWrapper() {
+	}
+	
+	public PortWrapper(Port port) {
+		name = port.getName();
+		orientation = ORIENTATION_NORTH;
+		direction = (port.getDirection().isIN()) ? (DIRECTION_IN) : (DIRECTION_OUT);
+		Type tp = port.getType();
+		if (tp.isScalar()) {
+			type = STD_LOGIC;
+		} else {
+			type = STD_LOGIC_VECTOR;
+			lowerBound = String.valueOf(tp.getRangeFrom());
+			upperBound = String.valueOf(tp.getRangeTo());
+		}
 	}
 
 	public String getName() {

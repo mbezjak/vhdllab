@@ -13,4 +13,19 @@ public class PortRelation {
 		port = p;
 		relatedTo = new ArrayList<SchemaPort>();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (!(obj instanceof PortRelation)) return false;
+		PortRelation pr = (PortRelation)obj;
+		return (pr.port.equals(this.port) && pr.relatedTo.equals(this.relatedTo));
+	}
+
+	@Override
+	public int hashCode() {
+		return port.hashCode() << 16 + relatedTo.hashCode();
+	}
+	
+	
 }
