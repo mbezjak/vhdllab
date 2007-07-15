@@ -116,7 +116,7 @@ public class ComponentToAddToolbar extends JPanel implements
 		return listModel;
 	}
 
-	public void RefreshList() {
+	public void refreshList() {
 		if (DEBUG_MODE) {
 			System.out
 					.println("ComponentToAddToolbar: propertyChangeEvent-refreshing list");
@@ -135,11 +135,9 @@ public class ComponentToAddToolbar extends JPanel implements
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (DEBUG_MODE) {
 			System.out.println("ComponentToAddToolbar: propertyChangeEvent");
-			System.out.println("ComponentToAddToolbar: propertyNewValue="
-					+ evt.getNewValue().toString());
 		}
 
-		RefreshList();
+		refreshList();
 	}
 
 	public void valueChanged(ListSelectionEvent e) {
