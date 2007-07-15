@@ -120,8 +120,8 @@
 			<categoryName>Basic</categoryName>
 			<drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
 			<genericComponent>false</genericComponent>
-			<width>40</width>
-			<height>150</height>
+			<width>120</width>
+			<height>140</height>
 			<parameters>
 				<parameter>
 					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter</paramClassName>
@@ -215,7 +215,7 @@
 			<schemaPortList>
 				<schemaPort>
 				 <x>0</x>
-				 <y>30</y>
+				 <y>40</y>
 				 <name>some_port_0</name>
 				 <mapping></mapping>
 				 <portIndex>0</portIndex>
@@ -229,20 +229,20 @@
 				</schemaPort>
 				<schemaPort>
 				 <x>0</x>
-				 <y>90</y>
+				 <y>80</y>
 				 <name>some_port_2</name>
 				 <mapping></mapping>
 				 <portIndex>0</portIndex>
 				</schemaPort>
 				<schemaPort>
 				 <x>0</x>
-				 <y>120</y>
+				 <y>100</y>
 				 <name>some_port_3</name>
 				 <mapping></mapping>
 				 <portIndex>0</portIndex>
 				</schemaPort>
 				<schemaPort>
-				 <x>40</x>
+				 <x>120</x>
 				 <y>75</y>
 				 <name>some_out_port</name>
 				 <mapping></mapping>

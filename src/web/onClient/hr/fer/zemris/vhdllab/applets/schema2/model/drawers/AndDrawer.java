@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 
 
@@ -32,6 +33,7 @@ public class AndDrawer implements IComponentDrawer {
 	/* static fields */
 	public static final int PORT_SIZE = 4;
 	public static final int PIN_LENGTH = 15;
+	public static final String INSIGNIA = "&";
 	
 	
 	/* private fields */
@@ -77,6 +79,12 @@ public class AndDrawer implements IComponentDrawer {
 		graphics.fillRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
 		graphics.setColor(c);
 		graphics.drawRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
+		
+		// draw insignia
+		Font oldf = graphics.getFont(), f = new Font("Serif", Font.PLAIN, 35);
+		graphics.setFont(f);
+		graphics.drawString(INSIGNIA, w / 2 - f.getSize() * INSIGNIA.length() / 2, h / 2 + f.getSize() / 2);
+		graphics.setFont(oldf);
 	}
 	
 }

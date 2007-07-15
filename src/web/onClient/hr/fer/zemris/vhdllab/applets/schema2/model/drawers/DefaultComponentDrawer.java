@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 
 
