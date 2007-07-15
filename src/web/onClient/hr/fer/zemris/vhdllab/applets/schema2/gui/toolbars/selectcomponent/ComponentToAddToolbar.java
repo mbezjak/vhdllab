@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
@@ -17,9 +18,11 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class ComponentToAddToolbar extends JPanel implements
-		PropertyChangeListener {
+		PropertyChangeListener, ListSelectionListener {
 
 	private static final long serialVersionUID = -4549154212847889157L;
 
@@ -31,14 +34,14 @@ public class ComponentToAddToolbar extends JPanel implements
 	private ISchemaController schemaController = null;
 
 	/**
-	 * Listener for change selection in list box (JList)
-	 */
-	private ComponentToAddToolbarSelectionListener selectionListener = null;
-
-	/**
 	 * List box
 	 */
 	JList list = null;
+
+	/**
+	 * Local controller za komunikaciju medju toolbarima
+	 */
+	private ILocalGuiController localController;
 
 	/**
 	 * Constructor
@@ -61,9 +64,7 @@ public class ComponentToAddToolbar extends JPanel implements
 		}
 
 		this.schemaController = schemaController;
-		this.selectionListener = new ComponentToAddToolbarSelectionListener(
-				localController);
-
+		this.localController = localController;
 		initToolbar();
 	}
 
@@ -85,8 +86,8 @@ public class ComponentToAddToolbar extends JPanel implements
 		listModel = getListBoxModel();
 		list = new JList(listModel);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setLayoutOrientation(JList.VERTICAL_WRAP);
-		list.addListSelectionListener(selectionListener);
+		list.setLayoutOrientation(JList.VERTICAL);
+		list.addListSelectionListener(this);
 	}
 
 	/**
@@ -105,7 +106,11 @@ public class ComponentToAddToolbar extends JPanel implements
 		}
 
 		for (Map.Entry<Caseless, ISchemaComponent> elem : prototypes.entrySet()) {
-			listModel.addElement(elem.getKey());
+			listModel.addElement(elem.getKey().toString());
+			if (DEBUG_MODE) {
+				System.out.println("ComponentToAddToolbar: addedComponent="
+						+ elem.getKey().toString());
+			}
 		}
 
 		return listModel;
@@ -122,9 +127,6 @@ public class ComponentToAddToolbar extends JPanel implements
 		add(list, BorderLayout.CENTER);
 	}
 
-	// TODO treba napraviti listener u slucaju da se doda neka nova komponenta u
-	// kolekciju postojecih komponenti
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -138,6 +140,18 @@ public class ComponentToAddToolbar extends JPanel implements
 		}
 
 		RefreshList();
+	}
+
+	public void valueChanged(ListSelectionEvent e) {
+		localController.setComponentToAdd(new Caseless(list.getSelectedValue()
+				.toString()));
+
+		if (ComponentToAddToolbar.DEBUG_MODE) {
+			System.out.println("ComponentToAddToolbar: selectedItem="
+					+ list.getSelectedValue().toString());
+		}
+
+		localController.setState(ECanvasState.ADD_COMPONENT_STATE);
 	}
 
 }
