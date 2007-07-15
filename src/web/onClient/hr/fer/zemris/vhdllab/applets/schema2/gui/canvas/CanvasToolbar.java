@@ -56,15 +56,7 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 		deleteState.addActionListener(this);
 		
 		//TODO ovo maknuti kad se srede stvari:
-		JButton button = new JButton("promijeni stanje");
-		button.addActionListener(new ActionListener(){
 
-			public void actionPerformed(ActionEvent e) {
-				dummyStateChanger();
-			}
-			
-		});
-		
 		final JToggleButton b = new JToggleButton("GRID ON");
 		b.setSelected(true);
 		b.addActionListener(new ActionListener(){
@@ -90,7 +82,6 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 		this.add(deleteState);
 		
 		//#####
-		this.add(button);
 		this.add(b);
 		//#####
 		

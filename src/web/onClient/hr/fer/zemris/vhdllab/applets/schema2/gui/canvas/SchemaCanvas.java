@@ -209,7 +209,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		g.setColor(CanvasColorProvider.GRID_DOT);
 		for(int i = 0; i<=img.getWidth()/dist;i++)
 			for(int j=0;j<=img.getHeight()/dist;j++){
-				g.fillOval(i*dist-2, j*dist-2, 2, 2);
+				g.fillOval(i*dist-1, j*dist-1, 3, 3);
 			}
 		
 		
