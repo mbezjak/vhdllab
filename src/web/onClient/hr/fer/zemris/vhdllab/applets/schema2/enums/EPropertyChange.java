@@ -31,24 +31,39 @@ public enum EPropertyChange {
 			return "ANY_CHANGE";
 		}
 	},
+	/**
+	 * Bilo kakva promjena nad rasporedom ili razmjestajem komponenti, pinova,
+	 * ili zica, ili segmenata zice, ali <b>ne</b> promjena koja obuhvaca
+	 * <b>iskljucivo</b> promjenu vrijednosti parametara.
+	 */
 	CANVAS_CHANGE() {
 		@Override
 		public String toString() {
 			return "CANVAS_CHANGE";
 		}
 	},
+	/**
+	 * Bilo kakva promjena vrijednosti parametara zice, komponente na shemi
+	 * ili modelirane komponente.
+	 */
 	COMPONENT_PROPERTY_CHANGE() {
 		@Override
 		public String toString() {
 			return "COMPONENT_PROPERTY_CHANGE";
-		}	
+		}
 	},
+	/**
+	 * Bilo kakva promjena u kolekciji prototipova.
+	 */
 	PROTOTYPES_CHANGE() {
 		@Override
 		public String toString() {
 			return "PROTOTYPES_CHANGE";
 		}
 	},
+	/**
+	 * Nikakva promjena u modelu.
+	 */
 	NO_CHANGE() {
 		@Override
 		public void assignListenerToSupport(PropertyChangeListener listener, PropertyChangeSupport support) {

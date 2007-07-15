@@ -124,14 +124,16 @@ public class LocalController implements ISchemaController {
 		if (queryresult.isSuccessful() && iscacheable) {
 			querycache.put(query, queryresult);
 			
-			EPropertyChange propdep = query.getPropertyDependency();
-			List<IQuery> qlist = queryindex.get(propdep);
-			
-			if (qlist == null) {
-				qlist = new ArrayList<IQuery>();
-				queryindex.put(propdep, qlist);
+			List<EPropertyChange> propdeps = query.getPropertyDependency();
+			for (EPropertyChange propdep : propdeps) {
+				List<IQuery> qlist = queryindex.get(propdep);
+				
+				if (qlist == null) {
+					qlist = new ArrayList<IQuery>();
+					queryindex.put(propdep, qlist);
+				}
+				qlist.add(query);
 			}
-			qlist.add(query);
 		}
 		
 		return queryresult;
@@ -149,7 +151,8 @@ public class LocalController implements ISchemaController {
 	}
 
 	private void reportChanges(ICommandResponse response) {
-		if (response.getPropertyChanges() != null) for (ChangeTuple ct : response.getPropertyChanges()) {
+		List<ChangeTuple> changes = response.getPropertyChanges();
+		if (changes != null) for (ChangeTuple ct : changes) {
 			ct.changetype.firePropertyChanges(support, ct.oldval, ct.newval);
 			clearCacheFor(ct.changetype);
 		}

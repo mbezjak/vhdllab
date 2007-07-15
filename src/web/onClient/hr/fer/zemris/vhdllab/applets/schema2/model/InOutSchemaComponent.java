@@ -252,6 +252,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		GenericParameter<Orientation> orientpar =
 			new GenericParameter<Orientation>(ISchemaComponent.KEY_ORIENTATION, false,
 					new Orientation());
+		orientpar.getConstraint().setPossibleValues(Orientation.allAllowed);
 		parameters.addParameter(orientpar);
 		
 		// default parameter - component port

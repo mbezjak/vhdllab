@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 
+import java.util.List;
+
 
 
 
@@ -13,8 +15,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
  * 
  * Klase koji implementiraju ovo sucelje moraju
  * OBAVEZNO implementirati equals na nacin da
- * se gledaju SVA polja upita, inace ce doci
- * do povrata krivo cacheiranih informacija.
+ * se uzimaju u obzir SVA polja <b>koja odreduju upit</b>,
+ * inace ce doci do povrata krivo cacheiranih informacija.
+ * Ne treba, stovise, ne smije se uzimati u obzir pomocna
+ * polja koja ne odreduju prirodu upita.
+ * 
+ * Takoder je nuzno implementirati hashCode().
  * 
  * @author brijest
  *
@@ -35,12 +41,12 @@ public interface IQuery {
 	boolean isCacheable();
 	
 	/**
-	 * Tip promjena na koje je osjetljiv ovaj upit.
+	 * Lista tipa promjena na koje je osjetljiv ovaj upit.
 	 * Ako se desi promjena ovog tipa, upit ce biti izbrisan iz cachea.
 	 * 
 	 * @return
 	 */
-	EPropertyChange getPropertyDependency();
+	List<EPropertyChange> getPropertyDependency();
 	
 	/**
 	 * Obavlja upit i vraca objekt koji opisuje uspjesnost upita,
@@ -51,6 +57,10 @@ public interface IQuery {
 	 * @return
 	 */
 	IQueryResult performQuery(ISchemaInfo info);
+	
+	boolean equals(Object o);
+	
+	int hashCode();
 	
 }
 

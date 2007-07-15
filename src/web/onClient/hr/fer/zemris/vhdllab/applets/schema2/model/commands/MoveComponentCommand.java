@@ -129,6 +129,15 @@ public class MoveComponentCommand implements ICommand {
 		}
 		
 		// add new wire segments
+		addWireSegments(info, cmp, toexpand, oldloc);
+		
+		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
+	}
+	
+	/**
+	 * Ova ce metoda biti reimplementirana nakon implementacije autoconnecta.
+	 */
+	private void addWireSegments(ISchemaInfo info, ISchemaComponent cmp, Map<Caseless, Integer> toexpand, XYLocation oldloc) {
 		ISchemaWireCollection wires = info.getWires();
 		List<SchemaPort> ports = cmp.getSchemaPorts();
 		for (Entry<Caseless, Integer> entry : toexpand.entrySet()) {
@@ -139,10 +148,11 @@ public class MoveComponentCommand implements ICommand {
 			wire.insertSegment(new WireSegment(oldloc.x + portoffset.x, oldloc.y + portoffset.y, oldloc.x + portoffset.x, loc.y  + portoffset.y));
 			wire.insertSegment(new WireSegment(oldloc.x + portoffset.x, loc.y + portoffset.y, loc.x + portoffset.x, loc.y + portoffset.y));
 		}
-		
-		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}
 
+	/**
+	 * Bit ce implementirano nakon implementacije autoconnecta.
+	 */
 	public ICommandResponse undoCommand(ISchemaInfo info) throws InvalidCommandOperationException {
 		throw new InvalidCommandOperationException("Undo not applicible here.");
 	}

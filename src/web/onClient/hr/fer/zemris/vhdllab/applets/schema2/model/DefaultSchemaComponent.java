@@ -41,6 +41,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Type;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -246,6 +247,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		GenericParameter<Orientation> orientpar =
 			new GenericParameter<Orientation>(ISchemaComponent.KEY_ORIENTATION, false,
 					new Orientation());
+		orientpar.getConstraint().setPossibleValues(Orientation.allAllowed);
 		parameters.addParameter(orientpar);
 	}
 

@@ -4,6 +4,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 
+import java.util.Set;
+
 
 
 

@@ -77,6 +77,10 @@ public enum EOrientation {
 		if (ocode.equals("WEST")) return EOrientation.WEST;
 		throw new NotImplementedException("Orientation '" + ocode + "' is unknown.");
 	}
+	
+	
+	
+	
 }
 
 
