@@ -6,7 +6,7 @@
    <component>
         <componentName>VL_AND</componentName>
         <codeFileName>VL_AND.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.AndDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>VL_AND_instance</preferredName>
         <genericComponent>true</genericComponent>
@@ -53,7 +53,7 @@
    <component>
         <componentName>VL_NAND</componentName>
         <codeFileName>VL_NAND.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.NandDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>VL_NAND_instance</preferredName>
         <genericComponent>true</genericComponent>
@@ -288,7 +288,7 @@
    <component>
         <componentName>VL_NOT</componentName>
         <codeFileName>VL_NOT.vhdl</codeFileName>
-        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer</drawerName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.NotDrawer</drawerName>
         <categoryName>BasicGates</categoryName>
 		<preferredName>VL_NOT_instance</preferredName>
         <genericComponent>true</genericComponent>

@@ -72,6 +72,7 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
 		}
 		
+		
 		// draw a rectangle
 		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);

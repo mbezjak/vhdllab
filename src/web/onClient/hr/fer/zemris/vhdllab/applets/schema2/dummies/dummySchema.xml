@@ -243,7 +243,7 @@
 				</schemaPort>
 				<schemaPort>
 				 <x>120</x>
-				 <y>75</y>
+				 <y>70</y>
 				 <name>some_out_port</name>
 				 <mapping></mapping>
 				 <portIndex>1</portIndex>

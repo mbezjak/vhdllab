@@ -27,13 +27,12 @@ import java.awt.Graphics2D;
  * @author Axel
  *
  */
-public class AndDrawer implements IComponentDrawer {
+public class NandDrawer implements IComponentDrawer {
 	
 	
 	/* static fields */
 	public static final int PORT_SIZE = 4;
 	public static final int PIN_LENGTH = 15;
-	public static final int INSIGNIA_SIZE = 25;
 	public static final String INSIGNIA = "&";
 	
 	
@@ -43,7 +42,7 @@ public class AndDrawer implements IComponentDrawer {
 	
 	
 	
-	public AndDrawer(ISchemaComponent componentToDraw) {
+	public NandDrawer(ISchemaComponent componentToDraw) {
 		comp_to_draw = componentToDraw;
 	}
 	
@@ -82,7 +81,7 @@ public class AndDrawer implements IComponentDrawer {
 		graphics.drawRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
 		
 		// draw insignia
-		Font oldf = graphics.getFont(), f = new Font("Serif", Font.PLAIN, INSIGNIA_SIZE);
+		Font oldf = graphics.getFont(), f = new Font("Serif", Font.PLAIN, 35);
 		graphics.setFont(f);
 		graphics.drawString(INSIGNIA, w / 2 - f.getSize() * INSIGNIA.length() / 2, h / 2 + f.getSize() / 2);
 		graphics.setFont(oldf);

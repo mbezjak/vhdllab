@@ -21,6 +21,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.PortRelation;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer;
+import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.InOutComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
@@ -144,8 +145,13 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		setComponentTypeName();
 		initDefaultParameters();
 		buildSchemaPorts();
+		initDrawer();
 	}
 	
+	private void initDrawer() {
+		drawer = new InOutComponentDrawer(this);
+	}
+
 	private void setComponentTypeName() {
 		if (portrel.port.getType().isScalar()) {
 			if (portrel.port.getDirection().equals(Direction.IN)) {
