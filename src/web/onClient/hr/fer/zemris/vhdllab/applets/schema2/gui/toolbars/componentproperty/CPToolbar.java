@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.JTableX;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
@@ -35,6 +36,11 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 */
 	private ILocalGuiController lgc = null;
 
+	/**
+	 * Tabela za prikaz parametara
+	 */
+	private JTableX tabela = null;
+
 	public CPToolbar(ILocalGuiController lgc, ISchemaController controller) {
 		this.lgc = lgc;
 		this.controller = controller;
@@ -45,8 +51,8 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	private void initGUI() {
 		setLayout(new GridLayout(3, 1));
 		setOpaque(true);
-		setBackground(Color.red);
-		setPreferredSize(new Dimension(100, 100));
+		setBackground(Color.green);
+		setPreferredSize(new Dimension(200, 100));
 	}
 
 	/**
@@ -65,7 +71,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 				System.out.println("CPToolbar: wireName=" + componentName);
 			}
 
-			showPropertyForWire();
+			showPropertyForWire(componentName);
 		} else if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT) {
 			if (DEBUG_MODE) {
 				System.out.println("CPToolbar: selectedType=COMPONENT");
@@ -80,10 +86,13 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 
 	/**
 	 * graficki prikaz parametara za komponentu ZICA
+	 * 
+	 * @param componentName
+	 *            ime zice
 	 */
-	private void showPropertyForWire() {
-		// TODO Auto-generated method stub
-
+	private void showPropertyForWire(Caseless componentName) {
+		cleanUpGui();
+		printComponentName(componentName.toString());
 	}
 
 	/**
@@ -100,19 +109,24 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 					+ numberOfParameters);
 		}
 
+		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
+				component);
+
 		cleanUpGui();
 		createJTableForComponent(component);
 		printComponentName(component.getName().toString());
 	}
 
 	private void createJTableForComponent(ISchemaComponent component) {
-
+		
 	}
 
 	private void printComponentName(String componentName) {
+
 		// dodaj labelu na panel
 		JLabel labelComponentName = new JLabel("Selection: " + componentName,
 				JLabel.LEFT);
+
 		add(labelComponentName);
 		revalidate();
 	}

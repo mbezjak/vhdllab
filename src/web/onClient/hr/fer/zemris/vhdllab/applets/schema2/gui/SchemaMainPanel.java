@@ -22,6 +22,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeseriali
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -95,27 +96,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		controller.registerCore(core);
 		controller.addListener(EPropertyChange.ANY_CHANGE,
 				new ModificationListener());
-
-		componentPropertyToolbar = new CPToolbar(localGUIController, controller);
-		componentToAddToolbar = new ComponentToAddToolbar(controller,
-				localGUIController);
-
-		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
-		controller.addListener(EPropertyChange.PROTOTYPES_CHANGE,
-				componentToAddToolbar);
-
-		localGUIController.addListener(canvas);
-		localGUIController.addListener(
-				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,
-				componentPropertyToolbar);
-
-		canvas.registerLocalController(localGUIController);
-		canvas.registerSchemaController(controller);
-
-		canTool = new CanvasToolbar(null);
-		canTool.registerController(localGUIController);
-		localGUIController.addListener(
-				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE, canTool);
 	}
 
 	private void initDynamic() {
@@ -143,8 +123,40 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private void initGUI() {
 		this.setLayout(new BorderLayout());
 
+		componentPropertyToolbar = new CPToolbar(localGUIController, controller);
+		componentToAddToolbar = new ComponentToAddToolbar(controller,
+				localGUIController);
+
+		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
+		controller.addListener(EPropertyChange.PROTOTYPES_CHANGE,
+				componentToAddToolbar);
+
+		localGUIController.addListener(canvas);
+		localGUIController.addListener(
+				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,
+				componentPropertyToolbar);
+
+		canvas.registerLocalController(localGUIController);
+		canvas.registerSchemaController(controller);
+
+		canTool = new CanvasToolbar(null);
+		canTool.registerController(localGUIController);
+		localGUIController.addListener(
+				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE, canTool);
+
 		JToolBar componentPropertyToolbarTB = new JToolBar("Property");
 		componentPropertyToolbarTB.add(componentPropertyToolbar);
+		JScrollPane componentPropertyToolbarScrollPane = new JScrollPane(
+				componentPropertyToolbarTB);
+
+		JToolBar componentToAddToolbarTB = new JToolBar("Components");
+		componentToAddToolbarTB.add(componentToAddToolbar);
+		JScrollPane componentToAddToolbarScrollPane = new JScrollPane(
+				componentToAddToolbarTB);
+
+		JPanel rightPanel = new JPanel(new GridLayout(2, 1));
+		rightPanel.add(componentPropertyToolbarScrollPane);
+		rightPanel.add(componentToAddToolbarScrollPane);
 
 		/* init canvas */
 		JScrollPane pane = new JScrollPane(canvas);
@@ -152,8 +164,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		panel.add(canTool, BorderLayout.NORTH);
 		panel.add(pane, BorderLayout.CENTER);
 		this.add(panel, BorderLayout.CENTER);
-		this.add(componentPropertyToolbarTB, BorderLayout.EAST);
-		this.add(componentToAddToolbar, BorderLayout.NORTH);
+		this.add(rightPanel, BorderLayout.EAST);
 	}
 
 	private void resetSchema() {
