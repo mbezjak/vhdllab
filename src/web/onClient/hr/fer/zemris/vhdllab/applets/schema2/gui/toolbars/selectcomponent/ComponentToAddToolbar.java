@@ -88,6 +88,7 @@ public class ComponentToAddToolbar extends JPanel implements
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		list.addListSelectionListener(this);
+		setFirstComponent();
 	}
 
 	/**
@@ -114,6 +115,16 @@ public class ComponentToAddToolbar extends JPanel implements
 		}
 
 		return listModel;
+	}
+
+	private void setFirstComponent() {
+		if (list.getModel().getSize() > 0) {
+			if (localController.getState() == ECanvasState.ADD_COMPONENT_STATE) {
+				localController.setComponentToAdd(new Caseless(list.getModel()
+						.getElementAt(0).toString()));
+				list.setSelectedIndex(0);
+			}
+		}
 	}
 
 	public void refreshList() {

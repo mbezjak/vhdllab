@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -121,6 +122,10 @@ public class CPToolbarParameterEnvelopeCollection {
 					+ value.toString());
 		}
 
+		Caseless objectName = component.getName();
+		String parameterName = getValueAt(row, 0);
+		Object newValue = null;
+
 		return false;
 	}
 
@@ -140,6 +145,12 @@ public class CPToolbarParameterEnvelopeCollection {
 	 */
 	public int getNumberOfRows() {
 		return parameters.size();
+	}
+
+	private Object getNewValue(Object value, int row) {
+		EParamTypes pType;
+
+		return null;
 	}
 
 	/**
@@ -190,9 +201,18 @@ public class CPToolbarParameterEnvelopeCollection {
 				buildComboBox(constraintValues);
 				isEnumerate = true;
 			} else {
+
 				if (pType == EParamTypes.BOOLEAN) {
 					buildComboBoxForBoolean(pType);
 					isEnumerate = true;
+				} else if (pType == EParamTypes.CASELESS) {
+
+				} else if (pType == EParamTypes.TEXT) {
+
+				} else if (pType == EParamTypes.INTEGER) {
+
+				} else if (pType == EParamTypes.DECIMAL) {
+
 				}
 			}
 		}
@@ -254,6 +274,15 @@ public class CPToolbarParameterEnvelopeCollection {
 		 */
 		public String getParameterValue() {
 			return parameter.getValue().toString();
+		}
+
+		/**
+		 * Dohvaca tip parametra
+		 * 
+		 * @return tip
+		 */
+		public EParamTypes getParameterType() {
+			return parameter.getType();
 		}
 
 		/**
