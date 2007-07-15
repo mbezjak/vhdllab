@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.drawers;
 
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -39,7 +40,8 @@ public class InOutComponentDrawer implements IComponentDrawer {
 	private static final int PIN_LENGTH = 15;
 	private static final int PORT_SIZE = 4;
 	private static final int TRIANGLE_SIDE = 21;
-	private static final int EMPTY_EDGE_OFFSET = 40;
+	private static final int EMPTY_EDGE_OFFSET = Constants.GRID_SIZE;
+	private static final int PER_PORT_SIZE = Constants.GRID_SIZE;
 	private static final int FONT_SIZE = 8;
 
 	
@@ -101,9 +103,9 @@ public class InOutComponentDrawer implements IComponentDrawer {
 		if (dir.equals(Direction.IN)) {
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
-			graphics.fillRect(0, EMPTY_EDGE_OFFSET, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET);
+			graphics.fillRect(0, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			graphics.setColor(c);
-			graphics.drawRect(0, EMPTY_EDGE_OFFSET, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET);
+			graphics.drawRect(0, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			
 			int[] xps = new int[3];
 			int[] yps = new int[3];
@@ -126,9 +128,9 @@ public class InOutComponentDrawer implements IComponentDrawer {
 		} else if (dir.equals(Direction.OUT)) {
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
-			graphics.fillRect(PIN_LENGTH, EMPTY_EDGE_OFFSET, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET);
+			graphics.fillRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			graphics.setColor(c);
-			graphics.drawRect(PIN_LENGTH, EMPTY_EDGE_OFFSET, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET);
+			graphics.drawRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			
 			int[] xps = new int[3];
 			int[] yps = new int[3];

@@ -121,7 +121,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	private static final String STD_LOGIC_VECTOR_OUT = "Output_vector";
 	private static final int WIDTH = Constants.GRID_SIZE * 4;
 	private static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
-	private static final int EDGE_OFFSET = Constants.GRID_SIZE * 2;
+	private static final int EDGE_OFFSET = Constants.GRID_SIZE;
 	
 	
 	/* private fields */
@@ -189,7 +189,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 	
 	private void buildInStdLogic() {
-		SchemaPort sp = new SchemaPort(width, EDGE_OFFSET + HEIGHT_PER_PORT / 2,
+		SchemaPort sp = new SchemaPort(width, EDGE_OFFSET + HEIGHT_PER_PORT,
 				new Caseless(portrel.port.getName()));
 		
 		sp.setPortindex(0);
@@ -200,7 +200,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 	
 	private void buildOutStdLogic() {
-		SchemaPort sp = new SchemaPort(0, EDGE_OFFSET + HEIGHT_PER_PORT / 2,
+		SchemaPort sp = new SchemaPort(0, EDGE_OFFSET + HEIGHT_PER_PORT,
 				new Caseless(portrel.port.getName()));
 		
 		sp.setPortindex(0);
@@ -217,9 +217,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		int j;
 		SchemaPort schport = null;
 		if (tp.hasVectorDirectionTO()) {
-			j = 0;
+			j = 1;
 			for (int i = from; i <= to; i++, j++) {
-				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j + HEIGHT_PER_PORT / 2,
+				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j,
 						new Caseless(portrel.port.getName() + "_" + i));
 				
 				schport.setPortindex(0);
@@ -227,9 +227,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 				schemaports.add(schport);
 			}
 		} else {
-			j = 0;
+			j = 1;
 			for (int i = to; i <= from; i++, j++) {
-				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j + HEIGHT_PER_PORT / 2,
+				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j,
 						new Caseless(portrel.port.getName() + "_" + i));
 				
 				schport.setPortindex(0);
@@ -238,7 +238,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 			}
 		}
 		
-		height = EDGE_OFFSET * 2 + HEIGHT_PER_PORT * (j + 1);
+		height = EDGE_OFFSET * 2 + HEIGHT_PER_PORT * j;
 	}
 	
 	private void initDefaultParameters() {

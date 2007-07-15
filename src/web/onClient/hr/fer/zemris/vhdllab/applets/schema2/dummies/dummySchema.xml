@@ -70,7 +70,7 @@
 			<y>100</y>
 			<drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.InOutComponentDrawer</drawerName>
 			<width>80</width>
-			<height>120</height>
+			<height>100</height>
 			<parameters>
 				<parameter>
 					<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter</paramClassName>
@@ -96,14 +96,14 @@
 			<schemaPortList>
 				<schemaPort>
 					<x>0</x>
-					<y>50</y>
+					<y>40</y>
 					<name>mainport_0</name>
 					<mapping></mapping>
 					<portIndex>0</portIndex>
 				</schemaPort>
 				<schemaPort>
 					<x>0</x>
-					<y>70</y>
+					<y>60</y>
 					<name>mainport_1</name>
 					<mapping></mapping>
 					<portIndex>0</portIndex>

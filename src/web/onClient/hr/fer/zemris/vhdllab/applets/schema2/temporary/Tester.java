@@ -60,20 +60,9 @@ public class Tester {
 		frame.setLayout(new BorderLayout());
 		frame.add(mpanel, BorderLayout.CENTER);
 		frame.setVisible(true);
-		frame.setPreferredSize(new Dimension(550, 400));
+		frame.setPreferredSize(new Dimension(750, 500));
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
-		
-		ICommand addwire = new AddWireCommand(new Caseless("MyWire"), 50, 350, 450, 350);
-		mpanel.getController().send(addwire);
-		ICommand expandwire = new ExpandWireCommand(new Caseless("MyWire"), 50, 350, 50, 450);
-		mpanel.getController().send(expandwire);
-		expandwire = new ExpandWireCommand(new Caseless("MyWire"), 50, 350, 50, 250);
-		mpanel.getController().send(expandwire);
-		expandwire = new ExpandWireCommand(new Caseless("MyWire"), 150, 350, 150, 450);
-		mpanel.getController().send(expandwire);
-		ICommand plug = new PlugWireCommand(new Caseless("SomeCompi"), new Caseless("MyWire"), new Caseless("some_port_0"));
-		System.out.println("Plug result: " + mpanel.getController().send(plug).getError());
 		
 		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));
