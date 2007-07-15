@@ -87,7 +87,7 @@ public class CriticalPoint {
 	private void findLocationOnPlug(ISchemaWire wire, int x, int y) {
 		List<WireSegment> segmentList = wire.getSegments();
 		
-		int distance = 20;
+		int distance = 10;
 		WireSegment clSegment = null;
 		
 		for(WireSegment segment:segmentList){

@@ -209,7 +209,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		g.setColor(CanvasColorProvider.GRID_DOT);
 		for(int i = 0; i<=img.getWidth()/dist;i++)
 			for(int j=0;j<=img.getHeight()/dist;j++){
-				g.fillOval(i*dist-2, j*dist-2, 4, 4);
+				g.fillOval(i*dist-2, j*dist-2, 5, 5);
 			}
 		
 		
@@ -552,7 +552,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				point = null;
 			}
 		}else{
-			ISchemaWire wire = wires.fetchWire(x, y, 10);
+			ISchemaWire wire = wires.fetchWire(x, y, Constants.GRID_SIZE/2-1);
 			if(wire != null){
 				point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));
 			}else{

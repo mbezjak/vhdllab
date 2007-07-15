@@ -12,7 +12,7 @@ public class CanvasColorProvider {
 	/**
 	 * The color of a grid dot
 	 */
-	public static final Color GRID_DOT = new Color(24,152,228);
+	public static final Color GRID_DOT = new Color(14,239,239);
 	
 	/**
 	 * Color used for marking critical points on compoinent ports
@@ -30,7 +30,7 @@ public class CanvasColorProvider {
 	/**
 	 * Color of signal lines to be added to the model
 	 */
-	public static final Color SIGNAL_LINE_TO_ADD = Color.CYAN;
+	public static final Color SIGNAL_LINE_TO_ADD = new Color(50, 167, 20);
 	
 	/**
 	 * If the schematic determines that the signal cannot be added this color is used

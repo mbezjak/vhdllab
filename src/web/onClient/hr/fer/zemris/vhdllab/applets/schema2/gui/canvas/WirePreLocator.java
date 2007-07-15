@@ -170,6 +170,7 @@ public class WirePreLocator {
 				System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
 			}
 			else{
+				wireName = createName(x1,y1,x1,y2);
 				ICommand instantiate = new AddWireCommand(createName(x1, y1, x2, y2),x1,y1,x2,y2);
 				ICommandResponse response = controller.send(instantiate);
 				System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
