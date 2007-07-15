@@ -33,7 +33,7 @@ public class AndDrawer implements IComponentDrawer {
 	/* static fields */
 	public static final int PORT_SIZE = 4;
 	public static final int PIN_LENGTH = 15;
-	public static final int INSIGNIA_SIZE = 25;
+	public static final int INSIGNIA_SIZE = 20;
 	public static final String INSIGNIA = "&";
 	
 	
@@ -84,7 +84,7 @@ public class AndDrawer implements IComponentDrawer {
 		// draw insignia
 		Font oldf = graphics.getFont(), f = new Font("Serif", Font.PLAIN, INSIGNIA_SIZE);
 		graphics.setFont(f);
-		graphics.drawString(INSIGNIA, w / 2 - f.getSize() * INSIGNIA.length() / 2, h / 2 + f.getSize() / 2);
+		graphics.drawString(INSIGNIA, w / 2 - f.getSize() * INSIGNIA.length() / 3, h / 2 + f.getSize() / 2);
 		graphics.setFont(oldf);
 	}
 	
