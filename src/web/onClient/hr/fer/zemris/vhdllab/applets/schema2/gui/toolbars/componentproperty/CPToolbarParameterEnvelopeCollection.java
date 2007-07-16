@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.SetParameterCommand;
@@ -38,7 +39,7 @@ public class CPToolbarParameterEnvelopeCollection {
 	/**
 	 * Komponenta ciji se parametri obradjuju
 	 */
-	private ISchemaComponent component = null;
+	private Caseless componentName = null;
 
 	/**
 	 * Lista parametara spremnih za prikaz u JTable
@@ -59,17 +60,39 @@ public class CPToolbarParameterEnvelopeCollection {
 	 * Konstruktor
 	 * 
 	 * @param component
-	 *            instanca komponente
+	 *            komponenta
+	 * @param controller
+	 *            kontroler
 	 */
 	public CPToolbarParameterEnvelopeCollection(ISchemaComponent component,
 			ISchemaController controller) {
 		this.controller = controller;
-		this.component = component;
+		this.componentName = component.getName();
 
-		buildParameters();
+		buildParameters(component.getParameters());
 		buildRowEditorModel();
 	}
 
+	/**
+	 * Konstruktor
+	 * 
+	 * @param wire
+	 *            zica
+	 * @param controller
+	 *            kontroler
+	 */
+	public CPToolbarParameterEnvelopeCollection(ISchemaWire wire,
+			ISchemaController controller) {
+		this.controller = controller;
+		this.componentName = wire.getName();
+
+		buildParameters(wire.getParameters());
+		buildRowEditorModel();
+	}
+
+	/**
+	 * Editori celija u tabeli
+	 */
 	private void buildRowEditorModel() {
 		rowModel = new RowEditorModel();
 
@@ -78,9 +101,8 @@ public class CPToolbarParameterEnvelopeCollection {
 		}
 	}
 
-	private void buildParameters() {
+	private void buildParameters(IParameterCollection collection) {
 		parameters = new ArrayList<ParameterEnvelope>();
-		IParameterCollection collection = component.getParameters();
 		Iterator<IParameter> it = collection.iterator();
 
 		while (it.hasNext()) {
@@ -135,8 +157,8 @@ public class CPToolbarParameterEnvelopeCollection {
 		if (CPToolbar.DEBUG_MODE) {
 			System.out.println("---");
 		}
-		Caseless objectName = component.getName();
 		String parameterName = getValueAt(row, 0);
+		Object newValue = null;
 
 		if (CPToolbar.DEBUG_MODE) {
 			System.out
@@ -148,12 +170,11 @@ public class CPToolbarParameterEnvelopeCollection {
 							+ value.toString());
 			System.out
 					.println("CPToolbarParameterEnvelopeCollection: objectName="
-							+ objectName.toString()
+							+ componentName.toString()
 							+ ", parameterName="
 							+ parameterName);
 		}
-		// FIXME neispravno uneseni brojevi
-		Object newValue = getNewValue(value, row);
+		newValue = getNewValue(value, row);
 
 		// bypass sending command if newValue is null
 		if (newValue == null) {
@@ -164,8 +185,8 @@ public class CPToolbarParameterEnvelopeCollection {
 			return false;
 		}
 
-		ICommand command = new SetParameterCommand(objectName, parameterName,
-				EParameterHolder.component, newValue, controller
+		ICommand command = new SetParameterCommand(componentName,
+				parameterName, EParameterHolder.component, newValue, controller
 						.getSchemaInfo());
 		ICommandResponse response = command.performCommand(controller
 				.getSchemaInfo());
@@ -228,7 +249,13 @@ public class CPToolbarParameterEnvelopeCollection {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: parameterType=INTEGER");
 			}
-			return Integer.parseInt(value.toString());
+			int broj = 0;
+			try {
+				broj = Integer.parseInt(value.toString());
+			} catch (NumberFormatException e) {
+				return null;
+			}
+			return broj;
 		} else if (pType == EParamTypes.DECIMAL) {
 			if (CPToolbar.DEBUG_MODE) {
 				System.out
@@ -258,7 +285,7 @@ public class CPToolbarParameterEnvelopeCollection {
 			return null;
 		}
 
-		return null;
+		throw new IllegalArgumentException("Nepoznati tip parametra!");
 	}
 
 	/**

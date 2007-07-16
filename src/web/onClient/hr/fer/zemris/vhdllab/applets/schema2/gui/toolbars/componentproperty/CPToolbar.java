@@ -8,6 +8,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.beans.PropertyChangeEvent;
@@ -70,12 +72,12 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 * Registrirani listener
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		ISchemaComponentCollection componentCollection = null;
-		ISchemaComponent component = null;
 		ISchemaInfo info = null;
 		Caseless componentName = null;
 
 		componentName = (Caseless) evt.getNewValue();
+
+		info = controller.getSchemaInfo();
 
 		// dali je komponenta ili zica
 		if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE) {
@@ -84,16 +86,19 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 				System.out.println("CPToolbar: wireName=" + componentName);
 			}
 
-			showPropertyForWire(componentName);
+			ISchemaWireCollection wiresCollection = info.getWires();
+			ISchemaWire wire = wiresCollection.fetchWire(componentName);
+			showPropertyForWire(wire);
 		} else if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT) {
 			if (DEBUG_MODE) {
 				System.out.println("CPToolbar: selectedType=COMPONENT");
 				System.out.println("CPToolbar: componentName=" + componentName);
 			}
 
-			info = controller.getSchemaInfo();
-			componentCollection = info.getComponents();
-			component = componentCollection.fetchComponent(componentName);
+			ISchemaComponentCollection componentCollection = info
+					.getComponents();
+			ISchemaComponent component = componentCollection
+					.fetchComponent(componentName);
 			showPropertyForComponent(component);
 		}
 	}
@@ -104,9 +109,21 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 * @param componentName
 	 *            ime zice
 	 */
-	private void showPropertyForWire(Caseless componentName) {
+	private void showPropertyForWire(ISchemaWire wire) {
+		JTableX tabela = null;
+		if (DEBUG_MODE) {
+			String componentName = wire.getName().toString();
+			int numberOfParameters = wire.getParameters().count();
+			System.out.println("CPToolbar: componentName:" + componentName);
+			System.out.println("CPToolbar: numberOfParameters:"
+					+ numberOfParameters);
+		}
+
 		cleanUpGui();
-		printComponentName(componentName.toString());
+		tabela = createJTableForWire(wire);
+		printComponentName(wire.getName().toString());
+		faceLiftingForTable(tabela);
+		printTable(tabela);
 	}
 
 	/**
@@ -143,6 +160,21 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		// komponentama
 		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
 				component, controller);
+		// na temelju envelopea, gradi se model za JTableX
+		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
+		// na temelju envelopea, izgradio se i RowEditor model za JTableX
+		RowEditorModel rowModel = pCollection.getRowEditorModel();
+
+		JTableX tabela = new JTableX(tableModel, rowModel);
+
+		return tabela;
+	}
+
+	private JTableX createJTableForWire(ISchemaWire wire) {
+		// izgenerirani envelope za sve parametre sa svim potrebnim vizualnim
+		// komponentama
+		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
+				wire, controller);
 		// na temelju envelopea, gradi se model za JTableX
 		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
 		// na temelju envelopea, izgradio se i RowEditor model za JTableX
