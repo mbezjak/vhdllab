@@ -9,9 +9,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.model.File;
@@ -36,6 +34,14 @@ import javax.swing.SwingUtilities;
 
 
 public class Tester {
+	
+	{
+		try {
+			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+	}
+}
 
 	/**
 	 * Privremeno radi testiranja.
@@ -43,6 +49,7 @@ public class Tester {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		new Tester();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				testSchema();

@@ -392,7 +392,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			}
 		}
 		
-		return to - from + 1;
+		return Math.abs(to - from) + 1;
 	}
 
 	private final String toVecDir(String ascend) {
