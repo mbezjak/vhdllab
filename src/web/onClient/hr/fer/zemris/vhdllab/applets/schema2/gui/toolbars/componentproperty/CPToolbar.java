@@ -69,41 +69,6 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	}
 
 	/**
-	 * Registrirani listener
-	 */
-	public void propertyChange(PropertyChangeEvent evt) {
-		ISchemaInfo info = null;
-		Caseless componentName = null;
-
-		componentName = (Caseless) evt.getNewValue();
-
-		info = controller.getSchemaInfo();
-
-		// dali je komponenta ili zica
-		if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE) {
-			if (DEBUG_MODE) {
-				System.out.println("CPToolbar: selectedType=WIRE");
-				System.out.println("CPToolbar: wireName=" + componentName);
-			}
-
-			ISchemaWireCollection wiresCollection = info.getWires();
-			ISchemaWire wire = wiresCollection.fetchWire(componentName);
-			showPropertyForWire(wire);
-		} else if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT) {
-			if (DEBUG_MODE) {
-				System.out.println("CPToolbar: selectedType=COMPONENT");
-				System.out.println("CPToolbar: componentName=" + componentName);
-			}
-
-			ISchemaComponentCollection componentCollection = info
-					.getComponents();
-			ISchemaComponent component = componentCollection
-					.fetchComponent(componentName);
-			showPropertyForComponent(component);
-		}
-	}
-
-	/**
 	 * Graficki prikaz parametara za komponentu ZICA
 	 * 
 	 * @param componentName
@@ -212,5 +177,42 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		// makni sve komponente sa panela
 		removeAll();
 		revalidate();
+	}
+
+	/**
+	 * Registrirani listener
+	 */
+	public void propertyChange(PropertyChangeEvent evt) {
+		ISchemaInfo info = null;
+		Caseless componentName = null;
+
+		componentName = (Caseless) evt.getNewValue();
+
+		info = controller.getSchemaInfo();
+
+		// dali je komponenta ili zica
+		if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE) {
+			if (DEBUG_MODE) {
+				System.out.println("CPToolbar: selectedType=WIRE");
+				System.out.println("CPToolbar: wireName=" + componentName);
+			}
+
+			ISchemaWireCollection wiresCollection = info.getWires();
+			ISchemaWire wire = wiresCollection.fetchWire(componentName);
+			showPropertyForWire(wire);
+		} else if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT) {
+			if (DEBUG_MODE) {
+				System.out.println("CPToolbar: selectedType=COMPONENT");
+				System.out.println("CPToolbar: componentName=" + componentName);
+			}
+
+			ISchemaComponentCollection componentCollection = info
+					.getComponents();
+			ISchemaComponent component = componentCollection
+					.fetchComponent(componentName);
+			showPropertyForComponent(component);
+		} else {
+			cleanUpGui();
+		}
 	}
 }

@@ -27,7 +27,7 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	public static final String PROPERTY_CHANGE_SELECTION = "ChangeSelection";
 
 	/**
-	 * 
+	 * Promjena stanja
 	 */
 	public static final String PROPERTY_CHANGE_STATE = "ChangeState";
 
