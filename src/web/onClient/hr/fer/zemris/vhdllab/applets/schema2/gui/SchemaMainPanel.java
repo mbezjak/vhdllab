@@ -31,6 +31,7 @@ import java.io.StringWriter;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
 public class SchemaMainPanel extends JPanel implements IEditor {
@@ -169,8 +170,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(canTool, BorderLayout.NORTH);
 		panel.add(pane, BorderLayout.CENTER);
-		this.add(panel, BorderLayout.CENTER);
-		this.add(rightPanel, BorderLayout.EAST);
+
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				panel, rightPanel);
+		splitPane.setDividerLocation(.8);
+		splitPane.setOneTouchExpandable(true);
+		this.add(splitPane, BorderLayout.CENTER);
 	}
 
 	private void resetSchema() {

@@ -23,11 +23,20 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+/**
+ * Toolbar za odabir postojecih komponenti koje se mogu iscrtavati
+ * 
+ * @author Garfield
+ * 
+ */
 public class ComponentToAddToolbar extends JPanel implements
 		PropertyChangeListener, ListSelectionListener {
 
 	private static final long serialVersionUID = -4549154212847889157L;
 
+	/**
+	 * Debug/retail mode
+	 */
 	public static final boolean DEBUG_MODE = true;
 
 	/**
@@ -170,6 +179,11 @@ public class ComponentToAddToolbar extends JPanel implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+	 */
 	public void valueChanged(ListSelectionEvent e) {
 		localController.setComponentToAdd(new Caseless(list.getSelectedValue()
 				.toString()));

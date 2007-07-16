@@ -10,7 +10,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
-import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -64,7 +63,6 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 */
 	private void initGUI() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setPreferredSize(new Dimension(200, 100));
 		setAlignmentX(LEFT_ALIGNMENT);
 	}
 
@@ -162,6 +160,8 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		sPane
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(sPane);
+		tabela.setPreferredSize(null);
+		setPreferredSize(tabela.getPreferredSize());
 		revalidate();
 	}
 
