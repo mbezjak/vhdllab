@@ -1,7 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.TimeFormatException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors.TimeCellEditor;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
@@ -10,6 +13,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.SetParameterCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.SetParameterCommand.EParameterHolder;
 
@@ -18,9 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.table.TableCellEditor;
 
 /**
  * Razred koji se brine o parametrima, njihovim prikazom u tabeli te njihovom
@@ -151,6 +155,15 @@ public class CPToolbarParameterEnvelopeCollection {
 		// FIXME neispravno uneseni brojevi
 		Object newValue = getNewValue(value, row);
 
+		// bypass sending command if newValue is null
+		if (newValue == null) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: bypassing sending command; reason=invalid or null valued input");
+			}
+			return false;
+		}
+
 		ICommand command = new SetParameterCommand(objectName, parameterName,
 				EParameterHolder.component, newValue, controller
 						.getSchemaInfo());
@@ -227,10 +240,14 @@ public class CPToolbarParameterEnvelopeCollection {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: parameterType=TIME");
 			}
-			System.err
-					.println("CPToolbarParameterEnvelopeCollection: neugradjena funkcija za Time tip parametra!");
-			// FIXME Ovdje cu se morat poigrat sa tabelom
-			return null;
+			Time newTime = null;
+
+			try {
+				newTime = Time.parseTime(value.toString());
+			} catch (TimeFormatException e) {
+			}
+
+			return newTime;
 		} else if (pType == EParamTypes.OBJECT) {
 			if (CPToolbar.DEBUG_MODE) {
 				System.out
@@ -270,8 +287,14 @@ public class CPToolbarParameterEnvelopeCollection {
 		/**
 		 * Defaultni editor u JTableu za ovaj tip parametra
 		 */
-		private DefaultCellEditor rowEditor = null;
+		private TableCellEditor rowEditor = null;
 
+		/**
+		 * Konstruktor
+		 * 
+		 * @param parameter
+		 *            parametar
+		 */
 		public ParameterEnvelope(IParameter parameter) {
 			this.parameter = parameter;
 			buildRest();
@@ -287,7 +310,6 @@ public class CPToolbarParameterEnvelopeCollection {
 						+ parameter.getName() + ", parameterType=" + pType
 						+ ", constraintValues=" + constraintValues);
 			}
-
 			if (constraintValues != null) {
 				buildComboBox(constraintValues);
 				isEnumerate = true;
@@ -299,7 +321,7 @@ public class CPToolbarParameterEnvelopeCollection {
 				} else if (pType == EParamTypes.OBJECT) {
 					// TODO Napraviti podrsku za object tipove parametara
 				} else if (pType == EParamTypes.TIME) {
-					// TODO Napraviti podrsku za TIME tipove parametara
+					rowEditor = new TimeCellEditor(ETimeMetrics.getAllTimes());
 				}
 			}
 		}
@@ -377,7 +399,7 @@ public class CPToolbarParameterEnvelopeCollection {
 		 * 
 		 * @return cell editor
 		 */
-		public AbstractCellEditor getRowEditor() {
+		public TableCellEditor getRowEditor() {
 			return rowEditor;
 		}
 	}
