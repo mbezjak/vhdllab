@@ -38,39 +38,50 @@ public class SchemaInfo2VHDL {
 		info = schemaInfo;
 		circint = info.getEntity().getCircuitInterface(schemaInfo);
 		
+		appendHeader();
 		appendEntityBlock();
 		appendArchitecturalBlock("structural");
 		
 		return sb.toString();
 	}
 	
+	private void appendHeader() {
+		sb.append("library ieee;\nuse ieee.std_logic_1164.all;\n\n");
+	}
+
+
+
 	private void appendEntityBlock() {
 		Port p;
 		Type pt;
 		int b1, b2;
 		
-		sb.append("ENTITY ").append(circint.getEntityName()).append(" IS\n");
-		sb.append("\tPORT(\n");
-		
 		List<Port> ports = circint.getPorts();
-		for (int i = 0; i < ports.size(); i++) {
-			p = ports.get(i);
-			sb.append("\t\t").append(p.getName()).append(": ").append(p.getDirection()).append(' ');
-			pt = p.getType();
-			if (pt.isScalar()) {
-				sb.append(pt.getTypeName());
+		
+		sb.append("ENTITY ").append(circint.getEntityName()).append(" IS\n");		
+		
+		if (!ports.isEmpty()) {
+			sb.append("\tPORT(\n");
+			
+			for (int i = 0; i < ports.size(); i++) {
+				p = ports.get(i);
+				sb.append("\t\t").append(p.getName()).append(": ").append(p.getDirection()).append(' ');
+				pt = p.getType();
+				if (pt.isScalar()) {
+					sb.append(pt.getTypeName());
+				}
+				if (pt.isVector()) {
+					sb.append(pt.getTypeName()).append('(');
+					b1 = pt.getRangeFrom(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeFrom()) : (pt.getRangeTo());
+					b2 = pt.getRangeTo(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeTo()) : (pt.getRangeFrom());
+					sb.append(b1).append(' ').append(pt.getVectorDirection()).append(' ').append(b2).append(")");
+				}
+				if (i != (ports.size() - 1)) sb.append(';');
+				sb.append('\n');
 			}
-			if (pt.isVector()) {
-				sb.append(pt.getTypeName()).append('(');
-				b1 = pt.getRangeFrom(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeFrom()) : (pt.getRangeTo());
-				b2 = pt.getRangeTo(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeTo()) : (pt.getRangeFrom());
-				sb.append(b1).append(' ').append(pt.getVectorDirection()).append(' ').append(b2).append(")");
-			}
-			if (i != (ports.size() - 1)) sb.append(';');
-			sb.append('\n');
+			sb.append("\t);\n");
 		}
 		
-		sb.append("\t);\n");
 		sb.append("END ENTITY ").append(circint.getEntityName()).append(";\n\n\n\n");
 	}
 	

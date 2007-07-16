@@ -69,7 +69,7 @@ public class TestBenchEditor2 extends JPanel implements IEditor, IWizard {
 
 	//************************INTERFACE METHODS**********************************************
 	//TODO:implement later :)
-	public void cleanUp() {
+	public void dispose() {
 		// TODO Auto-generated method stub
 
 	}

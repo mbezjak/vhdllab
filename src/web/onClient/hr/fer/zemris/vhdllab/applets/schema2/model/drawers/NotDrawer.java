@@ -32,8 +32,8 @@ public class NotDrawer implements IComponentDrawer {
 	
 	/* static fields */
 	public static final int PORT_SIZE = 4;
-	public static final int NEGATE_SIZE = 4;
-	public static final int PIN_LENGTH = 15;
+	public static final int NEGATE_SIZE = 10;
+	public static final int PIN_LENGTH = 20;
 	public static final int INSIGNIA_SIZE = 18;
 	public static final String INSIGNIA = "1";
 	

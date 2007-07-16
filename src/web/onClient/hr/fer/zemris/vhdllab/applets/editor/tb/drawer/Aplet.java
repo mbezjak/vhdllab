@@ -541,6 +541,6 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		return new FileContent(projectName, testbench, sb.toString());
 	}
 
-	public void cleanUp() {}
+	public void dispose() {}
 	
 }

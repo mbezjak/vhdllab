@@ -1,9 +1,11 @@
 package hr.fer.zemris.vhdllab.service.dependency.schema;
 
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.model.DefaultSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -48,11 +50,14 @@ public class SchemaDependency implements IDependency {
 		for (PlacedComponent placed : components) {
 			String filename = placed.comp.getCodeFileName();
 			if (filename == null || filename.trim().equals("")) continue;
-			File dependency = labman.findFileByName(f.getProject().getId(), filename);
+			File dependency;
+			if(placed.comp.getComponentType().equals(EComponentType.PREDEFINED)) {
+				dependency = labman.getPredefinedFile(filename, false);
+			} else {
+				dependency = labman.findFileByName(f.getProject().getId(), filename);
+			}
 			retlist.add(dependency);
 		}
-		
-		retlist.add(labman.getPredefinedFile(Constants.PREDEFINED_FILENAME, true)); // TODO: pitaj miru da l ovdje treba ic true
 		
 		return retlist;
 	}

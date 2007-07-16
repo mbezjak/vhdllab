@@ -68,9 +68,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 					Direction dir = portrel.port.getDirection();
 					if (dir.equals(Direction.IN)) {
 						sb.append(mappedto.toString()).append(" <= ");
-						sb.append(portrel.port.getName()).append(";\n");
+						sb.append(getName()).append(";\n"); // TODO vidi portrel.port.getName()
 					} else if (dir.equals(Direction.OUT)) {
-						sb.append(portrel.port.getName()).append(" <= ");
+						sb.append(getName()).append(" <= "); // TODO vidi portrel.port.getName()
 						sb.append(mappedto.toString()).append(";\n");
 					} else {
 						throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
@@ -84,7 +84,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
 							sb.append(mappedto.toString()).append(" <= ");
-							sb.append(portrel.port.getName()).append("(").append(i).append(");\n");
+							sb.append(getName()).append("(").append(i).append(");\n"); // TODO vidi portrel.port.getName()
 						}
 						i++;
 					}
@@ -93,7 +93,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
-							sb.append(portrel.port.getName()).append("(").append(i).append(")");
+							sb.append(getName()).append("(").append(i).append(")"); // TODO vidi portrel.port.getName()
 							sb.append(" <= ").append(mappedto.toString()).append('\n');
 						}
 						i++;
@@ -119,9 +119,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	private static final String STD_LOGIC_OUT = "Output_scalar";
 	private static final String STD_LOGIC_VECTOR_IN = "Input_vector";
 	private static final String STD_LOGIC_VECTOR_OUT = "Output_vector";
-	private static final int WIDTH = Constants.GRID_SIZE * 4;
-	private static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
-	private static final int EDGE_OFFSET = Constants.GRID_SIZE;
+	public static final int WIDTH = Constants.GRID_SIZE * 4;
+	public static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
+	public static final int EDGE_OFFSET = Constants.GRID_SIZE;
 	
 	
 	/* private fields */
@@ -282,6 +282,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		parameters = new SchemaParameterCollection();
 		
 		deserialize(wrapper);
+		setComponentTypeName();
 	}
 	
 	/**
@@ -326,6 +327,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		// other
 		inout.width = this.width;
 		inout.height = this.height;
+		inout.setComponentTypeName();
 		
 		return inout;
 	}
@@ -486,6 +488,8 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	public void setName(Caseless name) {
 		try {
 			parameters.setValue(ISchemaComponent.KEY_NAME, name);
+			portrel.port = new DefaultPort(name.toString(),
+					portrel.port.getDirection(), portrel.port.getType());
 		} catch (InvalidParameterValueException e) {
 			throw new RuntimeException("Name could not be set - invalid value.", e);
 		} catch (ParameterNotFoundException e) {

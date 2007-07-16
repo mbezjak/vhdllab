@@ -521,7 +521,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		thread.start();
 	}
 
-	public void cleanUp()
+	public void dispose()
 	{
 		scanner.stopScanner();
 	}

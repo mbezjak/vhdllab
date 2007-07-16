@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+<componentList>
+   <component>
+        <componentName>VL_AND</componentName>
+        <codeFileName>VL_AND.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.AndDrawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+		<preferredName>VL_AND_instance</preferredName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <paramType>TIME</paramType>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValues></allowedValues>
+           </parameter>
+
+           <parameter>
+              <generic>true</generic>
+              <paramType>INTEGER</paramType>
+              <name>n</name>
+              <value>2</value>
+              <allowedValues></allowedValues>
+			  <eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>a</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vectorAscension>descend</vectorAscension>
+              <lowerBound>1</lowerBound>
+              <upperBound>0</upperBound>
+           </port>
+
+           <port>
+              <name>f</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+   
+   <component>
+        <componentName>VL_NAND</componentName>
+        <codeFileName>VL_NAND.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.NandDrawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+		<preferredName>VL_NAND_instance</preferredName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <paramType>TIME</paramType>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValues></allowedValues>
+           </parameter>
+
+           <parameter>
+              <generic>true</generic>
+              <paramType>INTEGER</paramType>
+              <name>n</name>
+              <value>2</value>
+              <allowedValues></allowedValues>
+			  <eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>a</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vectorAscension>descend</vectorAscension>
+              <lowerBound>1</lowerBound>
+              <upperBound>0</upperBound>
+           </port>
+
+           <port>
+              <name>f</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+   
+   <component>
+        <componentName>VL_OR</componentName>
+        <codeFileName>VL_OR.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.OrDrawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+		<preferredName>VL_OR_instance</preferredName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <paramType>TIME</paramType>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValues></allowedValues>
+           </parameter>
+
+           <parameter>
+              <generic>true</generic>
+              <paramType>INTEGER</paramType>
+              <name>n</name>
+              <value>2</value>
+              <allowedValues></allowedValues>
+			  <eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>a</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vectorAscension>descend</vectorAscension>
+              <lowerBound>1</lowerBound>
+              <upperBound>0</upperBound>
+           </port>
+
+           <port>
+              <name>f</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+   
+   <component>
+        <componentName>VL_NOR</componentName>
+        <codeFileName>VL_NOR.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.NorDrawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+		<preferredName>VL_NOR_instance</preferredName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <paramType>TIME</paramType>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValues></allowedValues>
+           </parameter>
+
+           <parameter>
+              <generic>true</generic>
+              <paramType>INTEGER</paramType>
+              <name>n</name>
+              <value>2</value>
+              <allowedValues></allowedValues>
+			  <eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>a</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vectorAscension>descend</vectorAscension>
+              <lowerBound>1</lowerBound>
+              <upperBound>0</upperBound>
+           </port>
+
+           <port>
+              <name>f</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+   
+   <component>
+        <componentName>VL_XOR</componentName>
+        <codeFileName>VL_XOR.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.XorDrawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+		<preferredName>VL_XOR_instance</preferredName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <paramType>TIME</paramType>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValues></allowedValues>
+           </parameter>
+
+           <parameter>
+              <generic>true</generic>
+              <paramType>INTEGER</paramType>
+              <name>n</name>
+              <value>2</value>
+              <allowedValues></allowedValues>
+			  <eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>a</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vectorAscension>descend</vectorAscension>
+              <lowerBound>1</lowerBound>
+              <upperBound>0</upperBound>
+           </port>
+
+           <port>
+              <name>f</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+   
+   <component>
+        <componentName>VL_XNOR</componentName>
+        <codeFileName>VL_XNOR.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.XnorDrawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+		<preferredName>VL_XNOR_instance</preferredName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <paramType>TIME</paramType>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValues></allowedValues>
+           </parameter>
+
+           <parameter>
+              <generic>true</generic>
+              <paramType>INTEGER</paramType>
+              <name>n</name>
+              <value>2</value>
+              <allowedValues></allowedValues>
+			  <eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.FirstPortResizer</eventName>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>a</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vectorAscension>descend</vectorAscension>
+              <lowerBound>1</lowerBound>
+              <upperBound>0</upperBound>
+           </port>
+
+           <port>
+              <name>f</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+   
+   <component>
+        <componentName>VL_NOT</componentName>
+        <codeFileName>VL_NOT.vhdl</codeFileName>
+        <drawerName>hr.fer.zemris.vhdllab.applets.schema2.model.drawers.NotDrawer</drawerName>
+        <categoryName>BasicGates</categoryName>
+		<preferredName>VL_NOT_instance</preferredName>
+        <genericComponent>true</genericComponent>
+
+        <parameterList>
+           <parameter>
+              <generic>true</generic>
+              <paramType>TIME</paramType>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValues></allowedValues>
+           </parameter>
+        </parameterList>
+       
+        <portList>
+           <port>
+              <name>a</name>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic</type>
+           </port>
+
+           <port>
+              <name>f</name>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+        </portList>
+   </component>
+</componentList>
+
+
+
+
+
+
+
+
+
+
+
+

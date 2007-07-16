@@ -74,7 +74,7 @@ public class TextEditorTest extends JFrame {
 			}
 		
 			public void windowClosed(WindowEvent e) {
-				edi.editor.cleanUp();
+				edi.editor.dispose();
 				
 			}
 		

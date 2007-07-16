@@ -1729,7 +1729,7 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public void cleanUp() {
+	public void dispose() {
 		// TODO Auto-generated method stub
 		
 	}

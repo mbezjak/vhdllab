@@ -1,13 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
@@ -20,6 +20,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.LocalController;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
+import hr.fer.zemris.vhdllab.utilities.FileUtil;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -28,6 +29,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.ref.SoftReference;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,14 +38,17 @@ import javax.swing.JToolBar;
 
 public class SchemaMainPanel extends JPanel implements IEditor {
 
-	{
-		try {
-			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
-					.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	private SoftReference<DefaultWizard> wizardSoftRef;
+	
+
+//	{
+//		try {
+////			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
+////					.getSystemLookAndFeelClassName());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private class ModificationListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -57,7 +62,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private static final long serialVersionUID = -6643347269051956602L;
 
 	/* static fields */
-	private static final String PREDEFINED_FILE_NAME = "predefined.xml";
 
 	/* model private fields */
 	private ISchemaCore core;
@@ -110,13 +114,16 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private void initPrototypes() {
 		String predefined;
 
-		try {
-			predefined = projectContainer
-					.getPredefinedFileContent(PREDEFINED_FILE_NAME);
-		} catch (UniformAppletException e) {
-			throw new SchemaException(
-					"Could not open predefined component file.", e);
-		}
+//		try {
+//			predefined = projectContainer
+//					.getPredefinedFileContent(Constants.PREDEFINED_FILENAME);
+//		} catch (UniformAppletException e) {
+//			throw new SchemaException(
+//					"Could not open predefined component file.", e);
+//		}
+		
+		predefined = FileUtil.readFile(PredefinedComponentsParser.class.
+			getResourceAsStream(Constants.PREDEFINED_FILENAME));
 
 		core.initPrototypes(predefined);
 	}
@@ -189,8 +196,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 	/* IEditor methods */
 
-	public void cleanUp() {
-		resetSchema();
+	public void dispose() {
 	}
 
 	public String getData() {
@@ -219,8 +225,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public IWizard getWizard() {
-		// TODO: create real wiz
-		return new DummyWizard();
+		DefaultWizard dw = null;
+		if(wizardSoftRef!=null) dw = wizardSoftRef.get();
+		if(dw==null) {
+			dw = new DefaultWizard();
+			wizardSoftRef = new SoftReference<DefaultWizard>(dw);
+		}
+		return dw;
 	}
 
 	public void highlightLine(int line) {

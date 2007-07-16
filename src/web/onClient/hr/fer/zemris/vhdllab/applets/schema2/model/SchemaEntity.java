@@ -90,7 +90,7 @@ public class SchemaEntity implements ISchemaEntity {
 		
 		for (ISchemaComponent cmp : inouts) {
 			Port tocopy = cmp.getPort(0);
-			ports.add(tocopy);
+			ports.add(new DefaultPort(cmp.getName().toString(), tocopy.getDirection(), tocopy.getType()));
 //			ports.add(new DefaultPort(
 //					tocopy.getName(),
 //					(tocopy.getDirection().equals(Direction.IN)) ? (Direction.OUT) : (Direction.IN),

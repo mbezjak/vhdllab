@@ -77,7 +77,7 @@ public class PortWrapper {
 	}
 
 	public String getType() {
-		return type;
+		return type.toLowerCase();
 	}
 
 	public void setType(String type) {

@@ -32,11 +32,12 @@ public class Testbench implements IVHDLGenerator {
 		if(f == null) throw new NullPointerException("File can not be null.");
 		if(labman == null) throw new NullPointerException("VHDLLabManager can not be null.");
 		if(!f.getFileType().equals(FileTypes.FT_VHDL_TB)) throw new IllegalArgumentException("");
-		List<File> vhdlSources = labman.extractDependencies(f);
-		vhdlSources.remove(f);
-		if(vhdlSources.size() != 1) return null;
-		
-		File source = vhdlSources.get(0);
+
+		String content = f.getContent();
+		int start = content.indexOf("<file>") + "<file>".length();
+		int end = content.indexOf("</file>", start);
+		String name = content.substring(start, end);
+		File source = labman.findFileByName(f.getProject().getId(), name);
 		CircuitInterface ci = labman.extractCircuitInterface(source);
 		String vhdl = null;
 		try {

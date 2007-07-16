@@ -121,8 +121,10 @@
     <javac destdir="${build.dir}/service" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/service"/>
       <src path="src/common"/>
-    	<!-- only temporary solution!! -->
+      <!-- only temporary solution!! -->
       <src path="src/web/onClient"/>
+      <src path="src/i18n/common"/>
+      <!-- END only temporary solution!! -->
       <classpath refid="src.class.path"/>
     </javac>
   </target>
@@ -149,6 +151,7 @@
     <jar destfile="${jlib.dir}/${app.name}-dao.jar">
       <fileset dir="${build.dir}/dao" includes="**/*.class"/>
       <fileset dir="src/dao" excludes="**/*.java"/>
+      <fileset dir="src/common" excludes="**/*.java"/>
 	  <fileset dir="${hibernate.dir}"/>
     </jar>
   </target>
@@ -157,6 +160,7 @@
     <jar destfile="${jlib.dir}/${app.name}-service.jar">
       <fileset dir="${build.dir}/service" includes="**/*.class"/>
       <fileset dir="src/service" excludes="**/*.java"/>
+      <fileset dir="src/common" excludes="**/*.java"/>
     </jar>
   </target>
 
@@ -164,6 +168,7 @@
   	<jar destfile="${jlib.dir}/${app.name}-web-onServer.jar">
   	  <fileset dir="${build.dir}/web/onServer" includes="**/*.class"/>
       <fileset dir="src/web/onServer" excludes="**/*.java"/>
+      <fileset dir="src/common" excludes="**/*.java"/>
       <fileset dir="src/i18n/server" includes="**/*"/>
   	</jar>
   </target>
@@ -172,6 +177,7 @@
   	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar">
   	  <fileset dir="${build.dir}/web/onClient" includes="**/*.class"/>
       <fileset dir="src/web/onClient" excludes="**/*.java"/>
+      <fileset dir="src/common" excludes="**/*.java"/>
    	  <fileset dir="src/i18n/client" includes="**/*"/>
    	  <metainf dir="metadata/onClient/META-INF"/>
   	</jar>

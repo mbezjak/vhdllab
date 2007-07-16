@@ -41,7 +41,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.Type;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -261,7 +260,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		Direction dir;
 		Port port;
 		PortRelation pr;
-		int nc = 0, sc = 0, wc = 0, ec = 0, pos = 0;
+		int nc = 0, sc = 0, wc = 0, ec = 0, pos = 0, portindex = 0;
 		IntList toBeMoved = new IntList();
 		for (PortWrapper pw : portwrappers) {
 			if (pw.getType().equals(PortWrapper.STD_LOGIC_VECTOR)) {
@@ -282,16 +281,16 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				
 				int increment;
 				if (pw.getOrientation().equals(PortWrapper.ORIENTATION_NORTH)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.NORTH, toBeMoved, nc, pos);
+					increment = createSchPortsFor(tp, pr, EOrientation.NORTH, toBeMoved, nc, pos, portindex);
 					nc += increment;
 				} else if (pw.getOrientation().equals(PortWrapper.ORIENTATION_SOUTH)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.SOUTH, toBeMoved, sc, pos);
+					increment = createSchPortsFor(tp, pr, EOrientation.SOUTH, toBeMoved, sc, pos, portindex);
 					sc += increment;
 				} else if (pw.getOrientation().equals(PortWrapper.ORIENTATION_WEST)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.WEST, toBeMoved, wc, pos);
+					increment = createSchPortsFor(tp, pr, EOrientation.WEST, toBeMoved, wc, pos, portindex);
 					wc += increment;
 				} else if (pw.getOrientation().equals(PortWrapper.ORIENTATION_EAST)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.EAST, toBeMoved, ec, pos);
+					increment = createSchPortsFor(tp, pr, EOrientation.EAST, toBeMoved, ec, pos, portindex);
 					ec += increment;
 				} else throw new NotImplementedException("Orientation '" + pw.getOrientation() + "' unknown.");
 				
@@ -328,12 +327,15 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 					toBeMoved.add(pos);
 				} else throw new NotImplementedException("Orientation '" + pw.getOrientation() + "' unknown.");
 				
+				schport.setPortindex(portindex);
 				pr.relatedTo.add(schport);
 				schemaports.add(schport);
 				pos++;
 			} else {
 				throw new NotImplementedException("Port type '" + pw.getType() + "' is unknown.");
 			}
+			
+			portindex++;
 		}
 		
 		// calculate width and height and set ports appropriately
@@ -349,7 +351,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 	
 	private final int createSchPortsFor(Type tp, PortRelation pr, EOrientation ori, IntList toBeMoved,
-			int stor, int stpos)
+			int stor, int stpos, int portindex)
 	{
 		int from = tp.getRangeFrom(), to = tp.getRangeTo();
 		
@@ -367,6 +369,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				if (ori == EOrientation.EAST || ori == EOrientation.SOUTH) toBeMoved.add(stpos);
 				stpos++;
 				stor++;
+				schport.setPortindex(portindex);
 				schemaports.add(schport);
 				pr.relatedTo.add(schport);
 			}
@@ -383,6 +386,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				if (ori == EOrientation.EAST || ori == EOrientation.SOUTH) toBeMoved.add(stpos);
 				stpos++;
 				stor++;
+				schport.setPortindex(portindex);
 				schemaports.add(schport);
 				pr.relatedTo.add(schport);
 			}
@@ -597,7 +601,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	private void initSchemaPortsOnly(List<SchemaPortWrapper> portwrappers) {
 		schemaports = new ArrayList<SchemaPort>();
 		for (SchemaPortWrapper spw : portwrappers) {
-			schemaports.add(new SchemaPort(spw));
+			SchemaPort sp = new SchemaPort(spw);
+			sp.setPortindex(spw.getPortindex());
+			schemaports.add(sp);
 		}
 		for (int i = 0, sz = schemaports.size(); i < sz; i++) {
 			SchemaPort sp = schemaports.get(i);

@@ -17,10 +17,13 @@ import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
 import hr.fer.zemris.vhdllab.service.dependency.automat.AUTDependancy;
+import hr.fer.zemris.vhdllab.service.dependency.schema.SchemaDependency;
 import hr.fer.zemris.vhdllab.service.extractor.ICircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.extractor.automat.AutCircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.extractor.schema.SchemaCircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.service.generator.automat.VHDLGenerator;
+import hr.fer.zemris.vhdllab.service.generator.schema.SchemaVHDLGenerator;
 import hr.fer.zemris.vhdllab.simulators.ISimulator;
 import hr.fer.zemris.vhdllab.utilities.FileUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
@@ -58,7 +61,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		List<File> otherFiles = new ArrayList<File>();
 		for(File f : deps) {
 			if(f.getFileType().equals(FileTypes.FT_PREDEFINED)) {
-				otherFiles.add(f);
+				otherFiles.add(getPredefinedFile(f.getFileName(), true));
 			}
 		}
 		deps.removeAll(otherFiles);
@@ -289,6 +292,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		} else if (file.getFileType().equals(FileTypes.FT_VHDL_AUTOMAT)) {
 			ICircuitInterfaceExtractor extractor = new AutCircuitInterfaceExtractor();
 			return extractor.extractCircuitInterface(file);
+		} else if (file.getFileType().equals(FileTypes.FT_VHDL_STRUCT_SCHEMA)) {
+			ICircuitInterfaceExtractor extractor = new SchemaCircuitInterfaceExtractor();
+			return extractor.extractCircuitInterface(file);
 		} else {
 			throw new ServiceException("No extractor for file type: "
 					+ file.getFileType());
@@ -316,14 +322,15 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	public List<File> extractDependenciesDisp(File file)
 			throws ServiceException {
 		IDependency depExtractor = null;
-		if (file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)
-				|| file.getFileType().equals(FileTypes.FT_PREDEFINED)) {
+		if (file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)) {
 			depExtractor = new VHDLDependencyExtractor();
 		} else if (file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
 			depExtractor = new TestBenchDependencyExtractor();
 		} else if (file.getFileType().equals(FileTypes.FT_VHDL_AUTOMAT)) {
 			depExtractor = new AUTDependancy();
 		} else if (file.getFileType().equals(FileTypes.FT_VHDL_STRUCT_SCHEMA)) {
+			depExtractor = new SchemaDependency();
+		} else if (file.getFileType().equals(FileTypes.FT_PREDEFINED)) {
 			return Collections.emptyList();
 		} else {
 			throw new ServiceException("FileType " + file.getFileType()
@@ -443,6 +450,9 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		} else if (file.getFileType().equals(FileTypes.FT_VHDL_AUTOMAT)) {
 			IVHDLGenerator generator = new VHDLGenerator();
 			return generator.generateVHDL(file, this);
+		} else if (file.getFileType().equals(FileTypes.FT_VHDL_STRUCT_SCHEMA)) {
+			IVHDLGenerator generator = new SchemaVHDLGenerator();
+			return generator.generateVHDL(file, this);
 		} else
 			throw new ServiceException("FileType " + file.getFileType()
 					+ " has no registered vhdl generators!");
@@ -553,7 +563,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		List<File> otherFiles = new ArrayList<File>();
 		for(File f : deps) {
 			if(f.getFileType().equals(FileTypes.FT_PREDEFINED)) {
-				otherFiles.add(f);
+				otherFiles.add(getPredefinedFile(f.getFileName(), true));
 			}
 		}
 		deps.removeAll(otherFiles);

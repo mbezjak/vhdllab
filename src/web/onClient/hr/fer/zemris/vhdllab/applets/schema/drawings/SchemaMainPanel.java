@@ -1290,7 +1290,7 @@ public class SchemaMainPanel extends JPanel implements IEditor, IWizard {
 		return this;
 	}
 
-	public void cleanUp() {
+	public void dispose() {
 		ResetSchemaContent();
 	}
 

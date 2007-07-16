@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IGenericValue;
@@ -86,7 +87,7 @@ public class ParameterFactory {
 		// set constraint's allowedValuesSet
 		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split("#");
+			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				genval = createGenericValue(parwrapper);
 				genval.deserialize(sfield[i]);
@@ -109,7 +110,7 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split("#");
+			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(new Caseless(sfield[i]));
 			}
@@ -130,7 +131,7 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split("#");
+			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(Time.parseTime(sfield[i]));
 			}
@@ -151,7 +152,7 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split("#");
+			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(sfield[i]);
 			}
@@ -172,7 +173,7 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split("#");
+			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				try {
 					allowed.add(new Double(Double.parseDouble(sfield[i])));
@@ -197,7 +198,7 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split("#");
+			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				try {
 					allowed.add(new Integer(Integer.parseInt(sfield[i])));
@@ -222,7 +223,7 @@ public class ParameterFactory {
 		
 		if (parwrapper.getAllowedValues() != null && !parwrapper.getAllowedValues().equals("")) {
 			Set<Object> allowed = new HashSet<Object>();
-			String[] sfield = parwrapper.getAllowedValues().split("#");
+			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				allowed.add(new Boolean(Boolean.parseBoolean(sfield[i])));
 			}

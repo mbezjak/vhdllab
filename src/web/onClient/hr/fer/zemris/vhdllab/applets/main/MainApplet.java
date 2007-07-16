@@ -1004,6 +1004,10 @@ public class MainApplet
 					IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
 					view.setData(result);
 				}
+			} else {
+				String text = bundle.getString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
+				text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
+				echoStatusText(text, MessageEnum.Information);
 			}
 		} catch (UniformAppletException e) {
 			e.printStackTrace();
@@ -1046,7 +1050,7 @@ public class MainApplet
 	
 	public void simulate(String projectName, String fileName) {
 		try {
-			if(isTestbench(projectName, fileName)) {
+			if(isSimulatable(projectName, fileName)) {
 				List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
 				String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
 				String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
@@ -1063,6 +1067,10 @@ public class MainApplet
 						openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
 					}
 				}
+			} else {
+				String text = bundle.getString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
+				text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
+				echoStatusText(text, MessageEnum.Information);
 			}
 		} catch (UniformAppletException e) {
 			e.printStackTrace();
@@ -1115,7 +1123,20 @@ public class MainApplet
 	
 	public boolean isSimulatable(String projectName, String fileName) {
 		String type = getFileType(projectName, fileName);
-		return FileTypes.isSimulatable(type);
+		if(FileTypes.isSimulatable(type)) {
+			return true;
+		}
+		
+		CircuitInterface ci;
+		try {
+			ci = getCircuitInterfaceFor(projectName, fileName);
+		} catch (UniformAppletException e) {
+			return false;
+		}
+		if(ci.getPorts().isEmpty())	{
+			return true;
+		}
+		return false;
 	}
 	
 	public String getFileType(String projectName, String fileName) {
@@ -1735,7 +1756,7 @@ public class MainApplet
 		if(shouldContinue) {
 			for(IEditor editor : editorsToClose) {
 				// Clean up of an editor
-				editor.cleanUp();
+				editor.dispose();
 				// End of clean up
 				
 				editorPane.closeEditor(editor);

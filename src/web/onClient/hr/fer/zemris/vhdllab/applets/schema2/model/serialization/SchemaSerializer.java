@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -130,7 +131,13 @@ public class SchemaSerializer {
 		appendLine(writer);
 		writer.append("<y>").append(Integer.toString(y)).append("</y>");
 		appendLine(writer);
-		writer.append("<componentName>").append(component.getTypeName().toString()).append("</componentName>");
+		try {
+			writer.append("<componentName>").append(component.getTypeName().toString()).append("</componentName>");
+		} catch (NullPointerException e) {
+			System.err.println("Kemija ga: " + component.getName() + ", tip=" + component.getTypeName());
+			e.printStackTrace();
+			throw e;
+		}
 		appendLine(writer);
 		writer.append("<codeFileName>").append(component.getCodeFileName()).append("</codeFileName>");
 		appendLine(writer);
@@ -286,7 +293,7 @@ public class SchemaSerializer {
 				ISerializable serializable_object;
 				for (Object obj : allowed) {
 					serializable_object = (ISerializable)obj;
-					writer.append(serializable_object.serialize()).append(' ');
+					writer.append(serializable_object.serialize()).append(Constants.ALLOWED_SET_DIVIDER);
 				}
 			} else {
 				for (Object obj : allowed) {

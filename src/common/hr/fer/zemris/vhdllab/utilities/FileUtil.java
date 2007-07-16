@@ -1,10 +1,13 @@
 package hr.fer.zemris.vhdllab.utilities;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -41,6 +44,8 @@ public final class FileUtil {
 	 * 
 	 * @param fileName
 	 *            a path to a file name
+	 * @param encoding
+	 *            a file encoding
 	 * @return content of a file
 	 * @see #readFile(String)
 	 */
@@ -65,6 +70,48 @@ public final class FileUtil {
 			}
 		}
 		return content;
+	}
+
+	/**
+	 * Reads complete file content in UTF-8 encoding and returns it as a string.
+	 * If any exception occures then this method will return <code>null</code>.
+	 * 
+	 * @param is
+	 *            an input stream of a file
+	 * @return content of a file
+	 * @see #readFile(String)
+	 */
+	public static String readFile(InputStream is) {
+		return readFile(is, "UTF-8");
+	}
+
+	/**
+	 * Reads complete file content in specified encoding and returns it as a
+	 * string. If any exception occures then this method will return
+	 * <code>null</code>.
+	 * 
+	 * @param is
+	 *            an input stream of a file
+	 * @param encoding
+	 *            a file encoding
+	 * @return content of a file
+	 * @see #readFile(String)
+	 */
+	public static String readFile(InputStream is, String encoding) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					is, encoding));
+			String s;
+			while ((s = reader.readLine()) != null) {
+				sb.append(s);
+				sb.append('\n');
+			}
+			return sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**

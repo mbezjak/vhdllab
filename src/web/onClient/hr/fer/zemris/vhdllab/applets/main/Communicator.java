@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.preferences.Preferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -13,6 +14,8 @@ import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sun.plugin.cache.FileType;
 
 public class Communicator {
 
@@ -151,7 +154,10 @@ public class Communicator {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		if(fileName == null) throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if(fileIdentifier == null) {
+			return FileTypes.FT_PREDEFINED;
+			//throw new UniformAppletException("File does not exists!");
+		}
 		return invoker.loadFileType(fileIdentifier);
 	}
 	
@@ -165,8 +171,12 @@ public class Communicator {
 			String fileName = p.getFileName();
 			Long id = cache.getIdentifierFor(projectName, fileName);
 			if(id == null) {
-				Long fileIdentifier = invoker.findFileByName(projectIdentifier, fileName);
-				cache.cacheItem(projectName, fileName, fileIdentifier);
+				if(invoker.existsFile(projectIdentifier, fileName)) {
+					Long fileIdentifier = invoker.findFileByName(projectIdentifier, fileName);
+					cache.cacheItem(projectName, fileName, fileIdentifier);
+				} else {
+					//invoker.
+				}
 			}
 		}
 		return h;

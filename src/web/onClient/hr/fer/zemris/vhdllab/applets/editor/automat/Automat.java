@@ -299,7 +299,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 		
 	}
 	
-	public void cleanUp() {}
+	public void dispose() {}
 
 	
 

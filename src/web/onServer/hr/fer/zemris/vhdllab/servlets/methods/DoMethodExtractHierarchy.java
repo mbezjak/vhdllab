@@ -37,7 +37,7 @@ public class DoMethodExtractHierarchy implements RegisteredMethod {
 		} catch (Exception e) {
 			return errorProperties(method,MethodConstants.SE_CAN_NOT_EXTRACT_HIERARCHY, "Can not extract hierarchy for project id = '"+projectID+"'!");
 		}
-		
+
 		// Prepare response
 		Properties resProp = new Properties();
 		resProp.setProperty(MethodConstants.PROP_METHOD,method);

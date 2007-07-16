@@ -114,7 +114,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		PlacedComponent plc;
 		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
 			plc = entry.getValue();
-			if (plc.comp.getComponentType() == componentType) comps.add(plc.comp);
+			if (plc.comp.getComponentType().equals(componentType)) comps.add(plc.comp);
 		}
 		
 		return comps;
