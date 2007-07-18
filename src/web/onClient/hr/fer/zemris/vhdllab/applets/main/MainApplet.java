@@ -1998,7 +1998,7 @@ public class MainApplet
 		}
 		
 		public static List<FileIdentifier> deserializeEditorInfo(String data) {
-			if(data == null) return new ArrayList<FileIdentifier>(0);
+			if(data == null || data.equals("")) return Collections.emptyList();
 			String[] lines = data.split(SEPARATOR_FOR_EACH_ROW);
 			List<FileIdentifier> files = new ArrayList<FileIdentifier>(lines.length);
 			for(String s : lines) {
@@ -2022,7 +2022,7 @@ public class MainApplet
 		}
 		
 		public static List<String> deserializeViewInfo(String data) {
-			if(data == null) return new ArrayList<String>(0);
+			if(data == null || data.equals("")) return Collections.emptyList();
 			String[] lines = data.split(SEPARATOR_FOR_EACH_ROW);
 			List<String> files = new ArrayList<String>(lines.length);
 			for(String s : lines) {
