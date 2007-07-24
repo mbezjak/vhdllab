@@ -33,6 +33,7 @@ public class GHDLSimulator implements ISimulator {
 
 	private String executable;
 	private String tmpRoot;
+	private boolean leaveSimulationResults = false;
 	
 	public GHDLSimulator(Properties params) {
 		super();
@@ -44,6 +45,8 @@ public class GHDLSimulator implements ISimulator {
 		if(tmpRoot==null) {
 			throw new IllegalArgumentException("No root temporary directory specified!");
 		}
+		String lsr = params.getProperty("leaveSimulationResults");
+		if("true".equals(lsr)) leaveSimulationResults = true;
 	}
 
 	public SimulationResult simulate(List<File> dbFiles, List<File> otherFiles,
@@ -121,7 +124,7 @@ public class GHDLSimulator implements ISimulator {
 		} catch(Throwable tr) {
 			tr.printStackTrace();
 		} finally {
-			if(tmpDir != null) {
+			if(tmpDir != null && !leaveSimulationResults) {
 				try {
 					recursiveDelete(tmpDir);
 				} catch(Exception ignorable) {
