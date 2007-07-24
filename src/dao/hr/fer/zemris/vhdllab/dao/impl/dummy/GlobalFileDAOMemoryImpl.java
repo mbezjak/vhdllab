@@ -65,6 +65,11 @@ public class GlobalFileDAOMemoryImpl implements GlobalFileDAO {
 		}
 	}
 
+	@Override
+	public List<GlobalFile> getAll() throws DAOException {
+		return new ArrayList<GlobalFile>(files.values());
+	}
+
 	public synchronized List<GlobalFile> findByType(String type) throws DAOException {
 		if(type == null) {
 			throw new DAOException("Global file type can not be null.");
@@ -76,6 +81,18 @@ public class GlobalFileDAOMemoryImpl implements GlobalFileDAO {
 			}
 		}
 		return fileList;
+	}
+	
+	public synchronized GlobalFile findByName(String name) throws DAOException {
+		if(name == null) {
+			throw new DAOException("Global file name can not be null.");
+		}
+		for(GlobalFile f : files.values()) {
+			if(globalFileNamesAreEqual(f.getName(), name)) {
+				return f;
+			}
+		}
+		throw new DAOException("No such file!");
 	}
 	
 	public synchronized boolean exists(Long fileId) throws DAOException {

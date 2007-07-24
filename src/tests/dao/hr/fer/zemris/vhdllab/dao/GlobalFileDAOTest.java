@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.init.TestManager;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
 
@@ -285,6 +286,19 @@ public class GlobalFileDAOTest {
 	}
 
 	/**
+	 * everything is ok
+	 */
+	@Test
+	public void getAll() throws DAOException {
+		List<GlobalFile> expectedFiles = man.getAllGlobalFiles();
+		List<GlobalFile> all = globalFileDAO.getAll();
+		assertEquals(expectedFiles, all);
+		String type = man.pickRandomGlobalFile().getType();
+		assertTrue(all.containsAll(man.getGlobalFilesByType(type)));
+		assertTrue(all.contains(man.pickRandomGlobalFile()));
+	}
+	
+	/**
 	 * type is null
 	 */
 	@Test(expected=DAOException.class)
@@ -309,6 +323,32 @@ public class GlobalFileDAOTest {
 		GlobalFile file = man.pickRandomGlobalFile();
 		List<GlobalFile> files = man.getGlobalFilesByType(file.getType());
 		assertEquals(files, globalFileDAO.findByType(file.getType()));
+	}
+	
+	/**
+	 * global file name is null
+	 */
+	@Test(expected=DAOException.class)
+	public void findByName() throws DAOException {
+		globalFileDAO.findByName(null);
+	}
+	
+	/**
+	 * non-existing global file name
+	 */
+	@Test(expected=DAOException.class)
+	public void findByName2() throws DAOException {
+		globalFileDAO.findByName(man.getUnusedGlobalFileName());
+	}
+	
+	/**
+	 * everything ok
+	 */
+	@Test
+	public void findByName3() throws DAOException {
+		String name = man.pickRandomGlobalFile().getName();
+		GlobalFile expectedFile = man.getGlobalFileByName(name);
+		assertEquals(expectedFile, globalFileDAO.findByName(name));
 	}
 
 }

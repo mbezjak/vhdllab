@@ -79,6 +79,21 @@ public class UserFileDAOMemoryImpl implements UserFileDAO {
 		return fileList;
 	}
 	
+	public synchronized UserFile findByName(String userID, String name) throws DAOException {
+		if(userID == null) {
+			throw new DAOException("User identifier can not be null.");
+		}
+		if(name == null) {
+			throw new DAOException("User file name can not be null.");
+		}
+		for(UserFile f : findByUser(userID)) {
+			if(userFileNamesAreEqual(f.getName(), name)) {
+				return f;
+			}
+		}
+		throw new DAOException("No such file!");
+	}
+	
 	public synchronized boolean exists(Long fileId) throws DAOException {
 		if(fileId == null) {
 			throw new DAOException("Global file identifier can not be null.");

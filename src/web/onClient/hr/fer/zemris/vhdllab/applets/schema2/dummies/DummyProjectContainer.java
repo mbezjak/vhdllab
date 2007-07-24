@@ -15,7 +15,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.preferences.Preferences;
+import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
@@ -124,7 +124,7 @@ public class DummyProjectContainer implements ProjectContainer {
 		return sb.toString();
 	}
 
-	public List<Preferences> getPreferences(String type) throws UniformAppletException {
+	public UserPreferences getPreferences() throws UniformAppletException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -204,6 +204,19 @@ public class DummyProjectContainer implements ProjectContainer {
 	}
 
 	public void viewVHDLCode(String projectName, String fileName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getProperty(String name) throws UniformAppletException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveProperty(String name, String data)
+			throws UniformAppletException {
 		// TODO Auto-generated method stub
 		
 	}

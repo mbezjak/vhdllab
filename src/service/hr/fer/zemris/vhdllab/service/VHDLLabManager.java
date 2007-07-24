@@ -320,6 +320,16 @@ public interface VHDLLabManager {
 	public void deleteGlobalFile(Long fileId) throws ServiceException;
 
 	/**
+	 * Finds all global files. Return value will never be <code>null</code>,
+	 * although it can be an empty list.
+	 * 
+	 * @return all global files
+	 * @throws ServiceException
+	 *             if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public List<GlobalFile> getAllGlobalFiles() throws ServiceException;
+
+	/**
 	 * Finds all global files whose type is specified type. Return value will
 	 * never be <code>null</code>, although it can be an empty list.
 	 * 
@@ -331,6 +341,19 @@ public interface VHDLLabManager {
 	 */
 	public List<GlobalFile> findGlobalFilesByType(String type)
 			throws ServiceException;
+
+	/**
+	 * Finds a global file whose name is specified <code>name</code>. Return
+	 * value will never be <code>null</code>. In case that such file does not
+	 * exists this method will throw {@link DAOException}.
+	 * 
+	 * @param name
+	 *            a name of a global file
+	 * @return a global file
+	 * @throws ServiceException
+	 *             if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public GlobalFile findGlobalFileByName(String name) throws ServiceException;
 
 	/**
 	 * Retrieves user file with specified identifier. An exception will be
@@ -421,6 +444,22 @@ public interface VHDLLabManager {
 	 *             if any exception occurs (such as {@linkplain DAOException})
 	 */
 	public List<UserFile> findUserFilesByUser(String userId)
+			throws ServiceException;
+
+	/**
+	 * Finds a user files whose owner and name are specified by parameters.
+	 * Return value will never be <code>null</code>. In case that such file
+	 * does not exists this method will throw {@link DAOException}.
+	 * 
+	 * @param userId
+	 *            user identifier of user file
+	 * @param name
+	 *            a name of user file
+	 * @return a user file
+	 * @throws DAOException
+	 *             if exceptional condition occurs.
+	 */
+	public UserFile findUserFileByName(String userId, String name)
 			throws ServiceException;
 
 	/**

@@ -573,7 +573,7 @@
 
   <target name="package-tests" depends="package-tests-dao,package-tests-service,package-tests-web-onServer,package-tests-web-onClient"/>
 	
-  <target name="run-tests" depends="run-tests-dao,run-tests-service,run-tests-web-onServer,run-tests-web-onClient,tests-report"/>
+  <target name="run-tests" depends="run-tests-dao,run-tests-service,run-tests-web-onServer,run-tests-web-onClient,show-tests-report"/>
 	
   <target name="test" depends="run-tests,show-tests-report"/>
 

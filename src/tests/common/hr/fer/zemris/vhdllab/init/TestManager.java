@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.init;
 
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.GlobalFileDAO;
@@ -23,12 +22,11 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.model.UserFile;
-import hr.fer.zemris.vhdllab.preferences.Preferences;
-import hr.fer.zemris.vhdllab.preferences.SingleOption;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.impl.VHDLLabManagerImpl;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
+import hr.fer.zemris.vhdllab.servlets.initialize.InitServerData;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
@@ -65,7 +63,7 @@ public final class TestManager {
 	 * @param projectDAO a DAO for project model
 	 * @param globalFileDAO a DAO for global file model
 	 * @param userFileDAO a DAO for user file model
-	 * @throws NullPointerException if any parametar is <code>null</code>
+	 * @throws NullPointerException if any parameter is <code>null</code>
 	 */
 	public TestManager(FileDAO fileDAO, ProjectDAO projectDAO,
 			GlobalFileDAO globalFileDAO, UserFileDAO userFileDAO) {
@@ -80,7 +78,7 @@ public final class TestManager {
 	 * @param projectDAO a DAO for project model
 	 * @param globalFileDAO a DAO for global file model
 	 * @param userFileDAO a DAO for user file model
-	 * @throws NullPointerException if any parametar is <code>null</code>
+	 * @throws NullPointerException if any parameter is <code>null</code>
 	 */
 	public TestManager(VHDLLabManager labman, FileDAO fileDAO, ProjectDAO projectDAO,
 			GlobalFileDAO globalFileDAO, UserFileDAO userFileDAO) {
@@ -169,7 +167,7 @@ public final class TestManager {
 	/**
 	 * Returns all DAO interfaces to use hibernate (database) implementation.
 	 * This implementation also uses hibernate implementation but
-	 * session factory is automaticly provided (usualy at tomcat
+	 * session factory is automatically provided (usually at tomcat
 	 * initialization).
 	 * @return all DAO interfaces using hibernate (database) implementation
 	 * 		without session
@@ -339,51 +337,53 @@ public final class TestManager {
 	 * Initializes global files.
 	 */
 	public void initGlobalFiles() {
-		try {
-			String fileName;
-			
-			fileName = "Common language settings";
-			if(!labman.existsGlobalFile(fileName)) {
-				Preferences preferences = new Preferences();
-				List<String> values = new ArrayList<String>();
-				values.add("en");
-				SingleOption o = new SingleOption(UserFileConstants.COMMON_LANGUAGE, "Language", "String", values, "en", "en");
-				preferences.setOption(o);
-				
-				GlobalFile file = labman.createNewGlobalFile(fileName, FileTypes.FT_COMMON);
-				labman.saveGlobalFile(file.getId(), preferences.serialize());
-			}
-			
-			fileName = "Applet Settings";
-			if(!labman.existsGlobalFile(fileName)) {
-				Preferences preferences = new Preferences();
-				SingleOption o = new SingleOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
-				preferences.setOption(o);
-		
-				o = new SingleOption(UserFileConstants.APPLET_SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
-				preferences.setOption(o);
-		
-				o = new SingleOption(UserFileConstants.APPLET_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
-				preferences.setOption(o);
-		
-				List<String> values = new ArrayList<String>();
-				values.add("true");
-				values.add("false");
-				o = new SingleOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES, "Always save resources", "Boolean", values, "false", "false");
-				preferences.setOption(o);
-
-				o = new SingleOption(UserFileConstants.APPLET_OPENED_EDITORS, "Opened editors", false, "String", null, null, null);
-				preferences.setOption(o);
-				
-				o = new SingleOption(UserFileConstants.APPLET_OPENED_VIEWS, "Opened views", false, "String", null, null, null);
-				preferences.setOption(o);
-
-				GlobalFile file = labman.createNewGlobalFile(fileName, FileTypes.FT_APPLET);
-				labman.saveGlobalFile(file.getId(), preferences.serialize());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		InitServerData init = new InitServerData(labman);
+		init.initGlobalFiles();
+//		try {
+//			String fileName;
+//			
+//			fileName = "Common language settings";
+//			if(!labman.existsGlobalFile(fileName)) {
+//				Preferences preferences = new Preferences();
+//				List<String> values = new ArrayList<String>();
+//				values.add("en");
+//				SingleOption o = new SingleOption(UserFileConstants.LANGUAGE, "Language", "String", values, "en", "en");
+//				preferences.setOption(o);
+//				
+//				GlobalFile file = labman.createNewGlobalFile(fileName, FileTypes.FT_COMMON);
+//				labman.saveGlobalFile(file.getId(), preferences.serialize());
+//			}
+//			
+//			fileName = "Applet Settings";
+//			if(!labman.existsGlobalFile(fileName)) {
+//				Preferences preferences = new Preferences();
+//				SingleOption o = new SingleOption(UserFileConstants.PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
+//				preferences.setOption(o);
+//		
+//				o = new SingleOption(UserFileConstants.SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
+//				preferences.setOption(o);
+//		
+//				o = new SingleOption(UserFileConstants.VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
+//				preferences.setOption(o);
+//		
+//				List<String> values = new ArrayList<String>();
+//				values.add("true");
+//				values.add("false");
+//				o = new SingleOption(UserFileConstants.ALWAYS_SAVE_RESOURCES, "Always save resources", "Boolean", values, "false", "false");
+//				preferences.setOption(o);
+//
+//				o = new SingleOption(UserFileConstants.OPENED_EDITORS, "Opened editors", false, "String", null, null, null);
+//				preferences.setOption(o);
+//				
+//				o = new SingleOption(UserFileConstants.OPENED_VIEWS, "Opened views", false, "String", null, null, null);
+//				preferences.setOption(o);
+//
+//				GlobalFile file = labman.createNewGlobalFile(fileName, FileTypes.FT_APPLET);
+//				labman.saveGlobalFile(file.getId(), preferences.serialize());
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	/**
@@ -396,51 +396,8 @@ public final class TestManager {
 			throw new NullPointerException("User identifier can not be null.");
 		}
 		try {
-			String fileName;
-			
-			fileName = "Common language settings";
-			if(!labman.existsUserFile(userId, fileName)) {
-				Preferences preferences = new Preferences();
-				List<String> values = new ArrayList<String>();
-				values.add("en");
-				SingleOption o = new SingleOption(UserFileConstants.COMMON_LANGUAGE, "Language", "String", values, "en", "en");
-				preferences.setOption(o);
-				
-				UserFile file = labman.createNewUserFile(userId, fileName, FileTypes.FT_COMMON);
-				labman.saveUserFile(file.getId(), preferences.serialize());
-			}
-			
-			fileName = "Applet Settings";
-			if(!labman.existsGlobalFile(fileName)) {
-				Preferences preferences = new Preferences();
-				SingleOption o = new SingleOption(UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH, "PE width", "Double", null, "0.15", "0.15");
-				preferences.setOption(o);
-		
-				o = new SingleOption(UserFileConstants.APPLET_SIDEBAR_WIDTH, "Sidebar width", "Double", null, "0.75", "0.75");
-				preferences.setOption(o);
-		
-				o = new SingleOption(UserFileConstants.APPLET_VIEW_HEIGHT, "View height", "Double", null, "0.75", "0.75");
-				preferences.setOption(o);
-		
-				List<String> values = new ArrayList<String>();
-				values.add("true");
-				values.add("false");
-				o = new SingleOption(UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES, "Always save resources", "Boolean", values, "false", "false");
-				preferences.setOption(o);
-
-				StringBuilder sb = new StringBuilder(30);
-				sb.append("Project1/mux41\n")
-					.append("Project1/mux41_tb\n")
-					.append("Project1/Automat1\n");
-				o = new SingleOption(UserFileConstants.APPLET_OPENED_EDITORS, "Opened editors", false, "String", null, null, sb.toString());
-				preferences.setOption(o);
-				
-				o = new SingleOption(UserFileConstants.APPLET_OPENED_VIEWS, "Opened views", false, "String", null, null, null);
-				preferences.setOption(o);
-
-				UserFile file = labman.createNewUserFile(userId, fileName, FileTypes.FT_APPLET);
-				labman.saveUserFile(file.getId(), preferences.serialize());
-			}
+			// known hack! it is used to put all defaults to user files
+			labman.findUserFilesByUser(userId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -490,10 +447,8 @@ public final class TestManager {
 	 */
 	public void cleanGlobalFiles() {
 		try {
-			for(String type : FileTypes.values()) {
-				for(GlobalFile f : globalFileDAO.findByType(type)) {
-					globalFileDAO.delete(f);
-				}
+			for(GlobalFile f : globalFileDAO.getAll()) {
+				globalFileDAO.delete(f);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -812,8 +767,22 @@ public final class TestManager {
 	}
 	
 	/**
+	 * Returns all global files. If any
+	 * error, in DAO layer occurs then return value will be <code>null</code>.
+	 * @return all global files
+	 */
+	public List<GlobalFile> getAllGlobalFiles() {
+		try {
+			return globalFileDAO.getAll();
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns all global files containing specified <code>type</code>. If any
-	 * error, in DAO layer occures then return value will be <code>null</code>.
+	 * error, in DAO layer occurs then return value will be <code>null</code>.
 	 * @param type a global file type
 	 * @return all global files containing specified <code>type</code>
 	 * @throws NullPointerException is <code>type</code> is <code>null</code>
@@ -831,8 +800,27 @@ public final class TestManager {
 	}
 	
 	/**
+	 * Returns a global file having specified <code>name</code>. If any
+	 * error, in DAO layer occurs then return value will be <code>null</code>.
+	 * @param name a global file name
+	 * @return a global file having specified <code>name</code>
+	 * @throws NullPointerException is <code>type</code> is <code>null</code>
+	 */
+	public GlobalFile getGlobalFileByName(String name) {
+		if(name == null) {
+			throw new NullPointerException("Global file name can not be null.");
+		}
+		try {
+			return globalFileDAO.findByName(name);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns all user files containing specified user identifier. If any
-	 * error, in DAO layer occures then return value will be <code>null</code>.
+	 * error, in DAO layer occurs then return value will be <code>null</code>.
 	 * @param userId a user identifier
 	 * @return all user files containing specified <code>userId</code>
 	 * @throws NullPointerException is <code>userId</code> is <code>null</code>
@@ -850,8 +838,31 @@ public final class TestManager {
 	}
 	
 	/**
+	 * Returns a user file containing specified user identifier and user file name. If any
+	 * error, in DAO layer occurs then return value will be <code>null</code>.
+	 * @param userId a user identifier
+	 * @param name a user file name
+	 * @return a user file containing specified <code>userId</code> and <code>name</code>
+	 * @throws NullPointerException is <code>userId</code> or <code>name</code> is <code>null</code>
+	 */
+	public UserFile getUserFileByName(String userId, String name) {
+		if(userId == null) {
+			throw new NullPointerException("User identifier can not be null.");
+		}
+		if(name == null) {
+			throw new NullPointerException("User file name can not be null.");
+		}
+		try {
+			return userFileDAO.findByName(userId, name);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns a file identifier that is not in use. Meaning there is no file
-	 * containing that particular identifier. If, after cirtain amount of
+	 * containing that particular identifier. If, after certain amount of
 	 * iterations (more then 1000) this method can not find such file identifier
 	 * then returned value will be <code>null</code>. 
 	 * @return a file identifier that is not in use
@@ -872,7 +883,7 @@ public final class TestManager {
 	
 	/**
 	 * Returns a global file identifier that is not in use. Meaning there is no
-	 * global file containing that particular identifier. If, after cirtain amount
+	 * global file containing that particular identifier. If, after certain amount
 	 * of iterations (more then 1000) this method can not find such global file
 	 * identifier then returned value will be <code>null</code>. 
 	 * @return a global file identifier that is not in use
@@ -893,7 +904,7 @@ public final class TestManager {
 
 	/**
 	 * Returns a user file identifier that is not in use. Meaning there is no
-	 * user file containing that particular identifier. If, after cirtain amount
+	 * user file containing that particular identifier. If, after certain amount
 	 * of iterations (more then 1000) this method can not find such user file
 	 * identifier then returned value will be <code>null</code>. 
 	 * @return a user file identifier that is not in use
@@ -914,7 +925,7 @@ public final class TestManager {
 	
 	/**
 	 * Returns a project identifier that is not in use. Meaning there is no
-	 * projects containing that particular identifier. If, after cirtain amount
+	 * projects containing that particular identifier. If, after certain amount
 	 * of iterations (more then 1000) this method can not find such project
 	 * identifier then returned value will be <code>null</code>. 
 	 * @return a project identifier that is not in use
@@ -936,7 +947,7 @@ public final class TestManager {
 	/**
 	 * Returns a user identifier that is not in use. Meaning there is no records
 	 * of user's projects and user files containing that particular user id. If,
-	 * after cirtain amount of iterations (more then 1000) this method can not
+	 * after certain amount of iterations (more then 1000) this method can not
 	 * find such user identifier then returned value will be <code>null</code>. 
 	 * @return a user identifier that is not in use
 	 */
@@ -946,9 +957,9 @@ public final class TestManager {
 			for(int i = 1; i<2001; i++) {
 				List<Project> projects = labman.findProjectsByUser(userId);
 				if(projects.isEmpty()) {
-					return userId;
-//					List<UserFile> files = labman.findUserFilesByUser(userId);
-//					if(files.isEmpty()) return userId;
+//					return userId;
+					List<UserFile> files = labman.findUserFilesByUser(userId);
+					if(files.isEmpty()) return userId;
 				}
 				userId = userId + "::" + i;
 			}
@@ -959,7 +970,7 @@ public final class TestManager {
 	/**
 	 * Returns a file name that is not in use. Meaning there is no file
 	 * containing that particular name in <code>project</code>. If, after
-	 * cirtain amount of iterations (more then 1000) this method can not
+	 * certain amount of iterations (more then 1000) this method can not
 	 * find such file name then returned value will be <code>null</code>.
 	 * @param project a project where to look for such file name 
 	 * @return a file name that is not in use
@@ -986,7 +997,7 @@ public final class TestManager {
 	
 	/**
 	 * Returns a global file name that is not in use. Meaning there is no
-	 * global file with that name in DAO layer. If, after cirtain amount
+	 * global file with that name in DAO layer. If, after certain amount
 	 * of iterations (more then 1000) this method can not find such global
 	 * file name then returned value will be <code>null</code>.
 	 * @return a global file name that is not in use
@@ -1005,7 +1016,7 @@ public final class TestManager {
 	
 	/**
 	 * Returns a user file name that is not in use. Meaning there is no
-	 * user file with that name in DAO layer. If, after cirtain amount
+	 * user file with that name in DAO layer. If, after certain amount
 	 * of iterations (more then 1000) this method can not find such user
 	 * file name then returned value will be <code>null</code>.
 	 * @param userId a user identifier for whom to user files
@@ -1029,7 +1040,7 @@ public final class TestManager {
 	
 	/**
 	 * Returns a project name that is not in use. Meaning there is no projects
-	 * by that name having user <code>userId</code>. If, after cirtain amount
+	 * by that name having user <code>userId</code>. If, after certain amount
 	 * of iterations (more then 1000) this method can not find such project name
 	 * then returned value will be <code>null</code>.
 	 * @param userId a user identifier for whom to find projects 
@@ -1067,7 +1078,7 @@ public final class TestManager {
 	
 	/**
 	 * Returns a global file type that is not in use. Meaning there is no
-	 * global files with that type in DAO layer. If, after cirtain amount
+	 * global files with that type in DAO layer. If, after certain amount
 	 * of iterations (more then 1000) this method can not find such global
 	 * file type then returned value will be <code>null</code>.
 	 * @return a global file type that is not in use

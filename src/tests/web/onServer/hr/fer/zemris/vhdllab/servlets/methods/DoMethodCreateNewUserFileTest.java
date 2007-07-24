@@ -98,7 +98,7 @@ public class DoMethodCreateNewUserFileTest {
 	public void run5() throws ServiceException {
 		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
 		prop.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String.valueOf(file.getOwnerID()));
-		prop.setProperty(MethodConstants.PROP_FILE_TYPE, FileTypes.FT_APPLET);
+		prop.setProperty(MethodConstants.PROP_FILE_TYPE, FileTypes.FT_SYSTEM);
 		
 		Properties p = regMethod.run(prop, mprov);
 		assertEquals(3, p.keySet().size());
@@ -107,6 +107,6 @@ public class DoMethodCreateNewUserFileTest {
 		Long id = Long.parseLong(p.getProperty(MethodConstants.PROP_FILE_ID));
 		UserFile f = labman.loadUserFile(id);
 		assertEquals(file.getOwnerID(), f.getOwnerID());
-		assertEquals(FileTypes.FT_APPLET, f.getType());
+		assertEquals(FileTypes.FT_SYSTEM, f.getType());
 	}
 }

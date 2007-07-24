@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.model;
 
 import java.util.Set;
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.*;
 
 /**
  * @hibernate.class
@@ -104,8 +105,8 @@ public class Project {
 			return this.id.equals(other.id);
 		}
 		else if( this.id == null && other.id == null ) {
-			return this.ownerId.equalsIgnoreCase(other.ownerId) &&
-					this.projectName.equalsIgnoreCase(other.projectName);
+			return userIdAreEqual(this.ownerId, other.ownerId) &&
+					projectNamesAreEqual(this.projectName, other.projectName);
 		}
 		else return false;
 	}

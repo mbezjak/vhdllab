@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.preferences.Preferences;
+import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +24,9 @@ public class Cache {
 	private Map<String, IView> cachedViews;
 
 	private Map<FileIdentifier, Long> identifiers;
-	private Map<String, List<Long>> userFileIdentifiers;
+	private Map<String, Long> userFileIdentifiers;
 
-	private Map<Long, Preferences> preferences;
+	private UserPreferences preferences;
 	private List<FileIdentifier> compilationHistory;
 	private List<FileIdentifier> simulationHistory;
 
@@ -34,8 +34,7 @@ public class Cache {
 	public Cache() {
 		cachedViews = new HashMap<String, IView>();
 		identifiers = new HashMap<FileIdentifier, Long>();
-		userFileIdentifiers = new HashMap<String, List<Long>>();
-		preferences = new HashMap<Long, Preferences>();
+		userFileIdentifiers = new HashMap<String, Long>();
 		compilationHistory = new LinkedList<FileIdentifier>();
 		simulationHistory = new LinkedList<FileIdentifier>();
 
@@ -154,70 +153,15 @@ public class Cache {
 		cachedViews.put(type, view);
 	}
 
-	public Preferences getPreferences(Long userFileIdentifier) {
-		if(userFileIdentifier == null) {
-			throw new NullPointerException("User file identifier can not be null.");
-		}
-		return preferences.get(userFileIdentifier);
-	}
-
-	public List<Preferences> getAllPreferences() {
-		return new ArrayList<Preferences>(preferences.values());
-	}
-	
-	public Long getIdentifierFor(Preferences pref) {
-		if(pref == null) {
+	public void recachePreferences(UserPreferences preferences) {
+		if(preferences == null) {
 			throw new NullPointerException("Preferences can not be null.");
 		}
-		for(Entry<Long, Preferences> entry : preferences.entrySet()) {
-			if(pref.hashCode() == entry.getValue().hashCode()) {
-				return entry.getKey();
-			}
-		}
-		return null;
+		this.preferences = preferences;
 	}
 	
-	public boolean containsPreferencesByIdentifier(Long userFileIdentifier) {
-		if(userFileIdentifier == null) {
-			throw new NullPointerException("User file identifier can not be null.");
-		}
-		return preferences.containsKey(userFileIdentifier);
-	}
-
-	public void cachePreferences(Long userFileIdentifier, Preferences pref) {
-		if(userFileIdentifier == null) {
-			throw new NullPointerException("User file identifier can not be null.");
-		}
-		if(pref == null) {
-			throw new NullPointerException("Preferences can not be null.");
-		}
-		preferences.put(userFileIdentifier, pref);
-	}
-	
-	public void recachePreferences(Preferences pref) {
-		if(pref == null) {
-			throw new NullPointerException("Preferences can not be null.");
-		}
-		boolean recached = false;
-		for(Entry<Long, Preferences> entry : preferences.entrySet()) {
-			if(entry.getValue() == pref) {
-				cachePreferences(entry.getKey(), pref);
-				recached = true;
-				break;
-			}
-		}
-		if(!recached) {
-			throw new IllegalArgumentException("Preferences was never saved!");
-		}
-	}
-	
-	public void recachePreferences(List<Preferences> prefs) {
-		if(prefs == null) {
-			throw new NullPointerException("Preferences can not be null.");
-		}
-		for(Preferences p : prefs) {
-			recachePreferences(p);
-		}
+	public void saveProperty(String name, String data) {
+		preferences.setProperty(name, data);
 	}
 	
 	public boolean containsIdentifierFor(String projectName) {
@@ -262,6 +206,14 @@ public class Cache {
 		return projects;
 	}
 	
+	public UserPreferences getUserPreferences() {
+		return preferences;
+	}
+	
+	public Long getIdentifierForProperty(String name) {
+		return userFileIdentifiers.get(name);
+	}
+
 	public FileIdentifier getFileForIdentifier(Long id) {
 		if(id == null) {
 			throw new NullPointerException("File identifier can not be null.");
@@ -288,13 +240,6 @@ public class Cache {
 		return null;
 	}
 	
-	public List<Long> getIdentifierForUserFile(String type) {
-		if(type == null) {
-			throw new NullPointerException("Type can not be null.");
-		}
-		return userFileIdentifiers.get(type);
-	}
-	
 	public Long getIdentifierFor(String projectName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
@@ -313,33 +258,21 @@ public class Cache {
 		FileIdentifier key = makeIdentifier(projectName, fileName);
 		return identifiers.get(key);
 	}
+	
+	public void cacheUserPreferences(UserPreferences preferences) {
+		this.preferences = preferences;
+	}
 
-	public void cacheUserFileItem(String type, Long userFileIdentifier) {
-		if(type == null) {
-			throw new NullPointerException("Type can not be null.");
+	public void cacheUserFileItem(String name, Long userFileIdentifier) {
+		if(name == null) {
+			throw new NullPointerException("Name can not be null.");
 		}
 		if(userFileIdentifier == null) {
 			throw new NullPointerException("User file identifier can not be null.");
 		}
-		List<Long> ids = userFileIdentifiers.get(type);
-		if(ids == null) {
-			ids = new ArrayList<Long>();
-		}
-		if(!ids.contains(userFileIdentifier)) {
-			ids.add(userFileIdentifier);
-		}
-		userFileIdentifiers.put(type, ids);
+		userFileIdentifiers.put(name, userFileIdentifier);
 	}
 	
-	public void cacheUserFileItem(String type, List<Long> userFileIdentifiers) {
-		if(userFileIdentifiers == null) {
-			throw new NullPointerException("User file identifier can not be null.");
-		}
-		for(Long id : userFileIdentifiers) {
-			cacheUserFileItem(type, id);
-		}
-	}
-
 	public void cacheItem(String projectName, Long projectIdentifier) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");

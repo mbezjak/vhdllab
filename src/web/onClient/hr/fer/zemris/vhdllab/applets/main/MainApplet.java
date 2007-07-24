@@ -27,8 +27,7 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.preferences.Preferences;
-import hr.fer.zemris.vhdllab.preferences.SingleOption;
+import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
@@ -156,26 +155,17 @@ public class MainApplet
 		refreshWorkspace();
 		
 		try {
-			List<Preferences> prefs = getPreferences(FileTypes.FT_APPLET);
-			for(Preferences p : prefs) {
-				SingleOption option;
-				
-				option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
-				if(option != null) {
-					List<FileIdentifier> files = Utilities.deserializeEditorInfo(option.getChosenValue());
-					for(FileIdentifier f : files) {
-						openEditor(f.getProjectName(), f.getFileName(), true, false);
-					}
-				}
-				
-				option = p.getOption(UserFileConstants.APPLET_OPENED_VIEWS);
-				if(option != null) {
-					List<String> views = Utilities.deserializeViewInfo(option.getChosenValue());
-					for(String s : views) {
-						openView(s);
-					}
-				}
-
+			String data;
+			data = getProperty(UserFileConstants.OPENED_EDITORS);
+			List<FileIdentifier> files = Utilities.deserializeEditorInfo(data);
+			for(FileIdentifier f : files) {
+				openEditor(f.getProjectName(), f.getFileName(), true, false);
+			}
+			
+			data = getProperty(UserFileConstants.OPENED_VIEWS);
+			List<String> views = Utilities.deserializeViewInfo(data);
+			for(String s : views) {
+				openView(s);
 			}
 		} catch (UniformAppletException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
@@ -212,29 +202,17 @@ public class MainApplet
 //		closeAllEditors();
 		
 		try {
-			List<Preferences> prefs = getPreferences(FileTypes.FT_APPLET);
-			for(Preferences p : prefs) {
-				SingleOption option;
-				
-				option = p.getOption(UserFileConstants.APPLET_OPENED_EDITORS);
-				if(option != null) {
-					String data = Utilities.serializeEditorInfo(editorPane.getAllOpenedEditors());
-					option.setChosenValue(data);
-				}
-				
-				option = p.getOption(UserFileConstants.APPLET_OPENED_VIEWS);
-				if(option != null) {
-					List<String> views = new ArrayList<String>();
-					for(IView v : viewPane.getAllOpenedViews()) {
-						String type = communicator.getViewType(v);
-						views.add(type);
-					}
-					String data = Utilities.serializeViewInfo(views);
-					option.setChosenValue(data);
-				}
-				
-				savePreferences(p);
+			String data;
+			data = Utilities.serializeEditorInfo(editorPane.getAllOpenedEditors());
+			saveProperty(UserFileConstants.OPENED_EDITORS, data);
+
+			List<String> views = new ArrayList<String>();
+			for(IView v : viewPane.getAllOpenedViews()) {
+				String type = communicator.getViewType(v);
+				views.add(type);
 			}
+			data = Utilities.serializeViewInfo(views);
+			saveProperty(UserFileConstants.OPENED_VIEWS, data);
 		} catch (UniformAppletException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
@@ -1182,45 +1160,31 @@ public class MainApplet
 		return communicator.getCircuitInterfaceFor(projectName, fileName);
 	}
 	
-	private SingleOption getSingleOptionInPreferences(String userFileType, String singleOptionType) throws UniformAppletException {
-		List<Preferences> preferences = communicator.getPreferences(userFileType);
-		SingleOption option = null;
-		for(Preferences p : preferences) {
-			option = p.getOption(singleOptionType);
-			if(option == null) continue;
-			else break;
-		}
-		return option;
-	}
-	
 	public String getPredefinedFileContent(String fileName) throws UniformAppletException {
 		return communicator.loadPredefinedFileContent(fileName);
 	}
 
-	public List<Preferences> getPreferences(String type) throws UniformAppletException {
-		return communicator.getPreferences(type);
+	public UserPreferences getPreferences() throws UniformAppletException {
+		return communicator.getPreferences();
 	}
 	
-	public void savePreferences(Preferences pref) throws UniformAppletException {
+	@Override
+	public String getProperty(String name) throws UniformAppletException {
+		return communicator.getProperty(name);
+	}
+	
+	public void saveProperty(String name, String data) throws UniformAppletException {
+		communicator.saveProperty(name, data);
+	}
+	
+	private void savePreferences(UserPreferences pref) throws UniformAppletException {
 		communicator.savePreferences(pref);
 	}
 	
-	public void savePreferences(List<Preferences> pref) throws UniformAppletException {
-		communicator.savePreferences(pref);
-	}
-
 	public ResourceBundle getResourceBundle(String baseName) {
 		String language = null;
-		String country = null;
 		try {
-			SingleOption option = getSingleOptionInPreferences(FileTypes.FT_COMMON, UserFileConstants.COMMON_LANGUAGE);
-			if(option != null) {
-				language = option.getChosenValue(); 
-			}
-			option = getSingleOptionInPreferences(FileTypes.FT_COMMON, UserFileConstants.COMMON_COUNTRY);
-			if(option != null) {
-				country = option.getChosenValue(); 
-			}
+			language = getProperty(UserFileConstants.LANGUAGE);
 		} catch (UniformAppletException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
@@ -1230,7 +1194,7 @@ public class MainApplet
 		}
 		if(language == null) language = "en";
 		
-		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName, language, country);
+		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName, language);
 		/* This might happen only during developing/testing due to error. It
 		 * should never happen once application is deployed
 		 */
@@ -1558,23 +1522,16 @@ public class MainApplet
 	private void setPaneSize() {
 		try {
 			validate();
-			SingleOption o;
 			double size;
 			
-			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH);
-			size = Double.parseDouble(o.getChosenValue());
+			size = Double.parseDouble(getProperty(UserFileConstants.PROJECT_EXPLORER_WIDTH));
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
-			savePreferences(o.getParent());
 
-			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_SIDEBAR_WIDTH);
-			size = Double.parseDouble(o.getChosenValue());
+			size = Double.parseDouble(getProperty(UserFileConstants.SIDEBAR_WIDTH));
 			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
-			savePreferences(o.getParent());
 			
-			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_VIEW_HEIGHT);
-			size = Double.parseDouble(o.getChosenValue());
+			size = Double.parseDouble(getProperty(UserFileConstants.VIEW_HEIGHT));
 			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
-			savePreferences(o.getParent());
 		} catch (Exception e) {
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * 0.15));
 			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * 0.75));
@@ -1584,17 +1541,14 @@ public class MainApplet
 	
 	private void storePaneSize() {
 		try {
-			SingleOption o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_PROJECT_EXPLORER_WIDTH);
-			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth(); 
-			o.setChosenValue(String.valueOf(size));
+			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth();
+			saveProperty(UserFileConstants.PROJECT_EXPLORER_WIDTH, String.valueOf(size));
 			
-			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_SIDEBAR_WIDTH);
 			size = sideBarSplitPane.getDividerLocation() * 1.0 / sideBarSplitPane.getWidth(); 
-			o.setChosenValue(String.valueOf(size));
+			saveProperty(UserFileConstants.SIDEBAR_WIDTH, String.valueOf(size));
 
-			o = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_VIEW_HEIGHT);
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
-			o.setChosenValue(String.valueOf(size));
+			saveProperty(UserFileConstants.VIEW_HEIGHT, String.valueOf(size));
 		} catch (UniformAppletException e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
@@ -1805,13 +1759,8 @@ public class MainApplet
 			// checked a "always save resources" checkbox)
 			boolean shouldAutoSave;
 			try {
-				SingleOption singleOption = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES);
-				if(singleOption == null) {
-					shouldAutoSave = false;
-				} else {
-					String selected = singleOption.getChosenValue();
-					shouldAutoSave = Boolean.parseBoolean(selected);
-				}
+				String selected = getProperty(UserFileConstants.ALWAYS_SAVE_RESOURCES);
+				shouldAutoSave = Boolean.parseBoolean(selected);
 			} catch (UniformAppletException e) {
 				shouldAutoSave = false;
 				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
@@ -1871,9 +1820,7 @@ public class MainApplet
 		boolean shouldAutoSave = dialog.shouldAlwaysSaveResources();
 		if(shouldAutoSave) {
 			try {
-				SingleOption singleOption = getSingleOptionInPreferences(FileTypes.FT_APPLET, UserFileConstants.APPLET_SAVE_DIALOG_ALWAYS_SAVE_RESOURCES);
-				singleOption.setChosenValue(String.valueOf(shouldAutoSave));
-				savePreferences(singleOption.getParent());
+				saveProperty(UserFileConstants.ALWAYS_SAVE_RESOURCES, String.valueOf(shouldAutoSave));
 			} catch (UniformAppletException ignored) {
 				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 				StringWriter sw = new StringWriter();

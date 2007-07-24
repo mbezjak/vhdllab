@@ -5,7 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import hr.fer.zemris.vhdllab.preferences.Preferences;
+import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -14,8 +14,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import sun.plugin.cache.FileType;
+import java.util.Properties;
 
 public class Communicator {
 
@@ -23,29 +22,32 @@ public class Communicator {
 	private MethodInvoker invoker;
 	private Cache cache;
 
-	public Communicator(MethodInvoker invoker, String ownerId) {
-		if(invoker == null) throw new NullPointerException("Method invoker can not be null.");
-		if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
+	public Communicator(MethodInvoker invoker, String ownerId) throws UniformAppletException {
+		if (invoker == null)
+			throw new NullPointerException("Method invoker can not be null.");
+		if (ownerId == null)
+			throw new NullPointerException("Owner identifier can not be null.");
 		cache = new Cache();
 		this.invoker = invoker;
 		this.ownerId = ownerId;
+		loadUserPreferences();
 	}
-	
+
 	public void cleanUp() throws UniformAppletException {
-		for(Preferences pref : cache.getAllPreferences()) {
-			String data = pref.serialize();
-			Long id = cache.getIdentifierFor(pref);
-			invoker.saveUserFile(id, data);
+		UserPreferences preferences = cache.getUserPreferences();
+		for (String key : preferences.getAllPropertyKeys()) {
+			Long id = cache.getIdentifierForProperty(key);
+			invoker.saveUserFile(id, preferences.getProperty(key));
 		}
 	}
 
 	public List<String> getAllProjects() throws UniformAppletException {
 		List<Long> projectIdentifiers = invoker.findProjectsByUser(ownerId);
-		
+
 		List<String> projectNames = new ArrayList<String>();
-		for(Long id : projectIdentifiers) {
+		for (Long id : projectIdentifiers) {
 			String projectName = cache.getProjectForIdentifier(id);
-			if(projectName == null) {
+			if (projectName == null) {
 				String name = invoker.loadProjectName(id);
 				cache.cacheItem(name, id);
 				projectName = cache.getProjectForIdentifier(id);
@@ -55,20 +57,22 @@ public class Communicator {
 		return projectNames;
 	}
 
-	public List<String> findFilesByProject(String projectName) throws UniformAppletException {
-		if(projectName == null) {
+	public List<String> findFilesByProject(String projectName)
+			throws UniformAppletException {
+		if (projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
-		if(projectIdentifier == null) {
+		if (projectIdentifier == null) {
 			throw new UniformAppletException("Project does not exists!");
 		}
-		List<Long> fileIdentifiers =  invoker.findFilesByProject(projectIdentifier);
+		List<Long> fileIdentifiers = invoker
+				.findFilesByProject(projectIdentifier);
 
 		List<String> fileNames = new ArrayList<String>();
-		for(Long id : fileIdentifiers) {
+		for (Long id : fileIdentifiers) {
 			FileIdentifier identifier = cache.getFileForIdentifier(id);
-			if(identifier == null) {
+			if (identifier == null) {
 				String name = invoker.loadFileName(id);
 				cache.cacheItem(projectName, name, id);
 				identifier = cache.getFileForIdentifier(id);
@@ -78,115 +82,158 @@ public class Communicator {
 		return fileNames;
 	}
 
-	public boolean existsFile(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public boolean existsFile(String projectName, String fileName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
-		if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
-		/*return invoker.existsFile(projectIdentifier, fileName);*/
+		if (projectIdentifier == null)
+			throw new UniformAppletException("Project does not exists!");
+		/* return invoker.existsFile(projectIdentifier, fileName); */
 		return cache.containsIdentifierFor(projectName, fileName);
 	}
 
-	public boolean existsProject(String projectName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		/*Long projectIdentifier = cache.getIdentifierFor(projectName);
-		if(projectIdentifier == null) return false;
-		return invoker.existsProject(projectIdentifier);*/
+	public boolean existsProject(String projectName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		/*
+		 * Long projectIdentifier = cache.getIdentifierFor(projectName);
+		 * if(projectIdentifier == null) return false; return
+		 * invoker.existsProject(projectIdentifier);
+		 */
 		return cache.containsIdentifierFor(projectName);
 	}
-	
-	public void deleteFile(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+
+	public void deleteFile(String projectName, String fileName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		cache.removeItem(projectName, fileName);
 		invoker.deleteFile(fileIdentifier);
 	}
-	
+
 	public void deleteProject(String projectName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		cache.removeItem(projectName);
 		invoker.deleteProject(fileIdentifier);
 	}
 
 	public void createProject(String projectName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
 		Long projectIdentifier = invoker.createProject(projectName, ownerId);
 		cache.cacheItem(projectName, projectIdentifier);
 	}
 
-	public void createFile(String projectName, String fileName, String type) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
-		if(type == null) throw new NullPointerException("File type can not be null.");
+	public void createFile(String projectName, String fileName, String type)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
+		if (type == null)
+			throw new NullPointerException("File type can not be null.");
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
-		if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
-		Long fileIdentifier = invoker.createFile(projectIdentifier, fileName, type);
+		if (projectIdentifier == null)
+			throw new UniformAppletException("Project does not exists!");
+		Long fileIdentifier = invoker.createFile(projectIdentifier, fileName,
+				type);
 		cache.cacheItem(projectName, fileName, fileIdentifier);
 	}
 
-	public void saveFile(String projectName, String fileName, String content) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
-		if(content == null) throw new NullPointerException("File content can not be null.");
+	public void saveFile(String projectName, String fileName, String content)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
+		if (content == null)
+			throw new NullPointerException("File content can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		invoker.saveFile(fileIdentifier, content);
 	}
 
-	public String loadFileContent(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public String loadFileContent(String projectName, String fileName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		return invoker.loadFileContent(fileIdentifier);
 	}
-	
-	public String loadPredefinedFileContent(String fileName) throws UniformAppletException {
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+
+	public String loadPredefinedFileContent(String fileName)
+			throws UniformAppletException {
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		return invoker.loadPredefinedFileContent(fileName);
 	}
 
-	public String loadFileType(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public String loadFileType(String projectName, String fileName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) {
+		if (fileIdentifier == null) {
 			return FileTypes.FT_PREDEFINED;
-			//throw new UniformAppletException("File does not exists!");
+			// throw new UniformAppletException("File does not exists!");
 		}
 		return invoker.loadFileType(fileIdentifier);
 	}
-	
-	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+
+	public Hierarchy extractHierarchy(String projectName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
-		if(projectIdentifier == null) throw new UniformAppletException("Project does not exists!");
-		
+		if (projectIdentifier == null)
+			throw new UniformAppletException("Project does not exists!");
+
 		Hierarchy h = invoker.extractHierarchy(projectIdentifier);
-		for(Pair p : h) {
+		for (Pair p : h) {
 			String fileName = p.getFileName();
 			Long id = cache.getIdentifierFor(projectName, fileName);
-			if(id == null) {
-				if(invoker.existsFile(projectIdentifier, fileName)) {
-					Long fileIdentifier = invoker.findFileByName(projectIdentifier, fileName);
+			if (id == null) {
+				if (invoker.existsFile(projectIdentifier, fileName)) {
+					Long fileIdentifier = invoker.findFileByName(
+							projectIdentifier, fileName);
 					cache.cacheItem(projectName, fileName, fileIdentifier);
 				} else {
-					//invoker.
+					// invoker.
 				}
 			}
 		}
 		return h;
 	}
 
-	public String generateVHDL(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public String generateVHDL(String projectName, String fileName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		return invoker.generateVHDL(fileIdentifier);
 	}
 
@@ -194,11 +241,15 @@ public class Communicator {
 		return cache.getLastCompilationHistoryTarget();
 	}
 
-	public CompilationResult compile(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public CompilationResult compile(String projectName, String fileName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		cache.cacheCompilationTargetToHistory(projectName, fileName);
 		return invoker.compileFile(fileIdentifier);
 	}
@@ -215,12 +266,15 @@ public class Communicator {
 		return cache.getLastSimulationHistoryTarget();
 	}
 
-
-	public SimulationResult runSimulation(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public SimulationResult runSimulation(String projectName, String fileName)
+			throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		cache.cacheSimulationTargetToHistory(projectName, fileName);
 		return invoker.runSimulation(fileIdentifier);
 	}
@@ -233,99 +287,71 @@ public class Communicator {
 		return cache.simulationHistoryIsEmpty();
 	}
 
-	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public CircuitInterface getCircuitInterfaceFor(String projectName,
+			String fileName) throws UniformAppletException {
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if(fileIdentifier == null) throw new UniformAppletException("File does not exists!");
+		if (fileIdentifier == null)
+			throw new UniformAppletException("File does not exists!");
 		return invoker.extractCircuitInterface(fileIdentifier);
 	}
 
 	public IEditor getEditor(String type) {
-		if(type == null) {
+		if (type == null) {
 			throw new NullPointerException("Type can not be null.");
 		}
 		return cache.getEditor(type);
 	}
 
 	public IView getView(String type) {
-		if(type == null) {
+		if (type == null) {
 			throw new NullPointerException("Type can not be null.");
 		}
 		return cache.getView(type);
 	}
 
 	public String getViewType(IView view) {
-		if(view == null) {
+		if (view == null) {
 			throw new NullPointerException("Type can not be null.");
 		}
 		return cache.getViewType(view);
 	}
 
-	public void savePreferences(Preferences pref) throws UniformAppletException {
-		if(pref == null) {
+	public void savePreferences(UserPreferences pref)
+			throws UniformAppletException {
+		if (pref == null) {
 			throw new NullPointerException("Preferences can not be null.");
 		}
 		cache.recachePreferences(pref);
 	}
+
+	public String getProperty(String name) throws UniformAppletException {
+		UserPreferences preferences = getPreferences();
+		return preferences.getProperty(name);
+	}
 	
-	public void savePreferences(List<Preferences> prefs) throws UniformAppletException {
-		if(prefs == null) {
-			throw new NullPointerException("Preferences can not be null.");
-		}
-		cache.recachePreferences(prefs);
+	public void saveProperty(String name, String data) {
+		cache.saveProperty(name, data);
 	}
 
-	public List<Preferences> getPreferences(String type) throws UniformAppletException {
-		if(type == null) {
-			throw new NullPointerException("Type can not be null.");
-		}
-		List<Long> userFileIdentifiers = cache.getIdentifierForUserFile(type);
-		if(userFileIdentifiers == null) {
-			userFileIdentifiers = new ArrayList<Long>();
-			List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
-			for(Long id : userFiles) {
-				String userFileType = invoker.loadUserFileType(id);
-				if(type.equals(userFileType)) {
-					cache.cacheUserFileItem(userFileType, id);
-					userFileIdentifiers.add(id);
-					break;
-				}
-			}
-			if(userFileIdentifiers.isEmpty()) {
-				throw new IllegalArgumentException("Can not find preferences for type: " + type);
-			}
-		}
-		List<Preferences> prefs = new ArrayList<Preferences>();
-		for(Long id : userFileIdentifiers) {
-			Preferences p = cache.getPreferences(id);
-			if(p == null) {
-				String data = invoker.loadUserFileContent(id);
-				p = Preferences.deserialize(data);
-				cache.cachePreferences(id, p);
-			}
-			prefs.add(p);
-		}
-		return prefs;
+	public UserPreferences getPreferences() throws UniformAppletException {
+		return cache.getUserPreferences();
 	}
 
-	public List<Preferences> getAllPreferences() throws UniformAppletException {
-		//return cache.getAllPreferences();
-		List<Long> userFiles = invoker.findUserFilesByOwner(ownerId);
-		
-		List<Preferences> preferences = new ArrayList<Preferences>();
-		for(Long id : userFiles) {
-			if(!cache.containsPreferencesByIdentifier(id)) {
-				String type = invoker.loadUserFileType(id);
-				cache.cacheUserFileItem(type, id);
-				String data = invoker.loadUserFileContent(id);
-				Preferences pref = Preferences.deserialize(data);
-				cache.cachePreferences(id, pref);
-			}
-			Preferences pref = cache.getPreferences(id);
-			preferences.add(pref);
+	private void loadUserPreferences() throws UniformAppletException {
+		Properties properties = new Properties();
+		List<Long> userFileIds = invoker.findUserFilesByOwner(ownerId);
+		for(Long id : userFileIds) {
+			String name = invoker.loadUserFileName(id);
+			cache.cacheUserFileItem(name, id);
+			String data = invoker.loadUserFileContent(id);
+			properties.setProperty(name, data);
 		}
-		return preferences;
+		UserPreferences preferences = new UserPreferences(properties);
+		cache.cacheUserPreferences(preferences);
 	}
 
 }

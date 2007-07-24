@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.model;
 
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.*;
+
 /**
  * @hibernate.class
  *  table = "GLOBAL_FILES"
@@ -84,7 +86,7 @@ public class GlobalFile {
 			return this.id.equals(other.id);
 		}
 		else if( this.id == null && other.id == null ) {
-			return this.name.equalsIgnoreCase(other.name);
+			return globalFileNamesAreEqual(this.name, other.name);
 		}
 		else return false;
 	}

@@ -108,6 +108,43 @@ public class UserFileDAOHibernateImpl implements UserFileDAO {
 	}
 	
 	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#findByName(java.lang.String, java.lang.String)
+	 */
+	public UserFile findByName(String userID, String name) throws DAOException {
+		if(userID == null) {
+			throw new DAOException("User identifier can not be null.");
+		}
+		if(name == null) {
+			throw new DAOException("User file name can not be null.");
+		}
+		UserFile file;
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from UserFile as f where f.ownerID = :ownerID and f.name = :name")
+									.setString("ownerID", userID)
+									.setString("name", name);
+
+			file = (UserFile)query.uniqueResult();
+
+			tx.commit();
+
+		} catch (Exception e) {
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
+		}
+		if(file == null) {
+			throw new DAOException("No such file!");
+		} else {
+			return file;
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileID) throws DAOException {

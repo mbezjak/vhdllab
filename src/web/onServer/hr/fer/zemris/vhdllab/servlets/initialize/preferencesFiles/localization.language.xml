@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<property id="localization.language" type="common">
+	<description>Language</description>
+	<tooltip>Change language of system</tooltip>
+	<editable bySystem="true" byUser="true" />
+	<data type="string" editor="list">
+		<values>
+			<value>en</value>
+		</values>
+		<default>en</default>
+	</data>
+</property>

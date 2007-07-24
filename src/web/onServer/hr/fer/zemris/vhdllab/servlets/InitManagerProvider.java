@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets;
 
+import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.initialize.InitServerData;
 import hr.fer.zemris.vhdllab.servlets.manprovs.SampleManagerProvider;
 
@@ -22,10 +23,9 @@ public class InitManagerProvider implements ServletContextListener {
 		ev.getServletContext().setAttribute("managerProvider",prov);
 		
 		// initialize server data
-		InitServerData initData = new InitServerData(prov);
+		VHDLLabManager labman = (VHDLLabManager) prov.get(ManagerProvider.VHDL_LAB_MANAGER);
+		InitServerData initData = new InitServerData(labman);
 		initData.initGlobalFiles();
-//		initData.initUserFiles();
-//		initData.initDummyProjects();
 	}
 
 	/* (non-Javadoc)

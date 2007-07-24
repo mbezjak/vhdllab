@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.model;
 
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.*;
+
 /**
  * @hibernate.class
  *  table="FILES"
@@ -11,6 +13,7 @@ public class File implements Comparable<File> {
 	private String fileType;
 	private String content;
 	private Project project;
+	
 
 	public File() {}
 	
@@ -98,9 +101,8 @@ public class File implements Comparable<File> {
 		if( this.id != null && other.id != null ) {
 			return this.id.equals(other.id);
 		} else if( this.id == null && other.id == null ) {
-			return this.fileName.equalsIgnoreCase(other.fileName);
-		}
-		else return false;
+			return fileNamesAreEqual(this.fileName, other.fileName);
+		} else return false;
 	}
 
 	/* (non-Javadoc)

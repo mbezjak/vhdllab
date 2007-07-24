@@ -11,8 +11,8 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.model.UserFile;
-import hr.fer.zemris.vhdllab.preferences.Preferences;
-import hr.fer.zemris.vhdllab.preferences.SingleOption;
+import hr.fer.zemris.vhdllab.preferences.global.PreferencesParser;
+import hr.fer.zemris.vhdllab.preferences.global.Property;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
@@ -59,8 +59,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		File file = loadFile(fileId);
 		List<File> deps = extractDependencies(file);
 		List<File> otherFiles = new ArrayList<File>();
-		for(File f : deps) {
-			if(f.getFileType().equals(FileTypes.FT_PREDEFINED)) {
+		for (File f : deps) {
+			if (f.getFileType().equals(FileTypes.FT_PREDEFINED)) {
 				otherFiles.add(getPredefinedFile(f.getFileName(), true));
 			}
 		}
@@ -363,6 +363,18 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 	}
 
+	@Override
+	public List<GlobalFile> getAllGlobalFiles() throws ServiceException {
+		List<GlobalFile> files = null;
+		try {
+			files = globalFileDAO.getAll();
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException(e.getMessage(), e);
+		}
+		return files;
+	}
+
 	public List<GlobalFile> findGlobalFilesByType(String type)
 			throws ServiceException {
 		List<GlobalFile> files = null;
@@ -373,6 +385,18 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			throw new ServiceException(e.getMessage(), e);
 		}
 		return files;
+	}
+
+	@Override
+	public GlobalFile findGlobalFileByName(String name) throws ServiceException {
+		GlobalFile file = null;
+		try {
+			file = globalFileDAO.findByName(name);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException(e.getMessage(), e);
+		}
+		return file;
 	}
 
 	public List<Project> findProjectsByUser(String userId)
@@ -391,53 +415,51 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			throws ServiceException {
 		try {
 			List<UserFile> files = userFileDAO.findByUser(userId);
-			for (String type : FileTypes.values()) {
-				if (FileTypes.isNotVHDL(type)) {
-					boolean found = false;
-					for (GlobalFile globalFile : findGlobalFilesByType(type)) {
-						found = false;
-						for (UserFile userFile : files) {
-							if (globalFile.getName().equalsIgnoreCase(
-									userFile.getName())) {
-								found = true;
-								boolean foundPref = false;
-								Preferences userPref = Preferences
-										.deserialize(userFile.getContent());
-								for (SingleOption globalOption : Preferences
-										.deserialize(globalFile.getContent())
-										.getAllOptions()) {
-									foundPref = false;
-									for (SingleOption userOption : userPref
-											.getAllOptions()) {
-										if (globalOption.getName()
-												.equalsIgnoreCase(
-														userOption.getName())) {
-											foundPref = true;
-											break;
-										}
-									}
-									if (!foundPref) {
-										userPref.setOption(globalOption);
-									}
-								}
-								saveUserFile(userFile.getId(), userPref
-										.serialize());
-								break;
-							}
-						}
-						if (!found) {
-							UserFile uf = createNewUserFile(userId, globalFile
-									.getName(), globalFile.getType());
-							saveUserFile(uf.getId(), globalFile.getContent());
-						}
+			for (GlobalFile globalFile : getAllGlobalFiles()) {
+				boolean found = false;
+				for (UserFile userFile : files) {
+					if (userFile.getName().equalsIgnoreCase(
+							globalFile.getName())) {
+						found = true;
+						break;
 					}
 				}
+				if (!found) {
+					UserFile uf = synchronizeUserFile(globalFile, userId);
+					files.add(uf);
+				}
 			}
-			return userFileDAO.findByUser(userId);
+			return files;
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public UserFile findUserFileByName(String userId, String name)
+			throws ServiceException {
+		UserFile file = null;
+		if (existsUserFile(userId, name)) {
+			try {
+				file = userFileDAO.findByName(userId, name);
+			} catch (DAOException e) {
+				e.printStackTrace();
+				throw new ServiceException(e.getMessage(), e);
+			}
+		} else {
+			GlobalFile globalFile = findGlobalFileByName(name);
+			file = synchronizeUserFile(globalFile, userId);
+		}
+		return file;
+	}
+
+	private UserFile synchronizeUserFile(GlobalFile file, String userId)
+			throws ServiceException {
+		UserFile uf = createNewUserFile(userId, file.getName(), file.getType());
+		Property property = PreferencesParser.parseProperty(file.getContent());
+		saveUserFile(uf.getId(), property.getData().getDefaultValue());
+		return uf;
 	}
 
 	public String generateVHDL(File file) throws ServiceException {
@@ -561,13 +583,13 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		// Pretpostavka: file je po tipu VHDL Source samog testbencha
 		List<File> deps = extractDependencies(file);
 		List<File> otherFiles = new ArrayList<File>();
-		for(File f : deps) {
-			if(f.getFileType().equals(FileTypes.FT_PREDEFINED)) {
+		for (File f : deps) {
+			if (f.getFileType().equals(FileTypes.FT_PREDEFINED)) {
 				otherFiles.add(getPredefinedFile(f.getFileName(), true));
 			}
 		}
 		deps.removeAll(otherFiles);
-		
+
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream(
 				"simulator.properties");
 		if (is == null) {

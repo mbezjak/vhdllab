@@ -14,7 +14,7 @@ public class FileTypes {
 	public static final String FT_PREDEFINED = "predefined";
 	
 	public static final String FT_THEME = "theme";
-	public static final String FT_APPLET = "applet";
+	public static final String FT_SYSTEM = "system";
 	public static final String FT_COMMON = "common";
 
 	public static boolean isSimulation(String type) {
@@ -57,7 +57,7 @@ public class FileTypes {
 		values.add(FileTypes.FT_VHDL_SIMULATION);
 		values.add(FileTypes.FT_PREDEFINED);
 		values.add(FileTypes.FT_THEME);
-		values.add(FileTypes.FT_APPLET);
+		values.add(FileTypes.FT_SYSTEM);
 		values.add(FileTypes.FT_COMMON);
 		return values;
 	}

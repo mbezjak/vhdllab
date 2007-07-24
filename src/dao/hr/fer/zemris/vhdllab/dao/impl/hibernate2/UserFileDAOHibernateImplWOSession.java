@@ -66,6 +66,32 @@ public class UserFileDAOHibernateImplWOSession extends HibernateDaoSupport imple
 	}
 	
 	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#findByName(java.lang.String, java.lang.String)
+	 */
+	public UserFile findByName(String userID, String name) throws DAOException {
+		if(userID == null) {
+			throw new DAOException("User identifier can not be null.");
+		}
+		if(name == null) {
+			throw new DAOException("User file name can not be null.");
+		}
+		List<?> list;
+		try {
+			String query = "from UserFile as f where f.ownerID = :ownerID and f.name = :name";
+			String[] params = new String[] {"ownerID", "name"};
+			Object[] values = new Object[] {userID, name};
+			list = (List<?>) getHibernateTemplate().findByNamedParam(query, params, values);
+		} catch (Exception e) {
+			throw new DAOException(e);
+		}
+		if(list.isEmpty()) {
+			throw new DAOException("No such file!"); 
+		} else {
+			return (UserFile) list.get(0);
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.UserFileDAO#exists(java.lang.Long)
 	 */
 	public boolean exists(Long fileId) throws DAOException {

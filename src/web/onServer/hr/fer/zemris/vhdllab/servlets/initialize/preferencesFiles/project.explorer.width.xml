@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<property id="project.explorer.width" type="system">
+	<description>Project explorer width</description>
+	<tooltip>Width of project explorer</tooltip>
+	<editable bySystem="true" byUser="true" />
+	<data type="double" editor="custom">
+		<default>0.15</default>
+	</data>
+</property>

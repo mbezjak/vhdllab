@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<property id="opened.editors" type="system">
+	<description>Opened editors</description>
+	<!-- tooltip empty because this property is not editable by user -->
+	<tooltip></tooltip>
+	<editable bySystem="true" byUser="false" />
+	<data type="custom" editor="none">
+		<default></default>
+	</data>
+</property>

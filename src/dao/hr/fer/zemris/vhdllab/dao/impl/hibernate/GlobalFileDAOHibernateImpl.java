@@ -77,6 +77,31 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 			} catch (Throwable ignored) {}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#getAll()
+	 */
+	@SuppressWarnings("unchecked")
+	public List<GlobalFile> getAll() throws DAOException {
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from GlobalFile as f");
+
+			List<GlobalFile> files = (List<GlobalFile>)query.list();
+
+			tx.commit();
+
+			return files;
+		} catch (Exception e) {
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#findByType(java.lang.String)
@@ -104,6 +129,39 @@ public class GlobalFileDAOHibernateImpl implements GlobalFileDAO {
 			try {
 				HibernateUtil.closeSession();
 			} catch (Throwable ignored) {}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.dao.GlobalFileDAO#findByName(java.lang.String)
+	 */
+	public GlobalFile findByName(String name) throws DAOException {
+		if(name == null) {
+			throw new DAOException("User file name can not be null.");
+		}
+		GlobalFile file;
+		try {
+			Session session = HibernateUtil.currentSession();
+			Transaction tx = session.beginTransaction();
+
+			Query query = session.createQuery("from GlobalFile as f where f.name = :name")
+									.setString("name", name);
+
+			file = (GlobalFile)query.uniqueResult();
+
+			tx.commit();
+
+		} catch (Exception e) {
+			throw new DAOException(e);
+		} finally {
+			try {
+				HibernateUtil.closeSession();
+			} catch (Throwable ignored) {}
+		}
+		if(file == null) {
+			throw new DAOException("No such file!");
+		} else {
+			return file;
 		}
 	}
 	

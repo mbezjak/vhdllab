@@ -322,4 +322,46 @@ public class UserFileDAOTest {
 		assertEquals(expectedFiles, userFileDAO.findByUser(userId));
 	}
 	
+	/**
+	 * user id is null
+	 */
+	@Test(expected=DAOException.class)
+	public void findByName() throws DAOException {
+		userFileDAO.findByName(null, man.pickRandomUserFile(userId).getName());
+	}
+	
+	/**
+	 * user file name is null
+	 */
+	@Test(expected=DAOException.class)
+	public void findByName2() throws DAOException {
+		userFileDAO.findByName(userId, null);
+	}
+	
+	/**
+	 * non-existing user id
+	 */
+	@Test(expected=DAOException.class)
+	public void findByName3() throws DAOException {
+		userFileDAO.findByName(man.getUnusedUserId(), man.pickRandomUserFile(userId).getName());
+	}
+	
+	/**
+	 * non-existing user file name
+	 */
+	@Test(expected=DAOException.class)
+	public void findByName4() throws DAOException {
+		userFileDAO.findByName(userId, man.getUnusedUserFileName(userId));
+	}
+	
+	/**
+	 * everything ok
+	 */
+	@Test
+	public void findByName5() throws DAOException {
+		String name = man.pickRandomUserFile(userId).getName();
+		UserFile expectedFile = man.getUserFileByName(userId, name);
+		assertEquals(expectedFile, userFileDAO.findByName(userId, name));
+	}
+	
 }
