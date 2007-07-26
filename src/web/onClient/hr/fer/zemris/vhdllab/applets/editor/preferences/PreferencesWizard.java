@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.editor.preferences;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.constants.FileTypes;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -195,6 +196,30 @@ public class PreferencesWizard extends JPanel implements IWizard {
 					return;
 				}
 				StringBuilder sb = new StringBuilder(1000);
+				sb.append("Informations on how to install a property\n\n");
+				if(!FileTypes.values().contains(typeText.getText())) {
+					sb.append(" - file type ").append(typeText.getText())
+						.append(" does not exists so you need to add it.\n\t")
+						.append("* open src/common/hr.fer.zemris.vhdllab.constants.FileTypes class\n\t")
+						.append("* add the following line in \"user file types\" section:\n\t\t")
+						.append("public static final String FT_").append(typeText.getText().toUpperCase().replaceAll("\\.", "_"))
+						.append(" = \"").append(typeText.getText()).append("\";\n\t")
+						.append("* also add the following line at the bottom of values method:\n\t\t")
+						.append("values.add(FileTypes.FT_").append(typeText.getText().toUpperCase())
+						.append(");\n\n");
+				}
+				
+				sb.append(" - a property id most likely does not exists so you need to add it.\n\t")
+					.append("* open src/common/hr.fer.zemris.vhdllab.constants.UserFileConstants class\n\t")
+					.append("* add the following line at the end:\n\t\t")
+					.append("public static final String ").append(idText.getText().toUpperCase().replaceAll("\\.", "_"))
+					.append(" = \"").append(typeText.getText()).append("\";\n\n");
+				
+				sb.append(" - now you need to add xml file to specified package\n\t")
+					.append("* now open src/web/onServer/hr.fer.zemris.vhdllab.servlets.initialize.preferencesFiles package\n\t")
+					.append("* create a new file called \"").append(idText.getText()).append(".xml\"\n\t")
+					.append("* copy following lines in that file\n//START OF LINES TO COPY\n");
+				
 				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<property id=\"")
 					.append(idText.getText()).append("\" type=\"").append(typeText.getText())
 					.append("\" >\n\t<description>").append(descriptionText.getText())
@@ -204,6 +229,7 @@ public class PreferencesWizard extends JPanel implements IWizard {
 					.append("\" />\n\t<data type=\"").append(dataTypeComboBox.getSelectedItem())
 					.append("\" editor=\"").append(dataEditorComboBox.getSelectedItem())
 					.append("\">\n\t\t");
+				
 				if(model.getSize() != 0) {
 					sb.append("<values>\n");
 					for(int i = 0; i<model.getSize(); i++) {
@@ -214,12 +240,28 @@ public class PreferencesWizard extends JPanel implements IWizard {
 				sb.append("<default>").append(defaultText.getText()).append("</default>\n\t")
 					.append("</data>\n</property>\n");
 				
+				sb.append("// END OF LINES TO COPY\n\n");
+				
+				sb.append(" - now you need to add that file to configuration file\n\t")
+					.append("* open file preferencesFiles.properties in the same package\n\t")
+					.append("* append the following line to the end of the file:\n\t\t")
+					.append(idText.getText()).append(".xml; \\\n\n");
+				
+				sb.append(" - over and out. now try using that property. for example:\n\t")
+					.append("...\n\t")
+					.append("String data = projectContainer.getProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);\n\t")
+					.append("double width = Double.parseDouble(data);\n\t")
+					.append("...\n\n");
+				
+				sb.append("NOTE: if data type or data editor does not contain data you need, report it...");
+				
+				
 				composedArea.setText(sb.toString());
 			}
 		});
 
 		final JPanel dialogPanel = new JPanel(new BorderLayout());
-		dialogPanel.setPreferredSize(new Dimension(400, 500));
+		dialogPanel.setPreferredSize(new Dimension(700, 500));
 		dialogPanel.add(grid, BorderLayout.NORTH);
 		dialogPanel.add(composeAndValuesPanel, BorderLayout.CENTER);
 
