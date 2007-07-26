@@ -153,17 +153,6 @@ public class Cache {
 		cachedViews.put(type, view);
 	}
 
-	public void recachePreferences(UserPreferences preferences) {
-		if(preferences == null) {
-			throw new NullPointerException("Preferences can not be null.");
-		}
-		this.preferences = preferences;
-	}
-	
-	public void saveProperty(String name, String data) {
-		preferences.setProperty(name, data);
-	}
-	
 	public boolean containsIdentifierFor(String projectName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");

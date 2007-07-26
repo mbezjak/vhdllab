@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.preferences;
 
+import hr.fer.zemris.ajax.shared.XMLUtil;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -68,7 +70,7 @@ public class UserPreferences {
 			return;
 		}
 		for(PropertyListener l : list.getListeners(PropertyListener.class)) {
-			l.propertyChanged(oldValue, newValue);
+			l.propertyChanged(name, oldValue, newValue);
 		}
 	}
 
@@ -80,6 +82,9 @@ public class UserPreferences {
 			throw new NullPointerException("Data must not be null.");
 		}
 		String oldValue = properties.getProperty(name);
+		if(oldValue.equals(data)) {
+			return;
+		}
 		properties.put(name, data);
 		firePropertyChanged(name, oldValue, data);
 	}
@@ -90,7 +95,11 @@ public class UserPreferences {
 		}
 		return properties.getProperty(name);
 	}
-
+	
+	public String serialize() {
+		return XMLUtil.serializeProperties(properties);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

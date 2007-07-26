@@ -10,13 +10,16 @@ import java.util.EventListener;
 public interface PropertyListener extends EventListener {
 
 	/**
-	 * Invoked when certain property value in {@link UserPreferences} has changed.
+	 * Invoked when <code>name</code> property value in {@link UserPreferences} has
+	 * changed. <code>oldValue</code> will never be the same as <code>newValue</code>.
 	 * 
+	 * @param name
+	 *            a property that changed
 	 * @param oldValue
 	 *            an old property value
 	 * @param newValue
 	 *            a new property value
 	 */
-	void propertyChanged(String oldValue, String newValue);
+	void propertyChanged(String name, String oldValue, String newValue);
 
 }

@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
+import hr.fer.zemris.vhdllab.preferences.PropertyListener;
 import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -319,25 +320,28 @@ public class Communicator {
 		}
 		return cache.getViewType(view);
 	}
-
-	public void savePreferences(UserPreferences pref)
-			throws UniformAppletException {
-		if (pref == null) {
-			throw new NullPointerException("Preferences can not be null.");
-		}
-		cache.recachePreferences(pref);
+	
+	public void addPropertyListener(PropertyListener l, String name) {
+		UserPreferences preferences = getPreferences();
+		preferences.addPropertyListener(l, name);
 	}
 
+	public void removePropertyListener(PropertyListener l, String name) {
+		UserPreferences preferences = getPreferences();
+		preferences.removePropertyListener(l, name);
+	}
+	
 	public String getProperty(String name) throws UniformAppletException {
 		UserPreferences preferences = getPreferences();
 		return preferences.getProperty(name);
 	}
 	
-	public void saveProperty(String name, String data) {
-		cache.saveProperty(name, data);
+	public void saveProperty(String name, String data) throws UniformAppletException {
+		UserPreferences preferences = getPreferences();
+		preferences.setProperty(name, data);
 	}
 
-	public UserPreferences getPreferences() throws UniformAppletException {
+	public UserPreferences getPreferences() {
 		return cache.getUserPreferences();
 	}
 

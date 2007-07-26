@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<property id="always.save.resources" type="system">
+<property id="system.always.save.resources" type="system">
 	<description>Always save resources</description>
 	<tooltip>When resource should be saved do not show dialog and automatically save resource in question</tooltip>
 	<editable bySystem="true" byUser="true" />

@@ -67,6 +67,7 @@ public class LanguageConstants {
 	public static final String MENU_TOOLS_SIMULATE_ACTIVE = "menu.tools.simulate.active";
 	public static final String MENU_TOOLS_SIMULATE_HISTORY = "menu.tools.simulate.history";
 	public static final String MENU_TOOLS_VIEW_VHDL_CODE = "menu.tools.view.vhdl.code";
+	public static final String MENU_TOOLS_VIEW_PREFERENCES = "menu.tools.view.preferences";
 	public static final String MENU_HELP_ABOUT = "menu.help.about";
 
 	
@@ -124,5 +125,6 @@ public class LanguageConstants {
 	public static final String STATUSBAR_SIMULATED = "statusbar.simulated";
 	public static final String STATUSBAR_CANT_OPEN_VIEW = "statusbar.cant.open.view";
 	public static final String STATUSBAR_CANT_VIEW_VHDL_CODE = "statusbar.cant.view.vhdl.code";
+	public static final String STATUSBAR_CANT_VIEW_PREFERENCES = "statusbar.cant.view.preferences";
 	
 }

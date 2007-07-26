@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.preferences.UserPreferences;
+import hr.fer.zemris.vhdllab.preferences.PropertyListener;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
@@ -19,7 +19,8 @@ public interface ProjectContainer {
 	String getPredefinedFileContent(String fileName) throws UniformAppletException;
 	Hierarchy extractHierarchy(String projectName) throws UniformAppletException;
 	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException;
-	UserPreferences getPreferences() throws UniformAppletException;
+	void addPropertyListener(PropertyListener l, String name);
+	void removePropertyListener(PropertyListener l, String name);
 	String getProperty(String name) throws UniformAppletException;
 	void saveProperty(String name, String data) throws UniformAppletException;
 	boolean isCircuit(String projectName, String fileName);

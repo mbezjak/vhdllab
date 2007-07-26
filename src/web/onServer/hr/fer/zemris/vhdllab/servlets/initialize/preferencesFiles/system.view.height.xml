@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<property id="view.height" type="system">
+<property id="system.view.height" type="system">
 	<description>Project explorer width</description>
 	<tooltip>Width of project explorer</tooltip>
 	<editable bySystem="true" byUser="true" />

@@ -27,6 +27,7 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.preferences.PropertyListener;
 import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
@@ -42,8 +43,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
@@ -51,6 +52,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,6 +68,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
  * Main applet that is container for all other modules. This applet also defines
@@ -79,7 +83,7 @@ import javax.swing.KeyStroke;
  */
 public class MainApplet
 		extends JApplet
-		implements ProjectContainer {
+		implements ProjectContainer, PropertyListener {
 	
 	/**
 	 * Serial version ID.
@@ -141,28 +145,29 @@ public class MainApplet
 		}
 		
 		initGUI();
-		this.addComponentListener(new ComponentListener() {
-			public void componentHidden(ComponentEvent e) {}
-			public void componentMoved(ComponentEvent e) {}
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				setPaneSize();
 			}
-			public void componentShown(ComponentEvent e) {}
 		});
-
+		addPropertyListener(this, UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
+		addPropertyListener(this, UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
+		addPropertyListener(this, UserFileConstants.SYSTEM_VIEW_HEIGHT);
+		
 		// FIXME ovo mozda spretnije rijesit
 		openView(ViewTypes.VT_STATUS_HISTORY);
 		refreshWorkspace();
 		
 		try {
 			String data;
-			data = getProperty(UserFileConstants.OPENED_EDITORS);
+			data = getProperty(UserFileConstants.SYSTEM_OPENED_EDITORS);
 			List<FileIdentifier> files = Utilities.deserializeEditorInfo(data);
 			for(FileIdentifier f : files) {
 				openEditor(f.getProjectName(), f.getFileName(), true, false);
 			}
 			
-			data = getProperty(UserFileConstants.OPENED_VIEWS);
+			data = getProperty(UserFileConstants.SYSTEM_OPENED_VIEWS);
 			List<String> views = Utilities.deserializeViewInfo(data);
 			for(String s : views) {
 				openView(s);
@@ -204,7 +209,7 @@ public class MainApplet
 		try {
 			String data;
 			data = Utilities.serializeEditorInfo(editorPane.getAllOpenedEditors());
-			saveProperty(UserFileConstants.OPENED_EDITORS, data);
+			saveProperty(UserFileConstants.SYSTEM_OPENED_EDITORS, data);
 
 			List<String> views = new ArrayList<String>();
 			for(IView v : viewPane.getAllOpenedViews()) {
@@ -212,7 +217,7 @@ public class MainApplet
 				views.add(type);
 			}
 			data = Utilities.serializeViewInfo(views);
-			saveProperty(UserFileConstants.OPENED_VIEWS, data);
+			saveProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
 		} catch (UniformAppletException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
@@ -346,6 +351,64 @@ public class MainApplet
 		
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
 		centerComponentsPanel.add(viewSplitPane);
+
+		BasicSplitPaneDivider divider;
+		divider = ((BasicSplitPaneUI)projectExplorerSplitPane.getUI()).getDivider();
+		divider.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				int dividerLocation = projectExplorerSplitPane.getDividerLocation();
+				if(dividerLocation < 0) {
+					return;
+				}
+				double size = dividerLocation * 1.0 / projectExplorerSplitPane.getWidth();
+				DecimalFormat formatter = new DecimalFormat("0.##");
+				String property = formatter.format(size);
+				try {
+					saveProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
+				} catch (UniformAppletException ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		
+		divider = ((BasicSplitPaneUI)sideBarSplitPane.getUI()).getDivider();
+		divider.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				int dividerLocation = sideBarSplitPane.getDividerLocation();
+				if(dividerLocation < 0) {
+					return;
+				}
+				double size = dividerLocation * 1.0 / sideBarSplitPane.getWidth();
+				DecimalFormat formatter = new DecimalFormat("0.##");
+				String property = formatter.format(size);
+				try {
+					saveProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
+				} catch (UniformAppletException ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		
+		divider = ((BasicSplitPaneUI)viewSplitPane.getUI()).getDivider();
+		divider.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				int dividerLocation = viewSplitPane.getDividerLocation();
+				if(dividerLocation < 0) {
+					return;
+				}
+				double size = dividerLocation * 1.0 / viewSplitPane.getHeight();
+				DecimalFormat formatter = new DecimalFormat("0.##");
+				String property = formatter.format(size);
+				try {
+					saveProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
+				} catch (UniformAppletException ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		
 		return centerComponentsPanel;
 		
@@ -816,6 +879,18 @@ public class MainApplet
 				}
 			});
 			menu.add(menuItem);
+			menu.addSeparator();
+			
+			// View Preferences
+			key = LanguageConstants.MENU_TOOLS_VIEW_PREFERENCES;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					viewPreferences();
+				}
+			});
+			menu.add(menuItem);
 			
 			
 			menuBar.add(menu);
@@ -1127,6 +1202,17 @@ public class MainApplet
 		}
 	}
 	
+	private void viewPreferences() {
+		try {
+			String data = getPreferences().serialize();
+			openEditor("about", "config", data, FileTypes.FT_PREFERENCES, false, false);
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
+			echoStatusText(text, MessageEnum.Error);
+		}
+	}
+	
 	public void viewVHDLCode(String projectName, String fileName) {
 		try {
 			if(isCircuit(projectName, fileName) || 
@@ -1146,10 +1232,12 @@ public class MainApplet
 		viewVHDLCode(editor.getProjectName(), editor.getFileName());
 	}
 	
+	@Override
 	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
 		return communicator.extractHierarchy(projectName);
 	}
 
+	@Override
 	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
 		// TODO tu mozda sejvat file
 		// pitanje je dal s dialogom ili ne?
@@ -1160,31 +1248,40 @@ public class MainApplet
 		return communicator.getCircuitInterfaceFor(projectName, fileName);
 	}
 	
+	@Override
 	public String getPredefinedFileContent(String fileName) throws UniformAppletException {
 		return communicator.loadPredefinedFileContent(fileName);
 	}
+	
+	@Override
+	public void addPropertyListener(PropertyListener l, String name) {
+		communicator.addPropertyListener(l, name);
+	}
 
-	public UserPreferences getPreferences() throws UniformAppletException {
-		return communicator.getPreferences();
+	@Override
+	public void removePropertyListener(PropertyListener l, String name) {
+		communicator.removePropertyListener(l, name);
 	}
 	
+	private UserPreferences getPreferences() throws UniformAppletException {
+		return communicator.getPreferences();
+	}
+
 	@Override
 	public String getProperty(String name) throws UniformAppletException {
 		return communicator.getProperty(name);
 	}
 	
+	@Override
 	public void saveProperty(String name, String data) throws UniformAppletException {
 		communicator.saveProperty(name, data);
 	}
 	
-	private void savePreferences(UserPreferences pref) throws UniformAppletException {
-		communicator.savePreferences(pref);
-	}
-	
+	@Override
 	public ResourceBundle getResourceBundle(String baseName) {
 		String language = null;
 		try {
-			language = getProperty(UserFileConstants.LANGUAGE);
+			language = getProperty(UserFileConstants.COMMON_LANGUAGE);
 		} catch (UniformAppletException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
@@ -1202,22 +1299,27 @@ public class MainApplet
 		return bundle;
 	}
 	
+	@Override
 	public String getSelectedProject() {
 		return projectExplorer.getSelectedProject();
 	}
 	
+	@Override
 	public FileIdentifier getSelectedFile() {
 		return projectExplorer.getSelectedFile();
 	}
 	
+	@Override
 	public List<String> getAllProjects() {
 		return projectExplorer.getAllProjects();
 	}
 	
+	@Override
 	public void echoStatusText(String text, MessageEnum type) {
 		statusBar.setMessage(text, type);
 	}
 	
+	@Override
 	public IStatusBar getStatusBar() {
 		return statusBar;
 	}
@@ -1519,18 +1621,31 @@ public class MainApplet
 		}
 	}
 	
+	
+	@Override
+	public void propertyChanged(String name, String oldValue, String newValue) {
+		double size = Double.parseDouble(newValue);
+		if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH)) {
+			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
+		} else if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_SIDEBAR_WIDTH)) {
+			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
+		} else if (name.equalsIgnoreCase(UserFileConstants.SYSTEM_VIEW_HEIGHT)) {
+			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
+		}
+	}
+	
 	private void setPaneSize() {
 		try {
 			validate();
 			double size;
 			
-			size = Double.parseDouble(getProperty(UserFileConstants.PROJECT_EXPLORER_WIDTH));
+			size = Double.parseDouble(getProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH));
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
 
-			size = Double.parseDouble(getProperty(UserFileConstants.SIDEBAR_WIDTH));
+			size = Double.parseDouble(getProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH));
 			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
 			
-			size = Double.parseDouble(getProperty(UserFileConstants.VIEW_HEIGHT));
+			size = Double.parseDouble(getProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT));
 			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
 		} catch (Exception e) {
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * 0.15));
@@ -1541,14 +1656,18 @@ public class MainApplet
 	
 	private void storePaneSize() {
 		try {
+			DecimalFormat formatter = new DecimalFormat("0.##");
 			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth();
-			saveProperty(UserFileConstants.PROJECT_EXPLORER_WIDTH, String.valueOf(size));
+			String property = formatter.format(size);
+			saveProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
 			
 			size = sideBarSplitPane.getDividerLocation() * 1.0 / sideBarSplitPane.getWidth(); 
-			saveProperty(UserFileConstants.SIDEBAR_WIDTH, String.valueOf(size));
+			property = formatter.format(size);
+			saveProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
 
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
-			saveProperty(UserFileConstants.VIEW_HEIGHT, String.valueOf(size));
+			property = formatter.format(size);
+			saveProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
 		} catch (UniformAppletException e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
@@ -1759,7 +1878,7 @@ public class MainApplet
 			// checked a "always save resources" checkbox)
 			boolean shouldAutoSave;
 			try {
-				String selected = getProperty(UserFileConstants.ALWAYS_SAVE_RESOURCES);
+				String selected = getProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES);
 				shouldAutoSave = Boolean.parseBoolean(selected);
 			} catch (UniformAppletException e) {
 				shouldAutoSave = false;
@@ -1820,7 +1939,7 @@ public class MainApplet
 		boolean shouldAutoSave = dialog.shouldAlwaysSaveResources();
 		if(shouldAutoSave) {
 			try {
-				saveProperty(UserFileConstants.ALWAYS_SAVE_RESOURCES, String.valueOf(shouldAutoSave));
+				saveProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES, String.valueOf(shouldAutoSave));
 			} catch (UniformAppletException ignored) {
 				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 				StringWriter sw = new StringWriter();

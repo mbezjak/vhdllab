@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<property id="localization.language" type="common">
+<property id="common.localization.language" type="common">
 	<description>Language</description>
 	<tooltip>Change language of system</tooltip>
 	<editable bySystem="true" byUser="true" />

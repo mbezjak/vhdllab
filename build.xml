@@ -516,7 +516,7 @@
     </delete>
   </target>
 	
-  <target name="run-tomcat" depends="tomcat">
+  <target name="run-tomcat" depends="kill-tomcat,tomcat">
   	<property environment="env"/>
     <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.exec}"
     	spawn="true">

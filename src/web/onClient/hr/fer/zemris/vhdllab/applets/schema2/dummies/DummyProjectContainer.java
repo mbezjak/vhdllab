@@ -15,6 +15,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.preferences.PropertyListener;
 import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
@@ -217,6 +218,18 @@ public class DummyProjectContainer implements ProjectContainer {
 	@Override
 	public void saveProperty(String name, String data)
 			throws UniformAppletException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addPropertyListener(PropertyListener l, String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removePropertyListener(PropertyListener l, String name) {
 		// TODO Auto-generated method stub
 		
 	}
