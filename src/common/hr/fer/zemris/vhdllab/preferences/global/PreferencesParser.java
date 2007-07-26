@@ -15,8 +15,8 @@ public class PreferencesParser {
 		digester.addSetProperties("property");
 		digester.addBeanPropertySetter("property/description");
 		digester.addBeanPropertySetter("property/tooltip");
-		String[] params = new String[] { "bySystem", "byUser" };
-		String[] props = new String[] { "editableBySystem", "editableByUser" };
+		String[] params = new String[] { "byUser" };
+		String[] props = new String[] { "editableByUser" };
 		digester.addSetProperties("property/editable", params, props);
 
 		digester.addObjectCreate("property/data", PropertyData.class);

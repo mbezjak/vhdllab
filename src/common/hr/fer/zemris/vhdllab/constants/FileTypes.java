@@ -5,15 +5,18 @@ import java.util.List;
 
 public class FileTypes {
 
+	/* vhdl file types */
 	public static final String FT_VHDL_SOURCE = "vhdl_source";
 	public static final String FT_VHDL_AUTOMAT = "vhdl_automat";
 	public static final String FT_VHDL_STRUCT_SCHEMA = "vhdl_struct_schema";
 	public static final String FT_VHDL_TB = "vhdl_tb";
 	public static final String FT_VHDL_SIMULATION = "vhdl_simulation";
 
+	/* special file types */
 	public static final String FT_PREDEFINED = "predefined";
 	public static final String FT_PREFERENCES = "preferences";
 	
+	/* user file types */
 	public static final String FT_THEME = "theme";
 	public static final String FT_SYSTEM = "system";
 	public static final String FT_COMMON = "common";

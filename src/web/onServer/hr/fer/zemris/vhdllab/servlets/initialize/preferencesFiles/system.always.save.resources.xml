@@ -3,7 +3,7 @@
 <property id="system.always.save.resources" type="system">
 	<description>Always save resources</description>
 	<tooltip>When resource should be saved do not show dialog and automatically save resource in question</tooltip>
-	<editable bySystem="true" byUser="true" />
+	<editable byUser="true" />
 	<data type="boolean" editor="boolean">
 		<default>false</default>
 	</data>

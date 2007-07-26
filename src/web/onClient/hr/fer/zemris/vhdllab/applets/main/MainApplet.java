@@ -632,6 +632,17 @@ public class MainApplet
 			});
 			submenu.add(menuItem);
 			
+			// TODO this is only a temporary solution!
+			submenu.addSeparator();
+			menuItem = new JMenuItem("Property");
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					createNewFileInstance(FileTypes.FT_PREFERENCES);
+				}
+			});
+			submenu.add(menuItem);
+			// END TEMP SOLUTION
+			
 			menu.add(submenu);
 			
 			// Open menu item

@@ -3,7 +3,7 @@
 <property id="common.localization.language" type="common">
 	<description>Language</description>
 	<tooltip>Change language of system</tooltip>
-	<editable bySystem="true" byUser="true" />
+	<editable byUser="true" />
 	<data type="string" editor="list">
 		<values>
 			<value>en</value>

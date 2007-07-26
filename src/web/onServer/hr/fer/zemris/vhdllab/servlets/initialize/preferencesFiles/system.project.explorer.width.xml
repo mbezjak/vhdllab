@@ -3,7 +3,7 @@
 <property id="system.project.explorer.width" type="system">
 	<description>Project explorer width</description>
 	<tooltip>Width of project explorer</tooltip>
-	<editable bySystem="true" byUser="true" />
+	<editable byUser="true" />
 	<data type="double" editor="custom">
 		<default>0.15</default>
 	</data>

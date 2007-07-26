@@ -75,6 +75,11 @@ public class PreferencesEditor extends JPanel implements IEditor,
 
 	@Override
 	public void dispose() {
+		Properties p = XMLUtil.deserializeProperties(content.getContent());
+		for (Object o : p.keySet()) {
+			String key = (String) o;
+			container.removePropertyListener(this, key);
+		}
 	}
 
 	@Override
@@ -94,8 +99,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 
 	@Override
 	public IWizard getWizard() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PreferencesWizard();
 	}
 
 	@Override

@@ -6,7 +6,6 @@ public class Property {
 	private String type;
 	private String description;
 	private String tooltip;
-	private boolean editableBySystem;
 	private boolean editableByUser;
 	private PropertyData data;
 
@@ -43,14 +42,6 @@ public class Property {
 
 	public void setTooltip(String tooltip) {
 		this.tooltip = tooltip;
-	}
-
-	public boolean isEditableBySystem() {
-		return editableBySystem;
-	}
-
-	public void setEditableBySystem(boolean editableBySystem) {
-		this.editableBySystem = editableBySystem;
 	}
 
 	public boolean isEditableByUser() {
@@ -108,7 +99,6 @@ public class Property {
 				.append(", type=").append(type)
 				.append(", description=").append(description)
 				.append(", tooltip=").append(tooltip)
-				.append(", editableBySystem=").append(editableBySystem)
 				.append(", editableByUser=").append(editableByUser)
 				.append(", data=").append(data).append("]");
 		return sb.toString();
