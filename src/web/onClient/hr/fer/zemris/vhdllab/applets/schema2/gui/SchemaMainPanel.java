@@ -23,6 +23,8 @@ import hr.fer.zemris.vhdllab.utilities.FileUtil;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -34,20 +36,21 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 public class SchemaMainPanel extends JPanel implements IEditor {
 
 	private SoftReference<DefaultWizard> wizardSoftRef;
-	
 
-//	{
-//		try {
-////			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
-////					.getSystemLookAndFeelClassName());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// {
+	// try {
+	// // javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
+	// // .getSystemLookAndFeelClassName());
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	private class ModificationListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -78,6 +81,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private FileContent filecontent;
 	private boolean readonly, saveable, modified;
 
+	private double dividerLocation;
+
+	private JSplitPane splitPane;
+
 	/* ctors */
 
 	public SchemaMainPanel() {
@@ -96,6 +103,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		readonly = false;
 		saveable = false;
 		modified = false;
+		dividerLocation = 0.8;
 
 		controller.registerCore(core);
 		controller.addListener(EPropertyChange.ANY_CHANGE,
@@ -113,16 +121,16 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private void initPrototypes() {
 		String predefined;
 
-//		try {
-//			predefined = projectContainer
-//					.getPredefinedFileContent(Constants.PREDEFINED_FILENAME);
-//		} catch (UniformAppletException e) {
-//			throw new SchemaException(
-//					"Could not open predefined component file.", e);
-//		}
-		
-		predefined = FileUtil.readFile(PredefinedComponentsParser.class.
-			getResourceAsStream(Constants.PREDEFINED_FILENAME));
+		// try {
+		// predefined = projectContainer
+		// .getPredefinedFileContent(Constants.PREDEFINED_FILENAME);
+		// } catch (UniformAppletException e) {
+		// throw new SchemaException(
+		// "Could not open predefined component file.", e);
+		// }
+
+		predefined = FileUtil.readFile(PredefinedComponentsParser.class
+				.getResourceAsStream(Constants.PREDEFINED_FILENAME));
 
 		core.initPrototypes(predefined);
 	}
@@ -177,11 +185,41 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		panel.add(canTool, BorderLayout.NORTH);
 		panel.add(pane, BorderLayout.CENTER);
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				panel, rightPanel);
-		splitPane.setDividerLocation(.8);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panel,
+				rightPanel);
+		// splitPane.setDividerLocation((int) (0.8 * getWidth()));
 		splitPane.setOneTouchExpandable(true);
+		BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI())
+				.getDivider();
+		divider.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				int width = splitPane.getWidth();
+				if (width <= 0) {
+					return;
+				}
+				setSplitPaneDivider((double) splitPane.getDividerSize() / width);
+			}
+		});
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				int divider = getSplitPaneDivider();
+				if (divider <= 0) {
+					return;
+				}
+				splitPane.setDividerLocation(divider);
+			}
+		});
 		this.add(splitPane, BorderLayout.CENTER);
+	}
+
+	private void setSplitPaneDivider(double location) {
+		this.dividerLocation = location;
+	}
+
+	private int getSplitPaneDivider() {
+		return (int) (dividerLocation * splitPane.getWidth());
 	}
 
 	private void resetSchema() {
@@ -225,8 +263,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 	public IWizard getWizard() {
 		DefaultWizard dw = null;
-		if(wizardSoftRef!=null) dw = wizardSoftRef.get();
-		if(dw==null) {
+		if (wizardSoftRef != null)
+			dw = wizardSoftRef.get();
+		if (dw == null) {
 			dw = new DefaultWizard();
 			wizardSoftRef = new SoftReference<DefaultWizard>(dw);
 		}

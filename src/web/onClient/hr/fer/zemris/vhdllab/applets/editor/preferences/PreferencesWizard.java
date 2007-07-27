@@ -191,10 +191,6 @@ public class PreferencesWizard extends JPanel implements IWizard {
 					composedArea.setText("id and type must differ!");
 					return;
 				}
-				if(defaultText.getText().equals("")) {
-					composedArea.setText("default value not set!");
-					return;
-				}
 				StringBuilder sb = new StringBuilder(1000);
 				sb.append("Informations on how to install a property\n\n");
 				if(!FileTypes.values().contains(typeText.getText())) {
