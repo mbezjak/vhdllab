@@ -76,7 +76,7 @@ public class FindDisjointSegments implements IQuery {
 	public FindDisjointSegments(Caseless wireToAnalyze) {
 		propdepend = new ArrayList<EPropertyChange>();
 		propdepend.add(EPropertyChange.CANVAS_CHANGE);
-		propdepend.add(EPropertyChange.COMPONENT_PROPERTY_CHANGE);
+		propdepend.add(EPropertyChange.PROPERTY_CHANGE);
 		ro_pd = Collections.unmodifiableList(propdepend);
 		
 		wirename = wireToAnalyze;

@@ -1635,7 +1635,7 @@ public class MainApplet
 	
 	@Override
 	public void propertyChanged(String name, String oldValue, String newValue) {
-		double size = Double.parseDouble(newValue);
+		double size = Double.parseDouble(newValue.replace(',', '.'));
 		if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH)) {
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
 		} else if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_SIDEBAR_WIDTH)) {

@@ -190,6 +190,7 @@ public class CPToolbarParameterEnvelopeCollection {
 						.getSchemaInfo());
 		ICommandResponse response = command.performCommand(controller
 				.getSchemaInfo());
+		
 
 		if (CPToolbar.DEBUG_MODE) {
 			System.out

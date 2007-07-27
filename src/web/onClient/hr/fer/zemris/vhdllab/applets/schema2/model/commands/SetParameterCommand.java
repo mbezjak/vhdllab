@@ -175,9 +175,9 @@ public class SetParameterCommand implements ICommand {
 		}
 		
 		if (changes == null)
-			return new CommandResponse(new ChangeTuple(EPropertyChange.COMPONENT_PROPERTY_CHANGE));
+			return new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 		else {
-			changes.add(new ChangeTuple(EPropertyChange.COMPONENT_PROPERTY_CHANGE));
+			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 			return new CommandResponse(changes);
 		}
 	}
@@ -219,9 +219,9 @@ public class SetParameterCommand implements ICommand {
 		}
 		
 		if (changes == null)
-			return new CommandResponse(new ChangeTuple(EPropertyChange.COMPONENT_PROPERTY_CHANGE));
+			return new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 		else {
-			changes.add(new ChangeTuple(EPropertyChange.COMPONENT_PROPERTY_CHANGE));
+			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 			return new CommandResponse(changes);
 		}
 	}

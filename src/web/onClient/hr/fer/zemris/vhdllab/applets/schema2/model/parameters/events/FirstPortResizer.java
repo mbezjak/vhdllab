@@ -50,7 +50,7 @@ public class FirstPortResizer implements IParameterEvent {
 		List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
 		
 		changes.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
-		changes.add(new ChangeTuple(EPropertyChange.COMPONENT_PROPERTY_CHANGE));
+		changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 		
 		return changes;
 	}

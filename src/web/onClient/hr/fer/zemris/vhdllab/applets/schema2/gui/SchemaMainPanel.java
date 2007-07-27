@@ -88,7 +88,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	/* ctors */
 
 	public SchemaMainPanel() {
-		initStatic();
 	}
 
 	/* methods */
@@ -199,6 +198,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 					return;
 				}
 				setSplitPaneDivider((double) splitPane.getDividerSize() / width);
+				System.out.println("divider location =" + dividerLocation);
+				System.out.println("split pane width =" + width);
+				System.out.println("split pane divider size =" + splitPane.getDividerSize());
 			}
 		});
 		addComponentListener(new ComponentAdapter() {
@@ -208,6 +210,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				if (divider <= 0) {
 					return;
 				}
+				System.out.println("divider location =" + divider);
 				splitPane.setDividerLocation(divider);
 			}
 		});
@@ -277,6 +280,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public void init() {
+		initStatic();
 		initDynamic();
 	}
 

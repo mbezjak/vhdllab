@@ -30,16 +30,16 @@ public class Content extends JPanel {
 
 
 	public Content() {
-		Person ozegovic = new Person("Boris OûegoviÊ", ozegovicIcon, Description.OZEGOVIC.getString());
+		Person ozegovic = new Person("Boris O≈æegoviƒá", ozegovicIcon, Description.OZEGOVIC.getString());
 		Person bezjak = new Person("Miro Bezjak", bezjakIcon,Description.BEZJAK.getString());
-		Person ana = new Person("Ana VignjeviÊ", anaIcon, Description.VIGNJEVIC.getString());
-		Person cupic = new Person("Marko »upiÊ", cupicIcon, Description.CUPIC.getString());
-		Person delac = new Person("Davor DelaË", delacIcon, Description.DELAC.getString());
+		Person ana = new Person("Ana Vignjeviƒá", anaIcon, Description.VIGNJEVIC.getString());
+		Person cupic = new Person("Marko ƒåupiƒá", cupicIcon, Description.CUPIC.getString());
+		Person delac = new Person("Davor Delaƒç", delacIcon, Description.DELAC.getString());
 		Person prokopec = new Person("Aleksandar Prokopec", prokopecIcon, Description.PROKOPEC.getString());
-		Person alic = new Person("Ivan AliÊ", alicIcon, Description.ALIC.getString());
-		Person rajakovic = new Person("Tomislav RajakoviÊ", rajakovicIcon, Description.RAJAKOVIC.getString());
-		Person cakmak = new Person("Jagor »akmak", cakmakIcon, Description.CAKMAK.getString());
-		Person gjurkovic = new Person("Matej GjurkoviÊ", gjurkovicIcon, Description.GJURKOVIC.getString());
+		Person alic = new Person("Ivan Aliƒá", alicIcon, Description.ALIC.getString());
+		Person rajakovic = new Person("Tomislav Rajakoviƒá", rajakovicIcon, Description.RAJAKOVIC.getString());
+		Person cakmak = new Person("Jagor ƒåakmak", cakmakIcon, Description.CAKMAK.getString());
+		Person gjurkovic = new Person("Matej Gjurkoviƒá", gjurkovicIcon, Description.GJURKOVIC.getString());
 
 		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 		// SpringLayout layout = new SpringLayout();

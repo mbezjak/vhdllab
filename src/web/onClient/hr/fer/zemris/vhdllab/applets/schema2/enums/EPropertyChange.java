@@ -46,7 +46,7 @@ public enum EPropertyChange {
 	 * Bilo kakva promjena vrijednosti parametara zice, komponente na shemi
 	 * ili modelirane komponente.
 	 */
-	COMPONENT_PROPERTY_CHANGE() {
+	PROPERTY_CHANGE() {
 		@Override
 		public String toString() {
 			return "COMPONENT_PROPERTY_CHANGE";

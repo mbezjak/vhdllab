@@ -150,8 +150,8 @@
   <target name="package-dao" depends="compile-dao,hibernate-hbm">
     <jar destfile="${jlib.dir}/${app.name}-dao.jar">
       <fileset dir="${build.dir}/dao" includes="**/*.class"/>
-      <fileset dir="src/dao" excludes="**/*.java"/>
-      <fileset dir="src/common" excludes="**/*.java"/>
+      <fileset dir="src/dao" excludes="**/*.java,**/*svn/**,**/*svn"/>
+      <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
 	  <fileset dir="${hibernate.dir}"/>
     </jar>
   </target>
@@ -159,27 +159,27 @@
   <target name="package-service" depends="compile-service">
     <jar destfile="${jlib.dir}/${app.name}-service.jar">
       <fileset dir="${build.dir}/service" includes="**/*.class"/>
-      <fileset dir="src/service" excludes="**/*.java"/>
-      <fileset dir="src/common" excludes="**/*.java"/>
+      <fileset dir="src/service" excludes="**/*.java,**/*svn/**,**/*svn"/>
+      <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
     </jar>
   </target>
 
   <target name="package-web-onServer" depends="compile-web-onServer">
   	<jar destfile="${jlib.dir}/${app.name}-web-onServer.jar">
   	  <fileset dir="${build.dir}/web/onServer" includes="**/*.class"/>
-      <fileset dir="src/web/onServer" excludes="**/*.java"/>
-      <fileset dir="src/common" excludes="**/*.java"/>
-      <fileset dir="src/i18n/server" includes="**/*"/>
+      <fileset dir="src/web/onServer" excludes="**/*.java,**/*svn/**,**/*svn"/>
+      <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
+      <fileset dir="src/i18n/server" excludes="**/*svn/**,**/*svn"/>
   	</jar>
   </target>
   
   <target name="package-web-onClient" depends="compile-web-onClient">
   	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar">
   	  <fileset dir="${build.dir}/web/onClient" includes="**/*.class"/>
-      <fileset dir="src/web/onClient" excludes="**/*.java"/>
-      <fileset dir="src/common" excludes="**/*.java"/>
-   	  <fileset dir="src/i18n/client" includes="**/*"/>
-   	  <metainf dir="metadata/onClient/META-INF"/>
+      <fileset dir="src/web/onClient" excludes="**/*.java,**/*svn/**,**/*svn"/>
+      <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
+   	  <fileset dir="src/i18n/client" excludes="**/*svn/**,**/*svn"/>
+   	  <metainf dir="metadata/onClient/META-INF" excludes="**/*svn/**,**/*svn"/>
   	</jar>
   </target>
   
