@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class contains various static method for Testbench VHDL
+ * This class contains various method for Testbench VHDL
  * generation.
  * 
  * @author Miro Bezjak

@@ -13,7 +13,9 @@ import java.awt.Component;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class Testbench extends JPanel implements IEditor, IWizard {
+public class TestbenchEditor extends JPanel implements IEditor, IWizard {
+	
+	private static final long serialVersionUID = -1637316576029494858L;
 	
 	private ProjectContainer container;
 	private boolean readOnly;

@@ -132,7 +132,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	
 	private String createData() {
 		StringBuilder data = new StringBuilder();
-		data.append("<testbench>");
+		data.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<testbench>\n");
 		data.append("<file>").append(fileDepends).append("</file>\n");
 		data.append("<measureUnit>").append(measureUnit != null ? measureUnit : "ns").append("</measureUnit>\n");
 		data.append("<duration>").append(duration != null ? duration : "700").append("</duration>\n");
@@ -539,7 +539,8 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		String testbench = JOptionPane.showInputDialog(parent, "Enter a name of a testbench");
 		if(testbench == null) return null;
 		StringBuilder sb = new StringBuilder();
-		sb.append("<testbench><file>").append(file.getFileName()).append("</file></testbench>");
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<testbench>\n<file>")
+			.append(file.getFileName()).append("</file>\n</testbench>");
 		return new FileContent(projectName, testbench, sb.toString());
 	}
 

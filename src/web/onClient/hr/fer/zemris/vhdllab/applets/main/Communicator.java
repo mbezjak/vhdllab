@@ -23,7 +23,7 @@ public class Communicator {
 	private MethodInvoker invoker;
 	private Cache cache;
 
-	public Communicator(MethodInvoker invoker, String ownerId) throws UniformAppletException {
+	public Communicator(MethodInvoker invoker, String ownerId) {
 		if (invoker == null)
 			throw new NullPointerException("Method invoker can not be null.");
 		if (ownerId == null)
@@ -31,10 +31,13 @@ public class Communicator {
 		cache = new Cache();
 		this.invoker = invoker;
 		this.ownerId = ownerId;
+	}
+	
+	public void init() throws UniformAppletException {
 		loadUserPreferences();
 	}
 
-	public void cleanUp() throws UniformAppletException {
+	public void dispose() throws UniformAppletException {
 		UserPreferences preferences = cache.getUserPreferences();
 		for (String key : preferences.getAllPropertyKeys()) {
 			Long id = cache.getIdentifierForProperty(key);

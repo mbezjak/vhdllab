@@ -135,6 +135,7 @@ public class MainApplet
 			Initiator initiator = new AjaxInitiator(ajax);
 			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
 			communicator = new Communicator(invoker, userId);
+			communicator.init();
 			bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (Exception e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
@@ -228,7 +229,7 @@ public class MainApplet
 		
 		// TODO vidjet sto tocno s ovim. kakva je implementacija i mozda poboljsat implementaciju
 		try {
-			communicator.cleanUp();
+			communicator.dispose();
 		} catch (UniformAppletException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
