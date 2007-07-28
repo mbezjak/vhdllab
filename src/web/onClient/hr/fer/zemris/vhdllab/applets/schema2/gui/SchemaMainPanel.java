@@ -23,6 +23,7 @@ import hr.fer.zemris.vhdllab.utilities.FileUtil;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
@@ -75,6 +76,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private ILocalGuiController localGUIController;
 	private CPToolbar componentPropertyToolbar;
 	private ComponentToAddToolbar componentToAddToolbar;
+	private JPanel rightPanel;
 
 	/* IEditor private fields */
 	private ProjectContainer projectContainer;
@@ -82,6 +84,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private boolean readonly, saveable, modified;
 
 	private double dividerLocation;
+	private double constantRightPanelWidth;
 
 	private JSplitPane splitPane;
 
@@ -90,6 +93,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	public SchemaMainPanel() {
 	}
 
+	
 	/* methods */
 
 	private void initStatic() {
@@ -103,6 +107,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		saveable = false;
 		modified = false;
 		dividerLocation = 0.8;
+		constantRightPanelWidth = 140;
 
 		controller.registerCore(core);
 		controller.addListener(EPropertyChange.ANY_CHANGE,
@@ -174,7 +179,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		JScrollPane componentToAddToolbarScrollPane = new JScrollPane(
 				componentToAddToolbarTB);
 
-		JPanel rightPanel = new JPanel(new GridLayout(2, 1));
+		rightPanel = new JPanel(new GridLayout(2, 1));
 		rightPanel.add(componentPropertyToolbarScrollPane);
 		rightPanel.add(componentToAddToolbarScrollPane);
 
@@ -188,30 +193,39 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				rightPanel);
 		// splitPane.setDividerLocation((int) (0.8 * getWidth()));
 		splitPane.setOneTouchExpandable(true);
-		BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI())
+		final BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI())
 				.getDivider();
-		divider.addComponentListener(new ComponentAdapter() {
+//		divider.addComponentListener(new ComponentAdapter() {
+//			@Override
+//			public void componentMoved(ComponentEvent e) {
+//				int width = splitPane.getWidth();
+//				if (width <= 0) {
+//					return;
+//				}
+//				setSplitPaneDivider((double) splitPane.getDividerLocation() / width);
+//				System.out.println("divider location =" + dividerLocation);
+//				System.out.println("split pane width =" + width);
+//				System.out.println("split pane divider size =" + splitPane.getDividerSize());
+//			}
+//		});
+		rightPanel.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentMoved(ComponentEvent e) {
-				int width = splitPane.getWidth();
-				if (width <= 0) {
-					return;
-				}
-				setSplitPaneDivider((double) splitPane.getDividerSize() / width);
-				System.out.println("divider location =" + dividerLocation);
-				System.out.println("split pane width =" + width);
-				System.out.println("split pane divider size =" + splitPane.getDividerSize());
+			public void componentResized(ComponentEvent e) {
+				// TODO
+				//Insets ins = rightPanel.getInsets();
+				//constantRightPanelWidth = splitPane.getRightComponent().getWidth();
 			}
 		});
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				int divider = getSplitPaneDivider();
-				if (divider <= 0) {
-					return;
-				}
-				System.out.println("divider location =" + divider);
-				splitPane.setDividerLocation(divider);
+//				int divider = getSplitPaneDivider();
+//				if (divider <= 0) {
+//					return;
+//				}
+				int width = getWidth();
+				if (width <= 0) return;
+				splitPane.setDividerLocation(1 - constantRightPanelWidth / width);
 			}
 		});
 		this.add(splitPane, BorderLayout.CENTER);
