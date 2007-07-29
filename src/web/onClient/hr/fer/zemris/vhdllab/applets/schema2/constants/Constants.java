@@ -16,7 +16,7 @@ public class Constants {
 	public static final String PREFERRED_NAME_SUFIX = "_instance";
 	public static final String ALLOWED_SET_DIVIDER = "#";
 	
-	public static final int GRID_SIZE = 20;
+	public static final int GRID_SIZE = 10;
 	public static final int DEFAULT_SCHEMA_WIDTH = 500;
 	
 	public static class Categories {

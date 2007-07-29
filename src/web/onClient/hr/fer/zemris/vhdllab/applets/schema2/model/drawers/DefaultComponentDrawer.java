@@ -23,6 +23,9 @@ import java.awt.Graphics2D;
  * ali ne i poveznica s tijelom komponente (pravokutnikom).
  * 
  * Port NE SMIJE biti unutar samog pravokutnika komponente.
+ * Ako se nade unutar pravokutnika, a ne na rubu, do njega
+ * nece biti povucena zicica (ovo je samo stvar prikaza,
+ * tocka koja pripada portu i dalje ce biti iscrtana).
  * 
  * @author Axel
  *

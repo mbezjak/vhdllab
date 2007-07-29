@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.drawers;
 
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
@@ -20,7 +21,8 @@ public abstract class GateDrawer {
 	/* static fields */
 	public static final int PORT_SIZE = 4;
 	public static final int NEGATE_SIZE = 10;
-	public static final int PIN_LENGTH = 20;
+	public static final int PIN_LENGTH = Constants.GRID_SIZE * 2;
+	public static final int EDGE_OFFSET = (int) (Constants.GRID_SIZE * 1.5);
 	
 	
 	/* private fields */
@@ -64,11 +66,13 @@ public abstract class GateDrawer {
 		// draw a rectangle
 		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);
-		graphics.fillRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		if (detectNegations) graphics.fillOval(w - PIN_LENGTH, specialh - NEGATE_SIZE / 2, NEGATE_SIZE, NEGATE_SIZE);
+		graphics.fillRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
+		if (detectNegations) graphics.fillOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
+				NEGATE_SIZE, NEGATE_SIZE);
 		graphics.setColor(c);
-		graphics.drawRect(PIN_LENGTH, PIN_LENGTH, w - 2 * PIN_LENGTH, h - 2 * PIN_LENGTH);
-		if (detectNegations) graphics.drawOval(w - PIN_LENGTH, specialh - NEGATE_SIZE / 2, NEGATE_SIZE, NEGATE_SIZE);
+		graphics.drawRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
+		if (detectNegations) graphics.drawOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
+				NEGATE_SIZE, NEGATE_SIZE);
 		
 		
 	}

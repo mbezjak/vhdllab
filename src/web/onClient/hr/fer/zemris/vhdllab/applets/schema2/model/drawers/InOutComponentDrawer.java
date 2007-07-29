@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.InOutSchemaComponent;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
+import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -98,7 +99,9 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			throw new IllegalStateException("In-out component must have at least one port.", e);
 		}
 		Direction dir = port.getDirection();
-		boolean downto = port.getType().hasVectorDirectionDOWNTO();
+		Type tp = port.getType();
+		boolean downto = tp.hasVectorDirectionDOWNTO();
+		int rangeoffset = (tp.isScalar()) ? (0) : (tp.getRangeFrom());
 		
 		if (dir.equals(Direction.IN)) {
 			Color c = graphics.getColor();
@@ -120,17 +123,20 @@ public class InOutComponentDrawer implements IComponentDrawer {
 				yps[1] = yps[0] + TRIANGLE_SIDE;
 				graphics.fillPolygon(xps, yps, 3);
 				
-				graphics.drawString(String.valueOf((downto) ? (siz - i - 1) : (i)),
-						xps[0] - FONT_SIZE, (yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
+				// write port index
+				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i) : (i + rangeoffset)),
+						xps[0] - FONT_SIZE * 2, (yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
 				
 				i++;
 			}
 		} else if (dir.equals(Direction.OUT)) {
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
-			graphics.fillRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
+			graphics.fillRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH,
+					h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			graphics.setColor(c);
-			graphics.drawRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
+			graphics.drawRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH,
+					h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			
 			int[] xps = new int[3];
 			int[] yps = new int[3];
@@ -138,14 +144,15 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			xps[1] = w - PIN_LENGTH;
 			xps[2] = w - PIN_LENGTH + TRIANGLE_SIDE * 7 / 8;
 			List<SchemaPort> schports = cmp.getSchemaPorts();
-			int i = 0, siz = schports.size();
+			int i = 0;
 			for (SchemaPort sp : cmp.getSchemaPorts()) {
 				yps[2] = sp.getOffset().y;
 				yps[0] = yps[2] - TRIANGLE_SIDE / 2;
 				yps[1] = yps[0] + TRIANGLE_SIDE;
 				graphics.fillPolygon(xps, yps, 3);
 				
-				graphics.drawString(String.valueOf((downto) ? (siz - i - 1) : (i)),
+				// write port index
+				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i) : (i + rangeoffset)),
 						PIN_LENGTH + FONT_SIZE / 2, (yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
 				
 				i++;

@@ -63,6 +63,7 @@ public final class SchemaPort {
 	/**
 	 * Vraca offset porta od gornjeg
 	 * lijevog kuta komponente.
+	 * Ne vraca kopiju, vec referencu na pravu vrijednost!
 	 * 
 	 * @return
 	 */

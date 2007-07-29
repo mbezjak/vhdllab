@@ -23,6 +23,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.IntList;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.PortRelation;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
@@ -170,9 +171,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 
 	/* static fields */
-	private static final int WIDTH_PER_PORT = Constants.GRID_SIZE;
-	private static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
-	private static final int EDGE_OFFSET = Constants.GRID_SIZE * 2;
+	private static final int WIDTH_PER_PORT = Constants.GRID_SIZE * 2;
+	private static final int HEIGHT_PER_PORT = Constants.GRID_SIZE * 2;
+	private static final int EDGE_OFFSET = Constants.GRID_SIZE * 4;
 	
 	
 
@@ -358,14 +359,78 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 		
 		// calculate width and height and set ports appropriately
-		width = (((nc > sc) ? (nc) : (sc))) * WIDTH_PER_PORT + EDGE_OFFSET * 2;
-		height = (((wc > ec) ? (wc) : (ec))) * HEIGHT_PER_PORT + EDGE_OFFSET * 2;
+		width = (((nc > sc) ? (nc) : (sc)) - 1) * WIDTH_PER_PORT + EDGE_OFFSET * 2;
+		height = (((wc > ec) ? (wc) : (ec)) - 1) * HEIGHT_PER_PORT + EDGE_OFFSET * 2;
 		
+		// translate those schema ports (pins) that could be on width or height right away
 		pos = toBeMoved.size();
 		for (int i = 0; i < pos; i++) {
 			schport = schemaports.get(toBeMoved.get(i));
 			if (schport.getOffset().x == 0) schport.setXOffset(width);
 			else schport.setYOffset(height);
+		}
+		
+		alignPortsToCenterOnEachSide();
+	}
+	
+	private void alignPortsToCenterOnEachSide() {
+		// browse through all pins and map pins on different sides
+		List<SchemaPort> north = new ArrayList<SchemaPort>(), south = new ArrayList<SchemaPort>();
+		List<SchemaPort> west = new ArrayList<SchemaPort>(), east = new ArrayList<SchemaPort>();
+		
+		for (SchemaPort sp : schemaports) {
+			XYLocation offset = sp.getOffset();
+			if (offset.x == 0) west.add(sp);
+			else if (offset.x == width) east.add(sp);
+			else if (offset.y == 0) north.add(sp);
+			else if (offset.y == height) south.add(sp);
+			else throw new IllegalStateException("A schema port that's not on the border exists.");
+		}
+		
+		
+		// center the opposite side with less pins - check if even or odd num of pins
+		int sz = west.size(), szopp = east.size(), s;
+		List<SchemaPort> tomove = null;
+		
+		if (sz < szopp) { tomove = west; }
+		else if (sz > szopp) { tomove = east; s = szopp; szopp = sz; sz = s; }
+		if (tomove != null) {
+			// sz = size of the shorter side; szopp = size of the opposite
+			if (((sz % 2) == 0 && (szopp % 2) == 0) || (((sz % 2) == 1) && ((szopp % 2) == 1))) {
+				// if both are even or odd, translate by half their difference times the port size
+				int transl = (szopp - sz) / 2 * HEIGHT_PER_PORT;
+				for (SchemaPort sp : tomove)  {
+					sp.getOffset().y += transl;
+				}
+			} else {
+				// if one is even and the other one odd, translate by --||-- plus half the port size
+				int transl = (szopp - sz) / 2 * HEIGHT_PER_PORT + HEIGHT_PER_PORT / 2;
+				for (SchemaPort sp : tomove)  {
+					sp.getOffset().y += transl;
+				}
+			}
+		}
+		
+		tomove = null;
+		sz = north.size();
+		szopp = south.size();
+		if (sz < szopp) { tomove = north; }
+		else if (sz > szopp) { tomove = south; s = szopp; szopp = sz; sz = s; }
+		if (tomove != null) {
+			// sz = size of the shorter side; szopp = size of the opposite
+			if (((sz % 2) == 0 && (szopp % 2) == 0) || (((sz % 2) == 1) && ((szopp % 2) == 1))) {
+				// if both are even or odd, translate by half their difference times the port size
+				int transl = (szopp - sz) / 2 * WIDTH_PER_PORT;
+				for (SchemaPort sp : tomove)  {
+					sp.getOffset().x += transl;
+				}
+			} else {
+				// if one is even and the other one odd, translate by --||-- plus half the port size
+				int transl = (szopp - sz) / 2 * WIDTH_PER_PORT + WIDTH_PER_PORT / 2;
+				for (SchemaPort sp : tomove)  {
+					sp.getOffset().x += transl;
+				}
+			}
 		}
 	}
 	

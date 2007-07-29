@@ -62,7 +62,7 @@ public class NameChanger implements IParameterEvent {
 	public boolean performChange(Object oldvalue, IParameter parameter,
 			ISchemaInfo info, ISchemaWire wire, ISchemaComponent component)
 	{
-		Caseless oldkey = new Caseless((String) oldvalue);
+		Caseless oldkey = new Caseless((Caseless) oldvalue);
 
 		if (wire != null) {
 			return performWireNameChange(oldkey, info, wire, parameter);

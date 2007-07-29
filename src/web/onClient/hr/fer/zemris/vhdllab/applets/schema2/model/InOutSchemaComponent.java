@@ -119,9 +119,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	private static final String STD_LOGIC_OUT = "Output_scalar";
 	private static final String STD_LOGIC_VECTOR_IN = "Input_vector";
 	private static final String STD_LOGIC_VECTOR_OUT = "Output_vector";
-	public static final int WIDTH = Constants.GRID_SIZE * 4;
-	public static final int HEIGHT_PER_PORT = Constants.GRID_SIZE;
-	public static final int EDGE_OFFSET = Constants.GRID_SIZE;
+	public static final int WIDTH = Constants.GRID_SIZE * 8;
+	public static final int HEIGHT_PER_PORT = Constants.GRID_SIZE * 2;
+	public static final int EDGE_OFFSET = Constants.GRID_SIZE * 2;
 	
 	
 	/* private fields */
