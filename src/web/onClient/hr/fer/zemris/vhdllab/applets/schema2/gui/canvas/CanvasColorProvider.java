@@ -12,7 +12,7 @@ public class CanvasColorProvider {
 	/**
 	 * The color of a grid dot
 	 */
-	public static final Color GRID_DOT = new Color(35,240,250);
+	public static final Color GRID_DOT = new Color(155,195,185);
 	
 	/**
 	 * Color used for marking critical points on compoinent ports
