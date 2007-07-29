@@ -40,8 +40,8 @@ public class InOutComponentDrawer implements IComponentDrawer {
 	private static final int PIN_LENGTH = 15;
 	private static final int PORT_SIZE = 4;
 	private static final int TRIANGLE_SIDE = 21;
-	private static final int EMPTY_EDGE_OFFSET = Constants.GRID_SIZE;
-	private static final int PER_PORT_SIZE = Constants.GRID_SIZE;
+	private static final int EMPTY_EDGE_OFFSET = Constants.GRID_SIZE * 2;
+	private static final int PER_PORT_SIZE = Constants.GRID_SIZE * 2;
 	private static final int FONT_SIZE = 8;
 
 	
