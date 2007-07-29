@@ -47,18 +47,25 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		}
 	}
 	
+	
+	/* private fields */
 	private Map<Caseless, PlacedComponent> components;
+	private XYLocation loc;
 	
 	
+	
+	/* ctors */
 	
 	public SimpleSchemaComponentCollection() {
 		components = new HashMap<Caseless, PlacedComponent>();
+		loc = new XYLocation();
 	}
 	
 	
 	
 	
 	
+	/* methods */
 	
 	public void addComponent(int x, int y, ISchemaComponent component) 
 		throws DuplicateKeyException, OverlapException
@@ -73,14 +80,16 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		components.put(component.getName(), wrapper);
 	}
 
-	public boolean containsAt(int x, int y) {
-		XYLocation loc = new XYLocation(x, y);
-		XYLocation start;
-		ISchemaComponent comp;
+	public boolean containsAt(int x, int y, int dist) {
+		PlacedComponent plc;
+		
+		loc.x = x;
+		loc.y = y;
+		
 		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
-			comp = entry.getValue().comp;
-			start = entry.getValue().pos;
-			if (loc.in(start.x, start.y, comp.getWidth(), comp.getHeight())) return true;
+			plc = entry.getValue();
+			if (loc.in(plc.pos.x - dist, plc.pos.y - dist,
+					plc.comp.getWidth() + 2 * dist, plc.comp.getHeight() + 2 * dist)) return true;
 		}
 		return false;
 	}
@@ -89,16 +98,29 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		return components.containsKey(componentName);
 	}
 
-	public ISchemaComponent fetchComponent(int x, int y) {
-		XYLocation loc = new XYLocation(x, y);
-		XYLocation start;
-		ISchemaComponent comp;
+	public ISchemaComponent fetchComponent(int x, int y, int dist) {
+		ISchemaComponent found = null;
+		int mindist = dist;
+		
+		loc.x = x;
+		loc.y = y;
+		
 		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
-			comp = entry.getValue().comp;
-			start = entry.getValue().pos;
-			if (loc.in(start.x, start.y, comp.getWidth(), comp.getHeight())) return comp;
+			PlacedComponent plc = entry.getValue();
+			int wdt = plc.comp.getWidth(), hgt = plc.comp.getHeight();
+			
+			if (loc.in(plc.pos.x, plc.pos.y, wdt, hgt)) return plc.comp;
+			
+			int plcdist = plc.pos.x - loc.x;
+			if (plcdist < mindist) { mindist = plcdist; found = plc.comp; }
+			plcdist = loc.x - (plc.pos.x + wdt);
+			if (plcdist < mindist) { mindist = plcdist; found = plc.comp; }
+			plcdist = plc.pos.y - loc.y;
+			if (plcdist < mindist) { mindist = plcdist; found = plc.comp; }
+			plcdist = loc.y - (plc.pos.y + hgt);
+			if (plcdist < mindist) { mindist = plcdist; found = plc.comp; }
 		}
-		return null;
+		return found;
 	}
 
 	public ISchemaComponent fetchComponent(Caseless componentName) {

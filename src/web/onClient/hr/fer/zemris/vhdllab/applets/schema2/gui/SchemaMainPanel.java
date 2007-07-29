@@ -114,7 +114,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		readonly = false;
 		saveable = false;
 		modified = false;
-		constantRightPanelWidth = 140;
+		constantRightPanelWidth = 200;
 
 		controller.registerCore(core);
 		controller.addListener(EPropertyChange.ANY_CHANGE, new ModificationListener());
@@ -150,6 +150,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	
 	private void initUserPrototypes() {
 		if (projectContainer == null || filecontent == null) return;
+		System.out.println("Initializing user prototypes.");
 		
 		String projectname = filecontent.getProjectName();
 		String thisname = filecontent.getFileName();

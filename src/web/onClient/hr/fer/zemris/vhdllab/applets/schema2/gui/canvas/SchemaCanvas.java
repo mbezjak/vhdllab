@@ -58,7 +58,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	private static final long serialVersionUID = -179843489371055255L;
 	
 	
-	private static final int COMPONENT_DISTANCE = 5;
+	private static final int MIN_COMPONENT_DISTANCE = 15;
 
 	
 	/**
@@ -369,7 +369,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					System.out.println ("canvas report| component instantiate succesful: "+response.isSuccessful());
 				}
 				else if(state.equals(ECanvasState.DELETE_STATE)){
-					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), COMPONENT_DISTANCE);
+					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
 					if(comp != null){
 						ICommand instantiate = new DeleteComponentCommand(comp.getName());
 						ICommandResponse response = controller.send(instantiate);
@@ -386,7 +386,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					}
 				}
 				else if(state.equals(ECanvasState.MOVE_STATE)){
-					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), COMPONENT_DISTANCE);
+					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
 					if(comp != null){
 						localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
 					}else{
@@ -435,7 +435,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					}
 					preLoc = new WirePreLocator(x,y,x,y);
 				}else if(state.equals(ECanvasState.MOVE_STATE)){
-					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), COMPONENT_DISTANCE);
+					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
 					if(comp!=null){
 						componentToMove = comp.getName();
 					}
@@ -543,7 +543,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 	public CriticalPoint getCriticalPoint(int x, int y) {
 		CriticalPoint point = null;
-		ISchemaComponent comp = components.fetchComponent(x,y, COMPONENT_DISTANCE);
+		ISchemaComponent comp = components.fetchComponent(x,y, MIN_COMPONENT_DISTANCE);
 		if(comp!=null){
 			Rectangle rect = components.getComponentBounds(comp.getName());
 			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, 5);

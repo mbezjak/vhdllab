@@ -89,16 +89,25 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 * 
 	 * @param x
 	 * @param y
+	 * @param dist
 	 *  
 	 * @return
-	 * Vraca komponentu ako takva postoji na zadanim
-	 * koordinatama. Komponenta postoji na nekoj
-	 * koordinati ako bounding box komponente obuhvaca
-	 * koordinatu.
-	 * Ako ista ne postoji, vraca se null.
+	 * Vraca komponentu ako takva postoji na (x, y)
+	 * koordinati ili je udaljena najmanje za <code>dist</code>
+	 * od koordinate (x, y).
+	 * 
+	 * Pritom, ako postoji komponenta na koordinati (x, y)
+	 * bit ce vracena prva na koju se naide.
+	 * Ako ne postoji komponenta na toj koordinati, onda ce
+	 * biti vracena komponenta koja je najmanje udaljena
+	 * od koordinate (x, y), ali manje udaljena od <code>dist</code>.
+	 * Inace se vraca null.
+	 * 
+	 * Komponenta postoji na nekoj koordinati (x, y)
+	 * ako bounding box komponente obuhvaca koordinatu (x, y).
 	 * 
 	 */
-	ISchemaComponent fetchComponent(int x, int y);
+	ISchemaComponent fetchComponent(int x, int y, int dist);
 	
 	/**
 	 * Dohvaca sve komponente zadanog tipa.
@@ -110,17 +119,22 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	
 	/**
 	 * Odreduje da li postoji komponenta
-	 * na koordinatama.
+	 * na koordinatama (x, y), s tolerancijom
+	 * <code>dist</code>.
 	 * 
 	 * @param x
 	 * @param y
+	 * @param dist
+	 * 
 	 * @return
 	 * Vraca true ako postoji, false inace.
 	 * Komponenta postoji na koordinati ako
-	 * bounding box komponente obuhvaca koordinatu.
+	 * bounding box komponente, uvecan za
+	 * toleranciju <code>dist</code> obuhvaca
+	 * koordinatu.
 	 * 
 	 */
-	boolean containsAt(int x, int y);
+	boolean containsAt(int x, int y, int dist);
 	
 	
 	/**
