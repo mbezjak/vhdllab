@@ -61,8 +61,8 @@ public class ParameterFactory {
 		
 		try {
 			Class cls = Class.forName(valclass);
-			Constructor ctor = cls.getConstructor(null);
-			valobj = ctor.newInstance(null);
+			Constructor<IGenericValue> ctor = cls.getConstructor((Class[])null);
+			valobj = ctor.newInstance((Object[])null);
 			genval = (IGenericValue)valobj;
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Cannot instantiate parameter " +

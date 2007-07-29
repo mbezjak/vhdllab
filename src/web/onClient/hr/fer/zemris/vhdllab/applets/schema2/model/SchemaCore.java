@@ -48,10 +48,10 @@ public class SchemaCore implements ISchemaCore {
 		info.getEntity().reset();
 	}
 
-	ISchemaPrototypeCollection prototyper = null;
+	private ISchemaPrototypeCollection prototyper = null;
 	public void initPrototypes(String serializedPrototypes) {
-		// deserialize prototypes from given list
 		
+		// deserialize prototypes from given list
 		PredefinedComponentsParser predefparser = 
 			new PredefinedComponentsParser(serializedPrototypes);
 		PredefinedConf predefconf = predefparser.getConfiguration();

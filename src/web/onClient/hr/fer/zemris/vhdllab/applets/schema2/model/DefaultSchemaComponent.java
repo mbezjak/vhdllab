@@ -178,25 +178,29 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 
 	/* private fields */
 	private List<String> signames = new ArrayList<String>();
+	private String categoryName;
 	private Caseless componentName;
 	private String codeFileName;
-	private String categoryName;
 	private boolean generic;
 	private IComponentDrawer drawer;
 	private IParameterCollection parameters;
 	private List<SchemaPort> schemaports;
 	private List<PortRelation> portrelations;
 	private int width, height;
+
+	/* protected fields */
+	/* none */
 	
 	
 
 	/* ctors */
 	
 	/**
-	 * Privatni ctor, koristi se kod copyCtor-a.
+	 * Protected ctor, koristi se kod copyCtor-a,
+	 * eventualno za nasljedivanje.
 	 * 
 	 */
-	private DefaultSchemaComponent() {
+	protected DefaultSchemaComponent() {
 		parameters = new SchemaParameterCollection();
 		schemaports = new ArrayList<SchemaPort>();
 		portrelations = new ArrayList<PortRelation>();
@@ -235,7 +239,13 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		initDefaultParameters(predefComp.getPreferredName());
 	}
 
-	private void initDefaultParameters(String name) {
+	/**
+	 * Stvara 2 defaultna parametra - ime (koje je predano metodi)
+	 * i orijentaciju.
+	 * 
+	 * @param name
+	 */
+	protected void initDefaultParameters(String name) {
 		// default parameter - name
 		CaselessParameter cslpar =
 			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(name));
@@ -250,6 +260,15 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		parameters.addParameter(orientpar);
 	}
 
+	/**
+	 * Stvara portove na temelju PortWrapper-a, te automatski
+	 * stvara odgovarajuce pinove za njih.
+	 * Pretpostavlja da je uz svaki port navedena odgovarajuca
+	 * orijentacija (PortWrapper.getOrientation() ne vraca null ili
+	 * prazan string).
+	 * 
+	 * @param portwrappers
+	 */
 	private void initPorts(List<PortWrapper> portwrappers) {
 		schemaports = new ArrayList<SchemaPort>();
 		portrelations = new ArrayList<PortRelation>();
@@ -401,7 +420,13 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		else throw new NotImplementedException("Ascension '" + ascend + "' unknown.");
 	}
 
-	private void initDrawer(String drawerName) {
+	
+	/**
+	 * Stvara drawer na temelju imena.
+	 * 
+	 * @param drawerName
+	 */
+	protected void initDrawer(String drawerName) {
 		try {
 			Class cls = Class.forName(drawerName);
 			Class[] partypes = new Class[1];
@@ -415,7 +440,13 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 	}
 
-	private void initParameters(List<ParameterWrapper> params) {
+	
+	/**
+	 * Na temelju liste ParameterWrapper-a, stvara parametre.
+	 * 
+	 * @param params
+	 */
+	protected void initParameters(List<ParameterWrapper> params) {
 		parameters = new SchemaParameterCollection();
 		if (params != null) {
 			IParameter par;

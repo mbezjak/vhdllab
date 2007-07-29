@@ -12,6 +12,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.constants;
 public class Constants {
 	
 	public static final String PREDEFINED_FILENAME = "predefined.xml";
+	public static final String USER_CATEGORY_NAME = "UserComponents";
+	public static final String PREFERRED_NAME_SUFIX = "_instance";
 	public static final String ALLOWED_SET_DIVIDER = "#";
 	
 	public static final int GRID_SIZE = 20;

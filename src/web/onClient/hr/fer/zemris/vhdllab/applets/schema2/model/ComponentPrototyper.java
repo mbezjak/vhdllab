@@ -46,6 +46,12 @@ public class ComponentPrototyper implements ISchemaPrototypeCollection {
 		return prototypes;
 	}
 
+	public void clearPrototypes() {
+		prototypes.clear();
+	}
+	
+	
+
 }
 
 

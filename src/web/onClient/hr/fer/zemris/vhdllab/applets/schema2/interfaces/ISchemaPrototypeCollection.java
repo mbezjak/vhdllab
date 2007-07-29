@@ -63,6 +63,14 @@ public interface ISchemaPrototypeCollection {
 	 * da prototip tog istog tipa vec postoji.
 	 */
 	void addPrototype(ISchemaComponent componentPrototype) throws DuplicateKeyException;
+	
+	
+	/**
+	 * Brise sve prototipove.
+	 *
+	 */
+	void clearPrototypes();
+	
 }
 
 
