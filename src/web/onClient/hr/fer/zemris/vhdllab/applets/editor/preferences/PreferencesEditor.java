@@ -1,11 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
 import hr.fer.zemris.ajax.shared.XMLUtil;
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.preferences.PropertyListener;
 
 import java.awt.BorderLayout;
@@ -63,8 +63,8 @@ public class PreferencesEditor extends JPanel implements IEditor,
 					String key = (String) source.getValueAt(i, 0);
 					String value = (String) source.getValueAt(i, 1);
 					try {
-						container.saveProperty(key, value);
-					} catch (UniformAppletException ex) {
+						container.getPreferences().setProperty(key, value);
+					} catch (PropertyAccessException ex) {
 						ex.printStackTrace();
 						return;
 					}
@@ -78,7 +78,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 		Properties p = XMLUtil.deserializeProperties(content.getContent());
 		for (Object o : p.keySet()) {
 			String key = (String) o;
-			container.removePropertyListener(this, key);
+			container.getPreferences().removePropertyListener(this, key);
 		}
 	}
 
@@ -131,7 +131,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 			model.addRow(new Object[] { key, value });
 			int rowCount = model.getRowCount();
 			rows.put(key, Integer.valueOf(rowCount - 1));
-			container.addPropertyListener(this, key);
+			container.getPreferences().addPropertyListener(this, key);
 		}
 	}
 

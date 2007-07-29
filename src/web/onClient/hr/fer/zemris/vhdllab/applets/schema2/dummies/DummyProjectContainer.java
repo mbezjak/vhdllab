@@ -1,12 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
@@ -15,10 +8,16 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.preferences.PropertyListener;
-import hr.fer.zemris.vhdllab.preferences.UserPreferences;
+import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.ResourceBundle;
 
 
 
@@ -125,7 +124,7 @@ public class DummyProjectContainer implements ProjectContainer {
 		return sb.toString();
 	}
 
-	public UserPreferences getPreferences() throws UniformAppletException {
+	public IUserPreferences getPreferences() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -209,31 +208,6 @@ public class DummyProjectContainer implements ProjectContainer {
 		
 	}
 
-	@Override
-	public String getProperty(String name) throws UniformAppletException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void saveProperty(String name, String data)
-			throws UniformAppletException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addPropertyListener(PropertyListener l, String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removePropertyListener(PropertyListener l, String name) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }
 
 

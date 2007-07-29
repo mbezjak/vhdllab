@@ -245,7 +245,7 @@ public class PreferencesWizard extends JPanel implements IWizard {
 				
 				sb.append(" - over and out. now try using that property. for example:\n\t")
 					.append("...\n\t")
-					.append("String data = projectContainer.getProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);\n\t")
+					.append("String data = projectContainer.getPreferences().getProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);\n\t")
 					.append("double width = Double.parseDouble(data);\n\t")
 					.append("...\n\n");
 				

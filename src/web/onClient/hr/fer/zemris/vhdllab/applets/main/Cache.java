@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.preferences.UserPreferences;
+import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ public class Cache {
 	private Map<FileIdentifier, Long> identifiers;
 	private Map<String, Long> userFileIdentifiers;
 
-	private UserPreferences preferences;
+	private IUserPreferences preferences;
 	private List<FileIdentifier> compilationHistory;
 	private List<FileIdentifier> simulationHistory;
 
@@ -195,7 +195,7 @@ public class Cache {
 		return projects;
 	}
 	
-	public UserPreferences getUserPreferences() {
+	public IUserPreferences getUserPreferences() {
 		return preferences;
 	}
 	
@@ -248,7 +248,7 @@ public class Cache {
 		return identifiers.get(key);
 	}
 	
-	public void cacheUserPreferences(UserPreferences preferences) {
+	public void cacheUserPreferences(IUserPreferences preferences) {
 		this.preferences = preferences;
 	}
 

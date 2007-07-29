@@ -27,8 +27,9 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
+import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.preferences.PropertyListener;
-import hr.fer.zemris.vhdllab.preferences.UserPreferences;
 import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
@@ -152,9 +153,9 @@ public class MainApplet
 				setPaneSize();
 			}
 		});
-		addPropertyListener(this, UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
-		addPropertyListener(this, UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
-		addPropertyListener(this, UserFileConstants.SYSTEM_VIEW_HEIGHT);
+		getPreferences().addPropertyListener(this, UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
+		getPreferences().addPropertyListener(this, UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
+		getPreferences().addPropertyListener(this, UserFileConstants.SYSTEM_VIEW_HEIGHT);
 		
 		// FIXME ovo mozda spretnije rijesit
 		openView(ViewTypes.VT_STATUS_HISTORY);
@@ -173,7 +174,7 @@ public class MainApplet
 			for(String s : views) {
 				openView(s);
 			}
-		} catch (UniformAppletException ignored) {
+		} catch (Exception ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -219,7 +220,7 @@ public class MainApplet
 			}
 			data = Utilities.serializeViewInfo(views);
 			saveProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
-		} catch (UniformAppletException ignored) {
+		} catch (PropertyAccessException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -230,7 +231,7 @@ public class MainApplet
 		// TODO vidjet sto tocno s ovim. kakva je implementacija i mozda poboljsat implementaciju
 		try {
 			communicator.dispose();
-		} catch (UniformAppletException ignored) {
+		} catch (Exception ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -367,7 +368,7 @@ public class MainApplet
 				String property = formatter.format(size);
 				try {
 					saveProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
-				} catch (UniformAppletException ex) {
+				} catch (PropertyAccessException ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -386,7 +387,7 @@ public class MainApplet
 				String property = formatter.format(size);
 				try {
 					saveProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
-				} catch (UniformAppletException ex) {
+				} catch (PropertyAccessException ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -405,7 +406,7 @@ public class MainApplet
 				String property = formatter.format(size);
 				try {
 					saveProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
-				} catch (UniformAppletException ex) {
+				} catch (PropertyAccessException ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -1215,14 +1216,14 @@ public class MainApplet
 	}
 	
 	private void viewPreferences() {
-		try {
+//		try {
 			String data = getPreferences().serialize();
 			openEditor("about", "config", data, FileTypes.FT_PREFERENCES, false, false);
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
-			echoStatusText(text, MessageEnum.Error);
-		}
+//		} catch (UniformAppletException e) {
+//			e.printStackTrace();
+//			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
+//			echoStatusText(text, MessageEnum.Error);
+//		}
 	}
 	
 	public void viewVHDLCode(String projectName, String fileName) {
@@ -1265,28 +1266,16 @@ public class MainApplet
 		return communicator.loadPredefinedFileContent(fileName);
 	}
 	
-	@Override
-	public void addPropertyListener(PropertyListener l, String name) {
-		communicator.addPropertyListener(l, name);
-	}
-
-	@Override
-	public void removePropertyListener(PropertyListener l, String name) {
-		communicator.removePropertyListener(l, name);
-	}
-	
-	private UserPreferences getPreferences() throws UniformAppletException {
+	public IUserPreferences getPreferences() {
 		return communicator.getPreferences();
 	}
 
-	@Override
-	public String getProperty(String name) throws UniformAppletException {
-		return communicator.getProperty(name);
+	private String getProperty(String name) throws PropertyAccessException {
+		return getPreferences().getProperty(name);
 	}
 	
-	@Override
-	public void saveProperty(String name, String data) throws UniformAppletException {
-		communicator.saveProperty(name, data);
+	private void saveProperty(String name, String data) throws PropertyAccessException {
+		getPreferences().setProperty(name, data);
 	}
 	
 	@Override
@@ -1294,7 +1283,7 @@ public class MainApplet
 		String language = null;
 		try {
 			language = getProperty(UserFileConstants.COMMON_LANGUAGE);
-		} catch (UniformAppletException ignored) {
+		} catch (PropertyAccessException ignored) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1636,7 +1625,13 @@ public class MainApplet
 	
 	@Override
 	public void propertyChanged(String name, String oldValue, String newValue) {
-		double size = Double.parseDouble(newValue.replace(',', '.'));
+		double size;
+		try {
+			size = getPreferences().getPropertyAsDouble(name);
+		} catch (PropertyAccessException e) {
+			e.printStackTrace();
+			return;
+		}
 		if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH)) {
 			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
 		} else if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_SIDEBAR_WIDTH)) {
@@ -1680,7 +1675,7 @@ public class MainApplet
 			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
 			property = formatter.format(size);
 			saveProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
-		} catch (UniformAppletException e) {
+		} catch (PropertyAccessException e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1892,7 +1887,7 @@ public class MainApplet
 			try {
 				String selected = getProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES);
 				shouldAutoSave = Boolean.parseBoolean(selected);
-			} catch (UniformAppletException e) {
+			} catch (PropertyAccessException e) {
 				shouldAutoSave = false;
 				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 				StringWriter sw = new StringWriter();
@@ -1952,7 +1947,7 @@ public class MainApplet
 		if(shouldAutoSave) {
 			try {
 				saveProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES, String.valueOf(shouldAutoSave));
-			} catch (UniformAppletException ignored) {
+			} catch (PropertyAccessException ignored) {
 				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);

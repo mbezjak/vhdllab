@@ -3,14 +3,14 @@ package hr.fer.zemris.vhdllab.preferences;
 import java.util.EventListener;
 
 /**
- * Listener for a certain property in {@link UserPreferences}.
+ * Listener for a certain property in {@link DefaultUserPreferences}.
  * 
  * @author Miro Bezjak
  */
 public interface PropertyListener extends EventListener {
 
 	/**
-	 * Invoked when <code>name</code> property value in {@link UserPreferences} has
+	 * Invoked when <code>name</code> property value in {@link DefaultUserPreferences} has
 	 * changed. <code>oldValue</code> will never be the same as <code>newValue</code>.
 	 * 
 	 * @param name

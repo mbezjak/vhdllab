@@ -5,8 +5,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import hr.fer.zemris.vhdllab.preferences.PropertyListener;
-import hr.fer.zemris.vhdllab.preferences.UserPreferences;
+import hr.fer.zemris.vhdllab.preferences.DefaultUserPreferences;
+import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
+import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -37,9 +38,9 @@ public class Communicator {
 		loadUserPreferences();
 	}
 
-	public void dispose() throws UniformAppletException {
-		UserPreferences preferences = cache.getUserPreferences();
-		for (String key : preferences.getAllPropertyKeys()) {
+	public void dispose() throws UniformAppletException, PropertyAccessException {
+		IUserPreferences preferences = cache.getUserPreferences();
+		for (String key : preferences.propertyKeys()) {
 			Long id = cache.getIdentifierForProperty(key);
 			invoker.saveUserFile(id, preferences.getProperty(key));
 		}
@@ -324,27 +325,7 @@ public class Communicator {
 		return cache.getViewType(view);
 	}
 	
-	public void addPropertyListener(PropertyListener l, String name) {
-		UserPreferences preferences = getPreferences();
-		preferences.addPropertyListener(l, name);
-	}
-
-	public void removePropertyListener(PropertyListener l, String name) {
-		UserPreferences preferences = getPreferences();
-		preferences.removePropertyListener(l, name);
-	}
-	
-	public String getProperty(String name) throws UniformAppletException {
-		UserPreferences preferences = getPreferences();
-		return preferences.getProperty(name);
-	}
-	
-	public void saveProperty(String name, String data) throws UniformAppletException {
-		UserPreferences preferences = getPreferences();
-		preferences.setProperty(name, data);
-	}
-
-	public UserPreferences getPreferences() {
+	public IUserPreferences getPreferences() {
 		return cache.getUserPreferences();
 	}
 
@@ -357,7 +338,7 @@ public class Communicator {
 			String data = invoker.loadUserFileContent(id);
 			properties.setProperty(name, data);
 		}
-		UserPreferences preferences = new UserPreferences(properties);
+		IUserPreferences preferences = new DefaultUserPreferences(properties);
 		cache.cacheUserPreferences(preferences);
 	}
 
