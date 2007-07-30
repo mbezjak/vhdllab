@@ -166,6 +166,11 @@ public class DummyOR implements ISchemaComponent {
 		}
 	}
 	
+	public EOrientation getPortOrientation(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public Iterator<SchemaPort> schemaPortIterator() {
 		// TODO Auto-generated method stub
 		return null;

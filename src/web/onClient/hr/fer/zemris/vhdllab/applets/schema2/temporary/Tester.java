@@ -71,7 +71,7 @@ public class Tester {
 		mpanel.setFileContent(fc);
 		
 		// create frame
-		JFrame frame = new JFrame();
+		JFrame frame = new JFrame("Schema test");
 		
 		frame.setLayout(new BorderLayout());
 		frame.add(mpanel, BorderLayout.CENTER);

@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.serialization;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -160,9 +161,8 @@ public class SchemaSerializer {
 		appendLine(writer);
 		writer.append("<portList>");
 		appendLine(writer);
-		Iterator<Port> portit = component.portIterator();
-		while (portit.hasNext()) {
-			serializePort(writer, portit.next());
+		for (int i = 0, sz = component.portCount(); i < sz; i++) {
+			serializePort(writer, component.getPort(i), component.getPortOrientation(i));
 		}
 		writer.append("</portList>");
 		appendLine(writer);
@@ -312,13 +312,15 @@ public class SchemaSerializer {
 	}
 	
 	
-	private void serializePort(Writer writer, Port port) throws IOException {
+	private void serializePort(Writer writer, Port port, EOrientation orient) throws IOException {
 		writer.append("<port>");
 		appendLine(writer);
 		
 		writer.append("<name>").append(port.getName()).append("</name>");
 		appendLine(writer);
 		writer.append("<direction>").append(port.getDirection().toString()).append("</direction>");
+		appendLine(writer);
+		writer.append("<orientation>").append(orient.toString()).append("</orientation>");
 		appendLine(writer);
 		Type pt = port.getType();
 		writer.append("<type>").append(pt.getTypeName()).append("</type>");

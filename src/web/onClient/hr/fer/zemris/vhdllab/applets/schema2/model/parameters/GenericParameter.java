@@ -51,6 +51,7 @@ public class GenericParameter<T extends IGenericValue> extends AbstractParameter
 		allowed = (allowed != null) ? (new HashSet<Object>(allowed)) : (null);
 		
 		param.constraint = new GenericConstraint<T>(allowed);
+		param.paramevent = (this.paramevent != null) ? (this.paramevent.copyCtor()) : (null);
 		
 		return param;
 	}

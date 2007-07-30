@@ -75,7 +75,7 @@ public class UserComponent extends DefaultSchemaComponent {
 		// init ports - put IN on WEST, and OUT ports on EAST
 		List<Port> ports = cint.getPorts();
 		for (Port p : ports) {
-			PortWrapper wrapper = new PortWrapper(p);
+			PortWrapper wrapper = new PortWrapper(p, null);
 			if (p.getDirection().isIN()) {
 				wrapper.setOrientation(PortWrapper.ORIENTATION_WEST);
 			} else if (p.getDirection().isOUT()) {

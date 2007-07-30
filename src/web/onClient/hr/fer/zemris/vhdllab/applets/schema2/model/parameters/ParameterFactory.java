@@ -54,6 +54,7 @@ public class ParameterFactory {
 		return parameter;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static IGenericValue createGenericValue(ParameterWrapper parwrapper) {
 		String valclass = parwrapper.getValueType();
 		Object valobj = null;
@@ -72,6 +73,7 @@ public class ParameterFactory {
 		return genval;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static IParameter createObject(ParameterWrapper parwrapper) {
 		IParameter parameter = new GenericParameter(parwrapper.getName(), parwrapper.getGeneric(), null);
 		
@@ -97,7 +99,7 @@ public class ParameterFactory {
 		}
 		
 		String eventName = parwrapper.getEventName();
-		if (eventName != null) parameter.setParameterEvent(eventName);
+		if (eventName != null && !eventName.trim().equals("")) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -118,7 +120,7 @@ public class ParameterFactory {
 		}
 		
 		String eventName = parwrapper.getEventName();
-		if (eventName != null) parameter.setParameterEvent(eventName);
+		if (eventName != null && !eventName.trim().equals("")) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -139,7 +141,7 @@ public class ParameterFactory {
 		}
 		
 		String eventName = parwrapper.getEventName();
-		if (eventName != null) parameter.setParameterEvent(eventName);
+		if (eventName != null && !eventName.trim().equals("")) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -160,7 +162,7 @@ public class ParameterFactory {
 		}
 		
 		String eventName = parwrapper.getEventName();
-		if (eventName != null) parameter.setParameterEvent(eventName);
+		if (eventName != null && !eventName.trim().equals("")) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -185,7 +187,7 @@ public class ParameterFactory {
 		}
 		
 		String eventName = parwrapper.getEventName();
-		if (eventName != null) parameter.setParameterEvent(eventName);
+		if (eventName != null && !eventName.trim().equals("")) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -210,7 +212,7 @@ public class ParameterFactory {
 		}
 		
 		String eventName = parwrapper.getEventName();
-		if (eventName != null) parameter.setParameterEvent(eventName);
+		if (eventName != null && !eventName.trim().equals("")) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}
@@ -231,7 +233,7 @@ public class ParameterFactory {
 		}
 		
 		String eventName = parwrapper.getEventName();
-		if (eventName != null) parameter.setParameterEvent(eventName);
+		if (eventName != null && !eventName.trim().equals("")) parameter.setParameterEvent(eventName);
 		
 		return parameter;
 	}

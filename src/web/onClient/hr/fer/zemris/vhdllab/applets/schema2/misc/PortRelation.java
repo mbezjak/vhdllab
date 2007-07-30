@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.ArrayList;
@@ -7,10 +8,12 @@ import java.util.List;
 
 public class PortRelation {
 	public Port port;
+	public EOrientation orientation;
 	public List<SchemaPort> relatedTo;
 
-	public PortRelation(Port p) {
+	public PortRelation(Port p, EOrientation orient) {
 		port = p;
+		orientation = orient;
 		relatedTo = new ArrayList<SchemaPort>();
 	}
 

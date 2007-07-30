@@ -250,6 +250,15 @@ public interface ISchemaComponent {
 	Port getPort(int index);
 	
 	/**
+	 * Dohvaca orijentaciju porta pod zadanim indeksom.
+	 * 
+	 * @param index
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
+	EOrientation getPortOrientation(int index);
+	
+	/**
 	 * Postavlja port pod zadanim indeksom,
 	 * dodajuci (i brisuci) pritom
 	 * odgovarajuce pinove.
@@ -331,16 +340,15 @@ public interface ISchemaComponent {
 	
 	/**
 	 * Sluzi za iteriranje kroz portove koji
-	 * se pojavljuju u sucelju.
-	 * 
-	 * @see <code>getSchemaPorts()</code> 
+	 * se pojavljuju u sucelju sklopa.
+	 *  
 	 */
 	Iterator<Port> portIterator();
 	
 	
 	/**
 	 * Sluzi za iteriranje kroz fizicke portove
-	 * komponente u shemi.
+	 * komponente u shemi (pinove).
 	 * 
 	 * @return
 	 */

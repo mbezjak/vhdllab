@@ -50,6 +50,7 @@ public class CaselessParameter extends AbstractParameter {
 		
 		tp.value = this.value;
 		tp.constraint = new CaselessConstraint(allowed);
+		tp.paramevent = (this.paramevent != null) ? (this.paramevent.copyCtor()) : (null);
 		
 		return tp;
 	}

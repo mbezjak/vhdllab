@@ -49,6 +49,7 @@ public class TextParameter extends AbstractParameter {
 		
 		tp.value = this.value;
 		tp.constraint = new TextConstraint(allowed);
+		tp.paramevent = (this.paramevent != null) ? (this.paramevent.copyCtor()) : (null);
 		
 		return tp;
 	}

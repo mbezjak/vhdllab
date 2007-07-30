@@ -22,6 +22,14 @@ import java.util.List;
  *
  */
 public interface IParameterEvent {
+	
+	/**
+	 * Vraca deep copy ovog objekta.
+	 * 
+	 * @return
+	 * Deep copy ovog objekta.
+	 */
+	IParameterEvent copyCtor();
 
 	/**
 	 * Lista promjena koje obavlja ovaj event.

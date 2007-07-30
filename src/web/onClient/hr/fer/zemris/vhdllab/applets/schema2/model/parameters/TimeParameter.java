@@ -51,6 +51,7 @@ public class TimeParameter extends AbstractParameter {
 		
 		tp.value = new Time(this.value);
 		tp.constraint = new TimeConstraint(allowed);
+		tp.paramevent = (this.paramevent != null) ? (this.paramevent.copyCtor()) : (null);
 		
 		return tp;
 	}

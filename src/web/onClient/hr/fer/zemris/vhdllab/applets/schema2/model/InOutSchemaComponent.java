@@ -138,7 +138,8 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	
 	public InOutSchemaComponent(Port modelledPort) {
 		parameters = new SchemaParameterCollection();
-		portrel = new PortRelation(modelledPort);
+		portrel = new PortRelation(modelledPort, 
+				(modelledPort.getDirection().isIN()) ? (EOrientation.EAST) : (EOrientation.WEST));
 		schemaports = new ArrayList<SchemaPort>();
 		width = WIDTH;
 		
@@ -316,7 +317,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		}
 		
 		// copy port relation
-		inout.portrel = new PortRelation(this.portrel.port);
+		inout.portrel = new PortRelation(this.portrel.port, this.portrel.orientation);
 		for (SchemaPort sp : inout.schemaports) {
 			inout.portrel.relatedTo.add(sp);
 		}
@@ -342,8 +343,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		// handle port
 		List<PortWrapper> ports = compwrap.getPortWrappers();
 		if (ports.size() < 1) throw new IllegalStateException("At least one port needed for in-out component.");
-		Port p = PortFactory.createPort(ports.get(0));
-		portrel = new PortRelation(p);
+		PortWrapper pw = ports.get(0);
+		Port p = PortFactory.createPort(pw);
+		portrel = new PortRelation(p, EOrientation.parse(pw.getOrientation()));
 		
 		// create schema ports
 		schemaports.clear();
@@ -444,6 +446,11 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	public Port getPort(int index) {
 		if (index != 0) throw new IndexOutOfBoundsException();
 		return portrel.port;
+	}
+
+	public EOrientation getPortOrientation(int index) {
+		if (index != 0) throw new IndexOutOfBoundsException();
+		return portrel.orientation;
 	}
 
 	public void setPort(int index, Port port) {

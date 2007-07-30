@@ -53,11 +53,11 @@ public class SetParameterCommand implements ICommand {
 
 
 	/* private fields */
-	Caseless objname;
-	String paramname;
-	EParameterHolder holder;
-	Object val, oldval;
-	boolean undoable;
+	private Caseless objname;
+	private String paramname;
+	private EParameterHolder holder;
+	private Object val, oldval;
+	private boolean undoable;
 	
 	
 	/* ctors */
@@ -71,7 +71,7 @@ public class SetParameterCommand implements ICommand {
 	 * @param parameterName
 	 * Ime parametra kojem treba promijeniti vrijednost.
 	 * @param parameterHolder
-	 * Enumeracija koja govori o tome kome pripada parametar.
+	 * Enumeracija koja govori o tome kome pripada parametar (komponenti, zici, ...).
 	 * @param value
 	 * Nova vrijednost parametra.
 	 * @param info

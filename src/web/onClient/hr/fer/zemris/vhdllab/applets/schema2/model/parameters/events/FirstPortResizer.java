@@ -43,8 +43,16 @@ public class FirstPortResizer implements IParameterEvent {
 	public FirstPortResizer() {
 	}
 	
+	
+	
+	
 
 	/* methods */
+
+	public IParameterEvent copyCtor() {
+		return new FirstPortResizer();
+	}
+
 
 	public List<ChangeTuple> getChanges() {
 		List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
@@ -58,7 +66,7 @@ public class FirstPortResizer implements IParameterEvent {
 	public boolean isUndoable() {
 		return false;
 	}
-
+	
 	public boolean performChange(Object oldvalue, IParameter parameter, ISchemaInfo info, ISchemaWire wire, ISchemaComponent component) {
 		if (component == null) return false;
 		
@@ -85,8 +93,8 @@ public class FirstPortResizer implements IParameterEvent {
 		Type tp = port.getType();
 		if (tp.isScalar()) return false;
 		int[] range = new int[2];
-		range[0] = tp.getRangeFrom();
-		range[1] = tp.getRangeTo() + (portnum - oldnum);
+		range[0] = tp.getRangeFrom() + (portnum - oldnum) * ((tp.hasVectorDirectionTO()) ? (0) : (1));
+		range[1] = tp.getRangeTo() + (portnum - oldnum) * ((tp.hasVectorDirectionTO()) ? (1) : (0));
 		port = new DefaultPort(port.getName(), port.getDirection(),
 				new DefaultType("std_logic_vector", range, tp.getVectorDirection()));
 		component.setPort(0, port);

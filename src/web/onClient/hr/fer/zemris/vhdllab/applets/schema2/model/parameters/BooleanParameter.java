@@ -2,11 +2,13 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidParameterValueException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.constraints.BooleanConstraint;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 
@@ -42,7 +44,15 @@ public class BooleanParameter extends AbstractParameter {
 	
 
 	public IParameter copyCtor() {
-		throw new NotImplementedException();
+		BooleanParameter tp = new BooleanParameter(this.generic, this.name);
+		Set<Object> allowed = this.constraint.getPossibleValues();
+		allowed = (allowed != null) ? (new HashSet<Object>(allowed)) : (null);
+		
+		tp.val = this.val;
+		tp.constraint = new BooleanConstraint(allowed);
+		tp.paramevent = (this.paramevent != null) ? (this.paramevent.copyCtor()) : (null);
+		
+		return tp;
 	}
 
 	public String getName() {

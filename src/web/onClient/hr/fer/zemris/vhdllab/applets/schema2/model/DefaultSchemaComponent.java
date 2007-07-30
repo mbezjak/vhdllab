@@ -296,7 +296,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				else throw new NotImplementedException("Direction '" + pw.getDirection() + "' unknown.");
 				
 				port = new DefaultPort(pw.getName(), dir, tp);
-				pr = new PortRelation(port);
+				pr = new PortRelation(port, EOrientation.parse(pw.getOrientation()));
 				portrelations.add(pr);
 				
 				int increment;
@@ -324,7 +324,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				else throw new NotImplementedException("Direction '" + pw.getDirection() + "' unknown.");
 				
 				port = new DefaultPort(pw.getName(), dir, tp);
-				pr = new PortRelation(port);
+				pr = new PortRelation(port, EOrientation.parse(pw.getOrientation()));
 				portrelations.add(pr);
 				
 				if (pw.getOrientation().equals(PortWrapper.ORIENTATION_NORTH)) {
@@ -543,8 +543,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		PortRelation npr;
 		SchemaPort nsp;
 		for (PortRelation portrel : this.portrelations) {
-			npr = new PortRelation(new DefaultPort(portrel.port.getName(),
-					portrel.port.getDirection(), portrel.port.getType()));
+			npr = new PortRelation(
+					new DefaultPort(portrel.port.getName(),
+					portrel.port.getDirection(), portrel.port.getType()),
+					portrel.orientation
+					);
 			for (SchemaPort sp : portrel.relatedTo) {
 				nsp = new SchemaPort(sp);
 				nsp.setMapping(null);
@@ -689,7 +692,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		PortRelation portrel;
 		for (PortWrapper portwrap : portwrappers) {
 			port = createPortFromWrapper(portwrap);
-			portrel = new PortRelation(port);
+			portrel = new PortRelation(port, EOrientation.parse(portwrap.getOrientation()));
 			portrelations.add(portrel);
 		}
 	}
@@ -731,6 +734,10 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		return portrelations.get(index).port;
 	}
 
+	public EOrientation getPortOrientation(int index) {
+		return portrelations.get(index).orientation;
+	}
+
 	public void setPort(int index, Port nport) {
 		if (index < 0 || index >= portrelations.size()) throw new IndexOutOfBoundsException();
 		
@@ -746,7 +753,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		// create a list of PortWrappers
 		List<PortWrapper> portwrappers = new ArrayList<PortWrapper>();
 		for (PortRelation pr : portrelations) {
-			PortWrapper pw = new PortWrapper(pr.port);
+			PortWrapper pw = new PortWrapper(pr.port, pr.orientation.toString());
 			portwrappers.add(pw);
 		}
 		
@@ -760,6 +767,8 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			sp.setMapping(oldsp.getMapping());
 		}
 	}
+	
+	
 
 	public boolean isGeneric() {
 		return generic;

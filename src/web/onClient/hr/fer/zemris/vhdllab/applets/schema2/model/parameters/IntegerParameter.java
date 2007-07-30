@@ -53,6 +53,7 @@ public class IntegerParameter extends AbstractParameter {
 		
 		tp.val = this.val;
 		tp.constraint = new IntegerConstraint(allowed);
+		tp.paramevent = (this.paramevent != null) ? (this.paramevent.copyCtor()) : (null);
 		
 		return tp;
 	}

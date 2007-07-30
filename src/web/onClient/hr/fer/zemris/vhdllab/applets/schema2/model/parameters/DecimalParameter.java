@@ -53,6 +53,7 @@ public class DecimalParameter extends AbstractParameter {
 		
 		tp.val = this.val;
 		tp.constraint = new DecimalConstraint(allowed);
+		tp.paramevent = (this.paramevent != null) ? (this.paramevent.copyCtor()) : (null);
 		
 		return tp;
 	}

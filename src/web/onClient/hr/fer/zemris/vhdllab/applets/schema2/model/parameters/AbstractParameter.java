@@ -17,6 +17,9 @@ public abstract class AbstractParameter implements IParameter {
 	}
 	
 
+	
+	
+
 	public IParameterEvent getParameterEvent() {
 		return paramevent;
 	}

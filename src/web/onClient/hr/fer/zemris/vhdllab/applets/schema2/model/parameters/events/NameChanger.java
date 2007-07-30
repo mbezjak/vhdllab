@@ -46,6 +46,12 @@ public class NameChanger implements IParameterEvent {
 
 	
 	/* methods */
+	
+	
+
+	public IParameterEvent copyCtor() {
+		return new NameChanger();
+	}
 
 	public List<ChangeTuple> getChanges() {
 		List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
