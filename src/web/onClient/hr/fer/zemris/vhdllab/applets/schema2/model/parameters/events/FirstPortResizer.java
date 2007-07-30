@@ -88,7 +88,6 @@ public class FirstPortResizer implements IParameterEvent {
 			return false;
 		}
 		
-		
 		// create new port of same type but new size
 		Type tp = port.getType();
 		if (tp.isScalar()) return false;
