@@ -73,6 +73,36 @@ public interface ISchemaInfo {
 	 * @return
 	 */
 	ISchemaPrototypeCollection getPrototyper();
+	
+	/**
+	 * Vraca identifikator koji dosad nije koristen u schemi.
+	 * 
+	 * @return
+	 */
+	Caseless getFreeIdentifier();
+	
+	/**
+	 * Vraca identifikator koji dosad nije koristen u schemi.
+	 * 
+	 * @param offered
+	 * Ponudeni identifikator.
+	 * @return
+	 * Ako ponudeni identifikator nije koristen, tada je on
+	 * povratna vrijednost metode (ne kopija).
+	 * Inace se vraca identifikator koji nije koristen u schemi,
+	 * ali je 'slican' ponudenom (slican => ovisno o implementaciji).
+	 * 
+	 */
+	Caseless getFreeIdentifier(Caseless offered);
+	
+	/**
+	 * Provjerava da li je identifikator koristen u schemi.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	boolean isFreeIdentifier(Caseless identifier);
+	
 }
 
 

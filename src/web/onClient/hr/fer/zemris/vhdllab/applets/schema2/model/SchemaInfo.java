@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -118,6 +119,20 @@ public class SchemaInfo implements ISchemaInfo {
 		
 		entity = ent;
 	}
+
+	public Caseless getFreeIdentifier() {
+		throw new NotImplementedException();
+	}
+
+	public Caseless getFreeIdentifier(Caseless offered) {
+		throw new NotImplementedException();
+	}
+
+	public boolean isFreeIdentifier(Caseless identifier) {
+		throw new NotImplementedException();
+	}
+	
+	
 
 }
 

@@ -1,6 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.exceptions;
 
 
+
+
+
 public class TimeFormatException extends RuntimeException {
 
 	/**

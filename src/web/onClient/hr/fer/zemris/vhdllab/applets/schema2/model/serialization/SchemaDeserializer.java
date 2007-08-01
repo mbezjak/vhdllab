@@ -103,6 +103,7 @@ public class SchemaDeserializer {
 		digester.addObjectCreate("schemaInfo/components/schemaComponent/portList/port", PortWrapper.class);
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/name", "name");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/direction", "direction");
+		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/orientation", "orientation");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/type", "type");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/vectorAscension", "vectorAscension");
 		digester.addBeanPropertySetter("schemaInfo/components/schemaComponent/portList/port/lowerBound", "lowerBound");

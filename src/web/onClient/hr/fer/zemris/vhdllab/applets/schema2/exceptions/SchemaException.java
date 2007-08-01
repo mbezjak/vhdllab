@@ -4,12 +4,16 @@ package hr.fer.zemris.vhdllab.applets.schema2.exceptions;
 
 
 /**
- * Baca se od strane tvornice sklopova.
  * 
  * @author Axel
  *
  */
 public class SchemaException extends RuntimeException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public SchemaException() {
 		super();

@@ -116,7 +116,7 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			xps[1] = w - 2 * PIN_LENGTH;
 			xps[2] = w - 2 * PIN_LENGTH + TRIANGLE_SIDE * 7 / 8;
 			List<SchemaPort> schports = cmp.getSchemaPorts();
-			int i = 0, siz = schports.size();
+			int i = 0;//, siz = schports.size();
 			for (SchemaPort sp : schports) {
 				yps[2] = sp.getOffset().y;
 				yps[0] = yps[2] - TRIANGLE_SIDE / 2;
@@ -143,7 +143,7 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			xps[0] = w - PIN_LENGTH;
 			xps[1] = w - PIN_LENGTH;
 			xps[2] = w - PIN_LENGTH + TRIANGLE_SIDE * 7 / 8;
-			List<SchemaPort> schports = cmp.getSchemaPorts();
+			//List<SchemaPort> schports = cmp.getSchemaPorts();
 			int i = 0;
 			for (SchemaPort sp : cmp.getSchemaPorts()) {
 				yps[2] = sp.getOffset().y;

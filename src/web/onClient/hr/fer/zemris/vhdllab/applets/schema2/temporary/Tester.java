@@ -1,16 +1,21 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyProjectContainer;
-import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteSegmentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.queries.FindDisjointSegments;
+import hr.fer.zemris.vhdllab.applets.schema2.model.queries.FindDisjointSegments.DisjointSets;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -19,10 +24,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.JFrame;
@@ -40,8 +42,8 @@ public class Tester {
 			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
 	}
-}
 
 	/**
 	 * Privremeno radi testiranja.
@@ -80,14 +82,17 @@ public class Tester {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		
-//		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(new Caseless("Input_scalar"), 40, 40);
-//		mpanel.getController().send(instantiate);
-//		instantiate = new InstantiateComponentCommand(new Caseless("Input_scalar"), 40, 120);
-//		mpanel.getController().send(instantiate);
-//		instantiate = new InstantiateComponentCommand(new Caseless("Output_scalar"), 520, 40);
-//		mpanel.getController().send(instantiate);
-//		instantiate = new InstantiateComponentCommand(new Caseless("VL_XOR"), 320, 40);
-//		mpanel.getController().send(instantiate);
+//		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 50, 50, 150, 50);
+//		mpanel.getController().send(addwire);
+//		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
+//		mpanel.getController().send(expand);
+//		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);
+//		mpanel.getController().send(expand);
+//		expand = new ExpandWireCommand(new Caseless("zica1"), 50, 50, 50, 250);
+//		mpanel.getController().send(expand);
+		
+		InstantiateComponentCommand inst = new InstantiateComponentCommand(new Caseless("Input_scalar"), 50, 50);
+		mpanel.getController().send(inst);
 		
 		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));
@@ -103,58 +108,56 @@ public class Tester {
 			CircuitInterface ci = sciextract.extractCircuitInterface(f);
 			ci.equals(null);
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	private static void testDummyWiz() {
-		DummyWizard wiz = new DummyWizard();
-		
-		FileContent fc = wiz.getInitialFileContent(null, "dummyProject");
-		
-		System.out.println(fc.getContent());
-	}
-	
-	private static void testPredef() {
-		PredefinedComponentsParser pcp = new PredefinedComponentsParser("configuration.xml");
-		
-		pcp.getConfiguration();
-	}
-	
-	private static void testSD() {
-		SchemaDeserializer sd = new SchemaDeserializer();
-		FileReader fr = null;
-		ISchemaInfo info = null;
-		
-		try {
-			fr = new FileReader("d:/sample.xml");
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found");
-			System.exit(1);
-		}
-		
-		try {
-			info = sd.deserializeSchema(fr);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		
-		System.out.println("Ok, parsed.");
-		
-		SchemaSerializer ss = new SchemaSerializer();
-		PrintWriter pw = new PrintWriter(System.out);
-		try {
-			ss.serializeSchema(pw, info);
-			pw.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	private static void testDummyWiz() {
+//		DummyWizard wiz = new DummyWizard();
+//		
+//		FileContent fc = wiz.getInitialFileContent(null, "dummyProject");
+//		
+//		System.out.println(fc.getContent());
+//	}
+//	
+//	private static void testPredef() {
+//		PredefinedComponentsParser pcp = new PredefinedComponentsParser("configuration.xml");
+//		
+//		pcp.getConfiguration();
+//	}
+//	
+//	private static void testSD() {
+//		SchemaDeserializer sd = new SchemaDeserializer();
+//		FileReader fr = null;
+//		ISchemaInfo info = null;
+//		
+//		try {
+//			fr = new FileReader("d:/sample.xml");
+//		} catch (FileNotFoundException e) {
+//			System.out.println("File not found");
+//			System.exit(1);
+//		}
+//		
+//		try {
+//			info = sd.deserializeSchema(fr);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//		
+//		System.out.println("Ok, parsed.");
+//		
+//		SchemaSerializer ss = new SchemaSerializer();
+//		PrintWriter pw = new PrintWriter(System.out);
+//		try {
+//			ss.serializeSchema(pw, info);
+//			pw.flush();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 }
 
