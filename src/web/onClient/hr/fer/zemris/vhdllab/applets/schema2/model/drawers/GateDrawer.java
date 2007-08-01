@@ -7,93 +7,83 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 
-
-
-
-
-
-
 public abstract class GateDrawer {
-	
-	
+
 	/* static fields */
 	public static final int PORT_SIZE = 4;
 	public static final int NEGATE_SIZE = 10;
 	public static final int PIN_LENGTH = Constants.GRID_SIZE * 2;
 	public static final int EDGE_OFFSET = (int) (Constants.GRID_SIZE * 1.5);
-	
-	
+
 	/* private fields */
 	private ISchemaComponent comp_to_draw;
+	private String componentName;
 
-	
-	
-	
 	public GateDrawer(ISchemaComponent componentToDraw) {
 		comp_to_draw = componentToDraw;
+		componentName = comp_to_draw.getTypeName().toString();
 	}
-	
-	
+
 	protected void draw(Graphics2D graphics, boolean detectNegations) {
 		int w = comp_to_draw.getWidth();
 		int h = comp_to_draw.getHeight();
 		int specialh = 0;
-		
+
 		// draw ports and wires to those ports
 		for (SchemaPort port : comp_to_draw.getSchemaPorts()) {
 			Caseless mapping = port.getMapping();
 			XYLocation offset = port.getOffset();
-			
+
 			if (offset.x == 0 || offset.x == w) {
-				graphics.drawLine(offset.x, offset.y, w/2, offset.y);
-				if (offset.x == w) specialh = offset.y;
+				graphics.drawLine(offset.x, offset.y, w / 2, offset.y);
+				if (offset.x == w)
+					specialh = offset.y;
 			}
 			if (offset.y == 0 || offset.y == h) {
-				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
+				graphics.drawLine(offset.x, offset.y, offset.x, h / 2);
 			}
-			
-			if (!Caseless.isNullOrEmpty(mapping)) continue;
-			
+
+			if (!Caseless.isNullOrEmpty(mapping))
+				continue;
+
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
-			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
+			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE
+					/ 2, PORT_SIZE, PORT_SIZE);
 			graphics.setColor(c);
-			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
+			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE
+					/ 2, PORT_SIZE, PORT_SIZE);
 		}
-		
+
 		// draw a rectangle
 		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);
-		graphics.fillRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
-		if (detectNegations) graphics.fillOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
-				NEGATE_SIZE, NEGATE_SIZE);
+		graphics.fillRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2
+				* EDGE_OFFSET);
+		if (detectNegations)
+			graphics.fillOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
+					NEGATE_SIZE, NEGATE_SIZE);
 		graphics.setColor(c);
-		graphics.drawRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
-		if (detectNegations) graphics.drawOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
-				NEGATE_SIZE, NEGATE_SIZE);
-		
-		
+		graphics.drawRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2
+				* EDGE_OFFSET);
+		if (detectNegations)
+			graphics.drawOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
+					NEGATE_SIZE, NEGATE_SIZE);
+
+		// draw component name
+		Font oldf = graphics.getFont();
+		Font f = new Font(Constants.TEXT_FONT_FAMILY, Font.PLAIN,
+				Constants.TEXT_FONT_SIZE);
+
+		graphics.setFont(f);
+		graphics.drawString(componentName, w / 2 - f.getSize()
+				* componentName.length() / 3, h - f.getSize() / 2);
+
+		graphics.setFont(oldf);
+
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

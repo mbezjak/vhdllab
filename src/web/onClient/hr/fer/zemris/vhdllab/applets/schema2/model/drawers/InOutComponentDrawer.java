@@ -13,27 +13,17 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
-
-
-
-
-
-
-
-
-
-
 /**
  * A drawer that draws only InOutSchemaComponents.
  * 
  * @author brijest
- *
+ * 
  */
 public class InOutComponentDrawer implements IComponentDrawer {
 
@@ -45,133 +35,141 @@ public class InOutComponentDrawer implements IComponentDrawer {
 	private static final int PER_PORT_SIZE = Constants.GRID_SIZE * 2;
 	private static final int FONT_SIZE = 8;
 
-	
 	/* private fields */
 	private InOutSchemaComponent cmp;
-	
-	
-	
+	private String componentName;
+
 	/* ctors */
-	
+
 	public InOutComponentDrawer(ISchemaComponent cmpToDraw) {
 		if (!(cmpToDraw instanceof InOutSchemaComponent))
-			throw new IllegalArgumentException("This drawer can only draw an instance of '"
-					+ cmpToDraw.getClass().getName() + "'.");
-		cmp = (InOutSchemaComponent)cmpToDraw;
+			throw new IllegalArgumentException(
+					"This drawer can only draw an instance of '"
+							+ cmpToDraw.getClass().getName() + "'.");
+		cmp = (InOutSchemaComponent) cmpToDraw;
+		componentName = cmpToDraw.getName().toString();
 	}
-	
-	
 
 	/* methods */
 
 	public void draw(Graphics2D graphics) {
 		int w = cmp.getWidth();
 		int h = cmp.getHeight();
-		
+
 		// draw wires and ports
 		for (SchemaPort sp : cmp.getSchemaPorts()) {
 			Caseless mapping = sp.getMapping();
-			
+
 			XYLocation offset = sp.getOffset();
-			
+
 			if (offset.x == 0 || offset.x == w) {
-				graphics.drawLine(offset.x, offset.y, w/2, offset.y);
+				graphics.drawLine(offset.x, offset.y, w / 2, offset.y);
 			}
 			if (offset.y == 0 || offset.y == h) {
-				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
+				graphics.drawLine(offset.x, offset.y, offset.x, h / 2);
 			}
-			
-			if (!Caseless.isNullOrEmpty(mapping)) continue;
-			
+
+			if (!Caseless.isNullOrEmpty(mapping))
+				continue;
+
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
-			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
+			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE
+					/ 2, PORT_SIZE, PORT_SIZE);
 			graphics.setColor(c);
-			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
+			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE
+					/ 2, PORT_SIZE, PORT_SIZE);
 		}
-		
+
 		// draw component body with triangles and port nums
 		Port port;
 		Iterator<Port> it = cmp.portIterator();
 		try {
 			port = it.next();
 		} catch (NoSuchElementException e) {
-			throw new IllegalStateException("In-out component must have at least one port.", e);
+			throw new IllegalStateException(
+					"In-out component must have at least one port.", e);
 		}
 		Direction dir = port.getDirection();
 		Type tp = port.getType();
 		boolean downto = tp.hasVectorDirectionDOWNTO();
 		int rangeoffset = (tp.isScalar()) ? (0) : (tp.getRangeFrom());
-		
+
 		if (dir.equals(Direction.IN)) {
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
-			graphics.fillRect(0, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
+			graphics.fillRect(0, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2
+					* PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			graphics.setColor(c);
-			graphics.drawRect(0, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
-			
+			graphics.drawRect(0, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2
+					* PIN_LENGTH, h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
+
 			int[] xps = new int[3];
 			int[] yps = new int[3];
 			xps[0] = w - 2 * PIN_LENGTH;
 			xps[1] = w - 2 * PIN_LENGTH;
 			xps[2] = w - 2 * PIN_LENGTH + TRIANGLE_SIDE * 7 / 8;
 			List<SchemaPort> schports = cmp.getSchemaPorts();
-			int i = 0;//, siz = schports.size();
+			int i = 0;// , siz = schports.size();
 			for (SchemaPort sp : schports) {
 				yps[2] = sp.getOffset().y;
 				yps[0] = yps[2] - TRIANGLE_SIDE / 2;
 				yps[1] = yps[0] + TRIANGLE_SIDE;
 				graphics.fillPolygon(xps, yps, 3);
-				
+
 				// write port index
-				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i) : (i + rangeoffset)),
-						xps[0] - FONT_SIZE * 2, (yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
-				
+				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i)
+						: (i + rangeoffset)), xps[0] - FONT_SIZE * 2,
+						(yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
+
 				i++;
 			}
 		} else if (dir.equals(Direction.OUT)) {
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
-			graphics.fillRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH,
+			graphics.fillRect(PIN_LENGTH,
+					EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH,
 					h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
 			graphics.setColor(c);
-			graphics.drawRect(PIN_LENGTH, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH,
+			graphics.drawRect(PIN_LENGTH,
+					EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2 * PIN_LENGTH,
 					h - 2 * EMPTY_EDGE_OFFSET - PER_PORT_SIZE);
-			
+
 			int[] xps = new int[3];
 			int[] yps = new int[3];
 			xps[0] = w - PIN_LENGTH;
 			xps[1] = w - PIN_LENGTH;
 			xps[2] = w - PIN_LENGTH + TRIANGLE_SIDE * 7 / 8;
-			//List<SchemaPort> schports = cmp.getSchemaPorts();
+			// List<SchemaPort> schports = cmp.getSchemaPorts();
 			int i = 0;
 			for (SchemaPort sp : cmp.getSchemaPorts()) {
 				yps[2] = sp.getOffset().y;
 				yps[0] = yps[2] - TRIANGLE_SIDE / 2;
 				yps[1] = yps[0] + TRIANGLE_SIDE;
 				graphics.fillPolygon(xps, yps, 3);
-				
+
 				// write port index
-				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i) : (i + rangeoffset)),
-						PIN_LENGTH + FONT_SIZE / 2, (yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
-				
+				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i)
+						: (i + rangeoffset)), PIN_LENGTH + FONT_SIZE / 2,
+						(yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
+
 				i++;
 			}
 		} else {
-			throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
+			throw new NotImplementedException("Direction '" + dir.toString()
+					+ "' not implemented.");
 		}
+
+		// draw component name
+		Font oldf = graphics.getFont();
+		Font f = new Font(Constants.TEXT_FONT_FAMILY, Font.PLAIN,
+				Constants.TEXT_FONT_SIZE + 2);
+
+		graphics.setFont(f);
+		graphics.drawString(componentName, w / 2 - f.getSize()
+				* componentName.length() / 3, h-f.getSize());
+
+		graphics.setFont(oldf);
 	}
-	
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
