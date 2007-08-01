@@ -18,6 +18,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
 /**
  * Brise jedan segment odredene zice.
+ * Nece podijeliti zicu na dvije zice ako su
+ * brisanjem segmenta nastale dvije cjeline,
+ * i nece obrisati zicu ako je obrisan posljednji
+ * segment.
  * 
  * @author brijest
  *

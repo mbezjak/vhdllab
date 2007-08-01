@@ -6,9 +6,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.QueryResult;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
+import hr.fer.zemris.vhdllab.applets.schema2.model.QueryResult;
 
 import java.util.ArrayList;
 import java.util.Collections;

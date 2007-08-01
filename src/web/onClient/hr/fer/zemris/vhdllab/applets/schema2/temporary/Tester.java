@@ -6,16 +6,12 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyProjectContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteSegmentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteSegmentAndDivideCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.queries.FindDisjointSegments;
-import hr.fer.zemris.vhdllab.applets.schema2.model.queries.FindDisjointSegments.DisjointSets;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -82,17 +78,18 @@ public class Tester {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		
-//		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 50, 50, 150, 50);
-//		mpanel.getController().send(addwire);
-//		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
-//		mpanel.getController().send(expand);
-//		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);
-//		mpanel.getController().send(expand);
-//		expand = new ExpandWireCommand(new Caseless("zica1"), 50, 50, 50, 250);
-//		mpanel.getController().send(expand);
+		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 50, 50, 150, 50);
+		mpanel.getController().send(addwire);
+		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
+		mpanel.getController().send(expand);
+		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);
+		mpanel.getController().send(expand);
+		expand = new ExpandWireCommand(new Caseless("zica1"), 50, 50, 50, 250);
+		mpanel.getController().send(expand);
 		
-		InstantiateComponentCommand inst = new InstantiateComponentCommand(new Caseless("Input_scalar"), 50, 50);
-		mpanel.getController().send(inst);
+		DeleteSegmentAndDivideCommand delndiv = new DeleteSegmentAndDivideCommand(new Caseless("zica1"),
+				new WireSegment(150, 50, 150, 100));
+		mpanel.getController().send(delndiv);
 		
 		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));

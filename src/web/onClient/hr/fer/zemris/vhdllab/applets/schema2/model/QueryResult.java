@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.schema2.misc;
+package hr.fer.zemris.vhdllab.applets.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
 
