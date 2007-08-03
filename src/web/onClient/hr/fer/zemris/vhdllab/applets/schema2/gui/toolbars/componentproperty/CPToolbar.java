@@ -180,6 +180,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	private void cleanUpGui() {
 		// makni sve komponente sa panela
 		removeAll();
+		repaint();
 	}
 
 	/**
