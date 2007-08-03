@@ -555,7 +555,7 @@ public class GhdlResults
 		//System.out.println(sParser.getSignalNames());
 		//System.out.println(sParser.getSignalValues());
         
-        System.out.println(sParser.getExpandedSignalNames());
-        System.out.println(sParser.getCurrentVectorIndex());
+//        System.out.println(sParser.getExpandedSignalNames());
+//        System.out.println(sParser.getCurrentVectorIndex());
     }
 }

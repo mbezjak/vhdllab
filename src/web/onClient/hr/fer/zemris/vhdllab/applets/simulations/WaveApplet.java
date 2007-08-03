@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 
 import java.awt.BorderLayout;
@@ -1709,7 +1709,7 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 		// this.projectContainer = container;
 	}
 

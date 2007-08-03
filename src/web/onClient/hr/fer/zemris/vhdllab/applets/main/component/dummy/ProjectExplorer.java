@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main.component.dummy;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.model.Pair;
@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 	private static final long serialVersionUID = 4932799790563214089L;
-	private ProjectContainer container;
+	private ISystemContainer container;
 	private JList list;
 	private DefaultListModel model;
 	private String projectName;
@@ -39,9 +39,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				if(e.getClickCount() == 2) {
 					JList l = (JList) e.getSource();
 					int index = l.locationToIndex(e.getPoint());
-					try {
-						container.openEditor(projectName, (String)model.getElementAt(index), true, false);
-					} catch (UniformAppletException ex) {}
+					container.openEditor(projectName, (String)model.getElementAt(index), true, false);
 				}
 			}
 
@@ -64,8 +62,8 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		}
 	}
 
-	public void setProjectContainer(ProjectContainer pContainer) {
-		this.container = pContainer;
+	public void setSystemContainer(ISystemContainer container) {
+		this.container = container;
 	}
 
 	public void addProject(String projectName) {

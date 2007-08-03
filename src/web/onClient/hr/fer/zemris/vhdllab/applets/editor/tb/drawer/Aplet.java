@@ -5,7 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
@@ -48,7 +48,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	String elementGrafa="pozadina";
 	CircuitInterface io;
 	
-	private ProjectContainer container;
+	private ISystemContainer container;
 	private String projectName;
 	private String fileName;
 	private String backupData;
@@ -494,6 +494,9 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 			duration = data.substring(start, end);
 		}
 		
+		data = data.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<testbench>", "");
+		data = data.replace("</testbench>", "");
+		
 		setData(data);
 		if(this.in_panel.podatci_t == null) {
 			try {
@@ -509,8 +512,8 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public void setProjectContainer(ProjectContainer pContainer) {
-		this.container = pContainer;
+	public void setSystemContainer(ISystemContainer container) {
+		this.container = container;
 	}
 
 

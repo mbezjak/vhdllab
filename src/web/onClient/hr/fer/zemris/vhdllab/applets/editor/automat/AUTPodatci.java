@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityParser;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.ReturnData;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -61,7 +61,7 @@ public class AUTPodatci {
 	}
 
 	//TODO dovrsiti lokalizaciju...
-	public AUTPodatci(Component drawer,ProjectContainer pc, ResourceBundle bu) {
+	public AUTPodatci(Component drawer,ISystemContainer container, ResourceBundle bu) {
 		super();
 		JLabel label2=new JLabel(bu.getString(LanguageConstants.DIALOG_INPUT_TYPE));
 		JLabel label3=new JLabel(bu.getString(LanguageConstants.DIALOG_INPUT_RSET));
@@ -69,7 +69,7 @@ public class AUTPodatci {
 		
 		//TODO pozivanje entityTable-a kad bude gotov...
 		EntityTable interfac=new EntityTable();
-		interfac.setProjectContainer(pc);
+		interfac.setProjectContainer(container);
 		interfac.init();
 
 		String[] pom={"Moore","Mealy"};

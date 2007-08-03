@@ -7,7 +7,7 @@ import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
@@ -82,7 +82,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	protected static RedoAction redoAction;
 	protected static UndoManager undo = new UndoManager();
 	
-	private ProjectContainer container;
+	private ISystemContainer container;
 	private FileContent content;
 	
 	 
@@ -246,8 +246,8 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
 	}
 
-	public void setProjectContainer(ProjectContainer pContainer) {
-		this.container = pContainer;
+	public void setSystemContainer(ISystemContainer container) {
+		this.container = container;
 	}
 
 	public FileContent getInitialFileContent(Component parent, String projectName) {

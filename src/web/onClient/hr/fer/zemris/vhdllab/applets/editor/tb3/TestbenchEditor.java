@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 
@@ -17,7 +17,7 @@ public class TestbenchEditor extends JPanel implements IEditor, IWizard {
 	
 	private static final long serialVersionUID = -1637316576029494858L;
 	
-	private ProjectContainer container;
+	private ISystemContainer container;
 	private boolean readOnly;
 	private boolean savable;
 	private boolean modified;
@@ -88,7 +88,7 @@ public class TestbenchEditor extends JPanel implements IEditor, IWizard {
 	}
 
 	@Override
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 		this.container = container;
 	}
 

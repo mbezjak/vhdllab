@@ -32,7 +32,8 @@ public class FileTypes {
 	public static boolean isCircuit(String type) {
 		return type.equals(FileTypes.FT_VHDL_SOURCE) ||
 				type.equals(FileTypes.FT_VHDL_STRUCT_SCHEMA) ||
-				type.equals(FileTypes.FT_VHDL_AUTOMAT);
+				type.equals(FileTypes.FT_VHDL_AUTOMAT) ||
+				type.equals(FileTypes.FT_PREDEFINED);
 	}
 	
 	public static boolean isPredefined(String type) {
@@ -47,14 +48,6 @@ public class FileTypes {
 		return !(isSimulation(type) || isTestbench(type) || isCircuit(type));
 	}
 	
-	public static boolean isCompilable(String type) {
-		return FileTypes.isCircuit(type);
-	}
-	
-	public static boolean isSimulatable(String type) {
-		return FileTypes.isTestbench(type);
-	}
-
 	public static List<String> values() {
 		List<String> values = new ArrayList<String>();
 		values.add(FileTypes.FT_VHDL_SOURCE);

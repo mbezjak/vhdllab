@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 
@@ -34,7 +34,7 @@ public class PreferencesWizard extends JPanel implements IWizard {
 	}
 
 	@Override
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 	}
 
 	@Override

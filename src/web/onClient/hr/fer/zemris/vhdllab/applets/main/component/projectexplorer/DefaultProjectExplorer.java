@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
@@ -55,7 +55,7 @@ import javax.swing.tree.TreeSelectionModel;
  * 
  * @author Boris Ozegovic
  */
-public class ProjectExplorer extends JPanel implements IProjectExplorer {
+public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 	/* 
 	 * Project explorer je zamisljen kao stablo koje ce u svakom trenutku
 	 * moci prikazivati tri razlicite hijerarhije: X uses Y, X is used in Y i
@@ -135,7 +135,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	private Hierarchy hierarchy;
 
 	/** ProjectContainer */
-	private ProjectContainer projectContainer;
+	private ISystemContainer systemContainer;
 	private VHDLCellRenderer renderer;
 
 	private TreePath workingTreePath;
@@ -166,7 +166,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	/**
 	 * Default Constructor
 	 */
-	public ProjectExplorer() {
+	public DefaultProjectExplorer() {
 		// create set of expanded treepaths
 		expandedNodes = new HashSet<TreePath>();
 		allProjects = new ArrayList<String>();
@@ -376,7 +376,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 					.getUserObject();
 
 			// provjeri kojeg je tipa
-			type = projectContainer.getFileType(nodeProjectName, node.toString());
+			type = systemContainer.getFileType(nodeProjectName, node.toString());
 
 			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
 				setIcon(vhdl);
@@ -536,21 +536,21 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			String name = null;
 
 			if (event.getSource().equals(addProject)) {
-				projectContainer.createNewProjectInstance();
+				systemContainer.createNewProjectInstance();
 			} else if (event.getSource().equals(addVHDL)) {
-				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
+				systemContainer.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
 			} else if (event.getSource().equals(addTb)) {
-				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
+				systemContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
 			} else if (event.getSource().equals(addSchema)) {
-				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
+				systemContainer.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
 			} else if (event.getSource().equals(addAutomat)) {
-				projectContainer.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
+				systemContainer.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
 			} else if (event.getSource().equals(compile)) {
 				fileName = getFileName();
 				if (fileName != null) {
 					name = getProjectName();
 					if (name != null) {
-						projectContainer.compile(name, fileName);
+						systemContainer.compile(name, fileName);
 					}
 				}
 			} else if (event.getSource().equals(simulate)) {
@@ -558,7 +558,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				if (fileName != null) {
 					name = getProjectName();
 					if (name != null) {
-						projectContainer.simulate(name, fileName);
+						systemContainer.simulate(name, fileName);
 					}
 				}
 			} else if (event.getSource().equals(setActive)) {
@@ -572,7 +572,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				if (fileName != null) {
 					name = getProjectName();
 					if (name != null) {
-						projectContainer.viewVHDLCode(name, fileName);
+						systemContainer.viewVHDLCode(name, fileName);
 					}
 				}
 			} else if (event.getSource().equals(deleteFile)) {
@@ -717,13 +717,9 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 				} else if (event.getClickCount() == 2) {
 					fileName = getFileName();
 					if (fileName != null) {
-						try {
-							name = getProjectName();
-							if (name != null) {
-								projectContainer.openEditor(name, fileName, true, false);
-							}
-						} catch (UniformAppletException ex) {
-							ex.printStackTrace();
+						name = getProjectName();
+						if (name != null) {
+							systemContainer.openEditor(name, fileName, true, false);
 						}
 					}
 				}
@@ -825,12 +821,12 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 
 	/**
-	 * Postavlja projectContainer
+	 * Postavlja systemContainer
 	 * 
-	 * @param pContainer projectContainer
+	 * @param container systemContainer
 	 */
-	public void setProjectContainer(ProjectContainer pContainer) {
-		this.projectContainer = pContainer;
+	public void setSystemContainer(ISystemContainer container) {
+		this.systemContainer = container;
 	}
 
 
@@ -843,7 +839,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 	public void addFile(String projectName, String fileName) {
 		/* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
 		this.filesByProjects.get(projectName).add(fileName);
-		if(projectContainer.isTestbench(projectName, fileName)) {
+		if(systemContainer.isTestbench(projectName, fileName)) {
 			this.refreshProject(projectName);
 		} else {
 			addFileInProject(projectName, fileName);
@@ -967,7 +963,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 
 		// dohvaca sve root cvorove tog projekta
 		try {
-			hierarchy = projectContainer.extractHierarchy(projectName);
+			hierarchy = systemContainer.extractHierarchy(projectName);
 		} catch (UniformAppletException e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1012,7 +1008,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		PeNode rootNode = null;
 
 		try {
-			hierarchy = projectContainer.extractHierarchy(projectName);
+			hierarchy = systemContainer.extractHierarchy(projectName);
 		} catch (UniformAppletException e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1107,7 +1103,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 		PeNode rootNode = null;
 
 		try {
-			hierarchy = projectContainer.extractHierarchy(projectName);
+			hierarchy = systemContainer.extractHierarchy(projectName);
 		} catch (UniformAppletException e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1335,7 +1331,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			this.treeModel.removeNodeFromParent(node);
 			try {
-				this.projectContainer.deleteFile(name, node.toString());
+				this.systemContainer.deleteFile(name, node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1380,7 +1376,7 @@ public class ProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			this.treeModel.removeNodeFromParent((PeNode)node);
 			try {
-				this.projectContainer.deleteProject(node.toString());
+				this.systemContainer.deleteProject(node.toString());
 				this.allProjects.remove(node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block

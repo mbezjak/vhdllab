@@ -10,5 +10,8 @@ public class UserFileConstants {
 	public static final String SYSTEM_ALWAYS_SAVE_RESOURCES = "system.always.save.resources";
 	public static final String SYSTEM_OPENED_EDITORS = "system.opened.editors";
 	public static final String SYSTEM_OPENED_VIEWS = "system.opened.views";
+	public static final String SYSTEM_DEFAULT_EDITOR_PLACEMENT = "system.default.editor.placement";
+	public static final String SYSTEM_DEFAULT_VIEW_PLACEMENT = "system.default.view.placement";
+	public static final String SYSTEM_DEFAULT_PROJECT_EXPLORER_PLACEMENT = "system.default.project.explorer.placement";
 	
 }

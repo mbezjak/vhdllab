@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
@@ -287,8 +287,8 @@ public class EntityTable extends JPanel implements IEntityWizard{
 		return inter;
 	}
 
-	public void setProjectContainer(ProjectContainer pContainer) {
-		if (pContainer!=null)bundle=pContainer.getResourceBundle("Client_EntityTable_ApplicationResources");
+	public void setProjectContainer(ISystemContainer container) {
+		if (container!=null)bundle=container.getResourceBundle("Client_EntityTable_ApplicationResources");
 		else
 			bundle=CachedResourceBundles.getBundle("Client_EntityTable_ApplicationResources","en");
 		}

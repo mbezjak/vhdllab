@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedCompone
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
@@ -81,7 +81,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private ComponentToAddToolbar componentToAddToolbar;
 
 	/* IEditor private fields */
-	private ProjectContainer projectContainer;
+	private ISystemContainer systemContainer;
 	private FileContent filecontent;
 	private boolean readonly, saveable, modified;
 
@@ -115,7 +115,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		controller = new LocalController();
 		canvas = new SchemaCanvas();
 		localGUIController = new CanvasToolbarLocalGUIController();
-		projectContainer = null;
+		systemContainer = null;
 		filecontent = null;
 		readonly = false;
 		saveable = false;
@@ -158,15 +158,14 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	private void initUserPrototypes() {
-		if (projectContainer == null || filecontent == null)
-			return;
+		if (systemContainer == null || filecontent == null) return;
 		System.out.println("Initializing user prototypes.");
 
 		String projectname = filecontent.getProjectName();
 		String thisname = filecontent.getFileName();
 		List<String> circuitnames = null;
 		try {
-			circuitnames = projectContainer.getAllCircuits(projectname);
+			circuitnames = systemContainer.getAllCircuits(projectname);
 			if (circuitnames == null)
 				throw new NullPointerException(
 						"getAllCircuits(...) returned null.");
@@ -178,7 +177,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		ISchemaInfo info = controller.getSchemaInfo();
 		Hierarchy hierarchy;
 		try {
-			hierarchy = projectContainer.extractHierarchy(projectname);
+			hierarchy = systemContainer.extractHierarchy(projectname);
 		} catch (UniformAppletException e1) {
 			throw new SchemaException("Cannot extract hierarchy for project '"
 					+ projectname + "'.", e1);
@@ -194,8 +193,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			// get circuit interface for the component
 			CircuitInterface circint;
 			try {
-				circint = projectContainer.getCircuitInterfaceFor(projectname,
-						name);
+				circint = systemContainer.getCircuitInterfaceFor(projectname, name);
 			} catch (UniformAppletException e) {
 				throw new SchemaException(
 						"Could not fetch circuit interface for circuit '"
@@ -377,9 +375,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		initPrototypes();
 	}
 
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 		System.out.println("Project container set.");
-		projectContainer = container;
+		systemContainer = container;
 	}
 
 	public void setReadOnly(boolean flag) {

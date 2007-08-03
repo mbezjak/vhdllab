@@ -3,9 +3,10 @@ package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
@@ -27,21 +28,21 @@ import java.util.ResourceBundle;
 
 
 
-public class DummyProjectContainer implements ProjectContainer {
+public class DummyProjectContainer implements ISystemContainer {
 
-	public void compile(String projectName, String fileName) {
+	public boolean compile(String projectName, String fileName) {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 
-	public void createNewFileInstance(String type) {
+	public boolean createNewFileInstance(String type) {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 
-	public void createNewProjectInstance() {
+	public boolean createNewProjectInstance() {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 
 	public void deleteFile(String projectName, String fileName) throws UniformAppletException {
@@ -94,7 +95,7 @@ public class DummyProjectContainer implements ProjectContainer {
 		return null;
 	}
 
-	public IEditor getEditor(String projectName, String fileName) throws UniformAppletException {
+	public IEditor getEditor(String projectName, String fileName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -148,7 +149,7 @@ public class DummyProjectContainer implements ProjectContainer {
 		return null;
 	}
 
-	public IView getView(String type) throws UniformAppletException {
+	public IView getView(String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -188,7 +189,7 @@ public class DummyProjectContainer implements ProjectContainer {
 		return false;
 	}
 
-	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) throws UniformAppletException {
+	public void openEditor(String projectName, String fileName, boolean isSavable, boolean isReadOnly) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -198,9 +199,9 @@ public class DummyProjectContainer implements ProjectContainer {
 		
 	}
 
-	public void simulate(String projectName, String fileName) {
+	public boolean simulate(String projectName, String fileName) {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 
 	public void viewVHDLCode(String projectName, String fileName) {
@@ -208,6 +209,153 @@ public class DummyProjectContainer implements ProjectContainer {
 		
 	}
 
+	@Override
+	public boolean compile(IEditor editor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean compileLastHistoryResult() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean compileWithDialog() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IComponentProvider getComponentProvider() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getFilesFor(String projectName)
+			throws UniformAppletException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FileIdentifier getLastCompilationHistoryTarget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FileIdentifier getLastSimulationHistoryTarget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void openEditor(String projectName, String fileName, String content,
+			String type, boolean savable, boolean readOnly) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void openPreferences() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean simulate(IEditor editor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean simulateLastHistoryResult() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean simulateWithDialog() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void viewVHDLCode(IEditor editor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeAllButThisEditor(IEditor editorToKeepOpened,
+			boolean showDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeAllEditors(boolean showDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeEditor(IEditor editor, boolean showDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeView(IView view) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void openProjectExplorer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IView openView(String type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void saveAllEditors() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveEditor(IEditor editor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getProperty(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setProperty(String name, String data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void refreshWorkspace() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
 
 

@@ -414,7 +414,7 @@ class Scale extends JPanel
 		scaleEndPointInPixels *= pixelFactor;
 
         setDurationsInPixelsAfterZoom(scaleFactor);
-        System.out.println("da");
+//        System.out.println("da");
     }
 
 
@@ -541,8 +541,8 @@ class Scale extends JPanel
                     - offsetXAxis, SCALE_VALUE_YAXIS);
             
 			scaleValue += tempScaleStepInTime;
-            System.out.println("pixelFactor " + pixelFactor);
-            System.out.println("potention " + potention);
+//            System.out.println("pixelFactor " + pixelFactor);
+//            System.out.println("potention " + potention);
             x = (int)(scaleValue * potention * pixelFactor);
         }
 	}

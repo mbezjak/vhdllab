@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 
@@ -47,8 +47,8 @@ public class CompileErrorsPanel extends JPanel implements IView {
     /** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
     private JScrollPane scrollPane;
     
-    /** ProjectContainer */
-    private ProjectContainer projectContainer;
+    /** SystemContainer */
+    private ISystemContainer systemContainer;
     
     /** Editor */
     private IEditor editor;
@@ -131,20 +131,16 @@ public class CompileErrorsPanel extends JPanel implements IView {
         Pattern pattern = Pattern.compile("([^:]+):([^:]+):([^:]+):(.+)");
         Matcher matcher = pattern.matcher(error);
         if (matcher.matches()) {
-        	try {
-        		String projectName = projectContainer.getSelectedProject();
-        		if(projectName == null) {
-        			// FIXME ovo stvarno treba drugacije napravit!!
-        			projectContainer.echoStatusText("Select a project to highlight a line!", MessageEnum.Error);
-        			return;
-        		}
-        		String fileName = matcher.group(1);
-        		editor = projectContainer.getEditor(projectName, fileName);
-				int temp = Integer.valueOf(matcher.group(2));
-				editor.highlightLine(temp);
-			} catch (UniformAppletException e) {
-				e.printStackTrace();
-			}
+    		String projectName = systemContainer.getSelectedProject();
+    		if(projectName == null) {
+    			// FIXME ovo stvarno treba drugacije napravit!!
+    			systemContainer.echoStatusText("Select a project to highlight a line!", MessageEnum.Error);
+    			return;
+    		}
+    		String fileName = matcher.group(1);
+    		editor = systemContainer.getEditor(projectName, fileName);
+			int temp = Integer.valueOf(matcher.group(2));
+			editor.highlightLine(temp);
         }
     }
 
@@ -169,8 +165,8 @@ public class CompileErrorsPanel extends JPanel implements IView {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
 	 */
-	public void setProjectContainer(ProjectContainer container) {
-		this.projectContainer = container;
+	public void setSystemContainer(ISystemContainer container) {
+		this.systemContainer = container;
 	}
  
 }

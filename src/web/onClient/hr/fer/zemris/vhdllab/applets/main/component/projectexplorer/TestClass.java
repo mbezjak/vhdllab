@@ -54,7 +54,7 @@ public class TestClass extends JApplet {
 	@Override
 	public void init() {
 		Container cp = this.getContentPane();
-		JPanel panel = new ProjectExplorer();
+		JPanel panel = new DefaultProjectExplorer();
 		cp.add(panel);
 		super.init();
 	}

@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
@@ -46,7 +46,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 	
 	private static boolean isReadOnly=false;
 	private static boolean isSavable=false;
-	private ProjectContainer pContainer;
+	private ISystemContainer container;
 	private String projectName="default project";
 	private String fileName;
 	private ResourceBundle bundle=null;
@@ -67,7 +67,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 			
 			adrw=new AutoDrawer();
 
-			if(bundle!=null) adrw.setResourceBundle(pContainer,bundle);
+			if(bundle!=null) adrw.setResourceBundle(container,bundle);
 			
 			Icon ic=new ImageIcon(getClass().getResource("AddMode1.png"));
 			final JToggleButton dodajNoviSignal=new JToggleButton(ic);
@@ -243,11 +243,11 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 
-	public void setProjectContainer(ProjectContainer pContainer) {
-		this.pContainer=pContainer;
-		if(pContainer!=null){
-			projectName=pContainer.getSelectedProject();
-			bundle=pContainer.getResourceBundle("Client_Automat_ApplicationResources");
+	public void setSystemContainer(ISystemContainer container) {
+		this.container=container;
+		if(container!=null){
+			projectName=container.getSelectedProject();
+			bundle=container.getResourceBundle("Client_Automat_ApplicationResources");
 		}else
 			bundle=CachedResourceBundles.getBundle("Client_Automat_ApplicationResources","en");
 	}
@@ -258,7 +258,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 
 
 	public FileContent getInitialFileContent(Component parent, String projectName) {
-		AUTPodatci pod=new AUTPodatci(parent,pContainer,bundle);
+		AUTPodatci pod=new AUTPodatci(parent,container,bundle);
 		//TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
 		String gen=null;
 		if(pod.ime!=null){

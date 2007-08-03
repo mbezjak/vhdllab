@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
@@ -30,7 +30,7 @@ public class DefaultWizard implements IWizard {
 	
 	
 	/* private fields */
-	private ProjectContainer container;
+	private ISystemContainer container;
 	
 	
 	public DefaultWizard() {
@@ -99,7 +99,7 @@ public class DefaultWizard implements IWizard {
 		} else return null;
 	}
 
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 		this.container = container;
 	}
 

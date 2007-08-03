@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IProjectExplorer {
 
-	void setProjectContainer(ProjectContainer container);
+	void setSystemContainer(ISystemContainer container);
 	void addFile(String projectName, String fileName);
 	void addProject(String projectName);
 	

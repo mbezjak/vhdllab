@@ -5,7 +5,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * Klasa PeNode nasljeduje {@link DefaultMutableTreeNode} i overridea metode
  * equals i hashcode iz {@link DefaultMutableTreeNode} klase jer je nuzno i 
- * dovoljnjo da cvorovi imaju iste objekte, u slusaju {@link ProjectExplorer} 
+ * dovoljnjo da cvorovi imaju iste objekte, u slusaju {@link DefaultProjectExplorer} 
  * klase to je samo String.
  * 
  * @author Boris Ozegovic

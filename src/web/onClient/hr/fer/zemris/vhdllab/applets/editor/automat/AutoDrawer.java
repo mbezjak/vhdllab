@@ -11,7 +11,7 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
  */
 
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
 import java.awt.BorderLayout;
@@ -125,7 +125,7 @@ public class AutoDrawer extends JPanel{
 	public boolean isModified=false;
 	
 	private ResourceBundle bundle=null;
-	private ProjectContainer pContainer=null;
+	private ISystemContainer container=null;
 	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
@@ -219,7 +219,7 @@ public class AutoDrawer extends JPanel{
 		}else{
 			stanja=new LinkedList<Stanje>();
 			prijelazi=new HashSet<Prijelaz>();
-			podatci=new AUTPodatci(AutoDrawer.this,pContainer,bundle);
+			podatci=new AUTPodatci(AutoDrawer.this,container,bundle);
 		}
 		if(podatci.ime!=null)
 			parseLegend();
@@ -1113,9 +1113,9 @@ public class AutoDrawer extends JPanel{
 		return podatci;
 	}
 
-	public void setResourceBundle(ProjectContainer pc,ResourceBundle bundle) {
+	public void setResourceBundle(ISystemContainer container,ResourceBundle bundle) {
 		this.bundle=bundle;
-		this.pContainer=pc;
+		this.container=container;
 	}
 
 	public void dataChange() {

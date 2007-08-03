@@ -2,6 +2,15 @@
 
 <configuration>
 	<editors>
+		<editor id="editor.vhdl.source">
+			<class>hr.fer.zemris.vhdllab.applets.texteditor.TextEditor</class>
+			<fileType>vhdl_source</fileType>
+			<savable>true</savable>
+			<readonly>false</readonly>
+			<explicitSave>false</explicitSave>
+			<singleton>false</singleton>
+		</editor>
+		
 		<editor name="VHDL Source" fileType="vhdl_source"
 			class="hr.fer.zemris.vhdllab.applets.texteditor.TextEditor"
 			savable="true" readonly="false">
@@ -30,6 +39,12 @@
 	</editors>
 
 	<views>
+		<view id="view.status.history">
+			<class>hr.fer.zemris.vhdllab.applets.view.status.history.StatusHistoryView</class>
+			<singleton>true</singleton>
+			<contentsCached>true</contentsCached>
+		</view>
+	
 		<view name="Status History" viewType="status.history"
 			class="hr.fer.zemris.vhdllab.applets.view.status.history.StatusHistoryView"
 			singleton="true">

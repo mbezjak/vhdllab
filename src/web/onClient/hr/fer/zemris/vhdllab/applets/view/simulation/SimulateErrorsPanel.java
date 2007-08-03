@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.view.simulation;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
@@ -40,8 +40,8 @@ public class SimulateErrorsPanel extends JPanel implements IView {
     /** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
     private JScrollPane scrollPane;
     
-    /** ProjectContainer */
-    private ProjectContainer projectContainer;
+    /** SystemContainer */
+    private ISystemContainer systemContainer;
     
     /**
      * Constructor 
@@ -117,8 +117,8 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
 	 */
-	public void setProjectContainer(ProjectContainer container) {
-		this.projectContainer = container;
+	public void setSystemContainer(ISystemContainer container) {
+		this.systemContainer = container;
 	}
  
 }

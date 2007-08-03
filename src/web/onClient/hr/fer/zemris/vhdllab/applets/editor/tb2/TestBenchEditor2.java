@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.applets.editor.tb2;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 
 import java.awt.BorderLayout;
@@ -122,7 +122,7 @@ public class TestBenchEditor2 extends JPanel implements IEditor, IWizard {
 		edPan.setContent(content.getContent());
 	}
 
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 		// TODO Auto-generated method stub
 
 	}

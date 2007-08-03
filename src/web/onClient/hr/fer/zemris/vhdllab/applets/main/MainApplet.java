@@ -3,40 +3,28 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
-import hr.fer.zemris.vhdllab.applets.main.component.dummy.SideBar;
-import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.ProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
-import hr.fer.zemris.vhdllab.applets.main.conf.AppletConf;
-import hr.fer.zemris.vhdllab.applets.main.conf.ConfParser;
-import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
+import hr.fer.zemris.vhdllab.applets.main.constant.ComponentTypes;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
-import hr.fer.zemris.vhdllab.applets.main.constant.ViewTypes;
-import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
-import hr.fer.zemris.vhdllab.applets.main.dialog.SaveDialog;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorStorage;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorerStorage;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.preferences.PropertyListener;
-import hr.fer.zemris.vhdllab.utilities.ModelUtil;
+import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
-import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
-import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
-import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
-import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -46,20 +34,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.swing.FocusManager;
 import javax.swing.JApplet;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -67,44 +58,39 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
- * Main applet that is container for all other modules. This applet also defines
- * methods that other modules use for communication. Two modules can not
- * communicate directly! Only through main applet that acts as a mediator. All
- * methods available to other modules are defined in <code>ProjectContainer</code>
- * interface.
+ * Main applet is a container for all other modules. This is where all the GUI
+ * is placed and shown to a user.
  * 
  * @author Miro Bezjak
- * @see ProjectContainer
+ * @see ISystemContainer
  */
-public class MainApplet
-		extends JApplet
-		implements ProjectContainer, PropertyListener {
-	
-	/**
-	 * Serial version ID.
-	 */
+public class MainApplet extends JApplet implements IComponentContainer,
+		IComponentProvider, PropertyListener {
+
 	private static final long serialVersionUID = 4037604752375048576L;
-	
-	private Communicator communicator;
+
+	private ISystemContainer systemContainer;
 	private ResourceBundle bundle;
-	private AppletConf conf;
-	
-	private EditorPane editorPane;
-	private ViewPane viewPane;
-	private IProjectExplorer projectExplorer;
-	private SideBar sideBar;
+
+	private Map<Component, ComponentGroup> components;
+	private Map<ComponentGroup, JComponent> selectedComponentsByGroup;
+	private JComponent selectedComponent;
+
+	private JTabbedPane centerTabbedPane;
+	private JTabbedPane bottomTabbedPane;
+	private JTabbedPane leftTabbedPane;
+	private JTabbedPane rightTabbedPane;
 	private IStatusBar statusBar;
 	private JToolBar toolBar;
 
-	private JPanel projectExplorerPanel;
-	private JPanel sideBarPanel;
-	
 	private JSplitPane projectExplorerSplitPane;
 	private JSplitPane viewSplitPane;
 	private JSplitPane sideBarSplitPane;
@@ -112,17 +98,24 @@ public class MainApplet
 	private JPanel centerPanel;
 	private JPanel normalCenterPanel;
 	private Container parentOfMaximizedComponent = null;
-	
+
 	private About about;
-	
-	/* (non-Javadoc)
+
+	private IComponentStorage componentStorage;
+	private IEditorStorage editorStorage;
+	private IViewStorage viewStorage;
+	private IProjectExplorerStorage projectExplorerStorage;
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.applet.Applet#init()
 	 */
 	@Override
 	public void init() {
 		super.init();
 		String userId = this.getParameter("userId");
-		if(userId==null) {
+		if (userId == null) {
 			// TODO following should be removed when security is implemented!
 			// We must not enter this! If we do, applet should refuse to run!
 			// Until then:
@@ -130,22 +123,29 @@ public class MainApplet
 			// future implementation when security is in place
 			// throw new SecurityException();
 		}
+		components = new HashMap<Component, ComponentGroup>();
+		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
+
+		Communicator communicator;
 		try {
-			conf = ConfParser.getConfiguration();
 			AjaxMediator ajax = new DefaultAjaxMediator(this);
 			Initiator initiator = new AjaxInitiator(ajax);
 			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
 			communicator = new Communicator(invoker, userId);
 			communicator.init();
-			bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+			// FIXME this is broken!
+			bundle = communicator
+					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (Exception e) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
+			// TODO ovo se treba maknut kad MainApplet vise nece bit u
+			// development fazi
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			JOptionPane.showMessageDialog(this, sw.toString());
+			return;
 		}
-		
+
 		initGUI();
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -153,37 +153,65 @@ public class MainApplet
 				setPaneSize();
 			}
 		});
-		getPreferences().addPropertyListener(this, UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
-		getPreferences().addPropertyListener(this, UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
-		getPreferences().addPropertyListener(this, UserFileConstants.SYSTEM_VIEW_HEIGHT);
-		
-		// FIXME ovo mozda spretnije rijesit
-		openView(ViewTypes.VT_STATUS_HISTORY);
-		refreshWorkspace();
-		
+
+		DefaultSystemContainer systemContainer = new DefaultSystemContainer(
+				communicator, this, JOptionPane.getFrameForComponent(this));
+		this.systemContainer = systemContainer;
+		componentStorage = new DefaultComponentStorage(this, systemContainer);
+		editorStorage = new DefaultEditorStorage(componentStorage);
+		viewStorage = new DefaultViewStorage(componentStorage);
+		projectExplorerStorage = new DefaultProjectExplorerStorage(
+				componentStorage);
+		systemContainer.setComponentStorage(componentStorage);
+		systemContainer.setEditorStorage(editorStorage);
+		systemContainer.setViewStorage(viewStorage);
+		systemContainer.setProjectExplorerStorage(projectExplorerStorage);
 		try {
-			String data;
-			data = getProperty(UserFileConstants.SYSTEM_OPENED_EDITORS);
-			List<FileIdentifier> files = Utilities.deserializeEditorInfo(data);
-			for(FileIdentifier f : files) {
-				openEditor(f.getProjectName(), f.getFileName(), true, false);
-			}
-			
-			data = getProperty(UserFileConstants.SYSTEM_OPENED_VIEWS);
-			List<String> views = Utilities.deserializeViewInfo(data);
-			for(String s : views) {
-				openView(s);
-			}
-		} catch (Exception ignored) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ignored.printStackTrace(pw);
-			JOptionPane.showMessageDialog(this, sw.toString());
+			systemContainer.init();
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			return;
 		}
+
+		getPreferences().addPropertyListener(this,
+				UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
+		getPreferences().addPropertyListener(this,
+				UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
+		getPreferences().addPropertyListener(this,
+				UserFileConstants.SYSTEM_VIEW_HEIGHT);
+
+		// FIXME ovo mozda spretnije rijesit
+		systemContainer.openView(ComponentTypes.VIEW_STATUS_HISTORY);
+		systemContainer.openProjectExplorer();
+
+		FocusManager.getCurrentManager().addPropertyChangeListener(
+				"focusOwner", new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent e) {
+						Component c = (Component) e.getNewValue();
+						if (c != null) {
+							if (isDesendent(c, selectedComponent)
+									|| isDesendent(c, centerTabbedPane
+											.getSelectedComponent())
+									|| isDesendent(c, bottomTabbedPane
+											.getSelectedComponent())
+									|| isDesendent(c, leftTabbedPane
+											.getSelectedComponent())
+									|| isDesendent(c, rightTabbedPane
+											.getSelectedComponent())) {
+								selectedComponent = (JComponent) c;
+								ComponentGroup group = components.get(c);
+								selectedComponentsByGroup.put(group,
+										selectedComponent);
+							}
+						}
+					}
+				});
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.applet.Applet#start()
 	 */
 	@Override
@@ -191,76 +219,51 @@ public class MainApplet
 		super.start();
 		setPaneSize();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.applet.Applet#stop()
 	 */
 	@Override
 	public void stop() {
 		super.stop();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.applet.Applet#destroy()
 	 */
 	@Override
 	public void destroy() {
-		saveAllEditors();
-//		closeAllEditors();
-		
 		try {
-			String data;
-			data = Utilities.serializeEditorInfo(editorPane.getAllOpenedEditors());
-			saveProperty(UserFileConstants.SYSTEM_OPENED_EDITORS, data);
-
-			List<String> views = new ArrayList<String>();
-			for(IView v : viewPane.getAllOpenedViews()) {
-				String type = communicator.getViewType(v);
-				views.add(type);
-			}
-			data = Utilities.serializeViewInfo(views);
-			saveProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
-		} catch (PropertyAccessException ignored) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ignored.printStackTrace(pw);
-			JOptionPane.showMessageDialog(this, sw.toString());
+			((DefaultSystemContainer) systemContainer).dispose();
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
 		}
-		
-		// TODO vidjet sto tocno s ovim. kakva je implementacija i mozda poboljsat implementaciju
-		try {
-			communicator.dispose();
-		} catch (Exception ignored) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ignored.printStackTrace(pw);
-			JOptionPane.showMessageDialog(this, sw.toString());
-		}
-		communicator = null;
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
 		this.repaint();
 		super.destroy();
 	}
-	
+
 	private void initGUI() {
 		JPanel topContainerPanel = new JPanel(new BorderLayout());
 		centerPanel = new JPanel(new BorderLayout());
 		JMenuBar menuBar = new PrivateMenuBar(bundle).setupMainMenu();
 		this.setJMenuBar(menuBar);
-		
+
 		toolBar = new PrivateToolBar(bundle).setup();
 		topContainerPanel.add(toolBar, BorderLayout.NORTH);
 		topContainerPanel.add(setupStatusBar(), BorderLayout.SOUTH);
 		normalCenterPanel = setupCenterPanel();
 		centerPanel.add(normalCenterPanel, BorderLayout.CENTER);
 		topContainerPanel.add(centerPanel, BorderLayout.CENTER);
-		
+
 		this.add(topContainerPanel, BorderLayout.CENTER);
 	}
-	
+
 	private JPanel setupStatusBar() {
 		StatusBar statusBar = new StatusBar();
 		JPanel statusBarPanel = new JPanel(new BorderLayout());
@@ -269,153 +272,180 @@ public class MainApplet
 		this.statusBar = statusBar;
 		return statusBarPanel;
 	}
-	
+
 	private JPanel setupCenterPanel() {
-		ProjectExplorer projectExplorer = new ProjectExplorer();
-		this.projectExplorer = projectExplorer;
-		about = new About(MainApplet.this);
-		projectExplorer.setProjectContainer(this);
-		//JPanel projectExplorerPanel = new JPanel(new BorderLayout());
-		projectExplorerPanel = new JPanel(new BorderLayout());
-		projectExplorerPanel.add(projectExplorer, BorderLayout.CENTER);
-		
-		editorPane = new EditorPane(EditorPane.TOP, EditorPane.SCROLL_TAB_LAYOUT);
-		editorPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForEditors());
-		editorPane.addMouseListener(new MouseListener() {
+		about = new About(this);
+
+		centerTabbedPane = new JTabbedPane(JTabbedPane.TOP,
+				JTabbedPane.SCROLL_TAB_LAYOUT);
+		bottomTabbedPane = new JTabbedPane(JTabbedPane.TOP,
+				JTabbedPane.SCROLL_TAB_LAYOUT);
+		leftTabbedPane = new JTabbedPane(JTabbedPane.TOP,
+				JTabbedPane.SCROLL_TAB_LAYOUT);
+		rightTabbedPane = new JTabbedPane(JTabbedPane.TOP,
+				JTabbedPane.SCROLL_TAB_LAYOUT);
+
+		PrivateMenuBar menubar = new PrivateMenuBar(bundle);
+		centerTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(centerTabbedPane));
+		bottomTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(bottomTabbedPane));
+		leftTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(leftTabbedPane));
+		rightTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(rightTabbedPane));
+
+		centerTabbedPane.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
-					maximizeComponent(editorPane);
+				if (e.getClickCount() == 2) {
+					maximizeComponent(centerTabbedPane);
 				}
-				editorPane.requestFocusToSelectedEditor();
-				// TODO  Future impl
-//				editorPane.getSelectedEditor().requestFocusInWindow();
+				Component component = centerTabbedPane.getSelectedComponent();
+				if (component != null) {
+					component.requestFocusInWindow();
+				}
 			}
-			public void mouseEntered(MouseEvent e) {}
-			public void mouseExited(MouseEvent e) {}
-			public void mousePressed(MouseEvent e) {}
-			public void mouseReleased(MouseEvent e) {}
 		});
-		editorPane.addContainerListener(new ContainerListener() {
-			public void componentAdded(ContainerEvent e) {}
+		centerTabbedPane.addContainerListener(new ContainerAdapter() {
+			@Override
 			public void componentRemoved(ContainerEvent e) {
-				if(editorPane.isEmpty() && isMaximized(editorPane)) {
-					maximizeComponent(editorPane);
+				if (centerTabbedPane.getTabCount() == 0
+						&& isMaximized(centerTabbedPane)) {
+					maximizeComponent(centerTabbedPane);
 				}
 			}
 		});
-		
-		viewPane = new ViewPane(ViewPane.TOP, ViewPane.SCROLL_TAB_LAYOUT);
-		viewPane.setComponentPopupMenu(new PrivateMenuBar(bundle).setupPopupMenuForViews());
-		viewPane.addMouseListener(new MouseListener() {
+
+		bottomTabbedPane.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
-					maximizeComponent(viewPane);
+				if (e.getClickCount() == 2) {
+					maximizeComponent(bottomTabbedPane);
+				}
+				Component component = bottomTabbedPane.getSelectedComponent();
+				if (component != null) {
+					component.requestFocusInWindow();
 				}
 			}
-			public void mouseEntered(MouseEvent e) {}
-			public void mouseExited(MouseEvent e) {}
-			public void mousePressed(MouseEvent e) {}
-			public void mouseReleased(MouseEvent e) {}
 		});
-		viewPane.addContainerListener(new ContainerListener() {
-			public void componentAdded(ContainerEvent e) {
-				/*if(viewPane.getTabCount() == 1) {
-					Component[] components = viewSplitPane.getComponents();
-					if(components != null) {
-						boolean contains = false;
-						for(Component c : components) {
-							if(c == viewPane) {
-								contains = true;
-								break;
-							}
-						}
-						if(!contains) {
-							viewSplitPane.add(viewPane);
-							// TODO postavit velicnu iz preference-a
-						}
-					}
-				}*/
-			}
+		bottomTabbedPane.addContainerListener(new ContainerAdapter() {
+			@Override
 			public void componentRemoved(ContainerEvent e) {
-				/*if(viewPane.getTabCount() == 0) {
-					viewSplitPane.remove(viewPane);
-				}*/
+				if (bottomTabbedPane.getTabCount() == 0
+						&& isMaximized(bottomTabbedPane)) {
+					maximizeComponent(bottomTabbedPane);
+				}
 			}
 		});
-		
-		sideBarPanel = new JPanel(new BorderLayout());
-		sideBar = new SideBar();
-		sideBarPanel.add(sideBar, BorderLayout.CENTER);
-		
-		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorPane, null);
-		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorerPanel, sideBarSplitPane);
-		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, projectExplorerSplitPane, viewPane);
-		
+
+		leftTabbedPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					maximizeComponent(leftTabbedPane);
+				}
+				Component component = leftTabbedPane.getSelectedComponent();
+				if (component != null) {
+					component.requestFocusInWindow();
+				}
+			}
+		});
+		leftTabbedPane.addContainerListener(new ContainerAdapter() {
+			@Override
+			public void componentRemoved(ContainerEvent e) {
+				if (leftTabbedPane.getTabCount() == 0
+						&& isMaximized(leftTabbedPane)) {
+					maximizeComponent(leftTabbedPane);
+				}
+			}
+		});
+
+		rightTabbedPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					maximizeComponent(rightTabbedPane);
+				}
+				Component component = rightTabbedPane.getSelectedComponent();
+				if (component != null) {
+					component.requestFocusInWindow();
+				}
+			}
+		});
+		rightTabbedPane.addContainerListener(new ContainerAdapter() {
+			@Override
+			public void componentRemoved(ContainerEvent e) {
+				if (rightTabbedPane.getTabCount() == 0
+						&& isMaximized(rightTabbedPane)) {
+					maximizeComponent(rightTabbedPane);
+				}
+			}
+		});
+
+		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				centerTabbedPane, null);
+		// sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+		// centerTabbedPane, rightTabbedPane);
+		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				leftTabbedPane, sideBarSplitPane);
+		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+				projectExplorerSplitPane, bottomTabbedPane);
+
 		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
 		centerComponentsPanel.add(viewSplitPane);
 
 		BasicSplitPaneDivider divider;
-		divider = ((BasicSplitPaneUI)projectExplorerSplitPane.getUI()).getDivider();
+		divider = ((BasicSplitPaneUI) projectExplorerSplitPane.getUI())
+				.getDivider();
 		divider.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentMoved(ComponentEvent e) {
-				int dividerLocation = projectExplorerSplitPane.getDividerLocation();
-				if(dividerLocation < 0) {
+				int dividerLocation = projectExplorerSplitPane
+						.getDividerLocation();
+				if (dividerLocation < 0) {
 					return;
 				}
-				double size = dividerLocation * 1.0 / projectExplorerSplitPane.getWidth();
+				double size = dividerLocation * 1.0
+						/ projectExplorerSplitPane.getWidth();
 				DecimalFormat formatter = new DecimalFormat("0.##");
 				String property = formatter.format(size);
-				try {
-					saveProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
-				} catch (PropertyAccessException ex) {
-					ex.printStackTrace();
-				}
+				setProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH,
+						property);
 			}
 		});
-		
-		divider = ((BasicSplitPaneUI)sideBarSplitPane.getUI()).getDivider();
+
+		divider = ((BasicSplitPaneUI) sideBarSplitPane.getUI()).getDivider();
 		divider.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				int dividerLocation = sideBarSplitPane.getDividerLocation();
-				if(dividerLocation < 0) {
+				if (dividerLocation < 0) {
 					return;
 				}
-				double size = dividerLocation * 1.0 / sideBarSplitPane.getWidth();
+				double size = dividerLocation * 1.0
+						/ sideBarSplitPane.getWidth();
 				DecimalFormat formatter = new DecimalFormat("0.##");
 				String property = formatter.format(size);
-				try {
-					saveProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
-				} catch (PropertyAccessException ex) {
-					ex.printStackTrace();
-				}
+				setProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
 			}
 		});
-		
-		divider = ((BasicSplitPaneUI)viewSplitPane.getUI()).getDivider();
+
+		divider = ((BasicSplitPaneUI) viewSplitPane.getUI()).getDivider();
 		divider.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentMoved(ComponentEvent e) {
 				int dividerLocation = viewSplitPane.getDividerLocation();
-				if(dividerLocation < 0) {
+				if (dividerLocation < 0) {
 					return;
 				}
 				double size = dividerLocation * 1.0 / viewSplitPane.getHeight();
 				DecimalFormat formatter = new DecimalFormat("0.##");
 				String property = formatter.format(size);
-				try {
-					saveProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
-				} catch (PropertyAccessException ex) {
-					ex.printStackTrace();
-				}
+				setProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
 			}
 		});
-		
+
 		return centerComponentsPanel;
-		
+
 	}
-	
+
 	/**
 	 * Stop all internet traffic and destroy application.
 	 */
@@ -423,7 +453,7 @@ public class MainApplet
 		stop();
 		destroy();
 	}
-	
+
 	/**
 	 * Private class for creating menu bar. Created menu bar will be localized.
 	 * 
@@ -432,64 +462,76 @@ public class MainApplet
 	private class PrivateMenuBar {
 
 		private ResourceBundle bundle;
-		
+
 		/**
 		 * Constructor.
 		 * 
-		 * @param bundle {@link ResourceBundle} that contains localized information about menus
-		 * 		that will be created.
+		 * @param bundle
+		 *            {@link ResourceBundle} that contains localized information
+		 *            about menus that will be created.
 		 */
 		public PrivateMenuBar(ResourceBundle bundle) {
 			this.bundle = bundle;
 		}
-		
-		public JPopupMenu setupPopupMenuForEditors() {
+
+		public JPopupMenu setupPopupMenuForComponents(final JTabbedPane pane) {
 			JPopupMenu menuBar = new JPopupMenu();
 			JMenuItem menuItem;
 			String key;
-
+			
 			// Save editor
 			key = LanguageConstants.MENU_FILE_SAVE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					/*IEditor editor = (IEditor)editorPane.getSelectedComponent();
-					try {
-						if(isSimulation(editor.getProjectName(), editor.getFileName())) {
-							saveSimulation(editor);
-						} else {*/
-							saveEditor(editorPane.getSelectedEditor());
-						/*}
-					} catch (UniformAppletException ex) {
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						ex.printStackTrace(pw);
-						throw new NullPointerException(sw.toString());
-						/*String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
-						text = Utilities.replacePlaceholders(text, new String[] {editor.getFileName()});
-						echoStatusText(text);*/
-					/*}*/
+					/*
+					 * IEditor editor =
+					 * (IEditor)editorPane.getSelectedComponent(); try {
+					 * if(isSimulation(editor.getProjectName(),
+					 * editor.getFileName())) { saveSimulation(editor); } else {
+					 */
+					systemContainer.saveEditor(editorStorage
+							.getSelectedEditor());
+					/*
+					 * } } catch (UniformAppletException ex) { StringWriter sw =
+					 * new StringWriter(); PrintWriter pw = new PrintWriter(sw);
+					 * ex.printStackTrace(pw); throw new
+					 * NullPointerException(sw.toString()); /*String text =
+					 * bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+					 * text = Utilities.replacePlaceholders(text, new String[]
+					 * {editor.getFileName()}); echoStatusText(text);
+					 */
+					/* } */
 				}
 			});
 			menuBar.add(menuItem);
-			
+
 			// Save all editors
 			key = LanguageConstants.MENU_FILE_SAVE_ALL;
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveAllEditors();
+					systemContainer.saveAllEditors();
 				}
 			});
 			menuBar.add(menuItem);
 			menuBar.addSeparator();
-			
+
 			// Close editor
 			key = LanguageConstants.MENU_FILE_CLOSE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeEditor(editorPane.getSelectedEditor(), true);
+					JComponent selectedComponent = (JComponent) pane.getSelectedComponent();
+					if(selectedComponent == null) {
+						return;
+					}
+					ComponentGroup group = components.get(selectedComponent);
+					if(group.equals(ComponentGroup.EDITOR)) {
+						systemContainer.closeEditor((IEditor) selectedComponent, true);
+					} else {
+						componentStorage.remove(selectedComponent);
+					}
 				}
 			});
 			menuBar.add(menuItem);
@@ -499,62 +541,49 @@ public class MainApplet
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllButThisEditor(editorPane.getSelectedEditor(), true);
+					int index = pane.getSelectedIndex();
+					if(index == -1) {
+						return;
+					}
+					for(int i = 0; i<pane.getTabCount(); i++) {
+						if(i == index) {
+							continue;
+						}
+						JComponent c = (JComponent) pane.getComponentAt(i);
+						ComponentGroup group = components.get(c);
+						if(group.equals(ComponentGroup.EDITOR)) {
+							systemContainer.closeEditor((IEditor) c, true);
+						} else {
+							componentStorage.remove(c);
+						}
+						
+					}
 				}
 			});
 			menuBar.add(menuItem);
-			
+
 			// Close all editors
 			key = LanguageConstants.MENU_FILE_CLOSE_ALL;
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllEditors(true);
+					while(pane.getTabCount() != 0) {
+						JComponent c = (JComponent) pane.getComponentAt(0);
+						ComponentGroup group = components.get(c);
+						if(group.equals(ComponentGroup.EDITOR)) {
+							systemContainer.closeEditor((IEditor) c, true);
+						} else {
+							componentStorage.remove(c);
+						}
+						
+					}
 				}
 			});
 			menuBar.add(menuItem);
 
 			return menuBar;
 		}
-		
-		public JPopupMenu setupPopupMenuForViews() {
-			JPopupMenu menuBar = new JPopupMenu();
-			JMenuItem menuItem;
-			String key;
 
-			// Close view
-			key = LanguageConstants.MENU_FILE_CLOSE;
-			menuItem = new JMenuItem(bundle.getString(key));
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					closeView(viewPane.getSelectedView());
-				}
-			});
-			menuBar.add(menuItem);
-
-			// Close other views
-			key = LanguageConstants.MENU_FILE_CLOSE_OTHER;
-			menuItem = new JMenuItem(bundle.getString(key));
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					closeAllButThisView(viewPane.getSelectedView());
-				}
-			});
-			menuBar.add(menuItem);
-			
-			// Close all views
-			key = LanguageConstants.MENU_FILE_CLOSE_ALL;
-			menuItem = new JMenuItem(bundle.getString(key));
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					closeAllViews();
-				}
-			});
-			menuBar.add(menuItem);
-
-			return menuBar;
-		}
-		
 		/**
 		 * Creates and instantiates main menu bar.
 		 * 
@@ -572,7 +601,7 @@ public class MainApplet
 			key = LanguageConstants.MENU_FILE;
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
-			
+
 			// New sub menu
 			key = LanguageConstants.MENU_FILE_NEW;
 			submenu = new JMenu(bundle.getString(key));
@@ -584,83 +613,89 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewProjectInstance();
+					systemContainer.createNewProjectInstance();
 				}
 			});
 			submenu.add(menuItem);
 			submenu.addSeparator();
-			
+
 			// New VHDL Source menu item
 			key = LanguageConstants.MENU_FILE_NEW_VHDL_SOURCE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
+					systemContainer
+							.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
 				}
 			});
 			submenu.add(menuItem);
-			
+
 			// New Testbench menu item
 			key = LanguageConstants.MENU_FILE_NEW_TESTBENCH;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewFileInstance(FileTypes.FT_VHDL_TB);
+					systemContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
 				}
 			});
 			submenu.add(menuItem);
-			
+
 			// New Schema menu item
 			key = LanguageConstants.MENU_FILE_NEW_SCHEMA;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
+					systemContainer
+							.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
 				}
 			});
 			submenu.add(menuItem);
-			
+
 			// New Automat menu item
 			key = LanguageConstants.MENU_FILE_NEW_AUTOMAT;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
+					systemContainer
+							.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
 				}
 			});
 			submenu.add(menuItem);
-			
+
 			// TODO this is only a temporary solution!
 			submenu.addSeparator();
 			menuItem = new JMenuItem("Property");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					createNewFileInstance(FileTypes.FT_PREFERENCES);
+					systemContainer
+							.createNewFileInstance(FileTypes.FT_PREFERENCES);
 				}
 			});
 			submenu.add(menuItem);
 			// END TEMP SOLUTION
-			
+
 			menu.add(submenu);
-			
+
 			// Open menu item
-			/*key = LanguageConstants.MENU_FILE_OPEN;
-			menuItem = new JMenuItem(bundle.getString(key));
-			setCommonMenuAttributes(menuItem, key);
-			menu.add(menuItem);*/
+			/*
+			 * key = LanguageConstants.MENU_FILE_OPEN; menuItem = new
+			 * JMenuItem(bundle.getString(key));
+			 * setCommonMenuAttributes(menuItem, key); menu.add(menuItem);
+			 */
 			menu.addSeparator();
-			
+
 			// Save menu item
 			key = LanguageConstants.MENU_FILE_SAVE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveEditor(editorPane.getSelectedEditor());
+					systemContainer.saveEditor(editorStorage
+							.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
@@ -671,19 +706,20 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveAllEditors();
+					systemContainer.saveAllEditors();
 				}
 			});
 			menu.add(menuItem);
 			menu.addSeparator();
-			
+
 			// Close menu item
 			key = LanguageConstants.MENU_FILE_CLOSE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeEditor(editorPane.getSelectedEditor(), true);
+					systemContainer.closeEditor(editorStorage
+							.getSelectedEditor(), true);
 				}
 			});
 			menu.add(menuItem);
@@ -694,7 +730,7 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					closeAllEditors(true);
+					systemContainer.closeAllEditors(true);
 				}
 			});
 			menu.add(menuItem);
@@ -710,39 +746,42 @@ public class MainApplet
 				}
 			});
 			menu.add(menuItem);
-			
+
 			menuBar.add(menu);
-			
+
 			// Edit menu
 			key = LanguageConstants.MENU_EDIT;
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
 			menuBar.add(menu);
-			
+
 			// View menu
 			key = LanguageConstants.MENU_VIEW;
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
-			
+
 			// Maximize active window
 			key = LanguageConstants.MENU_VIEW_MAXIMIZE_ACTIVE_WINDOW;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					/*if(editorPane.isFocusOwner()) {
-						maximizeComponent(editorPane);
-					} else if(editorPane.isFocusCycleRoot()) {
-						maximizeComponent(viewPane);
-					}*/
-					if(!editorPane.isEmpty()) {
-						maximizeComponent(editorPane);
+					/*
+					 * if(editorPane.isFocusOwner()) {
+					 * maximizeComponent(editorPane); } else
+					 * if(editorPane.isFocusCycleRoot()) {
+					 * maximizeComponent(viewPane); }
+					 */
+					if (getSelectedComponent() != null) {
+						ComponentPlacement placement = componentStorage
+								.getComponentPlacement(getSelectedComponent());
+						maximizeComponent(getTabbedPane(placement));
 					}
 				}
 			});
 			menu.add(menuItem);
 			menu.addSeparator();
-			
+
 			// Show View sub menu
 			key = LanguageConstants.MENU_VIEW_SHOW_VIEW;
 			submenu = new JMenu(bundle.getString(key));
@@ -754,14 +793,18 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String viewType = ViewTypes.VT_COMPILATION_ERRORS;
+					String viewType = ComponentTypes.VIEW_COMPILATION_ERRORS;
 					try {
-						openView(viewType);
+						systemContainer.openView(viewType);
 					} catch (Exception ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
-						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
-						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
-						echoStatusText(text, MessageEnum.Error);
+						String text = bundle
+								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
+						String viewTitle = bundle
+								.getString(LanguageConstants.TITLE_FOR
+										+ viewType);
+						text = PlaceholderUtil.replacePlaceholders(text,
+								new String[] { viewTitle });
+						systemContainer.echoStatusText(text, MessageEnum.Error);
 					}
 				}
 			});
@@ -773,139 +816,158 @@ public class MainApplet
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String viewType = ViewTypes.VT_SIMULATION_ERRORS;
+					String viewType = ComponentTypes.VIEW_SIMULATION_ERRORS;
 					try {
-						openView(viewType);
+						systemContainer.openView(viewType);
 					} catch (Exception ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
-						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
-						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
-						echoStatusText(text, MessageEnum.Error);
+						String text = bundle
+								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
+						String viewTitle = bundle
+								.getString(LanguageConstants.TITLE_FOR
+										+ viewType);
+						text = PlaceholderUtil.replacePlaceholders(text,
+								new String[] { viewTitle });
+						systemContainer.echoStatusText(text, MessageEnum.Error);
 					}
 				}
 			});
 			submenu.add(menuItem);
-			
+
 			// Show Status History menu item
 			key = LanguageConstants.MENU_VIEW_SHOW_VIEW_STATUS_HISTORY;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String viewType = ViewTypes.VT_STATUS_HISTORY;
+					String viewType = ComponentTypes.VIEW_STATUS_HISTORY;
 					try {
-						openView(viewType);
+						systemContainer.openView(viewType);
 					} catch (Exception ex) {
-						String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
-						String viewTitle = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + viewType);
-						text = Utilities.replacePlaceholders(text, new String[] {viewTitle});
-						echoStatusText(text, MessageEnum.Error);
+						String text = bundle
+								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
+						String viewTitle = bundle
+								.getString(LanguageConstants.TITLE_FOR
+										+ viewType);
+						text = PlaceholderUtil.replacePlaceholders(text,
+								new String[] { viewTitle });
+						systemContainer.echoStatusText(text, MessageEnum.Error);
 					}
 				}
 			});
 			submenu.add(menuItem);
-			
+
 			menu.add(submenu);
 			
+			// Show Project Explorer
+			key = LanguageConstants.MENU_VIEW_PROJECT_EXPLORER;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					systemContainer.openProjectExplorer();
+				}
+			});
+			menu.add(menuItem);
+
 			menuBar.add(menu);
 
 			// Tool menu
 			key = LanguageConstants.MENU_TOOLS;
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
-			
+
 			// Compile with dialog
 			key = LanguageConstants.MENU_TOOLS_COMPILE_WITH_DIALOG;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					compileWithDialog();
+					systemContainer.compileWithDialog();
 				}
 			});
 			menu.add(menuItem);
-			
+
 			// Compile active editor
 			key = LanguageConstants.MENU_TOOLS_COMPILE_ACTIVE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					compile(editorPane.getSelectedEditor());
+					systemContainer.compile(editorStorage.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
-			
+
 			// Compile history
 			key = LanguageConstants.MENU_TOOLS_COMPILE_HISTORY;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					compileLastHistoryResult();
+					systemContainer.compileLastHistoryResult();
 				}
 			});
 			menu.add(menuItem);
 			menu.addSeparator();
-			
+
 			// Simulate with dialog
 			key = LanguageConstants.MENU_TOOLS_SIMULATE_WITH_DIALOG;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					simulateWithDialog();
+					systemContainer.simulateWithDialog();
 				}
 			});
 			menu.add(menuItem);
-			
+
 			// Simulate active editor
 			key = LanguageConstants.MENU_TOOLS_SIMULATE_ACTIVE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					simulate(editorPane.getSelectedEditor());
+					systemContainer.simulate(editorStorage.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
-			
+
 			// Simulate history
 			key = LanguageConstants.MENU_TOOLS_SIMULATE_HISTORY;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					simulateLastHistoryResult();
+					systemContainer.simulateLastHistoryResult();
 				}
 			});
 			menu.add(menuItem);
 			menu.addSeparator();
-			
+
 			// View VHDL code
 			key = LanguageConstants.MENU_TOOLS_VIEW_VHDL_CODE;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					viewVHDLCode(editorPane.getSelectedEditor());
+					systemContainer.viewVHDLCode(editorStorage
+							.getSelectedEditor());
 				}
 			});
 			menu.add(menuItem);
 			menu.addSeparator();
-			
+
 			// View Preferences
 			key = LanguageConstants.MENU_TOOLS_VIEW_PREFERENCES;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					viewPreferences();
+					systemContainer.openPreferences();
 				}
 			});
 			menu.add(menuItem);
-			
-			
+
 			menuBar.add(menu);
 
 			// Help menu
@@ -921,95 +983,110 @@ public class MainApplet
 			menu.add(menuItem);
 			setCommonMenuAttributes(menu, key);
 			menuBar.add(menu);
-			
+
 			return menuBar;
 		}
 
 		/**
-		 * Sets mnemonic, accelerator and tooltip for a given menu. If keys for mnemonic,
-		 * accelerator or tooltip (or all of them) does not exists then they will simply
-		 * be ignored.
+		 * Sets mnemonic, accelerator and tooltip for a given menu. If keys for
+		 * mnemonic, accelerator or tooltip (or all of them) does not exists
+		 * then they will simply be ignored.
 		 * 
-		 * @param menu a menu where to set mnemonic and accelerator
-		 * @param key a key containing menu's name 
+		 * @param menu
+		 *            a menu where to set mnemonic and accelerator
+		 * @param key
+		 *            a key containing menu's name
 		 */
 		private void setCommonMenuAttributes(JMenuItem menu, String key) {
 			/**
-			 * For locating mnemonic, accelerator or tooltip of a <code>menu</code> this
-			 * method will simply append appropriate string to <code>key</code>.
-			 * Information regarding such strings that will be appended can be found here:
+			 * For locating mnemonic, accelerator or tooltip of a
+			 * <code>menu</code> this method will simply append appropriate
+			 * string to <code>key</code>. Information regarding such strings
+			 * that will be appended can be found here:
 			 * <ul>
 			 * <li>LanguageConstants.MNEMONIC_APPEND</li>
 			 * <li>LanguageConstants.ACCELERATOR_APPEND</li>
 			 * <li>LanguageConstants.TOOLTIP_APPEND</li>
 			 * </ul>
 			 */
-			
+
 			// Set mnemonic
 			try {
-				String temp = bundle.getString(key + LanguageConstants.MNEMONIC_APPEND);
+				String temp = bundle.getString(key
+						+ LanguageConstants.MNEMONIC_APPEND);
 				temp = temp.trim();
-				if(temp.length() == 1 && StringUtil.isAlphaNumeric(temp)) {
+				if (temp.length() == 1 && StringUtil.isAlphaNumeric(temp)) {
 					menu.setMnemonic(temp.codePointAt(0));
 				}
-			} catch (RuntimeException e) {}
-			
+			} catch (RuntimeException e) {
+			}
+
 			// Set accelerator
 			try {
-				String temp = bundle.getString(key + LanguageConstants.ACCELERATOR_APPEND);
+				String temp = bundle.getString(key
+						+ LanguageConstants.ACCELERATOR_APPEND);
 				String[] keys = temp.split("[+]");
-				if(keys.length != 0) {
+				if (keys.length != 0) {
 					boolean functionKey = false;
 					int mask = 0;
 					int keyCode = 0;
-					for(String k : keys) {
+					for (String k : keys) {
 						k = k.trim();
-						if(k.equalsIgnoreCase("ctrl")) mask += KeyEvent.CTRL_DOWN_MASK;
-						else if(k.equalsIgnoreCase("alt")) mask += KeyEvent.ALT_DOWN_MASK;
-						else if(k.equalsIgnoreCase("shift")) mask += KeyEvent.SHIFT_DOWN_MASK;
-						else if(k.equalsIgnoreCase("func")) functionKey = true;
-						else if(functionKey && k.length() <= 2) {
-							if(!StringUtil.isNumeric(k)) throw new IllegalArgumentException();
+						if (k.equalsIgnoreCase("ctrl"))
+							mask += KeyEvent.CTRL_DOWN_MASK;
+						else if (k.equalsIgnoreCase("alt"))
+							mask += KeyEvent.ALT_DOWN_MASK;
+						else if (k.equalsIgnoreCase("shift"))
+							mask += KeyEvent.SHIFT_DOWN_MASK;
+						else if (k.equalsIgnoreCase("func"))
+							functionKey = true;
+						else if (functionKey && k.length() <= 2) {
+							if (!StringUtil.isNumeric(k))
+								throw new IllegalArgumentException();
 							keyCode = KeyEvent.VK_F1 - 1 + Integer.parseInt(k);
 							functionKey = false;
-						}
-						else if(k.length() == 1) {
-							if(!StringUtil.isAlphaNumeric(k)) throw new IllegalArgumentException();
-							keyCode = k.toUpperCase().codePointAt(0);								
+						} else if (k.length() == 1) {
+							if (!StringUtil.isAlphaNumeric(k))
+								throw new IllegalArgumentException();
+							keyCode = k.toUpperCase().codePointAt(0);
 						}
 					}
 					menu.setAccelerator(KeyStroke.getKeyStroke(keyCode, mask));
 				}
-			} catch (RuntimeException e) {}
-			
+			} catch (RuntimeException e) {
+			}
+
 			// Set tooltip
 			try {
-				String text = bundle.getString(key + LanguageConstants.TOOLTIP_APPEND);
+				String text = bundle.getString(key
+						+ LanguageConstants.TOOLTIP_APPEND);
 				text = text.trim();
 				menu.setToolTipText(text);
-			} catch (RuntimeException e) {}
+			} catch (RuntimeException e) {
+			}
 		}
 	}
 
 	/**
-	 * Private class for creating tool bar. Created toll bar will be localized.
+	 * Private class for creating tool bar. Created tool bar will be localized.
 	 * 
 	 * @author Miro Bezjak
 	 */
 	private class PrivateToolBar {
-		
+
 		private ResourceBundle bundle;
 
 		/**
 		 * Constructor.
 		 * 
-		 * @param bundle {@link ResourceBundle} that contains information about menus
-		 * 		that will be created.
+		 * @param bundle
+		 *            {@link ResourceBundle} that contains information about
+		 *            menus that will be created.
 		 */
 		public PrivateToolBar(ResourceBundle bundle) {
 			this.bundle = bundle;
 		}
-		
+
 		/**
 		 * Creates and instantiates tool bar.
 		 * 
@@ -1018,611 +1095,16 @@ public class MainApplet
 		public JToolBar setup() {
 			JToolBar toolBar = new JToolBar();
 			toolBar.setPreferredSize(new Dimension(0, 24));
-			
+
 			return toolBar;
 		}
 	}
-	
-	private void compileWithDialog() {
-		String title = bundle.getString(LanguageConstants.DIALOG_RUN_COMPILATION_TITLE);
-		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
-		FileIdentifier file = showRunDialog(title, listTitle, RunDialog.COMPILATION_TYPE);
-		if(file == null) return;
-		String projectName = file.getProjectName();
-		String fileName = file.getFileName();
-		compile(projectName, fileName);
-	}
-	
-	private void compile(IEditor editor) {
-		if(editor == null) return;
-		String projectName = editor.getProjectName();
-		String fileName = editor.getFileName();
-		if(isCircuit(projectName, fileName)) {
-			compile(projectName, fileName);
-		}
-	}
-	
-	private void compileLastHistoryResult() {
-		if(communicator.compilationHistoryIsEmpty()) {
-			compileWithDialog();
-		} else {
-			FileIdentifier file = communicator.getLastCompilationHistoryTarget();
-			if(file == null) {
-				compileWithDialog();
-			} else {
-				compile(file.getProjectName(), file.getFileName());
-			}
-		}
-	}
-	
-	public void compile(String projectName, String fileName) {
-		try {
-			if(isCircuit(projectName, fileName)) {
-				List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
-				String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-				String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-				boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
-				if(shouldContinue) {
-					CompilationResult result = communicator.compile(projectName, fileName);
-					String text = bundle.getString(LanguageConstants.STATUSBAR_COMPILED);
-					text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
-					echoStatusText(text, MessageEnum.Information);
-					IView view = openView(ViewTypes.VT_COMPILATION_ERRORS);
-					view.setData(result);
-				}
-			} else {
-				String text = bundle.getString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
-				text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
-				echoStatusText(text, MessageEnum.Information);
-			}
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-			echoStatusText(text, MessageEnum.Error);
-		}
-	}
-	
-	private void simulateWithDialog() {
-		String title = bundle.getString(LanguageConstants.DIALOG_RUN_SIMULATION_TITLE);
-		String listTitle = bundle.getString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
-		FileIdentifier file = showRunDialog(title, listTitle, RunDialog.SIMULATION_TYPE);
-		if(file == null) return;
-		String projectName = file.getProjectName();
-		String fileName = file.getFileName();
-		simulate(projectName, fileName);
-	}
-	
-	private void simulate(IEditor editor) {
-		if(editor == null) return;
-		String projectName = editor.getProjectName();
-		String fileName = editor.getFileName();
-		if(isTestbench(projectName, fileName)) {
-			simulate(projectName, fileName);
-		}
-	}
-	
-	private void simulateLastHistoryResult() {
-		if(communicator.simulationHistoryIsEmpty()) {
-			simulateWithDialog();
-		} else {
-			FileIdentifier file = communicator.getLastSimulationHistoryTarget();
-			if(file == null) {
-				simulateWithDialog();
-			} else {
-				simulate(file.getProjectName(), file.getFileName());
-			}
-		}
-	}
-	
-	public void simulate(String projectName, String fileName) {
-		try {
-			if(isSimulatable(projectName, fileName)) {
-				List<IEditor> openedEditors = editorPane.getOpenedEditorsThatHave(projectName);
-				String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-				String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-				boolean shouldContinue = saveResourcesWithSaveDialog(openedEditors, title, message);
-				if(shouldContinue) {
-					SimulationResult result = communicator.runSimulation(projectName, fileName);
-					String text = bundle.getString(LanguageConstants.STATUSBAR_SIMULATED);
-					text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
-					echoStatusText(text, MessageEnum.Information);
-					IView view = openView(ViewTypes.VT_SIMULATION_ERRORS);
-					view.setData(result);
-					if(result.getWaveform() != null) {
-						String simulationName = fileName + ".sim";
-						openEditor(projectName, simulationName, result.getWaveform(), FileTypes.FT_VHDL_SIMULATION, false, true);
-					}
-				}
-			} else {
-				String text = bundle.getString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
-				text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
-				echoStatusText(text, MessageEnum.Information);
-			}
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-			echoStatusText(text, MessageEnum.Error);
-		}
-	}
-	
-	public List<String> getAllCircuits(String projectName) throws UniformAppletException {
-		List<String> fileNames = communicator.findFilesByProject(projectName);
-		List<String> circuits = new ArrayList<String>();
-		for(String name : fileNames) {
-			if(isCircuit(projectName, name)) {
-				circuits.add(name);
-			}
-		}
-		return circuits;
-	}
-	
-	public List<String> getAllTestbenches(String projectName) throws UniformAppletException {
-		List<String> fileNames = communicator.findFilesByProject(projectName);
-		List<String> testbenches = new ArrayList<String>();
-		for(String name : fileNames) {
-			if(isTestbench(projectName, name)) {
-				testbenches.add(name);
-			}
-		}
-		return testbenches;
-	}
-	
-	public boolean isCircuit(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isCircuit(type);
-	}
-	
-	public boolean isTestbench(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isTestbench(type);
-	}
-	
-	public boolean isSimulation(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isSimulation(type);
-	}
-	
-	public boolean isCompilable(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isCompilable(type);
-	}
-	
-	public boolean isSimulatable(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		if(FileTypes.isSimulatable(type)) {
-			return true;
-		}
-		
-		CircuitInterface ci;
-		try {
-			ci = getCircuitInterfaceFor(projectName, fileName);
-		} catch (UniformAppletException e) {
-			return false;
-		}
-		if(ci.getPorts().isEmpty())	{
-			return true;
-		}
-		return false;
-	}
-	
-	public String getFileType(String projectName, String fileName) {
-		try {
-			return communicator.loadFileType(projectName, fileName);
-		} catch (UniformAppletException e) {
-			// TODO rijesit ovaj exception tako da se u statubaru ispise da se neka greska desila...
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	private void viewPreferences() {
-//		try {
-			String data = getPreferences().serialize();
-			openEditor("about", "config", data, FileTypes.FT_PREFERENCES, false, false);
-//		} catch (UniformAppletException e) {
-//			e.printStackTrace();
-//			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
-//			echoStatusText(text, MessageEnum.Error);
-//		}
-	}
-	
-	public void viewVHDLCode(String projectName, String fileName) {
-		try {
-			if(isCircuit(projectName, fileName) || 
-					isTestbench(projectName, fileName)) {
-				String vhdl = communicator.generateVHDL(projectName, fileName);
-				openEditor(projectName, "vhdl:"+fileName, vhdl, FileTypes.FT_VHDL_SOURCE, false, true);
-			}
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
-			echoStatusText(text, MessageEnum.Error);
-		}
-	}
-	
-	private void viewVHDLCode(IEditor editor) {
-		if(editor == null) return;
-		viewVHDLCode(editor.getProjectName(), editor.getFileName());
-	}
-	
-	@Override
-	public Hierarchy extractHierarchy(String projectName) throws UniformAppletException {
-		return communicator.extractHierarchy(projectName);
-	}
 
-	@Override
-	public CircuitInterface getCircuitInterfaceFor(String projectName, String fileName) throws UniformAppletException {
-		// TODO tu mozda sejvat file
-		// pitanje je dal s dialogom ili ne?
-		IEditor editor = getEditor(projectName, fileName);
-		if(editor != null) {
-			saveEditor(editor);
-		}
-		return communicator.getCircuitInterfaceFor(projectName, fileName);
-	}
-	
-	@Override
-	public String getPredefinedFileContent(String fileName) throws UniformAppletException {
-		return communicator.loadPredefinedFileContent(fileName);
-	}
-	
-	public IUserPreferences getPreferences() {
-		return communicator.getPreferences();
-	}
-
-	private String getProperty(String name) throws PropertyAccessException {
-		return getPreferences().getProperty(name);
-	}
-	
-	private void saveProperty(String name, String data) throws PropertyAccessException {
-		getPreferences().setProperty(name, data);
-	}
-	
-	@Override
-	public ResourceBundle getResourceBundle(String baseName) {
-		String language = null;
-		try {
-			language = getProperty(UserFileConstants.COMMON_LANGUAGE);
-		} catch (PropertyAccessException ignored) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ignored.printStackTrace(pw);
-			JOptionPane.showMessageDialog(this, sw.toString());
-		}
-		if(language == null) language = "en";
-		
-		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName, language);
-		/* This might happen only during developing/testing due to error. It
-		 * should never happen once application is deployed
-		 */
-		if(bundle == null) throw new NullPointerException("Bundle can not be null.");
-		return bundle;
-	}
-	
-	@Override
-	public String getSelectedProject() {
-		return projectExplorer.getSelectedProject();
-	}
-	
-	@Override
-	public FileIdentifier getSelectedFile() {
-		return projectExplorer.getSelectedFile();
-	}
-	
-	@Override
-	public List<String> getAllProjects() {
-		return projectExplorer.getAllProjects();
-	}
-	
-	@Override
-	public void echoStatusText(String text, MessageEnum type) {
-		statusBar.setMessage(text, type);
-	}
-	
 	@Override
 	public IStatusBar getStatusBar() {
 		return statusBar;
 	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer#isCorrectEntityName(java.lang.String)
-	 */
-	public boolean isCorrectEntityName(String name) {
-		return StringFormat.isCorrectEntityName(name);
-	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer#isCorrectProjectName(java.lang.String)
-	 */
-	public boolean isCorrectProjectName(String name) {
-		return StringFormat.isCorrectProjectName(name);
-	}
-	
-	public IEditor getEditor(String projectName, String fileName) throws UniformAppletException {
-		if(!editorPane.isEditorOpened(projectName, fileName)) {
-			// TODO treba se tablica savable-readonly za svaki file type napravit pa tu samo to gledat.
-			openEditor(projectName, fileName, true, false);
-		}
-		return editorPane.getOpenedEditor(projectName, fileName);
-	}
 
-	public IView getView(String type) {
-		int index = viewPane.indexOfView(type);
-		if(index == -1) {
-			openView(type);
-			index = viewPane.indexOfView(type);
-		}
-		return viewPane.getViewAt(index);
-	}
-	
-	public IView openView(String type) {
-		int index = viewPane.indexOfView(type);
-		if(index == -1) {
-			// Initialization of an editor
-			IView view = communicator.getView(type);
-			view.setProjectContainer(this);
-			// End of initialization
-
-			String title = bundle.getString(LanguageConstants.VIEW_TITLE_FOR + type);
-			viewPane.add(title, (Component)view, type);
-			index = viewPane.indexOfView(view);
-		}
-		viewPane.setSelectedIndex(index);
-		return getView(type);
-	}
-
-	public void openEditor(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if(fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		String type = getFileType(projectName, fileName);
-		EditorProperties ep = conf.getEditorProperties(type);
-		boolean savable = ep.isSavable();
-		boolean readOnly = ep.isReadonly();
-		openEditor(projectName, fileName, savable, readOnly);
-	}
-	
-	public void openEditor(String projectName, String fileName, boolean savable, boolean readOnly) throws UniformAppletException {
-		if(projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if(fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		int index = editorPane.indexOfEditor(projectName, fileName);
-		if(index == -1) {
-			String content = communicator.loadFileContent(projectName, fileName);
-			FileContent fileContent = new FileContent(projectName, fileName, content);
-			String type = getFileType(projectName, fileName);
-
-			index = openEditorImpl(fileContent, type, savable, readOnly);
-		}
-		editorPane.setSelectedIndex(index);
-	}
-	
-	private void openEditor(String projectName, String fileName, String content, String type, boolean isSavable, boolean isReadOnly) {
-		if(projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if(fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		if(content == null) {
-			throw new NullPointerException("Content can not be null.");
-		}
-		int index = editorPane.indexOfEditor(projectName, fileName);
-		if(index == -1) {
-			FileContent fileContent = new FileContent(projectName, fileName, content);
-
-			index = openEditorImpl(fileContent, type, isSavable, isReadOnly);
-		} else {
-			IEditor editor = editorPane.getEditorAt(index);
-			FileContent fileContent = new FileContent(projectName, fileName, content);
-			editor.setFileContent(fileContent);
-		}
-		editorPane.setSelectedIndex(index);
-	}
-	
-	private int openEditorImpl(FileContent fileContent, String type, boolean savable, boolean readOnly)  {
-		// Initialization of an editor
-		IEditor editor = communicator.getEditor(type);
-		editor.setProjectContainer(this);
-		editor.init();
-		editor.setSavable(savable);
-		editor.setReadOnly(readOnly);
-		editor.setFileContent(fileContent);
-		// End of initialization
-		
-		String projectName = fileContent.getProjectName();
-		String fileName = fileContent.getFileName();
-		String title = createEditorTitle(projectName, fileName);
-		editorPane.add(title, (Component)editor);
-		int index = editorPane.indexOfEditor(editor);
-		String toolTipText = createEditorToolTip(projectName, fileName);
-		editorPane.setToolTipTextAt(index, toolTipText);
-		return index;
-	}
-	
-	private String createEditorTitle(String projectName, String fileName) {
-		StringBuilder title = new StringBuilder(20 + projectName.length() + fileName.length());
-		title.append(projectName).append("/").append(fileName);
-		return title.toString();
-	}
-	
-	private String createEditorToolTip(String projectName, String fileName)	{
-		StringBuilder toolTipText = new StringBuilder(20 + projectName.length() + fileName.length());
-		toolTipText.append(projectName).append("/").append(fileName);
-		return toolTipText.toString();
-	}
-	
-	private void refreshWorkspace() {
-		// TODO to treba jos do kraja napravit, zajedno s refreshProject i refreshFile
-		List<String> openedProjects = projectExplorer.getAllProjects();
-		for(String p : openedProjects) {
-			projectExplorer.removeProject(p);
-		}
-		
-		try {
-			List<String> projects = communicator.getAllProjects();
-			for(String projectName : projects) {
-				projectExplorer.addProject(projectName);
-			}
-			
-			String text = bundle.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-			echoStatusText(text, MessageEnum.Successfull);
-		} catch (UniformAppletException e) {
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-			echoStatusText(text, MessageEnum.Error);
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			JOptionPane.showMessageDialog(this, sw.toString());
-		}
-	}
-	
-	private void refreshProject(String projectName) throws UniformAppletException {
-		if(projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		projectExplorer.removeProject(projectName);
-		if(communicator.existsProject(projectName)) {
-			projectExplorer.addProject(projectName);
-		}
-	}
-	
-	public void resetEditorTitle(boolean contentChanged, String projectName, String fileName) {
-		String title = createEditorTitle(projectName, fileName);
-		if(contentChanged) {
-			title = "*" + title;
-		}
-		int index = editorPane.indexOfEditor(projectName, fileName);
-		if(index != -1)  {
-			editorPane.setTitleAt(index, title);
-		}
-	}
-	
-	public boolean existsFile(String projectName, String fileName) throws UniformAppletException {
-		return communicator.existsFile(projectName, fileName);
-	}
-	
-	public boolean existsProject(String projectName) throws UniformAppletException {
-		return communicator.existsProject(projectName);
-	}
-	
-	public void deleteFile(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if(fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		if(editorPane.isEditorOpened(projectName, fileName)) {
-			IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
-			closeEditor(editor, false);
-		}
-		projectExplorer.removeFile(projectName, fileName);
-		communicator.deleteFile(projectName, fileName);
-	}
-	
-	public void deleteProject(String projectName) throws UniformAppletException {
-		if(projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		for(String fileName : communicator.findFilesByProject(projectName)) {
-			if(editorPane.isEditorOpened(projectName, fileName)) {
-				IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
-				closeEditor(editor, false);
-			}
-		}
-		projectExplorer.removeProject(projectName);
-		communicator.deleteProject(projectName);
-	}
-
-	
-	public void createNewFileInstance(String type) {
-		try {
-			String projectName = getSelectedProject();
-			if(projectName == null) {
-				String text = bundle.getString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
-				echoStatusText(text, MessageEnum.Information);
-				return;
-			}
-			// Initialization of a wizard
-			IWizard wizard = communicator.getEditor(type).getWizard();
-			if(wizard == null) throw new NullPointerException("No wizard for type: " + type);
-			wizard.setProjectContainer(this);
-			FileContent content = wizard.getInitialFileContent(this, projectName);
-			// End of initialization
-			
-			if(content == null) return;
-			// FIXME ovo treba popravit. naime glupo je da getInitalFileContent prima projectName koji n
-			// njemu nist ne znaci (ili mozda znaci) i onda tocno to mora vratit. mozda je bolje da 
-			// FileContent sadrzi samo file name i content. tj ne mijenjat FileContent nego napravit novi objekt!
-			// BTW trebalo bi FileContent napravit immutabilnim!
-			String returnedProjectName = content.getProjectName();
-			if(!ModelUtil.projectNamesAreEqual(projectName, returnedProjectName)) {
-				throw new IllegalStateException("Returned project name is incorrect. Follow IWizard's javadoc rules!");
-			}
-			String fileName = content.getFileName();
-			String data = content.getContent();
-			boolean exists = communicator.existsFile(projectName, fileName);
-			if(exists) {
-				String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_FILE);
-				text = Utilities.replacePlaceholders(text, new String[] {fileName, projectName});
-				echoStatusText(text, MessageEnum.Information);
-				return;
-			}
-			communicator.createFile(projectName, fileName, type);
-			communicator.saveFile(projectName, fileName, data);
-			// TODO this is temp solution
-//			if(isTestbench(projectName, fileName)) {
-//				projectExplorer.refreshProject(projectName);
-//			} else {
-				projectExplorer.addFile(projectName, fileName);
-//			}
-			String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_CREATED);
-			text = Utilities.replacePlaceholders(text, new String[] {fileName});
-			echoStatusText(text, MessageEnum.Successfull);
-			openEditor(projectName, fileName, true, false);
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_CREATE_FILE);
-			echoStatusText(text, MessageEnum.Error);
-		}
-	}
-	
-	public void createNewProjectInstance() {
-		try {
-			String title = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
-			String message = bundle.getString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
-			String projectName = showCreateProjectDialog(title, message);
-			if(projectName == null) return;
-			boolean exists = communicator.existsProject(projectName);
-			if(exists) {
-				// projectName is never null here
-				String text = bundle.getString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
-				text = Utilities.replacePlaceholders(text, new String[] {projectName});
-				echoStatusText(text, MessageEnum.Information);
-				return;
-			}
-			communicator.createProject(projectName);
-			projectExplorer.addProject(projectName);
-			String text = bundle.getString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
-			text = Utilities.replacePlaceholders(text, new String[] {projectName});
-			echoStatusText(text, MessageEnum.Successfull);
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_CREATE_PROJECT);
-			echoStatusText(text, MessageEnum.Error);
-		}
-	}
-	
-	
 	@Override
 	public void propertyChanged(String name, String oldValue, String newValue) {
 		double size;
@@ -1632,61 +1114,86 @@ public class MainApplet
 			e.printStackTrace();
 			return;
 		}
-		if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH)) {
-			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
-		} else if(name.equalsIgnoreCase(UserFileConstants.SYSTEM_SIDEBAR_WIDTH)) {
-			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
+		if (name
+				.equalsIgnoreCase(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH)) {
+			projectExplorerSplitPane
+					.setDividerLocation((int) (projectExplorerSplitPane
+							.getWidth() * size));
+		} else if (name
+				.equalsIgnoreCase(UserFileConstants.SYSTEM_SIDEBAR_WIDTH)) {
+			sideBarSplitPane.setDividerLocation((int) (sideBarSplitPane
+					.getWidth() * size));
 		} else if (name.equalsIgnoreCase(UserFileConstants.SYSTEM_VIEW_HEIGHT)) {
-			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
+			viewSplitPane
+					.setDividerLocation((int) (viewSplitPane.getHeight() * size));
 		}
 	}
-	
+
+	private IUserPreferences getPreferences() {
+		return systemContainer.getPreferences();
+	}
+
+	private String getProperty(String name) {
+		return systemContainer.getProperty(name);
+	}
+
+	private void setProperty(String name, String data) {
+		systemContainer.setProperty(name, data);
+	}
+
 	private void setPaneSize() {
 		try {
 			validate();
 			double size;
-			
-			size = Double.parseDouble(getProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH));
-			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * size));
 
-			size = Double.parseDouble(getProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH));
-			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * size));
-			
-			size = Double.parseDouble(getProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT));
-			viewSplitPane.setDividerLocation((int)(viewSplitPane.getHeight() * size));
+			size = Double
+					.parseDouble(getProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH));
+			projectExplorerSplitPane
+					.setDividerLocation((int) (projectExplorerSplitPane
+							.getWidth() * size));
+
+			size = Double
+					.parseDouble(getProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH));
+			sideBarSplitPane.setDividerLocation((int) (sideBarSplitPane
+					.getWidth() * size));
+
+			size = Double
+					.parseDouble(getProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT));
+			viewSplitPane
+					.setDividerLocation((int) (viewSplitPane.getHeight() * size));
 		} catch (Exception e) {
-			projectExplorerSplitPane.setDividerLocation((int)(projectExplorerSplitPane.getWidth() * 0.15));
-			sideBarSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * 0.75));
-			viewSplitPane.setDividerLocation((int)(sideBarSplitPane.getWidth() * 0.75));
+			projectExplorerSplitPane
+					.setDividerLocation((int) (projectExplorerSplitPane
+							.getWidth() * 0.15));
+			sideBarSplitPane.setDividerLocation((int) (sideBarSplitPane
+					.getWidth() * 0.75));
+			viewSplitPane
+					.setDividerLocation((int) (sideBarSplitPane.getWidth() * 0.75));
 		}
 	}
-	
-	private void storePaneSize() {
-		try {
-			DecimalFormat formatter = new DecimalFormat("0.##");
-			double size = projectExplorerSplitPane.getDividerLocation() * 1.0 / projectExplorerSplitPane.getWidth();
-			String property = formatter.format(size);
-			saveProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
-			
-			size = sideBarSplitPane.getDividerLocation() * 1.0 / sideBarSplitPane.getWidth(); 
-			property = formatter.format(size);
-			saveProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
 
-			size = viewSplitPane.getDividerLocation() * 1.0 / viewSplitPane.getHeight();
-			property = formatter.format(size);
-			saveProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
-		} catch (PropertyAccessException e) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			JOptionPane.showMessageDialog(this, sw.toString());
-		}
+	private void storePaneSize() {
+		DecimalFormat formatter = new DecimalFormat("0.##");
+		double size = projectExplorerSplitPane.getDividerLocation() * 1.0
+				/ projectExplorerSplitPane.getWidth();
+		String property = formatter.format(size);
+		setProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
+
+		size = sideBarSplitPane.getDividerLocation() * 1.0
+				/ sideBarSplitPane.getWidth();
+		property = formatter.format(size);
+		setProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
+
+		size = viewSplitPane.getDividerLocation() * 1.0
+				/ viewSplitPane.getHeight();
+		property = formatter.format(size);
+		setProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
 	}
-	
+
 	private void maximizeComponent(Component component) {
-		if(component == null) return;
-		if(isMaximized(component)) {
+		if (component == null)
+			return;
+		if (isMaximized(component)) {
 			centerPanel.remove(component);
 			parentOfMaximizedComponent.add(component);
 			centerPanel.add(normalCenterPanel, BorderLayout.CENTER);
@@ -1701,409 +1208,134 @@ public class MainApplet
 		centerPanel.repaint();
 		centerPanel.validate();
 	}
-	
+
 	private boolean isMaximized(Component component) {
 		return parentOfMaximizedComponent != null;
 	}
-	
-	private void saveEditor(IEditor editor) {
-		if(editor == null) return;
-		List<IEditor> editorsToSave = new ArrayList<IEditor>(1);
-		editorsToSave.add(editor);
-		saveEditors(editorsToSave);
-	}
-	
-	private void saveAllEditors() {
-		List<IEditor> openedEditors = editorPane.getAllOpenedEditors();
-		saveEditors(openedEditors);
-	}
-	
-	private void saveEditors(List<IEditor> editorsToSave) {
-		if(editorsToSave == null || editorsToSave.isEmpty()) return;
-		List<IEditor> savedEditors = new ArrayList<IEditor>();
-		List<String> projects = new ArrayList<String>();
-		for(IEditor editor : editorsToSave) {
-			if(editor.isSavable() && editor.isModified()) {
-				String fileName = editor.getFileName();
-				String projectName = editor.getProjectName();
-				String content = editor.getData();
-				if(content == null) continue;
-				savedEditors.add(editor);
-				if(!projects.contains(projectName)) {
-					projects.add(projectName);
-				}
-				try {
-					communicator.saveFile(projectName, fileName, content);
-					resetEditorTitle(false, projectName, fileName);
-					String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
-					text = Utilities.replacePlaceholders(text, new String[] {fileName});
-					echoStatusText(text, MessageEnum.Successfull);
-				} catch (UniformAppletException e) {
-					String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
-					text = Utilities.replacePlaceholders(text, new String[] {fileName});
-					echoStatusText(text, MessageEnum.Error);
-					// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-					StringWriter sw = new StringWriter();
-					PrintWriter pw = new PrintWriter(sw);
-					e.printStackTrace(pw);
-					JOptionPane.showMessageDialog(this, sw.toString());
-				}
-			}
-		}
-		
-		for(String projectName : projects) {
-			projectExplorer.refreshProject(projectName);
-		}
-		if(savedEditors.size() != 0) {
-			String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED_ALL);
-			String numberOfFiles = String.valueOf(savedEditors.size());
-			text = Utilities.replacePlaceholders(text, new String[] {numberOfFiles});
-			echoStatusText(text, MessageEnum.Successfull);
-		}
-	}
-	
-	private void saveSimulation(String projectName, String fileName) throws UniformAppletException {
-		if(projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if(fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		IEditor editor = editorPane.getOpenedEditor(projectName, fileName);
-		if(editor != null) {
-			saveSimulation(editor);
-		}
-	}
-	
-	private void saveSimulation(IEditor editor) throws UniformAppletException {
-		String fileName = editor.getFileName();
-		String projectName = editor.getProjectName();
-		if(!isSimulation(projectName, fileName)) return;
-		String content = editor.getData();
-		if(content == null) return;
-		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_SIMULATION_TITLE);
-		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_SIMULATION_MESSAGE);
-		fileName = showSaveSimulationDialog(title, message, fileName);
-		if(fileName == null) return;
-		communicator.saveFile(projectName, fileName, content);
-		
-		projectExplorer.refreshProject(projectName);
-		String text = bundle.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
-		text = Utilities.replacePlaceholders(text, new String[] {fileName});
-		echoStatusText(text, MessageEnum.Successfull);
-	}
-	
-	private List<IEditor> pickOpenedEditors(List<IEditor> editors) {
-		List<IEditor> openedEditors = new ArrayList<IEditor>();
-		for(IEditor e : editors) {
-			if(editorPane.isEditorOpened(e)) {
-				openedEditors.add(e);
-			}
-		}
-		return openedEditors;
-	}
-	
-	private void closeEditor(IEditor editor, boolean showDialog) {
-		if(editor == null) return;
-		List<IEditor> editorsToClose = new ArrayList<IEditor>(1);
-		editorsToClose.add(editor);
-		closeEditors(editorsToClose, showDialog);
-	}
-	
-	private void closeAllEditors(boolean showDialog) {
-		List<IEditor> openedEditors = editorPane.getAllOpenedEditors();
-		closeEditors(openedEditors, showDialog);
-	}
-	
-	private void closeAllButThisEditor(IEditor editorToKeepOpened, boolean showDialog) {
-		if(editorToKeepOpened == null) return;
-		List<IEditor> openedEditors = editorPane.getAllOpenedEditors();
-		openedEditors.remove(editorToKeepOpened);
-		closeEditors(openedEditors, showDialog);
-	}
-	
-	private void closeEditors(List<IEditor> editorsToClose, boolean showDialog) {
-		if(editorsToClose == null) return;
-		String title = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_TITLE);
-		String message = bundle.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_MESSAGE);
-		editorsToClose = pickOpenedEditors(editorsToClose);
-		boolean shouldContinue;
-		if(showDialog) {
-			shouldContinue = saveResourcesWithSaveDialog(editorsToClose, title, message);
-		} else {
-			shouldContinue = true;
-		}
-		if(shouldContinue) {
-			for(IEditor editor : editorsToClose) {
-				// Clean up of an editor
-				editor.dispose();
-				// End of clean up
-				
-				editorPane.closeEditor(editor);
-			}
-		}
-	}
-	
-	private void closeView(IView view) {
-		if(view == null) return;
-		List<IView> viewsToClose = new ArrayList<IView>(1);
-		viewsToClose.add(view);
-		closeViews(viewsToClose);
-	}
-	
-	private void closeAllViews() {
-		List<IView> openedViews = viewPane.getAllOpenedViews();
-		closeViews(openedViews);
-	}
-	
-	private void closeAllButThisView(IView viewToKeepOpened) {
-		if(viewToKeepOpened == null) return;
-		List<IView> openedViews = viewPane.getAllOpenedViews();
-		openedViews.remove(viewToKeepOpened);
-		closeViews(openedViews);
-	}
-	
-	private void closeViews(List<IView> viewsToClose) {
-		if(viewsToClose == null) return;
-		for(IView view : viewsToClose) {
-			viewPane.closeView(view);
-		}
-	}
-	
-	private boolean saveResourcesWithSaveDialog(List<IEditor> openedEditors, String title, String message) {
-		if(openedEditors == null) return false;
-		// create a list of savable and modified editors
-		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
-		for(IEditor editor : openedEditors) {
-			if(editor.isSavable() && editor.isModified()) {
-				notSavedEditors.add(editor);
-			}
-		}
-		
-		if(!notSavedEditors.isEmpty()) {
-			// look in preference and see if there is a need to show save dialog (user might have
-			// checked a "always save resources" checkbox)
-			boolean shouldAutoSave;
-			try {
-				String selected = getProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES);
-				shouldAutoSave = Boolean.parseBoolean(selected);
-			} catch (PropertyAccessException e) {
-				shouldAutoSave = false;
-				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
-				e.printStackTrace(pw);
-				JOptionPane.showMessageDialog(this, sw.toString());
-			}
-			
-			List<IEditor> editorsToSave = notSavedEditors;
-			if(!shouldAutoSave) {
-				List<FileIdentifier> filesToSave = showSaveDialog(title, message, notSavedEditors);
-				if(filesToSave == null) return false;
-				
-				// If size of files returned by save dialog equals those of not saved editors
-				// then a list of files are entirely equal to a list of not saved editors and
-				// no transformation is required.
-				if(filesToSave.size() != editorsToSave.size()) {
-					// transform FileIdentifiers to editors
-					editorsToSave = new ArrayList<IEditor>();
-					for(FileIdentifier file : filesToSave) {
-						String projectName = file.getProjectName();
-						String fileName = file.getFileName();
-						IEditor e = editorPane.getOpenedEditor(projectName, fileName);
-						editorsToSave.add(e);
-					}
-				}
-			}
-			
-			saveEditors(editorsToSave);
-		}
-		return true;
-	}
-	
-	private List<FileIdentifier> showSaveDialog(String title, String message, List<IEditor> editorsToBeSaved) {
-		if(editorsToBeSaved.isEmpty()) return Collections.emptyList();
-		String selectAll = bundle.getString(LanguageConstants.DIALOG_BUTTON_SELECT_ALL);
-		String deselectAll = bundle.getString(LanguageConstants.DIALOG_BUTTON_DESELECT_ALL);
-		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
-		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-		String alwaysSave = bundle.getString(LanguageConstants.DIALOG_SAVE_CHECKBOX_ALWAYS_SAVE_RESOURCES);
-		
-		SaveDialog dialog = new SaveDialog(this, true);
-		dialog.setTitle(title);
-		dialog.setText(message);
-		dialog.setOKButtonText(ok);
-		dialog.setCancelButtonText(cancel);
-		dialog.setSelectAllButtonText(selectAll);
-		dialog.setDeselectAllButtonText(deselectAll);
-		dialog.setAlwaysSaveCheckBoxText(alwaysSave);
-		for(IEditor editor : editorsToBeSaved) {
-			dialog.addItem(true, editor.getProjectName(), editor.getFileName());
-		}
-		dialog.startDialog();
-		// control locked until user clicks on OK, CANCEL or CLOSE button
-		
-		boolean shouldAutoSave = dialog.shouldAlwaysSaveResources();
-		if(shouldAutoSave) {
-			try {
-				saveProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES, String.valueOf(shouldAutoSave));
-			} catch (PropertyAccessException ignored) {
-				// TODO ovo se treba maknut kad MainApplet vise nece bit u development fazi
-				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
-				ignored.printStackTrace(pw);
-				JOptionPane.showMessageDialog(this, sw.toString());
-			}
-		}
-		int option = dialog.getOption();
-		if(option != SaveDialog.OK_OPTION) return null;
-		else return dialog.getSelectedResources();
-	}
-	
-	private String showSaveSimulationDialog(String title, String message, String suggestedFileName) {
-		String fileName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION);
-		return fileName;
-	}
-	
-	private FileIdentifier showRunDialog(String title, String listTitle, int dialogType) {
-		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
-		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-		String currentProjectTitle = bundle.getString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_TITLE);
-		String changeCurrentProjectButton = bundle.getString(LanguageConstants.DIALOG_RUN_CHANGE_CURRENT_PROJECT_BUTTON);
-		String projectName = getSelectedProject();
-		String currentProjectLabel;
-		if(projectName == null) {
-			currentProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);
-		} else {
-			currentProjectLabel = bundle.getString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_LABEL);
-			currentProjectLabel = Utilities.replacePlaceholders(currentProjectLabel, new String[] {projectName});
-		}
-		
-		RunDialog dialog = new RunDialog(this, true, this, dialogType);
-		dialog.setTitle(title);
-		dialog.setCurrentProjectTitle(currentProjectTitle);
-		dialog.setChangeProjectButtonText(changeCurrentProjectButton);
-		dialog.setCurrentProjectText(currentProjectLabel);
-		dialog.setListTitle(listTitle);
-		dialog.setOKButtonText(ok);
-		dialog.setCancelButtonText(cancel);
-		dialog.startDialog();
-		// control locked until user clicks on OK, CANCEL or CLOSE button
-		
-		return dialog.getSelectedFile();
-	}
-	
-	private String showCreateProjectDialog(String title, String message) {
-		String ok = bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
-		String cancel = bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-		Object[] options = new Object[] {ok, cancel};
-		
-		//String projectName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-		String projectName = (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.OK_CANCEL_OPTION);
-		/*try {
-			if(projectName != null && communicator.existsProject(projectName)) {
-				return null;
-			}
-		} catch (UniformAppletException e) {
-		}*/
-		return projectName;
-	}
-	
-	/**
-	 * A collection of utility methods for MainApplet.
-	 *  
-	 * @author Miro Bezjak
-	 */
-	private static class Utilities {
-		
-		private static final String PROJECT_FILE_SEPARATOR = "/";
-		private static final String SEPARATOR_FOR_EACH_ROW = "\n";
-		
-		/**
-		 * Constructs FileIdentifiers out of <code>editors</code>.
-		 * @param editors editors to construct FileIdentifiers from
-		 * @return FileIdentifiers constructed out of <code>editors</code>
-		 */
-		public static List<FileIdentifier> convertEditorsToFileIdentifers(List<IEditor> editors) {
-			if(editors == null) return null;
-			List<FileIdentifier> files = new ArrayList<FileIdentifier>();
-			for(IEditor e : editors) {
-				String projectName = e.getProjectName();
-				String fileName = e.getFileName();
-				FileIdentifier f = new FileIdentifier(projectName, fileName);
-				files.add(f);
-			}
-			return files;
-		}
-		
-		/**
-		 * Replace placeholders in <code>message</code> with <code>replacements</code>
-		 * string. Look at <code>Client_Main_ApplicationResources_en.properties</code>
-		 * file in src/i18n/client source folder to learn what placeholders are.
-		 * @param message a message from where to replace placeholders
-		 * @param replacements an array of string to replace placeholders 
-		 * @return modified message
-		 */
-		public static String replacePlaceholders(String message, String[] replacements) {
-			if(replacements == null) return message;
-			String replaced = message;
-			int i = 0; // placeholders starts with 0
-			for(String s : replacements) {
-				replaced = replaced.replace("{" + i + "}", s);
-				i++;
-			}
-			return replaced;
-		}
-		
-		public static String serializeEditorInfo(List<IEditor> editors) {
-			// guessing file name and project name (together) to be 15 characters
-			StringBuilder sb = new StringBuilder(editors.size() * 20);
-			for(IEditor e : editors) {
-				if(e.isSavable()) {
-					sb.append(e.getProjectName()).append(PROJECT_FILE_SEPARATOR)
-						.append(e.getFileName()).append(SEPARATOR_FOR_EACH_ROW);
-				}
-			}
-			if(sb.length() != 0) {
-				sb.deleteCharAt(sb.length() - 1);
-			}
-			return sb.toString();
-		}
-		
-		public static List<FileIdentifier> deserializeEditorInfo(String data) {
-			if(data == null || data.equals("")) return Collections.emptyList();
-			String[] lines = data.split(SEPARATOR_FOR_EACH_ROW);
-			List<FileIdentifier> files = new ArrayList<FileIdentifier>(lines.length);
-			for(String s : lines) {
-				String[] info = s.split(PROJECT_FILE_SEPARATOR);
-				FileIdentifier f = new FileIdentifier(info[0], info[1]);
-				files.add(f);
-			}
-			return files;
-		}
-		
-		public static String serializeViewInfo(List<String> views) {
-			// guessing view type to be 10 characters
-			StringBuilder sb = new StringBuilder(views.size() * 10);
-			for(String s : views) {
-				sb.append(s).append(SEPARATOR_FOR_EACH_ROW);
-			}
-			if(sb.length() != 0) {
-				sb.deleteCharAt(sb.length() - 1);
-			}
-			return sb.toString();
-		}
-		
-		public static List<String> deserializeViewInfo(String data) {
-			if(data == null || data.equals("")) return Collections.emptyList();
-			String[] lines = data.split(SEPARATOR_FOR_EACH_ROW);
-			List<String> files = new ArrayList<String>(lines.length);
-			for(String s : lines) {
-				files.add(s);
-			}
-			return files;
-		}
 
+	private boolean isDesendent(Component a, Component b) {
+		return b != null && SwingUtilities.isDescendingFrom(a, b);
+	}
+
+	private JTabbedPane getTabbedPane(ComponentPlacement placement) {
+		switch (placement) {
+		case CENTER:
+			return centerTabbedPane;
+		case BOTTOM:
+			return bottomTabbedPane;
+		case LEFT:
+			return leftTabbedPane;
+		case RIGHT:
+			return rightTabbedPane;
+		default:
+			return null;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#add(java.lang.String,
+	 *      javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	 */
+	@Override
+	public void addComponent(String title, JComponent component,
+			ComponentGroup group, ComponentPlacement placement) {
+		JTabbedPane pane = getTabbedPane(placement);
+		pane.add(title, component);
+		components.put(component, group);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#remove(javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	 */
+	@Override
+	public void removeComponent(JComponent component,
+			ComponentPlacement placement) {
+		JTabbedPane pane = getTabbedPane(placement);
+		pane.remove(component);
+		components.remove(component);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setTitle(javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement,
+	 *      java.lang.String)
+	 */
+	@Override
+	public void setComponentTitle(JComponent component,
+			ComponentPlacement placement, String title) {
+		JTabbedPane pane = getTabbedPane(placement);
+		int index = pane.indexOfComponent(component);
+		pane.setTitleAt(index, title);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getTitle(javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	 */
+	@Override
+	public String getComponentTitle(JComponent component,
+			ComponentPlacement placement) {
+		JTabbedPane pane = getTabbedPane(placement);
+		int index = pane.indexOfComponent(component);
+		return pane.getTitleAt(index);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setToolTipText(javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement,
+	 *      java.lang.String)
+	 */
+	@Override
+	public void setComponentToolTipText(JComponent component,
+			ComponentPlacement placement, String tooltip) {
+		JTabbedPane pane = getTabbedPane(placement);
+		int index = pane.indexOfComponent(component);
+		pane.setToolTipTextAt(index, tooltip);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setSelectedComponent(javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	 */
+	@Override
+	public void setSelectedComponent(JComponent component,
+			ComponentPlacement placement) {
+		JTabbedPane pane = getTabbedPane(placement);
+		pane.setSelectedComponent(component);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getSelectedComponent()
+	 */
+	@Override
+	public JComponent getSelectedComponent() {
+		return selectedComponent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getSelectedComponent(java.util.Collection)
+	 */
+	@Override
+	public JComponent getSelectedComponent(ComponentGroup group) {
+		return selectedComponentsByGroup.get(group);
 	}
 
 }

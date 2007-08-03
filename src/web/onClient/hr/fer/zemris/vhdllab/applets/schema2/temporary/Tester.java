@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummyProjectContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
@@ -58,13 +58,13 @@ public class Tester {
 	private static void testSchema() {
 		// test init
 		SchemaMainPanel mpanel = new SchemaMainPanel();
-		ProjectContainer dummypc = new DummyProjectContainer();
-		mpanel.setProjectContainer(dummypc);
+		ISystemContainer dummypc = new DummyProjectContainer();
+		mpanel.setSystemContainer(dummypc);
 		mpanel.init();
 		
 		// test setFileContent
 		IWizard wiz = new DefaultWizard();
-		wiz.setProjectContainer(new DummyProjectContainer());
+		wiz.setSystemContainer(new DummyProjectContainer());
 		FileContent fc = wiz.getInitialFileContent(null, "dummyProject");
 		mpanel.setFileContent(fc);
 		

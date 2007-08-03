@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main.component.dummy;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 
 import java.awt.BorderLayout;
@@ -28,7 +28,7 @@ public class Writer extends JPanel implements IEditor, IWizard {
 	private boolean readonly;
 	private boolean modifiedFlag = true;
 	
-	private ProjectContainer container;
+	private ISystemContainer container;
 	private FileContent content;
 	
 	public void init() {
@@ -76,8 +76,8 @@ public class Writer extends JPanel implements IEditor, IWizard {
 		container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
 	}
 
-	public void setProjectContainer(ProjectContainer pContainer) {
-		this.container = pContainer;
+	public void setSystemContainer(ISystemContainer container) {
+		this.container = container;
 	}
 
 	public FileContent getInitialFileContent(Component parent, String projectName) {

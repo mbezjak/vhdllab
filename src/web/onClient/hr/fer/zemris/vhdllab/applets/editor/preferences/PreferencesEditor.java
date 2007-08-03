@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.editor.preferences;
 import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.preferences.PropertyListener;
@@ -26,7 +26,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 
 	private static final long serialVersionUID = -7139479707266773753L;
 
-	private ProjectContainer container;
+	private ISystemContainer container;
 	private FileContent content;
 	private Map<String, Integer> rows;
 
@@ -142,7 +142,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 	}
 
 	@Override
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 		this.container = container;
 	}
 

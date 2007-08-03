@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusContent;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -113,7 +113,7 @@ public class StatusHistoryView extends JPanel implements IView {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
 	 */
-	public void setProjectContainer(ProjectContainer container) {
+	public void setSystemContainer(ISystemContainer container) {
 		container.getStatusBar().addStatusListener(new StatusListener() {
 			public void statusChanged(StatusContent c) {
 				addStatus(c.getMessage(), c.getMessageType());

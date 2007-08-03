@@ -28,7 +28,7 @@ public interface IEditor {
 	void setReadOnly(boolean flag);
 	boolean isReadOnly();
 	void highlightLine(int line);
-	void setProjectContainer(ProjectContainer container);
+	void setSystemContainer(ISystemContainer container);
 	void init();
 	IWizard getWizard();
 	void dispose();

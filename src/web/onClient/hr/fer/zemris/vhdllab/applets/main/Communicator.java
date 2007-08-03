@@ -5,6 +5,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
+import hr.fer.zemris.vhdllab.constants.UserFileConstants;
+import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.DefaultUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
@@ -17,6 +19,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class Communicator {
 
@@ -33,12 +36,29 @@ public class Communicator {
 		this.invoker = invoker;
 		this.ownerId = ownerId;
 	}
-	
+
 	public void init() throws UniformAppletException {
 		loadUserPreferences();
+		// FIXME TMP SOLUTION
+		loadFileIds();
 	}
 
-	public void dispose() throws UniformAppletException, PropertyAccessException {
+	private void loadFileIds() throws UniformAppletException {
+		/*
+		 * this is a fix for loadFileContent method. it breaks when system
+		 * container tries to open editors (stored in a session). because
+		 * critical methods: getAllProjects and findFilesByProject was still not
+		 * called nothing is cached so loadFileContent method assumes that such
+		 * file does not exist.
+		 */
+		for (String projectName : getAllProjects()) {
+			for (String fileName : findFilesByProject(projectName))
+				;
+		}
+	}
+
+	public void dispose() throws UniformAppletException,
+			PropertyAccessException {
 		IUserPreferences preferences = cache.getUserPreferences();
 		for (String key : preferences.propertyKeys()) {
 			Long id = cache.getIdentifierForProperty(key);
@@ -324,7 +344,7 @@ public class Communicator {
 		}
 		return cache.getViewType(view);
 	}
-	
+
 	public IUserPreferences getPreferences() {
 		return cache.getUserPreferences();
 	}
@@ -332,7 +352,7 @@ public class Communicator {
 	private void loadUserPreferences() throws UniformAppletException {
 		Properties properties = new Properties();
 		List<Long> userFileIds = invoker.findUserFilesByOwner(ownerId);
-		for(Long id : userFileIds) {
+		for (Long id : userFileIds) {
 			String name = invoker.loadUserFileName(id);
 			cache.cacheUserFileItem(name, id);
 			String data = invoker.loadUserFileContent(id);
@@ -340,6 +360,26 @@ public class Communicator {
 		}
 		IUserPreferences preferences = new DefaultUserPreferences(properties);
 		cache.cacheUserPreferences(preferences);
+	}
+
+	public ResourceBundle getResourceBundle(String baseName) {
+		String language;
+		try {
+			language = getPreferences().getProperty(
+					UserFileConstants.COMMON_LANGUAGE);
+		} catch (PropertyAccessException e) {
+			language = null;
+		}
+		if (language == null) {
+			language = "en";
+		}
+
+		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName,
+				language);
+		if (bundle == null) {
+			throw new IllegalArgumentException("No bundle found.");
+		}
+		return bundle;
 	}
 
 }

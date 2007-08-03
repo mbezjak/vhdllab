@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.dialog;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 
 import java.awt.BorderLayout;
@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,8 +49,8 @@ import javax.swing.border.TitledBorder;
  * This dialog uses project container to get files to display and dialog
  * type to chose which method to invoke. So far these are dialog types:
  * <ul>
- * <li>{@link #COMPILATION_TYPE} - uses {@link ProjectContainer#getAllCircuits(String)} method</li>
- * <li>{@link #SIMULATION_TYPE} - uses {@link ProjectContainer#getAllTestbenches(String)} method</li>
+ * <li>{@link #COMPILATION_TYPE} - uses {@link ISystemContainer#getAllCircuits(String)} method</li>
+ * <li>{@link #SIMULATION_TYPE} - uses {@link ISystemContainer#getAllTestbenches(String)} method</li>
  * </ul>
  * <p>Here is an example of how to user this dialog:</p>
  * <code>
@@ -95,8 +96,8 @@ public class RunDialog extends JDialog {
 	
 	/** Owner of this dialog (used to enable modal dialog) */
 	private Component owner;
-	/** Project Container to enable communication */
-	private ProjectContainer container;
+	/** System Container to enable communication */
+	private ISystemContainer container;
 	/** Currently displayed project */
 	private String currentProject;
 	
@@ -193,14 +194,14 @@ public class RunDialog extends JDialog {
      * @param owner the <code>Component</code> from which the dialog is displayed.
      * @param modal  true for a modal dialog, false for one that allows
      *               others windows to be active at the same time
-     * @param container project container to enable communication
+     * @param container system container to enable communication
      * @param dialogType a type of this dialog
      * @exception HeadlessException if GraphicsEnvironment.isHeadless()
      * returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public RunDialog(Component owner, boolean modal, ProjectContainer container, int dialogType) throws HeadlessException {
+    public RunDialog(Component owner, boolean modal, ISystemContainer container, int dialogType) throws HeadlessException {
     	super(JOptionPane.getFrameForComponent(owner), null, modal);
         runDialogImpl(owner, container, dialogType);
     }
@@ -223,14 +224,14 @@ public class RunDialog extends JDialog {
      * @param owner the <code>Frame</code> from which the dialog is displayed
      * @param modal  true for a modal dialog, false for one that allows
      *               others windows to be active at the same time
-     * @param container project container to enable communication
+     * @param container system container to enable communication
      * @param dialogType a type of this dialog
      * @exception HeadlessException if GraphicsEnvironment.isHeadless()
      * returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public RunDialog(Frame owner, boolean modal, ProjectContainer container, int dialogType) throws HeadlessException {
+    public RunDialog(Frame owner, boolean modal, ISystemContainer container, int dialogType) throws HeadlessException {
         super(owner, null, modal);
         runDialogImpl(owner, container, dialogType);
     }
@@ -252,14 +253,14 @@ public class RunDialog extends JDialog {
      * @param owner the non-null <code>Dialog</code> from which the dialog is displayed
      * @param modal  true for a modal dialog, false for one that allows
      *               other windows to be active at the same time
-     * @param container project container to enable communication
+     * @param container system container to enable communication
      * @param dialogType a type of this dialog
      * @exception HeadlessException if GraphicsEnvironment.isHeadless()
      * returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public RunDialog(Dialog owner, boolean modal, ProjectContainer container, int dialogType) throws HeadlessException {
+    public RunDialog(Dialog owner, boolean modal, ISystemContainer container, int dialogType) throws HeadlessException {
         super(owner, null, modal);
         runDialogImpl(owner, container, dialogType);
     }
@@ -282,14 +283,14 @@ public class RunDialog extends JDialog {
      * @param owner the <code>JApplet</code> from which the dialog is displayed
      * @param modal  true for a modal dialog, false for one that allows
      *               others windows to be active at the same time
-     * @param container project container to enable communication
+     * @param container system container to enable communication
      * @param dialogType a type of this dialog
      * @exception HeadlessException if GraphicsEnvironment.isHeadless()
      * returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public RunDialog(JApplet owner, boolean modal, ProjectContainer container, int dialogType) throws HeadlessException {
+    public RunDialog(JApplet owner, boolean modal, ISystemContainer container, int dialogType) throws HeadlessException {
         super(getAppletFrame(owner), null, modal);
         runDialogImpl(owner, container, dialogType);
     }
@@ -297,10 +298,10 @@ public class RunDialog extends JDialog {
     /**
      * Implemetation of a constructor of <code>RunDialog</code>.
      * @param owner owner for which the dialog is displayed
-     * @param container project container to enable communication
+     * @param container system container to enable communication
      * @param dialogType a type of this dialog
      */
-    private void runDialogImpl(Component owner, ProjectContainer container, int dialogType) {
+    private void runDialogImpl(Component owner, ISystemContainer container, int dialogType) {
     	this.owner = owner;
     	this.container = container;
     	this.dialogType = dialogType;
@@ -311,7 +312,12 @@ public class RunDialog extends JDialog {
     	popupMenu = new JPopupMenu();
     	Font font = popupMenu.getFont();
     	FontMetrics metrics = popupMenu.getFontMetrics(font);
-    	List<String> allProjects = container.getAllProjects();
+    	List<String> allProjects;
+		try {
+			allProjects = container.getAllProjects();
+		} catch (UniformAppletException e1) {
+			allProjects = new ArrayList<String>();
+		}
     	for(final String project : allProjects) {
     		JMenuItem item = new JMenuItem(project);
     		item.addActionListener(new ActionListener() {

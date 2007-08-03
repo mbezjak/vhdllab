@@ -31,10 +31,10 @@ public class LanguageConstants {
 
 	
 	/**
-	 * Part of a key for view title. In addition to this key user needs
-	 * to append one of view type to this key in order for key to be complete.
+	 * Part of a key for component title. In addition to this key user needs
+	 * to append one of component type to this key in order for key to be complete.
 	 */
-	public static final String VIEW_TITLE_FOR = "view.title.for.";
+	public static final String TITLE_FOR = "title.for.";
 	
 	public static final String MENU_FILE = "menu.file";
 	public static final String MENU_EDIT = "menu.edit";
@@ -60,6 +60,7 @@ public class LanguageConstants {
 	public static final String MENU_VIEW_SHOW_VIEW_COMPILATION_ERRORS = "menu.view.show.view.compilation.errors";
 	public static final String MENU_VIEW_SHOW_VIEW_SIMULATION_ERRORS = "menu.view.show.view.simulation.errors";
 	public static final String MENU_VIEW_SHOW_VIEW_STATUS_HISTORY = "menu.view.show.view.status.history";
+	public static final String MENU_VIEW_PROJECT_EXPLORER = "menu.view.project.explorer";
 	public static final String MENU_TOOLS_COMPILE_WITH_DIALOG = "menu.tools.compile.with.dialog";
 	public static final String MENU_TOOLS_COMPILE_ACTIVE = "menu.tools.compile.active";
 	public static final String MENU_TOOLS_COMPILE_HISTORY = "menu.tools.compile.history";
@@ -111,10 +112,13 @@ public class LanguageConstants {
 	public static final String STATUSBAR_FILE_CREATED = "statusbar.file.created";
 	public static final String STATUSBAR_PROJECT_CREATED = "statusbar.project.created";
 	public static final String STATUSBAR_NO_SELECTED_PROJECT = "statusbar.no.selected.project";
+	public static final String STATUSBAR_CANT_LOAD_FILE_TYPE = "statusbar.cant.load.file.type";
 	public static final String STATUSBAR_CANT_SAVE_FILE = "statusbar.cant.save.file";
 	public static final String STATUSBAR_CANT_SAVE_PROJECT = "statusbar.cant.save.project";
 	public static final String STATUSBAR_CANT_CREATE_FILE = "statusbar.cant.create.file";
 	public static final String STATUSBAR_CANT_CREATE_PROJECT = "statusbar.cant.create.project";
+	public static final String STATUSBAR_CANT_CHECK_FILE_EXISTENCE = "statusbar.cant.check.file.existence";
+	public static final String STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE = "statusbar.cant.check.project.existence";
 	public static final String STATUSBAR_CANT_LOAD_FILE_CONTENT = "statusbar.cant.load.file.content";
 	public static final String STATUSBAR_CANT_LOAD_WORKSPACE = "statusbar.cant.load.workspace";
 	public static final String STATUSBAR_CANT_COMPILE = "statusbar.cant.compile";
@@ -125,6 +129,7 @@ public class LanguageConstants {
 	public static final String STATUSBAR_SIMULATED = "statusbar.simulated";
 	public static final String STATUSBAR_CANT_OPEN_VIEW = "statusbar.cant.open.view";
 	public static final String STATUSBAR_CANT_VIEW_VHDL_CODE = "statusbar.cant.view.vhdl.code";
+	public static final String STATUSBAR_CANT_VIEW_VHDL_CODE_FOR_THAT_FILE = "statusbar.cant.view.vhdl.code.for.that.file";
 	public static final String STATUSBAR_CANT_VIEW_PREFERENCES = "statusbar.cant.view.preferences";
 	
 }
