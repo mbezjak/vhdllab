@@ -57,6 +57,11 @@ public class CPToolbarParameterEnvelopeCollection {
 	private ISchemaController controller = null;
 
 	/**
+	 * Parameter holder
+	 */
+	private EParameterHolder parameterHolder = null;
+
+	/**
 	 * Konstruktor
 	 * 
 	 * @param component
@@ -69,6 +74,7 @@ public class CPToolbarParameterEnvelopeCollection {
 		this.controller = controller;
 		this.componentName = component.getName();
 
+		parameterHolder = EParameterHolder.component;
 		buildParameters(component.getParameters());
 		buildRowEditorModel();
 	}
@@ -86,6 +92,7 @@ public class CPToolbarParameterEnvelopeCollection {
 		this.controller = controller;
 		this.componentName = wire.getName();
 
+		parameterHolder = EParameterHolder.wire;
 		buildParameters(wire.getParameters());
 		buildRowEditorModel();
 	}
@@ -186,11 +193,10 @@ public class CPToolbarParameterEnvelopeCollection {
 		}
 
 		ICommand command = new SetParameterCommand(componentName,
-				parameterName, EParameterHolder.component, newValue, controller
+				parameterName, parameterHolder, newValue, controller
 						.getSchemaInfo());
 		ICommandResponse response = command.performCommand(controller
 				.getSchemaInfo());
-		
 
 		if (CPToolbar.DEBUG_MODE) {
 			System.out

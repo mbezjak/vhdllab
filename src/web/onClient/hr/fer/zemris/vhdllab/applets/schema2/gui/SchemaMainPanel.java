@@ -29,7 +29,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
@@ -43,7 +42,6 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
 
 public class SchemaMainPanel extends JPanel implements IEditor {
 
@@ -69,11 +67,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	 */
 	private static final long serialVersionUID = -6643347269051956602L;
 
-	
-	
 	/* static fields */
 
-	
 	/* model private fields */
 	private ISchemaCore core;
 	private ISchemaController controller;
@@ -84,24 +79,35 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private ILocalGuiController localGUIController;
 	private CPToolbar componentPropertyToolbar;
 	private ComponentToAddToolbar componentToAddToolbar;
-	private JPanel rightPanel;
 
 	/* IEditor private fields */
 	private ProjectContainer projectContainer;
 	private FileContent filecontent;
 	private boolean readonly, saveable, modified;
-//	private double dividerLocation;
-	private double constantRightPanelWidth;
-	private JSplitPane splitPane;
 
-	
-	
+	/**
+	 * Right panel divider width
+	 */
+	private double rightPanelWidth;
+
+	/**
+	 * Glavni split pane koji dijeli canvas od toolbara
+	 */
+	private JSplitPane verticalSplitPane;
+	/**
+	 * desni split pane koji dijeli property toolbar i componentToAdd toolbar
+	 */
+	private JSplitPane horizontalSplitPane;
+
+	protected double rightPanelDividerPosition;
+
+	protected boolean resizingIsOver = false;
+
 	/* ctors */
 
 	public SchemaMainPanel() {
 	}
 
-	
 	/* methods */
 
 	private void initStatic() {
@@ -114,10 +120,13 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		readonly = false;
 		saveable = false;
 		modified = false;
-		constantRightPanelWidth = 200;
+
+		rightPanelWidth = 200;
+		rightPanelDividerPosition = .5;
 
 		controller.registerCore(core);
-		controller.addListener(EPropertyChange.ANY_CHANGE, new ModificationListener());
+		controller.addListener(EPropertyChange.ANY_CHANGE,
+				new ModificationListener());
 	}
 
 	private void initDynamic() {
@@ -143,51 +152,63 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		predefined = FileUtil.readFile(PredefinedComponentsParser.class
 				.getResourceAsStream(Constants.PREDEFINED_FILENAME));
 		core.initPrototypes(predefined);
-		
+
 		// init user component prototypes
 		initUserPrototypes();
 	}
-	
+
 	private void initUserPrototypes() {
-		if (projectContainer == null || filecontent == null) return;
+		if (projectContainer == null || filecontent == null)
+			return;
 		System.out.println("Initializing user prototypes.");
-		
+
 		String projectname = filecontent.getProjectName();
 		String thisname = filecontent.getFileName();
 		List<String> circuitnames = null;
 		try {
 			circuitnames = projectContainer.getAllCircuits(projectname);
-			if (circuitnames == null) throw new NullPointerException("getAllCircuits(...) returned null.");
+			if (circuitnames == null)
+				throw new NullPointerException(
+						"getAllCircuits(...) returned null.");
 		} catch (Exception e) {
-			throw new SchemaException("Could not fetch circuits in project '" + projectname + "'.", e);
+			throw new SchemaException("Could not fetch circuits in project '"
+					+ projectname + "'.", e);
 		}
-		
+
 		ISchemaInfo info = controller.getSchemaInfo();
 		Hierarchy hierarchy;
 		try {
 			hierarchy = projectContainer.extractHierarchy(projectname);
 		} catch (UniformAppletException e1) {
-			throw new SchemaException("Cannot extract hierarchy for project '" + projectname + "'.", e1);
+			throw new SchemaException("Cannot extract hierarchy for project '"
+					+ projectname + "'.", e1);
 		}
-		
+
 		for (String name : circuitnames) {
-			// do not put prototypes for the modelled component or for components that depend on this component
-			if (thisname.equals(name) || hierarchy.getChildrenForParent(name).contains(thisname)) continue;
-			
+			// do not put prototypes for the modelled component or for
+			// components that depend on this component
+			if (thisname.equals(name)
+					|| hierarchy.getChildrenForParent(name).contains(thisname))
+				continue;
+
 			// get circuit interface for the component
 			CircuitInterface circint;
 			try {
-				circint = projectContainer.getCircuitInterfaceFor(projectname, name);
+				circint = projectContainer.getCircuitInterfaceFor(projectname,
+						name);
 			} catch (UniformAppletException e) {
-				throw new SchemaException("Could not fetch circuit interface for circuit '" +
-						name + "' in project '" + projectname + "'.", e);
+				throw new SchemaException(
+						"Could not fetch circuit interface for circuit '"
+								+ name + "' in project '" + projectname + "'.",
+						e);
 			}
-			
+
 			// add component to prototypes
 			try {
 				info.getPrototyper().addPrototype(new UserComponent(circint));
 			} catch (DuplicateKeyException e) {
-				throw new SchemaException("Duplicate component name '" + circint.getEntityName() + "'.");
+				throw new SchemaException("Duplicate component name '"
+						+ circint.getEntityName() + "'.");
 			}
 		}
 	}
@@ -222,19 +243,14 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		localGUIController.addListener(
 				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE, canTool);
 
-		JToolBar componentPropertyToolbarTB = new JToolBar("Property");
-		componentPropertyToolbarTB.add(componentPropertyToolbar);
 		JScrollPane componentPropertyToolbarScrollPane = new JScrollPane(
-				componentPropertyToolbarTB);
-
-		JToolBar componentToAddToolbarTB = new JToolBar("Components");
-		componentToAddToolbarTB.add(componentToAddToolbar);
+				componentPropertyToolbar);
 		JScrollPane componentToAddToolbarScrollPane = new JScrollPane(
-				componentToAddToolbarTB);
+				componentToAddToolbar);
 
-		rightPanel = new JPanel(new GridLayout(2, 1));
-		rightPanel.add(componentPropertyToolbarScrollPane);
-		rightPanel.add(componentToAddToolbarScrollPane);
+		horizontalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+				componentPropertyToolbarScrollPane,
+				componentToAddToolbarScrollPane);
 
 		/* init canvas */
 		JScrollPane pane = new JScrollPane(canvas);
@@ -242,55 +258,40 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		panel.add(canTool, BorderLayout.NORTH);
 		panel.add(pane, BorderLayout.CENTER);
 
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panel,
-				rightPanel);
-		// splitPane.setDividerLocation((int) (0.8 * getWidth()));
-		splitPane.setOneTouchExpandable(true);
-//		final BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI())
-//				.getDivider();
-//		divider.addComponentListener(new ComponentAdapter() {
-//			@Override
-//			public void componentMoved(ComponentEvent e) {
-//				int width = splitPane.getWidth();
-//				if (width <= 0) {
-//					return;
-//				}
-//				setSplitPaneDivider((double) splitPane.getDividerLocation() / width);
-//				System.out.println("divider location =" + dividerLocation);
-//				System.out.println("split pane width =" + width);
-//				System.out.println("split pane divider size =" + splitPane.getDividerSize());
-//			}
-//		});
-		rightPanel.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				// TODO
-				//Insets ins = rightPanel.getInsets();
-				//constantRightPanelWidth = splitPane.getRightComponent().getWidth();
-			}
-		});
-		addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-//				int divider = getSplitPaneDivider();
-//				if (divider <= 0) {
-//					return;
-//				}
-				int width = getWidth();
-				if (width <= 0) return;
-				splitPane.setDividerLocation(1 - constantRightPanelWidth / width);
-			}
-		});
-		this.add(splitPane, BorderLayout.CENTER);
-	}
+		verticalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panel,
+				horizontalSplitPane);
 
-//	private void setSplitPaneDivider(double location) {
-//		this.dividerLocation = location;
-//	}
-//
-//	private int getSplitPaneDivider() {
-//		return (int) (dividerLocation * splitPane.getWidth());
-//	}
+		horizontalSplitPane.setOneTouchExpandable(true);
+		verticalSplitPane.setOneTouchExpandable(true);
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				int width = getWidth();
+				int height = getHeight();
+
+				if (width <= 0) {
+					return;
+				}
+				verticalSplitPane
+						.setDividerLocation(1
+								- rightPanelWidth
+								/ ((width >= rightPanelWidth) ? width
+										: rightPanelWidth));
+
+				if (height <= 0) {
+					return;
+				}
+				horizontalSplitPane
+						.setDividerLocation(rightPanelDividerPosition);
+
+				resizingIsOver = true;
+			}
+		});
+
+		this.add(verticalSplitPane, BorderLayout.CENTER);
+	}
 
 	private void resetSchema() {
 		core.reset();

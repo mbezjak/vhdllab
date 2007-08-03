@@ -12,10 +12,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
+import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,7 +52,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	/**
 	 * Ime oznacene komponente
 	 */
-	private JLabel labelComponentName = new JLabel("");
+	private JLabel labelComponentName = null;
 
 	public CPToolbar(ILocalGuiController lgc, ISchemaController controller) {
 		this.lgc = lgc;
@@ -64,8 +64,9 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 * Inicijalizira graficki dio ovog toolbara
 	 */
 	private void initGUI() {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setAlignmentX(LEFT_ALIGNMENT);
+		setLayout(new BorderLayout());
+		labelComponentName = new JLabel("Nothing selected", JLabel.CENTER);
+		add(labelComponentName, BorderLayout.NORTH);
 	}
 
 	/**
@@ -89,6 +90,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		printComponentName(wire.getName().toString());
 		faceLiftingForTable(tabela);
 		printTable(tabela);
+		validate();
 	}
 
 	/**
@@ -112,6 +114,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		printComponentName(component.getName().toString());
 		faceLiftingForTable(tabela);
 		printTable(tabela);
+		validate();
 	}
 
 	private void faceLiftingForTable(JTableX tabela) {
@@ -156,18 +159,19 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		sPane
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		add(sPane);
+		add(sPane, BorderLayout.CENTER);
+
 		tabela.setPreferredSize(null);
 		setPreferredSize(tabela.getPreferredSize());
-		revalidate();
+		sPane.invalidate();
 	}
 
 	private void printComponentName(String componentName) {
-
-		// dodaj labelu na panel
 		labelComponentName.setText("Selection: " + componentName);
-		add(labelComponentName);
-		revalidate();
+		labelComponentName.setOpaque(true);
+		add(labelComponentName, BorderLayout.NORTH);
+		labelComponentName.repaint();
+		labelComponentName.invalidate();
 	}
 
 	/**
@@ -176,7 +180,6 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	private void cleanUpGui() {
 		// makni sve komponente sa panela
 		removeAll();
-		revalidate();
 	}
 
 	/**
