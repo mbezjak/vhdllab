@@ -10,14 +10,14 @@ public class StatusContent {
 	private String message;
 	
 	/** Message type */
-	private MessageEnum messageType;
+	private MessageType messageType;
 	
 	/**
 	 * Constructor.
 	 * @param message a message content
 	 * @param messageType a message type
 	 */
-	public StatusContent(String message, MessageEnum messageType) {
+	public StatusContent(String message, MessageType messageType) {
 		super();
 		if(message == null) {
 			throw new NullPointerException("Message content can not be null.");
@@ -41,7 +41,7 @@ public class StatusContent {
 	 * Getter for message type.
 	 * @return a message type
 	 */
-	public MessageEnum getMessageType() {
+	public MessageType getMessageType() {
 		return messageType;
 	}
 	

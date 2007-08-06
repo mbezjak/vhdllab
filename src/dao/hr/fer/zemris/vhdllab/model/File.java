@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.model;
 
-import static hr.fer.zemris.vhdllab.utilities.ModelUtil.*;
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.fileNamesAreEqual;
 
 /**
  * @hibernate.class

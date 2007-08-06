@@ -73,6 +73,17 @@ public class DefaultViewStorage implements IViewStorage {
 	public void move(String identifier, ComponentPlacement placement) {
 		storage.moveComponent(identifier, group, placement);
 	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#getIdentifierFor(hr.fer.zemris.vhdllab.applets.main.interfaces.IView)
+	 */
+	@Override
+	public String getIdentifierFor(IView view) {
+		if(view == null) {
+			throw new NullPointerException("View cant be null");
+		}
+		return storage.getIdentifierFor(getComponentFor(view));
+	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#getOpenedView(java.lang.String)

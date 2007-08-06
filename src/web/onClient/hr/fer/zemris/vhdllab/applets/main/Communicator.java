@@ -5,8 +5,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.DefaultUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
@@ -19,7 +17,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class Communicator {
 
@@ -164,6 +161,11 @@ public class Communicator {
 
 	public void createFile(String projectName, String fileName, String type)
 			throws UniformAppletException {
+		createFile(projectName, fileName, type, null);
+	}
+
+	public void createFile(String projectName, String fileName, String type, String data)
+	throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
@@ -176,8 +178,11 @@ public class Communicator {
 		Long fileIdentifier = invoker.createFile(projectIdentifier, fileName,
 				type);
 		cache.cacheItem(projectName, fileName, fileIdentifier);
+		if(data != null) {
+			saveFile(projectName, fileName, data);
+		}
 	}
-
+	
 	public void saveFile(String projectName, String fileName, String content)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -360,26 +365,6 @@ public class Communicator {
 		}
 		IUserPreferences preferences = new DefaultUserPreferences(properties);
 		cache.cacheUserPreferences(preferences);
-	}
-
-	public ResourceBundle getResourceBundle(String baseName) {
-		String language;
-		try {
-			language = getPreferences().getProperty(
-					UserFileConstants.COMMON_LANGUAGE);
-		} catch (PropertyAccessException e) {
-			language = null;
-		}
-		if (language == null) {
-			language = "en";
-		}
-
-		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName,
-				language);
-		if (bundle == null) {
-			throw new IllegalArgumentException("No bundle found.");
-		}
-		return bundle;
 	}
 
 }

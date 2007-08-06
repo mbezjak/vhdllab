@@ -77,6 +77,17 @@ public interface IViewStorage {
 	void move(String identifier, ComponentPlacement placement);
 
 	/**
+	 * Returns an identifier for opened <code>view</code> or
+	 * <code>null</code> if such view is not opened.
+	 * 
+	 * @param view a view to get identifier for
+	 * @return an identifier for opened <code>view</code>
+	 * @throws NullPointerException
+	 *             if <code>view</code> is <code>null</code>
+	 */
+	String getIdentifierFor(IView view);
+
+	/**
 	 * Returns a view represented by <code>identifier</code> or
 	 * <code>null</code> if such view is not opened.
 	 * 

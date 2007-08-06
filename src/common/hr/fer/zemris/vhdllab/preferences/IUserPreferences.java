@@ -27,6 +27,8 @@ public interface IUserPreferences {
 	 */
 	void removePropertyListener(PropertyListener l, String name);
 
+	void removeAllPropertyListeners();
+	
 	boolean setProperty(String name, String data) throws PropertyAccessException;
 
 	String getProperty(String name) throws PropertyAccessException;

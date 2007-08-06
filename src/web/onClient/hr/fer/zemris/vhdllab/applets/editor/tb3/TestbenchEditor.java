@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.tb3;
 
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -113,7 +113,7 @@ public class TestbenchEditor extends JPanel implements IEditor, IWizard {
 		if(dialog.getOption() != RunDialog.OK_OPTION) return null;
 		FileIdentifier file = dialog.getSelectedFile();
 		if(!projectName.equalsIgnoreCase(file.getProjectName())) {
-			container.echoStatusText("Cant create testbench for file outside of '"+projectName+"'", MessageEnum.Information);
+			container.echoStatusText("Cant create testbench for file outside of '"+projectName+"'", MessageType.INFORMATION);
 			return null;
 		}
 		// Ovo gore ostaviti

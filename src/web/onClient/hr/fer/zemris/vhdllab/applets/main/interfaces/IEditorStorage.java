@@ -134,7 +134,7 @@ public interface IEditorStorage {
 	 * @see #move(IEditor, ComponentPlacement)
 	 */
 	void move(String identifier, ComponentPlacement placement);
-
+	
 	/**
 	 * Returns an editor represented by <code>projectName</code> and
 	 * <code>fileName</code> or <code>null</code> if such editor is not

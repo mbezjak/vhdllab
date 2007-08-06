@@ -1,25 +1,22 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
-import hr.fer.zemris.vhdllab.applets.main.constant.ComponentTypes;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
-import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
  * A system container is a core of vhdllab and contains important methods about
- * the system. It is designed to be a mediator between a component modul (an
+ * the system. It is designed to be a mediator between a component module (an
  * editor for example) and a system or another module. Since modules can't
  * communicate directly they can use some of system container's methods to
  * establish communication. System container is also a way of getting required
- * resource from a server.
+ * resource from a server (that is actually provided in
+ * {@link IResourceManagement} interface but system container providers resource
+ * management interface).
  * 
  * @author Miro Bezjak
  */
@@ -35,6 +32,7 @@ public interface ISystemContainer {
 	 * @return <code>true</code> if a resource has been compiled; false
 	 *         otherwise
 	 * @see #compileLastHistoryResult()
+	 * @see #compile(FileIdentifier)
 	 * @see #compile(IEditor)
 	 * @see #compile(String, String)
 	 */
@@ -50,11 +48,33 @@ public interface ISystemContainer {
 	 * @return <code>true</code> if resource has been compiled;
 	 *         <code>false</code> otherwise
 	 * @see #compileWithDialog()
+	 * @see #compile(FileIdentifier)
 	 * @see #compile(IEditor)
 	 * @see #compile(String, String)
-	 * @see #getLastCompilationHistoryTarget()
 	 */
 	boolean compileLastHistoryResult();
+
+	/**
+	 * Compiles specified resource. If <code>file</code> is <code>null</code>
+	 * this method will not throw an exception and will simply return
+	 * <code>false</code>.
+	 * <p>
+	 * Note that some resource is not compilable (simulation for example)
+	 * therefor this method will not compile such resource. To check if a
+	 * resource is compilable invoke
+	 * {@link IResourceManagement#isCompilable(String, String)} method.
+	 * </p>
+	 * 
+	 * @param file
+	 *            a resource to compile
+	 * @return <code>true</code> if resource has been compiled;
+	 *         <code>false</code> otherwise
+	 * @see #compileWithDialog()
+	 * @see #compileLastHistoryResult()
+	 * @see #compile(IEditor)
+	 * @see #compile(String, String)
+	 */
+	boolean compile(FileIdentifier file);
 
 	/**
 	 * Compiles a resource in an editor and returns <code>true</code> if
@@ -64,8 +84,8 @@ public interface ISystemContainer {
 	 * <p>
 	 * Note that some resource is not compilable (simulation for example)
 	 * therefor this method will not compile such resource. To check if a
-	 * resource is compilable invoke {@link #isCompilable(String, String)}
-	 * method.
+	 * resource is compilable invoke
+	 * {@link IResourceManagement#isCompilable(String, String)} method.
 	 * </p>
 	 * 
 	 * @param editor
@@ -74,23 +94,14 @@ public interface ISystemContainer {
 	 *         <code>false</code> otherwise
 	 * @see #compileWithDialog()
 	 * @see #compileLastHistoryResult()
+	 * @see #compile(FileIdentifier)
 	 * @see #compile(String, String)
 	 */
 	boolean compile(IEditor editor);
 
 	/**
-	 * Compiles a specified resource. Aside from actually compiling specified
-	 * resource this method (including any other compile methods in system
-	 * container) will to the following:
-	 * <ul>
-	 * <li>Before resource is compiled this method will check to see if any
-	 * editor associated with specified resource is opened. If it is it will
-	 * invoke {@link #saveResourcesWithDialog(List, String, String)}</li>
-	 * <li>If any exceptional condition occurs then this method will report it
-	 * by invoking {@link #echoStatusText(String, MessageEnum)} method</li>
-	 * <li>Once resource has been compiled user will be notified by opening a
-	 * view containing compilation result</li>
-	 * </ul>
+	 * Compiles a specified resource. If any error occurs this method will
+	 * simply return <code>false</code>.
 	 * <p>
 	 * If either parameter is <code>null</code> this method will not throw an
 	 * exception and will simply return <code>false</code>.
@@ -104,19 +115,10 @@ public interface ISystemContainer {
 	 *         <code>false</code> otherwise
 	 * @see #compileWithDialog()
 	 * @see #compileLastHistoryResult()
+	 * @see #compile(FileIdentifier)
 	 * @see #compile(IEditor)
 	 */
 	boolean compile(String projectName, String fileName);
-
-	/**
-	 * Returns a last recently compiled resource of <code>null</code> if no
-	 * such resource exists.
-	 * 
-	 * @return a last recently compiled resource of <code>null</code> if no
-	 *         such resource exists
-	 * @see #compileLastHistoryResult()
-	 */
-	FileIdentifier getLastCompilationHistoryTarget();
 
 	/* SIMULATE RESOURCE METHODS */
 
@@ -128,6 +130,7 @@ public interface ISystemContainer {
 	 * @return <code>true</code> if a resource has been simulated; false
 	 *         otherwise
 	 * @see #simulateLastHistoryResult()
+	 * @see #simulate(FileIdentifier)
 	 * @see #simulate(IEditor)
 	 * @see #simulate(String, String)
 	 */
@@ -143,11 +146,33 @@ public interface ISystemContainer {
 	 * @return <code>true</code> if resource has been simulated;
 	 *         <code>false</code> otherwise
 	 * @see #simulateWithDialog()
+	 * @see #simulate(FileIdentifier)
 	 * @see #simulate(IEditor)
 	 * @see #simulate(String, String)
-	 * @see #getLastSimulationHistoryTarget()
 	 */
 	boolean simulateLastHistoryResult();
+
+	/**
+	 * Simulates specified resource. If <code>file</code> is <code>null</code>
+	 * this method will not throw an exception and will simply return
+	 * <code>false</code>.
+	 * <p>
+	 * Note that some resource is not simulatable (vhdl source for example)
+	 * therefor this method will not simulate such resource. To check if a
+	 * resource is simulatable invoke
+	 * {@link IResourceManagement#isSimulatable(String, String)} method.
+	 * </p>
+	 * 
+	 * @param file
+	 *            a resource to simulate
+	 * @return <code>true</code> if resource has been simulated;
+	 *         <code>false</code> otherwise
+	 * @see #simulateWithDialog()
+	 * @see #simulateLastHistoryResult()
+	 * @see #simulate(IEditor)
+	 * @see #simulate(String, String)
+	 */
+	boolean simulate(FileIdentifier file);
 
 	/**
 	 * Simulates a resource in an editor and returns <code>true</code> if
@@ -157,8 +182,8 @@ public interface ISystemContainer {
 	 * <p>
 	 * Note that some resource is not simulatable (vhdl source for example)
 	 * therefor this method will not simulate such resource. To check if a
-	 * resource is simulatable invoke {@link #isSimulatable(String, String)}
-	 * method.
+	 * resource is simulatable invoke
+	 * {@link IResourceManagement#isSimulatable(String, String)} method.
 	 * </p>
 	 * 
 	 * @param editor
@@ -167,25 +192,14 @@ public interface ISystemContainer {
 	 *         <code>false</code> otherwise
 	 * @see #simulateWithDialog()
 	 * @see #simulateLastHistoryResult()
+	 * @see #simulate(FileIdentifier)
 	 * @see #simulate(String, String)
 	 */
 	boolean simulate(IEditor editor);
 
 	/**
-	 * Simulates a specified resource. Aside from actually simulating specified
-	 * resource this method (including any other simulate methods in system
-	 * container) will to the following:
-	 * <ul>
-	 * <li>Before resource is simulated this method will check to see if any
-	 * editor associated with specified resource is opened. If it is it will
-	 * invoke {@link #saveResourcesWithDialog(List, String, String)}</li>
-	 * <li>If any exceptional condition occurs then this method will report it
-	 * by invoking {@link #echoStatusText(String, MessageEnum)} method</li>
-	 * <li>Once resource has been simulated user will be notified by opening a
-	 * view containing simulation result</li>
-	 * <li>If a simulation finished successfully an editor will open containing
-	 * simulation data</li>
-	 * </ul>
+	 * Simulates a specified resource. If any error occurs this method will
+	 * simply return <code>false</code>.
 	 * <p>
 	 * If either parameter is <code>null</code> this method will not throw an
 	 * exception and will simply return <code>false</code>.
@@ -199,19 +213,10 @@ public interface ISystemContainer {
 	 *         <code>false</code> otherwise
 	 * @see #simulateWithDialog()
 	 * @see #simulateLastHistoryResult()
+	 * @see #simulate(FileIdentifier)
 	 * @see #simulate(IEditor)
 	 */
 	boolean simulate(String projectName, String fileName);
-
-	/**
-	 * Returns a last recently simulated resource of <code>null</code> if no
-	 * such resource exists.
-	 * 
-	 * @return a last recently simulated resource of <code>null</code> if no
-	 *         such resource exists
-	 * @see #simulateLastHistoryResult()
-	 */
-	FileIdentifier getLastSimulationHistoryTarget();
 
 	/* RESOURCE MANIPULATION METHODS */
 
@@ -230,204 +235,14 @@ public interface ISystemContainer {
 	 * <code>true</code> if specified resource was successfully created or
 	 * <code>false</code> otherwise.
 	 * 
-	 * @param id
-	 *            a component identifier (in {@link ComponentTypes}) to choose
-	 *            an editor (and his wizard)
+	 * @param type
+	 *            a type of a file to create
 	 * @return <code>true</code> if specified resource was successfully
 	 *         created; <code>false</code> otherwise
 	 * @throws NullPointerException
-	 *             if <code>id</code> is <code>null</code>
-	 * @see ComponentTypes
+	 *             if <code>type</code> is <code>null</code>
 	 */
-	boolean createNewFileInstance(String id);
-
-	/**
-	 * Deletes a file from a project.
-	 * 
-	 * @param projectName
-	 *            a project name that contains a file
-	 * @param fileName
-	 *            a file name of a file to delete
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	void deleteFile(String projectName, String fileName)
-			throws UniformAppletException;
-
-	/**
-	 * Deletes a project.
-	 * 
-	 * @param projectName
-	 *            a name of a project to delete
-	 * @throws NullPointerException
-	 *             if <code>projectName</code> is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	void deleteProject(String projectName) throws UniformAppletException;
-
-	/**
-	 * Returns <code>true</code> if a file with <code>fileName</code>
-	 * already exists in a specified project or <code>false</code> otherwise.
-	 * 
-	 * @param projectName
-	 *            specified project name
-	 * @param fileName
-	 *            a file name to check
-	 * @return <code>true</code> if a file already exists in a specified
-	 *         project; <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either paramter is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	boolean existsFile(String projectName, String fileName)
-			throws UniformAppletException;
-
-	/**
-	 * Returns <code>true</code> if a project with <code>projectName</code>
-	 * already exists or <code>false</code> otherwise.
-	 * 
-	 * @param projectName
-	 *            a project name to check
-	 * @return <code>true</code> if a project with <code>projectName</code>
-	 *         already exists; <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if <code>projectName</code> is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	boolean existsProject(String projectName) throws UniformAppletException;
-
-	/**
-	 * Returns all projects for a user. Return value will never be
-	 * <code>null</code> although it can be empty list.
-	 * 
-	 * @return all projects
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	List<String> getAllProjects() throws UniformAppletException;
-
-	/**
-	 * Returns all files in specified project. Return value will never be
-	 * <code>null</code> although it can be empty list.
-	 * 
-	 * @param projectName
-	 *            a name of a project to extract files from
-	 * @return all files in specified project
-	 * @throws NullPointerException
-	 *             if <code>projectName</code> is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	List<String> getFilesFor(String projectName) throws UniformAppletException;
-
-	/**
-	 * Returns all circuits in a specified project. Return value will never be
-	 * <code>null</code> although it can be empty list.
-	 * 
-	 * @param projectName
-	 *            a name of a project to extract circuits from
-	 * @return all circuits in a specified project
-	 * @throws NullPointerException
-	 *             if <code>projectName</code> is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 * @see #isCircuit(String, String)
-	 */
-	List<String> getAllCircuits(String projectName)
-			throws UniformAppletException;
-
-	/**
-	 * Returns all testbenches in a specified project. Return value will never
-	 * be <code>null</code> although it can be empty list.
-	 * 
-	 * @param projectName
-	 *            a name of a project to extract testbenches from
-	 * @return all testbenches in a specified project
-	 * @throws NullPointerException
-	 *             if <code>projectName</code> is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 * @see #isTestbench(String, String)
-	 */
-	List<String> getAllTestbenches(String projectName)
-			throws UniformAppletException;
-
-	/**
-	 * Extracts and returns a circuit interface for specified file. Return value
-	 * will never be null.
-	 * 
-	 * @param projectName
-	 *            a project name that contains a file
-	 * @param fileName
-	 *            a file name of a file to extract circuit interface from
-	 * @return a circuit interface for specified file
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	CircuitInterface getCircuitInterfaceFor(String projectName, String fileName)
-			throws UniformAppletException;
-
-	/**
-	 * Return a content of a specified predefined file. Return value will never
-	 * be null.
-	 * 
-	 * @param fileName
-	 *            a name of predefined file
-	 * @return a content of a specified predefined file
-	 * @throws NullPointerException
-	 *             if <code>fileName</code> is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	String getPredefinedFileContent(String fileName)
-			throws UniformAppletException;
-
-	/**
-	 * Returns a file type of a specified file. Return value can be
-	 * <code>null</code> and in that case it indicates an error has occured.
-	 * 
-	 * @param projectName
-	 *            a project name that contains a file
-	 * @param fileName
-	 *            a name of a file
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 * @return a type of a specified file
-	 */
-	String getFileType(String projectName, String fileName);
-
-	/**
-	 * Returns an extracted hierachy for a specified project. Return value will
-	 * never be null.
-	 * 
-	 * @param projectName
-	 *            a name of a project to extract hierachy from
-	 * @return an extracted hierachy for a specified project
-	 * @throws NullPointerException
-	 *             if <code>projectName</code> is <code>null</code>
-	 * @throws UniformAppletException
-	 *             if exceptional condition occurs (for example server is not
-	 *             responding)
-	 */
-	Hierarchy extractHierarchy(String projectName)
-			throws UniformAppletException;
+	boolean createNewFileInstance(String type);
 
 	/**
 	 * Returns a currently selected project in a project explorer or
@@ -447,136 +262,22 @@ public interface ISystemContainer {
 	 */
 	FileIdentifier getSelectedFile();
 
-	/* IS-SOMETHING METHODS */
-
-	/**
-	 * Returns <code>true</code> if specified file is a circuit (i.e.
-	 * represents a component in a vhdl) or <code>false</code> otherwise.
-	 * 
-	 * @param projectName
-	 *            project name that contains a file
-	 * @param fileName
-	 *            a name of a file
-	 * @return <code>true</code> if specified file is a circuit (i.e.
-	 *         represents a component in a vhdl); <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 */
-	boolean isCircuit(String projectName, String fileName);
-
-	/**
-	 * Returns <code>true</code> if specified file is a testbench (i.e. a
-	 * component in vhdl with no ports, input nor output) or <code>false</code>
-	 * otherwise.
-	 * <p>
-	 * Note that any component with no ports is considered a testbench. For
-	 * example you can create a new vhdl source and leave empty entity block.
-	 * That file is a testbench!
-	 * </p>
-	 * 
-	 * @param projectName
-	 *            project name that contains a file
-	 * @param fileName
-	 *            a name of a file
-	 * @return <code>true</code> if specified file is a testbench (i.e. a
-	 *         component in vhdl with no ports, input nor output);
-	 *         <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 */
-	boolean isTestbench(String projectName, String fileName);
-
-	/**
-	 * Returns <code>true</code> if specified file is a simulation (i.e. a
-	 * simulation result of a vhdl simulator) or <code>false</code> otherwise.
-	 * 
-	 * @param projectName
-	 *            project name that contains a file
-	 * @param fileName
-	 *            a name of a file
-	 * @return <code>true</code> if specified file is a simulation (i.e. a
-	 *         simulation result of a vhdl simulator); <code>false</code>
-	 *         otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 */
-	boolean isSimulation(String projectName, String fileName);
-
-	/**
-	 * Returns <code>true</code> if specified file is a compilable (i.e. is a
-	 * component in vhdl) or <code>false</code> otherwise.
-	 * <p>
-	 * Note that predefined files are purposely set to be not compilable even
-	 * though they are components in vhdl.
-	 * </p>
-	 * 
-	 * @param projectName
-	 *            project name that contains a file
-	 * @param fileName
-	 *            a name of a file
-	 * @return <code>true</code> if specified file is a compilable (i.e. is a
-	 *         component in vhdl); <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 */
-	boolean isCompilable(String projectName, String fileName);
-
-	/**
-	 * Returns <code>true</code> if specified file is a simulatable (i.e. is a
-	 * testbench in vhdl) or <code>false</code> otherwise.
-	 * 
-	 * @param projectName
-	 *            project name that contains a file
-	 * @param fileName
-	 *            a name of a file
-	 * @return <code>true</code> if specified file is a simulatable (i.e. is a
-	 *         testbench in vhdl); <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 */
-	boolean isSimulatable(String projectName, String fileName);
-
-	/**
-	 * Ignore case and check if <code>name</code> is a correct entity name.
-	 * Correct entity name is a string with the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain a tandem of underscore characters
-	 * </ul>
-	 * 
-	 * @param s
-	 *            a string that will be checked.
-	 * @return <code>true</code> if <code>name</code> is a correct name;
-	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>name</code> is <code>null</code>.
-	 */
-	boolean isCorrectEntityName(String name);
-
-	/**
-	 * Ignore case and check if <code>name</code> is a correct project name.
-	 * Correct project name is a string with the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain a tandem of underscore characters
-	 * </ul>
-	 * 
-	 * @param s
-	 *            a string that will be checked.
-	 * @return <code>true</code> if <code>name</code> is a correct name;
-	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>name</code> is <code>null</code>.
-	 */
-	boolean isCorrectProjectName(String name);
-
 	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
+
+	/**
+	 * Returns a system log. Return value will never be <code>null</code>.
+	 * 
+	 * @return a system log
+	 */
+	ISystemLog getSystemLog();
+
+	/**
+	 * Returns a resource management for manipulating resources. Return value
+	 * will never be <code>null</code>.
+	 * 
+	 * @return a resource management
+	 */
+	IResourceManagement getResourceManagement();
 
 	/**
 	 * Returns a user preferences. Return value will never be <code>null</code>.
@@ -652,7 +353,7 @@ public interface ISystemContainer {
 	 * @param type
 	 *            a type of a message
 	 */
-	void echoStatusText(String text, MessageEnum type);
+	void echoStatusText(String text, MessageType type);
 
 	/* EDITOR MANIPULATION METHODS */
 
@@ -678,10 +379,17 @@ public interface ISystemContainer {
 	 *            a project name that contains a file
 	 * @param fileName
 	 *            a name of a file for whom to view vhdl code
+	 * @return an editor presenting vhdl code or <code>null</code> if any
+	 *         error occurs
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	void viewVHDLCode(String projectName, String fileName);
+	IEditor viewVHDLCode(String projectName, String fileName);
+
+	/**
+	 * TODO PENDING REMOVAL
+	 */
+	IEditor getEditor(FileIdentifier resource);
 
 	/**
 	 * TODO PENDING REMOVAL

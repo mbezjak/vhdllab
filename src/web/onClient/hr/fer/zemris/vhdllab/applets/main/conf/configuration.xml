@@ -2,63 +2,113 @@
 
 <configuration>
 	<editors>
+
+		<!-- VHDL EDITORS -->
+
 		<editor id="editor.vhdl.source">
-			<class>hr.fer.zemris.vhdllab.applets.texteditor.TextEditor</class>
+			<class>
+				hr.fer.zemris.vhdllab.applets.texteditor.TextEditor
+			</class>
 			<fileType>vhdl_source</fileType>
 			<savable>true</savable>
 			<readonly>false</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>false</singleton>
 		</editor>
-		
-		<editor name="VHDL Source" fileType="vhdl_source"
-			class="hr.fer.zemris.vhdllab.applets.texteditor.TextEditor"
-			savable="true" readonly="false">
+
+		<editor id="editor.simulation">
+			<class>
+				hr.fer.zemris.vhdllab.applets.simulations.WaveApplet
+			</class>
+			<fileType>vhdl_simulation</fileType>
+			<savable>false</savable>
+			<readonly>true</readonly>
+			<explicitSave>true</explicitSave>
+			<singleton>false</singleton>
 		</editor>
 
-		<editor name="Simulation" fileType="vhdl_simulation"
-			class="hr.fer.zemris.vhdllab.applets.simulations.WaveApplet"
-			savable="false" readonly="true">
-			<explicitSave enabled="true" class="to.be.constructed" />
+		<editor id="editor.automat">
+			<class>
+				hr.fer.zemris.vhdllab.applets.editor.automat.Automat
+			</class>
+			<fileType>vhdl_automat</fileType>
+			<savable>true</savable>
+			<readonly>false</readonly>
+			<explicitSave>false</explicitSave>
+			<singleton>false</singleton>
 		</editor>
 
-		<editor name="Automat" fileType="vhdl_automat"
-			class="hr.fer.zemris.vhdllab.applets.editor.automat.Automat"
-			savable="true" readonly="false">
+		<editor id="editor.testbench">
+			<class>
+				hr.fer.zemris.vhdllab.applets.editor.tb.drawer.Aplet
+			</class>
+			<!-- a new testbench class -->
+			<!--
+				<class>hr.fer.zemris.vhdllab.applets.editor.tb3.TestbenchEditor</class>
+			-->
+			<fileType>vhdl_tb</fileType>
+			<savable>true</savable>
+			<readonly>false</readonly>
+			<explicitSave>false</explicitSave>
+			<singleton>false</singleton>
 		</editor>
 
-		<editor name="Testbench" fileType="vhdl_tb"
-			class="hr.fer.zemris.vhdllab.applets.editor.tb.drawer.Aplet"
-			savable="true" readonly="false">
+		<editor id="editor.schema">
+			<class>
+				hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel
+			</class>
+			<fileType>vhdl_struct_schema</fileType>
+			<savable>true</savable>
+			<readonly>false</readonly>
+			<explicitSave>false</explicitSave>
+			<singleton>false</singleton>
 		</editor>
 
-		<editor name="Schema" fileType="vhdl_struct_schema"
-			class="hr.fer.zemris.vhdllab.applets.schema.drawings.SchemaMainPanel"
-			savable="true" readonly="false">
+		<!-- SPECIAL PURPOSE EDITORS -->
+
+		<editor id="editor.predefined">
+			<class>
+				hr.fer.zemris.vhdllab.applets.texteditor.TextEditor
+			</class>
+			<fileType>predefined</fileType>
+			<savable>false</savable>
+			<readonly>true</readonly>
+			<explicitSave>false</explicitSave>
+			<singleton>false</singleton>
+		</editor>
+
+		<editor id="editor.preferences">
+			<class>
+				hr.fer.zemris.vhdllab.applets.editor.preferences.PreferencesEditor
+			</class>
+			<fileType>preferences</fileType>
+			<savable>false</savable>
+			<readonly>true</readonly>
+			<explicitSave>false</explicitSave>
+			<singleton>false</singleton>
 		</editor>
 	</editors>
 
 	<views>
 		<view id="view.status.history">
-			<class>hr.fer.zemris.vhdllab.applets.view.status.history.StatusHistoryView</class>
+			<class>
+				hr.fer.zemris.vhdllab.applets.view.status.history.StatusHistoryView
+			</class>
 			<singleton>true</singleton>
-			<contentsCached>true</contentsCached>
-		</view>
-	
-		<view name="Status History" viewType="status.history"
-			class="hr.fer.zemris.vhdllab.applets.view.status.history.StatusHistoryView"
-			singleton="true">
 		</view>
 
-		<view name="Compilation Errors"
-			viewType="vhdl.compilation.errors"
-			class="hr.fer.zemris.vhdllab.applets.view.compilation.CompileErrorsPanel"
-			singleton="true">
+		<view id="view.compilation.errors">
+			<class>
+				hr.fer.zemris.vhdllab.applets.view.compilation.CompileErrorsPanel
+			</class>
+			<singleton>true</singleton>
 		</view>
 
-		<view name="Simulation Errors" viewType="vhdl.simulation.errors"
-			class="hr.fer.zemris.vhdllab.applets.view.simulation.SimulateErrorsPanel"
-			singleton="true">
+		<view id="view.simulation.errors">
+			<class>
+				hr.fer.zemris.vhdllab.applets.view.simulation.SimulateErrorsPanel
+			</class>
+			<singleton>true</singleton>
 		</view>
 	</views>
 </configuration>

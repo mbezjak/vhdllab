@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.constants;
 
+import javax.management.relation.Role;
+
 public enum EnumTypes {
 	
 	FT_VHDL_SOURCE("vhdl_source", Role.CIRCUIT),

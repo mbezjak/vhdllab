@@ -5,6 +5,9 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import java.util.List;
 
 public interface IProjectExplorer {
+	
+	void init();
+	void dispose();
 
 	void setSystemContainer(ISystemContainer container);
 	void addFile(String projectName, String fileName);

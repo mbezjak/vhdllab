@@ -154,6 +154,18 @@ public interface IComponentStorage {
 	ComponentPlacement getComponentPlacement(JComponent component);
 
 	/**
+	 * Returns an identifier for a stored <code>component</code> or
+	 * <code>null</code> if a <code>component</code> is not stored.
+	 * 
+	 * @param component
+	 *            a component for whom to return identifier
+	 * @return an identifier for a specified component
+	 * @throws NullPointerException
+	 *             if <code>component</code> is <code>null</code>
+	 */
+	String getIdentifierFor(JComponent component);
+
+	/**
 	 * Returns a component with specified <code>identifier</code> that belongs
 	 * to specified <code>group</code> or <code>null</code> if no such
 	 * component exists.

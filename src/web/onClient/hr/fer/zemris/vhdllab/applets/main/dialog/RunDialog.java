@@ -296,7 +296,7 @@ public class RunDialog extends JDialog {
     }
 
     /**
-     * Implemetation of a constructor of <code>RunDialog</code>.
+     * Implementation of a constructor of <code>RunDialog</code>.
      * @param owner owner for which the dialog is displayed
      * @param container system container to enable communication
      * @param dialogType a type of this dialog
@@ -314,7 +314,7 @@ public class RunDialog extends JDialog {
     	FontMetrics metrics = popupMenu.getFontMetrics(font);
     	List<String> allProjects;
 		try {
-			allProjects = container.getAllProjects();
+			allProjects = container.getResourceManagement().getAllProjects();
 		} catch (UniformAppletException e1) {
 			allProjects = new ArrayList<String>();
 		}
@@ -581,9 +581,9 @@ public class RunDialog extends JDialog {
     	List<String> files = null;
     	try {
 			if(dialogType == RunDialog.COMPILATION_TYPE) {
-				files = container.getAllCircuits(currentProject);
+				files = container.getResourceManagement().getAllCircuits(currentProject);
 			} else if(dialogType == RunDialog.SIMULATION_TYPE) {
-				files = container.getAllTestbenches(currentProject);
+				files = container.getResourceManagement().getAllTestbenches(currentProject);
 			}
 		} catch (UniformAppletException e) {
 			files = null;

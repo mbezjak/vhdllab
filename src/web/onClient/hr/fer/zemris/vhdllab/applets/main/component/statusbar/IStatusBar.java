@@ -34,7 +34,7 @@ public interface IStatusBar {
 
 	/**
 	 * Sets specified message to be displayed in status bar. Message type will
-	 * be set to {@link MessageEnum#Information}.
+	 * be set to {@link MessageType#INFORMATION}.
 	 * @param message a message to be displayed
 	 */
 	void setMessage(String message);
@@ -44,7 +44,7 @@ public interface IStatusBar {
 	 * @param message a message to be displayed
 	 * @param message type
 	 */
-	void setMessage(String message, MessageEnum type);
+	void setMessage(String message, MessageType type);
 	
 	/**
 	 * Returns a message displayed in status bar.
@@ -56,7 +56,7 @@ public interface IStatusBar {
 	 * Returns MessageEnum that represents message type.
 	 * @return message type
 	 */
-	MessageEnum getMessageType();
+	MessageType getMessageType();
 	
 	/**
 	 * Adds custom component to status bar.

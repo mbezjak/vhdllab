@@ -57,7 +57,19 @@ public class DefaultUserPreferences implements IUserPreferences {
 			}
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.preferences.IUserPreferences#removeAllPropertyListeners()
+	 */
+	@Override
+	public void removeAllPropertyListeners() {
+		for(EventListenerList eventList : listeners.values()) {
+			for(PropertyListener l : eventList.getListeners(PropertyListener.class)) {
+				eventList.remove(PropertyListener.class, l);
+			}
+		}
+	}
+	
 	private void firePropertyChanged(String name, String oldValue, String newValue) {
 		EventListenerList list = listeners.get(name);
 		if(list == null) {

@@ -4,7 +4,7 @@ import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.constant.ComponentTypes;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
@@ -14,7 +14,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorerStorage;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
@@ -127,14 +129,17 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
 
 		Communicator communicator;
+		IResourceManagement resourceManagement;
+		ISystemLog systemLog;
 		try {
 			AjaxMediator ajax = new DefaultAjaxMediator(this);
 			Initiator initiator = new AjaxInitiator(ajax);
 			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
 			communicator = new Communicator(invoker, userId);
 			communicator.init();
-			// FIXME this is broken!
-			bundle = communicator
+			resourceManagement = new DefaultResourceManagement(communicator);
+			systemLog = new DefaultSystemLog();
+			bundle = resourceManagement
 					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (Exception e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u
@@ -155,7 +160,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		});
 
 		DefaultSystemContainer systemContainer = new DefaultSystemContainer(
-				communicator, this, JOptionPane.getFrameForComponent(this));
+				resourceManagement, systemLog, this, JOptionPane
+						.getFrameForComponent(this));
 		this.systemContainer = systemContainer;
 		componentStorage = new DefaultComponentStorage(this, systemContainer);
 		editorStorage = new DefaultEditorStorage(componentStorage);
@@ -286,10 +292,14 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		PrivateMenuBar menubar = new PrivateMenuBar(bundle);
-		centerTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(centerTabbedPane));
-		bottomTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(bottomTabbedPane));
-		leftTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(leftTabbedPane));
-		rightTabbedPane.setComponentPopupMenu(menubar.setupPopupMenuForComponents(rightTabbedPane));
+		centerTabbedPane.setComponentPopupMenu(menubar
+				.setupPopupMenuForComponents(centerTabbedPane));
+		bottomTabbedPane.setComponentPopupMenu(menubar
+				.setupPopupMenuForComponents(bottomTabbedPane));
+		leftTabbedPane.setComponentPopupMenu(menubar
+				.setupPopupMenuForComponents(leftTabbedPane));
+		rightTabbedPane.setComponentPopupMenu(menubar
+				.setupPopupMenuForComponents(rightTabbedPane));
 
 		centerTabbedPane.addMouseListener(new MouseAdapter() {
 			@Override
@@ -478,7 +488,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			JPopupMenu menuBar = new JPopupMenu();
 			JMenuItem menuItem;
 			String key;
-			
+
 			// Save editor
 			key = LanguageConstants.MENU_FILE_SAVE;
 			menuItem = new JMenuItem(bundle.getString(key));
@@ -522,13 +532,15 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JComponent selectedComponent = (JComponent) pane.getSelectedComponent();
-					if(selectedComponent == null) {
+					JComponent selectedComponent = (JComponent) pane
+							.getSelectedComponent();
+					if (selectedComponent == null) {
 						return;
 					}
 					ComponentGroup group = components.get(selectedComponent);
-					if(group.equals(ComponentGroup.EDITOR)) {
-						systemContainer.closeEditor((IEditor) selectedComponent, true);
+					if (group.equals(ComponentGroup.EDITOR)) {
+						systemContainer.closeEditor(
+								(IEditor) selectedComponent, true);
 					} else {
 						componentStorage.remove(selectedComponent);
 					}
@@ -542,21 +554,21 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int index = pane.getSelectedIndex();
-					if(index == -1) {
+					if (index == -1) {
 						return;
 					}
-					for(int i = 0; i<pane.getTabCount(); i++) {
-						if(i == index) {
+					for (int i = 0; i < pane.getTabCount(); i++) {
+						if (i == index) {
 							continue;
 						}
 						JComponent c = (JComponent) pane.getComponentAt(i);
 						ComponentGroup group = components.get(c);
-						if(group.equals(ComponentGroup.EDITOR)) {
+						if (group.equals(ComponentGroup.EDITOR)) {
 							systemContainer.closeEditor((IEditor) c, true);
 						} else {
 							componentStorage.remove(c);
 						}
-						
+
 					}
 				}
 			});
@@ -567,15 +579,15 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					while(pane.getTabCount() != 0) {
+					while (pane.getTabCount() != 0) {
 						JComponent c = (JComponent) pane.getComponentAt(0);
 						ComponentGroup group = components.get(c);
-						if(group.equals(ComponentGroup.EDITOR)) {
+						if (group.equals(ComponentGroup.EDITOR)) {
 							systemContainer.closeEditor((IEditor) c, true);
 						} else {
 							componentStorage.remove(c);
 						}
-						
+
 					}
 				}
 			});
@@ -804,7 +816,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						systemContainer.echoStatusText(text, MessageEnum.Error);
+						systemContainer.echoStatusText(text, MessageType.ERROR);
 					}
 				}
 			});
@@ -827,7 +839,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						systemContainer.echoStatusText(text, MessageEnum.Error);
+						systemContainer.echoStatusText(text, MessageType.ERROR);
 					}
 				}
 			});
@@ -850,14 +862,14 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						systemContainer.echoStatusText(text, MessageEnum.Error);
+						systemContainer.echoStatusText(text, MessageType.ERROR);
 					}
 				}
 			});
 			submenu.add(menuItem);
 
 			menu.add(submenu);
-			
+
 			// Show Project Explorer
 			key = LanguageConstants.MENU_VIEW_PROJECT_EXPLORER;
 			menuItem = new JMenuItem(bundle.getString(key));

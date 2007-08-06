@@ -2,23 +2,33 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
+import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
+import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfigurationParser;
+import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
+import hr.fer.zemris.vhdllab.applets.main.conf.ViewProperties;
 import hr.fer.zemris.vhdllab.applets.main.constant.ComponentTypes;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.dialog.SaveDialog;
+import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
+import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorerStorage;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.applets.main.model.ResultTarget;
+import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
@@ -26,9 +36,6 @@ import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
-import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
-import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
-import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.awt.Frame;
 import java.io.PrintWriter;
@@ -46,12 +53,12 @@ import javax.swing.JOptionPane;
  * To use this implementation you need to setup it up properly. This is how:
  * </p>
  * <blockquote><code>
- * DefaultSystemContainer container = new DefaultSystemContainer(myCommunicator, myComponentProvider);
- * container.setComponentStorage(myComponentStorage);
- * container.setEditorStrage(myEditorStorage);
- * container.setViewStrage(myViewStorage);
- * container.setProjectExplorerStrage(myProjectExplorerStorage);
- * container.init();
+ * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManagement, mySystemLog, myComponentProvider, parentFrame);<br/>
+ * container.setComponentStorage(myComponentStorage);<br/>
+ * container.setEditorStrage(myEditorStorage);<br/>
+ * container.setViewStrage(myViewStorage);<br/>
+ * container.setProjectExplorerStrage(myProjectExplorerStorage);<br/>
+ * container.init();<br/>
  * </code></blockquote>
  * <p>
  * To dispose of this system container simply invoke {@link #dispose()} method.
@@ -66,9 +73,17 @@ import javax.swing.JOptionPane;
 public class DefaultSystemContainer implements ISystemContainer {
 
 	/**
-	 * A communicator.
+	 * A resource management.
 	 */
-	private Communicator communicator;
+	private IResourceManagement resourceManagement;
+	/**
+	 * A system log.
+	 */
+	private ISystemLog systemLog;
+	/**
+	 * A Component configuration.
+	 */
+	private ComponentConfiguration configuration;
 	/**
 	 * A resource bundle of using language in error reporting.
 	 */
@@ -101,8 +116,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 	/**
 	 * Constructs a default system container.
 	 * 
-	 * @param communicator
-	 *            a communicator
+	 * @param resourceManagement
+	 *            a resource management
+	 * @param systemLog
+	 *            a system log
 	 * @param componentProvider
 	 *            a component provider
 	 * @param parentFrame
@@ -110,15 +127,23 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	public DefaultSystemContainer(Communicator communicator,
-			IComponentProvider componentProvider, Frame parentFrame) {
-		if (communicator == null) {
-			throw new NullPointerException("Communicator cant be null");
+	public DefaultSystemContainer(IResourceManagement resourceManagement,
+			ISystemLog systemLog, IComponentProvider componentProvider,
+			Frame parentFrame) {
+		if (resourceManagement == null) {
+			throw new NullPointerException("Resource management cant be null");
+		}
+		if (systemLog == null) {
+			throw new NullPointerException("System log cant be null");
 		}
 		if (componentProvider == null) {
 			throw new NullPointerException("Component provider cant be null");
 		}
-		this.communicator = communicator;
+		if (parentFrame == null) {
+			throw new NullPointerException("Parent frame cant be null");
+		}
+		this.resourceManagement = resourceManagement;
+		this.systemLog = systemLog;
 		this.componentProvider = componentProvider;
 		this.parentFrame = parentFrame;
 	}
@@ -171,7 +196,37 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 *             if exceptional condition occurs
 	 */
 	public void init() throws UniformAppletException {
+		configuration = ComponentConfigurationParser.getConfiguration();
 		bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		resourceManagement
+				.addVetoableResourceListener(new BeforeCompilationCheckCompilableAndSaveEditors());
+		resourceManagement
+				.addVetoableResourceListener(new AfterCompilationEcho());
+		resourceManagement
+				.addVetoableResourceListener(new AfterCompilationOpenView());
+		resourceManagement
+				.addVetoableResourceListener(new BeforeSimulationCheckSimulatableAndSaveEditors());
+		resourceManagement
+				.addVetoableResourceListener(new AfterSimulationEcho());
+		resourceManagement
+				.addVetoableResourceListener(new AfterSimulationOpenView());
+		resourceManagement
+				.addVetoableResourceListener(new AfterSimulationOpenEditor());
+		resourceManagement
+				.addVetoableResourceListener(new BeforeProjectCreationCheckExistence());
+		resourceManagement
+				.addVetoableResourceListener(new BeforeProjectCreationCheckCorrectName());
+		resourceManagement
+				.addVetoableResourceListener(new AfterProjectCreationEcho());
+		resourceManagement
+				.addVetoableResourceListener(new BeforeResourceCreationCheckExistence());
+		resourceManagement
+				.addVetoableResourceListener(new BeforeResourceCreationCheckCorrectName());
+		resourceManagement
+				.addVetoableResourceListener(new AfterResourceCreationEcho());
+		resourceManagement
+				.addVetoableResourceListener(new AfterResourceCreationOpenEditor());
+
 		String data;
 		data = getProperty(UserFileConstants.SYSTEM_OPENED_EDITORS);
 		List<FileIdentifier> files = SerializationUtil
@@ -202,25 +257,24 @@ public class DefaultSystemContainer implements ISystemContainer {
 
 		List<String> views = new ArrayList<String>();
 		for (IView v : viewStorage.getAllOpenedViews()) {
-			String type = communicator.getViewType(v);
-			views.add(type);
+			String id = viewStorage.getIdentifierFor(v);
+			views.add(id);
 		}
 		data = SerializationUtil.serializeViewInfo(views);
 		setProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
 
-		// TODO vidjet sto tocno s ovim. kakva je implementacija i mozda
-		// poboljsat implementaciju
-		try {
-			communicator.dispose();
-		} catch (Exception ignored) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u
-			// development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ignored.printStackTrace(pw);
-			JOptionPane.showMessageDialog(parentFrame, sw.toString());
-		}
-		communicator = null;
+		systemLog.removeAllSystemLogListeners();
+		resourceManagement.removeAllVetoableResourceListeners();
+		getPreferences().removeAllPropertyListeners();
+
+		resourceManagement = null;
+		componentProvider = null;
+		componentStorage = null;
+		editorStorage = null;
+		viewStorage = null;
+		projectExplorerStorage = null;
+		bundle = null;
+		parentFrame = null;
 	}
 
 	/* ISystemContainer METHODS */
@@ -234,16 +288,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean compileWithDialog() {
-		String title = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_TITLE);
-		String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
-		FileIdentifier file = showRunDialog(title, listTitle,
-				RunDialog.COMPILATION_TYPE);
-		if (file == null) {
-			return false;
-		}
-		String projectName = file.getProjectName();
-		String fileName = file.getFileName();
-		return compile(projectName, fileName);
+		FileIdentifier file = showCompilationRunDialog();
+		return compile(file);
 	}
 
 	/*
@@ -253,12 +299,26 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean compileLastHistoryResult() {
-		if (communicator.compilationHistoryIsEmpty()) {
+		if (systemLog.compilationHistoryIsEmpty()) {
 			return compileWithDialog();
 		} else {
-			FileIdentifier file = getLastCompilationHistoryTarget();
-			return compile(file.getProjectName(), file.getFileName());
+			ResultTarget<CompilationResult> resultTarget = systemLog
+					.getLastCompilationResultTarget();
+			return compile(resultTarget.getResource());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#compile(hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier)
+	 */
+	@Override
+	public boolean compile(FileIdentifier file) {
+		if (file == null) {
+			return false;
+		}
+		return compile(file.getProjectName(), file.getFileName());
 	}
 
 	/*
@@ -284,49 +344,20 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean compile(String projectName, String fileName) {
-		if (!isCompilable(projectName, fileName)) {
-			String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
-			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
-					fileName, projectName });
-			echoStatusText(text, MessageEnum.Information);
-			return false;
-		}
-		List<IEditor> openedEditors = editorStorage
-				.getOpenedEditorsThatHave(projectName);
-		String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-		String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-		boolean shouldContinue = saveResourcesWithDialog(openedEditors, title,
-				message);
-		if (!shouldContinue) {
+		if (projectName == null || fileName == null) {
 			return false;
 		}
 		CompilationResult result;
 		try {
-			result = communicator.compile(projectName, fileName);
+			result = resourceManagement.compile(projectName, fileName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_COMPILE);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			echoStatusText(text, MessageEnum.Error);
+			echoStatusText(text, MessageType.ERROR);
 			return false;
 		}
-		String text = getBundleString(LanguageConstants.STATUSBAR_COMPILED);
-		text = PlaceholderUtil.replacePlaceholders(text, new String[] {
-				fileName, projectName });
-		echoStatusText(text, MessageEnum.Information);
-		IView view = openView(ComponentTypes.VIEW_COMPILATION_ERRORS);
-		view.setData(result);
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getLastCompilationHistoryTarget()
-	 */
-	@Override
-	public FileIdentifier getLastCompilationHistoryTarget() {
-		return communicator.getLastCompilationHistoryTarget();
+		return result != null;
 	}
 
 	/* SIMULATE RESOURCE METHODS */
@@ -338,16 +369,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean simulateWithDialog() {
-		String title = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_TITLE);
-		String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
-		FileIdentifier file = showRunDialog(title, listTitle,
-				RunDialog.SIMULATION_TYPE);
-		if (file == null) {
-			return false;
-		}
-		String projectName = file.getProjectName();
-		String fileName = file.getFileName();
-		return simulate(projectName, fileName);
+		FileIdentifier file = showSimulationRunDialog();
+		return simulate(file);
 	}
 
 	/*
@@ -357,12 +380,26 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean simulateLastHistoryResult() {
-		if (communicator.simulationHistoryIsEmpty()) {
+		if (systemLog.simulationHistoryIsEmpty()) {
 			return simulateWithDialog();
 		} else {
-			FileIdentifier file = communicator.getLastSimulationHistoryTarget();
-			return simulate(file.getProjectName(), file.getFileName());
+			ResultTarget<SimulationResult> resultTarget = systemLog
+					.getLastSimulationResultTarget();
+			return simulate(resultTarget.getResource());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#simulate(hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier)
+	 */
+	@Override
+	public boolean simulate(FileIdentifier file) {
+		if (file == null) {
+			return false;
+		}
+		return simulate(file.getProjectName(), file.getFileName());
 	}
 
 	/*
@@ -388,53 +425,20 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean simulate(String projectName, String fileName) {
-		if (!isSimulatable(projectName, fileName)) {
-			String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
-			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
-					fileName, projectName });
-			echoStatusText(text, MessageEnum.Information);
-		}
-		List<IEditor> openedEditors = editorStorage
-				.getOpenedEditorsThatHave(projectName);
-		String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-		String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-		boolean shouldContinue = saveResourcesWithDialog(openedEditors, title,
-				message);
-		if (!shouldContinue) {
+		if (projectName == null || fileName == null) {
 			return false;
 		}
 		SimulationResult result;
 		try {
-			result = communicator.runSimulation(projectName, fileName);
+			result = resourceManagement.simulate(projectName, fileName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			echoStatusText(text, MessageEnum.Error);
+			echoStatusText(text, MessageType.ERROR);
 			return false;
 		}
-		String text = getBundleString(LanguageConstants.STATUSBAR_SIMULATED);
-		text = PlaceholderUtil.replacePlaceholders(text, new String[] {
-				fileName, projectName });
-		echoStatusText(text, MessageEnum.Information);
-		IView view = openView(ComponentTypes.VIEW_SIMULATION_ERRORS);
-		view.setData(result);
-		if (result.getWaveform() != null) {
-			String simulationName = fileName + ".sim";
-			openEditor(projectName, simulationName, result.getWaveform(),
-					FileTypes.FT_VHDL_SIMULATION, false, true);
-		}
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getLastSimulationHistoryTarget()
-	 */
-	@Override
-	public FileIdentifier getLastSimulationHistoryTarget() {
-		return communicator.getLastSimulationHistoryTarget();
+		return result != null;
 	}
 
 	/* RESOURCE MANIPULATION METHODS */
@@ -446,49 +450,19 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean createNewProjectInstance() {
-		String title = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
-		String message = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
-		String projectName = showCreateProjectDialog(title, message);
-		if (projectName == null || projectName.equals("")) {
-			return false;
-		}
-		boolean exists;
-		try {
-			exists = existsProject(projectName);
-		} catch (UniformAppletException e) {
-			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
-			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { projectName });
-			echoStatusText(text, MessageEnum.Error);
-			return false;
-		}
-		if (exists) {
-			// projectName is never null here
-			String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
-			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { projectName });
-			echoStatusText(text, MessageEnum.Information);
+		String projectName = showCreateProjectDialog();
+		if (projectName == null) {
 			return false;
 		}
 		try {
-			communicator.createProject(projectName);
+			return resourceManagement.createNewProject(projectName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_PROJECT);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { projectName });
-			echoStatusText(text, MessageEnum.Error);
+			echoStatusText(text, MessageType.ERROR);
 			return false;
 		}
-		// TODO PENDING REMOVAL!
-		if (projectExplorerStorage.isProjectExplorerOpened()) {
-			projectExplorerStorage.getProjectExplorer().addProject(projectName);
-		}
-		// END REMOVAL
-		String text = getBundleString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
-		text = PlaceholderUtil.replacePlaceholders(text,
-				new String[] { projectName });
-		echoStatusText(text, MessageEnum.Successfull);
-		return true;
 	}
 
 	/*
@@ -497,274 +471,35 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#createNewFileInstance(java.lang.String)
 	 */
 	@Override
-	public boolean createNewFileInstance(String id) {
-		if (id == null) {
-			throw new NullPointerException("Component identifier cant be null.");
+	public boolean createNewFileInstance(String type) {
+		if (type == null) {
+			throw new NullPointerException("File type cant be null");
 		}
 		String projectName = getSelectedProject();
 		if (projectName == null) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
-			echoStatusText(text, MessageEnum.Information);
+			echoStatusText(text, MessageType.INFORMATION);
 			return false;
 		}
-		IWizard wizard = getNewEditorInstance(id).getWizard();
+		IWizard wizard = getNewEditorInstanceByFileType(type).getWizard();
 		FileContent content = initWizard(wizard, projectName);
 		if (content == null) {
 			// user canceled or no wizard for such editor
 			return false;
 		}
+		projectName = content.getProjectName();
 		String fileName = content.getFileName();
 		String data = content.getContent();
-		boolean exists;
 		try {
-			exists = existsFile(projectName, fileName);
-		} catch (UniformAppletException e) {
-			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_FILE_EXISTENCE);
-			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
-			echoStatusText(text, MessageEnum.Error);
-			return false;
-		}
-		if (exists) {
-			String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_FILE);
-			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
-					fileName, projectName });
-			echoStatusText(text, MessageEnum.Information);
-			return false;
-		}
-		try {
-			communicator.createFile(projectName, fileName, id);
-			communicator.saveFile(projectName, fileName, data);
+			return resourceManagement.createNewResource(projectName, fileName,
+					type, data);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_FILE);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { fileName });
-			echoStatusText(text, MessageEnum.Error);
+			echoStatusText(text, MessageType.ERROR);
+			return false;
 		}
-		// TODO PENDING REMOVAL!
-		if (projectExplorerStorage.isProjectExplorerOpened()) {
-			projectExplorerStorage.getProjectExplorer().addFile(projectName,
-					fileName);
-		}
-		// END REMOVAL
-		String text = getBundleString(LanguageConstants.STATUSBAR_FILE_CREATED);
-		text = PlaceholderUtil.replacePlaceholders(text,
-				new String[] { fileName });
-		echoStatusText(text, MessageEnum.Successfull);
-		openEditor(projectName, fileName, true, false);
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#deleteFile(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public void deleteFile(String projectName, String fileName)
-			throws UniformAppletException {
-		if (projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if (fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		if (editorStorage.isEditorOpened(projectName, fileName)) {
-			IEditor editor = editorStorage.getOpenedEditor(projectName,
-					fileName);
-			closeEditor(editor, false);
-		}
-		// TODO PENDING REMOVAL!
-		if (projectExplorerStorage.isProjectExplorerOpened()) {
-			projectExplorerStorage.getProjectExplorer().removeFile(projectName,
-					fileName);
-		}
-		// END REMOVAL
-		communicator.deleteFile(projectName, fileName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#deleteProject(java.lang.String)
-	 */
-	@Override
-	public void deleteProject(String projectName) throws UniformAppletException {
-		if (projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		for (IEditor e : editorStorage.getOpenedEditorsThatHave(projectName)) {
-			closeEditor(e, false);
-		}
-		// TODO PENDING REMOVAL!
-		if (projectExplorerStorage.isProjectExplorerOpened()) {
-			projectExplorerStorage.getProjectExplorer().removeProject(
-					projectName);
-		}
-		// END REMOVAL
-		communicator.deleteProject(projectName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#existsFile(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean existsFile(String projectName, String fileName)
-			throws UniformAppletException {
-		if (projectName == null) {
-			throw new NullPointerException("Project name cant be null");
-		}
-		if (fileName == null) {
-			throw new NullPointerException("File name cant be null");
-		}
-		return communicator.existsFile(projectName, fileName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#existsProject(java.lang.String)
-	 */
-	@Override
-	public boolean existsProject(String projectName)
-			throws UniformAppletException {
-		if (projectName == null) {
-			throw new NullPointerException("Project name cant be null");
-		}
-		return communicator.existsProject(projectName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getAllProjects()
-	 */
-	@Override
-	public List<String> getAllProjects() throws UniformAppletException {
-		return communicator.getAllProjects();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getFilesFor(java.lang.String)
-	 */
-	@Override
-	public List<String> getFilesFor(String projectName)
-			throws UniformAppletException {
-		if (projectName == null) {
-			throw new NullPointerException("Project name cant be null");
-		}
-		return communicator.findFilesByProject(projectName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getAllCircuits(java.lang.String)
-	 */
-	@Override
-	public List<String> getAllCircuits(String projectName)
-			throws UniformAppletException {
-		List<String> fileNames = getFilesFor(projectName);
-		List<String> circuits = new ArrayList<String>();
-		for (String name : fileNames) {
-			if (isCircuit(projectName, name)) {
-				circuits.add(name);
-			}
-		}
-		return circuits;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getAllTestbenches(java.lang.String)
-	 */
-	@Override
-	public List<String> getAllTestbenches(String projectName)
-			throws UniformAppletException {
-		List<String> fileNames = getFilesFor(projectName);
-		List<String> testbenches = new ArrayList<String>();
-		for (String name : fileNames) {
-			if (isTestbench(projectName, name)) {
-				testbenches.add(name);
-			}
-		}
-		return testbenches;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getCircuitInterfaceFor(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public CircuitInterface getCircuitInterfaceFor(String projectName,
-			String fileName) throws UniformAppletException {
-		if (projectName == null) {
-			throw new NullPointerException("Project name cant be null");
-		}
-		if (fileName == null) {
-			throw new NullPointerException("File name cant be null");
-		}
-		return communicator.getCircuitInterfaceFor(projectName, fileName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getPredefinedFileContent(java.lang.String)
-	 */
-	@Override
-	public String getPredefinedFileContent(String fileName)
-			throws UniformAppletException {
-		if (fileName == null) {
-			throw new NullPointerException("File name cant be null");
-		}
-		return communicator.loadPredefinedFileContent(fileName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getFileType(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public String getFileType(String projectName, String fileName) {
-		if (projectName == null) {
-			throw new NullPointerException("Project name cant be null");
-		}
-		if (fileName == null) {
-			throw new NullPointerException("File name cant be null");
-		}
-		try {
-			return communicator.loadFileType(projectName, fileName);
-		} catch (UniformAppletException e) {
-			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_LOAD_FILE_TYPE);
-			echoStatusText(text, MessageEnum.Error);
-			return null;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#extractHierarchy(java.lang.String)
-	 */
-	@Override
-	public Hierarchy extractHierarchy(String projectName)
-			throws UniformAppletException {
-		if (projectName == null) {
-			throw new NullPointerException("Project name cant be null");
-		}
-		return communicator.extractHierarchy(projectName);
 	}
 
 	/*
@@ -797,102 +532,27 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 	}
 
-	/* IS-SOMETHING METHODS */
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isCircuit(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean isCircuit(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isCircuit(type);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isTestbench(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean isTestbench(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		if (FileTypes.isTestbench(type)) {
-			return true;
-		}
-
-		CircuitInterface ci;
-		try {
-			ci = getCircuitInterfaceFor(projectName, fileName);
-		} catch (UniformAppletException e) {
-			return false;
-		}
-		if (ci.getPorts().isEmpty()) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isSimulation(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean isSimulation(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isSimulation(type);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isCompilable(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean isCompilable(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isCircuit(type) && !FileTypes.isPredefined(type);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isSimulatable(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean isSimulatable(String projectName, String fileName) {
-		String type = getFileType(projectName, fileName);
-		return FileTypes.isTestbench(type);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isCorrectEntityName(java.lang.String)
-	 */
-	@Override
-	public boolean isCorrectEntityName(String name) {
-		return StringFormat.isCorrectEntityName(name);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isCorrectProjectName(java.lang.String)
-	 */
-	@Override
-	public boolean isCorrectProjectName(String name) {
-		return StringFormat.isCorrectProjectName(name);
-	}
-
 	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getResourceManagement()
+	 */
+	@Override
+	public IResourceManagement getResourceManagement() {
+		return resourceManagement;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getSystemLog()
+	 */
+	@Override
+	public ISystemLog getSystemLog() {
+		return systemLog;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -901,11 +561,12 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public IUserPreferences getPreferences() {
-		return communicator.getPreferences();
+		return resourceManagement.getPreferences();
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getProperty(java.lang.String)
 	 */
 	@Override
@@ -927,8 +588,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 		return data;
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#setProperty(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#setProperty(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void setProperty(String name, String data) {
@@ -953,7 +617,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public ResourceBundle getResourceBundle(String baseName) {
-		return communicator.getResourceBundle(baseName);
+		return resourceManagement.getResourceBundle(baseName);
 	}
 
 	/* COMPONENT PROVIDER METHODS */
@@ -985,8 +649,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 *      hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum)
 	 */
 	@Override
-	public void echoStatusText(String text, MessageEnum type) {
-		getStatusBar().setMessage(text, type);
+	public void echoStatusText(String text, MessageType type) {
+		// getStatusBar().setMessage(text, type);
+		systemLog.addSystemMessage(new SystemMessage(text, type));
 	}
 
 	/* EDITOR MANIPULATION METHODS */
@@ -1023,29 +688,45 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 *      java.lang.String)
 	 */
 	@Override
-	public void viewVHDLCode(String projectName, String fileName) {
-		if (isCircuit(projectName, fileName)
-				|| isTestbench(projectName, fileName)) {
+	public IEditor viewVHDLCode(String projectName, String fileName) {
+		if(editorStorage.isEditorOpened(projectName, "vhdl:" + fileName)) {
+			return editorStorage.getOpenedEditor(projectName, "vhdl:" + fileName);
+		}
+		if (resourceManagement.isCircuit(projectName, fileName)
+				|| resourceManagement.isTestbench(projectName, fileName)) {
 			String vhdl;
 			try {
-				vhdl = communicator.generateVHDL(projectName, fileName);
+				vhdl = resourceManagement.generateVHDL(projectName, fileName);
 			} catch (UniformAppletException e) {
 				String text = bundle
 						.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { fileName });
-				echoStatusText(text, MessageEnum.Error);
-				return;
+				echoStatusText(text, MessageType.ERROR);
+				return null;
 			}
 			openEditor(projectName, "vhdl:" + fileName, vhdl,
 					FileTypes.FT_VHDL_SOURCE, false, true);
+			return editorStorage.getOpenedEditor(projectName, "vhdl:" + fileName);
 		} else {
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE_FOR_THAT_FILE);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { fileName });
-			echoStatusText(text, MessageEnum.Error);
+			echoStatusText(text, MessageType.ERROR);
+			return null;
 		}
+	}
+
+	/**
+	 * TODO PENDING REMOVAL!
+	 */
+	@Override
+	public IEditor getEditor(FileIdentifier resource) {
+		if (resource == null) {
+			return null;
+		}
+		return getEditor(resource.getProjectName(), resource.getFileName());
 	}
 
 	/**
@@ -1077,14 +758,15 @@ public class DefaultSystemContainer implements ISystemContainer {
 		if (editor == null) {
 			String content;
 			try {
-				content = communicator.loadFileContent(projectName, fileName);
+				content = resourceManagement.getFileContent(projectName,
+						fileName);
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
 				return;
 			}
 			FileContent fileContent = new FileContent(projectName, fileName,
 					content);
-			String type = getFileType(projectName, fileName);
+			String type = resourceManagement.getFileType(projectName, fileName);
 
 			editor = openEditorImpl(fileContent, type, savable, readOnly);
 		}
@@ -1125,7 +807,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private IEditor openEditorImpl(FileContent fileContent, String type,
 			boolean savable, boolean readOnly) {
 		// Initialization of an editor
-		IEditor editor = communicator.getEditor(type);
+		IEditor editor = getNewEditorInstanceByFileType(type);
 		editor.setSystemContainer(this);
 		editor.init();
 		editor.setSavable(savable);
@@ -1183,19 +865,19 @@ public class DefaultSystemContainer implements ISystemContainer {
 					projects.add(projectName);
 				}
 				try {
-					communicator.saveFile(projectName, fileName, content);
+					resourceManagement.saveFile(projectName, fileName, content);
 					resetEditorTitle(false, projectName, fileName);
 					String text = bundle
 							.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
 					text = PlaceholderUtil.replacePlaceholders(text,
 							new String[] { fileName });
-					echoStatusText(text, MessageEnum.Successfull);
+					echoStatusText(text, MessageType.SUCCESSFUL);
 				} catch (UniformAppletException e) {
 					String text = bundle
 							.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
 					text = PlaceholderUtil.replacePlaceholders(text,
 							new String[] { fileName });
-					echoStatusText(text, MessageEnum.Error);
+					echoStatusText(text, MessageType.ERROR);
 					// TODO ovo se treba maknut kad MainApplet vise nece bit u
 					// development fazi
 					StringWriter sw = new StringWriter();
@@ -1220,7 +902,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String numberOfFiles = String.valueOf(savedEditors.size());
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { numberOfFiles });
-			echoStatusText(text, MessageEnum.Successfull);
+			echoStatusText(text, MessageType.SUCCESSFUL);
 		}
 	}
 
@@ -1323,6 +1005,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		// TODO ovo bolje slozit
 		IProjectExplorer projectExplorer = new DefaultProjectExplorer();
 		projectExplorer.setSystemContainer(this);
+		projectExplorer.init();
 		projectExplorerStorage.add("Project Explorer", projectExplorer);
 		refreshWorkspace();
 	}
@@ -1331,19 +1014,20 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * TODO PENDING REMOVAL!
 	 */
 	@Override
-	public IView openView(String type) {
-		IView view = viewStorage.getOpenedView(type);
+	public IView openView(String id) {
+		IView view = viewStorage.getOpenedView(id);
 		if (view == null) {
-			// Initialization of an editor
-			view = communicator.getView(type);
+			// Initialization of a view
+			view = getNewViewInstance(id);
 			view.setSystemContainer(this);
+			view.init();
 			// End of initialization
 
-			String title = bundle.getString(LanguageConstants.TITLE_FOR + type);
-			viewStorage.add(type, title, view);
+			String title = bundle.getString(LanguageConstants.TITLE_FOR + id);
+			viewStorage.add(id, title, view);
 		}
-		viewStorage.setSelectedView(type);
-		return getView(type);
+		viewStorage.setSelectedView(id);
+		return getView(id);
 	}
 
 	/**
@@ -1384,6 +1068,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		if (viewsToClose == null)
 			return;
 		for (IView view : viewsToClose) {
+			view.dispose();
 			viewStorage.close(view);
 		}
 	}
@@ -1400,24 +1085,22 @@ public class DefaultSystemContainer implements ISystemContainer {
 				.getProjectExplorer();
 		// TODO to treba jos do kraja napravit, zajedno s refreshProject i
 		// refreshFile
-		List<String> openedProjects = projectExplorer.getAllProjects();
-		for (String p : openedProjects) {
+		for (String p : projectExplorer.getAllProjects()) {
 			projectExplorer.removeProject(p);
 		}
 
 		try {
-			List<String> projects = communicator.getAllProjects();
-			for (String projectName : projects) {
+			for (String projectName : resourceManagement.getAllProjects()) {
 				projectExplorer.addProject(projectName);
 			}
 
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-			echoStatusText(text, MessageEnum.Successfull);
+			echoStatusText(text, MessageType.SUCCESSFUL);
 		} catch (UniformAppletException e) {
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-			echoStatusText(text, MessageEnum.Error);
+			echoStatusText(text, MessageType.ERROR);
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u
 			// development fazi
 			StringWriter sw = new StringWriter();
@@ -1543,12 +1226,115 @@ public class DefaultSystemContainer implements ISystemContainer {
 	/**
 	 * Returns a new instance of specified editor.
 	 * 
+	 * @param type
+	 *            a type of a file that editor handles
+	 * @return a new editor instance
+	 * @throws NullPointerException
+	 *             if <code>type</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if can't find editor for given <code>type</code>
+	 * @throws IllegalStateException
+	 *             if editor can't be instantiated
+	 */
+	private IEditor getNewEditorInstanceByFileType(String type) {
+		if (type == null) {
+			throw new NullPointerException("Type can not be null.");
+		}
+		EditorProperties ep = configuration.getEditorPropertiesByFileType(type);
+		if (ep == null) {
+			throw new IllegalArgumentException(
+					"Can not find editor for given type.");
+		}
+		return instantiateEditor(ep);
+	}
+
+	/**
+	 * Returns a new instance of specified editor.
+	 * 
 	 * @param id
 	 *            an identifier of an editor
 	 * @return a new editor instance
+	 * @throws NullPointerException
+	 *             if <code>id</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if can't find editor for given <code>id</code>
+	 * @throws IllegalStateException
+	 *             if editor can't be instantiated
 	 */
 	private IEditor getNewEditorInstance(String id) {
-		return communicator.getEditor(id);
+		if (id == null) {
+			throw new NullPointerException("Identifier can not be null.");
+		}
+		EditorProperties ep = configuration.getEditorProperties(id);
+		if (ep == null) {
+			throw new IllegalArgumentException(
+					"Can not find editor for given identifier.");
+		}
+		return instantiateEditor(ep);
+	}
+
+	/**
+	 * Returns a new instance of specified editor.
+	 * 
+	 * @param ep
+	 *            an editor properties that contains an information on editor
+	 *            class
+	 * @return a new editor instance
+	 * @throws IllegalStateException
+	 *             if editor can't be instantiated
+	 */
+	private IEditor instantiateEditor(EditorProperties ep) {
+		IEditor editor = null;
+		try {
+			editor = (IEditor) Class.forName(ep.getClazz()).newInstance();
+		} catch (Exception e) {
+			throw new IllegalStateException("Can not instantiate editor.");
+		}
+		return editor;
+	}
+
+	/**
+	 * Returns a new instance of specified view.
+	 * 
+	 * @param id
+	 *            an identifier of an view
+	 * @return a new view instance
+	 * @throws NullPointerException
+	 *             if <code>id</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if can't find view for given <code>id</code>
+	 * @throws IllegalStateException
+	 *             if view can't be instantiated
+	 */
+	private IView getNewViewInstance(String id) {
+		if (id == null) {
+			throw new NullPointerException("Identifier can not be null.");
+		}
+		ViewProperties vp = configuration.getViewProperties(id);
+		if (vp == null) {
+			throw new IllegalArgumentException(
+					"Can not find view for given identifier.");
+		}
+		return instantiateView(vp);
+	}
+
+	/**
+	 * Returns a new instance of specified view.
+	 * 
+	 * @param vp
+	 *            a view properties that contains an information on a view class
+	 * @return a new view instance
+	 * @throws IllegalStateException
+	 *             if view can't be instantiated
+	 */
+	private IView instantiateView(ViewProperties vp) {
+		IView view = null;
+		try {
+			view = (IView) Class.forName(vp.getClazz()).newInstance();
+		} catch (Exception e) {
+			throw new IllegalStateException("Can not instantiate view.");
+		}
+		return view;
 	}
 
 	/**
@@ -1563,6 +1349,22 @@ public class DefaultSystemContainer implements ISystemContainer {
 	}
 
 	/* SHOW DIALOGS METHODS */
+
+	private FileIdentifier showCompilationRunDialog() {
+		String title = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_TITLE);
+		String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
+		FileIdentifier file = showRunDialog(title, listTitle,
+				RunDialog.COMPILATION_TYPE);
+		return file;
+	}
+
+	private FileIdentifier showSimulationRunDialog() {
+		String title = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_TITLE);
+		String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
+		FileIdentifier file = showRunDialog(title, listTitle,
+				RunDialog.SIMULATION_TYPE);
+		return file;
+	}
 
 	/**
 	 * TODO PENDING CHANGE! also to change (by transition): -
@@ -1641,7 +1443,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * TODO PENDING CHANGE! also to change (by transition): -
 	 * createNewProjectInstance
 	 */
-	private String showCreateProjectDialog(String title, String message) {
+	private String showCreateProjectDialog() {
+		String title = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
+		String message = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
 		String ok = getBundleString(LanguageConstants.DIALOG_BUTTON_OK);
 		String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
 		Object[] options = new Object[] { ok, cancel };
@@ -1656,7 +1460,313 @@ public class DefaultSystemContainer implements ISystemContainer {
 		 * communicator.existsProject(projectName)) { return null; } } catch
 		 * (UniformAppletException e) { }
 		 */
+		if(projectName.equals("")) {
+			projectName = null;
+		}
 		return projectName;
+	}
+
+	/**
+	 * Check if if resource is compilable. Also save opened editors.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class BeforeCompilationCheckCompilableAndSaveEditors extends
+			VetoableResourceAdapter {
+		@Override
+		public void beforeResourceCompilation(String projectName,
+				String fileName) throws ResourceVetoException {
+			if (!resourceManagement.isCompilable(projectName, fileName)) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
+				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+						fileName, projectName });
+				echoStatusText(text, MessageType.INFORMATION);
+				// veto compilation
+				throw new ResourceVetoException();
+			}
+			List<IEditor> openedEditors = editorStorage
+					.getOpenedEditorsThatHave(projectName);
+			String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
+			String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
+			boolean shouldContinue = saveResourcesWithDialog(openedEditors,
+					title, message);
+			if (!shouldContinue) {
+				// veto compilation
+				throw new ResourceVetoException();
+			}
+		}
+	}
+
+	/**
+	 * Echoes that a resource has been compiled.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterCompilationEcho extends VetoableResourceAdapter {
+		@Override
+		public void resourceCompiled(String projectName, String fileName,
+				CompilationResult result) {
+			String text = getBundleString(LanguageConstants.STATUSBAR_COMPILED);
+			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+					fileName, projectName });
+			echoStatusText(text, MessageType.INFORMATION);
+		}
+	}
+
+	/**
+	 * First open view for displaying compilation result and then log this
+	 * compilation is system log.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterCompilationOpenView extends VetoableResourceAdapter {
+		@Override
+		public void resourceCompiled(String projectName, String fileName,
+				CompilationResult result) {
+			openView(ComponentTypes.VIEW_COMPILATION_ERRORS);
+
+			FileIdentifier resource = new FileIdentifier(projectName, fileName);
+			ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
+					resource, result);
+			systemLog.addCompilationResultTarget(resultTarget);
+		}
+	}
+
+	/**
+	 * Check if if resource is simulatable. Also save opened editors.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class BeforeSimulationCheckSimulatableAndSaveEditors extends
+			VetoableResourceAdapter {
+		@Override
+		public void beforeResourceSimulation(String projectName, String fileName)
+				throws ResourceVetoException {
+			if (!resourceManagement.isSimulatable(projectName, fileName)) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
+				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+						fileName, projectName });
+				echoStatusText(text, MessageType.INFORMATION);
+				// veto simulation
+				throw new ResourceVetoException();
+			}
+			List<IEditor> openedEditors = editorStorage
+					.getOpenedEditorsThatHave(projectName);
+			String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
+			String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
+			boolean shouldContinue = saveResourcesWithDialog(openedEditors,
+					title, message);
+			if (!shouldContinue) {
+				// veto simulation
+				throw new ResourceVetoException();
+			}
+
+		}
+	}
+
+	/**
+	 * Echoes that a resource has been simulated.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterSimulationEcho extends VetoableResourceAdapter {
+		@Override
+		public void resourceSimulated(String projectName, String fileName,
+				SimulationResult result) {
+			String text = getBundleString(LanguageConstants.STATUSBAR_SIMULATED);
+			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+					fileName, projectName });
+			echoStatusText(text, MessageType.INFORMATION);
+		}
+	}
+
+	/**
+	 * First open view for displaying simulation result and then log this
+	 * simulation is system log.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterSimulationOpenView extends VetoableResourceAdapter {
+		@Override
+		public void resourceSimulated(String projectName, String fileName,
+				SimulationResult result) {
+			openView(ComponentTypes.VIEW_SIMULATION_ERRORS);
+
+			FileIdentifier resource = new FileIdentifier(projectName, fileName);
+			ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(
+					resource, result);
+			systemLog.addSimulationResultTarget(resultTarget);
+		}
+	}
+
+	/**
+	 * Opens a simulations editor to present a simulation result if simulation
+	 * is successful.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterSimulationOpenEditor extends VetoableResourceAdapter {
+		@Override
+		public void resourceSimulated(String projectName, String fileName,
+				SimulationResult result) {
+			if (result.getWaveform() != null) {
+				String simulationName = fileName + ".sim";
+				openEditor(projectName, simulationName, result.getWaveform(),
+						FileTypes.FT_VHDL_SIMULATION, false, true);
+			}
+		}
+	}
+
+	/**
+	 * Check existence of project before creating it.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class BeforeProjectCreationCheckExistence extends
+			VetoableResourceAdapter {
+		@Override
+		public void beforeProjectCreation(String projectName)
+				throws ResourceVetoException {
+			boolean exists;
+			try {
+				exists = resourceManagement.existsProject(projectName);
+			} catch (UniformAppletException e) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
+				text = PlaceholderUtil.replacePlaceholders(text,
+						new String[] { projectName });
+				echoStatusText(text, MessageType.ERROR);
+				// veto project creation
+				throw new ResourceVetoException();
+			}
+			if (exists) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
+				text = PlaceholderUtil.replacePlaceholders(text,
+						new String[] { projectName });
+				echoStatusText(text, MessageType.INFORMATION);
+				// veto project creation
+				throw new ResourceVetoException();
+			}
+
+		}
+	}
+
+	/**
+	 * Check if a project has a correct name.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class BeforeProjectCreationCheckCorrectName extends
+			VetoableResourceAdapter {
+		@Override
+		public void beforeProjectCreation(String projectName)
+				throws ResourceVetoException {
+			if (!resourceManagement.isCorrectProjectName(projectName)) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
+				text = PlaceholderUtil.replacePlaceholders(text,
+						new String[] { projectName });
+				echoStatusText(text, MessageType.ERROR);
+				// veto project creation
+				throw new ResourceVetoException();
+			}
+		}
+	}
+
+	/**
+	 * Echo that project was created.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterProjectCreationEcho extends VetoableResourceAdapter {
+		@Override
+		public void projectCreated(String projectName) {
+			String text = getBundleString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
+			text = PlaceholderUtil.replacePlaceholders(text,
+					new String[] { projectName });
+			echoStatusText(text, MessageType.SUCCESSFUL);
+		}
+	}
+
+	/**
+	 * Check existence of resource before creating it.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class BeforeResourceCreationCheckExistence extends
+			VetoableResourceAdapter {
+		@Override
+		public void beforeResourceCreation(String projectName, String fileName,
+				String type) throws ResourceVetoException {
+			boolean exists;
+			try {
+				exists = resourceManagement.existsFile(projectName, fileName);
+			} catch (UniformAppletException e) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_FILE_EXISTENCE);
+				text = PlaceholderUtil.replacePlaceholders(text,
+						new String[] { fileName });
+				echoStatusText(text, MessageType.ERROR);
+				// veto resource creation
+				throw new ResourceVetoException();
+			}
+			if (exists) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_FILE);
+				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+						fileName, projectName });
+				echoStatusText(text, MessageType.INFORMATION);
+				// veto resource creation
+				throw new ResourceVetoException();
+			}
+		}
+	}
+
+	/**
+	 * Check if a resource has a correct name.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class BeforeResourceCreationCheckCorrectName extends
+			VetoableResourceAdapter {
+		@Override
+		public void beforeResourceCreation(String projectName, String fileName,
+				String type) throws ResourceVetoException {
+			if (!resourceManagement.isCorrectFileName(fileName)) {
+				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
+				text = PlaceholderUtil.replacePlaceholders(text,
+						new String[] { fileName });
+				echoStatusText(text, MessageType.ERROR);
+				// veto project creation
+				throw new ResourceVetoException();
+			}
+		}
+	}
+
+	/**
+	 * Echo that resource was created.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterResourceCreationEcho extends VetoableResourceAdapter {
+		@Override
+		public void resourceCreated(String projectName, String fileName,
+				String type) {
+			String text = getBundleString(LanguageConstants.STATUSBAR_FILE_CREATED);
+			text = PlaceholderUtil.replacePlaceholders(text,
+					new String[] { fileName });
+			echoStatusText(text, MessageType.SUCCESSFUL);
+		}
+	}
+
+	/**
+	 * Opens an editor for specified resource.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class AfterResourceCreationOpenEditor extends
+			VetoableResourceAdapter {
+		@Override
+		public void resourceCreated(String projectName, String fileName,
+				String type) {
+			openEditor(projectName, fileName, true, false);
+		}
 	}
 
 }

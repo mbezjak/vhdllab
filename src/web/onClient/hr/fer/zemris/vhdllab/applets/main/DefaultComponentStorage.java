@@ -308,6 +308,21 @@ public class DefaultComponentStorage implements IComponentStorage {
 		ComponentIdentifier ci = bidiComponents.get(component);
 		return components.get(ci).getPlacement();
 	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getIdentifierFor(javax.swing.JComponent)
+	 */
+	@Override
+	public String getIdentifierFor(JComponent component) {
+		if(component == null) {
+			throw new NullPointerException("Component cant be null");
+		}
+		if(!bidiComponents.containsKey(component)) {
+			return null;
+		}
+		ComponentIdentifier ci = bidiComponents.get(component);
+		return ci.getIdentifier();
+	}
 
 	/*
 	 * (non-Javadoc)

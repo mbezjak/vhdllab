@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
@@ -49,11 +49,11 @@ public class DefaultWizard implements IWizard {
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if(container.existsFile(projectName, ci.getEntityName())) {
-					container.echoStatusText(ci.getEntityName() + " already exists!", MessageEnum.Information);
+				if(container.getResourceManagement().existsFile(projectName, ci.getEntityName())) {
+					container.echoStatusText(ci.getEntityName() + " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {
-				container.echoStatusText("Internal error!", MessageEnum.Information);
+				container.echoStatusText("Internal error!", MessageType.INFORMATION);
 				return null;
 			}
 			
@@ -63,7 +63,7 @@ public class DefaultWizard implements IWizard {
 				info.getEntity().getParameters().setValue(SchemaEntity.KEY_NAME, new Caseless(ci.getEntityName()));
 			} catch (Exception e) {
 				e.printStackTrace();
-				container.echoStatusText("Internal error!", MessageEnum.Information);
+				container.echoStatusText("Internal error!", MessageType.INFORMATION);
 				return null;
 			}
 			
@@ -81,7 +81,7 @@ public class DefaultWizard implements IWizard {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					container.echoStatusText("Internal error!", MessageEnum.Information);
+					container.echoStatusText("Internal error!", MessageType.INFORMATION);
 					return null;
 				}
 			}
@@ -92,7 +92,7 @@ public class DefaultWizard implements IWizard {
 				ss.serializeSchema(writer, info);
 			} catch (IOException e) {
 				e.printStackTrace();
-				container.echoStatusText("Internal error!", MessageEnum.Information);
+				container.echoStatusText("Internal error!", MessageType.INFORMATION);
 				return null;
 			}
 			return new FileContent(projectName, ci.getEntityName(), writer.toString());

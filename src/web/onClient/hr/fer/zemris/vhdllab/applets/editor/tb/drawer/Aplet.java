@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -500,7 +500,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		setData(data);
 		if(this.in_panel.podatci_t == null) {
 			try {
-				CircuitInterface ci = container.getCircuitInterfaceFor(projectName, fileDepends);
+				CircuitInterface ci = container.getResourceManagement().getCircuitInterfaceFor(projectName, fileDepends);
 				setCircuitInterface(ci);
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
@@ -536,7 +536,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		if(dialog.getOption() != RunDialog.OK_OPTION) return null;
 		FileIdentifier file = dialog.getSelectedFile();
 		if(!projectName.equalsIgnoreCase(file.getProjectName())) {
-			container.echoStatusText("Cant create testbench for file outside of '"+projectName+"'", MessageEnum.Information);
+			container.echoStatusText("Cant create testbench for file outside of '"+projectName+"'", MessageType.INFORMATION);
 			return null;
 		}
 		String testbench = JOptionPane.showInputDialog(parent, "Enter a name of a testbench");

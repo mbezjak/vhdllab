@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.model;
 
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.projectNamesAreEqual;
+import static hr.fer.zemris.vhdllab.utilities.ModelUtil.userIdAreEqual;
+
 import java.util.Set;
-import static hr.fer.zemris.vhdllab.utilities.ModelUtil.*;
 
 /**
  * @hibernate.class

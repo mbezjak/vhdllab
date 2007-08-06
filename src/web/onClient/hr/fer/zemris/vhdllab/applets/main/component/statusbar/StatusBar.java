@@ -1,6 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.main.component.statusbar;
 
 import hr.fer.zemris.vhdllab.applets.main.event.EventListenerList;
+import hr.fer.zemris.vhdllab.applets.main.event.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -35,7 +39,7 @@ public class StatusBar extends JPanel implements IStatusBar {
 	/** Listeners to notify when status text changes */
 	private EventListenerList<StatusListener> statusListenerList;
 
-	private MessageEnum messageType;
+	private MessageType messageType;
 
 	private static final String TIME = " HH:mm ";
 
@@ -65,27 +69,36 @@ public class StatusBar extends JPanel implements IStatusBar {
 			}
 		});
 		timer.start();
+		
+//		SystemLogListener systemLogListener = new SystemLogAdapter() {
+//			@Override
+//			public void systemMessageAdded(SystemMessage message) {
+//				setMessage(message);
+//			}
+//		};
+//		container.getSystemLog().addSystemLogListener(systemLogListener);
+		// later remove the listener
 	}
 	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar#setMessage(java.lang.String)
 	 */
 	public void setMessage(String message) {
-		setMessage(message, MessageEnum.Information);
+		setMessage(message, MessageType.INFORMATION);
+	}
+	
+	@Override
+	public void setMessage(String message, MessageType type) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar#setMessage(java.lang.String, hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum)
 	 */
-	public void setMessage(String text, MessageEnum type) {
-		if(text == null) {
-			text = "";
-		}
-		if(type == null) {
-			type = MessageEnum.Information;
-		}
-		statusText.setText(text);
-		this.messageType = type;
+	public void setMessage(SystemMessage message) {
+		statusText.setText(message.getContent());
+		messageType = message.getType();
 		fireStatusChanged();
 	}
 	
@@ -99,7 +112,7 @@ public class StatusBar extends JPanel implements IStatusBar {
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar#getMessageType()
 	 */
-	public MessageEnum getMessageType() {
+	public MessageType getMessageType() {
 		return messageType;
 	}
 

@@ -1,10 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.view.status.history;
 
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusContent;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusListener;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
+import hr.fer.zemris.vhdllab.applets.main.event.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
+import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,9 +27,9 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-/** 
- * View that holds past messages diplayed in status bar.
- *
+/**
+ * View that holds past messages displayed in status bar.
+ * 
  * @author Miro Bezjak
  * @version 1.0
  * @since 3.2.2007.
@@ -42,35 +44,55 @@ public class StatusHistoryView extends JPanel implements IView {
 
 	/** Formatter that will return string representation of current time. */
 	private Format formatter;
-	
+
 	/** Contains style for every message type */
-	private Map<MessageEnum, Style> messageTypeStyles;
+	private Map<MessageType, Style> messageTypeStyles;
 
 	/** Pane where text will be displayed */
 	private JTextPane textPane;
 
 	/**
+	 * A system container.
+	 */
+	private ISystemContainer container;
+
+	private SystemLogListener systemLogListener;
+
+	/**
 	 * Constructor.
 	 */
 	public StatusHistoryView() {
+	}
+
+	/**
+	 * Returns string representation of current time.
+	 * 
+	 * @return
+	 */
+	protected String getFormattedTime(Date date) {
+		return formatter.format(date);
+	}
+
+	@Override
+	public void init() {
 		formatter = new SimpleDateFormat(timeFormat);
 		textPane = new JTextPane();
 		textPane.setEditable(false);
 		textPane.setAutoscrolls(true);
-		
-		MessageEnum[] messageTypes = MessageEnum.values();
-		messageTypeStyles = new HashMap<MessageEnum, Style>(messageTypes.length);
+
+		MessageType[] messageTypes = MessageType.values();
+		messageTypeStyles = new HashMap<MessageType, Style>(messageTypes.length);
 		StyledDocument doc = (StyledDocument) textPane.getDocument();
-		for(MessageEnum e : messageTypes) {
-			if(e.isSuccessful()) {
+		for (MessageType e : messageTypes) {
+			if (e.isSuccessful()) {
 				Style style = doc.addStyle("Successfull Style Message", null);
 				StyleConstants.setForeground(style, new Color(12, 46, 233));
 				messageTypeStyles.put(e, style);
-			} else if(e.isError()) {
+			} else if (e.isError()) {
 				Style style = doc.addStyle("Error Style Message", null);
 				StyleConstants.setForeground(style, new Color(237, 7, 7));
 				messageTypeStyles.put(e, style);
-			} else if(e.isInformation()) {
+			} else if (e.isInformation()) {
 				Style style = doc.addStyle("Information Style Message", null);
 				StyleConstants.setForeground(style, new Color(43, 46, 59));
 				messageTypeStyles.put(e, style);
@@ -79,58 +101,81 @@ public class StatusHistoryView extends JPanel implements IView {
 
 		final JScrollPane scrollPane = new JScrollPane(textPane);
 		this.addComponentListener(new ComponentListener() {
-			public void componentHidden(ComponentEvent e) {}
-			public void componentMoved(ComponentEvent e) {}
+			public void componentHidden(ComponentEvent e) {
+			}
+
+			public void componentMoved(ComponentEvent e) {
+			}
+
 			public void componentResized(ComponentEvent e) {
 				scrollPane.setPreferredSize(StatusHistoryView.this.getSize());
 			}
-			public void componentShown(ComponentEvent e) {}
+
+			public void componentShown(ComponentEvent e) {
+			}
 		});
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
+		
+		ISystemLog systemLog = container.getSystemLog();
+		for(SystemMessage message : systemLog.getSystemMessages()) {
+			addMessage(message);
+		}
+		systemLogListener = new SystemLogAdapter() {
+			@Override
+			public void systemMessageAdded(SystemMessage message) {
+				addMessage(message);
+			}
+		};
+		systemLog.addSystemLogListener(systemLogListener);
 	}
 
-	/**
-	 * Returns string representation of current time.
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#dispose()
 	 */
-	protected String getCurrentTime() {
-		return formatter.format(new Date());
+	@Override
+	public void dispose() {
+		container.getSystemLog().removeSystemLogListener(systemLogListener);
 	}
 
 	/**
 	 * This method is ignored since this View has much better way of accessing
 	 * information.
 	 */
-	public void appendData(Object data) {}
+	public void appendData(Object data) {
+	}
 
 	/**
 	 * This method is ignored since this View has much better way of accessing
 	 * information.
 	 */
-	public void setData(Object data) {}
+	public void setData(Object data) {
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
 	 */
 	public void setSystemContainer(ISystemContainer container) {
-		container.getStatusBar().addStatusListener(new StatusListener() {
-			public void statusChanged(StatusContent c) {
-				addStatus(c.getMessage(), c.getMessageType());
-			}
-		});
+		this.container = container;
 	}
-	
+
 	/**
-	 * Appends a status content to the end of status history.
-	 * @param message a message content
-	 * @param messageType a message type
+	 * Appends a system message to the end of status history.
+	 * 
+	 * @param message
+	 *            a system message to add
 	 */
-	protected void addStatus(String message, MessageEnum messageType) {
-		StringBuilder sb = new StringBuilder(message.length() + 10);
-		sb.append(getCurrentTime()).append("  ").append(message).append("\n");
-		
-		Style style = messageTypeStyles.get(messageType);
+	private void addMessage(SystemMessage message) {
+		String content = message.getContent();
+		StringBuilder sb = new StringBuilder(content.length() + 10);
+		sb.append(getFormattedTime(message.getDate())).append("  ").append(
+				content).append("\n");
+
+		Style style = messageTypeStyles.get(message.getType());
 		Document doc = (StyledDocument) textPane.getDocument();
 		try {
 			doc.insertString(doc.getLength(), sb.toString(), style);

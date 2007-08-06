@@ -4,7 +4,7 @@ package hr.fer.zemris.vhdllab.applets.texteditor;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
@@ -262,8 +262,8 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if(container.existsFile(projectName, ci.getEntityName())) {
-					container.echoStatusText(ci.getEntityName() + " already exists!", MessageEnum.Information);
+				if(container.getResourceManagement().existsFile(projectName, ci.getEntityName())) {
+					container.echoStatusText(ci.getEntityName() + " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
@@ -314,8 +314,8 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		Highlighter h = text.getHighlighter();
 		h.removeAllHighlights();
 		String content = text.getText();
-		content = content.replaceAll("\r+", "");
-		text.setText(content);
+//		content = content.replaceAll("\r+", "");
+//		text.setText(content);
 		text.setCaretPosition(caret);
 		int pos = 0;
 		line--;
