@@ -15,8 +15,8 @@ import java.util.ResourceBundle;
  * communicate directly they can use some of system container's methods to
  * establish communication. System container is also a way of getting required
  * resource from a server (that is actually provided in
- * {@link IResourceManagement} interface but system container providers resource
- * management interface).
+ * {@link IResourceManager} interface but system container providers resource
+ * manager interface).
  * 
  * @author Miro Bezjak
  */
@@ -62,7 +62,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not compilable (simulation for example)
 	 * therefor this method will not compile such resource. To check if a
 	 * resource is compilable invoke
-	 * {@link IResourceManagement#isCompilable(String, String)} method.
+	 * {@link IResourceManager#isCompilable(String, String)} method.
 	 * </p>
 	 * 
 	 * @param file
@@ -85,7 +85,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not compilable (simulation for example)
 	 * therefor this method will not compile such resource. To check if a
 	 * resource is compilable invoke
-	 * {@link IResourceManagement#isCompilable(String, String)} method.
+	 * {@link IResourceManager#isCompilable(String, String)} method.
 	 * </p>
 	 * 
 	 * @param editor
@@ -160,7 +160,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not simulatable (vhdl source for example)
 	 * therefor this method will not simulate such resource. To check if a
 	 * resource is simulatable invoke
-	 * {@link IResourceManagement#isSimulatable(String, String)} method.
+	 * {@link IResourceManager#isSimulatable(String, String)} method.
 	 * </p>
 	 * 
 	 * @param file
@@ -183,7 +183,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not simulatable (vhdl source for example)
 	 * therefor this method will not simulate such resource. To check if a
 	 * resource is simulatable invoke
-	 * {@link IResourceManagement#isSimulatable(String, String)} method.
+	 * {@link IResourceManager#isSimulatable(String, String)} method.
 	 * </p>
 	 * 
 	 * @param editor
@@ -272,12 +272,12 @@ public interface ISystemContainer {
 	ISystemLog getSystemLog();
 
 	/**
-	 * Returns a resource management for manipulating resources. Return value
+	 * Returns a resource manager for manipulating resources. Return value
 	 * will never be <code>null</code>.
 	 * 
-	 * @return a resource management
+	 * @return a resource manager
 	 */
-	IResourceManagement getResourceManagement();
+	IResourceManager getResourceManager();
 
 	/**
 	 * Returns a user preferences. Return value will never be <code>null</code>.

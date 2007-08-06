@@ -108,7 +108,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
 		if (matcher.matches()) {
 			FileIdentifier resource = resultTarget.getResource();
 			IEditor editor;
-			if (container.getResourceManagement().getFileType(
+			if (container.getResourceManager().getFileType(
 					resource.getProjectName(), resource.getFileName()).equals(
 					FileTypes.FT_VHDL_SOURCE)) {
 				editor = container.getEditor(resource);

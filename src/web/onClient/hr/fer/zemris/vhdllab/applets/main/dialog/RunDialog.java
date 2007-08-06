@@ -314,7 +314,7 @@ public class RunDialog extends JDialog {
     	FontMetrics metrics = popupMenu.getFontMetrics(font);
     	List<String> allProjects;
 		try {
-			allProjects = container.getResourceManagement().getAllProjects();
+			allProjects = container.getResourceManager().getAllProjects();
 		} catch (UniformAppletException e1) {
 			allProjects = new ArrayList<String>();
 		}
@@ -581,9 +581,9 @@ public class RunDialog extends JDialog {
     	List<String> files = null;
     	try {
 			if(dialogType == RunDialog.COMPILATION_TYPE) {
-				files = container.getResourceManagement().getAllCircuits(currentProject);
+				files = container.getResourceManager().getAllCircuits(currentProject);
 			} else if(dialogType == RunDialog.SIMULATION_TYPE) {
-				files = container.getResourceManagement().getAllTestbenches(currentProject);
+				files = container.getResourceManager().getAllTestbenches(currentProject);
 			}
 		} catch (UniformAppletException e) {
 			files = null;

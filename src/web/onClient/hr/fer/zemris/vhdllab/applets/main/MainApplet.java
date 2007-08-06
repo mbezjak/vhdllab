@@ -14,7 +14,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorerStorage;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage;
@@ -129,7 +129,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
 
 		Communicator communicator;
-		IResourceManagement resourceManagement;
+		IResourceManager resourceManager;
 		ISystemLog systemLog;
 		try {
 			AjaxMediator ajax = new DefaultAjaxMediator(this);
@@ -137,9 +137,9 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
 			communicator = new Communicator(invoker, userId);
 			communicator.init();
-			resourceManagement = new DefaultResourceManagement(communicator);
+			resourceManager = new DefaultResourceManager(communicator);
 			systemLog = new DefaultSystemLog();
-			bundle = resourceManagement
+			bundle = resourceManager
 					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (Exception e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u
@@ -160,7 +160,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		});
 
 		DefaultSystemContainer systemContainer = new DefaultSystemContainer(
-				resourceManagement, systemLog, this, JOptionPane
+				resourceManager, systemLog, this, JOptionPane
 						.getFrameForComponent(this));
 		this.systemContainer = systemContainer;
 		componentStorage = new DefaultComponentStorage(this, systemContainer);

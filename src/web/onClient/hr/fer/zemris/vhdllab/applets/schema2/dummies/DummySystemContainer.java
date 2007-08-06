@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
@@ -23,18 +23,18 @@ import java.util.ResourceBundle;
 
 public class DummySystemContainer implements ISystemContainer {
 	
-	private IResourceManagement resourceManagement;
+	private IResourceManager resourceManager;
 	
 	public DummySystemContainer() {
-		resourceManagement = new DummyResourceManagement();
+		resourceManager = new DummyResourceManager();
 	}
 	
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getResourceManagement()
 	 */
 	@Override
-	public IResourceManagement getResourceManagement() {
-		return resourceManagement;
+	public IResourceManager getResourceManager() {
+		return resourceManager;
 	}
 
 	/* (non-Javadoc)
@@ -42,7 +42,7 @@ public class DummySystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public ResourceBundle getResourceBundle(String baseName) {
-		return resourceManagement.getResourceBundle(baseName);
+		return resourceManager.getResourceBundle(baseName);
 	}
 
 	@Override

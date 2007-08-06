@@ -335,7 +335,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 				addProject(projectName);
 			}
 		};
-		systemContainer.getResourceManagement().addVetoableResourceListener(resourceListener);
+		systemContainer.getResourceManager().addVetoableResourceListener(resourceListener);
 	}
 	
 	/* (non-Javadoc)
@@ -343,7 +343,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 	 */
 	@Override
 	public void dispose() {
-		systemContainer.getResourceManagement().removeVetoableResourceListener(resourceListener);
+		systemContainer.getResourceManager().removeVetoableResourceListener(resourceListener);
 	}
 
 
@@ -402,7 +402,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 					.getUserObject();
 
 			// provjeri kojeg je tipa
-			type = systemContainer.getResourceManagement().getFileType(nodeProjectName, node.toString());
+			type = systemContainer.getResourceManager().getFileType(nodeProjectName, node.toString());
 
 			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
 				setIcon(vhdl);
@@ -866,7 +866,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 	public void addFile(String projectName, String fileName) {
 		/* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
 		this.filesByProjects.get(projectName).add(fileName);
-		if(systemContainer.getResourceManagement().isTestbench(projectName, fileName)) {
+		if(systemContainer.getResourceManager().isTestbench(projectName, fileName)) {
 			this.refreshProject(projectName);
 		} else {
 			addFileInProject(projectName, fileName);
@@ -990,7 +990,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 
 		// dohvaca sve root cvorove tog projekta
 		try {
-			hierarchy = systemContainer.getResourceManagement().extractHierarchy(projectName);
+			hierarchy = systemContainer.getResourceManager().extractHierarchy(projectName);
 		} catch (UniformAppletException e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1035,7 +1035,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 		PeNode rootNode = null;
 
 		try {
-			hierarchy = systemContainer.getResourceManagement().extractHierarchy(projectName);
+			hierarchy = systemContainer.getResourceManager().extractHierarchy(projectName);
 		} catch (UniformAppletException e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1130,7 +1130,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 		PeNode rootNode = null;
 
 		try {
-			hierarchy = systemContainer.getResourceManagement().extractHierarchy(projectName);
+			hierarchy = systemContainer.getResourceManager().extractHierarchy(projectName);
 		} catch (UniformAppletException e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -1358,7 +1358,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			this.treeModel.removeNodeFromParent(node);
 			try {
-				this.systemContainer.getResourceManagement().deleteFile(name, node.toString());
+				this.systemContainer.getResourceManager().deleteFile(name, node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1403,7 +1403,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 			this.treeModel.removeNodeFromParent((PeNode)node);
 			try {
-				this.systemContainer.getResourceManagement().deleteProject(node.toString());
+				this.systemContainer.getResourceManager().deleteProject(node.toString());
 				this.allProjects.remove(node.toString());
 			} catch (UniformAppletException e) {
 				// TODO Auto-generated catch block

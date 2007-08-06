@@ -19,7 +19,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorerStorage;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
@@ -53,7 +53,7 @@ import javax.swing.JOptionPane;
  * To use this implementation you need to setup it up properly. This is how:
  * </p>
  * <blockquote><code>
- * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManagement, mySystemLog, myComponentProvider, parentFrame);<br/>
+ * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManager, mySystemLog, myComponentProvider, parentFrame);<br/>
  * container.setComponentStorage(myComponentStorage);<br/>
  * container.setEditorStrage(myEditorStorage);<br/>
  * container.setViewStrage(myViewStorage);<br/>
@@ -73,9 +73,9 @@ import javax.swing.JOptionPane;
 public class DefaultSystemContainer implements ISystemContainer {
 
 	/**
-	 * A resource management.
+	 * A resource manager.
 	 */
-	private IResourceManagement resourceManagement;
+	private IResourceManager resourceManager;
 	/**
 	 * A system log.
 	 */
@@ -116,8 +116,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 	/**
 	 * Constructs a default system container.
 	 * 
-	 * @param resourceManagement
-	 *            a resource management
+	 * @param resourceManager
+	 *            a resource manager
 	 * @param systemLog
 	 *            a system log
 	 * @param componentProvider
@@ -127,11 +127,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	public DefaultSystemContainer(IResourceManagement resourceManagement,
+	public DefaultSystemContainer(IResourceManager resourceManager,
 			ISystemLog systemLog, IComponentProvider componentProvider,
 			Frame parentFrame) {
-		if (resourceManagement == null) {
-			throw new NullPointerException("Resource management cant be null");
+		if (resourceManager == null) {
+			throw new NullPointerException("Resource manager cant be null");
 		}
 		if (systemLog == null) {
 			throw new NullPointerException("System log cant be null");
@@ -142,7 +142,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		if (parentFrame == null) {
 			throw new NullPointerException("Parent frame cant be null");
 		}
-		this.resourceManagement = resourceManagement;
+		this.resourceManager = resourceManager;
 		this.systemLog = systemLog;
 		this.componentProvider = componentProvider;
 		this.parentFrame = parentFrame;
@@ -198,33 +198,33 @@ public class DefaultSystemContainer implements ISystemContainer {
 	public void init() throws UniformAppletException {
 		configuration = ComponentConfigurationParser.getConfiguration();
 		bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new BeforeCompilationCheckCompilableAndSaveEditors());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterCompilationEcho());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterCompilationOpenView());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new BeforeSimulationCheckSimulatableAndSaveEditors());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterSimulationEcho());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterSimulationOpenView());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterSimulationOpenEditor());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new BeforeProjectCreationCheckExistence());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new BeforeProjectCreationCheckCorrectName());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterProjectCreationEcho());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new BeforeResourceCreationCheckExistence());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new BeforeResourceCreationCheckCorrectName());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterResourceCreationEcho());
-		resourceManagement
+		resourceManager
 				.addVetoableResourceListener(new AfterResourceCreationOpenEditor());
 
 		String data;
@@ -264,10 +264,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 		setProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
 
 		systemLog.removeAllSystemLogListeners();
-		resourceManagement.removeAllVetoableResourceListeners();
+		resourceManager.removeAllVetoableResourceListeners();
 		getPreferences().removeAllPropertyListeners();
 
-		resourceManagement = null;
+		resourceManager = null;
 		componentProvider = null;
 		componentStorage = null;
 		editorStorage = null;
@@ -349,7 +349,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 		CompilationResult result;
 		try {
-			result = resourceManagement.compile(projectName, fileName);
+			result = resourceManager.compile(projectName, fileName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_COMPILE);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
@@ -430,7 +430,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 		SimulationResult result;
 		try {
-			result = resourceManagement.simulate(projectName, fileName);
+			result = resourceManager.simulate(projectName, fileName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
@@ -455,7 +455,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			return false;
 		}
 		try {
-			return resourceManagement.createNewProject(projectName);
+			return resourceManager.createNewProject(projectName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_PROJECT);
 			text = PlaceholderUtil.replacePlaceholders(text,
@@ -491,7 +491,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		String fileName = content.getFileName();
 		String data = content.getContent();
 		try {
-			return resourceManagement.createNewResource(projectName, fileName,
+			return resourceManager.createNewResource(projectName, fileName,
 					type, data);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_FILE);
@@ -537,11 +537,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getResourceManagement()
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getResourceManager()
 	 */
 	@Override
-	public IResourceManagement getResourceManagement() {
-		return resourceManagement;
+	public IResourceManager getResourceManager() {
+		return resourceManager;
 	}
 
 	/*
@@ -561,7 +561,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public IUserPreferences getPreferences() {
-		return resourceManagement.getPreferences();
+		return resourceManager.getPreferences();
 	}
 
 	/*
@@ -617,7 +617,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public ResourceBundle getResourceBundle(String baseName) {
-		return resourceManagement.getResourceBundle(baseName);
+		return resourceManager.getResourceBundle(baseName);
 	}
 
 	/* COMPONENT PROVIDER METHODS */
@@ -692,11 +692,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 		if(editorStorage.isEditorOpened(projectName, "vhdl:" + fileName)) {
 			return editorStorage.getOpenedEditor(projectName, "vhdl:" + fileName);
 		}
-		if (resourceManagement.isCircuit(projectName, fileName)
-				|| resourceManagement.isTestbench(projectName, fileName)) {
+		if (resourceManager.isCircuit(projectName, fileName)
+				|| resourceManager.isTestbench(projectName, fileName)) {
 			String vhdl;
 			try {
-				vhdl = resourceManagement.generateVHDL(projectName, fileName);
+				vhdl = resourceManager.generateVHDL(projectName, fileName);
 			} catch (UniformAppletException e) {
 				String text = bundle
 						.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
@@ -758,7 +758,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		if (editor == null) {
 			String content;
 			try {
-				content = resourceManagement.getFileContent(projectName,
+				content = resourceManager.getFileContent(projectName,
 						fileName);
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
@@ -766,7 +766,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			}
 			FileContent fileContent = new FileContent(projectName, fileName,
 					content);
-			String type = resourceManagement.getFileType(projectName, fileName);
+			String type = resourceManager.getFileType(projectName, fileName);
 
 			editor = openEditorImpl(fileContent, type, savable, readOnly);
 		}
@@ -865,7 +865,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 					projects.add(projectName);
 				}
 				try {
-					resourceManagement.saveFile(projectName, fileName, content);
+					resourceManager.saveFile(projectName, fileName, content);
 					resetEditorTitle(false, projectName, fileName);
 					String text = bundle
 							.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
@@ -1090,7 +1090,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 
 		try {
-			for (String projectName : resourceManagement.getAllProjects()) {
+			for (String projectName : resourceManager.getAllProjects()) {
 				projectExplorer.addProject(projectName);
 			}
 
@@ -1476,7 +1476,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void beforeResourceCompilation(String projectName,
 				String fileName) throws ResourceVetoException {
-			if (!resourceManagement.isCompilable(projectName, fileName)) {
+			if (!resourceManager.isCompilable(projectName, fileName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
@@ -1542,7 +1542,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void beforeResourceSimulation(String projectName, String fileName)
 				throws ResourceVetoException {
-			if (!resourceManagement.isSimulatable(projectName, fileName)) {
+			if (!resourceManager.isSimulatable(projectName, fileName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
@@ -1629,7 +1629,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				throws ResourceVetoException {
 			boolean exists;
 			try {
-				exists = resourceManagement.existsProject(projectName);
+				exists = resourceManager.existsProject(projectName);
 			} catch (UniformAppletException e) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
 				text = PlaceholderUtil.replacePlaceholders(text,
@@ -1660,7 +1660,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void beforeProjectCreation(String projectName)
 				throws ResourceVetoException {
-			if (!resourceManagement.isCorrectProjectName(projectName)) {
+			if (!resourceManager.isCorrectProjectName(projectName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { projectName });
@@ -1698,7 +1698,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String type) throws ResourceVetoException {
 			boolean exists;
 			try {
-				exists = resourceManagement.existsFile(projectName, fileName);
+				exists = resourceManager.existsFile(projectName, fileName);
 			} catch (UniformAppletException e) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_FILE_EXISTENCE);
 				text = PlaceholderUtil.replacePlaceholders(text,
@@ -1728,7 +1728,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void beforeResourceCreation(String projectName, String fileName,
 				String type) throws ResourceVetoException {
-			if (!resourceManagement.isCorrectFileName(fileName)) {
+			if (!resourceManager.isCorrectFileName(fileName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { fileName });

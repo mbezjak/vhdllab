@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
+import hr.fer.zemris.vhdllab.utilities.StringFormat;
+
 
 /**
  * This class describes type of a port in ENTITY block. It consists
@@ -105,6 +107,8 @@ public class DefaultType implements Type {
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain an underscore character after an underscore character
+	 * <li>it must not be a reserved word (check at
+	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
 	 * </ul>
 	 * <p>
 	 * Range must uniformly describe port as a scalar or bounds of a vector, whichever is the case.
@@ -146,7 +150,7 @@ public class DefaultType implements Type {
 		if( range == null && vectorDirection != null ) throw new NullPointerException("Conflict: vector direction can not be null while range is not.");
 		if( range != null && vectorDirection == null ) throw new NullPointerException("Conflict: range can not be null while vector direction is not.");
 		
-		if( !StringFormat.isCorrectEntityName(typeName) ) throw new IllegalArgumentException("Type name is not of correct format.");
+		if( !StringFormat.isCorrectVHDLType(typeName) ) throw new IllegalArgumentException("Type name is not of correct format.");
 		if( range != null && (range.length != 2 || range[0] < 0 || range[1] < 0) ) throw new IllegalArgumentException("Range does not have two elements or at least one of them is negative.");
 		if( vectorDirection != null ) {
 			if( !isVectorDirection(vectorDirection) ) throw new IllegalArgumentException("Vector direction is incorrect.");

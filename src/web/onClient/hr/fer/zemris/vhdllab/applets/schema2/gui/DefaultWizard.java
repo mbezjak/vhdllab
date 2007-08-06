@@ -49,7 +49,7 @@ public class DefaultWizard implements IWizard {
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if(container.getResourceManagement().existsFile(projectName, ci.getEntityName())) {
+				if(container.getResourceManager().existsFile(projectName, ci.getEntityName())) {
 					container.echoStatusText(ci.getEntityName() + " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {

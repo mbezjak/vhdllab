@@ -2,17 +2,17 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
+import hr.fer.zemris.vhdllab.utilities.StringFormat;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
-import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +21,12 @@ import java.util.ResourceBundle;
 import javax.swing.event.EventListenerList;
 
 /**
- * This is a default implementation of {@link IResourceManagement} interface. It
+ * This is a default implementation of {@link IResourceManager} interface. It
  * uses {@link Communicator} as a resources provider.
  * 
  * @author Miro Bezjak
  */
-public class DefaultResourceManagement implements IResourceManagement {
+public class DefaultResourceManager implements IResourceManager {
 
 	/**
 	 * A resource provider.
@@ -47,7 +47,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	 * @throws NullPointerException
 	 *             if <code>communicator</code> is <code>null</code>
 	 */
-	public DefaultResourceManagement(Communicator communicator) {
+	public DefaultResourceManager(Communicator communicator) {
 		super();
 		if (communicator == null) {
 			throw new NullPointerException("Communicator cant be null");
@@ -61,7 +61,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#addVetoableResourceListener(hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#addVetoableResourceListener(hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener)
 	 */
 	@Override
 	public void addVetoableResourceListener(VetoableResourceListener l) {
@@ -71,7 +71,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#removeVetoableResourceListener(hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#removeVetoableResourceListener(hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener)
 	 */
 	@Override
 	public void removeVetoableResourceListener(VetoableResourceListener l) {
@@ -81,7 +81,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#removeAllVetoableResourceListeners()
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#removeAllVetoableResourceListeners()
 	 */
 	@Override
 	public void removeAllVetoableResourceListeners() {
@@ -93,7 +93,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getVetoableResourceListeners()
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getVetoableResourceListeners()
 	 */
 	@Override
 	public VetoableResourceListener[] getVetoableResourceListeners() {
@@ -105,7 +105,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#createNewResource(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#createNewResource(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#createNewResource(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#createNewResource(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -150,7 +150,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#createNewProject(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#createNewProject(java.lang.String)
 	 */
 	@Override
 	public boolean createNewProject(String projectName)
@@ -176,7 +176,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#deleteFile(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#deleteFile(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -200,7 +200,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#deleteProject(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#deleteProject(java.lang.String)
 	 */
 	@Override
 	public void deleteProject(String projectName) throws UniformAppletException {
@@ -219,7 +219,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#existsFile(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#existsFile(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -237,7 +237,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#existsProject(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#existsProject(java.lang.String)
 	 */
 	@Override
 	public boolean existsProject(String projectName)
@@ -253,7 +253,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getAllProjects()
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getAllProjects()
 	 */
 	@Override
 	public List<String> getAllProjects() throws UniformAppletException {
@@ -263,7 +263,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getFilesFor(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getFilesFor(java.lang.String)
 	 */
 	@Override
 	public List<String> getFilesFor(String projectName)
@@ -277,7 +277,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getAllCircuits(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getAllCircuits(java.lang.String)
 	 */
 	@Override
 	public List<String> getAllCircuits(String projectName)
@@ -295,7 +295,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getAllTestbenches(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getAllTestbenches(java.lang.String)
 	 */
 	@Override
 	public List<String> getAllTestbenches(String projectName)
@@ -313,7 +313,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getCircuitInterfaceFor(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getCircuitInterfaceFor(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -331,7 +331,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#generateVHDL(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#generateVHDL(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -349,7 +349,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getFileContent(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getFileContent(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -367,7 +367,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getPredefinedFileContent(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getPredefinedFileContent(java.lang.String)
 	 */
 	@Override
 	public String getPredefinedFileContent(String fileName)
@@ -381,7 +381,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#saveFile(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#saveFile(java.lang.String,
 	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -402,7 +402,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getFileType(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getFileType(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -423,7 +423,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#extractHierarchy(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#extractHierarchy(java.lang.String)
 	 */
 	@Override
 	public Hierarchy extractHierarchy(String projectName)
@@ -439,7 +439,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#compile(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#compile(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -463,7 +463,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#simulate(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#simulate(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -488,7 +488,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isCircuit(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCircuit(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -503,7 +503,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isTestbench(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isTestbench(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -531,7 +531,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isSimulation(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isSimulation(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -546,7 +546,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isCompilable(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCompilable(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -561,7 +561,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isSimulatable(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isSimulatable(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -576,7 +576,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isCorrectEntityName(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCorrectEntityName(java.lang.String)
 	 */
 	@Override
 	public boolean isCorrectEntityName(String name) {
@@ -584,7 +584,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	}
 	
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isCorrectFileName(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCorrectFileName(java.lang.String)
 	 */
 	@Override
 	public boolean isCorrectFileName(String name) {
@@ -594,7 +594,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#isCorrectProjectName(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCorrectProjectName(java.lang.String)
 	 */
 	@Override
 	public boolean isCorrectProjectName(String name) {
@@ -606,7 +606,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getPreferences()
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getPreferences()
 	 */
 	@Override
 	public IUserPreferences getPreferences() {
@@ -616,7 +616,7 @@ public class DefaultResourceManagement implements IResourceManagement {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getResourceBundle(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getResourceBundle(java.lang.String)
 	 */
 	@Override
 	public ResourceBundle getResourceBundle(String baseName) {

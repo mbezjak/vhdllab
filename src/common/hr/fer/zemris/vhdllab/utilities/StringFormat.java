@@ -1,6 +1,8 @@
-package hr.fer.zemris.vhdllab.vhdl.model;
+package hr.fer.zemris.vhdllab.utilities;
 
-import hr.fer.zemris.vhdllab.utilities.StringUtil;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Helper class for checking if strings are of right format.
@@ -8,6 +10,27 @@ import hr.fer.zemris.vhdllab.utilities.StringUtil;
  * @author Miro Bezjak
  */
 public class StringFormat {
+
+	/**
+	 * A name of a file that contains such file names.
+	 */
+	private static final String NOT_VALID_FILE = "NotValidVHDLNames.txt";
+
+	private static final Set<String> notValidVHDLNames;
+
+	static {
+		notValidVHDLNames = new HashSet<String>();
+		InputStream is = StringFormat.class.getResourceAsStream(NOT_VALID_FILE);
+		String data = FileUtil.readFile(is);
+		for (String s : data.split("\n")) {
+			s = s.trim();
+			if (s.equals("") || s.startsWith("#")) {
+				continue;
+			}
+			notValidVHDLNames.add(s.toLowerCase());
+		}
+
+	}
 
 	/**
 	 * Don't let anyone instantiate this class.
@@ -45,6 +68,28 @@ public class StringFormat {
 	}
 
 	/**
+	 * Ignore case and check if <code>s</code> is a correct vhdl type. The
+	 * only allowd type is:
+	 * <ul>
+	 * <li>std_logic
+	 * <li>std_logic_vector
+	 * </ul>
+	 * 
+	 * @param s
+	 *            a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is a correct vhdl type;
+	 *         <code>false</code> otherwise.
+	 * @throws NullPointerException
+	 *             is <code>s</code> is <code>null</code>.
+	 */
+	public static boolean isCorrectVHDLType(String s) {
+		if (s == null)
+			throw new NullPointerException("String can not be null.");
+		s = s.toLowerCase();
+		return s.equals("std_logic") || s.equals("std_logic_vector");
+	}
+
+	/**
 	 * Ignore case and check if <code>s</code> is a correct entity name.
 	 * Correct entity name is a string with the following format:
 	 * <ul>
@@ -53,6 +98,8 @@ public class StringFormat {
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain a tandem of underscore characters
+	 * <li>it must not be a reserved word (check at
+	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
 	 * </ul>
 	 * 
 	 * @param s
@@ -83,6 +130,10 @@ public class StringFormat {
 			}
 			return false;
 		}
+
+		if (notValidVHDLNames.contains(s.toLowerCase())) {
+			return false;
+		}
 		return true;
 	}
 
@@ -95,6 +146,8 @@ public class StringFormat {
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain a tandem of underscore characters
+	 * <li>it must not be a reserved word (check at
+	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
 	 * </ul>
 	 * 
 	 * @param s
@@ -117,6 +170,8 @@ public class StringFormat {
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain a tandem of underscore characters
+	 * <li>it must not be a reserved word (check at
+	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
 	 * </ul>
 	 * 
 	 * @param s

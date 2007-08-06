@@ -500,7 +500,7 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		setData(data);
 		if(this.in_panel.podatci_t == null) {
 			try {
-				CircuitInterface ci = container.getResourceManagement().getCircuitInterfaceFor(projectName, fileDepends);
+				CircuitInterface ci = container.getResourceManager().getCircuitInterfaceFor(projectName, fileDepends);
 				setCircuitInterface(ci);
 			} catch (UniformAppletException e) {
 				e.printStackTrace();

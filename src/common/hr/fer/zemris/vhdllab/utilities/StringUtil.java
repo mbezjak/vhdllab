@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.utilities;
 
 
+
 /**
  * Helper class for checking if strings are of right format.
  * 

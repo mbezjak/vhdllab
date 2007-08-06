@@ -165,7 +165,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		String thisname = filecontent.getFileName();
 		List<String> circuitnames = null;
 		try {
-			circuitnames = systemContainer.getResourceManagement().getAllCircuits(projectname);
+			circuitnames = systemContainer.getResourceManager().getAllCircuits(projectname);
 			if (circuitnames == null)
 				throw new NullPointerException(
 						"getAllCircuits(...) returned null.");
@@ -177,7 +177,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		ISchemaInfo info = controller.getSchemaInfo();
 		Hierarchy hierarchy;
 		try {
-			hierarchy = systemContainer.getResourceManagement().extractHierarchy(projectname);
+			hierarchy = systemContainer.getResourceManager().extractHierarchy(projectname);
 		} catch (UniformAppletException e1) {
 			throw new SchemaException("Cannot extract hierarchy for project '"
 					+ projectname + "'.", e1);
@@ -193,7 +193,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			// get circuit interface for the component
 			CircuitInterface circint;
 			try {
-				circint = systemContainer.getResourceManagement().getCircuitInterfaceFor(projectname, name);
+				circint = systemContainer.getResourceManager().getCircuitInterfaceFor(projectname, name);
 			} catch (UniformAppletException e) {
 				throw new SchemaException(
 						"Could not fetch circuit interface for circuit '"

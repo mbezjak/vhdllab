@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.vhdl.tb;
 
 import static org.junit.Assert.assertEquals;
-import hr.fer.zemris.vhdllab.vhdl.model.StringFormat;
+import hr.fer.zemris.vhdllab.utilities.StringFormat;
 
 import org.junit.Test;
 
@@ -71,6 +71,30 @@ public class StringFormatTest {
 		assertEquals(false, StringFormat.isCorrectEntityName("sklop?drugi"));
 	}
 
+	/** 
+	 * String is a reserved word (xor).
+	 */
+	@Test
+	public void isCorrectName9() {
+		assertEquals(false, StringFormat.isCorrectEntityName("xor"));
+	}
+	
+	/** 
+	 * String is a reserved word (entity).
+	 */
+	@Test
+	public void isCorrectName10() {
+		assertEquals(false, StringFormat.isCorrectEntityName("entity"));
+	}
+	
+	/**
+	 * String is a reserved word (std_logic).
+	 */
+	@Test
+	public void isCorrectName11() {
+		assertEquals(false, StringFormat.isCorrectEntityName("std_logic"));
+	}
+	
 	/** 
 	 * String is measure unit.
 	 */

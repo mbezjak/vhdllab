@@ -16,13 +16,13 @@ import java.util.ResourceBundle;
  * 
  * @author Miro Bezjak
  */
-public interface IResourceManagement {
+public interface IResourceManager {
 
 	/* LISTENERS METHODS */
 
 	/**
 	 * Adds the specified vetoable resource listener to receive resource events
-	 * from this resource management. If listener <code>l</code> is
+	 * from this resource manager. If listener <code>l</code> is
 	 * <code>null</code>, no exception is thrown and no action is performed.
 	 * 
 	 * @param l
@@ -32,11 +32,11 @@ public interface IResourceManagement {
 
 	/**
 	 * Removes the specified vetoable resource listener so that it no longer
-	 * receives resource events from this resource management. This method
-	 * performs no function, nor does it throw an exception, if the listener
-	 * specified by the argument was not previously added to this resource
-	 * management. If listener <code>l</code> is <code>null</code>, no
-	 * exception is thrown and no action is performed.
+	 * receives resource events from this resource manager. This method performs
+	 * no function, nor does it throw an exception, if the listener specified by
+	 * the argument was not previously added to this resource manager. If
+	 * listener <code>l</code> is <code>null</code>, no exception is thrown
+	 * and no action is performed.
 	 * 
 	 * @param l
 	 *            a listener to remove
@@ -50,9 +50,9 @@ public interface IResourceManagement {
 
 	/**
 	 * Returns an array of all the vetoable resource listeners registered on
-	 * this resource management.
+	 * this resource manager.
 	 * 
-	 * @return all of this resource management's
+	 * @return all of this resource manager's
 	 *         <code>VetoableResourceListener</code>s or an empty array if no
 	 *         vetoable resource listeners are currently registered
 	 */
@@ -518,6 +518,8 @@ public interface IResourceManagement {
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain a tandem of underscore characters
+	 * <li>it must not be a reserved word (check at
+	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
 	 * </ul>
 	 * 
 	 * @param name
@@ -538,6 +540,8 @@ public interface IResourceManagement {
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain a tandem of underscore characters
+	 * <li>it must not be a reserved word (check at
+	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
 	 * </ul>
 	 * 
 	 * @param name
@@ -558,6 +562,8 @@ public interface IResourceManagement {
 	 * <li>it must not start with a non-alpha character
 	 * <li>it must not end with an underscore character
 	 * <li>it must not contain a tandem of underscore characters
+	 * <li>it must not be a reserved word (check at
+	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
 	 * </ul>
 	 * 
 	 * @param name

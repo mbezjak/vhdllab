@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
@@ -17,7 +17,7 @@ import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
-public class DummyResourceManagement implements IResourceManagement {
+public class DummyResourceManager implements IResourceManager {
 
 	@Override
 	public void addVetoableResourceListener(VetoableResourceListener l) {
