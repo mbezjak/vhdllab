@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
@@ -49,8 +47,9 @@ public class Communicator {
 		 * file does not exist.
 		 */
 		for (String projectName : getAllProjects()) {
-			for (String fileName : findFilesByProject(projectName))
-				;
+			for (String fileName : findFilesByProject(projectName)) {
+				loadFileType(projectName, fileName);
+			}
 		}
 	}
 
@@ -227,7 +226,12 @@ public class Communicator {
 			return FileTypes.FT_PREDEFINED;
 			// throw new UniformAppletException("File does not exists!");
 		}
-		return invoker.loadFileType(fileIdentifier);
+		String fileType = cache.getFileType(fileIdentifier);
+		if(fileType == null) {
+			fileType = invoker.loadFileType(fileIdentifier);
+			cache.cacheFileType(fileIdentifier, fileType);
+		}
+		return fileType;
 	}
 
 	public Hierarchy extractHierarchy(String projectName)
@@ -267,10 +271,6 @@ public class Communicator {
 		return invoker.generateVHDL(fileIdentifier);
 	}
 
-	public FileIdentifier getLastCompilationHistoryTarget() {
-		return cache.getLastCompilationHistoryTarget();
-	}
-
 	public CompilationResult compile(String projectName, String fileName)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -280,20 +280,7 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		cache.cacheCompilationTargetToHistory(projectName, fileName);
 		return invoker.compileFile(fileIdentifier);
-	}
-
-	public List<FileIdentifier> getCompilationHistory() {
-		return cache.getCompilationHistory();
-	}
-
-	public boolean compilationHistoryIsEmpty() {
-		return cache.compilationHistoryIsEmpty();
-	}
-
-	public FileIdentifier getLastSimulationHistoryTarget() {
-		return cache.getLastSimulationHistoryTarget();
 	}
 
 	public SimulationResult runSimulation(String projectName, String fileName)
@@ -305,16 +292,7 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		cache.cacheSimulationTargetToHistory(projectName, fileName);
 		return invoker.runSimulation(fileIdentifier);
-	}
-
-	public List<FileIdentifier> getSimulationHistory() {
-		return cache.getSimulationHistory();
-	}
-
-	public boolean simulationHistoryIsEmpty() {
-		return cache.simulationHistoryIsEmpty();
 	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName,
@@ -327,27 +305,6 @@ public class Communicator {
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		return invoker.extractCircuitInterface(fileIdentifier);
-	}
-
-	public IEditor getEditor(String type) {
-		if (type == null) {
-			throw new NullPointerException("Type can not be null.");
-		}
-		return cache.getEditor(type);
-	}
-
-	public IView getView(String type) {
-		if (type == null) {
-			throw new NullPointerException("Type can not be null.");
-		}
-		return cache.getView(type);
-	}
-
-	public String getViewType(IView view) {
-		if (view == null) {
-			throw new NullPointerException("Type can not be null.");
-		}
-		return cache.getViewType(view);
 	}
 
 	public IUserPreferences getPreferences() {
