@@ -82,7 +82,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	private ISystemContainer systemContainer;
 	private ResourceBundle bundle;
 
-	private Map<Component, ComponentGroup> components;
+	/* COMPONENT CONTAINER PRIVATE FIELDS */
+	private Map<JComponent, ComponentInformation> components;
 	private Map<ComponentGroup, JComponent> selectedComponentsByGroup;
 	private JComponent selectedComponent;
 
@@ -108,6 +109,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	private IViewStorage viewStorage;
 	private IProjectExplorerStorage projectExplorerStorage;
 
+	private Communicator communicator;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,10 +128,9 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			// future implementation when security is in place
 			// throw new SecurityException();
 		}
-		components = new HashMap<Component, ComponentGroup>();
+		components = new HashMap<JComponent, ComponentInformation>();
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
 
-		Communicator communicator;
 		IResourceManager resourceManager;
 		ISystemLog systemLog;
 		try {
@@ -139,6 +141,12 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			communicator.init();
 			resourceManager = new DefaultResourceManager(communicator);
 			systemLog = new DefaultSystemLog();
+			componentStorage = new DefaultComponentStorage(this,
+					resourceManager.getPreferences());
+			editorStorage = new DefaultEditorStorage(componentStorage);
+			viewStorage = new DefaultViewStorage(componentStorage);
+			projectExplorerStorage = new DefaultProjectExplorerStorage(
+					componentStorage);
 			bundle = resourceManager
 					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (Exception e) {
@@ -163,11 +171,6 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				resourceManager, systemLog, this, JOptionPane
 						.getFrameForComponent(this));
 		this.systemContainer = systemContainer;
-		componentStorage = new DefaultComponentStorage(this, systemContainer);
-		editorStorage = new DefaultEditorStorage(componentStorage);
-		viewStorage = new DefaultViewStorage(componentStorage);
-		projectExplorerStorage = new DefaultProjectExplorerStorage(
-				componentStorage);
 		systemContainer.setComponentStorage(componentStorage);
 		systemContainer.setEditorStorage(editorStorage);
 		systemContainer.setViewStorage(viewStorage);
@@ -196,20 +199,40 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					public void propertyChange(PropertyChangeEvent e) {
 						Component c = (Component) e.getNewValue();
 						if (c != null) {
-							if (isDesendent(c, selectedComponent)
-									|| isDesendent(c, centerTabbedPane
-											.getSelectedComponent())
-									|| isDesendent(c, bottomTabbedPane
-											.getSelectedComponent())
-									|| isDesendent(c, leftTabbedPane
-											.getSelectedComponent())
-									|| isDesendent(c, rightTabbedPane
-											.getSelectedComponent())) {
-								selectedComponent = (JComponent) c;
-								ComponentGroup group = components.get(c);
-								selectedComponentsByGroup.put(group,
-										selectedComponent);
+							if (isDesendent(c, centerTabbedPane
+									.getSelectedComponent())) {
+								c = centerTabbedPane.getSelectedComponent();
+							} else if (isDesendent(c, bottomTabbedPane
+									.getSelectedComponent())) {
+								c = bottomTabbedPane.getSelectedComponent();
+							} else if (isDesendent(c, leftTabbedPane
+									.getSelectedComponent())) {
+								c = leftTabbedPane.getSelectedComponent();
+							} else if (isDesendent(c, rightTabbedPane
+									.getSelectedComponent())) {
+								c = rightTabbedPane.getSelectedComponent();
+							} else {
+								c = selectedComponent;
 							}
+							selectedComponent = (JComponent) c;
+							ComponentGroup group = getComponentGroup(selectedComponent);
+							selectedComponentsByGroup.put(group,
+									selectedComponent);
+							// if (isDesendent(c, selectedComponent)
+							// || isDesendent(c, centerTabbedPane
+							// .getSelectedComponent())
+							// || isDesendent(c, bottomTabbedPane
+							// .getSelectedComponent())
+							// || isDesendent(c, leftTabbedPane
+							// .getSelectedComponent())
+							// || isDesendent(c, rightTabbedPane
+							// .getSelectedComponent())) {
+							// selectedComponent = (JComponent) c;
+							// ComponentGroup group =
+							// getComponentGroup(selectedComponent);
+							// selectedComponentsByGroup.put(group,
+							// selectedComponent);
+							// }
 						}
 					}
 				});
@@ -245,6 +268,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	public void destroy() {
 		try {
 			((DefaultSystemContainer) systemContainer).dispose();
+			communicator.dispose();
 		} catch (UniformAppletException e) {
 			e.printStackTrace();
 		}
@@ -537,7 +561,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					if (selectedComponent == null) {
 						return;
 					}
-					ComponentGroup group = components.get(selectedComponent);
+					ComponentGroup group = getComponentGroup(selectedComponent);
 					if (group.equals(ComponentGroup.EDITOR)) {
 						systemContainer.closeEditor(
 								(IEditor) selectedComponent, true);
@@ -562,7 +586,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 							continue;
 						}
 						JComponent c = (JComponent) pane.getComponentAt(i);
-						ComponentGroup group = components.get(c);
+						ComponentGroup group = getComponentGroup(c);
 						if (group.equals(ComponentGroup.EDITOR)) {
 							systemContainer.closeEditor((IEditor) c, true);
 						} else {
@@ -581,7 +605,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				public void actionPerformed(ActionEvent e) {
 					while (pane.getTabCount() != 0) {
 						JComponent c = (JComponent) pane.getComponentAt(0);
-						ComponentGroup group = components.get(c);
+						ComponentGroup group = getComponentGroup(c);
 						if (group.equals(ComponentGroup.EDITOR)) {
 							systemContainer.closeEditor((IEditor) c, true);
 						} else {
@@ -1229,6 +1253,11 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		return b != null && SwingUtilities.isDescendingFrom(a, b);
 	}
 
+	private JTabbedPane getTabbedPane(JComponent component) {
+		ComponentPlacement placement = components.get(component).getPlacement();
+		return getTabbedPane(placement);
+	}
+
 	private JTabbedPane getTabbedPane(ComponentPlacement placement) {
 		switch (placement) {
 		case CENTER:
@@ -1247,8 +1276,9 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#add(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#addComponent(java.lang.String,
 	 *      javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup,
 	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
 	 */
 	@Override
@@ -1256,19 +1286,17 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			ComponentGroup group, ComponentPlacement placement) {
 		JTabbedPane pane = getTabbedPane(placement);
 		pane.add(title, component);
-		components.put(component, group);
+		components.put(component, new ComponentInformation(group, placement));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#remove(javax.swing.JComponent,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#removeComponent(javax.swing.JComponent)
 	 */
 	@Override
-	public void removeComponent(JComponent component,
-			ComponentPlacement placement) {
-		JTabbedPane pane = getTabbedPane(placement);
+	public void removeComponent(JComponent component) {
+		JTabbedPane pane = getTabbedPane(component);
 		pane.remove(component);
 		components.remove(component);
 	}
@@ -1276,14 +1304,32 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setTitle(javax.swing.JComponent,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getComponentPlacement(javax.swing.JComponent)
+	 */
+	@Override
+	public ComponentPlacement getComponentPlacement(JComponent component) {
+		return components.get(component).getPlacement();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getComponentPlacement(javax.swing.JComponent)
+	 */
+	@Override
+	public ComponentGroup getComponentGroup(JComponent component) {
+		return components.get(component).getGroup();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setComponentTitle(javax.swing.JComponent,
 	 *      java.lang.String)
 	 */
 	@Override
-	public void setComponentTitle(JComponent component,
-			ComponentPlacement placement, String title) {
-		JTabbedPane pane = getTabbedPane(placement);
+	public void setComponentTitle(JComponent component, String title) {
+		JTabbedPane pane = getTabbedPane(component);
 		int index = pane.indexOfComponent(component);
 		pane.setTitleAt(index, title);
 	}
@@ -1291,13 +1337,11 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getTitle(javax.swing.JComponent,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getComponentTitle(javax.swing.JComponent)
 	 */
 	@Override
-	public String getComponentTitle(JComponent component,
-			ComponentPlacement placement) {
-		JTabbedPane pane = getTabbedPane(placement);
+	public String getComponentTitle(JComponent component) {
+		JTabbedPane pane = getTabbedPane(component);
 		int index = pane.indexOfComponent(component);
 		return pane.getTitleAt(index);
 	}
@@ -1305,14 +1349,12 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setToolTipText(javax.swing.JComponent,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setComponentToolTipText(javax.swing.JComponent,
 	 *      java.lang.String)
 	 */
 	@Override
-	public void setComponentToolTipText(JComponent component,
-			ComponentPlacement placement, String tooltip) {
-		JTabbedPane pane = getTabbedPane(placement);
+	public void setComponentToolTipText(JComponent component, String tooltip) {
+		JTabbedPane pane = getTabbedPane(component);
 		int index = pane.indexOfComponent(component);
 		pane.setToolTipTextAt(index, tooltip);
 	}
@@ -1320,13 +1362,11 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setSelectedComponent(javax.swing.JComponent,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setSelectedComponent(javax.swing.JComponent)
 	 */
 	@Override
-	public void setSelectedComponent(JComponent component,
-			ComponentPlacement placement) {
-		JTabbedPane pane = getTabbedPane(placement);
+	public void setSelectedComponent(JComponent component) {
+		JTabbedPane pane = getTabbedPane(component);
 		pane.setSelectedComponent(component);
 	}
 
@@ -1348,6 +1388,93 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	@Override
 	public JComponent getSelectedComponent(ComponentGroup group) {
 		return selectedComponentsByGroup.get(group);
+	}
+
+	/**
+	 * Stores a component group and placement.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private static class ComponentInformation {
+		private ComponentGroup group;
+		private ComponentPlacement placement;
+
+		public ComponentInformation(ComponentGroup group,
+				ComponentPlacement placement) {
+			super();
+			this.group = group;
+			this.placement = placement;
+		}
+
+		/**
+		 * A component group.
+		 * 
+		 * @return a component group
+		 */
+		public ComponentGroup getGroup() {
+			return group;
+		}
+
+		/**
+		 * A component placement.
+		 * 
+		 * @return a component placement
+		 */
+		public ComponentPlacement getPlacement() {
+			return placement;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((group == null) ? 0 : group.hashCode());
+			result = prime * result
+					+ ((placement == null) ? 0 : placement.hashCode());
+			return result;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final ComponentInformation other = (ComponentInformation) obj;
+			if (group == null) {
+				if (other.group != null)
+					return false;
+			} else if (!group.equals(other.group))
+				return false;
+			if (placement == null) {
+				if (other.placement != null)
+					return false;
+			} else if (!placement.equals(other.placement))
+				return false;
+			return true;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "group" + group + " / placement" + placement;
+		}
 	}
 
 }

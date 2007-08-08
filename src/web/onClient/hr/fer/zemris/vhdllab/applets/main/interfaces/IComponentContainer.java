@@ -14,19 +14,22 @@ import javax.swing.JComponent;
  */
 public interface IComponentContainer {
 
-	void addComponent(String title, JComponent component, ComponentGroup group, ComponentPlacement placement);
+	void addComponent(String title, JComponent component, ComponentGroup group,
+			ComponentPlacement placement);
 
-	void removeComponent(JComponent component, ComponentPlacement placement);
+	void removeComponent(JComponent component);
+	
+	ComponentPlacement getComponentPlacement(JComponent component);
 
-	void setComponentTitle(JComponent component, ComponentPlacement placement,
-			String title);
+	ComponentGroup getComponentGroup(JComponent component);
+	
+	void setComponentTitle(JComponent component, String title);
 
-	String getComponentTitle(JComponent component, ComponentPlacement placement);
+	String getComponentTitle(JComponent component);
 
-	void setComponentToolTipText(JComponent component, ComponentPlacement placement,
-			String tooltip);
+	void setComponentToolTipText(JComponent component, String tooltip);
 
-	void setSelectedComponent(JComponent component, ComponentPlacement placement);
+	void setSelectedComponent(JComponent component);
 
 	JComponent getSelectedComponent();
 

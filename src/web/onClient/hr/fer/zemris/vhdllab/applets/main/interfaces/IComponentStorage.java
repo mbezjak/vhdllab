@@ -117,12 +117,10 @@ public interface IComponentStorage {
 	 * 
 	 * @param component
 	 *            a component to remove
-	 * @return removed component or <code>null</code> if it was not stored at
-	 *         all
 	 * @throws NullPointerException
 	 *             is <code>component</code> is <code>null</code>
 	 */
-	JComponent remove(JComponent component);
+	void remove(JComponent component);
 
 	/**
 	 * Moves component from one tabbed pane to another.

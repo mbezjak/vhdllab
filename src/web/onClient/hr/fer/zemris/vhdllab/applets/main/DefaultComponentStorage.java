@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
@@ -25,7 +24,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/**
 	 * All stored components.
 	 */
-	private Map<ComponentIdentifier, ComponentInformation> components;
+	private Map<ComponentIdentifier, JComponent> components;
 	/**
 	 * This is a other directional map for <code>components</code> field.
 	 */
@@ -39,34 +38,34 @@ public class DefaultComponentStorage implements IComponentStorage {
 	 */
 	private IComponentContainer componentContainer;
 	/**
-	 * A system container for a method of getting preferences.
+	 * A user preferences for default component placement.
 	 */
-	private ISystemContainer systemContainer;
+	private IUserPreferences preferences;
 
 	/**
 	 * Constructs a component storage.
 	 * 
 	 * @param componentContainer
 	 *            a container where all component are presented to a user
-	 * @param systemContainer
-	 *            a system container for a method of getting preferences
+	 * @param preferences
+	 *            a user preferences for default component placement
 	 * @throws NullPointerException
 	 *             if <code>componentContainer</code> or
 	 *             <code>projectContainer</code> is <code>null</code>
 	 */
 	public DefaultComponentStorage(IComponentContainer componentContainer,
-			ISystemContainer systemContainer) {
+			IUserPreferences preferences) {
 		if (componentContainer == null) {
 			throw new NullPointerException("Component container cant be null.");
 		}
-		if (systemContainer == null) {
-			throw new NullPointerException("System container cant be null.");
+		if (preferences == null) {
+			throw new NullPointerException("User preferences cant be null.");
 		}
-		components = new HashMap<ComponentIdentifier, ComponentInformation>();
+		components = new HashMap<ComponentIdentifier, JComponent>();
 		bidiComponents = new HashMap<JComponent, ComponentIdentifier>();
 		groups = new HashMap<ComponentGroup, Collection<JComponent>>();
 		this.componentContainer = componentContainer;
-		this.systemContainer = systemContainer;
+		this.preferences = preferences;
 
 	}
 
@@ -83,7 +82,6 @@ public class DefaultComponentStorage implements IComponentStorage {
 		if (group == null) {
 			throw new NullPointerException("Component group cant be null.");
 		}
-		IUserPreferences preferences = systemContainer.getPreferences();
 		String property;
 		switch (group) {
 		case EDITOR:
@@ -167,16 +165,15 @@ public class DefaultComponentStorage implements IComponentStorage {
 	private boolean add(ComponentIdentifier ci, String title,
 			JComponent component, ComponentPlacement placement) {
 		if (contains(ci)) {
-			ComponentInformation info = components.get(ci);
-			if (!placement.equals(info.getPlacement())) {
+			if (!placement.equals(componentContainer
+					.getComponentPlacement(component))) {
 				moveComponent(ci, placement);
 			}
-			setTitle(ci, title); // always after possible move
+			// must only be set after component has moved!
+			setTitle(ci, title);
 			return false;
 		} else {
-			ComponentInformation info = new ComponentInformation(component,
-					placement);
-			components.put(ci, info);
+			components.put(ci, component);
 			bidiComponents.put(component, ci);
 			ComponentGroup group = ci.getGroup();
 			Collection<JComponent> groupedComponents = groups.get(group);
@@ -186,8 +183,8 @@ public class DefaultComponentStorage implements IComponentStorage {
 			groupedComponents.add(component);
 			groups.put(group, groupedComponents);
 			componentContainer.addComponent(title, component, group, placement);
+			return true;
 		}
-		return false;
 	}
 
 	/*
@@ -203,8 +200,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 		 * null.
 		 */
 		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		ComponentInformation info = remove(ci);
-		return info != null ? info.getComponent() : null;
+		return remove(ci);
 	}
 
 	/*
@@ -213,16 +209,11 @@ public class DefaultComponentStorage implements IComponentStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#remove(javax.swing.JComponent)
 	 */
 	@Override
-	public JComponent remove(JComponent component) {
+	public void remove(JComponent component) {
 		if (component == null) {
 			throw new NullPointerException("Component cant be null");
 		}
-		if (!bidiComponents.containsKey(component)) {
-			return null;
-		}
-		ComponentIdentifier ci = bidiComponents.get(component);
-		ComponentInformation info = remove(ci);
-		return info != null ? info.getComponent() : null;
+		componentContainer.removeComponent(component);
 	}
 
 	/**
@@ -231,23 +222,22 @@ public class DefaultComponentStorage implements IComponentStorage {
 	 * 
 	 * @param ci
 	 *            a component identifier
-	 * @return a ComponentInformation that was previously stored or
-	 *         <code>null</code> if component was not stored at all
+	 * @return a component that was previously stored or <code>null</code> if
+	 *         component was not stored at all
 	 */
-	private ComponentInformation remove(ComponentIdentifier ci) {
+	private JComponent remove(ComponentIdentifier ci) {
 		if (!contains(ci)) {
 			return null;
 		}
-		ComponentInformation info = components.remove(ci);
-		bidiComponents.remove(info.getComponent());
+		JComponent component = components.remove(ci);
+		bidiComponents.remove(component);
 		Collection<JComponent> groupedComponents = groups.get(ci.getGroup());
-		groupedComponents.remove(info.getComponent());
+		groupedComponents.remove(component);
 		if (groupedComponents.isEmpty()) {
 			groups.remove(ci.getGroup());
 		}
-		componentContainer.removeComponent(info.getComponent(), info
-				.getPlacement());
-		return info;
+		componentContainer.removeComponent(component);
+		return component;
 	}
 
 	/*
@@ -290,34 +280,34 @@ public class DefaultComponentStorage implements IComponentStorage {
 					+ " not stored");
 		}
 		String title = getTitleFor(ci);
-		JComponent component = remove(ci).getComponent();
+		JComponent component = remove(ci);
 		add(ci, title, component, placement);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getComponentPlacement(javax.swing.JComponent)
 	 */
 	@Override
 	public ComponentPlacement getComponentPlacement(JComponent component) {
-		if(component == null) {
+		if (component == null) {
 			throw new NullPointerException("Component cant be null");
 		}
-		if(!bidiComponents.containsKey(component)) {
-			return null;
-		}
-		ComponentIdentifier ci = bidiComponents.get(component);
-		return components.get(ci).getPlacement();
+		return componentContainer.getComponentPlacement(component);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getIdentifierFor(javax.swing.JComponent)
 	 */
 	@Override
 	public String getIdentifierFor(JComponent component) {
-		if(component == null) {
+		if (component == null) {
 			throw new NullPointerException("Component cant be null");
 		}
-		if(!bidiComponents.containsKey(component)) {
+		if (!bidiComponents.containsKey(component)) {
 			return null;
 		}
 		ComponentIdentifier ci = bidiComponents.get(component);
@@ -352,7 +342,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 		if (!contains(ci)) {
 			return null;
 		}
-		return components.get(ci).getComponent();
+		return components.get(ci);
 	}
 
 	/*
@@ -403,9 +393,8 @@ public class DefaultComponentStorage implements IComponentStorage {
 			throw new IllegalArgumentException("Component " + ci.toString()
 					+ " not stored");
 		}
-		ComponentInformation info = components.get(ci);
-		componentContainer.setSelectedComponent(info.getComponent(), info
-				.getPlacement());
+		JComponent component = getComponent(ci);
+		componentContainer.setSelectedComponent(component);
 	}
 
 	/*
@@ -495,9 +484,8 @@ public class DefaultComponentStorage implements IComponentStorage {
 			throw new IllegalArgumentException("Component " + ci.toString()
 					+ " not stored");
 		}
-		ComponentInformation info = components.get(ci);
-		componentContainer.setComponentTitle(info.getComponent(), info
-				.getPlacement(), title);
+		JComponent component = getComponent(ci);
+		componentContainer.setComponentTitle(component, title);
 	}
 
 	/*
@@ -531,9 +519,8 @@ public class DefaultComponentStorage implements IComponentStorage {
 			throw new IllegalArgumentException("Component " + ci.toString()
 					+ " not stored");
 		}
-		ComponentInformation info = components.get(ci);
-		return componentContainer.getComponentTitle(info.getComponent(), info
-				.getPlacement());
+		JComponent component = getComponent(ci);
+		return componentContainer.getComponentTitle(component);
 	}
 
 	/*
@@ -572,9 +559,8 @@ public class DefaultComponentStorage implements IComponentStorage {
 			throw new IllegalArgumentException("Component " + ci.toString()
 					+ " not stored");
 		}
-		ComponentInformation info = components.get(ci);
-		componentContainer.setComponentToolTipText(info.getComponent(), info
-				.getPlacement(), tooltip);
+		JComponent component = getComponent(ci);
+		componentContainer.setComponentToolTipText(component, tooltip);
 	}
 
 	/*
@@ -604,7 +590,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 			return groupedComponents.size();
 		}
 	}
-
+	
 	/**
 	 * A private class used to identify components.
 	 * 
@@ -701,56 +687,6 @@ public class DefaultComponentStorage implements IComponentStorage {
 		@Override
 		public String toString() {
 			return identifier + "/" + group.name();
-		}
-
-	}
-
-	/**
-	 * Contains all neccessary information regarding components.
-	 * 
-	 * @author Miro Bezjak
-	 */
-	private static class ComponentInformation {
-
-		/**
-		 * A component in question.
-		 */
-		private JComponent component;
-		/**
-		 * A location where component is added.
-		 */
-		private ComponentPlacement placement;
-
-		/**
-		 * Constructs all information regarding <code>component</code>.
-		 * 
-		 * @param component
-		 *            a component in question
-		 * @param placement
-		 *            a location where component is added
-		 */
-		public ComponentInformation(JComponent component,
-				ComponentPlacement placement) {
-			this.component = component;
-			this.placement = placement;
-		}
-
-		/**
-		 * Getter for a component.
-		 * 
-		 * @return a component
-		 */
-		public JComponent getComponent() {
-			return component;
-		}
-
-		/**
-		 * Getter for a component placement.
-		 * 
-		 * @return a component placement
-		 */
-		public ComponentPlacement getPlacement() {
-			return placement;
 		}
 
 	}

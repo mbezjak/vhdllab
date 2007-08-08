@@ -11,8 +11,8 @@ import java.util.TreeSet;
 
 /**
  * This class represents a set of pairs that together build hierarchical
- * grapht that is used to diplay to a user dependencies that exists between
- * files in cirtain project.
+ * graph that is used to display to a user dependencies that exists between
+ * files in certain project.
  * @author Miro Bezjak
  */
 public class Hierarchy implements Iterable<Pair> {
@@ -22,7 +22,7 @@ public class Hierarchy implements Iterable<Pair> {
 	/** Serialization key for project name. */
 	private static final String SERIALIZATION_KEY_PROJECT_NAME = "project.name";
 	
-	/** A name of a project for whom this hierachy is created */
+	/** A name of a project for whom this hierarchy is created */
 	private String projectName;
 	/** A set of pairs that represent this hierarchy */
 	private Set<Pair> pairs;
@@ -31,7 +31,7 @@ public class Hierarchy implements Iterable<Pair> {
 	
 	/**
 	 * Constructor.
-	 * @param projectName a name of a project for whom this hierachy is created
+	 * @param projectName a name of a project for whom this hierarchy is created
 	 * @throws NullPointerException if <code>projectName</code> is <code>null</code>
 	 */
 	public Hierarchy(String projectName) {

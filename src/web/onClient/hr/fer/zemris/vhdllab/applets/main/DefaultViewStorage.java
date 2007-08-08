@@ -62,8 +62,8 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#close(hr.fer.zemris.vhdllab.applets.main.interfaces.IView)
 	 */
 	@Override
-	public IView close(IView view) {
-		return (IView) storage.remove(getComponentFor(view));
+	public void close(IView view) {
+		storage.remove(getComponentFor(view));
 	}
 
 	/* (non-Javadoc)

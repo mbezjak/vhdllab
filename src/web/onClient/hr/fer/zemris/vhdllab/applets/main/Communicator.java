@@ -48,17 +48,23 @@ public class Communicator {
 		 */
 		for (String projectName : getAllProjects()) {
 			for (String fileName : findFilesByProject(projectName)) {
+				// this is just extra it has nothing to do with the actual bug
 				loadFileType(projectName, fileName);
 			}
 		}
 	}
 
-	public void dispose() throws UniformAppletException,
-			PropertyAccessException {
+	public void dispose() throws UniformAppletException {
 		IUserPreferences preferences = cache.getUserPreferences();
 		for (String key : preferences.propertyKeys()) {
 			Long id = cache.getIdentifierForProperty(key);
-			invoker.saveUserFile(id, preferences.getProperty(key));
+			String property;
+			try {
+				property = preferences.getProperty(key);
+			} catch (PropertyAccessException e) {
+				throw new UniformAppletException(e);
+			}
+			invoker.saveUserFile(id, property);
 		}
 	}
 

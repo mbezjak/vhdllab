@@ -56,11 +56,10 @@ public interface IViewStorage {
 	 * 
 	 * @param view
 	 *            a view to close
-	 * @return a closed view or <code>null</code> if it was not opened at all
 	 * @throws NullPointerException
 	 *             if <code>view</code> is <code>null</code>
 	 */
-	IView close(IView view);
+	void close(IView view);
 
 	/**
 	 * Moves view from one tabbed pane to another.
