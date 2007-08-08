@@ -24,11 +24,11 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/**
 	 * All stored components.
 	 */
-	private Map<ComponentIdentifier, JComponent> components;
+	private Map<String, JComponent> components;
 	/**
 	 * This is a other directional map for <code>components</code> field.
 	 */
-	private Map<JComponent, ComponentIdentifier> bidiComponents;
+	private Map<JComponent, String> bidiComponents;
 	/**
 	 * A grouped components.
 	 */
@@ -61,8 +61,8 @@ public class DefaultComponentStorage implements IComponentStorage {
 		if (preferences == null) {
 			throw new NullPointerException("User preferences cant be null.");
 		}
-		components = new HashMap<ComponentIdentifier, JComponent>();
-		bidiComponents = new HashMap<JComponent, ComponentIdentifier>();
+		components = new HashMap<String, JComponent>();
+		bidiComponents = new HashMap<JComponent, String>();
 		groups = new HashMap<ComponentGroup, Collection<JComponent>>();
 		this.componentContainer = componentContainer;
 		this.preferences = preferences;
@@ -132,6 +132,9 @@ public class DefaultComponentStorage implements IComponentStorage {
 	@Override
 	public boolean add(String identifier, ComponentGroup group, String title,
 			JComponent component, ComponentPlacement placement) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null.");
+		}
 		if (title == null) {
 			throw new NullPointerException("Title cant be null.");
 		}
@@ -141,41 +144,17 @@ public class DefaultComponentStorage implements IComponentStorage {
 		if (placement == null) {
 			throw new NullPointerException("Component placement cant be null.");
 		}
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		return add(ci, title, component, placement);
-	}
-
-	/**
-	 * This is an actual implementation of <code>add</code> method.
-	 * 
-	 * @param ci
-	 *            an identifier of a component
-	 * @param title
-	 *            a title to use
-	 * @param component
-	 *            a component to add
-	 * @param placement
-	 *            where to add a component
-	 * @return see public add methods
-	 */
-	private boolean add(ComponentIdentifier ci, String title,
-			JComponent component, ComponentPlacement placement) {
-		if (contains(ci)) {
+		if (contains(identifier)) {
 			if (!placement.equals(componentContainer
 					.getComponentPlacement(component))) {
-				moveComponent(ci, placement);
+				moveComponent(identifier, placement);
 			}
 			// must only be set after component has moved!
-			setTitle(ci, title);
+			setTitle(identifier, title);
 			return false;
 		} else {
-			components.put(ci, component);
-			bidiComponents.put(component, ci);
-			ComponentGroup group = ci.getGroup();
+			components.put(identifier, component);
+			bidiComponents.put(component, identifier);
 			Collection<JComponent> groupedComponents = groups.get(group);
 			if (groupedComponents == null) {
 				groupedComponents = new ArrayList<JComponent>();
@@ -190,17 +169,26 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#remove(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#remove(java.lang.String)
 	 */
 	@Override
-	public JComponent remove(String identifier, ComponentGroup group) {
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		return remove(ci);
+	public JComponent remove(String identifier) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
+		}
+		if (!contains(identifier)) {
+			return null;
+		}
+		JComponent component = components.remove(identifier);
+		bidiComponents.remove(component);
+		ComponentGroup group = componentContainer.getComponentGroup(component);
+		Collection<JComponent> groupedComponents = groups.get(group);
+		groupedComponents.remove(component);
+		if (groupedComponents.isEmpty()) {
+			groups.remove(group);
+		}
+		componentContainer.removeComponent(component);
+		return component;
 	}
 
 	/*
@@ -216,72 +204,29 @@ public class DefaultComponentStorage implements IComponentStorage {
 		componentContainer.removeComponent(component);
 	}
 
-	/**
-	 * This is an actual implementation of
-	 * {@link #remove(String, ComponentGroup)} method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @return a component that was previously stored or <code>null</code> if
-	 *         component was not stored at all
-	 */
-	private JComponent remove(ComponentIdentifier ci) {
-		if (!contains(ci)) {
-			return null;
-		}
-		JComponent component = components.remove(ci);
-		bidiComponents.remove(component);
-		Collection<JComponent> groupedComponents = groups.get(ci.getGroup());
-		groupedComponents.remove(component);
-		if (groupedComponents.isEmpty()) {
-			groups.remove(ci.getGroup());
-		}
-		componentContainer.removeComponent(component);
-		return component;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#moveComponent(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup,
 	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
 	 */
 	@Override
-	public void moveComponent(String identifier, ComponentGroup group,
-			ComponentPlacement placement) {
+	public void moveComponent(String identifier, ComponentPlacement placement) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
+		}
 		if (placement == null) {
 			throw new NullPointerException("Component placement cant be null.");
 		}
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		moveComponent(ci, placement);
-	}
-
-	/**
-	 * This is an actual implementation of
-	 * {@link #moveComponent(String, ComponentGroup, ComponentPlacement)}
-	 * method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @param placement
-	 *            a location of a component
-	 * @throws IllegalArgumentException
-	 *             is specified component is not stored
-	 */
-	private void moveComponent(ComponentIdentifier ci,
-			ComponentPlacement placement) {
-		if (!contains(ci)) {
-			throw new IllegalArgumentException("Component " + ci.toString()
+		if (!contains(identifier)) {
+			throw new IllegalArgumentException("Component " + identifier
 					+ " not stored");
 		}
-		String title = getTitleFor(ci);
-		JComponent component = remove(ci);
-		add(ci, title, component, placement);
+		String title = getTitleFor(identifier);
+		JComponent component = getComponent(identifier);
+		ComponentGroup group = componentContainer.getComponentGroup(component);
+		remove(identifier);
+		add(identifier, group, title, component, placement);
 	}
 
 	/*
@@ -310,8 +255,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 		if (!bidiComponents.containsKey(component)) {
 			return null;
 		}
-		ComponentIdentifier ci = bidiComponents.get(component);
-		return ci.getIdentifier();
+		return bidiComponents.get(component);
 	}
 
 	/*
@@ -321,28 +265,14 @@ public class DefaultComponentStorage implements IComponentStorage {
 	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup)
 	 */
 	@Override
-	public JComponent getComponent(String identifier, ComponentGroup group) {
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		return getComponent(ci);
-	}
-
-	/**
-	 * This is an actual implementation of
-	 * {@link #getComponent(String, ComponentGroup)} method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @return a component
-	 */
-	private JComponent getComponent(ComponentIdentifier ci) {
-		if (!contains(ci)) {
+	public JComponent getComponent(String identifier) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
+		}
+		if (!contains(identifier)) {
 			return null;
 		}
-		return components.get(ci);
+		return components.get(identifier);
 	}
 
 	/*
@@ -366,34 +296,18 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setSelectedComponent(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setSelectedComponent(java.lang.String)
 	 */
 	@Override
-	public void setSelectedComponent(String identifier, ComponentGroup group) {
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		setSelectedComponent(ci);
-	}
-
-	/**
-	 * This is an actual implementation of
-	 * {@link #setSelectedComponent(String, ComponentGroup)} method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @throws IllegalArgumentException
-	 *             is specified component is not stored
-	 */
-	private void setSelectedComponent(ComponentIdentifier ci) {
-		if (!contains(ci)) {
-			throw new IllegalArgumentException("Component " + ci.toString()
+	public void setSelectedComponent(String identifier) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
+		}
+		if (!contains(identifier)) {
+			throw new IllegalArgumentException("Component " + identifier
 					+ " not stored");
 		}
-		JComponent component = getComponent(ci);
+		JComponent component = getComponent(identifier);
 		componentContainer.setSelectedComponent(component);
 	}
 
@@ -423,103 +337,53 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#contains(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#contains(java.lang.String)
 	 */
 	@Override
-	public boolean contains(String identifier, ComponentGroup group) {
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		return contains(ci);
-	}
-
-	/**
-	 * This is an actual implementation of
-	 * {@link #contains(String, ComponentGroup)} method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @return <code>true</code> if this storage contains specified component;
-	 *         <code>false</code> otherwise
-	 */
-	private boolean contains(ComponentIdentifier ci) {
-		return components.containsKey(ci);
+	public boolean contains(String identifier) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
+		}
+		return components.containsKey(identifier);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setTitle(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup, java.lang.String)
+	 *      java.lang.String)
 	 */
 	@Override
-	public void setTitle(String identifier, ComponentGroup group, String title) {
+	public void setTitle(String identifier, String title) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
+		}
 		if (title == null) {
 			throw new NullPointerException("Title cant be null.");
 		}
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		setTitle(ci, title);
-	}
-
-	/**
-	 * This is an actual implementation of
-	 * {@link #setTitle(String, ComponentGroup, String)} method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @param title
-	 *            a title to set
-	 * @throws IllegalArgumentException
-	 *             is specified component is not stored
-	 */
-	private void setTitle(ComponentIdentifier ci, String title) {
-		if (!contains(ci)) {
-			throw new IllegalArgumentException("Component " + ci.toString()
+		if (!contains(identifier)) {
+			throw new IllegalArgumentException("Component " + identifier
 					+ " not stored");
 		}
-		JComponent component = getComponent(ci);
+		JComponent component = getComponent(identifier);
 		componentContainer.setComponentTitle(component, title);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getTitleFor(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getTitleFor(java.lang.String)
 	 */
 	@Override
-	public String getTitleFor(String identifier, ComponentGroup group) {
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		return getTitleFor(ci);
-	}
-
-	/**
-	 * This is an actual implementation of
-	 * {@link #getTitleFor(String, ComponentGroup)} method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @return a title
-	 * @throws IllegalArgumentException
-	 *             is specified component is not stored
-	 */
-	private String getTitleFor(ComponentIdentifier ci) {
-		if (!contains(ci)) {
-			throw new IllegalArgumentException("Component " + ci.toString()
+	public String getTitleFor(String identifier) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
+		}
+		if (!contains(identifier)) {
+			throw new IllegalArgumentException("Component " + identifier
 					+ " not stored");
 		}
-		JComponent component = getComponent(ci);
+		JComponent component = getComponent(identifier);
 		return componentContainer.getComponentTitle(component);
 	}
 
@@ -527,39 +391,18 @@ public class DefaultComponentStorage implements IComponentStorage {
 	 * (non-Javadoc)
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setToolTipText(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup, java.lang.String)
+	 *      java.lang.String)
 	 */
 	@Override
-	public void setToolTipText(String identifier, ComponentGroup group,
-			String tooltip) {
-		if (tooltip == null) {
-			throw new NullPointerException("Title cant be null.");
+	public void setToolTipText(String identifier, String tooltip) {
+		if (identifier == null) {
+			throw new NullPointerException("Identifier cant be null");
 		}
-		/*
-		 * Component identifier takes care of checking if identifier or group is
-		 * null.
-		 */
-		ComponentIdentifier ci = new ComponentIdentifier(identifier, group);
-		setToolTipText(ci, tooltip);
-	}
-
-	/**
-	 * This is an actual implementation of
-	 * {@link #setToolTipText(String, ComponentGroup, String)} method.
-	 * 
-	 * @param ci
-	 *            a component identifier
-	 * @param tooltip
-	 *            a title to set
-	 * @throws IllegalArgumentException
-	 *             is specified component is not stored
-	 */
-	private void setToolTipText(ComponentIdentifier ci, String tooltip) {
-		if (!contains(ci)) {
-			throw new IllegalArgumentException("Component " + ci.toString()
+		if (!contains(identifier)) {
+			throw new IllegalArgumentException("Component " + identifier
 					+ " not stored");
 		}
-		JComponent component = getComponent(ci);
+		JComponent component = getComponent(identifier);
 		componentContainer.setComponentToolTipText(component, tooltip);
 	}
 
@@ -589,106 +432,6 @@ public class DefaultComponentStorage implements IComponentStorage {
 		} else {
 			return groupedComponents.size();
 		}
-	}
-	
-	/**
-	 * A private class used to identify components.
-	 * 
-	 * @author Miro Bezjak
-	 */
-	private static class ComponentIdentifier {
-
-		private String identifier;
-		private ComponentGroup group;
-
-		/**
-		 * Constructs a new component identifier out of <code>identifier</code>
-		 * and <code>group</code>.
-		 * 
-		 * @param identifier
-		 *            an identifier of a component in specified
-		 *            <code>group</code>
-		 * @param group
-		 *            a component group
-		 * @throws NullPointerException
-		 *             if <code>identifier</code> or <code>group</code> is
-		 *             <code>null</code>
-		 */
-		public ComponentIdentifier(String identifier, ComponentGroup group) {
-			if (identifier == null) {
-				throw new NullPointerException(
-						"Component identifier cant be null.");
-			}
-			if (group == null) {
-				throw new NullPointerException("Component group cant be null.");
-			}
-			this.identifier = identifier;
-			this.group = group;
-		}
-
-		/**
-		 * Getter for component identifier.
-		 * 
-		 * @return a component identifier
-		 */
-		public String getIdentifier() {
-			return identifier;
-		}
-
-		/**
-		 * Getter for component group.
-		 * 
-		 * @return a component group
-		 */
-		public ComponentGroup getGroup() {
-			return group;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + group.hashCode();
-			result = prime * result + identifier.hashCode();
-			return result;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			final ComponentIdentifier other = (ComponentIdentifier) obj;
-			if (!group.equals(other.group))
-				return false;
-			if (!identifier.equals(other.identifier))
-				return false;
-			return true;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-		public String toString() {
-			return identifier + "/" + group.name();
-		}
-
 	}
 
 }

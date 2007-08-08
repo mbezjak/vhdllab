@@ -63,7 +63,7 @@ public class DefaultProjectExplorerStorage implements IProjectExplorerStorage {
 	 */
 	@Override
 	public IView close() {
-		return (IView) storage.remove(identifier, group);
+		return (IView) storage.remove(identifier);
 	}
 
 	/*
@@ -73,7 +73,7 @@ public class DefaultProjectExplorerStorage implements IProjectExplorerStorage {
 	 */
 	@Override
 	public void move(ComponentPlacement placement) {
-		storage.moveComponent(identifier, group, placement);
+		storage.moveComponent(identifier, placement);
 	}
 
 	/*
@@ -83,7 +83,7 @@ public class DefaultProjectExplorerStorage implements IProjectExplorerStorage {
 	 */
 	@Override
 	public IProjectExplorer getProjectExplorer() {
-		return (IProjectExplorer) storage.getComponent(identifier, group);
+		return (IProjectExplorer) storage.getComponent(identifier);
 	}
 
 	/*
@@ -93,7 +93,7 @@ public class DefaultProjectExplorerStorage implements IProjectExplorerStorage {
 	 */
 	@Override
 	public boolean isProjectExplorerOpened() {
-		return storage.contains(identifier, group);
+		return storage.contains(identifier);
 	}
 
 	/*
@@ -103,7 +103,7 @@ public class DefaultProjectExplorerStorage implements IProjectExplorerStorage {
 	 */
 	@Override
 	public void setTitle(String title) {
-		storage.setTitle(identifier, group, title);
+		storage.setTitle(identifier, title);
 	}
 
 	/*
@@ -113,7 +113,7 @@ public class DefaultProjectExplorerStorage implements IProjectExplorerStorage {
 	 */
 	@Override
 	public void setToolTipText(String tooltip) {
-		storage.setToolTipText(identifier, group, tooltip);
+		storage.setToolTipText(identifier, tooltip);
 	}
 
 	/**

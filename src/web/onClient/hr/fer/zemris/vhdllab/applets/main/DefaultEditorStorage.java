@@ -85,7 +85,7 @@ public class DefaultEditorStorage implements IEditorStorage {
 	 */
 	@Override
 	public IEditor close(String identifier) {
-		return (IEditor) storage.remove(identifier, group);
+		return (IEditor) storage.remove(identifier);
 	}
 
 	/*
@@ -107,7 +107,7 @@ public class DefaultEditorStorage implements IEditorStorage {
 	 */
 	@Override
 	public void move(String identifier, ComponentPlacement placement) {
-		storage.moveComponent(identifier, group, placement);
+		storage.moveComponent(identifier, placement);
 	}
 
 	/*
@@ -135,7 +135,7 @@ public class DefaultEditorStorage implements IEditorStorage {
 	 */
 	@Override
 	public IEditor getOpenedEditor(String identifier) {
-		return (IEditor) storage.getComponent(identifier, group);
+		return (IEditor) storage.getComponent(identifier);
 	}
 
 	/*
@@ -190,7 +190,7 @@ public class DefaultEditorStorage implements IEditorStorage {
 	 */
 	@Override
 	public void setSelectedEditor(String identifier) {
-		storage.setSelectedComponent(identifier, group);
+		storage.setSelectedComponent(identifier);
 	}
 
 	/*
@@ -238,7 +238,7 @@ public class DefaultEditorStorage implements IEditorStorage {
 	 */
 	@Override
 	public boolean isEditorOpened(String identifier) {
-		return storage.contains(identifier, group);
+		return storage.contains(identifier);
 	}
 
 	/*
@@ -260,7 +260,7 @@ public class DefaultEditorStorage implements IEditorStorage {
 	 */
 	@Override
 	public void setTitle(String identifier, String title) {
-		storage.setTitle(identifier, group, title);
+		storage.setTitle(identifier, title);
 	}
 
 	/*
@@ -282,7 +282,7 @@ public class DefaultEditorStorage implements IEditorStorage {
 	 */
 	@Override
 	public void setToolTipText(String identifier, String tooltip) {
-		storage.setToolTipText(identifier, group, tooltip);
+		storage.setToolTipText(identifier, tooltip);
 	}
 
 	/*

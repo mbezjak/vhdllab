@@ -55,7 +55,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 */
 	@Override
 	public IView close(String identifier) {
-		return (IView) storage.remove(identifier, group);
+		return (IView) storage.remove(identifier);
 	}
 	
 	/* (non-Javadoc)
@@ -71,7 +71,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 */
 	@Override
 	public void move(String identifier, ComponentPlacement placement) {
-		storage.moveComponent(identifier, group, placement);
+		storage.moveComponent(identifier, placement);
 	}
 	
 	/* (non-Javadoc)
@@ -90,7 +90,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 */
 	@Override
 	public IView getOpenedView(String identifier) {
-		return (IView) storage.getComponent(identifier, group);
+		return (IView) storage.getComponent(identifier);
 	}
 
 	/* (non-Javadoc)
@@ -111,7 +111,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 */
 	@Override
 	public void setSelectedView(String identifier) {
-		storage.setSelectedComponent(identifier, group);
+		storage.setSelectedComponent(identifier);
 	}
 
 	/* (non-Javadoc)
@@ -127,7 +127,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 */
 	@Override
 	public boolean isViewOpened(String identifier) {
-		return storage.contains(identifier, group);
+		return storage.contains(identifier);
 	}
 
 	/* (non-Javadoc)
@@ -135,7 +135,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 */
 	@Override
 	public void setTitle(String identifier, String title) {
-		storage.setTitle(identifier, group, title);
+		storage.setTitle(identifier, title);
 	}
 
 	/* (non-Javadoc)
@@ -143,7 +143,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 */
 	@Override
 	public void setToolTipText(String identifier, String tooltip) {
-		storage.setToolTipText(identifier, group, tooltip);
+		storage.setToolTipText(identifier, tooltip);
 	}
 
 	/* (non-Javadoc)

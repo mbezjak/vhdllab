@@ -5,6 +5,7 @@ public class ViewProperties {
 	private String id;
 	private String clazz;
 	private boolean singleton;
+	private String idResolver;
 
 	public ViewProperties() {
 	}
@@ -33,6 +34,14 @@ public class ViewProperties {
 		this.singleton = singleton;
 	}
 
+	public String getIdResolver() {
+		return idResolver;
+	}
+
+	public void setIdResolver(String idResolver) {
+		this.idResolver = idResolver;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -42,7 +51,8 @@ public class ViewProperties {
 	public String toString() {
 		StringBuilder sb = new StringBuilder(100);
 		sb.append("view id=").append(id).append(", class=").append(clazz)
-				.append(", singleton=").append(singleton);
+				.append(", singleton=").append(singleton).append(
+						", idResolver=").append(idResolver);
 		return sb.toString();
 	}
 

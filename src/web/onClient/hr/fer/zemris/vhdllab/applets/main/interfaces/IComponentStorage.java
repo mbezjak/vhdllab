@@ -77,10 +77,9 @@ public interface IComponentStorage {
 	 * </p>
 	 * 
 	 * @param identifier
-	 *            a unique identifier for a <code>component</code> in a
-	 *            specified <code>group</code>
+	 *            a unique identifier for a <code>component</code>
 	 * @param group
-	 *            a group where <code>component</code> belong to
+	 *            a group that a <code>component</code> belong to
 	 * @param title
 	 *            a title that is used in tabbed pane when component is
 	 *            displayed
@@ -103,14 +102,12 @@ public interface IComponentStorage {
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @return a component previously stored or <code>null</code> if it was
 	 *         not stored at all
 	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
+	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	JComponent remove(String identifier, ComponentGroup group);
+	JComponent remove(String identifier);
 
 	/**
 	 * Removes a specified component from storage.
@@ -127,8 +124,6 @@ public interface IComponentStorage {
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @param placement
 	 *            a location to destination tabbed pane
 	 * @throws NullPointerException
@@ -136,8 +131,7 @@ public interface IComponentStorage {
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void moveComponent(String identifier, ComponentGroup group,
-			ComponentPlacement placement);
+	void moveComponent(String identifier, ComponentPlacement placement);
 
 	/**
 	 * Returns a location where a component is stored or <code>null</code> if
@@ -164,19 +158,16 @@ public interface IComponentStorage {
 	String getIdentifierFor(JComponent component);
 
 	/**
-	 * Returns a component with specified <code>identifier</code> that belongs
-	 * to specified <code>group</code> or <code>null</code> if no such
-	 * component exists.
+	 * Returns a component with specified <code>identifier</code> or
+	 * <code>null</code> if no such component exists.
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @return a component
 	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
+	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	JComponent getComponent(String identifier, ComponentGroup group);
+	JComponent getComponent(String identifier);
 
 	/**
 	 * Returns all components that belong to specified <code>group</code>.
@@ -196,14 +187,12 @@ public interface IComponentStorage {
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
+	 *             if <code>identifier</code> is <code>null</code>
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void setSelectedComponent(String identifier, ComponentGroup group);
+	void setSelectedComponent(String identifier);
 
 	/**
 	 * Returns a selected component or <code>null</code> if no component is
@@ -243,22 +232,18 @@ public interface IComponentStorage {
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @return <code>true</code> if this storage contains specified component;
 	 *         <code>false</code> otherwise
 	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
+	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	boolean contains(String identifier, ComponentGroup group);
+	boolean contains(String identifier);
 
 	/**
 	 * Sets a title for a component.
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @param title
 	 *            a title to set
 	 * @throws NullPointerException
@@ -266,38 +251,35 @@ public interface IComponentStorage {
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void setTitle(String identifier, ComponentGroup group, String title);
+	void setTitle(String identifier, String title);
 
 	/**
 	 * Returns a title for a component.
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @return a title
 	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
+	 *             if <code>identifier</code> is <code>null</code>
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	String getTitleFor(String identifier, ComponentGroup group);
+	String getTitleFor(String identifier);
 
 	/**
 	 * Sets a tooltip for a component.
 	 * 
 	 * @param identifier
 	 *            a component identifier
-	 * @param group
-	 *            a component group
 	 * @param tooltip
-	 *            a tooltip to set
+	 *            a tooltip to set or <code>null</code> to turn off tooltip
+	 *            text
 	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
+	 *             if <code>identifier</code> is <code>null</code>
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void setToolTipText(String identifier, ComponentGroup group, String tooltip);
+	void setToolTipText(String identifier, String tooltip);
 
 	/**
 	 * Returns the number of stored components.
