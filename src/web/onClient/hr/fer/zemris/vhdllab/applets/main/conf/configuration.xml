@@ -154,5 +154,15 @@
 				hr.fer.zemris.vhdllab.applets.main.resolver.ReturnOriginalResolver
 			</idResolver>
 		</view>
+		
+		<view id="view.project.explorer">
+			<class>
+				hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer
+			</class>
+			<singleton>true</singleton>
+			<idResolver>
+				hr.fer.zemris.vhdllab.applets.main.resolver.ReturnOriginalResolver
+			</idResolver>
+		</view>
 	</views>
 </configuration>

@@ -364,7 +364,7 @@ public interface IResourceManager {
 
 	/**
 	 * Compiles a specified resource. Return value can be <code>null</code> if
-	 * resource is not compilable or someone vetoed compilation.
+	 * someone vetoed compilation.
 	 * 
 	 * @param projectName
 	 *            a resource's project name
@@ -384,7 +384,7 @@ public interface IResourceManager {
 
 	/**
 	 * Simulates a specified resource. Return value can be <code>null</code>
-	 * if resource is not simulatable or someone vetoed simulation.
+	 * if someone vetoed simulation.
 	 * 
 	 * @param projectName
 	 *            a resource's project name

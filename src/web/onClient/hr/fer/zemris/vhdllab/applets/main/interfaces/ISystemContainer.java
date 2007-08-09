@@ -438,5 +438,4 @@ public interface ISystemContainer {
 
 	IView openView(String type);
 
-	void refreshWorkspace();
 }

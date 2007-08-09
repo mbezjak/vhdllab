@@ -445,9 +445,6 @@ public class DefaultResourceManager implements IResourceManager {
 	@Override
 	public CompilationResult compile(String projectName, String fileName)
 			throws UniformAppletException {
-		if (!isCompilable(projectName, fileName)) {
-			return null;
-		}
 		try {
 			fireBeforeResourceCompilation(projectName, fileName);
 		} catch (ResourceVetoException e) {
@@ -469,9 +466,6 @@ public class DefaultResourceManager implements IResourceManager {
 	@Override
 	public SimulationResult simulate(String projectName, String fileName)
 			throws UniformAppletException {
-		if (!isSimulatable(projectName, fileName)) {
-			return null;
-		}
 		try {
 			fireBeforeResourceSimulation(projectName, fileName);
 		} catch (ResourceVetoException e) {

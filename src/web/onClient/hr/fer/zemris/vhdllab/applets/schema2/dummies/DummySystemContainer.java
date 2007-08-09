@@ -211,12 +211,6 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public void refreshWorkspace() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void resetEditorTitle(boolean contentChanged, String projectName,
 			String fileName) {
 		// TODO Auto-generated method stub

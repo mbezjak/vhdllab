@@ -19,6 +19,8 @@ public interface IComponentContainer {
 
 	void removeComponent(JComponent component);
 	
+	boolean containsComponent(JComponent component);
+	
 	ComponentPlacement getComponentPlacement(JComponent component);
 
 	ComponentGroup getComponentGroup(JComponent component);

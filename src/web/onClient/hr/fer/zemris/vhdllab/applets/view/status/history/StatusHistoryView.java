@@ -140,20 +140,6 @@ public class StatusHistoryView extends JPanel implements IView {
 		container.getSystemLog().removeSystemLogListener(systemLogListener);
 	}
 
-	/**
-	 * This method is ignored since this View has much better way of accessing
-	 * information.
-	 */
-	public void appendData(Object data) {
-	}
-
-	/**
-	 * This method is ignored since this View has much better way of accessing
-	 * information.
-	 */
-	public void setData(Object data) {
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -183,6 +169,11 @@ public class StatusHistoryView extends JPanel implements IView {
 			return;
 		}
 		textPane.setCaretPosition(doc.getLength());
+	}
+	
+	@Override
+	public <T> T asInterface(Class<T> clazz) {
+		return null;
 	}
 
 }

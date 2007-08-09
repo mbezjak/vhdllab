@@ -176,32 +176,15 @@ public class CompileErrorsPanel extends JPanel implements IView {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.view.IView#appendData(java.lang.Object)
-	 */
-	public void appendData(Object data) {
-		setData(data);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setData(java.lang.Object)
-	 */
-	public void setData(Object data) {
-		if (!(data instanceof CompilationResult)) {
-			throw new IllegalArgumentException("Unknown data!");
-		}
-		// content.clear();
-		setContent((ResultTarget<CompilationResult>) data);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
 	 */
 	public void setSystemContainer(ISystemContainer container) {
 		this.container = container;
+	}
+	
+	@Override
+	public <T> T asInterface(Class<T> clazz) {
+		return null;
 	}
 
 }

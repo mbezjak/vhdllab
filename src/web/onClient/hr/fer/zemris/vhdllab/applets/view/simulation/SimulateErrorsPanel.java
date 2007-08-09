@@ -122,33 +122,15 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.view.IView#appendData(java.lang.Object)
-	 */
-	public void appendData(Object data) {
-		// TODO ovdje pozvat setContent
-		setData(data);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setData(java.lang.Object)
-	 */
-	public void setData(Object data) {
-		if (!(data instanceof SimulationResult)) {
-			throw new IllegalArgumentException("Unknown data!");
-		}
-		// content.clear();
-		setContent((ResultTarget<SimulationResult>) data);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
 	 */
 	public void setSystemContainer(ISystemContainer container) {
 		this.container = container;
+	}
+	
+	@Override
+	public <T> T asInterface(Class<T> clazz) {
+		return null;
 	}
 
 }

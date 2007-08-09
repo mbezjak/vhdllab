@@ -14,5 +14,6 @@ public class ComponentTypes {
 	public static final String VIEW_COMPILATION_ERRORS = "view.compilation.errors";
 	public static final String VIEW_SIMULATION_ERRORS = "view.simulation.errors";
 	public static final String VIEW_STATUS_HISTORY = "view.status.history";
+	public static final String VIEW_PROJECT_EXPLORER = "view.project.explorer";
 
 }

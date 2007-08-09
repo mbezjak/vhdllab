@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
@@ -17,8 +17,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorStorage;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorerStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
@@ -57,7 +55,6 @@ import javax.swing.JOptionPane;
  * container.setComponentStorage(myComponentStorage);<br/>
  * container.setEditorStrage(myEditorStorage);<br/>
  * container.setViewStrage(myViewStorage);<br/>
- * container.setProjectExplorerStrage(myProjectExplorerStorage);<br/>
  * container.init();<br/>
  * </code></blockquote>
  * <p>
@@ -108,10 +105,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * A view storage.
 	 */
 	private IViewStorage viewStorage;
-	/**
-	 * A project explorer storage.
-	 */
-	private IProjectExplorerStorage projectExplorerStorage;
 
 	/**
 	 * Constructs a default system container.
@@ -176,17 +169,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	public void setViewStorage(IViewStorage viewStorage) {
 		this.viewStorage = viewStorage;
-	}
-
-	/**
-	 * Setter for a project explorer storage.
-	 * 
-	 * @param projectExplorerStorage
-	 *            a project explorer storage
-	 */
-	public void setProjectExplorerStorage(
-			IProjectExplorerStorage projectExplorerStorage) {
-		this.projectExplorerStorage = projectExplorerStorage;
 	}
 
 	/**
@@ -272,7 +254,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 		componentStorage = null;
 		editorStorage = null;
 		viewStorage = null;
-		projectExplorerStorage = null;
 		bundle = null;
 		parentFrame = null;
 	}
@@ -509,11 +490,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public String getSelectedProject() {
-		if (!projectExplorerStorage.isProjectExplorerOpened()) {
+		if (!viewStorage.isViewOpened(ComponentTypes.VIEW_PROJECT_EXPLORER)) {
 			return null;
 		} else {
-			return projectExplorerStorage.getProjectExplorer()
-					.getSelectedProject();
+			IView view = viewStorage.getOpenedView(ComponentTypes.VIEW_PROJECT_EXPLORER);
+			return view.asInterface(IProjectExplorer.class).getSelectedProject();
 		}
 	}
 
@@ -524,11 +505,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public FileIdentifier getSelectedFile() {
-		if (!projectExplorerStorage.isProjectExplorerOpened()) {
+		if (!viewStorage.isViewOpened(ComponentTypes.VIEW_PROJECT_EXPLORER)) {
 			return null;
 		} else {
-			return projectExplorerStorage.getProjectExplorer()
-					.getSelectedFile();
+			IView view = viewStorage.getOpenedView(ComponentTypes.VIEW_PROJECT_EXPLORER);
+			return view.asInterface(IProjectExplorer.class).getSelectedFile();
 		}
 	}
 
@@ -889,9 +870,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 			}
 		}
 
-		if (projectExplorerStorage.isProjectExplorerOpened()) {
-			IProjectExplorer projectExplorer = projectExplorerStorage
-					.getProjectExplorer();
+		if (viewStorage.isViewOpened(ComponentTypes.VIEW_PROJECT_EXPLORER)) {
+			IView view = viewStorage.getOpenedView(ComponentTypes.VIEW_PROJECT_EXPLORER);
+			IProjectExplorer projectExplorer = view.asInterface(IProjectExplorer.class);
 			for (String projectName : projects) {
 				projectExplorer.refreshProject(projectName);
 			}
@@ -1002,12 +983,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public void openProjectExplorer() {
-		// TODO ovo bolje slozit
-		IProjectExplorer projectExplorer = new DefaultProjectExplorer();
-		projectExplorer.setSystemContainer(this);
-		projectExplorer.init();
-		projectExplorerStorage.add("Project Explorer", projectExplorer);
-		refreshWorkspace();
+		openView(ComponentTypes.VIEW_PROJECT_EXPLORER);
 	}
 
 	/**
@@ -1070,43 +1046,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 		for (IView view : viewsToClose) {
 			view.dispose();
 			viewStorage.close(view);
-		}
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void refreshWorkspace() {
-		if (!projectExplorerStorage.isProjectExplorerOpened()) {
-			return;
-		}
-		IProjectExplorer projectExplorer = projectExplorerStorage
-				.getProjectExplorer();
-		// TODO to treba jos do kraja napravit, zajedno s refreshProject i
-		// refreshFile
-		for (String p : projectExplorer.getAllProjects()) {
-			projectExplorer.removeProject(p);
-		}
-
-		try {
-			for (String projectName : resourceManager.getAllProjects()) {
-				projectExplorer.addProject(projectName);
-			}
-
-			String text = bundle
-					.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-			echoStatusText(text, MessageType.SUCCESSFUL);
-		} catch (UniformAppletException e) {
-			String text = bundle
-					.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-			echoStatusText(text, MessageType.ERROR);
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u
-			// development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			JOptionPane.showMessageDialog(parentFrame, sw.toString());
 		}
 	}
 

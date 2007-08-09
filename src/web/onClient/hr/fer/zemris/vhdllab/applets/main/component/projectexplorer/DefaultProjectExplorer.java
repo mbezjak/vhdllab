@@ -2,10 +2,12 @@ package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
+import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
@@ -27,6 +29,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -41,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -57,7 +61,7 @@ import javax.swing.tree.TreeSelectionModel;
  * 
  * @author Boris Ozegovic
  */
-public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
+public class DefaultProjectExplorer extends JPanel implements IView, IProjectExplorer {
 	/* 
 	 * Project explorer je zamisljen kao stablo koje ce u svakom trenutku
 	 * moci prikazivati tri razlicite hijerarhije: X uses Y, X is used in Y i
@@ -336,6 +340,24 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 			}
 		};
 		systemContainer.getResourceManager().addVetoableResourceListener(resourceListener);
+		loadWorkspace();
+	}
+	
+	private void loadWorkspace() {
+		for (String p : getAllProjects()) {
+			removeProject(p);
+		}
+		try {
+			for (String projectName : systemContainer.getResourceManager().getAllProjects()) {
+				addProject(projectName);
+			}
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			ResourceBundle bundle = systemContainer.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+			String text = bundle.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
+			systemContainer.echoStatusText(text, MessageType.ERROR);
+			return;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -1410,7 +1432,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 				e.printStackTrace();
 			}
 		}
-
+		
 		/* brise projekt iz liste projekata u tom PE-u */
 		this.allProjects.remove(node.toString());
 		this.refreshProject(projectName);
@@ -1421,4 +1443,14 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public <T> T asInterface(Class<T> clazz) {
+		if(clazz == IProjectExplorer.class) {
+			return (T) this;
+		} else {
+			return null;
+		}
+	}
+
 }

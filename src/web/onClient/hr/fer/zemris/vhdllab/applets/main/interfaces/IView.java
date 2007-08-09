@@ -50,30 +50,28 @@ public interface IView {
 	void dispose();
 
 	/**
-	 * Sets data to display in this view. If some data was already displayed
-	 * then it should be replaced by this. If data is <code>null</code> than
-	 * this method will throw no exception and will delete its contents.
+	 * Enables to get other interfaces that this view implements. Note that some
+	 * implementation will not only look for interfaces that this view directly
+	 * implements but also if some of its components implements specified
+	 * interface.
+	 * <p>
+	 * This method can return <code>null</code> if:
+	 * <ul>
+	 * <li>any error occurs</li>
+	 * <li><code>clazz</code> is <code>null</code></li>
+	 * <li>this view does not implement specified interface</li>
+	 * <li>this view refuses to return an interface (e.g. implementing
+	 * interface is private and no outside components can invoke its methods)</li>
+	 * </ul>
+	 * </p>
 	 * 
-	 * @param data
-	 *            a data to set.
-	 * @throws IllegalArgumentException
-	 *             if data provided through this method is unknown to
-	 *             implementation of this IView interface. For example, if
-	 *             implementation expects String but received an integer.
+	 * @param <T>
+	 *            an interface that this view implements
+	 * @param clazz
+	 *            a class of an interface that this view implements
+	 * @return a specified interface or <code>null</code> if this view either
+	 *         does not implement specified implement or refuses to
 	 */
-	void setData(Object data);
-
-	/**
-	 * Appends data to an end of this view. If data is <code>null</code> than
-	 * this method will throw no exception and will simply do nothing.
-	 * 
-	 * @param data
-	 *            a data to append.
-	 * @throws IllegalArgumentException
-	 *             if data provided through this method is unknown to
-	 *             implementation of this IView interface. For example, if
-	 *             implementation expects String but received an integer.
-	 */
-	void appendData(Object data);
+	<T> T asInterface(Class<T> clazz);
 
 }
