@@ -4,6 +4,8 @@ import javax.swing.JComponent;
 
 public interface IIDResolver {
 
-	String resolve(String originalId, JComponent component);
+	String resolveFromComponent(String originalId, JComponent component);
+	
+	String resolveFromData(String originalId, Object... data);
 	
 }

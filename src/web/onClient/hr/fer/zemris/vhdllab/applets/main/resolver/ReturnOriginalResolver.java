@@ -9,11 +9,22 @@ public class ReturnOriginalResolver implements IIDResolver {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IIDResolver#resolve(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IIDResolver#resolveFromComponent(java.lang.String,
 	 *      javax.swing.JComponent)
 	 */
 	@Override
-	public String resolve(String originalId, JComponent component) {
+	public String resolveFromComponent(String originalId, JComponent component) {
+		return resolveFromData(originalId, (Object[]) null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IIDResolver#resolveFromData(java.lang.String,
+	 *      java.lang.Object[])
+	 */
+	@Override
+	public String resolveFromData(String originalId, Object... data) {
 		return originalId;
 	}
 
