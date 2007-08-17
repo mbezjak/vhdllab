@@ -23,11 +23,15 @@ public class PlaceholderUtil {
 	 */
 	public static String replacePlaceholders(String message,
 			String[] replacements) {
-		if (replacements == null)
+		if (replacements == null) {
 			return message;
+		}
 		String replaced = message;
 		int i = 0; // placeholders starts with 0
 		for (String s : replacements) {
+			if(s == null) {
+				continue;
+			}
 			replaced = replaced.replace("{" + i + "}", s);
 			i++;
 		}

@@ -16,7 +16,7 @@ public enum MessageType {
 	 * Returns <code>true</code> if this MessageEnum is
 	 * <code>successful</code>.
 	 * 
-	 * @return<code>true</code> if this MessageEnum is
+	 * @return <code>true</code> if this MessageEnum is
 	 *         <code>successful</code>; <code>false</code> otherwise
 	 */
 	public boolean isSuccessful() {
@@ -26,7 +26,7 @@ public enum MessageType {
 	/**
 	 * Returns <code>true</code> if this MessageEnum is <code>error</code>.
 	 * 
-	 * @return<code>true</code> if this MessageEnum is <code>error</code>;
+	 * @return <code>true</code> if this MessageEnum is <code>error</code>;
 	 *         <code>false</code> otherwise
 	 */
 	public boolean isError() {
@@ -37,7 +37,7 @@ public enum MessageType {
 	 * Returns <code>true</code> if this MessageEnum is
 	 * <code>information</code>.
 	 * 
-	 * @return<code>true</code> if this MessageEnum is
+	 * @return <code>true</code> if this MessageEnum is
 	 *         <code>information</code>; <code>false</code> otherwise
 	 */
 	public boolean isInformation() {

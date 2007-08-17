@@ -70,6 +70,10 @@ public abstract class VetoableResourceAdapter implements
 	@Override
 	public void resourceDeleted(String projectName, String fileName) {
 	}
+	
+	@Override
+	public void resourceSaved(String projectName, String fileName) {
+	}
 
 	@Override
 	public void resourceSimulated(String projectName, String fileName,

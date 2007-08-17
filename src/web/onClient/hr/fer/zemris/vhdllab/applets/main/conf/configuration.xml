@@ -14,9 +14,6 @@
 			<readonly>false</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>false</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.BasicFileEditorResolver
-			</idResolver>
 		</editor>
 
 		<editor id="editor.simulation">
@@ -28,9 +25,6 @@
 			<readonly>true</readonly>
 			<explicitSave>true</explicitSave>
 			<singleton>false</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.BasicFileEditorResolver
-			</idResolver>
 		</editor>
 
 		<editor id="editor.automat">
@@ -42,9 +36,6 @@
 			<readonly>false</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>false</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.BasicFileEditorResolver
-			</idResolver>
 		</editor>
 
 		<editor id="editor.testbench">
@@ -60,9 +51,6 @@
 			<readonly>false</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>false</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.BasicFileEditorResolver
-			</idResolver>
 		</editor>
 
 		<editor id="editor.schema">
@@ -74,9 +62,6 @@
 			<readonly>false</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>false</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.BasicFileEditorResolver
-			</idResolver>
 		</editor>
 
 		<!-- SPECIAL PURPOSE EDITORS -->
@@ -90,9 +75,6 @@
 			<readonly>true</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>false</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.BasicFileEditorResolver
-			</idResolver>
 		</editor>
 
 		<editor id="editor.view.vhdl">
@@ -104,9 +86,6 @@
 			<readonly>true</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>false</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.BasicFileEditorResolver
-			</idResolver>
 		</editor>
 
 		<editor id="editor.preferences">
@@ -115,12 +94,9 @@
 			</class>
 			<fileType>preferences</fileType>
 			<savable>false</savable>
-			<readonly>true</readonly>
+			<readonly>false</readonly>
 			<explicitSave>false</explicitSave>
 			<singleton>true</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.ReturnOriginalResolver
-			</idResolver>
 		</editor>
 	</editors>
 
@@ -130,9 +106,6 @@
 				hr.fer.zemris.vhdllab.applets.view.status.history.StatusHistoryView
 			</class>
 			<singleton>true</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.ReturnOriginalResolver
-			</idResolver>
 		</view>
 
 		<view id="view.compilation.errors">
@@ -140,9 +113,6 @@
 				hr.fer.zemris.vhdllab.applets.view.compilation.CompileErrorsPanel
 			</class>
 			<singleton>true</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.ReturnOriginalResolver
-			</idResolver>
 		</view>
 
 		<view id="view.simulation.errors">
@@ -150,9 +120,6 @@
 				hr.fer.zemris.vhdllab.applets.view.simulation.SimulateErrorsPanel
 			</class>
 			<singleton>true</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.ReturnOriginalResolver
-			</idResolver>
 		</view>
 		
 		<view id="view.project.explorer">
@@ -160,9 +127,6 @@
 				hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer
 			</class>
 			<singleton>true</singleton>
-			<idResolver>
-				hr.fer.zemris.vhdllab.applets.main.resolver.ReturnOriginalResolver
-			</idResolver>
 		</view>
 	</views>
 </configuration>

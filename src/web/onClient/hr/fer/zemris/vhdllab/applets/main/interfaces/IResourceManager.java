@@ -424,7 +424,9 @@ public interface IResourceManager {
 
 	/**
 	 * Returns <code>true</code> if specified file is a circuit (i.e.
-	 * represents a component in a vhdl) or <code>false</code> otherwise.
+	 * represents a component in a vhdl) or <code>false</code> otherwise. If
+	 * either <code>projectName</code> or <code>fileName</code> is
+	 * <code>null</code> then this method will return <code>false</code>.
 	 * 
 	 * @param projectName
 	 *            project name that contains a file
@@ -432,15 +434,14 @@ public interface IResourceManager {
 	 *            a name of a file
 	 * @return <code>true</code> if specified file is a circuit (i.e.
 	 *         represents a component in a vhdl); <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
 	 */
 	boolean isCircuit(String projectName, String fileName);
 
 	/**
 	 * Returns <code>true</code> if specified file is a testbench (i.e. a
 	 * component in vhdl with no ports, input nor output) or <code>false</code>
-	 * otherwise.
+	 * otherwise. If either <code>projectName</code> or <code>fileName</code>
+	 * is <code>null</code> then this method will return <code>false</code>.
 	 * <p>
 	 * Note that any component with no ports is considered a testbench. For
 	 * example you can create a new vhdl source and leave empty entity block.
@@ -454,14 +455,14 @@ public interface IResourceManager {
 	 * @return <code>true</code> if specified file is a testbench (i.e. a
 	 *         component in vhdl with no ports, input nor output);
 	 *         <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
 	 */
 	boolean isTestbench(String projectName, String fileName);
 
 	/**
 	 * Returns <code>true</code> if specified file is a simulation (i.e. a
 	 * simulation result of a vhdl simulator) or <code>false</code> otherwise.
+	 * If either <code>projectName</code> or <code>fileName</code> is
+	 * <code>null</code> then this method will return <code>false</code>.
 	 * 
 	 * @param projectName
 	 *            project name that contains a file
@@ -470,14 +471,14 @@ public interface IResourceManager {
 	 * @return <code>true</code> if specified file is a simulation (i.e. a
 	 *         simulation result of a vhdl simulator); <code>false</code>
 	 *         otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
 	 */
 	boolean isSimulation(String projectName, String fileName);
 
 	/**
 	 * Returns <code>true</code> if specified file is a compilable (i.e. is a
-	 * component in vhdl) or <code>false</code> otherwise.
+	 * component in vhdl) or <code>false</code> otherwise. If either
+	 * <code>projectName</code> or <code>fileName</code> is
+	 * <code>null</code> then this method will return <code>false</code>.
 	 * <p>
 	 * Note that predefined files are purposely set to be not compilable even
 	 * though they are components in vhdl.
@@ -489,14 +490,14 @@ public interface IResourceManager {
 	 *            a name of a file
 	 * @return <code>true</code> if specified file is a compilable (i.e. is a
 	 *         component in vhdl); <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
 	 */
 	boolean isCompilable(String projectName, String fileName);
 
 	/**
 	 * Returns <code>true</code> if specified file is a simulatable (i.e. is a
-	 * testbench in vhdl) or <code>false</code> otherwise.
+	 * testbench in vhdl) or <code>false</code> otherwise. If either
+	 * <code>projectName</code> or <code>fileName</code> is
+	 * <code>null</code> then this method will return <code>false</code>.
 	 * 
 	 * @param projectName
 	 *            project name that contains a file
@@ -504,10 +505,23 @@ public interface IResourceManager {
 	 *            a name of a file
 	 * @return <code>true</code> if specified file is a simulatable (i.e. is a
 	 *         testbench in vhdl); <code>false</code> otherwise
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
 	 */
 	boolean isSimulatable(String projectName, String fileName);
+
+	/**
+	 * Returns <code>true</code> if specified file can generate vhdl code or
+	 * <code>false</code> otherwise. If either <code>projectName</code> or
+	 * <code>fileName</code> is <code>null</code> then this method will
+	 * return <code>false</code>.
+	 * 
+	 * @param projectName
+	 *            project name that contains a file
+	 * @param fileName
+	 *            a name of a file
+	 * @return <code>true</code> if specified file can generate vhdl code;
+	 *         <code>false</code> otherwise
+	 */
+	boolean canGenerateVHDLCode(String projectName, String fileName);
 
 	/**
 	 * Ignore case and check if <code>name</code> is a correct entity name.
@@ -526,8 +540,6 @@ public interface IResourceManager {
 	 *            a string that will be checked.
 	 * @return <code>true</code> if <code>name</code> is a correct name;
 	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>name</code> is <code>null</code>.
 	 */
 	boolean isCorrectEntityName(String name);
 
@@ -548,8 +560,6 @@ public interface IResourceManager {
 	 *            a string that will be checked.
 	 * @return <code>true</code> if <code>name</code> is a correct name;
 	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>name</code> is <code>null</code>.
 	 */
 	boolean isCorrectFileName(String name);
 
@@ -570,8 +580,6 @@ public interface IResourceManager {
 	 *            a string that will be checked.
 	 * @return <code>true</code> if <code>name</code> is a correct name;
 	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>name</code> is <code>null</code>.
 	 */
 	boolean isCorrectProjectName(String name);
 

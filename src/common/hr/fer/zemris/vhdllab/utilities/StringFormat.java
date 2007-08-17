@@ -106,12 +106,11 @@ public class StringFormat {
 	 *            a string that will be checked.
 	 * @return <code>true</code> if <code>s</code> is a correct name;
 	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>s</code> is <code>null</code>.
 	 */
 	public static boolean isCorrectEntityName(String s) {
-		if (s == null)
-			throw new NullPointerException("String can not be null.");
+		if (s == null) {
+			return false;
+		}
 		char[] chars = s.toCharArray();
 		if (chars.length == 0)
 			return false;
@@ -154,8 +153,6 @@ public class StringFormat {
 	 *            a string that will be checked.
 	 * @return <code>true</code> if <code>s</code> is a correct name;
 	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>s</code> is <code>null</code>.
 	 */
 	public static boolean isCorrectFileName(String s) {
 		return isCorrectEntityName(s);
@@ -178,8 +175,6 @@ public class StringFormat {
 	 *            a string that will be checked.
 	 * @return <code>true</code> if <code>s</code> is a correct name;
 	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             is <code>s</code> is <code>null</code>.
 	 */
 	public static boolean isCorrectProjectName(String s) {
 		return isCorrectEntityName(s);

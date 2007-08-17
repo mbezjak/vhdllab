@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components>
+	<!-- a group tag must be one group in ComponentGroup class -->
+	
+	<component>
+		<group>EDITOR</group>
+		<normal>images/icons/components/editor.png</normal>
+		<active>images/icons/components/active_editor.png</active>
+	</component>
+	
+	<component>
+		<group>VIEW</group>
+		<normal>images/icons/components/view.png</normal>
+		<active>images/icons/components/active_view.png</active>
+	</component>
+	
+</components>

@@ -1,14 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
- 
-
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
@@ -55,10 +56,6 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
- 
-
- 
-
 public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 	private static final long serialVersionUID = 5853551043423675268L;
@@ -67,13 +64,9 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	private boolean readonly;
 	private boolean modifiedFlag = true;
 	private Object highlighted;
-	
+
 	AbstractDocument doc;
-	
- 
-	
-	 
- 
+
 	static HashMap<Object, Action> actions;
 	public JPopupMenu popup;
 
@@ -81,34 +74,27 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	protected static UndoAction undoAction;
 	protected static RedoAction redoAction;
 	protected static UndoManager undo = new UndoManager();
-	
+
 	private ISystemContainer container;
 	private FileContent content;
-	
-	 
-	 
-	
- 
-	
+
 	public void initGUI() {
-		
-		
+
 		text = new JTextPane();
 		text.setCaretPosition(0);
 		text.setLocation(25, 50);
-		//text.setPreferredSize(new Dimension(300,300));
-		
+		// text.setPreferredSize(new Dimension(300,300));
+
 		text.addCaretListener(new CaretListener() {
 			public void caretUpdate(CaretEvent e) {
-				if(highlighted != null) {
+				if (highlighted != null) {
 					text.getHighlighter().removeHighlight(highlighted);
 					highlighted = null;
 				}
 			}
 		});
-		
-		
-		//create pop up menu
+
+		// create pop up menu
 
 		popup = new JPopupMenu();
 
@@ -129,17 +115,14 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 			}
 		};
-		
-		
+
 		JMenuItem item;
 		TextEditor.undoAction = new UndoAction();
 		popup.add(item = new JMenuItem(TextEditor.undoAction));
-		 
 
 		TextEditor.redoAction = new RedoAction();
 		popup.add(item = new JMenuItem(TextEditor.redoAction));
-	 
-		
+
 		popup.addSeparator();
 		popup.add(item = new JMenuItem("Cut"));
 		item.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -164,58 +147,72 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		text.addMouseListener(new MousePopupListener());
 
 		text.add(popup);
-		
+
 		JScrollPane scroll = new JScrollPane(text);
-		 
-		 
+
 		this.setLayout(new BorderLayout());
 		this.add(scroll, BorderLayout.CENTER);
 		this.setBackground(Color.RED);
-		
-		StyledDocument styledDoc =   text.getStyledDocument();
+
+		StyledDocument styledDoc = text.getStyledDocument();
 		if (styledDoc instanceof AbstractDocument) {
 			doc = (AbstractDocument) styledDoc;
-		 
+
 		} else {
 			System.err
 					.println("Text pane's document isn't an AbstractDocument!");
 			System.exit(-1);
 		}
-		
-		
+
 		text.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
-				if(modifiedFlag) return;
+				if (modifiedFlag)
+					return;
 				modifiedFlag = true;
-				container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
+				FileIdentifier file = new FileIdentifier(content
+						.getProjectName(), content.getFileName());
+				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+						.createFileEditorIdentifier(file);
+				container.getEditorManager().resetEditorTitle(modifiedFlag,
+						identifier);
 			}
+
 			public void removeUpdate(DocumentEvent e) {
-				if(modifiedFlag) return;
+				if (modifiedFlag)
+					return;
 				modifiedFlag = true;
-				container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
+				FileIdentifier file = new FileIdentifier(content
+						.getProjectName(), content.getFileName());
+				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+						.createFileEditorIdentifier(file);
+				container.getEditorManager().resetEditorTitle(modifiedFlag,
+						identifier);
 			}
+
 			public void insertUpdate(DocumentEvent e) {
-				if(modifiedFlag) return;
+				if (modifiedFlag)
+					return;
 				modifiedFlag = true;
-				container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
+				FileIdentifier file = new FileIdentifier(content
+						.getProjectName(), content.getFileName());
+				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+						.createFileEditorIdentifier(file);
+				container.getEditorManager().resetEditorTitle(modifiedFlag,
+						identifier);
 			}
 		});
-		
-//		
-	     
- 
+
+		//		
+
 		createActionTable(text);
 
 		// Add some key bindings.
 		addBindings();
 
-		//initDocument();
+		// initDocument();
 
 		doc.addUndoableEditListener(new MyUndoableEditListener());
-		
-		
-		
-	 
+
 	}
 
 	public String getData() {
@@ -234,36 +231,48 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	public StyledDocument getDocument() {
 		return text.getStyledDocument();
 	}
+
 	public void setDocument(StyledDocument doc) {
 		text.setStyledDocument(doc);
-		 
+
 	}
-	
+
 	public void setFileContent(FileContent fContent) {
 		this.content = fContent;
 		text.setText(content.getContent());
 		modifiedFlag = false;
-		container.resetEditorTitle(modifiedFlag, content.getProjectName(),content.getFileName());
+//		FileIdentifier file = new FileIdentifier(content
+//				.getProjectName(), content.getFileName());
+//		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+//				.createFileEditorIdentifier(file);
+//		container.getEditorManager().resetEditorTitle(modifiedFlag,
+//				identifier);
 	}
 
 	public void setSystemContainer(ISystemContainer container) {
 		this.container = container;
 	}
 
-	public FileContent getInitialFileContent(Component parent, String projectName) {
-		String[] options = new String[] {"OK", "Cancel"};
+	public FileContent getInitialFileContent(Component parent,
+			String projectName) {
+		String[] options = new String[] { "OK", "Cancel" };
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
 		EntityTable table = new EntityTable();
 		table.setProjectContainer(container);
 		table.init();
-		int option = JOptionPane.showOptionDialog(parent, table, "New VHDL source", optionType, messageType, null, options, options[0]);
-		if(option == JOptionPane.OK_OPTION) {
-			if(projectName == null) return null;
+		int option = JOptionPane.showOptionDialog(parent, table,
+				"New VHDL source", optionType, messageType, null, options,
+				options[0]);
+		if (option == JOptionPane.OK_OPTION) {
+			if (projectName == null)
+				return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if(container.getResourceManager().existsFile(projectName, ci.getEntityName())) {
-					container.echoStatusText(ci.getEntityName() + " already exists!", MessageType.INFORMATION);
+				if (container.getResourceManager().existsFile(projectName,
+						ci.getEntityName())) {
+					container.echoStatusText(ci.getEntityName()
+							+ " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
@@ -273,34 +282,38 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 				JOptionPane.showMessageDialog(parent, sw.toString());
 				return null;
 			}
-			StringBuilder sb = new StringBuilder(100 + ci.getPorts().size() * 20);
+			StringBuilder sb = new StringBuilder(
+					100 + ci.getPorts().size() * 20);
 			sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
-			sb.append("ENTITY ").append(ci.getEntityName()).append(" IS PORT (\n");
-			for(Port p : ci.getPorts()) {
+			sb.append("ENTITY ").append(ci.getEntityName()).append(
+					" IS PORT (\n");
+			for (Port p : ci.getPorts()) {
 				Type type = p.getType();
-				sb.append("\t").append(p.getName()).append(" : ")
-					.append(p.getDirection().toString()).append(" ")
-					.append(type.getTypeName());
-				if(type.isVector()) {
-					sb.append(" (").append(type.getRangeFrom())
-						.append(" ").append(type.getVectorDirection())
-						.append(" ").append(type.getRangeTo()).append(")");
+				sb.append("\t").append(p.getName()).append(" : ").append(
+						p.getDirection().toString()).append(" ").append(
+						type.getTypeName());
+				if (type.isVector()) {
+					sb.append(" (").append(type.getRangeFrom()).append(" ")
+							.append(type.getVectorDirection()).append(" ")
+							.append(type.getRangeTo()).append(")");
 				}
 				sb.append(";\n");
 			}
-			if(ci.getPorts().size() == 0) {
-				sb.replace(sb.length()-8, sb.length(), "\n");
+			if (ci.getPorts().size() == 0) {
+				sb.replace(sb.length() - 8, sb.length(), "\n");
 			} else {
-				sb.replace(sb.length()-2, sb.length()-1, ");");
+				sb.replace(sb.length() - 2, sb.length() - 1, ");");
 			}
 			sb.append("end ").append(ci.getEntityName()).append(";\n\n");
 			sb.append("ARCHITECTURE arch OF ").append(ci.getEntityName())
-				.append(" IS \n\nBEGIN\n\nEND arch;");
-			
-			return new FileContent(projectName, ci.getEntityName(), sb.toString());
-		} else return null;
+					.append(" IS \n\nBEGIN\n\nEND arch;");
+
+			return new FileContent(projectName, ci.getEntityName(), sb
+					.toString());
+		} else
+			return null;
 	}
-	
+
 	public String getFileName() {
 		return content.getFileName();
 	}
@@ -308,24 +321,26 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	public String getProjectName() {
 		return content.getProjectName();
 	}
-	
+
 	public void highlightLine(int line) {
 		int caret = text.getCaretPosition();
 		Highlighter h = text.getHighlighter();
 		h.removeAllHighlights();
 		String content = text.getText();
-//		content = content.replaceAll("\r+", "");
-//		text.setText(content);
+		// content = content.replaceAll("\r+", "");
+		// text.setText(content);
 		text.setCaretPosition(caret);
 		int pos = 0;
 		line--;
-		while(line != 0) {
+		while (line != 0) {
 			pos = content.indexOf('\n', pos) + 1;
 			line--;
 		}
 		int last = content.indexOf('\n', pos) + 1;
 		try {
-			highlighted = h.addHighlight(pos, last, new DefaultHighlighter.DefaultHighlightPainter(new Color(180, 210, 238)));
+			highlighted = h.addHighlight(pos, last,
+					new DefaultHighlighter.DefaultHighlightPainter(new Color(
+							180, 210, 238)));
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 			StringWriter sw = new StringWriter();
@@ -334,9 +349,9 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 			JOptionPane.showMessageDialog(this, sw.toString());
 		}
 	}
-	
+
 	public void setReadOnly(boolean flag) {
-		if(flag) {
+		if (flag) {
 			text.setEditable(false);
 		}
 		this.readonly = flag;
@@ -357,7 +372,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	public void setSavable(boolean flag) {
 		savable = flag;
 	}
-	
+
 	class MousePopupListener extends MouseAdapter {
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -424,7 +439,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		key = KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK);
 		inputMap.put(key, redoAction);
 		// TAB for TAB Action
-		key = KeyStroke.getKeyStroke(KeyEvent.VK_TAB,0);
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
 		inputMap.put(key, DefaultEditorKit.insertTabAction);
 	}
 
@@ -472,7 +487,8 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		protected void updateUndoState() {
 			if (undo.canUndo()) {
 				setEnabled(true);
-				putValue(Action.NAME, undo.getUndoPresentationName().split(" ")[0]);
+				putValue(Action.NAME,
+						undo.getUndoPresentationName().split(" ")[0]);
 			} else {
 				setEnabled(false);
 				putValue(Action.NAME, "Undo");
@@ -505,48 +521,45 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		protected void updateRedoState() {
 			if (undo.canRedo()) {
 				setEnabled(true);
-				putValue(Action.NAME, undo.getRedoPresentationName().split(" ")[0]);
+				putValue(Action.NAME,
+						undo.getRedoPresentationName().split(" ")[0]);
 			} else {
 				setEnabled(false);
 				putValue(Action.NAME, "Redo");
 			}
 		}
 	}
+
 	InitScanner scanner = new InitScanner();
+
 	public void run() {
 		initGUI();
-		
-		
+
 		Thread thread = new Thread(scanner);
 		thread.start();
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		scanner.stopScanner();
 	}
+
 	public void init() {
 		this.run();
-		
+
 	}
 
-	 
-	}
+}
 
 class InitScanner implements Runnable {
 	EditorScanner scanner = new EditorScanner();
-	
+
 	public void stopScanner() {
 		scanner.stopScanner();
 	}
-	
+
 	public void run() {
-		
-		
-		//scanner.run();
+
+		// scanner.run();
 	}
-	
+
 }
- 
-		
- 

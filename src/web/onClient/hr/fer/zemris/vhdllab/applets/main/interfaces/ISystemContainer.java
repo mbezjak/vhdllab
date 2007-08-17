@@ -2,10 +2,12 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -265,6 +267,13 @@ public interface ISystemContainer {
 	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
 
 	/**
+	 * Returns an editor manager. Return value will never be <code>null</code>.
+	 * 
+	 * @return an editor manager
+	 */
+	IEditorManager getEditorManager();
+	
+	/**
 	 * Returns a system log. Return value will never be <code>null</code>.
 	 * 
 	 * @return a system log
@@ -358,84 +367,23 @@ public interface ISystemContainer {
 	/* EDITOR MANIPULATION METHODS */
 
 	/**
-	 * Opens a preferences editor.
-	 */
-	void openPreferences();
-
-	/**
-	 * Opens a text editor where a vhdl code for a specified file can be view.
-	 * 
-	 * @param editor
-	 *            an editor containing a file for whom to view vhdl code
-	 * @throws NullPointerException
-	 *             if <code>editor</code> is <code>null</code>
-	 */
-	void viewVHDLCode(IEditor editor);
-
-	/**
-	 * Opens a text editor where a vhdl code for a specified file can be view.
-	 * 
-	 * @param projectName
-	 *            a project name that contains a file
-	 * @param fileName
-	 *            a name of a file for whom to view vhdl code
-	 * @return an editor presenting vhdl code or <code>null</code> if any
-	 *         error occurs
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 */
-	IEditor viewVHDLCode(String projectName, String fileName);
-
-	/**
-	 * TODO PENDING REMOVAL
-	 */
-	IEditor getEditor(FileIdentifier resource);
-
-	/**
-	 * TODO PENDING REMOVAL
-	 */
-	IEditor getEditor(String projectName, String fileName);
-
-	/**
 	 * TODO PENDING REMOVAL!
 	 */
-	void openEditor(String projectName, String fileName, boolean savable,
-			boolean readOnly);
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	void openEditor(String projectName, String fileName, String content,
-			String type, boolean savable, boolean readOnly);
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	IView getView(String type);
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	void resetEditorTitle(boolean contentChanged, String projectName,
-			String fileName);
+	IView getView(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Opens a project explorer.
 	 */
 	void openProjectExplorer();
 
-	void saveEditor(IEditor editor);
-
-	void saveAllEditors();
-
-	void closeEditor(IEditor editor, boolean showDialog);
-
-	void closeAllButThisEditor(IEditor editorToKeepOpened, boolean showDialog);
-
-	void closeAllEditors(boolean showDialog);
-
 	void closeView(IView view);
 
-	IView openView(String type);
+	IView openView(IComponentIdentifier<?> type);
 
+	List<IEditor> showSaveDialog(String title, String message,
+			List<IEditor> editorsToBeSaved);
+
+	boolean isViewOpened(IComponentIdentifier<?> identifier);
+
+	IView getOpenedView(IComponentIdentifier<?> identifier);
 }

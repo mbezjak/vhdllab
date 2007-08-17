@@ -24,29 +24,6 @@ import java.util.List;
 public interface IEditorStorage {
 
 	/**
-	 * Adds an editor to a storage (ultimately to be presented to a user). This
-	 * method can be used only if an editor has a valid both project and file
-	 * name (non-null) otherwise it will throw {@link IllegalArgumentException}.
-	 * <p>
-	 * Editor identifier and title will be created using
-	 * {@link #createEditorIdentifierFor(IEditor)} and
-	 * {@link #createTitleFor(IEditor)} respectfully.
-	 * </p>
-	 * 
-	 * @param editor
-	 *            an editor to add
-	 * @return <code>true</code> if <code>editor</code> was added to storage
-	 *         or <code>false</code> if it is already in a storage (and thus
-	 *         will not be added)
-	 * @throws NullPointerException
-	 *             if <code>editor</code> is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if editor does not have a valid project and file name
-	 * @see #add(String, String, IEditor)
-	 */
-	boolean add(IEditor editor);
-
-	/**
 	 * Adds an editor to a storage (ultimately to be presented to a user).
 	 * 
 	 * @param identifier
@@ -134,40 +111,6 @@ public interface IEditorStorage {
 	 * @see #move(IEditor, ComponentPlacement)
 	 */
 	void move(String identifier, ComponentPlacement placement);
-	
-	/**
-	 * Returns an editor represented by <code>projectName</code> and
-	 * <code>fileName</code> or <code>null</code> if such editor is not
-	 * opened.
-	 * <p>
-	 * Editor identifier will be created using
-	 * {@link #createEditorIdentifierFor(FileIdentifier)}.
-	 * </p>
-	 * 
-	 * @param projectName
-	 *            a project name
-	 * @param fileName
-	 *            a file name
-	 * @return an editor represented by <code>projectName</code> and
-	 *         <code>fileName</code>
-	 * @throws NullPointerException
-	 *             is either parameter is <code>null</code>
-	 * @see #getOpenedEditor(String)
-	 */
-	IEditor getOpenedEditor(String projectName, String fileName);
-
-	/**
-	 * Returns an editor represented by <code>identifier</code> or
-	 * <code>null</code> if such editor is not opened.
-	 * 
-	 * @param identifier
-	 *            a unique editor identifier
-	 * @return an editor represented by <code>identifier</code>
-	 * @throws NullPointerException
-	 *             is <code>identifier</code> is <code>null</code>
-	 * @see #getOpenedEditor(String, String)
-	 */
-	IEditor getOpenedEditor(String identifier);
 
 	/**
 	 * Returns a collection of all editors that are currently opened. Returned

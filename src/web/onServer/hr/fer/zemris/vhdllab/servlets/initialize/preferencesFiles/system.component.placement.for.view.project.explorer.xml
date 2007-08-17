@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<property id="system.default.project.explorer.placement" type="system">
-	<description>Default project explorer placement</description>
+<property id="system.component.placement.for.view.project.explorer" type="system">
+	<description>Project explorer placement</description>
 	<tooltip>The default location where project explorer will open</tooltip>
 	<editable byUser="true" />
 	<data type="string" editor="list">

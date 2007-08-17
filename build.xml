@@ -440,7 +440,10 @@
   	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}classes"/>
   	
     <copy todir="${tomcat.app.dir}" overwrite="true">
+      <fileset dir="${basedir}/html"/>
+      <!-- TODO this is only temporary: -->
       <fileset dir="${basedir}/html/pages"/>
+      <!-- END TEMPORARY -->
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar"/>
       <fileset file="${basedir}/${lib.dir}/commons-digester-1.7.jar"/>
       <fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar"/>

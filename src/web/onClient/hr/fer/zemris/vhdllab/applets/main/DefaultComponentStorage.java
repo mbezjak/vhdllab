@@ -1,10 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
-import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,11 +22,11 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/**
 	 * All stored components.
 	 */
-	private Map<String, JComponent> components;
+	private Map<IComponentIdentifier<?>, JComponent> components;
 	/**
 	 * This is a other directional map for <code>components</code> field.
 	 */
-	private Map<JComponent, String> bidiComponents;
+	private Map<JComponent, IComponentIdentifier<?>> bidiComponents;
 	/**
 	 * A grouped components.
 	 */
@@ -37,101 +35,37 @@ public class DefaultComponentStorage implements IComponentStorage {
 	 * A container where all components are presented to a user.
 	 */
 	private IComponentContainer componentContainer;
-	/**
-	 * A user preferences for default component placement.
-	 */
-	private IUserPreferences preferences;
 
 	/**
 	 * Constructs a component storage.
 	 * 
 	 * @param componentContainer
 	 *            a container where all component are presented to a user
-	 * @param preferences
-	 *            a user preferences for default component placement
 	 * @throws NullPointerException
-	 *             if <code>componentContainer</code> or
-	 *             <code>projectContainer</code> is <code>null</code>
+	 *             if <code>componentContainer</code> is <code>null</code>
 	 */
-	public DefaultComponentStorage(IComponentContainer componentContainer,
-			IUserPreferences preferences) {
+	public DefaultComponentStorage(IComponentContainer componentContainer) {
 		if (componentContainer == null) {
 			throw new NullPointerException("Component container cant be null.");
 		}
-		if (preferences == null) {
-			throw new NullPointerException("User preferences cant be null.");
-		}
-		components = new HashMap<String, JComponent>();
-		bidiComponents = new HashMap<JComponent, String>();
+		components = new HashMap<IComponentIdentifier<?>, JComponent>();
+		bidiComponents = new HashMap<JComponent, IComponentIdentifier<?>>();
 		groups = new HashMap<ComponentGroup, Collection<JComponent>>();
 		this.componentContainer = componentContainer;
-		this.preferences = preferences;
 
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#add(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup, java.lang.String,
-	 *      javax.swing.JComponent)
-	 */
-	@Override
-	public boolean add(String identifier, ComponentGroup group, String title,
-			JComponent component) {
-		if (group == null) {
-			throw new NullPointerException("Component group cant be null.");
-		}
-		String property;
-		switch (group) {
-		case EDITOR:
-			try {
-				property = preferences
-						.getProperty(UserFileConstants.SYSTEM_DEFAULT_EDITOR_PLACEMENT);
-			} catch (PropertyAccessException e) {
-				property = ComponentPlacement.CENTER.name();
-			}
-			break;
-		case VIEW:
-			try {
-				property = preferences
-						.getProperty(UserFileConstants.SYSTEM_DEFAULT_VIEW_PLACEMENT);
-			} catch (PropertyAccessException e) {
-				property = ComponentPlacement.BOTTOM.name();
-			}
-			break;
-		case PROJECT_EXPLORER:
-			try {
-				property = preferences
-						.getProperty(UserFileConstants.SYSTEM_DEFAULT_PROJECT_EXPLORER_PLACEMENT);
-			} catch (PropertyAccessException e) {
-				property = ComponentPlacement.LEFT.name();
-			}
-			break;
-		default:
-			property = ComponentPlacement.CENTER.name();
-			break;
-		}
-		ComponentPlacement placement;
-		try {
-			placement = ComponentPlacement.valueOf(property);
-		} catch (RuntimeException e) {
-			placement = ComponentPlacement.CENTER;
-		}
-		return add(identifier, group, title, component, placement);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#add(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#add(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier,
 	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup, java.lang.String,
 	 *      javax.swing.JComponent,
 	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
 	 */
 	@Override
-	public boolean add(String identifier, ComponentGroup group, String title,
-			JComponent component, ComponentPlacement placement) {
+	public boolean add(IComponentIdentifier<?> identifier, ComponentGroup group,
+			String title, JComponent component, ComponentPlacement placement) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null.");
 		}
@@ -169,10 +103,10 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#remove(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#remove(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
 	 */
 	@Override
-	public JComponent remove(String identifier) {
+	public JComponent remove(IComponentIdentifier<?> identifier) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}
@@ -201,17 +135,19 @@ public class DefaultComponentStorage implements IComponentStorage {
 		if (component == null) {
 			throw new NullPointerException("Component cant be null");
 		}
-		componentContainer.removeComponent(component);
+		IComponentIdentifier<?> identifier = bidiComponents.get(component);
+		remove(identifier);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#moveComponent(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#moveComponent(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier,
 	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
 	 */
 	@Override
-	public void moveComponent(String identifier, ComponentPlacement placement) {
+	public void moveComponent(IComponentIdentifier<?> identifier,
+			ComponentPlacement placement) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}
@@ -248,7 +184,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getIdentifierFor(javax.swing.JComponent)
 	 */
 	@Override
-	public String getIdentifierFor(JComponent component) {
+	public IComponentIdentifier<?> getIdentifierFor(JComponent component) {
 		if (component == null) {
 			throw new NullPointerException("Component cant be null");
 		}
@@ -261,11 +197,10 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getComponent(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getComponent(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
 	 */
 	@Override
-	public JComponent getComponent(String identifier) {
+	public JComponent getComponent(IComponentIdentifier<?> identifier) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}
@@ -296,10 +231,10 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setSelectedComponent(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setSelectedComponent(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
 	 */
 	@Override
-	public void setSelectedComponent(String identifier) {
+	public void setSelectedComponent(IComponentIdentifier<?> identifier) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}
@@ -337,10 +272,10 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#contains(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#contains(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
 	 */
 	@Override
-	public boolean contains(String identifier) {
+	public boolean contains(IComponentIdentifier<?> identifier) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}
@@ -350,11 +285,11 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setTitle(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setTitle(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier,
 	 *      java.lang.String)
 	 */
 	@Override
-	public void setTitle(String identifier, String title) {
+	public void setTitle(IComponentIdentifier<?> identifier, String title) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}
@@ -372,10 +307,10 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getTitleFor(java.lang.String)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#getTitleFor(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
 	 */
 	@Override
-	public String getTitleFor(String identifier) {
+	public String getTitleFor(IComponentIdentifier<?> identifier) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}
@@ -390,11 +325,11 @@ public class DefaultComponentStorage implements IComponentStorage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setToolTipText(java.lang.String,
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage#setToolTipText(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier,
 	 *      java.lang.String)
 	 */
 	@Override
-	public void setToolTipText(String identifier, String tooltip) {
+	public void setToolTipText(IComponentIdentifier<?> identifier, String tooltip) {
 		if (identifier == null) {
 			throw new NullPointerException("Identifier cant be null");
 		}

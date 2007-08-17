@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.dialog;
 
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,6 +12,7 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +90,7 @@ public class SaveDialog extends JDialog {
 	/** Owner of this dialog (used to enable modal dialog) */
 	private Component owner;
 	
+	private Map<SaveItem, IEditor> presentedEditors;
 	/** Label to be displayed above a list of checkboxes */
 	private JLabel label;
 	/** A list of checkboxes displayed to user */
@@ -425,6 +427,7 @@ public class SaveDialog extends JDialog {
     private void saveDialogImpl(Component owner) {
     	this.owner = owner;
     	
+    	presentedEditors = new HashMap<SaveItem, IEditor>();
     	// setup label
     	label = new JLabel();
     	int width = DIALOG_WIDTH - 2 * BORDER;
@@ -546,26 +549,23 @@ public class SaveDialog extends JDialog {
     }
     
     /**
-     * Returns FileIdentifiers that were selected by user to be saved.
+     * Returns editors that were selected by user to be saved.
      * This method will return <code>null</code> if user did not click
      * on a OK button.
-     * @return FileIdentifiers to save
+     * @return editors to save
      */
-    public List<FileIdentifier> getSelectedResources() {
+    public List<IEditor> getSelectedResources() {
     	if(getOption() != SaveDialog.OK_OPTION) {
     		return null;
     	}
     	
-    	List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>();
+    	List<IEditor> editorsToSave = new ArrayList<IEditor>();
     	for(SaveItem item : list.getItems()) {
     		if(item.isSelected()) {
-	    		String projectName = item.getProjectName();
-	    		String fileName = item.getFileName();
-	    		FileIdentifier file = new FileIdentifier(projectName, fileName);
-	    		identifiers.add(file);
+	    		editorsToSave.add(presentedEditors.get(item));
     		}
     	}
-    	return identifiers;
+    	return editorsToSave;
     }
     
     /**
@@ -581,16 +581,16 @@ public class SaveDialog extends JDialog {
     /**
      * Add item to list so that it can be selected in a checkbox.
      * @param seleted indicating if checkbox should be selected or not
-     * @param projectName a name of a project
-     * @param fileName a name of a file
+     * @param editor an editor to present to be saved
      * @throws NullPointerException if <code>fileName</code> is <code>null</code>
      */
-    public void addItem(boolean seleted, String projectName, String fileName) {
-    	if(projectName == null || fileName == null) {
-    		throw new NullPointerException("Project name or File name can not be null.");
+    public void addItem(boolean seleted, IEditor editor) {
+    	if(editor == null) {
+    		throw new NullPointerException("Editor can not be null.");
     	}
-    	SaveItem item = new SaveItem(seleted, projectName, fileName);
+    	SaveItem item = new SaveItem(seleted, editor.getProjectName(), editor.getFileName());
     	list.addItem(item);
+    	presentedEditors.put(item, editor);
     }
     
     /**

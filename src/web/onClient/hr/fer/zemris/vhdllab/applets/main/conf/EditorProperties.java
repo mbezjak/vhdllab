@@ -9,7 +9,6 @@ public class EditorProperties {
 	private boolean readonly;
 	private boolean explicitSave;
 	private boolean singleton;
-	private String idResolver;
 
 	public EditorProperties() {
 	}
@@ -72,14 +71,6 @@ public class EditorProperties {
 	public void setSingleton(boolean singleton) {
 		this.singleton = singleton;
 	}
-	
-	public String getIdResolver() {
-		return idResolver;
-	}
-
-	public void setIdResolver(String idResolver) {
-		this.idResolver = idResolver;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -93,8 +84,7 @@ public class EditorProperties {
 				.append(", filetype=").append(fileType).append(", savable=")
 				.append(savable).append(", readonly=").append(readonly).append(
 						", explicitsave=").append(explicitSave).append(
-						", singleton=").append(singleton).append(
-						", idResolver=").append(idResolver);
+						", singleton=").append(singleton);
 		return sb.toString();
 	}
 

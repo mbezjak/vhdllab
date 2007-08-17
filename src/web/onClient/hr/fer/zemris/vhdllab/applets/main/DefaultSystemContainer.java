@@ -3,6 +3,8 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfigurationParser;
 import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
@@ -16,7 +18,7 @@ import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorStorage;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
@@ -27,7 +29,6 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.model.ResultTarget;
 import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
-import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
@@ -36,8 +37,6 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
 import java.awt.Frame;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +52,7 @@ import javax.swing.JOptionPane;
  * <blockquote><code>
  * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManager, mySystemLog, myComponentProvider, parentFrame);<br/>
  * container.setComponentStorage(myComponentStorage);<br/>
- * container.setEditorStrage(myEditorStorage);<br/>
+ * container.setEditorManager(myEditorManager);<br/>
  * container.setViewStrage(myViewStorage);<br/>
  * container.init();<br/>
  * </code></blockquote>
@@ -98,9 +97,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private IComponentStorage componentStorage;
 	/**
-	 * An editor storage.
+	 * An editor manager.
 	 */
-	private IEditorStorage editorStorage;
+	private IEditorManager editorManager;
 	/**
 	 * A view storage.
 	 */
@@ -152,13 +151,13 @@ public class DefaultSystemContainer implements ISystemContainer {
 	}
 
 	/**
-	 * Setter for an editor storage.
+	 * Setter for an editor manager.
 	 * 
-	 * @param editorStorage
-	 *            an editor storage
+	 * @param editorManager
+	 *            an editor manager
 	 */
-	public void setEditorStorage(IEditorStorage editorStorage) {
-		this.editorStorage = editorStorage;
+	public void setEditorManager(IEditorManager editorManager) {
+		this.editorManager = editorManager;
 	}
 
 	/**
@@ -182,14 +181,12 @@ public class DefaultSystemContainer implements ISystemContainer {
 		bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		resourceManager
 				.addVetoableResourceListener(new BeforeCompilationCheckCompilableAndSaveEditors());
-		resourceManager
-				.addVetoableResourceListener(new AfterCompilationEcho());
+		resourceManager.addVetoableResourceListener(new AfterCompilationEcho());
 		resourceManager
 				.addVetoableResourceListener(new AfterCompilationOpenView());
 		resourceManager
 				.addVetoableResourceListener(new BeforeSimulationCheckSimulatableAndSaveEditors());
-		resourceManager
-				.addVetoableResourceListener(new AfterSimulationEcho());
+		resourceManager.addVetoableResourceListener(new AfterSimulationEcho());
 		resourceManager
 				.addVetoableResourceListener(new AfterSimulationOpenView());
 		resourceManager
@@ -208,19 +205,24 @@ public class DefaultSystemContainer implements ISystemContainer {
 				.addVetoableResourceListener(new AfterResourceCreationEcho());
 		resourceManager
 				.addVetoableResourceListener(new AfterResourceCreationOpenEditor());
+		resourceManager.addVetoableResourceListener(new ResourceSavedEcho());
 
 		String data;
 		data = getProperty(UserFileConstants.SYSTEM_OPENED_EDITORS);
 		List<FileIdentifier> files = SerializationUtil
 				.deserializeEditorInfo(data);
 		for (FileIdentifier f : files) {
-			openEditor(f.getProjectName(), f.getFileName(), true, false);
+			IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+					.createFileEditorIdentifier(f);
+			editorManager.openEditorByResource(identifier);
 		}
 
 		data = getProperty(UserFileConstants.SYSTEM_OPENED_VIEWS);
 		List<String> views = SerializationUtil.deserializeViewInfo(data);
 		for (String s : views) {
-			openView(s);
+			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+					.createViewIdentifier(s);
+			openView(identifier);
 		}
 	}
 
@@ -231,16 +233,16 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 *             if exceptional condition occurs
 	 */
 	public void dispose() throws UniformAppletException {
-		saveAllEditors();
+		editorManager.saveAllEditors();
 		String data;
-		data = SerializationUtil.serializeEditorInfo(editorStorage
+		data = SerializationUtil.serializeEditorInfo(editorManager
 				.getAllOpenedEditors());
 		setProperty(UserFileConstants.SYSTEM_OPENED_EDITORS, data);
 
 		List<String> views = new ArrayList<String>();
 		for (IView v : viewStorage.getAllOpenedViews()) {
-			String id = viewStorage.getIdentifierFor(v);
-			views.add(id);
+			IComponentIdentifier<?> id = viewStorage.getIdentifierFor(v);
+			views.add(id.getComponentType());
 		}
 		data = SerializationUtil.serializeViewInfo(views);
 		setProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
@@ -252,7 +254,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		resourceManager = null;
 		componentProvider = null;
 		componentStorage = null;
-		editorStorage = null;
+		editorManager = null;
 		viewStorage = null;
 		bundle = null;
 		parentFrame = null;
@@ -483,6 +485,19 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 	}
 
+	private IEditor getNewEditorInstanceByFileType(String type) {
+		EditorProperties ep = configuration.getEditorPropertiesByFileType(type);
+		String clazz = ep.getClazz();
+		IEditor editor;
+		try {
+			editor = (IEditor) Class.forName(clazz).newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return editor;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -490,11 +505,14 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public String getSelectedProject() {
-		if (!viewStorage.isViewOpened(ComponentTypes.VIEW_PROJECT_EXPLORER)) {
+		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+				.createProjectExplorerIdentifier();
+		if (!viewStorage.isViewOpened(identifier)) {
 			return null;
 		} else {
-			IView view = viewStorage.getOpenedView(ComponentTypes.VIEW_PROJECT_EXPLORER);
-			return view.asInterface(IProjectExplorer.class).getSelectedProject();
+			IView view = viewStorage.getOpenedView(identifier);
+			return view.asInterface(IProjectExplorer.class)
+					.getSelectedProject();
 		}
 	}
 
@@ -505,15 +523,22 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public FileIdentifier getSelectedFile() {
-		if (!viewStorage.isViewOpened(ComponentTypes.VIEW_PROJECT_EXPLORER)) {
+		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+				.createProjectExplorerIdentifier();
+		if (!viewStorage.isViewOpened(identifier)) {
 			return null;
 		} else {
-			IView view = viewStorage.getOpenedView(ComponentTypes.VIEW_PROJECT_EXPLORER);
+			IView view = viewStorage.getOpenedView(identifier);
 			return view.asInterface(IProjectExplorer.class).getSelectedFile();
 		}
 	}
 
 	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
+
+	@Override
+	public IEditorManager getEditorManager() {
+		return editorManager;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -627,353 +652,34 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * (non-Javadoc)
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#echoStatusText(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum)
+	 *      hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType)
 	 */
 	@Override
 	public void echoStatusText(String text, MessageType type) {
-		// getStatusBar().setMessage(text, type);
 		systemLog.addSystemMessage(new SystemMessage(text, type));
 	}
 
-	/* EDITOR MANIPULATION METHODS */
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#openPreferences()
-	 */
-	@Override
-	public void openPreferences() {
-		String data = getPreferences().serialize();
-		openEditor("about", "config", data, FileTypes.FT_PREFERENCES, false,
-				false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#viewVHDLCode(hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor)
-	 */
-	@Override
-	public void viewVHDLCode(IEditor editor) {
-		if (editor == null) {
-			throw new NullPointerException("Editor cant be null");
-		}
-		viewVHDLCode(editor.getProjectName(), editor.getFileName());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#viewVHDLCode(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public IEditor viewVHDLCode(String projectName, String fileName) {
-		if(editorStorage.isEditorOpened(projectName, "vhdl:" + fileName)) {
-			return editorStorage.getOpenedEditor(projectName, "vhdl:" + fileName);
-		}
-		if (resourceManager.isCircuit(projectName, fileName)
-				|| resourceManager.isTestbench(projectName, fileName)) {
-			String vhdl;
-			try {
-				vhdl = resourceManager.generateVHDL(projectName, fileName);
-			} catch (UniformAppletException e) {
-				String text = bundle
-						.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
-				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { fileName });
-				echoStatusText(text, MessageType.ERROR);
-				return null;
-			}
-			openEditor(projectName, "vhdl:" + fileName, vhdl,
-					FileTypes.FT_VHDL_SOURCE, false, true);
-			return editorStorage.getOpenedEditor(projectName, "vhdl:" + fileName);
-		} else {
-			String text = bundle
-					.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE_FOR_THAT_FILE);
-			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
-			echoStatusText(text, MessageType.ERROR);
-			return null;
-		}
-	}
-
 	/**
 	 * TODO PENDING REMOVAL!
 	 */
 	@Override
-	public IEditor getEditor(FileIdentifier resource) {
-		if (resource == null) {
-			return null;
-		}
-		return getEditor(resource.getProjectName(), resource.getFileName());
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public IEditor getEditor(String projectName, String fileName) {
-		if (!editorStorage.isEditorOpened(projectName, fileName)) {
-			// TODO treba se tablica savable-readonly za svaki file type
-			// napravit pa tu samo to gledat.
-			openEditor(projectName, fileName, true, false);
-		}
-		return editorStorage.getOpenedEditor(projectName, fileName);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void openEditor(String projectName, String fileName,
-			boolean savable, boolean readOnly) {
-		if (projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if (fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		IEditor editor = editorStorage.getOpenedEditor(projectName, fileName);
-		if (editor == null) {
-			String content;
-			try {
-				content = resourceManager.getFileContent(projectName,
-						fileName);
-			} catch (UniformAppletException e) {
-				e.printStackTrace();
-				return;
-			}
-			FileContent fileContent = new FileContent(projectName, fileName,
-					content);
-			String type = resourceManager.getFileType(projectName, fileName);
-
-			editor = openEditorImpl(fileContent, type, savable, readOnly);
-		}
-		editorStorage.setSelectedEditor(editor);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	public void openEditor(String projectName, String fileName, String content,
-			String type, boolean savable, boolean readOnly) {
-		if (projectName == null) {
-			throw new NullPointerException("Project name can not be null.");
-		}
-		if (fileName == null) {
-			throw new NullPointerException("File name can not be null.");
-		}
-		if (content == null) {
-			throw new NullPointerException("Content can not be null.");
-		}
-		IEditor editor = editorStorage.getOpenedEditor(projectName, fileName);
-		if (editor == null) {
-			FileContent fileContent = new FileContent(projectName, fileName,
-					content);
-
-			editor = openEditorImpl(fileContent, type, savable, readOnly);
-		} else {
-			FileContent fileContent = new FileContent(projectName, fileName,
-					content);
-			editor.setFileContent(fileContent);
-		}
-		editorStorage.setSelectedEditor(editor);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	private IEditor openEditorImpl(FileContent fileContent, String type,
-			boolean savable, boolean readOnly) {
-		// Initialization of an editor
-		IEditor editor = getNewEditorInstanceByFileType(type);
-		editor.setSystemContainer(this);
-		editor.init();
-		editor.setSavable(savable);
-		editor.setReadOnly(readOnly);
-		editor.setFileContent(fileContent);
-		// End of initialization
-
-		String projectName = fileContent.getProjectName();
-		String fileName = fileContent.getFileName();
-		String title = editorStorage.createTitleFor(projectName, fileName);
-		editorStorage.add(title, title, editor);
-		String toolTipText = createEditorToolTip(projectName, fileName);
-		editorStorage.setToolTipText(editor, toolTipText);
-		return editor;
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void saveEditor(IEditor editor) {
-		if (editor == null)
-			return;
-		List<IEditor> editorsToSave = new ArrayList<IEditor>(1);
-		editorsToSave.add(editor);
-		saveEditors(editorsToSave);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void saveAllEditors() {
-		List<IEditor> openedEditors = editorStorage.getAllOpenedEditors();
-		saveEditors(openedEditors);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	private void saveEditors(List<IEditor> editorsToSave) {
-		if (editorsToSave == null || editorsToSave.isEmpty())
-			return;
-		List<IEditor> savedEditors = new ArrayList<IEditor>();
-		List<String> projects = new ArrayList<String>();
-		for (IEditor editor : editorsToSave) {
-			if (editor.isSavable() && editor.isModified()) {
-				String fileName = editor.getFileName();
-				String projectName = editor.getProjectName();
-				String content = editor.getData();
-				if (content == null)
-					continue;
-				savedEditors.add(editor);
-				if (!projects.contains(projectName)) {
-					projects.add(projectName);
-				}
-				try {
-					resourceManager.saveFile(projectName, fileName, content);
-					resetEditorTitle(false, projectName, fileName);
-					String text = bundle
-							.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
-					text = PlaceholderUtil.replacePlaceholders(text,
-							new String[] { fileName });
-					echoStatusText(text, MessageType.SUCCESSFUL);
-				} catch (UniformAppletException e) {
-					String text = bundle
-							.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
-					text = PlaceholderUtil.replacePlaceholders(text,
-							new String[] { fileName });
-					echoStatusText(text, MessageType.ERROR);
-					// TODO ovo se treba maknut kad MainApplet vise nece bit u
-					// development fazi
-					StringWriter sw = new StringWriter();
-					PrintWriter pw = new PrintWriter(sw);
-					e.printStackTrace(pw);
-					JOptionPane.showMessageDialog(parentFrame, sw.toString());
-					return;
-				}
-			}
-		}
-
-		if (viewStorage.isViewOpened(ComponentTypes.VIEW_PROJECT_EXPLORER)) {
-			IView view = viewStorage.getOpenedView(ComponentTypes.VIEW_PROJECT_EXPLORER);
-			IProjectExplorer projectExplorer = view.asInterface(IProjectExplorer.class);
-			for (String projectName : projects) {
-				projectExplorer.refreshProject(projectName);
-			}
-		}
-		if (savedEditors.size() != 0) {
-			String text = bundle
-					.getString(LanguageConstants.STATUSBAR_FILE_SAVED_ALL);
-			String numberOfFiles = String.valueOf(savedEditors.size());
-			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { numberOfFiles });
-			echoStatusText(text, MessageType.SUCCESSFUL);
-		}
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	private List<IEditor> pickOpenedEditors(List<IEditor> editors) {
-		List<IEditor> openedEditors = new ArrayList<IEditor>();
-		for (IEditor e : editors) {
-			if (editorStorage.isEditorOpened(e)) {
-				openedEditors.add(e);
-			}
-		}
-		return openedEditors;
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void closeEditor(IEditor editor, boolean showDialog) {
-		if (editor == null)
-			return;
-		List<IEditor> editorsToClose = new ArrayList<IEditor>(1);
-		editorsToClose.add(editor);
-		closeEditors(editorsToClose, showDialog);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void closeAllEditors(boolean showDialog) {
-		List<IEditor> openedEditors = editorStorage.getAllOpenedEditors();
-		closeEditors(openedEditors, showDialog);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void closeAllButThisEditor(IEditor editorToKeepOpened,
-			boolean showDialog) {
-		if (editorToKeepOpened == null)
-			return;
-		List<IEditor> openedEditors = editorStorage.getAllOpenedEditors();
-		openedEditors.remove(editorToKeepOpened);
-		closeEditors(openedEditors, showDialog);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	private void closeEditors(List<IEditor> editorsToClose, boolean showDialog) {
-		if (editorsToClose == null)
-			return;
-		String title = bundle
-				.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_TITLE);
-		String message = bundle
-				.getString(LanguageConstants.DIALOG_SAVE_RESOURCES_MESSAGE);
-		editorsToClose = pickOpenedEditors(editorsToClose);
-		boolean shouldContinue;
-		if (showDialog) {
-			shouldContinue = saveResourcesWithDialog(editorsToClose, title,
-					message);
-		} else {
-			shouldContinue = true;
-		}
-		if (shouldContinue) {
-			for (IEditor editor : editorsToClose) {
-				// Clean up of an editor
-				editor.dispose();
-				// End of clean up
-
-				editorStorage.close(editor);
-			}
-		}
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public IView getView(String type) {
-		IView view = viewStorage.getOpenedView(type);
+	public IView getView(IComponentIdentifier<?> identifier) {
+		IView view = viewStorage.getOpenedView(identifier);
 		if (view == null) {
-			openView(type);
-			view = viewStorage.getOpenedView(type);
+			openView(identifier);
+			view = viewStorage.getOpenedView(identifier);
 		}
 		return view;
+	}
+
+	@Override
+	public IView getOpenedView(IComponentIdentifier<?> identifier) {
+		return viewStorage.getOpenedView(identifier);
+	}
+
+	@Override
+	public boolean isViewOpened(IComponentIdentifier<?> identifier) {
+		return viewStorage.isViewOpened(identifier);
 	}
 
 	/*
@@ -983,27 +689,30 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public void openProjectExplorer() {
-		openView(ComponentTypes.VIEW_PROJECT_EXPLORER);
+		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+				.createProjectExplorerIdentifier();
+		openView(identifier);
 	}
 
 	/**
 	 * TODO PENDING REMOVAL!
 	 */
 	@Override
-	public IView openView(String id) {
-		IView view = viewStorage.getOpenedView(id);
+	public IView openView(IComponentIdentifier<?> identifier) {
+		IView view = viewStorage.getOpenedView(identifier);
 		if (view == null) {
 			// Initialization of a view
-			view = getNewViewInstance(id);
+			view = getNewViewInstance(identifier.getComponentType());
 			view.setSystemContainer(this);
 			view.init();
 			// End of initialization
 
-			String title = bundle.getString(LanguageConstants.TITLE_FOR + id);
-			viewStorage.add(id, title, view);
+			String title = bundle.getString(LanguageConstants.TITLE_FOR
+					+ identifier.getComponentType());
+			viewStorage.add(identifier, title, view);
 		}
-		viewStorage.setSelectedView(id);
-		return getView(id);
+		viewStorage.setSelectedView(identifier);
+		return getView(identifier);
 	}
 
 	/**
@@ -1049,94 +758,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 	}
 
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void resetEditorTitle(boolean contentChanged, String projectName,
-			String fileName) {
-		String title = editorStorage.createTitleFor(projectName, fileName);
-		if (contentChanged) {
-			title = "*" + title;
-		}
-		IEditor editor = editorStorage.getOpenedEditor(projectName, fileName);
-		if (editor != null) {
-			editorStorage.setTitle(editor, title);
-		}
-	}
-
-	/**
-	 * TODO PENDING CHANGE!
-	 */
-	private boolean saveResourcesWithDialog(List<IEditor> openedEditors,
-			String title, String message) {
-		if (openedEditors == null)
-			return false;
-		// create a list of savable and modified editors
-		List<IEditor> notSavedEditors = new ArrayList<IEditor>();
-		for (IEditor editor : openedEditors) {
-			if (editor.isSavable() && editor.isModified()) {
-				notSavedEditors.add(editor);
-			}
-		}
-
-		if (!notSavedEditors.isEmpty()) {
-			// look in preference and see if there is a need to show save dialog
-			// (user might have
-			// checked a "always save resources" checkbox)
-			boolean shouldAutoSave;
-			String selected = getProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES);
-			if (selected != null) {
-				shouldAutoSave = Boolean.parseBoolean(selected);
-			} else {
-				shouldAutoSave = false;
-			}
-
-			List<IEditor> editorsToSave = notSavedEditors;
-			if (!shouldAutoSave) {
-				List<FileIdentifier> filesToSave = showSaveDialog(title,
-						message, notSavedEditors);
-				if (filesToSave == null)
-					return false;
-
-				// If size of files returned by save dialog equals those of not
-				// saved editors
-				// then a list of files are entirely equal to a list of not
-				// saved editors and
-				// no transformation is required.
-				if (filesToSave.size() != editorsToSave.size()) {
-					// transform FileIdentifiers to editors
-					editorsToSave = new ArrayList<IEditor>();
-					for (FileIdentifier file : filesToSave) {
-						String projectName = file.getProjectName();
-						String fileName = file.getFileName();
-						IEditor e = editorStorage.getOpenedEditor(projectName,
-								fileName);
-						editorsToSave.add(e);
-					}
-				}
-			}
-
-			saveEditors(editorsToSave);
-		}
-		return true;
-	}
-
 	/* PRIVATE COMMON TASK METHODS */
-
-	/**
-	 * Creates an editor tooltip text.
-	 * 
-	 * @param projectName
-	 *            a name of a project
-	 * @param fileName
-	 *            a name of a file
-	 * @return a tooltip text
-	 */
-	private String createEditorToolTip(String projectName, String fileName) {
-		// TODO CHANGE THIS TO MORE APPROPRIATE
-		return editorStorage.createTitleFor(projectName, fileName);
-	}
 
 	/**
 	 * Initializes and show a wizard and returns created file content (can be
@@ -1160,76 +782,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 				projectName);
 		// end of initialization
 		return content;
-	}
-
-	/**
-	 * Returns a new instance of specified editor.
-	 * 
-	 * @param type
-	 *            a type of a file that editor handles
-	 * @return a new editor instance
-	 * @throws NullPointerException
-	 *             if <code>type</code> is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if can't find editor for given <code>type</code>
-	 * @throws IllegalStateException
-	 *             if editor can't be instantiated
-	 */
-	private IEditor getNewEditorInstanceByFileType(String type) {
-		if (type == null) {
-			throw new NullPointerException("Type can not be null.");
-		}
-		EditorProperties ep = configuration.getEditorPropertiesByFileType(type);
-		if (ep == null) {
-			throw new IllegalArgumentException(
-					"Can not find editor for given type.");
-		}
-		return instantiateEditor(ep);
-	}
-
-	/**
-	 * Returns a new instance of specified editor.
-	 * 
-	 * @param id
-	 *            an identifier of an editor
-	 * @return a new editor instance
-	 * @throws NullPointerException
-	 *             if <code>id</code> is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if can't find editor for given <code>id</code>
-	 * @throws IllegalStateException
-	 *             if editor can't be instantiated
-	 */
-	private IEditor getNewEditorInstance(String id) {
-		if (id == null) {
-			throw new NullPointerException("Identifier can not be null.");
-		}
-		EditorProperties ep = configuration.getEditorProperties(id);
-		if (ep == null) {
-			throw new IllegalArgumentException(
-					"Can not find editor for given identifier.");
-		}
-		return instantiateEditor(ep);
-	}
-
-	/**
-	 * Returns a new instance of specified editor.
-	 * 
-	 * @param ep
-	 *            an editor properties that contains an information on editor
-	 *            class
-	 * @return a new editor instance
-	 * @throws IllegalStateException
-	 *             if editor can't be instantiated
-	 */
-	private IEditor instantiateEditor(EditorProperties ep) {
-		IEditor editor = null;
-		try {
-			editor = (IEditor) Class.forName(ep.getClazz()).newInstance();
-		} catch (Exception e) {
-			throw new IllegalStateException("Can not instantiate editor.");
-		}
-		return editor;
 	}
 
 	/**
@@ -1309,7 +861,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * TODO PENDING CHANGE! also to change (by transition): -
 	 * saveResourcesWithSaveDialog
 	 */
-	private List<FileIdentifier> showSaveDialog(String title, String message,
+	@Override
+	public List<IEditor> showSaveDialog(String title, String message,
 			List<IEditor> editorsToBeSaved) {
 		if (editorsToBeSaved.isEmpty())
 			return Collections.emptyList();
@@ -1328,7 +881,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		dialog.setDeselectAllButtonText(deselectAll);
 		dialog.setAlwaysSaveCheckBoxText(alwaysSave);
 		for (IEditor editor : editorsToBeSaved) {
-			dialog.addItem(true, editor.getProjectName(), editor.getFileName());
+			dialog.addItem(true, editor);
 		}
 		dialog.startDialog();
 		// control locked until user clicks on OK, CANCEL or CLOSE button
@@ -1392,14 +945,14 @@ public class DefaultSystemContainer implements ISystemContainer {
 		// String projectName = (String) JOptionPane.showInputDialog(this,
 		// message, title, JOptionPane.OK_CANCEL_OPTION, null, options,
 		// options[0]);
-		String projectName = (String) JOptionPane.showInputDialog(parentFrame,
-				message, title, JOptionPane.OK_CANCEL_OPTION);
+		String projectName = JOptionPane.showInputDialog(parentFrame, message,
+				title, JOptionPane.OK_CANCEL_OPTION);
 		/*
 		 * try { if(projectName != null &&
 		 * communicator.existsProject(projectName)) { return null; } } catch
 		 * (UniformAppletException e) { }
 		 */
-		if(projectName.equals("")) {
+		if (projectName.equals("")) {
 			projectName = null;
 		}
 		return projectName;
@@ -1423,12 +976,12 @@ public class DefaultSystemContainer implements ISystemContainer {
 				// veto compilation
 				throw new ResourceVetoException();
 			}
-			List<IEditor> openedEditors = editorStorage
+			List<IEditor> openedEditors = editorManager
 					.getOpenedEditorsThatHave(projectName);
 			String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
 			String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-			boolean shouldContinue = saveResourcesWithDialog(openedEditors,
-					title, message);
+			boolean shouldContinue = editorManager.saveResourcesWithDialog(
+					openedEditors, title, message);
 			if (!shouldContinue) {
 				// veto compilation
 				throw new ResourceVetoException();
@@ -1462,7 +1015,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void resourceCompiled(String projectName, String fileName,
 				CompilationResult result) {
-			openView(ComponentTypes.VIEW_COMPILATION_ERRORS);
+			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+					.createViewIdentifier(ComponentTypes.VIEW_COMPILATION_ERRORS);
+			openView(identifier);
 
 			FileIdentifier resource = new FileIdentifier(projectName, fileName);
 			ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
@@ -1489,12 +1044,12 @@ public class DefaultSystemContainer implements ISystemContainer {
 				// veto simulation
 				throw new ResourceVetoException();
 			}
-			List<IEditor> openedEditors = editorStorage
+			List<IEditor> openedEditors = editorManager
 					.getOpenedEditorsThatHave(projectName);
 			String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
 			String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-			boolean shouldContinue = saveResourcesWithDialog(openedEditors,
-					title, message);
+			boolean shouldContinue = editorManager.saveResourcesWithDialog(
+					openedEditors, title, message);
 			if (!shouldContinue) {
 				// veto simulation
 				throw new ResourceVetoException();
@@ -1529,7 +1084,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void resourceSimulated(String projectName, String fileName,
 				SimulationResult result) {
-			openView(ComponentTypes.VIEW_SIMULATION_ERRORS);
+			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+					.createViewIdentifier(ComponentTypes.VIEW_SIMULATION_ERRORS);
+			openView(identifier);
 
 			FileIdentifier resource = new FileIdentifier(projectName, fileName);
 			ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(
@@ -1549,9 +1106,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 		public void resourceSimulated(String projectName, String fileName,
 				SimulationResult result) {
 			if (result.getWaveform() != null) {
-				String simulationName = fileName + ".sim";
-				openEditor(projectName, simulationName, result.getWaveform(),
-						FileTypes.FT_VHDL_SIMULATION, false, true);
+				FileIdentifier file = new FileIdentifier(projectName, fileName);
+				IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+						.createSimulationEditorIdentifier(file);
+				FileContent content = new FileContent(projectName, fileName, result.getWaveform());
+				editorManager.openEditor(identifier, content);
 			}
 		}
 	}
@@ -1704,7 +1263,27 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void resourceCreated(String projectName, String fileName,
 				String type) {
-			openEditor(projectName, fileName, true, false);
+			FileIdentifier file = new FileIdentifier(projectName, fileName);
+			IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+					.createFileEditorIdentifier(file);
+
+			editorManager.openEditorByResource(identifier);
+		}
+	}
+
+	/**
+	 * Echoes that a resource has been saved.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class ResourceSavedEcho extends VetoableResourceAdapter {
+		@Override
+		public void resourceSaved(String projectName, String fileName) {
+			String text = bundle
+					.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
+			text = PlaceholderUtil.replacePlaceholders(text,
+					new String[] { fileName });
+			echoStatusText(text, MessageType.SUCCESSFUL);
 		}
 	}
 

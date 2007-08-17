@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.ComponentGroup;
 import hr.fer.zemris.vhdllab.applets.main.ComponentPlacement;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 
 import java.util.Collection;
 
@@ -28,39 +29,9 @@ import javax.swing.JComponent;
  * @author Miro Bezjak
  * @see IEditorStorage
  * @see IViewStorage
- * @see IProjectExplorerStorage
  * @see IComponentContainer
  */
 public interface IComponentStorage {
-
-	/**
-	 * Adds a component to storage (ultimately to be presented to a user).
-	 * Component placement that will be used is determined from a property of
-	 * component's group.
-	 * <p>
-	 * If component already exists in storage then this method will reset the
-	 * title.
-	 * </p>
-	 * 
-	 * @param identifier
-	 *            a unique identifier for a <code>component</code> in a
-	 *            specified <code>group</code>
-	 * @param group
-	 *            a group where <code>component</code> belong to
-	 * @param title
-	 *            a title that is used in tabbed pane when component is
-	 *            displayed
-	 * @param component
-	 *            a component to add
-	 * @return <code>true</code> if <code>component</code> was added to
-	 *         storage or <code>false</code> if it is already in a storage
-	 *         (and thus will not be added)
-	 * @throws NullPointerException
-	 *             if either parameter is <code>null</code>
-	 * @see #add(String, ComponentGroup, String, JComponent, ComponentPlacement)
-	 */
-	boolean add(String identifier, ComponentGroup group, String title,
-			JComponent component);
 
 	/**
 	 * Adds a <code>component</code> to storage (ultimately to be presented to
@@ -94,8 +65,8 @@ public interface IComponentStorage {
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	boolean add(String identifier, ComponentGroup group, String title,
-			JComponent component, ComponentPlacement placement);
+	boolean add(IComponentIdentifier<?> identifier, ComponentGroup group,
+			String title, JComponent component, ComponentPlacement placement);
 
 	/**
 	 * Removes a component from storage.
@@ -107,7 +78,7 @@ public interface IComponentStorage {
 	 * @throws NullPointerException
 	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	JComponent remove(String identifier);
+	JComponent remove(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Removes a specified component from storage.
@@ -131,7 +102,7 @@ public interface IComponentStorage {
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void moveComponent(String identifier, ComponentPlacement placement);
+	void moveComponent(IComponentIdentifier<?> identifier, ComponentPlacement placement);
 
 	/**
 	 * Returns a location where a component is stored or <code>null</code> if
@@ -155,7 +126,7 @@ public interface IComponentStorage {
 	 * @throws NullPointerException
 	 *             if <code>component</code> is <code>null</code>
 	 */
-	String getIdentifierFor(JComponent component);
+	IComponentIdentifier<?> getIdentifierFor(JComponent component);
 
 	/**
 	 * Returns a component with specified <code>identifier</code> or
@@ -167,7 +138,7 @@ public interface IComponentStorage {
 	 * @throws NullPointerException
 	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	JComponent getComponent(String identifier);
+	JComponent getComponent(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Returns all components that belong to specified <code>group</code>.
@@ -192,7 +163,7 @@ public interface IComponentStorage {
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void setSelectedComponent(String identifier);
+	void setSelectedComponent(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Returns a selected component or <code>null</code> if no component is
@@ -237,7 +208,7 @@ public interface IComponentStorage {
 	 * @throws NullPointerException
 	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	boolean contains(String identifier);
+	boolean contains(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Sets a title for a component.
@@ -251,7 +222,7 @@ public interface IComponentStorage {
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void setTitle(String identifier, String title);
+	void setTitle(IComponentIdentifier<?> identifier, String title);
 
 	/**
 	 * Returns a title for a component.
@@ -264,7 +235,7 @@ public interface IComponentStorage {
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	String getTitleFor(String identifier);
+	String getTitleFor(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Sets a tooltip for a component.
@@ -279,7 +250,7 @@ public interface IComponentStorage {
 	 * @throws IllegalArgumentException
 	 *             is specified component is not stored
 	 */
-	void setToolTipText(String identifier, String tooltip);
+	void setToolTipText(IComponentIdentifier<?> identifier, String tooltip);
 
 	/**
 	 * Returns the number of stored components.

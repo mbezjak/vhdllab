@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.conf;
 
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,10 @@ public class ComponentConfiguration {
 	
 	public void addView(ViewProperties view) {
 		views.put(view.getId(), view);
+	}
+	
+	public EditorProperties getEditorProperties(IComponentIdentifier<?> id) {
+		return getEditorProperties(id.getComponentType());
 	}
 	
 	public EditorProperties getEditorProperties(String id) {

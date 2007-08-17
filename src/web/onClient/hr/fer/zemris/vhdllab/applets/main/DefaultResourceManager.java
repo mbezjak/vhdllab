@@ -397,6 +397,7 @@ public class DefaultResourceManager implements IResourceManager {
 			throw new NullPointerException("File content cant be null");
 		}
 		communicator.saveFile(projectName, fileName, content);
+		fireResourceSaved(projectName, fileName);
 	}
 
 	/*
@@ -487,6 +488,9 @@ public class DefaultResourceManager implements IResourceManager {
 	 */
 	@Override
 	public boolean isCircuit(String projectName, String fileName) {
+		if (projectName == null || fileName == null) {
+			return false;
+		}
 		String type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
@@ -502,6 +506,9 @@ public class DefaultResourceManager implements IResourceManager {
 	 */
 	@Override
 	public boolean isTestbench(String projectName, String fileName) {
+		if (projectName == null || fileName == null) {
+			return false;
+		}
 		String type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
@@ -530,6 +537,9 @@ public class DefaultResourceManager implements IResourceManager {
 	 */
 	@Override
 	public boolean isSimulation(String projectName, String fileName) {
+		if (projectName == null || fileName == null) {
+			return false;
+		}
 		String type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
@@ -545,6 +555,9 @@ public class DefaultResourceManager implements IResourceManager {
 	 */
 	@Override
 	public boolean isCompilable(String projectName, String fileName) {
+		if (projectName == null || fileName == null) {
+			return false;
+		}
 		String type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
@@ -560,11 +573,29 @@ public class DefaultResourceManager implements IResourceManager {
 	 */
 	@Override
 	public boolean isSimulatable(String projectName, String fileName) {
+		if (projectName == null || fileName == null) {
+			return false;
+		}
 		String type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
 		}
 		return FileTypes.isTestbench(type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#canGenerateVHDLCode(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean canGenerateVHDLCode(String projectName, String fileName) {
+		if (projectName == null || fileName == null) {
+			return false;
+		}
+		return isCircuit(projectName, fileName)
+				|| isTestbench(projectName, fileName);
 	}
 
 	/*
@@ -576,8 +607,10 @@ public class DefaultResourceManager implements IResourceManager {
 	public boolean isCorrectEntityName(String name) {
 		return StringFormat.isCorrectEntityName(name);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCorrectFileName(java.lang.String)
 	 */
 	@Override
@@ -778,6 +811,20 @@ public class DefaultResourceManager implements IResourceManager {
 		}
 	}
 
+	/**
+	 * Fires resourceSaved event.
+	 * 
+	 * @param projectName
+	 *            a name of a project
+	 * @param fileName
+	 *            a name of a file
+	 */
+	private void fireResourceSaved(String projectName, String fileName) {
+		for (VetoableResourceListener l : getVetoableResourceListeners()) {
+			l.resourceSaved(projectName, fileName);
+		}
+	}
+	
 	/**
 	 * Fires resourceCompiled event.
 	 * 

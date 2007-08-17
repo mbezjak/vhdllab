@@ -105,6 +105,16 @@ public interface VetoableResourceListener extends EventListener {
 	 *            a name of a deleted file
 	 */
 	void resourceDeleted(String projectName, String fileName);
+	
+	/**
+	 * Indicates that a resource has been saved.
+	 * 
+	 * @param projectName
+	 *            a name of a project containing a file
+	 * @param fileName
+	 *            a name of a deleted file
+	 */
+	void resourceSaved(String projectName, String fileName);
 
 	/**
 	 * Indicates that a resource is about to be compiled. If someone vetoes this

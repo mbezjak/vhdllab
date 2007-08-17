@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage;
@@ -46,15 +47,15 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#add(java.lang.String, java.lang.String, hr.fer.zemris.vhdllab.applets.main.interfaces.IView)
 	 */
 	@Override
-	public boolean add(String identifier, String title, IView view) {
-		return storage.add(identifier, group, title, getComponentFor(view));
+	public boolean add(IComponentIdentifier<?> identifier, String title, IView view) {
+		return storage.add(identifier, group, title, getComponentFor(view), ComponentPlacement.BOTTOM);
 	}
 
 	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#close(java.lang.String)
 	 */
 	@Override
-	public IView close(String identifier) {
+	public IView close(IComponentIdentifier<?> identifier) {
 		return (IView) storage.remove(identifier);
 	}
 	
@@ -70,7 +71,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#move(java.lang.String, hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
 	 */
 	@Override
-	public void move(String identifier, ComponentPlacement placement) {
+	public void move(IComponentIdentifier<?> identifier, ComponentPlacement placement) {
 		storage.moveComponent(identifier, placement);
 	}
 	
@@ -78,7 +79,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#getIdentifierFor(hr.fer.zemris.vhdllab.applets.main.interfaces.IView)
 	 */
 	@Override
-	public String getIdentifierFor(IView view) {
+	public IComponentIdentifier<?> getIdentifierFor(IView view) {
 		if(view == null) {
 			throw new NullPointerException("View cant be null");
 		}
@@ -89,7 +90,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#getOpenedView(java.lang.String)
 	 */
 	@Override
-	public IView getOpenedView(String identifier) {
+	public IView getOpenedView(IComponentIdentifier<?> identifier) {
 		return (IView) storage.getComponent(identifier);
 	}
 
@@ -110,7 +111,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#setSelectedView(java.lang.String)
 	 */
 	@Override
-	public void setSelectedView(String identifier) {
+	public void setSelectedView(IComponentIdentifier<?> identifier) {
 		storage.setSelectedComponent(identifier);
 	}
 
@@ -126,7 +127,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#isViewOpened(java.lang.String)
 	 */
 	@Override
-	public boolean isViewOpened(String identifier) {
+	public boolean isViewOpened(IComponentIdentifier<?> identifier) {
 		return storage.contains(identifier);
 	}
 
@@ -134,7 +135,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#setTitle(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setTitle(String identifier, String title) {
+	public void setTitle(IComponentIdentifier<?> identifier, String title) {
 		storage.setTitle(identifier, title);
 	}
 
@@ -142,7 +143,7 @@ public class DefaultViewStorage implements IViewStorage {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage#setToolTipText(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setToolTipText(String identifier, String tooltip) {
+	public void setToolTipText(IComponentIdentifier<?> identifier, String tooltip) {
 		storage.setToolTipText(identifier, tooltip);
 	}
 

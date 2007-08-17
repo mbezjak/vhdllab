@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.ComponentPlacement;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 
 import java.util.List;
 
@@ -16,7 +17,6 @@ import java.util.List;
  * 
  * @author Miro Bezjak
  * @see IEditorStorage
- * @see IProjectExplorerStorage
  * @see IComponentStorage
  * @see IComponentContainer
  */
@@ -37,7 +37,7 @@ public interface IViewStorage {
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	boolean add(String identifier, String title, IView view);
+	boolean add(IComponentIdentifier<?> identifier, String title, IView view);
 
 	/**
 	 * Closes opened view.
@@ -49,7 +49,7 @@ public interface IViewStorage {
 	 * @throws NullPointerException
 	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	IView close(String identifier);
+	IView close(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Closes specified view.
@@ -73,7 +73,7 @@ public interface IViewStorage {
 	 * @throws IllegalArgumentException
 	 *             if specified view is not opened
 	 */
-	void move(String identifier, ComponentPlacement placement);
+	void move(IComponentIdentifier<?> identifier, ComponentPlacement placement);
 
 	/**
 	 * Returns an identifier for opened <code>view</code> or
@@ -84,7 +84,7 @@ public interface IViewStorage {
 	 * @throws NullPointerException
 	 *             if <code>view</code> is <code>null</code>
 	 */
-	String getIdentifierFor(IView view);
+	IComponentIdentifier<?> getIdentifierFor(IView view);
 
 	/**
 	 * Returns a view represented by <code>identifier</code> or
@@ -96,7 +96,7 @@ public interface IViewStorage {
 	 * @throws NullPointerException
 	 *             is <code>identifier</code> is <code>null</code>
 	 */
-	IView getOpenedView(String identifier);
+	IView getOpenedView(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Returns a collection of all views that are currently opened. Returned
@@ -117,7 +117,7 @@ public interface IViewStorage {
 	 * @throws IllegalArgumentException
 	 *             if specified view is not opened
 	 */
-	void setSelectedView(String identifier);
+	void setSelectedView(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Returns a selected view or <code>null</code> if no view is selected.
@@ -142,7 +142,7 @@ public interface IViewStorage {
 	 * @throws NullPointerException
 	 *             if <code>identifier</code> is <code>null</code>
 	 */
-	boolean isViewOpened(String identifier);
+	boolean isViewOpened(IComponentIdentifier<?> identifier);
 
 	/**
 	 * Sets a title for a view.
@@ -156,7 +156,7 @@ public interface IViewStorage {
 	 * @throws IllegalArgumentException
 	 *             if specified view is not opened
 	 */
-	void setTitle(String identifier, String title);
+	void setTitle(IComponentIdentifier<?> identifier, String title);
 
 	/**
 	 * Sets a tooltip text for a view.
@@ -170,7 +170,7 @@ public interface IViewStorage {
 	 * @throws IllegalArgumentException
 	 *             if specified view is not opened
 	 */
-	void setToolTipText(String identifier, String tooltip);
+	void setToolTipText(IComponentIdentifier<?> identifier, String tooltip);
 
 	/**
 	 * Returns the number of opened views.
@@ -186,7 +186,6 @@ public interface IViewStorage {
 	 * 
 	 * @return <code>true</code> if there is no opened views;
 	 *         <code>false</code> otherwise
-	 * @see #getEditorCount()
 	 */
 	boolean isEmpty();
 

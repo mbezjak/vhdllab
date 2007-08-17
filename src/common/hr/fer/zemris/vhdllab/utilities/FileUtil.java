@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
- * Utility class for loading properties, filtering malitious path etc.
+ * Utility class for loading properties, filtering malicious path etc.
  * 
  * @author Miro Bezjak
  */
@@ -24,7 +24,7 @@ public final class FileUtil {
 
 	/**
 	 * Reads complete file content in <code>UTF-8</code> encoding and returns
-	 * it as a string. If any exception occures then this method will return
+	 * it as a string. If any exception occurs then this method will return
 	 * <code>null</code>.
 	 * 
 	 * @param fileName
@@ -38,7 +38,7 @@ public final class FileUtil {
 
 	/**
 	 * Reads complete file content in specified encoding and returns it as a
-	 * string. If any exception occures then this method will return
+	 * string. If any exception occurs then this method will return
 	 * <code>null</code>.
 	 * 
 	 * @param fileName
@@ -73,7 +73,7 @@ public final class FileUtil {
 
 	/**
 	 * Reads complete file content in UTF-8 encoding and returns it as a string.
-	 * If any exception occures then this method will return <code>null</code>.
+	 * If any exception occurs then this method will return <code>null</code>.
 	 * 
 	 * @param is
 	 *            an input stream of a file
@@ -86,7 +86,7 @@ public final class FileUtil {
 
 	/**
 	 * Reads complete file content in specified encoding and returns it as a
-	 * string. If any exception occures then this method will return
+	 * string. If any exception occurs then this method will return
 	 * <code>null</code>.
 	 * 
 	 * @param is
@@ -116,7 +116,7 @@ public final class FileUtil {
 	/**
 	 * Returns a properties object out of content from input stream
 	 * <code>is</code>. This method will also close <code>is</code> when
-	 * properties is created. If {@link IOException} occures then this method
+	 * properties is created. If {@link IOException} occurs then this method
 	 * will return <code>null</code>.
 	 * 
 	 * @param is
@@ -176,7 +176,7 @@ public final class FileUtil {
 	/**
 	 * Merges two paths into one. <code>endPath</code> is considered to be
 	 * relative to <code>beginPath</code>. <code>endPath</code> will also
-	 * be scaned and filtered for <code>..</code> special characters (among
+	 * be scanned and filtered for <code>..</code> special characters (among
 	 * others) as described in {@link #filterMaliciousPath(String)} method.
 	 * There is no need for <code>beginPath</code> to be absolute path and in
 	 * that case merged path will be relative aswell.

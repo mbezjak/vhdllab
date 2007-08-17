@@ -42,7 +42,7 @@ public interface IStatusBar {
 	/**
 	 * Sets specified message to be displayed in status bar.
 	 * @param message a message to be displayed
-	 * @param message type
+	 * @param type a message type
 	 */
 	void setMessage(String message, MessageType type);
 	

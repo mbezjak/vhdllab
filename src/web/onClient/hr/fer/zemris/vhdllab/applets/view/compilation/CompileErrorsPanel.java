@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.view.compilation;
 
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
+import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.event.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
@@ -111,10 +113,14 @@ public class CompileErrorsPanel extends JPanel implements IView {
 			if (container.getResourceManager().getFileType(
 					resource.getProjectName(), resource.getFileName()).equals(
 					FileTypes.FT_VHDL_SOURCE)) {
-				editor = container.getEditor(resource);
+				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+						.createFileEditorIdentifier(resource);
+				editor = container.getEditorManager().getOpenedEditor(
+						identifier);
 			} else {
-				editor = container.viewVHDLCode(resource.getProjectName(),
-						resource.getFileName());
+				IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+						.createViewVHDLIdentifier(resource);
+				editor = container.getEditorManager().viewVHDLCode(identifier);
 			}
 			int temp = Integer.valueOf(matcher.group(2));
 			editor.highlightLine(temp);
@@ -181,7 +187,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
 	public void setSystemContainer(ISystemContainer container) {
 		this.container = container;
 	}
-	
+
 	@Override
 	public <T> T asInterface(Class<T> clazz) {
 		return null;

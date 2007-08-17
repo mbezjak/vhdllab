@@ -35,6 +35,14 @@ public class LanguageConstants {
 	 * to append one of component type to this key in order for key to be complete.
 	 */
 	public static final String TITLE_FOR = "title.for.";
+	/**
+	 * Part of a key for component tooltip. In addition to this key user needs
+	 * to append one of component type to this key in order for key to be complete.
+	 */
+	public static final String TOOLTIP_FOR = "tooltip.for.";
+	
+	public static final String TOOLTIP_EDITOR_EDITABLE = "tooltip.editor.editable";
+	public static final String TOOLTIP_EDITOR_READONLY = "tooltip.editor.readonly";
 	
 	public static final String MENU_FILE = "menu.file";
 	public static final String MENU_EDIT = "menu.edit";
@@ -104,6 +112,7 @@ public class LanguageConstants {
 
 	
 	public static final String STATUSBAR_LOAD_COMPLETE = "statusbar.load.complete";
+	public static final String STATUSBAR_INTERNAL_ERROR = "statusbar.internal.error";
 	public static final String STATUSBAR_LANGUAGE_SETTING_NOT_FOUND = "statusbar.language.setting.not.found";
 	public static final String STATUSBAR_EXISTS_FILE = "statusbar.exists.file";
 	public static final String STATUSBAR_EXISTS_PROJECT = "statusbar.exists.project";

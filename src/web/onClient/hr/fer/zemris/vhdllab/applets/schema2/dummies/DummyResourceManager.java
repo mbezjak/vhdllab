@@ -1,12 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
@@ -16,6 +9,13 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class DummyResourceManager implements IResourceManager {
 
@@ -256,6 +256,15 @@ public class DummyResourceManager implements IResourceManager {
 
 	@Override
 	public boolean isCorrectFileName(String name) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#canGenerateVHDLCode(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public boolean canGenerateVHDLCode(String projectName, String fileName) {
 		// TODO Auto-generated method stub
 		return false;
 	}
