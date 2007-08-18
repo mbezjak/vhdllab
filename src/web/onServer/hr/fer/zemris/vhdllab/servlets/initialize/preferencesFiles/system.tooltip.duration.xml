@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<property id="system.tooltip.duration" type="system" >
+	<description>Tool tip duration</description>
+	<tooltip>A duration of a tool tip text</tooltip>
+	<editable byUser="true" />
+	<data type="integer" editor="custom">
+		<default>15000</default>
+	</data>
+</property>

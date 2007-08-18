@@ -209,7 +209,7 @@ public class PreferencesWizard extends JPanel implements IWizard {
 					.append("* open src/common/hr.fer.zemris.vhdllab.constants.UserFileConstants class\n\t")
 					.append("* add the following line at the end:\n\t\t")
 					.append("public static final String ").append(idText.getText().toUpperCase().replaceAll("\\.", "_"))
-					.append(" = \"").append(typeText.getText()).append("\";\n\n");
+					.append(" = \"").append(idText.getText()).append("\";\n\n");
 				
 				sb.append(" - now you need to add xml file to specified package\n\t")
 					.append("* now open src/web/onServer/hr.fer.zemris.vhdllab.servlets.initialize.preferencesFiles package\n\t")

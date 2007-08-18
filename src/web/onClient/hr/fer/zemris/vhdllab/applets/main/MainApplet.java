@@ -66,6 +66,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
@@ -158,6 +159,14 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		}
 
 		initGUI();
+		int duration;
+		try {
+			duration = resourceManager.getPreferences().getPropertyAsInteger(
+					UserFileConstants.SYSTEM_TOOLTIP_DURATION).intValue();
+		} catch (PropertyAccessException e) {
+			duration = 15000;
+		}
+		ToolTipManager.sharedInstance().setDismissDelay(duration);
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -198,6 +207,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
 		getPreferences().addPropertyListener(this,
 				UserFileConstants.SYSTEM_VIEW_HEIGHT);
+		getPreferences().addPropertyListener(this,
+				UserFileConstants.SYSTEM_TOOLTIP_DURATION);
 
 		// FIXME ovo mozda spretnije rijesit
 		IComponentIdentifier<?> stViewIdentifier = ComponentIdentifierFactory
@@ -1238,6 +1249,16 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		} else if (name.equalsIgnoreCase(UserFileConstants.SYSTEM_VIEW_HEIGHT)) {
 			viewSplitPane
 					.setDividerLocation((int) (viewSplitPane.getHeight() * size));
+		} else if (name
+				.equalsIgnoreCase(UserFileConstants.SYSTEM_TOOLTIP_DURATION)) {
+			int duration;
+			try {
+				duration = getPreferences().getPropertyAsInteger(
+						UserFileConstants.SYSTEM_TOOLTIP_DURATION).intValue();
+			} catch (PropertyAccessException e) {
+				duration = 15000;
+			}
+			ToolTipManager.sharedInstance().setDismissDelay(duration);
 		}
 	}
 
