@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
@@ -274,6 +273,13 @@ public interface ISystemContainer {
 	IEditorManager getEditorManager();
 	
 	/**
+	 * Returns a view manager. Return value will never be <code>null</code>.
+	 * 
+	 * @return a view manager
+	 */
+	IViewManager getViewManager();
+	
+	/**
 	 * Returns a system log. Return value will never be <code>null</code>.
 	 * 
 	 * @return a system log
@@ -364,26 +370,7 @@ public interface ISystemContainer {
 	 */
 	void echoStatusText(String text, MessageType type);
 
-	/* EDITOR MANIPULATION METHODS */
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	IView getView(IComponentIdentifier<?> identifier);
-
-	/**
-	 * Opens a project explorer.
-	 */
-	void openProjectExplorer();
-
-	void closeView(IView view);
-
-	IView openView(IComponentIdentifier<?> type);
-
 	List<IEditor> showSaveDialog(String title, String message,
 			List<IEditor> editorsToBeSaved);
 
-	boolean isViewOpened(IComponentIdentifier<?> identifier);
-
-	IView getOpenedView(IComponentIdentifier<?> identifier);
 }

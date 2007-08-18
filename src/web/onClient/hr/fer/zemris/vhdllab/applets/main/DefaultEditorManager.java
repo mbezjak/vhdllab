@@ -31,8 +31,6 @@ import javax.swing.JComponent;
 /**
  * This is a default implementation of {@link IEditorManager}.
  * 
- * Defines methods for manipulating editors.
- * 
  * @author Miro Bezjak
  */
 public class DefaultEditorManager implements IEditorManager {
@@ -274,7 +272,6 @@ public class DefaultEditorManager implements IEditorManager {
 		ComponentPlacement placement = getPlacement(identifier);
 		storage.add(identifier, group, title, (JComponent) editor, placement);
 		storage.setToolTipText(identifier, tooltip);
-		storage.setSelectedComponent(identifier);
 		return editor;
 	}
 
@@ -359,8 +356,8 @@ public class DefaultEditorManager implements IEditorManager {
 
 		IComponentIdentifier<?> peIdentifier = ComponentIdentifierFactory
 				.createProjectExplorerIdentifier();
-		if (container.isViewOpened(peIdentifier)) {
-			IView view = container.getOpenedView(peIdentifier);
+		if (container.getViewManager().isViewOpened(peIdentifier)) {
+			IView view = container.getViewManager().getOpenedView(peIdentifier);
 			IProjectExplorer projectExplorer = view
 					.asInterface(IProjectExplorer.class);
 			for (String projectName : projects) {
@@ -438,7 +435,7 @@ public class DefaultEditorManager implements IEditorManager {
 	}
 
 	/**
-	 * Closes all specified editors. If <code>editor</code> is
+	 * Closes all specified editors. If <code>editorsToClose</code> is
 	 * <code>null</code> no exception will be thrown and this method will
 	 * simply return.
 	 * 
@@ -583,7 +580,7 @@ public class DefaultEditorManager implements IEditorManager {
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#findAllEditorAssociatedWith(java.lang.Object)
 	 */
-	public List<IEditor> findAllEditorAssociatedWith(Object instanceModifier) {
+	public List<IEditor> findAllEditorsAssociatedWith(Object instanceModifier) {
 		if (instanceModifier == null) {
 			throw new NullPointerException("Instance modifier cant be null");
 		}
@@ -694,6 +691,13 @@ public class DefaultEditorManager implements IEditorManager {
 		return storage.getIdentifierFor((JComponent) editor);
 	}
 
+	/**
+	 * Returns a component placement out of specified identifier.
+	 * 
+	 * @param identifier
+	 *            an identifier for whom to determine placement
+	 * @return a component placement
+	 */
 	private ComponentPlacement getPlacement(IComponentIdentifier<?> identifier) {
 		String id = identifier.getComponentType();
 		String property;

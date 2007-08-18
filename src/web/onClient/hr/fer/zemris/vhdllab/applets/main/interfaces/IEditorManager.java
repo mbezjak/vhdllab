@@ -102,9 +102,8 @@ public interface IEditorManager {
 	IEditor openEditor(IComponentIdentifier<?> identifier, FileContent content);
 
 	/**
-	 * Returns an editor represented by <code>projectName</code> and
-	 * <code>fileName</code> or <code>null</code> if such editor is not
-	 * opened.
+	 * Returns an editor represented by <code>identifier</code> or
+	 * <code>null</code> if such editor is not opened.
 	 * 
 	 * @param identifier
 	 *            an editor identifier
@@ -238,7 +237,7 @@ public interface IEditorManager {
 	 * @throws NullPointerException
 	 *             if <code>instanceModifier</code> is <code>null</code>
 	 */
-	List<IEditor> findAllEditorAssociatedWith(Object instanceModifier);
+	List<IEditor> findAllEditorsAssociatedWith(Object instanceModifier);
 
 	/**
 	 * Returns all opened editors. Return value will never be <code>null</code>
@@ -261,7 +260,7 @@ public interface IEditorManager {
 	 *             is <code>projectName</code> is <code>null</code>
 	 */
 	List<IEditor> getOpenedEditorsThatHave(String projectName);
-	
+
 	/**
 	 * Returns a selected editor or <code>null</code> if no editor is
 	 * selected.

@@ -41,6 +41,10 @@ public class ComponentConfiguration {
 		return editorsByFileType.get(type);
 	}
 	
+	public ViewProperties getViewProperties(IComponentIdentifier<?> id) {
+		return getViewProperties(id.getComponentType());
+	}
+	
 	public ViewProperties getViewProperties(String id) {
 		return views.get(id);
 	}

@@ -20,7 +20,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
@@ -110,7 +110,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 	private IComponentStorage componentStorage;
 	private IEditorManager editorManager;
-	private IViewStorage viewStorage;
+	private IViewManager viewManager;
 
 	private Communicator communicator;
 
@@ -145,7 +145,6 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			resourceManager = new DefaultResourceManager(communicator);
 			systemLog = new DefaultSystemLog();
 			componentStorage = new DefaultComponentStorage(this);
-			viewStorage = new DefaultViewStorage(componentStorage);
 			bundle = resourceManager
 					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (Exception e) {
@@ -179,11 +178,13 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		}
 		editorManager = new DefaultEditorManager(componentStorage, conf,
 				systemContainer);
+		viewManager = new DefaultViewManager(componentStorage, conf,
+				systemContainer);
 		ComponentIdentifierFactory.setComponentConfiguration(conf);
 		ComponentIdentifierFactory.setContainer(systemContainer);
 		systemContainer.setComponentStorage(componentStorage);
 		systemContainer.setEditorManager(editorManager);
-		systemContainer.setViewStorage(viewStorage);
+		systemContainer.setViewManager(viewManager);
 		try {
 			systemContainer.init();
 		} catch (UniformAppletException e) {
@@ -201,8 +202,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		// FIXME ovo mozda spretnije rijesit
 		IComponentIdentifier<?> stViewIdentifier = ComponentIdentifierFactory
 				.createViewIdentifier(ComponentTypes.VIEW_STATUS_HISTORY);
-		systemContainer.openView(stViewIdentifier);
-		systemContainer.openProjectExplorer();
+		systemContainer.getViewManager().openView(stViewIdentifier);
+		systemContainer.getViewManager().openProjectExplorer();
 
 		String text = bundle
 				.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
@@ -290,7 +291,17 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				Component component = centerTabbedPane.getSelectedComponent();
-				if(component == null) {
+				if (component == null) {
+					return;
+				}
+				activate((JComponent) component);
+			}
+		});
+		centerTabbedPane.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				Component component = centerTabbedPane.getSelectedComponent();
+				if (component == null) {
 					return;
 				}
 				activate((JComponent) component);
@@ -300,7 +311,17 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				Component component = bottomTabbedPane.getSelectedComponent();
-				if(component == null) {
+				if (component == null) {
+					return;
+				}
+				activate((JComponent) component);
+			}
+		});
+		bottomTabbedPane.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				Component component = bottomTabbedPane.getSelectedComponent();
+				if (component == null) {
 					return;
 				}
 				activate((JComponent) component);
@@ -310,7 +331,17 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				Component component = leftTabbedPane.getSelectedComponent();
-				if(component == null) {
+				if (component == null) {
+					return;
+				}
+				activate((JComponent) component);
+			}
+		});
+		leftTabbedPane.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				Component component = leftTabbedPane.getSelectedComponent();
+				if (component == null) {
 					return;
 				}
 				activate((JComponent) component);
@@ -320,7 +351,17 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				Component component = rightTabbedPane.getSelectedComponent();
-				if(component == null) {
+				if (component == null) {
+					return;
+				}
+				activate((JComponent) component);
+			}
+		});
+		rightTabbedPane.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				Component component = rightTabbedPane.getSelectedComponent();
+				if (component == null) {
 					return;
 				}
 				activate((JComponent) component);
@@ -340,7 +381,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		centerTabbedPane.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2 && centerTabbedPane.getTabCount() != 0) {
+				if (e.getClickCount() == 2
+						&& centerTabbedPane.getTabCount() != 0) {
 					maximizeComponent(centerTabbedPane);
 				}
 				Component component = centerTabbedPane.getSelectedComponent();
@@ -362,7 +404,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		bottomTabbedPane.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2 && bottomTabbedPane.getTabCount() != 0) {
+				if (e.getClickCount() == 2
+						&& bottomTabbedPane.getTabCount() != 0) {
 					maximizeComponent(bottomTabbedPane);
 				}
 				Component component = bottomTabbedPane.getSelectedComponent();
@@ -406,7 +449,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		rightTabbedPane.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2 && rightTabbedPane.getTabCount() != 0) {
+				if (e.getClickCount() == 2
+						&& rightTabbedPane.getTabCount() != 0) {
 					maximizeComponent(rightTabbedPane);
 				}
 				Component component = rightTabbedPane.getSelectedComponent();
@@ -524,7 +568,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			final JPopupMenu menuBar = new JPopupMenu();
 			JMenuItem menuItem;
 			String key;
-			
+
 			// Save editor
 			key = LanguageConstants.MENU_FILE_SAVE;
 			menuItem = new JMenuItem(bundle.getString(key));
@@ -847,7 +891,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					try {
 						IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 								.createViewIdentifier(viewType);
-						systemContainer.openView(identifier);
+						systemContainer.getViewManager().openView(identifier);
 					} catch (Exception ex) {
 						String text = bundle
 								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
@@ -872,7 +916,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					try {
 						IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 								.createViewIdentifier(viewType);
-						systemContainer.openView(identifier);
+						systemContainer.getViewManager().openView(identifier);
 					} catch (Exception ex) {
 						String text = bundle
 								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
@@ -897,7 +941,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					try {
 						IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 								.createViewIdentifier(viewType);
-						systemContainer.openView(identifier);
+						systemContainer.getViewManager().openView(identifier);
 					} catch (Exception ex) {
 						String text = bundle
 								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
@@ -912,18 +956,30 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			});
 			submenu.add(menuItem);
 
-			menu.add(submenu);
-
 			// Show Project Explorer
-			key = LanguageConstants.MENU_VIEW_PROJECT_EXPLORER;
+			key = LanguageConstants.MENU_VIEW_SHOW_VIEW_PROJECT_EXPLORER;
 			menuItem = new JMenuItem(bundle.getString(key));
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.openProjectExplorer();
+					try {
+						systemContainer.getViewManager().openProjectExplorer();
+					} catch (Exception ex) {
+						String text = bundle
+								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
+						String viewTitle = bundle
+								.getString(LanguageConstants.TITLE_FOR
+										+ ComponentTypes.VIEW_PROJECT_EXPLORER);
+						text = PlaceholderUtil.replacePlaceholders(text,
+								new String[] { viewTitle });
+						systemContainer.echoStatusText(text, MessageType.ERROR);
+					}
+
 				}
 			});
-			menu.add(menuItem);
+			submenu.add(menuItem);
+
+			menu.add(submenu);
 
 			menuBar.add(menu);
 
@@ -1303,7 +1359,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		components.put(component, new ComponentInformation(group, placement));
 		JTabbedPane pane = getTabbedPane(placement);
 		pane.add(title, component);
-		setIcon(component);
+		activate(component);
 		addListenersFor(component);
 	}
 
@@ -1334,12 +1390,13 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		int index = pane.indexOfComponent(component);
 		pane.setIconAt(index, componentIcon);
 	}
-	
+
 	private void addListenersFor(JComponent component) {
 		addListenersFor(component, component);
 	}
-	
-	private void addListenersFor(Container container, JComponent originalComponent) {
+
+	private void addListenersFor(Container container,
+			JComponent originalComponent) {
 		if (container == null) {
 			return;
 		}
@@ -1351,27 +1408,33 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			c.addMouseListener(new MyMouse(originalComponent));
 		}
 	}
-	
+
 	private void activate(JComponent component) {
+		if (component == null) {
+			return;
+		}
+		if (selectedComponent == null || !selectedComponent.equals(component)) {
+			selectedComponent = component;
+		}
 		ComponentGroup group = components.get(component).getGroup();
 		JComponent previousComponent = selectedComponentsByGroup.get(group);
-		if(previousComponent != null && previousComponent.equals(component)) {
+		if (previousComponent != null && previousComponent.equals(component)) {
 			return;
 		}
 		deactivate(previousComponent);
-		JTabbedPane pane = getTabbedPane(component);
-		pane.setSelectedComponent(component);
 		selectedComponentsByGroup.put(group, component);
 		selectedComponent = component;
 		setActiveIcon(component);
+		JTabbedPane pane = getTabbedPane(component);
+		pane.setSelectedComponent(component);
 	}
 
 	private void deactivate(JComponent component) {
 		deactivate(component, true);
 	}
-	
+
 	private void deactivate(JComponent component, boolean setIcon) {
-		if(component == null) {
+		if (component == null) {
 			return;
 		}
 		ComponentInformation info = components.get(component);
@@ -1379,7 +1442,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		if (selectedComponent != null && selectedComponent.equals(component)) {
 			selectedComponent = null;
 		}
-		if(setIcon) {
+		if (setIcon) {
 			setIcon(component);
 		}
 	}
@@ -1393,7 +1456,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			selectedComponent = c;
+			activate(c);
 		}
 	}
 
@@ -1406,7 +1469,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 		@Override
 		public void focusGained(FocusEvent e) {
-			selectedComponent = c;
+			activate(c);
 		}
 
 	}
@@ -1520,8 +1583,6 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		if (!containsComponent(component)) {
 			return;
 		}
-//		JTabbedPane pane = getTabbedPane(component);
-//		pane.setSelectedComponent(component);
 		activate(component);
 	}
 
@@ -1554,6 +1615,14 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		private ComponentGroup group;
 		private ComponentPlacement placement;
 
+		/**
+		 * Constructs a component information using specified parameters.
+		 * 
+		 * @param group
+		 *            a component group
+		 * @param placement
+		 *            a component placement
+		 */
 		public ComponentInformation(ComponentGroup group,
 				ComponentPlacement placement) {
 			super();
@@ -1628,7 +1697,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		 */
 		@Override
 		public String toString() {
-			return "group" + group + " / placement" + placement;
+			return "group: " + group + " / placement: " + placement;
 		}
 	}
 

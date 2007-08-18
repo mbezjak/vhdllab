@@ -2,14 +2,13 @@ package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 
@@ -46,12 +45,6 @@ public class DummySystemContainer implements ISystemContainer {
 	@Override
 	public ResourceBundle getResourceBundle(String baseName) {
 		return resourceManager.getResourceBundle(baseName);
-	}
-
-	@Override
-	public void closeView(IView view) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -139,12 +132,6 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public void openProjectExplorer() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void setProperty(String name, String data) {
 		// TODO Auto-generated method stub
 		
@@ -199,47 +186,20 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getOpenedView(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
-	 */
-	@Override
-	public IView getOpenedView(IComponentIdentifier<?> identifier) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getView(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
-	 */
-	@Override
-	public IView getView(IComponentIdentifier<?> identifier) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#isViewOpened(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
-	 */
-	@Override
-	public boolean isViewOpened(IComponentIdentifier<?> identifier) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#openView(hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
-	 */
-	@Override
-	public IView openView(IComponentIdentifier<?> type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#showSaveDialog(java.lang.String, java.lang.String, java.util.List)
 	 */
 	@Override
 	public List<IEditor> showSaveDialog(String title, String message,
 			List<IEditor> editorsToBeSaved) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getViewManager()
+	 */
+	@Override
+	public IViewManager getViewManager() {
 		// TODO Auto-generated method stub
 		return null;
 	}

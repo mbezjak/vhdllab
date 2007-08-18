@@ -8,7 +8,6 @@ import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifi
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfigurationParser;
 import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
-import hr.fer.zemris.vhdllab.applets.main.conf.ViewProperties;
 import hr.fer.zemris.vhdllab.applets.main.constant.ComponentTypes;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
@@ -23,7 +22,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewStorage;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
@@ -53,6 +52,7 @@ import javax.swing.JOptionPane;
  * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManager, mySystemLog, myComponentProvider, parentFrame);<br/>
  * container.setComponentStorage(myComponentStorage);<br/>
  * container.setEditorManager(myEditorManager);<br/>
+ * container.setViewManager(myViewManager);<br/>
  * container.setViewStrage(myViewStorage);<br/>
  * container.init();<br/>
  * </code></blockquote>
@@ -101,9 +101,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private IEditorManager editorManager;
 	/**
-	 * A view storage.
+	 * A view manager.
 	 */
-	private IViewStorage viewStorage;
+	private IViewManager viewManager;
 
 	/**
 	 * Constructs a default system container.
@@ -161,13 +161,13 @@ public class DefaultSystemContainer implements ISystemContainer {
 	}
 
 	/**
-	 * Setter for a view storage.
+	 * Setter for a view manager.
 	 * 
-	 * @param viewStorage
-	 *            a view storage
+	 * @param viewManager
+	 *            a view manager
 	 */
-	public void setViewStorage(IViewStorage viewStorage) {
-		this.viewStorage = viewStorage;
+	public void setViewManager(IViewManager viewManager) {
+		this.viewManager = viewManager;
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		for (String s : views) {
 			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 					.createViewIdentifier(s);
-			openView(identifier);
+			viewManager.openView(identifier);
 		}
 	}
 
@@ -240,8 +240,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 		setProperty(UserFileConstants.SYSTEM_OPENED_EDITORS, data);
 
 		List<String> views = new ArrayList<String>();
-		for (IView v : viewStorage.getAllOpenedViews()) {
-			IComponentIdentifier<?> id = viewStorage.getIdentifierFor(v);
+		for (IView v : viewManager.getAllOpenedViews()) {
+			IComponentIdentifier<?> id = viewManager.getIdentifierFor(v);
 			views.add(id.getComponentType());
 		}
 		data = SerializationUtil.serializeViewInfo(views);
@@ -255,7 +255,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		componentProvider = null;
 		componentStorage = null;
 		editorManager = null;
-		viewStorage = null;
+		viewManager = null;
 		bundle = null;
 		parentFrame = null;
 	}
@@ -507,10 +507,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 	public String getSelectedProject() {
 		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 				.createProjectExplorerIdentifier();
-		if (!viewStorage.isViewOpened(identifier)) {
+		if (!viewManager.isViewOpened(identifier)) {
 			return null;
 		} else {
-			IView view = viewStorage.getOpenedView(identifier);
+			IView view = viewManager.getOpenedView(identifier);
 			return view.asInterface(IProjectExplorer.class)
 					.getSelectedProject();
 		}
@@ -525,19 +525,34 @@ public class DefaultSystemContainer implements ISystemContainer {
 	public FileIdentifier getSelectedFile() {
 		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 				.createProjectExplorerIdentifier();
-		if (!viewStorage.isViewOpened(identifier)) {
+		if (!viewManager.isViewOpened(identifier)) {
 			return null;
 		} else {
-			IView view = viewStorage.getOpenedView(identifier);
+			IView view = viewManager.getOpenedView(identifier);
 			return view.asInterface(IProjectExplorer.class).getSelectedFile();
 		}
 	}
 
 	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getEditorManager()
+	 */
 	@Override
 	public IEditorManager getEditorManager() {
 		return editorManager;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getViewManager()
+	 */
+	@Override
+	public IViewManager getViewManager() {
+		return viewManager;
 	}
 
 	/*
@@ -659,105 +674,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 		systemLog.addSystemMessage(new SystemMessage(text, type));
 	}
 
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public IView getView(IComponentIdentifier<?> identifier) {
-		IView view = viewStorage.getOpenedView(identifier);
-		if (view == null) {
-			openView(identifier);
-			view = viewStorage.getOpenedView(identifier);
-		}
-		return view;
-	}
-
-	@Override
-	public IView getOpenedView(IComponentIdentifier<?> identifier) {
-		return viewStorage.getOpenedView(identifier);
-	}
-
-	@Override
-	public boolean isViewOpened(IComponentIdentifier<?> identifier) {
-		return viewStorage.isViewOpened(identifier);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#openProjectExplorer()
-	 */
-	@Override
-	public void openProjectExplorer() {
-		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-				.createProjectExplorerIdentifier();
-		openView(identifier);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public IView openView(IComponentIdentifier<?> identifier) {
-		IView view = viewStorage.getOpenedView(identifier);
-		if (view == null) {
-			// Initialization of a view
-			view = getNewViewInstance(identifier.getComponentType());
-			view.setSystemContainer(this);
-			view.init();
-			// End of initialization
-
-			String title = bundle.getString(LanguageConstants.TITLE_FOR
-					+ identifier.getComponentType());
-			viewStorage.add(identifier, title, view);
-		}
-		viewStorage.setSelectedView(identifier);
-		return getView(identifier);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	@Override
-	public void closeView(IView view) {
-		if (view == null)
-			return;
-		List<IView> viewsToClose = new ArrayList<IView>(1);
-		viewsToClose.add(view);
-		closeViews(viewsToClose);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	private void closeAllViews() {
-		List<IView> openedViews = viewStorage.getAllOpenedViews();
-		closeViews(openedViews);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	private void closeAllButThisView(IView viewToKeepOpened) {
-		if (viewToKeepOpened == null)
-			return;
-		List<IView> openedViews = viewStorage.getAllOpenedViews();
-		openedViews.remove(viewToKeepOpened);
-		closeViews(openedViews);
-	}
-
-	/**
-	 * TODO PENDING REMOVAL!
-	 */
-	private void closeViews(List<IView> viewsToClose) {
-		if (viewsToClose == null)
-			return;
-		for (IView view : viewsToClose) {
-			view.dispose();
-			viewStorage.close(view);
-		}
-	}
-
 	/* PRIVATE COMMON TASK METHODS */
 
 	/**
@@ -782,50 +698,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 				projectName);
 		// end of initialization
 		return content;
-	}
-
-	/**
-	 * Returns a new instance of specified view.
-	 * 
-	 * @param id
-	 *            an identifier of an view
-	 * @return a new view instance
-	 * @throws NullPointerException
-	 *             if <code>id</code> is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if can't find view for given <code>id</code>
-	 * @throws IllegalStateException
-	 *             if view can't be instantiated
-	 */
-	private IView getNewViewInstance(String id) {
-		if (id == null) {
-			throw new NullPointerException("Identifier can not be null.");
-		}
-		ViewProperties vp = configuration.getViewProperties(id);
-		if (vp == null) {
-			throw new IllegalArgumentException(
-					"Can not find view for given identifier.");
-		}
-		return instantiateView(vp);
-	}
-
-	/**
-	 * Returns a new instance of specified view.
-	 * 
-	 * @param vp
-	 *            a view properties that contains an information on a view class
-	 * @return a new view instance
-	 * @throws IllegalStateException
-	 *             if view can't be instantiated
-	 */
-	private IView instantiateView(ViewProperties vp) {
-		IView view = null;
-		try {
-			view = (IView) Class.forName(vp.getClazz()).newInstance();
-		} catch (Exception e) {
-			throw new IllegalStateException("Can not instantiate view.");
-		}
-		return view;
 	}
 
 	/**
@@ -1017,7 +889,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				CompilationResult result) {
 			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 					.createViewIdentifier(ComponentTypes.VIEW_COMPILATION_ERRORS);
-			openView(identifier);
+			viewManager.openView(identifier);
 
 			FileIdentifier resource = new FileIdentifier(projectName, fileName);
 			ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
@@ -1086,7 +958,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				SimulationResult result) {
 			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 					.createViewIdentifier(ComponentTypes.VIEW_SIMULATION_ERRORS);
-			openView(identifier);
+			viewManager.openView(identifier);
 
 			FileIdentifier resource = new FileIdentifier(projectName, fileName);
 			ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(
@@ -1109,7 +981,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 				FileIdentifier file = new FileIdentifier(projectName, fileName);
 				IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
 						.createSimulationEditorIdentifier(file);
-				FileContent content = new FileContent(projectName, fileName, result.getWaveform());
+				FileContent content = new FileContent(projectName, fileName,
+						result.getWaveform());
 				editorManager.openEditor(identifier, content);
 			}
 		}
