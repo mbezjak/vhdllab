@@ -19,6 +19,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -329,6 +331,12 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 		treeModel = treeModelNormal;
 		root = topNormal;
 
+		this.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				tree.requestFocusInWindow();
+			}
+		});
 		resourceListener = new VetoableResourceAdapter() {
 			@Override
 			public void resourceCreated(String projectName, String fileName,

@@ -1,32 +1,35 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 /**
  * 
  * @author ddelac
@@ -183,22 +186,56 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 				}
 				
 			});
-		    KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		     .addKeyEventDispatcher(new KeyEventDispatcher(){
-		        public boolean dispatchKeyEvent(KeyEvent e){
-		          if(e.getID() == KeyEvent.KEY_RELEASED)
-		          {
-		            if(e.getKeyCode() == KeyEvent.VK_ESCAPE ) {
-		            	adrw.setStanjeRada(1);
-		            	normal.setSelected(true);
-		            	dodajNoviPrijelaz.setSelected(false);
-		            	dodajNoviSignal.setSelected(false);
-		            	brisi.setSelected(false);
-		            	pocStanje.setSelected(false);
-		            	podatci.setSelected(false);
-		            }
-		          }
-		          return false;}});
+			
+			
+			
+			tulbar.setFocusable(true);
+			tulbar.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					JComponent source = (JComponent) e.getSource();
+					source.requestFocusInWindow();
+				}
+			});
+			adrw.setFocusable(true);
+			adrw.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					JComponent source = (JComponent) e.getSource();
+					source.requestFocusInWindow();
+				}
+			});
+			this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape_key_action");
+			this.getActionMap().put("escape_key_action", new AbstractAction() {
+				private static final long serialVersionUID = 1844240025875439799L;
+				@Override
+				public void actionPerformed(ActionEvent e) {
+	            	adrw.setStanjeRada(1);
+	            	normal.setSelected(true);
+	            	dodajNoviPrijelaz.setSelected(false);
+	            	dodajNoviSignal.setSelected(false);
+	            	brisi.setSelected(false);
+	            	pocStanje.setSelected(false);
+	            	podatci.setSelected(false);
+				}
+			});
+			// THIS WAS SUBSTITUTED BY ABOVE CODE BECAUSE BOTTOM CODE (COMMENTED ONE) IS BROKEN
+//		    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+//		     .addKeyEventDispatcher(new KeyEventDispatcher(){
+//		        public boolean dispatchKeyEvent(KeyEvent e){
+//		          if(e.getID() == KeyEvent.KEY_RELEASED)
+//		          {
+//		            if(e.getKeyCode() == KeyEvent.VK_ESCAPE ) {
+//		            	adrw.setStanjeRada(1);
+//		            	normal.setSelected(true);
+//		            	dodajNoviPrijelaz.setSelected(false);
+//		            	dodajNoviSignal.setSelected(false);
+//		            	brisi.setSelected(false);
+//		            	pocStanje.setSelected(false);
+//		            	podatci.setSelected(false);
+//		            }
+//		          }
+//		          return false;}});
 	}
 
 

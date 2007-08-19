@@ -802,9 +802,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 		 * communicator.existsProject(projectName)) { return null; } } catch
 		 * (UniformAppletException e) { }
 		 */
-		if (projectName.equals("")) {
-			projectName = null;
-		}
 		return projectName;
 	}
 

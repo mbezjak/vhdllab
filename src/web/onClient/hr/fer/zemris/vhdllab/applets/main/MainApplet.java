@@ -117,9 +117,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 	private Communicator communicator;
 
-	/*
-	 * (non-Javadoc)
-	 * 
+
+	/* (non-Javadoc)
 	 * @see java.applet.Applet#init()
 	 */
 	@Override
@@ -136,7 +135,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		}
 		components = new HashMap<JComponent, ComponentInformation>();
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
-
+		
 		IResourceManager resourceManager;
 		try {
 			AjaxMediator ajax = new DefaultAjaxMediator(this);
@@ -296,7 +295,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				JTabbedPane.SCROLL_TAB_LAYOUT);
 		rightTabbedPane = new JTabbedPane(JTabbedPane.TOP,
 				JTabbedPane.SCROLL_TAB_LAYOUT);
-
+		
 		centerTabbedPane.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -314,7 +313,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				if (component == null) {
 					return;
 				}
-				activate((JComponent) component);
+				component.requestFocusInWindow();
+//				activate((JComponent) component);
 			}
 		});
 		bottomTabbedPane.addChangeListener(new ChangeListener() {
@@ -334,7 +334,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				if (component == null) {
 					return;
 				}
-				activate((JComponent) component);
+				component.requestFocusInWindow();
+//				activate((JComponent) component);
 			}
 		});
 		leftTabbedPane.addChangeListener(new ChangeListener() {
@@ -354,7 +355,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				if (component == null) {
 					return;
 				}
-				activate((JComponent) component);
+				component.requestFocusInWindow();
+//				activate((JComponent) component);
 			}
 		});
 		rightTabbedPane.addChangeListener(new ChangeListener() {
@@ -374,7 +376,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				if (component == null) {
 					return;
 				}
-				activate((JComponent) component);
+				component.requestFocusInWindow();
+//				activate((JComponent) component);
 			}
 		});
 
@@ -395,10 +398,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 						&& centerTabbedPane.getTabCount() != 0) {
 					maximizeComponent(centerTabbedPane);
 				}
-				Component component = centerTabbedPane.getSelectedComponent();
-				if (component != null) {
-					component.requestFocusInWindow();
-				}
+				activate((JComponent) centerTabbedPane.getSelectedComponent());
 			}
 		});
 		centerTabbedPane.addContainerListener(new ContainerAdapter() {
@@ -418,10 +418,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 						&& bottomTabbedPane.getTabCount() != 0) {
 					maximizeComponent(bottomTabbedPane);
 				}
-				Component component = bottomTabbedPane.getSelectedComponent();
-				if (component != null) {
-					component.requestFocusInWindow();
-				}
+				activate((JComponent) bottomTabbedPane.getSelectedComponent());
 			}
 		});
 		bottomTabbedPane.addContainerListener(new ContainerAdapter() {
@@ -440,10 +437,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				if (e.getClickCount() == 2 && leftTabbedPane.getTabCount() != 0) {
 					maximizeComponent(leftTabbedPane);
 				}
-				Component component = leftTabbedPane.getSelectedComponent();
-				if (component != null) {
-					component.requestFocusInWindow();
-				}
+				activate((JComponent) leftTabbedPane.getSelectedComponent());
 			}
 		});
 		leftTabbedPane.addContainerListener(new ContainerAdapter() {
@@ -463,10 +457,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 						&& rightTabbedPane.getTabCount() != 0) {
 					maximizeComponent(rightTabbedPane);
 				}
-				Component component = rightTabbedPane.getSelectedComponent();
-				if (component != null) {
-					component.requestFocusInWindow();
-				}
+				activate((JComponent) rightTabbedPane.getSelectedComponent());
 			}
 		});
 		rightTabbedPane.addContainerListener(new ContainerAdapter() {
@@ -1146,6 +1137,15 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				}
 			});
 			menu.add(menuItem);
+			
+			menu.addSeparator();
+			menuItem = new JMenuItem("Show new dialog");
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JOptionPane.showMessageDialog(MainApplet.this, "is it modal?");
+				}
+			});
+			menu.add(menuItem);
 			// TODO END TEMP SOLUTION
 
 			menuBar.add(menu);
@@ -1468,7 +1468,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			if (c instanceof Container) {
 				addListenersFor((Container) c, originalComponent);
 			}
-			c.addFocusListener(new MyFocus(originalComponent));
+//			c.addFocusListener(new MyFocus(originalComponent));
 			c.addMouseListener(new MyMouse(originalComponent));
 		}
 	}
@@ -1511,7 +1511,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		}
 	}
 
-	class MyMouse extends MouseAdapter {
+	private class MyMouse extends MouseAdapter {
 		private JComponent c;
 
 		public MyMouse(JComponent c) {

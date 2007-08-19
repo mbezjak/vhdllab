@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.main.component.statusbar;
 
 import hr.fer.zemris.vhdllab.applets.main.event.EventListenerList;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
@@ -71,13 +71,13 @@ public class StatusBar extends JPanel implements IStatusBar {
 		});
 		timer.start();
 		
-//		SystemLogListener systemLogListener = new SystemLogAdapter() {
-//			@Override
-//			public void systemMessageAdded(SystemMessage message) {
-//				setMessage(message);
-//			}
-//		};
-//		container.getSystemLog().addSystemLogListener(systemLogListener);
+		SystemLogListener systemLogListener = new SystemLogAdapter() {
+			@Override
+			public void systemMessageAdded(SystemMessage message) {
+				setMessage(message);
+			}
+		};
+		SystemLog.instance().addSystemLogListener(systemLogListener);
 		// later remove the listener
 	}
 	
@@ -90,13 +90,8 @@ public class StatusBar extends JPanel implements IStatusBar {
 	
 	@Override
 	public void setMessage(String message, MessageType type) {
-		// TODO Auto-generated method stub
-		
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar#setMessage(java.lang.String, hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageEnum)
-	 */
 	public void setMessage(SystemMessage message) {
 		statusText.setText(message.getContent());
 		messageType = message.getType();
