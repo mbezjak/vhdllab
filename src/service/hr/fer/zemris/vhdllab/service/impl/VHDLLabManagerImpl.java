@@ -35,10 +35,16 @@ import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.tb.TestBenchDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -708,6 +714,41 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			f.setContent(FileUtil.readFile(pathToFile));
 		}
 		return f;
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#saveErrorMessage(java.lang.String, java.lang.String)
+	 */
+	public void saveErrorMessage(String userId, String content)
+			throws ServiceException {
+		if (userId == null) {
+			throw new ServiceException("User identifier cant be null.");
+		}
+		if (content == null) {
+			throw new ServiceException("Content cant be null.");
+		}
+
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(
+				"applicationExceptions.properties");
+		Properties p = FileUtil.getProperties(is);
+		if (p == null) {
+			throw new ServiceException("Can not read properties file.");
+		}
+		String exDir = p.getProperty("exceptions.dir");
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		Date date = new Date();
+		String name = "client_" + userId + "_" + formatter.format(date)
+				+ ".txt";
+		String pathToFile = FileUtil.mergePaths(exDir, name);
+		java.io.File file = new java.io.File(pathToFile);
+		try {
+			file.createNewFile();
+			OutputStream os = new FileOutputStream(file);
+			FileUtil.appendToFile(content, os, "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 }

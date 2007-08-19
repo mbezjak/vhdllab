@@ -2,11 +2,14 @@ package hr.fer.zemris.vhdllab.utilities;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Properties;
 
 /**
@@ -114,6 +117,29 @@ public final class FileUtil {
 	}
 
 	/**
+	 * Appends a <code>content</code> using specified output stream and
+	 * encoding.
+	 * 
+	 * @param content
+	 *            a content to append
+	 * @param os
+	 *            an output stream of a file
+	 * @param encoding
+	 *            a file encoding
+	 */
+	public static void appendToFile(String content, OutputStream os,
+			String encoding) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+					os, encoding));
+			writer.append(content);
+			writer.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Returns a properties object out of content from input stream
 	 * <code>is</code>. This method will also close <code>is</code> when
 	 * properties is created. If {@link IOException} occurs then this method
@@ -165,11 +191,11 @@ public final class FileUtil {
 	 * @return a filtered path
 	 */
 	public static String filterMaliciousPath(String path) {
-		path = path.replaceAll("\\.+/|:", "");
+		path = path.replaceAll("\\.+[/\\\\]|:", "");
+		path = path.replaceAll("//", "/");
 		if (path.startsWith("/")) {
 			path = path.substring(1);
 		}
-		path = path.replaceAll("//", "/");
 		return path;
 	}
 
@@ -189,7 +215,7 @@ public final class FileUtil {
 	 */
 	public static String mergePaths(String beginPath, String endPath) {
 		endPath = FileUtil.filterMaliciousPath(endPath);
-		if (!beginPath.startsWith("/")) {
+		if (!beginPath.endsWith("/")) {
 			beginPath += "/";
 		}
 		return beginPath + endPath;

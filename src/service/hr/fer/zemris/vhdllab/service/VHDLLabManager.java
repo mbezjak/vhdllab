@@ -571,8 +571,21 @@ public interface VHDLLabManager {
 	public Hierarchy extractHierarchy(Project project) throws ServiceException;
 
 	/**
+	 * Saves an error message.
+	 * 
+	 * @param userId
+	 *            a user identifier
+	 * @param content
+	 *            a content of an error
+	 * @throws ServiceException
+	 *             if exceptional condition occurs
+	 */
+	void saveErrorMessage(String userId, String content)
+			throws ServiceException;
+
+	/**
 	 * Returns a file that is not managed by DAO tier. Instead it will look for
-	 * a file with <code>fileName</code> in a default location specefied by
+	 * a file with <code>fileName</code> in a default location specified by
 	 * <code>defaultFiles.properties</code> configuration file.
 	 * 
 	 * @param fileName

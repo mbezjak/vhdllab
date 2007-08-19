@@ -31,10 +31,17 @@ Following must be done in order to prepare project.
    Developers: do not add ../src/service/predefinedFiles.properties to svn
    repository! You shoud only customize it and leave it for yourself.
 
-6) start tomcat using following ant task:
+6) copy applicationExceptions.properties-sample to
+   ../src/service/applicationExceptions.properties. Then edit this file and fix
+   path. 
+
+   Developers: do not add ../src/service/applicationExceptions.properties to svn
+   repository! You shoud only customize it and leave it for yourself.
+
+7) start tomcat using following ant task:
    ant run-tomcat
 
-7) developer version of application can be accessed on:
+8) developer version of application can be accessed on:
    http://localhost:8080/vhdllab/vhdllab.html
 
 Debugging applets:

@@ -204,6 +204,15 @@ public class DummySystemContainer implements ISystemContainer {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#echoErrorMessage(java.lang.Throwable)
+	 */
+	@Override
+	public void echoErrorMessage(Throwable ex) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 
 

@@ -788,5 +788,18 @@ public class DefaultMethodInvoker implements MethodInvoker {
 		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
 	}
+	
+	public void saveErrorMessage(String userId, String content)
+			throws UniformAppletException {
+		if(userId == null) throw new NullPointerException("User id can not be null.");
+		if(content == null) throw new NullPointerException("File content can not be null.");
+		Properties reqProperties = new Properties();
+		String method = MethodConstants.MTD_SAVE_ERROR_MESSAGE;
+		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
+		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String.valueOf(userId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
+		
+		initiator.initiateCall(reqProperties);
+	}
 
 }

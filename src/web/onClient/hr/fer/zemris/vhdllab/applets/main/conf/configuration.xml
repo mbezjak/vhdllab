@@ -108,6 +108,13 @@
 			<singleton>true</singleton>
 		</view>
 
+		<view id="view.error.history">
+			<class>
+				hr.fer.zemris.vhdllab.applets.view.error.history.ErrorHistoryView
+			</class>
+			<singleton>true</singleton>
+		</view>
+
 		<view id="view.compilation.errors">
 			<class>
 				hr.fer.zemris.vhdllab.applets.view.compilation.CompileErrorsPanel

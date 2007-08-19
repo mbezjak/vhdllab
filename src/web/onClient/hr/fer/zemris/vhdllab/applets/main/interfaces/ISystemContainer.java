@@ -360,6 +360,7 @@ public interface ISystemContainer {
 	IStatusBar getStatusBar();
 
 	/**
+	 * XXX ovaj javadoc ne valja!
 	 * Echos a text to status bar. This is an alias method for
 	 * <code>getStatusBar().setMessage(String, MessageEnum)</code>.
 	 * 
@@ -369,6 +370,17 @@ public interface ISystemContainer {
 	 *            a type of a message
 	 */
 	void echoStatusText(String text, MessageType type);
+	
+	/**
+	 * XXX ovaj javadoc ne valja!
+	 * Echos a text to status bar. This is an alias method for
+	 * <code>getStatusBar().setMessage(String, MessageEnum)</code>.
+	 * 
+	 * @param ex
+	 *            an exception to echo
+	 */
+	void echoErrorMessage(Throwable ex);
+
 
 	List<IEditor> showSaveDialog(String title, String message,
 			List<IEditor> editorsToBeSaved);

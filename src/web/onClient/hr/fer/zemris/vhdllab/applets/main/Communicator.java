@@ -312,6 +312,12 @@ public class Communicator {
 			throw new UniformAppletException("File does not exists!");
 		return invoker.extractCircuitInterface(fileIdentifier);
 	}
+	
+	public void saveErrorMessage(String content) throws UniformAppletException {
+		if (content == null)
+			throw new NullPointerException("Content can not be null.");
+		invoker.saveErrorMessage(ownerId, content);
+	}
 
 	public IUserPreferences getPreferences() {
 		return cache.getUserPreferences();

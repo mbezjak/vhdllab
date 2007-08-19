@@ -64,5 +64,6 @@ public interface MethodInvoker {
 	List<Long> extractDependencies(Long fileId) throws UniformAppletException;
 	Hierarchy extractHierarchy(Long projectId) throws UniformAppletException;
 	String loadPredefinedFileContent(String fileName) throws UniformAppletException;
+	void saveErrorMessage(String userId, String content) throws UniformAppletException;
 
 }

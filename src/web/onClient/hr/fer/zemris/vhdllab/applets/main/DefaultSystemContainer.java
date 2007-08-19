@@ -36,6 +36,8 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
 import java.awt.Frame;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -246,6 +248,14 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 		data = SerializationUtil.serializeViewInfo(views);
 		setProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
+
+		StringBuilder sb = new StringBuilder(2000);
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		for (SystemMessage m : systemLog.getErrorMessages()) {
+			sb.append(formatter.format(m.getDate())).append("\t\t").append(
+					m.getContent()).append("\n\n");
+		}
+		resourceManager.saveErrorMessage(sb.toString());
 
 		systemLog.removeAllSystemLogListeners();
 		resourceManager.removeAllVetoableResourceListeners();
@@ -672,6 +682,17 @@ public class DefaultSystemContainer implements ISystemContainer {
 	@Override
 	public void echoStatusText(String text, MessageType type) {
 		systemLog.addSystemMessage(new SystemMessage(text, type));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#echoErrorMessage(java.lang.Throwable)
+	 */
+	@Override
+	public void echoErrorMessage(Throwable ex) {
+		SystemMessage message = new SystemMessage(ex);
+		systemLog.addErrorMessage(message);
 	}
 
 	/* PRIVATE COMMON TASK METHODS */

@@ -789,18 +789,6 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			});
 			submenu.add(menuItem);
 
-			// TODO this is only a temporary solution!
-			submenu.addSeparator();
-			menuItem = new JMenuItem("Property");
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					systemContainer
-							.createNewFileInstance(FileTypes.FT_PREFERENCES);
-				}
-			});
-			submenu.add(menuItem);
-			// END TEMP SOLUTION
-
 			menu.add(submenu);
 
 			// Open menu item
@@ -1123,6 +1111,46 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			});
 			menu.add(menuItem);
 			setCommonMenuAttributes(menu, key);
+			menuBar.add(menu);
+
+			// Development menu
+			// TODO development menu only temporary solution
+			menu = new JMenu("Development");
+			menuItem = new JMenuItem("Show view Error History");
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+							.createViewIdentifier(ComponentTypes.VIEW_ERROR_HISTORY);
+					systemContainer.getViewManager().openView(identifier);
+				}
+			});
+			menu.add(menuItem);
+			
+			menuItem = new JMenuItem("Create new error");
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						int error = 1 / 0;
+						System.out.println(error);
+					} catch (RuntimeException ex) {
+						ex.printStackTrace();
+						systemContainer.echoErrorMessage(ex);
+					}
+				}
+			});
+			menu.add(menuItem);
+			
+			menu.addSeparator();
+			menuItem = new JMenuItem("Create new property");
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					systemContainer
+							.createNewFileInstance(FileTypes.FT_PREFERENCES);
+				}
+			});
+			menu.add(menuItem);
+			// TODO END TEMP SOLUTION
+
 			menuBar.add(menu);
 
 			return menuBar;

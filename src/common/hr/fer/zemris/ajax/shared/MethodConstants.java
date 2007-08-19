@@ -1918,11 +1918,40 @@ public class MethodConstants {
 	 * <p>
 	 * This method may cause following status errors:
 	 * <ul>
-	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parametar
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain a parameter
 	 * <li>{@link #SE_NO_SUCH_FILE} - if file with {@link #PROP_FILE_ID} could not be found
 	 * </ul>
 	 */
 	public static final String MTD_LOAD_PREDEFINED_FILE_CONTENT = "load.predefined.file.content";
+	/**
+	 * A "save error message" method. Expected parameters (written as a property) are
+	 * <ul>
+	 * <li>{@link #PROP_FILE_OWNER_ID}
+	 * <li>{@link #PROP_FILE_CONTENT}
+	 * </ul>
+	 * <p>
+	 * If no error occurred, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing {@link #STATUS_OK}
+	 * </ul>
+	 * <p>
+	 * However if error occurred, a returned <code>Properties</code> will contain following
+	 * property
+	 * <ul>
+	 * <li>{@link #PROP_METHOD} - containing this method request
+	 * <li>{@link #PROP_STATUS} - containing one of status errors
+	 * <li>{@link #PROP_STATUS_CONTENT} - containing a message that describes an error message
+	 * </ul>
+	 * <p>
+	 * This method may cause following status errors:
+	 * <ul>
+	 * <li>{@link #SE_METHOD_ARGUMENT_ERROR} - if method does not contain both parameters
+	 * <li>{@link #SE_CAN_NOT_SAVE_FILE} - if file with {@link #PROP_FILE_ID} could not be saved
+	 * </ul>
+	 */
+	public static final String MTD_SAVE_ERROR_MESSAGE = "save.error.message";
 	
 	/**
 	 * Dont let anyone instantiate this class.

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.model;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
+import hr.fer.zemris.vhdllab.utilities.ExceptionsUtil;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,18 @@ public class SystemMessage {
 	 */
 	private MessageType type;
 
+	/**
+	 * Constructs a message with current time and <code>ERROR</code> message type.
+	 * 
+	 * @param cause
+	 *            an exception that occurred
+	 * @throws NullPointerException
+	 *             if <code>exception</code> is <code>null</code>
+	 */
+	public SystemMessage(Throwable cause) {
+		this(ExceptionsUtil.printStackTrace(cause));
+	}
+	
 	/**
 	 * Constructs a message with current time and <code>ERROR</code> message type.
 	 * 

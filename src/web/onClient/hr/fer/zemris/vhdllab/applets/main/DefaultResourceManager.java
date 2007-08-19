@@ -403,6 +403,19 @@ public class DefaultResourceManager implements IResourceManager {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#saveErrorMessage(java.lang.String)
+	 */
+	@Override
+	public void saveErrorMessage(String content) throws UniformAppletException {
+		if (content == null) {
+			throw new NullPointerException("Content cant be null");
+		}
+		communicator.saveErrorMessage(content);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getFileType(java.lang.String,
 	 *      java.lang.String)
 	 */
@@ -824,7 +837,7 @@ public class DefaultResourceManager implements IResourceManager {
 			l.resourceSaved(projectName, fileName);
 		}
 	}
-	
+
 	/**
 	 * Fires resourceCompiled event.
 	 * 

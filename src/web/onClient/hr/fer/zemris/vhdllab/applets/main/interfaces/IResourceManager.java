@@ -331,6 +331,19 @@ public interface IResourceManager {
 			throws UniformAppletException;
 
 	/**
+	 * Saves an error message.
+	 * 
+	 * @param content
+	 *            an error message content to save
+	 * @throws NullPointerException
+	 *             if <code>content</code> is <code>null</code>
+	 * @throws UniformAppletException
+	 *             if exceptional condition occurs (for example server is not
+	 *             responding)
+	 */
+	void saveErrorMessage(String content) throws UniformAppletException;
+
+	/**
 	 * Returns a file type of a specified file. Return value can be
 	 * <code>null</code> and in that case it indicates an error has occurred.
 	 * 

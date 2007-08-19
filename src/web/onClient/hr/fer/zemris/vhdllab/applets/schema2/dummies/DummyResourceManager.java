@@ -269,4 +269,13 @@ public class DummyResourceManager implements IResourceManager {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#saveErrorMessage(java.lang.String)
+	 */
+	@Override
+	public void saveErrorMessage(String content) throws UniformAppletException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
