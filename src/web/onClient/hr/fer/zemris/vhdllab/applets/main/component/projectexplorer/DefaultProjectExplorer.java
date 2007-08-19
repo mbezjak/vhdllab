@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
@@ -10,6 +9,8 @@ import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
@@ -360,7 +361,7 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-			systemContainer.echoStatusText(text, MessageType.ERROR);
+			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return;
 		}
 	}

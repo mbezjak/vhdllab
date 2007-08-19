@@ -1,13 +1,29 @@
-package hr.fer.zemris.vhdllab.applets.main.component.statusbar;
+package hr.fer.zemris.vhdllab.client.core.log;
 
 /**
  * Represents a type of a message.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 19.8.2007
  */
 public enum MessageType {
 
-	ERROR, SUCCESSFUL, INFORMATION;
+	/**
+	 * A message type that indicates an error in a application. Either an actual
+	 * bug in application or for example that a server is not responding.
+	 */
+	ERROR,
+	/**
+	 * A message type that indicates a successful action. For example: a
+	 * resource has been saved successfully.
+	 */
+	SUCCESSFUL,
+	/**
+	 * A message type that indicates an information. For example: an editor has
+	 * been closed.
+	 */
+	INFORMATION;
 
 	private MessageType() {
 	}
@@ -44,13 +60,4 @@ public enum MessageType {
 		return this.equals(INFORMATION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Enum#toString()
-	 */
-	@Override
-	public String toString() {
-		return this.name();
-	}
 }

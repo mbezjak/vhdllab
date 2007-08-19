@@ -1,9 +1,5 @@
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.client.core.log;
 
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
-import hr.fer.zemris.vhdllab.applets.main.model.ResultTarget;
-import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
@@ -14,11 +10,24 @@ import java.util.List;
 import javax.swing.event.EventListenerList;
 
 /**
- * This is a default implementation of {@link ISystemLog} interface.
+ * Defines methods in a system log. A system log is place where all system
+ * activity is logged. For example: system messages (presented to a user as a
+ * part of system-to-user communication), each compilation or simulation is
+ * logged here, etc.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 19.8.2007
  */
-public class DefaultSystemLog implements ISystemLog {
+public final class SystemLog {
+	/*
+	 * A system log is a singleton class.
+	 */
+
+	/**
+	 * An instance of system log.
+	 */
+	private static final SystemLog INSTANCE = new SystemLog();
 
 	/**
 	 * Maximum number of system messages. Must always be positive!
@@ -61,9 +70,9 @@ public class DefaultSystemLog implements ISystemLog {
 	private List<ResultTarget<SimulationResult>> simulationTargets;
 
 	/**
-	 * Constructs an empty system log.
+	 * Private constructor. Constructs an empty system log.
 	 */
-	public DefaultSystemLog() {
+	private SystemLog() {
 		listeners = new EventListenerList();
 		systemMessages = new LinkedList<SystemMessage>();
 		errorMessages = new LinkedList<SystemMessage>();
@@ -71,48 +80,81 @@ public class DefaultSystemLog implements ISystemLog {
 		simulationTargets = new LinkedList<ResultTarget<SimulationResult>>();
 	}
 
+	/**
+	 * Returns an instance of a system log. Return value will never be
+	 * <code>null</code>.
+	 * 
+	 * @return an instance of a system log
+	 */
+	public static SystemLog instance() {
+		return INSTANCE;
+	}
+
 	/* LISTENERS METHODS */
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#addSystemLogListener(hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener)
+	/**
+	 * Adds a system log listener.
+	 * 
+	 * @param l
+	 *            a system log listener
 	 */
-	@Override
 	public void addSystemLogListener(SystemLogListener l) {
 		listeners.add(SystemLogListener.class, l);
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#removeSystemLogListener(hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener)
+	/**
+	 * Removes a system log listener.
+	 * 
+	 * @param l
+	 *            a system log listener
 	 */
-	@Override
 	public void removeSystemLogListener(SystemLogListener l) {
 		listeners.remove(SystemLogListener.class, l);
 	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#removeAllSystemLogListeners()
+
+	/**
+	 * Removes all system log listeners.
 	 */
-	@Override
 	public void removeAllSystemLogListeners() {
-		for(SystemLogListener l : getSystemLogListeners()) {
+		for (SystemLogListener l : getSystemLogListeners()) {
 			listeners.remove(SystemLogListener.class, l);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#getSystemLogListeners()
+	/**
+	 * Returns an array of all registered system log listeners. Returned array
+	 * will never be <code>null</code> although it can be empty list.
+	 * 
+	 * @return an array of all registered system log listeners.
 	 */
-	@Override
 	public SystemLogListener[] getSystemLogListeners() {
 		return listeners.getListeners(SystemLogListener.class);
 	}
 
 	/* SYSTEM MESSAGE METHODS */
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#addSystemMessage(hr.fer.zemris.vhdllab.applets.main.model.SystemMessage)
+	/**
+	 * Adds a system message to this system log.
+	 * 
+	 * @param text
+	 *            a text of a message
+	 * @param type
+	 *            a message type
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
 	 */
-	@Override
+	public void addSystemMessage(String text, MessageType type) {
+		addSystemMessage(new SystemMessage(text, type));
+	}
+
+	/**
+	 * Adds a system message to this system log.
+	 * 
+	 * @param message
+	 *            a system message to add.
+	 * @throws NullPointerException
+	 *             if <code>message</code> is <code>null</code>
+	 */
 	public void addSystemMessage(SystemMessage message) {
 		if (message == null) {
 			throw new NullPointerException("Message cant be null");
@@ -125,20 +167,40 @@ public class DefaultSystemLog implements ISystemLog {
 		fireSystemMessageAdded(message);
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#getSystemMessages()
+	/**
+	 * Returns an array of system messages. Return value will never be
+	 * <code>null</code> although it can be empty array.
+	 * 
+	 * @return an array of system messages
 	 */
-	@Override
 	public SystemMessage[] getSystemMessages() {
 		return systemMessages.toArray(new SystemMessage[systemMessages.size()]);
 	}
 
 	/* ERROR MESSAGE METHODS */
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#addErrorMessage(hr.fer.zemris.vhdllab.applets.main.model.SystemMessage)
+	/**
+	 * Adds an error message to this system log. Unlike a system message, an
+	 * error message is used for debugging purposes only!
+	 * 
+	 * @param cause
+	 *            an exception that occurred
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
 	 */
-	@Override
+	public void addErrorMessage(Throwable cause) {
+		addErrorMessage(new SystemMessage(cause));
+	}
+
+	/**
+	 * Adds an error message to this system log. Unlike a system message, an
+	 * error message is used for debugging purposes only!
+	 * 
+	 * @param message
+	 *            an error message to add.
+	 * @throws NullPointerException
+	 *             if <code>message</code> is <code>null</code>
+	 */
 	public void addErrorMessage(SystemMessage message) {
 		if (message == null) {
 			throw new NullPointerException("Message cant be null");
@@ -151,20 +213,25 @@ public class DefaultSystemLog implements ISystemLog {
 		fireErrorMessageAdded(message);
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#getErrorMessages()
+	/**
+	 * Returns an array of error messages. Unlike a system message, an error
+	 * message is used for debugging purposes only! Return value will never be
+	 * <code>null</code> although it can be empty array.
+	 * 
+	 * @return an array of error messages
 	 */
-	@Override
 	public SystemMessage[] getErrorMessages() {
 		return errorMessages.toArray(new SystemMessage[errorMessages.size()]);
 	}
 
 	/* COMPILATION RESULT TARGET METHODS */
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#addCompilationResultTarget(hr.fer.zemris.vhdllab.applets.main.model.ResultTarget)
+	/**
+	 * Adds a compilation result target to this system log.
+	 * 
+	 * @param result
+	 *            a compilation result target
 	 */
-	@Override
 	public void addCompilationResultTarget(
 			ResultTarget<CompilationResult> result) {
 		if (result == null) {
@@ -179,41 +246,51 @@ public class DefaultSystemLog implements ISystemLog {
 		fireCompilationTargetAdded(result);
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#getCompilationResultTargets()
+	/**
+	 * Returns an unmodifiable list of compilation result targets. Return value
+	 * will never be <code>null</code> although it can be empty list.
+	 * 
+	 * @return an unmodifiable list of compilation result targets
 	 */
-	@Override
 	public List<ResultTarget<CompilationResult>> getCompilationResultTargets() {
 		return Collections.unmodifiableList(compilationTargets);
 	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#getLastCompilationResultTarget()
+
+	/**
+	 * Returns a last compiled result target or <code>null</code> if
+	 * compilation history is empty.
+	 * 
+	 * @return a last compiled result target or <code>null</code> if
+	 *         compilation history is empty
 	 */
-	@Override
 	public ResultTarget<CompilationResult> getLastCompilationResultTarget() {
-		if(compilationHistoryIsEmpty()) {
+		if (compilationHistoryIsEmpty()) {
 			return null;
 		} else {
 			// last target
 			return compilationTargets.get(compilationTargets.size() - 1);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#compilationHistoryIsEmpty()
+
+	/**
+	 * Returns <code>true</code> if no compilation result target is stored in
+	 * system log or <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if no compilation result target is stored in
+	 *         system log; <code>false</code> otherwise
 	 */
-	@Override
 	public boolean compilationHistoryIsEmpty() {
 		return compilationTargets.isEmpty();
 	}
 
 	/* SIMULATION RESULT TARGET METHODS */
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#addSimulationResultTarget(hr.fer.zemris.vhdllab.applets.main.model.ResultTarget)
+	/**
+	 * Adds a simulation result target to this system log.
+	 * 
+	 * @param result
+	 *            a simulation result target
 	 */
-	@Override
 	public void addSimulationResultTarget(ResultTarget<SimulationResult> result) {
 		if (result == null) {
 			throw new NullPointerException(
@@ -227,31 +304,39 @@ public class DefaultSystemLog implements ISystemLog {
 		fireSimulationTargetAdded(result);
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#getSimulationResultTargets()
+	/**
+	 * Returns an unmodifiable list of simulation result targets. Return value
+	 * will never be <code>null</code> although it can be empty list.
+	 * 
+	 * @return an unmodifiable list of simulation result targets
 	 */
-	@Override
 	public List<ResultTarget<SimulationResult>> getSimulationResultTargets() {
 		return Collections.unmodifiableList(simulationTargets);
 	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#getLastSimulationResultTarget()
+
+	/**
+	 * Returns a last simulated result target or <code>null</code> if
+	 * simulation history is empty.
+	 * 
+	 * @return a last simulated result target or <code>null</code> if
+	 *         simulation history is empty
 	 */
-	@Override
 	public ResultTarget<SimulationResult> getLastSimulationResultTarget() {
-		if(simulationHistoryIsEmpty()) {
+		if (simulationHistoryIsEmpty()) {
 			return null;
 		} else {
 			// last target
 			return simulationTargets.get(simulationTargets.size() - 1);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog#simulationHistoryIsEmpty()
+
+	/**
+	 * Returns <code>true</code> if no simulation result target is stored in
+	 * system log or <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if no simulation result target is stored in
+	 *         system log; <code>false</code> otherwise
 	 */
-	@Override
 	public boolean simulationHistoryIsEmpty() {
 		return simulationTargets.isEmpty();
 	}

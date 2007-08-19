@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
@@ -20,14 +19,15 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.applets.main.model.ResultTarget;
-import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
@@ -51,7 +51,7 @@ import javax.swing.JOptionPane;
  * To use this implementation you need to setup it up properly. This is how:
  * </p>
  * <blockquote><code>
- * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManager, mySystemLog, myComponentProvider, parentFrame);<br/>
+ * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManager, myComponentProvider, parentFrame);<br/>
  * container.setComponentStorage(myComponentStorage);<br/>
  * container.setEditorManager(myEditorManager);<br/>
  * container.setViewManager(myViewManager);<br/>
@@ -74,10 +74,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * A resource manager.
 	 */
 	private IResourceManager resourceManager;
-	/**
-	 * A system log.
-	 */
-	private ISystemLog systemLog;
 	/**
 	 * A Component configuration.
 	 */
@@ -112,8 +108,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * 
 	 * @param resourceManager
 	 *            a resource manager
-	 * @param systemLog
-	 *            a system log
 	 * @param componentProvider
 	 *            a component provider
 	 * @param parentFrame
@@ -122,13 +116,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 *             if either parameter is <code>null</code>
 	 */
 	public DefaultSystemContainer(IResourceManager resourceManager,
-			ISystemLog systemLog, IComponentProvider componentProvider,
-			Frame parentFrame) {
+			IComponentProvider componentProvider, Frame parentFrame) {
 		if (resourceManager == null) {
 			throw new NullPointerException("Resource manager cant be null");
-		}
-		if (systemLog == null) {
-			throw new NullPointerException("System log cant be null");
 		}
 		if (componentProvider == null) {
 			throw new NullPointerException("Component provider cant be null");
@@ -137,7 +127,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 			throw new NullPointerException("Parent frame cant be null");
 		}
 		this.resourceManager = resourceManager;
-		this.systemLog = systemLog;
 		this.componentProvider = componentProvider;
 		this.parentFrame = parentFrame;
 	}
@@ -251,13 +240,13 @@ public class DefaultSystemContainer implements ISystemContainer {
 
 		StringBuilder sb = new StringBuilder(2000);
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-		for (SystemMessage m : systemLog.getErrorMessages()) {
+		for (SystemMessage m : SystemLog.instance().getErrorMessages()) {
 			sb.append(formatter.format(m.getDate())).append("\t\t").append(
 					m.getContent()).append("\n\n");
 		}
 		resourceManager.saveErrorMessage(sb.toString());
 
-		systemLog.removeAllSystemLogListeners();
+		SystemLog.instance().removeAllSystemLogListeners();
 		resourceManager.removeAllVetoableResourceListeners();
 		getPreferences().removeAllPropertyListeners();
 
@@ -292,10 +281,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean compileLastHistoryResult() {
-		if (systemLog.compilationHistoryIsEmpty()) {
+		if (SystemLog.instance().compilationHistoryIsEmpty()) {
 			return compileWithDialog();
 		} else {
-			ResultTarget<CompilationResult> resultTarget = systemLog
+			ResultTarget<CompilationResult> resultTarget = SystemLog.instance()
 					.getLastCompilationResultTarget();
 			return compile(resultTarget.getResource());
 		}
@@ -347,7 +336,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_COMPILE);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			echoStatusText(text, MessageType.ERROR);
+			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return false;
 		}
 		return result != null;
@@ -373,10 +362,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean simulateLastHistoryResult() {
-		if (systemLog.simulationHistoryIsEmpty()) {
+		if (SystemLog.instance().simulationHistoryIsEmpty()) {
 			return simulateWithDialog();
 		} else {
-			ResultTarget<SimulationResult> resultTarget = systemLog
+			ResultTarget<SimulationResult> resultTarget = SystemLog.instance()
 					.getLastSimulationResultTarget();
 			return simulate(resultTarget.getResource());
 		}
@@ -428,7 +417,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			echoStatusText(text, MessageType.ERROR);
+			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return false;
 		}
 		return result != null;
@@ -453,7 +442,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_PROJECT);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { projectName });
-			echoStatusText(text, MessageType.ERROR);
+			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return false;
 		}
 	}
@@ -471,7 +460,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		String projectName = getSelectedProject();
 		if (projectName == null) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
-			echoStatusText(text, MessageType.INFORMATION);
+			SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 			return false;
 		}
 		IWizard wizard = getNewEditorInstanceByFileType(type).getWizard();
@@ -490,7 +479,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_FILE);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { fileName });
-			echoStatusText(text, MessageType.ERROR);
+			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return false;
 		}
 	}
@@ -573,16 +562,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 	@Override
 	public IResourceManager getResourceManager() {
 		return resourceManager;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getSystemLog()
-	 */
-	@Override
-	public ISystemLog getSystemLog() {
-		return systemLog;
 	}
 
 	/*
@@ -671,28 +650,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 	@Override
 	public IStatusBar getStatusBar() {
 		return componentProvider.getStatusBar();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#echoStatusText(java.lang.String,
-	 *      hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType)
-	 */
-	@Override
-	public void echoStatusText(String text, MessageType type) {
-		systemLog.addSystemMessage(new SystemMessage(text, type));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#echoErrorMessage(java.lang.Throwable)
-	 */
-	@Override
-	public void echoErrorMessage(Throwable ex) {
-		SystemMessage message = new SystemMessage(ex);
-		systemLog.addErrorMessage(message);
 	}
 
 	/* PRIVATE COMMON TASK METHODS */
@@ -865,7 +822,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
-				echoStatusText(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 				// veto compilation
 				throw new ResourceVetoException();
 			}
@@ -894,7 +851,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_COMPILED);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			echoStatusText(text, MessageType.INFORMATION);
+			SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 		}
 	}
 
@@ -915,7 +872,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			FileIdentifier resource = new FileIdentifier(projectName, fileName);
 			ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
 					resource, result);
-			systemLog.addCompilationResultTarget(resultTarget);
+			SystemLog.instance().addCompilationResultTarget(resultTarget);
 		}
 	}
 
@@ -933,7 +890,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
-				echoStatusText(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 				// veto simulation
 				throw new ResourceVetoException();
 			}
@@ -963,7 +920,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_SIMULATED);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			echoStatusText(text, MessageType.INFORMATION);
+			SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 		}
 	}
 
@@ -984,7 +941,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			FileIdentifier resource = new FileIdentifier(projectName, fileName);
 			ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(
 					resource, result);
-			systemLog.addSimulationResultTarget(resultTarget);
+			SystemLog.instance().addSimulationResultTarget(resultTarget);
 		}
 	}
 
@@ -1026,7 +983,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { projectName });
-				echoStatusText(text, MessageType.ERROR);
+				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
@@ -1034,7 +991,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { projectName });
-				echoStatusText(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
@@ -1056,7 +1013,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { projectName });
-				echoStatusText(text, MessageType.ERROR);
+				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
@@ -1074,7 +1031,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { projectName });
-			echoStatusText(text, MessageType.SUCCESSFUL);
+			SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 		}
 	}
 
@@ -1095,7 +1052,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_FILE_EXISTENCE);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { fileName });
-				echoStatusText(text, MessageType.ERROR);
+				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 				// veto resource creation
 				throw new ResourceVetoException();
 			}
@@ -1103,7 +1060,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_FILE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
-				echoStatusText(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 				// veto resource creation
 				throw new ResourceVetoException();
 			}
@@ -1124,7 +1081,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { fileName });
-				echoStatusText(text, MessageType.ERROR);
+				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
@@ -1143,7 +1100,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_FILE_CREATED);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { fileName });
-			echoStatusText(text, MessageType.SUCCESSFUL);
+			SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 		}
 	}
 
@@ -1177,7 +1134,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 					.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { fileName });
-			echoStatusText(text, MessageType.SUCCESSFUL);
+			SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 		}
 	}
 

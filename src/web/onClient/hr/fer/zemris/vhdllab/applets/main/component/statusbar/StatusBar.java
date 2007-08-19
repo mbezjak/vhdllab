@@ -1,10 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.main.component.statusbar;
 
 import hr.fer.zemris.vhdllab.applets.main.event.EventListenerList;
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
+import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

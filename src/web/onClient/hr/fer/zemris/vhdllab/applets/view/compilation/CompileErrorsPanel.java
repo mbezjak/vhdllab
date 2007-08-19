@@ -2,13 +2,14 @@ package hr.fer.zemris.vhdllab.applets.view.compilation;
 
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.applets.main.model.ResultTarget;
+import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.CompilationMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
@@ -166,7 +167,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
 				setContent(result);
 			}
 		};
-		container.getSystemLog().addSystemLogListener(systemLogListener);
+		SystemLog.instance().addSystemLogListener(systemLogListener);
 	}
 
 	/*
@@ -176,7 +177,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
 	 */
 	@Override
 	public void dispose() {
-		container.getSystemLog().removeSystemLogListener(systemLogListener);
+		SystemLog.instance().removeSystemLogListener(systemLogListener);
 	}
 
 	/*

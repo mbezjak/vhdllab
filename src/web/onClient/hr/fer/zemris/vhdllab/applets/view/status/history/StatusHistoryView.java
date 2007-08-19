@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.view.status.history;
 
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
+import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -117,7 +117,7 @@ public class StatusHistoryView extends JPanel implements IView {
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
 		
-		ISystemLog systemLog = container.getSystemLog();
+		SystemLog systemLog = SystemLog.instance();
 		for(SystemMessage message : systemLog.getSystemMessages()) {
 			addMessage(message);
 		}
@@ -137,7 +137,7 @@ public class StatusHistoryView extends JPanel implements IView {
 	 */
 	@Override
 	public void dispose() {
-		container.getSystemLog().removeSystemLogListener(systemLogListener);
+		SystemLog.instance().removeSystemLogListener(systemLogListener);
 	}
 
 	/*
@@ -162,7 +162,7 @@ public class StatusHistoryView extends JPanel implements IView {
 				content).append("\n");
 
 		Style style = messageTypeStyles.get(message.getType());
-		Document doc = (StyledDocument) textPane.getDocument();
+		Document doc = textPane.getDocument();
 		try {
 			doc.insertString(doc.getLength(), sb.toString(), style);
 		} catch (BadLocationException e) {

@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
@@ -14,6 +13,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.InOutSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaEntity;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
@@ -50,10 +51,10 @@ public class DefaultWizard implements IWizard {
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
 				if(container.getResourceManager().existsFile(projectName, ci.getEntityName())) {
-					container.echoStatusText(ci.getEntityName() + " already exists!", MessageType.INFORMATION);
+					SystemLog.instance().addSystemMessage(ci.getEntityName() + " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {
-				container.echoStatusText("Internal error!", MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage("Internal error!", MessageType.INFORMATION);
 				return null;
 			}
 			
@@ -63,7 +64,7 @@ public class DefaultWizard implements IWizard {
 				info.getEntity().getParameters().setValue(SchemaEntity.KEY_NAME, new Caseless(ci.getEntityName()));
 			} catch (Exception e) {
 				e.printStackTrace();
-				container.echoStatusText("Internal error!", MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage("Internal error!", MessageType.INFORMATION);
 				return null;
 			}
 			
@@ -81,7 +82,7 @@ public class DefaultWizard implements IWizard {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					container.echoStatusText("Internal error!", MessageType.INFORMATION);
+					SystemLog.instance().addSystemMessage("Internal error!", MessageType.INFORMATION);
 					return null;
 				}
 			}
@@ -92,7 +93,7 @@ public class DefaultWizard implements IWizard {
 				ss.serializeSchema(writer, info);
 			} catch (IOException e) {
 				e.printStackTrace();
-				container.echoStatusText("Internal error!", MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage("Internal error!", MessageType.INFORMATION);
 				return null;
 			}
 			return new FileContent(projectName, ci.getEntityName(), writer.toString());

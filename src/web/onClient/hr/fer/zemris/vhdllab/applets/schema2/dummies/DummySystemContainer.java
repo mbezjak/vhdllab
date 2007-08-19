@@ -1,13 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
@@ -90,12 +88,6 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public void echoStatusText(String text, MessageType type) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public IComponentProvider getComponentProvider() {
 		// TODO Auto-generated method stub
 		return null;
@@ -121,12 +113,6 @@ public class DummySystemContainer implements ISystemContainer {
 
 	@Override
 	public IStatusBar getStatusBar() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISystemLog getSystemLog() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -202,15 +188,6 @@ public class DummySystemContainer implements ISystemContainer {
 	public IViewManager getViewManager() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#echoErrorMessage(java.lang.Throwable)
-	 */
-	@Override
-	public void echoErrorMessage(Throwable ex) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

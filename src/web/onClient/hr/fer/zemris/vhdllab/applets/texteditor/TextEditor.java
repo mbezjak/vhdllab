@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.texteditor;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
@@ -10,6 +9,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
@@ -271,7 +272,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 			try {
 				if (container.getResourceManager().existsFile(projectName,
 						ci.getEntityName())) {
-					container.echoStatusText(ci.getEntityName()
+					SystemLog.instance().addSystemMessage(ci.getEntityName()
 							+ " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {

@@ -1,5 +1,6 @@
-package hr.fer.zemris.vhdllab.applets.main.model;
+package hr.fer.zemris.vhdllab.client.core.log;
 
+import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.vhdl.Result;
 
 import java.text.Format;
@@ -7,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * A result target contains information regarding time when result occured, a
+ * A result target contains information regarding time when result occurred, a
  * resource for which this result stands for and an actual result. This class is
  * immutable and therefor thread-safe.
  * 
@@ -15,8 +16,10 @@ import java.util.Date;
  *            either a compilation or a simulation result
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 19.8.2007
  */
-public class ResultTarget<T extends Result> {
+public final class ResultTarget<T extends Result> {
 
 	/**
 	 * A time when result was created.

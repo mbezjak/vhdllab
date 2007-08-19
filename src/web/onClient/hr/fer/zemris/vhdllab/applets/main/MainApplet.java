@@ -4,7 +4,6 @@ import hr.fer.zemris.ajax.shared.AjaxMediator;
 import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
@@ -19,10 +18,11 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemLog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
@@ -138,7 +138,6 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
 
 		IResourceManager resourceManager;
-		ISystemLog systemLog;
 		try {
 			AjaxMediator ajax = new DefaultAjaxMediator(this);
 			Initiator initiator = new AjaxInitiator(ajax);
@@ -146,7 +145,6 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			communicator = new Communicator(invoker, userId);
 			communicator.init();
 			resourceManager = new DefaultResourceManager(communicator);
-			systemLog = new DefaultSystemLog();
 			componentStorage = new DefaultComponentStorage(this);
 			bundle = resourceManager
 					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
@@ -177,8 +175,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		});
 
 		DefaultSystemContainer systemContainer = new DefaultSystemContainer(
-				resourceManager, systemLog, this, JOptionPane
-						.getFrameForComponent(this));
+				resourceManager, this, JOptionPane.getFrameForComponent(this));
 		this.systemContainer = systemContainer;
 		ComponentConfiguration conf;
 		try {
@@ -220,7 +217,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 		String text = bundle
 				.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
-		systemContainer.echoStatusText(text, MessageType.SUCCESSFUL);
+		SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 	}
 
 	/*
@@ -917,7 +914,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						systemContainer.echoStatusText(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 					}
 				}
 			});
@@ -942,7 +939,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						systemContainer.echoStatusText(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 					}
 				}
 			});
@@ -967,7 +964,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						systemContainer.echoStatusText(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 					}
 				}
 			});
@@ -989,7 +986,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ ComponentTypes.VIEW_PROJECT_EXPLORER);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						systemContainer.echoStatusText(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 					}
 
 				}
@@ -1125,7 +1122,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				}
 			});
 			menu.add(menuItem);
-			
+
 			menuItem = new JMenuItem("Create new error");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1134,12 +1131,12 @@ public class MainApplet extends JApplet implements IComponentContainer,
 						System.out.println(error);
 					} catch (RuntimeException ex) {
 						ex.printStackTrace();
-						systemContainer.echoErrorMessage(ex);
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
 			menu.add(menuItem);
-			
+
 			menu.addSeparator();
 			menuItem = new JMenuItem("Create new property");
 			menuItem.addActionListener(new ActionListener() {

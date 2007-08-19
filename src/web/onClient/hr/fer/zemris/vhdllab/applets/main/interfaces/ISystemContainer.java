@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
@@ -280,13 +279,6 @@ public interface ISystemContainer {
 	IViewManager getViewManager();
 	
 	/**
-	 * Returns a system log. Return value will never be <code>null</code>.
-	 * 
-	 * @return a system log
-	 */
-	ISystemLog getSystemLog();
-
-	/**
 	 * Returns a resource manager for manipulating resources. Return value
 	 * will never be <code>null</code>.
 	 * 
@@ -358,29 +350,6 @@ public interface ISystemContainer {
 	 * @return a status bar
 	 */
 	IStatusBar getStatusBar();
-
-	/**
-	 * XXX ovaj javadoc ne valja!
-	 * Echos a text to status bar. This is an alias method for
-	 * <code>getStatusBar().setMessage(String, MessageEnum)</code>.
-	 * 
-	 * @param text
-	 *            a text to set
-	 * @param type
-	 *            a type of a message
-	 */
-	void echoStatusText(String text, MessageType type);
-	
-	/**
-	 * XXX ovaj javadoc ne valja!
-	 * Echos a text to status bar. This is an alias method for
-	 * <code>getStatusBar().setMessage(String, MessageEnum)</code>.
-	 * 
-	 * @param ex
-	 *            an exception to echo
-	 */
-	void echoErrorMessage(Throwable ex);
-
 
 	List<IEditor> showSaveDialog(String title, String message,
 			List<IEditor> editorsToBeSaved);

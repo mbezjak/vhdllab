@@ -1,6 +1,5 @@
-package hr.fer.zemris.vhdllab.applets.main.model;
+package hr.fer.zemris.vhdllab.client.core.log;
 
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.MessageType;
 import hr.fer.zemris.vhdllab.utilities.ExceptionsUtil;
 
 import java.text.Format;
@@ -12,8 +11,10 @@ import java.util.Date;
  * thread-safe.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 19.8.2007
  */
-public class SystemMessage {
+public final class SystemMessage {
 
 	/**
 	 * An exact time when message occurred.
@@ -29,7 +30,8 @@ public class SystemMessage {
 	private MessageType type;
 
 	/**
-	 * Constructs a message with current time and <code>ERROR</code> message type.
+	 * Constructs a message with current time and <code>ERROR</code> message
+	 * type.
 	 * 
 	 * @param cause
 	 *            an exception that occurred
@@ -39,9 +41,10 @@ public class SystemMessage {
 	public SystemMessage(Throwable cause) {
 		this(ExceptionsUtil.printStackTrace(cause));
 	}
-	
+
 	/**
-	 * Constructs a message with current time and <code>ERROR</code> message type.
+	 * Constructs a message with current time and <code>ERROR</code> message
+	 * type.
 	 * 
 	 * @param content
 	 *            a content of a message
@@ -51,7 +54,7 @@ public class SystemMessage {
 	public SystemMessage(String content) {
 		this(content, MessageType.ERROR);
 	}
-	
+
 	/**
 	 * Constructs a message with current time.
 	 * 
@@ -103,7 +106,7 @@ public class SystemMessage {
 	}
 
 	/**
-	 * Getter for a content
+	 * Getter for a content.
 	 * 
 	 * @return a content
 	 */
@@ -166,7 +169,6 @@ public class SystemMessage {
 	@Override
 	public String toString() {
 		Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return formatter.format(date) + "\t" + content + "/" + type;
+		return formatter.format(date) + "\t/" + type + "\t" + content;
 	}
-
 }

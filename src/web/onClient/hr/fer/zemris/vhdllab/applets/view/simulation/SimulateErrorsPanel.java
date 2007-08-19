@@ -1,10 +1,11 @@
 package hr.fer.zemris.vhdllab.applets.view.simulation;
 
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.applets.main.event.SystemLogListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.model.ResultTarget;
+import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.vhdl.SimulationMessage;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
@@ -106,7 +107,7 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 				setContent(result);
 			}
 		};
-		container.getSystemLog().addSystemLogListener(systemLogListener);
+		SystemLog.instance().addSystemLogListener(systemLogListener);
 	}
 
 	/*
@@ -116,7 +117,7 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	 */
 	@Override
 	public void dispose() {
-		container.getSystemLog().removeSystemLogListener(systemLogListener);
+		SystemLog.instance().removeSystemLogListener(systemLogListener);
 	}
 
 	/*

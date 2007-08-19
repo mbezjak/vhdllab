@@ -1,7 +1,5 @@
-package hr.fer.zemris.vhdllab.applets.main.event;
+package hr.fer.zemris.vhdllab.client.core.log;
 
-import hr.fer.zemris.vhdllab.applets.main.model.ResultTarget;
-import hr.fer.zemris.vhdllab.applets.main.model.SystemMessage;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 
@@ -17,6 +15,8 @@ import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
  * </p>
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 19.8.2007
  */
 public class SystemLogAdapter implements SystemLogListener {
 	@Override
@@ -34,5 +34,4 @@ public class SystemLogAdapter implements SystemLogListener {
 	@Override
 	public void systemMessageAdded(SystemMessage message) {
 	}
-
 }

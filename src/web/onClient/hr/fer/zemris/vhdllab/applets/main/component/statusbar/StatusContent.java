@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.component.statusbar;
 
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+
 /**
  * Contains message content and message type.
  * @author Miro Bezjak
