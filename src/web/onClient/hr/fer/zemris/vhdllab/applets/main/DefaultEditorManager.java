@@ -418,7 +418,7 @@ public class DefaultEditorManager implements IEditorManager {
 	 */
 	public void closeAllEditors() {
 		List<IEditor> openedEditors = getAllOpenedEditors();
-		closeEditors(openedEditors, true);
+		closeEditors(openedEditors);
 	}
 
 	/*
@@ -431,7 +431,16 @@ public class DefaultEditorManager implements IEditorManager {
 			return;
 		List<IEditor> openedEditors = getAllOpenedEditors();
 		openedEditors.remove(editorToKeepOpened);
-		closeEditors(openedEditors, true);
+		closeEditors(openedEditors);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#closeEditors(java.util.List)
+	 */
+	public void closeEditors(List<IEditor> editorsToClose) {
+		closeEditors(editorsToClose, true);
 	}
 
 	/**

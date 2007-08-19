@@ -181,15 +181,12 @@ public class DefaultViewManager implements IViewManager {
 		closeViews(openedViews);
 	}
 
-	/**
-	 * Closes all specified views. If <code>viewsToClose</code> is
-	 * <code>null</code> no exception will be thrown and this method will
-	 * simply return.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param viewsToClose
-	 *            a views to close
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager#closeViews(java.util.List)
 	 */
-	private void closeViews(List<IView> viewsToClose) {
+	public void closeViews(List<IView> viewsToClose) {
 		if (viewsToClose == null)
 			return;
 		viewsToClose = pickOpenedViews(viewsToClose);

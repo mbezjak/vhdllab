@@ -49,7 +49,9 @@ import java.awt.event.MouseEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -585,24 +587,15 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					/*
-					 * IEditor editor =
-					 * (IEditor)editorPane.getSelectedComponent(); try {
-					 * if(isSimulation(editor.getProjectName(),
-					 * editor.getFileName())) { saveSimulation(editor); } else {
-					 */
-					systemContainer.getEditorManager().saveEditor(
-							editorManager.getSelectedEditor());
-					/*
-					 * } } catch (UniformAppletException ex) { StringWriter sw =
-					 * new StringWriter(); PrintWriter pw = new PrintWriter(sw);
-					 * ex.printStackTrace(pw); throw new
-					 * NullPointerException(sw.toString()); /*String text =
-					 * bundle.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
-					 * text = Utilities.replacePlaceholders(text, new String[]
-					 * {editor.getFileName()}); echoStatusText(text);
-					 */
-					/* } */
+					JComponent c = (JComponent) pane.getSelectedComponent();
+					if (c == null) {
+						return;
+					}
+					ComponentGroup group = getComponentGroup(c);
+					if (group.equals(ComponentGroup.EDITOR)) {
+						systemContainer.getEditorManager().saveEditor(
+								(IEditor) c);
+					}
 				}
 			});
 			menuBar.add(menuItem);
@@ -612,7 +605,18 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().saveAllEditors();
+					List<IEditor> editorsToSave = new ArrayList<IEditor>(pane
+							.getTabCount());
+					for (int i = 0; i < pane.getTabCount(); i++) {
+						JComponent c = (JComponent) pane.getComponentAt(i);
+						ComponentGroup group = getComponentGroup(c);
+						if (group.equals(ComponentGroup.EDITOR)) {
+							editorsToSave.add((IEditor) c);
+						}
+
+					}
+					systemContainer.getEditorManager().saveEditors(
+							editorsToSave);
 				}
 			});
 			menuBar.add(menuItem);
@@ -648,6 +652,10 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					if (index == -1) {
 						return;
 					}
+					List<IEditor> editorsToClose = new ArrayList<IEditor>(pane
+							.getTabCount());
+					List<JComponent> componentsToClose = new ArrayList<JComponent>(
+							pane.getTabCount());
 					for (int i = 0; i < pane.getTabCount(); i++) {
 						if (i == index) {
 							continue;
@@ -655,12 +663,15 @@ public class MainApplet extends JApplet implements IComponentContainer,
 						JComponent c = (JComponent) pane.getComponentAt(i);
 						ComponentGroup group = getComponentGroup(c);
 						if (group.equals(ComponentGroup.EDITOR)) {
-							systemContainer.getEditorManager().closeEditor(
-									(IEditor) c);
+							editorsToClose.add((IEditor) c);
 						} else {
-							componentStorage.remove(c);
+							componentsToClose.add(c);
 						}
-
+					}
+					systemContainer.getEditorManager().closeEditors(
+							editorsToClose);
+					for (JComponent c : componentsToClose) {
+						componentStorage.remove(c);
 					}
 				}
 			});
@@ -671,16 +682,23 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					while (pane.getTabCount() != 0) {
-						JComponent c = (JComponent) pane.getComponentAt(0);
+					List<IEditor> editorsToClose = new ArrayList<IEditor>(pane
+							.getTabCount());
+					List<JComponent> componentsToClose = new ArrayList<JComponent>(
+							pane.getTabCount());
+					for (int i = 0; i < pane.getTabCount(); i++) {
+						JComponent c = (JComponent) pane.getComponentAt(i);
 						ComponentGroup group = getComponentGroup(c);
 						if (group.equals(ComponentGroup.EDITOR)) {
-							systemContainer.getEditorManager().closeEditor(
-									(IEditor) c);
+							editorsToClose.add((IEditor) c);
 						} else {
-							componentStorage.remove(c);
+							componentsToClose.add(c);
 						}
-
+					}
+					systemContainer.getEditorManager().closeEditors(
+							editorsToClose);
+					for (JComponent c : componentsToClose) {
+						componentStorage.remove(c);
 					}
 				}
 			});

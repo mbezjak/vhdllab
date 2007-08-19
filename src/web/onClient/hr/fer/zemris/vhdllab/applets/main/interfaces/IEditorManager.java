@@ -174,6 +174,16 @@ public interface IEditorManager {
 	void closeAllButThisEditor(IEditor editorToKeepOpened);
 
 	/**
+	 * Closes all specified editors. If <code>editorsToClose</code> is
+	 * <code>null</code> no exception will be thrown and this method will
+	 * simply return.
+	 * 
+	 * @param editorsToClose
+	 *            an editors to close
+	 */
+	void closeEditors(List<IEditor> editorsToClose);
+
+	/**
 	 * Resets an editor title to make it visible to a user that an editor's
 	 * content has been changed.
 	 * 

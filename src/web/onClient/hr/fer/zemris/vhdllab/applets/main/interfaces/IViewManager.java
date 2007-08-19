@@ -68,6 +68,16 @@ public interface IViewManager {
 	void closeAllButThisView(IView viewToKeepOpened);
 
 	/**
+	 * Closes all specified views. If <code>viewsToClose</code> is
+	 * <code>null</code> no exception will be thrown and this method will
+	 * simply return.
+	 * 
+	 * @param viewsToClose
+	 *            a views to close
+	 */
+	void closeViews(List<IView> viewsToClose);
+
+	/**
 	 * Returns <code>true</code> if specified view is opened or
 	 * <code>false</code> otherwise.
 	 * 
