@@ -456,7 +456,7 @@ public interface VHDLLabManager {
 	 * @param name
 	 *            a name of user file
 	 * @return a user file
-	 * @throws DAOException
+	 * @throws ServiceException
 	 *             if exceptional condition occurs.
 	 */
 	public UserFile findUserFileByName(String userId, String name)

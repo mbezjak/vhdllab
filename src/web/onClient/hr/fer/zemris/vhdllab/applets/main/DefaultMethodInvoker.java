@@ -22,8 +22,9 @@ import java.util.Properties;
  * Default implementation of <code>MethodInvoker</code> interface. Uses
  * <code>Initiator</code> to initiate requests to server. It also uses
  * Properties class to create XML documents that are sent and then reassembled
- * on server. Server also returns XML documents that are reassembled here and
- * so forth.
+ * on server. Server also returns XML documents that are reassembled here and so
+ * forth.
+ * 
  * @author Miro Bezjak
  */
 public class DefaultMethodInvoker implements MethodInvoker {
@@ -33,517 +34,663 @@ public class DefaultMethodInvoker implements MethodInvoker {
 
 	/**
 	 * Constructor.
-	 * @param initiator an <code>Initiator</code> that is responsible for
-	 * 		initiating requests to server
-	 * @throws NullPointerException if <code>initiator</code> is <code>null</code>
+	 * 
+	 * @param initiator
+	 *            an <code>Initiator</code> that is responsible for initiating
+	 *            requests to server
+	 * @throws NullPointerException
+	 *             if <code>initiator</code> is <code>null</code>
 	 */
 	public DefaultMethodInvoker(Initiator initiator) {
-		if(initiator == null) throw new NullPointerException("Ajax mediator can not be null");
+		if (initiator == null)
+			throw new NullPointerException("Ajax mediator can not be null");
 		this.initiator = initiator;
 	}
-	
-	public CompilationResult compileFile(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+
+	public CompilationResult compileFile(Long fileId)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_COMPILE_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String data = resProperties.getProperty(MethodConstants.PROP_RESULT_COMPILATION_SERIALIZATION);
+
+		String data = resProperties
+				.getProperty(MethodConstants.PROP_RESULT_COMPILATION_SERIALIZATION);
 		CompilationResult result = CompilationResult.deserialize(data);
 		return result;
 	}
 
-	public Long createFile(Long projectId, String name, String type) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
-		if(name == null) throw new NullPointerException("File name can not be null.");
-		if(type == null) throw new NullPointerException("File type can not be null.");
+	public Long createFile(Long projectId, String name, String type)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
+		if (name == null)
+			throw new NullPointerException("File name can not be null.");
+		if (type == null)
+			throw new NullPointerException("File type can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
 		return id;
 	}
 
-	public Long createGlobalFile(String name, String type) throws UniformAppletException {
-		if(name == null) throw new NullPointerException("Global file name can not be null.");
-		if(type == null) throw new NullPointerException("Global file type can not be null.");
+	public Long createGlobalFile(String name, String type)
+			throws UniformAppletException {
+		if (name == null)
+			throw new NullPointerException("Global file name can not be null.");
+		if (type == null)
+			throw new NullPointerException("Global file type can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_GLOBAL_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
 		return id;
 	}
 
-	public Long createProject(String name, String ownerId) throws UniformAppletException {
-		if(name == null) throw new NullPointerException("Project name can not be null.");
-		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
+	public Long createProject(String name, String ownerId)
+			throws UniformAppletException {
+		if (name == null)
+			throw new NullPointerException("Project name can not be null.");
+		if (ownerId == null)
+			throw new NullPointerException(
+					"Project owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, name);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID,
+				ownerId);
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String projectId = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID);
+
+		String projectId = resProperties
+				.getProperty(MethodConstants.PROP_PROJECT_ID);
 		Long id = Long.parseLong(projectId);
 		return id;
 	}
 
-	public Long createUserFile(String ownerId, String name, String type) throws UniformAppletException {
-		if(ownerId == null) throw new NullPointerException("User owner identifier can not be null.");
-		if(type == null) throw new NullPointerException("User file type can not be null.");
+	public Long createUserFile(String ownerId, String name, String type)
+			throws UniformAppletException {
+		if (ownerId == null)
+			throw new NullPointerException(
+					"User owner identifier can not be null.");
+		if (type == null)
+			throw new NullPointerException("User file type can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_CREATE_NEW_USER_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
 		return id;
 	}
 
 	public void deleteFile(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		initiator.initiateCall(reqProperties);
 	}
 
 	public void deleteGlobalFile(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_GLOBAL_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		initiator.initiateCall(reqProperties);
 	}
 
 	public void deleteProject(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		initiator.initiateCall(reqProperties);
 	}
 
 	public void deleteUserFile(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException(
+					"User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_DELETE_USER_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public boolean existsFile(Long projectId, String name) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
-		if(name == null) throw new NullPointerException("File name can not be null.");
+	public boolean existsFile(Long projectId, String name)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
+		if (name == null)
+			throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
+
+		String exists = resProperties
+				.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
 	}
 
 	public boolean existsGlobalFile(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException(
+					"Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_GLOBAL_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
+
+		String exists = resProperties
+				.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
 	}
 
 	public boolean existsProject(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String exists = resProperties.getProperty(MethodConstants.PROP_PROJECT_EXISTS);
+
+		String exists = resProperties
+				.getProperty(MethodConstants.PROP_PROJECT_EXISTS);
 		return exists.equals("1");
 	}
 
 	public boolean existsUserFile(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException(
+					"User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_USER_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
+
+		String exists = resProperties
+				.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
 	}
 
-	public CircuitInterface extractCircuitInterface(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+	public CircuitInterface extractCircuitInterface(Long fileId)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXTRACT_CIRCUIT_INTERFACE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String ciEntityName = resProperties.getProperty(MethodConstants.PROP_CI_ENTITY_NAME);
+
+		String ciEntityName = resProperties
+				.getProperty(MethodConstants.PROP_CI_ENTITY_NAME);
 		List<Port> ports = new ArrayList<Port>();
 		int i = 1;
-		while(true) {
-			String portName = resProperties.getProperty(MethodConstants.PROP_CI_PORT_NAME+"."+i);
-			if(portName == null) break;
-			String portDirection = resProperties.getProperty(MethodConstants.PROP_CI_PORT_DIRECTION+"."+i);
-			String typeName = resProperties.getProperty(MethodConstants.PROP_CI_PORT_TYPE_NAME+"."+i);
-			String typeRangeFrom = resProperties.getProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_FROM+"."+i);
-			String typeRangeTo = resProperties.getProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_TO+"."+i);
-			String vectorDirection = resProperties.getProperty(MethodConstants.PROP_CI_PORT_TYPE_VECTOR_DIRECTION+"."+i);
-			
+		while (true) {
+			String portName = resProperties
+					.getProperty(MethodConstants.PROP_CI_PORT_NAME + "." + i);
+			if (portName == null)
+				break;
+			String portDirection = resProperties
+					.getProperty(MethodConstants.PROP_CI_PORT_DIRECTION + "."
+							+ i);
+			String typeName = resProperties
+					.getProperty(MethodConstants.PROP_CI_PORT_TYPE_NAME + "."
+							+ i);
+			String typeRangeFrom = resProperties
+					.getProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_FROM
+							+ "." + i);
+			String typeRangeTo = resProperties
+					.getProperty(MethodConstants.PROP_CI_PORT_TYPE_RANGE_TO
+							+ "." + i);
+			String vectorDirection = resProperties
+					.getProperty(MethodConstants.PROP_CI_PORT_TYPE_VECTOR_DIRECTION
+							+ "." + i);
+
 			Direction direction;
-			if(portDirection.equalsIgnoreCase("IN")) {
+			if (portDirection.equalsIgnoreCase("IN")) {
 				direction = Direction.IN;
-			} else if(portDirection.equalsIgnoreCase("OUT")) {
+			} else if (portDirection.equalsIgnoreCase("OUT")) {
 				direction = Direction.OUT;
-			} else if(portDirection.equalsIgnoreCase("INOUT")) {
+			} else if (portDirection.equalsIgnoreCase("INOUT")) {
 				direction = Direction.INOUT;
 			} else {
 				direction = Direction.BUFFER;
 			}
-			
+
 			int[] range;
-			if(typeRangeFrom == null && typeRangeTo == null) {
+			if (typeRangeFrom == null && typeRangeTo == null) {
 				range = null;
 			} else {
 				int rangeFrom = Integer.parseInt(typeRangeFrom);
 				int rangeTo = Integer.parseInt(typeRangeTo);
-				range = new int[] {rangeFrom, rangeTo};
-			} 
-			
+				range = new int[] { rangeFrom, rangeTo };
+			}
+
 			Type type = new DefaultType(typeName, range, vectorDirection);
 			ports.add(new DefaultPort(portName, direction, type));
 			i++;
 		}
-		
+
 		return new DefaultCircuitInterface(ciEntityName, ports);
 	}
 
-	public List<Long> extractDependencies(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+	public List<Long> extractDependencies(Long fileId)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXTRACT_DEPENDENCIES;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
-		while(true) {
-			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
-			if(id == null) break;
+		while (true) {
+			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID
+					+ "." + i);
+			if (id == null)
+				break;
 			files.add(Long.parseLong(id));
 			i++;
 		}
 		return files;
 	}
-	
-	public Hierarchy extractHierarchy(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+
+	public Hierarchy extractHierarchy(Long projectId)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXTRACT_HIERARCHY;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String data = resProperties.getProperty(MethodConstants.PROP_HIERARCHY_SERIALIZATION);
+
+		String data = resProperties
+				.getProperty(MethodConstants.PROP_HIERARCHY_SERIALIZATION);
 		Hierarchy h = Hierarchy.deserialize(data);
 		return h;
 	}
-	
-	public Long findFileByName(Long projectId, String name) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
-		if(name == null) throw new NullPointerException("File name can not be null.");
+
+	public Long findFileByName(Long projectId, String name)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
+		if (name == null)
+			throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_FILE_BY_NAME;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String fileId = resProperties.getProperty(MethodConstants.PROP_FILE_ID);
 		Long id = Long.parseLong(fileId);
 		return id;
 	}
-	
-	public List<Long> findFilesByProject(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+
+	public List<Long> findFilesByProject(Long projectId)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_FILES_BY_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
-		while(true) {
-			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
-			if(id == null) break;
+		while (true) {
+			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID
+					+ "." + i);
+			if (id == null)
+				break;
 			files.add(Long.parseLong(id));
 			i++;
 		}
 		return files;
 	}
 
-	public List<Long> findGlobalFilesByType(String type) throws UniformAppletException {
-		if(type == null) throw new NullPointerException("Global file type can not be null.");
+	public List<Long> findGlobalFilesByType(String type)
+			throws UniformAppletException {
+		if (type == null)
+			throw new NullPointerException("Global file type can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_GLOBAL_FILES_BY_TYPE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_TYPE, type);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
-		while(true) {
-			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
-			if(id == null) break;
+		while (true) {
+			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID
+					+ "." + i);
+			if (id == null)
+				break;
 			files.add(Long.parseLong(id));
 			i++;
 		}
 		return files;
 	}
 
-	public List<Long> findProjectsByUser(String ownerId) throws UniformAppletException {
-		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
+	public List<Long> findProjectsByUser(String ownerId)
+			throws UniformAppletException {
+		if (ownerId == null)
+			throw new NullPointerException(
+					"Project owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_PROJECTS_BY_USER;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID,
+				ownerId);
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		List<Long> projects = new ArrayList<Long>();
 		int i = 1;
-		while(true) {
-			String id = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID+"."+i);
-			if(id == null) break;
+		while (true) {
+			String id = resProperties
+					.getProperty(MethodConstants.PROP_PROJECT_ID + "." + i);
+			if (id == null)
+				break;
 			projects.add(Long.parseLong(id));
 			i++;
 		}
 		return projects;
 	}
 
-	public List<Long> findUserFilesByOwner(String ownerId) throws UniformAppletException {
-		if(ownerId == null) throw new NullPointerException("User file owner identifier can not be null.");
+	public List<Long> findUserFilesByOwner(String ownerId)
+			throws UniformAppletException {
+		if (ownerId == null)
+			throw new NullPointerException(
+					"User file owner identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_FIND_USER_FILES_BY_USER;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
-		while(true) {
-			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
-			if(id == null) break;
+		while (true) {
+			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID
+					+ "." + i);
+			if (id == null)
+				break;
 			files.add(Long.parseLong(id));
 			i++;
 		}
 		return files;
 	}
-	
-	public Long getProjectIdentifier(String ownerId, String projectName) throws UniformAppletException {
-		if(ownerId == null) throw new NullPointerException("Project owner identifier can not be null.");
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+
+	public Long getProjectIdentifier(String ownerId, String projectName)
+			throws UniformAppletException {
+		if (ownerId == null)
+			throw new NullPointerException(
+					"Project owner identifier can not be null.");
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_GET_PROJECT_IDENTIFIER;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, projectName);
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID,
+				ownerId);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME,
+				projectName);
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String id = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID);
 		return Long.parseLong(id);
 	}
-	
+
 	public String generateVHDL(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_GENERATE_VHDL;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String vhdl = resProperties.getProperty(MethodConstants.PROP_GENERATED_VHDL);
+
+		String vhdl = resProperties
+				.getProperty(MethodConstants.PROP_GENERATED_VHDL);
 		return vhdl;
 	}
 
 	public String loadFileContent(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_CONTENT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
+
+		String content = resProperties
+				.getProperty(MethodConstants.PROP_FILE_CONTENT);
 		return content;
 	}
 
 	public String loadFileName(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_NAME;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String name = resProperties.getProperty(MethodConstants.PROP_FILE_NAME);
 		return name;
 	}
 
 	public Long loadFileProjectId(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_BELONGS_TO_PROJECT_ID;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String projectId = resProperties.getProperty(MethodConstants.PROP_PROJECT_ID);
+
+		String projectId = resProperties
+				.getProperty(MethodConstants.PROP_PROJECT_ID);
 		Long id = Long.parseLong(projectId);
 		return id;
 
 	}
 
 	public String loadFileType(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_FILE_TYPE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String type = resProperties.getProperty(MethodConstants.PROP_FILE_TYPE);
 		return type;
 	}
 
-	public String loadGlobalFileContent(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
+	public String loadGlobalFileContent(Long fileId)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException(
+					"Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_GLOBAL_FILE_CONTENT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
+
+		String content = resProperties
+				.getProperty(MethodConstants.PROP_FILE_CONTENT);
 		return content;
 	}
 
 	public String loadGlobalFileName(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException(
+					"Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_GLOBAL_FILE_NAME;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String name = resProperties.getProperty(MethodConstants.PROP_FILE_NAME);
 		return name;
 	}
 
 	public String loadGlobalFileType(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException(
+					"Global file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_GLOBAL_FILE_TYPE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String type = resProperties.getProperty(MethodConstants.PROP_FILE_TYPE);
 		return type;
 	}
-	
-	public String loadPredefinedFileContent(String fileName) throws UniformAppletException {
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+
+	public String loadPredefinedFileContent(String fileName)
+			throws UniformAppletException {
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PREDEFINED_FILE_CONTENT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, fileName);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
+
+		String content = resProperties
+				.getProperty(MethodConstants.PROP_FILE_CONTENT);
 		return content;
 	}
 
-	public List<Long> loadProjectFilesId(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+	public List<Long> loadProjectFilesId(Long projectId)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_FILES_ID;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		List<Long> files = new ArrayList<Long>();
 		int i = 1;
-		while(true) {
-			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID+"."+i);
-			if(id == null) break;
+		while (true) {
+			String id = resProperties.getProperty(MethodConstants.PROP_FILE_ID
+					+ "." + i);
+			if (id == null)
+				break;
 			files.add(Long.parseLong(id));
 			i++;
 		}
@@ -551,254 +698,339 @@ public class DefaultMethodInvoker implements MethodInvoker {
 	}
 
 	public String loadProjectName(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_NAME;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String name = resProperties.getProperty(MethodConstants.PROP_PROJECT_NAME);
+
+		String name = resProperties
+				.getProperty(MethodConstants.PROP_PROJECT_NAME);
 		return name;
 	}
 
-	public Long loadProjectNumberFiles(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+	public Long loadProjectNumberFiles(Long projectId)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_NMBR_FILES;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String numberOfFiles = resProperties.getProperty(MethodConstants.PROP_PROJECT_NMBR_FILES);
+
+		String numberOfFiles = resProperties
+				.getProperty(MethodConstants.PROP_PROJECT_NMBR_FILES);
 		Long count = Long.parseLong(numberOfFiles);
 		return count;
 	}
 
-	public String loadProjectOwnerId(Long projectId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
+	public String loadProjectOwnerId(Long projectId)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_PROJECT_OWNER_ID;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String ownerId = resProperties.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID);
+
+		String ownerId = resProperties
+				.getProperty(MethodConstants.PROP_PROJECT_OWNER_ID);
 		return ownerId;
 	}
 
-	public String loadUserFileContent(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
+	public String loadUserFileContent(Long fileId)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException(
+					"User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_CONTENT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String content = resProperties.getProperty(MethodConstants.PROP_FILE_CONTENT);
+
+		String content = resProperties
+				.getProperty(MethodConstants.PROP_FILE_CONTENT);
 		return content;
 	}
 
-	public String loadUserFileOwnerId(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
+	public String loadUserFileOwnerId(Long fileId)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException(
+					"User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_OWNER_ID;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String ownerId = resProperties.getProperty(MethodConstants.PROP_FILE_OWNER_ID);
+
+		String ownerId = resProperties
+				.getProperty(MethodConstants.PROP_FILE_OWNER_ID);
 		return ownerId;
 	}
-	
+
 	public String loadUserFileName(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException(
+					"User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_NAME;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String name = resProperties.getProperty(MethodConstants.PROP_FILE_NAME);
 		return name;
 	}
 
-
 	public String loadUserFileType(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("User file identifier can not be null.");
+		if (fileId == null)
+			throw new NullPointerException(
+					"User file identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_LOAD_USER_FILE_TYPE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
+
 		String type = resProperties.getProperty(MethodConstants.PROP_FILE_TYPE);
 		return type;
 	}
 
-	public void renameFile(Long fileId, String name) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
-		if(name == null) throw new NullPointerException("File name can not be null.");
+	public void renameFile(Long fileId, String name)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
+		if (name == null)
+			throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_RENAME_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public void renameGlobalFile(Long fileId, String name) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
-		if(name == null) throw new NullPointerException("Global file name can not be null.");
+	public void renameGlobalFile(Long fileId, String name)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException(
+					"Global file identifier can not be null.");
+		if (name == null)
+			throw new NullPointerException("Global file name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_RENAME_GLOBAL_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public void renameProject(Long projectId, String name) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
-		if(name == null) throw new NullPointerException("Project name can not be null.");
+	public void renameProject(Long projectId, String name)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
+		if (name == null)
+			throw new NullPointerException("Project name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_RENAME_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
 		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, name);
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public SimulationResult runSimulation(Long fileId) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
+	public SimulationResult runSimulation(Long fileId)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_RUN_SIMULATION;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
-		
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String data = resProperties.getProperty(MethodConstants.PROP_RESULT_SIMULATION_SERIALIZATION);
+
+		String data = resProperties
+				.getProperty(MethodConstants.PROP_RESULT_SIMULATION_SERIALIZATION);
 		SimulationResult result = SimulationResult.deserialize(data);
 		return result;
 	}
 
-	public void saveFile(Long fileId, String content) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
-		if(content == null) throw new NullPointerException("File content can not be null.");
+	public void saveFile(Long fileId, String content)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
+		if (content == null)
+			throw new NullPointerException("File content can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_SAVE_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public void saveGlobalFile(Long fileId, String content) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("Global file identifier can not be null.");
-		if(content == null) throw new NullPointerException("Global file content can not be null.");
+	public void saveGlobalFile(Long fileId, String content)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException(
+					"Global file identifier can not be null.");
+		if (content == null)
+			throw new NullPointerException(
+					"Global file content can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_SAVE_GLOBAL_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public void saveProject(Long projectId, List<Long> filesId) throws UniformAppletException {
-		if(projectId == null) throw new NullPointerException("Project identifier can not be null.");
-		if(filesId == null) throw new NullPointerException("List of File identifiers can not be null.");
-		if(filesId.size() == 0) throw new IllegalArgumentException("List of File identifiers can not be empty.");
+	public void saveProject(Long projectId, List<Long> filesId)
+			throws UniformAppletException {
+		if (projectId == null)
+			throw new NullPointerException(
+					"Project identifier can not be null.");
+		if (filesId == null)
+			throw new NullPointerException(
+					"List of File identifiers can not be null.");
+		if (filesId.size() == 0)
+			throw new IllegalArgumentException(
+					"List of File identifiers can not be empty.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_SAVE_PROJECT;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String.valueOf(projectId));
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_ID, String
+				.valueOf(projectId));
 		int i = 1;
-		for(Long id : filesId) {
-			reqProperties.setProperty(MethodConstants.PROP_FILE_ID+"."+i, String.valueOf(id));
+		for (Long id : filesId) {
+			reqProperties.setProperty(MethodConstants.PROP_FILE_ID + "." + i,
+					String.valueOf(id));
 			i++;
 		}
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public void saveUserFile(Long fileId, String content) throws UniformAppletException {
-		if(fileId == null) throw new NullPointerException("File identifier can not be null.");
-		if(content == null) throw new NullPointerException("User file content can not be null.");
+	public void saveUserFile(Long fileId, String content)
+			throws UniformAppletException {
+		if (fileId == null)
+			throw new NullPointerException("File identifier can not be null.");
+		if (content == null)
+			throw new NullPointerException("User file content can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_SAVE_USER_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String.valueOf(fileId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_ID, String
+				.valueOf(fileId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 
-	public boolean existsProject(String ownerId, String projectName) throws UniformAppletException {
-		if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
-		if(projectName == null) throw new NullPointerException("Project name can not be null.");
+	public boolean existsProject(String ownerId, String projectName)
+			throws UniformAppletException {
+		if (ownerId == null)
+			throw new NullPointerException("Owner identifier can not be null.");
+		if (projectName == null)
+			throw new NullPointerException("Project name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_PROJECT2;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID, ownerId);
-		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME, projectName);
-		
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_OWNER_ID,
+				ownerId);
+		reqProperties.setProperty(MethodConstants.PROP_PROJECT_NAME,
+				projectName);
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String exists = resProperties.getProperty(MethodConstants.PROP_PROJECT_EXISTS);
+
+		String exists = resProperties
+				.getProperty(MethodConstants.PROP_PROJECT_EXISTS);
 		return exists.equals("1");
 	}
 
 	public boolean existsGlobalFile(String name) throws UniformAppletException {
-		if(name == null) throw new NullPointerException("Global file name can not be null.");
+		if (name == null)
+			throw new NullPointerException("Global file name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_GLOBAL_FILE2;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, name);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
+
+		String exists = resProperties
+				.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
 	}
 
-	public boolean existsUserFile(String ownerId, String fileName) throws UniformAppletException {
-		if(ownerId == null) throw new NullPointerException("Owner identifier can not be null.");
-		if(fileName == null) throw new NullPointerException("File name can not be null.");
+	public boolean existsUserFile(String ownerId, String fileName)
+			throws UniformAppletException {
+		if (ownerId == null)
+			throw new NullPointerException("Owner identifier can not be null.");
+		if (fileName == null)
+			throw new NullPointerException("File name can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_EXISTS_USER_FILE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, ownerId);
 		reqProperties.setProperty(MethodConstants.PROP_FILE_NAME, fileName);
-		
+
 		Properties resProperties = initiator.initiateCall(reqProperties);
-		
-		String exists = resProperties.getProperty(MethodConstants.PROP_FILE_EXISTS);
+
+		String exists = resProperties
+				.getProperty(MethodConstants.PROP_FILE_EXISTS);
 		return exists.equals("1");
 	}
-	
+
 	public void saveErrorMessage(String userId, String content)
 			throws UniformAppletException {
-		if(userId == null) throw new NullPointerException("User id can not be null.");
-		if(content == null) throw new NullPointerException("File content can not be null.");
+		if (userId == null)
+			throw new NullPointerException("User id can not be null.");
+		if (content == null)
+			throw new NullPointerException("File content can not be null.");
 		Properties reqProperties = new Properties();
 		String method = MethodConstants.MTD_SAVE_ERROR_MESSAGE;
 		reqProperties.setProperty(MethodConstants.PROP_METHOD, method);
-		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String.valueOf(userId));
+		reqProperties.setProperty(MethodConstants.PROP_FILE_OWNER_ID, String
+				.valueOf(userId));
 		reqProperties.setProperty(MethodConstants.PROP_FILE_CONTENT, content);
-		
+
 		initiator.initiateCall(reqProperties);
 	}
 

@@ -738,7 +738,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 		Date date = new Date();
 		String name = "client_" + userId + "_" + formatter.format(date)
-				+ ".txt";
+				+ ".log";
 		String pathToFile = FileUtil.mergePaths(exDir, name);
 		java.io.File file = new java.io.File(pathToFile);
 		try {
