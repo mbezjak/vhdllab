@@ -56,6 +56,10 @@ function performAjaxAbort() {
 
 function ajaxCallback() {
   if( req.readyState==4) {
-    document.applets[0].ajaxCallResultReceived(req.responseText, req.status);
+    vhdllab.ajaxCallResultReceived(req.responseText, req.status);
   }
+}
+
+function exitApplication() {
+  vhdllab.fastCleanup();
 }

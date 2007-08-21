@@ -446,6 +446,8 @@
       <!-- END TEMPORARY -->
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar"/>
       <fileset file="${basedir}/${lib.dir}/commons-digester-1.7.jar"/>
+      <fileset file="${basedir}/${lib.dir}/commons-httpclient-3.0.1.jar"/>
+      <fileset file="${basedir}/${lib.dir}/commons-codec-1.3.jar"/>
       <fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar"/>
 	  <fileset file="${basedir}/${lib.dir}/hibernate/commons-logging.jar"/>
       <fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils-1.7.0.jar"/>

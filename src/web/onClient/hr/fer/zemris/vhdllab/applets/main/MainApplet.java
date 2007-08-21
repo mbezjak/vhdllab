@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.ajax.shared.AjaxMediator;
-import hr.fer.zemris.ajax.shared.DefaultAjaxMediator;
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
@@ -31,6 +29,7 @@ import hr.fer.zemris.vhdllab.preferences.PropertyListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
+import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -68,6 +67,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -117,13 +117,91 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 	private Communicator communicator;
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.applet.Applet#init()
 	 */
 	@Override
 	public void init() {
-		super.init();
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					initSystem();
+				}
+			});
+		} catch (Exception ignored) {
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.applet.Applet#start()
+	 */
+	@Override
+	public void start() {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					startSystem();
+				}
+			});
+		} catch (Exception ignored) {
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.applet.Applet#stop()
+	 */
+	@Override
+	public void stop() {
+		if (SwingUtilities.isEventDispatchThread()) {
+			stopSystem();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						stopSystem();
+					}
+				});
+			} catch (Exception ignored) {
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.applet.Applet#destroy()
+	 */
+	@Override
+	public void destroy() {
+		if (SwingUtilities.isEventDispatchThread()) {
+			destroySystem();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						destroySystem();
+					}
+				});
+			} catch (Exception ignored) {
+			}
+		}
+	}
+
+	/**
+	 * This is an implementation of {@link Applet#init()} method and it is
+	 * intended to be executed by EDT.
+	 */
+	private void initSystem() {
 		String userId = this.getParameter("userId");
 		if (userId == null) {
 			// TODO following should be removed when security is implemented!
@@ -135,11 +213,12 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		}
 		components = new HashMap<JComponent, ComponentInformation>();
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
-		
+
 		IResourceManager resourceManager;
 		try {
-			AjaxMediator ajax = new DefaultAjaxMediator(this);
-			Initiator initiator = new AjaxInitiator(ajax);
+//			AjaxMediator ajax = new DefaultAjaxMediator(this);
+//			Initiator initiator = new AjaxInitiator(ajax);
+			Initiator initiator = new HttpClientInitiator(getCodeBase().toExternalForm());
 			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
 			communicator = new Communicator(invoker, userId);
 			communicator.init();
@@ -219,44 +298,62 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.applet.Applet#start()
+	/**
+	 * This is an implementation of {@link Applet#start()} method and it is
+	 * intended to be executed by EDT.
 	 */
-	@Override
-	public void start() {
-		super.start();
+	private void startSystem() {
 		setPaneSize();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.applet.Applet#stop()
+	/**
+	 * This is an implementation of {@link Applet#stop()} method and it is
+	 * intended to be executed by EDT.
 	 */
-	@Override
-	public void stop() {
-		super.stop();
+	private void stopSystem() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.applet.Applet#destroy()
+	/**
+	 * This is an implementation of {@link Applet#destroy()} method and it is
+	 * intended to be executed by EDT.
 	 */
-	@Override
-	public void destroy() {
+	private void destroySystem() {
 		try {
-			((DefaultSystemContainer) systemContainer).dispose();
-			communicator.dispose();
+			if (systemContainer != null) {
+				((DefaultSystemContainer) systemContainer).dispose();
+				systemContainer = null;
+			}
+			if (communicator != null) {
+				communicator.dispose();
+				communicator = null;
+			}
 		} catch (UniformAppletException e) {
 			e.printStackTrace();
 		}
 		this.setJMenuBar(null);
 		this.getContentPane().removeAll();
 		this.repaint();
-		super.destroy();
+	}
+
+	/**
+	 * Stop all internet traffic and destroy application. Unlike
+	 * {@link #exitApplication()} this method does not require any user
+	 * intervention (i.e. this method will force save all resources, editors
+	 * etc.).
+	 */
+	public void fastCleanup() {
+		stop();
+		destroy();
+	}
+
+	/**
+	 * Stop all internet traffic and destroy application. This method will ask
+	 */
+	private void exitApplication() {
+		// TODO ovo treba popravit kad se sredi system container i dialog
+		// manager.
+		systemContainer.getEditorManager().closeAllEditors();
+		fastCleanup();
 	}
 
 	private void initGUI() {
@@ -295,7 +392,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				JTabbedPane.SCROLL_TAB_LAYOUT);
 		rightTabbedPane = new JTabbedPane(JTabbedPane.TOP,
 				JTabbedPane.SCROLL_TAB_LAYOUT);
-		
+
 		centerTabbedPane.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -314,7 +411,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					return;
 				}
 				component.requestFocusInWindow();
-//				activate((JComponent) component);
+				// activate((JComponent) component);
 			}
 		});
 		bottomTabbedPane.addChangeListener(new ChangeListener() {
@@ -335,7 +432,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					return;
 				}
 				component.requestFocusInWindow();
-//				activate((JComponent) component);
+				// activate((JComponent) component);
 			}
 		});
 		leftTabbedPane.addChangeListener(new ChangeListener() {
@@ -356,7 +453,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					return;
 				}
 				component.requestFocusInWindow();
-//				activate((JComponent) component);
+				// activate((JComponent) component);
 			}
 		});
 		rightTabbedPane.addChangeListener(new ChangeListener() {
@@ -377,7 +474,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 					return;
 				}
 				component.requestFocusInWindow();
-//				activate((JComponent) component);
+				// activate((JComponent) component);
 			}
 		});
 
@@ -535,14 +632,6 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 		return centerComponentsPanel;
 
-	}
-
-	/**
-	 * Stop all internet traffic and destroy application.
-	 */
-	private void exitApplication() {
-		stop();
-		destroy();
 	}
 
 	/**
@@ -905,7 +994,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text,
+								MessageType.ERROR);
 					}
 				}
 			});
@@ -930,7 +1020,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text,
+								MessageType.ERROR);
 					}
 				}
 			});
@@ -955,7 +1046,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ viewType);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text,
+								MessageType.ERROR);
 					}
 				}
 			});
@@ -977,7 +1069,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 										+ ComponentTypes.VIEW_PROJECT_EXPLORER);
 						text = PlaceholderUtil.replacePlaceholders(text,
 								new String[] { viewTitle });
-						SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+						SystemLog.instance().addSystemMessage(text,
+								MessageType.ERROR);
 					}
 
 				}
@@ -1137,12 +1230,13 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				}
 			});
 			menu.add(menuItem);
-			
+
 			menu.addSeparator();
 			menuItem = new JMenuItem("Show new dialog");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(MainApplet.this, "is it modal?");
+					JOptionPane.showMessageDialog(MainApplet.this,
+							"is it modal?");
 				}
 			});
 			menu.add(menuItem);
@@ -1468,7 +1562,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			if (c instanceof Container) {
 				addListenersFor((Container) c, originalComponent);
 			}
-//			c.addFocusListener(new MyFocus(originalComponent));
+			// c.addFocusListener(new MyFocus(originalComponent));
 			c.addMouseListener(new MyMouse(originalComponent));
 		}
 	}

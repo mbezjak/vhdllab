@@ -4,14 +4,14 @@
 	
 	<component>
 		<group>EDITOR</group>
-		<normal>images/icons/components/editor.png</normal>
-		<active>images/icons/components/active_editor.png</active>
+		<normal>editor.png</normal>
+		<active>active_editor.png</active>
 	</component>
 	
 	<component>
 		<group>VIEW</group>
-		<normal>images/icons/components/view.png</normal>
-		<active>images/icons/components/active_view.png</active>
+		<normal>view.png</normal>
+		<active>active_view.png</active>
 	</component>
 	
 </components>

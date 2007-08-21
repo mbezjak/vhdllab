@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- JNLP File for VHDLLab -->
+
+<jnlp spec="1.0+" codebase="http://localhost:8080/vhdllab/" href="vhdllab.jnlp">
+   <information>
+      <title>VHDLLab application</title>
+      <vendor>The FER java team</vendor>
+      <description>VHDLLab</description>
+      <homepage href="http://java.sun.com/docs/books/tutorial/deployment/webstart/running.html"/>
+      <description kind="short">VHDLLab</description>
+   </information>
+   <shortcut online="false">
+      <desktop/>
+      <menu submenu="My VHDLLab App"/>
+    </shortcut>
+   <resources>     
+   	<jar href="vhdllab-web-onClient.jar"/>   
+   	<jar href="commons-logging.jar"/>   
+   	<jar href="commons-collections.jar"/>   
+   	<jar href="commons-beanutils-1.7.0.jar"/>   
+   	<jar href="commons-digester-1.7.jar"/>   
+   	<jar href="commons-codec-1.3.jar"/>   
+   	<jar href="commons-httpclient-3.0.1.jar"/>   
+	<j2se version="1.6+"
+	      href="http://java.sun.com/products/autodl/j2se"/>
+   </resources>
+   <applet-desc main-class="hr.fer.zemris.vhdllab.applets.main.MainApplet" name="vhdllab" height="600" width="800"/>
+</jnlp>

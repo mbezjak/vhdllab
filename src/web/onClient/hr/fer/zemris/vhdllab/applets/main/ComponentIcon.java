@@ -25,24 +25,22 @@ import org.apache.commons.digester.Digester;
  */
 public class ComponentIcon {
 
-	private static final String COMPONENT_ICON_CONFIGURATION = "configurations/componentIcons.xml";
-
 	private static final Map<ComponentGroup, Icons> icons;
 
 	static {
 		icons = new HashMap<ComponentGroup, Icons>();
-		InputStream is = ComponentIcon.class.getClassLoader()
-				.getResourceAsStream(COMPONENT_ICON_CONFIGURATION);
+		InputStream is = ComponentIcon.class
+				.getResourceAsStream("componentIcons.xml");
 		String data = FileUtil.readFile(is);
 		ComponentIcons ci = ComponentIconParser.getConfiguration(data);
-		for(ComponentIconItem i : ci.getIcons()) {
+		for (ComponentIconItem i : ci.getIcons()) {
 			ComponentGroup group = ComponentGroup.valueOf(i.getGroup());
 			Icon normal = loadIcon(i.getNormal());
 			Icon active = loadIcon(i.getActive());
 			icons.put(group, new Icons(normal, active));
 		}
 	}
-	
+
 	/**
 	 * Loads an icon and returns it.
 	 * 
@@ -51,11 +49,9 @@ public class ComponentIcon {
 	 * @return an icon
 	 */
 	private static Icon loadIcon(String path) {
-		URL url = ComponentIcon.class.getClassLoader().getResource(path);
+		URL url = ComponentIcon.class.getResource(path);
 		return new ImageIcon(url);
 	}
-
-
 
 	/**
 	 * Returns a normal (presented to a user at all times) icon for a specified
@@ -72,7 +68,7 @@ public class ComponentIcon {
 			throw new NullPointerException("Component group cant be null");
 		}
 		Icons i = icons.get(group);
-		if(i == null) {
+		if (i == null) {
 			return null;
 		}
 		return i.getNormal();
@@ -94,7 +90,7 @@ public class ComponentIcon {
 			throw new NullPointerException("Component group cant be null");
 		}
 		Icons i = icons.get(group);
-		if(i == null) {
+		if (i == null) {
 			return null;
 		}
 		return i.getActive();
@@ -312,7 +308,7 @@ public class ComponentIcon {
 	 * @author Miro Bezjak
 	 */
 	public static class Icons {
-		
+
 		/**
 		 * A normal icon.
 		 */
@@ -321,12 +317,14 @@ public class ComponentIcon {
 		 * An active icon.
 		 */
 		private Icon active;
-		
+
 		/**
 		 * Default constructor.
 		 * 
-		 * @param normal a normal icon
-		 * @param active an active icon
+		 * @param normal
+		 *            a normal icon
+		 * @param active
+		 *            an active icon
 		 */
 		public Icons(Icon normal, Icon active) {
 			super();
@@ -342,7 +340,7 @@ public class ComponentIcon {
 		public Icon getNormal() {
 			return normal;
 		}
-		
+
 		/**
 		 * Getter for an active icon.
 		 * 
@@ -352,7 +350,9 @@ public class ComponentIcon {
 			return active;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
@@ -366,7 +366,9 @@ public class ComponentIcon {
 			return result;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
@@ -390,7 +392,7 @@ public class ComponentIcon {
 				return false;
 			return true;
 		}
-		
+
 	}
-	
+
 }
