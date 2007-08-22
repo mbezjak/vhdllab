@@ -205,6 +205,7 @@ public class DefaultEditorManager implements IEditorManager {
 		String fileName = file.getFileName();
 		// only so content should not be loaded
 		if (isEditorOpened(identifier)) {
+			storage.setSelectedComponent(identifier);
 			return getOpenedEditor(identifier);
 		}
 		String content;

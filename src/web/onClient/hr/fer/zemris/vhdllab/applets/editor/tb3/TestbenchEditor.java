@@ -1,13 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.editor.tb3;
 
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.Component;
 
@@ -125,7 +127,7 @@ public class TestbenchEditor extends JPanel implements IEditor, IWizard {
 		// kako dobit ciruit interface
 //		CircuitInterface ci;
 //		try {
-//			ci = container.getCircuitInterfaceFor(file.getProjectName(), file.getFileName());
+//			ci = container.getResourceManager().getCircuitInterfaceFor(file.getProjectName(), file.getFileName());
 //		} catch (UniformAppletException e) {
 //			e.printStackTrace();
 //			return null;

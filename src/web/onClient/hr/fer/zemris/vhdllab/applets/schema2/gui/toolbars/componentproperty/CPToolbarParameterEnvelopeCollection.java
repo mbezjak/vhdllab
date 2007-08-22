@@ -195,8 +195,7 @@ public class CPToolbarParameterEnvelopeCollection {
 		ICommand command = new SetParameterCommand(componentName,
 				parameterName, parameterHolder, newValue, controller
 						.getSchemaInfo());
-		ICommandResponse response = command.performCommand(controller
-				.getSchemaInfo());
+		ICommandResponse response = controller.send(command);
 
 		if (CPToolbar.DEBUG_MODE) {
 			System.out
