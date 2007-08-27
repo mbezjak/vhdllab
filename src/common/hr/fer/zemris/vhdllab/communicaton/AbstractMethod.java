@@ -3,24 +3,36 @@
  */
 package hr.fer.zemris.vhdllab.communicaton;
 
-import hr.fer.zemris.ajax.shared.XMLUtil;
-
-import java.util.Properties;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Miro Bezjak
  * @param <T>
  */
-public abstract class AbstractMethod<T> implements IMethod<T> {
+public abstract class AbstractMethod<T extends Serializable> implements
+		IMethod<T> {
 
-	private Properties p;
+	private String method;
+	private String userId;
+	private String fingerprint;
+	private Map<String, Serializable> parameters;
+	private T result;
+	private int statusCode;
+	private String statusMessage;
 
 	public AbstractMethod(String method) {
-		if (method == null) {
+		this.method = method;
+		if (this.method == null) {
 			throw new NullPointerException("Method cant be null");
 		}
-		p = new Properties();
-		p.setProperty(METHOD_KEY, method);
+		userId = UserCredentials.instance().getUserId();
+		fingerprint = UserCredentials.instance().getFingerprint();
+		parameters = new HashMap<String, Serializable>();
+		result = null;
+		statusCode = STATUS_NOT_SET;
+		statusMessage = null;
 	}
 
 	/*
@@ -30,7 +42,23 @@ public abstract class AbstractMethod<T> implements IMethod<T> {
 	 */
 	@Override
 	public String getMethod() {
-		return p.getProperty(METHOD_KEY);
+		return method;
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getUserId()
+	 */
+	@Override
+	public String getUserId() {
+		return userId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getFingerprint()
+	 */
+	@Override
+	public String getFingerprint() {
+		return fingerprint;
 	}
 
 	/*
@@ -39,90 +67,64 @@ public abstract class AbstractMethod<T> implements IMethod<T> {
 	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getParameter(java.lang.String)
 	 */
 	@Override
-	public String getParameter(String paramName) {
-		if (paramName == null) {
+	public Object getParameter(String param) {
+		return getParameter(Object.class, param);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getParameter(java.lang.Class,
+	 *      java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <X> X getParameter(Class<X> clazz, String param) {
+		if (clazz == null) {
+			throw new NullPointerException("Return value class cant be null");
+		}
+		if (param == null) {
 			throw new NullPointerException("Parameter name cant be null");
 		}
-		String property = p.getProperty(PROPERTY_PREFIX + paramName);
+		Object property = parameters.get(param);
 		if (property == null) {
-			setStatus(SE_METHOD_ARGUMENT_ERROR, "Parameter " + paramName
+			setStatus(SE_METHOD_ARGUMENT_ERROR, "Parameter " + param
 					+ " is not set.");
 		}
-		return property;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getParameterAsBoolean(java.lang.String)
-	 */
-	@Override
-	public Boolean getParameterAsBoolean(String paramName) {
-		String parameter = getParameter(paramName);
-		if (parameter == null) {
-			return null;
-		}
-		return Boolean.valueOf(parameter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getParameterAsDouble(java.lang.String)
-	 */
-	@Override
-	public Double getParameterAsDouble(String paramName) {
-		String parameter = getParameter(paramName);
-		if (parameter == null) {
-			return null;
-		}
 		try {
-			return Double.valueOf(parameter);
-		} catch (NumberFormatException e) {
-			setStatus(SE_PARSE_ERROR, "Parameter " + paramName
-					+ " does't contain a double value but: " + parameter);
+			return (X) property;
+		} catch (RuntimeException e) {
+			setStatus(SE_PARSE_ERROR, "Parameter " + param + "=" + property
+					+ " cant be casted to " + clazz.getCanonicalName());
 			return null;
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getParameterAsInteger(java.lang.String)
-	 */
-	@Override
-	public Integer getParameterAsInteger(String paramName) {
-		String parameter = getParameter(paramName);
-		if (parameter == null) {
-			return null;
+	protected <V extends Serializable> void setParameter(String param, V value) {
+		if (param == null) {
+			throw new NullPointerException("Parameter cant be null");
 		}
-		try {
-			return Integer.valueOf(parameter);
-		} catch (NumberFormatException e) {
-			setStatus(SE_PARSE_ERROR, "Parameter " + paramName
-					+ " does't contain an integer value but: " + parameter);
-			return null;
+		if (value == null) {
+			throw new NullPointerException("Parameter value cant be null");
 		}
+		parameters.put(param, value);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getParameterAsLong(java.lang.String)
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getResult()
 	 */
 	@Override
-	public Long getParameterAsLong(String paramName) {
-		String parameter = getParameter(paramName);
-		if (parameter == null) {
-			return null;
-		}
-		try {
-			return Long.valueOf(parameter);
-		} catch (NumberFormatException e) {
-			setStatus(SE_PARSE_ERROR, "Parameter " + paramName
-					+ " does't contain a long value but: " + parameter);
-			return null;
-		}
+	public T getResult() {
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#setResult(java.io.Serializable)
+	 */
+	@Override
+	public void setResult(T result) {
+		this.result = result;
+		setStatusOK();
 	}
 
 	/*
@@ -132,30 +134,7 @@ public abstract class AbstractMethod<T> implements IMethod<T> {
 	 */
 	@Override
 	public int getStatusCode() {
-		try {
-			return Integer.parseInt(p.getProperty(STATUS_CODE));
-		} catch (NumberFormatException e) {
-			return SE_STATUS_CODE_PARSE_ERROR;
-		}
-	}
-
-	protected void setOKStatus() {
-		setStatus(STATUS_OK);
-	}
-
-	protected void setStatus(int statusCode) {
-		setStatus(statusCode, null);
-	}
-
-	protected void setStatus(int statusCode, String message) {
-		p.setProperty(STATUS_CODE, String.valueOf(statusCode));
-		if (message != null) {
-			p.setProperty(STATUS_MESSAGE, message);
-		}
-	}
-
-	protected boolean isStatusSet() {
-		return p.containsKey(STATUS_CODE);
+		return statusCode;
 	}
 
 	/*
@@ -165,17 +144,26 @@ public abstract class AbstractMethod<T> implements IMethod<T> {
 	 */
 	@Override
 	public String getStatusMessage() {
-		return p.getProperty(STATUS_MESSAGE);
+		return statusMessage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#serialize()
-	 */
+	protected void setStatusOK() {
+		setStatus(STATUS_OK);
+	}
+
 	@Override
-	public String serialize() {
-		return XMLUtil.serializeProperties(p);
+	public void setStatus(int statusCode) {
+		setStatus(statusCode, null);
+	}
+
+	@Override
+	public void setStatus(int statusCode, String message) {
+		this.statusCode = statusCode;
+		this.statusMessage = message;
+	}
+
+	protected boolean isStatusSet() {
+		return statusCode != STATUS_NOT_SET;
 	}
 
 }

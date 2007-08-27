@@ -42,10 +42,6 @@ package hr.fer.zemris.vhdllab.communicaton;
  */
 public interface MethodConstants {
 
-	public static final String METHOD_KEY = "method";
-	public static final String PROPERTY_PREFIX = "property.";
-	public static final String RESULT_PREFIX = "result.";
-	
 	/**
 	 * An operator for separating parts of a method. This
 	 * operator has no priority. It is simply a part of a
@@ -97,14 +93,9 @@ public interface MethodConstants {
 	
 	
 	/**
-	 * A status property.
+	 * A value when status code is not set.
 	 */
-	public static final String STATUS_CODE = "status.code";
-	/**
-	 * A status content property used to pass a message to client describing
-	 * an error that occurred.
-	 */
-	public static final String STATUS_MESSAGE = "status.message";
+	public static final int STATUS_NOT_SET = -1;
 	/**
 	 * A value for status property when no errors occurred.
 	 */
@@ -122,13 +113,11 @@ public interface MethodConstants {
 	 */
 	public static final int SE_PARSE_ERROR = 3;
 	/**
-	 * A status error value for status property when parse error occurred.
-	 */
-	public static final int SE_STATUS_CODE_PARSE_ERROR = -1;
-	/**
 	 * A status error value for status property when method arguments are faulty.
 	 */
 	public static final int SE_METHOD_ARGUMENT_ERROR = 4;
+	
+	public static final int SE_NO_PERMISSION = 5;
 	
 	/**
 	 * A status error value for status property when file was not found.
@@ -180,6 +169,10 @@ public interface MethodConstants {
 	 */
 	public static final int SE_CAN_NOT_DELETE_PROJECT = 206;
 	
+	public static final int SE_CAN_NOT_FIND_FILE = 301;
+	
+	public static final int SE_CAN_NOT_FIND_PROJECT = 302;
+	
 	/**
 	 * A status error value for status property when can not get compilation result.
 	 */
@@ -208,100 +201,33 @@ public interface MethodConstants {
 	
 	
 	/**
-	 * A file ID property.
-	 */
-	public static final String PROP_FILE_ID = "file.id";
-	/**
 	 * A file name property.
 	 */
 	public static final String PROP_FILE_NAME = "file.name";
+	
 	/**
 	 * A file type property.
 	 */
 	public static final String PROP_FILE_TYPE = "file.type";
+	
 	/**
 	 * A file content property.
 	 */
 	public static final String PROP_FILE_CONTENT = "file.content";
-	/**
-	 * A file exists property. Contains <code>1</code> if file exists;
-	 * <code>0</code> otherwise.
-	 */
-	public static final String PROP_FILE_EXISTS = "file.exists";
-	/**
-	 * A file owner ID property.
-	 */
-	public static final String PROP_FILE_OWNER_ID = "file.owner.id";
 	
-	/**
-	 * A project ID property.
-	 */
-	public static final String PROP_PROJECT_ID = "project.id";
 	/**
 	 * A project name property.
 	 */
 	public static final String PROP_PROJECT_NAME = "project.name";
-	/**
-	 * A project owner ID property.
-	 */
-	public static final String PROP_PROJECT_OWNER_ID = "project.owner.id";
-	/**
-	 * A project number of files property.
-	 */
-	public static final String PROP_PROJECT_NMBR_FILES = "project.nmbr.files";
-	/**
-	 * A project exists property. Contains <code>1</code> if project exists;
-	 * <code>0</code> otherwise.
-	 */
-	public static final String PROP_PROJECT_EXISTS = "project.exists";
 	
 	/**
-	 * A compilation result serialization property.
+	 * An identifier parameter. Same for file, global file, user file and project identifier.
 	 */
-	public static final String PROP_RESULT_COMPILATION_SERIALIZATION = "result.compilation.serialization";
-	/**
-	 * A simulation result serialization property.
-	 */
-	public static final String PROP_RESULT_SIMULATION_SERIALIZATION = "result.simulation.serialization";
+	public static final String PROP_ID = "id";
 
 	/**
-	 * A hierarchy serialization property.
+	 * A user ID property.
 	 */
-	public static final String PROP_HIERARCHY_SERIALIZATION = "hierarchy.serialization";
-
-	/**
-	 * A value for generate VHDL property.
-	 */
-	public static final String PROP_GENERATED_VHDL = "generated.vhdl";
-	
-	/**
-	 * A value for entity name of circuit interface.
-	 */
-	public static final String PROP_CI_ENTITY_NAME = "ci.entity.name";
-	/**
-	 * A value for port name.
-	 */
-	public static final String PROP_CI_PORT_NAME = "ci.port.name";
-	/**
-	 * A value for port direction.
-	 */
-	public static final String PROP_CI_PORT_DIRECTION = "ci.port.direction";
-	/**
-	 * A value for type name of a port.
-	 */
-	public static final String PROP_CI_PORT_TYPE_NAME = "ci.port.type.name";
-	/**
-	 * A value for range from of a port.
-	 */
-	public static final String PROP_CI_PORT_TYPE_RANGE_FROM = "ci.port.type.range.from";
-	/**
-	 * A value for range to of a port.
-	 */
-	public static final String PROP_CI_PORT_TYPE_RANGE_TO = "ci.port.type.range.to";
-	/**
-	 * A value for vector direction of a port.
-	 */
-	public static final String PROP_CI_PORT_TYPE_VECTOR_DIRECTION = "ci.port.type.vector.direction";
-
+	public static final String PROP_USER_ID = "user.id";
 
 }

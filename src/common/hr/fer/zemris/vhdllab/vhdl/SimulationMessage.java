@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.vhdl;
 
 public class SimulationMessage extends Message {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * @param entity Entity name of simulation unit for which message is generated 
 	 * @param message message
@@ -19,12 +21,6 @@ public class SimulationMessage extends Message {
 		super(message);
 	}
 
-	public static SimulationMessage deserialize(String data) {
-		if(data == null) throw new NullPointerException("Data can not be null.");
-		Message msg = Message.deserialize(data);
-		return new SimulationMessage(msg);
-	}
-	
 	@Override
 	public String toString() {
 		return super.toString();

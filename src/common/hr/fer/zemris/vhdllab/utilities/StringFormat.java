@@ -69,7 +69,7 @@ public class StringFormat {
 
 	/**
 	 * Ignore case and check if <code>s</code> is a correct vhdl type. The
-	 * only allowd type is:
+	 * only allowed type is:
 	 * <ul>
 	 * <li>std_logic
 	 * <li>std_logic_vector
@@ -83,10 +83,11 @@ public class StringFormat {
 	 *             is <code>s</code> is <code>null</code>.
 	 */
 	public static boolean isCorrectVHDLType(String s) {
-		if (s == null)
+		if (s == null) {
 			throw new NullPointerException("String can not be null.");
-		s = s.toLowerCase();
-		return s.equals("std_logic") || s.equals("std_logic_vector");
+		}
+		return s.equalsIgnoreCase("std_logic")
+				|| s.equalsIgnoreCase("std_logic_vector");
 	}
 
 	/**
@@ -137,17 +138,23 @@ public class StringFormat {
 	}
 
 	/**
-	 * Ignore case and check if <code>s</code> is a correct file name. Correct
-	 * file name is a string with the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of English alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain a tandem of underscore characters
-	 * <li>it must not be a reserved word (check at
-	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
-	 * </ul>
+	 * Ignore case and check if <code>s</code> is a correct port name. A
+	 * correct port name format is the same as
+	 * {@link #isCorrectEntityName(String)}.
+	 * 
+	 * @param s
+	 *            a string that will be checked.
+	 * @return <code>true</code> if <code>s</code> is a correct name;
+	 *         <code>false</code> otherwise.
+	 */
+	public static boolean isCorrectPortName(String s) {
+		return isCorrectEntityName(s);
+	}
+
+	/**
+	 * Ignore case and check if <code>s</code> is a correct file name. A
+	 * correct file name format is the same as
+	 * {@link #isCorrectEntityName(String)}.
 	 * 
 	 * @param s
 	 *            a string that will be checked.
@@ -159,17 +166,9 @@ public class StringFormat {
 	}
 
 	/**
-	 * Ignore case and check if <code>s</code> is a correct project name.
-	 * Correct project name is a string with the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of English alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain a tandem of underscore characters
-	 * <li>it must not be a reserved word (check at
-	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
-	 * </ul>
+	 * Ignore case and check if <code>s</code> is a correct project name. A
+	 * correct project name format is the same as
+	 * {@link #isCorrectFileName(String)}.
 	 * 
 	 * @param s
 	 *            a string that will be checked.
@@ -177,7 +176,7 @@ public class StringFormat {
 	 *         <code>false</code> otherwise.
 	 */
 	public static boolean isCorrectProjectName(String s) {
-		return isCorrectEntityName(s);
+		return isCorrectFileName(s);
 	}
 
 }

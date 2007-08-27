@@ -32,7 +32,7 @@ public class GenerateVHDLTest {
 		CompilationResult result = null;
 		try {
 			vhdl = vhdlLabman.generateVHDL(automat);
-			result = vhdlLabman.compile(automat.getId());
+			result = vhdlLabman.compile(automat);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 			return;

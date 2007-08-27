@@ -1,11 +1,13 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
-import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
-import java.util.Properties;
+import java.io.Serializable;
 
 /**
  * This class represents a registered method for "exists project" request.
@@ -13,48 +15,31 @@ import java.util.Properties;
  * @author Miro Bezjak
  * @see MethodConstants#MTD_EXISTS_PROJECT
  */
-public class DoMethodExistsProject implements RegisteredMethod {
+public class DoMethodExistsProject extends AbstractRegisteredMethod {
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(hr.fer.zemris.vhdllab.communicaton.IMethod,
+	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
-	public Properties run(Properties p, ManagerProvider mprov) {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
-		String method = p.getProperty(MethodConstants.PROP_METHOD);
-		String projectID = p.getProperty(MethodConstants.PROP_PROJECT_ID,null);
-		if(projectID==null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No project ID specified!");
-		
-		// Check if project exists
-		boolean exists = false;
-		try {
-			Long id = Long.parseLong(projectID);
-			exists = labman.existsProject(id);
-		} catch (NumberFormatException e) {
-			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse project ID = '"+projectID+"'!");
-		} catch (Exception e) {
-			return errorProperties(method,MethodConstants.SE_CAN_NOT_DETERMINE_EXISTANCE_OF_PROJECT, "Unable to determine if project ("+projectID+") exists!");
+	@Override
+	public void run(IMethod<Serializable> method, ManagerProvider provider) {
+		VHDLLabManager labman = getVHDLLabManager(provider);
+		Long projectId = method.getParameter(Long.class, PROP_ID);
+		if (projectId == null) {
+			return;
 		}
-		
-		// Prepare response
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,method);
-		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		resProp.setProperty(MethodConstants.PROP_PROJECT_EXISTS,String.valueOf(exists ? 1 : 0));
-		return resProp;
+		boolean exists;
+		try {
+			checkProjectSecurity(method, labman, projectId);
+			exists = labman.existsProject(projectId);
+		} catch (ServiceException e) {
+			method.setStatus(SE_CAN_NOT_DETERMINE_EXISTANCE_OF_PROJECT,
+					"projectId=" + projectId);
+			return;
+		}
+		method.setResult(Boolean.valueOf(exists));
 	}
 	
-	/**
-	 * This method is called if error occurs.
-	 * @param method a method that caused this error
-	 * @param errNo error message number
-	 * @param errorMessage error message to pass back to caller
-	 * @return a response Properties
-	 */
-	private Properties errorProperties(String method, String errNo, String errorMessage) {
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,method);
-		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
-		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
-		return resProp;
-	}
 }

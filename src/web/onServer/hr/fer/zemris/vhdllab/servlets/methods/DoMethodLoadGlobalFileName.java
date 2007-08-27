@@ -1,12 +1,14 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
 import hr.fer.zemris.vhdllab.model.GlobalFile;
+import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
-import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
-import java.util.Properties;
+import java.io.Serializable;
 
 /**
  * This class represents a registered method for "load global file name" request.
@@ -14,49 +16,29 @@ import java.util.Properties;
  * @author Miro Bezjak
  * @see MethodConstants#MTD_LOAD_GLOBAL_FILE_NAME
  */
-public class DoMethodLoadGlobalFileName implements RegisteredMethod {
+public class DoMethodLoadGlobalFileName extends AbstractRegisteredMethod {
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(hr.fer.zemris.vhdllab.communicaton.IMethod,
+	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
-	public Properties run(Properties p, ManagerProvider mprov) {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
-		String method = p.getProperty(MethodConstants.PROP_METHOD);
-		String fileID = p.getProperty(MethodConstants.PROP_FILE_ID,null);
-		if(fileID==null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file ID specified!");
-
-		// Load global file
-		GlobalFile file = null;
-		try {
-			Long id = Long.parseLong(fileID);
-			file = labman.loadGlobalFile(id);
-		} catch (NumberFormatException e) {
-			return errorProperties(method,MethodConstants.SE_PARSE_ERROR,"Unable to parse file ID = '"+fileID+"'!");
-		} catch (Exception e) {
-			file = null;
+	@Override
+	public void run(IMethod<Serializable> method, ManagerProvider provider) {
+		VHDLLabManager labman = getVHDLLabManager(provider);
+		Long fileId = method.getParameter(Long.class, PROP_ID);
+		if (fileId == null) {
+			return;
 		}
-		if(file==null) return errorProperties(method,MethodConstants.SE_NO_SUCH_FILE,"File ("+fileID+") not found!");
-
-		// Prepare response
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,method);
-		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		resProp.setProperty(MethodConstants.PROP_FILE_NAME,file.getName());
-		return resProp;
+		GlobalFile file;
+		try {
+			file = labman.loadGlobalFile(fileId);
+		} catch (ServiceException e) {
+			method.setStatus(SE_CAN_NOT_FIND_FILE, "fileId=" + fileId);
+			return;
+		}
+		method.setResult(file.getName());
 	}
 	
-	/**
-	 * This method is called if error occurs.
-	 * @param method a method that caused this error
-	 * @param errNo error message number
-	 * @param errorMessage error message to pass back to caller
-	 * @return a response Properties
-	 */
-	private Properties errorProperties(String method, String errNo, String errorMessage) {
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,method);
-		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
-		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
-		return resProp;
-	}
 }

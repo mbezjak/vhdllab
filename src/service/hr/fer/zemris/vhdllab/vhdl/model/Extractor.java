@@ -396,7 +396,7 @@ public class Extractor {
 	 */
 	private static CircuitInterface wrapToCircuitInterface(Extractor.Entity entity) {
 		if(entity==null) throw new NullPointerException("Entity can not be null.");
-		DefaultCircuitInterface ci = new DefaultCircuitInterface(entity.getEntity_name());
+		List<Port> ports = new ArrayList<Port>(entity.getPort_part().size());
 		for(Extractor.Port_entry p : entity.getPort_part()) {
 			String name = p.getName();
 			String mode = p.getMode();
@@ -416,9 +416,9 @@ public class Extractor {
 			else if(mode.equalsIgnoreCase(String.valueOf(ch_INOUT))) dir = Direction.INOUT;
 			else if(mode.equalsIgnoreCase(String.valueOf(ch_BUFFER))) dir = Direction.BUFFER;
 			
-			ci.addPort(new DefaultPort(name, dir, t));
+			ports.add(new DefaultPort(name, dir, t));
 		}
-		return ci;
+		return new DefaultCircuitInterface(entity.getEntity_name(), ports);
 	}
 	
 	/**

@@ -1,8 +1,11 @@
 package hr.fer.zemris.vhdllab.vhdl;
 
+import java.io.ObjectStreamException;
 import java.util.List;
 
 public class CompilationResult extends Result {
+
+	private static final long serialVersionUID = 1L;
 
 	public CompilationResult(Integer status, boolean isSuccessful, List<? extends CompilationMessage> messages) {
 		super(status, isSuccessful, messages);
@@ -18,14 +21,18 @@ public class CompilationResult extends Result {
 		return (List<? extends CompilationMessage>)super.getMessages();
 	}
 
-	public static CompilationResult deserialize(String data) {
-		if(data == null) throw new NullPointerException("Data can not be null.");
-		Result result = Result.deserialize(data);
-		return new CompilationResult(result);
-	}
-	
 	@Override
 	public String toString() {
 		return super.toString();
 	}
+	
+	/**
+	 * Make a defensive copy.
+	 */
+	@Override
+	protected Object readResolve() throws ObjectStreamException {
+		Result result = (Result) super.readResolve();
+		return new CompilationResult(result);
+	}
+
 }

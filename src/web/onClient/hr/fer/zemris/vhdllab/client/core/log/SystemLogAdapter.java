@@ -18,7 +18,7 @@ import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
  * @version 1.0
  * @since 19.8.2007
  */
-public class SystemLogAdapter implements SystemLogListener {
+public abstract class SystemLogAdapter implements SystemLogListener {
 	@Override
 	public void compilationTargetAdded(ResultTarget<CompilationResult> result) {
 	}

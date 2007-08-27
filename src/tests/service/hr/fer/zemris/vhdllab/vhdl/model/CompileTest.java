@@ -32,13 +32,13 @@ public class CompileTest {
 		vhdlLabman.saveFile(sklopFjaTb.getId(), sklopFjaTb.getContent());
 
 		// This should be clean:
-		CompilationResult compRes = vhdlLabman.compile(sklopFjaTb.getId());
+		CompilationResult compRes = vhdlLabman.compile(sklopFjaTb);
 		System.out.println("CompRes: "+compRes);
 		
 		// This should have errors:
 		sklopFja.setContent(provider.provide("2"));
 		vhdlLabman.saveFile(sklopFja.getId(), sklopFja.getContent());
-		compRes = vhdlLabman.compile(sklopFjaTb.getId());
+		compRes = vhdlLabman.compile(sklopFjaTb);
 		System.out.println("CompRes: "+compRes);
 		
 	}

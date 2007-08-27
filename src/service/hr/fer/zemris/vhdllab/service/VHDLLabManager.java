@@ -149,6 +149,18 @@ public interface VHDLLabManager {
 	public File loadFile(Long fileId) throws ServiceException;
 
 	/**
+	 * Checks to see if specified file exists.
+	 * 
+	 * @param fileId
+	 *            identifier of the file
+	 * @return <code>true</code> if file exists, <code>false</code>
+	 *         otherwise
+	 * @throws ServiceException
+	 *             if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public boolean existsFile(Long fileId) throws ServiceException;
+
+	/**
 	 * Checks to see if specified project contains a file with given name.
 	 * 
 	 * @param projectId
@@ -422,6 +434,20 @@ public interface VHDLLabManager {
 	 */
 	public void saveUserFile(Long fileId, String content)
 			throws ServiceException;
+	
+	/**
+	 * Use this method to rename a user file.
+	 * 
+	 * @param fileId
+	 *            identifier of the user file
+	 * @param newName
+	 *            new name
+	 * @throws ServiceException
+	 *             if any exception occurs (such as {@linkplain DAOException})
+	 */
+	public void renameUserFile(Long fileId, String newName)
+			throws ServiceException;
+
 
 	/**
 	 * Use this method to delete a user file.
@@ -481,25 +507,25 @@ public interface VHDLLabManager {
 	/**
 	 * Use this method to compile specified file.
 	 * 
-	 * @param fileId
-	 *            identifier of the file
+	 * @param file
+	 *            a file to compile
 	 * @return compilation result
 	 * @throws ServiceException
 	 *             if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public CompilationResult compile(Long fileId) throws ServiceException;
+	public CompilationResult compile(File file) throws ServiceException;
 
 	/**
 	 * Use this method to perform a simulation. The file specified must be of
 	 * simulatable type (such as {@linkplain FileTypes#FT_VHDL_TB}}).
 	 * 
-	 * @param fileId
-	 *            identifier of the file
+	 * @param file
+	 *            a file to simulate
 	 * @return simulation status
 	 * @throws ServiceException
 	 *             if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public SimulationResult runSimulation(Long fileId) throws ServiceException;
+	public SimulationResult runSimulation(File file) throws ServiceException;
 
 	/**
 	 * Use this method to generate VHDL for specified file. Please note that

@@ -1,14 +1,9 @@
 package hr.fer.zemris.vhdllab.vhdl;
 
-import hr.fer.zemris.ajax.shared.XMLUtil;
-
-import java.util.Properties;
 
 public class CompilationMessage extends Message {
 	
-	protected static final String COMPILATION_MESSAGE_SUPER = "compilation.message.super";
-	protected static final String COMPILATION_MESSAGE_ROW = "compilation.message.row";
-	protected static final String COMPILATION_MESSAGE_COLUMN = "compilation.message.column";
+	private static final long serialVersionUID = 1L;
 
 	private int row;
 	private int column;
@@ -43,25 +38,35 @@ public class CompilationMessage extends Message {
 		return column;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String serialize() {
-		Properties prop = new Properties();
-		String superSerialization = super.serialize();
-		prop.setProperty(COMPILATION_MESSAGE_SUPER, superSerialization);
-		prop.setProperty(COMPILATION_MESSAGE_ROW, String.valueOf(row));
-		prop.setProperty(COMPILATION_MESSAGE_COLUMN, String.valueOf(column));
-		return XMLUtil.serializeProperties(prop);
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + column;
+		result = prime * result + row;
+		return result;
 	}
-	
-	public static CompilationMessage deserialize(String data) {
-		if(data == null) throw new NullPointerException("Data can not be null.");
-		Properties prop = XMLUtil.deserializeProperties(data);
-		if(prop == null) throw new IllegalArgumentException("Unknown serialization format: data");
-		int row = Integer.parseInt(prop.getProperty(COMPILATION_MESSAGE_ROW));
-		int column = Integer.parseInt(prop.getProperty(COMPILATION_MESSAGE_COLUMN));
-		String superSerialization = prop.getProperty(COMPILATION_MESSAGE_SUPER);
-		Message msg = Message.deserialize(superSerialization);
-		return new CompilationMessage(msg, row, column);
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (!(obj instanceof CompilationMessage))
+			return false;
+		final CompilationMessage other = (CompilationMessage) obj;
+		if (column != other.column)
+			return false;
+		if (row != other.row)
+			return false;
+		return true;
 	}
 
 	@Override

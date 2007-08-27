@@ -1,32 +1,33 @@
 package hr.fer.zemris.vhdllab.vhdl;
 
-import hr.fer.zemris.ajax.shared.XMLUtil;
+import java.io.Serializable;
 
-import java.util.Properties;
+public class Message implements Serializable {
 
-public class Message {
-	
-	protected static final String MESSAGE_TEXT = "message.text";
-	protected static final String MESSAGE_ENTITY = "message.entity";
-
+	private static final long serialVersionUID = 1L;
 	private String messageText;
 	private String messageEntity;
 
 	@Deprecated
 	public Message(String message) {
 		super();
-		if(message == null) throw new NullPointerException("Message can not be null");
+		if (message == null)
+			throw new NullPointerException("Message can not be null");
 		this.messageText = message;
 	}
 
 	/**
-	 * @param entity Entity name of unit for which message is generated. Please note that this
-	 *               can be an empty string, if appropriate information could not be determined.  
-	 * @param message message
+	 * @param entity
+	 *            Entity name of unit for which message is generated. Please
+	 *            note that this can be an empty string, if appropriate
+	 *            information could not be determined.
+	 * @param message
+	 *            message
 	 */
 	public Message(String entity, String message) {
 		super();
-		if(message == null) throw new NullPointerException("Message can not be null");
+		if (message == null)
+			throw new NullPointerException("Message can not be null");
 		this.messageText = message;
 		this.messageEntity = entity;
 	}
@@ -44,26 +45,50 @@ public class Message {
 	public String getMessageEntity() {
 		return messageEntity;
 	}
-	
-	public String serialize() {
-		Properties prop = new Properties();
-		prop.setProperty(MESSAGE_TEXT, messageText);
-		prop.setProperty(MESSAGE_ENTITY, messageEntity);
-		return XMLUtil.serializeProperties(prop);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((messageEntity == null) ? 0 : messageEntity.hashCode());
+		result = prime * result + messageText.hashCode();
+		return result;
 	}
-	
-	public static Message deserialize(String data) {
-		if(data == null) throw new NullPointerException("Data can not be null.");
-		Properties prop = XMLUtil.deserializeProperties(data);
-		if(prop == null) throw new IllegalArgumentException("Unknown serialization format: data");
-		String messageText = prop.getProperty(MESSAGE_TEXT);
-		String messageEntity = prop.getProperty(MESSAGE_ENTITY,null);
-		return new Message(messageEntity, messageText);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Message))
+			return false;
+		final Message other = (Message) obj;
+		if (messageEntity == null) {
+			if (other.messageEntity != null)
+				return false;
+		} else if (!messageEntity.equals(other.messageEntity))
+			return false;
+		if (!messageText.equals(other.messageText))
+			return false;
+		return true;
 	}
-	
+
 	@Override
 	public String toString() {
-		if(messageEntity!=null && !messageEntity.equals("")) return "["+messageEntity+"] "+messageText;
+		if (messageEntity != null && !messageEntity.equals(""))
+			return "[" + messageEntity + "] " + messageText;
 		return messageText;
 	}
 }

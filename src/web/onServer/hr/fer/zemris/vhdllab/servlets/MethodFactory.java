@@ -1,9 +1,11 @@
 package hr.fer.zemris.vhdllab.servlets;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
 import hr.fer.zemris.vhdllab.servlets.dispatch.AdvancedMethodDispatcher;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -93,11 +95,13 @@ public class MethodFactory {
 	private static class ComplexMethodExecutor implements RegisteredMethod {
 
 		/* (non-Javadoc)
-		 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
+		 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(hr.fer.zemris.vhdllab.communicaton.IMethod, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 		 */
-		public Properties run(Properties p, ManagerProvider mprov) {
+		@Override
+		public void run(IMethod<Serializable> method, ManagerProvider provider) {
 			MethodDispatcher disp = new AdvancedMethodDispatcher();
-			return disp.preformMethodDispatching(p, mprov);
+			disp.preformMethodDispatching(method, provider);
 		}
+		
 	}
 }

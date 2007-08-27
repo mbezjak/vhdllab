@@ -1,57 +1,45 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
+import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
-import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
-import java.util.Properties;
+import java.io.Serializable;
 
 /**
- * This class represents a registered method for "exists global file (2)" request.
+ * This class represents a registered method for "exists global file (2)"
+ * request.
  * 
  * @author Miro Bezjak
  * @see MethodConstants#MTD_EXISTS_GLOBAL_FILE
  */
-public class DoMethodExistsGlobalFile2 implements RegisteredMethod {
+public class DoMethodExistsGlobalFile2 extends AbstractRegisteredMethod {
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(java.util.Properties, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(hr.fer.zemris.vhdllab.communicaton.IMethod,
+	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
-	public Properties run(Properties p, ManagerProvider mprov) {
-		VHDLLabManager labman = (VHDLLabManager)mprov.get(ManagerProvider.VHDL_LAB_MANAGER);
-		String method = p.getProperty(MethodConstants.PROP_METHOD);
-		String fileName = p.getProperty(MethodConstants.PROP_FILE_NAME,null);
-		if(fileName==null) return errorProperties(method,MethodConstants.SE_METHOD_ARGUMENT_ERROR,"No file name specified!");
-		
-		// Check if file exists
-		boolean exists = false;
+	@Override
+	public void run(IMethod<Serializable> method, ManagerProvider provider) {
+		VHDLLabManager labman = getVHDLLabManager(provider);
+		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
+		if (fileName == null) {
+			return;
+		}
+		boolean exists;
 		try {
 			exists = labman.existsGlobalFile(fileName);
-		} catch (Exception e) {
-			return errorProperties(method,MethodConstants.SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE, "Unable to determine if file exists!");
+		} catch (ServiceException e) {
+			method.setStatus(SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE, "name="
+					+ fileName);
+			return;
 		}
-		
-		// Prepare response
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,method);
-		resProp.setProperty(MethodConstants.PROP_STATUS,MethodConstants.STATUS_OK);
-		resProp.setProperty(MethodConstants.PROP_FILE_EXISTS,String.valueOf(exists ? 1 : 0));
-		return resProp;
+		method.setResult(Boolean.valueOf(exists));
 	}
-	
-	/**
-	 * This method is called if error occurs.
-	 * @param method a method that caused this error
-	 * @param errNo error message number
-	 * @param errorMessage error message to pass back to caller
-	 * @return a response Properties
-	 */
-	private Properties errorProperties(String method, String errNo, String errorMessage) {
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,method);
-		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
-		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
-		return resProp;
-	}
+
 }

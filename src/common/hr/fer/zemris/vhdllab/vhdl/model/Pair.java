@@ -1,9 +1,7 @@
 package hr.fer.zemris.vhdllab.vhdl.model;
 
-import hr.fer.zemris.ajax.shared.XMLUtil;
-
+import java.io.Serializable;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,15 +11,9 @@ import java.util.TreeSet;
  * contain <code>file</code>) that all use <code>file</code>.
  * @author Miro Bezjak
  */
-public class Pair implements Comparable<Pair>{
+public class Pair implements Comparable<Pair>, Serializable {
 	
-	/** Serialization key for file name */
-	private static final String SERIALIZATION_KEY_FILE_NAME = "file.name";
-	/** Serialization key for file type */
-	private static final String SERIALIZATION_KEY_FILE_TYPE = "file.type";
-	/** Serialization key for a parent */
-	private static final String SERIALIZATION_KEY_PARENT = "parent";
-
+	private static final long serialVersionUID = 1L;
 	/** A set of files in which <code>fileName</code> is used */
 	private Set<String> parents;
 	/** A name of a file that this pair represents */
@@ -77,7 +69,7 @@ public class Pair implements Comparable<Pair>{
 	
 	/**
 	 * Add parent to this pair. <code>Parent</code> represents file name of another
-	 * file and therfor is case insensitive.
+	 * file and therefor is case insensitive.
 	 * @param parent
 	 * @throws NullPointerException if <code>parent</code> is <code>null</code>
 	 */
@@ -90,42 +82,6 @@ public class Pair implements Comparable<Pair>{
 			if(parent.equalsIgnoreCase(p)) return;
 		}
 		this.parents.add(parent);
-	}
-	
-	/**
-	 * Serializes this pair.
-	 * @return a serialized string
-	 */
-	public String serialize() {
-		Properties p = new Properties();
-		p.setProperty(SERIALIZATION_KEY_FILE_NAME, fileName);
-		p.setProperty(SERIALIZATION_KEY_FILE_TYPE, fileType);
-		int i = 1;
-		for(String parent : parents) {
-			p.setProperty(SERIALIZATION_KEY_PARENT + "." + i, parent);
-			i++;
-		}
-		return XMLUtil.serializeProperties(p);
-	}
-	
-	/**
-	 * Constructs pair out of <code>data</code> that contains serialized string.
-	 * @param data serialized string
-	 * @return a pair that <code>data</code> represents
-	 */
-	public static Pair deserialize(String data) {
-		if(data == null) throw new NullPointerException("Data can not be null.");
-		Properties p = XMLUtil.deserializeProperties(data);
-		if(p == null) throw new IllegalArgumentException("Unknown serialization format: data");
-		String fileName = p.getProperty(SERIALIZATION_KEY_FILE_NAME);
-		String fileType = p.getProperty(SERIALIZATION_KEY_FILE_TYPE);
-		Pair pair = new Pair(fileName, fileType);
-		for(int i = 1; true; i++) {
-			String parent = p.getProperty(SERIALIZATION_KEY_PARENT + "." + i);
-			if(parent ==  null) break;
-			pair.addParent(parent);
-		}
-		return pair;
 	}
 	
 	/* (non-Javadoc)

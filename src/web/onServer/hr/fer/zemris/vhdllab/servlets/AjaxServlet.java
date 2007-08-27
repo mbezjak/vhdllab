@@ -1,11 +1,12 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.ajax.shared.XMLUtil;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,50 +30,47 @@ public class AjaxServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		InputStream is = request.getInputStream();
-		
-		// Another way to do it (and log request as well)
-		String text = XMLUtil.inputStreamAsText(is,"UTF-8");
-		Properties p = XMLUtil.deserializeProperties(text);
-		
-		Properties resProp;
-		ManagerProvider mprov = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
-		String method = p.getProperty(MethodConstants.PROP_METHOD, "");
-		RegisteredMethod regMethod = MethodFactory.getMethod(method);
-		if(regMethod==null) {
-			resProp = errorProperties(method, MethodConstants.SE_INVALID_METHOD_CALL, "Invalid method called!");
-		} else {
-			resProp = regMethod.run(p,mprov);
+		ObjectInputStream ois = new ObjectInputStream(request.getInputStream());
+		IMethod<Serializable> method;
+		try {
+			method = (IMethod<Serializable>) ois.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return;
+		} finally {
+			ois.close();
 		}
-		returnXMLResponse(XMLUtil.serializeProperties(resProp), request, response);
-	}
-	
-	/**
-	 * This method is called if error occurs.
-	 * @param method a method that caused this error
-	 * @param errNo error message number
-	 * @param errorMessage error message to pass back to caller
-	 * @return a response Properties
-	 */
-	private Properties errorProperties(String method, String errNo, String errorMessage) {
-		Properties resProp = new Properties();
-		resProp.setProperty(MethodConstants.PROP_METHOD,method);
-		resProp.setProperty(MethodConstants.PROP_STATUS,errNo);
-		resProp.setProperty(MethodConstants.PROP_STATUS_CONTENT,errorMessage);
-		return resProp;
+		ManagerProvider provider = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
+		
+		RegisteredMethod regMethod = MethodFactory.getMethod(method.getMethod());
+		if(regMethod == null) {
+			method.setStatus(MethodConstants.SE_INVALID_METHOD_CALL);
+		} else {
+			try {
+				regMethod.run(method, provider);
+			} catch (SecurityException e) {
+				e.printStackTrace();
+				method.setStatus(MethodConstants.SE_NO_PERMISSION);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				method.setStatus(MethodConstants.SE_INTERNAL_SERVER_ERROR);
+			}
+		}
+		returnResponse(method, request, response);
 	}
 	
 	/**
 	 * This method is called to actually send the results back to the caller.
-	 * @param message message to send - this is assumed to be a XML message
+	 * @param method a method to send
 	 * @param request http servlet request
 	 * @param response http servlet response
 	 * @throws IOException if method can not send results
 	 */
-	private void returnXMLResponse(String message, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.setContentType("text/xml;charset=UTF-8");
+	private void returnResponse(IMethod<Serializable> method, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		response.setContentType("application/octet-stream");
 		response.setHeader("Cache-Control","no-cache");
-		response.getWriter().write(message);
-		response.getWriter().flush();
+		ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
+		oos.writeObject(method);
+		oos.flush();
 	}
 }

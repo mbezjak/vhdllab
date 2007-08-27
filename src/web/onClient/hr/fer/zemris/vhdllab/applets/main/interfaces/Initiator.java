@@ -1,9 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
+import java.io.Serializable;
+
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-
-import java.util.Properties;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
 
 /**
  * This interface defines a way to initiate request to server.
@@ -27,12 +28,11 @@ public interface Initiator {
 	 * {@link MethodConstants#PROP_STATUS_CONTENT} key will be set as
 	 * exception's message.
 	 * 
-	 * @param request
-	 *            a property, containing all information, to send to server
-	 * @return a response properties
+	 * @param method
+	 *            a method, containing all information, to send to server
 	 * @throws UniformAppletException
-	 *             if any king of error occures
+	 *             if any king of error occurs
 	 */
-	Properties initiateCall(Properties request) throws UniformAppletException;
+	<T extends Serializable> void initiateCall(IMethod<T> method) throws UniformAppletException;
 
 }

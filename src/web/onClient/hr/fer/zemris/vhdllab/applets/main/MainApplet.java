@@ -18,9 +18,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.communicaton.UserCredentials;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
@@ -218,9 +218,9 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		try {
 //			AjaxMediator ajax = new DefaultAjaxMediator(this);
 //			Initiator initiator = new AjaxInitiator(ajax);
+			UserCredentials.instance().setUserId(userId);
 			Initiator initiator = new HttpClientInitiator(getCodeBase().toExternalForm());
-			MethodInvoker invoker = new DefaultMethodInvoker(initiator);
-			communicator = new Communicator(invoker, userId);
+			communicator = new Communicator(initiator, userId);
 			communicator.init();
 			resourceManager = new DefaultResourceManager(communicator);
 			componentStorage = new DefaultComponentStorage(this);

@@ -3,92 +3,70 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 import hr.fer.zemris.vhdllab.utilities.StringFormat;
 
 /**
- * This class describes port part in ENTITY block of VHDL code. It consists of
- * port name, {@linkplain Direction} and {@linkplain Type}.
- * 
- * <h3>Example</h3>
- * 
- * Here is an example of port part in ENTITY block: <blockquote> a : IN
- * std_logic </blockquote> In this example this class will contain port name:
- * <code>a</code>, direction: <code>IN</code> and a type: scalar;
- * <code>std_logic</code>.
+ * This is a default implementation of {@link Port}.
  * <p>
- * Another example, but with declaring a vector: <blockquote> b : OUT
- * std_logic_vector(2 DOWNTO 0) </blockquote> In this example this class will
- * contain port name: <code>b</code>, direction: <code>OUT</code> and a
- * <code>type</code>: vector; rangeFrom: 2; rangeTo: 0; vectorDirection:
- * DOWNTO; <code>std_logic</code>. For more information see {@linkplain Type}.
- * 
- * <h3>Restrictions</h3>
- * 
- * Port name will have the following format:
- * <ul>
- * <li>it will contain only alpha (only letters of english alphabet), numeric
- * (digits 0 to 9) or underscore (_) characters
- * <li>it will not start with a non-alpha character
- * <li>it will not end with an underscore character
- * <li>it will not contain an underscore character after an underscore
- * character
- * <li>it must not be a reserved word (check at
- * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
- * </ul>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @author Miro Bezjak
  * @see Type
  * @see Direction
  */
-public class DefaultPort implements Port {
+public final class DefaultPort implements Port {
 
-	/** A port name. */
+	private static final long serialVersionUID = -8925566308988401573L;
+
+	/**
+	 * A port name.
+	 * 
+	 * @serial
+	 */
 	private String portName;
 
-	/** A direction of a port. */
+	/**
+	 * A direction of a port.
+	 * 
+	 * @serial
+	 */
 	private Direction direction;
 
-	/** A type of a port. */
+	/**
+	 * A type of a port.
+	 * 
+	 * @serial
+	 */
 	private Type type;
 
 	/**
 	 * Create an instance of this class using name, direction and type to
-	 * describe a port.
-	 * 
-	 * <h3>Restrictions</h3>
-	 * 
-	 * Port name must be of the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain an underscore character after an underscore
-	 * character
-	 * <li>it must not be a reserved word (check at
-	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
-	 * </ul>
+	 * describe a port. A port name must have a format as described by
+	 * {@link StringFormat#isCorrectPortName(String)}.
 	 * 
 	 * @param name
-	 *            a name of a port.
+	 *            a name of a port
 	 * @param direction
-	 *            a direction of a port.
+	 *            a direction of a port
 	 * @param type
-	 *            a type of a port.
+	 *            a type of a port
 	 * @throws NullPointerException
-	 *             if <code>name</code>, <code>direction</code> or
-	 *             <code>type</code> is <code>null</code>.
+	 *             if either parameter is <code>null</code>.
 	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is not of correct format.
+	 *             if <code>name</code> is not of correct format
 	 * @see Direction
 	 * @see Type
 	 */
 	public DefaultPort(String name, Direction direction, Type type) {
-		if (name == null)
+		if (name == null) {
 			throw new NullPointerException("Port name can not be null.");
-		if (direction == null)
+		}
+		if (direction == null) {
 			throw new NullPointerException("Direction can not be null.");
-		if (type == null)
+		}
+		if (type == null) {
 			throw new NullPointerException("Type can not be null.");
+		}
 
-		if (!StringFormat.isCorrectEntityName(name))
+		if (!StringFormat.isCorrectPortName(name))
 			throw new IllegalArgumentException(
 					"Port name is not of correct format.");
 
@@ -127,51 +105,45 @@ public class DefaultPort implements Port {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.vhdl.model.Port#equals(hr.fer.zemris.vhdllab.vhdl.model.Port)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof Port))
-			return false;
-		Port other = (Port) o;
-
-		return other.getName().equalsIgnoreCase(this.portName)
-				&& other.getDirection().equals(this.direction)
-				&& other.getType().equals(this.type);
-	}
-
-	/**
-	 * Returns a hash code value for this <code>DefaultPort</code> instance.
-	 * The hash code of <code>DefaultPort</code> instance is hash code of port
-	 * name (ignore case) XOR with hash code of direction XOR with hash code of
-	 * type (class implemeting <code>Type</code> interface).
-	 * <p>
-	 * This ensures that <code>dp1.equals(dp2)</code> implies that
-	 * <code>dp1.hashCode() == dp2.hashCode()</code> for any two DefaultPorts,
-	 * <code>dp1</code> and <code>dp2</code>, as required by the general
-	 * contract of <code>Object.hashCode</code>.
-	 * 
-	 * @return a hash code value for this <code>DefaultPort</code> instance.
-	 * @see java.lang.String#hashCode()
-	 * @see Direction#hashCode()
-	 * @see DefaultType#hashCode()
+	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-		return portName.toLowerCase().hashCode() ^ direction.hashCode()
-				^ type.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + direction.hashCode();
+		result = prime * result + portName.toLowerCase().hashCode();
+		result = prime * result + type.hashCode();
+		return result;
 	}
 
-	/**
-	 * Returns a string representing detailed description of this
-	 * <code>DefaultPort</code> instance. Returned string will have the
-	 * following format:
-	 * <p>
-	 * PORT NAME: --port name here--, DIRECTION: --string representing direction
-	 * here--, --string representing type here--
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return a string representing detailed description of this
-	 *         <code>DefaultPort</code> instance.
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final DefaultPort other = (DefaultPort) obj;
+		if (!direction.equals(other.direction))
+			return false;
+		if (!portName.equalsIgnoreCase(other.portName))
+			return false;
+		if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
@@ -182,4 +154,5 @@ public class DefaultPort implements Port {
 						type.toString());
 		return retval.toString();
 	}
+	
 }

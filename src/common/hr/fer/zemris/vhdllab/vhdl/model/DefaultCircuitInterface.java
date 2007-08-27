@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 
 import hr.fer.zemris.vhdllab.utilities.StringFormat;
 
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,192 +10,146 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class describes ENTITY block in VHDL code. It consists of entity name
- * and a {@link java.util.List List} of {@link Port ports}.
- * 
- * <h3>Example</h3>
- * 
- * Here is an example of ENTITY block: <blockquote>
- * 
- * <pre>
- * ENTITY circuit IS PORT(
- * 	a : IN std_logic;
- * 	b : OUT std_logic);
- * END circuit;
- * </pre>
- * 
- * </blockquote> In this example this class will contain entity name:
- * <code>circuit</code> and a list of ports that describes this particular
- * circuit. Therefor one port in a port collection will contain information
- * about the following line: <i>a : IN std_logic</i>! This is true for every
- * other port in port list.
- * 
- * <h3>Restrictions</h3>
- * 
- * A <code>List</code> of <code>Ports</code> will not contain two or more
- * ports that share the same name (ignore case)! Also entity name will have the
- * following format:
- * <ul>
- * <li>it will contain only alpha (only letters of english alphabet), numeric
- * (digits 0 to 9) or underscore (_) characters
- * <li>it will not start with a non-alpha character
- * <li>it will not end with an underscore character
- * <li>it will not contain an underscore character after an underscore
- * character
- * <li>it must not be a reserved word (check at
- * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
- * </ul>
+ * This is a default implementation of {@link CircuitInterface}.
+ * <p>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @author Miro Bezjak
  * @see Port
  */
-public class DefaultCircuitInterface implements CircuitInterface {
+public final class DefaultCircuitInterface implements CircuitInterface {
 
-	/** A name of entity block. */
-	private String entityName;
-
-	/** A list of ports that describes circuit interface. */
-	private List<Port> portList = new ArrayList<Port>();
-
-	/** A read-only list of ports that is used for return. */
-	private List<Port> portList_ro = Collections.unmodifiableList(portList);
-
-	/** A map of ports used for searching for a particular port. */
-	private Map<String, Port> portMap = new HashMap<String, Port>();
+	private static final long serialVersionUID = 3566491383856046473L;
 
 	/**
-	 * Create an instance of this class using only entity name. Port list will
-	 * remain empty.
+	 * A name of entity block.
 	 * 
-	 * <h3>Restrictions</h3>
+	 * @serial
+	 */
+	private String entityName;
+
+	/**
+	 * A list of ports that describes circuit interface.
 	 * 
-	 * A <code>name</code> must be of the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain an underscore character after an underscore
-	 * character
-	 * </ul>
+	 * @serial
+	 */
+	private List<Port> portList;
+
+	/** A read-only list of ports to return in getter. */
+	private transient List<Port> portList_ro;
+
+	/** A map of ports used for searching for a particular port. */
+	private transient Map<String, Port> portMap;
+
+	/**
+	 * Create an instance of this class using only entity name with an empty
+	 * port list. An entity name must have a format as described by
+	 * {@link StringFormat#isCorrectEntityName(String)}.
 	 * 
 	 * @param name
-	 *            an entity name.
+	 *            an entity name
 	 * @throws NullPointerException
 	 *             if <code>name</code> is <code>null</code>.
 	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is not of the correct format.
+	 *             if <code>name</code> is not of the correct format
 	 */
 	public DefaultCircuitInterface(String name) {
-		createDefaultCircuitInterface(name, null);
-	}
-
-	/**
-	 * Create an instance of this class using an entity name and port list
-	 * <code>ports</code> that will be added to this port list.
-	 * 
-	 * <h3>Restrictions</h3>
-	 * 
-	 * A <code>name</code> must be of the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain an underscore character after an underscore
-	 * character
-	 * </ul>
-	 * 
-	 * @param name
-	 *            an entity name.
-	 * @param ports
-	 *            a port list that will be added.
-	 * @throws NullPointerException
-	 *             if <code>name</code> or <code>ports</code> is
-	 *             <code>null</code>.
-	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is not of the correct format.
-	 */
-	public DefaultCircuitInterface(String name, List<Port> ports) {
-		if (ports == null)
-			throw new NullPointerException("Port list can not be null.");
-		createDefaultCircuitInterface(name, ports);
+		this(name, new ArrayList<Port>());
 	}
 
 	/**
 	 * Create an instance of this class using an entity name and a
-	 * <code>port</code> that will be added to this port list.
-	 * 
-	 * <h3>Restrictions</h3>
-	 * 
-	 * A <code>name</code> must be of the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain an underscore character after an underscore
-	 * character
-	 * </ul>
+	 * <code>port</code> that circuit consists of. An entity name must have a
+	 * format as described by {@link StringFormat#isCorrectEntityName(String)}.
 	 * 
 	 * @param name
-	 *            an entity name.
+	 *            an entity name
 	 * @param port
-	 *            a port that will be added.
+	 *            a port that circuit consists of
 	 * @throws NullPointerException
-	 *             if <code>name</code> or <code>port</code> is
-	 *             <code>null</code>.
+	 *             if either parameter is <code>null</code>
 	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is not of the correct format.
+	 *             if <code>name</code> is not of the correct format
 	 */
 	public DefaultCircuitInterface(String name, Port port) {
-		if (port == null)
-			throw new NullPointerException("Port can not be null.");
-		List<Port> ports = new ArrayList<Port>();
-		ports.add(port);
-		createDefaultCircuitInterface(name, ports);
+		this(name, createPortList(port));
 	}
 
 	/**
-	 * A private constructor.
-	 * <p>
-	 * All of the above constructors are redirected to this private method
-	 * because they are doing similar jobs. For details see class constructors
-	 * above.
-	 * 
-	 * <h3>Restrictions</h3>
-	 * 
-	 * A <code>name</code> must be of the following format:
-	 * <ul>
-	 * <li>it must contain only alpha (only letters of english alphabet),
-	 * numeric (digits 0 to 9) or underscore (_) characters
-	 * <li>it must not start with a non-alpha character
-	 * <li>it must not end with an underscore character
-	 * <li>it must not contain an underscore character after an underscore
-	 * character
-	 * <li>it must not be a reserved word (check at
-	 * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
-	 * </ul>
+	 * Create an instance of this class using an entity name and port list that
+	 * circuit consists of. An entity name must have a format as described by
+	 * {@link StringFormat#isCorrectEntityName(String)}.
 	 * 
 	 * @param name
-	 *            an entity name.
+	 *            an entity name
 	 * @param ports
-	 *            a port list that will be added.
+	 *            a port list that circuit consists of
 	 * @throws NullPointerException
-	 *             if either <code>name</code> or <code>ports</code> is
-	 *             <code>null</code>.
+	 *             if either parameter is <code>null</code>
 	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is not of the correct format.
+	 *             if <code>name</code> is not of the correct format
 	 */
-	private void createDefaultCircuitInterface(String name, List<Port> ports) {
-		if (name == null)
+	public DefaultCircuitInterface(String name, List<Port> ports) {
+		if (name == null) {
 			throw new NullPointerException("Name can not be null.");
-		if (!StringFormat.isCorrectEntityName(name))
+		}
+		if (ports == null) {
+			throw new NullPointerException("Port list can not be null.");
+		}
+		if (!StringFormat.isCorrectEntityName(name)) {
 			throw new IllegalArgumentException("Name is not of correct format.");
-
+		}
 		this.entityName = name;
-		if (ports != null)
-			addPortList(ports);
+		portList = new ArrayList<Port>(ports.size());
+		portMap = new HashMap<String, Port>(ports.size());
+		addPortList(ports);
+		portList_ro = Collections.unmodifiableList(portList);
+	}
+
+	/**
+	 * Appends all of the elements of <code>ports</code> to intern list.
+	 * 
+	 * @param ports
+	 *            a port list to all
+	 * @see #addPort(Port)
+	 */
+	private void addPortList(List<Port> ports) {
+		for (Port p : ports) {
+			addPort(p);
+		}
+	}
+
+	/**
+	 * Appends the specified port to the end of intern list.
+	 * 
+	 * @param p
+	 *            a port that will be added.
+	 * @see #addPortList(List)
+	 */
+	private void addPort(Port p) {
+		if (getPort(p.getName()) != null) {
+			// do not allow multiple ports with same name
+			return;
+		}
+		portList.add(p);
+		portMap.put(p.getName().toLowerCase(), p);
+	}
+
+	/**
+	 * Creates a list out of specified <code>port</code>.
+	 * 
+	 * @param port
+	 *            a port for whom to create a list
+	 * @return a list containing specified <code>port</code>
+	 */
+	private static List<Port> createPortList(Port port) {
+		if (port == null) {
+			throw new NullPointerException("Port can not be null.");
+		}
+		List<Port> ports = new ArrayList<Port>(1);
+		ports.add(port);
+		return ports;
 	}
 
 	/*
@@ -202,19 +157,20 @@ public class DefaultCircuitInterface implements CircuitInterface {
 	 * 
 	 * @see hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface#getPort(java.lang.String)
 	 */
+	@Override
 	public Port getPort(String portName) {
-		if (portName == null)
+		if (portName == null) {
 			throw new NullPointerException("Port name can not be null.");
+		}
 		return portMap.get(portName.toLowerCase());
 	}
 
-	/**
-	 * Returns a list of ports. List is sorted according to the way ports were
-	 * added (declared). A returned list of ports is read-only!
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return a list of ports.
-	 * @see Port
+	 * @see hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface#getPorts()
 	 */
+	@Override
 	public List<Port> getPorts() {
 		return portList_ro;
 	}
@@ -224,6 +180,7 @@ public class DefaultCircuitInterface implements CircuitInterface {
 	 * 
 	 * @see hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface#getEntityName()
 	 */
+	@Override
 	public String getEntityName() {
 		return entityName;
 	}
@@ -231,51 +188,39 @@ public class DefaultCircuitInterface implements CircuitInterface {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface#equals(hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof CircuitInterface))
-			return false;
-		CircuitInterface other = (CircuitInterface) o;
-
-		return other.getEntityName().equalsIgnoreCase(this.entityName)
-				&& other.getPorts().size() == this.portList.size()
-				&& other.getPorts().equals(this.portList);
-	}
-
-	/**
-	 * Returns a hash code value for this <code>DefaultCircuitInterface</code>
-	 * instance. The hash code of <code>DefaultCircuitInterface</code>
-	 * instance is hash code of entity name (ignore case) XOR with hash code of
-	 * port list.
-	 * <p>
-	 * This ensures that <code>dci1.equals(dci2)</code> implies that
-	 * <code>dci1.hashCode() == dci2.hashCode()</code> for any two
-	 * DefaultCircuitInterfaces, <code>dci1</code> and <code>dci2</code>,
-	 * as required by the general contract of <code>Object.hashCode</code>.
-	 * 
-	 * @return a hash code value for this <code>DefaultCircuitInterface</code>
-	 *         instance.
-	 * @see java.lang.String#hashCode()
-	 * @see java.util.List#hashCode()
+	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-		return entityName.toLowerCase().hashCode() ^ portList.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + entityName.toLowerCase().hashCode();
+		result = prime * result + portList.hashCode();
+		return result;
 	}
 
-	/**
-	 * Returns a string representing detailed description of this
-	 * <code>DefaultCircuitInterface</code> instance. Returned string will
-	 * have the following format:
-	 * <p>
-	 * CIRCUIT INTERFACE, ENTITY NAME: --entity name here--, CONTAINS --port
-	 * list size here-- PORTS:<br>
-	 * --string representing every port in port list here--
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final DefaultCircuitInterface other = (DefaultCircuitInterface) obj;
+		if (!entityName.equalsIgnoreCase(other.entityName))
+			return false;
+		if (portList.size() != other.portList.size())
+			return false;
+		if (!portList.equals(other.portList))
+			return false;
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return a string representing detailed description of this
-	 *         <code>DefaultCircuitInterface</code> instance.
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
@@ -291,45 +236,10 @@ public class DefaultCircuitInterface implements CircuitInterface {
 	}
 
 	/**
-	 * Appends the specified port to the end of this list.
-	 * 
-	 * @param p
-	 *            a port that will be added.
-	 * @return <code>true</code> if <code>p</code> has been added;
-	 *         <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             if <code>p</code> is <code>null</code>.
-	 * @see #addPortList(List)
+	 * Makes a defensive copy of default circuit interface.
 	 */
-	public boolean addPort(Port p) {
-		if (p == null)
-			throw new NullPointerException("Port can not be null.");
-		if (getPort(p.getName()) != null)
-			return false;
-		portList.add(p);
-		portMap.put(p.getName().toLowerCase(), p);
-		return true;
+	private Object readResolve() throws ObjectStreamException {
+		return new DefaultCircuitInterface(entityName, portList);
 	}
 
-	/**
-	 * Appends all of the elements of <code>ports</code> to this list.
-	 * 
-	 * @param ports
-	 *            a port list that will to be added.
-	 * @return <code>true</code> if at least one port in <code>ports</code>
-	 *         has been added; <code>false</code> otherwise.
-	 * @throws NullPointerException
-	 *             if <code>ports</code> is <code>null</code>.
-	 * @see #addPort(Port)
-	 */
-	public boolean addPortList(List<Port> ports) {
-		if (ports == null)
-			throw new NullPointerException("Port list can not be null.");
-		boolean retval = false;
-		for (Port p : ports) {
-			if (addPort(p))
-				retval = true;
-		}
-		return retval;
-	}
 }

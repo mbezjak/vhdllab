@@ -1,61 +1,88 @@
 package hr.fer.zemris.vhdllab.vhdl;
 
-import hr.fer.zemris.ajax.shared.XMLUtil;
-
+import java.io.ObjectStreamException;
 import java.util.List;
-import java.util.Properties;
 
 public class SimulationResult extends Result {
-	
-	protected static final String SIMULATION_RESULT_SUPER = "simulation.result.super";
-	protected static final String SIMULATION_RESULT_WAVEFORM = "simulation.result.waveform";
 
+	private static final long serialVersionUID = 1L;
 	private String waveform;
 
-	public SimulationResult(Integer status, boolean isSuccessful, List<? extends SimulationMessage> messages, String waveform) {
-		super(status, isSuccessful, messages);
+	public SimulationResult(Integer status, boolean successful,
+			List<? extends SimulationMessage> messages, String waveform) {
+		super(status, successful, messages);
 		this.waveform = waveform;
 	}
-	
+
 	protected SimulationResult(Result result, String waveform) {
 		super(result);
 		this.waveform = waveform;
 	}
 
-
 	public String getWaveform() {
 		return waveform;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<? extends SimulationMessage> getMessages() {
-		return (List<? extends SimulationMessage>)super.getMessages();
+		return (List<? extends SimulationMessage>) super.getMessages();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String serialize() {
-		Properties prop = new Properties();
-		String superSerialization = super.serialize();
-		prop.setProperty(SIMULATION_RESULT_SUPER, superSerialization);
-		if(waveform != null) {
-			prop.setProperty(SIMULATION_RESULT_WAVEFORM, waveform);
-		}
-		return XMLUtil.serializeProperties(prop);
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((waveform == null) ? 0 : waveform.hashCode());
+		return result;
 	}
-	
-	public static SimulationResult deserialize(String data) {
-		if(data == null) throw new NullPointerException("Data can not be null.");
-		Properties prop = XMLUtil.deserializeProperties(data);
-		if(prop == null) throw new IllegalArgumentException("Unknown serialization format: data");
-		String waveform = prop.getProperty(SIMULATION_RESULT_WAVEFORM);
-		String superSerialization = prop.getProperty(SIMULATION_RESULT_SUPER);
-		Result result = Result.deserialize(superSerialization);
-		return new SimulationResult(result, waveform);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (!(obj instanceof SimulationResult))
+			return false;
+		final SimulationResult other = (SimulationResult) obj;
+		if (waveform == null) {
+			if (other.waveform != null)
+				return false;
+		} else if (!waveform.equals(other.waveform))
+			return false;
+		return true;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.vhdl.Result#toString()
+	 */
 	@Override
 	public String toString() {
-		return super.toString() + (waveform!=null ? " waveform: "+waveform: "");
+		return super.toString()
+				+ (waveform != null ? " waveform: " + waveform : "");
 	}
+
+	/**
+	 * Make a defensive copy.
+	 */
+	@Override
+	protected Object readResolve() throws ObjectStreamException {
+		Result result = (Result) super.readResolve();
+		return new SimulationResult(result, waveform);
+	}
+
 }

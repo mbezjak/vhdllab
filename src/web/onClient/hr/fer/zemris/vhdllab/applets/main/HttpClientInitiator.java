@@ -1,15 +1,19 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
-import hr.fer.zemris.vhdllab.utilities.FileUtil;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
 
-import java.util.Properties;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 /**
  * Implementation of <code>Initiator</code> interface that uses
@@ -26,11 +30,8 @@ public class HttpClientInitiator implements Initiator {
 	/**
 	 * Constructor.
 	 * 
-	 * @param client
-	 *            an <code>HttpClient</code> that is responsible for
-	 *            initiating requests to server
-	 * @throws NullPointerException
-	 *             if <code>ajax</code> is <code>null</code>
+	 * @param basecode
+	 *            a base codes
 	 */
 	public HttpClientInitiator(String basecode) {
 		this.basecode = basecode;
@@ -40,43 +41,47 @@ public class HttpClientInitiator implements Initiator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator#initiateCall(java.util.Properties)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator#initiateCall(hr.fer.zemris.vhdllab.communicaton.IMethod)
 	 */
-	public Properties initiateCall(Properties request)
+	@Override
+	public <T extends Serializable> void initiateCall(IMethod<T> method)
 			throws UniformAppletException {
-		String method = request.getProperty(MethodConstants.PROP_METHOD, "");
 		PostMethod postMethod = new PostMethod(basecode + "doAjax");
-		postMethod.setRequestEntity(new StringRequestEntity(XMLUtil.serializeProperties(request)));
-		String responseText = null;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(200);
+		ObjectOutputStream oos;
+		byte[] requestArray;
+		try {
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(method);
+			requestArray = bos.toByteArray();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new UniformAppletException(e);
+		}
+		
+		postMethod.setRequestEntity(new ByteArrayRequestEntity(requestArray));
+		IMethod<T> returnedMethod;
 		try {
 			int executeMethod = client.executeMethod(postMethod);
-//			System.out.println(executeMethod);
-//			responseText = postMethod.getResponseBodyAsString();
-			responseText = FileUtil.readFile(postMethod.getResponseBodyAsStream());
-//			System.out.println(responseText);
+			InputStream is = postMethod.getResponseBodyAsStream();
+			ObjectInputStream ois = new ObjectInputStream(is);
+			returnedMethod = (IMethod<T>) ois.readObject();
 			postMethod.releaseConnection();
-//			System.out.println("*****************************************");
 		} catch (Exception e) {
 			throw new UniformAppletException("AJAX connection problems", e);
 		}
-		if (responseText == null) {
-			throw new UniformAppletException("AJAX connection problems");
+		
+		if(!returnedMethod.getMethod().equals(method.getMethod())) {
+			throw new UniformAppletException();
 		}
 
-		Properties response = XMLUtil.deserializeProperties(responseText);
-		String resMethod = response.getProperty(MethodConstants.PROP_METHOD);
-		if (!method.equalsIgnoreCase(resMethod)) {
-			throw new UniformAppletException(
-					"Wrong method returned! Expected: " + method + " but was: "
-							+ resMethod);
+		if (returnedMethod.getStatusCode() != MethodConstants.STATUS_OK) {
+			throw new UniformAppletException();
 		}
-		String status = response.getProperty(MethodConstants.PROP_STATUS, "");
-		if (!status.equals(MethodConstants.STATUS_OK)) {
-			throw new UniformAppletException(response.getProperty(
-					MethodConstants.PROP_STATUS_CONTENT, "Unknown error."));
-		}
-
-		return response;
+		
+		method.setStatus(returnedMethod.getStatusCode(), returnedMethod.getStatusMessage());
+		method.setResult(returnedMethod.getResult());
 	}
 
 }

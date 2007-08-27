@@ -1,7 +1,32 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.MethodInvoker;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.CompileFileMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.CreateFileMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.CreateProjectMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.DeleteFileMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.DeleteProjectMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.ExistsFile2Method;
+import hr.fer.zemris.vhdllab.communicaton.methods.ExtractCircuitInterfaceMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.ExtractHierarchyMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.FindFileByNameMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.FindFilesByProjectMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.FindProjectsByUserMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.FindUserFilesByUserMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.GenerateVHDLMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LoadFileContentMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LoadFileNameMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LoadFileTypeMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LoadPredefinedFileContentMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LoadProjectNameMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LoadUserFileContentMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LoadUserFileNameMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.ReportApplicationErrorMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.SaveFileMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.SaveUserFileMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.SimulateFileMethod;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.preferences.DefaultUserPreferences;
 import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
@@ -12,24 +37,25 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class Communicator {
 
-	private String ownerId;
-	private MethodInvoker invoker;
+	private String userId;
+	private Initiator initiator;
 	private Cache cache;
 
-	public Communicator(MethodInvoker invoker, String ownerId) {
-		if (invoker == null)
-			throw new NullPointerException("Method invoker can not be null.");
-		if (ownerId == null)
-			throw new NullPointerException("Owner identifier can not be null.");
+	public Communicator(Initiator initiator, String userId) {
+		if (initiator == null)
+			throw new NullPointerException("Initiator can not be null.");
+		if (userId == null)
+			throw new NullPointerException("User identifier can not be null.");
 		cache = new Cache();
-		this.invoker = invoker;
-		this.ownerId = ownerId;
+		this.initiator = initiator;
+		this.userId = userId;
 	}
 
 	public void init() throws UniformAppletException {
@@ -64,18 +90,23 @@ public class Communicator {
 			} catch (PropertyAccessException e) {
 				throw new UniformAppletException(e);
 			}
-			invoker.saveUserFile(id, property);
+			SaveUserFileMethod method = new SaveUserFileMethod(id, property);
+			initiate(method);
 		}
 	}
 
 	public List<String> getAllProjects() throws UniformAppletException {
-		List<Long> projectIdentifiers = invoker.findProjectsByUser(ownerId);
+		FindProjectsByUserMethod method = new FindProjectsByUserMethod(userId);
+		initiate(method);
+		List<Long> projectIdentifiers = method.getResult();
 
 		List<String> projectNames = new ArrayList<String>();
 		for (Long id : projectIdentifiers) {
 			String projectName = cache.getProjectForIdentifier(id);
 			if (projectName == null) {
-				String name = invoker.loadProjectName(id);
+				LoadProjectNameMethod loadProjectNameMethod = new LoadProjectNameMethod(id);
+				initiate(loadProjectNameMethod);
+				String name = loadProjectNameMethod.getResult();
 				cache.cacheItem(name, id);
 				projectName = cache.getProjectForIdentifier(id);
 			}
@@ -93,14 +124,17 @@ public class Communicator {
 		if (projectIdentifier == null) {
 			throw new UniformAppletException("Project does not exists!");
 		}
-		List<Long> fileIdentifiers = invoker
-				.findFilesByProject(projectIdentifier);
+		FindFilesByProjectMethod method = new FindFilesByProjectMethod(projectIdentifier);
+		initiate(method);
+		List<Long> fileIdentifiers = method.getResult();
 
 		List<String> fileNames = new ArrayList<String>();
 		for (Long id : fileIdentifiers) {
 			FileIdentifier identifier = cache.getFileForIdentifier(id);
 			if (identifier == null) {
-				String name = invoker.loadFileName(id);
+				LoadFileNameMethod loadFileNameMethod = new LoadFileNameMethod(id);
+				initiate(loadFileNameMethod);
+				String name = loadFileNameMethod.getResult();
 				cache.cacheItem(projectName, name, id);
 				identifier = cache.getFileForIdentifier(id);
 			}
@@ -144,7 +178,8 @@ public class Communicator {
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		cache.removeItem(projectName, fileName);
-		invoker.deleteFile(fileIdentifier);
+		DeleteFileMethod method = new DeleteFileMethod(fileIdentifier);
+		initiate(method);
 	}
 
 	public void deleteProject(String projectName) throws UniformAppletException {
@@ -154,13 +189,16 @@ public class Communicator {
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		cache.removeItem(projectName);
-		invoker.deleteProject(fileIdentifier);
+		DeleteProjectMethod method = new DeleteProjectMethod(fileIdentifier);
+		initiate(method);
 	}
 
 	public void createProject(String projectName) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
-		Long projectIdentifier = invoker.createProject(projectName, ownerId);
+		CreateProjectMethod method = new CreateProjectMethod(projectName, userId);
+		initiate(method);
+		Long projectIdentifier = method.getResult();
 		cache.cacheItem(projectName, projectIdentifier);
 	}
 
@@ -180,8 +218,10 @@ public class Communicator {
 		Long projectIdentifier = cache.getIdentifierFor(projectName);
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
-		Long fileIdentifier = invoker.createFile(projectIdentifier, fileName,
-				type);
+		CreateFileMethod method = new CreateFileMethod(projectIdentifier, fileName, type);
+		initiate(method);
+
+		Long fileIdentifier = method.getResult();
 		cache.cacheItem(projectName, fileName, fileIdentifier);
 		if(data != null) {
 			saveFile(projectName, fileName, data);
@@ -199,7 +239,8 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		invoker.saveFile(fileIdentifier, content);
+		SaveFileMethod method = new SaveFileMethod(fileIdentifier, content);
+		initiate(method);
 	}
 
 	public String loadFileContent(String projectName, String fileName)
@@ -211,14 +252,18 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		return invoker.loadFileContent(fileIdentifier);
+		LoadFileContentMethod method = new LoadFileContentMethod(fileIdentifier);
+		initiate(method);
+		return method.getResult();
 	}
 
 	public String loadPredefinedFileContent(String fileName)
 			throws UniformAppletException {
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		return invoker.loadPredefinedFileContent(fileName);
+		LoadPredefinedFileContentMethod method = new LoadPredefinedFileContentMethod(fileName);
+		initiate(method);
+		return method.getResult();
 	}
 
 	public String loadFileType(String projectName, String fileName)
@@ -234,7 +279,9 @@ public class Communicator {
 		}
 		String fileType = cache.getFileType(fileIdentifier);
 		if(fileType == null) {
-			fileType = invoker.loadFileType(fileIdentifier);
+			LoadFileTypeMethod method = new LoadFileTypeMethod(fileIdentifier);
+			initiate(method);
+			fileType = method.getResult();
 			cache.cacheFileType(fileIdentifier, fileType);
 		}
 		return fileType;
@@ -248,14 +295,21 @@ public class Communicator {
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
 
-		Hierarchy h = invoker.extractHierarchy(projectIdentifier);
+		ExtractHierarchyMethod hierarhyMethod = new ExtractHierarchyMethod(projectIdentifier);
+		initiate(hierarhyMethod);
+
+		Hierarchy h = hierarhyMethod.getResult();
 		for (Pair p : h) {
 			String fileName = p.getFileName();
 			Long id = cache.getIdentifierFor(projectName, fileName);
 			if (id == null) {
-				if (invoker.existsFile(projectIdentifier, fileName)) {
-					Long fileIdentifier = invoker.findFileByName(
-							projectIdentifier, fileName);
+				ExistsFile2Method existsMethod = new ExistsFile2Method(projectIdentifier, fileName);
+				initiate(existsMethod);
+				boolean exists = existsMethod.getResult().booleanValue();
+				if (exists) {
+					FindFileByNameMethod findMethod = new FindFileByNameMethod(projectIdentifier, fileName);
+					initiate(findMethod);
+					Long fileIdentifier = findMethod.getResult();
 					cache.cacheItem(projectName, fileName, fileIdentifier);
 				} else {
 					// invoker.
@@ -274,7 +328,9 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		return invoker.generateVHDL(fileIdentifier);
+		GenerateVHDLMethod method = new GenerateVHDLMethod(fileIdentifier);
+		initiate(method);
+		return method.getResult();
 	}
 
 	public CompilationResult compile(String projectName, String fileName)
@@ -286,7 +342,9 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		return invoker.compileFile(fileIdentifier);
+		CompileFileMethod method = new CompileFileMethod(fileIdentifier);
+		initiate(method);
+		return method.getResult();
 	}
 
 	public SimulationResult runSimulation(String projectName, String fileName)
@@ -298,7 +356,9 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		return invoker.runSimulation(fileIdentifier);
+		SimulateFileMethod method = new SimulateFileMethod(fileIdentifier);
+		initiate(method);
+		return method.getResult();
 	}
 
 	public CircuitInterface getCircuitInterfaceFor(String projectName,
@@ -310,13 +370,16 @@ public class Communicator {
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		return invoker.extractCircuitInterface(fileIdentifier);
+		ExtractCircuitInterfaceMethod method = new ExtractCircuitInterfaceMethod(fileIdentifier);
+		initiate(method);
+		return method.getResult();
 	}
 	
 	public void saveErrorMessage(String content) throws UniformAppletException {
 		if (content == null)
 			throw new NullPointerException("Content can not be null.");
-		invoker.saveErrorMessage(ownerId, content);
+		ReportApplicationErrorMethod method = new ReportApplicationErrorMethod(userId, content);
+		initiate(method);
 	}
 
 	public IUserPreferences getPreferences() {
@@ -325,15 +388,25 @@ public class Communicator {
 
 	private void loadUserPreferences() throws UniformAppletException {
 		Properties properties = new Properties();
-		List<Long> userFileIds = invoker.findUserFilesByOwner(ownerId);
+		FindUserFilesByUserMethod findMethod = new FindUserFilesByUserMethod(userId);
+		initiate(findMethod);
+		List<Long> userFileIds = findMethod.getResult();
 		for (Long id : userFileIds) {
-			String name = invoker.loadUserFileName(id);
+			LoadUserFileNameMethod nameMethod = new LoadUserFileNameMethod(id);
+			initiate(nameMethod);
+			String name = nameMethod.getResult();
 			cache.cacheUserFileItem(name, id);
-			String data = invoker.loadUserFileContent(id);
+			LoadUserFileContentMethod contentMethod = new LoadUserFileContentMethod(id);
+			initiate(contentMethod);
+			String data = contentMethod.getResult();
 			properties.setProperty(name, data);
 		}
 		IUserPreferences preferences = new DefaultUserPreferences(properties);
 		cache.cacheUserPreferences(preferences);
+	}
+	
+	private void initiate(IMethod<? extends Serializable> method) throws UniformAppletException {
+		initiator.initiateCall(method);
 	}
 
 }

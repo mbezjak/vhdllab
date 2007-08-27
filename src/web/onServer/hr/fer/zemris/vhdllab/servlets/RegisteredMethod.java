@@ -1,24 +1,27 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import java.util.Properties;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
+
+import java.io.Serializable;
 
 /**
- * This interface represents one registered method for a given
- * request. All registered methods are registered in
- * {@linkplain hr.fer.zemris.vhdllab.servlets.MethodFactory}
+ * This interface represents one registered method for a given request. All
+ * registered methods are registered in {@link MethodFactory}
  * 
  * @author Miro Bezjak
  * @see MethodFactory#getMethod(String)
  */
-public interface RegisteredMethod {
-	
+public interface RegisteredMethod extends MethodConstants {
+
 	/**
-	 * This method is called when cirtain request is received.
+	 * This method is called when certain request is received.
 	 * 
-	 * @param p Properties representing accepted request
-	 * @param mprov a manager provider
-	 * @return a response Properties
+	 * @param method
+	 *            a method representing accepted request
+	 * @param provider
+	 *            a manager provider
 	 */
-	public Properties run(Properties p,	ManagerProvider mprov);
-	
+	public void run(IMethod<Serializable> method, ManagerProvider provider);
+
 }

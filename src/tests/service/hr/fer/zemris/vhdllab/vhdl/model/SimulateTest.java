@@ -31,7 +31,7 @@ public class SimulateTest {
 		sklopFjaTb.setContent(provider.provide("1"));
 		vhdlLabman.saveFile(sklopFjaTb.getId(), sklopFjaTb.getContent());
 
-		SimulationResult simRes = vhdlLabman.runSimulation(sklopFjaTb.getId());
+		SimulationResult simRes = vhdlLabman.runSimulation(sklopFjaTb);
 		System.out.println("SimRes: "+simRes);
 	}
 	
@@ -83,7 +83,7 @@ public class SimulateTest {
 				"<signal name=\"SEL\" type=\"vector\" rangeFrom=\"1\" rangeTo=\"0\">(0,00)(25,10)(35,11)(70,10)(85,00)(130,01)(165,11)(195,10)(200,00)(250,01)(260,00)(285,10)(310,11)(320,10)(350,00)(360,01)(385,00)(395,10)(410,00)(415,01)(430,00)</signal>" + "\n");
 		vhdlLabman.saveFile(sklopFjaTb.getId(), sklopFjaTb.getContent());
 
-		SimulationResult simRes = vhdlLabman.runSimulation(sklopFjaTb.getId());
+		SimulationResult simRes = vhdlLabman.runSimulation(sklopFjaTb);
 		System.out.println("SimRes: "+simRes);
 	}
 	

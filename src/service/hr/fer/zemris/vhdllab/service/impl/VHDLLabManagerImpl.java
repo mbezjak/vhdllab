@@ -61,8 +61,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 	public VHDLLabManagerImpl() {
 	}
 
-	public CompilationResult compile(Long fileId) throws ServiceException {
-		File file = loadFile(fileId);
+	public CompilationResult compile(File file) throws ServiceException {
 		List<File> deps = extractDependencies(file);
 		List<File> otherFiles = new ArrayList<File>();
 		for (File f : deps) {
@@ -211,6 +210,19 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		} catch (DAOException e) {
 			e.printStackTrace();
 			throw new ServiceException(e.getMessage(), e);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#existsFile(java.lang.Long)
+	 */
+	@Override
+	public boolean existsFile(Long fileId) throws ServiceException {
+		try {
+			return fileDAO.exists(fileId);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException(e.getMessage(), e);		
 		}
 	}
 
@@ -584,8 +596,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		}
 	}
 
-	public SimulationResult runSimulation(Long fileId) throws ServiceException {
-		File file = loadFile(fileId);
+	public SimulationResult runSimulation(File file) throws ServiceException {
 		// Pretpostavka: file je po tipu VHDL Source samog testbencha
 		List<File> deps = extractDependencies(file);
 		List<File> otherFiles = new ArrayList<File>();
@@ -671,6 +682,22 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		UserFile file = loadUserFile(fileId);
 		file.setContent(content);
 		try {
+			userFileDAO.save(file);
+		} catch (DAOException e) {
+			e.printStackTrace();
+			throw new ServiceException(e.getMessage(), e);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#renameUserFile(java.lang.Long, java.lang.String)
+	 */
+	@Override
+	public void renameUserFile(Long fileId, String newName)
+			throws ServiceException {
+		try {
+			UserFile file = userFileDAO.load(fileId);
+			file.setName(newName);
 			userFileDAO.save(file);
 		} catch (DAOException e) {
 			e.printStackTrace();

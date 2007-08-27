@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import java.util.Properties;
+import hr.fer.zemris.vhdllab.communicaton.IMethod;
+
+import java.io.Serializable;
 
 /**
  * This interface must resolve a method and call a registered
@@ -12,11 +14,10 @@ public interface MethodDispatcher {
 	/**
 	 * This method resolves a method and calls a registered
 	 * method to deal with it.
-	 * @param p a properties that will be processed.
-	 * @param mprov a manager provider.
-	 * @return a response Properties.
+	 * @param method a method that will be processed
+	 * @param provider a manager provider
 	 */
-	public Properties preformMethodDispatching(Properties p,
-						ManagerProvider mprov);
+	public void preformMethodDispatching(IMethod<Serializable> method,
+						ManagerProvider provider);
 	
 }

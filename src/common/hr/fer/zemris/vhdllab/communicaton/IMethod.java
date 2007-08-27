@@ -3,30 +3,36 @@
  */
 package hr.fer.zemris.vhdllab.communicaton;
 
+import java.io.Serializable;
+
 /**
  * @param <T>
  * @author Miro Bezjak
  */
-public interface IMethod<T> extends MethodConstants {
+public interface IMethod<T extends Serializable> extends Serializable, MethodConstants {
 
 	String getMethod();
 	
-	String getParameter(String paramName);
+	String getFingerprint();
 	
-	Boolean getParameterAsBoolean(String paramName);
+	String getUserId();
 	
-	Double getParameterAsDouble(String paramName);
+	Object getParameter(String param);
 	
-	Integer getParameterAsInteger(String paramName);
+	<X> X getParameter(Class<X> clazz, String param);
 	
-	Long getParameterAsLong(String paramName);
-
+	void setResult(T result);
+	
 	T getResult();
+	
+	void setStatus(int statusCode);
+	
+	void setStatus(int statusCode, String message);
 	
 	int getStatusCode();
 	
 	String getStatusMessage();
 
-	String serialize();
+
 
 }
