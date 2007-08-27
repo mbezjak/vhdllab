@@ -159,6 +159,22 @@ public final class WireSegment {
 		return (loc1.x == loc2.x);
 	}
 	
+	/**
+	 * Odreduje da li je zadana tocka na tom segmentu.
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public final boolean hasPoint(int x, int y) {
+		if (loc1.x == loc2.x) {
+			/* vertical */
+			return SMath.withinOrd(y, loc1.y, loc2.y);
+		} else {
+			/* horizontal */
+			return SMath.withinOrd(x, loc1.x, loc2.x);
+		}
+	}
+	
 	public final void setX1(int x1) {
 		loc1.x = x1;
 	}

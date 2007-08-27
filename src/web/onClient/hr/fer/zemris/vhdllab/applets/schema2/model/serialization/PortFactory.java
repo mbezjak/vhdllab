@@ -47,6 +47,7 @@ public class PortFactory {
 		} else throw new NotImplementedException("Port type '" + portwrap.getType() + "' is unknown.");
 	}
 	
+	@SuppressWarnings("unused")
 	private static void swapTwoElemArr(int[] arr) {
 		int t = arr[0];
 		arr[0] = arr[1];

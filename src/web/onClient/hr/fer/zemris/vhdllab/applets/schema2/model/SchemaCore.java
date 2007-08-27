@@ -49,14 +49,14 @@ public class SchemaCore implements ISchemaCore {
 	}
 
 	private ISchemaPrototypeCollection prototyper = null;
-	public void initPrototypes(String serializedPrototypes) {
-		
+	public void initPrototypes(String serializedPrototypes) {		
 		// deserialize prototypes from given list
 		PredefinedComponentsParser predefparser = 
 			new PredefinedComponentsParser(serializedPrototypes);
 		PredefinedConf predefconf = predefparser.getConfiguration();
 
 		prototyper = info.getPrototyper();
+		prototyper.clearPrototypes();
 		for (PredefinedComponent pc : predefconf.getComponents()) {
 			try {
 				prototyper.addPrototype(new DefaultSchemaComponent(pc));
@@ -64,7 +64,6 @@ public class SchemaCore implements ISchemaCore {
 				throw new SchemaException("Duplicate component.", e);
 			}
 		}
-		
 		
 		// add InOutSchemaComponents to list - this is unique for this implementation
 		addInOutComponent(new DefaultPort("input_v", Direction.IN, new DefaultType("std_logic_vector",

@@ -79,8 +79,8 @@ public class AddWireCommand implements ICommand {
 	 * horizontalnih i vertikalnih segmenata.
 	 * 
 	 * @throws IllegalArgumentException
-	 * U slucaju da segmenti nisu vertikalni ili horizontalni
-	 * baca se exception.
+	 * U slucaju da segmenti nisu vertikalni ili horizontalni,
+	 * ili se segmenti preklapaju, baca se exception.
 	 */
 	public AddWireCommand(Caseless wirename, List<WireSegment> segments)
 		throws IllegalArgumentException
@@ -94,7 +94,9 @@ public class AddWireCommand implements ICommand {
 						"horizontal and vertical segments.");
 			}
 			
-			wire.insertSegment(seg);
+			if (!wire.insertSegment(seg)) {
+				throw new IllegalArgumentException("Segments within the given list overlap.");
+			}
 		}
 	}
 	

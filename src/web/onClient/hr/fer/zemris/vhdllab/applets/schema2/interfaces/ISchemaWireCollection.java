@@ -61,12 +61,22 @@ public interface ISchemaWireCollection extends Iterable<ISchemaWire> {
 	 * @param dist
 	 *  
 	 * @return
-	 * Vraca zicu ako takva postoji na zadanim
+	 * Vraca prvu zicu ako takva postoji na zadanim
 	 * koordinatama ili je udaljena za dist od njih.
 	 * Ako ista ne postoji, vraca se null.
 	 * 
 	 */
 	ISchemaWire fetchWire(int x, int y, int dist);
+	
+	
+	/**
+	 * Vraca skup svih zica na danoj koordinati.
+	 * @param x
+	 * @param y
+	 * @return
+	 * Null ako nema zica na navedenoj koordinati.
+	 */
+	Set<ISchemaWire> fetchAllWires(int x, int y);
 	
 	
 	

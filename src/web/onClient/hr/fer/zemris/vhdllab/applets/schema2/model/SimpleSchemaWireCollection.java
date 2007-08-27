@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,39 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 		}
 		return null;
 	}
+
+	public Set<ISchemaWire> fetchAllWires(int x, int y) {
+		Set<ISchemaWire> allwires = null;
+		Set<Entry<Caseless, ISchemaWire>> entries = wires.entrySet();
+		Iterator<Entry<Caseless, ISchemaWire>> it = entries.iterator();
+		
+		while (it.hasNext()) {
+			ISchemaWire sw = it.next().getValue();
+			
+			for (WireSegment seg : sw.getSegments()) {
+				if (seg.hasPoint(x, y)) {
+					allwires = new HashSet<ISchemaWire>();
+					allwires.add(sw);
+					break;
+				}
+			}
+			
+			if (allwires != null) break;
+		}
+		
+		while (it.hasNext()) {
+			ISchemaWire sw = it.next().getValue();
+			
+			for (WireSegment seg : sw.getSegments()) {
+				if (seg.hasPoint(x, y)) {
+					allwires.add(sw);
+				}
+			}
+		}
+		
+		return allwires;
+	}
+
 
 	public ISchemaWire fetchWire(Caseless wireName) {
 		return wires.get(wireName); 

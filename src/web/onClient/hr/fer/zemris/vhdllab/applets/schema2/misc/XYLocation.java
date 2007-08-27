@@ -7,7 +7,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
  * @author Axel
  *
  */
-public final class XYLocation {
+public final class XYLocation implements Comparable {
 	public int x;
 	public int y;
 	
@@ -58,6 +58,19 @@ public final class XYLocation {
 	public final boolean in(int xpos, int ypos, int wdt, int hgt) {
 		return (x >= xpos && x <= (xpos + wdt) && y >= ypos && y <= (ypos + hgt));
 	}
+	
+	public final int manhattan(int x, int y) {
+		return Math.abs(this.x - x) + Math.abs(this.y - y);
+	}
+	
+	public final double euclid(int x, int y) {
+		return Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
+	}
+	
+	public final int chebyshev(int x, int y) {
+		int dx = Math.abs(this.x - x), dy = Math.abs(this.y - y);
+		return (dx > dy) ? (dx) : (dy);
+	}
 
 	@Override
 	public final boolean equals(Object obj) {
@@ -69,13 +82,24 @@ public final class XYLocation {
 
 	@Override
 	public final int hashCode() {
-		return 37 * x + y;
+		return x << 16 + y;
 	}
 
 	@Override
 	public final String toString() {
 		return "(" + x + ", " + y + ")";
 	}
+
+	public int compareTo(Object o) {
+		XYLocation other = (XYLocation)o;
+		if (this.x < other.x) return -1;
+		if (this.x > other.x) return 1;
+		if (this.y < other.y) return -1;
+		if (this.y > other.y) return 1;
+		return 0;
+	}
+	
+	
 	
 	
 }

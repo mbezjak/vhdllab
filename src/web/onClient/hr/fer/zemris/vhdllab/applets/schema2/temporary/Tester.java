@@ -6,12 +6,8 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummySystemContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.CostSortedHash;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteSegmentAndDivideCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -22,6 +18,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -40,6 +37,43 @@ public class Tester {
 			e.printStackTrace();
 		}
 	}
+	
+	private static class TestComp implements Comparable {
+		private int num;
+		
+		public TestComp(int n) {
+			num = n;
+		}
+		
+		public int getNum() {
+			return num;
+		}
+		
+		public int compareTo(Object o) {
+			TestComp other = (TestComp)o;
+			if (this.num < other.num) return -1;
+			if (this.num > other.num) return 1;
+			return 0;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || !(obj instanceof TestComp)) return false;
+			TestComp other = (TestComp)obj;
+			return this.num == other.num;
+		}
+
+		@Override
+		public int hashCode() {
+			return num;
+		}
+
+		@Override
+		public String toString() {
+			return "TestComp(num=" + num + ")";
+		}
+		
+	}
 
 	/**
 	 * Privremeno radi testiranja.
@@ -53,6 +87,11 @@ public class Tester {
 				testSchema();
 			}
 		});
+		
+//		testCostSortedHash();
+	}
+	
+	private static void testCostSortedHash() {
 	}
 	
 	private static void testSchema() {
@@ -78,18 +117,18 @@ public class Tester {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		
-		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 50, 50, 150, 50);
-		mpanel.getController().send(addwire);
-		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
-		mpanel.getController().send(expand);
-		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);
-		mpanel.getController().send(expand);
-		expand = new ExpandWireCommand(new Caseless("zica1"), 50, 50, 50, 250);
-		mpanel.getController().send(expand);
-		
-		DeleteSegmentAndDivideCommand delndiv = new DeleteSegmentAndDivideCommand(new Caseless("zica1"),
-				new WireSegment(150, 50, 150, 100));
-		mpanel.getController().send(delndiv);
+//		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 50, 50, 150, 50);
+//		mpanel.getController().send(addwire);
+//		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
+//		mpanel.getController().send(expand);
+//		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);
+//		mpanel.getController().send(expand);
+//		expand = new ExpandWireCommand(new Caseless("zica1"), 50, 50, 50, 250);
+//		mpanel.getController().send(expand);
+//		
+//		DeleteSegmentAndDivideCommand delndiv = new DeleteSegmentAndDivideCommand(new Caseless("zica1"),
+//				new WireSegment(150, 50, 150, 100));
+//		mpanel.getController().send(delndiv);
 		
 		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));

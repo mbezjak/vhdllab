@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaWire;
 
@@ -46,10 +45,10 @@ public class SchemaDeserializer {
 		// wires
 		digester.addObjectCreate("schemaInfo/wires/schemaWire", SchemaWire.class);
 		
-		digester.addObjectCreate("schemaInfo/wires/schemaWire/nodes/node", XYLocation.class);
-		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/nodes/node/x", "x");
-		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/nodes/node/y", "y");
-		digester.addSetNext("schemaInfo/wires/schemaWire/nodes/node", "addNode");
+//		digester.addObjectCreate("schemaInfo/wires/schemaWire/nodes/node", XYLocation.class);
+//		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/nodes/node/x", "x");
+//		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/nodes/node/y", "y");
+//		digester.addSetNext("schemaInfo/wires/schemaWire/nodes/node", "addNode");
 		
 		digester.addObjectCreate("schemaInfo/wires/schemaWire/segments/segment", WireSegment.class);
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/segments/segment/x1", "x1");

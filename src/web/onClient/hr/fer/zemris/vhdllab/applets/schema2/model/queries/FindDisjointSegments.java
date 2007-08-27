@@ -61,12 +61,18 @@ public class FindDisjointSegments implements IQuery {
 
 	
 	/* static fields */
+	public static final String QUERY_NAME = FindDisjointSegments.class.getSimpleName(); 
 	public static final String KEY_SEGMENT_SETS = "segment_sets";
+	private static final List<EPropertyChange> propdepend = new ArrayList<EPropertyChange>();
+	private static final List<EPropertyChange> ro_pd = Collections.unmodifiableList(propdepend);
+	
+	{
+		propdepend.add(EPropertyChange.CANVAS_CHANGE);
+		propdepend.add(EPropertyChange.PROPERTY_CHANGE);
+	}
 	
 	
 	/* private fields */
-	private List<EPropertyChange> propdepend;
-	private List<EPropertyChange> ro_pd;
 	private Caseless wirename;
 	
 	
@@ -74,11 +80,6 @@ public class FindDisjointSegments implements IQuery {
 	/* ctors */
 
 	public FindDisjointSegments(Caseless wireToAnalyze) {
-		propdepend = new ArrayList<EPropertyChange>();
-		propdepend.add(EPropertyChange.CANVAS_CHANGE);
-		propdepend.add(EPropertyChange.PROPERTY_CHANGE);
-		ro_pd = Collections.unmodifiableList(propdepend);
-		
 		wirename = wireToAnalyze;
 	}
 	
@@ -93,6 +94,10 @@ public class FindDisjointSegments implements IQuery {
 
 	public boolean isCacheable() {
 		return true;
+	}
+
+	public String getQueryName() {
+		return QUERY_NAME;
 	}
 
 	public IQueryResult performQuery(ISchemaInfo info) {

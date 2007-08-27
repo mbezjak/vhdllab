@@ -219,17 +219,17 @@ public class SchemaSerializer {
 		writer.append("<schemaWire>");
 		appendLine(writer);
 		
-		writer.append("<nodes>");
-		appendLine(writer);
-		for (XYLocation node : wire.getNodes()) {
-			writer.append("<node>");
-			writer.append("<x>").append(Integer.toString(node.x)).append("</x>");
-			writer.append("<y>").append(Integer.toString(node.y)).append("</y>");
-			writer.append("</node>");
-			appendLine(writer);
-		}
-		writer.append("</nodes>");
-		appendLine(writer);
+//		writer.append("<nodes>");
+//		appendLine(writer);
+//		for (XYLocation node : wire.getNodes()) {
+//			writer.append("<node>");
+//			writer.append("<x>").append(Integer.toString(node.x)).append("</x>");
+//			writer.append("<y>").append(Integer.toString(node.y)).append("</y>");
+//			writer.append("</node>");
+//			appendLine(writer);
+//		}
+//		writer.append("</nodes>");
+//		appendLine(writer);
 		
 		writer.append("<segments>");
 		appendLine(writer);

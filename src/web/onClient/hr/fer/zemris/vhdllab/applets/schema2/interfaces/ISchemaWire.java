@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Rectangle;
 import java.util.List;
+import java.util.Set;
 
 
 
@@ -60,8 +61,7 @@ public interface ISchemaWire {
 	
 	
 	/**
-	 * Vraca listu svih racvalista
-	 * zice.
+	 * Vraca listu svih racvalista zice.
 	 * 
 	 * @return
 	 * Lista koordinata svih racvalista.
@@ -107,8 +107,11 @@ public interface ISchemaWire {
 	 * mjesta gdje je to potrebno.
 	 * 
 	 * @param segment
+	 * @return
+	 * Vraca true ako je segment uspjesno dodan,
+	 * a false u protivnom (npr. radi overlapa).
 	 */
-	void insertSegment(WireSegment segment);
+	boolean insertSegment(WireSegment segment);
 	
 	/**
 	 * Brise iz liste segmenata navedeni segment.
@@ -120,6 +123,16 @@ public interface ISchemaWire {
 	 * Vraca false ako segment nije naden.
 	 */
 	boolean removeSegment(WireSegment segment);
+	
+	/**
+	 * Vraca segmente zice na danoj koordinati.
+	 * @param x
+	 * @param y
+	 * @return
+	 * Null ako nema segmenata na toj koordinati.
+	 */
+	Set<WireSegment> segmentsAt(int x, int y);
+	
 }
 
 

@@ -72,7 +72,9 @@ public class ExpandWireCommand implements ICommand {
 					"Wire with name '" + name + "' does not exist"));
 		}
 		
-		wire.insertSegment(segment);
+		if (!wire.insertSegment(segment)) return new CommandResponse(
+				new SchemaError(EErrorTypes.WIRE_OVERLAP,
+				"Segment would overlap with other segments."));
 		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}

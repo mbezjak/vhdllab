@@ -17,7 +17,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ public class BindWireCommand implements ICommand {
 	/* private fields */
 	private Caseless wtobind, tobindto;
 	private Map<Caseless, IntList> cachedports;
-	private List<XYLocation> cachednodes;
 	private List<WireSegment> cachedsegments;
 	private ISchemaWire cachedwire;
 
@@ -71,7 +69,6 @@ public class BindWireCommand implements ICommand {
 		tobindto = wireToBeBoundTo;
 		
 		cachedports = new HashMap<Caseless, IntList>();
-		cachednodes = new ArrayList<XYLocation>();
 		cachedsegments = new ArrayList<WireSegment>();
 	}
 
@@ -123,20 +120,19 @@ public class BindWireCommand implements ICommand {
 		}
 		
 		// add all segments from old wire to tobindtowire, caching them
-		List<WireSegment> wslist = tobindtowire.getSegments();
 		for (WireSegment ws : oldwire.getSegments()) {
-			wslist.add(ws);
+			tobindtowire.insertSegment(ws);
 			cachedsegments.add(ws);
 		}
 		
 		// add all nodes from old wire to tobintowire if they can be added, caching them
-		List<XYLocation> nodelist = tobindtowire.getNodes();
-		for (XYLocation node : oldwire.getNodes()) {
-			if (!(nodelist.contains(node))) {
-				nodelist.add(node);
-				cachednodes.add(node);
-			}
-		}
+//		List<XYLocation> nodelist = tobindtowire.getNodes();
+//		for (XYLocation node : oldwire.getNodes()) {
+//			if (!(nodelist.contains(node))) {
+//				nodelist.add(node);
+//				cachednodes.add(node);
+//			}
+//		}
 		
 		return new CommandResponse(true);
 	}
@@ -153,16 +149,15 @@ public class BindWireCommand implements ICommand {
 				"Wire with name '" + tobindto + "' does not exist."));
 		
 		// remove cached segments from tobindtowire
-		List<WireSegment> wslist = tobindtowire.getSegments();
 		for (WireSegment ws : cachedsegments) {
-			wslist.remove(ws);
+			tobindtowire.removeSegment(ws);
 		}
 		
 		// remove cached node from tobindtowire
-		List<XYLocation> nodelist = tobindtowire.getNodes();
-		for (XYLocation node : cachednodes) {
-			nodelist.remove(node);
-		}
+//		List<XYLocation> nodelist = tobindtowire.getNodes();
+//		for (XYLocation node : cachednodes) {
+//			nodelist.remove(node);
+//		}
 		
 		// add old wire
 		try {
@@ -187,7 +182,6 @@ public class BindWireCommand implements ICommand {
 		}
 		
 		// clear cache
-		cachednodes.clear();
 		cachedports.clear();
 		cachedsegments.clear();
 		cachedwire = null;

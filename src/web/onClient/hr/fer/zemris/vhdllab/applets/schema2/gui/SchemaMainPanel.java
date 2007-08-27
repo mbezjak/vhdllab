@@ -45,8 +45,6 @@ import javax.swing.JSplitPane;
 
 public class SchemaMainPanel extends JPanel implements IEditor {
 
-	private SoftReference<DefaultWizard> wizardSoftRef;
-
 	// {
 	// try {
 	// // javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
@@ -62,13 +60,14 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		}
 	}
 
-	/**
-	 * 
-	 */
+	
+	/* static fields */
 	private static final long serialVersionUID = -6643347269051956602L;
 
-	/* static fields */
 
+	/* private fields */
+	private SoftReference<DefaultWizard> wizardSoftRef;
+	
 	/* model private fields */
 	private ISchemaCore core;
 	private ISchemaController controller;
@@ -106,10 +105,16 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	/* ctors */
 
 	public SchemaMainPanel() {
+		initStatic();
 	}
 
 	/* methods */
 
+	/**
+	 * Initializes fields with initial value and 
+	 * assumes that the project container IS NOT SET.
+	 * Therefore, this is called from a ctor.
+	 */
 	private void initStatic() {
 		core = new SchemaCore();
 		controller = new LocalController();
@@ -129,6 +134,10 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				new ModificationListener());
 	}
 
+	/**
+	 * Performs all initialization assuming that a project container
+	 * HAS BEEN SET. Therefore, this is not called from a ctor.
+	 */
 	private void initDynamic() {
 		// init prototype components
 		initPrototypes();
@@ -154,7 +163,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		core.initPrototypes(predefined);
 
 		// init user component prototypes
-		initUserPrototypes();
+		if (1 == 0) initUserPrototypes();
 	}
 
 	private void initUserPrototypes() {
@@ -186,9 +195,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		for (String name : circuitnames) {
 			// do not put prototypes for the modelled component or for
 			// components that depend on this component
-			if (thisname.equals(name)
-					|| hierarchy.getChildrenForParent(name).contains(thisname))
-				continue;
+			if (thisname.equals(name) || hierarchy.getChildrenForParent(name).contains(thisname)) continue;
 
 			// get circuit interface for the component
 			CircuitInterface circint;
@@ -197,8 +204,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			} catch (UniformAppletException e) {
 				throw new SchemaException(
 						"Could not fetch circuit interface for circuit '"
-								+ name + "' in project '" + projectname + "'.",
-						e);
+								+ name + "' in project '" + projectname + "'.", e);
 			}
 
 			// add component to prototypes
@@ -346,7 +352,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public void init() {
-		initStatic();
 		initDynamic();
 	}
 
@@ -363,7 +368,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public void setFileContent(FileContent content) {
-		System.out.println("File content set.");
+		//System.out.println("File content set.");
 		filecontent = content;
 		resetSchema();
 		if (filecontent != null) {
@@ -376,7 +381,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public void setSystemContainer(ISystemContainer container) {
-		System.out.println("Project container set.");
+		//System.out.println("Project container set.");
 		systemContainer = container;
 	}
 

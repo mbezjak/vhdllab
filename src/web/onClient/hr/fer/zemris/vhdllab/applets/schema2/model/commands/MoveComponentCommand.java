@@ -11,20 +11,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 
 
@@ -35,11 +27,7 @@ import java.util.Map.Entry;
  * 
  * @version 1.0
  * Ako je na neki port komponente bila spojena neka zica,
- * tad se toj zici dodaje jos jedan segment tako da bude
- * produzena do nove lokacije porta.
- * Ova ce komanda biti reimplementirana tako da to bude
- * pametnije rijeseno pomocu AutoConnect-a, ovo je samo
- * privremeno rjesenje.
+ * komanda nece biti izvrsena.
  * 
  * @author brijest
  *
@@ -53,6 +41,7 @@ public class MoveComponentCommand implements ICommand {
 	/* private fields */
 	private Caseless cmpname;
 	private XYLocation loc;
+	private XYLocation oldloc;
 	
 
 	/* ctors */
@@ -79,7 +68,7 @@ public class MoveComponentCommand implements ICommand {
 	}
 
 	public boolean isUndoable() {
-		return false;
+		return true;
 	}
 
 	public ICommandResponse performCommand(ISchemaInfo info) {
@@ -92,16 +81,14 @@ public class MoveComponentCommand implements ICommand {
 		}
 		
 		// find old location
-		XYLocation oldloc = components.getComponentLocation(cmpname);
+		oldloc = components.getComponentLocation(cmpname);
 		
 		// find mapped ports
-		Map<Caseless, Integer> toexpand = new HashMap<Caseless, Integer>();
-		int i = 0;
 		for (SchemaPort sp : cmp.getSchemaPorts()) {
 			Caseless mapping = sp.getMapping();
 			if (Caseless.isNullOrEmpty(mapping)) continue;
-			toexpand.put(mapping, i);
-			i++;
+			return new CommandResponse(new SchemaError(EErrorTypes.MAPPING_ERROR,
+					COMMAND_NAME + " cannot move components that have mapped ports."));
 		}
 		
 		// remove component
@@ -120,41 +107,60 @@ public class MoveComponentCommand implements ICommand {
 			try {
 				components.addComponent(oldloc.x, oldloc.y, cmp);
 			} catch (DuplicateKeyException e1) {
-				throw new IllegalStateException("Component could not be added back after removal.");
+				throw new IllegalStateException("Component could not be added back after removal " +
+						"due to duplicate key.");
 			} catch (OverlapException e1) {
-				throw new IllegalStateException("Component caused overlap while being added back to old location.");
+				throw new IllegalStateException("Component caused overlap while being added back to " +
+						"old location.");
 			}
 			return new CommandResponse(new SchemaError(EErrorTypes.COMPONENT_OVERLAP,
 					"Component overlaps other components at desired location."));
 		}
 		
-		// add new wire segments
-		addWireSegments(info, cmp, toexpand, oldloc);
-		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}
 	
-	/**
-	 * Ova ce metoda biti reimplementirana nakon implementacije autoconnecta.
-	 */
-	private void addWireSegments(ISchemaInfo info, ISchemaComponent cmp, Map<Caseless, Integer> toexpand, XYLocation oldloc) {
-		ISchemaWireCollection wires = info.getWires();
-		List<SchemaPort> ports = cmp.getSchemaPorts();
-		for (Entry<Caseless, Integer> entry : toexpand.entrySet()) {
-			ISchemaWire wire = wires.fetchWire(entry.getKey());
-			if (wire == null) throw new IllegalStateException("Port was mapped to '" + entry.getKey() + "' and this wire does not exist.");
-			SchemaPort sp = ports.get(entry.getValue());
-			XYLocation portoffset = sp.getOffset();
-			wire.insertSegment(new WireSegment(oldloc.x + portoffset.x, oldloc.y + portoffset.y, oldloc.x + portoffset.x, loc.y  + portoffset.y));
-			wire.insertSegment(new WireSegment(oldloc.x + portoffset.x, loc.y + portoffset.y, loc.x + portoffset.x, loc.y + portoffset.y));
-		}
-	}
-
-	/**
-	 * Bit ce implementirano nakon implementacije autoconnecta.
-	 */
 	public ICommandResponse undoCommand(ISchemaInfo info) throws InvalidCommandOperationException {
-		throw new InvalidCommandOperationException("Undo not applicible here.");
+		ISchemaComponentCollection components = info.getComponents();
+		ISchemaComponent cmp = components.fetchComponent(cmpname);
+		
+		if (cmp == null) {
+			throw new IllegalStateException("Component '" + cmpname + "' cannot be found while " +
+					"performing undo.");
+		}
+		
+		for (SchemaPort sp : cmp.getSchemaPorts()) {
+			Caseless mapping = sp.getMapping();
+			if (Caseless.isNullOrEmpty(mapping)) continue;
+			throw new IllegalStateException("Component has mapped ports while performing undo.");
+		}
+		
+		try {
+			components.removeComponent(cmpname);
+		} catch (UnknownKeyException e) {
+			throw new IllegalStateException("Component could not be removed, after it was found!");
+		}
+		
+		// add component to new location
+		try {
+			components.addComponent(oldloc.x, oldloc.y, cmp);
+		} catch (DuplicateKeyException e) {
+			throw new IllegalStateException("Component could not be added back after removal.");
+		} catch (OverlapException e) {
+			try {
+				components.addComponent(oldloc.x, oldloc.y, cmp);
+			} catch (DuplicateKeyException e1) {
+				throw new IllegalStateException("Component could not be added back after removal " +
+						"due to duplicate key.");
+			} catch (OverlapException e1) {
+				throw new IllegalStateException("Component caused overlap while being added back to " +
+						"old location.");
+			}
+			throw new IllegalStateException("Component overlaps other components at desired location " +
+					"while performing undo.");
+		}
+		
+		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}
 	
 

@@ -41,6 +41,12 @@ public interface IQuery {
 	boolean isCacheable();
 	
 	/**
+	 * Vraca ime upita.
+	 * @return
+	 */
+	String getQueryName();
+	
+	/**
 	 * Lista tipa promjena na koje je osjetljiv ovaj upit.
 	 * Ako se desi promjena ovog tipa, upit ce biti izbrisan iz cachea.
 	 * 
