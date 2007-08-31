@@ -56,17 +56,17 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 		
 		//TODO ovo maknuti kad se srede stvari:
 
-		final JToggleButton b = new JToggleButton("GRID ON");
+		final JToggleButton b = new JToggleButton("SNAP ON");
 		b.setSelected(true);
 		b.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
 				if(localController.isGridON()){
-					b.setText("GRID OFF");
+					b.setText("SNAP OFF");
 					b.setSelected(false);
 					localController.setGridON(false);
 				}else{
-					b.setText("GRID ON");
+					b.setText("SNAP ON");
 					b.setSelected(true);
 					localController.setGridON(true);
 				}

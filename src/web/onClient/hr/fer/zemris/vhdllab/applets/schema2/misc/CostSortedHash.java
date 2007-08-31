@@ -1,12 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.misc;
 
 import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.TreeSet;
-
-
-
-
 
 /**
  * 
@@ -15,80 +10,96 @@ import java.util.TreeSet;
  * @param <Tp>
  *            Must have implemented equals and hashCode, and must be Comparable.
  */
-public class CostSortedHash<Key extends Comparable, Tp> {
-	
-	private static class CostWrapper implements Comparable {
+public class CostSortedHash<Key extends Comparable<Key>, Tp> {
+
+	private static class CostWrapper<K extends Comparable<K>> implements Comparable<CostWrapper<K>> {
 		public int cost;
-		public Comparable key;
-		public CostWrapper(int c, Comparable k) { cost = c; key = k; }
-		public int compareTo(Object o) {
-			CostWrapper other = (CostWrapper)o;
-			if (this.cost < other.cost) return -1;
-			if (this.cost > other.cost) return 1;
+		public K key;
+
+		public CostWrapper(int c, K k) {
+			cost = c;
+			key = k;
+		}
+
+		public int compareTo(CostWrapper<K> other) {
+			if (this.cost < other.cost)
+				return -1;
+			if (this.cost > other.cost)
+				return 1;
 			return this.key.compareTo(other.key);
 		}
+
 		@Override
 		public boolean equals(Object obj) {
-			if (obj == null || !(obj instanceof CostWrapper)) return false;
-			CostWrapper other = (CostWrapper)obj;
+			if (obj == null || !(obj instanceof CostWrapper))
+				return false;
+			CostWrapper other = (CostWrapper) obj;
 			return this.cost == other.cost && this.key.equals(other.key);
 		}
+
 		@Override
 		public int hashCode() {
 			return cost << 16 + key.hashCode();
 		}
 	}
-	
-	private static class TpWrapper {
-		public Object value;
+
+	private static class TpWrapper<T> {
+		public T value;
 		public int cost;
-		public TpWrapper(int c, Object val) { cost = c; value = val; }
+
+		public TpWrapper(int c, T val) {
+			cost = c;
+			value = val;
+		}
 	}
 
+	
 	/* private fields */
-	private CostWrapper finder;
-	private HashMap<Key, TpWrapper> hash;
-	private TreeSet<CostWrapper> tree;
+	private CostWrapper<Key> finder;
+	private HashMap<Key, TpWrapper<Tp>> hash;
+	private TreeSet<CostWrapper<Key>> tree;
 
+	
 	
 	/* ctors */
-	
-	public CostSortedHash() {
-		finder = new CostWrapper(0, null);
-		hash = new HashMap<Key, TpWrapper>();
-		tree = new TreeSet<CostWrapper>();
-	}
-	
-	
-	
 
-	/* methods */
+	public CostSortedHash() {
+		finder = new CostWrapper<Key>(0, null);
+		hash = new HashMap<Key, TpWrapper<Tp>>();
+		tree = new TreeSet<CostWrapper<Key>>();
+	}
+
 	
+	
+	
+	/* methods */
+
 	public boolean add(Key key, int cost, Tp elem) {
 		if (hash.containsKey(key)) return false;
-		
+
 		/* add to hash */
-		hash.put(key, new TpWrapper(cost, elem));
-		
+		hash.put(key, new TpWrapper<Tp>(cost, elem));
+
 		/* add to tree */
-		tree.add(new CostWrapper(cost, key));
-		
+		tree.add(new CostWrapper<Key>(cost, key));
+
 		return true;
 	}
-	
+
 	public Tp get(Key key) {
-		return (Tp) hash.get(key);
+		TpWrapper<Tp> t = hash.get(key);
+		return (t != null) ? (t.value) : (null);
 	}
 
 	public Key cheapest() {
-		CostWrapper cw = tree.first();
-		return (Key) ((cw == null) ? (null) : (cw.key));
+		CostWrapper<Key> cw = tree.first();
+		return (cw == null) ? (null) : (cw.key);
 	}
-	
+
 	public boolean isEmpty() {
 		return hash.isEmpty();
 	}
-	
+
 	public int size() {
 		return hash.size();
 	}
@@ -110,37 +121,37 @@ public class CostSortedHash<Key extends Comparable, Tp> {
 		
 		return true;
 	}
-	
+
 	/**
 	 * @throws IllegalArgumentException
 	 *             U slucaju da key nije u kolekciji.
 	 */
 	public int getCost(Key key) {
-		TpWrapper tpw = hash.get(key);
-		
-		if (tpw == null) throw new IllegalArgumentException("Not in collection.");
+		TpWrapper<Tp> tpw = hash.get(key);
+
+		if (tpw == null)
+			throw new IllegalArgumentException("Not in collection.");
 		return tpw.cost;
 	}
-	
+
 	public boolean updateCost(Key key, int cost) {
 		if (!hash.containsKey(key)) return false;
-		
+
 		/* update tree */
-		TpWrapper tpw = hash.get(key);
+		TpWrapper<Tp> tpw = hash.get(key);
 		finder.cost = tpw.cost;
 		finder.key = key;
 		tree.remove(finder);
-		tree.add(new CostWrapper(cost, key));
-		
+		tree.add(new CostWrapper<Key>(cost, key));
+
 		/* update hash */
 		tpw.cost = cost;
-		
+
 		return true;
 	}
 
-	
-
 }
+
 
 
 

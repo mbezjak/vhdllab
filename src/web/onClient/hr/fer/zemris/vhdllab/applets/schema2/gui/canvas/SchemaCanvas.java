@@ -14,6 +14,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
@@ -64,8 +65,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	/**
 	 * Image used to create double-buffer effect.
 	 */
-	private BufferedImage img = new BufferedImage(1, 1
-			, BufferedImage.TYPE_3BYTE_BGR);
+	private BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
 	
 	/**
 	 * Collection containing all components in design.
@@ -236,12 +236,12 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			comp.getDrawer().draw(g);
 			g.translate(-componentLocation.x, -componentLocation.y);
 			
-			String text = name.toString();
+//			String text = name.toString();
 			Rectangle rect = components.getComponentBounds(name);
-			FontMetrics fm = g.getFontMetrics();
-			int tx=rect.x+rect.width/2-fm.stringWidth(text)/2;
-			int ty=rect.y;
-			g.drawString(text,tx,ty);
+//			FontMetrics fm = g.getFontMetrics();
+//			int tx=rect.x+rect.width/2-fm.stringWidth(text)/2;
+//			int ty=rect.y;
+//			g.drawString(text,tx,ty);
 
 			if(rect.x + rect.width + 10 > sizeX)sizeX =rect.x + rect.width + 10;
 			if(rect.y + rect.height + 10 > sizeY)sizeY =rect.y + rect.height + 10;
@@ -256,9 +256,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					CanvasColorProvider.SIGNAL_LINE_SELECTED:
 						CanvasColorProvider.SIGNAL_LINE);
 			wires.fetchWire(name).getDrawer().draw(g);
-			Rectangle rect = wires.getBounds(name);
-			if(rect.x + rect.width + 10 > sizeX)sizeX =rect.x + rect.width + 10;
-			if(rect.y + rect.height + 10 > sizeY)sizeY =rect.y + rect.height + 10;
+			Rect2d rect = wires.getBounds(name);
+			if(rect.left + rect.width + 10 > sizeX)sizeX =rect.left + rect.width + 10;
+			if(rect.top + rect.height + 10 > sizeY)sizeY =rect.top + rect.height + 10;
 			g.setColor(cl);
 		}
 		

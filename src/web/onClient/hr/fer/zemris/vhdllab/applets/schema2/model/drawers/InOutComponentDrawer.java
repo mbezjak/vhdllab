@@ -43,9 +43,8 @@ public class InOutComponentDrawer implements IComponentDrawer {
 
 	public InOutComponentDrawer(ISchemaComponent cmpToDraw) {
 		if (!(cmpToDraw instanceof InOutSchemaComponent))
-			throw new IllegalArgumentException(
-					"This drawer can only draw an instance of '"
-							+ cmpToDraw.getClass().getName() + "'.");
+			throw new IllegalArgumentException("This drawer can only draw an instance of '" +
+				cmpToDraw.getClass().getName() + "'.");
 		cmp = (InOutSchemaComponent) cmpToDraw;
 		componentName = cmpToDraw.getName().toString();
 	}
@@ -156,20 +155,28 @@ public class InOutComponentDrawer implements IComponentDrawer {
 				i++;
 			}
 		} else {
-			throw new NotImplementedException("Direction '" + dir.toString()
-					+ "' not implemented.");
+			throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
 		}
 
 		// draw component name
 		Font oldf = graphics.getFont();
-		Font f = new Font(Constants.TEXT_FONT_FAMILY, Font.PLAIN,
-				Constants.TEXT_FONT_SIZE + 2);
-
+		Color oldc = graphics.getColor();
+		
+		Font f = new Font(Constants.TEXT_FONT_CANVASNAMES, Font.PLAIN, Constants.TEXT_FONT_SIZE);
 		graphics.setFont(f);
-		graphics.drawString(componentName, w / 2 - f.getSize()
-				* componentName.length() / 3, h-f.getSize());
+		graphics.drawString(cmp.getName().toString(), 0, Constants.TEXT_FONT_SIZE / 2);
+
+//		f = new Font(Constants.TEXT_FONT_CANVASNAMES, Font.PLAIN, Constants.TEXT_SMALL_FONT_SIZE);
+//		int r = oldc.getRed() + 140; r = (r > 240) ? (240) : (r);
+//		int g = oldc.getGreen() + 140; g = (g > 240) ? (240) : (g);
+//		int b = oldc.getBlue() + 140; b = (b > 240) ? (240) : (b);
+//		graphics.setColor(new Color(r, g, b));
+//		graphics.setFont(f);
+//		graphics.drawString(componentName, 0, Constants.TEXT_FONT_SIZE * 3 / 2);
 
 		graphics.setFont(oldf);
+		graphics.setColor(oldc);
+
 	}
 
 }

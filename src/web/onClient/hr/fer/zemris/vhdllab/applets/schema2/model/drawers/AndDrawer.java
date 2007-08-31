@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model.drawers;
 
+import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 
@@ -41,7 +42,7 @@ public class AndDrawer extends GateDrawer implements IComponentDrawer {
 
 		// draw insignia
 		Font oldf = graphics.getFont();
-		Font f = new Font("Serif", Font.PLAIN, INSIGNIA_SIZE);
+		Font f = new Font(Constants.TEXT_FONT_NORMAL, Font.PLAIN, INSIGNIA_SIZE);
 
 		graphics.setFont(f);
 		graphics.drawString(INSIGNIA, w / 2 - f.getSize() * INSIGNIA.length()
@@ -50,3 +51,14 @@ public class AndDrawer extends GateDrawer implements IComponentDrawer {
 		graphics.setFont(oldf);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+

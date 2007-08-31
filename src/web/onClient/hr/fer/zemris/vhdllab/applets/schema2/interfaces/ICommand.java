@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import hr.fer.zemris.vhdllab.applets.schema2.constants.CCommandNames;
+
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidCommandOperationException;
 
 

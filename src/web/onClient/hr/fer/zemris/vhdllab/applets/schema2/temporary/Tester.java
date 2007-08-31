@@ -1,13 +1,20 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummySystemContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.CostSortedHash;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.queries.InspectWalkability;
+import hr.fer.zemris.vhdllab.applets.schema2.model.queries.SmartConnect;
+import hr.fer.zemris.vhdllab.applets.schema2.model.queries.misc.WalkabilityMap;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -18,7 +25,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -38,6 +44,7 @@ public class Tester {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static class TestComp implements Comparable {
 		private int num;
 		
@@ -87,11 +94,6 @@ public class Tester {
 				testSchema();
 			}
 		});
-		
-//		testCostSortedHash();
-	}
-	
-	private static void testCostSortedHash() {
 	}
 	
 	private static void testSchema() {
@@ -117,8 +119,11 @@ public class Tester {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		
-//		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 50, 50, 150, 50);
-//		mpanel.getController().send(addwire);
+		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 10, 30, 10, 80);
+		mpanel.getController().send(addwire);
+		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(
+				new Caseless("VL_OR"), 50, 0);
+		mpanel.getController().send(instantiate);
 //		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
 //		mpanel.getController().send(expand);
 //		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);
@@ -132,6 +137,13 @@ public class Tester {
 		
 		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));
+		
+		InspectWalkability inspect = new InspectWalkability(false);
+		IQueryResult result = mpanel.getController().send(inspect);
+		
+		SmartConnect connect = new SmartConnect(new XYLocation(10, 10), new XYLocation(250, 150),
+				(WalkabilityMap)(result.get(InspectWalkability.KEY_WALKABILITY)));
+		result = mpanel.getController().send(connect);
 		
 		SchemaCircuitInterfaceExtractor sciextract = new SchemaCircuitInterfaceExtractor();
 		try {

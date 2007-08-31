@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
-import java.awt.Rectangle;
 import java.util.List;
 import java.util.Set;
 
@@ -98,7 +98,7 @@ public interface ISchemaWire {
 	 * @return
 	 * Bounding box, pravokutnik!
 	 */
-	Rectangle getBounds();
+	Rect2d getBounds();
 	
 	
 	/**

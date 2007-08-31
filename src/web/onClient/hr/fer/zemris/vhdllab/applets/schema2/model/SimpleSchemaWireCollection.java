@@ -6,9 +6,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 
-import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -127,7 +127,7 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	
 	
 
-	public Rectangle getBounds(Caseless wireName) {
+	public Rect2d getBounds(Caseless wireName) {
 		ISchemaWire wire = wires.get(wireName);
 		
 		if (wire == null) return null;

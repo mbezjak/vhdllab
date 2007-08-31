@@ -15,6 +15,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaPrototypeCollecti
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.EntityWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
@@ -131,6 +133,39 @@ public class SchemaInfo implements ISchemaInfo {
 	public boolean isFreeIdentifier(Caseless identifier) {
 		throw new NotImplementedException();
 	}
+
+	public Rect2d boundingBox() {
+		Rect2d bounds = new Rect2d();
+		bounds.left = Integer.MAX_VALUE;
+		bounds.top = Integer.MAX_VALUE;
+		int maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
+		
+		for (PlacedComponent placed : components) {
+			int tx = placed.pos.x + placed.comp.getWidth(), ty = placed.pos.y + placed.comp.getHeight();
+			if (placed.pos.x < bounds.left) bounds.left = placed.pos.x;
+			if (placed.pos.y < bounds.top) bounds.top = placed.pos.y;
+			if (tx > maxx) maxx = tx;
+			if (ty > maxy) maxy = ty;
+		}
+		
+		for (ISchemaWire wire : wires) {
+			Rect2d wrec = wire.getBounds();
+			if (wrec.left < bounds.left) bounds.left = wrec.left;
+			if (wrec.top < bounds.top) bounds.top = wrec.top;
+			if ((wrec.left + wrec.width) > maxx) maxx = wrec.left + wrec.width;
+			if ((wrec.top + wrec.height) > maxy) maxy = wrec.top + wrec.height;
+		}
+		
+		if (bounds.left == Integer.MAX_VALUE) bounds.left = 0;
+		if (bounds.top == Integer.MAX_VALUE) bounds.top = 0;
+		if (maxx == Integer.MIN_VALUE) maxx = 0;
+		if (maxy == Integer.MIN_VALUE) maxy = 0;
+		bounds.width = maxx - bounds.left;
+		bounds.height = maxy - bounds.top;
+		
+		return bounds;
+	}
+	
 	
 	
 

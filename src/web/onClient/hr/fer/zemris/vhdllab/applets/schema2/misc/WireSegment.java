@@ -168,10 +168,10 @@ public final class WireSegment {
 	public final boolean hasPoint(int x, int y) {
 		if (loc1.x == loc2.x) {
 			/* vertical */
-			return SMath.withinOrd(y, loc1.y, loc2.y);
+			return loc1.x == x && SMath.withinOrd(y, loc1.y, loc2.y);
 		} else {
 			/* horizontal */
-			return SMath.withinOrd(x, loc1.x, loc2.x);
+			return loc1.y == y && SMath.withinOrd(x, loc1.x, loc2.x);
 		}
 	}
 	

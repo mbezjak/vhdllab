@@ -10,6 +10,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+
+
+
 public abstract class GateDrawer {
 
 	/* static fields */
@@ -46,8 +49,7 @@ public abstract class GateDrawer {
 				graphics.drawLine(offset.x, offset.y, offset.x, h / 2);
 			}
 
-			if (!Caseless.isNullOrEmpty(mapping))
-				continue;
+			if (!Caseless.isNullOrEmpty(mapping)) continue;
 
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
@@ -61,29 +63,46 @@ public abstract class GateDrawer {
 		// draw a rectangle
 		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);
-		graphics.fillRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2
-				* EDGE_OFFSET);
+		graphics.fillRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
 		if (detectNegations)
-			graphics.fillOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
-					NEGATE_SIZE, NEGATE_SIZE);
+			graphics.fillOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2, NEGATE_SIZE, NEGATE_SIZE);
 		graphics.setColor(c);
-		graphics.drawRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2
-				* EDGE_OFFSET);
+		graphics.drawRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
 		if (detectNegations)
-			graphics.drawOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2,
-					NEGATE_SIZE, NEGATE_SIZE);
+			graphics.drawOval(w - EDGE_OFFSET, specialh - NEGATE_SIZE / 2, NEGATE_SIZE, NEGATE_SIZE);
 
-		// draw component name
+		// draw component type name and instance name
 		Font oldf = graphics.getFont();
-		Font f = new Font(Constants.TEXT_FONT_FAMILY, Font.PLAIN,
-				Constants.TEXT_FONT_SIZE);
-
+		Color oldc = graphics.getColor();
+		
+		Font f = new Font(Constants.TEXT_FONT_CANVASNAMES, Font.PLAIN, Constants.TEXT_FONT_SIZE);
 		graphics.setFont(f);
-		graphics.drawString(componentName, w / 2 - f.getSize()
-				* componentName.length() / 3, h - f.getSize() / 2);
+		graphics.drawString(comp_to_draw.getName().toString(), 0, -Constants.TEXT_FONT_SIZE / 2);
+
+		f = new Font(Constants.TEXT_FONT_CANVASNAMES, Font.PLAIN, Constants.TEXT_SMALL_FONT_SIZE);
+		int r = oldc.getRed() + 140; r = (r > 240) ? (240) : (r);
+		int g = oldc.getGreen() + 140; g = (g > 240) ? (240) : (g);
+		int b = oldc.getBlue() + 140; b = (b > 240) ? (240) : (b);
+		graphics.setColor(new Color(r, g, b));
+		graphics.setFont(f);
+		graphics.drawString(componentName, 0, Constants.TEXT_FONT_SIZE / 2);
 
 		graphics.setFont(oldf);
-
+		graphics.setColor(oldc);
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

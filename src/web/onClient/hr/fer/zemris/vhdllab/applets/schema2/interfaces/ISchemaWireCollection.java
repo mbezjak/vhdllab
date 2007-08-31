@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import java.awt.Rectangle;
-import java.util.Set;
-
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
+
+import java.util.Set;
 
 
 
@@ -89,7 +89,7 @@ public interface ISchemaWireCollection extends Iterable<ISchemaWire> {
 	 * Minimalni pravokutnik koji obuhvaca
 	 * zicu, a null zica tog imena ne postoji.
 	 */
-	Rectangle getBounds(Caseless wireName);
+	Rect2d getBounds(Caseless wireName);
 	
 	
 	

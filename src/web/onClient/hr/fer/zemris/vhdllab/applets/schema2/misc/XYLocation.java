@@ -7,7 +7,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.misc;
  * @author Axel
  *
  */
-public final class XYLocation implements Comparable {
+public final class XYLocation implements Comparable<XYLocation> {
 	public int x;
 	public int y;
 	
@@ -90,8 +90,7 @@ public final class XYLocation implements Comparable {
 		return "(" + x + ", " + y + ")";
 	}
 
-	public int compareTo(Object o) {
-		XYLocation other = (XYLocation)o;
+	public int compareTo(XYLocation other) {
 		if (this.x < other.x) return -1;
 		if (this.x > other.x) return 1;
 		if (this.y < other.y) return -1;

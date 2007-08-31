@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IWireDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
@@ -15,7 +16,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultWireDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
 
-import java.awt.Rectangle;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,30 +76,30 @@ public class SchemaWire implements ISchemaWire {
 		throw new NotImplementedException();
 	}
 
-	public Rectangle getBounds() {
-		Rectangle r = new Rectangle();
+	public Rect2d getBounds() {
+		Rect2d r = new Rect2d();
 		int xmax = 0, ymax = 0;
 		
 		if (segments.size() > 0) {
-			r.x = SMath.min(segments.get(0).getStart().x, segments.get(0).getEnd().x);
+			r.left = SMath.min(segments.get(0).getStart().x, segments.get(0).getEnd().x);
 			xmax = SMath.max(segments.get(0).getStart().x, segments.get(0).getEnd().x);
-			r.y = SMath.min(segments.get(0).getStart().y, segments.get(0).getEnd().y);
+			r.top = SMath.min(segments.get(0).getStart().y, segments.get(0).getEnd().y);
 			ymax = SMath.max(segments.get(0).getStart().y, segments.get(0).getEnd().y);
 		}
 		
 		for (int i = 1; i < segments.size(); i++) {
-			r.x = SMath.min(segments.get(i).getStart().x, r.x);
-			r.x = SMath.min(segments.get(i).getEnd().x, r.x);
+			r.left = SMath.min(segments.get(i).getStart().x, r.left);
+			r.left = SMath.min(segments.get(i).getEnd().x, r.left);
 			xmax = SMath.max(segments.get(i).getStart().x, xmax);
 			xmax = SMath.max(segments.get(i).getEnd().x, xmax);
-			r.y = SMath.min(segments.get(i).getStart().y, r.y);
-			r.y = SMath.min(segments.get(i).getEnd().y, r.y);
+			r.top = SMath.min(segments.get(i).getStart().y, r.top);
+			r.top = SMath.min(segments.get(i).getEnd().y, r.top);
 			ymax = SMath.max(segments.get(i).getStart().y, ymax);
 			ymax = SMath.max(segments.get(i).getEnd().y, ymax);
 		}
 		
-		r.width = xmax - r.x;
-		r.height = ymax - r.y;
+		r.width = xmax - r.left;
+		r.height = ymax - r.top;
 		
 		return r;
 	}

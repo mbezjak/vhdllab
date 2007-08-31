@@ -6,28 +6,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
 
 public final class LocDimRotator {
 	
-	
-	/**
-	 * Vraca zarotiranu koordinatu, gdje
-	 * se rotira u odnosu na (0, 0) i to
-	 * na cetiri nacina - NORTH,
-	 * SOUTH, EAST, WEST.
-	 *  
-	 * @param location
-	 * Koordinata kakva bi bila kad bi
-	 * orientation bio NORTH.
-	 * @param orientation
-	 * @return
-	 * Ako je orijentacija NORTH,
-	 * vraca istu vrijednost.
-	 * Ako je SOUTH, WEST ili EAST,
-	 * XYLocation se rotira na odgovarajucu
-	 * stranu.
-	 */
-	public final XYLocation rotateLocation(XYLocation location, Dimension2d dimension, EOrientation orientation) {
-		return rotateLocation(location.x, location.y, dimension.width, dimension.height, orientation);
-	}
-	
 	/**
 	 * Vidi prethodnu metodu.
 	 * 

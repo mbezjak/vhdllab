@@ -17,8 +17,6 @@ import java.io.InputStreamReader;
 
 
 public class DummyWizard implements IWizard {
-	
-	private ISystemContainer systemContainer;
 
 	public FileContent getInitialFileContent(Component parent, String projectName) {
 //		URL url = this.getClass().getResource("dummySchema.xml");
@@ -49,7 +47,6 @@ public class DummyWizard implements IWizard {
 	}
 
 	public void setSystemContainer(ISystemContainer container) {
-		systemContainer = container;
 	}
 	
 }

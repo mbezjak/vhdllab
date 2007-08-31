@@ -1,8 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.util.Map;
+
+import com.sun.org.apache.regexp.internal.recompile;
 
 
 
@@ -102,6 +106,11 @@ public interface ISchemaInfo {
 	 * @return
 	 */
 	boolean isFreeIdentifier(Caseless identifier);
+	
+	/**
+	 * Vraca bounding box unutar kojeg stanu sve komponente i zice na shemi.
+	 */
+	Rect2d boundingBox();
 	
 }
 
