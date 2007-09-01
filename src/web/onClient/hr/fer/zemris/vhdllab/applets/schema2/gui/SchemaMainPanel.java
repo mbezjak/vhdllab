@@ -22,6 +22,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.LocalController;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.model.UserComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.EmptyCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.utilities.FileUtil;
@@ -163,7 +164,14 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		core.initPrototypes(predefined);
 
 		// init user component prototypes
-		if (1 == 0) initUserPrototypes();
+		initUserPrototypes();
+		
+		// send EmptyCommand to alert listeners
+		controller.send(new EmptyCommand(EPropertyChange.PROTOTYPES_CHANGE));
+		
+		// empty undo and redo stack, clear changes, as there have been none
+		controller.clearCommandCache();
+		modified = false;
 	}
 
 	private void initUserPrototypes() {
@@ -306,6 +314,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return controller;
 	}
 
+	
 	/* IEditor methods */
 
 	public void dispose() {
@@ -394,3 +403,19 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

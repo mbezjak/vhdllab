@@ -174,7 +174,7 @@ public class ComponentToAddToolbar extends JPanel implements
 				return;
 			}
 		} else if (evt.getPropertyName().equals(
-				EPropertyChange.PROTOTYPES_CHANGE)) {
+				EPropertyChange.PROTOTYPES_CHANGE.toString())) {
 			refreshList();
 		}
 	}
