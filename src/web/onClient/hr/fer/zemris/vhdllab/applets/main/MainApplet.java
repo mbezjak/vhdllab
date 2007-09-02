@@ -18,14 +18,15 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
+import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
+import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener;
+import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.communicaton.UserCredentials;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
-import hr.fer.zemris.vhdllab.preferences.PropertyListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
@@ -45,8 +46,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +81,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  * @see ISystemContainer
  */
 public class MainApplet extends JApplet implements IComponentContainer,
-		IComponentProvider, PropertyListener {
+		IComponentProvider, PreferencesListener {
 
 	private static final long serialVersionUID = 4037604752375048576L;
 
@@ -124,14 +123,19 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	 */
 	@Override
 	public void init() {
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				@Override
-				public void run() {
-					initSystem();
-				}
-			});
-		} catch (Exception ignored) {
+		// this method is sometimes invoked by EventDispatchThread!
+		if (SwingUtilities.isEventDispatchThread()) {
+			initSystem();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						initSystem();
+					}
+				});
+			} catch (Exception ignored) {
+			}
 		}
 	}
 
@@ -142,14 +146,19 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	 */
 	@Override
 	public void start() {
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				@Override
-				public void run() {
-					startSystem();
-				}
-			});
-		} catch (Exception ignored) {
+		// this method is sometimes invoked by EventDispatchThread!
+		if (SwingUtilities.isEventDispatchThread()) {
+			startSystem();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						startSystem();
+					}
+				});
+			} catch (Exception ignored) {
+			}
 		}
 	}
 
@@ -160,6 +169,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	 */
 	@Override
 	public void stop() {
+		// this method is sometimes invoked by EventDispatchThread!
 		if (SwingUtilities.isEventDispatchThread()) {
 			stopSystem();
 		} else {
@@ -182,6 +192,7 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	 */
 	@Override
 	public void destroy() {
+		// this method is sometimes invoked by EventDispatchThread!
 		if (SwingUtilities.isEventDispatchThread()) {
 			destroySystem();
 		} else {
@@ -203,7 +214,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	 */
 	private void initSystem() {
 		String userId = this.getParameter("userId");
-		if (userId == null) {
+		String sessionId = this.getParameter("sessionId");
+		if (userId == null || sessionId == null) {
 			// TODO following should be removed when security is implemented!
 			// We must not enter this! If we do, applet should refuse to run!
 			// Until then:
@@ -216,34 +228,79 @@ public class MainApplet extends JApplet implements IComponentContainer,
 
 		IResourceManager resourceManager;
 		try {
-//			AjaxMediator ajax = new DefaultAjaxMediator(this);
-//			Initiator initiator = new AjaxInitiator(ajax);
+			// AjaxMediator ajax = new DefaultAjaxMediator(this);
+			// Initiator initiator = new AjaxInitiator(ajax);
+			String vhdllabPath = this.getParameter("vhdllab.path");
+			String authenticationPath = this
+					.getParameter("authentication.path");
+			String cookieHost = this.getParameter("cookie.host");
+			String cookiePath = this.getParameter("cookie.path");
+			int sessionLength = Integer.parseInt(this
+					.getParameter("session.length"));
+			sessionLength -= 30;
 			UserCredentials.instance().setUserId(userId);
-			Initiator initiator = new HttpClientInitiator(getCodeBase().toExternalForm());
+			Initiator initiator = new HttpClientInitiator(vhdllabPath,
+					authenticationPath, cookieHost, cookiePath, sessionId,
+					sessionLength);
 			communicator = new Communicator(initiator, userId);
-			communicator.init();
+			communicator.init(); // also initializes UserPreferences
+
+			/*
+			 * It appears that some browsers, once page that presents this
+			 * applet is closed (i.e. a tab in a browser), doesn't shutdown JVM
+			 * (that contained this applet) but rather just dispose of this
+			 * applet (this class). This class has no problem with this (init
+			 * and destroy methods are called only once for each applet
+			 * instance), however SystemLog (a singleton) and
+			 * ResourceBundleProvider (contains static field and method) have
+			 * problem with this. Since they all operate under static context
+			 * (singleton is designed by having static instance field) and since
+			 * JVM is never shutdown they never loose references in their static
+			 * fields and thus always stay initialized! This is a problem
+			 * because those classes contains information on previous applet
+			 * instance (the whole system, not just this class). Because of this
+			 * they have to be reinitialized. Note however that once this applet
+			 * first starts this reinitialization is unnecessary but that is a
+			 * small price to pay for having "stateless" system.
+			 * 
+			 * Note that UserPreferences is another singleton class however it
+			 * is not mentioned here because its initialization is done every
+			 * time in Communicator. UserPreferences can't operate without this
+			 * initialization so that class is safe. Check implementation of
+			 * UserPreferences#init(Properties) method to see why
+			 * UserPreferences is not one of critical "must-be-reinitialized"
+			 * class. UserPreferences is initialized in Communicator#init()
+			 * method.
+			 * 
+			 * Found in: Mozilla Firefox 2.0.0.6 (Linux version)
+			 * 
+			 * @since 2/9/2007
+			 */
+			ResourceBundleProvider.init();
+			SystemLog.instance().clearAll();
+			/*
+			 * End of reinitialization code.
+			 */
+
 			resourceManager = new DefaultResourceManager(communicator);
 			componentStorage = new DefaultComponentStorage(this);
-			bundle = resourceManager
-					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-		} catch (Exception e) {
+			bundle = ResourceBundleProvider
+					.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		} catch (Throwable e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u
 			// development fazi
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			JOptionPane.showMessageDialog(this, sw.toString());
+			e.printStackTrace();
+			// StringWriter sw = new StringWriter();
+			// PrintWriter pw = new PrintWriter(sw);
+			// e.printStackTrace(pw);
+			// JOptionPane.showMessageDialog(this, sw.toString());
 			return;
 		}
 
 		initGUI();
 		int duration;
-		try {
-			duration = resourceManager.getPreferences().getPropertyAsInteger(
-					UserFileConstants.SYSTEM_TOOLTIP_DURATION).intValue();
-		} catch (PropertyAccessException e) {
-			duration = 15000;
-		}
+		duration = UserPreferences.instance().getInt(
+				UserFileConstants.SYSTEM_TOOLTIP_DURATION, 15000);
 		ToolTipManager.sharedInstance().setDismissDelay(duration);
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -278,13 +335,13 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			return;
 		}
 
-		getPreferences().addPropertyListener(this,
+		UserPreferences.instance().addPreferencesListener(this,
 				UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
-		getPreferences().addPropertyListener(this,
+		UserPreferences.instance().addPreferencesListener(this,
 				UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
-		getPreferences().addPropertyListener(this,
+		UserPreferences.instance().addPreferencesListener(this,
 				UserFileConstants.SYSTEM_VIEW_HEIGHT);
-		getPreferences().addPropertyListener(this,
+		UserPreferences.instance().addPreferencesListener(this,
 				UserFileConstants.SYSTEM_TOOLTIP_DURATION);
 
 		// FIXME ovo mozda spretnije rijesit
@@ -594,7 +651,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 						/ projectExplorerSplitPane.getWidth();
 				DecimalFormat formatter = new DecimalFormat("0.##");
 				String property = formatter.format(size);
-				setProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH,
+				UserPreferences.instance().set(
+						UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH,
 						property);
 			}
 		});
@@ -611,7 +669,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 						/ sideBarSplitPane.getWidth();
 				DecimalFormat formatter = new DecimalFormat("0.##");
 				String property = formatter.format(size);
-				setProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
+				UserPreferences.instance().set(
+						UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
 			}
 		});
 
@@ -626,7 +685,8 @@ public class MainApplet extends JApplet implements IComponentContainer,
 				double size = dividerLocation * 1.0 / viewSplitPane.getHeight();
 				DecimalFormat formatter = new DecimalFormat("0.##");
 				String property = formatter.format(size);
-				setProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
+				UserPreferences.instance().set(
+						UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
 			}
 		});
 
@@ -1365,50 +1425,36 @@ public class MainApplet extends JApplet implements IComponentContainer,
 		return statusBar;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener#propertyChanged(hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent)
+	 */
 	@Override
-	public void propertyChanged(String name, String oldValue, String newValue) {
-		double size;
-		try {
-			size = getPreferences().getPropertyAsDouble(name);
-		} catch (PropertyAccessException e) {
-			e.printStackTrace();
-			return;
-		}
+	public void propertyChanged(PreferencesEvent event) {
+		String name = event.getName();
+		UserPreferences pref = event.getPreferences();
 		if (name
 				.equalsIgnoreCase(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH)) {
+			double size = pref.getDouble(name, 0.15);
 			projectExplorerSplitPane
 					.setDividerLocation((int) (projectExplorerSplitPane
 							.getWidth() * size));
 		} else if (name
 				.equalsIgnoreCase(UserFileConstants.SYSTEM_SIDEBAR_WIDTH)) {
+			double size = pref.getDouble(name, 0.75);
 			sideBarSplitPane.setDividerLocation((int) (sideBarSplitPane
 					.getWidth() * size));
 		} else if (name.equalsIgnoreCase(UserFileConstants.SYSTEM_VIEW_HEIGHT)) {
+			double size = pref.getDouble(name, 0.75);
 			viewSplitPane
 					.setDividerLocation((int) (viewSplitPane.getHeight() * size));
 		} else if (name
 				.equalsIgnoreCase(UserFileConstants.SYSTEM_TOOLTIP_DURATION)) {
-			int duration;
-			try {
-				duration = getPreferences().getPropertyAsInteger(
-						UserFileConstants.SYSTEM_TOOLTIP_DURATION).intValue();
-			} catch (PropertyAccessException e) {
-				duration = 15000;
-			}
+			int duration = pref.getInt(
+					UserFileConstants.SYSTEM_TOOLTIP_DURATION, 15000);
 			ToolTipManager.sharedInstance().setDismissDelay(duration);
 		}
-	}
-
-	private IUserPreferences getPreferences() {
-		return systemContainer.getPreferences();
-	}
-
-	private String getProperty(String name) {
-		return systemContainer.getProperty(name);
-	}
-
-	private void setProperty(String name, String data) {
-		systemContainer.setProperty(name, data);
 	}
 
 	private void setPaneSize() {
@@ -1416,19 +1462,18 @@ public class MainApplet extends JApplet implements IComponentContainer,
 			validate();
 			double size;
 
-			size = Double
-					.parseDouble(getProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH));
+			UserPreferences pref = UserPreferences.instance();
+			size = pref.getDouble(
+					UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, 0.15);
 			projectExplorerSplitPane
 					.setDividerLocation((int) (projectExplorerSplitPane
 							.getWidth() * size));
 
-			size = Double
-					.parseDouble(getProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH));
+			size = pref.getDouble(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, 0.75);
 			sideBarSplitPane.setDividerLocation((int) (sideBarSplitPane
 					.getWidth() * size));
 
-			size = Double
-					.parseDouble(getProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT));
+			size = pref.getDouble(UserFileConstants.SYSTEM_VIEW_HEIGHT, 0.75);
 			viewSplitPane
 					.setDividerLocation((int) (viewSplitPane.getHeight() * size));
 		} catch (Exception e) {
@@ -1443,21 +1488,22 @@ public class MainApplet extends JApplet implements IComponentContainer,
 	}
 
 	private void storePaneSize() {
+		UserPreferences pref = UserPreferences.instance();
 		DecimalFormat formatter = new DecimalFormat("0.##");
 		double size = projectExplorerSplitPane.getDividerLocation() * 1.0
 				/ projectExplorerSplitPane.getWidth();
 		String property = formatter.format(size);
-		setProperty(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
+		pref.set(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
 
 		size = sideBarSplitPane.getDividerLocation() * 1.0
 				/ sideBarSplitPane.getWidth();
 		property = formatter.format(size);
-		setProperty(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
+		pref.set(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
 
 		size = viewSplitPane.getDividerLocation() * 1.0
 				/ viewSplitPane.getHeight();
 		property = formatter.format(size);
-		setProperty(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
+		pref.set(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
 	}
 
 	private void maximizeComponent(Component component) {

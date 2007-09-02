@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
@@ -284,7 +285,7 @@ public class Automat extends JPanel implements IEditor,IWizard  {
 		this.container=container;
 		if(container!=null){
 			projectName=container.getSelectedProject();
-			bundle=container.getResourceBundle("Client_Automat_ApplicationResources");
+			bundle=ResourceBundleProvider.getBundle("Client_Automat_ApplicationResources");
 		}else
 			bundle=CachedResourceBundles.getBundle("Client_Automat_ApplicationResources","en");
 	}

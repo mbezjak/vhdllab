@@ -8,10 +8,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 
 
@@ -35,14 +33,6 @@ public class DummySystemContainer implements ISystemContainer {
 	@Override
 	public IResourceManager getResourceManager() {
 		return resourceManager;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getResourceBundle(java.lang.String)
-	 */
-	@Override
-	public ResourceBundle getResourceBundle(String baseName) {
-		return resourceManager.getResourceBundle(baseName);
 	}
 
 	@Override
@@ -94,12 +84,6 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public String getProperty(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public FileIdentifier getSelectedFile() {
 		// TODO Auto-generated method stub
 		return null;
@@ -115,12 +99,6 @@ public class DummySystemContainer implements ISystemContainer {
 	public IStatusBar getStatusBar() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void setProperty(String name, String data) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -151,15 +129,6 @@ public class DummySystemContainer implements ISystemContainer {
 	public boolean simulateWithDialog() {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getPreferences()
-	 */
-	@Override
-	public IUserPreferences getPreferences() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/* (non-Javadoc)

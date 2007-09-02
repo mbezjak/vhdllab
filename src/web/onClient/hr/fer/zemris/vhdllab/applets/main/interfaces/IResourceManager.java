@@ -2,14 +2,12 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Defines methods for resource management (manipulation and data extraction).
@@ -412,26 +410,6 @@ public interface IResourceManager {
 	 */
 	SimulationResult simulate(String projectName, String fileName)
 			throws UniformAppletException;
-
-	/**
-	 * Returns a user preferences. Return value will never be <code>null</code>.
-	 * 
-	 * @return a user preferences.
-	 */
-	IUserPreferences getPreferences();
-
-	/**
-	 * Gets a resource bundle for the given base name and user's locale.
-	 * Returned value will never be <code>null</code>.
-	 * 
-	 * @param baseName
-	 *            the base name of the resource bundle, a fully qualified class
-	 *            name (or a name before language suffix)
-	 * @return a resource bundle for the given base name and user's locale.
-	 * @throws IllegalArgumentException
-	 *             if no bundle for such <code>baseName</code> can be found
-	 */
-	ResourceBundle getResourceBundle(String baseName);
 
 	/* IS-SOMETHING METHODS */
 

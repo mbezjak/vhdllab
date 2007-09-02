@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
@@ -168,7 +169,8 @@ public class EntityTable extends JPanel implements IEntityWizard{
             return data.length;
         }
 
-        public String getColumnName(int col) {
+        @Override
+		public String getColumnName(int col) {
             return columnNames[col];
         }
 
@@ -181,12 +183,14 @@ public class EntityTable extends JPanel implements IEntityWizard{
         }
 */
 
-        public boolean isCellEditable(int row, int col) {
+        @Override
+		public boolean isCellEditable(int row, int col) {
         	if(col>2&&getValueAt(row,2).equals("std_logic"))return false;
             return true;
         }
 
-        public void setValueAt(Object value, int row, int col) {
+        @Override
+		public void setValueAt(Object value, int row, int col) {
             data[row][col] = value;
             fireTableCellUpdated(row, col);
         }
@@ -288,7 +292,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 	}
 
 	public void setProjectContainer(ISystemContainer container) {
-		if (container!=null)bundle=container.getResourceBundle("Client_EntityTable_ApplicationResources");
+		if (container!=null)bundle=ResourceBundleProvider.getBundle("Client_EntityTable_ApplicationResources");
 		else
 			bundle=CachedResourceBundles.getBundle("Client_EntityTable_ApplicationResources","en");
 		}

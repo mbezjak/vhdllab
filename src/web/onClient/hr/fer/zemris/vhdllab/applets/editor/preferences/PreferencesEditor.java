@@ -1,17 +1,16 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
-import hr.fer.zemris.ajax.shared.XMLUtil;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
-import hr.fer.zemris.vhdllab.preferences.PropertyListener;
+import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
+import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener;
+import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 
 import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 public class PreferencesEditor extends JPanel implements IEditor,
-		PropertyListener {
+		PreferencesListener {
 
 	private static final long serialVersionUID = -7139479707266773753L;
 
@@ -62,12 +61,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 					TableModel source = (TableModel) e.getSource();
 					String key = (String) source.getValueAt(i, 0);
 					String value = (String) source.getValueAt(i, 1);
-					try {
-						container.getPreferences().setProperty(key, value);
-					} catch (PropertyAccessException ex) {
-						ex.printStackTrace();
-						return;
-					}
+					UserPreferences.instance().set(key, value);
 				}
 			}
 		});
@@ -75,11 +69,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 
 	@Override
 	public void dispose() {
-		Properties p = XMLUtil.deserializeProperties(content.getContent());
-		for (Object o : p.keySet()) {
-			String key = (String) o;
-			container.getPreferences().removePropertyListener(this, key);
-		}
+		UserPreferences.instance().removePreferencesListener(this);
 	}
 
 	@Override
@@ -124,21 +114,26 @@ public class PreferencesEditor extends JPanel implements IEditor,
 	@Override
 	public void setFileContent(FileContent content) {
 		this.content = content;
-		Properties p = XMLUtil.deserializeProperties(content.getContent());
-		for (Object o : p.keySet()) {
-			String key = (String) o;
-			String value = p.getProperty(key);
+		UserPreferences pref = UserPreferences.instance();
+		for(String key : pref.keys()) {
+			String value = pref.get(key, null);
+			if(value == null) {
+				continue;
+			}
 			model.addRow(new Object[] { key, value });
 			int rowCount = model.getRowCount();
 			rows.put(key, Integer.valueOf(rowCount - 1));
-			container.getPreferences().addPropertyListener(this, key);
+			pref.addPreferencesListener(this, key);
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener#propertyChanged(hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent)
+	 */
 	@Override
-	public void propertyChanged(String name, String oldValue, String newValue) {
-		int row = rows.get(name).intValue();
-		model.setValueAt(newValue, row, 1);
+	public void propertyChanged(PreferencesEvent event) {
+		int row = rows.get(event.getName()).intValue();
+		model.setValueAt(event.getNewValue(), row, 1);
 	}
 
 	@Override

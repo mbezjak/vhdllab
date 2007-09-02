@@ -24,7 +24,7 @@ public class CachedResourceBundles {
 		WeakReference<ResourceBundle> ref = cache.get(key);
 		ResourceBundle bundle = null;
 		if(ref!=null) {
-			bundle = (ResourceBundle)ref.get();
+			bundle = ref.get();
 		}
 		if(bundle!=null) {
 			return bundle;
@@ -33,7 +33,7 @@ public class CachedResourceBundles {
 			ref = cache.get(key);
 			bundle = null;
 			if(ref!=null) {
-				bundle = (ResourceBundle)ref.get();
+				bundle = ref.get();
 			}
 			if(bundle!=null) return bundle;
 			bundle = loadBundle(name, language,country);

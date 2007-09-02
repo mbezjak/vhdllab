@@ -24,13 +24,13 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
+import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -169,7 +169,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	public void init() throws UniformAppletException {
 		configuration = ComponentConfigurationParser.getConfiguration();
-		bundle = getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		bundle = ResourceBundleProvider.getBundle(
+				LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		resourceManager
 				.addVetoableResourceListener(new BeforeCompilationCheckCompilableAndSaveEditors());
 		resourceManager.addVetoableResourceListener(new AfterCompilationEcho());
@@ -198,8 +199,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 				.addVetoableResourceListener(new AfterResourceCreationOpenEditor());
 		resourceManager.addVetoableResourceListener(new ResourceSavedEcho());
 
-		String data;
-		data = getProperty(UserFileConstants.SYSTEM_OPENED_EDITORS);
+		UserPreferences pref = UserPreferences.instance();
+		String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
+		String data = pref.get(name, "");
 		List<FileIdentifier> files = SerializationUtil
 				.deserializeEditorInfo(data);
 		for (FileIdentifier f : files) {
@@ -208,7 +210,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 			editorManager.openEditorByResource(identifier);
 		}
 
-		data = getProperty(UserFileConstants.SYSTEM_OPENED_VIEWS);
+		name = UserFileConstants.SYSTEM_OPENED_VIEWS;
+		data = pref.get(name, "");
 		List<String> views = SerializationUtil.deserializeViewInfo(data);
 		for (String s : views) {
 			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
@@ -225,10 +228,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	public void dispose() throws UniformAppletException {
 		editorManager.saveAllEditors();
-		String data;
-		data = SerializationUtil.serializeEditorInfo(editorManager
+		UserPreferences pref = UserPreferences.instance();
+		String data = SerializationUtil.serializeEditorInfo(editorManager
 				.getAllOpenedEditors());
-		setProperty(UserFileConstants.SYSTEM_OPENED_EDITORS, data);
+		String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
+		pref.set(name, data);
 
 		List<String> views = new ArrayList<String>();
 		for (IView v : viewManager.getAllOpenedViews()) {
@@ -236,7 +240,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 			views.add(id.getComponentType());
 		}
 		data = SerializationUtil.serializeViewInfo(views);
-		setProperty(UserFileConstants.SYSTEM_OPENED_VIEWS, data);
+		name = UserFileConstants.SYSTEM_OPENED_VIEWS;
+		pref.set(name, data);
 
 		StringBuilder sb = new StringBuilder(2000);
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
@@ -244,11 +249,13 @@ public class DefaultSystemContainer implements ISystemContainer {
 			sb.append(formatter.format(m.getDate())).append("\t\t").append(
 					m.getContent()).append("\n\n");
 		}
-		resourceManager.saveErrorMessage(sb.toString());
+		if(sb.length() != 0) {
+			resourceManager.saveErrorMessage(sb.toString());
+		}
 
 		SystemLog.instance().removeAllSystemLogListeners();
 		resourceManager.removeAllVetoableResourceListeners();
-		getPreferences().removeAllPropertyListeners();
+		UserPreferences.instance().removeAllPreferencesListeners();
 
 		resourceManager = null;
 		componentProvider = null;
@@ -460,7 +467,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 		String projectName = getSelectedProject();
 		if (projectName == null) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
-			SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+			SystemLog.instance()
+					.addSystemMessage(text, MessageType.INFORMATION);
 			return false;
 		}
 		IWizard wizard = getNewEditorInstanceByFileType(type).getWizard();
@@ -532,7 +540,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 	}
 
-	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
+	/* MANAGER GETTER METHODS */
 
 	/*
 	 * (non-Javadoc)
@@ -562,72 +570,6 @@ public class DefaultSystemContainer implements ISystemContainer {
 	@Override
 	public IResourceManager getResourceManager() {
 		return resourceManager;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getPreferences()
-	 */
-	@Override
-	public IUserPreferences getPreferences() {
-		return resourceManager.getPreferences();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getProperty(java.lang.String)
-	 */
-	@Override
-	public String getProperty(String name) {
-		IUserPreferences preferences = getPreferences();
-		String data;
-		try {
-			data = preferences.getProperty(name);
-		} catch (PropertyAccessException e) {
-			// try again
-			try {
-				data = preferences.getProperty(name);
-			} catch (PropertyAccessException ex) {
-				// report problems
-				ex.printStackTrace();
-				data = null;
-			}
-		}
-		return data;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#setProperty(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public void setProperty(String name, String data) {
-		IUserPreferences preferences = getPreferences();
-		try {
-			preferences.setProperty(name, data);
-		} catch (PropertyAccessException e) {
-			// try again
-			try {
-				preferences.setProperty(name, data);
-			} catch (PropertyAccessException ex) {
-				// report problems
-				ex.printStackTrace();
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getResourceBundle(java.lang.String)
-	 */
-	@Override
-	public ResourceBundle getResourceBundle(String baseName) {
-		return resourceManager.getResourceBundle(baseName);
 	}
 
 	/* COMPONENT PROVIDER METHODS */
@@ -738,8 +680,9 @@ public class DefaultSystemContainer implements ISystemContainer {
 
 		boolean shouldAutoSave = dialog.shouldAlwaysSaveResources();
 		if (shouldAutoSave) {
-			setProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES, String
-					.valueOf(shouldAutoSave));
+			UserPreferences.instance().set(
+					UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES,
+					String.valueOf(shouldAutoSave));
 		}
 		int option = dialog.getOption();
 		if (option != SaveDialog.OK_OPTION)
@@ -819,7 +762,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
-				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text,
+						MessageType.INFORMATION);
 				// veto compilation
 				throw new ResourceVetoException();
 			}
@@ -848,7 +792,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_COMPILED);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+			SystemLog.instance()
+					.addSystemMessage(text, MessageType.INFORMATION);
 		}
 	}
 
@@ -887,7 +832,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
-				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text,
+						MessageType.INFORMATION);
 				// veto simulation
 				throw new ResourceVetoException();
 			}
@@ -917,7 +863,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 			String text = getBundleString(LanguageConstants.STATUSBAR_SIMULATED);
 			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 					fileName, projectName });
-			SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+			SystemLog.instance()
+					.addSystemMessage(text, MessageType.INFORMATION);
 		}
 	}
 
@@ -988,7 +935,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { projectName });
-				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text,
+						MessageType.INFORMATION);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
@@ -1057,7 +1005,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_FILE);
 				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
 						fileName, projectName });
-				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text,
+						MessageType.INFORMATION);
 				// veto resource creation
 				throw new ResourceVetoException();
 			}

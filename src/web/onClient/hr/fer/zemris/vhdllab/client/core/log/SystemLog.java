@@ -13,7 +13,8 @@ import javax.swing.event.EventListenerList;
  * Defines methods in a system log. A system log is place where all system
  * activity is logged. For example: system messages (presented to a user as a
  * part of system-to-user communication), each compilation or simulation is
- * logged here, etc.
+ * logged here, etc. All methods in system log allow concurrent access by
+ * multiple threads without external synchronization.
  * 
  * @author Miro Bezjak
  * @version 1.0
@@ -98,7 +99,7 @@ public final class SystemLog {
 	 * @param l
 	 *            a system log listener
 	 */
-	public void addSystemLogListener(SystemLogListener l) {
+	public synchronized void addSystemLogListener(SystemLogListener l) {
 		listeners.add(SystemLogListener.class, l);
 	}
 
@@ -108,14 +109,14 @@ public final class SystemLog {
 	 * @param l
 	 *            a system log listener
 	 */
-	public void removeSystemLogListener(SystemLogListener l) {
+	public synchronized void removeSystemLogListener(SystemLogListener l) {
 		listeners.remove(SystemLogListener.class, l);
 	}
 
 	/**
 	 * Removes all system log listeners.
 	 */
-	public void removeAllSystemLogListeners() {
+	public synchronized void removeAllSystemLogListeners() {
 		for (SystemLogListener l : getSystemLogListeners()) {
 			listeners.remove(SystemLogListener.class, l);
 		}
@@ -127,7 +128,7 @@ public final class SystemLog {
 	 * 
 	 * @return an array of all registered system log listeners.
 	 */
-	public SystemLogListener[] getSystemLogListeners() {
+	public synchronized SystemLogListener[] getSystemLogListeners() {
 		return listeners.getListeners(SystemLogListener.class);
 	}
 
@@ -159,11 +160,13 @@ public final class SystemLog {
 		if (message == null) {
 			throw new NullPointerException("Message cant be null");
 		}
-		if (systemMessages.size() == MAX_SYSTEM_MESSAGES_COUNT) {
-			// remove first
-			systemMessages.remove(0);
+		synchronized (this) {
+			if (systemMessages.size() == MAX_SYSTEM_MESSAGES_COUNT) {
+				// remove first
+				systemMessages.remove(0);
+			}
+			systemMessages.add(message);
 		}
-		systemMessages.add(message);
 		fireSystemMessageAdded(message);
 	}
 
@@ -173,7 +176,7 @@ public final class SystemLog {
 	 * 
 	 * @return an array of system messages
 	 */
-	public SystemMessage[] getSystemMessages() {
+	public synchronized SystemMessage[] getSystemMessages() {
 		return systemMessages.toArray(new SystemMessage[systemMessages.size()]);
 	}
 
@@ -205,11 +208,13 @@ public final class SystemLog {
 		if (message == null) {
 			throw new NullPointerException("Message cant be null");
 		}
-		if (errorMessages.size() == MAX_ERROR_MESSAGES_COUNT) {
-			// remove first
-			errorMessages.remove(0);
+		synchronized (this) {
+			if (errorMessages.size() == MAX_ERROR_MESSAGES_COUNT) {
+				// remove first
+				errorMessages.remove(0);
+			}
+			errorMessages.add(message);
 		}
-		errorMessages.add(message);
 		fireErrorMessageAdded(message);
 	}
 
@@ -220,7 +225,7 @@ public final class SystemLog {
 	 * 
 	 * @return an array of error messages
 	 */
-	public SystemMessage[] getErrorMessages() {
+	public synchronized SystemMessage[] getErrorMessages() {
 		return errorMessages.toArray(new SystemMessage[errorMessages.size()]);
 	}
 
@@ -238,11 +243,13 @@ public final class SystemLog {
 			throw new NullPointerException(
 					"Compilation result target cant be null");
 		}
-		if (compilationTargets.size() == MAX_RESULT_TARGET_COUNT) {
-			// remove first
-			compilationTargets.remove(0);
+		synchronized (this) {
+			if (compilationTargets.size() == MAX_RESULT_TARGET_COUNT) {
+				// remove first
+				compilationTargets.remove(0);
+			}
+			compilationTargets.add(result);
 		}
-		compilationTargets.add(result);
 		fireCompilationTargetAdded(result);
 	}
 
@@ -252,7 +259,7 @@ public final class SystemLog {
 	 * 
 	 * @return an unmodifiable list of compilation result targets
 	 */
-	public List<ResultTarget<CompilationResult>> getCompilationResultTargets() {
+	public synchronized List<ResultTarget<CompilationResult>> getCompilationResultTargets() {
 		return Collections.unmodifiableList(compilationTargets);
 	}
 
@@ -263,7 +270,7 @@ public final class SystemLog {
 	 * @return a last compiled result target or <code>null</code> if
 	 *         compilation history is empty
 	 */
-	public ResultTarget<CompilationResult> getLastCompilationResultTarget() {
+	public synchronized ResultTarget<CompilationResult> getLastCompilationResultTarget() {
 		if (compilationHistoryIsEmpty()) {
 			return null;
 		} else {
@@ -279,7 +286,7 @@ public final class SystemLog {
 	 * @return <code>true</code> if no compilation result target is stored in
 	 *         system log; <code>false</code> otherwise
 	 */
-	public boolean compilationHistoryIsEmpty() {
+	public synchronized boolean compilationHistoryIsEmpty() {
 		return compilationTargets.isEmpty();
 	}
 
@@ -296,11 +303,13 @@ public final class SystemLog {
 			throw new NullPointerException(
 					"Simulation result target cant be null");
 		}
-		if (simulationTargets.size() == MAX_RESULT_TARGET_COUNT) {
-			// remove first
-			simulationTargets.remove(0);
+		synchronized (this) {
+			if (simulationTargets.size() == MAX_RESULT_TARGET_COUNT) {
+				// remove first
+				simulationTargets.remove(0);
+			}
+			simulationTargets.add(result);
 		}
-		simulationTargets.add(result);
 		fireSimulationTargetAdded(result);
 	}
 
@@ -310,7 +319,7 @@ public final class SystemLog {
 	 * 
 	 * @return an unmodifiable list of simulation result targets
 	 */
-	public List<ResultTarget<SimulationResult>> getSimulationResultTargets() {
+	public synchronized List<ResultTarget<SimulationResult>> getSimulationResultTargets() {
 		return Collections.unmodifiableList(simulationTargets);
 	}
 
@@ -321,7 +330,7 @@ public final class SystemLog {
 	 * @return a last simulated result target or <code>null</code> if
 	 *         simulation history is empty
 	 */
-	public ResultTarget<SimulationResult> getLastSimulationResultTarget() {
+	public synchronized ResultTarget<SimulationResult> getLastSimulationResultTarget() {
 		if (simulationHistoryIsEmpty()) {
 			return null;
 		} else {
@@ -337,8 +346,19 @@ public final class SystemLog {
 	 * @return <code>true</code> if no simulation result target is stored in
 	 *         system log; <code>false</code> otherwise
 	 */
-	public boolean simulationHistoryIsEmpty() {
+	public synchronized boolean simulationHistoryIsEmpty() {
 		return simulationTargets.isEmpty();
+	}
+	
+	/**
+	 * Clears all information in this system log.
+	 */
+	public synchronized void clearAll() {
+		listeners = new EventListenerList();
+		systemMessages.clear();
+		errorMessages.clear();
+		compilationTargets.clear();
+		simulationTargets.clear();
 	}
 
 	/* FIRE EVENT METHODS */

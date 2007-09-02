@@ -2,11 +2,8 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * A system container is a core of vhdllab and contains important methods about
@@ -262,7 +259,7 @@ public interface ISystemContainer {
 	 */
 	FileIdentifier getSelectedFile();
 
-	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
+	/* MANAGER GETTER METHODS */
 
 	/**
 	 * Returns an editor manager. Return value will never be <code>null</code>.
@@ -285,52 +282,6 @@ public interface ISystemContainer {
 	 * @return a resource manager
 	 */
 	IResourceManager getResourceManager();
-
-	/**
-	 * Returns a user preferences. Return value will never be <code>null</code>.
-	 * 
-	 * @return a user preferences.
-	 */
-	IUserPreferences getPreferences();
-
-	/**
-	 * Returns a data from a property as string of <code>null</code> if
-	 * exceptional condition occurs. This is an alias method for
-	 * <code>getPreferences().getPropety(name)</code>, however this method
-	 * does not throw {@link PropertyAccessException}, instead if such
-	 * exception occurs this method will simply return <code>null</code>.
-	 * 
-	 * @param name
-	 *            a name of a property to return
-	 * @return a data of a property or <code>null</code> is error occurred
-	 */
-	String getProperty(String name);
-
-	/**
-	 * Set a property. This is an alias method for
-	 * <code>getPreferences().setPropety(name, data)</code>, however this
-	 * method does not throw {@link PropertyAccessException}, instead if such
-	 * exception occurs this method will simply report a problem.
-	 * 
-	 * @param name
-	 *            a name of a property to set
-	 * @param data
-	 *            a data to set
-	 */
-	void setProperty(String name, String data);
-
-	/**
-	 * Gets a resource bundle for the given base name and user's locale.
-	 * Returned value will never be <code>null</code>.
-	 * 
-	 * @param baseName
-	 *            the base name of the resource bundle, a fully qualified class
-	 *            name (or a name before language suffix)
-	 * @return a resource bundle for the given base name and user's locale.
-	 * @throws IllegalArgumentException
-	 *             if no bundle for such <code>baseName</code> can be found
-	 */
-	ResourceBundle getResourceBundle(String baseName);
 
 	/* COMPONENT PROVIDER METHODS */
 

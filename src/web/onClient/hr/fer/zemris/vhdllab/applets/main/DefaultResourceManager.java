@@ -4,10 +4,6 @@ import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
-import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.utilities.StringFormat;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
@@ -16,7 +12,6 @@ import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.event.EventListenerList;
 
@@ -639,44 +634,6 @@ public class DefaultResourceManager implements IResourceManager {
 	@Override
 	public boolean isCorrectProjectName(String name) {
 		return StringFormat.isCorrectProjectName(name);
-	}
-
-	/* PREFERENCES AND RESOURCE BUNDLE METHODS */
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getPreferences()
-	 */
-	@Override
-	public IUserPreferences getPreferences() {
-		return communicator.getPreferences();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getResourceBundle(java.lang.String)
-	 */
-	@Override
-	public ResourceBundle getResourceBundle(String baseName) {
-		String language;
-		try {
-			language = getPreferences().getProperty(
-					UserFileConstants.COMMON_LANGUAGE);
-		} catch (PropertyAccessException e) {
-			language = null;
-		}
-		if (language == null) {
-			language = "en";
-		}
-
-		ResourceBundle bundle = CachedResourceBundles.getBundle(baseName,
-				language);
-		if (bundle == null) {
-			throw new IllegalArgumentException("No bundle found.");
-		}
-		return bundle;
 	}
 
 	/* FIRE EVENTS METHODS */

@@ -3,8 +3,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -15,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class DummyResourceManager implements IResourceManager {
 
@@ -150,20 +147,6 @@ public class DummyResourceManager implements IResourceManager {
 		}
 		
 		return sb.toString();
-	}
-
-	@Override
-	public IUserPreferences getPreferences() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getResourceBundle(java.lang.String)
-	 */
-	@Override
-	public ResourceBundle getResourceBundle(String baseName) {
-		return CachedResourceBundles.getBundle(baseName + "_en");
 	}
 
 	@Override

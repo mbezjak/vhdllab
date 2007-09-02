@@ -35,7 +35,7 @@ tomcat.port = 8080
 ### Application host ###
 app.host = localhost
 ### Relative application url pattern for tomcat ###
-app.url = vhdllab.html
+app.url = vhdllab.jsp
 
 ### When starting browser wait for tomcat to reload its contents (in seconds) ###
 sleep.for.tomcat = 1

@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,9 +15,7 @@ public class Cache {
 	
 	private Map<Long, String> fileTypes;
 
-	private IUserPreferences preferences;
-
-
+	
 	public Cache() {
 		identifiers = new HashMap<FileIdentifier, Long>();
 		userFileIdentifiers = new HashMap<String, Long>();
@@ -65,10 +62,6 @@ public class Cache {
 			}
 		}
 		return projects;
-	}
-	
-	public IUserPreferences getUserPreferences() {
-		return preferences;
 	}
 	
 	public Long getIdentifierForProperty(String name) {
@@ -128,10 +121,6 @@ public class Cache {
 		return identifiers.get(key);
 	}
 	
-	public void cacheUserPreferences(IUserPreferences preferences) {
-		this.preferences = preferences;
-	}
-
 	public void cacheUserFileItem(String name, Long userFileIdentifier) {
 		if(name == null) {
 			throw new NullPointerException("Name can not be null.");

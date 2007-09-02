@@ -14,11 +14,11 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
@@ -55,11 +55,6 @@ public class DefaultEditorManager implements IEditorManager {
 	 * A resource manager.
 	 */
 	private IResourceManager resourceManager;
-
-	/**
-	 * A user preferences for accessing user properties.
-	 */
-	private IUserPreferences preferences;
 
 	/**
 	 * A resource bundle.
@@ -99,9 +94,8 @@ public class DefaultEditorManager implements IEditorManager {
 		this.conf = conf;
 		this.container = container;
 		this.resourceManager = container.getResourceManager();
-		this.preferences = container.getPreferences();
-		this.bundle = container
-				.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		this.bundle = ResourceBundleProvider.getBundle(
+				LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		group = ComponentGroup.EDITOR;
 	}
 
@@ -111,10 +105,9 @@ public class DefaultEditorManager implements IEditorManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#openPreferences()
 	 */
 	public IEditor openPreferences() {
-		String data = preferences.serialize();
 		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 				.createPreferencesIdentifier();
-		return openEditor(identifier, data);
+		return openEditor(identifier, "");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -542,15 +535,9 @@ public class DefaultEditorManager implements IEditorManager {
 			// look in preference and see if there is a need to show save dialog
 			// (user might have
 			// checked a "always save resources" checkbox)
-			boolean shouldAutoSave;
-			String selected = container
-					.getProperty(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES);
-			if (selected != null) {
-				shouldAutoSave = Boolean.parseBoolean(selected);
-			} else {
-				shouldAutoSave = false;
-			}
-
+			String name = UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES;
+			boolean shouldAutoSave = UserPreferences.instance().getBoolean(
+					name, false);
 			List<IEditor> editorsToSave = notSavedEditors;
 			if (!shouldAutoSave) {
 				editorsToSave = container.showSaveDialog(title, message,
@@ -711,21 +698,12 @@ public class DefaultEditorManager implements IEditorManager {
 	 */
 	private ComponentPlacement getPlacement(IComponentIdentifier<?> identifier) {
 		String id = identifier.getComponentType();
-		String property;
-		try {
-			property = preferences
-					.getProperty(UserFileConstants.SYSTEM_COMPONENT_PLACEMENT_FOR
-							+ id);
-		} catch (PropertyAccessException e) {
-			property = null;
-		}
+		UserPreferences pref = UserPreferences.instance();
+		String name = UserFileConstants.SYSTEM_COMPONENT_PLACEMENT_FOR;
+		String property = pref.get(name + id, null);
 		if (property == null) {
-			try {
-				property = preferences
-						.getProperty(UserFileConstants.SYSTEM_DEFAULT_EDITOR_PLACEMENT);
-			} catch (PropertyAccessException e) {
-				property = null;
-			}
+			name = UserFileConstants.SYSTEM_DEFAULT_EDITOR_PLACEMENT;
+			property = pref.get(name, null);
 			if (property == null) {
 				property = ComponentPlacement.CENTER.name();
 			}

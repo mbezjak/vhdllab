@@ -30,14 +30,27 @@
         <url-pattern>/doAjax</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AuthenticationPingServlet</servlet-name>
+        <servlet-class>hr.fer.zemris.vhdllab.servlets.AuthenticationPingServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AuthenticationPingServlet</servlet-name>
+        <url-pattern>/authentication/ping</url-pattern>
+    </servlet-mapping>
+
     <!-- JSPC servlet mappings end -->
 
     <!-- Security constraints start -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>VHDLLAB</web-resource-name>
-            <description>Require users to authenticate</description>    
-            <url-pattern>/vhdllab.jsp</url-pattern>                    
+            <description>Require users to authenticate</description>
+            <url-pattern>/*</url-pattern>
+            <url-pattern>/vhdllab.jsp</url-pattern>
+            <url-pattern>/doAjax</url-pattern>
+            <url-pattern>/authentication/ping</url-pattern>
             <http-method>POST</http-method>
             <http-method>GET</http-method>
         </web-resource-collection>

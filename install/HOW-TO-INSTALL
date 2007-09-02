@@ -38,11 +38,43 @@ Following must be done in order to prepare project.
    Developers: do not add ../src/service/applicationExceptions.properties to svn
    repository! You shoud only customize it and leave it for yourself.
 
-7) start tomcat using following ant task:
+7) copy parameters.properties-sample to
+   ../metadata/web/parameters.properties. Then edit this file and fix
+   path. 
+
+   Developers: do not add ../metadata/web/parameters.properties to svn
+   repository! You shoud only customize it and leave it for yourself.
+
+8) vhdllab needs for tomcat to be enabled with ssl support. This is what you have to do:
+		- open a console and issue following statements (note that the first statement
+		will ask you for a keystore password. Use "changeit"! It will ask you for more
+		information but those can be anything you want):
+			* statements for linux users:
+				$JAVA_HOME/bin/keytool -genkey -alias tomcat -keypass changeit -keyalg RSA
+				$JAVA_HOME/bin/keytool -export -alias tomcat -keypass changeit -file server.crt
+				sudo $JAVA_HOME/bin/keytool -import -file server.crt -keypass changeit -keystore $JAVA_HOME%/jre/lib/security/cacerts
+			* statements for windows users:
+				%JAVA_HOME%\bin\keytool -genkey -alias tomcat -keypass changeit -keyalg RSA
+				%JAVA_HOME%\bin\keytool -export -alias tomcat -keypass changeit -file server.crt
+				%JAVA_HOME%\bin\keytool -import -file server.crt -keypass changeit -keystore %JAVA_HOME%\jre\lib\security\cacerts
+		- after that you need to enable ssl support in tomcat. Open
+		CATALINA_HOME/conf/server.xml file and search for a line that contains this
+		"Define a SSL HTTP/1.1 Connector on port 8443" and uncomment following xml tag
+		"<Connector port="8443" protocol="HTTP/1.1" ........"
+		
+	Now ssl support should be configured in tomcat. Try to open this page to see if ssl
+	is working correctly "https://localhost:8443/".
+	
+9) you need to define some users for tomcat. You can do it easily in
+	CATALINA_HOME/conf/tomcat-users.xml file. Just add following lines in the file:
+		<role rolename="student"/>
+		<user username="test" password="a" roles="student"/>
+
+10) start tomcat using following ant task:
    ant run-tomcat
 
-8) developer version of application can be accessed on:
-   http://localhost:8080/vhdllab/vhdllab.html
+11) developer version of application can be accessed on:
+   http://localhost:8080/vhdllab/vhdllab.jsp
 
 Debugging applets:
 ------------------

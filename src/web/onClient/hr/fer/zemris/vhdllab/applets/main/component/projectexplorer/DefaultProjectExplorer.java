@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
@@ -365,8 +366,8 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			}
 		} catch (UniformAppletException e) {
 			e.printStackTrace();
-			ResourceBundle bundle = systemContainer
-					.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+			ResourceBundle bundle = ResourceBundleProvider
+					.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
 			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
@@ -641,12 +642,11 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 				if (fileName != null) {
 					name = getProjectName();
 					if (name != null) {
-						FileIdentifier file = new FileIdentifier(name,
-								fileName);
+						FileIdentifier file = new FileIdentifier(name, fileName);
 						IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
 								.createViewVHDLIdentifier(file);
-						systemContainer.getEditorManager()
-								.viewVHDLCode(identifier);
+						systemContainer.getEditorManager().viewVHDLCode(
+								identifier);
 					}
 				}
 			} else if (event.getSource().equals(deleteFile)) {
@@ -893,6 +893,10 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 		selectedNode = ((PeNode) tree.getLastSelectedPathComponent());
 		if (selectedNode != null) {
 			fileName = selectedNode.toString();
+		}
+		// TODO ovo ne valjda ali je privremeno rijesenje
+		if(fileName.equals(getProjectName())) {
+			fileName = null;
 		}
 		return fileName;
 	}

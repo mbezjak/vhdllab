@@ -9,11 +9,11 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
+import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.preferences.IUserPreferences;
-import hr.fer.zemris.vhdllab.preferences.PropertyAccessException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,11 +43,6 @@ public class DefaultViewManager implements IViewManager {
 	 * A system container for accessing more information.
 	 */
 	private ISystemContainer container;
-
-	/**
-	 * A user preferences for accessing user properties.
-	 */
-	private IUserPreferences preferences;
 
 	/**
 	 * A resource bundle.
@@ -86,9 +81,8 @@ public class DefaultViewManager implements IViewManager {
 		this.storage = storage;
 		this.conf = conf;
 		this.container = container;
-		this.preferences = container.getPreferences();
-		this.bundle = container
-				.getResourceBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		this.bundle = ResourceBundleProvider
+				.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		group = ComponentGroup.VIEW;
 	}
 
@@ -335,21 +329,12 @@ public class DefaultViewManager implements IViewManager {
 	 */
 	private ComponentPlacement getPlacement(IComponentIdentifier<?> identifier) {
 		String id = identifier.getComponentType();
-		String property;
-		try {
-			property = preferences
-					.getProperty(UserFileConstants.SYSTEM_COMPONENT_PLACEMENT_FOR
-							+ id);
-		} catch (PropertyAccessException e) {
-			property = null;
-		}
+		UserPreferences pref = UserPreferences.instance();
+		String name = UserFileConstants.SYSTEM_COMPONENT_PLACEMENT_FOR;
+		String property = pref.get(name + id, null);
 		if (property == null) {
-			try {
-				property = preferences
-						.getProperty(UserFileConstants.SYSTEM_DEFAULT_VIEW_PLACEMENT);
-			} catch (PropertyAccessException e) {
-				property = null;
-			}
+			name = UserFileConstants.SYSTEM_DEFAULT_VIEW_PLACEMENT;
+			property = pref.get(name, null);
 			if (property == null) {
 				property = ComponentPlacement.BOTTOM.name();
 			}
