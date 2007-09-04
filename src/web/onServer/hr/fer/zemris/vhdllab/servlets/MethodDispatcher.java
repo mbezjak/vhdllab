@@ -4,6 +4,8 @@ import hr.fer.zemris.vhdllab.communicaton.IMethod;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This interface must resolve a method and call a registered
  * method to deal with it.
@@ -18,6 +20,6 @@ public interface MethodDispatcher {
 	 * @param provider a manager provider
 	 */
 	public void preformMethodDispatching(IMethod<Serializable> method,
-						ManagerProvider provider);
+						ManagerProvider provider, HttpServletRequest request);
 	
 }

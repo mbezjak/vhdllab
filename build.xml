@@ -83,10 +83,21 @@
       <replacefilter token="@@hibernate.query.substitutions@@" property="hibernate.query.substitutions"/>
   	</replace>
   	
-  	<replace file="${local.dir}${file.separator}.java.policy" propertyfile="${configuration.properties}">
+  	<replace file="${local.dir}/.java.policy" propertyfile="${configuration.properties}">
   	  <replacefilter token="@@vhdllab.server@@" property="app.host"/>
-	  <replacefilter token="@@vhdllab.port@@" property="tomcat.port"/>
+	  <replacefilter token="@@http.port@@" property="http.port"/>
+	  <replacefilter token="@@https.port@@" property="https.port"/>
   	  <replacefilter token="@@vhdllab.name@@" property="app.name"/>
+  	</replace>
+  	
+  	<replace dir="${local.dir}" propertyfile="${configuration.properties}">
+  	  <replacefilter token="@@app.name@@" property="app.name"/>
+	  <replacefilter token="@@app.host@@" property="app.host"/>
+	  <replacefilter token="@@http.port@@" property="http.port"/>
+	  <replacefilter token="@@https.port@@" property="https.port"/>
+	  <replacefilter token="@@app.communication.protocol@@" property="app.communication.protocol"/>
+	  <replacefilter token="@@app.communication.port@@" property="app.communication.port"/>
+	  <replacefilter token="@@app.homepage@@" property="app.homepage"/>
   	</replace>
   	
   	<copy todir="${build.dir}">
@@ -179,6 +190,7 @@
       <fileset dir="src/web/onClient" excludes="**/*.java,**/*svn/**,**/*svn"/>
       <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
    	  <fileset dir="src/i18n/client" excludes="**/*svn/**,**/*svn"/>
+   	  <fileset file="local/onClient/server.properties"/>
    	  <metainf dir="metadata/onClient/META-INF" excludes="**/*svn/**,**/*svn"/>
   	</jar>
   </target>
@@ -541,7 +553,7 @@
   	<sleep seconds="${sleep.for.tomcat}"/>
     <exec executable="${browser.exec}" spawn="true">
       <arg line="${browser.arg}"/>
-      <arg line="http://${app.host}:${tomcat.port}/${app.name}/${app.url}"/>
+      <arg line="http://${app.host}:${http.port}/${app.name}/${app.url}"/>
     </exec>
   </target>
 	

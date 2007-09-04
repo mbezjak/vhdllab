@@ -4,7 +4,6 @@
 package hr.fer.zemris.vhdllab.client.dialogs.login;
 
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -73,16 +72,16 @@ public class LoginDialog extends JDialog {
 	 */
 	private int option = CLOSED_OPTION;
 
-	private Credentials credentials;
+	private UserCredential credentials;
 
 	public LoginDialog(Frame owner) {
-		this(owner, ResourceBundleProvider.getBundle(BUNDLE_NAME));
+		this(owner, null);
 	}
 
 	public LoginDialog(Frame owner, ResourceBundle bundle) {
 		super(owner, true);
 		if (bundle == null) {
-			bundle = CachedResourceBundles.getBundle(BUNDLE_NAME, "en");
+			bundle = ResourceBundleProvider.getBundle(BUNDLE_NAME);
 		}
 		String text;
 		text = bundle.getString(USERNAME);
@@ -112,7 +111,7 @@ public class LoginDialog extends JDialog {
 				String username = usernameField.getText();
 				if (!username.equals("")) {
 					String password = new String(passwordField.getPassword());
-					credentials = new Credentials(username, password);
+					credentials = new UserCredential(username, password);
 					close(OK_OPTION);
 				} else {
 					usernameField.requestFocusInWindow();
@@ -166,7 +165,7 @@ public class LoginDialog extends JDialog {
 	/**
 	 * @return the credentials
 	 */
-	public Credentials getCredentials() {
+	public UserCredential getCredentials() {
 		return credentials;
 	}
 

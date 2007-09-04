@@ -5,6 +5,8 @@ import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This interface represents one registered method for a given request. All
  * registered methods are registered in {@link MethodFactory}
@@ -21,7 +23,11 @@ public interface RegisteredMethod extends MethodConstants {
 	 *            a method representing accepted request
 	 * @param provider
 	 *            a manager provider
+	 * @param request
+	 *            a http request (used for example to logout a user, return
+	 *            session information etc.)
 	 */
-	public void run(IMethod<Serializable> method, ManagerProvider provider);
+	public void run(IMethod<Serializable> method, ManagerProvider provider,
+			HttpServletRequest request);
 
 }

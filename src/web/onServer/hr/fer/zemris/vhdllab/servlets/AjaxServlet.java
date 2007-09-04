@@ -67,7 +67,7 @@ public class AjaxServlet extends HttpServlet {
 			method.setStatus(MethodConstants.SE_INVALID_METHOD_CALL);
 		} else {
 			try {
-				regMethod.run(method, provider);
+				regMethod.run(method, provider, request);
 			} catch (SecurityException e) {
 				e.printStackTrace();
 				method.setStatus(MethodConstants.SE_NO_PERMISSION);

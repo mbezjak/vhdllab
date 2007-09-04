@@ -6,6 +6,8 @@ import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class can resolve complex method.
  * <p/>
@@ -388,7 +390,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 */
 	@Override
 	public void preformMethodDispatching(IMethod<Serializable> method,
-			ManagerProvider provider) {
+			ManagerProvider provider, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		
 	}

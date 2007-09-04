@@ -12,6 +12,10 @@ import hr.fer.zemris.vhdllab.communicaton.IMethod;
  * @author Miro Bezjak
  */
 public interface Initiator {
+	
+	void init();
+	
+	void dispose();
 
 	/**
 	 * Initiates request to server.

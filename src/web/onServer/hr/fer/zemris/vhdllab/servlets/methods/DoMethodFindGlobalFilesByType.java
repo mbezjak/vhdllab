@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class represents a registered method for "find global files by type" request.
  * 
@@ -26,7 +28,7 @@ public class DoMethodFindGlobalFilesByType extends AbstractRegisteredMethod {
 	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	@Override
-	public void run(IMethod<Serializable> method, ManagerProvider provider) {
+	public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
 		String type = method.getParameter(String.class, PROP_FILE_TYPE);
 		if (type == null) {

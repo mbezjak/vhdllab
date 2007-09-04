@@ -25,11 +25,8 @@ import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
 import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
-import hr.fer.zemris.vhdllab.client.dialogs.login.Credentials;
-import hr.fer.zemris.vhdllab.client.dialogs.login.LoginDialog;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
@@ -50,7 +47,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +57,6 @@ import java.util.ResourceBundle;
 import javax.swing.Icon;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -74,18 +69,10 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-
-import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  * Main applet is a container for all other modules. This is where all the GUI
@@ -103,14 +90,6 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	/* PARAMETER NAMES */
 	private static final String USER_ID = "userId";
 	private static final String SESSION_ID = "sessionId";
-	private static final String SESSION_LENGTH = "session.length";
-	private static final String AUTH_PATH = "authentication.path";
-
-	/**
-	 * A minimum session length. Below this number applet will refuse to run!
-	 * Length is in seconds.
-	 */
-	private static final int MINIMUM_SESSION_LENGTH = 60;
 
 	private ISystemContainer systemContainer;
 	private ResourceBundle bundle;
@@ -163,6 +142,7 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 				});
 			} catch (Exception ignored) {
 				ignored.printStackTrace();
+				throw new IllegalStateException();
 			}
 		}
 	}
@@ -245,36 +225,18 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	 */
 	private void initSystem() {
 		setFrameOwner();
-
-		/*
-		 * If session length is too low propagate exception to cancel applet
-		 * initialization.
-		 */
-		int sessionLength = getSessionLength();
-
-		/*
-		 * This method will also set userId in SystemContext class.
-		 */
-		String sessionId = getSessionId();
-
-		// set user and session identifier
-
 		components = new HashMap<JComponent, ComponentInformation>();
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
 
 		IResourceManager resourceManager;
 		try {
-			// AjaxMediator ajax = new DefaultAjaxMediator(this);
-			// Initiator initiator = new AjaxInitiator(ajax);
-			String vhdllabPath = this.getParameter("vhdllab.path");
-			String authenticationPath = this
-					.getParameter("authentication.path");
-			String cookieHost = this.getParameter("cookie.host");
-			String cookiePath = this.getParameter("cookie.path");
-			sessionLength -= 30;
-			Initiator initiator = new HttpClientInitiator(vhdllabPath,
-					authenticationPath, cookieHost, cookiePath, sessionId,
-					sessionLength);
+			/*
+			 * This method will also set userId in SystemContext class.
+			 */
+			String sessionId = getParameter(SESSION_ID);
+			SystemContext.setUserId(getParameter(USER_ID));
+			Initiator initiator = new HttpClientInitiator(sessionId);
+			initiator.init();
 			communicator = new Communicator(initiator);
 			communicator.init(); // also initializes UserPreferences
 
@@ -432,121 +394,6 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	private void setFrameOwner() {
 		Frame owner = JOptionPane.getFrameForComponent(this);
 		SystemContext.setFrameOwner(owner);
-	}
-
-	/**
-	 * Returns a length of a session from applet parameters. A session length is
-	 * a number in seconds that indicates a maximum inactive interval before
-	 * server invalidates a session.
-	 * 
-	 * @return a length of a session
-	 * @throws IllegalStateException
-	 *             if session length < {@link #MINIMUM_SESSION_LENGTH}
-	 */
-	private int getSessionLength() {
-		String sessionLength = getParameter(SESSION_LENGTH);
-		if (sessionLength == null) {
-			sessionLength = String.valueOf(MINIMUM_SESSION_LENGTH);
-		}
-		int length; // in seconds
-		try {
-			length = Integer.parseInt(sessionLength);
-		} catch (NumberFormatException e) {
-			length = MINIMUM_SESSION_LENGTH;
-		}
-		if (length < MINIMUM_SESSION_LENGTH) {
-			/*
-			 * Because ResourceBundleProvider is still not initialized here
-			 * (because UserPreferences is not either) we are using
-			 * CachedResourceBundles instead with default language (en).
-			 */
-			String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
-			ResourceBundle bundle = CachedResourceBundles.getBundle(name, "en");
-			String key = LanguageConstants.DIALOG_BAD_SESSION_LENGTH;
-			String text = bundle.getString(key);
-			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { String.valueOf(length) });
-			JOptionPane pane = new JOptionPane(text, JOptionPane.ERROR_MESSAGE,
-					JOptionPane.DEFAULT_OPTION);
-			JDialog dialog = pane.createDialog(SystemContext.getFrameOwner(),
-					UIManager.getString("OptionPane.messageDialogTitle"));
-			dialog.setSize(new Dimension(400, 200));
-			dialog.setLocationRelativeTo(SystemContext.getFrameOwner());
-			dialog.setVisible(true);
-			throw new IllegalStateException("Session length too low (" + length
-					+ ")");
-		}
-		return length;
-	}
-
-	/**
-	 * Returns a session identifier. A session id is either provided for applet
-	 * though parameters or user will have to login and then a session will be
-	 * provided by server. This method will also set user id in
-	 * {@link SystemContext} class.
-	 * 
-	 * @return a session identifier
-	 */
-	private String getSessionId() {
-		String userId = getParameter(USER_ID);
-		String sessionId = getParameter(SESSION_ID);
-		if (userId == null || sessionId == null) {
-			String authPath = getParameter(AUTH_PATH);
-			ResourceBundle dialogBundle = CachedResourceBundles.getBundle(
-					LoginDialog.BUNDLE_NAME, "en");
-			LoginDialog dialog = new LoginDialog(JOptionPane
-					.getFrameForComponent(this), dialogBundle);
-			dialog.setVisible(true);
-			Credentials c = dialog.getCredentials();
-			HttpClient client = new HttpClient();
-			client.getState().setCredentials(
-					AuthScope.ANY,
-					new UsernamePasswordCredentials(c.getUsername(), c
-							.getPassword()));
-			client.getParams().setAuthenticationPreemptive(true);
-			GetMethod getMethod = new GetMethod(this
-					.getParameter("authentication.path"));
-			getMethod.setDoAuthentication(true);
-			try {
-				int s = client.executeMethod(getMethod);
-				System.out.println("status code=" + s);
-			} catch (HttpException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			getMethod.releaseConnection();
-			
-			
-			getMethod = new GetMethod(authPath);
-//			client.getState().setCredentials(AuthScope.ANY, null);
-			client.getParams().setAuthenticationPreemptive(false);
-			try {
-				int s = client.executeMethod(getMethod);
-				System.out.println("status code 2nd time=" + s);
-			} catch (HttpException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			getMethod.releaseConnection();
-			
-			Cookie[] cookies = client.getState().getCookies();
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("JSESSIONID")) {
-					sessionId = cookie.getValue();
-					System.out.println(sessionId + "//" + cookie.getPath() + "$$" + cookie.getDomain());
-					break;
-				}
-			}
-			userId = c.getUsername();
-		}
-		SystemContext.setUserId(userId);
-		return sessionId;
 	}
 
 	/**

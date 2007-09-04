@@ -30,11 +30,6 @@
 		System.out.println(c.getName() + "/" + c.getValue());
 	}
 	}
-
-
-  	
-		InputStream is = getServletContext().getResourceAsStream("/WEB-INF/parameters.properties");
-  		Properties p = FileUtil.getProperties(is);
   	%>
   	<jsp:plugin code="hr.fer.zemris.vhdllab.applets.main.MainApplet"
   				archive="vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils-1.7.0.jar,commons-digester-1.7.jar,commons-codec-1.3.jar,commons-httpclient-3.0.1.jar"
@@ -43,11 +38,6 @@
   		  <jsp:param name="mayscript" value="true"></jsp:param>
   		  <jsp:param name="id" value="vhdllab"></jsp:param>
   		  <jsp:param name="class" value="vhdllab"></jsp:param>
-	      <jsp:param name="vhdllab.path" value="<%=p.getProperty("vhdllab.path")%>"></jsp:param>
-	      <jsp:param name="authentication.path" value="<%=p.getProperty("authentication.path")%>"></jsp:param>
-	      <jsp:param name="cookie.host" value="<%=p.getProperty("cookie.host")%>"></jsp:param>
-	      <jsp:param name="cookie.path" value="<%=p.getProperty("cookie.path")%>"></jsp:param>
-	      <jsp:param name="session.length" value="<%=session.getMaxInactiveInterval()%>"></jsp:param>
 	      <jsp:param name="sessionId" value="<%=session.getId()%>"></jsp:param>
 	      <jsp:param name="userId" value="<%=request.getRemoteUser()%>"></jsp:param>
   		</jsp:params>

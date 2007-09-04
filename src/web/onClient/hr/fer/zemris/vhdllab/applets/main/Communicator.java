@@ -401,7 +401,7 @@ public class Communicator {
 			String data = contentMethod.getResult();
 			properties.setProperty(name, data);
 		}
-		UserPreferences.init(properties);
+		UserPreferences.instance().init(properties);
 	}
 
 	private void initiate(IMethod<? extends Serializable> method)

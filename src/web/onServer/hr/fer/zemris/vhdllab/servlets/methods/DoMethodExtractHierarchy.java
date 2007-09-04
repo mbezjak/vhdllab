@@ -11,6 +11,8 @@ import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class represents a registered method for "extract hierarchy" request.
  * 
@@ -26,7 +28,7 @@ public class DoMethodExtractHierarchy extends AbstractRegisteredMethod {
 	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	@Override
-	public void run(IMethod<Serializable> method, ManagerProvider provider) {
+	public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
 		Long projectId = method.getParameter(Long.class, PROP_ID);
 		if (projectId == null) {

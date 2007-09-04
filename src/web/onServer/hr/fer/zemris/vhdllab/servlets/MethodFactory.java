@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class is used to return appropriate RegisteredMethod
  * to deal with cirtain methods.
@@ -98,9 +100,9 @@ public class MethodFactory {
 		 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(hr.fer.zemris.vhdllab.communicaton.IMethod, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 		 */
 		@Override
-		public void run(IMethod<Serializable> method, ManagerProvider provider) {
+		public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 			MethodDispatcher disp = new AdvancedMethodDispatcher();
-			disp.preformMethodDispatching(method, provider);
+			disp.preformMethodDispatching(method, provider, request);
 		}
 		
 	}

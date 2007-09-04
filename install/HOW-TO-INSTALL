@@ -38,14 +38,7 @@ Following must be done in order to prepare project.
    Developers: do not add ../src/service/applicationExceptions.properties to svn
    repository! You shoud only customize it and leave it for yourself.
 
-7) copy parameters.properties-sample to
-   ../metadata/web/parameters.properties. Then edit this file and fix
-   path. 
-
-   Developers: do not add ../metadata/web/parameters.properties to svn
-   repository! You shoud only customize it and leave it for yourself.
-
-8) vhdllab needs for tomcat to be enabled with ssl support. This is what you have to do:
+7) vhdllab needs for tomcat to be enabled with ssl support. This is what you have to do:
 		- open a console and issue following statements (note that the first statement
 		will ask you for a keystore password. Use "changeit"! It will ask you for more
 		information but those can be anything you want):
@@ -65,15 +58,15 @@ Following must be done in order to prepare project.
 	Now ssl support should be configured in tomcat. Try to open this page to see if ssl
 	is working correctly "https://localhost:8443/".
 	
-9) you need to define some users for tomcat. You can do it easily in
+8) you need to define some users for tomcat. You can do it easily in
 	CATALINA_HOME/conf/tomcat-users.xml file. Just add following lines in the file:
 		<role rolename="student"/>
 		<user username="test" password="a" roles="student"/>
 
-10) start tomcat using following ant task:
+9) start tomcat using following ant task:
    ant run-tomcat
 
-11) developer version of application can be accessed on:
+10) developer version of application can be accessed on:
    http://localhost:8080/vhdllab/vhdllab.jsp
 
 Debugging applets:

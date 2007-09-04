@@ -11,7 +11,7 @@ package hr.fer.zemris.vhdllab.client.dialogs.login;
  * @version 1.0
  * @since 2/9/2007
  */
-public final class Credentials {
+public final class UserCredential {
 
 	private String username;
 	private String password;
@@ -29,7 +29,7 @@ public final class Credentials {
 	 * @throws IllegalArgumentException
 	 *             if <code>username</code> is an empty string
 	 */
-	public Credentials(String username, String password) {
+	public UserCredential(String username, String password) {
 		if (username == null) {
 			throw new NullPointerException("Username cant be null");
 		}
@@ -86,9 +86,9 @@ public final class Credentials {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof Credentials))
+		if (!(obj instanceof UserCredential))
 			return false;
-		final Credentials other = (Credentials) obj;
+		final UserCredential other = (UserCredential) obj;
 		if (!username.equals(other.username))
 			return false;
 		if (!password.equals(other.password))
@@ -103,7 +103,7 @@ public final class Credentials {
 	 */
 	@Override
 	public String toString() {
-		return username + " [" + password + "]";
+		return username + ":" + password;
 	}
 
 }

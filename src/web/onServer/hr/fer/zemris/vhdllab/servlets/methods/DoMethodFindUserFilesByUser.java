@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class represents a registered method for "find user files by user" request.
  * 
@@ -26,7 +28,7 @@ public class DoMethodFindUserFilesByUser extends AbstractRegisteredMethod {
 	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	@Override
-	public void run(IMethod<Serializable> method, ManagerProvider provider) {
+	public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
 		String userId = method.getUserId();
 		List<UserFile> files;

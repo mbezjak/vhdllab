@@ -9,6 +9,8 @@ import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class represents a registered method for "rename user file" request.
  * 
@@ -24,7 +26,7 @@ public class DoMethodRenameUserFile extends AbstractRegisteredMethod {
 	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	@Override
-	public void run(IMethod<Serializable> method, ManagerProvider provider) {
+	public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
 		Long fileId = method.getParameter(Long.class, PROP_ID);
 		String newName = method.getParameter(String.class, PROP_FILE_NAME);

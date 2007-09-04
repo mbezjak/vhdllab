@@ -16,8 +16,10 @@ import javax.swing.event.EventListenerList;
  * method.
  * <p>
  * Note that before user preferences can be used it needs to be initialized
- * (depending on implementation: define how to access properties). However
- * normal user should not be burdened by initialization.
+ * (depending on implementation: define how to access properties).
+ * Initialization is done by invoking <code>init</code> method. However normal
+ * user should not be burdened by initialization, it is up to a system to
+ * initialize user preferences.
  * </p>
  * <p>
  * Also note that initialization must be done in a single thread (multi-threaded
@@ -67,7 +69,7 @@ public final class UserPreferences {
 	 * @param p
 	 *            a properties to set
 	 */
-	public static void init(Properties p) {
+	public void init(Properties p) {
 		if (p == null) {
 			throw new NullPointerException("Properties cant be null");
 		}
@@ -75,6 +77,22 @@ public final class UserPreferences {
 		pref.properties = (Properties) p.clone();
 		pref.listeners = new HashMap<String, EventListenerList>();
 		pref.bidiListeners = new HashMap<PreferencesListener, Collection<String>>();
+	}
+
+	/**
+	 * Returns <code>true</code> if this user preferences has been initialized
+	 * or <code>false</code> otherwise. This method is useful only during
+	 * initialization of system or to important system component that is a part
+	 * of system initialization. Editors and views are not those components so
+	 * they have no use for this method because it will always return
+	 * <code>true</code> (by the time editors or views begin initializing this
+	 * user preferences will already be initialized).
+	 * 
+	 * @return <code>true</code> if this user preferences has been
+	 *         initialized; <code>false</code> otherwise
+	 */
+	public boolean isInitialized() {
+		return properties != null;
 	}
 
 	/**

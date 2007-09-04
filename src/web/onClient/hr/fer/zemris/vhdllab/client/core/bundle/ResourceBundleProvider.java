@@ -22,23 +22,36 @@ import java.util.ResourceBundle;
 public final class ResourceBundleProvider {
 
 	/**
+	 * A default language. Used when initialization can't be done
+	 * (UserPreferences is not yet initialized) or as a default value to
+	 * UserPreferences's get method.
+	 */
+	private static final String DEFAULT_LANGUAGE = "en";
+
+	/**
 	 * Language for all returned resource bundle
 	 */
 	private static String language;
-	
+
 	static {
 		/*
 		 * static initialization
 		 */
 		init();
 	}
-	
+
 	/**
-	 * Initializes the language that is used as bundle's locale.
+	 * Initializes the language that is used as bundle's locale. This should be
+	 * invoked only once during system initialization!
 	 */
 	public static void init() {
-		String name = UserFileConstants.COMMON_LANGUAGE;
-		language = UserPreferences.instance().get(name, "en");
+		UserPreferences pref = UserPreferences.instance();
+		if (pref.isInitialized()) {
+			String name = UserFileConstants.COMMON_LANGUAGE;
+			language = pref.get(name, DEFAULT_LANGUAGE);
+		} else {
+			language = DEFAULT_LANGUAGE;
+		}
 	}
 
 	/**

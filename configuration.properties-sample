@@ -2,8 +2,33 @@
 ### ant configuration properties ###
 ####################################
 
-### application name ###
+
+#######################################
+### server configuration properties ###
+#######################################
+
+### 			Application name				###
+### * don't use special characters!				###
+### * this is also an application directory		###
+###		under CATALINA_HOME/webapps 			###
 app.name = vhdllab
+### Application host ###
+app.host = localhost
+### Server http port ###
+http.port = 8080
+### Server https (http+ssl) port ###
+https.port = 8443
+### A protocol that is used for communication between			###
+### client and server application (can only be http or https)	###
+app.communication.protocol = https
+### A port that is used for communication between				###
+### client and server application. Should match					###
+###	${app.communication.protocol}.								###
+app.communication.port = 8443
+### Application homepage ###
+app.homepage = http://localhost:8080/vhdllab/vhdllab.jsp
+
+
 
 ### directories in ${basedir} ###
 build.dir = build
@@ -30,12 +55,6 @@ hibernate.hbm.version = 2.0
 tomcat.exec = startup.bat
 ### Tomcat shutdown executable file ###
 tomcat.shutdown.exec = shutdown.bat
-### Tomcat port ###
-tomcat.port = 8080
-### Application host ###
-app.host = localhost
-### Relative application url pattern for tomcat ###
-app.url = vhdllab.jsp
 
 ### When starting browser wait for tomcat to reload its contents (in seconds) ###
 sleep.for.tomcat = 1
@@ -55,6 +74,9 @@ browser.arg = -new-window
 #browser.arg = -nosession
 ### No command line argument ###
 #browser.arg =
+
+### Relative application url pattern for tomcat ###
+app.url = vhdllab.jsp
 
 
 ############################

@@ -9,6 +9,8 @@ import hr.fer.zemris.vhdllab.servlets.RegisteredMethod;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class simply calls a registered method written in
  * Properties (argument of constructor).
@@ -21,7 +23,7 @@ public class SimpleMethodDispatcher implements MethodDispatcher {
 	 */
 	@Override
 	public void preformMethodDispatching(IMethod<Serializable> method,
-			ManagerProvider provider) {
+			ManagerProvider provider, HttpServletRequest request) {
 		if(method==null) throw new NullPointerException("Properties can not be null!");
 		if(provider==null) throw new NullPointerException("Manager provider can not be null!");
 		RegisteredMethod registeredMethod = MethodFactory.getMethod(method.getMethod());
@@ -29,7 +31,7 @@ public class SimpleMethodDispatcher implements MethodDispatcher {
 			method.setStatus(MethodConstants.SE_INVALID_METHOD_CALL);
 			return;
 		}
-		registeredMethod.run(method, provider);
+		registeredMethod.run(method, provider, request);
 	}
 	
 }
