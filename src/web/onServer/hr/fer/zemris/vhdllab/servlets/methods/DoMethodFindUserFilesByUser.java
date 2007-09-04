@@ -28,10 +28,7 @@ public class DoMethodFindUserFilesByUser extends AbstractRegisteredMethod {
 	@Override
 	public void run(IMethod<Serializable> method, ManagerProvider provider) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
-		String userId = method.getParameter(String.class, PROP_USER_ID);
-		if (userId == null) {
-			return;
-		}
+		String userId = method.getUserId();
 		List<UserFile> files;
 		try {
 			files = labman.findUserFilesByUser(userId);

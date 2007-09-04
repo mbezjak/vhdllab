@@ -23,8 +23,20 @@ public class AuthenticationPingServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String user = request.getRemoteUser();
-		returnResponse(user, request, response);
+//		Enumeration e = request.getHeaderNames();
+//		while(e.hasMoreElements()) {
+//			String h = (String) e.nextElement();
+//			System.out.println("header " + h + "=" +request.getHeader(h));
+//		}
+//		System.out.println(request.getRequestedSessionId());
+//		System.out.println(request.getSession().getId());
+//		System.out.println(request.getRequestedSessionId());
+//		String user = request.getRemoteUser();
+//		System.out.println(user);
+//		System.out.println("\n\n");
+//		returnResponse(user, request, response);
+		request.getSession(); // create a session
+		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}
 	
 	/* (non-Javadoc)

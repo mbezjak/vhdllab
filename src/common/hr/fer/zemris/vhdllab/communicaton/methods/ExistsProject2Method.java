@@ -11,9 +11,8 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractMethod;
  */
 public class ExistsProject2Method extends AbstractMethod<Boolean> {
 
-	public ExistsProject2Method(String userId, String projectName) {
+	public ExistsProject2Method(String projectName) {
 		super("exists.project2");
-		setParameter(PROP_USER_ID, userId);
 		setParameter(PROP_PROJECT_NAME, projectName);
 	}
 

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -33,6 +32,7 @@ public class AjaxServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //		request.getSession().setMaxInactiveInterval(15);
+		System.out.println(request.getRequestedSessionId());
 		System.out.println(request.getSession().getId());
 		System.out.println("host=" + request.getRemoteHost());
 		System.out.println("user=" + request.getRemoteUser());
@@ -45,11 +45,11 @@ public class AjaxServlet extends HttpServlet {
 				System.out.println("name=" + c.getName() + "/value=" + c.getValue() + "%%" +c.getMaxAge());
 			}
 		}
-		Enumeration en = request.getHeaderNames();
-		while(en.hasMoreElements()) {
-			String header = (String) en.nextElement();
-			System.out.println(header + "=" + request.getHeader(header));
-		}
+//		Enumeration en = request.getHeaderNames();
+//		while(en.hasMoreElements()) {
+//			String header = (String) en.nextElement();
+//			System.out.println(header + "=" + request.getHeader(header));
+//		}
 		ObjectInputStream ois = new ObjectInputStream(request.getInputStream());
 		IMethod<Serializable> method;
 		try {

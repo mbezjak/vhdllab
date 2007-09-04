@@ -13,9 +13,8 @@ import java.util.ArrayList;
  */
 public class FindProjectsByUserMethod extends AbstractMethod<ArrayList<Long>> {
 
-	public FindProjectsByUserMethod(String userId) {
+	public FindProjectsByUserMethod() {
 		super("find.projects.by.user");
-		setParameter(PROP_USER_ID, userId);
 	}
 
 }

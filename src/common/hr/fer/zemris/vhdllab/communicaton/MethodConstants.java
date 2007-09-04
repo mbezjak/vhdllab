@@ -225,9 +225,4 @@ public interface MethodConstants {
 	 */
 	public static final String PROP_ID = "id";
 
-	/**
-	 * A user ID property.
-	 */
-	public static final String PROP_USER_ID = "user.id";
-
 }

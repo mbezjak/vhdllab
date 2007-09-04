@@ -13,9 +13,8 @@ import java.util.ArrayList;
  */
 public class FindUserFilesByUserMethod extends AbstractMethod<ArrayList<Long>> {
 
-	public FindUserFilesByUserMethod(String userId) {
+	public FindUserFilesByUserMethod() {
 		super("find.user.files.by.user");
-		setParameter(PROP_USER_ID, userId);
 	}
 
 }

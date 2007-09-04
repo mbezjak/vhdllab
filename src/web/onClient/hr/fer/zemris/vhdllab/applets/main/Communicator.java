@@ -42,18 +42,14 @@ import java.util.Properties;
 
 public class Communicator {
 
-	private String userId;
 	private Initiator initiator;
 	private Cache cache;
 
-	public Communicator(Initiator initiator, String userId) {
+	public Communicator(Initiator initiator) {
 		if (initiator == null)
 			throw new NullPointerException("Initiator can not be null.");
-		if (userId == null)
-			throw new NullPointerException("User identifier can not be null.");
 		cache = new Cache();
 		this.initiator = initiator;
-		this.userId = userId;
 	}
 
 	public void init() throws UniformAppletException {
@@ -92,7 +88,7 @@ public class Communicator {
 	}
 
 	public List<String> getAllProjects() throws UniformAppletException {
-		FindProjectsByUserMethod method = new FindProjectsByUserMethod(userId);
+		FindProjectsByUserMethod method = new FindProjectsByUserMethod();
 		initiate(method);
 		List<Long> projectIdentifiers = method.getResult();
 
@@ -195,8 +191,7 @@ public class Communicator {
 	public void createProject(String projectName) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
-		CreateProjectMethod method = new CreateProjectMethod(userId,
-				projectName);
+		CreateProjectMethod method = new CreateProjectMethod(projectName);
 		initiate(method);
 		Long projectIdentifier = method.getResult();
 		cache.cacheItem(projectName, projectIdentifier);
@@ -386,14 +381,13 @@ public class Communicator {
 		if (content == null)
 			throw new NullPointerException("Content can not be null.");
 		ReportApplicationErrorMethod method = new ReportApplicationErrorMethod(
-				userId, content);
+				content);
 		initiate(method);
 	}
 
 	private void loadUserPreferences() throws UniformAppletException {
 		Properties properties = new Properties();
-		FindUserFilesByUserMethod findMethod = new FindUserFilesByUserMethod(
-				userId);
+		FindUserFilesByUserMethod findMethod = new FindUserFilesByUserMethod();
 		initiate(findMethod);
 		List<Long> userFileIds = findMethod.getResult();
 		for (Long id : userFileIds) {
@@ -407,7 +401,6 @@ public class Communicator {
 			String data = contentMethod.getResult();
 			properties.setProperty(name, data);
 		}
-		System.out.println(properties);
 		UserPreferences.init(properties);
 	}
 

@@ -26,11 +26,11 @@ public class DoMethodExistsProject2 extends AbstractRegisteredMethod {
 	@Override
 	public void run(IMethod<Serializable> method, ManagerProvider provider) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
-		String userId = method.getParameter(String.class, PROP_USER_ID);
 		String projectName = method.getParameter(String.class, PROP_PROJECT_NAME);
-		if (userId == null || projectName == null) {
+		if (projectName == null) {
 			return;
 		}
+		String userId = method.getUserId();
 		boolean exists;
 		try {
 			exists = labman.existsProject(userId, projectName);

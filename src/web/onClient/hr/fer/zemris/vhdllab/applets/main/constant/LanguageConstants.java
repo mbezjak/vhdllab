@@ -86,6 +86,8 @@ public class LanguageConstants {
 	public static final String DIALOG_BUTTON_CANCEL = "dialog.button.cancel";
 	public static final String DIALOG_BUTTON_SELECT_ALL = "dialog.button.select.all";
 	public static final String DIALOG_BUTTON_DESELECT_ALL = "dialog.button.deselect.all";
+	
+	public static final String DIALOG_BAD_SESSION_LENGTH = "dialog.bad.session.length";
 
 	public static final String DIALOG_SAVE_CHECKBOX_ALWAYS_SAVE_RESOURCES = "dialog.save.checkbox.always.save.resources";
 	public static final String DIALOG_SAVE_RESOURCES_TITLE = "dialog.save.resources.title";

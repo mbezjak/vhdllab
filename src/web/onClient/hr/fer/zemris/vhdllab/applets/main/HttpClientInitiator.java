@@ -134,6 +134,14 @@ public final class HttpClientInitiator implements Initiator {
 			}
 
 			int executeMethod = client.executeMethod(postMethod);
+			if(executeMethod == 401) {
+//				System.out.println("*******trying to authenticate");
+//				client.getState().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("test", "a"));
+//				postMethod.setDoAuthentication(true);
+//				executeMethod = client.executeMethod(postMethod);
+//				client.getState().setCredentials(AuthScope.ANY, null);
+//				System.out.println(client.getState().getCredentials(AuthScope.ANY));
+			}
 			System.out.println(executeMethod);
 			InputStream is = postMethod.getResponseBodyAsStream();
 			ObjectInputStream ois = new ObjectInputStream(is);

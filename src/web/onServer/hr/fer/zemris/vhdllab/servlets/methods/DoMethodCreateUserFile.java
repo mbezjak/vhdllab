@@ -27,12 +27,12 @@ public class DoMethodCreateUserFile extends AbstractRegisteredMethod {
 	@Override
 	public void run(IMethod<Serializable> method, ManagerProvider provider) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
-		String userId = method.getParameter(String.class, PROP_USER_ID);
 		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
 		String fileType = method.getParameter(String.class, PROP_FILE_TYPE);
-		if (userId == null || fileName == null || fileType == null) {
+		if (fileName == null || fileType == null) {
 			return;
 		}
+		String userId = method.getUserId();
 		UserFile file;
 		try {
 			file = labman.createNewUserFile(userId, fileName, fileType);

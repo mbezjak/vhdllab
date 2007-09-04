@@ -5,6 +5,7 @@
 <%@page import="java.io.InputStream"%>
 <%@page import="hr.fer.zemris.vhdllab.utilities.FileUtil"%>
 <%@page import="java.util.Properties"%>
+<%@page import="java.util.Enumeration"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8"/>
@@ -15,6 +16,23 @@
 <body onunload="javascript:exitApplication();">
   <div>
   	<%
+	Enumeration e = request.getHeaderNames();
+	while(e.hasMoreElements()) {
+		String h = (String) e.nextElement();
+		System.out.println("header " + h + "=" +request.getHeader(h));
+	}
+	System.out.println(request.getRequestedSessionId());
+	System.out.println(session.getId());
+	System.out.println(request.getRequestedSessionId());
+	Cookie[] cs = request.getCookies();
+	if(cs != null) {
+	for(Cookie c : cs) {
+		System.out.println(c.getName() + "/" + c.getValue());
+	}
+	}
+
+
+  	
 		InputStream is = getServletContext().getResourceAsStream("/WEB-INF/parameters.properties");
   		Properties p = FileUtil.getProperties(is);
   	%>

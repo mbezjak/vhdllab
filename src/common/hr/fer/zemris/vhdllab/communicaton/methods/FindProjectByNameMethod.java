@@ -11,9 +11,8 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractMethod;
  */
 public class FindProjectByNameMethod extends AbstractMethod<Long> {
 
-	public FindProjectByNameMethod(String userId, String projectName) {
+	public FindProjectByNameMethod(String projectName) {
 		super("find.project.by.name");
-		setParameter(PROP_USER_ID, userId);
 		setParameter(PROP_PROJECT_NAME, projectName);
 	}
 

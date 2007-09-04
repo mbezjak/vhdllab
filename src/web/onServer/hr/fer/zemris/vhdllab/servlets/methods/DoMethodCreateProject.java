@@ -29,10 +29,10 @@ public class DoMethodCreateProject extends AbstractRegisteredMethod {
 		VHDLLabManager labman = getVHDLLabManager(provider);
 		String projectName = method.getParameter(String.class,
 				PROP_PROJECT_NAME);
-		String userId = method.getParameter(String.class, PROP_USER_ID);
-		if (projectName == null || userId == null) {
+		if (projectName == null) {
 			return;
 		}
+		String userId = method.getUserId();
 		Project project;
 		try {
 			project = labman.createNewProject(projectName, userId);

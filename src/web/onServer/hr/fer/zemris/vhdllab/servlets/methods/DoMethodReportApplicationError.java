@@ -26,11 +26,11 @@ public class DoMethodReportApplicationError extends AbstractRegisteredMethod {
 	@Override
 	public void run(IMethod<Serializable> method, ManagerProvider provider) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
-		String userId = method.getParameter(String.class, PROP_USER_ID);
 		String content = method.getParameter(String.class, PROP_FILE_CONTENT);
-		if (userId == null || content == null) {
+		if (content == null) {
 			return;
 		}
+		String userId = method.getUserId();
 		try {
 			labman.saveErrorMessage(userId, content);
 		} catch (ServiceException e) {

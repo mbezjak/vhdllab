@@ -26,11 +26,11 @@ public class DoMethodExistsUserFile2 extends AbstractRegisteredMethod {
 	@Override
 	public void run(IMethod<Serializable> method, ManagerProvider provider) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
-		String userId = method.getParameter(String.class, PROP_USER_ID);
 		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
-		if (userId == null || fileName == null) {
+		if (fileName == null) {
 			return;
 		}
+		String userId = method.getUserId();
 		boolean exists;
 		try {
 			exists = labman.existsUserFile(userId, fileName);

@@ -3,6 +3,8 @@
  */
 package hr.fer.zemris.vhdllab.communicaton;
 
+import hr.fer.zemris.vhdllab.applets.main.SystemContext;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +18,6 @@ public abstract class AbstractMethod<T extends Serializable> implements
 
 	private String method;
 	private String userId;
-	private String fingerprint;
 	private Map<String, Serializable> parameters;
 	private T result;
 	private int statusCode;
@@ -27,8 +28,7 @@ public abstract class AbstractMethod<T extends Serializable> implements
 		if (this.method == null) {
 			throw new NullPointerException("Method cant be null");
 		}
-		userId = UserCredentials.instance().getUserId();
-		fingerprint = UserCredentials.instance().getFingerprint();
+		userId = SystemContext.getUserId();
 		parameters = new HashMap<String, Serializable>();
 		result = null;
 		statusCode = STATUS_NOT_SET;
@@ -53,14 +53,6 @@ public abstract class AbstractMethod<T extends Serializable> implements
 		return userId;
 	}
 	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getFingerprint()
-	 */
-	@Override
-	public String getFingerprint() {
-		return fingerprint;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

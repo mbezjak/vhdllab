@@ -13,8 +13,6 @@ public interface IMethod<T extends Serializable> extends Serializable, MethodCon
 
 	String getMethod();
 	
-	String getFingerprint();
-	
 	String getUserId();
 	
 	Object getParameter(String param);
