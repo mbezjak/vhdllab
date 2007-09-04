@@ -734,7 +734,7 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 					}
 					ComponentGroup group = getComponentGroup(c);
 					if (group.equals(ComponentGroup.EDITOR)) {
-						systemContainer.getEditorManager().saveEditor(
+						systemContainer.getEditorManager().saveEditorExplicitly(
 								(IEditor) c);
 					}
 				}
@@ -946,7 +946,7 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().saveEditor(
+					systemContainer.getEditorManager().saveEditorExplicitly(
 							editorManager.getSelectedEditor());
 				}
 			});

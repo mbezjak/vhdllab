@@ -1670,7 +1670,7 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 
 
 	public String getData() {
-		return null;
+		return fileContent.getContent();
 	}
 
 

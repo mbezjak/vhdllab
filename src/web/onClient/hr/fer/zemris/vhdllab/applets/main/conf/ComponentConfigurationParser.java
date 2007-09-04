@@ -26,15 +26,18 @@ public class ComponentConfigurationParser {
 		digester.addObjectCreate("configuration/editors/editor",
 				EditorProperties.class);
 		digester.addSetProperties("configuration/editors/editor");
-		digester.addSetNestedProperties("configuration/editors/editor");
-		digester.addSetNestedProperties("configuration/editors/editor",
-				"class", "clazz");
+		String[] elements = new String[] {"class", "explicitSave"};
+		String[] properties = new String[] {"clazz", null};
+		digester.addSetNestedProperties("configuration/editors/editor", elements, properties);
+		digester.addSetProperties("configuration/editors/editor/explicitSave",
+				"value", "explicitSaveValue");
+		digester.addSetNestedProperties("configuration/editors/editor/explicitSave",
+				"class", "explicitSaveClass");
 		digester.addSetNext("configuration/editors/editor", "addEditor");
 
 		digester.addObjectCreate("configuration/views/view",
 				ViewProperties.class);
 		digester.addSetProperties("configuration/views/view");
-		digester.addSetNestedProperties("configuration/views/view");
 		digester.addSetNestedProperties("configuration/views/view", "class",
 				"clazz");
 		digester.addSetNext("configuration/views/view", "addView");

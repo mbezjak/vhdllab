@@ -124,6 +124,20 @@ public interface IEditorManager {
 	void saveEditor(IEditor editor);
 
 	/**
+	 * Explicitly saves a specified editor. Explicit saving will try to save an
+	 * editor even if it is declared a not savable by using declared explicit
+	 * save class (if such a class exists).
+	 * 
+	 * @param editor
+	 *            an editor to save
+	 * @throws NullPointerException
+	 *             if <code>editor</code> is <code>null</code>
+	 * @throws IllegalStateException
+	 *             if explicit save class can't be instantiated
+	 */
+	void saveEditorExplicitly(IEditor editor);
+
+	/**
 	 * Saves all opened editors.
 	 */
 	void saveAllEditors();

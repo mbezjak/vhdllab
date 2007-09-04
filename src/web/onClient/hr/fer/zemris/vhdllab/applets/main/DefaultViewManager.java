@@ -368,7 +368,7 @@ public class DefaultViewManager implements IViewManager {
 		try {
 			view = (IView) Class.forName(vp.getClazz()).newInstance();
 		} catch (Exception e) {
-			throw new IllegalStateException("Cant instantiate view");
+			throw new IllegalStateException("Cant instantiate view", e);
 		}
 		return view;
 	}

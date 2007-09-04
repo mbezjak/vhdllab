@@ -12,7 +12,7 @@
 			<fileType>vhdl_source</fileType>
 			<savable>true</savable>
 			<readonly>false</readonly>
-			<explicitSave>false</explicitSave>
+			<explicitSave value="false"/>
 			<singleton>false</singleton>
 		</editor>
 
@@ -23,7 +23,11 @@
 			<fileType>vhdl_simulation</fileType>
 			<savable>false</savable>
 			<readonly>true</readonly>
-			<explicitSave>true</explicitSave>
+			<explicitSave value="true">
+				<class>
+					hr.fer.zemris.vhdllab.applets.simulations.ExplicitSaveSimulation
+				</class>
+			</explicitSave>
 			<singleton>false</singleton>
 		</editor>
 
@@ -34,7 +38,7 @@
 			<fileType>vhdl_automat</fileType>
 			<savable>true</savable>
 			<readonly>false</readonly>
-			<explicitSave>false</explicitSave>
+			<explicitSave value="false"/>
 			<singleton>false</singleton>
 		</editor>
 
@@ -49,7 +53,7 @@
 			<fileType>vhdl_tb</fileType>
 			<savable>true</savable>
 			<readonly>false</readonly>
-			<explicitSave>false</explicitSave>
+			<explicitSave value="false"/>
 			<singleton>false</singleton>
 		</editor>
 
@@ -60,7 +64,7 @@
 			<fileType>vhdl_struct_schema</fileType>
 			<savable>true</savable>
 			<readonly>false</readonly>
-			<explicitSave>false</explicitSave>
+			<explicitSave value="false"/>
 			<singleton>false</singleton>
 		</editor>
 
@@ -73,7 +77,7 @@
 			<fileType>predefined</fileType>
 			<savable>false</savable>
 			<readonly>true</readonly>
-			<explicitSave>false</explicitSave>
+			<explicitSave value="false"/>
 			<singleton>false</singleton>
 		</editor>
 
@@ -84,7 +88,7 @@
 			<fileType></fileType>
 			<savable>false</savable>
 			<readonly>true</readonly>
-			<explicitSave>false</explicitSave>
+			<explicitSave value="false"/>
 			<singleton>false</singleton>
 		</editor>
 
@@ -95,7 +99,7 @@
 			<fileType>preferences</fileType>
 			<savable>false</savable>
 			<readonly>false</readonly>
-			<explicitSave>false</explicitSave>
+			<explicitSave value="false"/>
 			<singleton>true</singleton>
 		</editor>
 	</editors>

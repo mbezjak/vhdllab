@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 import javax.swing.SwingUtilities;
 
 /**
- * Tests
+ * Tests {@link LoginDialog}, but just GUI. This is not an actual JUnit test.
  * 
  * @author Miro Bezjak
  */
@@ -19,7 +19,9 @@ public class LoginDialogTest {
 
 	/**
 	 * Start of test. Not a JUnit test! Just testing GUI.
-	 * @param args no effect
+	 * 
+	 * @param args
+	 *            no effect
 	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {

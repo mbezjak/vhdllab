@@ -238,7 +238,7 @@ public class Communicator {
 		SaveFileMethod method = new SaveFileMethod(fileIdentifier, content);
 		initiate(method);
 	}
-
+	
 	public String loadFileContent(String projectName, String fileName)
 			throws UniformAppletException {
 		if (projectName == null)

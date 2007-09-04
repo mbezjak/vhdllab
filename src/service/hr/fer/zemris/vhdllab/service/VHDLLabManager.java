@@ -434,7 +434,7 @@ public interface VHDLLabManager {
 	 */
 	public void saveUserFile(Long fileId, String content)
 			throws ServiceException;
-	
+
 	/**
 	 * Use this method to rename a user file.
 	 * 
@@ -447,7 +447,6 @@ public interface VHDLLabManager {
 	 */
 	public void renameUserFile(Long fileId, String newName)
 			throws ServiceException;
-
 
 	/**
 	 * Use this method to delete a user file.

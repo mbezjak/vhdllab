@@ -8,6 +8,7 @@ public class EditorProperties {
 	private boolean savable;
 	private boolean readonly;
 	private boolean explicitSave;
+	private String explicitSaveClass;
 	private boolean singleton;
 
 	public EditorProperties() {
@@ -56,12 +57,20 @@ public class EditorProperties {
 		this.readonly = readonly;
 	}
 
-	public boolean isExplicitSave() {
+	public boolean getExplicitSaveValue() {
 		return explicitSave;
 	}
 
-	public void setExplicitSave(boolean explicitSave) {
+	public void setExplicitSaveValue(boolean explicitSave) {
 		this.explicitSave = explicitSave;
+	}
+
+	public String getExplicitSaveClass() {
+		return explicitSaveClass;
+	}
+
+	public void setExplicitSaveClass(String explicitSaveClass) {
+		this.explicitSaveClass = explicitSaveClass;
 	}
 
 	public boolean isSingleton() {
@@ -84,7 +93,8 @@ public class EditorProperties {
 				.append(", filetype=").append(fileType).append(", savable=")
 				.append(savable).append(", readonly=").append(readonly).append(
 						", explicitsave=").append(explicitSave).append(
-						", singleton=").append(singleton);
+						", explicitSaveClass=").append(explicitSaveClass)
+				.append(", singleton=").append(singleton);
 		return sb.toString();
 	}
 

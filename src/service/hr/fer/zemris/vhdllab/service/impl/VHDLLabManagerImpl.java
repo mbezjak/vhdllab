@@ -18,6 +18,7 @@ import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.dependency.IDependency;
 import hr.fer.zemris.vhdllab.service.dependency.automat.AUTDependancy;
 import hr.fer.zemris.vhdllab.service.dependency.schema.SchemaDependency;
+import hr.fer.zemris.vhdllab.service.dependency.simulation.SimulationDependency;
 import hr.fer.zemris.vhdllab.service.extractor.ICircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.extractor.automat.AutCircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.extractor.schema.SchemaCircuitInterfaceExtractor;
@@ -60,7 +61,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public VHDLLabManagerImpl() {
 	}
-
+	
 	public CompilationResult compile(File file) throws ServiceException {
 		List<File> deps = extractDependencies(file);
 		List<File> otherFiles = new ArrayList<File>();
@@ -348,6 +349,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			depExtractor = new AUTDependancy();
 		} else if (file.getFileType().equals(FileTypes.FT_VHDL_STRUCT_SCHEMA)) {
 			depExtractor = new SchemaDependency();
+		} else if (file.getFileType().equals(FileTypes.FT_VHDL_SIMULATION)) {
+			depExtractor = new SimulationDependency();
 		} else if (file.getFileType().equals(FileTypes.FT_PREDEFINED)) {
 			return Collections.emptyList();
 		} else {

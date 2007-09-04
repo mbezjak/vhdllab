@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplicitSave;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
@@ -94,8 +95,8 @@ public class DefaultEditorManager implements IEditorManager {
 		this.conf = conf;
 		this.container = container;
 		this.resourceManager = container.getResourceManager();
-		this.bundle = ResourceBundleProvider.getBundle(
-				LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		this.bundle = ResourceBundleProvider
+				.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		group = ComponentGroup.EDITOR;
 	}
 
@@ -294,6 +295,48 @@ public class DefaultEditorManager implements IEditorManager {
 		List<IEditor> editorsToSave = new ArrayList<IEditor>(1);
 		editorsToSave.add(editor);
 		saveEditors(editorsToSave);
+	}
+
+	public void saveEditorExplicitly(IEditor editor) {
+		if (editor == null) {
+			throw new NullPointerException("Editor cant be null");
+		}
+		// TODO ovaj dio koda se treba nekako unificirat s saveEditors metodom!
+		IComponentIdentifier<?> id = getIdentifierFor(editor);
+		EditorProperties ep = conf.getEditorProperties(id);
+		if (ep.getExplicitSaveValue()) {
+			String clazz = ep.getExplicitSaveClass();
+			IExplicitSave saveClass;
+			try {
+				Class<?> c = Class.forName(clazz);
+				if (c == null) {
+					return;
+				}
+				saveClass = (IExplicitSave) c.newInstance();
+			} catch (Exception e) {
+				throw new IllegalStateException(
+						"Cant instantiate explicit save class", e);
+			}
+			try {
+				saveClass.save(editor, container);
+			} catch (UniformAppletException e) {
+				String text = bundle
+						.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+				text = PlaceholderUtil.replacePlaceholders(text,
+						new String[] { editor.getFileName() });
+				echoStatusText(text, MessageType.ERROR);
+				return;
+			}
+			IComponentIdentifier<?> peIdentifier = ComponentIdentifierFactory
+					.createProjectExplorerIdentifier();
+			if (container.getViewManager().isViewOpened(peIdentifier)) {
+				IView view = container.getViewManager().getOpenedView(
+						peIdentifier);
+				IProjectExplorer projectExplorer = view
+						.asInterface(IProjectExplorer.class);
+				projectExplorer.refreshProject(editor.getProjectName());
+			}
+		}
 	}
 
 	/*
@@ -737,7 +780,7 @@ public class DefaultEditorManager implements IEditorManager {
 		try {
 			editor = (IEditor) Class.forName(ep.getClazz()).newInstance();
 		} catch (Exception e) {
-			throw new IllegalStateException("Cant instantiate editor");
+			throw new IllegalStateException("Cant instantiate editor", e);
 		}
 		return editor;
 	}
