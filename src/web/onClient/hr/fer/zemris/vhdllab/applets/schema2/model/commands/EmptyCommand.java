@@ -9,6 +9,13 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
 
+
+/**
+ * Sluzi za updateanje.
+ * 
+ * @author Axel
+ *
+ */
 public class EmptyCommand implements ICommand {	
 
 	/* static fields */

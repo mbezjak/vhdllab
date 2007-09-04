@@ -3,8 +3,8 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
@@ -164,7 +164,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		core.initPrototypes(predefined);
 
 		// init user component prototypes
-		if (1 == 0) initUserPrototypes();
+		initUserPrototypes();
 		
 		// send EmptyCommand to alert listeners
 		controller.send(new EmptyCommand(EPropertyChange.PROTOTYPES_CHANGE));
