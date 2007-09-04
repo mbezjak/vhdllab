@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.client.core;
 
 import java.awt.Frame;
 

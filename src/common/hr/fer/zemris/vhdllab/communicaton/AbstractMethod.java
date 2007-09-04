@@ -3,7 +3,7 @@
  */
 package hr.fer.zemris.vhdllab.communicaton;
 
-import hr.fer.zemris.vhdllab.applets.main.SystemContext;
+import hr.fer.zemris.vhdllab.client.core.SystemContext;
 
 import java.io.Serializable;
 import java.util.HashMap;
