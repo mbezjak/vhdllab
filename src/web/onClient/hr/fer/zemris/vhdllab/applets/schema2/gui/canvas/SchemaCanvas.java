@@ -14,6 +14,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.DrawingProperties;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SMath;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
@@ -127,6 +128,8 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	 */
 	private CriticalPoint wireEnding = null;
 	
+	private DrawingProperties drawProperties = null;
+	
 	private Timer timer = null;
 	private Caseless componentToMove = null;
 	
@@ -158,6 +161,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		state = ECanvasState.MOVE_STATE;	//init state
 		decrementer = new Decrementer(20, this);
 		timer = new Timer(70,decrementer);
+		drawProperties = new DrawingProperties();
 		
 		this.addMouseListener(new Mouse1());
 		this.addMouseMotionListener(new Mose2());
@@ -233,7 +237,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 						CanvasColorProvider.COMPONENT);
 			
 			g.translate(componentLocation.x, componentLocation.y);
-			comp.getDrawer().draw(g);
+			comp.getDrawer().draw(g, drawProperties);
 			g.translate(-componentLocation.x, -componentLocation.y);
 			
 //			String text = name.toString();
@@ -266,7 +270,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			Color temp = g.getColor();
 			g.setColor(CanvasColorProvider.COMPONENT_TO_ADD);
 			g.translate(addComponentX, addComponentY);
-			addComponentComponent.getDrawer().draw(g);
+			addComponentComponent.getDrawer().draw(g, drawProperties);
 			g.translate(-addComponentX, -addComponentY);
 			g.setColor(temp);
 		}
