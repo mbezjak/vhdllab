@@ -221,7 +221,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 			j = 1;
 			for (int i = from; i <= to; i++, j++) {
 				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j,
-						new Caseless(portrel.port.getName() + "_" + i));
+						new Caseless(portrel.port.getName() + "(" + i + ")"));
 				
 				schport.setPortindex(0);
 				portrel.relatedTo.add(schport);
@@ -231,7 +231,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 			j = 1;
 			for (int i = to; i <= from; i++, j++) {
 				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j,
-						new Caseless(portrel.port.getName() + "_" + i));
+						new Caseless(portrel.port.getName() + "(" + i + ")"));
 				
 				schport.setPortindex(0);
 				portrel.relatedTo.add(schport);

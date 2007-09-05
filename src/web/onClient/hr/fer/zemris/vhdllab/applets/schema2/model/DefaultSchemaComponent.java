@@ -444,11 +444,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			for (int i = from; i <= to; i++) {
 				if (ori == EOrientation.NORTH || ori == EOrientation.SOUTH) {
 					schport = new SchemaPort(EDGE_OFFSET + stor * WIDTH_PER_PORT, 0,
-							new Caseless(pr.port.getName() + "_" + i));
+							new Caseless(pr.port.getName() + "(" + i + ")"));
 				}
 				if (ori == EOrientation.EAST || ori == EOrientation.WEST) {
 					schport = new SchemaPort(0, EDGE_OFFSET + stor * HEIGHT_PER_PORT,
-							new Caseless(pr.port.getName() + "_" + i));
+							new Caseless(pr.port.getName() + "(" + i + ")"));
 				}
 				if (ori == EOrientation.EAST || ori == EOrientation.SOUTH) toBeMoved.add(stpos);
 				stpos++;
@@ -461,11 +461,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			for (int i = to; i <= from; i++) {
 				if (ori == EOrientation.NORTH || ori == EOrientation.SOUTH) {
 					schport = new SchemaPort(EDGE_OFFSET + stor * WIDTH_PER_PORT, 0,
-							new Caseless(pr.port.getName() + "_" + i));
+							new Caseless(pr.port.getName() + "(" + i + ")"));
 				}
 				if (ori == EOrientation.EAST || ori == EOrientation.WEST) {
 					schport = new SchemaPort(0, EDGE_OFFSET + stor * HEIGHT_PER_PORT,
-							new Caseless(pr.port.getName() + "_" + i));
+							new Caseless(pr.port.getName() + "(" + i + ")"));
 				}
 				if (ori == EOrientation.EAST || ori == EOrientation.SOUTH) toBeMoved.add(stpos);
 				stpos++;

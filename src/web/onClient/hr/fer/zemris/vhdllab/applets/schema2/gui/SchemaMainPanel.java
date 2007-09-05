@@ -167,7 +167,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		core.initPrototypes(predefined);
 
 		// init user component prototypes
-//		initUserPrototypes();
+		initUserPrototypes();
 		
 		// send EmptyCommand to alert listeners
 		controller.send(new EmptyCommand(EPropertyChange.PROTOTYPES_CHANGE));

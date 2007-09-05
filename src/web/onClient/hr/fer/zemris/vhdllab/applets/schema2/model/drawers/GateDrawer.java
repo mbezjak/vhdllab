@@ -32,6 +32,7 @@ public abstract class GateDrawer {
 	}
 
 	protected void draw(Graphics2D graphics, boolean detectNegations, DrawingProperties properties) {
+		XYLocation offset = null;
 		int w = comp_to_draw.getWidth();
 		int h = comp_to_draw.getHeight();
 		int specialh = 0;
@@ -39,7 +40,7 @@ public abstract class GateDrawer {
 		// draw ports and wires to those ports
 		for (SchemaPort port : comp_to_draw.getSchemaPorts()) {
 			Caseless mapping = port.getMapping();
-			XYLocation offset = port.getOffset();
+			offset = port.getOffset();
 
 			if (offset.x == 0 || offset.x == w) {
 				graphics.drawLine(offset.x, offset.y, w / 2, offset.y);

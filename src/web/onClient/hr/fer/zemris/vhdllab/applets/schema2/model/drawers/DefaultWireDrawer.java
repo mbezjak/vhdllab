@@ -111,9 +111,9 @@ public class DefaultWireDrawer implements IWireDrawer {
 				Color oldc = graphics.getColor();
 				
 				graphics.setFont(Constants.FONT_CANVAS_SMALL);
-				int r = oldc.getRed() + 140; r = (r > 230) ? (230) : (r);
-				int g = oldc.getGreen() + 140; g = (g > 230) ? (230) : (g);
-				int b = oldc.getBlue() + 140; b = (b > 230) ? (230) : (b);
+				int r = oldc.getRed() + 170; r = (r > 240) ? (240) : (r);
+				int g = oldc.getGreen() + 170; g = (g > 240) ? (240) : (g);
+				int b = oldc.getBlue() + 170; b = (b > 240) ? (240) : (b);
 				graphics.setColor(new Color(r, g, b));
 				
 				/* place middle */

@@ -39,7 +39,9 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 	public static final int PORT_SIZE = 4;
 	public static final int PIN_LENGTH = Constants.GRID_SIZE * 2;
 	public static final int EDGE_OFFSET = (int) (Constants.GRID_SIZE * 1.5);
+	public static final int PORT_NAME_OFFSET = 1;
 //	public static final int PER_PORT_SIZE = Constants.GRID_SIZE * 2;
+	private static final int PORT_FONT_SIZE = Constants.FONT_CANVAS_SMALL.getSize();
 	
 	
 	
@@ -69,8 +71,7 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			offset = port.getOffset();
 			if (offset.x == 0 || offset.x == w) {
 				graphics.drawLine(offset.x, offset.y, w/2, offset.y);
-			}
-			if (offset.y == 0 || offset.y == h) {
+			} else if (offset.y == 0 || offset.y == h) {
 				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
 			}
 			
@@ -82,7 +83,6 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			graphics.setColor(c);
 			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
 		}
-		
 		
 		// draw a rectangle
 		Color c = graphics.getColor();
@@ -111,6 +111,38 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			graphics.setFont(oldf);
 			graphics.setColor(oldc);
 		}
+		
+		// draw port names
+		if (properties.drawingPortNames) {
+			Font oldf = graphics.getFont();
+			Color oldc = graphics.getColor();
+			
+			int r = oldc.getRed() + 140; r = (r > 230) ? (230) : (r);
+			int g = oldc.getGreen() + 140; g = (g > 230) ? (230) : (g);
+			int b = oldc.getBlue() + 140; b = (b > 230) ? (230) : (b);
+			graphics.setColor(new Color(r, g, b));
+			graphics.setFont(Constants.FONT_CANVAS_SMALL);
+			
+			for (SchemaPort sp : comp_to_draw.getSchemaPorts()) {
+				String name = sp.getName().toString();
+				int half = name.length() * PORT_FONT_SIZE / 2;
+				offset = sp.getOffset();
+				
+				if (offset.x == 0) {
+					graphics.drawString(name, -PORT_NAME_OFFSET - half, offset.y - 4);
+				} else if (offset.x == w) {
+					graphics.drawString(name, w - PORT_NAME_OFFSET - half, offset.y - 4);
+				} else if (offset.y == 0) {
+					graphics.drawString(name, offset.x + 1, -PORT_NAME_OFFSET - half);
+				} else if (offset.y == h) {
+					graphics.drawString(name, offset.x + 1, h - PORT_NAME_OFFSET - half);
+				}
+			}
+			
+			graphics.setFont(oldf);
+			graphics.setColor(oldc);
+		}
+
 	}
 	
 }
