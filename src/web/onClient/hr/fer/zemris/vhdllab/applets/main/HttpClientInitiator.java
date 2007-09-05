@@ -203,8 +203,8 @@ public final class HttpClientInitiator implements Initiator {
 		Credentials c = new UsernamePasswordCredentials(userId, password);
 		String host = properties.getProperty(HOST);
 		AuthScope scope = new AuthScope(host, AuthScope.ANY_PORT);
-		client.getState().setCredentials(scope, c);
 		client.getState().clearCookies();
+		client.getState().setCredentials(scope, c);
 		client.getParams().setAuthenticationPreemptive(true);
 		String url = properties.getProperty(AUTH_URL);
 		GetMethod method = new GetMethod(url);
@@ -213,9 +213,21 @@ public final class HttpClientInitiator implements Initiator {
 			client.executeMethod(method);
 		} catch (Exception e) {
 			SystemLog.instance().addErrorMessage(e);
+			// TODO STO SAD?
+		} finally {
+			method.releaseConnection();
 		}
-		method.releaseConnection();
-		restoreSessionIdFromCookie();
+		Cookie[] cookies = client.getState().getCookies();
+		if(cookies != null) {
+			for(Cookie cookie : cookies) {
+				if(cookie.getName().equals(COOKIE_NAME)) {
+					cookie.setSecure(false);
+				}
+			}
+		}
+//		restoreSessionIdFromCookie();
+//		client.getState().clearCookies();
+//		setCookies();
 
 		/*
 		 * A long comment on tomcat session handling authentication
@@ -226,18 +238,13 @@ public final class HttpClientInitiator implements Initiator {
 			client.executeMethod(method);
 		} catch (Exception e) {
 			SystemLog.instance().addErrorMessage(e);
+			// TODO sto sad???
+		} finally {
+			method.releaseConnection();
 		}
-		method.releaseConnection();
 
 		client.getParams().setAuthenticationPreemptive(false);
-		client.getState().setCredentials(scope, null);
-		 System.out.println("u auth metodi!!");
-		for (Cookie c1 : client.getState().getCookies()) {
-			System.out.println(c1.getName() + "=" + c1.getValue() + "///"
-					+ c1.getDomain() + "$$" + c1.getPath() + "##"
-					+ c1.getExpiryDate() + "##" + c1.getSecure());
-		}
-
+		client.getState().clearCredentials();
 	}
 
 	/**
@@ -251,6 +258,7 @@ public final class HttpClientInitiator implements Initiator {
 		for (Cookie c : cookies) {
 			if (c.getName().equals(COOKIE_NAME)) {
 				sessionId = c.getValue();
+				break;
 			}
 		}
 	}
@@ -282,6 +290,13 @@ public final class HttpClientInitiator implements Initiator {
 	 */
 	private void initHttpClient() {
 		client = new HttpClient();
+		setCookies();
+	}
+
+	/**
+	 * 
+	 */
+	private void setCookies() {
 		String host = properties.getProperty(HOST);
 		String cookiePath = properties.getProperty(COOKIE_PATH);
 		Cookie cookie = new Cookie(host, COOKIE_NAME, sessionId, cookiePath,
@@ -308,8 +323,9 @@ public final class HttpClientInitiator implements Initiator {
 		} catch (Exception e) {
 			SystemLog.instance().addErrorMessage(e);
 			return false;
+		} finally {
+			method.releaseConnection();
 		}
-		method.releaseConnection();
 		return status != HttpStatus.SC_UNAUTHORIZED;
 	}
 

@@ -31,7 +31,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.commands.MoveComponentCommand
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -177,6 +176,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	/**
 	 * Overriden method for painting the canvas.
 	 */
+	@Override
 	protected void paintComponent(Graphics g) {
 		Insets in = this.getInsets();
 		if(img == null) {

@@ -1,9 +1,0 @@
-authentication.path = vhdllab/authentication/ping
-vhdllab.path = vhdllab/doAjax
-base.path = /vhdllab/
-host = localhost
-port = 8443
-protocol = https
-archive = vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils-1.7.0.jar,commons-digester-1.7.jar,commons-codec-1.3.jar,commons-httpclient-3.0.1.jar
-
-homepage = http://localhost/vhdllab/vhdllab.jsp
