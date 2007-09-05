@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.DrawingProperties;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
@@ -46,7 +47,7 @@ public class NotDrawer implements IComponentDrawer {
 		componentName = comp_to_draw.getTypeName().toString();
 	}
 
-	public void draw(Graphics2D graphics) {
+	public void draw(Graphics2D graphics, DrawingProperties properties) {
 		int w = comp_to_draw.getWidth();
 		int h = comp_to_draw.getHeight();
 		int specialh = 0;
@@ -98,22 +99,24 @@ public class NotDrawer implements IComponentDrawer {
 				/ 4, h / 2 + f.getSize() / 2);
 
 		// draw component type name and instance name
-		Color oldc = graphics.getColor();
-		
-		f = new Font(Constants.TEXT_FONT_CANVASNAMES, Font.PLAIN, Constants.TEXT_FONT_SIZE);
-		graphics.setFont(f);
-		graphics.drawString(comp_to_draw.getName().toString(), 0, -Constants.TEXT_FONT_SIZE / 2);
-
-		f = new Font(Constants.TEXT_FONT_CANVASNAMES, Font.PLAIN, Constants.TEXT_SMALL_FONT_SIZE);
-		int r = oldc.getRed() + 140; r = (r > 240) ? (240) : (r);
-		int g = oldc.getGreen() + 140; g = (g > 240) ? (240) : (g);
-		int b = oldc.getBlue() + 140; b = (b > 240) ? (240) : (b);
-		graphics.setColor(new Color(r, g, b));
-		graphics.setFont(f);
-		graphics.drawString(componentName, 0, Constants.TEXT_FONT_SIZE / 2);
-
-		graphics.setFont(oldf);
-		graphics.setColor(oldc);
+		if (properties.drawingComponentNames) {
+			Color oldc = graphics.getColor();
+			
+			f = new Font(Constants.TEXT_FONT_CANVAS, Font.PLAIN, Constants.TEXT_NORMAL_FONT_SIZE);
+			graphics.setFont(f);
+			graphics.drawString(comp_to_draw.getName().toString(), 0, -Constants.TEXT_NORMAL_FONT_SIZE / 2);
+	
+			f = new Font(Constants.TEXT_FONT_CANVAS, Font.PLAIN, Constants.TEXT_SMALL_FONT_SIZE);
+			int r = oldc.getRed() + 140; r = (r > 230) ? (230) : (r);
+			int g = oldc.getGreen() + 140; g = (g > 230) ? (230) : (g);
+			int b = oldc.getBlue() + 140; b = (b > 230) ? (230) : (b);
+			graphics.setColor(new Color(r, g, b));
+			graphics.setFont(f);
+			graphics.drawString(componentName, 0, Constants.TEXT_NORMAL_FONT_SIZE / 2);
+	
+			graphics.setFont(oldf);
+			graphics.setColor(oldc);
+		}
 	}
 
 }

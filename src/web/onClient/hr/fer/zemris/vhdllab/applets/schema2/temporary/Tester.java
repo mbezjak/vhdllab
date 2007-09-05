@@ -119,11 +119,11 @@ public class Tester {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		
-		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 10, 30, 10, 80);
+		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 100, 300, 350, 300);
 		mpanel.getController().send(addwire);
-		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(
-				new Caseless("VL_OR"), 50, 0);
-		mpanel.getController().send(instantiate);
+//		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(
+//				new Caseless("VL_OR"), 50, 0);
+//		mpanel.getController().send(instantiate);
 //		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
 //		mpanel.getController().send(expand);
 //		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);

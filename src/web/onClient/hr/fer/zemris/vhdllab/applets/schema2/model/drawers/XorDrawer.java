@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.drawers;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.DrawingProperties;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -46,8 +47,8 @@ public class XorDrawer extends GateDrawer implements IComponentDrawer {
 	}
 	
 	
-	public void draw(Graphics2D graphics) {
-		super.draw(graphics, false);
+	public void draw(Graphics2D graphics, DrawingProperties properties) {
+		super.draw(graphics, false, properties);
 		
 		int w = comp_to_draw.getWidth();
 		int h = comp_to_draw.getHeight();

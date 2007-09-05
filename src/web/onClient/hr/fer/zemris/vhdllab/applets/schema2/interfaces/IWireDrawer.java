@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.misc.DrawingProperties;
 import java.awt.Graphics2D;
 
 
@@ -29,5 +30,5 @@ public interface IWireDrawer {
 	 * @param graphics
 	 * Adapter za iscrtavanje.
 	 */
-	void draw(Graphics2D graphics);
+	void draw(Graphics2D graphics, DrawingProperties properties);
 }

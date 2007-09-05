@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.drawers;
 
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.DrawingProperties;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -34,8 +35,8 @@ public class NandDrawer extends GateDrawer implements IComponentDrawer {
 		comp_to_draw = componentToDraw;
 	}
 
-	public void draw(Graphics2D graphics) {
-		super.draw(graphics, true);
+	public void draw(Graphics2D graphics, DrawingProperties properties) {
+		super.draw(graphics, true, properties);
 
 		int w = comp_to_draw.getWidth();
 		int h = comp_to_draw.getHeight();
