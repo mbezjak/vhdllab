@@ -259,7 +259,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			g.setColor(type == CanvasToolbarLocalGUIController.TYPE_WIRE && name.equals(sel)?
 					CanvasColorProvider.SIGNAL_LINE_SELECTED:
 						CanvasColorProvider.SIGNAL_LINE);
-			wires.fetchWire(name).getDrawer().draw(g);
+			wires.fetchWire(name).getDrawer().draw(g, drawProperties);
 			Rect2d rect = wires.getBounds(name);
 			if(rect.left + rect.width + 10 > sizeX)sizeX =rect.left + rect.width + 10;
 			if(rect.top + rect.height + 10 > sizeY)sizeY =rect.top + rect.height + 10;
