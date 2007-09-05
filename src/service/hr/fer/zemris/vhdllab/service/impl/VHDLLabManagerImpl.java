@@ -740,7 +740,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 				throw new ServiceException("Can not read properties file.");
 			}
 			String predefDir = p.getProperty("predefined.files.tmpDir");
-			String pathToFile = FileUtil.mergePaths(predefDir, fileName);
+			String pathToFile = FileUtil.mergePaths(predefDir, fileName + ".vhdl");
 			f.setContent(FileUtil.readFile(pathToFile));
 		}
 		return f;

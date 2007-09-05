@@ -49,7 +49,7 @@ public class SchemaDependency implements IDependency {
 			String filename = placed.comp.getCodeFileName();
 			if (filename == null || filename.trim().equals("")) continue;
 			File dependency;
-			if(placed.comp.getComponentType().equals(EComponentType.PREDEFINED)) {
+			if (placed.comp.getComponentType().equals(EComponentType.PREDEFINED)) {
 				dependency = labman.getPredefinedFile(filename, false);
 			} else {
 				dependency = labman.findFileByName(f.getProject().getId(), filename);

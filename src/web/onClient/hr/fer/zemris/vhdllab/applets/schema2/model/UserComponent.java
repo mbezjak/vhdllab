@@ -64,7 +64,7 @@ public class UserComponent extends DefaultSchemaComponent {
 		
 		// init basic fields
 		predef.setComponentName(name);
-		predef.setCodeFileName(name + ".vhdl");
+		predef.setCodeFileName(name);
 		predef.setCategoryName(Constants.USER_CATEGORY_NAME);
 		predef.setPreferredName(name + Constants.PREFERRED_NAME_SUFIX);
 		predef.setDrawerName(DefaultComponentDrawer.class.getName());

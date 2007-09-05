@@ -230,6 +230,14 @@ public final class HttpClientInitiator implements Initiator {
 		method.releaseConnection();
 
 		client.getParams().setAuthenticationPreemptive(false);
+		client.getState().setCredentials(scope, null);
+		 System.out.println("u auth metodi!!");
+		for (Cookie c1 : client.getState().getCookies()) {
+			System.out.println(c1.getName() + "=" + c1.getValue() + "///"
+					+ c1.getDomain() + "$$" + c1.getPath() + "##"
+					+ c1.getExpiryDate() + "##" + c1.getSecure());
+		}
+
 	}
 
 	/**
@@ -341,16 +349,16 @@ public final class HttpClientInitiator implements Initiator {
 		postMethod.setRequestEntity(new ByteArrayRequestEntity(requestArray));
 		IMethod<T> returnedMethod;
 		try {
-//			System.out.println("in method cookies");
-//			for (Cookie c : client.getState().getCookies()) {
-//				System.out.println(c.getName() + "=" + c.getValue() + "///"
-//						+ c.getDomain() + "$$" + c.getPath() + "##"
-//						+ c.getExpiryDate() + "##" + c.getSecure());
-//			}
+			System.out.println("in method cookies");
+			for (Cookie c : client.getState().getCookies()) {
+				System.out.println(c.getName() + "=" + c.getValue() + "///"
+						+ c.getDomain() + "$$" + c.getPath() + "##"
+						+ c.getExpiryDate() + "##" + c.getSecure());
+			}
 
 			int executeMethod = client.executeMethod(postMethod);
 			if (executeMethod == 401) {
-				authenticate();
+//				authenticate();
 				// System.out.println("*******trying to authenticate");
 				// client.getState().setCredentials(AuthScope.ANY, new
 				// UsernamePasswordCredentials("test", "a"));

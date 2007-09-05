@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.vhdl.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -18,10 +19,13 @@ import java.util.TreeSet;
 public class Hierarchy implements Iterable<Pair>, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
 	/** A name of a project for whom this hierarchy is created */
 	private String projectName;
+
 	/** A set of pairs that represent this hierarchy */
 	private Set<Pair> pairs;
+
 	/** A map of pairs for quick access to hierarchy */
 	private transient Map<String, Pair> pairsMap;
 
@@ -81,6 +85,34 @@ public class Hierarchy implements Iterable<Pair>, Serializable {
 			}
 		}
 		return children;
+	}
+
+	/**
+	 * Returns all descendats for a specified parent. Return value will never be
+	 * <code>null</code> although it can be empty set.
+	 * 
+	 * @param parent
+	 *            a parent for whom to get descendants for
+	 * @return all descendants
+	 * @throws NullPointerException if <code>parent</code> is <code>null</code>
+	 */
+	public Set<String> getDescendantsForParent(String parent) {
+		if (parent == null) {
+			throw new NullPointerException("Parent cant be null");
+		}
+		Set<String> descendants = new HashSet<String>();
+		getDescendantsForParentRecursive(descendants, parent);
+		return descendants;
+	}
+
+	private void getDescendantsForParentRecursive(Set<String> descendants,
+			String parent) {
+		// TODO napravit da hierarija nema kruyne yavistnosti inace je ovo
+		// beskonacna petlja!!!
+		for (String d : getChildrenForParent(parent)) {
+			descendants.add(d);
+			getDescendantsForParentRecursive(descendants, d);
+		}
 	}
 
 	/**
@@ -180,9 +212,9 @@ public class Hierarchy implements Iterable<Pair>, Serializable {
 	private void readObject(java.io.ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
 		in.defaultReadObject();
-		
+
 		pairsMap = new HashMap<String, Pair>(pairs.size());
-		for(Pair p : pairs) {
+		for (Pair p : pairs) {
 			pairsMap.put(p.getFileName().toUpperCase(), p);
 		}
 	}

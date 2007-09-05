@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
+import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -43,6 +44,8 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+
+import com.sun.java_cup.internal.runtime.virtual_parse_stack;
 
 public class SchemaMainPanel extends JPanel implements IEditor {
 
@@ -203,7 +206,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		for (String name : circuitnames) {
 			// do not put prototypes for the modelled component or for
 			// components that depend on this component
-			if (thisname.equals(name) || hierarchy.getChildrenForParent(name).contains(thisname)) continue;
+			if (thisname.equals(name) || hierarchy.getDescendantsForParent(name).contains(thisname)) continue;
 
 			// get circuit interface for the component
 			CircuitInterface circint;
@@ -387,6 +390,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			core.setSchemaInfo(sd.deserializeSchema(stread));
 		}
 		initPrototypes();
+		systemContainer.getResourceManager().addVetoableResourceListener(new VetoableResourceAdapter() {
+			@Override
+			public void resourceSaved(String projectName, String fileName) {
+				// TODO ovo implementirat
+			}
+		});
 	}
 
 	public void setSystemContainer(ISystemContainer container) {
