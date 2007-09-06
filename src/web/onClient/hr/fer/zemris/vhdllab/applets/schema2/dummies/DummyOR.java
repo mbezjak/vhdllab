@@ -114,6 +114,11 @@ public class DummyOR implements ISchemaComponent {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public boolean isInvalidated() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	public SchemaPort getSchemaPort(Caseless name) {
 		// TODO Auto-generated method stub

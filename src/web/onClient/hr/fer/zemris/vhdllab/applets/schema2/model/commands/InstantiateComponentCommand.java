@@ -74,7 +74,11 @@ public class InstantiateComponentCommand implements ICommand {
 	public ICommandResponse performCommand(ISchemaInfo info) {
 		
 		try {
-			ISchemaComponent component = info.getPrototyper().clonePrototype(cpType, info.getComponents().getComponentNames());
+			ISchemaComponent component = info.getPrototyper().
+				clonePrototype(cpType, info.getComponents().getComponentNames());
+			
+			if (component.isInvalidated())
+				throw new IllegalStateException("Component within prototyper is invalidated.");
 			
 			// remember chosen instance name, so you can remove it on undo
 			instName = component.getName();

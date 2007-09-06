@@ -80,6 +80,10 @@ public class MoveComponentCommand implements ICommand {
 					"Component '" + cmpname.toString() + "' does not exist."));
 		}
 		
+		if (cmp.isInvalidated()) return new CommandResponse(
+				new SchemaError(EErrorTypes.COMPONENT_INVALIDATED, "Component '" + cmpname.toString() +
+						"' is invalidated."));
+		
 		// find old location
 		oldloc = components.getComponentLocation(cmpname);
 		

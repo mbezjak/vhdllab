@@ -507,6 +507,10 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	public EComponentType getComponentType() {
 		return EComponentType.IN_OUT;
 	}
+
+	public boolean isInvalidated() {
+		return false;
+	}
 	
 }
 

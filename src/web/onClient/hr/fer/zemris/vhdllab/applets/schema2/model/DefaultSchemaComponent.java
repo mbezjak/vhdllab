@@ -178,19 +178,19 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 
 	/* private fields */
-	private List<String> signames = new ArrayList<String>();
-	private String categoryName;
-	private Caseless componentName;
-	private String codeFileName;
-	private boolean generic;
-	private IComponentDrawer drawer;
-	private IParameterCollection parameters;
-	private List<SchemaPort> schemaports;
-	private List<PortRelation> portrelations;
-	private int width, height;
+	/* none */
 
 	/* protected fields */
-	/* none */
+	protected List<String> signames = new ArrayList<String>();
+	protected String categoryName;
+	protected Caseless componentName;
+	protected String codeFileName;
+	protected boolean generic;
+	protected IComponentDrawer drawer;
+	protected IParameterCollection parameters;
+	protected List<SchemaPort> schemaports;
+	protected List<PortRelation> portrelations;
+	protected int width, height;
 	
 	
 
@@ -778,7 +778,9 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		return EComponentType.PREDEFINED;
 	}
 
-	
+	public boolean isInvalidated() {
+		return false;
+	}
 	
 
 }

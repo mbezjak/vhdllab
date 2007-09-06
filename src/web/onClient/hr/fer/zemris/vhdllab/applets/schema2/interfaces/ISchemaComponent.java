@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
+import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidatedException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -323,7 +324,8 @@ public interface ISchemaComponent {
 	
 	/**
 	 * Da li je komponenta genericka - da li
-	 * u svom sucelju sadrzi GENERIC blok.
+	 * u svom sucelju sadrzi GENERIC blok, i samim
+	 * time generic parametre.
 	 * 
 	 * @return
 	 */
@@ -353,6 +355,22 @@ public interface ISchemaComponent {
 	 * @return
 	 */
 	Iterator<SchemaPort> schemaPortIterator();
+	
+	
+	/**
+	 * Odreduje da li je komponenta u invalidated stanju.
+	 * Komponenti koja je u invalidated stanju ne moze se
+	 * pristupati, ne moze se dohvatiti kolekcija parametara,
+	 * portova, itd.
+	 * Tipicne implementacije komponente vracaju true. Posebna
+	 * implementacija ove komponente vraca false, a nju se u
+	 * shemu stavlja automatski ako se ustanovi da se sucelje
+	 * neke od komponenti u shemi promijenilo (a uzrok promjene
+	 * je izvan sheme).
+	 * 
+	 * @return
+	 */
+	boolean isInvalidated();
 	
 }
 

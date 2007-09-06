@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownComponentPrototypeException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
@@ -70,6 +71,12 @@ public interface ISchemaPrototypeCollection {
 	 *
 	 */
 	void clearPrototypes();
+	
+	/**
+	 * Brise samo prototipove navedenog tipa.
+	 * @param cmptype
+	 */
+	void clearPrototypes(EComponentType cmptype);
 	
 }
 

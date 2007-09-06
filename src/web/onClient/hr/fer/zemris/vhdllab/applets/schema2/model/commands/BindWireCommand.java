@@ -95,6 +95,7 @@ public class BindWireCommand implements ICommand {
 		
 		// find all components mapped to oldwire, map them to tobeboundwire and cache ports
 		for (PlacedComponent placed : info.getComponents()) {
+			if (placed.comp.isInvalidated()) continue;
 			IntList portindices = null;
 			int i = 0;
 			for (SchemaPort sp : placed.comp.getSchemaPorts()) {

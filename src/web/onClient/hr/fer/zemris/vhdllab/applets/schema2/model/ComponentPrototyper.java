@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownComponentPrototypeException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -8,8 +9,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.AutoRenamer;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 
 
@@ -48,6 +51,14 @@ public class ComponentPrototyper implements ISchemaPrototypeCollection {
 
 	public void clearPrototypes() {
 		prototypes.clear();
+	}
+
+	public void clearPrototypes(EComponentType cmptype) {
+		Iterator<Entry<Caseless, ISchemaComponent>> iter = prototypes.entrySet().iterator();
+		
+		while (iter.hasNext()) {
+			if (iter.next().getValue().getComponentType().equals(cmptype)) iter.remove();
+		}
 	}
 	
 	

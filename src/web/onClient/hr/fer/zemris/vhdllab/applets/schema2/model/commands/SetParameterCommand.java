@@ -46,6 +46,11 @@ public class SetParameterCommand implements ICommand {
 		entity, wire, component
 	}
 	
+	private static class PPWrapper {
+		public IParameterCollection params;
+		public IParameter par;
+	}
+	
 	
 	/* static fields */
 	public static final String COMMAND_NAME = "SetParameterCommand";
@@ -58,6 +63,7 @@ public class SetParameterCommand implements ICommand {
 	private EParameterHolder holder;
 	private Object val, oldval;
 	private boolean undoable;
+	private PPWrapper ppw;
 	
 	
 	/* ctors */
@@ -81,6 +87,7 @@ public class SetParameterCommand implements ICommand {
 	public SetParameterCommand(Caseless objectName, String parameterName,
 			EParameterHolder parameterHolder, Object value, ISchemaInfo info)
 	{
+		ppw = new PPWrapper();
 		objname = objectName;
 		paramname = parameterName;
 		holder = parameterHolder;
@@ -88,7 +95,8 @@ public class SetParameterCommand implements ICommand {
 		
 		// determine whether this command is undoable
 		// on basis of the parameter itself
-		IParameter param = fetchParameter(info);
+		fetchParameter(info);
+		IParameter param = ppw.par;
 		if (param == null) {
 			undoable = false;
 		} else {
@@ -102,31 +110,36 @@ public class SetParameterCommand implements ICommand {
 	
 	/* methods */
 	
-	private IParameterCollection fetchParameters(ISchemaInfo info) {
+	private EErrorTypes fetchParameters(ISchemaInfo info) {
 		switch (holder) {
 		case entity:
-			return info.getEntity().getParameters();
+			ppw.params = info.getEntity().getParameters();
 		case wire:
 			ISchemaWire wire = info.getWires().fetchWire(objname);
-			if (wire == null) return null;
-			return wire.getParameters();
+			if (wire == null) return EErrorTypes.NONEXISTING_WIRE_NAME;
+			ppw.params = wire.getParameters();
 		case component:
 			ISchemaComponent comp = info.getComponents().fetchComponent(objname);
-			if (comp == null) return null;
-			return comp.getParameters();
+			if (comp == null) return EErrorTypes.NONEXISTING_COMPONENT_NAME;
+			if (comp.isInvalidated()) return EErrorTypes.COMPONENT_INVALIDATED;
+			ppw.params = comp.getParameters();
 		}
-		return null;
+		return EErrorTypes.NO_ERROR;
 	}
 	
-	private IParameter fetchParameter(ISchemaInfo info) {
-		IParameterCollection params = fetchParameters(info);
+	private EErrorTypes fetchParameter(ISchemaInfo info) {
+		IParameterCollection params = null;
+		EErrorTypes err = fetchParameters(info);
+		params = ppw.params;
 		
-		if (params == null) return null;
+		if (params == null) return err;
 		try {
-			return params.getParameter(paramname);
+			ppw.par = params.getParameter(paramname);
 		} catch (ParameterNotFoundException e) {
-			return null;
+			return EErrorTypes.PARAMETER_NOT_FOUND;
 		}
+		
+		return EErrorTypes.NO_ERROR;
 	}
 
 	public String getCommandName() {
@@ -138,10 +151,19 @@ public class SetParameterCommand implements ICommand {
 	}
 
 	public ICommandResponse performCommand(ISchemaInfo info) {
-		IParameter param = fetchParameter(info);
+		IParameter param = null;
+		EErrorTypes err = fetchParameter(info);
+		param = ppw.par;
 		
-		if (param == null) return new CommandResponse(new SchemaError(EErrorTypes.PARAMETER_NOT_FOUND,
-				"No such wire, component or parameter."));
+		if (err.equals(EErrorTypes.PARAMETER_NOT_FOUND) || 
+				err.equals(EErrorTypes.NONEXISTING_COMPONENT_NAME) ||
+				err.equals(EErrorTypes.NONEXISTING_WIRE_NAME))
+		{
+			return new CommandResponse(new SchemaError(err,	"No such wire, component or parameter."));
+		}
+		if (err.equals(EErrorTypes.COMPONENT_INVALIDATED))
+			return new CommandResponse(new SchemaError(EErrorTypes.COMPONENT_INVALIDATED,
+				"Component that holds the parameter is invalidated."));
 		
 		// save old value for undo
 		oldval = param.getValue();
@@ -185,7 +207,9 @@ public class SetParameterCommand implements ICommand {
 	public ICommandResponse undoCommand(ISchemaInfo info) throws InvalidCommandOperationException {
 		if (!undoable) throw new InvalidCommandOperationException("Parameter event is not undoable.");
 		
-		IParameter param = fetchParameter(info);
+		IParameter param = null;
+		fetchParameter(info);
+		param = ppw.par;
 		
 		if (param == null) return new CommandResponse(new SchemaError(EErrorTypes.PARAMETER_NOT_FOUND,
 			"No such wire, component or parameter."));

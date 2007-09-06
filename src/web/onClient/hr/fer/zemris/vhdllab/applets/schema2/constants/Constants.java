@@ -23,6 +23,7 @@ public class Constants {
 	
 	public static final Color COLOR_TEXT_NORMAL = new Color(0, 0, 0);
 	public static final Color COLOR_TEXT_FADED = new Color(180, 180, 180);
+	public static final Color COLOR_ERROR = new Color(255, 0, 0);
 
 	public static class Categories {
 		public static final String INOUT = "INOUT";

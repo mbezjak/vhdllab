@@ -112,6 +112,7 @@ public class DeleteWireCommand implements ICommand {
 		SchemaPort sp = null;
 		Iterator<SchemaPort> spit = null;
 		for (PlacedComponent placed : info.getComponents()) {
+			if (placed.comp.isInvalidated()) continue;
 			spit = placed.comp.schemaPortIterator();
 			while (spit.hasNext()) {
 				sp = spit.next();

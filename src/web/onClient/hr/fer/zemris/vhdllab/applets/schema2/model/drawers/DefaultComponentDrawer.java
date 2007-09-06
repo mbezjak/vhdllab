@@ -40,7 +40,6 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 	public static final int PIN_LENGTH = Constants.GRID_SIZE * 2;
 	public static final int EDGE_OFFSET = (int) (Constants.GRID_SIZE * 1.5);
 	public static final int PORT_NAME_OFFSET = 1;
-//	public static final int PER_PORT_SIZE = Constants.GRID_SIZE * 2;
 	private static final int PORT_FONT_SIZE = Constants.FONT_CANVAS_SMALL.getSize();
 	
 	

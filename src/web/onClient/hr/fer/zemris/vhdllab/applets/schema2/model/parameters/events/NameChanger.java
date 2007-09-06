@@ -106,7 +106,7 @@ public class NameChanger implements IParameterEvent {
 		Caseless newname = wire.getName();
 		for (PlacedComponent placed : info.getComponents()) {
 			for (SchemaPort sp : placed.comp.getSchemaPorts()) {
-				if (sp.getMapping().equals(oldname)) sp.setMapping(newname);
+				if (oldname.equals(sp.getMapping())) sp.setMapping(newname);
 			}
 		}
 		

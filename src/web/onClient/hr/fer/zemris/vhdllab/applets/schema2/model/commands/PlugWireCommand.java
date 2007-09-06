@@ -53,6 +53,9 @@ public class PlugWireCommand implements ICommand {
 		
 		if (cmp == null) return new CommandResponse(new SchemaError(EErrorTypes.NONEXISTING_COMPONENT_NAME,
 				"Component with name '" + cmpname.toString() + "' could not be found."));
+		if (cmp.isInvalidated()) return new CommandResponse(
+				new SchemaError(EErrorTypes.COMPONENT_INVALIDATED, "Component with name '" + 
+						cmpname.toString() + "' is invalidated."));
 		
 		ISchemaWire wire = info.getWires().fetchWire(wirename);
 		

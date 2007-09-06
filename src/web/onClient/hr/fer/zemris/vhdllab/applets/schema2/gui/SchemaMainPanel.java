@@ -9,7 +9,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
@@ -19,14 +18,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.Compon
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.model.LocalController;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
-import hr.fer.zemris.vhdllab.applets.schema2.model.UserComponent;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.EmptyCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InvalidateObsoleteUserComponents;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.RebuildPrototypeCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
-import hr.fer.zemris.vhdllab.utilities.FileUtil;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
@@ -36,9 +33,11 @@ import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -149,34 +148,25 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	private void initPrototypes() {
-		String predefined;
-
-		// try {
-		// predefined = projectContainer
-		// .getPredefinedFileContent(Constants.PREDEFINED_FILENAME);
-		// } catch (UniformAppletException e) {
-		// throw new SchemaException(
-		// "Could not open predefined component file.", e);
-		// }
+		InputStream predefined;
 
 		// init default prototypes
-		predefined = FileUtil.readFile(PredefinedComponentsParser.class
-				.getResourceAsStream(Constants.PREDEFINED_FILENAME));
-		core.initPrototypes(predefined);
+		predefined = PredefinedComponentsParser.class
+			.getResourceAsStream(Constants.PREDEFINED_FILENAME);
 
 		// init user component prototypes
-		initUserPrototypes();
+		List<CircuitInterface> usercis = getUserPrototypeList();
 		
 		// send EmptyCommand to alert listeners
-		controller.send(new EmptyCommand(EPropertyChange.PROTOTYPES_CHANGE));
-		
-		// empty undo and redo stack, clear changes, as there have been none
-		controller.clearCommandCache();
+		controller.send(new RebuildPrototypeCollection(predefined, usercis));
+		if (usercis != null) {
+			controller.send(new InvalidateObsoleteUserComponents(usercis));
+		}
 		modified = false;
 	}
 
-	private void initUserPrototypes() {
-		if (systemContainer == null || filecontent == null) return;
+	private List<CircuitInterface> getUserPrototypeList() {
+		if (systemContainer == null || filecontent == null) return null;
 		System.out.println("Initializing user prototypes.");
 
 		String projectname = filecontent.getProjectName();
@@ -192,7 +182,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 					+ projectname + "'.", e);
 		}
 
-		ISchemaInfo info = controller.getSchemaInfo();
 		Hierarchy hierarchy;
 		try {
 			hierarchy = systemContainer.getResourceManager().extractHierarchy(projectname);
@@ -201,6 +190,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 					+ projectname + "'.", e1);
 		}
 
+		List<CircuitInterface> usercircuits = new ArrayList<CircuitInterface>();
 		for (String name : circuitnames) {
 			// do not put prototypes for the modelled component or for
 			// components that depend on this component
@@ -215,15 +205,11 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 						"Could not fetch circuit interface for circuit '"
 								+ name + "' in project '" + projectname + "'.", e);
 			}
-
-			// add component to prototypes
-			try {
-				info.getPrototyper().addPrototype(new UserComponent(circint));
-			} catch (DuplicateKeyException e) {
-				throw new SchemaException("Duplicate component name '"
-						+ circint.getEntityName() + "'.");
-			}
+			
+			usercircuits.add(circint);
 		}
+		
+		return usercircuits;
 	}
 
 	private void initGUI() {
@@ -391,7 +377,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		systemContainer.getResourceManager().addVetoableResourceListener(new VetoableResourceAdapter() {
 			@Override
 			public void resourceSaved(String projectName, String fileName) {
-				// TODO ovo implementirat
+				List<CircuitInterface> usercis = getUserPrototypeList();
+				controller.send(new RebuildPrototypeCollection(null, usercis));
+				controller.send(new InvalidateObsoleteUserComponents(usercis));
 			}
 		});
 	}

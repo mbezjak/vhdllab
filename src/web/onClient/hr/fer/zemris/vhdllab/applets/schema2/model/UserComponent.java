@@ -5,8 +5,13 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PortRelation;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultComponentDrawer;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.List;
@@ -31,6 +36,14 @@ public class UserComponent extends DefaultSchemaComponent {
 	
 
 	/* ctors */
+	
+	
+	/**
+	 * Samo za copyCtor().
+	 */
+	protected UserComponent() {
+		super();
+	}
 	
 	public UserComponent(CircuitInterface cint) {
 		super(preparePredefinedWrapper(cint));
@@ -58,6 +71,44 @@ public class UserComponent extends DefaultSchemaComponent {
 		return EComponentType.USER_DEFINED;
 	}
 	
+	@Override
+	public ISchemaComponent copyCtor() {
+		UserComponent uc = new UserComponent();
+		
+		uc.componentName = this.componentName;
+		uc.codeFileName = this.codeFileName;
+		uc.categoryName = this.categoryName;
+		uc.generic = this.generic;
+		uc.width = this.width;
+		uc.height = this.height;
+		uc.initDrawer(this.drawer.getClass().getName());
+		
+		// copy schema ports and port relations
+		PortRelation npr;
+		SchemaPort nsp;
+		for (PortRelation portrel : this.portrelations) {
+			npr = new PortRelation(
+					new DefaultPort(portrel.port.getName(),
+					portrel.port.getDirection(), portrel.port.getType()),
+					portrel.orientation
+					);
+			for (SchemaPort sp : portrel.relatedTo) {
+				nsp = new SchemaPort(sp);
+				nsp.setMapping(null);
+				npr.relatedTo.add(nsp);
+				uc.schemaports.add(nsp);
+			}
+			uc.portrelations.add(npr);
+		}
+		
+		// copy parameters
+		for (IParameter param : this.parameters) {
+			uc.parameters.addParameter(param.copyCtor());
+		}
+		
+		return uc;
+	}
+
 	private static PredefinedComponent preparePredefinedWrapper(CircuitInterface cint) {
 		PredefinedComponent predef = new PredefinedComponent();
 		String name = cint.getEntityName();

@@ -38,7 +38,6 @@ public class InOutComponentDrawer implements IComponentDrawer {
 
 	/* private fields */
 	private InOutSchemaComponent cmp;
-	private String componentName;
 
 	/* ctors */
 
@@ -47,7 +46,6 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			throw new IllegalArgumentException("This drawer can only draw an instance of '" +
 				cmpToDraw.getClass().getName() + "'.");
 		cmp = (InOutSchemaComponent) cmpToDraw;
-		componentName = cmpToDraw.getName().toString();
 	}
 
 	/* methods */

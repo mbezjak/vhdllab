@@ -32,7 +32,9 @@ public enum EComponentType {
 	 */
 	IN_OUT,
 	/**
-	 * Rezervirano za buduce primjene.
+	 * Rezervirano za buduce primjene. Komponenta ovog tipa
+	 * nece se smatrati ulazom ili izlazom sklopa koji se
+	 * modelira, a moze i ne mora sadrzavati generic parametre.
 	 */
 	NON_BASIC
 	
