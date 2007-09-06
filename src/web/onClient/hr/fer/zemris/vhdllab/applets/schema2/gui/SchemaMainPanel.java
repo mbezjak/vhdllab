@@ -45,8 +45,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import com.sun.java_cup.internal.runtime.virtual_parse_stack;
-
 public class SchemaMainPanel extends JPanel implements IEditor {
 
 	// {

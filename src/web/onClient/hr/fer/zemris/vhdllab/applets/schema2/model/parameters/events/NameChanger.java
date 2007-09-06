@@ -56,7 +56,7 @@ public class NameChanger implements IParameterEvent {
 	public List<ChangeTuple> getChanges() {
 		List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
 
-		changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
+		changes.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 
 		return changes;
 	}

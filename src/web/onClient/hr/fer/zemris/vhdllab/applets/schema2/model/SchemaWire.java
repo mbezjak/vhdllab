@@ -15,6 +15,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.DefaultWireDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class SchemaWire implements ISchemaWire {
 	
 	private void initDefaultParameters(Caseless wireName) {
 		CaselessParameter caspar = new CaselessParameter(ISchemaWire.KEY_NAME, false, wireName);
+		caspar.setParameterEvent(new NameChanger());
 		parameters.addParameter(caspar);
 	}
 

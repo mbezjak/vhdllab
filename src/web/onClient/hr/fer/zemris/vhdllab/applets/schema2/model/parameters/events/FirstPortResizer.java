@@ -53,12 +53,10 @@ public class FirstPortResizer implements IParameterEvent {
 		return new FirstPortResizer();
 	}
 
-
 	public List<ChangeTuple> getChanges() {
 		List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
 		
 		changes.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
-		changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 		
 		return changes;
 	}
@@ -67,7 +65,9 @@ public class FirstPortResizer implements IParameterEvent {
 		return false;
 	}
 	
-	public boolean performChange(Object oldvalue, IParameter parameter, ISchemaInfo info, ISchemaWire wire, ISchemaComponent component) {
+	public boolean performChange(Object oldvalue, IParameter parameter, ISchemaInfo info,
+			ISchemaWire wire, ISchemaComponent component)
+	{
 		if (component == null) return false;
 		
 		int oldnum = (Integer)oldvalue, portnum;
