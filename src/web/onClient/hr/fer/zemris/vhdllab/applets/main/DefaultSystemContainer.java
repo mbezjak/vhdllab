@@ -245,6 +245,13 @@ public class DefaultSystemContainer implements ISystemContainer {
 
 		StringBuilder sb = new StringBuilder(2000);
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		for (SystemMessage m : SystemLog.instance().getSystemMessages()) {
+			sb.append(formatter.format(m.getDate())).append("\t\t").append(
+					m.getContent()).append("\n\n");
+		}
+		if(sb.length() != 0) {
+			sb.append("---------------------------------\n\n\n");
+		}
 		for (SystemMessage m : SystemLog.instance().getErrorMessages()) {
 			sb.append(formatter.format(m.getDate())).append("\t\t").append(
 					m.getContent()).append("\n\n");
@@ -958,7 +965,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { projectName });
-				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
@@ -1027,7 +1034,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { fileName });
-				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 				// veto project creation
 				throw new ResourceVetoException();
 			}

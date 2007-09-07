@@ -13,7 +13,7 @@ import hr.fer.zemris.vhdllab.communicaton.IMethod;
  */
 public interface Initiator {
 	
-	void init();
+	void init() throws UniformAppletException;
 	
 	void dispose();
 

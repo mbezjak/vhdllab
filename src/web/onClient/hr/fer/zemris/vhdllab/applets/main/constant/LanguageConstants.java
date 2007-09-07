@@ -87,7 +87,7 @@ public class LanguageConstants {
 	public static final String DIALOG_BUTTON_SELECT_ALL = "dialog.button.select.all";
 	public static final String DIALOG_BUTTON_DESELECT_ALL = "dialog.button.deselect.all";
 	
-	public static final String DIALOG_LOGIN_EXIT_NOTIFICATION = "dialog.login.exit.notification";
+	public static final String DIALOG_LOGIN_CANCELED = "dialog.login.cancled";
 
 	public static final String DIALOG_SAVE_CHECKBOX_ALWAYS_SAVE_RESOURCES = "dialog.save.checkbox.always.save.resources";
 	public static final String DIALOG_SAVE_RESOURCES_TITLE = "dialog.save.resources.title";
@@ -115,6 +115,7 @@ public class LanguageConstants {
 	
 	public static final String STATUSBAR_LOAD_COMPLETE = "statusbar.load.complete";
 	public static final String STATUSBAR_INTERNAL_ERROR = "statusbar.internal.error";
+	public static final String STATUSBAR_NO_CONNECTION = "statusbar.no.connection";
 	public static final String STATUSBAR_LANGUAGE_SETTING_NOT_FOUND = "statusbar.language.setting.not.found";
 	public static final String STATUSBAR_EXISTS_FILE = "statusbar.exists.file";
 	public static final String STATUSBAR_EXISTS_PROJECT = "statusbar.exists.project";

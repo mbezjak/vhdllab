@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
+import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.dialogs.login.LoginDialog;
 import hr.fer.zemris.vhdllab.client.dialogs.login.UserCredential;
@@ -19,16 +20,19 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -91,32 +95,30 @@ public final class HttpClientInitiator implements Initiator {
 	private static final int MINIMUM_SESSION_LENGTH = 60;
 
 	/**
-	 * A properties in server configuration file.
+	 * A properties in server configuration file. Note that access to properties
+	 * is not synchronized. This is because this properties will not change its
+	 * data! Once properties are set they will remain constant for as long as
+	 * this initiator is in use!
 	 */
 	private Properties properties;
 
 	/**
-	 * A session identifier that is stored in a cookie to enable communication
-	 * to server.
+	 * A session identifier. Stored here only for {@link #init()} method! Other
+	 * then that this field is not used!
 	 */
 	private String sessionId;
 
 	/**
-	 * A user identifier that is logged in and for whom to send all methods are
-	 * sent.
+	 * A cached user credentials that is automatically used to authenticate a
+	 * user.
 	 */
-	private String userId;
+	private Credentials credentials;
 
 	/**
-	 * A password of a user.
-	 */
-	private String password;
-	
-	/**
-	 * A timer that executes task that saves session.
+	 * A timer for executing a task that saves session.
 	 */
 	private Timer timer;
-	
+
 	/**
 	 * Mediator responsible for initiating requests to server.
 	 */
@@ -126,6 +128,7 @@ public final class HttpClientInitiator implements Initiator {
 	 * Constructor.
 	 * 
 	 * @param sessionId
+	 *            an initial session identifier
 	 */
 	public HttpClientInitiator(String sessionId) {
 		this.sessionId = sessionId;
@@ -137,8 +140,7 @@ public final class HttpClientInitiator implements Initiator {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator#init()
 	 */
 	@Override
-	public void init() {
-		userId = SystemContext.getUserId();
+	public void init() throws UniformAppletException {
 		readServerProperties();
 		registerProtocol();
 		initHttpClient();
@@ -146,121 +148,11 @@ public final class HttpClientInitiator implements Initiator {
 			authenticate();
 		}
 		initSessionSaverBeacon();
-	}
-
-	/**
-	 * 
-	 */
-	private void initSessionSaverBeacon() {
-		int length = getSessionLength() * 1000; // in ms
-		timer = new Timer(true);
-		SessionSaverBeacon beacon = new SessionSaverBeacon();
-		timer.schedule(beacon, length, length);
-	}
-
-	/**
-	 * @return
-	 */
-	private int getSessionLength() {
-		GetSessionLengthMethod method = new GetSessionLengthMethod();
-		try {
-			initiateCall(method);
-		} catch (UniformAppletException e) {
-			return MINIMUM_SESSION_LENGTH;
-		}
-		return method.getResult().intValue();
-	}
-
-	/**
-	 * 
-	 */
-	private void authenticate() {
-		if (userId == null || password == null) {
-			LoginDialog dialog = new LoginDialog(SystemContext.getFrameOwner());
-			dialog.setVisible(true); // controls are locked here
-			int option = dialog.getOption();
-			if (option == LoginDialog.OK_OPTION) {
-				UserCredential uc = dialog.getCredentials();
-				userId = uc.getUsername();
-				password = uc.getPassword();
-			} else {
-				String bundleName = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
-				ResourceBundle bundle = ResourceBundleProvider
-						.getBundle(bundleName);
-				String message = bundle
-						.getString(LanguageConstants.DIALOG_LOGIN_EXIT_NOTIFICATION);
-				Frame parent = SystemContext.getFrameOwner();
-				option = JOptionPane.showConfirmDialog(parent, message);
-				if (option == JOptionPane.YES_OPTION) {
-					// quit application
-					// maybe like this
-					// SystemContext.requestAbnormalApplicationTermination();
-				} else {
-					// jao majko mila zakompliciralo se.
-				}
-			}
-		}
-		Credentials c = new UsernamePasswordCredentials(userId, password);
-		String host = properties.getProperty(HOST);
-		AuthScope scope = new AuthScope(host, AuthScope.ANY_PORT);
-		client.getState().clearCookies();
-		client.getState().setCredentials(scope, c);
-		client.getParams().setAuthenticationPreemptive(true);
-		String url = properties.getProperty(AUTH_URL);
-		GetMethod method = new GetMethod(url);
-		method.setDoAuthentication(true);
-		try {
-			client.executeMethod(method);
-		} catch (Exception e) {
-			SystemLog.instance().addErrorMessage(e);
-			// TODO STO SAD?
-		} finally {
-			method.releaseConnection();
-		}
-		Cookie[] cookies = client.getState().getCookies();
-		if(cookies != null) {
-			for(Cookie cookie : cookies) {
-				if(cookie.getName().equals(COOKIE_NAME)) {
-					cookie.setSecure(false);
-				}
-			}
-		}
-//		restoreSessionIdFromCookie();
-//		client.getState().clearCookies();
-//		setCookies();
-
 		/*
-		 * A long comment on tomcat session handling authentication
+		 * Dispose of session identifier (it is no longer needed because a
+		 * session cookie is inside of http client).
 		 */
-		method = new GetMethod(url);
-		method.setDoAuthentication(true);
-		try {
-			client.executeMethod(method);
-		} catch (Exception e) {
-			SystemLog.instance().addErrorMessage(e);
-			// TODO sto sad???
-		} finally {
-			method.releaseConnection();
-		}
-
-		client.getParams().setAuthenticationPreemptive(false);
-		client.getState().clearCredentials();
-	}
-
-	/**
-	 * 
-	 */
-	private void restoreSessionIdFromCookie() {
-		Cookie[] cookies = client.getState().getCookies();
-		if (cookies == null) {
-			return;
-		}
-		for (Cookie c : cookies) {
-			if (c.getName().equals(COOKIE_NAME)) {
-				sessionId = c.getValue();
-				break;
-			}
-		}
+		sessionId = null;
 	}
 
 	/**
@@ -290,13 +182,8 @@ public final class HttpClientInitiator implements Initiator {
 	 */
 	private void initHttpClient() {
 		client = new HttpClient();
-		setCookies();
-	}
 
-	/**
-	 * 
-	 */
-	private void setCookies() {
+		// set session cookie
 		String host = properties.getProperty(HOST);
 		String cookiePath = properties.getProperty(COOKIE_PATH);
 		Cookie cookie = new Cookie(host, COOKIE_NAME, sessionId, cookiePath,
@@ -314,19 +201,165 @@ public final class HttpClientInitiator implements Initiator {
 	 *         code; <code>false</code> otherwise
 	 */
 	private boolean isSessionValid() {
+		/*
+		 * This method is called only once: during initialization!
+		 */
 		String url = properties.getProperty(AUTH_URL);
 		GetMethod method = new GetMethod(url);
 		// session cookies is already set here!
 		int status;
 		try {
-			status = client.executeMethod(method);
-		} catch (Exception e) {
-			SystemLog.instance().addErrorMessage(e);
+			status = execute(method, true);
+		} catch (UniformAppletException e) {
 			return false;
-		} finally {
-			method.releaseConnection();
 		}
 		return status != HttpStatus.SC_UNAUTHORIZED;
+	}
+
+	/**
+	 * Initializes a timer that executes task that saves session.
+	 */
+	private void initSessionSaverBeacon() {
+		int length = getSessionLength() * 1000; // in ms
+		timer = new Timer(true);
+		SessionSaverBeacon beacon = new SessionSaverBeacon();
+		timer.schedule(beacon, length, length);
+	}
+
+	/**
+	 * Returns a maximum inactive interval before a session is invalidated.
+	 * 
+	 * @return a maximum inactive interval before a session is invalidated
+	 */
+	private int getSessionLength() {
+		GetSessionLengthMethod method = new GetSessionLengthMethod();
+		try {
+			initiateCall(method);
+		} catch (UniformAppletException e) {
+			return MINIMUM_SESSION_LENGTH;
+		}
+		int length = method.getResult().intValue();
+		if (length < MINIMUM_SESSION_LENGTH) {
+			length = MINIMUM_SESSION_LENGTH;
+		}
+		return length - (MINIMUM_SESSION_LENGTH / 2);
+	}
+
+	/**
+	 * @throws UniformAppletException 
+	 */
+	private void authenticate() throws UniformAppletException {
+		if (credentials == null) {
+			// also sets credentials
+			try {
+				showLoginDialog();
+			} catch (SecurityException e) {
+				throw new UniformAppletException(e);
+			}
+		}
+		String host = properties.getProperty(HOST);
+		AuthScope scope = new AuthScope(host, AuthScope.ANY_PORT);
+		client.getState().clearCookies();
+		client.getState().setCredentials(scope, credentials);
+		client.getParams().setAuthenticationPreemptive(true);
+		String url = properties.getProperty(AUTH_URL);
+		GetMethod method = new GetMethod(url);
+		method.setDoAuthentication(true);
+		int status = execute(method, true);
+		System.out.println(status);
+		if(status == HttpStatus.SC_UNAUTHORIZED) {
+			credentials = null;
+			client.getState().clearCredentials();
+			authenticate(); // TODO tu stavit retry message u login dialog
+		} else {
+			Cookie[] cookies = client.getState().getCookies();
+			if(cookies == null) {
+				// TODO nesto!!
+			}
+			for(Cookie c : cookies) {
+				if(c.getName().equals(COOKIE_NAME)) {
+					c.setSecure(false);
+				}
+			}
+			
+			/*
+			 * A long comment on tomcat session handling authentication
+			 */
+			method = new GetMethod(url);
+			method.setDoAuthentication(true);
+			status = execute(method, true);
+			System.out.println(status);
+
+			client.getParams().setAuthenticationPreemptive(false);
+			client.getState().clearCredentials();
+		}
+	}
+
+	/**
+	 * Show a login dialog to a user and requests that a user enters username
+	 * and password that is needed to authenticate user. This method also sets
+	 * credentials (a private field).
+	 * 
+	 * @throws SecurityException
+	 *             if user refused to provider proper username and password
+	 */
+	private void showLoginDialog() {
+		/*
+		 * This method only insures that showLoginDialogImpl method is invoked
+		 * by EDT.
+		 */
+		if (SwingUtilities.isEventDispatchThread()) {
+			showLoginDialogImpl();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						showLoginDialogImpl();
+					}
+				});
+			} catch (InterruptedException e) {
+				SystemLog.instance().addErrorMessage(e);
+			} catch (InvocationTargetException e) {
+				Throwable cause = e.getCause();
+				if (cause instanceof SecurityException) {
+					throw new SecurityException(cause);
+				} else {
+					SystemLog.instance().addErrorMessage(e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * An actual implementation of showLoginDialog method. This method must be
+	 * invoked by EDT!
+	 */
+	private void showLoginDialogImpl() {
+		Frame owner = SystemContext.getFrameOwner();
+		LoginDialog dialog = new LoginDialog(owner);
+		dialog.setVisible(true); // controls are locked here
+		int option = dialog.getOption();
+		if (option == LoginDialog.OK_OPTION) {
+			UserCredential uc = dialog.getCredentials();
+			String userId = uc.getUsername();
+			String password = uc.getPassword();
+			Credentials c = new UsernamePasswordCredentials(userId, password);
+			credentials = c;
+		} else {
+			String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
+			String key = LanguageConstants.DIALOG_LOGIN_CANCELED;
+			String text = ResourceBundleProvider.getBundle(name).getString(key);
+			option = JOptionPane.showConfirmDialog(owner, text);
+			if (option == JOptionPane.YES_OPTION) {
+				throw new SecurityException(
+						"User refused to provide proper username and password");
+			} else {
+				// show login dialog again
+				showLoginDialogImpl();
+				// after recursive loop simply exit
+			}
+		}
 	}
 
 	/*
@@ -337,6 +370,9 @@ public final class HttpClientInitiator implements Initiator {
 	@Override
 	public void dispose() {
 		timer.cancel();
+		properties.clear();
+		credentials = null;
+		client = null;
 	}
 
 	/*
@@ -374,7 +410,7 @@ public final class HttpClientInitiator implements Initiator {
 
 			int executeMethod = client.executeMethod(postMethod);
 			if (executeMethod == 401) {
-//				authenticate();
+				// authenticate();
 				// System.out.println("*******trying to authenticate");
 				// client.getState().setCredentials(AuthScope.ANY, new
 				// UsernamePasswordCredentials("test", "a"));
@@ -407,18 +443,63 @@ public final class HttpClientInitiator implements Initiator {
 		method.setResult(returnedMethod.getResult());
 	}
 
+	/**
+	 * Executes a method in http client and returns a status code.
+	 * 
+	 * @param method
+	 *            a method to execute
+	 * @param shouldRelease
+	 *            a flag indicating if a specified method should release
+	 *            connection at the end
+	 * @return a http status code
+	 * @throws UniformAppletException
+	 *             if any exception occurred
+	 */
+	private int execute(HttpMethod method, boolean shouldRelease)
+			throws UniformAppletException {
+		try {
+			return client.executeMethod(method);
+		} catch (HttpException e) {
+			// a http exception should never occur, so just log it
+			SystemLog.instance().addErrorMessage(e);
+			throw new UniformAppletException(e);
+		} catch (IOException e) {
+			SystemLog log = SystemLog.instance();
+			log.addErrorMessage(e); // log an exception
+			String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
+			String key = LanguageConstants.STATUSBAR_NO_CONNECTION;
+			String text = ResourceBundleProvider.getBundle(name).getString(key);
+			// report an error (a custom message for a user to see)
+			log.addSystemMessage(text, MessageType.ERROR);
+			// rethrow as UniformAppletException
+			throw new UniformAppletException(e);
+		} finally {
+			if (shouldRelease) {
+				method.releaseConnection();
+			}
+		}
+	}
+
+	/**
+	 * A timer task that saves a session by sending a beacon http request so
+	 * that a server does not invalidate a session because user was inactive for
+	 * a longer period of time.
+	 * 
+	 * @author Miro Bezjak
+	 * @version 1.0
+	 * @since 7/9/2007
+	 */
 	private class SessionSaverBeacon extends TimerTask {
 		@Override
 		public void run() {
 			String url = properties.getProperty(AUTH_URL);
 			GetMethod method = new GetMethod(url);
 			try {
-				client.executeMethod(method);
-			} catch (Exception e) {
-				SystemLog.instance().addErrorMessage(e);
+				execute(method, true);
+			} catch (Exception ignored) {
+				// ignored because exxceptions are already logged!
 			}
-			method.releaseConnection();
 		}
 	}
-	
+
 }

@@ -150,7 +150,7 @@ public class DefaultEditorManager implements IEditorManager {
 					.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE_FOR_THAT_FILE);
 			text = PlaceholderUtil.replacePlaceholders(text,
 					new String[] { fileName });
-			echoStatusText(text, MessageType.ERROR);
+			echoStatusText(text, MessageType.INFORMATION);
 			return null;
 		}
 

@@ -29,10 +29,14 @@ public class AuthenticationPingServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("auth servlet !!!!!!!!!!!!!!!111111");
+		System.out.println(request.getRequestedSessionId());
+		System.out.println(request.getSession().getId());
+		System.out.println("host=" + request.getRemoteHost());
+		System.out.println("user=" + request.getRemoteUser());
+		System.out.println("principal=" + request.getUserPrincipal());
 		Cookie[] cookies = request.getCookies();
 		if(cookies == null) {
-			System.out.println("auth servlet = == = nista od cookie-a");
+			System.out.println("nista od cookie-a");
 		} else {
 			for(Cookie c : cookies) {
 				System.out.println("name=" + c.getName() + "/value=" + c.getValue() + "%%" +c.getMaxAge());
@@ -43,8 +47,7 @@ public class AuthenticationPingServlet extends HttpServlet {
 			String header = (String) en.nextElement();
 			System.out.println(header + "=" + request.getHeader(header));
 		}
-		System.out.println(request.getSession().getId());
-		System.out.println("auth servlet !!!!!!!!!!!!!!!111111");
+		request.getSession(); // just create a session
 		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}
 

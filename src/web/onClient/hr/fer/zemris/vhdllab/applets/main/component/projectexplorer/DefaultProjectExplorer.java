@@ -448,7 +448,7 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			type = systemContainer.getResourceManager().getFileType(
 					nodeProjectName, node.toString());
 
-			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
+			if (FileTypes.FT_VHDL_SOURCE.equals(type) || FileTypes.FT_PREDEFINED.equals(type)) {
 				setIcon(vhdl);
 				setToolTipText("VHDL source file");
 			} else if (FileTypes.FT_VHDL_TB.equals(type)) {

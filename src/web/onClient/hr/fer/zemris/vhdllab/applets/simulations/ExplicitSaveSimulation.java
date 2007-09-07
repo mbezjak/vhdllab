@@ -41,7 +41,7 @@ public class ExplicitSaveSimulation implements IExplicitSave {
 		IResourceManager rm = container.getResourceManager();
 		if (!rm.isCorrectFileName(name)) {
 			SystemLog.instance().addSystemMessage("Invalid name!",
-					MessageType.ERROR);
+					MessageType.INFORMATION);
 		}
 		String projectName = editor.getProjectName();
 		rm.createNewResource(projectName, name, FileTypes.FT_VHDL_SIMULATION,
