@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.JTableX;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
@@ -100,9 +101,16 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 *            komponenta koja se prikazuje
 	 */
 	public void showPropertyForComponent(ISchemaComponent component) {
+		if (component == null) {
+			if (DEBUG_MODE) {
+				System.err.println("CPToolbar: null component provided");
+			}
+			cleanUpGui();
+			return;
+		}
 		JTableX tabela = null;
+		String componentName = component.getName().toString();
 		if (DEBUG_MODE) {
-			String componentName = component.getName().toString();
 			int numberOfParameters = component.getParameters().count();
 			System.out.println("CPToolbar: componentName:" + componentName);
 			System.out.println("CPToolbar: numberOfParameters:"
@@ -190,41 +198,83 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 
 		if (evt.getPropertyName().equals(
 				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION)) {
-			ISchemaInfo info = null;
 			Caseless componentName = null;
 
 			componentName = (Caseless) evt.getNewValue();
 
-			info = controller.getSchemaInfo();
 			// dali je komponenta ili zica
-			if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE) {
+			if (isWire(lgc.getSelectedType())) {
 				if (DEBUG_MODE) {
 					System.out.println("CPToolbar: selectedType=WIRE");
 					System.out.println("CPToolbar: wireName=" + componentName);
 				}
 
-				ISchemaWireCollection wiresCollection = info.getWires();
-				ISchemaWire wire = wiresCollection.fetchWire(componentName);
-				showPropertyForWire(wire);
-			} else if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT) {
+				fetchAndShowWireProperty(componentName);
+			} else if (isComponent(lgc.getSelectedType())) {
 				if (DEBUG_MODE) {
 					System.out.println("CPToolbar: selectedType=COMPONENT");
 					System.out.println("CPToolbar: componentName="
 							+ componentName);
 				}
 
-				ISchemaComponentCollection componentCollection = info
-						.getComponents();
-				ISchemaComponent component = componentCollection
-						.fetchComponent(componentName);
-				showPropertyForComponent(component);
+				fetchAndShowComponentProperty(componentName);
 			} else {
 				cleanUpGui();
 			}
+		} else if (evt.getPropertyName().equals(
+				EPropertyChange.PROPERTY_CHANGE.toString())) {
+
+			System.out.println("CPToolbar: selected component:"
+					+ lgc.getSelectedComponent().toString());
+
+			if (isWire(lgc.getSelectedType())) {
+				fetchAndShowWireProperty(lgc.getSelectedComponent());
+			} else if (isComponent(lgc.getSelectedType())) {
+				fetchAndShowComponentProperty(lgc.getSelectedComponent());
+			}
 		} else {
 			if (CPToolbar.DEBUG_MODE) {
-				System.out.println("CPToolbar: unknow property");
+				System.err.println("CPToolbar: unknow property");
 			}
 		}
+	}
+
+	private void fetchAndShowComponentProperty(Caseless componentName) {
+		if (componentName == null)
+			return;
+
+		ISchemaInfo info = controller.getSchemaInfo();
+
+		ISchemaComponentCollection componentCollection = info.getComponents();
+		ISchemaComponent component = componentCollection
+				.fetchComponent(componentName);
+		showPropertyForComponent(component);
+	}
+
+	private void fetchAndShowWireProperty(Caseless componentName) {
+		if (componentName == null)
+			return;
+
+		ISchemaInfo info = controller.getSchemaInfo();
+
+		ISchemaWireCollection wiresCollection = info.getWires();
+		ISchemaWire wire = wiresCollection.fetchWire(componentName);
+		showPropertyForWire(wire);
+	}
+
+	private boolean isWire(int t) {
+		if (t == CanvasToolbarLocalGUIController.TYPE_WIRE) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isComponent(int t) {
+		if (t == CanvasToolbarLocalGUIController.TYPE_COMPONENT) {
+			return true;
+		}
+
+		return false;
 	}
 }

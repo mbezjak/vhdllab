@@ -11,7 +11,6 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.InspectWalkability;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.SmartConnect;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.misc.WalkabilityMap;

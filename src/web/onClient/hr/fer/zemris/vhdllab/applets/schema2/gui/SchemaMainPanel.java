@@ -61,14 +61,12 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		}
 	}
 
-	
 	/* static fields */
 	private static final long serialVersionUID = -6643347269051956602L;
 
-
 	/* private fields */
 	private SoftReference<DefaultWizard> wizardSoftRef;
-	
+
 	/* model private fields */
 	private ISchemaCore core;
 	private ISchemaController controller;
@@ -112,9 +110,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	/* methods */
 
 	/**
-	 * Initializes fields with initial value and 
-	 * assumes that the project container IS NOT SET.
-	 * Therefore, this is called from a ctor.
+	 * Initializes fields with initial value and assumes that the project
+	 * container IS NOT SET. Therefore, this is called from a ctor.
 	 */
 	private void initStatic() {
 		core = new SchemaCore();
@@ -136,8 +133,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	/**
-	 * Performs all initialization assuming that a project container
-	 * HAS BEEN SET. Therefore, this is not called from a ctor.
+	 * Performs all initialization assuming that a project container HAS BEEN
+	 * SET. Therefore, this is not called from a ctor.
 	 */
 	private void initDynamic() {
 		// init prototype components
@@ -152,11 +149,11 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 		// init default prototypes
 		predefined = PredefinedComponentsParser.class
-			.getResourceAsStream(Constants.PREDEFINED_FILENAME);
+				.getResourceAsStream(Constants.PREDEFINED_FILENAME);
 
 		// init user component prototypes
 		List<CircuitInterface> usercis = getUserPrototypeList();
-		
+
 		// send EmptyCommand to alert listeners
 		controller.send(new RebuildPrototypeCollection(predefined, usercis));
 		if (usercis != null) {
@@ -166,14 +163,16 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	private List<CircuitInterface> getUserPrototypeList() {
-		if (systemContainer == null || filecontent == null) return null;
+		if (systemContainer == null || filecontent == null)
+			return null;
 		System.out.println("Initializing user prototypes.");
 
 		String projectname = filecontent.getProjectName();
 		String thisname = filecontent.getFileName();
 		List<String> circuitnames = null;
 		try {
-			circuitnames = systemContainer.getResourceManager().getAllCircuits(projectname);
+			circuitnames = systemContainer.getResourceManager().getAllCircuits(
+					projectname);
 			if (circuitnames == null)
 				throw new NullPointerException(
 						"getAllCircuits(...) returned null.");
@@ -184,7 +183,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 		Hierarchy hierarchy;
 		try {
-			hierarchy = systemContainer.getResourceManager().extractHierarchy(projectname);
+			hierarchy = systemContainer.getResourceManager().extractHierarchy(
+					projectname);
 		} catch (UniformAppletException e1) {
 			throw new SchemaException("Cannot extract hierarchy for project '"
 					+ projectname + "'.", e1);
@@ -194,21 +194,26 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		for (String name : circuitnames) {
 			// do not put prototypes for the modelled component or for
 			// components that depend on this component
-			if (thisname.equals(name) || hierarchy.getDescendantsForParent(name).contains(thisname)) continue;
+			if (thisname.equals(name)
+					|| hierarchy.getDescendantsForParent(name).contains(
+							thisname))
+				continue;
 
 			// get circuit interface for the component
 			CircuitInterface circint;
 			try {
-				circint = systemContainer.getResourceManager().getCircuitInterfaceFor(projectname, name);
+				circint = systemContainer.getResourceManager()
+						.getCircuitInterfaceFor(projectname, name);
 			} catch (UniformAppletException e) {
 				throw new SchemaException(
 						"Could not fetch circuit interface for circuit '"
-								+ name + "' in project '" + projectname + "'.", e);
+								+ name + "' in project '" + projectname + "'.",
+						e);
 			}
-			
+
 			usercircuits.add(circint);
 		}
-		
+
 		return usercircuits;
 	}
 
@@ -222,6 +227,8 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
 		controller.addListener(EPropertyChange.PROTOTYPES_CHANGE,
 				componentToAddToolbar);
+		controller.addListener(EPropertyChange.PROPERTY_CHANGE,
+				componentPropertyToolbar);
 
 		// component selection toolbar
 		localGUIController.addListener(
@@ -301,7 +308,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return controller;
 	}
 
-	
 	/* IEditor methods */
 
 	public void dispose() {
@@ -364,7 +370,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 	public void setFileContent(FileContent content) {
-		//System.out.println("File content set.");
+		// System.out.println("File content set.");
 		filecontent = content;
 		resetSchema();
 		if (filecontent != null) {
@@ -374,18 +380,22 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			core.setSchemaInfo(sd.deserializeSchema(stread));
 		}
 		initPrototypes();
-		systemContainer.getResourceManager().addVetoableResourceListener(new VetoableResourceAdapter() {
-			@Override
-			public void resourceSaved(String projectName, String fileName) {
-				List<CircuitInterface> usercis = getUserPrototypeList();
-				controller.send(new RebuildPrototypeCollection(null, usercis));
-				controller.send(new InvalidateObsoleteUserComponents(usercis));
-			}
-		});
+		systemContainer.getResourceManager().addVetoableResourceListener(
+				new VetoableResourceAdapter() {
+					@Override
+					public void resourceSaved(String projectName,
+							String fileName) {
+						List<CircuitInterface> usercis = getUserPrototypeList();
+						controller.send(new RebuildPrototypeCollection(null,
+								usercis));
+						controller.send(new InvalidateObsoleteUserComponents(
+								usercis));
+					}
+				});
 	}
 
 	public void setSystemContainer(ISystemContainer container) {
-		//System.out.println("Project container set.");
+		// System.out.println("Project container set.");
 		systemContainer = container;
 	}
 
@@ -398,19 +408,3 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
