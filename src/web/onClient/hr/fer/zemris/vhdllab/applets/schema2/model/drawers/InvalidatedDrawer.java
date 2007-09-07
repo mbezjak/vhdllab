@@ -16,10 +16,7 @@ public class InvalidatedDrawer implements IComponentDrawer {
 
 	/* static fields */
 	public static final int EDGE_OFFSET = (int) (Constants.GRID_SIZE * 0.5);
-	private static final String INVALIDATED = "INVALIDATED";
-	private static final String ETC_STRING = "...";
-	private static final int SMALL_FONT_SIZE = Constants.FONT_CANVAS_SMALL.getSize();
-	private static final int INV_SIGN_LEN = INVALIDATED.length() * SMALL_FONT_SIZE;
+	private static final int BORDER_LINES_STEP = Constants.GRID_SIZE / 2;
 	
 	
 	
@@ -47,23 +44,25 @@ public class InvalidatedDrawer implements IComponentDrawer {
 		if (componentName == null) componentName = cmptodraw.getTypeName().toString();
 		
 		// draw a rectangle
-		Color c = graphics.getColor();
 		graphics.setColor(Color.WHITE);
 		graphics.fillRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
-		graphics.setColor(c);
+		graphics.setColor(Constants.COLOR_ERROR);
 		graphics.drawRect(EDGE_OFFSET, EDGE_OFFSET, w - 2 * EDGE_OFFSET, h - 2 * EDGE_OFFSET);
 		
 		// draw invalidated sign
-		int innerwid = (w - 2 * EDGE_OFFSET);
-		if (innerwid < INV_SIGN_LEN) {
-			String invsign = INVALIDATED;
-			int nlen = innerwid / SMALL_FONT_SIZE - 3;
-			if (nlen > 2) {
-				invsign = invsign.substring(0, nlen - 3).concat(ETC_STRING);
-				graphics.drawString(invsign, EDGE_OFFSET + 2, EDGE_OFFSET + 2);
-			}
-		} else {
-			graphics.drawString(INVALIDATED, EDGE_OFFSET + 2, EDGE_OFFSET + 2);
+		graphics.drawLine(EDGE_OFFSET, EDGE_OFFSET, w - EDGE_OFFSET, h - EDGE_OFFSET);
+		graphics.drawLine(EDGE_OFFSET, h - EDGE_OFFSET, w - EDGE_OFFSET, EDGE_OFFSET);
+		
+		// draw border
+		int wmeo = w - EDGE_OFFSET;
+		int hmeo = h - EDGE_OFFSET;
+		for (int j = BORDER_LINES_STEP * 2; j <= hmeo; j += BORDER_LINES_STEP) {
+			graphics.drawLine(0, j, EDGE_OFFSET, j - BORDER_LINES_STEP);
+			graphics.drawLine(wmeo, j, w, j - BORDER_LINES_STEP);
+		}
+		for (int i = 0; i <= wmeo; i += BORDER_LINES_STEP) {
+			graphics.drawLine(i, EDGE_OFFSET, i + BORDER_LINES_STEP, 0);
+			graphics.drawLine(i, h, i + BORDER_LINES_STEP, hmeo);
 		}
 		
 		// draw component type name and instance name
@@ -73,7 +72,7 @@ public class InvalidatedDrawer implements IComponentDrawer {
 			
 			Font f = new Font(Constants.TEXT_FONT_CANVAS, Font.PLAIN, Constants.TEXT_NORMAL_FONT_SIZE);
 			graphics.setFont(f);
-			graphics.drawString(cmptodraw.getName().toString(), 0, -Constants.TEXT_NORMAL_FONT_SIZE);
+			graphics.drawString(cmptodraw.getName().toString(), 0, -Constants.TEXT_NORMAL_FONT_SIZE * 1.5f);
 	
 			f = new Font(Constants.TEXT_FONT_CANVAS, Font.PLAIN, Constants.TEXT_SMALL_FONT_SIZE);
 			int r = oldc.getRed() + 140; r = (r > 230) ? (230) : (r);
@@ -81,7 +80,7 @@ public class InvalidatedDrawer implements IComponentDrawer {
 			int b = oldc.getBlue() + 140; b = (b > 230) ? (230) : (b);
 			graphics.setColor(new Color(r, g, b));
 			graphics.setFont(f);
-			graphics.drawString(componentName, 0, 0);
+			graphics.drawString(componentName, 0, -Constants.TEXT_NORMAL_FONT_SIZE * 0.5f);
 	
 			graphics.setFont(oldf);
 			graphics.setColor(oldc);

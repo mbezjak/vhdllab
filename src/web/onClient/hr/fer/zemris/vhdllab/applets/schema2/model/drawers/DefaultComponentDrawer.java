@@ -124,17 +124,17 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 			
 			for (SchemaPort sp : comp_to_draw.getSchemaPorts()) {
 				String name = sp.getName().toString();
-				int half = name.length() * PORT_FONT_SIZE / 2;
+				int full = name.length() * PORT_FONT_SIZE, half = full / 2;
 				offset = sp.getOffset();
 				
 				if (offset.x == 0) {
-					graphics.drawString(name, -PORT_NAME_OFFSET - half, offset.y - 4);
+					graphics.drawString(name, PORT_NAME_OFFSET - full, offset.y - 4);
 				} else if (offset.x == w) {
-					graphics.drawString(name, w - PORT_NAME_OFFSET - half, offset.y - 4);
+					graphics.drawString(name, w - PORT_NAME_OFFSET + full, offset.y - 4);
 				} else if (offset.y == 0) {
-					graphics.drawString(name, offset.x + 1, -PORT_NAME_OFFSET - half);
+					graphics.drawString(name, offset.x + 1, PORT_NAME_OFFSET);
 				} else if (offset.y == h) {
-					graphics.drawString(name, offset.x + 1, h - PORT_NAME_OFFSET - half);
+					graphics.drawString(name, offset.x + 1, h - PORT_NAME_OFFSET);
 				}
 			}
 			

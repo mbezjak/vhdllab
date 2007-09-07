@@ -54,7 +54,7 @@ public class InvalidatedComponent implements ISchemaComponent {
 	
 	
 	/* static fields */
-	private static final Caseless INVALIDATED_COMPONENT = new Caseless("Invalidated component");
+	private static final Caseless INVALIDATED_COMPONENT = new Caseless("INVALIDATED");
 	
 
 	/* private fields */

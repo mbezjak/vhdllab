@@ -20,8 +20,10 @@ public class DefaultWireDrawer implements IWireDrawer {
 
 	/* static fields */
 	public static final int NODE_SIZE = 5;
-	private static final int MIN_DIST_BETWEEN_SEGS = 180;
+	private static final String ETC_STRING = "...";
+	private static final int MIN_DIST_BETWEEN_SEGS = 250;
 	private static final int NAME_FONT_SIZE = Constants.FONT_CANVAS_SMALL.getSize();
+	private static final int MIN_SEG_DIM = NAME_FONT_SIZE * 5;
 
 	/* private fields */
 	private ISchemaWire wire_to_draw;
@@ -74,7 +76,7 @@ public class DefaultWireDrawer implements IWireDrawer {
 				
 				graphics.drawLine(start.x, start.y, end.x, end.y);
 				
-				if (segment.length() >= ndim) {
+				if (segment.length() >= MIN_SEG_DIM) {
 					if (!found) {
 						xul = xur = xdl = xdr = xmid = segcntrx;
 						yul = yur = ydl = ydr = ymid = segcntry;
@@ -153,14 +155,27 @@ public class DefaultWireDrawer implements IWireDrawer {
 	}
 	
 	private void placeName(Graphics2D g, int x, int y, WireSegment segment) {
+		String nname = name;
+		int seglen = segment.length(), nndim = ndim, nnlength = nlength;
+		
+		/* shorten string if necessary */
+		if (seglen <= ndim) {
+			/* string is surely longer than 4 chars, that was checked before */
+			int avchars = seglen / NAME_FONT_SIZE;
+			nname = name.substring(0, avchars - 3).concat(ETC_STRING);
+			nnlength = nname.length();
+			nndim = nnlength * NAME_FONT_SIZE;
+		}
+		
+		/* draw string */
 		if (segment.isVertical()) {
 			x++;
-			for (int i = 0, yp = y - ndim / 2; i < nlength; i++, yp += NAME_FONT_SIZE) {
-				char c = name.charAt(i);
+			for (int i = 0, yp = y - nndim / 2; i < nnlength; i++, yp += NAME_FONT_SIZE) {
+				char c = nname.charAt(i);
 				g.drawString(String.valueOf(c), x, yp);
 			}
 		} else {
-			g.drawString(name, x - ndim / 2, y - 2);
+			g.drawString(nname, x - nndim / 3, y - 2);
 		}
 	}
 
