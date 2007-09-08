@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
+import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -81,6 +82,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	/* IEditor private fields */
 	private ISystemContainer systemContainer;
 	private FileContent filecontent;
+	private VetoableResourceListener appletListener;
 	private boolean readonly, saveable, modified;
 
 	/**
@@ -379,19 +381,17 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 			core.setSchemaInfo(sd.deserializeSchema(stread));
 		}
+		
 		initPrototypes();
-		systemContainer.getResourceManager().addVetoableResourceListener(
-				new VetoableResourceAdapter() {
-					@Override
-					public void resourceSaved(String projectName,
-							String fileName) {
-						List<CircuitInterface> usercis = getUserPrototypeList();
-						controller.send(new RebuildPrototypeCollection(null,
-								usercis));
-						controller.send(new InvalidateObsoleteUserComponents(
-								usercis));
-					}
-				});
+		
+		appletListener = new VetoableResourceAdapter() {
+			@Override
+			public void resourceSaved(String projectName, String fileName) {
+				List<CircuitInterface> usercis = getUserPrototypeList();
+				controller.send(new RebuildPrototypeCollection(null, usercis));
+				controller.send(new InvalidateObsoleteUserComponents(usercis));
+			}
+		};
 	}
 
 	public void setSystemContainer(ISystemContainer container) {

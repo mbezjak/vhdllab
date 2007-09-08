@@ -64,26 +64,32 @@ public class InvalidateObsoleteUserComponents implements ICommand {
 	public ICommandResponse performCommand(ISchemaInfo info) {
 		ISchemaComponentCollection components = info.getComponents();
 		Set<ISchemaComponent> usercomps = components.fetchComponents(EComponentType.USER_DEFINED);
+		Set<Caseless> toremove = new HashSet<Caseless>();
 		
 		for (ISchemaComponent cmp : usercomps) {
 			if (!circuits.contains(cmp.getCircuitInterface())) {
 				Caseless cmpname = cmp.getName();
-				XYLocation cmploc = components.getComponentLocation(cmpname);
-				InvalidatedComponent invcmp = new InvalidatedComponent(
-						cmpname.toString(), cmp.getWidth(), cmp.getHeight());
-				try {
-					components.removeComponent(cmpname);
-				} catch (UnknownKeyException e) {
-					throw new IllegalStateException("Component exists but cannot be found by it's name.");
-				}
-				try {
-					components.addComponent(cmploc.x, cmploc.y, invcmp);
-				} catch (DuplicateKeyException e) {
-					throw new IllegalStateException("Old component under this name removed?");
-				} catch (OverlapException e) {
-					throw new IllegalStateException("Old component didn't overlap!");
-				}
+				toremove.add(cmpname);
 			}
+		}
+		for (Caseless remname : toremove) {
+			ISchemaComponent cmp = components.fetchComponent(remname);
+			XYLocation cmploc = components.getComponentLocation(remname);
+			InvalidatedComponent invcmp = new InvalidatedComponent(
+					remname.toString(), cmp.getWidth(), cmp.getHeight());
+			
+			try {
+				components.removeComponent(remname);
+			} catch (UnknownKeyException e) {
+				throw new IllegalStateException("Component exists but cannot be found by it's name.");
+			}
+			try {
+				components.addComponent(cmploc.x, cmploc.y, invcmp);
+			} catch (DuplicateKeyException e) {
+				throw new IllegalStateException("Old component under this name removed?");
+			} catch (OverlapException e) {
+				throw new IllegalStateException("Old component didn't overlap!");
+			}			
 		}
 		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));

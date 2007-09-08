@@ -9,9 +9,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Rect2d;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +46,7 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	/* ctors */
 	
 	public SimpleSchemaWireCollection() {
-		wires = new HashMap<Caseless, ISchemaWire>();
+		wires = new LinkedHashMap<Caseless, ISchemaWire>();
 	}
 	
 	

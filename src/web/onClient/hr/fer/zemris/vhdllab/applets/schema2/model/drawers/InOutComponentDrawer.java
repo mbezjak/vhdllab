@@ -108,7 +108,8 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			xps[1] = w - 2 * PIN_LENGTH;
 			xps[2] = w - 2 * PIN_LENGTH + TRIANGLE_SIDE * 7 / 8;
 			List<SchemaPort> schports = cmp.getSchemaPorts();
-			int i = 0;// , siz = schports.size();
+			int i = 0;
+			boolean szbgt1 = schports.size() > 1;
 			for (SchemaPort sp : schports) {
 				yps[2] = sp.getOffset().y;
 				yps[0] = yps[2] - TRIANGLE_SIDE / 2;
@@ -116,7 +117,7 @@ public class InOutComponentDrawer implements IComponentDrawer {
 				graphics.fillPolygon(xps, yps, 3);
 
 				// write port index
-				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i)
+				if (szbgt1) graphics.drawString(String.valueOf((downto) ? (rangeoffset - i)
 						: (i + rangeoffset)), xps[0] - FONT_SIZE * 2,
 						(yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
 
@@ -138,16 +139,17 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			xps[0] = w - PIN_LENGTH;
 			xps[1] = w - PIN_LENGTH;
 			xps[2] = w - PIN_LENGTH + TRIANGLE_SIDE * 7 / 8;
-			// List<SchemaPort> schports = cmp.getSchemaPorts();
+			List<SchemaPort> schports = cmp.getSchemaPorts();
 			int i = 0;
-			for (SchemaPort sp : cmp.getSchemaPorts()) {
+			boolean szbgt1 = schports.size() > 1;
+			for (SchemaPort sp : schports) {
 				yps[2] = sp.getOffset().y;
 				yps[0] = yps[2] - TRIANGLE_SIDE / 2;
 				yps[1] = yps[0] + TRIANGLE_SIDE;
 				graphics.fillPolygon(xps, yps, 3);
 
 				// write port index
-				graphics.drawString(String.valueOf((downto) ? (rangeoffset - i)
+				if (szbgt1) graphics.drawString(String.valueOf((downto) ? (rangeoffset - i)
 						: (i + rangeoffset)), PIN_LENGTH + FONT_SIZE / 2,
 						(yps[0] + yps[1]) / 2 + FONT_SIZE / 2);
 
@@ -164,7 +166,7 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			
 			Font f = new Font(Constants.TEXT_FONT_CANVAS, Font.PLAIN, Constants.TEXT_NORMAL_FONT_SIZE);
 			graphics.setFont(f);
-			graphics.drawString(cmp.getName().toString(), 0, Constants.TEXT_NORMAL_FONT_SIZE / 2);
+			graphics.drawString(cmp.getName().toString(), 0, Constants.TEXT_NORMAL_FONT_SIZE * 3 / 2);
 	
 //			f = new Font(Constants.TEXT_FONT_CANVASNAMES, Font.PLAIN, Constants.TEXT_SMALL_FONT_SIZE);
 //			int r = oldc.getRed() + 140; r = (r > 230) ? (230) : (r);

@@ -11,9 +11,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Rectangle;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -57,7 +57,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	/* ctors */
 	
 	public SimpleSchemaComponentCollection() {
-		components = new HashMap<Caseless, PlacedComponent>();
+		components = new LinkedHashMap<Caseless, PlacedComponent>();
 		loc = new XYLocation();
 	}
 	
@@ -135,7 +135,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	}
 
 	public Set<ISchemaComponent> fetchComponents(EComponentType componentType) {
-		Set<ISchemaComponent> comps = new HashSet<ISchemaComponent>();
+		Set<ISchemaComponent> comps = new LinkedHashSet<ISchemaComponent>();
 		
 		PlacedComponent plc;
 		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
