@@ -35,9 +35,9 @@
   				archive="vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils-1.7.0.jar,commons-digester-1.7.jar,commons-codec-1.3.jar,commons-httpclient-3.0.1.jar"
   				type="applet" width="100%" height="100%" jreversion="1.6" name="vhdllab">
   		<jsp:params>
-  		  <jsp:param name="mayscript" value="true"></jsp:param>
   		  <jsp:param name="id" value="vhdllab"></jsp:param>
   		  <jsp:param name="class" value="vhdllab"></jsp:param>
+  		  <jsp:param name="mayscript" value="true"></jsp:param>
 	      <jsp:param name="sessionId" value="<%=session.getId()%>"></jsp:param>
 	      <jsp:param name="userId" value="<%=request.getRemoteUser()%>"></jsp:param>
   		</jsp:params>

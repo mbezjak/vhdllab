@@ -9,7 +9,9 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractMethod;
  * @author Miro Bezjak
  *
  */
-public class ExistsPredefinedFileMethod extends AbstractMethod<String> {
+public final class ExistsPredefinedFileMethod extends AbstractMethod<String> {
+
+	private static final long serialVersionUID = 1L;
 
 	public ExistsPredefinedFileMethod(String fileName) {
 		super("exists.predefined.file");

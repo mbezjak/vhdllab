@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.communicaton.results.Void;
  * @author Miro Bezjak
  *
  */
-public class DeleteUserFileMethod extends AbstractIdParameterMethod<Void> {
+public final class DeleteUserFileMethod extends AbstractIdParameterMethod<Void> {
+
+	private static final long serialVersionUID = 1L;
 
 	public DeleteUserFileMethod(Long id) {
 		super("delete.user.file", id);

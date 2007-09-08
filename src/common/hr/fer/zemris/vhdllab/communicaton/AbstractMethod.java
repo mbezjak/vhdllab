@@ -44,15 +44,17 @@ public abstract class AbstractMethod<T extends Serializable> implements
 	public String getMethod() {
 		return method;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getUserId()
 	 */
 	@Override
 	public String getUserId() {
 		return userId;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -101,16 +103,20 @@ public abstract class AbstractMethod<T extends Serializable> implements
 		}
 		parameters.put(param, value);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getResult()
 	 */
 	@Override
 	public T getResult() {
 		return result;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#setResult(java.io.Serializable)
 	 */
 	@Override
@@ -156,6 +162,41 @@ public abstract class AbstractMethod<T extends Serializable> implements
 
 	protected boolean isStatusSet() {
 		return statusCode != STATUS_NOT_SET;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof AbstractMethod))
+			return false;
+		final AbstractMethod<?> other = (AbstractMethod<?>) obj;
+		if (method == null) {
+			if (other.method != null)
+				return false;
+		} else if (!method.equals(other.method))
+			return false;
+		return true;
 	}
 
 }

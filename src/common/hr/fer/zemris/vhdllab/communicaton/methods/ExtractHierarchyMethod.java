@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
  * @author Miro Bezjak
  *
  */
-public class ExtractHierarchyMethod extends AbstractIdParameterMethod<Hierarchy> {
+public final class ExtractHierarchyMethod extends AbstractIdParameterMethod<Hierarchy> {
+
+	private static final long serialVersionUID = 1L;
 
 	public ExtractHierarchyMethod(Long id) {
 		super("extract.hierarchy", id);

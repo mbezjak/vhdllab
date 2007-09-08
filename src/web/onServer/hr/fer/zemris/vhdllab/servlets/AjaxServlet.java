@@ -92,4 +92,5 @@ public class AjaxServlet extends HttpServlet {
 		oos.writeObject(method);
 		oos.flush();
 	}
+	
 }

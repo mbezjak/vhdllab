@@ -11,7 +11,9 @@ import java.util.ArrayList;
  * @author Miro Bezjak
  *
  */
-public class FindProjectsByUserMethod extends AbstractMethod<ArrayList<Long>> {
+public final class FindProjectsByUserMethod extends AbstractMethod<ArrayList<Long>> {
+
+	private static final long serialVersionUID = 1L;
 
 	public FindProjectsByUserMethod() {
 		super("find.projects.by.user");

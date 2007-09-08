@@ -9,7 +9,9 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractMethod;
  * @author Miro Bezjak
  *
  */
-public class CreateUserFileMethod extends AbstractMethod<Long> {
+public final class CreateUserFileMethod extends AbstractMethod<Long> {
+
+	private static final long serialVersionUID = 1L;
 
 	public CreateUserFileMethod(String fileName, String fileType) {
 		super("create.user.file");

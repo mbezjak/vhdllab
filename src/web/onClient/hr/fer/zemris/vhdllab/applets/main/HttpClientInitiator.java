@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.client.dialogs.login.UserCredential;
 import hr.fer.zemris.vhdllab.communicaton.IMethod;
 import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
 import hr.fer.zemris.vhdllab.communicaton.methods.GetSessionLengthMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.LogoutMethod;
 import hr.fer.zemris.vhdllab.utilities.FileUtil;
 
 import java.awt.Frame;
@@ -46,10 +47,23 @@ import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 /**
  * Implementation of <code>Initiator</code> interface that uses
  * <code>HttpClient</code> to initiate requests to server.
+ * <p>
+ * This implementation is designed to work with Apache Tomcat powered server
+ * (preferably with version 6) and if server is changed then there is a chance
+ * that this implementation will have to change aswell.
+ * </p>
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 7/9/2007
  */
 public final class HttpClientInitiator implements Initiator {
+	/*
+	 * If server changes this things possibly needs to be modified in order for
+	 * this initiator to work. COOKIE_NAME (a private field) could need
+	 * changing. Also check authentication method to see if it needs to be
+	 * modified.
+	 */
 
 	/**
 	 * A server configuration file.
@@ -85,7 +99,8 @@ public final class HttpClientInitiator implements Initiator {
 	private static final String COOKIE_NAME = "JSESSIONID";
 
 	/**
-	 * An estimate of how big an object will be after serialization (1KB).
+	 * An estimate of how big an object (a method that is sent to server) will
+	 * be after serialization (1KB).
 	 */
 	private static final int BYTE_ARRAY_SIZE = 1000;
 
@@ -96,9 +111,9 @@ public final class HttpClientInitiator implements Initiator {
 
 	/**
 	 * A properties in server configuration file. Note that access to properties
-	 * is not synchronized. This is because this properties will not change its
-	 * data! Once properties are set they will remain constant for as long as
-	 * this initiator is in use!
+	 * is not synchronized. This is because properties will not change its data!
+	 * Once properties are set they will remain constant for as long as this
+	 * initiator is in use!
 	 */
 	private Properties properties;
 
@@ -142,7 +157,11 @@ public final class HttpClientInitiator implements Initiator {
 	@Override
 	public void init() throws UniformAppletException {
 		readServerProperties();
-		registerProtocol();
+		/*
+		 * Once registerProtocol method is enabled you must enable documented
+		 * bug workaround in authenticate method!
+		 */
+		// registerProtocol();
 		initHttpClient();
 		if (!isSessionValid()) {
 			authenticate();
@@ -170,6 +189,7 @@ public final class HttpClientInitiator implements Initiator {
 	 * Registers a new {@link ProtocolSocketFactory} for <code>https</code>
 	 * protocol. This factory will accept self-signed certificate.
 	 */
+	@SuppressWarnings("unused")
 	private void registerProtocol() {
 		int port = Integer.parseInt(properties.getProperty(HTTPS_PORT));
 		Protocol easyhttps = new Protocol("https",
@@ -246,50 +266,148 @@ public final class HttpClientInitiator implements Initiator {
 	}
 
 	/**
-	 * @throws UniformAppletException 
+	 * Authenticates user. This method will first try to authenticate user using
+	 * cached credentials and if that fails or there is no cached credentials
+	 * this method will invoke {@link #showLoginDialog(boolean)} to ask user for
+	 * proper credentials.
+	 * 
+	 * @throws UniformAppletException
+	 *             if any exception occurs such as: user refused to provider
+	 *             proper credentials or server is not responding etc.
 	 */
 	private void authenticate() throws UniformAppletException {
+		authenticate(false);
+	}
+
+	/**
+	 * Authenticates user. This method will first try to authenticate user using
+	 * cached credentials and if that fails or there is no cached credentials
+	 * this method will invoke {@link #showLoginDialog(boolean)} to ask user for
+	 * proper credentials.
+	 * 
+	 * @param displayRetryMessage
+	 *            a flag indicating if login dialog should show retry message
+	 *            (not a default message when it says that authentication is
+	 *            required but a message saying that he should try again because
+	 *            previous login attempt failed)
+	 * @throws UniformAppletException
+	 *             if any exception occurs such as: user refused to provider
+	 *             proper credentials or server is not responding etc.
+	 */
+	private void authenticate(boolean displayRetryMessage)
+			throws UniformAppletException {
 		if (credentials == null) {
-			// also sets credentials
 			try {
-				showLoginDialog();
+				// also sets credentials
+				showLoginDialog(displayRetryMessage);
 			} catch (SecurityException e) {
 				throw new UniformAppletException(e);
 			}
 		}
+		client.getState().clearCookies();
 		String host = properties.getProperty(HOST);
 		AuthScope scope = new AuthScope(host, AuthScope.ANY_PORT);
-		client.getState().clearCookies();
 		client.getState().setCredentials(scope, credentials);
 		client.getParams().setAuthenticationPreemptive(true);
 		String url = properties.getProperty(AUTH_URL);
+
+		/*
+		 * Send method to authenticate user.
+		 */
 		GetMethod method = new GetMethod(url);
 		method.setDoAuthentication(true);
 		int status = execute(method, true);
-		System.out.println(status);
-		if(status == HttpStatus.SC_UNAUTHORIZED) {
+		if (status == HttpStatus.SC_UNAUTHORIZED) {
+			// retry authentication if current authentication failed
 			credentials = null;
 			client.getState().clearCredentials();
-			authenticate(); // TODO tu stavit retry message u login dialog
+			authenticate(true);
 		} else {
 			Cookie[] cookies = client.getState().getCookies();
-			if(cookies == null) {
-				// TODO nesto!!
+			if (cookies == null) {
+				/*
+				 * This must never happen because it would indicate that server
+				 * did not create session cookie or it is using some other
+				 * method of session tracking. This implementation of initiator
+				 * depends on session tracking through cookie! If server changes
+				 * implementation of session tracking then so must this
+				 * HttpClientInititator implementation. Until then this method
+				 * throws exception.
+				 */
+				throw new UniformAppletException(
+						"Unknown session tracking mechanism or server didn't return appropriate session cookie");
 			}
-			for(Cookie c : cookies) {
-				if(c.getName().equals(COOKIE_NAME)) {
-					c.setSecure(false);
-				}
-			}
-			
 			/*
-			 * A long comment on tomcat session handling authentication
+			 * Sets session cookie's secure flag to false.
+			 * 
+			 * Description: This is a possible bug in
+			 * EasySSLProtocolSocketFactory or EasyX509TrustManager classes.
+			 * When using secure connection (https) to authenticate tomcat
+			 * returns valid session cookie and it is marked as secure (must be
+			 * sent only over secure connections). Then when http client tries
+			 * to send the same request again (again over https) he does not
+			 * send that session cookie. However if that cookie is set as
+			 * insecure (can be sent over http) everything works fine.
+			 * 
+			 * These classes are used in registerProtocol method!
+			 * 
+			 * Found in: Mozilla Firefox 2.0.0.6 (Linux version); Apache Tomcat
+			 * 6.0.13; Apache HttpClient 3.0.1
+			 * 
+			 * @since 7/9/2007
+			 */
+			/*
+			 * This code is disabled because registerProtocol method is
+			 * disabled. When enabling registerProtocol method you must enable
+			 * this code aswell!
+			 */
+			// for (Cookie c : cookies) {
+			// if (c.getName().equals(COOKIE_NAME)) {
+			// c.setSecure(false);
+			// }
+			// }
+
+			/*
+			 * Following code is a workaround for a problem with tomcat session
+			 * handling (most likely not a bug but whether it is a feature is
+			 * still uncertain).
+			 * 
+			 * Description: It appears that tomcat authentication and session
+			 * management is a little fuzzy. This is a process for
+			 * authenticating to tomcat and using its session tracking (using
+			 * BASIC authentication scheme and cookie based session tracking).
+			 * First when a request is made to secured content with an
+			 * authenticate header tomcat returns a cookie with specific name
+			 * and session id value. However this session is still new since
+			 * client has not reported that he accepts this session (and thus
+			 * session tracking). This would not be a problem since next request
+			 * would simply send this cookie and thus accepting session
+			 * tracking. From there on client could only send that session
+			 * cookie (no longer would authentication data needed to be sent in
+			 * every request) and he would have access to secured content.
+			 * However it appears that since this session is new, when client
+			 * does sent request (and thus accepting session tracing), tomcat
+			 * expects an authentication header aswell. It does not matter that
+			 * client obtained this session by sending authentication header.
+			 * There for this next code requests the same content with providing
+			 * authentication header (because no credentials was cleared from
+			 * HttpState) and the same returned session cookie.
+			 * 
+			 * Found in: Apache Tomcat 6.0.13 (also in 5.5.23)
+			 * 
+			 * This problem was tested using regular java sockets that connected
+			 * to Apache Tomcat.
+			 * 
+			 * @since 7/9/2007
 			 */
 			method = new GetMethod(url);
 			method.setDoAuthentication(true);
-			status = execute(method, true);
-			System.out.println(status);
+			execute(method, true);
 
+			/*
+			 * Authentication cleanup (clears credentials aswell because from
+			 * here on it uses session identifier instead).
+			 */
 			client.getParams().setAuthenticationPreemptive(false);
 			client.getState().clearCredentials();
 		}
@@ -300,22 +418,27 @@ public final class HttpClientInitiator implements Initiator {
 	 * and password that is needed to authenticate user. This method also sets
 	 * credentials (a private field).
 	 * 
+	 * @param displayRetryMessage
+	 *            a flag indicating if login dialog should show retry message
+	 *            (not a default message when it says that authentication is
+	 *            required but a message saying that he should try again because
+	 *            previous login attempt failed)
 	 * @throws SecurityException
 	 *             if user refused to provider proper username and password
 	 */
-	private void showLoginDialog() {
+	private void showLoginDialog(final boolean displayRetryMessage) {
 		/*
 		 * This method only insures that showLoginDialogImpl method is invoked
 		 * by EDT.
 		 */
 		if (SwingUtilities.isEventDispatchThread()) {
-			showLoginDialogImpl();
+			showLoginDialogImpl(displayRetryMessage);
 		} else {
 			try {
 				SwingUtilities.invokeAndWait(new Runnable() {
 					@Override
 					public void run() {
-						showLoginDialogImpl();
+						showLoginDialogImpl(displayRetryMessage);
 					}
 				});
 			} catch (InterruptedException e) {
@@ -334,10 +457,26 @@ public final class HttpClientInitiator implements Initiator {
 	/**
 	 * An actual implementation of showLoginDialog method. This method must be
 	 * invoked by EDT!
+	 * 
+	 * @param displayRetryMessage
+	 *            a flag indicating if login dialog should show retry message
+	 *            (not a default message when it says that authentication is
+	 *            required but a message saying that he should try again because
+	 *            previous login attempt failed)
+	 * @throws SecurityException
+	 *             if user refused to provider proper username and password
 	 */
-	private void showLoginDialogImpl() {
+	private void showLoginDialogImpl(boolean displayRetryMessage) {
 		Frame owner = SystemContext.getFrameOwner();
-		LoginDialog dialog = new LoginDialog(owner);
+		String message;
+		if (displayRetryMessage) {
+			String name = LoginDialog.BUNDLE_NAME;
+			String key = LoginDialog.RETRY_MESSAGE;
+			message = ResourceBundleProvider.getBundle(name).getString(key);
+		} else {
+			message = null;
+		}
+		LoginDialog dialog = new LoginDialog(owner, message);
 		dialog.setVisible(true); // controls are locked here
 		int option = dialog.getOption();
 		if (option == LoginDialog.OK_OPTION) {
@@ -355,8 +494,16 @@ public final class HttpClientInitiator implements Initiator {
 				throw new SecurityException(
 						"User refused to provide proper username and password");
 			} else {
+				/*
+				 * Since this is a recursive loop and a user controls it, by
+				 * pressing no to a confirm dialog and a cancel to login dialog,
+				 * may lead to OutOfMemoryError but since these conditions are
+				 * so extreme (because user would have to repeat this loop
+				 * possibly thousands or even millions of times) there is no
+				 * need to prevent OutOfMemoryError.
+				 */
 				// show login dialog again
-				showLoginDialogImpl();
+				showLoginDialogImpl(displayRetryMessage);
 				// after recursive loop simply exit
 			}
 		}
@@ -369,6 +516,12 @@ public final class HttpClientInitiator implements Initiator {
 	 */
 	@Override
 	public void dispose() {
+		// send a logout method
+		LogoutMethod method = new LogoutMethod();
+		try {
+			initiateCall(method);
+		} catch (UniformAppletException ignored) {
+		}
 		timer.cancel();
 		properties.clear();
 		credentials = null;
@@ -385,50 +538,22 @@ public final class HttpClientInitiator implements Initiator {
 			throws UniformAppletException {
 		String url = properties.getProperty(SERVLET_URL);
 		PostMethod postMethod = new PostMethod(url);
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(BYTE_ARRAY_SIZE);
-		ObjectOutputStream oos;
-		byte[] requestArray;
-		try {
-			oos = new ObjectOutputStream(bos);
-			oos.writeObject(method);
-			requestArray = bos.toByteArray();
-			oos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new UniformAppletException(e);
-		}
-
+		byte[] requestArray = serializeObject(method);
 		postMethod.setRequestEntity(new ByteArrayRequestEntity(requestArray));
-		IMethod<T> returnedMethod;
-		try {
-			System.out.println("in method cookies");
-			for (Cookie c : client.getState().getCookies()) {
-				System.out.println(c.getName() + "=" + c.getValue() + "///"
-						+ c.getDomain() + "$$" + c.getPath() + "##"
-						+ c.getExpiryDate() + "##" + c.getSecure());
-			}
 
-			int executeMethod = client.executeMethod(postMethod);
-			if (executeMethod == 401) {
-				// authenticate();
-				// System.out.println("*******trying to authenticate");
-				// client.getState().setCredentials(AuthScope.ANY, new
-				// UsernamePasswordCredentials("test", "a"));
-				// postMethod.setDoAuthentication(true);
-				// executeMethod = client.executeMethod(postMethod);
-				// client.getState().setCredentials(AuthScope.ANY, null);
-				// System.out.println(client.getState().getCredentials(AuthScope.ANY));
-			}
-			System.out.println(executeMethod);
-			InputStream is = postMethod.getResponseBodyAsStream();
-			ObjectInputStream ois = new ObjectInputStream(is);
-			returnedMethod = (IMethod<T>) ois.readObject();
-
+		int status = execute(postMethod, false);
+		if (status == HttpStatus.SC_UNAUTHORIZED) {
 			postMethod.releaseConnection();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new UniformAppletException("AJAX connection problems", e);
+			authenticate();
+			status = execute(postMethod, false);
 		}
+		if (status != HttpStatus.SC_OK) {
+			throw new UniformAppletException("Unexpected http status code: "
+					+ status);
+		}
+
+		IMethod<T> returnedMethod = getResult(postMethod);
+		postMethod.releaseConnection();
 
 		if (!returnedMethod.getMethod().equals(method.getMethod())) {
 			throw new UniformAppletException();
@@ -441,6 +566,54 @@ public final class HttpClientInitiator implements Initiator {
 		method.setStatus(returnedMethod.getStatusCode(), returnedMethod
 				.getStatusMessage());
 		method.setResult(returnedMethod.getResult());
+	}
+
+	private <T extends Serializable> byte[] serializeObject(IMethod<T> method)
+			throws UniformAppletException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(BYTE_ARRAY_SIZE);
+		ObjectOutputStream oos = null;
+		try {
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(method);
+		} catch (IOException e) {
+			SystemLog.instance().addErrorMessage(e);
+			throw new UniformAppletException(e);
+		} finally {
+			if (oos != null) {
+				try {
+					oos.close();
+				} catch (IOException ignored) {
+				}
+			}
+		}
+		return bos.toByteArray();
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends Serializable> IMethod<T> getResult(HttpMethod method)
+			throws UniformAppletException {
+		ObjectInputStream ois = null;
+		try {
+			InputStream is = method.getResponseBodyAsStream();
+			ois = new ObjectInputStream(is);
+			return (IMethod<T>) ois.readObject();
+		} catch (IOException e) {
+			SystemLog.instance().addErrorMessage(e);
+			throw new UniformAppletException(e);
+		} catch (ClassNotFoundException e) {
+			SystemLog.instance().addErrorMessage(e);
+			throw new UniformAppletException(e);
+		} catch (ClassCastException e) {
+			SystemLog.instance().addErrorMessage(e);
+			throw new UniformAppletException(e);
+		} finally {
+			if (ois != null) {
+				try {
+					ois.close();
+				} catch (IOException ignored) {
+				}
+			}
+		}
 	}
 
 	/**
@@ -490,6 +663,11 @@ public final class HttpClientInitiator implements Initiator {
 	 * @since 7/9/2007
 	 */
 	private class SessionSaverBeacon extends TimerTask {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.TimerTask#run()
+		 */
 		@Override
 		public void run() {
 			String url = properties.getProperty(AUTH_URL);
@@ -497,7 +675,7 @@ public final class HttpClientInitiator implements Initiator {
 			try {
 				execute(method, true);
 			} catch (Exception ignored) {
-				// ignored because exxceptions are already logged!
+				// ignored because exceptions are already logged!
 			}
 		}
 	}

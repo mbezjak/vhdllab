@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
  * @author Miro Bezjak
  *
  */
-public class ExtractCircuitInterfaceMethod extends AbstractIdParameterMethod<CircuitInterface> {
+public final class ExtractCircuitInterfaceMethod extends AbstractIdParameterMethod<CircuitInterface> {
+
+	private static final long serialVersionUID = 1L;
 
 	public ExtractCircuitInterfaceMethod(Long id) {
 		super("extract.circuit.interface", id);

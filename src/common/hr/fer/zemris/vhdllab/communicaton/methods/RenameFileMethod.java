@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.communicaton.results.Void;
  * @author Miro Bezjak
  *
  */
-public class RenameFileMethod extends AbstractIdParameterMethod<Void> {
+public final class RenameFileMethod extends AbstractIdParameterMethod<Void> {
+
+	private static final long serialVersionUID = 1L;
 
 	public RenameFileMethod(Long id, String fileName) {
 		super("rename.file", id);

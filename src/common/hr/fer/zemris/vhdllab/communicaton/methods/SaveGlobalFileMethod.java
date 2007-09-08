@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.communicaton.results.Void;
  * @author Miro Bezjak
  *
  */
-public class SaveGlobalFileMethod extends AbstractIdParameterMethod<Void> {
+public final class SaveGlobalFileMethod extends AbstractIdParameterMethod<Void> {
+
+	private static final long serialVersionUID = 1L;
 
 	public SaveGlobalFileMethod(Long id, String content) {
 		super("save.global.file", id);

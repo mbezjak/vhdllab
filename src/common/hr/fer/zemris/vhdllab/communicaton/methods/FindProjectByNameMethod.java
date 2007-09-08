@@ -9,7 +9,9 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractMethod;
  * @author Miro Bezjak
  *
  */
-public class FindProjectByNameMethod extends AbstractMethod<Long> {
+public final class FindProjectByNameMethod extends AbstractMethod<Long> {
+
+	private static final long serialVersionUID = 1L;
 
 	public FindProjectByNameMethod(String projectName) {
 		super("find.project.by.name");

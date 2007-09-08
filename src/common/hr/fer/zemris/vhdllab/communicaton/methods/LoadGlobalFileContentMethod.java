@@ -9,7 +9,9 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractIdParameterMethod;
  * @author Miro Bezjak
  *
  */
-public class LoadGlobalFileContentMethod extends AbstractIdParameterMethod<String> {
+public final class LoadGlobalFileContentMethod extends AbstractIdParameterMethod<String> {
+
+	private static final long serialVersionUID = 1L;
 
 	public LoadGlobalFileContentMethod(Long id) {
 		super("load.global.file.content", id);

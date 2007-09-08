@@ -121,6 +121,8 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	private IViewManager viewManager;
 
 	private Communicator communicator;
+	private Initiator initiator;
+
 
 	/*
 	 * (non-Javadoc)
@@ -235,7 +237,7 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			 */
 			String sessionId = getParameter(SESSION_ID);
 			SystemContext.setUserId(getParameter(USER_ID));
-			Initiator initiator = new HttpClientInitiator(sessionId);
+			initiator = new HttpClientInitiator(sessionId);
 			initiator.init();
 			communicator = new Communicator(initiator);
 			communicator.init(); // also initializes UserPreferences
@@ -378,6 +380,10 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			if (communicator != null) {
 				communicator.dispose();
 				communicator = null;
+			}
+			if (initiator != null) {
+				initiator.dispose();
+				initiator = null;
 			}
 		} catch (UniformAppletException e) {
 			e.printStackTrace();

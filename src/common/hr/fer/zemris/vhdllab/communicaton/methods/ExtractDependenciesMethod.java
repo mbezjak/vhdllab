@@ -11,7 +11,9 @@ import java.util.ArrayList;
  * @author Miro Bezjak
  *
  */
-public class ExtractDependenciesMethod extends AbstractIdParameterMethod<ArrayList<Long>> {
+public final class ExtractDependenciesMethod extends AbstractIdParameterMethod<ArrayList<Long>> {
+
+	private static final long serialVersionUID = 1L;
 
 	public ExtractDependenciesMethod(Long id) {
 		super("extract.dependencies", id);

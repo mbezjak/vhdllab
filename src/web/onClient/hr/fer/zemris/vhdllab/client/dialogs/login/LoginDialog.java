@@ -33,9 +33,10 @@ public class LoginDialog extends JDialog {
 
 	/* BUNDLE CONSTANTS */
 	public static final String BUNDLE_NAME = "LoginDialog";
+	public static final String DEFAULT_MESSAGE = "message.default";
+	public static final String RETRY_MESSAGE = "message.retry";
 	private static final String TITLE = "title";
 	private static final String BORDER_TITLE = "border.title";
-	private static final String DESCRIPTION = "description.default";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
 	private static final String OK = "ok";
@@ -78,7 +79,11 @@ public class LoginDialog extends JDialog {
 		this(owner, null);
 	}
 
-	public LoginDialog(Frame owner, ResourceBundle bundle) {
+	public LoginDialog(Frame owner, String message) {
+		this(owner, null, message);
+	}
+	
+	public LoginDialog(Frame owner, ResourceBundle bundle, String message) {
 		super(owner, true);
 		if (bundle == null) {
 			bundle = ResourceBundleProvider.getBundle(BUNDLE_NAME);
@@ -139,11 +144,13 @@ public class LoginDialog extends JDialog {
 		JPanel actionPanel = new JPanel(new BorderLayout());
 		actionPanel.add(actionBox, BorderLayout.EAST);
 
-		text = bundle.getString(DESCRIPTION);
-		JLabel descriptionLabel = new JLabel(text);
+		if(message == null) {
+			message = bundle.getString(DEFAULT_MESSAGE);
+		}
+		JLabel messageLabel = new JLabel(message);
 
 		setLayout(new BorderLayout());
-		add(descriptionLabel, BorderLayout.NORTH);
+		add(messageLabel, BorderLayout.NORTH);
 		add(grid, BorderLayout.CENTER);
 		add(actionPanel, BorderLayout.SOUTH);
 		getRootPane().setDefaultButton(ok);

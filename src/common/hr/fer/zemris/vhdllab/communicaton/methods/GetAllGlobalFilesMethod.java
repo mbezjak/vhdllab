@@ -11,7 +11,9 @@ import java.util.ArrayList;
  * @author Miro Bezjak
  *
  */
-public class GetAllGlobalFilesMethod extends AbstractMethod<ArrayList<Long>> {
+public final class GetAllGlobalFilesMethod extends AbstractMethod<ArrayList<Long>> {
+
+	private static final long serialVersionUID = 1L;
 
 	public GetAllGlobalFilesMethod() {
 		super("get.all.global.files");

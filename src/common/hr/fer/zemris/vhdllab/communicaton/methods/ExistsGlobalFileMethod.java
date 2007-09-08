@@ -9,7 +9,9 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractIdParameterMethod;
  * @author Miro Bezjak
  *
  */
-public class ExistsGlobalFileMethod extends AbstractIdParameterMethod<Boolean> {
+public final class ExistsGlobalFileMethod extends AbstractIdParameterMethod<Boolean> {
+
+	private static final long serialVersionUID = 1L;
 
 	public ExistsGlobalFileMethod(Long id) {
 		super("exists.global.file", id);

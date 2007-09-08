@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.communicaton.results.Void;
  * @author Miro Bezjak
  *
  */
-public class SaveUserFileMethod extends AbstractIdParameterMethod<Void> {
+public final class SaveUserFileMethod extends AbstractIdParameterMethod<Void> {
+
+	private static final long serialVersionUID = 1L;
 
 	public SaveUserFileMethod(Long id, String content) {
 		super("save.user.file", id);

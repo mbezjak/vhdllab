@@ -9,6 +9,6 @@ import java.io.Serializable;
  * @author Miro Bezjak
  *
  */
-public class Void implements Serializable {
+public final class Void implements Serializable {
 
 }

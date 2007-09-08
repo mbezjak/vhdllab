@@ -9,13 +9,12 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractMethod;
  * @author Miro Bezjak
  *
  */
-public final class ExistsUserFile2Method extends AbstractMethod<Boolean> {
+public final class LogoutMethod extends AbstractMethod<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
-	public ExistsUserFile2Method(String fileName) {
-		super("exists.user.file2");
-		setParameter(PROP_FILE_NAME, fileName);
+	public LogoutMethod() {
+		super("logout");
 	}
 
 }

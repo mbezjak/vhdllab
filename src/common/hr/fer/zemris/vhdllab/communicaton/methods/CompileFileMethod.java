@@ -10,7 +10,9 @@ import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
  * @author Miro Bezjak
  *
  */
-public class CompileFileMethod extends AbstractIdParameterMethod<CompilationResult> {
+public final class CompileFileMethod extends AbstractIdParameterMethod<CompilationResult> {
+
+	private static final long serialVersionUID = 1L;
 
 	public CompileFileMethod(Long id) {
 		super("compile.file", id);

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @author Miro Bezjak
- * 
+ * @param <T> 
  */
 public abstract class AbstractIdParameterMethod<T extends Serializable> extends
 		AbstractMethod<T> {

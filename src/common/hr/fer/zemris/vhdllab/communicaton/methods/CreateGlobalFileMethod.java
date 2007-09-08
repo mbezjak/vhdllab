@@ -9,7 +9,9 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractMethod;
  * @author Miro Bezjak
  *
  */
-public class CreateGlobalFileMethod extends AbstractMethod<Long> {
+public final class CreateGlobalFileMethod extends AbstractMethod<Long> {
+
+	private static final long serialVersionUID = 1L;
 
 	public CreateGlobalFileMethod(String fileName, String fileType) {
 		super("create.global.file");

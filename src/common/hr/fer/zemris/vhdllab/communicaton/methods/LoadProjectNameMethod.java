@@ -9,7 +9,9 @@ import hr.fer.zemris.vhdllab.communicaton.AbstractIdParameterMethod;
  * @author Miro Bezjak
  *
  */
-public class LoadProjectNameMethod extends AbstractIdParameterMethod<String> {
+public final class LoadProjectNameMethod extends AbstractIdParameterMethod<String> {
+
+	private static final long serialVersionUID = 1L;
 
 	public LoadProjectNameMethod(Long id) {
 		super("load.project.name", id);

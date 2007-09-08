@@ -3,10 +3,7 @@
  */
 package hr.fer.zemris.vhdllab.client.dialogs.login;
 
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
-
 import java.awt.Frame;
-import java.util.ResourceBundle;
 
 import javax.swing.SwingUtilities;
 
@@ -34,9 +31,7 @@ public class LoginDialogTest {
 
 	private static void initGUI() {
 		Frame f = new Frame();
-		ResourceBundle bundle = CachedResourceBundles.getBundle("LoginDialog",
-				"en");
-		LoginDialog dialog = new LoginDialog(f, bundle);
+		LoginDialog dialog = new LoginDialog(f);
 		dialog.setVisible(true);
 		System.out.println(dialog.getOption());
 		System.out.println(dialog.getCredentials());

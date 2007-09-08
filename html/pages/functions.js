@@ -56,10 +56,10 @@ function performAjaxAbort() {
 
 function ajaxCallback() {
   if( req.readyState==4) {
-    vhdllab.ajaxCallResultReceived(req.responseText, req.status);
+    document.getElementById("vhdllab").ajaxCallResultReceived(req.responseText, req.status);
   }
 }
 
 function exitApplication() {
-  vhdllab.fastCleanup();
+  document.getElementById("vhdllab").fastCleanup();
 }
