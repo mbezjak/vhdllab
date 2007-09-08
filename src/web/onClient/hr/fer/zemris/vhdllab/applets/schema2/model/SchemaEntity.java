@@ -25,7 +25,6 @@ import java.util.Set;
 public class SchemaEntity implements ISchemaEntity {
 	
 	/* static fields */
-	public static final String KEY_NAME = "Name";
 	
 	
 	/* private fields */
@@ -76,6 +75,15 @@ public class SchemaEntity implements ISchemaEntity {
 	public IParameterCollection getParameters() {
 		return parameters;
 	}
+
+	public Caseless getName() {
+		try {
+			return (Caseless) parameters.getParameter(KEY_NAME).getValue();
+		} catch (ParameterNotFoundException e) {
+			throw new IllegalStateException("Must contain parameter '" + KEY_NAME + "'.");
+		}
+	}
+
 
 	public void setParameters(IParameterCollection parameterCollection) {
 		parameters = parameterCollection;

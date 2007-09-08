@@ -1,9 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
-import java.util.List;
-
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
+
+import java.util.List;
 
 
 
@@ -16,6 +17,8 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
  *
  */
 public interface ISchemaEntity {
+	
+	public static final String KEY_NAME = "Name";
 	
 	
 	/**
@@ -45,6 +48,13 @@ public interface ISchemaEntity {
 	 * @param parameters
 	 */
 	void setParameters(IParameterCollection parameters);
+	
+	/**
+	 * Vraca vrijednost uvijek prisutnog parametra pod kljucem KEY_NAME,
+	 * koji oznacava ime entity-a.
+	 * @return
+	 */
+	Caseless getName();
 	
 	/**
 	 * Dohvaca portove sucelja modelirane komponente.

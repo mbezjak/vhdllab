@@ -36,6 +36,8 @@ import java.util.List;
  * U slucaju da constraint onemogucava promjenu vrijednosti,
  * razlog nemogucnosti promjene vrijednosti nalazi se u info mapi
  * pod kljucem KEY_CONSTRAINT_EXPLANATION u obliku EConstraintExplanation.
+ * U slucaju uspjesne promjene parametra, u info mapi ce se pod kljucem
+ * KEY_UPDATED_NAME naci novo ime komponente, odnosno zice.
  * 
  * @author Axel
  *
@@ -55,6 +57,7 @@ public class SetParameterCommand implements ICommand {
 	/* static fields */
 	public static final String COMMAND_NAME = "SetParameterCommand";
 	public static final String KEY_CONSTRAINT_EXPLANATION = "CONSTRAINT_EXPL";
+	public static final String KEY_UPDATED_NAME = "UPDATED_NAME";
 
 
 	/* private fields */
@@ -64,6 +67,8 @@ public class SetParameterCommand implements ICommand {
 	private Object val, oldval;
 	private boolean undoable;
 	private PPWrapper ppw;
+	private ISchemaWire tmpwire;
+	private ISchemaComponent tmpcmp;
 	
 	
 	/* ctors */
@@ -114,15 +119,20 @@ public class SetParameterCommand implements ICommand {
 		switch (holder) {
 		case entity:
 			ppw.params = info.getEntity().getParameters();
+			break;
 		case wire:
 			ISchemaWire wire = info.getWires().fetchWire(objname);
 			if (wire == null) return EErrorTypes.NONEXISTING_WIRE_NAME;
 			ppw.params = wire.getParameters();
+			tmpwire = wire;
+			break;
 		case component:
 			ISchemaComponent comp = info.getComponents().fetchComponent(objname);
 			if (comp == null) return EErrorTypes.NONEXISTING_COMPONENT_NAME;
 			if (comp.isInvalidated()) return EErrorTypes.COMPONENT_INVALIDATED;
 			ppw.params = comp.getParameters();
+			tmpcmp = comp;
+			break;
 		}
 		return EErrorTypes.NO_ERROR;
 	}
@@ -196,11 +206,19 @@ public class SetParameterCommand implements ICommand {
 			}
 		}
 		
-		if (changes == null)
-			return new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
+		// add updated name to info map
+		Caseless updname = getUpdatedName(info);
+		
+		if (changes == null) {
+			CommandResponse cr = new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
+			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
+			return cr;
+		}
 		else {
 			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
-			return new CommandResponse(changes);
+			CommandResponse cr = new CommandResponse(changes);
+			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
+			return cr;
 		}
 	}
 
@@ -242,12 +260,32 @@ public class SetParameterCommand implements ICommand {
 			}
 		}
 		
-		if (changes == null)
-			return new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
+		// add updated name to info map
+		Caseless updname = getUpdatedName(info);
+		
+		if (changes == null) {
+			CommandResponse cr = new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
+			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
+			return cr;
+		}
 		else {
 			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
-			return new CommandResponse(changes);
+			CommandResponse cr = new CommandResponse(changes);
+			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
+			return cr;
 		}
+	}
+	
+	private Caseless getUpdatedName(ISchemaInfo info) {
+		switch (holder) {
+		case entity:
+			return info.getEntity().getName();
+		case wire:
+			return tmpwire.getName();
+		case component:
+			return tmpcmp.getName();
+		}
+		throw new IllegalStateException("Holder is enum, but did not end in switch?");
 	}
 	
 	private SchemaError fireEvent(ISchemaInfo info, IParameter param, IParameterEvent pe,
