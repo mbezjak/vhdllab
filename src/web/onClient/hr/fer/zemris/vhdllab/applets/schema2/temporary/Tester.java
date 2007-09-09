@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummySystemContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.CustomDialogs;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
