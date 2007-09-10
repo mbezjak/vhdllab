@@ -14,21 +14,22 @@ import java.util.Map;
  * @param <T>
  */
 public abstract class AbstractMethod<T extends Serializable> implements
-		IMethod<T> {
+		Method<T> {
 
-	private String method;
+	private final String method;
 	private String userId;
-	private Map<String, Serializable> parameters;
+	private final Map<String, Serializable> parameters;
+
 	private T result;
 	private int statusCode;
 	private String statusMessage;
 
 	public AbstractMethod(String method) {
-		this.method = method;
-		if (this.method == null) {
+		if (method == null) {
 			throw new NullPointerException("Method cant be null");
 		}
-		userId = SystemContext.getUserId();
+		this.method = method;
+		setUserId(SystemContext.getUserId());
 		parameters = new HashMap<String, Serializable>();
 		result = null;
 		statusCode = STATUS_NOT_SET;
@@ -53,6 +54,19 @@ public abstract class AbstractMethod<T extends Serializable> implements
 	@Override
 	public String getUserId() {
 		return userId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.communicaton.Method#setUserId(java.lang.String)
+	 */
+	@Override
+	public void setUserId(String userId) {
+		if(userId == null) {
+			throw new NullPointerException("User identifier cant be null");
+		}
+		this.userId = userId;
 	}
 
 	/*
@@ -167,6 +181,26 @@ public abstract class AbstractMethod<T extends Serializable> implements
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see hr.fer.zemris.vhdllab.communicaton.Method#join(hr.fer.zemris.vhdllab.communicaton.Method)
+	 */
+	@Override
+	public void join(Method<T> joinMethod) {
+		if (joinMethod == null) {
+			throw new NullPointerException("Method cant be null");
+		}
+		if(!this.equals(joinMethod)) {
+			throw new IllegalArgumentException("Incompatible methods");
+		}
+		result = joinMethod.getResult();
+		statusCode = joinMethod.getStatusCode();
+		statusMessage = joinMethod.getStatusMessage();
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -174,6 +208,9 @@ public abstract class AbstractMethod<T extends Serializable> implements
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		result = prime * result
+				+ ((parameters == null) ? 0 : parameters.hashCode());
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
 	}
 
@@ -190,11 +227,21 @@ public abstract class AbstractMethod<T extends Serializable> implements
 			return false;
 		if (!(obj instanceof AbstractMethod))
 			return false;
-		final AbstractMethod<?> other = (AbstractMethod<?>) obj;
+		final AbstractMethod other = (AbstractMethod) obj;
 		if (method == null) {
 			if (other.method != null)
 				return false;
 		} else if (!method.equals(other.method))
+			return false;
+		if (parameters == null) {
+			if (other.parameters != null)
+				return false;
+		} else if (!parameters.equals(other.parameters))
+			return false;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
 			return false;
 		return true;
 	}

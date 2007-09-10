@@ -9,10 +9,12 @@ import java.io.Serializable;
  * @param <T>
  * @author Miro Bezjak
  */
-public interface IMethod<T extends Serializable> extends Serializable, MethodConstants {
+public interface Method<T extends Serializable> extends Serializable, MethodConstants {
 
 	String getMethod();
 	
+	void setUserId(String userId);
+
 	String getUserId();
 	
 	Object getParameter(String param);
@@ -31,6 +33,10 @@ public interface IMethod<T extends Serializable> extends Serializable, MethodCon
 	
 	String getStatusMessage();
 
-
-
+	void join(Method<T> method);
+	
+	int hashCode();
+	
+	boolean equals(Object o);
+	
 }

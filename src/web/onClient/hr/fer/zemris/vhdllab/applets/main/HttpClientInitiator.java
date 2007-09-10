@@ -8,7 +8,7 @@ import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.dialogs.login.LoginDialog;
 import hr.fer.zemris.vhdllab.client.dialogs.login.UserCredential;
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
 import hr.fer.zemris.vhdllab.communicaton.methods.GetSessionLengthMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.LogoutMethod;
@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
@@ -127,7 +126,7 @@ public final class HttpClientInitiator implements Initiator {
 	 * A cached user credentials that is automatically used to authenticate a
 	 * user.
 	 */
-	private Credentials credentials;
+	private UsernamePasswordCredentials credentials;
 
 	/**
 	 * A timer for executing a task that saves session.
@@ -366,7 +365,8 @@ public final class HttpClientInitiator implements Initiator {
 			// c.setSecure(false);
 			// }
 			// }
-
+			
+			
 			/*
 			 * Following code is a workaround for a problem with tomcat session
 			 * handling (most likely not a bug but whether it is a feature is
@@ -483,8 +483,7 @@ public final class HttpClientInitiator implements Initiator {
 			UserCredential uc = dialog.getCredentials();
 			String userId = uc.getUsername();
 			String password = uc.getPassword();
-			Credentials c = new UsernamePasswordCredentials(userId, password);
-			credentials = c;
+			credentials = new UsernamePasswordCredentials(userId, password);
 		} else {
 			String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
 			String key = LanguageConstants.DIALOG_LOGIN_CANCELED;
@@ -534,11 +533,11 @@ public final class HttpClientInitiator implements Initiator {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator#initiateCall(hr.fer.zemris.vhdllab.communicaton.IMethod)
 	 */
 	@Override
-	public <T extends Serializable> void initiateCall(IMethod<T> method)
+	public <T extends Serializable> void initiateCall(Method<T> requestMethod)
 			throws UniformAppletException {
 		String url = properties.getProperty(SERVLET_URL);
 		PostMethod postMethod = new PostMethod(url);
-		byte[] requestArray = serializeObject(method);
+		byte[] requestArray = serializeObject(requestMethod);
 		postMethod.setRequestEntity(new ByteArrayRequestEntity(requestArray));
 
 		int status = execute(postMethod, false);
@@ -546,29 +545,42 @@ public final class HttpClientInitiator implements Initiator {
 			postMethod.releaseConnection();
 			authenticate();
 			status = execute(postMethod, false);
+			// reset userId in system context
+			SystemContext.setUserId(credentials.getUserName());
+			// reset userId in request method
+			requestMethod.setUserId(SystemContext.getUserId());
 		}
 		if (status != HttpStatus.SC_OK) {
 			throw new UniformAppletException("Unexpected http status code: "
 					+ status);
 		}
 
-		IMethod<T> returnedMethod = getResult(postMethod);
+		Method<T> responseMethod = getResult(postMethod);
 		postMethod.releaseConnection();
 
-		if (!returnedMethod.getMethod().equals(method.getMethod())) {
-			throw new UniformAppletException();
+		try {
+			requestMethod.join(responseMethod);
+		} catch (IllegalArgumentException e) {
+			throw new UniformAppletException(e);
 		}
-
-		if (returnedMethod.getStatusCode() != MethodConstants.STATUS_OK) {
-			throw new UniformAppletException();
+		if (requestMethod.getStatusCode() != MethodConstants.STATUS_OK) {
+			throw new UniformAppletException("Returned status code is "
+					+ requestMethod.getStatusCode());
 		}
-
-		method.setStatus(returnedMethod.getStatusCode(), returnedMethod
-				.getStatusMessage());
-		method.setResult(returnedMethod.getResult());
 	}
 
-	private <T extends Serializable> byte[] serializeObject(IMethod<T> method)
+	/**
+	 * Serializes a specified method.
+	 * 
+	 * @param <T>
+	 *            a method's result type
+	 * @param method
+	 *            a specified method
+	 * @return serialized method in a form of bytes
+	 * @throws UniformAppletException
+	 *             if any exception occurs (such as IOException)
+	 */
+	private <T extends Serializable> byte[] serializeObject(Method<T> method)
 			throws UniformAppletException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(BYTE_ARRAY_SIZE);
 		ObjectOutputStream oos = null;
@@ -589,14 +601,26 @@ public final class HttpClientInitiator implements Initiator {
 		return bos.toByteArray();
 	}
 
+	/**
+	 * Deserializes a method and returns it.
+	 * 
+	 * @param <T>
+	 *            a method's result type
+	 * @param method
+	 *            a http method from where to extract serialized method
+	 * @return a method
+	 * @throws UniformAppletException
+	 *             if any exception occurs (such as IOException,
+	 *             ClassNotFoundException etc.)
+	 */
 	@SuppressWarnings("unchecked")
-	private <T extends Serializable> IMethod<T> getResult(HttpMethod method)
+	private <T extends Serializable> Method<T> getResult(HttpMethod method)
 			throws UniformAppletException {
 		ObjectInputStream ois = null;
 		try {
 			InputStream is = method.getResponseBodyAsStream();
 			ois = new ObjectInputStream(is);
-			return (IMethod<T>) ois.readObject();
+			return (Method<T>) ois.readObject();
 		} catch (IOException e) {
 			SystemLog.instance().addErrorMessage(e);
 			throw new UniformAppletException(e);

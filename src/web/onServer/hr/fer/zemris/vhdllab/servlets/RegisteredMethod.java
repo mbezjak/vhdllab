@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
 
 import java.io.Serializable;
@@ -27,7 +27,7 @@ public interface RegisteredMethod extends MethodConstants {
 	 *            a http request (used for example to logout a user, return
 	 *            session information etc.)
 	 */
-	public void run(IMethod<Serializable> method, ManagerProvider provider,
+	public void run(Method<Serializable> method, ManagerProvider provider,
 			HttpServletRequest request);
 
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 
 /**
  * This interface defines a way to initiate request to server.
@@ -37,6 +37,6 @@ public interface Initiator {
 	 * @throws UniformAppletException
 	 *             if any king of error occurs
 	 */
-	<T extends Serializable> void initiateCall(IMethod<T> method) throws UniformAppletException;
+	<T extends Serializable> void initiateCall(Method<T> method) throws UniformAppletException;
 
 }

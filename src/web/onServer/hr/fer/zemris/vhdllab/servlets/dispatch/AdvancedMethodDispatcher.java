@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.dispatch;
 
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 import hr.fer.zemris.vhdllab.servlets.MethodDispatcher;
 
@@ -389,7 +389,7 @@ public class AdvancedMethodDispatcher implements MethodDispatcher {
 	 * @see hr.fer.zemris.vhdllab.servlets.MethodDispatcher#preformMethodDispatching(hr.fer.zemris.vhdllab.communicaton.IMethod, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	@Override
-	public void preformMethodDispatching(IMethod<Serializable> method,
+	public void preformMethodDispatching(Method<Serializable> method,
 			ManagerProvider provider, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		

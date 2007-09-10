@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.servlets.dispatch.AdvancedMethodDispatcher;
 
 import java.io.InputStream;
@@ -100,7 +100,7 @@ public class MethodFactory {
 		 * @see hr.fer.zemris.vhdllab.servlets.RegisteredMethod#run(hr.fer.zemris.vhdllab.communicaton.IMethod, hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 		 */
 		@Override
-		public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
+		public void run(Method<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 			MethodDispatcher disp = new AdvancedMethodDispatcher();
 			disp.preformMethodDispatching(method, provider, request);
 		}

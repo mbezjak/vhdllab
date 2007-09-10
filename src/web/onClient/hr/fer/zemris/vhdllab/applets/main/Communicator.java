@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.communicaton.methods.CompileFileMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.CreateFileMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.CreateProjectMethod;
@@ -238,7 +238,7 @@ public class Communicator {
 		SaveFileMethod method = new SaveFileMethod(fileIdentifier, content);
 		initiate(method);
 	}
-	
+
 	public String loadFileContent(String projectName, String fileName)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -246,12 +246,18 @@ public class Communicator {
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
 		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-		if (fileIdentifier == null)
-			throw new UniformAppletException("File (" + fileName + "/"
-					+ projectName + ") does not exists!");
-		LoadFileContentMethod method = new LoadFileContentMethod(fileIdentifier);
-		initiate(method);
-		return method.getResult();
+		if (fileIdentifier == null) {
+			// throw new UniformAppletException("File (" + fileName + "/"
+			// + projectName + ") does not exists!");
+			LoadPredefinedFileContentMethod method = new LoadPredefinedFileContentMethod(fileName);
+			initiate(method);
+			return method.getResult();
+		} else {
+			LoadFileContentMethod method = new LoadFileContentMethod(
+					fileIdentifier);
+			initiate(method);
+			return method.getResult();
+		}
 	}
 
 	public String loadPredefinedFileContent(String fileName)
@@ -404,7 +410,7 @@ public class Communicator {
 		UserPreferences.instance().init(properties);
 	}
 
-	private void initiate(IMethod<? extends Serializable> method)
+	private void initiate(Method<? extends Serializable> method)
 			throws UniformAppletException {
 		initiator.initiateCall(method);
 	}

@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 
 import java.io.Serializable;
 
@@ -19,7 +19,7 @@ public interface MethodDispatcher {
 	 * @param method a method that will be processed
 	 * @param provider a manager provider
 	 */
-	public void preformMethodDispatching(IMethod<Serializable> method,
+	public void preformMethodDispatching(Method<Serializable> method,
 						ManagerProvider provider, HttpServletRequest request);
 	
 }

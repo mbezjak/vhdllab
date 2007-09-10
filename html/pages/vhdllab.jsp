@@ -15,22 +15,6 @@
 </head>
 <body onunload="javascript:exitApplication();">
   <div>
-  	<%
-	Enumeration e = request.getHeaderNames();
-	while(e.hasMoreElements()) {
-		String h = (String) e.nextElement();
-		System.out.println("header " + h + "=" +request.getHeader(h));
-	}
-	System.out.println(request.getRequestedSessionId());
-	System.out.println(session.getId());
-	System.out.println(request.getRequestedSessionId());
-	Cookie[] cs = request.getCookies();
-	if(cs != null) {
-	for(Cookie c : cs) {
-		System.out.println(c.getName() + "/" + c.getValue());
-	}
-	}
-  	%>
   	<jsp:plugin code="hr.fer.zemris.vhdllab.applets.main.MainApplet"
   				archive="vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils-1.7.0.jar,commons-digester-1.7.jar,commons-codec-1.3.jar,commons-httpclient-3.0.1.jar"
   				type="applet" width="100%" height="100%" jreversion="1.6" name="vhdllab">

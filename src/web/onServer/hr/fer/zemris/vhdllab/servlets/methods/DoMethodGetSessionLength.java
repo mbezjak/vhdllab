@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
 
@@ -24,7 +24,7 @@ public class DoMethodGetSessionLength extends AbstractRegisteredMethod {
 	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	@Override
-	public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
+	public void run(Method<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 		int interval = request.getSession().getMaxInactiveInterval();
 		method.setResult(Integer.valueOf(interval));
 	}

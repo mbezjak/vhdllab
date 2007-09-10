@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.ajax.shared.MethodConstants;
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
@@ -27,7 +27,7 @@ public class DoMethodCreateProject extends AbstractRegisteredMethod {
 	 *      hr.fer.zemris.vhdllab.servlets.ManagerProvider)
 	 */
 	@Override
-	public void run(IMethod<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
+	public void run(Method<Serializable> method, ManagerProvider provider, HttpServletRequest request) {
 		VHDLLabManager labman = getVHDLLabManager(provider);
 		String projectName = method.getParameter(String.class,
 				PROP_PROJECT_NAME);

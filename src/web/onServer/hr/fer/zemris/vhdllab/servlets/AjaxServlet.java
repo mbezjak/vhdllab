@@ -1,9 +1,10 @@
 package hr.fer.zemris.vhdllab.servlets;
 
-import hr.fer.zemris.vhdllab.communicaton.IMethod;
+import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.communicaton.MethodConstants;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -13,84 +14,164 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 /**
- * Servlet which responses to AJAX calls.
+ * A main vhdllab servlet. One that processes all {@link Method}s.
  * 
  * @author Miro Bezjak
  */
 public class AjaxServlet extends HttpServlet {
-	
+
+	private static final long serialVersionUID = 1L;
+
 	/**
-	 * Serial version ID.
+	 * A logger instance.
 	 */
-	private static final long serialVersionUID = -8488801764777289854L;
-	
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	private static final Logger LOG = Logger.getLogger(AjaxServlet.class);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		request.getSession().setMaxInactiveInterval(15);
-//		System.out.println(request.getRequestedSessionId());
-//		System.out.println(request.getSession().getId());
-//		System.out.println("host=" + request.getRemoteHost());
-//		System.out.println("user=" + request.getRemoteUser());
-//		System.out.println("principal=" + request.getUserPrincipal());
-//		Cookie[] cookies = request.getCookies();
-//		if(cookies == null) {
-//			System.out.println("nista od cookie-a");
-//		} else {
-//			for(Cookie c : cookies) {
-//				System.out.println("name=" + c.getName() + "/value=" + c.getValue() + "%%" +c.getMaxAge());
-//			}
-//		}
-//		Enumeration en = request.getHeaderNames();
-//		while(en.hasMoreElements()) {
-//			String header = (String) en.nextElement();
-//			System.out.println(header + "=" + request.getHeader(header));
-//		}
-		ObjectInputStream ois = new ObjectInputStream(request.getInputStream());
-		IMethod<Serializable> method;
-		try {
-			method = (IMethod<Serializable>) ois.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return;
-		} finally {
-			ois.close();
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		String remoteUser = request.getRemoteUser();
+		if (remoteUser == null) {
+			LOG.fatal("Current security implementation can't work without "
+					+ "user authentication and session tracking!");
+			throw new ServletException(
+					"Security implementation cant work with no remote user");
 		}
-		ManagerProvider provider = (ManagerProvider)this.getServletContext().getAttribute("managerProvider");
-		
-		RegisteredMethod regMethod = MethodFactory.getMethod(method.getMethod());
-		if(regMethod == null) {
-			method.setStatus(MethodConstants.SE_INVALID_METHOD_CALL);
-		} else {
-			try {
-				regMethod.run(method, provider, request);
-			} catch (SecurityException e) {
-				e.printStackTrace();
-				method.setStatus(MethodConstants.SE_NO_PERMISSION);
-			} catch (Throwable e) {
-				e.printStackTrace();
-				method.setStatus(MethodConstants.SE_INTERNAL_SERVER_ERROR);
+		Method<Serializable> method = deserializeObject(request);
+		if (method == null) {
+			/*
+			 * Since error occurred during deserialization there could not be
+			 * any valid respose so simply response that user sent a bad request
+			 * (such that could not be deserialized).
+			 * 
+			 * Note that error during deserialization could also mean external
+			 * tempering (trying to modify bytes of serialized method) and
+			 * trying to break security of this servlet.
+			 */
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+		if (!isSecurityValid(method, request)) {
+			/*
+			 * This means that user is trying to perform action as one user
+			 * while he is logged as another. This could mean that he is trying
+			 * to break security of this servlet.
+			 */
+			if (LOG.isEnabledFor(Level.WARN)) {
+				LOG.warn("Possible security issue caused by user: "
+						+ remoteUser
+						+ ". He signed a request method with userId: "
+						+ method.getUserId());
 			}
+			method.setStatus(Method.SE_NO_PERMISSION);
+			returnResponse(method, request, response);
+		}
+
+		ManagerProvider provider = (ManagerProvider) getServletContext()
+				.getAttribute("managerProvider");
+		RegisteredMethod regMethod = MethodFactory
+				.getMethod(method.getMethod());
+		if (regMethod == null) {
+			// TODO tu jos treba separirat metode koji obicni korisnik smije
+			// obavit i one koje samo admin moze. Npr. delete.global.file smije
+			// samo admin. To napravit preko request.isUserInRole metode
+			if (LOG.isEnabledFor(Level.WARN)) {
+				LOG.warn("A user (" + remoteUser
+						+ ") requested inexistent method ("
+						+ method.getMethod() + ")");
+			}
+			method.setStatus(MethodConstants.SE_INVALID_METHOD_CALL);
+			returnResponse(method, request, response);
+		}
+
+		try {
+			regMethod.run(method, provider, request);
+		} catch (SecurityException e) {
+			/*
+			 * This indicates for example that a user tried to delete a file
+			 * that belongs to another user.
+			 */
+			if (LOG.isEnabledFor(Level.WARN)) {
+				LOG.warn("A user (" + remoteUser
+						+ ") tried to manipulate with "
+						+ "a resource that does not belong to him", e);
+			}
+			method.setStatus(MethodConstants.SE_NO_PERMISSION);
+		} catch (RuntimeException e) {
+			if (LOG.isEnabledFor(Level.WARN)) {
+				LOG.warn("An unknow exception occurred", e);
+			}
+			method.setStatus(MethodConstants.SE_INTERNAL_SERVER_ERROR);
 		}
 		returnResponse(method, request, response);
 	}
-	
+
+	/**
+	 * @param method
+	 * @param request
+	 * @return
+	 */
+	private boolean isSecurityValid(Method<Serializable> method,
+			HttpServletRequest request) {
+		return method.getUserId().equals(request.getRemoteUser());
+	}
+
+	/**
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unchecked")
+	private Method<Serializable> deserializeObject(HttpServletRequest request)
+			throws IOException {
+		InputStream is = request.getInputStream();
+		ObjectInputStream ois = new ObjectInputStream(is);
+		try {
+			return (Method<Serializable>) ois.readObject();
+		} catch (ClassNotFoundException e) {
+			LOG.error("Possible security issue caused by user: "
+					+ request.getRemoteUser(), e);
+			return null;
+		} catch (ClassCastException e) {
+			LOG.error("Possible security issue caused by user: "
+					+ request.getRemoteUser(), e);
+			return null;
+		} finally {
+			ois.close();
+		}
+	}
+
 	/**
 	 * This method is called to actually send the results back to the caller.
-	 * @param method a method to send
-	 * @param request http servlet request
-	 * @param response http servlet response
-	 * @throws IOException if method can not send results
+	 * 
+	 * @param method
+	 *            a method to send
+	 * @param request
+	 *            http servlet request
+	 * @param response
+	 *            http servlet response
+	 * @throws IOException
+	 *             if method can not send results
 	 */
-	private void returnResponse(IMethod<Serializable> method, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void returnResponse(Method<Serializable> method,
+			HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		response.setContentType("application/octet-stream");
-		response.setHeader("Cache-Control","no-cache");
-		ObjectOutputStream oos = new ObjectOutputStream(response.getOutputStream());
+		response.setHeader("Cache-Control", "no-cache");
+		ObjectOutputStream oos = new ObjectOutputStream(response
+				.getOutputStream());
 		oos.writeObject(method);
 		oos.flush();
 	}
-	
+
 }
