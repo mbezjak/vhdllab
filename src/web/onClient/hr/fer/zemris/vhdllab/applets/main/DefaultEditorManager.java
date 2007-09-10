@@ -297,36 +297,17 @@ public class DefaultEditorManager implements IEditorManager {
 		saveEditors(editorsToSave);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#saveEditorExplicitly(hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor)
+	 */
 	public void saveEditorExplicitly(IEditor editor) {
 		if (editor == null) {
 			throw new NullPointerException("Editor cant be null");
 		}
-		// TODO ovaj dio koda se treba nekako unificirat s saveEditors metodom!
-		IComponentIdentifier<?> id = getIdentifierFor(editor);
-		EditorProperties ep = conf.getEditorProperties(id);
-		if (ep.getExplicitSaveValue()) {
-			String clazz = ep.getExplicitSaveClass();
-			IExplicitSave saveClass;
-			try {
-				Class<?> c = Class.forName(clazz);
-				if (c == null) {
-					return;
-				}
-				saveClass = (IExplicitSave) c.newInstance();
-			} catch (Exception e) {
-				throw new IllegalStateException(
-						"Cant instantiate explicit save class", e);
-			}
-			try {
-				saveClass.save(editor, container);
-			} catch (UniformAppletException e) {
-				String text = bundle
-						.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
-				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { editor.getFileName() });
-				echoStatusText(text, MessageType.ERROR);
-				return;
-			}
+		boolean saved = saveEditorImpl(editor, true);
+		if (saved) {
 			IComponentIdentifier<?> peIdentifier = ComponentIdentifierFactory
 					.createProjectExplorerIdentifier();
 			if (container.getViewManager().isViewOpened(peIdentifier)) {
@@ -365,29 +346,12 @@ public class DefaultEditorManager implements IEditorManager {
 		List<IEditor> savedEditors = new ArrayList<IEditor>();
 		List<String> projects = new ArrayList<String>();
 		for (IEditor editor : editorsToSave) {
-			if (editor.isSavable() && editor.isModified()) {
-				String fileName = editor.getFileName();
-				String projectName = editor.getProjectName();
-				String content = editor.getData();
-				if (content == null)
-					continue;
+			boolean saved = saveEditorImpl(editor, false);
+			if (saved) {
 				savedEditors.add(editor);
+				String projectName = editor.getProjectName();
 				if (!projects.contains(projectName)) {
 					projects.add(projectName);
-				}
-				try {
-					resourceManager.saveFile(projectName, fileName, content);
-				} catch (UniformAppletException e) {
-					String text = bundle
-							.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
-					text = PlaceholderUtil.replacePlaceholders(text,
-							new String[] { fileName });
-					echoStatusText(text, MessageType.ERROR);
-					return;
-				}
-				if (isEditorOpened(editor)) {
-					IComponentIdentifier<?> identifier = getIdentifierFor(editor);
-					resetEditorTitle(false, identifier);
 				}
 			}
 		}
@@ -410,6 +374,76 @@ public class DefaultEditorManager implements IEditorManager {
 					new String[] { numberOfFiles });
 			echoStatusText(text, MessageType.SUCCESSFUL);
 		}
+	}
+
+	/**
+	 * This is an actual implementation of saveEditor method. Returns
+	 * <code>true</code> if editor has been saved or <code>false</code>
+	 * otherwise.
+	 * 
+	 * @param editor
+	 *            an editor to save
+	 * @param tryExplicitly
+	 *            <code>true</code> if this method should try to save an
+	 *            editor explicitly if it is not savable
+	 * @return <code>true</code> if editor has been saved; <code>false</code>
+	 *         otherwise
+	 * @throws IllegalStateException
+	 *             if editor's explicit save class can't be instantiated
+	 */
+	private boolean saveEditorImpl(IEditor editor, boolean tryExplicitly) {
+		if (editor.isSavable() && editor.isModified()) {
+			String fileName = editor.getFileName();
+			String projectName = editor.getProjectName();
+			String content = editor.getData();
+			if (content == null) {
+				return false;
+			}
+			try {
+				resourceManager.saveFile(projectName, fileName, content);
+			} catch (UniformAppletException e) {
+				String text = bundle
+						.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+				text = PlaceholderUtil.replacePlaceholders(text,
+						new String[] { fileName });
+				echoStatusText(text, MessageType.ERROR);
+				return false;
+			}
+			if (isEditorOpened(editor)) {
+				IComponentIdentifier<?> identifier = getIdentifierFor(editor);
+				resetEditorTitle(false, identifier);
+			}
+			return true;
+		} else if (tryExplicitly) {
+			IComponentIdentifier<?> id = getIdentifierFor(editor);
+			EditorProperties ep = conf.getEditorProperties(id);
+			if (ep.getExplicitSaveValue()) {
+				String clazz = ep.getExplicitSaveClass();
+				IExplicitSave saveClass;
+				try {
+					Class<?> c = Class.forName(clazz);
+					if (c == null) {
+						return false;
+					}
+					saveClass = (IExplicitSave) c.newInstance();
+				} catch (Exception e) {
+					throw new IllegalStateException(
+							"Cant instantiate explicit save class", e);
+				}
+				try {
+					saveClass.save(editor, container);
+				} catch (UniformAppletException e) {
+					String text = bundle
+							.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
+					text = PlaceholderUtil.replacePlaceholders(text,
+							new String[] { editor.getFileName() });
+					echoStatusText(text, MessageType.ERROR);
+					return false;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/*

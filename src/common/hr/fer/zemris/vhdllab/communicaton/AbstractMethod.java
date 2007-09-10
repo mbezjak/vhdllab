@@ -227,7 +227,7 @@ public abstract class AbstractMethod<T extends Serializable> implements
 			return false;
 		if (!(obj instanceof AbstractMethod))
 			return false;
-		final AbstractMethod other = (AbstractMethod) obj;
+		final AbstractMethod<?> other = (AbstractMethod<?>) obj;
 		if (method == null) {
 			if (other.method != null)
 				return false;
