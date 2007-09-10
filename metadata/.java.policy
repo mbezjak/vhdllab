@@ -1,5 +1,5 @@
 grant codeBase "http://@@vhdllab.server@@:@@http.port@@/@@vhdllab.name@@/-" {
   permission java.util.PropertyPermission "org.apache.commons.logging.LogFactory.HashtableImpl", "read";
-};grant codeBase "http://@@vhdllab.server@@:@@https.port@@/@@vhdllab.name@@/-" {
+};grant codeBase "https://@@vhdllab.server@@:@@https.port@@/@@vhdllab.name@@/-" {
   permission java.util.PropertyPermission "org.apache.commons.logging.LogFactory.HashtableImpl", "read";
 };

@@ -47,6 +47,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.security.AccessControlException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,7 +123,6 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 
 	private Communicator communicator;
 	private Initiator initiator;
-
 
 	/*
 	 * (non-Javadoc)
@@ -283,6 +283,11 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			componentStorage = new DefaultComponentStorage(this);
 			bundle = ResourceBundleProvider
 					.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		} catch (AccessControlException e) {
+			e.printStackTrace();
+			return;
+			// TODO ovo treba malo modificirat i rec da se applet nemoze dignut
+			// ako nije .java.policy na svojem mjestu
 		} catch (Throwable e) {
 			// TODO ovo se treba maknut kad MainApplet vise nece bit u
 			// development fazi
@@ -740,8 +745,8 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 					}
 					ComponentGroup group = getComponentGroup(c);
 					if (group.equals(ComponentGroup.EDITOR)) {
-						systemContainer.getEditorManager().saveEditorExplicitly(
-								(IEditor) c);
+						systemContainer.getEditorManager()
+								.saveEditorExplicitly((IEditor) c);
 					}
 				}
 			});

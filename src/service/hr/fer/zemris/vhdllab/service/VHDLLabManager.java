@@ -504,6 +504,19 @@ public interface VHDLLabManager {
 			throws ServiceException;
 
 	/**
+	 * Returns <code>true</code> if specified predefined file exists or
+	 * <code>false</code> otherwise.
+	 * 
+	 * @param fileName
+	 *            a name specifying a file
+	 * @return <code>true</code> if specified predefined file exists;
+	 *         <code>false</code> otherwise
+	 * @throws ServiceException
+	 *             if any exception occurs (such as {@linkplain DAOException})
+	 */
+	boolean existsPredefinedFile(String fileName) throws ServiceException;
+
+	/**
 	 * Use this method to compile specified file.
 	 * 
 	 * @param file

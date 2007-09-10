@@ -100,6 +100,16 @@
 	  <replacefilter token="@@app.homepage@@" property="app.homepage"/>
   	</replace>
   	
+  	<replace dir="${local.dir}/web" propertyfile="${configuration.properties}">
+  	  <replacefilter token="@@app.name@@" property="app.name"/>
+	  <replacefilter token="@@app.host@@" property="app.host"/>
+	  <replacefilter token="@@http.port@@" property="http.port"/>
+	  <replacefilter token="@@https.port@@" property="https.port"/>
+	  <replacefilter token="@@app.communication.protocol@@" property="app.communication.protocol"/>
+	  <replacefilter token="@@app.communication.port@@" property="app.communication.port"/>
+	  <replacefilter token="@@app.homepage@@" property="app.homepage"/>
+  	</replace>
+  	
   	<copy todir="${build.dir}">
   	  <fileset file="${local.dir}/log4j.properties"/>
   	</copy>
@@ -445,11 +455,11 @@
   <target name="tomcat" depends="package">
   	<fail unless="tomcat.dir">Tomcat directory not set! Edit this information in configuration.properties file.
   	</fail>
-  	<property name="tomcat.app.dir" value="${tomcat.dir}${file.separator}webapps${file.separator}${app.name}"/>
+  	<property name="tomcat.app.dir" value="${tomcat.dir}/webapps/${app.name}"/>
   	<mkdir dir="${tomcat.app.dir}"/>
-  	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF"/>
-  	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}lib"/>
-  	<mkdir dir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}classes"/>
+  	<mkdir dir="${tomcat.app.dir}/WEB-INF"/>
+  	<mkdir dir="${tomcat.app.dir}/WEB-INF/lib"/>
+  	<mkdir dir="${tomcat.app.dir}/WEB-INF/classes"/>
   	
     <copy todir="${tomcat.app.dir}" overwrite="true">
       <fileset file="${basedir}/html/*"/>
@@ -466,11 +476,11 @@
       <fileset file="${basedir}/${local.dir}/.java.policy"/>
     </copy>
   	
-    <copy todir="${tomcat.app.dir}${file.separator}WEB-INF" overwrite="true">
-      <fileset dir="${basedir}/metadata/web"/>
+    <copy todir="${tomcat.app.dir}/WEB-INF" overwrite="true">
+      <fileset dir="${basedir}/local/web"/>
     </copy>
 
-  	<copy todir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}lib" overwrite="true">
+  	<copy todir="${tomcat.app.dir}/WEB-INF/lib" overwrite="true">
       <fileset file="${basedir}/${jlib.dir}/${app.name}-dao.jar"/>
       <fileset file="${basedir}/${jlib.dir}/${app.name}-service.jar"/>
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onServer.jar"/>
@@ -480,7 +490,7 @@
       <fileset file="${basedir}/${lib.dir}/xdoclet/*.*"/>
     </copy>
   	
-  	<copy todir="${tomcat.app.dir}${file.separator}WEB-INF${file.separator}classes" overwrite="true">
+  	<copy todir="${tomcat.app.dir}/WEB-INF/classes" overwrite="true">
   	  <fileset file="${local.dir}/log4j.properties"/>
   	</copy>
   	

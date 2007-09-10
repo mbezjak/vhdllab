@@ -61,7 +61,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 
 	public VHDLLabManagerImpl() {
 	}
-	
+
 	public CompilationResult compile(File file) throws ServiceException {
 		List<File> deps = extractDependencies(file);
 		List<File> otherFiles = new ArrayList<File>();
@@ -213,8 +213,10 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			throw new ServiceException(e.getMessage(), e);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#existsFile(java.lang.Long)
 	 */
 	@Override
@@ -223,7 +225,7 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			return fileDAO.exists(fileId);
 		} catch (DAOException e) {
 			e.printStackTrace();
-			throw new ServiceException(e.getMessage(), e);		
+			throw new ServiceException(e.getMessage(), e);
 		}
 	}
 
@@ -691,9 +693,12 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			throw new ServiceException(e.getMessage(), e);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#renameUserFile(java.lang.Long, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#renameUserFile(java.lang.Long,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void renameUserFile(Long fileId, String newName)
@@ -740,14 +745,34 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 				throw new ServiceException("Can not read properties file.");
 			}
 			String predefDir = p.getProperty("predefined.files.tmpDir");
-			String pathToFile = FileUtil.mergePaths(predefDir, fileName + ".vhdl");
+			String pathToFile = FileUtil.mergePaths(predefDir, fileName
+					+ ".vhdl");
 			f.setContent(FileUtil.readFile(pathToFile));
 		}
 		return f;
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#saveErrorMessage(java.lang.String, java.lang.String)
+	public boolean existsPredefinedFile(String fileName) throws ServiceException {
+		if (fileName == null) {
+			throw new ServiceException("File name can not be null.");
+		}
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(
+				"predefinedFiles.properties");
+		Properties p = FileUtil.getProperties(is);
+		if (p == null) {
+			throw new ServiceException("Can not read properties file.");
+		}
+		String predefDir = p.getProperty("predefined.files.tmpDir");
+		String pathToFile = FileUtil.mergePaths(predefDir, fileName + ".vhdl");
+		java.io.File file = new java.io.File(pathToFile);
+		return file.exists();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.service.VHDLLabManager#saveErrorMessage(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public void saveErrorMessage(String userId, String content)
 			throws ServiceException {
