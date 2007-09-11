@@ -160,7 +160,7 @@ public final class HttpClientInitiator implements Initiator {
 		 * Once registerProtocol method is enabled you must enable documented
 		 * bug workaround in authenticate method!
 		 */
-		// registerProtocol();
+		registerProtocol();
 		initHttpClient();
 		if (!isSessionValid()) {
 			authenticate();
@@ -360,13 +360,12 @@ public final class HttpClientInitiator implements Initiator {
 			 * disabled. When enabling registerProtocol method you must enable
 			 * this code aswell!
 			 */
-			// for (Cookie c : cookies) {
-			// if (c.getName().equals(COOKIE_NAME)) {
-			// c.setSecure(false);
-			// }
-			// }
-			
-			
+			for (Cookie c : cookies) {
+				if (c.getName().equals(COOKIE_NAME)) {
+					c.setSecure(false);
+				}
+			}
+
 			/*
 			 * Following code is a workaround for a problem with tomcat session
 			 * handling (most likely not a bug but whether it is a feature is
