@@ -30,6 +30,8 @@ public abstract class ParameterSetterPanel<T> extends JPanel {
 	
 	
 	/* methods */
+	
+	public abstract void setToValue(T value);
 
 	public abstract T getNewValue();
 	

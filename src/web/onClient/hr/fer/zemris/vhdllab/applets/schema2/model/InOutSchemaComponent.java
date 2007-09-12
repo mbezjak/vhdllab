@@ -25,8 +25,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.drawers.InOutComponentDrawer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.InOutPortChanger;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.Orientation;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.ParamPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
@@ -119,6 +121,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	private static final String STD_LOGIC_OUT = "Output_scalar";
 	private static final String STD_LOGIC_VECTOR_IN = "Input_vector";
 	private static final String STD_LOGIC_VECTOR_OUT = "Output_vector";
+	public static final String KEY_PORT = "InOutPort";
 	public static final int WIDTH = Constants.GRID_SIZE * 8;
 	public static final int HEIGHT_PER_PORT = Constants.GRID_SIZE * 2;
 	public static final int EDGE_OFFSET = Constants.GRID_SIZE * 2;
@@ -145,7 +148,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		
 		setComponentTypeName();
 		initDefaultParameters();
-		buildSchemaPorts();
+		rebuildSchemaPorts();
 		initDrawer();
 	}
 	
@@ -169,7 +172,10 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		}
 	}
 
-	private void buildSchemaPorts() {
+	public void rebuildSchemaPorts() {
+		schemaports.clear();
+		portrel.relatedTo.clear();
+		
 		Type tp = portrel.port.getType();
 		Direction dir = portrel.port.getDirection();
 		if (dir.equals(Direction.IN)) {
@@ -257,6 +263,10 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		parameters.addParameter(orientpar);
 		
 		// default parameter - component port
+		GenericParameter<ParamPort> portpar = 
+			new GenericParameter<ParamPort>(KEY_PORT, false, new ParamPort(portrel.port));
+		portpar.setParameterEvent(new InOutPortChanger());
+		parameters.addParameter(portpar);
 	}
 	
 	private void initDrawer(String drawerName) {
@@ -302,6 +312,14 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	
 	
 	/* methods */
+	
+	public Port getPort() {
+		return portrel.port;
+	}
+	
+	public void setPort(Port p) {
+		portrel.port = p;
+	}
 
 	public ISchemaComponent copyCtor() {
 		InOutSchemaComponent inout = new InOutSchemaComponent();
@@ -457,7 +475,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		if (index != 0) throw new IndexOutOfBoundsException();
 		schemaports.clear();
 		portrel.port = port;
-		buildSchemaPorts();
+		rebuildSchemaPorts();
 	}
 
 	public int portCount() {

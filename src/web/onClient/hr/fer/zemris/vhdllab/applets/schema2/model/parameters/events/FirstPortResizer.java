@@ -13,6 +13,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -31,7 +32,11 @@ import java.util.List;
 public class FirstPortResizer implements IParameterEvent {
 	
 	/* static fields */
-	
+	private static final List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
+	private static final List<ChangeTuple> ro_ch = Collections.unmodifiableList(changes);
+	{
+		changes.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
+	}
 	
 
 	/* private fields */
@@ -54,11 +59,7 @@ public class FirstPortResizer implements IParameterEvent {
 	}
 
 	public List<ChangeTuple> getChanges() {
-		List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
-		
-		changes.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
-		
-		return changes;
+		return ro_ch;
 	}
 
 	public boolean isUndoable() {
