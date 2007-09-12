@@ -38,7 +38,7 @@ public class Aplet extends AbstractEditor implements IWizard {
 	private static final long serialVersionUID = -1L;
 	
 	JPanel panel = new JPanel();
-	Platno2 in_panel= new Platno2();
+	Platno2 in_panel= new Platno2(this);
 	JScrollPane scrol = new JScrollPane(in_panel);
 	private String data="";
 	String elementGrafa="pozadina";

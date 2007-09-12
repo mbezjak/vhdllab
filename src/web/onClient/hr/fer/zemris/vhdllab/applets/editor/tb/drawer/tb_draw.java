@@ -34,7 +34,7 @@ import javax.swing.event.ChangeListener;
 	
 		boolean a =true;
 		JPanel panel = new JPanel();
-		Platno2 in_panel= new Platno2();
+		Platno2 in_panel= new Platno2(null);
 		JScrollPane scrol = new JScrollPane(in_panel);
 		private String data="";
 		String elementGrafa="pozadina";

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.Color;
@@ -35,9 +36,11 @@ public class Platno2 extends JComponent {
 	int polozaj=0;
 	int it=0;
 	boolean prvoCrtanje=true;
+	private IEditor editor;
 	
-	public Platno2(){
+	public Platno2(IEditor editor){
 		super();
+		this.editor = editor;
 		this.addMouseListener(new MouseListener(){
 
 			public void mouseClicked(MouseEvent arg0) {
@@ -605,7 +608,7 @@ public class Platno2 extends JComponent {
 			}
 			//TODO nacrtaj_sve(); 
 			repaint();
-		
+			editor.setModified(true);
 		}
 		
 		
