@@ -14,7 +14,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.CPToolbar;
-import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.ComponentToAddToolbar;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.TabbedCTAddToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
@@ -76,7 +76,7 @@ public class SchemaMainPanel extends AbstractEditor {
 	private CanvasToolbar canTool;
 	private ILocalGuiController localGUIController;
 	private CPToolbar componentPropertyToolbar;
-	private ComponentToAddToolbar componentToAddToolbar;
+	private TabbedCTAddToolbar componentToAddToolbar;
 
 	/* IEditor private fields */
 	private VetoableResourceListener appletListener;
@@ -213,7 +213,7 @@ public class SchemaMainPanel extends AbstractEditor {
 		this.setLayout(new BorderLayout());
 
 		componentPropertyToolbar = new CPToolbar(localGUIController, controller);
-		componentToAddToolbar = new ComponentToAddToolbar(controller,
+		componentToAddToolbar = new TabbedCTAddToolbar(controller,
 				localGUIController);
 
 		controller.addListener(EPropertyChange.CANVAS_CHANGE, canvas);
@@ -348,9 +348,9 @@ public class SchemaMainPanel extends AbstractEditor {
 
 			core.setSchemaInfo(sd.deserializeSchema(stread));
 		}
-		
+
 		initPrototypes();
-		
+
 		appletListener = new VetoableResourceAdapter() {
 			@Override
 			public void resourceSaved(String projectName, String fileName) {
