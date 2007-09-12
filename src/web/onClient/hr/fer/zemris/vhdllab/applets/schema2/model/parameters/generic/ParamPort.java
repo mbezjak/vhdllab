@@ -86,9 +86,11 @@ public class ParamPort implements IGenericValue {
 		pw.setName(sf[0]);
 		pw.setDirection(sf[1]);
 		pw.setType(sf[2]);
-		pw.setVectorAscension(sf[3]);
-		pw.setLowerBound(sf[4]);
-		pw.setUpperBound(sf[5]);
+		if (sf[2].equalsIgnoreCase("std_logic_vector")) {
+			pw.setVectorAscension(sf[3]);
+			pw.setLowerBound(sf[4]);
+			pw.setUpperBound(sf[5]);
+		}
 		
 		return pw;
 	}

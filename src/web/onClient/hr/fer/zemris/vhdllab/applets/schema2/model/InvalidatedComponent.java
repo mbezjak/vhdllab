@@ -129,6 +129,9 @@ public class InvalidatedComponent implements ISchemaComponent {
 		width = compwrap.getWidth();
 		height = compwrap.getHeight();
 		
+		// drawer
+		drawer = new InvalidatedDrawer(this);
+		
 		// parameters
 		deserializeParams(compwrap.getParamWrappers());
 		

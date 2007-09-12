@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummySystemContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
-import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.CustomDialogs;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
@@ -15,6 +14,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.InspectWalkability;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.SmartConnect;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.misc.WalkabilityMap;
+import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -24,6 +24,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.swing.JFrame;
@@ -154,7 +155,9 @@ public class Tester {
 			
 			f.setContent(writer.toString());
 			CircuitInterface ci = sciextract.extractCircuitInterface(f);
-			ci.equals(null);
+
+			SchemaDeserializer ds = new SchemaDeserializer();
+			ds.deserializeSchema(new StringReader(writer.toString()));
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

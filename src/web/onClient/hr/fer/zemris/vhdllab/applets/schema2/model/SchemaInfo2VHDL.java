@@ -1,10 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema2.model;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IVHDLSegmentProvider;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
@@ -34,6 +37,8 @@ public class SchemaInfo2VHDL {
 	 * @return
 	 */
 	public String generateVHDL(ISchemaInfo schemaInfo) {
+		if (!isValid(schemaInfo)) return null;
+		
 		sb = new StringBuilder();
 		info = schemaInfo;
 		circint = info.getEntity().getCircuitInterface(schemaInfo);
@@ -45,6 +50,28 @@ public class SchemaInfo2VHDL {
 		return sb.toString();
 	}
 	
+	private boolean isValid(ISchemaInfo info) {
+		for (PlacedComponent plc : info.getComponents()) {
+			// find invalidated components
+			if (plc.comp.isInvalidated()) return false;
+			
+			// check if inout
+			if (plc.comp.getComponentType().equals(EComponentType.IN_OUT)) continue;
+			
+			// find empty ports with IN direction
+			for (int i = 0, sz = plc.comp.schemaPortCount(); i < sz; i++) {
+				SchemaPort sp = plc.comp.getSchemaPort(i);
+				Caseless mapping = sp.getMapping();
+				if (Caseless.isNullOrEmpty(mapping)) {
+					Port p = plc.comp.getPort(sp.getPortindex());
+					if (p.getDirection().isIN()) return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+
 	private void appendHeader() {
 		sb.append("library ieee;\nuse ieee.std_logic_1164.all;\n\n");
 	}
