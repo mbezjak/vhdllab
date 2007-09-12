@@ -42,11 +42,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.lang.reflect.InvocationTargetException;
 import java.security.AccessControlException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -72,8 +76,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
  * Main applet is a container for all other modules. This is where all the GUI
@@ -92,18 +94,16 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	private static final String USER_ID = "userId";
 	private static final String SESSION_ID = "sessionId";
 
+	private boolean initialized = false;
+
 	private ISystemContainer systemContainer;
-	private ResourceBundle bundle;
 
 	/* COMPONENT CONTAINER PRIVATE FIELDS */
 	private Map<JComponent, ComponentInformation> components;
 	private Map<ComponentGroup, JComponent> selectedComponentsByGroup;
 	private JComponent selectedComponent;
 
-	private JTabbedPane centerTabbedPane;
-	private JTabbedPane bottomTabbedPane;
-	private JTabbedPane leftTabbedPane;
-	private JTabbedPane rightTabbedPane;
+	private Map<ComponentPlacement, JTabbedPane> tabbedContainers;
 	private IStatusBar statusBar;
 	private JToolBar toolBar;
 
@@ -112,7 +112,7 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	private JSplitPane sideBarSplitPane;
 
 	private JPanel centerPanel;
-	private JPanel normalCenterPanel;
+	private JComponent normalCenterPanel;
 	private Container parentOfMaximizedComponent = null;
 
 	private About about;
@@ -131,22 +131,360 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	 */
 	@Override
 	public void init() {
-		// this method is sometimes invoked by EventDispatchThread!
-		if (SwingUtilities.isEventDispatchThread()) {
-			initSystem();
-		} else {
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						initSystem();
-					}
-				});
-			} catch (Exception ignored) {
-				ignored.printStackTrace();
-				throw new IllegalStateException();
+		Thread initThread = new Thread(new Runnable() {
+			private DefaultResourceManager resourceManager;
+
+			@Override
+			public void run() {
+				try {
+					// SwingUtilities.invokeAndWait(new Runnable() {
+					// @Override
+					// public void run() {
+					// initSystem();
+					// }
+					// });
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							setupGlassPane();
+							getGlassPane().setVisible(true);
+							initBasicGUI();
+							setPaneSize();
+						}
+					});
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_START);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.INFORMATION);
+						}
+					});
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							setFrameOwner();
+							components = new HashMap<JComponent, ComponentInformation>();
+							selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_INITIATOR);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.INFORMATION);
+						}
+					});
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							String sessionId = getParameter(SESSION_ID);
+							SystemContext.setUserId(getParameter(USER_ID));
+							initiator = new HttpClientInitiator(sessionId);
+							try {
+								initiator.init();
+							} catch (UniformAppletException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_DONE);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.SUCCESSFUL);
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_COMMUNICATOR);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.INFORMATION);
+						}
+					});
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							communicator = new Communicator(initiator);
+							try {
+								communicator.init(); // also initializes
+								// UserPreferences
+							} catch (UniformAppletException e) {
+								e.printStackTrace();
+							}
+							try {
+								/*
+								 * It appears that some browsers, once page that
+								 * presents this applet is closed (i.e. a tab in
+								 * a browser), doesn't shutdown JVM (that
+								 * contained this applet) but rather just
+								 * dispose of this applet (this class). This
+								 * class has no problem with this (init and
+								 * destroy methods are called only once for each
+								 * applet instance), however SystemLog (a
+								 * singleton) and ResourceBundleProvider
+								 * (contains static field and method) have
+								 * problem with this. Since they all operate
+								 * under static context (singleton is designed
+								 * by having static instance field) and since
+								 * JVM is never shutdown they never loose
+								 * references in their static fields and thus
+								 * always stay initialized! This is a problem
+								 * because those classes contains information on
+								 * previous applet instance (the whole system,
+								 * not just this class). Because of this they
+								 * have to be reinitialized. Note however that
+								 * once this applet first starts this
+								 * reinitialization is unnecessary but that is a
+								 * small price to pay for having "stateless"
+								 * system.
+								 * 
+								 * Note that UserPreferences is another
+								 * singleton class, however it is not mentioned
+								 * here because its initialization is done every
+								 * time in Communicator. UserPreferences can't
+								 * operate without this initialization so that
+								 * class is safe. Check implementation of
+								 * UserPreferences#init(Properties) method to
+								 * see why UserPreferences is not one of
+								 * critical "must-be-reinitialized" class.
+								 * UserPreferences is initialized in
+								 * Communicator#init() method.
+								 * 
+								 * Found in: Mozilla Firefox 2.0.0.6 (Linux
+								 * version)
+								 * 
+								 * @since 2/9/2007
+								 */
+								ResourceBundleProvider.init();
+								// SystemLog.instance().clearAll();
+								/*
+								 * End of reinitialization code.
+								 */
+
+								resourceManager = new DefaultResourceManager(
+										communicator);
+								componentStorage = new DefaultComponentStorage(
+										MainApplet.this);
+							} catch (AccessControlException e) {
+								e.printStackTrace();
+								return;
+								// TODO ovo treba malo modificirat i rec da se
+								// applet nemoze dignut
+								// ako nije .java.policy na svojem mjestu
+							} catch (Throwable e) {
+								// TODO ovo se treba maknut kad MainApplet vise
+								// nece bit u
+								// development fazi
+								e.printStackTrace();
+								// StringWriter sw = new StringWriter();
+								// PrintWriter pw = new PrintWriter(sw);
+								// e.printStackTrace(pw);
+								// JOptionPane.showMessageDialog(this,
+								// sw.toString());
+								return;
+							}
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_DONE);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.SUCCESSFUL);
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_GUI);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.INFORMATION);
+						}
+					});
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							initGUI();
+							int duration;
+							duration = UserPreferences.instance().getInt(
+									UserFileConstants.SYSTEM_TOOLTIP_DURATION,
+									15000);
+							ToolTipManager.sharedInstance().setDismissDelay(
+									duration);
+							MainApplet.this
+									.addComponentListener(new ComponentAdapter() {
+										@Override
+										public void componentResized(
+												ComponentEvent e) {
+											setPaneSize();
+										}
+									});
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_DONE);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.SUCCESSFUL);
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_SYSTEM);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.INFORMATION);
+						}
+					});
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							DefaultSystemContainer systemContainer = new DefaultSystemContainer(
+									resourceManager,
+									MainApplet.this,
+									JOptionPane
+											.getFrameForComponent(MainApplet.this));
+							MainApplet.this.systemContainer = systemContainer;
+							ComponentConfiguration conf;
+							try {
+								conf = ComponentConfigurationParser
+										.getConfiguration();
+							} catch (UniformAppletException e) {
+								e.printStackTrace();
+								return;
+							}
+							editorManager = new DefaultEditorManager(
+									componentStorage, conf, systemContainer);
+							viewManager = new DefaultViewManager(
+									componentStorage, conf, systemContainer);
+							ComponentIdentifierFactory
+									.setComponentConfiguration(conf);
+							ComponentIdentifierFactory
+									.setContainer(systemContainer);
+							systemContainer
+									.setComponentStorage(componentStorage);
+							systemContainer.setEditorManager(editorManager);
+							systemContainer.setViewManager(viewManager);
+							try {
+								systemContainer.init();
+							} catch (UniformAppletException e) {
+								e.printStackTrace();
+								return;
+							}
+
+							UserPreferences
+									.instance()
+									.addPreferencesListener(
+											MainApplet.this,
+											UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
+							UserPreferences.instance().addPreferencesListener(
+									MainApplet.this,
+									UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
+							UserPreferences.instance().addPreferencesListener(
+									MainApplet.this,
+									UserFileConstants.SYSTEM_VIEW_HEIGHT);
+							UserPreferences.instance().addPreferencesListener(
+									MainApplet.this,
+									UserFileConstants.SYSTEM_TOOLTIP_DURATION);
+
+							// FIXME ovo mozda spretnije rijesit
+							IComponentIdentifier<?> stViewIdentifier = ComponentIdentifierFactory
+									.createViewIdentifier(ComponentTypes.VIEW_STATUS_HISTORY);
+							systemContainer.getViewManager().openView(
+									stViewIdentifier);
+							systemContainer.getViewManager()
+									.openProjectExplorer();
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_DONE);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.SUCCESSFUL);
+						}
+					});
+//					Thread.sleep(2000);
+					SwingUtilities.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							ResourceBundle bundle = ResourceBundleProvider
+									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+							String text = bundle
+									.getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
+							SystemLog.instance().addSystemMessage(text,
+									MessageType.SUCCESSFUL);
+							setInitialized(true);
+							start();
+							getGlassPane().setVisible(false);
+						}
+					});
+//					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		}
+		});
+		initThread.start();
+		// this method is sometimes invoked by EventDispatchThread!
+		// if (SwingUtilities.isEventDispatchThread()) {
+		// initSystem();
+		// } else {
+		// try {
+		// SwingUtilities.invokeAndWait(new Runnable() {
+		// @Override
+		// public void run() {
+		// initSystem();
+		// }
+		// });
+		// } catch (Exception ignored) {
+		// ignored.printStackTrace();
+		// }
+		// }
 	}
 
 	/*
@@ -226,15 +564,15 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	 * intended to be executed by EDT.
 	 */
 	private void initSystem() {
+		setupGlassPane();
+		getGlassPane().setVisible(true);
+		initBasicGUI();
 		setFrameOwner();
 		components = new HashMap<JComponent, ComponentInformation>();
 		selectedComponentsByGroup = new HashMap<ComponentGroup, JComponent>();
 
 		IResourceManager resourceManager;
 		try {
-			/*
-			 * This method will also set userId in SystemContext class.
-			 */
 			String sessionId = getParameter(SESSION_ID);
 			SystemContext.setUserId(getParameter(USER_ID));
 			initiator = new HttpClientInitiator(sessionId);
@@ -274,15 +612,13 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			 * @since 2/9/2007
 			 */
 			ResourceBundleProvider.init();
-			SystemLog.instance().clearAll();
+			// SystemLog.instance().clearAll();
 			/*
 			 * End of reinitialization code.
 			 */
 
 			resourceManager = new DefaultResourceManager(communicator);
 			componentStorage = new DefaultComponentStorage(this);
-			bundle = ResourceBundleProvider
-					.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		} catch (AccessControlException e) {
 			e.printStackTrace();
 			return;
@@ -298,6 +634,10 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			// JOptionPane.showMessageDialog(this, sw.toString());
 			return;
 		}
+
+		// TODO ovo popravit
+		SystemLog.instance().addSystemMessage("Initializing GUI!",
+				MessageType.INFORMATION);
 
 		initGUI();
 		int duration;
@@ -352,9 +692,14 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 		systemContainer.getViewManager().openView(stViewIdentifier);
 		systemContainer.getViewManager().openProjectExplorer();
 
+		ResourceBundle bundle = ResourceBundleProvider
+				.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		String text = bundle
-				.getString(LanguageConstants.STATUSBAR_LOAD_COMPLETE);
+				.getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
 		SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
+		setInitialized(true);
+		start();
+		getGlassPane().setVisible(false);
 	}
 
 	/**
@@ -362,7 +707,9 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	 * intended to be executed by EDT.
 	 */
 	private void startSystem() {
-		setPaneSize();
+		if (isInitialized()) {
+			setPaneSize();
+		}
 	}
 
 	/**
@@ -398,6 +745,22 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 		this.repaint();
 	}
 
+	private synchronized boolean isInitialized() {
+		return initialized;
+	}
+
+	private synchronized void setInitialized(boolean initialized) {
+		this.initialized = initialized;
+	}
+
+	/**
+	 * Sets a glass pane in root pane but doesn't make it visible.
+	 */
+	private void setupGlassPane() {
+		InitializationGlassPane glassPane = new InitializationGlassPane();
+		setGlassPane(glassPane);
+	}
+
 	/**
 	 * Sets a frame in {@link SystemContext}. This frame is used to enable
 	 * modal dialogs.
@@ -424,24 +787,24 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	private void exitApplication() {
 		// TODO ovo treba popravit kad se sredi system container i dialog
 		// manager.
-		systemContainer.getEditorManager().closeAllEditors();
+		// systemContainer.getEditorManager().closeAllEditors();
 		fastCleanup();
 	}
 
 	private void initGUI() {
-		JPanel topContainerPanel = new JPanel(new BorderLayout());
-		centerPanel = new JPanel(new BorderLayout());
-		JMenuBar menuBar = new PrivateMenuBar(bundle).setupMainMenu();
+		about = new About(this);
+		JMenuBar menuBar = new PrivateMenuBar().setupMainMenu();
 		this.setJMenuBar(menuBar);
 
-		toolBar = new PrivateToolBar(bundle).setup();
-		topContainerPanel.add(toolBar, BorderLayout.NORTH);
-		topContainerPanel.add(setupStatusBar(), BorderLayout.SOUTH);
-		normalCenterPanel = setupCenterPanel();
-		centerPanel.add(normalCenterPanel, BorderLayout.CENTER);
-		topContainerPanel.add(centerPanel, BorderLayout.CENTER);
+		PrivateMenuBar menubar = new PrivateMenuBar();
+		for (ComponentPlacement p : ComponentPlacement.values()) {
+			JTabbedPane pane = getTabbedPane(p);
+			pane.setComponentPopupMenu(menubar
+					.setupPopupMenuForComponents(pane));
+		}
 
-		this.add(topContainerPanel, BorderLayout.CENTER);
+		toolBar = new PrivateToolBar().setup();
+		add(toolBar, BorderLayout.NORTH);
 	}
 
 	private JPanel setupStatusBar() {
@@ -453,260 +816,48 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 		return statusBarPanel;
 	}
 
-	private JPanel setupCenterPanel() {
-		about = new About(this);
+	private void initBasicGUI() {
+		initTabbedContainers();
+		centerPanel = new JPanel(new BorderLayout());
+		normalCenterPanel = setupCenterPanel();
+		centerPanel.add(normalCenterPanel, BorderLayout.CENTER);
+		add(centerPanel, BorderLayout.CENTER);
+		add(setupStatusBar(), BorderLayout.SOUTH);
+	}
 
-		centerTabbedPane = new JTabbedPane(JTabbedPane.TOP,
-				JTabbedPane.SCROLL_TAB_LAYOUT);
-		bottomTabbedPane = new JTabbedPane(JTabbedPane.TOP,
-				JTabbedPane.SCROLL_TAB_LAYOUT);
-		leftTabbedPane = new JTabbedPane(JTabbedPane.TOP,
-				JTabbedPane.SCROLL_TAB_LAYOUT);
-		rightTabbedPane = new JTabbedPane(JTabbedPane.TOP,
-				JTabbedPane.SCROLL_TAB_LAYOUT);
+	private void initTabbedContainers() {
+		ComponentPlacement[] placements = ComponentPlacement.values();
+		tabbedContainers = new HashMap<ComponentPlacement, JTabbedPane>(
+				placements.length);
 
-		centerTabbedPane.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Component component = centerTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				activate((JComponent) component);
-			}
-		});
-		centerTabbedPane.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				Component component = centerTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				component.requestFocusInWindow();
-				// activate((JComponent) component);
-			}
-		});
-		bottomTabbedPane.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Component component = bottomTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				activate((JComponent) component);
-			}
-		});
-		bottomTabbedPane.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				Component component = bottomTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				component.requestFocusInWindow();
-				// activate((JComponent) component);
-			}
-		});
-		leftTabbedPane.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Component component = leftTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				activate((JComponent) component);
-			}
-		});
-		leftTabbedPane.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				Component component = leftTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				component.requestFocusInWindow();
-				// activate((JComponent) component);
-			}
-		});
-		rightTabbedPane.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Component component = rightTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				activate((JComponent) component);
-			}
-		});
-		rightTabbedPane.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				Component component = rightTabbedPane.getSelectedComponent();
-				if (component == null) {
-					return;
-				}
-				component.requestFocusInWindow();
-				// activate((JComponent) component);
-			}
-		});
+		ChangeListener changeListener = new TabbedPaneChangeListener();
+		FocusListener focusListener = new TabbedPaneFocusListener();
+		MouseListener mouseListener = new TabbedPaneMouseListener();
+		ContainerListener containerListener = new TabbedPaneContainerListener();
 
-		PrivateMenuBar menubar = new PrivateMenuBar(bundle);
-		centerTabbedPane.setComponentPopupMenu(menubar
-				.setupPopupMenuForComponents(centerTabbedPane));
-		bottomTabbedPane.setComponentPopupMenu(menubar
-				.setupPopupMenuForComponents(bottomTabbedPane));
-		leftTabbedPane.setComponentPopupMenu(menubar
-				.setupPopupMenuForComponents(leftTabbedPane));
-		rightTabbedPane.setComponentPopupMenu(menubar
-				.setupPopupMenuForComponents(rightTabbedPane));
+		for (ComponentPlacement p : placements) {
+			JTabbedPane pane = new JTabbedPane(JTabbedPane.TOP,
+					JTabbedPane.SCROLL_TAB_LAYOUT);
+			pane.addChangeListener(changeListener);
+			pane.addFocusListener(focusListener);
+			pane.addMouseListener(mouseListener);
+			pane.addContainerListener(containerListener);
+			tabbedContainers.put(p, pane);
+		}
+	}
 
-		centerTabbedPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2
-						&& centerTabbedPane.getTabCount() != 0) {
-					maximizeComponent(centerTabbedPane);
-				}
-				activate((JComponent) centerTabbedPane.getSelectedComponent());
-			}
-		});
-		centerTabbedPane.addContainerListener(new ContainerAdapter() {
-			@Override
-			public void componentRemoved(ContainerEvent e) {
-				if (centerTabbedPane.getTabCount() == 0
-						&& isMaximized(centerTabbedPane)) {
-					maximizeComponent(centerTabbedPane);
-				}
-			}
-		});
-
-		bottomTabbedPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2
-						&& bottomTabbedPane.getTabCount() != 0) {
-					maximizeComponent(bottomTabbedPane);
-				}
-				activate((JComponent) bottomTabbedPane.getSelectedComponent());
-			}
-		});
-		bottomTabbedPane.addContainerListener(new ContainerAdapter() {
-			@Override
-			public void componentRemoved(ContainerEvent e) {
-				if (bottomTabbedPane.getTabCount() == 0
-						&& isMaximized(bottomTabbedPane)) {
-					maximizeComponent(bottomTabbedPane);
-				}
-			}
-		});
-
-		leftTabbedPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2 && leftTabbedPane.getTabCount() != 0) {
-					maximizeComponent(leftTabbedPane);
-				}
-				activate((JComponent) leftTabbedPane.getSelectedComponent());
-			}
-		});
-		leftTabbedPane.addContainerListener(new ContainerAdapter() {
-			@Override
-			public void componentRemoved(ContainerEvent e) {
-				if (leftTabbedPane.getTabCount() == 0
-						&& isMaximized(leftTabbedPane)) {
-					maximizeComponent(leftTabbedPane);
-				}
-			}
-		});
-
-		rightTabbedPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2
-						&& rightTabbedPane.getTabCount() != 0) {
-					maximizeComponent(rightTabbedPane);
-				}
-				activate((JComponent) rightTabbedPane.getSelectedComponent());
-			}
-		});
-		rightTabbedPane.addContainerListener(new ContainerAdapter() {
-			@Override
-			public void componentRemoved(ContainerEvent e) {
-				if (rightTabbedPane.getTabCount() == 0
-						&& isMaximized(rightTabbedPane)) {
-					maximizeComponent(rightTabbedPane);
-				}
-			}
-		});
-
+	private JComponent setupCenterPanel() {
 		sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				centerTabbedPane, null);
+				getTabbedPane(ComponentPlacement.CENTER), null);
 		// sideBarSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		// centerTabbedPane, rightTabbedPane);
 		projectExplorerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				leftTabbedPane, sideBarSplitPane);
+				getTabbedPane(ComponentPlacement.LEFT), sideBarSplitPane);
 		viewSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				projectExplorerSplitPane, bottomTabbedPane);
+				projectExplorerSplitPane,
+				getTabbedPane(ComponentPlacement.BOTTOM));
 
-		JPanel centerComponentsPanel = new JPanel(new BorderLayout());
-		centerComponentsPanel.add(viewSplitPane);
-
-		BasicSplitPaneDivider divider;
-		divider = ((BasicSplitPaneUI) projectExplorerSplitPane.getUI())
-				.getDivider();
-		divider.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				int dividerLocation = projectExplorerSplitPane
-						.getDividerLocation();
-				if (dividerLocation < 0) {
-					return;
-				}
-				double size = dividerLocation * 1.0
-						/ projectExplorerSplitPane.getWidth();
-				DecimalFormat formatter = new DecimalFormat("0.##");
-				String property = formatter.format(size);
-				UserPreferences.instance().set(
-						UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH,
-						property);
-			}
-		});
-
-		divider = ((BasicSplitPaneUI) sideBarSplitPane.getUI()).getDivider();
-		divider.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				int dividerLocation = sideBarSplitPane.getDividerLocation();
-				if (dividerLocation < 0) {
-					return;
-				}
-				double size = dividerLocation * 1.0
-						/ sideBarSplitPane.getWidth();
-				DecimalFormat formatter = new DecimalFormat("0.##");
-				String property = formatter.format(size);
-				UserPreferences.instance().set(
-						UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
-			}
-		});
-
-		divider = ((BasicSplitPaneUI) viewSplitPane.getUI()).getDivider();
-		divider.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				int dividerLocation = viewSplitPane.getDividerLocation();
-				if (dividerLocation < 0) {
-					return;
-				}
-				double size = dividerLocation * 1.0 / viewSplitPane.getHeight();
-				DecimalFormat formatter = new DecimalFormat("0.##");
-				String property = formatter.format(size);
-				UserPreferences.instance().set(
-						UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
-			}
-		});
-
-		return centerComponentsPanel;
-
+		return viewSplitPane;
 	}
 
 	/**
@@ -720,13 +871,10 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 
 		/**
 		 * Constructor.
-		 * 
-		 * @param bundle
-		 *            {@link ResourceBundle} that contains localized information
-		 *            about menus that will be created.
 		 */
-		public PrivateMenuBar(ResourceBundle bundle) {
-			this.bundle = bundle;
+		public PrivateMenuBar() {
+			this.bundle = ResourceBundleProvider
+					.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		}
 
 		public JPopupMenu setupPopupMenuForComponents(final JTabbedPane pane) {
@@ -1029,15 +1177,9 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					/*
-					 * if(editorPane.isFocusOwner()) {
-					 * maximizeComponent(editorPane); } else
-					 * if(editorPane.isFocusCycleRoot()) {
-					 * maximizeComponent(viewPane); }
-					 */
-					if (getSelectedComponent() != null) {
-						ComponentPlacement placement = componentStorage
-								.getComponentPlacement(getSelectedComponent());
+					JComponent component = getSelectedComponent();
+					if (component != null) {
+						ComponentPlacement placement = getComponentPlacement(component);
 						maximizeComponent(getTabbedPane(placement));
 					}
 				}
@@ -1413,13 +1555,10 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 
 		/**
 		 * Constructor.
-		 * 
-		 * @param bundle
-		 *            {@link ResourceBundle} that contains information about
-		 *            menus that will be created.
 		 */
-		public PrivateToolBar(ResourceBundle bundle) {
-			this.bundle = bundle;
+		public PrivateToolBar() {
+			this.bundle = ResourceBundleProvider
+					.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		}
 
 		/**
@@ -1473,10 +1612,10 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	}
 
 	private void setPaneSize() {
-		try {
-			validate();
-			double size;
+		validate();
+		double size;
 
+		try {
 			UserPreferences pref = UserPreferences.instance();
 			size = pref.getDouble(
 					UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, 0.15);
@@ -1491,14 +1630,14 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 			size = pref.getDouble(UserFileConstants.SYSTEM_VIEW_HEIGHT, 0.75);
 			viewSplitPane
 					.setDividerLocation((int) (viewSplitPane.getHeight() * size));
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			projectExplorerSplitPane
 					.setDividerLocation((int) (projectExplorerSplitPane
 							.getWidth() * 0.15));
 			sideBarSplitPane.setDividerLocation((int) (sideBarSplitPane
 					.getWidth() * 0.75));
 			viewSplitPane
-					.setDividerLocation((int) (sideBarSplitPane.getWidth() * 0.75));
+					.setDividerLocation((int) (viewSplitPane.getHeight() * 0.75));
 		}
 	}
 
@@ -1538,6 +1677,7 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 		}
 		centerPanel.repaint();
 		centerPanel.validate();
+		component.requestFocusInWindow();
 	}
 
 	private boolean isMaximized(Component component) {
@@ -1550,18 +1690,7 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 	}
 
 	private JTabbedPane getTabbedPane(ComponentPlacement placement) {
-		switch (placement) {
-		case CENTER:
-			return centerTabbedPane;
-		case BOTTOM:
-			return bottomTabbedPane;
-		case LEFT:
-			return leftTabbedPane;
-		case RIGHT:
-			return rightTabbedPane;
-		default:
-			return null;
-		}
+		return tabbedContainers.get(placement);
 	}
 
 	/*
@@ -1918,6 +2047,196 @@ public final class MainApplet extends JApplet implements IComponentContainer,
 		public String toString() {
 			return "group: " + group + " / placement: " + placement;
 		}
+	}
+
+	private class TabbedPaneChangeListener implements ChangeListener {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
+		 */
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			JTabbedPane pane = (JTabbedPane) e.getSource();
+			Component component = pane.getSelectedComponent();
+			if (component == null) {
+				return;
+			}
+			activate((JComponent) component);
+		}
+
+	}
+
+	private class TabbedPaneFocusListener extends FocusAdapter {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.awt.event.FocusAdapter#focusGained(java.awt.event.FocusEvent)
+		 */
+		@Override
+		public void focusGained(FocusEvent e) {
+			JTabbedPane pane = (JTabbedPane) e.getSource();
+			Component component = pane.getSelectedComponent();
+			if (component == null) {
+				return;
+			}
+			component.requestFocusInWindow();
+		}
+
+	}
+
+	private class TabbedPaneMouseListener extends MouseAdapter {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+		 */
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			JTabbedPane pane = (JTabbedPane) e.getSource();
+			if (e.getClickCount() == 2 && pane.getTabCount() != 0) {
+				maximizeComponent(pane);
+			} else if (e.getClickCount() == 1) {
+				Component component = pane.getSelectedComponent();
+				activate((JComponent) component);
+			}
+		}
+
+	}
+
+	private class TabbedPaneContainerListener extends ContainerAdapter {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.awt.event.ContainerAdapter#componentRemoved(java.awt.event.ContainerEvent)
+		 */
+		@Override
+		public void componentRemoved(ContainerEvent e) {
+			JTabbedPane pane = (JTabbedPane) e.getSource();
+			if (pane.getTabCount() == 0 && isMaximized(pane)) {
+				maximizeComponent(pane);
+			}
+		}
+
+	}
+
+	private class DividerHorizontalComponentListener extends ComponentAdapter {
+
+		private final DecimalFormat formatter = new DecimalFormat("0.##");
+		private final JSplitPane pane;
+		private final String propertyKey;
+
+		public DividerHorizontalComponentListener(JSplitPane pane,
+				String propertyKey) {
+			if (pane == null) {
+				throw new NullPointerException("Split pane cant be null");
+			}
+			if (propertyKey == null) {
+				throw new NullPointerException("Property key cant be null");
+			}
+			this.pane = pane;
+			this.propertyKey = propertyKey;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.awt.event.ComponentAdapter#componentMoved(java.awt.event.ComponentEvent)
+		 */
+		@Override
+		public void componentMoved(ComponentEvent e) {
+			int dividerLocation = pane.getDividerLocation();
+			if (dividerLocation < 0) {
+				return;
+			}
+			double ratio = getDividerRatio(dividerLocation, pane);
+			String property = formatter.format(ratio);
+			UserPreferences.instance().set(propertyKey, property);
+		}
+
+		protected double getDividerRatio(double dividerLocation, JSplitPane pane) {
+			return dividerLocation / pane.getWidth();
+		}
+
+	}
+
+	private class DividerVerticalComponentListener extends
+			DividerHorizontalComponentListener {
+
+		public DividerVerticalComponentListener(JSplitPane pane,
+				String propertyKey) {
+			super(pane, propertyKey);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see hr.fer.zemris.vhdllab.applets.main.MainApplet.DividerHorizontalComponentListener#getDividerLocation(double,
+		 *      javax.swing.JSplitPane)
+		 */
+		@Override
+		protected double getDividerRatio(double dividerLocation, JSplitPane pane) {
+			return dividerLocation / pane.getHeight();
+		}
+
+	}
+
+	private class SplitPaneHorizontalComponentListener extends ComponentAdapter {
+
+		private final String propertyKey;
+		private final double def;
+
+		public SplitPaneHorizontalComponentListener(String propertyKey,
+				double def) {
+			if (propertyKey == null) {
+				throw new NullPointerException("Property key cant be null");
+			}
+			this.propertyKey = propertyKey;
+			this.def = def;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.awt.event.ComponentAdapter#componentResized(java.awt.event.ComponentEvent)
+		 */
+		@Override
+		public void componentResized(ComponentEvent e) {
+			JSplitPane pane = (JSplitPane) e.getSource();
+			double ratio = UserPreferences.instance().getDouble(propertyKey,
+					def);
+			int dividerLocation = getDividerLocation(ratio, pane);
+			pane.setDividerLocation(dividerLocation);
+		}
+
+		protected int getDividerLocation(double ratio, JSplitPane pane) {
+			return (int) (pane.getWidth() * ratio);
+		}
+
+	}
+
+	private class SplitPaneVerticalComponentListener extends
+			SplitPaneHorizontalComponentListener {
+
+		public SplitPaneVerticalComponentListener(String propertyKey, double def) {
+			super(propertyKey, def);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see hr.fer.zemris.vhdllab.applets.main.MainApplet.SplitPaneHorizontalComponentListener#getDividerLocation(double,
+		 *      javax.swing.JSplitPane)
+		 */
+		@Override
+		protected int getDividerLocation(double ratio, JSplitPane pane) {
+			return (int) (pane.getHeight() * ratio);
+		}
+
 	}
 
 }

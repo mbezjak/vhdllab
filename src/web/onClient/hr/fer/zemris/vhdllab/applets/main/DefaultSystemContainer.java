@@ -247,7 +247,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 		for (SystemMessage m : SystemLog.instance().getSystemMessages()) {
 			sb.append(formatter.format(m.getDate())).append("\t\t").append(
-					m.getContent()).append("\n\n");
+					m.getContent()).append("\n");
 		}
 		if(sb.length() != 0) {
 			sb.append("---------------------------------\n\n\n");

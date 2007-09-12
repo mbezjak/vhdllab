@@ -78,7 +78,6 @@ public class LanguageConstants {
 	public static final String MENU_TOOLS_VIEW_VHDL_CODE = "menu.tools.view.vhdl.code";
 	public static final String MENU_TOOLS_VIEW_PREFERENCES = "menu.tools.view.preferences";
 	public static final String MENU_HELP_ABOUT = "menu.help.about";
-
 	
 	public static final String DIALOG_BUTTON_YES = "dialog.button.yes";
 	public static final String DIALOG_BUTTON_NO = "dialog.button.no";
@@ -113,7 +112,13 @@ public class LanguageConstants {
 	public static final String DIALOG_RUN_SIMULATION_TITLE = "dialog.run.simulation.title";
 
 	
-	public static final String STATUSBAR_LOAD_COMPLETE = "statusbar.load.complete";
+	public static final String STATUSBAR_INIT_START = "statusbar.init.start";
+	public static final String STATUSBAR_INIT_INITIATOR = "statusbar.init.initiator";
+	public static final String STATUSBAR_INIT_COMMUNICATOR = "statusbar.init.communicator";
+	public static final String STATUSBAR_INIT_GUI = "statusbar.init.gui";
+	public static final String STATUSBAR_INIT_SYSTEM = "statusbar.init.system";
+	public static final String STATUSBAR_INIT_LOAD_COMPLETE = "statusbar.init.load.complete";
+	public static final String STATUSBAR_INIT_DONE = "statusbar.init.done";
 	public static final String STATUSBAR_INTERNAL_ERROR = "statusbar.internal.error";
 	public static final String STATUSBAR_NO_CONNECTION = "statusbar.no.connection";
 	public static final String STATUSBAR_LANGUAGE_SETTING_NOT_FOUND = "statusbar.language.setting.not.found";

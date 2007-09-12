@@ -156,10 +156,6 @@ public final class HttpClientInitiator implements Initiator {
 	@Override
 	public void init() throws UniformAppletException {
 		readServerProperties();
-		/*
-		 * Once registerProtocol method is enabled you must enable documented
-		 * bug workaround in authenticate method!
-		 */
 		registerProtocol();
 		initHttpClient();
 		if (!isSessionValid()) {
@@ -341,11 +337,11 @@ public final class HttpClientInitiator implements Initiator {
 			 * 
 			 * Description: This is a possible bug in
 			 * EasySSLProtocolSocketFactory or EasyX509TrustManager classes.
-			 * When using secure connection (https) to authenticate tomcat
-			 * returns valid session cookie and it is marked as secure (must be
+			 * When using secure connection (https) to authenticate, tomcat
+			 * returns valid session cookie that is marked as secure (must be
 			 * sent only over secure connections). Then when http client tries
 			 * to send the same request again (again over https) he does not
-			 * send that session cookie. However if that cookie is set as
+			 * send that session cookie! However if that cookie is set as
 			 * insecure (can be sent over http) everything works fine.
 			 * 
 			 * These classes are used in registerProtocol method!
@@ -354,11 +350,6 @@ public final class HttpClientInitiator implements Initiator {
 			 * 6.0.13; Apache HttpClient 3.0.1
 			 * 
 			 * @since 7/9/2007
-			 */
-			/*
-			 * This code is disabled because registerProtocol method is
-			 * disabled. When enabling registerProtocol method you must enable
-			 * this code aswell!
 			 */
 			for (Cookie c : cookies) {
 				if (c.getName().equals(COOKIE_NAME)) {

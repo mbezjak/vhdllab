@@ -33,7 +33,7 @@ public final class SystemLog {
 	/**
 	 * Maximum number of system messages. Must always be positive!
 	 */
-	private static final int MAX_SYSTEM_MESSAGES_COUNT = 50;
+	private static final int MAX_SYSTEM_MESSAGES_COUNT = 200;
 
 	/**
 	 * Maximum number of error messages. Must always be positive!
