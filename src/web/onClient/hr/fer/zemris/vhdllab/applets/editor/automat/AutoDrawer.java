@@ -11,6 +11,7 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
  */
 
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
@@ -122,10 +123,9 @@ public class AutoDrawer extends JPanel{
 	
 	private HashSet<String> listaSignala=null;
 	
-	public boolean isModified=false;
-	
 	private ResourceBundle bundle=null;
 	private ISystemContainer container=null;
+	private IEditor editor;
 	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
@@ -133,12 +133,12 @@ public class AutoDrawer extends JPanel{
 	 *
 	 */
 	
-	public AutoDrawer() {
+	public AutoDrawer(IEditor editor) {
 		super();
 		this.setOpaque(true);
 		createGUI();
 		this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
-		isModified=false;
+		this.editor = editor;
 	}
 	
 	/*public AutoDrawer(String strpodatci){
@@ -171,6 +171,7 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * metoda paintComponent klase JPanel overrideana
 	 */
+	@Override
 	protected void paintComponent(Graphics g) {
 		if(img == null) {
 			img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
@@ -521,12 +522,12 @@ public class AutoDrawer extends JPanel{
 				x1=ka.ox+radijus+(int)(Math.cos(fi+strOdm)*radijus);
 				y2=iz.oy+radijus+(int)(Math.sin(fi-strOdm)*radijus);
 				x3=(int)(Math.abs(x2+(x1-x2)/2)-7*l);
-				y3=(int)(Math.abs(y2+(y1-y2)/2));
+				y3=(Math.abs(y2+(y1-y2)/2));
 				fi-=Math.PI/2;
 				strOdm=-0.3;
 			}
 			else{	
-				x3=(int)(Math.abs(x2+(x1-x2)/2));
+				x3=(Math.abs(x2+(x1-x2)/2));
 				y3=(int)(Math.abs(y2+(y1-y2)/2)-7*l);
 				strOdm=-0.2;
 			}
@@ -666,7 +667,7 @@ public class AutoDrawer extends JPanel{
 			y1=ka.oy+radijus-(int)(Math.sin(fi+strOdm)*radijus);
 			x2=iz.ox+radijus-(int)(Math.cos(fi-strOdm)*radijus);
 			y2=iz.oy+radijus-(int)(Math.sin(fi-strOdm)*radijus);
-			x3=(int)(Math.abs(x2+(x1-x2)/2));
+			x3=(Math.abs(x2+(x1-x2)/2));
 			y3=(int)(Math.abs(y2+(y1-y2)/2)-7*l);
 			strOdm=-0.2;
 			}
@@ -858,7 +859,7 @@ public class AutoDrawer extends JPanel{
 		public void mouseDragged(MouseEvent e) {
 			if(pressed){
 				//pomjeriSliku(e.getX(),e.getY());
-				if(!isModified)isModified=true;
+				editor.setModified(true);
 				selektiran.ox=e.getX()-radijus;
 				selektiran.oy=e.getY()-radijus;
 					/*if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
@@ -904,14 +905,14 @@ public class AutoDrawer extends JPanel{
 				for(Stanje st:stanja)
 					if(jelSelektiran(e,st)){
 						st.editStanje2(podatci,AutoDrawer.this,bundle);
-						if(!isModified)isModified=true;
+						editor.setModified(true);
 						nacrtajSklop();
 						break;
 					}
 				for(Prijelaz pr:prijelazi)
 					if(jelSelektiran(e,pr)){
 						editorPrijelaza(pr);
-						if(!isModified)isModified=true;
+						editor.setModified(true);
 						break;
 					}
 			}
@@ -958,7 +959,7 @@ public class AutoDrawer extends JPanel{
 						stanjeZaDodati.els=stanjeZaDodati.ime;
 						stanjeZaDodati.eIz="0";
 						stanja.add(stanjeZaDodati);
-						if(!isModified)isModified=true;
+						editor.setModified(true);
 					}
 					stanjeRada=1;
 					stanjeZaDodati=null;
@@ -1004,7 +1005,7 @@ public class AutoDrawer extends JPanel{
 							prijelazZaDodati=null;
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;
-							if(!isModified)isModified=true;
+							editor.setModified(true);
 							nacrtajSklop();
 							break;
 						}
@@ -1013,14 +1014,14 @@ public class AutoDrawer extends JPanel{
 					if (jelSelektiran(e,st)) {
 						if(st.ime.equals(podatci.pocetnoStanje))podatci.pocetnoStanje="";
 						brisiStanje(st);
-						if(!isModified)isModified=true;
+						editor.setModified(true);
 						nacrtajSklop();
 						break;
 					}	
 				for(Prijelaz pr:prijelazi)
 					if(jelSelektiran(e,pr)){
 						brisiPrijelaz(pr);
-						if(!isModified)isModified=true;
+						editor.setModified(true);
 						nacrtajSklop();
 						break;
 					}
@@ -1031,7 +1032,7 @@ public class AutoDrawer extends JPanel{
 					if(jelSelektiran(e,st)){
 						if(!podatci.pocetnoStanje.equals(st.ime)){
 							podatci.pocetnoStanje=st.ime;
-							if(!isModified)isModified=true;
+							editor.setModified(true);
 						}
 						break;
 					}

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.tb2;
 
+import hr.fer.zemris.vhdllab.applets.main.event.EditorListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
@@ -141,6 +142,56 @@ public class TestBenchEditor2 extends JPanel implements IEditor, IWizard {
 			String projectName) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#addEditorListener(hr.fer.zemris.vhdllab.applets.main.event.EditorListener)
+	 */
+	@Override
+	public void addEditorListener(EditorListener l) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#getEditorListeners()
+	 */
+	@Override
+	public EditorListener[] getEditorListeners() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#removeAllEditorListeners()
+	 */
+	@Override
+	public void removeAllEditorListeners() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#removeEditorListener(hr.fer.zemris.vhdllab.applets.main.event.EditorListener)
+	 */
+	@Override
+	public void removeEditorListener(EditorListener l) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#setModified(boolean)
+	 */
+	@Override
+	public boolean setModified(boolean flag) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -4,8 +4,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedCompone
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
@@ -45,7 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-public class SchemaMainPanel extends JPanel implements IEditor {
+public class SchemaMainPanel extends AbstractEditor {
 
 	// {
 	// try {
@@ -58,7 +57,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 	private class ModificationListener implements PropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent evt) {
-			modified = true;
+			setModified(true);
 		}
 	}
 
@@ -80,10 +79,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 	private ComponentToAddToolbar componentToAddToolbar;
 
 	/* IEditor private fields */
-	private ISystemContainer systemContainer;
-	private FileContent filecontent;
 	private VetoableResourceListener appletListener;
-	private boolean readonly, saveable, modified;
 
 	/**
 	 * Right panel divider width
@@ -120,11 +116,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		controller = new LocalController();
 		canvas = new SchemaCanvas();
 		localGUIController = new CanvasToolbarLocalGUIController();
-		systemContainer = null;
-		filecontent = null;
-		readonly = false;
-		saveable = false;
-		modified = false;
 
 		rightPanelWidth = 200;
 		rightPanelDividerPosition = .5;
@@ -161,19 +152,18 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		if (usercis != null) {
 			controller.send(new InvalidateObsoleteUserComponents(usercis));
 		}
-		modified = false;
 	}
 
 	private List<CircuitInterface> getUserPrototypeList() {
-		if (systemContainer == null || filecontent == null)
+		if (container == null || content == null)
 			return null;
 		System.out.println("Initializing user prototypes.");
 
-		String projectname = filecontent.getProjectName();
-		String thisname = filecontent.getFileName();
+		String projectname = content.getProjectName();
+		String thisname = content.getFileName();
 		List<String> circuitnames = null;
 		try {
-			circuitnames = systemContainer.getResourceManager().getAllCircuits(
+			circuitnames = resourceManager.getAllCircuits(
 					projectname);
 			if (circuitnames == null)
 				throw new NullPointerException(
@@ -185,7 +175,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 		Hierarchy hierarchy;
 		try {
-			hierarchy = systemContainer.getResourceManager().extractHierarchy(
+			hierarchy = resourceManager.extractHierarchy(
 					projectname);
 		} catch (UniformAppletException e1) {
 			throw new SchemaException("Cannot extract hierarchy for project '"
@@ -204,7 +194,7 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 			// get circuit interface for the component
 			CircuitInterface circint;
 			try {
-				circint = systemContainer.getResourceManager()
+				circint = resourceManager
 						.getCircuitInterfaceFor(projectname, name);
 			} catch (UniformAppletException e) {
 				throw new SchemaException(
@@ -312,7 +302,9 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 
 	/* IEditor methods */
 
+	@Override
 	public void dispose() {
+		super.dispose();
 	}
 
 	public String getData() {
@@ -328,18 +320,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return writer.toString();
 	}
 
-	public String getFileName() {
-		if (filecontent != null)
-			return filecontent.getFileName();
-		return null;
-	}
-
-	public String getProjectName() {
-		if (filecontent != null)
-			return filecontent.getProjectName();
-		return null;
-	}
-
 	public IWizard getWizard() {
 		DefaultWizard dw = null;
 		if (wizardSoftRef != null)
@@ -351,33 +331,20 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 		return dw;
 	}
 
-	public void highlightLine(int line) {
-		// do absolutely nothing - this is not a text editor.
-	}
-
+	@Override
 	public void init() {
+		super.init();
 		initDynamic();
 	}
 
-	public boolean isModified() {
-		return modified;
-	}
-
-	public boolean isReadOnly() {
-		return readonly;
-	}
-
-	public boolean isSavable() {
-		return saveable;
-	}
-
+	@Override
 	public void setFileContent(FileContent content) {
+		super.setFileContent(content);
 		// System.out.println("File content set.");
-		filecontent = content;
 		resetSchema();
-		if (filecontent != null) {
+		if (content != null) {
 			SchemaDeserializer sd = new SchemaDeserializer();
-			StringReader stread = new StringReader(filecontent.getContent());
+			StringReader stread = new StringReader(content.getContent());
 
 			core.setSchemaInfo(sd.deserializeSchema(stread));
 		}
@@ -392,19 +359,6 @@ public class SchemaMainPanel extends JPanel implements IEditor {
 				controller.send(new InvalidateObsoleteUserComponents(usercis));
 			}
 		};
-	}
-
-	public void setSystemContainer(ISystemContainer container) {
-		// System.out.println("Project container set.");
-		systemContainer = container;
-	}
-
-	public void setReadOnly(boolean flag) {
-		readonly = flag;
-	}
-
-	public void setSavable(boolean flag) {
-		saveable = flag;
 	}
 
 }

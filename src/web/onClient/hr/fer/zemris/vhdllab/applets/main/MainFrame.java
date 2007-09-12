@@ -50,6 +50,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.lang.reflect.InvocationTargetException;
 import java.security.AccessControlException;
 import java.text.DecimalFormat;
@@ -59,8 +61,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.JApplet;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -73,6 +75,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -84,7 +87,7 @@ import javax.swing.event.ChangeListener;
  * @author Miro Bezjak
  * @see ISystemContainer
  */
-public final class MainApplet extends JApplet implements IComponentProvider,
+public final class MainFrame extends JFrame implements IComponentProvider,
 		PreferencesListener {
 
 	private static final long serialVersionUID = 1L;
@@ -124,7 +127,6 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 	 * 
 	 * @see java.applet.Applet#init()
 	 */
-	@Override
 	public void init() {
 		Thread initThread = new Thread(new Runnable() {
 			private DefaultResourceManager resourceManager;
@@ -163,7 +165,7 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 						public void run() {
 							setFrameOwner();
 							componentContainer = new DefaultComponentContainer(
-									MainApplet.this);
+									MainFrame.this);
 						}
 					});
 					// Thread.sleep(2000);
@@ -181,9 +183,7 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
-							String sessionId = getParameter(SESSION_ID);
-							SystemContext.setUserId(getParameter(USER_ID));
-							initiator = new HttpClientInitiator(sessionId);
+							initiator = new HttpClientInitiator(null);
 							try {
 								initiator.init();
 							} catch (UniformAppletException e) {
@@ -333,7 +333,7 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 									15000);
 							ToolTipManager.sharedInstance().setDismissDelay(
 									duration);
-							MainApplet.this
+							MainFrame.this
 									.addComponentListener(new ComponentAdapter() {
 										@Override
 										public void componentResized(
@@ -372,10 +372,10 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 						public void run() {
 							DefaultSystemContainer systemContainer = new DefaultSystemContainer(
 									resourceManager,
-									MainApplet.this,
+									MainFrame.this,
 									JOptionPane
-											.getFrameForComponent(MainApplet.this));
-							MainApplet.this.systemContainer = systemContainer;
+											.getFrameForComponent(MainFrame.this));
+							MainFrame.this.systemContainer = systemContainer;
 							ComponentConfiguration conf;
 							try {
 								conf = ComponentConfigurationParser
@@ -406,16 +406,16 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 							UserPreferences
 									.instance()
 									.addPreferencesListener(
-											MainApplet.this,
+											MainFrame.this,
 											UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
 							UserPreferences.instance().addPreferencesListener(
-									MainApplet.this,
+									MainFrame.this,
 									UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
 							UserPreferences.instance().addPreferencesListener(
-									MainApplet.this,
+									MainFrame.this,
 									UserFileConstants.SYSTEM_VIEW_HEIGHT);
 							UserPreferences.instance().addPreferencesListener(
-									MainApplet.this,
+									MainFrame.this,
 									UserFileConstants.SYSTEM_TOOLTIP_DURATION);
 
 							// FIXME ovo mozda spretnije rijesit
@@ -487,7 +487,6 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 	 * 
 	 * @see java.applet.Applet#start()
 	 */
-	@Override
 	public void start() {
 		// this method is sometimes invoked by EventDispatchThread!
 		if (SwingUtilities.isEventDispatchThread()) {
@@ -511,7 +510,6 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 	 * 
 	 * @see java.applet.Applet#stop()
 	 */
-	@Override
 	public void stop() {
 		// this method is sometimes invoked by EventDispatchThread!
 		if (SwingUtilities.isEventDispatchThread()) {
@@ -535,7 +533,6 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 	 * 
 	 * @see java.applet.Applet#destroy()
 	 */
-	@Override
 	public void destroy() {
 		// this method is sometimes invoked by EventDispatchThread!
 		if (SwingUtilities.isEventDispatchThread()) {
@@ -567,9 +564,7 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 
 		IResourceManager resourceManager;
 		try {
-			String sessionId = getParameter(SESSION_ID);
-			SystemContext.setUserId(getParameter(USER_ID));
-			initiator = new HttpClientInitiator(sessionId);
+			initiator = new HttpClientInitiator(null);
 			initiator.init();
 			communicator = new Communicator(initiator);
 			communicator.init(); // also initializes UserPreferences
@@ -1446,7 +1441,7 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 			menuItem = new JMenuItem("Show new dialog");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(MainApplet.this,
+					JOptionPane.showMessageDialog(MainFrame.this,
 							"is it modal?");
 				}
 			});
@@ -1870,6 +1865,54 @@ public final class MainApplet extends JApplet implements IComponentProvider,
 			return (int) (pane.getHeight() * ratio);
 		}
 
+	}
+	
+	public static void main(String[] args) {
+		MainFrame frame = new MainFrame();
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frame.addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+//				System.out.println(e);
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				System.out.println(e);
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.out.println(e);
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+//				System.out.println(e);
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				System.out.println(e);
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				System.out.println(e);
+			}
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				System.out.println(e);
+			}
+		
+		});
+
+		frame.setPreferredSize(new Dimension(900, 700));
+		frame.pack();
+		frame.setVisible(true);
+		frame.init();
 	}
 
 }

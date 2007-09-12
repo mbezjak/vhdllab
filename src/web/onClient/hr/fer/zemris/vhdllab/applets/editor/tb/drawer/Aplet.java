@@ -2,9 +2,8 @@ package hr.fer.zemris.vhdllab.applets.editor.tb.drawer;
 
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
@@ -34,13 +33,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Aplet extends JPanel implements IEditor, IWizard {
+public class Aplet extends AbstractEditor implements IWizard {
 
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1428428870309310489L;
+	private static final long serialVersionUID = -1L;
 	
 	JPanel panel = new JPanel();
 	Platno2 in_panel= new Platno2();
@@ -49,12 +44,9 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	String elementGrafa="pozadina";
 	CircuitInterface io;
 	
-	private ISystemContainer container;
 	private String projectName;
 	private String fileName;
 	private String backupData;
-	private boolean isSavable;
-	private boolean isReadOnly;
 	
 	private String fileDepends = null;
 	private String measureUnit = null;
@@ -80,7 +72,9 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		//in_panel.nacrtaj_sve();
 	}
 	
+	@Override
 	public void init(){
+		super.init();
 			//scrol.setIgnoreRepaint(true);
 			
 			//stvoriSignal();
@@ -429,24 +423,12 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public String getFileName() {
-		return fileName;
-	}
-
-
-	public String getProjectName() {
-		return projectName;
-	}
-
-
 	public IWizard getWizard() {
 		return this;
 	}
 
 
-	public void highlightLine(int line) {}
-
-
+	@Override
 	public boolean isModified() {
 		String data = createData();
 		data = StringUtil.removeWhiteSpaces(data);
@@ -459,17 +441,9 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public boolean isReadOnly() {
-		return isReadOnly;
-	}
-
-
-	public boolean isSavable() {
-		return isSavable;
-	}
-
-
+	@Override
 	public void setFileContent(FileContent fContent) {
+		super.setFileContent(fContent);
 		projectName = fContent.getProjectName();
 		fileName = fContent.getFileName();
 		String data = fContent.getContent();
@@ -513,21 +487,6 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 	}
 
 
-	public void setSystemContainer(ISystemContainer container) {
-		this.container = container;
-	}
-
-
-	public void setReadOnly(boolean flag) {
-		isReadOnly = flag;
-	}
-
-
-	public void setSavable(boolean flag) {
-		isSavable = flag;
-	}
-
-
 	public FileContent getInitialFileContent(Component parent, String projectName) {
 		RunDialog dialog = new RunDialog(parent, true, container, RunDialog.COMPILATION_TYPE);
 		dialog.setChangeProjectButtonText("change");
@@ -548,6 +507,4 @@ public class Aplet extends JPanel implements IEditor, IWizard {
 		return new FileContent(projectName, testbench, sb.toString());
 	}
 
-	public void dispose() {}
-	
 }

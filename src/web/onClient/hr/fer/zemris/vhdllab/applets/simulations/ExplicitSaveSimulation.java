@@ -46,6 +46,7 @@ public class ExplicitSaveSimulation implements IExplicitSave {
 		String projectName = editor.getProjectName();
 		rm.createNewResource(projectName, name, FileTypes.FT_VHDL_SIMULATION,
 				editor.getData());
+		editor.setModified(false);
 	}
 
 }

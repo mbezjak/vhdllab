@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifi
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
 import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
+import hr.fer.zemris.vhdllab.applets.main.event.EditorListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
@@ -248,8 +249,11 @@ public class DefaultEditorManager implements IEditorManager {
 		editor.setSavable(savable);
 		editor.setReadOnly(readOnly);
 		editor.setFileContent(content);
+		editor.setModified(false);
 		// End of initialization
-
+		
+		editor.addEditorListener(new EditorModifiedListener());
+		
 		String tooltipSpecial;
 		if (readOnly) {
 			tooltipSpecial = bundle
@@ -409,10 +413,7 @@ public class DefaultEditorManager implements IEditorManager {
 				echoStatusText(text, MessageType.ERROR);
 				return false;
 			}
-			if (isEditorOpened(editor)) {
-				IComponentIdentifier<?> identifier = getIdentifierFor(editor);
-				resetEditorTitle(false, identifier);
-			}
+			editor.setModified(false);
 			return true;
 		} else if (tryExplicitly) {
 			IComponentIdentifier<?> id = getIdentifierFor(editor);
@@ -569,21 +570,44 @@ public class DefaultEditorManager implements IEditorManager {
 		return openedEditors;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Resets an editor title to make it visible to a user that an editor's
+	 * content has been changed.
 	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#resetEditorTitle(boolean,
-	 *      hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
+	 * @param projectName
+	 *            a name of a project that file belongs to
+	 * @param fileName
+	 *            a name of a file that editor represents
+	 * @param contentChanged
+	 *            <code>true</code> if an editor content has been changed;
+	 *            <code>false</code> otherwise.
 	 */
-	public void resetEditorTitle(boolean contentChanged,
-			IComponentIdentifier<?> identifier) {
-		String title = getTitle(identifier);
-		if (contentChanged) {
+	private void resetEditorTitle(String projectName, String fileName,
+			boolean modified) {
+		IComponentIdentifier<FileIdentifier> id = ComponentIdentifierFactory
+				.createFileEditorIdentifier(projectName, fileName);
+		resetEditorTitle(id, modified);
+	}
+
+	/**
+	 * Resets an editor title to make it visible to a user that an editor's
+	 * content has been changed.
+	 * 
+	 * @param identifier
+	 *            an identifier of an editor
+	 * @param contentChanged
+	 *            <code>true</code> if an editor content has been changed;
+	 *            <code>false</code> otherwise.
+	 */
+	private void resetEditorTitle(IComponentIdentifier<FileIdentifier> id,
+			boolean modified) {
+		String title = getTitle(id);
+		if (modified) {
 			title = "*" + title;
 		} else if (title.startsWith("*")) {
 			title = title.substring(1);
 		}
-		IEditor editor = getOpenedEditor(identifier);
+		IEditor editor = getOpenedEditor(id);
 		if (editor != null) {
 			setTitle(editor, title);
 		}
@@ -830,6 +854,20 @@ public class DefaultEditorManager implements IEditorManager {
 	 */
 	private void echoStatusText(String text, MessageType type) {
 		SystemLog.instance().addSystemMessage(text, type);
+	}
+
+	private class EditorModifiedListener implements EditorListener {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see hr.fer.zemris.vhdllab.applets.main.event.EditorListener#modified(java.lang.String,
+		 *      java.lang.String, boolean)
+		 */
+		@Override
+		public void modified(String projectName, String fileName, boolean flag) {
+			resetEditorTitle(projectName, fileName, flag);
+		}
 	}
 
 }

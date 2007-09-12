@@ -1,35 +1,25 @@
 package hr.fer.zemris.vhdllab.applets.editor.tb3;
 
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
-import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 
 import java.awt.Component;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
-public class TestbenchEditor extends JPanel implements IEditor, IWizard {
+public class TestbenchEditor extends AbstractEditor implements IWizard {
 	
-	private static final long serialVersionUID = -1637316576029494858L;
+	private static final long serialVersionUID = 1L;
 	
-	private ISystemContainer container;
-	private boolean readOnly;
-	private boolean savable;
-	private boolean modified;
-	private FileContent content;
-
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+		super.dispose();
 	}
 
 	@Override
@@ -39,70 +29,22 @@ public class TestbenchEditor extends JPanel implements IEditor, IWizard {
 	}
 
 	@Override
-	public String getFileName() {
-		return content.getFileName();
-	}
-
-	@Override
-	public String getProjectName() {
-		return content.getProjectName();
-	}
-
-	@Override
 	public IWizard getWizard() {
 		return this;
 	}
 
 	@Override
-	public void highlightLine(int line) {
-	}
-
-	@Override
 	public void init() {
-		modified = false;
+		super.init();
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public boolean isModified() {
-		return modified;
-	}
-	
-	private void setModified(boolean flag) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-
-	@Override
-	public boolean isSavable() {
-		return savable;
 	}
 
 	@Override
 	public void setFileContent(FileContent content) {
-		this.content = content;
+		super.setFileContent(content);
 		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setSystemContainer(ISystemContainer container) {
-		this.container = container;
-	}
-
-	@Override
-	public void setReadOnly(boolean flag) {
-		this.readOnly = flag;
-	}
-
-	@Override
-	public void setSavable(boolean flag) {
-		savable = flag;
+		setModified(false);
 	}
 
 	@Override

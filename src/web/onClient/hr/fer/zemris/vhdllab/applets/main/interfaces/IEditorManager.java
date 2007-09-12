@@ -198,19 +198,6 @@ public interface IEditorManager {
 	void closeEditors(List<IEditor> editorsToClose);
 
 	/**
-	 * Resets an editor title to make it visible to a user that an editor's
-	 * content has been changed.
-	 * 
-	 * @param contentChanged
-	 *            <code>true</code> if an editor content has been changed;
-	 *            <code>false</code> otherwise.
-	 * @param identifier
-	 *            an identifier of an editor
-	 */
-	void resetEditorTitle(boolean contentChanged,
-			IComponentIdentifier<?> identifier);
-
-	/**
 	 * Opens a dialog to save specified resources. If <code>openedEditors</code>
 	 * is <code>null</code> then this method will simply return
 	 * <code>false</code>.

@@ -1,9 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 
 import java.awt.BorderLayout;
@@ -43,7 +42,7 @@ import javax.swing.event.ListSelectionListener;
 
 
 
-public class WaveApplet extends JPanel implements IEditor, IWizard {
+public class WaveApplet extends AbstractEditor implements IWizard {
 
 	/** Ovaj container */
 	private JPanel cp = this;
@@ -203,23 +202,15 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 	private char previousKey = 'A';
 
 	/** SerialVersionUID */
-	private static final long serialVersionUID = 2;
+	private static final long serialVersionUID = 1L;
 
-	/** FileContent */
-	private FileContent fileContent;
-
-	/** flags */
-	private boolean readOnly;
-	private boolean savableFlag;
-
-
-	/** ProjectContainer */
-	// private ProjectContainer projectContainer;
 	public WaveApplet() {
 	}
 
 
+	@Override
 	public void init() {
+		super.init();
 		// textField.setEditable(false);
 		// textField.setToolTipText("Value");
 		search.setText("search signal");
@@ -460,8 +451,9 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 	/**
 	 * Metoda postavlja sadrzaj
 	 */
+	@Override
 	public void setFileContent(FileContent content) {
-		this.fileContent = content;
+		super.setFileContent(content);
 		/* uzima String preko HTTP-a i predaje ga GHDL parseru */
 		results.parseString(content.getContent());
 		scale.setContent(results);
@@ -1670,67 +1662,16 @@ public class WaveApplet extends JPanel implements IEditor, IWizard {
 
 
 	public String getData() {
-		return fileContent.getContent();
-	}
-
-
-	public String getFileName() {
-		return fileContent.getFileName();
-	}
-
-
-	public String getProjectName() {
-		return fileContent.getProjectName();
+		return content.getContent();
 	}
 
 
 	public IWizard getWizard() {
-		return null;
+		return this;
 	}
-
-
-	public void highlightLine(int line) {
-		;
-	}
-
-
-	public boolean isModified() {
-		return false;
-	}
-
-
-	public boolean isReadOnly() {
-		return this.readOnly;
-	}
-
-
-	public boolean isSavable() {
-		return this.savableFlag;
-	}
-
-
-	public void setSystemContainer(ISystemContainer container) {
-		// this.projectContainer = container;
-	}
-
-
-	public void setReadOnly(boolean flag) {
-		this.readOnly = flag;
-	}
-
-
-	public void setSavable(boolean flag) {
-		this.savableFlag = flag;
-	}
-
 
 	public FileContent getInitialFileContent(Component parent, String projectName) {
 		return null;
 	}
 
-
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
 }

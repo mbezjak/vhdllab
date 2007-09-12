@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- JNLP File for VHDLLab -->
 
-<jnlp spec="1.0+" codebase="http://localhost:8080/vhdllab/" href="vhdllab.jnlp">
+<jnlp spec="1.6+" codebase="http://localhost:8080/vhdllab/" href="vhdllab2.jnlp">
    <information>
       <title>VHDLLab application</title>
       <vendor>The FER java team</vendor>
@@ -13,6 +13,7 @@
       <desktop/>
       <menu submenu="My VHDLLab App"/>
     </shortcut>
+    <update check="always" policy="prompt-update" />
    <resources>     
    	<jar href="vhdllab-web-onClient.jar"/>   
    	<jar href="commons-logging.jar"/>   
@@ -24,5 +25,5 @@
 	<j2se version="1.6+"
 	      href="http://java.sun.com/products/autodl/j2se"/>
    </resources>
-   <applet-desc main-class="hr.fer.zemris.vhdllab.applets.main.MainApplet" name="vhdllab" height="600" width="800"/>
+   <application-desc main-class="hr.fer.zemris.vhdllab.applets.main.MainFrame">
 </jnlp>

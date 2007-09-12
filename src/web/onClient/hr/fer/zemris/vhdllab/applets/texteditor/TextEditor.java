@@ -2,13 +2,9 @@ package hr.fer.zemris.vhdllab.applets.texteditor;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -35,7 +31,6 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -59,13 +54,10 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
+public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 
-	private static final long serialVersionUID = 5853551043423675268L;
+	private static final long serialVersionUID = 1L;
 	JTextPane text;
-	private boolean savable;
-	private boolean readonly;
-	private boolean modifiedFlag = true;
 	private Object highlighted;
 
 	AbstractDocument doc;
@@ -77,9 +69,6 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	protected static UndoAction undoAction;
 	protected static RedoAction redoAction;
 	protected static UndoManager undo = new UndoManager();
-
-	private ISystemContainer container;
-	private FileContent content;
 
 	public void initGUI() {
 
@@ -169,39 +158,15 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 		text.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
-				if (modifiedFlag)
-					return;
-				modifiedFlag = true;
-				FileIdentifier file = new FileIdentifier(content
-						.getProjectName(), content.getFileName());
-				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-						.createFileEditorIdentifier(file);
-				container.getEditorManager().resetEditorTitle(modifiedFlag,
-						identifier);
+				setModified(true);
 			}
 
 			public void removeUpdate(DocumentEvent e) {
-				if (modifiedFlag)
-					return;
-				modifiedFlag = true;
-				FileIdentifier file = new FileIdentifier(content
-						.getProjectName(), content.getFileName());
-				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-						.createFileEditorIdentifier(file);
-				container.getEditorManager().resetEditorTitle(modifiedFlag,
-						identifier);
+				setModified(true);
 			}
 
 			public void insertUpdate(DocumentEvent e) {
-				if (modifiedFlag)
-					return;
-				modifiedFlag = true;
-				FileIdentifier file = new FileIdentifier(content
-						.getProjectName(), content.getFileName());
-				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-						.createFileEditorIdentifier(file);
-				container.getEditorManager().resetEditorTitle(modifiedFlag,
-						identifier);
+				setModified(true);
 			}
 		});
 
@@ -224,16 +189,11 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 	}
 
 	public String getData() {
-		modifiedFlag = false;
 		return text.getText();
 	}
 
 	public IWizard getWizard() {
 		return this;
-	}
-
-	public boolean isModified() {
-		return modifiedFlag;
 	}
 
 	public StyledDocument getDocument() {
@@ -245,20 +205,10 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 
 	}
 
-	public void setFileContent(FileContent fContent) {
-		this.content = fContent;
+	@Override
+	public void setFileContent(FileContent content) {
+		super.setFileContent(content);
 		text.setText(content.getContent());
-		modifiedFlag = false;
-//		FileIdentifier file = new FileIdentifier(content
-//				.getProjectName(), content.getFileName());
-//		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-//				.createFileEditorIdentifier(file);
-//		container.getEditorManager().resetEditorTitle(modifiedFlag,
-//				identifier);
-	}
-
-	public void setSystemContainer(ISystemContainer container) {
-		this.container = container;
 	}
 
 	public FileContent getInitialFileContent(Component parent,
@@ -322,14 +272,7 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 			return null;
 	}
 
-	public String getFileName() {
-		return content.getFileName();
-	}
-
-	public String getProjectName() {
-		return content.getProjectName();
-	}
-
+	@Override
 	public void highlightLine(int line) {
 		int caret = text.getCaretPosition();
 		Highlighter h = text.getHighlighter();
@@ -358,27 +301,12 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		}
 	}
 
+	@Override
 	public void setReadOnly(boolean flag) {
+		super.setReadOnly(flag);
 		if (flag) {
 			text.setEditable(false);
 		}
-		this.readonly = flag;
-	}
-
-	public void setSaveable(boolean flag) {
-		this.savable = flag;
-	}
-
-	public boolean isReadOnly() {
-		return readonly;
-	}
-
-	public boolean isSavable() {
-		return savable;
-	}
-
-	public void setSavable(boolean flag) {
-		savable = flag;
 	}
 
 	class MousePopupListener extends MouseAdapter {
@@ -547,13 +475,16 @@ public class TextEditor extends JPanel implements IEditor, IWizard, Runnable {
 		thread.start();
 	}
 
+	@Override
 	public void dispose() {
 		scanner.stopScanner();
+		super.dispose();
 	}
 
+	@Override
 	public void init() {
+		super.init();
 		this.run();
-
 	}
 
 }

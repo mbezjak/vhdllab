@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
@@ -12,7 +11,6 @@ import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
@@ -20,23 +18,19 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-public class PreferencesEditor extends JPanel implements IEditor,
+public class PreferencesEditor extends AbstractEditor implements
 		PreferencesListener {
 
-	private static final long serialVersionUID = -7139479707266773753L;
+	private static final long serialVersionUID = 1L;
 
-	private ISystemContainer container;
-	private FileContent content;
 	private Map<String, Integer> rows;
 
 	private DefaultTableModel model;
 	private JTable table;
 
-	public PreferencesEditor() {
-	}
-
 	@Override
 	public void init() {
+		super.init();
 		rows = new HashMap<String, Integer>();
 		Object[] columns = new Object[] { "key", "value" };
 		model = new DefaultTableModel(columns, 0) {
@@ -70,6 +64,7 @@ public class PreferencesEditor extends JPanel implements IEditor,
 	@Override
 	public void dispose() {
 		UserPreferences.instance().removePreferencesListener(this);
+		super.dispose();
 	}
 
 	@Override
@@ -78,46 +73,17 @@ public class PreferencesEditor extends JPanel implements IEditor,
 	}
 
 	@Override
-	public String getFileName() {
-		return content.getFileName();
-	}
-
-	@Override
-	public String getProjectName() {
-		return content.getProjectName();
-	}
-
-	@Override
 	public IWizard getWizard() {
 		return new PreferencesWizard();
 	}
 
 	@Override
-	public void highlightLine(int line) {
-	}
-
-	@Override
-	public boolean isModified() {
-		return false;
-	}
-
-	@Override
-	public boolean isReadOnly() {
-		return false;
-	}
-
-	@Override
-	public boolean isSavable() {
-		return false;
-	}
-
-	@Override
 	public void setFileContent(FileContent content) {
-		this.content = content;
+		super.setFileContent(content);
 		UserPreferences pref = UserPreferences.instance();
-		for(String key : pref.keys()) {
+		for (String key : pref.keys()) {
 			String value = pref.get(key, null);
-			if(value == null) {
+			if (value == null) {
 				continue;
 			}
 			model.addRow(new Object[] { key, value });
@@ -126,27 +92,16 @@ public class PreferencesEditor extends JPanel implements IEditor,
 			pref.addPreferencesListener(this, key);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener#propertyChanged(hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent)
 	 */
 	@Override
 	public void propertyChanged(PreferencesEvent event) {
 		int row = rows.get(event.getName()).intValue();
 		model.setValueAt(event.getNewValue(), row, 1);
-	}
-
-	@Override
-	public void setSystemContainer(ISystemContainer container) {
-		this.container = container;
-	}
-
-	@Override
-	public void setReadOnly(boolean flag) {
-	}
-
-	@Override
-	public void setSavable(boolean flag) {
 	}
 
 }

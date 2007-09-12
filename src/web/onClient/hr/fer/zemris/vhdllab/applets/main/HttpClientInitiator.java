@@ -400,6 +400,8 @@ public final class HttpClientInitiator implements Initiator {
 			 */
 			client.getParams().setAuthenticationPreemptive(false);
 			client.getState().clearCredentials();
+			// reset userId in system context
+			SystemContext.setUserId(credentials.getUserName());
 		}
 	}
 
@@ -535,8 +537,6 @@ public final class HttpClientInitiator implements Initiator {
 			postMethod.releaseConnection();
 			authenticate();
 			status = execute(postMethod, false);
-			// reset userId in system context
-			SystemContext.setUserId(credentials.getUserName());
 			// reset userId in request method
 			requestMethod.setUserId(SystemContext.getUserId());
 		}
