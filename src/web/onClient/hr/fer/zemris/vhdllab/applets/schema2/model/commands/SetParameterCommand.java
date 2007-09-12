@@ -19,6 +19,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 import hr.fer.zemris.vhdllab.applets.schema2.model.CommandResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -215,6 +216,7 @@ public class SetParameterCommand implements ICommand {
 			return cr;
 		}
 		else {
+			changes = new ArrayList<ChangeTuple>(changes);
 			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 			CommandResponse cr = new CommandResponse(changes);
 			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
@@ -269,6 +271,7 @@ public class SetParameterCommand implements ICommand {
 			return cr;
 		}
 		else {
+			changes = new ArrayList<ChangeTuple>(changes);
 			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 			CommandResponse cr = new CommandResponse(changes);
 			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
