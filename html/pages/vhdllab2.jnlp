@@ -1,29 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- JNLP File for VHDLLab -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JNLP File for VHDLLab application -->
 
-<jnlp spec="1.6+" codebase="http://localhost:8080/vhdllab/" href="vhdllab2.jnlp">
-   <information>
-      <title>VHDLLab application</title>
-      <vendor>The FER java team</vendor>
-      <description>VHDLLab</description>
-      <homepage href="http://java.sun.com/docs/books/tutorial/deployment/webstart/running.html"/>
-      <description kind="short">VHDLLab</description>
-   </information>
-   <shortcut online="true">
-      <desktop/>
-      <menu submenu="My VHDLLab App"/>
-    </shortcut>
-    <update check="always" policy="prompt-update" />
-   <resources>     
-   	<jar href="vhdllab-web-onClient.jar"/>   
-   	<jar href="commons-logging.jar"/>   
-   	<jar href="commons-collections.jar"/>   
-   	<jar href="commons-beanutils-1.7.0.jar"/>   
-   	<jar href="commons-digester-1.7.jar"/>   
-   	<jar href="commons-codec-1.3.jar"/>   
-   	<jar href="commons-httpclient-3.0.1.jar"/>   
-	<j2se version="1.6+"
-	      href="http://java.sun.com/products/autodl/j2se"/>
-   </resources>
-   <application-desc main-class="hr.fer.zemris.vhdllab.applets.main.MainFrame">
+<jnlp spec="6.0+" codebase="http://localhost:8080/vhdllab/" href="vhdllab2.jnlp">
+
+	<information>
+		<title>VHDLLab</title>
+		<vendor>FER Java team, University of Zagreb, Croatia</vendor>
+		<homepage href="http://java.sun.com/docs/books/tutorial/deployment/webstart/running.html"/>
+		<description kind="one-line">A web based IDE for VHDL.</description>
+		<description kind="tooltip">A web based IDE for VHDL.</description>
+		<description kind="short">A cross-platform web based IDE for VHDL programming language.</description>
+
+		<shortcut online="true">
+			<desktop/>
+			<menu submenu="VHDLLab"/>
+		</shortcut>
+
+		<related-content href=".java.policy">
+			<title>Java policy</title>
+			<description>This is a mandatory java policy file whose contents must be copied in existing .java.policy file in user home directory or if such file does not exists this file must be copied in designated directory. This application will not work without it!</description>
+		</related-content>
+	</information>
+
+	<update check="always" policy="prompt-update" />
+
+	<resources>
+		<java version="1.6+" href="http://java.sun.com/products/autodl/j2se"
+			java-vm-args="-client"/>
+		<jar href="vhdllab-web-onClient.jar" main="true"/>   
+		<jar href="commons-logging.jar"/>   
+		<jar href="commons-collections.jar"/>   
+		<jar href="commons-beanutils.jar"/>   
+		<jar href="commons-digester.jar"/>   
+		<jar href="commons-codec.jar"/>   
+		<jar href="commons-httpclient.jar"/>   
+	</resources>
+
+	<application-desc main-class="hr.fer.zemris.vhdllab.applets.main.MainFrame">
+	</application-desc>
+
 </jnlp>

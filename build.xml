@@ -467,12 +467,12 @@
       <fileset file="${basedir}/html/pages/*"/>
       <!-- END TEMPORARY -->
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar"/>
-      <fileset file="${basedir}/${lib.dir}/commons-digester-1.7.jar"/>
-      <fileset file="${basedir}/${lib.dir}/commons-httpclient-3.0.1.jar"/>
-      <fileset file="${basedir}/${lib.dir}/commons-codec-1.3.jar"/>
+      <fileset file="${basedir}/${lib.dir}/commons-digester.jar"/>
+      <fileset file="${basedir}/${lib.dir}/commons-httpclient.jar"/>
+      <fileset file="${basedir}/${lib.dir}/commons-codec.jar"/>
       <fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar"/>
 	  <fileset file="${basedir}/${lib.dir}/hibernate/commons-logging.jar"/>
-      <fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils-1.7.0.jar"/>
+      <fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils.jar"/>
       <fileset file="${basedir}/${local.dir}/.java.policy"/>
     </copy>
   	
@@ -573,10 +573,12 @@
     	
     <!-- TODO: When security constraints are in place vhdllab.html will
     	have to be excluded from war (also its jar dependencies) -->
-    <fileset dir="${html.pages.dir}" includes="*"/>
+   	<fileset dir="${html.pages.dir}" includes="*"/>
     <fileset dir="${jlib.dir}" includes="vhdllab-web-onClient.jar"/>
-    <fileset dir="${lib.dir}" includes="commons-digester-1.7.jar"/>
-    <fileset dir="${lib.dir}/xdoclet" includes="commons-beanutils-1.7.0.jar"/>
+    <fileset dir="${lib.dir}" includes="commons-digester.jar"/>
+    <fileset dir="${lib.dir}" includes="commons-httpclient.jar"/>
+    <fileset dir="${lib.dir}" includes="commons-codec.jar"/>
+    <fileset dir="${lib.dir}/xdoclet" includes="commons-beanutils.jar"/>
     <fileset dir="${lib.dir}/hibernate" includes="commons-collections.jar,commons-logging.jar"/>
     <fileset dir="${local.dir}" includes=".java.policy"/>
 	<lib dir="${jlib.dir}" includes="*.jar"/>

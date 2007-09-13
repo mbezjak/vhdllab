@@ -140,6 +140,17 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					// initSystem();
 					// }
 					// });
+				    try 
+				    {
+//				      UIManager.setLookAndFeel(new SyntheticaBlackStarLookAndFeel());
+//				      UIManager.setLookAndFeel(new SubstanceLookAndFeel());
+//				      SubstanceLookAndFeel.setCurrentTheme(new SubstanceBusinessBlackSteelLookAndFeel());
+//				      SyntheticaLookAndFeel.setAntiAliasEnabled(true);
+				    } 
+				    catch (Exception e) 
+				    {
+				      e.printStackTrace();
+				    }
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {

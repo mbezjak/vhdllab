@@ -16,7 +16,7 @@
 <body onunload="javascript:exitApplication();">
   <div>
   	<jsp:plugin code="hr.fer.zemris.vhdllab.applets.main.MainApplet"
-  				archive="vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils-1.7.0.jar,commons-digester-1.7.jar,commons-codec-1.3.jar,commons-httpclient-3.0.1.jar"
+  				archive="vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils.jar,commons-digester.jar,commons-codec.jar,commons-httpclient.jar"
   				type="applet" width="100%" height="100%" jreversion="1.6" name="vhdllab">
   		<jsp:params>
   		  <jsp:param name="id" value="vhdllab"></jsp:param>

@@ -64,6 +64,7 @@
         </user-data-constraint>
     </security-constraint>
 
+	<!-- 
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>VHDLLAB</web-resource-name>
@@ -81,6 +82,7 @@
             <transport-guarantee>NONE</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
+	 -->
 
     <login-config>
         <auth-method>BASIC</auth-method>

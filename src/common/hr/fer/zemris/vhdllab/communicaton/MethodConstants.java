@@ -99,104 +99,104 @@ public interface MethodConstants {
 	/**
 	 * A value for status property when no errors occurred.
 	 */
-	public static final int STATUS_OK = 0;
-	/**
-	 * A status error value for status property when internal server error occurred.
-	 */
-	public static final int SE_INTERNAL_SERVER_ERROR = 1;
-	/**
-	 * A status error value for status property when invalid method was called.
-	 */
-	public static final int SE_INVALID_METHOD_CALL = 2;
-	/**
-	 * A status error value for status property when parse error occurred.
-	 */
-	public static final int SE_PARSE_ERROR = 3;
+	public static final int STATUS_OK = 200;
 	/**
 	 * A status error value for status property when method arguments are faulty.
 	 */
-	public static final int SE_METHOD_ARGUMENT_ERROR = 4;
+	public static final int SE_METHOD_ARGUMENT_ERROR = 400;
+	public static final int SE_NO_PERMISSION = 401;
+	/**
+	 * A status error value for status property when parse error occurred.
+	 */
+	public static final int SE_PARSE_ERROR = 402;
+	/**
+	 * A status error value for status property when invalid method was called.
+	 */
+	public static final int SE_INVALID_METHOD_CALL = 404;
 	
-	public static final int SE_NO_PERMISSION = 5;
+	/**
+	 * A status error value for status property when internal server error occurred.
+	 */
+	public static final int SE_INTERNAL_SERVER_ERROR = 500;
 	
 	/**
 	 * A status error value for status property when file was not found.
 	 */
-	public static final int SE_NO_SUCH_FILE = 101;
+	public static final int SE_NO_SUCH_FILE = 501;
 	/**
 	 * A status error value for status property when file was not able to be saved.
 	 */
-	public static final int SE_CAN_NOT_SAVE_FILE = 102;
+	public static final int SE_CAN_NOT_SAVE_FILE = 502;
 	/**
 	 * A status error value for status property when file was not able to be renamed.
 	 */
-	public static final int SE_CAN_NOT_RENAME_FILE = 103;
+	public static final int SE_CAN_NOT_RENAME_FILE = 503;
 	/**
 	 * A status error value for status property when file was not able to be created.
 	 */
-	public static final int SE_CAN_NOT_CREATE_FILE = 104;
+	public static final int SE_CAN_NOT_CREATE_FILE = 504;
 	/**
 	 * A status error value for status property when existence of file was not able to be determine.
 	 */
-	public static final int SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE = 105;
+	public static final int SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE = 505;
 	/**
 	 * A status error value for status property when file can not be deleted.
 	 */
-	public static final int SE_CAN_NOT_DELETE_FILE = 106;
+	public static final int SE_CAN_NOT_DELETE_FILE = 506;
+	
+	public static final int SE_CAN_NOT_FIND_FILE = 507;
+
 	
 	/**
 	 * A status error value for status property when project was not found.
 	 */
-	public static final int SE_NO_SUCH_PROJECT = 201;
+	public static final int SE_NO_SUCH_PROJECT = 521;
 	/**
 	 * A status error value for status property when project was not able to be saved.
 	 */
-	public static final int SE_CAN_NOT_SAVE_PROJECT = 202;
+	public static final int SE_CAN_NOT_SAVE_PROJECT = 522;
 	/**
 	 * A status error value for status property when project was not able to be renamed.
 	 */
-	public static final int SE_CAN_NOT_RENAME_PROJECT = 203;
+	public static final int SE_CAN_NOT_RENAME_PROJECT = 523;
 	/**
 	 * A status error value for status property when project was not able to be created.
 	 */
-	public static final int SE_CAN_NOT_CREATE_PROJECT = 204;
+	public static final int SE_CAN_NOT_CREATE_PROJECT = 524;
 	/**
 	 * A status error value for status property when existence of project was not able to be determine.
 	 */
-	public static final int SE_CAN_NOT_DETERMINE_EXISTANCE_OF_PROJECT = 205;
+	public static final int SE_CAN_NOT_DETERMINE_EXISTANCE_OF_PROJECT = 525;
 	/**
 	 * A status error value for status property when project can not be deleted.
 	 */
-	public static final int SE_CAN_NOT_DELETE_PROJECT = 206;
-	
-	public static final int SE_CAN_NOT_FIND_FILE = 301;
-	
-	public static final int SE_CAN_NOT_FIND_PROJECT = 302;
+	public static final int SE_CAN_NOT_DELETE_PROJECT = 526;
+	public static final int SE_CAN_NOT_FIND_PROJECT = 527;
 	
 	/**
 	 * A status error value for status property when can not get compilation result.
 	 */
-	public static final int SE_CAN_NOT_GET_COMPILATION_RESULT = 501;
+	public static final int SE_CAN_NOT_GET_COMPILATION_RESULT = 551;
 	/**
 	 * A status error value for status property when can not get simulation result.
 	 */
-	public static final int SE_CAN_NOT_GET_SIMULATION_RESULT = 502;
+	public static final int SE_CAN_NOT_GET_SIMULATION_RESULT = 552;
 	/**
 	 * A status error value for status property when can not generate VHDL.
 	 */
-	public static final int SE_CAN_NOT_GENERATE_VHDL = 503;
+	public static final int SE_CAN_NOT_GENERATE_VHDL = 553;
 	/**
 	 * A status error value for status property when circuit interface could not be extracted.
 	 */
-	public static final int SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE = 504;
+	public static final int SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE = 554;
 	/**
 	 * A status error value for status property when dependencies could not be extracted.
 	 */
-	public static final int SE_CAN_NOT_EXTRACT_DEPENDENCIES = 505;
+	public static final int SE_CAN_NOT_EXTRACT_DEPENDENCIES = 555;
 	/**
 	 * A status error value for status property when hierarchy could not be extracted.
 	 */
-	public static final int SE_CAN_NOT_EXTRACT_HIERARCHY = 506;
+	public static final int SE_CAN_NOT_EXTRACT_HIERARCHY = 556;
 	
 	
 	

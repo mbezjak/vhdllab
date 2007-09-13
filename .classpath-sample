@@ -27,10 +27,10 @@
 	<classpathentry kind="lib" path="libs/hibernate/jta.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/log4j.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/odmg-3.0.jar"/>
-	<classpathentry kind="lib" path="libs/xdoclet/commons-beanutils-1.7.0.jar"/>
-	<classpathentry kind="lib" path="libs/commons-digester-1.7.jar"/>
 	<classpathentry kind="lib" path="libs/spring.jar"/>
-	<classpathentry kind="lib" path="libs/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="libs/commons-httpclient-3.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/commons-codec.jar"/>
+	<classpathentry kind="lib" path="libs/commons-digester.jar"/>
+	<classpathentry kind="lib" path="libs/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="libs/xdoclet/commons-beanutils.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
