@@ -66,9 +66,9 @@ Following must be done in order to prepare project.
 9) start tomcat using following ant task:
    ant run-tomcat
 
-10) developer version of application can be accessed on:
-   http://localhost:8080/vhdllab/vhdllab.jsp
+10) developer version of application can be accessed on (a java web start application):
+   http://localhost:8080/vhdllab/launch.jnlp
 
-Debugging applets:
+Debugging applets (depreciated, no longer in use since vhdllab uses jnlp instead of browsers):
 ------------------
 Configure JVM with option: -Xdebug -Xrunjdwp:transport=dt_socket,address=5555,server=y,suspend=n

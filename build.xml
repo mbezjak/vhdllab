@@ -113,6 +113,7 @@
 	  <replacefilter token="@@app.client.archive@@" property="app.client.archive"/>
 	  <replacefilter token="@@app.vendor@@" property="app.vendor"/>
 	  <replacefilter token="@@jnlp.update.policy@@" property="jnlp.update.policy"/>
+	  <replacefilter token="@@jnlp.vm.parameter@@" property="jnlp.vm.parameter"/>
 	  <replacefilter token="@@app.main.class@@" property="app.main.class"/>
   	</replace>
   	
