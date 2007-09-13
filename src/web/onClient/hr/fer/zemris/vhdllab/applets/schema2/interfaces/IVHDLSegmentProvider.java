@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+
+import java.util.Map;
+
 
 
 /**
@@ -38,9 +42,15 @@ public interface IVHDLSegmentProvider {
 	 * @param info
 	 * Info sluzi kako bi se u slucaju koristenja
 	 * pomocnih signala razrijesili konflikti imena.
+	 * @param renamedSignals
+	 * Ako implementacija namjerava koristiti ime signala
+	 * koji se nalazi u schematicu i cije se ime takoder
+	 * se nalazi u navedenoj mapi, onda ta implementacija
+	 * mora zamijeniti to ime vrijednoscu iz mape pod
+	 * tim kljucem. 
 	 * @return
 	 */
-	String getInstantiation(ISchemaInfo info);
+	String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals);
 }
 
 

@@ -39,7 +39,7 @@ public class Tester {
 	
 	{
 		try {
-			//javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
 //			SyntheticaLookAndFeel slaf = new SyntheticaStandardLookAndFeel();
 //			UIManager.setLookAndFeel(slaf);
 		} catch (Exception e) {

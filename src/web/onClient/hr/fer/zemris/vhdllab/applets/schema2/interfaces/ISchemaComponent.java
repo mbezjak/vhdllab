@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EOrientation;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidatedException;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
@@ -338,6 +337,17 @@ public interface ISchemaComponent {
 	 * @param compwrap
 	 */
 	void deserialize(ComponentWrapper compwrap);
+	
+	
+	/**
+	 * Vraca listu schemaportova (pinova) na koju
+	 * se odnosi Port pod zadanim indeksom.
+	 * 
+	 * @param portIndex
+	 * @throws IndexOutOfBoundsException
+	 * @return
+	 */
+	List<SchemaPort> getRelatedTo(int portIndex);
 	
 	
 	/**

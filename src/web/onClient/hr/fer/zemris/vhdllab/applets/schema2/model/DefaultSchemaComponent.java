@@ -70,8 +70,12 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 	private class DefaultVHDLSegmentProvider implements IVHDLSegmentProvider {
 		
-		public String getInstantiation(ISchemaInfo info) {
+		private List<String> signames = new ArrayList<String>();
+		private Map<Caseless, Caseless> renamed;
+		
+		public String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals) {
 			StringBuilder sb = new StringBuilder();
+			renamed = renamedSignals;
 			
 			// bind to helper signals
 			int i = 0;
@@ -79,23 +83,24 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				Type tp = portrel.port.getType();
 				String signame = signames.get(i);
 				if (tp.isVector()) {
-					int vecpos = 0;
+					int vecpos = tp.getRangeFrom();
+					boolean downto = tp.hasVectorDirectionDOWNTO();
 					for (SchemaPort related : portrel.relatedTo) {
-						if (!Caseless.isNullOrEmpty(related.getMapping())) {
+						Caseless mappedto = related.getMapping();
+						if (!Caseless.isNullOrEmpty(mappedto)) {
 							sb.append(signame).append('(').append(vecpos).append(')');
-							sb.append(" <= ").append(related.getMapping().toString());
+							sb.append(" <= ").append(rename(mappedto));
 							sb.append(";\n");
 						}
-						vecpos++;
+						if (downto) vecpos--;
+						else vecpos++;
 					}
-					
 				}
 				i++;
 			}
 			
 			
 			// instantiate
-			
 			sb.append(getName()).append(": entity work.").append(getTypeName());
 			
 			// handle generic map
@@ -125,7 +130,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 					Type tp = portrel.port.getType();
 					if (tp.isScalar()) {
 						Caseless mappedto = portrel.relatedTo.get(0).getMapping();
-						sb.append((!Caseless.isNullOrEmpty(mappedto)) ? (mappedto) : ("open"));
+						sb.append((!Caseless.isNullOrEmpty(mappedto)) ? (rename(mappedto)) : ("open"));
 					} else {
 						sb.append(signames.get(i));
 					}
@@ -138,6 +143,12 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			sb.append(";\n");
 			
 			return sb.toString();
+		}
+
+		private Caseless rename(Caseless mappedto) {
+			Caseless sigrenamed = renamed.get(mappedto);
+			if (sigrenamed == null) return mappedto;
+			return sigrenamed;
 		}
 
 		public String getSignalDefinitions(ISchemaInfo info) {
@@ -181,7 +192,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	/* none */
 
 	/* protected fields */
-	protected List<String> signames = new ArrayList<String>();
 	protected String categoryName;
 	protected Caseless componentName;
 	protected String codeFileName;
@@ -767,8 +777,10 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			sp.setMapping(oldsp.getMapping());
 		}
 	}
-	
-	
+
+	public List<SchemaPort> getRelatedTo(int portIndex) {
+		return portrelations.get(portIndex).relatedTo;
+	}
 
 	public boolean isGeneric() {
 		return generic;

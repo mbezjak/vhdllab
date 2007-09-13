@@ -256,6 +256,10 @@ public class InvalidatedComponent implements ISchemaComponent {
 		return ro_schemaports;
 	}
 
+	public List<SchemaPort> getRelatedTo(int portIndex) {
+		return new ArrayList<SchemaPort>();
+	}
+
 	public Caseless getTypeName() {
 		return INVALIDATED_COMPONENT;
 	}

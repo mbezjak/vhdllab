@@ -41,6 +41,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 
@@ -61,19 +62,22 @@ import java.util.NoSuchElementException;
 public class InOutSchemaComponent implements ISchemaComponent {
 	
 	private class InOutVHDLSegmentProvider implements IVHDLSegmentProvider {
-		public String getInstantiation(ISchemaInfo info) {
+		private Map<Caseless, Caseless> renamed;
+		
+		public String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals) {
 			StringBuilder sb = new StringBuilder();
+			renamed = renamedSignals;
 			
 			if (portrel.port.getType().isScalar()) {
 				Caseless mappedto = schemaports.get(0).getMapping();
 				if (!Caseless.isNullOrEmpty(mappedto)) {
 					Direction dir = portrel.port.getDirection();
 					if (dir.equals(Direction.IN)) {
-						sb.append(mappedto.toString()).append(" <= ");
+						sb.append(rename(mappedto)).append(" <= ");
 						sb.append(getName()).append(";\n"); // TODO vidi portrel.port.getName()
 					} else if (dir.equals(Direction.OUT)) {
 						sb.append(getName()).append(" <= "); // TODO vidi portrel.port.getName()
-						sb.append(mappedto.toString()).append(";\n");
+						sb.append(rename(mappedto)).append(";\n");
 					} else {
 						throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
 					}
@@ -85,7 +89,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
-							sb.append(mappedto.toString()).append(" <= ");
+							sb.append(rename(mappedto)).append(" <= ");
 							sb.append(getName()).append("(").append(i).append(");\n"); // TODO vidi portrel.port.getName()
 						}
 						i++;
@@ -96,7 +100,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
 							sb.append(getName()).append("(").append(i).append(")"); // TODO vidi portrel.port.getName()
-							sb.append(" <= ").append(mappedto.toString()).append('\n');
+							sb.append(" <= ").append(rename(mappedto)).append('\n');
 						}
 						i++;
 					}
@@ -110,6 +114,10 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		}
 		public String getSignalDefinitions(ISchemaInfo info) {
 			return "";
+		}
+		private Caseless rename(Caseless mappedto) {
+			Caseless updated = renamed.get(mappedto);
+			return (updated == null) ? (mappedto) : (updated);
 		}
 	}
 	
@@ -528,6 +536,11 @@ public class InOutSchemaComponent implements ISchemaComponent {
 
 	public boolean isInvalidated() {
 		return false;
+	}
+
+	public List<SchemaPort> getRelatedTo(int portIndex) {
+		if (portIndex != 0) throw new IndexOutOfBoundsException();
+		return portrel.relatedTo;
 	}
 	
 }
