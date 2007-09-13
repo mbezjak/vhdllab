@@ -65,44 +65,62 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		private Map<Caseless, Caseless> renamed;
 		
 		public String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals) {
+			Caseless cmpname = getName();
 			StringBuilder sb = new StringBuilder();
+			Type tp = portrel.port.getType();
 			renamed = renamedSignals;
 			
-			if (portrel.port.getType().isScalar()) {
+			if (tp.isScalar()) {
 				Caseless mappedto = schemaports.get(0).getMapping();
 				if (!Caseless.isNullOrEmpty(mappedto)) {
-					Direction dir = portrel.port.getDirection();
-					if (dir.equals(Direction.IN)) {
-						sb.append(rename(mappedto)).append(" <= ");
-						sb.append(getName()).append(";\n"); // TODO vidi portrel.port.getName()
-					} else if (dir.equals(Direction.OUT)) {
-						sb.append(getName()).append(" <= "); // TODO vidi portrel.port.getName()
-						sb.append(rename(mappedto)).append(";\n");
-					} else {
-						throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
+					mappedto = rename(mappedto);
+					if (!mappedto.equals(cmpname)) {
+						Direction dir = portrel.port.getDirection();
+						if (dir.equals(Direction.IN)) {
+							sb.append(rename(mappedto)).append(" <= ");
+							sb.append(getName()).append(";\n"); // TODO vidi portrel.port.getName()
+						} else if (dir.equals(Direction.OUT)) {
+							sb.append(getName()).append(" <= "); // TODO vidi portrel.port.getName()
+							sb.append(rename(mappedto)).append(";\n");
+						} else {
+							throw new NotImplementedException("Direction '" + dir.toString() + 
+									"' not implemented.");
+						}
 					}
 				}
 			} else {
 				Direction dir = portrel.port.getDirection();
 				if (dir.equals(Direction.IN)) {
-					int i = 0;
+					int i = tp.getRangeFrom();
+					boolean downto = tp.hasVectorDirectionDOWNTO();
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
-							sb.append(rename(mappedto)).append(" <= ");
-							sb.append(getName()).append("(").append(i).append(");\n"); // TODO vidi portrel.port.getName()
+							mappedto = rename(mappedto);
+							Caseless vecwpos = new Caseless(cmpname + "(" + i + ")");
+							if (!mappedto.equals(vecwpos)) {
+								sb.append(rename(mappedto)).append(" <= ");
+								sb.append(cmpname).append("(").append(i).append(");\n");
+								// TODO vidi portrel.port.getName()
+							}
 						}
-						i++;
+						if (downto) i--; else i++;
 					}
 				} else if (dir.equals(Direction.OUT)) {
-					int i = 0;
+					int i = tp.getRangeFrom();
+					boolean downto = tp.hasVectorDirectionDOWNTO();
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
-							sb.append(getName()).append("(").append(i).append(")"); // TODO vidi portrel.port.getName()
-							sb.append(" <= ").append(rename(mappedto)).append('\n');
+							mappedto = rename(mappedto);
+							Caseless vecwpos = new Caseless(cmpname + "(" + i + ")");
+							if (!mappedto.equals(vecwpos)) {
+								sb.append(getName()).append("(").append(i).append(")");
+								sb.append(" <= ").append(rename(mappedto)).append('\n');
+								// TODO vidi portrel.port.getName()
+							}
 						}
-						i++;
+						if (downto) i--; else i++;
 					}
 				} else {
 					throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");

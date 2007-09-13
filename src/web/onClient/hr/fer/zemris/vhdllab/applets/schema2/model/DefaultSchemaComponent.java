@@ -70,7 +70,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	
 	private class DefaultVHDLSegmentProvider implements IVHDLSegmentProvider {
 		
-		private List<String> signames = new ArrayList<String>();
 		private Map<Caseless, Caseless> renamed;
 		
 		public String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals) {
@@ -192,6 +191,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	/* none */
 
 	/* protected fields */
+	protected List<String> signames = new ArrayList<String>();
 	protected String categoryName;
 	protected Caseless componentName;
 	protected String codeFileName;
