@@ -207,6 +207,13 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	public void removeComponent(Caseless name) throws UnknownKeyException {
 		if (!components.containsKey(name)) throw new UnknownKeyException();
 		components.remove(name);
+		Iterator<PlacedComponent> itp = insertlist.iterator();
+		while (itp.hasNext()) {
+			if (itp.next().comp.getName().equals(name)) {
+				itp.remove();
+				break;
+			}
+		}
 	}
 	
 	

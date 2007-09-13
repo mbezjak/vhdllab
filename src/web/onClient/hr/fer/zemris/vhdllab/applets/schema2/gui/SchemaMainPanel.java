@@ -355,9 +355,15 @@ public class SchemaMainPanel extends AbstractEditor {
 		appletListener = new VetoableResourceAdapter() {
 			@Override
 			public void resourceSaved(String projectName, String fileName) {
+				if (fileName.equals(SchemaMainPanel.this.content.getFileName())) return;
+				
+				boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
+				
 				List<CircuitInterface> usercis = getUserPrototypeList();
 				controller.send(new RebuildPrototypeCollection(null, usercis));
 				controller.send(new InvalidateObsoleteUserComponents(usercis));
+				
+				SchemaMainPanel.this.setModified(oldmodifiedstatus);
 			}
 		};
 		resourceManager.addVetoableResourceListener(appletListener);
