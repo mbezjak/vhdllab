@@ -5,7 +5,7 @@
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/service"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/dao"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/common"/>
-	<classpathentry kind="src" path="src/tests/common"/>
+	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/common"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/dao"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/service"/>
 	<classpathentry excluding="**/.svn/|.svn/" kind="src" path="src/tests/web/onClient"/>

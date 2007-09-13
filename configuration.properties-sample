@@ -12,6 +12,8 @@
 ### * this is also an application directory		###
 ###		under CATALINA_HOME/webapps 			###
 app.name = vhdllab
+### A title for an application ###
+app.title = VHDLLab
 ### Application host ###
 app.host = localhost
 ### Server http port ###
@@ -26,8 +28,20 @@ app.communication.protocol = https
 ###	${app.communication.protocol}.								###
 app.communication.port = 8443
 ### Application homepage ###
-app.homepage = http://localhost:8080/vhdllab/vhdllab.jsp
-
+app.homepage = 
+### A jnlp file name ###
+jnlp.file = launch.jnlp
+### Client application dependencies + application itself ### 
+### a first jar must be application itself				 ###
+app.client.archive = vhdllab-web-onClient.jar,commons-logging.jar,commons-collections.jar,commons-beanutils.jar,commons-digester.jar,commons-codec.jar,commons-httpclient.jar
+### An application vendor ###
+app.vendor = FER Java team, University of Zagreb, Croatia
+### A policy for jnlp file on how to update an application ###
+#jnlp.update.policy = always
+jnlp.update.policy = prompt-update
+#jnlp.update.policy = prompt-run
+### A main class of an application (one having public static void main method) ###
+app.main.class = hr.fer.zemris.vhdllab.applets.main.MainFrame
 
 
 ### directories in ${basedir} ###
@@ -61,22 +75,6 @@ sleep.for.tomcat = 1
 
 ### Override java policy in user home dir ###
 override.java.policy = false
-
-### Full path to browser executable file ###
-#browser.exec = c:\\Program Files\\Mozilla Firefox\\firefox.exe
-#browser.exec = c:\\Program Files\\Opera\\opera.exe
-
-### Command line argument ###
-### Firefox ###
-browser.arg = -new-window
-### Opera (Linux Only) ###
-#browser.arg = -newwindow
-#browser.arg = -nosession
-### No command line argument ###
-#browser.arg =
-
-### Relative application url pattern for tomcat ###
-app.url = vhdllab.jsp
 
 
 ############################

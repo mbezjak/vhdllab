@@ -21,6 +21,16 @@
     <!-- JSPC servlet mappings start -->
 
     <servlet>
+        <servlet-name>JNLPServlet</servlet-name>
+        <servlet-class>hr.fer.zemris.vhdllab.servlets.JNLPServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>JNLPServlet</servlet-name>
+        <url-pattern>/launch.jnlp</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>AjaxServlet</servlet-name>
         <servlet-class>hr.fer.zemris.vhdllab.servlets.AjaxServlet</servlet-class>
     </servlet>
@@ -63,26 +73,6 @@
             <transport-guarantee>NONE</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
-
-	<!-- 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>VHDLLAB</web-resource-name>
-            <description>Require users to authenticate</description>
-            <url-pattern>/*</url-pattern>
-            <http-method>POST</http-method>
-            <http-method>GET</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <description>Define who can access this url-pattern</description>
-            <role-name>student</role-name>
-            <role-name>admin</role-name>
-        </auth-constraint>
-        <user-data-constraint>
-            <transport-guarantee>NONE</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
-	 -->
 
     <login-config>
         <auth-method>BASIC</auth-method>

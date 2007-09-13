@@ -102,12 +102,18 @@
   	
   	<replace dir="${local.dir}/web" propertyfile="${configuration.properties}">
   	  <replacefilter token="@@app.name@@" property="app.name"/>
+  	  <replacefilter token="@@app.title@@" property="app.title"/>
 	  <replacefilter token="@@app.host@@" property="app.host"/>
 	  <replacefilter token="@@http.port@@" property="http.port"/>
 	  <replacefilter token="@@https.port@@" property="https.port"/>
 	  <replacefilter token="@@app.communication.protocol@@" property="app.communication.protocol"/>
 	  <replacefilter token="@@app.communication.port@@" property="app.communication.port"/>
 	  <replacefilter token="@@app.homepage@@" property="app.homepage"/>
+	  <replacefilter token="@@jnlp.file@@" property="jnlp.file"/>
+	  <replacefilter token="@@app.client.archive@@" property="app.client.archive"/>
+	  <replacefilter token="@@app.vendor@@" property="app.vendor"/>
+	  <replacefilter token="@@jnlp.update.policy@@" property="jnlp.update.policy"/>
+	  <replacefilter token="@@app.main.class@@" property="app.main.class"/>
   	</replace>
   	
   	<copy todir="${build.dir}">
@@ -553,17 +559,6 @@
   <target name="kill-tomcat">
     <exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.shutdown.exec}"
     	spawn="true">
-    </exec>
-  </target>
-	
-  <target name="run-app" depends="tomcat">
-  	<fail unless="browser.exec">Browser executable not set! Edit this information in configuration.properties file.
-  	</fail>
- 	<!-- Sleep for tomcat to reload his resources -->
-  	<sleep seconds="${sleep.for.tomcat}"/>
-    <exec executable="${browser.exec}" spawn="true">
-      <arg line="${browser.arg}"/>
-      <arg line="http://${app.host}:${http.port}/${app.name}/${app.url}"/>
     </exec>
   </target>
 	
