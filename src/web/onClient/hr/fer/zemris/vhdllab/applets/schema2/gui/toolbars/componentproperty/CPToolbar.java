@@ -135,7 +135,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		// izgenerirani envelope za sve parametre sa svim potrebnim vizualnim
 		// komponentama
 		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
-				component, controller,lgc);
+				component, controller, lgc);
 		// na temelju envelopea, gradi se model za JTableX
 		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
 		// na temelju envelopea, izgradio se i RowEditor model za JTableX
@@ -150,7 +150,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		// izgenerirani envelope za sve parametre sa svim potrebnim vizualnim
 		// komponentama
 		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
-				wire, controller);
+				wire, controller, lgc);
 		// na temelju envelopea, gradi se model za JTableX
 		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
 		// na temelju envelopea, izgradio se i RowEditor model za JTableX
@@ -218,12 +218,15 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 				}
 
 				fetchAndShowComponentProperty(componentName);
-			} else {
+			} else if (lgc.getSelectedComponent().equals(
+					CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED)) {
+				if (DEBUG_MODE) {
+					System.out.println("CPToolbar: nothingSelected!");
+				}
 				cleanUpGui();
 			}
 		} else if (evt.getPropertyName().equals(
 				EPropertyChange.PROPERTY_CHANGE.toString())) {
-
 			System.out.println("CPToolbar: selected component:"
 					+ lgc.getSelectedComponent().toString());
 
@@ -234,7 +237,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 			}
 		} else {
 			if (CPToolbar.DEBUG_MODE) {
-				System.err.println("CPToolbar: unknow property");
+				System.out.println("CPToolbar: unknow property");
 			}
 		}
 	}
@@ -259,6 +262,12 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 
 		ISchemaWireCollection wiresCollection = info.getWires();
 		ISchemaWire wire = wiresCollection.fetchWire(componentName);
+		if (wire == null) {
+			if (DEBUG_MODE) {
+				System.err.println("CPToolbar: fetched wire was null");
+			}
+			return;
+		}
 		showPropertyForWire(wire);
 	}
 

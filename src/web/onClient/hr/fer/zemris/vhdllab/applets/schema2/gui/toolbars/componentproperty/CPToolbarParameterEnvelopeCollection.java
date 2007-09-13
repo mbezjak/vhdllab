@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.TimeFormatException;
@@ -98,9 +97,10 @@ public class CPToolbarParameterEnvelopeCollection {
 	 *            kontroler
 	 */
 	public CPToolbarParameterEnvelopeCollection(ISchemaWire wire,
-			ISchemaController controller) {
+			ISchemaController controller, ILocalGuiController lgc) {
 		this.controller = controller;
 		this.componentName = wire.getName();
+		this.lgc = lgc;
 
 		parameterHolder = EParameterHolder.wire;
 		buildParameters(wire.getParameters());
@@ -219,7 +219,6 @@ public class CPToolbarParameterEnvelopeCollection {
 					pHolder = CanvasToolbarLocalGUIController.TYPE_COMPONENT;
 				}
 				lgc.setSelectedComponent(cName, pHolder);
-				lgc.setState(ECanvasState.MOVE_STATE);
 			}
 		}
 
