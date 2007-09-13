@@ -16,6 +16,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 /**
  * Sucelje za skup komponenti koje 
  * se nalaze u shemi.
+ * Specificno je za ovo sucelje da iterira
+ * po skupu komponenti u shemi onim redoslijedom
+ * kojim su komponente dodane u shemu (izuzevsi
+ * komponente za koje je pri dodavanju specificiran
+ * redni broj).
  * 
  * @author Axel
  *
@@ -151,7 +156,31 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 * Ako dolazi do preklapanja.
 	 * 
 	 */
-	void addComponent(int x, int y, ISchemaComponent component) throws DuplicateKeyException, OverlapException;
+	void addComponent(int x, int y, ISchemaComponent component)
+	throws DuplicateKeyException, OverlapException;
+
+	/**
+	 * Dodaje komponentu na shemu,
+	 * na zadane koordinate, pod zadani
+	 * redni broj.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param component
+	 * @param index
+	 * Redni broj pod kojim se nalazi komponenta
+	 * (komponenta ce pri iteriranju biti pod tim rednim brojem).
+	 * 
+	 * @throws DuplicateKeyException
+	 * Ako postoji komponenta tog imena.
+	 * @throws OverlapException
+	 * Ako dolazi do preklapanja.
+	 * @throws IndexOutOfBoundsException
+	 * Ako je (index < 0 || index > ISchemaComponentCollection.size()).
+	 * 
+	 */
+	void addComponentAt(int x, int y, ISchemaComponent component, int index)
+	throws DuplicateKeyException, OverlapException;
 	
 	/**
 	 * Zadanu komponentu mice sa sheme.
@@ -165,6 +194,32 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 */
 	void removeComponent(Caseless name) throws UnknownKeyException;
 	
+	/**
+	 * Zadanu komponentu mice sa sheme, te je ponovno smjesta na novu
+	 * lokaciju, ali POD ISTIM REDNIM BROJEM!
+	 * 
+	 * @param name
+	 * Jedinstveni identifikator komponente
+	 * koja ce biti maknuta sa sheme i ponovno smjestena na nju
+	 * pod istim rednim brojem.
+	 * @param x
+	 * @param y
+	 * 
+	 * @throws UnknownKeyException
+	 * Ako ne postoji komponenta tog imena.
+	 * 
+	 */
+	void reinsertComponent(Caseless name, int x, int y)
+	throws UnknownKeyException, OverlapException;
+	
+	/**
+	 * Vraca redni broj komponente koja je dodana u shemu.
+	 * Sucelje ne specificira vremensku slozenost ove operacije.
+	 * @param name
+	 * @return
+	 * @throws UnknownKeyException
+	 */
+	int getComponentIndex(Caseless name) throws UnknownKeyException;
 	
 	/**
 	 * Vraca skup imena komponenata na shemi,
@@ -180,6 +235,13 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 *
 	 */
 	void clear();
+	
+	/**
+	 * Vraca broj komponenti u kolekciji.
+	 * @return
+	 * Broj komponenti u kolekciji.
+	 */
+	int size();
 	
 }
 

@@ -11,9 +11,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -32,24 +34,9 @@ import java.util.Map.Entry;
  */
 public class SimpleSchemaComponentCollection implements ISchemaComponentCollection {
 	
-	
-	
-	private class ComponentIterator implements Iterator<PlacedComponent> {
-		private Iterator<Entry<Caseless, PlacedComponent>> pit = components.entrySet().iterator();
-		public boolean hasNext() {
-			return pit.hasNext();
-		}
-		public PlacedComponent next() {
-			return pit.next().getValue();
-		}
-		public void remove() {
-			pit.remove();
-		}
-	}
-	
-	
 	/* private fields */
 	private Map<Caseless, PlacedComponent> components;
+	private List<PlacedComponent> insertlist;
 	private XYLocation loc;
 	
 	
@@ -57,7 +44,8 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	/* ctors */
 	
 	public SimpleSchemaComponentCollection() {
-		components = new LinkedHashMap<Caseless, PlacedComponent>();
+		components = new HashMap<Caseless, PlacedComponent>();
+		insertlist = new LinkedList<PlacedComponent>();
 		loc = new XYLocation();
 	}
 	
@@ -78,6 +66,52 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		wrapper.comp = component;
 		wrapper.pos = new XYLocation(x, y);
 		components.put(component.getName(), wrapper);
+		insertlist.add(wrapper);
+	}
+
+	public void addComponentAt(int x, int y, ISchemaComponent component, int index)
+	throws DuplicateKeyException, OverlapException
+	{
+		if (components.containsKey(component.getName())) throw new DuplicateKeyException();
+		if (index < 0 || index > insertlist.size()) throw new IndexOutOfBoundsException();
+		
+		// TODO: eventualna provjera overlappinga dode ovdje
+		
+		PlacedComponent wrapper = new PlacedComponent();
+		wrapper.comp = component;
+		wrapper.pos = new XYLocation(x, y);
+		components.put(component.getName(), wrapper);
+		insertlist.add(index, wrapper);		
+	}
+
+	public int getComponentIndex(Caseless name) throws UnknownKeyException {
+		if (!components.containsKey(name)) throw new UnknownKeyException();		
+		
+		int count = 0;
+		for (PlacedComponent plc : insertlist) {
+			if (plc.comp.getName().equals(name)) return count;
+			count++;
+		}
+		
+		throw new IllegalStateException("Component exists but not found during iteration.");
+	}
+
+	public void reinsertComponent(Caseless name, int x, int y)
+		throws UnknownKeyException, OverlapException
+	{
+		if (!components.containsKey(name)) throw new UnknownKeyException();
+		
+		// TODO eventualna provjera overlappinga
+		
+		PlacedComponent plc = components.get(name);
+		components.remove(name);
+		plc.pos.x = x;
+		plc.pos.y = y;
+		components.put(name, plc);
+	}
+
+	public int size() {
+		return components.size();
 	}
 
 	public boolean containsAt(int x, int y, int dist) {
@@ -137,9 +171,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	public Set<ISchemaComponent> fetchComponents(EComponentType componentType) {
 		Set<ISchemaComponent> comps = new LinkedHashSet<ISchemaComponent>();
 		
-		PlacedComponent plc;
-		for (Entry<Caseless, PlacedComponent> entry : components.entrySet()) {
-			plc = entry.getValue();
+		for (PlacedComponent plc : insertlist) {
 			if (plc.comp.getComponentType().equals(componentType)) comps.add(plc.comp);
 		}
 		
@@ -184,7 +216,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	
 
 	public Iterator<PlacedComponent> iterator() {
-		return new ComponentIterator();
+		return insertlist.iterator();
 	}
 
 

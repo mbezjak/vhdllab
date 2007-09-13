@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
@@ -31,8 +32,9 @@ public class DeleteComponentCommand implements ICommand {
 	
 	/* private fields */
 	private Caseless cmpname;
-	private ISchemaComponent deleted;
 	private int x, y;
+	private ISchemaComponent deleted;
+	private int deletedIndex;
 
 	
 	/* ctors */
@@ -84,7 +86,7 @@ public class DeleteComponentCommand implements ICommand {
 		
 		// restore previous state
 		try {
-			info.getComponents().addComponent(x, y, deleted);
+			info.getComponents().addComponentAt(x, y, deleted, deletedIndex);
 		} catch (DuplicateKeyException e) {
 			return new CommandResponse(new SchemaError(EErrorTypes.DUPLICATE_COMPONENT_NAME,
 			"Component with name '" + deleted.getName() + "' already exists."));
@@ -98,9 +100,11 @@ public class DeleteComponentCommand implements ICommand {
 	}
 	
 	private void cacheComponent(ISchemaInfo info) throws UnknownKeyException {
-		deleted = info.getComponents().fetchComponent(cmpname);
+		ISchemaComponentCollection components = info.getComponents();
+		deletedIndex = components.getComponentIndex(cmpname);
+		deleted = components.fetchComponent(cmpname);
 		if (deleted == null) throw new UnknownKeyException();
-		Rectangle r = info.getComponents().getComponentBounds(cmpname);
+		Rectangle r = components.getComponentBounds(cmpname);
 		x = r.x;
 		y = r.y;
 	}

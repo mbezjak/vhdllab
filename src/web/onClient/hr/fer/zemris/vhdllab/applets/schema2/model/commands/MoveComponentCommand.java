@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.commands;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EErrorTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.InvalidCommandOperationException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
@@ -95,30 +94,14 @@ public class MoveComponentCommand implements ICommand {
 					COMMAND_NAME + " cannot move components that have mapped ports."));
 		}
 		
-		// remove component
-		try {
-			components.removeComponent(cmpname);
-		} catch (UnknownKeyException e) {
-			throw new IllegalStateException("Component could not be removed, after it was found!");
-		}
-		
 		// add component to new location
 		try {
-			components.addComponent(loc.x, loc.y, cmp);
-		} catch (DuplicateKeyException e) {
-			throw new IllegalStateException("Component could not be added back after removal.");
+			components.reinsertComponent(cmpname, loc.x, loc.y);
 		} catch (OverlapException e) {
-			try {
-				components.addComponent(oldloc.x, oldloc.y, cmp);
-			} catch (DuplicateKeyException e1) {
-				throw new IllegalStateException("Component could not be added back after removal " +
-						"due to duplicate key.");
-			} catch (OverlapException e1) {
-				throw new IllegalStateException("Component caused overlap while being added back to " +
-						"old location.");
-			}
 			return new CommandResponse(new SchemaError(EErrorTypes.COMPONENT_OVERLAP,
 					"Component overlaps other components at desired location."));
+		} catch (UnknownKeyException e) {
+			throw new IllegalStateException("Component could not found, although it has been before.");
 		}
 		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
@@ -139,29 +122,14 @@ public class MoveComponentCommand implements ICommand {
 			throw new IllegalStateException("Component has mapped ports while performing undo.");
 		}
 		
-		try {
-			components.removeComponent(cmpname);
-		} catch (UnknownKeyException e) {
-			throw new IllegalStateException("Component could not be removed, after it was found!");
-		}
-		
 		// add component to new location
 		try {
-			components.addComponent(oldloc.x, oldloc.y, cmp);
-		} catch (DuplicateKeyException e) {
-			throw new IllegalStateException("Component could not be added back after removal.");
+			components.reinsertComponent(cmpname, oldloc.x, oldloc.y);
 		} catch (OverlapException e) {
-			try {
-				components.addComponent(oldloc.x, oldloc.y, cmp);
-			} catch (DuplicateKeyException e1) {
-				throw new IllegalStateException("Component could not be added back after removal " +
-						"due to duplicate key.");
-			} catch (OverlapException e1) {
-				throw new IllegalStateException("Component caused overlap while being added back to " +
-						"old location.");
-			}
 			throw new IllegalStateException("Component overlaps other components at desired location " +
 					"while performing undo.");
+		} catch (UnknownKeyException e) {
+			throw new IllegalStateException("Component could not found, although it has been before.");
 		}
 		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));

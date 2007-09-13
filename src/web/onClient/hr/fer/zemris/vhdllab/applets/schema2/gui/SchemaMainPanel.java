@@ -304,6 +304,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
 	@Override
 	public void dispose() {
+		resourceManager.removeVetoableResourceListener(appletListener);
 		super.dispose();
 	}
 
@@ -359,6 +360,7 @@ public class SchemaMainPanel extends AbstractEditor {
 				controller.send(new InvalidateObsoleteUserComponents(usercis));
 			}
 		};
+		resourceManager.addVetoableResourceListener(appletListener);
 	}
 
 }
