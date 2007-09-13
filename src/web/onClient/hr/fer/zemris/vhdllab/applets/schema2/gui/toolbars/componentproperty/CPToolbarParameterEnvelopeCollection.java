@@ -1,12 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
+import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.TimeFormatException;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors.TimeCellEditor;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
@@ -62,17 +65,24 @@ public class CPToolbarParameterEnvelopeCollection {
 	private EParameterHolder parameterHolder = null;
 
 	/**
+	 * Local gui controller
+	 */
+	private ILocalGuiController lgc = null;
+
+	/**
 	 * Konstruktor
 	 * 
 	 * @param component
 	 *            komponenta
 	 * @param controller
 	 *            kontroler
+	 * @param lgc
 	 */
 	public CPToolbarParameterEnvelopeCollection(ISchemaComponent component,
-			ISchemaController controller) {
+			ISchemaController controller, ILocalGuiController lgc) {
 		this.controller = controller;
 		this.componentName = component.getName();
+		this.lgc = lgc;
 
 		parameterHolder = EParameterHolder.component;
 		buildParameters(component.getParameters());
@@ -196,6 +206,22 @@ public class CPToolbarParameterEnvelopeCollection {
 				parameterName, parameterHolder, newValue, controller
 						.getSchemaInfo());
 		ICommandResponse response = controller.send(command);
+
+		if (response.isSuccessful()) {
+			Caseless cName = (Caseless) response.getInfoMap().get(
+					SetParameterCommand.KEY_UPDATED_NAME);
+			if (!componentName.equals(cName)) {
+				int pHolder = CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED;
+
+				if (parameterHolder.equals(EParameterHolder.wire)) {
+					pHolder = CanvasToolbarLocalGUIController.TYPE_WIRE;
+				} else if (parameterHolder.equals(EParameterHolder.component)) {
+					pHolder = CanvasToolbarLocalGUIController.TYPE_COMPONENT;
+				}
+				lgc.setSelectedComponent(cName, pHolder);
+				lgc.setState(ECanvasState.MOVE_STATE);
+			}
+		}
 
 		if (CPToolbar.DEBUG_MODE) {
 			System.out

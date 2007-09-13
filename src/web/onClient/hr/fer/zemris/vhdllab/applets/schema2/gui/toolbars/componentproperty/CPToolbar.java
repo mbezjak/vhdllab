@@ -135,7 +135,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		// izgenerirani envelope za sve parametre sa svim potrebnim vizualnim
 		// komponentama
 		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
-				component, controller);
+				component, controller,lgc);
 		// na temelju envelopea, gradi se model za JTableX
 		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
 		// na temelju envelopea, izgradio se i RowEditor model za JTableX
