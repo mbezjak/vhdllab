@@ -118,12 +118,12 @@ public class SchemaInfo2VHDL {
 		
 		IVHDLSegmentProvider provider = null;
 		
-		// pripremiti signale
+		// prepare signals
 		for (ISchemaWire wire : info.getWires()) {
 			sb.append("SIGNAL ").append(wire.getName()).append(": std_logic;\n");
 		}
 		
-		// pripremiti komponente
+		// prepare components
 		for (Caseless name : info.getComponents().getComponentNames()) {
 			ISchemaComponent comp = info.getComponents().fetchComponent(name);
 			
@@ -135,7 +135,7 @@ public class SchemaInfo2VHDL {
 		
 		sb.append("BEGIN\n");
 		
-		// mapirati
+		// map everything
 		for (Caseless name : info.getComponents().getComponentNames()) {
 			ISchemaComponent comp = info.getComponents().fetchComponent(name);
 			
