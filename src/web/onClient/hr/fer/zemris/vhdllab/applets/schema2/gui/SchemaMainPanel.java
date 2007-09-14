@@ -288,7 +288,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			}
 		});
 
-		this.add(verticalSplitPane, BorderLayout.CENTER);
+		this.add(componentToAddToolbar, BorderLayout.CENTER);
 	}
 
 	private void resetSchema() {
