@@ -92,10 +92,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 
 	private static final long serialVersionUID = 1L;
 
-	/* PARAMETER NAMES */
-	private static final String USER_ID = "userId";
-	private static final String SESSION_ID = "sessionId";
-
 	private boolean initialized = false;
 
 	private ISystemContainer systemContainer;

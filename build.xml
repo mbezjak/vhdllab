@@ -98,6 +98,7 @@
 	  <replacefilter token="@@app.communication.protocol@@" property="app.communication.protocol"/>
 	  <replacefilter token="@@app.communication.port@@" property="app.communication.port"/>
 	  <replacefilter token="@@app.homepage@@" property="app.homepage"/>
+  	  <replacefilter token="@@jnlp.file@@" property="jnlp.file"/>
   	</replace>
   	
   	<replace dir="${local.dir}/web" propertyfile="${configuration.properties}">

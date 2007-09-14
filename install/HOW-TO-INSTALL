@@ -68,6 +68,14 @@ Following must be done in order to prepare project.
 
 10) developer version of application can be accessed on (a java web start application):
    http://localhost:8080/vhdllab/launch.jnlp
+   or by invoking "app-startup.sh" or "app-startup.bat" (depending on OS) script provided in ../local directory.
+
+Debugging application inside java web start:
+--------------------------------------------
+Simply invoke app-startup.sh or app-startup.bat (depending on OS) script provided in ../local directory
+- if an application needs to be suspended until someone connects to it simply provide 'y' argument like this:
+	./app-startup.sh y
+- note that a port used to debug an application is 5555 (most likely, check actual script to be sure)
 
 Debugging applets (depreciated, no longer in use since vhdllab uses jnlp instead of browsers):
 ------------------
