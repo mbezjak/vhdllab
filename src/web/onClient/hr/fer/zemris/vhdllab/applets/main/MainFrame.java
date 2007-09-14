@@ -50,8 +50,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.lang.reflect.InvocationTargetException;
 import java.security.AccessControlException;
 import java.text.DecimalFormat;
@@ -142,6 +142,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 //				      UIManager.setLookAndFeel(new SubstanceLookAndFeel());
 //				      SubstanceLookAndFeel.setCurrentTheme(new SubstanceBusinessBlackSteelLookAndFeel());
 //				      SyntheticaLookAndFeel.setAntiAliasEnabled(true);
+//				      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				    } 
 				    catch (Exception e) 
 				    {
@@ -1875,50 +1876,19 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	}
 	
 	public static void main(String[] args) {
-		MainFrame frame = new MainFrame();
+		final MainFrame frame = new MainFrame();
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.addWindowListener(new WindowListener() {
-
-			@Override
-			public void windowActivated(WindowEvent e) {
-//				System.out.println(e);
-			}
-
-			@Override
-			public void windowClosed(WindowEvent e) {
-				System.out.println(e);
-			}
-
+		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.out.println(e);
+				frame.stop();
+				frame.destroy();
 			}
-
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-//				System.out.println(e);
-			}
-
-			@Override
-			public void windowDeiconified(WindowEvent e) {
-				System.out.println(e);
-			}
-
-			@Override
-			public void windowIconified(WindowEvent e) {
-				System.out.println(e);
-			}
-
-			@Override
-			public void windowOpened(WindowEvent e) {
-				System.out.println(e);
-			}
-		
 		});
 
-		frame.setPreferredSize(new Dimension(900, 700));
 		frame.pack();
 		frame.setVisible(true);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.init();
 	}
 
