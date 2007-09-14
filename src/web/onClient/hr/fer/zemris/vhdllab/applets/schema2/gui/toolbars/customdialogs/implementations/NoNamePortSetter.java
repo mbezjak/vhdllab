@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,6 +32,7 @@ import javax.swing.JTextField;
 public class NoNamePortSetter extends ParameterSetterPanel<ParamPort> {
 	
 	/* static fields */
+	private JLabel nameLabel;
 	private static final long serialVersionUID = 1L;
 
 	
@@ -64,6 +66,7 @@ public class NoNamePortSetter extends ParameterSetterPanel<ParamPort> {
 	public void setToValue(ParamPort value) {
 		Port p = value.getPort();
 		cachedname = p.getName();
+		nameLabel.setText(cachedname);
 		if (p.getDirection().isIN()) inRadio.setSelected(true);
 		else outRadio.setSelected(true);
 		Type tp = p.getType();
@@ -243,7 +246,11 @@ public class NoNamePortSetter extends ParameterSetterPanel<ParamPort> {
 
 		final JPanel panel_8 = new JPanel();
 		north_panel.add(panel_8, BorderLayout.WEST);
-		panel_8.setLayout(new GridLayout(1, 0));
+		panel_8.setLayout(new GridLayout(2, 0));
+
+		final JLabel directionLabel_1 = new JLabel();
+		directionLabel_1.setText(" Name ");
+		panel_8.add(directionLabel_1);
 
 		final JLabel directionLabel = new JLabel();
 		panel_8.add(directionLabel);
@@ -251,16 +258,26 @@ public class NoNamePortSetter extends ParameterSetterPanel<ParamPort> {
 
 		final JPanel panel_9 = new JPanel();
 		north_panel.add(panel_9);
-		final GridLayout gridLayout = new GridLayout(1, 0);
+		final GridLayout gridLayout = new GridLayout(2, 0);
 		gridLayout.setVgap(1);
 		gridLayout.setHgap(1);
 		panel_9.setLayout(gridLayout);
 
+		final JPanel panel_5 = new JPanel();
+		final FlowLayout flowLayout_1 = new FlowLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		panel_5.setLayout(flowLayout_1);
+		panel_9.add(panel_5);
+
+		nameLabel = new JLabel();
+		nameLabel.setPreferredSize(new Dimension(150, 20));
+		panel_5.add(nameLabel);
+
 		final JPanel panel_10 = new JPanel();
+		panel_9.add(panel_10);
 		final FlowLayout flowLayout = new FlowLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		panel_10.setLayout(flowLayout);
-		panel_9.add(panel_10);
 
 		inRadio = new JRadioButton();
 		inRadio.setSelected(true);
