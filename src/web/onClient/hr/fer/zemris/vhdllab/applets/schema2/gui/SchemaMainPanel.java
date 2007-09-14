@@ -213,6 +213,7 @@ public class SchemaMainPanel extends AbstractEditor {
 		this.setLayout(new BorderLayout());
 
 		componentPropertyToolbar = new CPToolbar(localGUIController, controller);
+		
 		componentToAddToolbar = new TabbedCTAddToolbar(controller,
 				localGUIController);
 
@@ -288,7 +289,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			}
 		});
 
-		this.add(componentToAddToolbar, BorderLayout.CENTER);
+		this.add(verticalSplitPane, BorderLayout.CENTER);
 	}
 
 	private void resetSchema() {
