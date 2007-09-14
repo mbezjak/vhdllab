@@ -45,7 +45,6 @@ public class SchemaInfo2VHDL {
 		}
 	}
 	
-	
 	/* private fields */
 	private StringBuilder sb;
 	private ISchemaInfo info;
