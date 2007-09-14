@@ -90,7 +90,7 @@
   	  <replacefilter token="@@vhdllab.name@@" property="app.name"/>
   	</replace>
   	
-  	<replace dir="${local.dir}" propertyfile="${configuration.properties}">
+  	<replace dir="${local.dir}" propertyfile="${configuration.properties}" includes="**/*">
   	  <replacefilter token="@@app.name@@" property="app.name"/>
 	  <replacefilter token="@@app.host@@" property="app.host"/>
 	  <replacefilter token="@@http.port@@" property="http.port"/>
@@ -99,6 +99,8 @@
 	  <replacefilter token="@@app.communication.port@@" property="app.communication.port"/>
 	  <replacefilter token="@@app.homepage@@" property="app.homepage"/>
   	  <replacefilter token="@@jnlp.file@@" property="jnlp.file"/>
+  	  <replacefilter token="@@app.main.class@@" property="app.main.class"/>
+  	  <replacefilter token="@@app.splash@@" property="app.splash"/>
   	</replace>
   	
   	<replace dir="${local.dir}/web" propertyfile="${configuration.properties}">
@@ -203,11 +205,13 @@
   </target>
   
   <target name="package-web-onClient" depends="compile-web-onClient">
-  	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar">
+  	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar"
+  		manifest="local/onClient/META-INF/MANIFEST.MF">
   	  <fileset dir="${build.dir}/web/onClient" includes="**/*.class"/>
       <fileset dir="src/web/onClient" excludes="**/*.java,**/*svn/**,**/*svn"/>
       <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
    	  <fileset dir="src/i18n/client" excludes="**/*svn/**,**/*svn"/>
+   	  <fileset dir="images" excludes="**/*svn/**,**/*svn"/>
    	  <fileset file="local/onClient/server.properties"/>
    	  <metainf dir="metadata/onClient/META-INF" excludes="**/*svn/**,**/*svn"/>
   	</jar>

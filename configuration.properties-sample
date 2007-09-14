@@ -44,7 +44,8 @@ jnlp.update.policy = prompt-update
 app.main.class = hr.fer.zemris.vhdllab.applets.main.MainFrame
 ### A parameter to jnlp file for a client application ###
 jnlp.vm.parameter = -client
-#jnlp.vm.parameter = -client -Xdebug -Xrunjdwp:transport=dt_socket,address=5555,server=y,suspend=n
+### A splash screen ###
+app.splash = splash.png
 
 
 ### directories in ${basedir} ###

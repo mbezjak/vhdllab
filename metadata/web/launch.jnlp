@@ -10,6 +10,7 @@
 		<description kind="one-line">A web based IDE for VHDL.</description>
 		<description kind="tooltip">A web based IDE for VHDL.</description>
 		<description kind="short">A cross-platform web based IDE for VHDL programming language.</description>
+		<icon href="@@app.splash@@" kind="splash"/> 
 
 		<shortcut online="true">
 			<desktop/>
