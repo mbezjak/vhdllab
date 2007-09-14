@@ -101,6 +101,7 @@
   	  <replacefilter token="@@jnlp.file@@" property="jnlp.file"/>
   	  <replacefilter token="@@app.main.class@@" property="app.main.class"/>
   	  <replacefilter token="@@app.splash@@" property="app.splash"/>
+  	  <replacefilter token="@@app.icon@@" property="app.icon"/>
   	</replace>
   	
   	<replace dir="${local.dir}/web" propertyfile="${configuration.properties}">
