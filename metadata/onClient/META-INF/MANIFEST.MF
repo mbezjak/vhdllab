@@ -1,2 +1,2 @@
-SplashScreen-Image: @@app.splash@@
+SplashScreen-Image: images/@@app.splash@@
 Main-Class: @@app.main.class@@
