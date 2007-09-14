@@ -93,7 +93,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 
 	{
 		try {
-			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
+					.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -108,7 +109,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private boolean initialized = false;
@@ -155,18 +156,17 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					// initSystem();
 					// }
 					// });
-				    try 
-				    {
-//				      UIManager.setLookAndFeel(new SyntheticaBlackStarLookAndFeel());
-//				      UIManager.setLookAndFeel(new SubstanceLookAndFeel());
-//				      SubstanceLookAndFeel.setCurrentTheme(new SubstanceBusinessBlackSteelLookAndFeel());
-//				      SyntheticaLookAndFeel.setAntiAliasEnabled(true);
-//				      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				    } 
-				    catch (Exception e) 
-				    {
-				      e.printStackTrace();
-				    }
+					try {
+						// UIManager.setLookAndFeel(new
+						// SyntheticaBlackStarLookAndFeel());
+						// UIManager.setLookAndFeel(new SubstanceLookAndFeel());
+						// SubstanceLookAndFeel.setCurrentTheme(new
+						// SubstanceBusinessBlackSteelLookAndFeel());
+						// SyntheticaLookAndFeel.setAntiAliasEnabled(true);
+						// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
@@ -214,7 +214,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 							try {
 								initiator.init();
 							} catch (UniformAppletException e) {
-								e.printStackTrace();
+								destroy();
 							}
 						}
 					});
@@ -745,20 +745,29 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				((DefaultSystemContainer) systemContainer).dispose();
 				systemContainer = null;
 			}
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
+		}
+		try {
 			if (communicator != null) {
 				communicator.dispose();
 				communicator = null;
 			}
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
+		}
+		try {
 			if (initiator != null) {
 				initiator.dispose();
 				initiator = null;
 			}
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
 		}
-		this.setJMenuBar(null);
-		this.getContentPane().removeAll();
-		this.repaint();
+		System.exit(1);
+//		this.setJMenuBar(null);
+//		this.getContentPane().removeAll();
+//		this.repaint();
 	}
 
 	private synchronized boolean isInitialized() {
@@ -907,7 +916,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					if (c == null) {
 						return;
 					}
-					ComponentGroup group = componentContainer.getComponentGroup(c);
+					ComponentGroup group = componentContainer
+							.getComponentGroup(c);
 					if (group.equals(ComponentGroup.EDITOR)) {
 						systemContainer.getEditorManager()
 								.saveEditorExplicitly((IEditor) c);
@@ -925,7 +935,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 							.getTabCount());
 					for (int i = 0; i < pane.getTabCount(); i++) {
 						JComponent c = (JComponent) pane.getComponentAt(i);
-						ComponentGroup group = componentContainer.getComponentGroup(c);
+						ComponentGroup group = componentContainer
+								.getComponentGroup(c);
 						if (group.equals(ComponentGroup.EDITOR)) {
 							editorsToSave.add((IEditor) c);
 						}
@@ -948,7 +959,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					if (selectedComponent == null) {
 						return;
 					}
-					ComponentGroup group = componentContainer.getComponentGroup(selectedComponent);
+					ComponentGroup group = componentContainer
+							.getComponentGroup(selectedComponent);
 					if (group.equals(ComponentGroup.EDITOR)) {
 						systemContainer.getEditorManager().closeEditor(
 								(IEditor) selectedComponent);
@@ -977,7 +989,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 							continue;
 						}
 						JComponent c = (JComponent) pane.getComponentAt(i);
-						ComponentGroup group = componentContainer.getComponentGroup(c);
+						ComponentGroup group = componentContainer
+								.getComponentGroup(c);
 						if (group.equals(ComponentGroup.EDITOR)) {
 							editorsToClose.add((IEditor) c);
 						} else {
@@ -1004,7 +1017,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 							pane.getTabCount());
 					for (int i = 0; i < pane.getTabCount(); i++) {
 						JComponent c = (JComponent) pane.getComponentAt(i);
-						ComponentGroup group = componentContainer.getComponentGroup(c);
+						ComponentGroup group = componentContainer
+								.getComponentGroup(c);
 						if (group.equals(ComponentGroup.EDITOR)) {
 							editorsToClose.add((IEditor) c);
 						} else {
@@ -1193,9 +1207,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JComponent component = componentContainer.getSelectedComponent();
+					JComponent component = componentContainer
+							.getSelectedComponent();
 					if (component != null) {
-						ComponentPlacement placement = componentContainer.getComponentPlacement(component);
+						ComponentPlacement placement = componentContainer
+								.getComponentPlacement(component);
 						maximizeComponent(getTabbedPane(placement));
 					}
 				}
@@ -1893,7 +1909,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		}
 
 	}
-	
+
 	public static void main(String[] args) {
 		final MainFrame frame = new MainFrame();
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
