@@ -214,8 +214,7 @@ public class SetParameterCommand implements ICommand {
 			CommandResponse cr = new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
 			return cr;
-		}
-		else {
+		} else {
 			changes = new ArrayList<ChangeTuple>(changes);
 			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 			CommandResponse cr = new CommandResponse(changes);
@@ -292,7 +291,8 @@ public class SetParameterCommand implements ICommand {
 	}
 	
 	private SchemaError fireEvent(ISchemaInfo info, IParameter param, IParameterEvent pe,
-			Object oldvalue) {
+			Object oldvalue)
+	{
 		ISchemaComponent component = null;
 		ISchemaWire wire = null;
 		

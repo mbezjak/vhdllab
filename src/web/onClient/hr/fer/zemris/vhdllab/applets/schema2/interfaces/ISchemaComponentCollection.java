@@ -213,6 +213,23 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	throws UnknownKeyException, OverlapException;
 	
 	/**
+	 * Ako postoji komponenta imena <code>name</code> tada
+	 * ce ista biti preimenovana u <code>updatedname</code>.
+	 * Pritom ce njen redoslijed unutar kolekcije ostati isti.
+	 * 
+	 * @param name
+	 * @param updatedname
+	 * @throws UnknownKeyException
+	 * Ako ne postoji komponenta imena <code>name</code>.
+	 * @throws DuplicateKeyException
+	 * Ako postoji komponenta imena <code>namde</code>, ali
+	 * postoji i komponenta imena <code>updatedname</code>.
+	 * U tom slucaju nikakve promjene u kolekciji nece biti.
+	 */
+	void renameComponent(Caseless name, Caseless updatedname)
+	throws UnknownKeyException, DuplicateKeyException;
+	
+	/**
 	 * Vraca redni broj komponente koja je dodana u shemu.
 	 * Sucelje ne specificira vremensku slozenost ove operacije.
 	 * @param name

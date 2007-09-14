@@ -29,6 +29,10 @@ import java.io.StringWriter;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel;
 
 
 
@@ -39,9 +43,9 @@ public class Tester {
 	
 	{
 		try {
-			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-//			SyntheticaLookAndFeel slaf = new SyntheticaStandardLookAndFeel();
-//			UIManager.setLookAndFeel(slaf);
+//			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+			SyntheticaLookAndFeel slaf = new SyntheticaStandardLookAndFeel();
+			UIManager.setLookAndFeel(slaf);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

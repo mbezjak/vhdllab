@@ -26,7 +26,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.GenericParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.ParameterFactory;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.InOutPortChanger;
-import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger;
+import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameAndPortNameChanger;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.Orientation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.ParamPort;
 import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.PortFactory;
@@ -278,7 +278,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		// default parameter - name
 		CaselessParameter cslpar =
 			new CaselessParameter(ISchemaComponent.KEY_NAME, false, new Caseless(portrel.port.getName()));
-		cslpar.setParameterEvent(new NameChanger());
+		cslpar.setParameterEvent(new NameAndPortNameChanger());
 		parameters.addParameter(cslpar);
 		
 		// default parameter - component orientation
@@ -339,10 +339,17 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	
 	/* methods */
 	
+	/**
+	 * Vraca jedini port inout komponente.
+	 */
 	public Port getPort() {
 		return portrel.port;
 	}
 	
+	/**
+	 * Postavlja jedini port inout komponente.
+	 * @param p
+	 */
 	public void setPort(Port p) {
 		portrel.port = p;
 	}

@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.DuplicateKeyException;
-import hr.fer.zemris.vhdllab.applets.schema2.exceptions.OverlapException;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.UnknownKeyException;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterEvent;
@@ -10,11 +9,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
+import hr.fer.zemris.vhdllab.applets.schema2.model.InOutSchemaComponent;
+import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
+import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author Axel
  * 
  */
-public class NameChanger implements IParameterEvent {
+public class NameAndPortNameChanger implements IParameterEvent {
 
 	/* static fields */
 	private static final List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
@@ -45,7 +45,7 @@ public class NameChanger implements IParameterEvent {
 
 	/* ctors */
 
-	public NameChanger() {
+	public NameAndPortNameChanger() {
 	}
 
 
@@ -53,7 +53,7 @@ public class NameChanger implements IParameterEvent {
 	/* methods */	
 
 	public IParameterEvent copyCtor() {
-		return new NameChanger();
+		return new NameAndPortNameChanger();
 	}
 
 	public List<ChangeTuple> getChanges() {
@@ -67,49 +67,15 @@ public class NameChanger implements IParameterEvent {
 	public boolean performChange(Object oldvalue, IParameter parameter,
 			ISchemaInfo info, ISchemaWire wire, ISchemaComponent component)
 	{
+		if (!(oldvalue instanceof Caseless)) return false;
+		
 		Caseless oldkey = new Caseless((Caseless) oldvalue);
 
-		if (wire != null) {
-			return performWireNameChange(oldkey, info, wire, parameter);
-		} else if (component != null) {
+		if (component != null && (component instanceof InOutSchemaComponent)) {
 			return performComponentNameChange(oldkey, info, component, parameter);
 		}
 		
-		return true;
-	}
-
-	private boolean performWireNameChange(Caseless oldname, ISchemaInfo info,
-			ISchemaWire wire, IParameter parameter)
-	{
-		ISchemaWireCollection wires = info.getWires();
-		
-		if (wires.containsName(wire.getName())) return false;
-		
-		try {
-			wires.removeWire(oldname);
-		} catch (UnknownKeyException e) {
-			return false;
-		}
-		
-		try {
-			wires.addWire(wire);
-		} catch (DuplicateKeyException e) {
-			throw new IllegalStateException("Wire could not be placed " +
-					"back to the same location.");
-		} catch (OverlapException e) {
-			throw new IllegalStateException("Wire could not be placed " +
-					"back to the same location.");
-		}
-		
-		// unplug old wire from this one, and plug new one to components
-		Caseless newname = wire.getName();
-		for (PlacedComponent placed : info.getComponents()) {
-			for (SchemaPort sp : placed.comp.getSchemaPorts()) {
-				if (oldname.equals(sp.getMapping())) sp.setMapping(newname);
-			}
-		}
-		
-		return true;
+		return false;
 	}
 
 	private boolean performComponentNameChange(Caseless oldname, ISchemaInfo info,
@@ -118,6 +84,7 @@ public class NameChanger implements IParameterEvent {
 		ISchemaComponentCollection components = info.getComponents();
 		Caseless updatedname = cmp.getName();
 		
+		/* rename component using the component collection */
 		cmp.setName(oldname);
 		
 		try {
@@ -125,8 +92,29 @@ public class NameChanger implements IParameterEvent {
 		} catch (UnknownKeyException e) {
 			throw new IllegalStateException("Component was in collection, but cannot be found.");
 		} catch (DuplicateKeyException e) {
+			/* set updated name back before returning false */
 			cmp.setName(updatedname);
 			return false;
+		}
+		
+		/* rename component's first port to match component's name */
+		InOutSchemaComponent inoutcmp = (InOutSchemaComponent)cmp;
+		
+		/* first cache old signal mappings */
+		List<SchemaPort> oldschemaports = new ArrayList(inoutcmp.getRelatedTo(0));
+		
+		/* now rename port and rebuild schemaports */
+		Port p = inoutcmp.getPort();
+		inoutcmp.setPort(new DefaultPort(updatedname.toString(), p.getDirection(), p.getType()));
+		inoutcmp.rebuildSchemaPorts();
+		
+		/* set back old signal mappings */
+		List<SchemaPort> updatedschemaports = inoutcmp.getRelatedTo(0);
+		int i = 0;
+		for (SchemaPort oldsp : oldschemaports) {
+			Caseless mappedto = oldsp.getMapping();
+			if (!Caseless.isNullOrEmpty(mappedto)) updatedschemaports.get(i).setMapping(mappedto);
+			i++;
 		}
 		
 		return true;

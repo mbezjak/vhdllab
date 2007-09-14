@@ -110,6 +110,18 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		components.put(name, plc);
 	}
 
+	public void renameComponent(Caseless name, Caseless updatedname)
+	throws UnknownKeyException, DuplicateKeyException
+	{
+		if (!components.containsKey(name)) throw new UnknownKeyException();
+		if (components.containsKey(updatedname)) throw new DuplicateKeyException();
+		
+		PlacedComponent plc = components.get(name);
+		components.remove(name);
+		plc.comp.setName(updatedname);
+		components.put(updatedname, plc);
+	}
+	
 	public int size() {
 		return components.size();
 	}
