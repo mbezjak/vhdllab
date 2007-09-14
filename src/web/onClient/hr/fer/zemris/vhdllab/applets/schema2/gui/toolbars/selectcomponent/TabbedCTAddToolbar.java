@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent;
 
 import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
@@ -11,14 +10,12 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -26,7 +23,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class TabbedCTAddToolbar extends JTabbedPane implements
+public class TabbedCTAddToolbar extends JPanel implements
 		PropertyChangeListener, ListSelectionListener {
 	private static final long serialVersionUID = 2973973513115634524L;
 
@@ -81,18 +78,10 @@ public class TabbedCTAddToolbar extends JTabbedPane implements
 	 * Stavlja stvoreni JTabbedPanel na toolbar
 	 */
 	private void placePanel() {
-		// JTabbedPane tabbedPane = createTabbedPane();
-		faceLiftTabbedPane(this);
+		JTabbedPane tabbedPane = createTabbedPane();
+		faceLiftTabbedPane(tabbedPane);
 
-		JPanel firstPanel = new JPanel(new GridLayout(1, 1));
-		JPanel secondPanel = new JPanel(new GridLayout(1, 1));
-		firstPanel.add(new JLabel("First panel", JLabel.CENTER));
-		secondPanel.add(new JLabel("Second panel", JLabel.CENTER));
-
-		this.add("Prvi panel", firstPanel);
-		this.add("Drugi panel", secondPanel);
-
-		// add(tabbedPane, BorderLayout.CENTER);
+		add(tabbedPane, BorderLayout.CENTER);
 	}
 
 	/**
@@ -101,7 +90,7 @@ public class TabbedCTAddToolbar extends JTabbedPane implements
 	 * @param tabbedPane
 	 */
 	private void faceLiftTabbedPane(JTabbedPane tabbedPane) {
-		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 	}
 
 	/**
@@ -112,13 +101,13 @@ public class TabbedCTAddToolbar extends JTabbedPane implements
 	private JTabbedPane createTabbedPane() {
 		// kategorija<->listboxmodel
 		Map<String, DefaultListModel> categoryModel = createListModelByCategory();
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 
 		for (Map.Entry<String, DefaultListModel> categoty : categoryModel
 				.entrySet()) {
 			JPanel pane = crateListBoxPane(categoty.getValue());
 
-			// tabbedPane.add(categoty.getKey(), pane);
+			tabbedPane.addTab(categoty.getKey(), pane);
 		}
 
 		return tabbedPane;
