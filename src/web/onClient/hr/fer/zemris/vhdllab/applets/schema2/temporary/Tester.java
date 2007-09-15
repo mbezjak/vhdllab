@@ -85,6 +85,24 @@ public class Tester {
 		
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
+
 	/**
 	 * Privremeno radi testiranja.
 	 * 
@@ -99,7 +117,7 @@ public class Tester {
 		});
 	}
 	
-	private static void testSchema() {
+	private static void testSchema() {		
 		// test init
 		SchemaMainPanel mpanel = new SchemaMainPanel();
 		ISystemContainer dummypc = new DummySystemContainer();
