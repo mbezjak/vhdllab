@@ -61,6 +61,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.jnlp.ServiceManager;
+import javax.jnlp.SingleInstanceListener;
+import javax.jnlp.SingleInstanceService;
+import javax.jnlp.UnavailableServiceException;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -111,8 +115,15 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	}
 
 	private static final long serialVersionUID = 1L;
-
-	private boolean initialized = false;
+	
+	/**
+	 * An exit status ok indicating normal application termination.
+	 */
+	private static final int EXIT_STATUS_OK = 0;
+	/**
+	 * An exit status error indicating abnormal application termination.
+	 */
+	private static final int EXIT_STATUS_ERROR = 1;
 
 	private ISystemContainer systemContainer;
 
@@ -214,7 +225,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 							try {
 								initiator.init();
 							} catch (UniformAppletException e) {
-								destroy();
+								exit(EXIT_STATUS_ERROR);
 							}
 						}
 					});
@@ -476,8 +487,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 									.getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
 							SystemLog.instance().addSystemMessage(text,
 									MessageType.SUCCESSFUL);
-							setInitialized(true);
-							start();
+							setPaneSize();
 							getGlassPane().setVisible(false);
 						}
 					});
@@ -509,75 +519,35 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		// }
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.applet.Applet#start()
-	 */
-	public void start() {
-		// this method is sometimes invoked by EventDispatchThread!
-		if (SwingUtilities.isEventDispatchThread()) {
-			startSystem();
-		} else {
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						startSystem();
-					}
-				});
-			} catch (Exception ignored) {
-				ignored.printStackTrace();
+	public void exit(int status) {
+		try {
+			if (systemContainer != null) {
+				((DefaultSystemContainer) systemContainer).dispose();
+				systemContainer = null;
 			}
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.applet.Applet#stop()
-	 */
-	public void stop() {
-		// this method is sometimes invoked by EventDispatchThread!
-		if (SwingUtilities.isEventDispatchThread()) {
-			stopSystem();
-		} else {
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						stopSystem();
-					}
-				});
-			} catch (Exception ignored) {
-				ignored.printStackTrace();
+		try {
+			if (communicator != null) {
+				communicator.dispose();
+				communicator = null;
 			}
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.applet.Applet#destroy()
-	 */
-	public void destroy() {
-		// this method is sometimes invoked by EventDispatchThread!
-		if (SwingUtilities.isEventDispatchThread()) {
-			destroySystem();
-		} else {
-			try {
-				SwingUtilities.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						destroySystem();
-					}
-				});
-			} catch (Exception ignored) {
-				ignored.printStackTrace();
+		try {
+			if (initiator != null) {
+				initiator.dispose();
+				initiator = null;
 			}
+		} catch (Exception ignored) {
+			ignored.printStackTrace();
 		}
+		sis.removeSingleInstanceListener(sisListener);
+		System.exit(status);
 	}
-
+	
 	/**
 	 * This is an implementation of {@link Applet#init()} method and it is
 	 * intended to be executed by EDT.
@@ -713,69 +683,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		String text = bundle
 				.getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
 		SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
-		setInitialized(true);
-		start();
+		setPaneSize();
 		getGlassPane().setVisible(false);
-	}
-
-	/**
-	 * This is an implementation of {@link Applet#start()} method and it is
-	 * intended to be executed by EDT.
-	 */
-	private void startSystem() {
-		if (isInitialized()) {
-			setPaneSize();
-		}
-	}
-
-	/**
-	 * This is an implementation of {@link Applet#stop()} method and it is
-	 * intended to be executed by EDT.
-	 */
-	private void stopSystem() {
-	}
-
-	/**
-	 * This is an implementation of {@link Applet#destroy()} method and it is
-	 * intended to be executed by EDT.
-	 */
-	private void destroySystem() {
-		try {
-			if (systemContainer != null) {
-				((DefaultSystemContainer) systemContainer).dispose();
-				systemContainer = null;
-			}
-		} catch (Exception ignored) {
-			ignored.printStackTrace();
-		}
-		try {
-			if (communicator != null) {
-				communicator.dispose();
-				communicator = null;
-			}
-		} catch (Exception ignored) {
-			ignored.printStackTrace();
-		}
-		try {
-			if (initiator != null) {
-				initiator.dispose();
-				initiator = null;
-			}
-		} catch (Exception ignored) {
-			ignored.printStackTrace();
-		}
-		System.exit(1);
-//		this.setJMenuBar(null);
-//		this.getContentPane().removeAll();
-//		this.repaint();
-	}
-
-	private synchronized boolean isInitialized() {
-		return initialized;
-	}
-
-	private synchronized void setInitialized(boolean initialized) {
-		this.initialized = initialized;
 	}
 
 	/**
@@ -795,27 +704,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		SystemContext.setFrameOwner(owner);
 	}
 
-	/**
-	 * Stop all internet traffic and destroy application. Unlike
-	 * {@link #exitApplication()} this method does not require any user
-	 * intervention (i.e. this method will force save all resources, editors
-	 * etc.).
-	 */
-	public void fastCleanup() {
-		stop();
-		destroy();
-	}
-
-	/**
-	 * Stop all internet traffic and destroy application. This method will ask
-	 */
-	private void exitApplication() {
-		// TODO ovo treba popravit kad se sredi system container i dialog
-		// manager.
-		// systemContainer.getEditorManager().closeAllEditors();
-		fastCleanup();
-	}
-
 	private void initGUI() {
 		about = new About(this);
 		JMenuBar menuBar = new PrivateMenuBar().setupMainMenu();
@@ -827,9 +715,9 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			pane.setComponentPopupMenu(menubar
 					.setupPopupMenuForComponents(pane));
 		}
-
-		toolBar = new PrivateToolBar().setup();
-		add(toolBar, BorderLayout.NORTH);
+		
+//		toolBar = new PrivateToolBar().setup();
+//		add(toolBar, BorderLayout.NORTH);
 	}
 
 	private JPanel setupStatusBar() {
@@ -1135,8 +1023,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().saveEditorExplicitly(
-							editorManager.getSelectedEditor());
+					IEditor editor = editorManager.getSelectedEditor();
+					if(editor == null) {
+						return;
+					}
+					systemContainer.getEditorManager().saveEditorExplicitly(editor);
 				}
 			});
 			menu.add(menuItem);
@@ -1159,8 +1050,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().closeEditor(
-							editorManager.getSelectedEditor());
+					IEditor editor = editorManager.getSelectedEditor();
+					if(editor == null) {
+						return;
+					}
+					systemContainer.getEditorManager().closeEditor(editor);
 				}
 			});
 			menu.add(menuItem);
@@ -1183,7 +1077,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					exitApplication();
+					exit(EXIT_STATUS_OK);
 				}
 			});
 			menu.add(menuItem);
@@ -1576,36 +1470,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		}
 	}
 
-	/**
-	 * Private class for creating tool bar. Created tool bar will be localized.
-	 * 
-	 * @author Miro Bezjak
-	 */
-	private class PrivateToolBar {
-
-		private ResourceBundle bundle;
-
-		/**
-		 * Constructor.
-		 */
-		public PrivateToolBar() {
-			this.bundle = ResourceBundleProvider
-					.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-		}
-
-		/**
-		 * Creates and instantiates tool bar.
-		 * 
-		 * @return created tool bar
-		 */
-		public JToolBar setup() {
-			JToolBar toolBar = new JToolBar();
-			toolBar.setPreferredSize(new Dimension(0, 24));
-
-			return toolBar;
-		}
-	}
-
 	@Override
 	public IStatusBar getStatusBar() {
 		return statusBar;
@@ -1909,22 +1773,57 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		}
 
 	}
-
+	
+	private SISListener sisListener;
+	private SingleInstanceService sis;
+	
 	public static void main(String[] args) {
-		final MainFrame frame = new MainFrame();
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.addWindowListener(new WindowAdapter() {
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
-			public void windowClosing(WindowEvent e) {
-				frame.stop();
-				frame.destroy();
+			public void run() {
+				final MainFrame frame = new MainFrame();
+				SingleInstanceService sis;
+				try {
+					sis = (SingleInstanceService) ServiceManager
+							.lookup("javax.jnlp.SingleInstanceService");
+				} catch (UnavailableServiceException e) {
+					e.printStackTrace();
+					sis = null;
+				}
+				frame.sis = sis;
+				frame.sisListener = new SISListener(frame);
+				sis.addSingleInstanceListener(frame.sisListener);
+				
+				frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+				frame.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowClosing(WindowEvent e) {
+						frame.exit(EXIT_STATUS_OK);
+					}
+				});
+
+				frame.setPreferredSize(new Dimension(900, 700));
+				frame.pack();
+				frame.setVisible(true);
+				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				frame.init();
 			}
 		});
-
-		frame.pack();
-		frame.setVisible(true);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		frame.init();
 	}
+	
+	private static class SISListener implements SingleInstanceListener {
+		private JFrame frame;
+		
+		public SISListener(JFrame frame) {
+			this.frame = frame;
+		}
+		
+        public void newActivation(String[] params) {
+        	System.out.println("called again");
+        	frame.toFront();
+        	frame.requestFocusInWindow();
+        	frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+    }
 
 }

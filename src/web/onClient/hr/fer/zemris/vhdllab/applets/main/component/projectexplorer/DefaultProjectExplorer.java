@@ -895,7 +895,7 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			fileName = selectedNode.toString();
 		}
 		// TODO ovo ne valjda ali je privremeno rijesenje
-		if(fileName.equals(getProjectName())) {
+		if(fileName != null && fileName.equals(getProjectName())) {
 			fileName = null;
 		}
 		return fileName;

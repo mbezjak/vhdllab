@@ -32,5 +32,6 @@
 	<classpathentry kind="lib" path="libs/commons-digester.jar"/>
 	<classpathentry kind="lib" path="libs/commons-httpclient.jar"/>
 	<classpathentry kind="lib" path="libs/xdoclet/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="libs/javaws.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

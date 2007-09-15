@@ -21,17 +21,17 @@ import javax.swing.JTabbedPane;
 
 /**
  * @author Miro Bezjak
- *
+ * 
  */
 public class DefaultComponentContainer implements IComponentContainer {
-	
+
 	private IComponentProvider provider;
 	private Map<JComponent, ComponentInformation> components;
 	private Map<ComponentGroup, JComponent> selectedComponentsByGroup;
 	private JComponent selectedComponent;
-	
+
 	public DefaultComponentContainer(IComponentProvider provider) {
-		if(provider == null) {
+		if (provider == null) {
 			throw new NullPointerException("Provider cant be null");
 		}
 		this.provider = provider;
@@ -40,8 +40,13 @@ public class DefaultComponentContainer implements IComponentContainer {
 		selectedComponent = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#addComponent(java.lang.String, javax.swing.JComponent, hr.fer.zemris.vhdllab.applets.main.ComponentGroup, hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#addComponent(java.lang.String,
+	 *      javax.swing.JComponent,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentGroup,
+	 *      hr.fer.zemris.vhdllab.applets.main.ComponentPlacement)
 	 */
 	@Override
 	public void addComponent(String title, JComponent component,
@@ -53,7 +58,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		addListenersFor(component);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#containsComponent(javax.swing.JComponent)
 	 */
 	@Override
@@ -61,7 +68,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		return components.containsKey(component);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getComponentGroup(javax.swing.JComponent)
 	 */
 	@Override
@@ -72,7 +81,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		return components.get(component).getGroup();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getComponentPlacement(javax.swing.JComponent)
 	 */
 	@Override
@@ -83,7 +94,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		return components.get(component).getPlacement();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getComponentTitle(javax.swing.JComponent)
 	 */
 	@Override
@@ -96,7 +109,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		return pane.getTitleAt(index);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getSelectedComponent()
 	 */
 	@Override
@@ -104,7 +119,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		return selectedComponent;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#getSelectedComponent(hr.fer.zemris.vhdllab.applets.main.ComponentGroup)
 	 */
 	@Override
@@ -112,7 +129,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		return selectedComponentsByGroup.get(group);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#removeComponent(javax.swing.JComponent)
 	 */
 	@Override
@@ -126,8 +145,11 @@ public class DefaultComponentContainer implements IComponentContainer {
 		pane.remove(component);
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setComponentTitle(javax.swing.JComponent, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setComponentTitle(javax.swing.JComponent,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void setComponentTitle(JComponent component, String title) {
@@ -139,8 +161,11 @@ public class DefaultComponentContainer implements IComponentContainer {
 		pane.setTitleAt(index, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setComponentToolTipText(javax.swing.JComponent, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setComponentToolTipText(javax.swing.JComponent,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void setComponentToolTipText(JComponent component, String tooltip) {
@@ -152,7 +177,9 @@ public class DefaultComponentContainer implements IComponentContainer {
 		pane.setToolTipTextAt(index, tooltip);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentContainer#setSelectedComponent(javax.swing.JComponent)
 	 */
 	@Override
@@ -162,7 +189,7 @@ public class DefaultComponentContainer implements IComponentContainer {
 		}
 		activate(component);
 	}
-	
+
 	/**
 	 * Sets an icon for a specified component.
 	 * 
@@ -201,8 +228,21 @@ public class DefaultComponentContainer implements IComponentContainer {
 			return;
 		}
 		for (Component c : container.getComponents()) {
-			if (c instanceof Container) {
-				addListenersFor((Container) c, originalComponent);
+			if (c instanceof JTabbedPane) {
+				/*
+				 * This is a workaround for a bug in scrollable layout tabbed
+				 * pane. It seams that when a mouse listener is added to some of
+				 * its components it stops responding.
+				 */
+				JTabbedPane pane = (JTabbedPane) c;
+				for (int i = 0; i < pane.getTabCount(); i++) {
+					addListenersFor((JComponent) pane.getComponentAt(i),
+							originalComponent);
+				}
+			} else {
+				if (c instanceof Container) {
+					addListenersFor((Container) c, originalComponent);
+				}
 			}
 			// c.addFocusListener(new MyFocus(originalComponent));
 			c.addMouseListener(new MyMouse(originalComponent));
@@ -273,7 +313,7 @@ public class DefaultComponentContainer implements IComponentContainer {
 		}
 
 	}
-	
+
 	private JTabbedPane getTabbedPane(JComponent component) {
 		ComponentPlacement placement = components.get(component).getPlacement();
 		return getTabbedPane(placement);
@@ -377,5 +417,5 @@ public class DefaultComponentContainer implements IComponentContainer {
 			return "group: " + group + " / placement: " + placement;
 		}
 	}
-	
+
 }
