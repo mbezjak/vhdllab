@@ -1819,10 +1819,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		}
 		
         public void newActivation(String[] params) {
-        	System.out.println("called again");
-        	frame.toFront();
-        	frame.requestFocusInWindow();
         	frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        	frame.toFront();
         }
     }
 
