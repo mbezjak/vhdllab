@@ -169,8 +169,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	public void init() throws UniformAppletException {
 		configuration = ComponentConfigurationParser.getConfiguration();
-		bundle = ResourceBundleProvider.getBundle(
-				LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
+		bundle = ResourceBundleProvider
+				.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 		resourceManager
 				.addVetoableResourceListener(new BeforeCompilationCheckCompilableAndSaveEditors());
 		resourceManager.addVetoableResourceListener(new AfterCompilationEcho());
@@ -249,14 +249,14 @@ public class DefaultSystemContainer implements ISystemContainer {
 			sb.append(formatter.format(m.getDate())).append("\t\t").append(
 					m.getContent()).append("\n");
 		}
-		if(sb.length() != 0) {
+		if (sb.length() != 0) {
 			sb.append("---------------------------------\n\n\n");
 		}
 		for (SystemMessage m : SystemLog.instance().getErrorMessages()) {
 			sb.append(formatter.format(m.getDate())).append("\t\t").append(
 					m.getContent()).append("\n\n");
 		}
-		if(sb.length() != 0) {
+		if (sb.length() != 0) {
 			resourceManager.saveErrorMessage(sb.toString());
 		}
 
@@ -295,10 +295,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean compileLastHistoryResult() {
-		if (SystemLog.instance().compilationHistoryIsEmpty()) {
+		SystemLog log = SystemLog.instance();
+		if (log.compilationHistoryIsEmpty()) {
 			return compileWithDialog();
 		} else {
-			ResultTarget<CompilationResult> resultTarget = SystemLog.instance()
+			ResultTarget<CompilationResult> resultTarget = log
 					.getLastCompilationResultTarget();
 			return compile(resultTarget.getResource());
 		}
@@ -376,10 +377,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public boolean simulateLastHistoryResult() {
-		if (SystemLog.instance().simulationHistoryIsEmpty()) {
+		SystemLog log = SystemLog.instance();
+		if (log.simulationHistoryIsEmpty()) {
 			return simulateWithDialog();
 		} else {
-			ResultTarget<SimulationResult> resultTarget = SystemLog.instance()
+			ResultTarget<SimulationResult> resultTarget = log
 					.getLastSimulationResultTarget();
 			return simulate(resultTarget.getResource());
 		}
@@ -965,7 +967,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { projectName });
-				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text,
+						MessageType.INFORMATION);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
@@ -1034,7 +1037,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new String[] { fileName });
-				SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
+				SystemLog.instance().addSystemMessage(text,
+						MessageType.INFORMATION);
 				// veto project creation
 				throw new ResourceVetoException();
 			}
