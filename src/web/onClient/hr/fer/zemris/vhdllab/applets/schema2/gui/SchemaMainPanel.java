@@ -155,8 +155,7 @@ public class SchemaMainPanel extends AbstractEditor {
 	}
 
 	private List<CircuitInterface> getUserPrototypeList() {
-		if (container == null || content == null)
-			return null;
+		if (container == null || content == null) return null;
 		System.out.println("Initializing user prototypes.");
 
 		String projectname = content.getProjectName();
@@ -366,6 +365,45 @@ public class SchemaMainPanel extends AbstractEditor {
 				
 				SchemaMainPanel.this.setModified(oldmodifiedstatus);
 			}
+
+			@Override
+			public void resourceCreated(String projectName, String fileName, String type) {
+				boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
+				
+				List<CircuitInterface> usercis = getUserPrototypeList();
+				controller.send(new RebuildPrototypeCollection(null, usercis));
+				controller.send(new InvalidateObsoleteUserComponents(usercis));
+				
+				SchemaMainPanel.this.setModified(oldmodifiedstatus);
+			}
+
+			@Override
+			public void resourceDeleted(String projectName, String fileName) {
+				/* check if the deleted resource was used in schema */
+				boolean isused = false;
+				
+				CircuitInterface circint;
+				try {
+					circint = resourceManager.getCircuitInterfaceFor(projectName, fileName);
+				} catch (UniformAppletException e) {
+					e.printStackTrace();
+					return;
+				}
+				
+				// TODO: finish this
+				
+				/* perform changes */
+				if (isused) {
+					boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
+					
+					List<CircuitInterface> usercis = getUserPrototypeList();
+					controller.send(new RebuildPrototypeCollection(null, usercis));
+					controller.send(new InvalidateObsoleteUserComponents(usercis));
+					
+					SchemaMainPanel.this.setModified(oldmodifiedstatus);
+				}
+			}
+			
 		};
 		resourceManager.addVetoableResourceListener(appletListener);
 	}
