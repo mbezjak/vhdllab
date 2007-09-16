@@ -90,7 +90,7 @@ public class TabbedCTAddToolbar extends JPanel implements
 	 * @param tabbedPane
 	 */
 	private void faceLiftTabbedPane(JTabbedPane tabbedPane) {
-		tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 
 	/**

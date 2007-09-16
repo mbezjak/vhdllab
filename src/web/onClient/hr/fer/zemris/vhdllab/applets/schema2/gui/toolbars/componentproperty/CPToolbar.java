@@ -53,7 +53,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	/**
 	 * Ime oznacene komponente
 	 */
-	private JLabel labelComponentName = null;
+	private JLabel labelComponentName = new JLabel("", JLabel.CENTER);
 
 	public CPToolbar(ILocalGuiController lgc, ISchemaController controller) {
 		this.lgc = lgc;
@@ -66,7 +66,11 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 */
 	private void initGUI() {
 		setLayout(new BorderLayout());
-		labelComponentName = new JLabel("Nothing selected", JLabel.CENTER);
+		printWhenNothingSelected();
+	}
+
+	private void printWhenNothingSelected() {
+		labelComponentName.setText("Nothing selected");
 		add(labelComponentName, BorderLayout.NORTH);
 	}
 
@@ -188,6 +192,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	private void cleanUpGui() {
 		// makni sve komponente sa panela
 		removeAll();
+		printWhenNothingSelected();
 		repaint();
 	}
 
@@ -218,8 +223,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 				}
 
 				fetchAndShowComponentProperty(componentName);
-			} else if (lgc.getSelectedComponent().equals(
-					CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED)) {
+			} else if (lgc.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED) {
 				if (DEBUG_MODE) {
 					System.out.println("CPToolbar: nothingSelected!");
 				}

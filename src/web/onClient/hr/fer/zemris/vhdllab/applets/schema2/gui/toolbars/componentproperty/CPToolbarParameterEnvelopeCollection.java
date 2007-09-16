@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.enums.ETimeMetrics;
 import hr.fer.zemris.vhdllab.applets.schema2.exceptions.TimeFormatException;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors.ObjectCellEditor;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors.TimeCellEditor;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
@@ -200,6 +201,12 @@ public class CPToolbarParameterEnvelopeCollection {
 						.println("CPToolbarParameterEnvelopeCollection: bypassing sending command; reason=invalid or null valued input");
 			}
 			return false;
+		} else if (newValue.equals(getValueAt(row, 1))) {
+			if (CPToolbar.DEBUG_MODE) {
+				System.out
+						.println("CPToolbarParameterEnvelopeCollection: new value is equal to old value - no action!");
+			}
+			return false;
 		}
 
 		ICommand command = new SetParameterCommand(componentName,
@@ -311,9 +318,8 @@ public class CPToolbarParameterEnvelopeCollection {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: parameterType=OBJECT");
 			}
-			System.err
-					.println("CPToolbarParameterEnvelopeCollection: neugradjena funkcija za Object tip parametra!");
-			return null;
+
+			return value.toString();
 		}
 
 		throw new IllegalArgumentException("Nepoznati tip parametra!");
@@ -365,10 +371,12 @@ public class CPToolbarParameterEnvelopeCollection {
 
 			if (CPToolbar.DEBUG_MODE) {
 				System.out.println("ParameterEnvelope: parameterName="
-						+ parameter.getName() + ", parameterType=" + pType
+						+ parameter.getName() + ", parameterValue="
+						+ parameter.getValue() + ", parameterType=" + pType
 						+ ", constraintValues=" + constraintValues);
 			}
-			if (constraintValues != null) {
+			if (constraintValues != null
+					&& parameter.getType() != EParamTypes.OBJECT) {
 				buildComboBox(constraintValues);
 				isEnumerate = true;
 			} else {
@@ -378,6 +386,7 @@ public class CPToolbarParameterEnvelopeCollection {
 					isEnumerate = true;
 				} else if (pType == EParamTypes.OBJECT) {
 					// TODO Napraviti podrsku za object tipove parametara
+					rowEditor = new ObjectCellEditor(parameter.getValue());
 				} else if (pType == EParamTypes.TIME) {
 					rowEditor = new TimeCellEditor(ETimeMetrics.getAllTimes());
 				}
