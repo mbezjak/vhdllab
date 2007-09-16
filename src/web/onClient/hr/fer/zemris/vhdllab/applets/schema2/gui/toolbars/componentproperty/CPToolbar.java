@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
@@ -70,8 +71,9 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	}
 
 	private void printWhenNothingSelected() {
-		labelComponentName.setText("Nothing selected");
-		add(labelComponentName, BorderLayout.NORTH);
+		// labelComponentName.setText("Nothing selected");
+		// add(labelComponentName, BorderLayout.NORTH);
+		fetchAndShowEntityProperty();
 	}
 
 	/**
@@ -104,7 +106,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	 * @param component
 	 *            komponenta koja se prikazuje
 	 */
-	public void showPropertyForComponent(ISchemaComponent component) {
+	private void showPropertyForComponent(ISchemaComponent component) {
 		if (component == null) {
 			if (DEBUG_MODE) {
 				System.err.println("CPToolbar: null component provided");
@@ -165,6 +167,21 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 		return tabela;
 	}
 
+	private JTableX createJTabbleForEntity(ISchemaEntity entity) {
+		// izgenerirani envelope za sve parametre sa svim potrebnim vizualnim
+		// komponentama
+		CPToolbarParameterEnvelopeCollection pCollection = new CPToolbarParameterEnvelopeCollection(
+				entity, controller, lgc);
+		// na temelju envelopea, gradi se model za JTableX
+		CPToolbarTableModel tableModel = new CPToolbarTableModel(pCollection);
+		// na temelju envelopea, izgradio se i RowEditor model za JTableX
+		RowEditorModel rowModel = pCollection.getRowEditorModel();
+
+		JTableX tabela = new JTableX(tableModel, rowModel);
+
+		return tabela;
+	}
+
 	private void printTable(JTableX tabela) {
 		JScrollPane sPane = new JScrollPane(tabela);
 		sPane
@@ -192,7 +209,6 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 	private void cleanUpGui() {
 		// makni sve komponente sa panela
 		removeAll();
-		printWhenNothingSelected();
 		repaint();
 	}
 
@@ -228,6 +244,7 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 					System.out.println("CPToolbar: nothingSelected!");
 				}
 				cleanUpGui();
+				printWhenNothingSelected();
 			}
 		} else if (evt.getPropertyName().equals(
 				EPropertyChange.PROPERTY_CHANGE.toString())) {
@@ -273,6 +290,37 @@ public class CPToolbar extends JPanel implements PropertyChangeListener {
 			return;
 		}
 		showPropertyForWire(wire);
+	}
+
+	private void fetchAndShowEntityProperty() {
+		ISchemaInfo info = controller.getSchemaInfo();
+		ISchemaEntity entity = info.getEntity();
+
+		if (entity == null) {
+			if (DEBUG_MODE) {
+				System.err.println("CPToolbar: fetched entity was null!");
+			}
+			return;
+		}
+		showPropertyForEntity(entity);
+	}
+
+	private void showPropertyForEntity(ISchemaEntity entity) {
+		JTableX tabela = null;
+		String componentName = entity.getName().toString();
+
+		if (DEBUG_MODE) {
+			int numberOfParameters = entity.getParameters().count();
+			System.out.println("CPToolbar: entityName:" + componentName);
+			System.out.println("CPToolbar: numberOfParameters:"
+					+ numberOfParameters);
+		}
+
+		tabela = createJTabbleForEntity(entity);
+		printComponentName(componentName);
+		faceLiftingForTable(tabela);
+		printTable(tabela);
+		validate();
 	}
 
 	private boolean isWire(int t) {

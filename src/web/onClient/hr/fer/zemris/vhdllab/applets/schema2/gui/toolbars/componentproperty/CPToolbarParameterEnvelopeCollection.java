@@ -15,6 +15,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.IParameterConstraint;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
@@ -105,6 +106,17 @@ public class CPToolbarParameterEnvelopeCollection {
 
 		parameterHolder = EParameterHolder.wire;
 		buildParameters(wire.getParameters());
+		buildRowEditorModel();
+	}
+
+	public CPToolbarParameterEnvelopeCollection(ISchemaEntity entity,
+			ISchemaController controller, ILocalGuiController lgc) {
+		this.controller = controller;
+		this.componentName = entity.getName();
+		this.lgc = lgc;
+
+		parameterHolder = EParameterHolder.entity;
+		buildParameters(entity.getParameters());
 		buildRowEditorModel();
 	}
 
