@@ -164,9 +164,9 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 	/* mapa datoteka po projektu. */
 	private Map<String, List<String>> filesByProjects;
 
-	private Icon normal = new ImageIcon(getClass().getResource("normal.png"));
-	private Icon inverse = new ImageIcon(getClass().getResource("inverse.png"));
-	private Icon flatIcon = new ImageIcon(getClass().getResource("flat.png"));
+	private Icon normal = new ImageIcon(getClass().getClassLoader().getResource("images/icons/hierarchy_xusesy_32.png"));
+	private Icon inverse = new ImageIcon(getClass().getClassLoader().getResource("images/icons/hierarchy_xusedbyy_32.png"));
+	private Icon flatIcon = new ImageIcon(getClass().getClassLoader().getResource("images/icons/hierarchy_flat_32.png"));
 	private JButton normalButton = new JButton(normal);
 	private JButton inverseButton = new JButton(inverse);
 	private JButton flatButton = new JButton(flatIcon);
@@ -407,16 +407,18 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 		 */
 		private static final long serialVersionUID = 3562380292516384882L;
 		private String type;
-		private Icon vhdl = new ImageIcon(getClass().getResource("vhdl.png"));
-		private Icon tb = new ImageIcon(getClass().getResource("tb.png"));
-		private Icon automat = new ImageIcon(getClass().getResource(
-				"automat.png"));
-		private Icon schema = new ImageIcon(getClass()
-				.getResource("schema.png"));
-		private Icon simulation = new ImageIcon(getClass().getResource(
-				"simulation.png"));
-		private Icon project = new ImageIcon(getClass().getResource(
-				"project.png"));
+		private Icon vhdl = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_source_16.png"));
+		private Icon tb = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_testbench_16.png"));
+		private Icon automat = new ImageIcon(getClass().getClassLoader().getResource(
+				"images/icons/file_automaton_16.png"));
+		private Icon schema = new ImageIcon(getClass().getClassLoader()
+				.getResource("images/icons/file_schema_16.png"));
+		private Icon simulation = new ImageIcon(getClass().getClassLoader().getResource(
+				"images/icons/file_simulation_16.png"));
+		private Icon project = new ImageIcon(getClass().getClassLoader().getResource(
+				"images/icons/project_16.png"));
+		private Icon defaultIcon = new ImageIcon(getClass().getClassLoader().getResource(
+		"images/icons/file_16.png"));
 
 		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -463,6 +465,8 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			} else if (FileTypes.FT_VHDL_SIMULATION.equals(type)) {
 				setIcon(simulation);
 				setToolTipText("Simulation");
+			} else {
+				setIcon(defaultIcon);
 			}
 			return this;
 		}
