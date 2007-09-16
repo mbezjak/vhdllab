@@ -18,6 +18,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.Tabbed
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaCore;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.model.LocalController;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaCore;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InvalidateObsoleteUserComponents;
@@ -381,16 +382,14 @@ public class SchemaMainPanel extends AbstractEditor {
 			public void resourceDeleted(String projectName, String fileName) {
 				/* check if the deleted resource was used in schema */
 				boolean isused = false;
-				
-				CircuitInterface circint;
-				try {
-					circint = resourceManager.getCircuitInterfaceFor(projectName, fileName);
-				} catch (UniformAppletException e) {
-					e.printStackTrace();
-					return;
+
+				for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
+					CircuitInterface plcci = plc.comp.getCircuitInterface();
+					if (plcci.getEntityName().equalsIgnoreCase(fileName)) {
+						isused = true;
+						break;
+					}
 				}
-				
-				// TODO: finish this
 				
 				/* perform changes */
 				if (isused) {
