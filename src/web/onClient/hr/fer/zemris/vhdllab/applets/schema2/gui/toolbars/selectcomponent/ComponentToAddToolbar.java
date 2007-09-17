@@ -1,13 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
-import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.ECanvasState;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;

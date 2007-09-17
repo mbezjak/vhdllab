@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaWire;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.WireSegment;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

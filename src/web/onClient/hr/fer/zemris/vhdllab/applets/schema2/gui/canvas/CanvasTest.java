@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaComponentCollection;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaWireCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaWireCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SimpleSchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SimpleSchemaWireCollection;
 
 import java.awt.BorderLayout;
 

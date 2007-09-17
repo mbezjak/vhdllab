@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Time;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.CPToolbar;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Time;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

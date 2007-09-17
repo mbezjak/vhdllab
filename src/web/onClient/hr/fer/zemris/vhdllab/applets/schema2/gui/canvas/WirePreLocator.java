@@ -1,14 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
-import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommand;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ICommandResponse;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.AddWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.BindWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.ExpandWireCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.PlugWireCommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommandResponse;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.AddWireCommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.BindWireCommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.ExpandWireCommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.PlugWireCommand;
 
 import java.awt.Graphics2D;
 

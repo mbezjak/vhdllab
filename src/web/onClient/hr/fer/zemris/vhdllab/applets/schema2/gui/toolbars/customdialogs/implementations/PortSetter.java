@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.implementations;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.generic.ParamPort;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.ParameterSetterPanel;
-import hr.fer.zemris.vhdllab.applets.schema2.model.parameters.generic.ParamPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultType;
 import hr.fer.zemris.vhdllab.vhdl.model.Direction;

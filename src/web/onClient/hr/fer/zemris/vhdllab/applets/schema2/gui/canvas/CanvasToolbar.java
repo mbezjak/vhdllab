@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.ECanvasState;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

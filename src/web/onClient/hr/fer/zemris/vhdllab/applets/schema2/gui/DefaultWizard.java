@@ -1,18 +1,18 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InOutSchemaComponent;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaEntity;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.applets.schema2.constants.Constants;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.schema2.model.InOutSchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaEntity;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;

@@ -1,18 +1,18 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.EPropertyChange;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaEntity;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaWire;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaWireCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.JTableX;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponent;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaComponentCollection;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaEntity;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWire;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;

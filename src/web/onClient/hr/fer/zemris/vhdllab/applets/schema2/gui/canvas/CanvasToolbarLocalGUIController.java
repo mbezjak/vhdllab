@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.canvas;
 
-import hr.fer.zemris.vhdllab.applets.schema2.enums.ECanvasState;
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController;
-import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.ECanvasState;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

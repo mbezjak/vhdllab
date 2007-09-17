@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.service.generator.schema;
 
-import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaInfo;
-import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaInfo2VHDL;
-import hr.fer.zemris.vhdllab.applets.schema2.model.serialization.SchemaDeserializer;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
