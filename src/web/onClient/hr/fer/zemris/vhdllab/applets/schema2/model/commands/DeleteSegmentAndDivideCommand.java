@@ -17,6 +17,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.AutoRenamer;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.ChangeTuple;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.IntList;
+import hr.fer.zemris.vhdllab.applets.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaError;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.schema2.misc.WireSegment;
@@ -26,8 +28,11 @@ import hr.fer.zemris.vhdllab.applets.schema2.model.SchemaWire;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.FindDisjointSegments;
 import hr.fer.zemris.vhdllab.applets.schema2.model.queries.FindDisjointSegments.DisjointSets;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 
 
@@ -55,19 +60,29 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 			compname = cmpname;
 			schemaportindex = index;
 		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || !(obj instanceof UnplugWrapper)) return false;
+			UnplugWrapper other = (UnplugWrapper)obj;
+			return other.compname.equals(this.compname) && other.schemaportindex == this.schemaportindex;
+		}
+		@Override
+		public int hashCode() {
+			return compname.hashCode() << 16 + schemaportindex;
+		}
 	}
 	
 	private static enum EActionState {
 		normal() {
 			@Override
-			public ICommandResponse housework(ISchemaInfo info, DeleteSegmentAndDivideCommand command) {
+			public ICommandResponse undoHousework(ISchemaInfo info, DeleteSegmentAndDivideCommand command) {
 				// do absolutely nothing
 				return null;
 			}
 		},
 		deleted() {
 			@Override
-			public ICommandResponse housework(ISchemaInfo info, DeleteSegmentAndDivideCommand command) {
+			public ICommandResponse undoHousework(ISchemaInfo info, DeleteSegmentAndDivideCommand command) {
 				SchemaWire wire = new SchemaWire(command.wirename);
 				
 				wire.insertSegment(command.segment);
@@ -84,9 +99,19 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 		},
 		divided() {
 			@Override
-			public ICommandResponse housework(ISchemaInfo info, DeleteSegmentAndDivideCommand command) {
+			public ICommandResponse undoHousework(ISchemaInfo info, DeleteSegmentAndDivideCommand command) {
+				ISchemaComponentCollection components = info.getComponents();
 				ISchemaWireCollection wires = info.getWires();
 				ISchemaWire wire = wires.fetchWire(command.wirename);
+				
+				// remap components to old wire
+				for (Entry<Caseless, IntList> ntry : command.renamedmappings.entrySet()) {
+					ISchemaComponent cmp = components.fetchComponent(ntry.getKey());
+					IntList lst = ntry.getValue();
+					for (int i = 0, sz = lst.size(); i < sz; i++) {
+						cmp.getSchemaPort(lst.get(i)).setMapping(command.wirename);
+					}
+				}
 				
 				// for each name in divided set
 				for (Caseless divname : command.divided) {
@@ -119,11 +144,11 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 		};
 		
 		/**
+		 * 
 		 * @return
-		 * Returns null if everything went well,
-		 * leaving the calling method to do the work.
+		 * Vraca null ako je sve dobro proslo.
 		 */
-		public abstract ICommandResponse housework(ISchemaInfo info, DeleteSegmentAndDivideCommand command);
+		public abstract ICommandResponse undoHousework(ISchemaInfo info, DeleteSegmentAndDivideCommand command);
 	}
 	
 
@@ -136,6 +161,7 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 	private WireSegment segment;
 	private Set<Caseless> divided;
 	private Set<UnplugWrapper> unplugged;
+	private Map<Caseless, IntList> renamedmappings;
 	private EActionState actionstate;
 	
 
@@ -184,7 +210,7 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 			}
 			
 			actionstate = EActionState.deleted;
-		} else { // divide wire into 2 wires if necessary
+		} else { // divide wire into 2 or more wires if necessary
 			FindDisjointSegments findsegs = new FindDisjointSegments(wirename);
 			IQueryResult result = findsegs.performQuery(info);
 			
@@ -217,6 +243,33 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 				} catch (OverlapException e) {
 					throw new IllegalStateException("Overlapping problems with the new wire, " +
 							"and they didn't seem to exist with the old wire.", e);
+				}
+				
+				// find components mapped to oldwire and remap them to new wire
+				renamedmappings = new HashMap<Caseless, IntList>();
+				for (PlacedComponent plc : info.getComponents()) {
+					IntList changedports = null;
+					int count = -1;
+					for (SchemaPort sp : plc.comp.getSchemaPorts()) {
+						count++;
+						Caseless mappedto = sp.getMapping();
+						if (Caseless.isNullOrEmpty(mappedto)) continue;
+						/* check if port was mapped to old name */
+						if (mappedto.equals(wirename)) {
+							/* check if wire has segments at the position */
+							XYLocation sploc = sp.getOffset();
+							if (nwire.segmentsAt(plc.pos.x + sploc.x, plc.pos.y + sploc.y) != null) {
+								/* set new mapping */
+								sp.setMapping(divname);
+								/* cache mapped port for undo */
+								if (changedports == null) changedports = new IntList();
+								changedports.add(count);
+							}
+						}
+					}
+					if (changedports != null) {
+						renamedmappings.put(plc.comp.getName(), changedports);
+					}
 				}
 				
 				actionstate = EActionState.divided;
@@ -261,7 +314,7 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 		}
 		
 		// perform housework
-		ICommandResponse resp = actionstate.housework(info, this);
+		ICommandResponse resp = actionstate.undoHousework(info, this);
 		if (resp != null && !resp.isSuccessful()) return resp;
 		
 		// fetch wire and insert the segment back
