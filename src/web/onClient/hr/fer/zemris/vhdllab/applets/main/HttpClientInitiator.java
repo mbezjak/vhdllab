@@ -294,8 +294,8 @@ public final class HttpClientInitiator implements Initiator {
 		if (credentials == null) {
 			try {
 				// also sets credentials
-//				showLoginDialog(displayRetryMessage);
-				credentials = new UsernamePasswordCredentials("test", "a");
+				showLoginDialog(displayRetryMessage);
+//				credentials = new UsernamePasswordCredentials("test", "a");
 			} catch (SecurityException e) {
 				throw new UniformAppletException(e);
 			}

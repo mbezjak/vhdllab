@@ -288,6 +288,9 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			line--;
 		}
 		int last = content.indexOf('\n', pos) + 1;
+		if(last == 0) {
+			last = content.length();
+		}
 		try {
 			highlighted = h.addHighlight(pos, last,
 					new DefaultHighlighter.DefaultHighlightPainter(new Color(

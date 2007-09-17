@@ -159,15 +159,11 @@ public class SchemaMainPanel extends AbstractEditor {
 		if (container == null || content == null) return null;
 		System.out.println("Initializing user prototypes.");
 
-		String projectname = content.getProjectName();
-		String thisname = content.getFileName();
+		String projectname = getProjectName();
+		String thisname = getFileName();
 		List<String> circuitnames = null;
 		try {
-			circuitnames = resourceManager.getAllCircuits(
-					projectname);
-			if (circuitnames == null)
-				throw new NullPointerException(
-						"getAllCircuits(...) returned null.");
+			circuitnames = resourceManager.getAllCircuits(projectname);
 		} catch (Exception e) {
 			throw new SchemaException("Could not fetch circuits in project '"
 					+ projectname + "'.", e);
@@ -392,7 +388,7 @@ public class SchemaMainPanel extends AbstractEditor {
 				
 				/* perform changes */
 				if (isused) {
-					boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
+					boolean oldmodifiedstatus = isModified();
 					
 					List<CircuitInterface> usercis = getUserPrototypeList();
 					controller.send(new RebuildPrototypeCollection(null, usercis));

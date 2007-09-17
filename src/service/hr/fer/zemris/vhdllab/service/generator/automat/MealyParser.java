@@ -45,7 +45,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 		else if(podatci.clock.equalsIgnoreCase("rising_edge"))buffer.append("rising_edge(clock)");
 		else buffer.append("clock=").append(podatci.clock);
 		buffer.append(" THEN\n\t\t")
-		.append("state_present <= state_next;");
+		.append("state_present <= state_n;");
 		
 		buffer = spojiIzlaze(buffer);
 		
@@ -56,7 +56,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 
 	private StringBuffer spojiIzlaze(StringBuffer buffer) {
 		for(Signal s:izlazniSignali){
-			buffer.append("\n\t\t").append(s.getImeSignala()).append("<=").append(s.getImeSignala()).append("_next;");
+			buffer.append("\n\t\t").append(s.getImeSignala()).append("<=").append(s.getImeSignala()).append("_n;");
 		}
 		return buffer;
 	}
@@ -73,7 +73,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 		int pozicija=0;
 		for(Signal sig:izlazniSignali){
 			String navodnici=(sig.getTip()==Signal.STD_LOGIC_VECTOR?"\"":"'");
-			buffer.append(sig.getImeSignala()).append("_next <= ").append(navodnici)
+			buffer.append(sig.getImeSignala()).append("_n <= ").append(navodnici)
 			.append(izlaz.substring(pozicija,pozicija+sig.getSirinaSignala()))
 			.append(navodnici).append(";\n\t\t");
 			pozicija+=sig.getSirinaSignala();
@@ -105,11 +105,11 @@ public class MealyParser implements IAutomatVHDLGenerator {
 					buffer.deleteCharAt(buffer.length()-1);
 			}
 			if(!test)buffer.append("ELSE ");
-			buffer.append("state_next<=ST_").append(st.els).append(";");
+			buffer.append("state_n<=ST_").append(st.els).append(";");
 			buffer=generirajIzlaze(st.eIz,buffer);
 			if(!test)buffer.append("\n\t\tEND IF;");
 		}
-		buffer.append("\n\t\tWHEN OTHERS => state_next <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
+		buffer.append("\n\t\tWHEN OTHERS => state_n <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
 		return buffer;
 	}
 
@@ -130,7 +130,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 			buffer.deleteCharAt(buffer.length()-1);
 			buffer.deleteCharAt(buffer.length()-1);
 			buffer.deleteCharAt(buffer.length()-1);
-			buffer.append(" THEN state_next<=ST_").append(pr.u).append(";");
+			buffer.append(" THEN state_n<=ST_").append(pr.u).append(";");
 			buffer=generirajIzlaze(pom[1],buffer);
 			buffer.append("\n\t\tELSIF ");
 		}
@@ -157,13 +157,13 @@ public class MealyParser implements IAutomatVHDLGenerator {
 		for(Stanje st:stanja)buffer.append("ST_").append(st.ime).append(", ");
 		buffer.deleteCharAt(buffer.length()-1);
 		buffer.deleteCharAt(buffer.length()-1);
-		buffer.append(");\nSIGNAL state_present, state_next:stateType;\n");
+		buffer.append(");\nSIGNAL state_present, state_n:stateType;\n");
 		
 		String[] redovi=podatci.interfac.split("\n");
 		for(int i=0;i<redovi.length;i++){
 			buffer.append("\n");
 			String[] rijeci=redovi[i].split(" ");
-			buffer.append("SIGNAL ").append(rijeci[0]).append("_next: ").append(rijeci[2]);
+			buffer.append("SIGNAL ").append(rijeci[0]).append("_n: ").append(rijeci[2]);
 			if(rijeci[2].toUpperCase().equals("STD_LOGIC_VECTOR")){
 				if(Integer.parseInt(rijeci[3])<Integer.parseInt(rijeci[4]))
 					buffer.append("(").append(Integer.parseInt(rijeci[3])).append(" TO ").append(Integer.parseInt(rijeci[4])).append(")");

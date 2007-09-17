@@ -114,10 +114,13 @@ public class CompileErrorsPanel extends JPanel implements IView {
 			if (container.getResourceManager().getFileType(
 					resource.getProjectName(), resource.getFileName()).equals(
 					FileTypes.FT_VHDL_SOURCE)) {
-				IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+				IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
 						.createFileEditorIdentifier(resource);
 				editor = container.getEditorManager().getOpenedEditor(
 						identifier);
+				if(editor == null) {
+					editor = container.getEditorManager().openEditorByResource(identifier);
+				}
 			} else {
 				IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
 						.createViewVHDLIdentifier(resource);

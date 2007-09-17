@@ -198,6 +198,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		resourceManager
 				.addVetoableResourceListener(new AfterResourceCreationOpenEditor());
 		resourceManager.addVetoableResourceListener(new ResourceSavedEcho());
+		resourceManager.addVetoableResourceListener(new ResourceDeletedCloseEditor());
 
 		UserPreferences pref = UserPreferences.instance();
 		String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
@@ -1095,4 +1096,17 @@ public class DefaultSystemContainer implements ISystemContainer {
 		}
 	}
 
+	/**
+	 * Close editor after resource has been deleted.
+	 * 
+	 * @author Miro Bezjak
+	 */
+	private class ResourceDeletedCloseEditor extends VetoableResourceAdapter {
+		
+		@Override
+		public void resourceDeleted(String projectName, String fileName) {
+			// TODO napravit ovo. kvagu kolko problema s tim.
+		}
+	}
+	
 }

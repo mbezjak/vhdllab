@@ -235,9 +235,11 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 
 	private void unplugAt(XYLocation loc, ISchemaComponentCollection components) {
 		ISchemaComponent cmp = components.fetchComponent(loc.x, loc.y, 1);
-		XYLocation cloc = components.getComponentLocation(cmp.getName());
+		
 		if (cmp == null) return;
 		if (cmp.isInvalidated()) return;
+		
+		XYLocation cloc = components.getComponentLocation(cmp.getName());
 		int count = 0;
 		for (SchemaPort sp : cmp.getSchemaPorts()) {
 			XYLocation portloc = sp.getOffset();

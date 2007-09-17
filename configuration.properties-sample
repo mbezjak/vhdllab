@@ -47,7 +47,7 @@ jnlp.vm.parameter = -client
 ### A splash screen ###
 app.splash = splash.png
 ### An application icon ###
-app.icon = app.icon = icons/vhdllab_main_32.png
+app.icon = icons/vhdllab_main_32.png
 
 
 ### directories in ${basedir} ###

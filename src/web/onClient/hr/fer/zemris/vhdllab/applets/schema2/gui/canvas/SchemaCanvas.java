@@ -23,7 +23,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.SimpleSchemaWireCollection;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteComponentCommand;
-import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteSegmentCommand;
+import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteSegmentAndDivideCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.DeleteWireCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.InstantiateComponentCommand;
 import hr.fer.zemris.vhdllab.applets.schema2.model.commands.MoveComponentCommand;
@@ -383,7 +383,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 						if(wire != null){
 							int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
 							WireSegment seg = wire.getSegments().get(segNo);
-							ICommand deleteSegment = new DeleteSegmentCommand(wire.getName(),seg);
+							ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
 							ICommandResponse response = controller.send(deleteSegment);
 							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
 						}

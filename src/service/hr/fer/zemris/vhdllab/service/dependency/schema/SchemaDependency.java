@@ -54,7 +54,7 @@ public class SchemaDependency implements IDependency {
 			} else {
 				dependency = labman.findFileByName(f.getProject().getId(), filename);
 			}
-			retlist.add(dependency);
+			if (dependency != null) retlist.add(dependency);
 		}
 		
 		return retlist;

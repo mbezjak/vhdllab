@@ -153,9 +153,9 @@
     <javac destdir="${build.dir}/service" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/service"/>
       <src path="src/common"/>
-      <!-- only temporary solution!! -->
+      <!-- only temporary solution!! --> <!--
       <src path="src/web/onClient"/>
-      <src path="src/i18n/common"/>
+      <src path="src/i18n/common"/> -->
       <!-- END only temporary solution!! -->
       <classpath refid="src.class.path"/>
     </javac>
