@@ -175,8 +175,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
 		Hierarchy hierarchy;
 		try {
-			hierarchy = resourceManager.extractHierarchy(
-					projectname);
+			hierarchy = resourceManager.extractHierarchy(projectname);
 		} catch (UniformAppletException e1) {
 			throw new SchemaException("Cannot extract hierarchy for project '"
 					+ projectname + "'.", e1);
