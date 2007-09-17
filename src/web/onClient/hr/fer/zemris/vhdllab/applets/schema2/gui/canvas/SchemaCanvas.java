@@ -547,10 +547,11 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 	public CriticalPoint getCriticalPoint(int x, int y) {
 		CriticalPoint point = null;
+		
 		ISchemaComponent comp = components.fetchComponent(x,y, MIN_COMPONENT_DISTANCE);
 		if(comp!=null){
 			Rectangle rect = components.getComponentBounds(comp.getName());
-			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, 5);
+			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, 10);
 			if(port != null){
 				point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
 						CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
@@ -559,13 +560,29 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				point = null;
 			}
 		}else{
-			ISchemaWire wire = wires.fetchWire(x, y, Constants.GRID_SIZE/2-1);
-			if(wire != null){
-				point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));
-			}else{
-				return null;
+
+			comp = components.fetchComponent(x-MIN_COMPONENT_DISTANCE,y, MIN_COMPONENT_DISTANCE);
+			if(comp!=null){
+				Rectangle rect = components.getComponentBounds(comp.getName());
+				SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, 10);
+				if(port != null){
+					point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
+							CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
+					decrementer.reset();
+				}else{
+					point = null;
+				}	
+			}else{		
+				ISchemaWire wire = wires.fetchWire(x, y, Constants.GRID_SIZE/2-1);
+				if(wire != null){
+					point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));
+				}else{
+					point = null;
+				}
 			}
 		}
+		
+		
 		return point;
 	}
 	

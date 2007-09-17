@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
 
 import org.xml.sax.SAXException;
 /**
@@ -118,8 +119,6 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * Minimalne dimenzije do kojih se smije smanjivat editor.
 	 */
-	private int minX=0;
-	private int minY=0;
 	
 	private HashSet<String> listaSignala=null;
 	
@@ -137,7 +136,7 @@ public class AutoDrawer extends JPanel{
 		super();
 		this.setOpaque(true);
 		createGUI();
-		this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
+		//this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
 		this.editor = editor;
 	}
 	
@@ -159,12 +158,11 @@ public class AutoDrawer extends JPanel{
 	private void createGUI() {
 		
 		img=new BufferedImage(this.getPreferredSize().width,this.getPreferredSize().height,BufferedImage.TYPE_3BYTE_BGR);
-		nacrtajSklop();
 		
 		this.addMouseListener(new Mouse());
 		this.addMouseMotionListener(new Mouse2());
 
-		this.paintComponents(img.getGraphics());
+		this.repaint();
 		
 	}
 	
@@ -175,19 +173,11 @@ public class AutoDrawer extends JPanel{
 	protected void paintComponent(Graphics g) {
 		if(img == null) {
 			img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
-			//Graphics2D gr=(Graphics2D)img.getGraphics();
-			nacrtajSklop();
 		} else {
-			/*int x=0; TODO resize!!!!!
-			int y=0;
-			for(Stanje st:stanja){
-				if(st.ox>x) x=st.ox;
-				if(st.oy>y) y=st.oy;
-			}*/
 			if (img.getHeight()!=this.getHeight()||img.getWidth()!=this.getWidth()){
 				img=new BufferedImage(this.getWidth(),this.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
-				nacrtajSklop();
 			}
+			if (stanjeRada!=4) nacrtajSklop();
 			g.drawImage(img,0,0,img.getWidth(),img.getHeight(),null);
 		}
 	}
@@ -344,15 +334,15 @@ public class AutoDrawer extends JPanel{
 	}
 	
 	private void resizeComponent() {
-		int maxX=minX;
-		int maxY=minY;
+		int maxX=0;
+		int maxY=0;
 		for(Stanje st:stanja){
 			if(st.ox+2*radijus+10>maxX)maxX=st.ox+2*radijus+10;
 			if(st.oy+2*radijus+10>maxY)maxY=st.oy+2*radijus+10;
 		}
-		//if(maxX!=minX||maxY!=minY)
-			this.setSize(maxX,maxY);
-			//System.out.println(minX+" "+minY+":"+this.getWidth()+" "+this.getHeight());
+		
+		this.setPreferredSize(new Dimension(maxX,maxY));
+		AutoDrawer.this.revalidate();
 	}
 
 	/**
@@ -371,90 +361,88 @@ public class AutoDrawer extends JPanel{
 	 */
 	private void nacrtajSklop(){
 		if(dataSet()){
-		checkOKness();
-		resizeComponent();
-		Graphics2D g=(Graphics2D)img.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(getOKColor());
-		g.fillRect(0,0,img.getWidth(),img.getHeight());
-		g.setColor(Color.WHITE);
-		g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
-		
-		//crtanje stanja
-		if(stanjeZaDodati!=null){
-			g.setColor(stanjeZaDodati.boja);
-			g.fillArc(stanjeZaDodati.ox,stanjeZaDodati.oy,2*radijus,2*radijus,0,360);
+			checkOKness();
+			Graphics2D g=(Graphics2D)img.getGraphics();
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setColor(getOKColor());
+			g.fillRect(0,0,img.getWidth(),img.getHeight());
 			g.setColor(Color.WHITE);
-			g.fillArc(stanjeZaDodati.ox+radijus/5,stanjeZaDodati.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
-		}
-		for(Stanje st:stanja){
-			g.setColor(st.boja);
-			g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
-			g.setColor(Color.WHITE);
-			g.fillArc(st.ox+radijus/5,st.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
-			g.setColor(st.boja);
-			if(st.ime.equals(podatci.pocetnoStanje)){
-				g.drawLine(st.ox-17,st.oy+radijus,st.ox,st.oy+radijus);
-				int[] xP=new int[3];
-				int[] yP=new int[3];
-				setXYP(xP,yP,st);
-				g.fillPolygon(xP,yP,3);
-			}
-		//upis u stanja
+			g.fillRect(3,3,img.getWidth()-6,img.getHeight()-6);
 
-			String tekst=null;
-			if(podatci.tip.equals(new String("Moore")))
-				tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
-			else if (podatci.tip.equals(new String("Mealy"))) 
-				tekst=new StringBuffer().append(st.ime).toString();
-			g.setFont(new Font("Helvetica", Font.BOLD, radijus/2));
-			FontMetrics fm= g.getFontMetrics();
-			int xString=st.ox+radijus-fm.stringWidth(tekst)/2;
-			int yString=st.oy+radijus+fm.getAscent()/2;
-			g.drawString(tekst,xString,yString);
-			g.setColor(Color.WHITE);
-		}
-		
-		//crtanje prijelaza
-		for(Prijelaz pr:prijelazi){
-			Stanje iz=null;
-			Stanje ka=null;
-			for(Stanje stanje:stanja){
-				if(stanje.ime.equals(pr.iz)) iz=stanje;
-				if(stanje.ime.equals(pr.u)) ka=stanje;
+			//crtanje stanja
+			if(stanjeZaDodati!=null){
+				g.setColor(stanjeZaDodati.boja);
+				g.fillArc(stanjeZaDodati.ox,stanjeZaDodati.oy,2*radijus,2*radijus,0,360);
+				g.setColor(Color.WHITE);
+				g.fillArc(stanjeZaDodati.ox+radijus/5,stanjeZaDodati.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
 			}
-			nacrtajPrijelaz(iz, ka,pr);
+			for(Stanje st:stanja){
+				g.setColor(st.boja);
+				g.fillArc(st.ox,st.oy,2*radijus,2*radijus,0,360);
+				g.setColor(Color.WHITE);
+				g.fillArc(st.ox+radijus/5,st.oy+radijus/5,2*(radijus-radijus/5),2*(radijus-radijus/5),0,360);
+				g.setColor(st.boja);
+				if(st.ime.equals(podatci.pocetnoStanje)){
+					g.drawLine(st.ox-17,st.oy+radijus,st.ox,st.oy+radijus);
+					int[] xP=new int[3];
+					int[] yP=new int[3];
+					setXYP(xP,yP,st);
+					g.fillPolygon(xP,yP,3);
+				}
+				//upis u stanja
+
+				String tekst=null;
+				if(podatci.tip.equals(new String("Moore")))
+					tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
+				else if (podatci.tip.equals(new String("Mealy"))) 
+					tekst=new StringBuffer().append(st.ime).toString();
+				g.setFont(new Font("Helvetica", Font.BOLD, radijus/2));
+				FontMetrics fm= g.getFontMetrics();
+				int xString=st.ox+radijus-fm.stringWidth(tekst)/2;
+				int yString=st.oy+radijus+fm.getAscent()/2;
+				g.drawString(tekst,xString,yString);
+				g.setColor(Color.WHITE);
+			}
+
+			//crtanje prijelaza
+			for(Prijelaz pr:prijelazi){
+				Stanje iz=null;
+				Stanje ka=null;
+				for(Stanje stanje:stanja){
+					if(stanje.ime.equals(pr.iz)) iz=stanje;
+					if(stanje.ime.equals(pr.u)) ka=stanje;
+				}
+				nacrtajPrijelaz(iz, ka,pr);
+			}
+
+			//crtanje else prijelaza
+
+			for(Stanje st1:stanja) 
+				for(Stanje st2:stanja) 
+					if(st1.els.equalsIgnoreCase(st2.ime))nacrtajPrijelaz(st1,st2,null);
+
+			g.setColor(Color.BLACK);
+			String[] legendic=legenda.split("\n");
+			g.setFont(new Font("Arial", Font.BOLD, 10));
+			FontMetrics fm= g.getFontMetrics();
+			int odmak=legendic[0].length()>legendic[1].length()?
+					(legendic[0].length()>legendic[2].length()?fm.stringWidth(legendic[0]):fm.stringWidth(legendic[2])):
+						(legendic[1].length()>legendic[2].length()?fm.stringWidth(legendic[1]):fm.stringWidth(legendic[2]));
+					int xStr=img.getWidth()-odmak-10;
+					int yStr=fm.getHeight()+5;
+					g.drawString(legendic[0],xStr,yStr);
+					g.setFont(new Font("Arial", Font.PLAIN, 10));
+					fm= g.getFontMetrics();
+					yStr+=fm.getHeight();
+					g.drawString(legendic[1],xStr,yStr);
+					yStr+=fm.getHeight();
+					g.drawString(legendic[2],xStr,yStr);
+
+					g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
 		}
-		
-		//crtanje else prijelaza
-		
-		for(Stanje st1:stanja) 
-			for(Stanje st2:stanja) 
-				if(st1.els.equalsIgnoreCase(st2.ime))nacrtajPrijelaz(st1,st2,null);
-		
-		g.setColor(Color.BLACK);
-		String[] legendic=legenda.split("\n");
-		g.setFont(new Font("Arial", Font.BOLD, 10));
-		FontMetrics fm= g.getFontMetrics();
-		int odmak=legendic[0].length()>legendic[1].length()?
-				(legendic[0].length()>legendic[2].length()?fm.stringWidth(legendic[0]):fm.stringWidth(legendic[2])):
-				(legendic[1].length()>legendic[2].length()?fm.stringWidth(legendic[1]):fm.stringWidth(legendic[2]));
-		int xStr=img.getWidth()-odmak-10;
-		int yStr=fm.getHeight()+5;
-		g.drawString(legendic[0],xStr,yStr);
-		g.setFont(new Font("Arial", Font.PLAIN, 10));
-		fm= g.getFontMetrics();
-		yStr+=fm.getHeight();
-		g.drawString(legendic[1],xStr,yStr);
-		yStr+=fm.getHeight();
-		g.drawString(legendic[2],xStr,yStr);
-		
-		repaint();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
+
 	}
-		
-	}
-	
+
 	/**
 	 * Postavlja isOK zastavicu na true ako je moguce napraviti
 	 * VHDL iz trenutnog automata, inace false.
@@ -705,7 +693,7 @@ public class AutoDrawer extends JPanel{
 	public void setStanjeRada(int stanjeRada) {
 		stanjeZaDodati=null;
 		prijelazZaDodati=null;
-		nacrtajSklop();
+		repaint();
 		this.stanjeRada = stanjeRada;
 		if(stanjeRada==2)stanjeZaDodati=new Stanje();
 /*		if(stanjeRada==2){
@@ -740,7 +728,7 @@ public class AutoDrawer extends JPanel{
 
 	public void brisiPrijelaz(Prijelaz pr) {
 		prijelazi.remove(pr);
-		nacrtajSklop();
+		repaint();
 	}
 
 	public void brisiStanje(Stanje st) {
@@ -753,7 +741,6 @@ public class AutoDrawer extends JPanel{
 	}
 
 	public void editorPrijelaza(Prijelaz pr) {
-		//TODO:sredujem da se izbrise prijelaz ako nama nista na njemu.....
 		final Prijelaz pr2=pr;
 		JButton add=new JButton(bundle.getString(LanguageConstants.EDITOR_ADD));
 		JButton delete=new JButton(bundle.getString(LanguageConstants.EDITOR_DELETE));
@@ -817,7 +804,7 @@ public class AutoDrawer extends JPanel{
 		 	if(pr2.pobudaIzlaz.size()>0)
 		 		pr=pr2;
 		 	else prijelazi.remove(pr);
-			nacrtajSklop();
+			repaint();
 		}
 	}
 	
@@ -827,10 +814,11 @@ public class AutoDrawer extends JPanel{
 	 * @param y
 	 */
 	private void pomjeriSliku(int x, int y) {
-		if(x>AutoDrawer.this.getWidth())AutoDrawer.this.setSize(x,AutoDrawer.this.getHeight());
-		if(y>AutoDrawer.this.getHeight())AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),y);
+		if(x>AutoDrawer.this.getWidth())AutoDrawer.this.setPreferredSize(new Dimension(x,AutoDrawer.this.getHeight()));
+		if(y>AutoDrawer.this.getHeight())AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),y));
 
 		if(x<3.3*radijus||y<3.3*radijus) moveAll(x,y);	//TODO i tu je odmak!!!
+		AutoDrawer.this.revalidate();
 	}
 
 	private void moveAll(int x, int y) {
@@ -839,8 +827,8 @@ public class AutoDrawer extends JPanel{
 			s.ox-=(x<odmak?x-odmak:0);
 			s.oy-=(y<odmak?y-odmak:0);
 		}
-		if(x<odmak)AutoDrawer.this.setSize(AutoDrawer.this.getWidth()-x+odmak,AutoDrawer.this.getHeight());
-		if(y<odmak)AutoDrawer.this.setSize(AutoDrawer.this.getWidth(),AutoDrawer.this.getHeight()-y+odmak);
+		if(x<odmak)AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth()-x+odmak,AutoDrawer.this.getHeight()));
+		if(y<odmak)AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),AutoDrawer.this.getHeight()-y+odmak));
 	}
 	
 	
@@ -866,7 +854,8 @@ public class AutoDrawer extends JPanel{
 					if(selektiran.ox<0)selektiran.ox=0;
 					if(selektiran.oy>img.getHeight()-2*radijus) selektiran.oy=img.getHeight()-2*radijus;
 					if(selektiran.oy<0)selektiran.oy=0;*/
-				nacrtajSklop();
+				resizeComponent();
+				repaint();
 			}
 		}
 		
@@ -882,7 +871,7 @@ public class AutoDrawer extends JPanel{
 				if(stanjeZaDodati.ox<0)stanjeZaDodati.ox=0;
 				if(stanjeZaDodati.oy>img.getHeight()-2*radijus) stanjeZaDodati.oy=img.getHeight()-2*radijus;
 				if(stanjeZaDodati.oy<0)stanjeZaDodati.oy=0;
-				nacrtajSklop();
+				repaint();
 			}
 			
 			if(stanjeRada==4){
@@ -906,7 +895,7 @@ public class AutoDrawer extends JPanel{
 					if(jelSelektiran(e,st)){
 						st.editStanje2(podatci,AutoDrawer.this,bundle);
 						editor.setModified(true);
-						nacrtajSklop();
+						repaint();
 						break;
 					}
 				for(Prijelaz pr:prijelazi)
@@ -964,7 +953,7 @@ public class AutoDrawer extends JPanel{
 					stanjeRada=1;
 					stanjeZaDodati=null;
 					setStanjeRada(2);
-					nacrtajSklop();
+					repaint();
 				}
 
 			}
@@ -1006,7 +995,7 @@ public class AutoDrawer extends JPanel{
 							prijelazZaDodati=new Prijelaz();
 							stanjeRada=3;
 							editor.setModified(true);
-							nacrtajSklop();
+							repaint();
 							break;
 						}
 			if(stanjeRada==5){
@@ -1015,14 +1004,14 @@ public class AutoDrawer extends JPanel{
 						if(st.ime.equals(podatci.pocetnoStanje))podatci.pocetnoStanje="";
 						brisiStanje(st);
 						editor.setModified(true);
-						nacrtajSklop();
+						repaint();
 						break;
 					}	
 				for(Prijelaz pr:prijelazi)
 					if(jelSelektiran(e,pr)){
 						brisiPrijelaz(pr);
 						editor.setModified(true);
-						nacrtajSklop();
+						repaint();
 						break;
 					}
 			}
@@ -1036,7 +1025,7 @@ public class AutoDrawer extends JPanel{
 						}
 						break;
 					}
-				nacrtajSklop();
+				repaint();
 			}
 			/*if(e.getButton()==MouseEvent.BUTTON3){
 				stanjeZaDodati=null;
@@ -1057,7 +1046,7 @@ public class AutoDrawer extends JPanel{
 						st.boja=Color.GREEN;
 						pressed=true;
 						selektiran=st;
-						nacrtajSklop();
+						repaint();
 						break;
 					}
 			
@@ -1078,13 +1067,13 @@ public class AutoDrawer extends JPanel{
 				if(e.getX()<0||e.getY()<0) moveAll(e.getX(),e.getY());
 				*/
 				
-				if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
+				/*if(selektiran.ox>img.getWidth()-2*radijus) selektiran.ox=img.getWidth()-2*radijus;
 				if(selektiran.ox<0)selektiran.ox=0;
 				if(selektiran.oy>img.getHeight()-2*radijus) selektiran.oy=img.getHeight()-2*radijus;
-				if(selektiran.oy<0)selektiran.oy=0;
+				if(selektiran.oy<0)selektiran.oy=0;*/
 				selektiran.boja=Color.BLACK;
 				selektiran=null;
-				nacrtajSklop();
+				repaint();
 				pressed=false;
 			}
 			podatci.sirina=AutoDrawer.this.getWidth();
@@ -1096,16 +1085,12 @@ public class AutoDrawer extends JPanel{
 		/**
 		 * nis ne radi...
 		 */
-		public void mouseEntered(MouseEvent e) {
-
-			}
+		public void mouseEntered(MouseEvent e) {}
 
 		/**
 		 * nis ne radi...
 		 */
-		public void mouseExited(MouseEvent e) {
-
-		}
+		public void mouseExited(MouseEvent e) {}
 		
 	}
 
@@ -1196,6 +1181,7 @@ public class AutoDrawer extends JPanel{
 		};
 		JOptionPane optionPane=new JOptionPane(panel,JOptionPane.PLAIN_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
 		JDialog dialog=optionPane.createDialog(this,bundle.getString(LanguageConstants.DIALOG_TITLE_MACHINEDATA));
+		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
 		
@@ -1205,7 +1191,7 @@ public class AutoDrawer extends JPanel{
 			buf.deleteCharAt(buf.length()-1);
 			podatci.interfac=buf.toString();
 			parseLegend();
-			nacrtajSklop();
+			repaint();
 		}
 	}
 	
@@ -1229,8 +1215,8 @@ public class AutoDrawer extends JPanel{
 		return true;
 	}
 
-	public void setMinXY(int minX,int minY) {
+	/*public void setMinXY(int minX,int minY) {
 		this.minX = minX;
 		this.minY=minY;
-	}
+	}*/
 }

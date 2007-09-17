@@ -10,8 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -45,7 +43,7 @@ public class Automat extends AbstractEditor implements IWizard {
 	/**
 	 * AutoDrawer je JPanel na koji se crta automat
 	 */
-	AutoDrawer adrw = null;
+	private AutoDrawer adrw = null;
 
 	private ResourceBundle bundle = null;
 
@@ -162,9 +160,9 @@ public class Automat extends AbstractEditor implements IWizard {
 		this.add(tulbar, BorderLayout.NORTH);
 
 		// predpostavke za -3:
-		adrw.setMinXY(Automat.this.getWidth() - 3, Automat.this.getHeight()
-				- tulbar.getHeight() - 3);
-
+		//adrw.setMinXY(Automat.this.getWidth() - 3, Automat.this.getHeight()
+		//		- tulbar.getHeight() - 3);
+/*
 		this.addComponentListener(new ComponentListener() {
 
 			public void componentResized(ComponentEvent arg0) {
@@ -188,7 +186,7 @@ public class Automat extends AbstractEditor implements IWizard {
 
 			}
 
-		});
+		});*/
 
 		tulbar.setFocusable(true);
 		tulbar.addMouseListener(new MouseAdapter() {
@@ -223,24 +221,6 @@ public class Automat extends AbstractEditor implements IWizard {
 				podatci.setSelected(false);
 			}
 		});
-		// THIS WAS SUBSTITUTED BY ABOVE CODE BECAUSE BOTTOM CODE (COMMENTED
-		// ONE) IS BROKEN
-		// KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		// .addKeyEventDispatcher(new KeyEventDispatcher(){
-		// public boolean dispatchKeyEvent(KeyEvent e){
-		// if(e.getID() == KeyEvent.KEY_RELEASED)
-		// {
-		// if(e.getKeyCode() == KeyEvent.VK_ESCAPE ) {
-		// adrw.setStanjeRada(1);
-		// normal.setSelected(true);
-		// dodajNoviPrijelaz.setSelected(false);
-		// dodajNoviSignal.setSelected(false);
-		// brisi.setSelected(false);
-		// pocStanje.setSelected(false);
-		// podatci.setSelected(false);
-		// }
-		// }
-		// return false;}});
 	}
 
 	// *************************************************************************
