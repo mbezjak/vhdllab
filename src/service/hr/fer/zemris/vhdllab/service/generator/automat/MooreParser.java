@@ -182,13 +182,68 @@ public class MooreParser implements IAutomatVHDLGenerator {
 	}
 
 	private StringBuffer createType(StringBuffer buffer) {
-		buffer.append("TYPE stateType IS (");
-		for(Stanje st:stanja)buffer.append("ST_").append(st.ime).append(", ");
-		buffer.deleteCharAt(buffer.length()-1);
-		buffer.deleteCharAt(buffer.length()-1);
-		buffer.append(");\nSIGNAL state_present, state_next:stateType;\n");
+		//buffer.append("TYPE stateType IS (");
+		//for(Stanje st:stanja)buffer.append("ST_").append(st.ime).append(", ");
+		//buffer.deleteCharAt(buffer.length()-1);
+		//buffer.deleteCharAt(buffer.length()-1);
+		//buffer.append(");\nSIGNAL state_present, state_next:stateType;\n");
+		
+		Signal state = createStateSignal();
+		StringBuffer bufferTemp = new StringBuffer();
+		if(state.getTip()==Signal.STD_LOGIC){
+			bufferTemp.append(" std_logic");
+		}else{
+			bufferTemp.append(" std_logic_vector(").append(state.getFrom())
+			.append(state.getSmijer()==Signal.C_TO?" TO ":" DOWNTO ").append(state.getTo()).append(")");
+		}
+		String stateType = bufferTemp.toString();
+		
+		for(Stanje st:stanja){
+			buffer.append("\n  CONSTANT ST_").append(st.ime).append(": ").append(stateType).append(" := ")
+			.append(decToBinString(state.getTip(), stanja.indexOf(st), state.getFrom()+1)).append(";");
+		}
+		
+		buffer.append("\n");
+		buffer.append("\n  SIGNAL state_present, state_next: ").append(stateType).append(";");
+		
+		buffer.append("\n");
+		
 		return buffer;
 	}
+	
+	private String decToBinString(int tip, int indexOf, int size) {
+		String s = "";
+		
+		if(tip == Signal.STD_LOGIC){
+			return indexOf == 1?"'1'":"'0'";
+		}else{
+			StringBuffer b = new StringBuffer("\"");
+			for(int i = 0; i < size;i++){
+				b.append(indexOf%2);
+				indexOf/=2;
+			}
+			s = b.append("\"").reverse().toString();
+		}
+		
+		return s;
+	}
+
+	private Signal createStateSignal() {
+		int length = stanja.size();
+		String tip = "std_logic";
+		int from = 0;
+		int to = 0;
+
+		if(length>2){
+			tip = "std_logic_vector";
+			from = (int) Math.floor(Math.log(length-1)/Math.log(2));
+			to = 0;
+		}
+		
+		Signal s = new Signal(from,to,"signal",tip);
+		return s;
+	}
+
 
 	private StringBuffer addEntity(StringBuffer buffer) {
 		buffer.append("ENTITY ").append(podatci.ime).append(" IS PORT(\n")

@@ -45,7 +45,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 		else if(podatci.clock.equalsIgnoreCase("rising_edge"))buffer.append("rising_edge(clock)");
 		else buffer.append("clock=").append(podatci.clock);
 		buffer.append(" THEN\n\t\t")
-		.append("state_present <= state_n;");
+		.append("state_present <= state_next;");
 		
 		buffer = spojiIzlaze(buffer);
 		
@@ -56,7 +56,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 
 	private StringBuffer spojiIzlaze(StringBuffer buffer) {
 		for(Signal s:izlazniSignali){
-			buffer.append("\n\t\t").append(s.getImeSignala()).append("<=").append(s.getImeSignala()).append("_n;");
+			buffer.append("\n\t\t").append(s.getImeSignala()).append("<=").append(s.getImeSignala()).append("_next;");
 		}
 		return buffer;
 	}
@@ -73,7 +73,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 		int pozicija=0;
 		for(Signal sig:izlazniSignali){
 			String navodnici=(sig.getTip()==Signal.STD_LOGIC_VECTOR?"\"":"'");
-			buffer.append(sig.getImeSignala()).append("_n <= ").append(navodnici)
+			buffer.append(sig.getImeSignala()).append("_next <= ").append(navodnici)
 			.append(izlaz.substring(pozicija,pozicija+sig.getSirinaSignala()))
 			.append(navodnici).append(";\n\t\t");
 			pozicija+=sig.getSirinaSignala();
@@ -105,11 +105,11 @@ public class MealyParser implements IAutomatVHDLGenerator {
 					buffer.deleteCharAt(buffer.length()-1);
 			}
 			if(!test)buffer.append("ELSE ");
-			buffer.append("state_n<=ST_").append(st.els).append(";");
+			buffer.append("state_next<=ST_").append(st.els).append(";");
 			buffer=generirajIzlaze(st.eIz,buffer);
 			if(!test)buffer.append("\n\t\tEND IF;");
 		}
-		buffer.append("\n\t\tWHEN OTHERS => state_n <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
+		buffer.append("\n\t\tWHEN OTHERS => state_next <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
 		return buffer;
 	}
 
@@ -130,7 +130,7 @@ public class MealyParser implements IAutomatVHDLGenerator {
 			buffer.deleteCharAt(buffer.length()-1);
 			buffer.deleteCharAt(buffer.length()-1);
 			buffer.deleteCharAt(buffer.length()-1);
-			buffer.append(" THEN state_n<=ST_").append(pr.u).append(";");
+			buffer.append(" THEN state_next<=ST_").append(pr.u).append(";");
 			buffer=generirajIzlaze(pom[1],buffer);
 			buffer.append("\n\t\tELSIF ");
 		}
@@ -153,27 +153,76 @@ public class MealyParser implements IAutomatVHDLGenerator {
 	}
 
 	private StringBuffer createType(StringBuffer buffer) {
-		buffer.append("TYPE stateType IS (");
-		for(Stanje st:stanja)buffer.append("ST_").append(st.ime).append(", ");
-		buffer.deleteCharAt(buffer.length()-1);
-		buffer.deleteCharAt(buffer.length()-1);
-		buffer.append(");\nSIGNAL state_present, state_n:stateType;\n");
+		//COMMENTED CODE FOR STATE TYPE!!!
+		//buffer.append("TYPE stateType IS (");
+		//for(Stanje st:stanja)buffer.append("ST_").append(st.ime).append(", ");
+		//buffer.deleteCharAt(buffer.length()-1);
+		//buffer.deleteCharAt(buffer.length()-1);
+		//buffer.append(");\nSIGNAL state_present, state_next:stateType;\n");
 		
-		String[] redovi=podatci.interfac.split("\n");
-		for(int i=0;i<redovi.length;i++){
-			buffer.append("\n");
-			String[] rijeci=redovi[i].split(" ");
-			buffer.append("SIGNAL ").append(rijeci[0]).append("_n: ").append(rijeci[2]);
-			if(rijeci[2].toUpperCase().equals("STD_LOGIC_VECTOR")){
-				if(Integer.parseInt(rijeci[3])<Integer.parseInt(rijeci[4]))
-					buffer.append("(").append(Integer.parseInt(rijeci[3])).append(" TO ").append(Integer.parseInt(rijeci[4])).append(")");
-				else buffer.append("(").append(Integer.parseInt(rijeci[3])).append(" DOWNTO ").append(Integer.parseInt(rijeci[4])).append(")");
+		Signal state = createStateSignal();
+		StringBuffer bufferTemp = new StringBuffer();
+		if(state.getTip()==Signal.STD_LOGIC){
+			bufferTemp.append(" std_logic");
+		}else{
+			bufferTemp.append(" std_logic_vector(").append(state.getFrom())
+			.append(state.getSmijer()==Signal.C_TO?" TO ":" DOWNTO ").append(state.getTo()).append(")");
+		}
+		String stateType = bufferTemp.toString();
+		
+		for(Stanje st:stanja){
+			buffer.append("\n  CONSTANT ST_").append(st.ime).append(": ").append(stateType).append(" := ")
+			.append(decToBinString(state.getTip(), stanja.indexOf(st), state.getFrom()+1)).append(";");
+		}
+		
+		buffer.append("\n");
+		buffer.append("\n  SIGNAL state_present, state_next: ").append(stateType).append(";");
+		
+		for(Signal s:izlazniSignali){
+			buffer.append("\n  SIGNAL ").append(s.getImeSignala()).append("_next:");
+			if(s.getTip()==Signal.STD_LOGIC){
+				buffer.append(" std_logic;");
+			}else{
+				buffer.append(" std_logic_vector(").append(s.getFrom())
+				.append(s.getSmijer()==Signal.C_TO?" TO ":" DOWNTO ").append(s.getTo()).append(");");
 			}
-			buffer.append(";");
 		}
 		buffer.append("\n");
 		
 		return buffer;
+	}
+
+	private String decToBinString(int tip, int indexOf, int size) {
+		String s = "";
+		
+		if(tip == Signal.STD_LOGIC){
+			return indexOf == 1?"'1'":"'0'";
+		}else{
+			StringBuffer b = new StringBuffer("\"");
+			for(int i = 0; i < size;i++){
+				b.append(indexOf%2);
+				indexOf/=2;
+			}
+			s = b.append("\"").reverse().toString();
+		}
+		
+		return s;
+	}
+
+	private Signal createStateSignal() {
+		int length = stanja.size();
+		String tip = "std_logic";
+		int from = 0;
+		int to = 0;
+
+		if(length>2){
+			tip = "std_logic_vector";
+			from = (int) Math.floor(Math.log(length-1)/Math.log(2));
+			to = 0;
+		}
+		
+		Signal s = new Signal(from,to,"signal",tip);
+		return s;
 	}
 
 	private StringBuffer addEntity(StringBuffer buffer) {

@@ -14,12 +14,12 @@ public class Signal {
 	private int from;
 	private int to;
 	
-	public Signal(int from, int to, String s2,String s3) {
+	public Signal(int from, int to, String ime,String tipSignala) {
 		this.from=from;
 		this.to=to;
 		sirinaSignala=Math.abs(from-to)+1;
-		imeSignala=s2;
-		tip=(s3.toUpperCase().equals("STD_LOGIC")?1:0);
+		imeSignala=ime;
+		tip=(tipSignala.toUpperCase().equals("STD_LOGIC")?1:0);
 		smijer=(from<to?C_TO:C_DOWNTO);
 	}
 	public String getImeSignala() {
