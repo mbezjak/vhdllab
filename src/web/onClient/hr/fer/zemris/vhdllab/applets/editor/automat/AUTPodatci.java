@@ -128,7 +128,7 @@ public class AUTPodatci {
 					this.reset=(String)reset.getSelectedItem();
 					this.clock=(String)clock.getSelectedItem();
 					String[][] data=inter.getData();
-					if(dataOK(data)){
+					if(dataOK(data, interfac)){
 						parseInterfac(data);
 						test=false;
 					}else{
@@ -183,7 +183,7 @@ public class AUTPodatci {
 		return test;
 	}*/
 
-	private boolean dataOK(String[][] data) {
+	private boolean dataOK(String[][] data, EntityTable eTable) {
 		boolean markerIn=false;
 		boolean markerOut=false;
 		
@@ -192,6 +192,6 @@ public class AUTPodatci {
 			if(data[i][1].equalsIgnoreCase("out"))markerOut=true;
 		}
 			
-		return markerIn&&markerOut;
+		return markerIn&&markerOut&&eTable.isDataCorrect();
 	}
 }

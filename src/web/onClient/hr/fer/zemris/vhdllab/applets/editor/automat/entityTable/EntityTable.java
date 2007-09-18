@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
+import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
@@ -19,9 +20,11 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -50,6 +53,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 	
 	private JTextField imeSklop;
 	private ResourceBundle bundle;
+	private ISystemContainer container;
 	/**
 	 * @param header 
 	 * @param args
@@ -266,7 +270,6 @@ public class EntityTable extends JPanel implements IEntityWizard{
 	}
 
 	public CircuitInterface getCircuitInterface() {
-		//TODO Rucno napraviti extractCircuitInterface GOTOVO
 		List<Port> lista=new ArrayList<Port>();
 		ReturnData data=model.getData();
 		String[][] pomData=data.getData();
@@ -295,10 +298,23 @@ public class EntityTable extends JPanel implements IEntityWizard{
 		if (container!=null)bundle=ResourceBundleProvider.getBundle("Client_EntityTable_ApplicationResources");
 		else
 			bundle=CachedResourceBundles.getBundle("Client_EntityTable_ApplicationResources","en");
+		this.container = container; 
 		}
 
 	public boolean isDataCorrect() {
-		// TODO Unimplemented at the moment...
+		Set<String> test = new HashSet<String>();
+		for(int i = 0; i < model.getRowCount()-1; i++){
+			if(test.contains(model.getValueAt(i, 0))) 
+				return false;
+			else test.add((String) model.getValueAt(i, 0));
+		}
+		try {
+			if(container.getResourceManager().existsFile(container.getSelectedProject(), imeSklop.getText()))
+				return false;
+		} catch (UniformAppletException e) {
+			System.out.println("Error isDataCorrect EntityTable");
+			e.printStackTrace();
+		}
 		return true;
 	}
 

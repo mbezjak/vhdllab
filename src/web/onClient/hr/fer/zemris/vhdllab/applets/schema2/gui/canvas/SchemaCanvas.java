@@ -59,7 +59,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	private static final long serialVersionUID = -179843489371055255L;
 	
 	
-	private static final int MIN_COMPONENT_DISTANCE = 15;
+	private static final int MIN_COMPONENT_DISTANCE = 10;
 
 	
 	/**
@@ -311,14 +311,14 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println("Canvas registered:"+evt.getPropertyName());
+//		System.out.println("Canvas registered:"+evt.getPropertyName());
 
 		if(evt.getPropertyName().equals(EPropertyChange.CANVAS_CHANGE.toString())){
 			drawComponents();
 		}else if(evt.getPropertyName().equalsIgnoreCase("GRID")){
 			isGridOn = localController.isGridON();
 		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION)){
-			System.out.println("Canvas registered: localControler.PROPERTY_CHANGE_SELECTION");
+//			System.out.println("Canvas registered: localControler.PROPERTY_CHANGE_SELECTION");
 		}else if(evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)
 				||evt.getPropertyName().equalsIgnoreCase(CanvasToolbarLocalGUIController.PROPERTY_CHANGE_COMPONENT_TO_ADD)){
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -340,7 +340,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					e.printStackTrace();
 				}
 			}
-			System.out.println("Canvas registered:" + tempCont);
+//			System.out.println("Canvas registered:" + tempCont);
 		}
 		repaint();
 	}
@@ -551,7 +551,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		ISchemaComponent comp = components.fetchComponent(x,y, MIN_COMPONENT_DISTANCE);
 		if(comp!=null){
 			Rectangle rect = components.getComponentBounds(comp.getName());
-			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, 10);
+			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, MIN_COMPONENT_DISTANCE);
 			if(port != null){
 				point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
 						CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
@@ -559,26 +559,13 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			}else{
 				point = null;
 			}
-		}else{
 
-			comp = components.fetchComponent(x-MIN_COMPONENT_DISTANCE,y, MIN_COMPONENT_DISTANCE);
-			if(comp!=null){
-				Rectangle rect = components.getComponentBounds(comp.getName());
-				SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, 10);
-				if(port != null){
-					point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
-							CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
-					decrementer.reset();
-				}else{
-					point = null;
-				}	
-			}else{		
-				ISchemaWire wire = wires.fetchWire(x, y, Constants.GRID_SIZE/2-1);
-				if(wire != null){
-					point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));
-				}else{
-					point = null;
-				}
+		}else{		
+			ISchemaWire wire = wires.fetchWire(x, y, Constants.GRID_SIZE/2-1);
+			if(wire != null){
+				point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));
+			}else{
+				point = null;
 			}
 		}
 		
