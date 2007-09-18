@@ -12,8 +12,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUICon
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -46,6 +48,8 @@ public class TabbedCTAddToolbar extends JPanel implements
 	 * Prvi ListBox
 	 */
 	private JList firstListBox = null;
+
+	private Set<JList> listBoxes = null;
 
 	public TabbedCTAddToolbar(ISchemaController schemaController,
 			ILocalGuiController localController) {
@@ -90,7 +94,7 @@ public class TabbedCTAddToolbar extends JPanel implements
 	 * @param tabbedPane
 	 */
 	private void faceLiftTabbedPane(JTabbedPane tabbedPane) {
-		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 	}
 
 	/**
@@ -102,6 +106,7 @@ public class TabbedCTAddToolbar extends JPanel implements
 		// kategorija<->listboxmodel
 		Map<String, DefaultListModel> categoryModel = createListModelByCategory();
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		listBoxes = new HashSet<JList>();
 
 		for (Map.Entry<String, DefaultListModel> categoty : categoryModel
 				.entrySet()) {
@@ -120,6 +125,7 @@ public class TabbedCTAddToolbar extends JPanel implements
 		faceLiftListBox(listBox);
 		listBox.addListSelectionListener(this);
 		pane.add(listBox, BorderLayout.CENTER);
+		listBoxes.add(listBox);
 
 		if (firstListBox == null)
 			firstListBox = listBox;
@@ -134,6 +140,9 @@ public class TabbedCTAddToolbar extends JPanel implements
 
 	private void refreshToolbar() {
 		firstListBox = null;
+		listBoxes.clear();
+		listBoxes = null;
+
 		removeAll();
 		placePanel();
 	}
@@ -185,8 +194,9 @@ public class TabbedCTAddToolbar extends JPanel implements
 
 		if (evt.getPropertyName().equals(
 				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_STATE)) {
+
 			if (localController.getComponentToAdd() == null) {
-				if (ComponentToAddToolbar.DEBUG_MODE) {
+				if (TabbedCTAddToolbar.DEBUG_MODE) {
 					System.out
 							.println("ComponentToAddToolbar: settingFirstComponent");
 				}
@@ -208,9 +218,30 @@ public class TabbedCTAddToolbar extends JPanel implements
 	public void valueChanged(ListSelectionEvent e) {
 		JList listBox = (JList) e.getSource();
 
+		if (listBox.isSelectionEmpty())
+			return;
+
+		for (JList lb : listBoxes) {
+			if (!lb.isSelectionEmpty()) {
+
+				if (lb != listBox) {
+					if (DEBUG_MODE) {
+						System.out.println("ComponentToAddToolbar: selected:"
+								+ lb.getSelectedValue().toString());
+					}
+					lb.clearSelection();
+				} else {
+					if (DEBUG_MODE) {
+						System.out.println("ComponentToAddToolbar: selected:"
+								+ lb.getSelectedValue().toString()
+								+ ", CURRENTLY MODIFIED");
+					}
+				}
+			}
+		}
+
 		localController.setComponentToAdd(new Caseless(listBox
 				.getSelectedValue().toString()));
 		localController.setState(ECanvasState.ADD_COMPONENT_STATE);
 	}
-
 }

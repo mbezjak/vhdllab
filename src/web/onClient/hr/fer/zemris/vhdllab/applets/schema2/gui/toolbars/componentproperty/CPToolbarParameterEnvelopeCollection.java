@@ -23,8 +23,10 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.cust
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors.TimeCellEditor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.DefaultCellEditor;
@@ -330,8 +332,9 @@ public class CPToolbarParameterEnvelopeCollection {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: parameterType=OBJECT");
 			}
+			return (Object) parameters.get(row).getParameterValueForObject(
+					(String) value);
 
-			return value.toString();
 		}
 
 		throw new IllegalArgumentException("Nepoznati tip parametra!");
@@ -361,6 +364,12 @@ public class CPToolbarParameterEnvelopeCollection {
 		private boolean isEnumerate = false;
 
 		/**
+		 * Za parametre tipa OBJECT potrebna je struktura koja pamti koji objekt
+		 * se nalazi pod kojim stringom. <parameterName>,<paramValue,paramObject>
+		 */
+		private Map<String, Object> containerForObjectParameters = null;
+
+		/**
 		 * Defaultni editor u JTableu za ovaj tip parametra
 		 */
 		private TableCellEditor rowEditor = null;
@@ -373,6 +382,7 @@ public class CPToolbarParameterEnvelopeCollection {
 		 */
 		public ParameterEnvelope(IParameter parameter) {
 			this.parameter = parameter;
+			containerForObjectParameters = new HashMap<String, Object>();
 			buildRest();
 		}
 
@@ -387,9 +397,8 @@ public class CPToolbarParameterEnvelopeCollection {
 						+ parameter.getValue() + ", parameterType=" + pType
 						+ ", constraintValues=" + constraintValues);
 			}
-			if (constraintValues != null
-					&& parameter.getType() != EParamTypes.OBJECT) {
-				buildComboBox(constraintValues);
+			if (constraintValues != null) {
+				buildComboBox(constraintValues, parameter.getName());
 				isEnumerate = true;
 			} else {
 
@@ -405,7 +414,9 @@ public class CPToolbarParameterEnvelopeCollection {
 			}
 		}
 
-		private void buildComboBox(Set<Object> constraintValues) {
+		private void buildComboBox(Set<Object> constraintValues,
+				String paramName) {
+
 			if (CPToolbar.DEBUG_MODE) {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: buildingComboBox for Object type");
@@ -415,6 +426,8 @@ public class CPToolbarParameterEnvelopeCollection {
 
 			for (Object o : constraintValues) {
 				possibleValues.addItem(o.toString());
+				containerForObjectParameters.put(o.toString(), o);
+
 				if (CPToolbar.DEBUG_MODE) {
 					System.out
 							.println("CPToolbarParameterEnvelopeCollection: comboBoxValue:"
@@ -462,6 +475,18 @@ public class CPToolbarParameterEnvelopeCollection {
 		 */
 		public String getParameterValue() {
 			return parameter.getValue().toString();
+		}
+
+		/**
+		 * Dohvaca vrijednost OBJECT parametra
+		 * 
+		 * @param value
+		 *            kljuc pod kojim se nalazi OBJECT
+		 * @return OBJECT
+		 */
+		public Object getParameterValueForObject(String value) {
+
+			return containerForObjectParameters.get(value);
 		}
 
 		/**
