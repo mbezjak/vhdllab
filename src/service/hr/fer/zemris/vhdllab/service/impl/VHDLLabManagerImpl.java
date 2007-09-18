@@ -748,7 +748,11 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			String predefDir = p.getProperty("predefined.files.tmpDir");
 			String pathToFile = FileUtil.mergePaths(predefDir, fileName
 					+ ".vhdl");
-			f.setContent(FileUtil.readFile(pathToFile));
+			String content = FileUtil.readFile(pathToFile);
+			if(content == null) {
+				throw new ServiceException("File cant be read");
+			}
+			f.setContent(content);
 		}
 		return f;
 	}

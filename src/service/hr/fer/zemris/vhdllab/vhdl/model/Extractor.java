@@ -994,7 +994,7 @@ public class Extractor {
 		}
 	}
 	
-	public static Hierarchy extractHierarchy(Project project, VHDLLabManager labman) throws Exception {
+	public static Hierarchy extractHierarchy(Project project, VHDLLabManager labman) {
 		Hierarchy h = new Hierarchy(project.getProjectName());
 		Set<File> files = project.getFiles();
 		if(files == null) return h;
@@ -1009,11 +1009,17 @@ public class Extractor {
 		return h;
 	}
 	
-	private static void createHierarchy(File file, Hierarchy h, VHDLLabManager labman) throws ServiceException {
+	private static void createHierarchy(File file, Hierarchy h, VHDLLabManager labman) {
 		if(file == null || file.getContent() == null) return;
 //		String source = labman.generateVHDL(file);
 //		Set<String> usedComponents = Extractor.extractUsedComponents(source);
-		List<File> usedComponents = labman.extractDependenciesDisp(file);
+		List<File> usedComponents;
+		try {
+			usedComponents = labman.extractDependenciesDisp(file);
+		} catch (ServiceException e) {
+			e.printStackTrace();
+			return;
+		}
 		usedComponents.remove(file);
 		for(File component : usedComponents) {
 			Pair pair = h.getPair(component.getFileName());
