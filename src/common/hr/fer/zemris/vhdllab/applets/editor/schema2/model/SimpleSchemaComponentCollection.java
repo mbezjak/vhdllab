@@ -146,7 +146,7 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 
 	public ISchemaComponent fetchComponent(int x, int y, int dist) {
 		ISchemaComponent found = null;
-		int mindist = dist;
+		int mindist = dist + 1;
 		
 		loc.x = x;
 		loc.y = y;
@@ -158,12 +158,12 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 			if (loc.in(plc.pos.x, plc.pos.y, wdt, hgt)) return plc.comp;
 			
 			int plcdist = plc.pos.x - loc.x;
-			if (loc.y > (plc.pos.y - dist) && loc.y < (plc.pos.y + hgt + dist)) {
+			if (loc.y >= (plc.pos.y - dist) && loc.y <= (plc.pos.y + hgt + dist)) {
 				if (plcdist < mindist && plcdist >= 0) { mindist = plcdist; found = plc.comp; }
 				plcdist = loc.x - (plc.pos.x + wdt);
 				if (plcdist < mindist && plcdist >= 0) { mindist = plcdist; found = plc.comp; }
 			}
-			if (loc.x > (plc.pos.x - dist) && loc.x < (plc.pos.x + wdt + dist)) {
+			if (loc.x >= (plc.pos.x - dist) && loc.x <= (plc.pos.x + wdt + dist)) {
 				plcdist = plc.pos.y - loc.y;
 				if (plcdist < mindist && plcdist >= 0) { mindist = plcdist; found = plc.comp; }
 				plcdist = loc.y - (plc.pos.y + hgt);

@@ -33,7 +33,7 @@ public class SMath {
 		for (SchemaPort port : ports) {
 			ndist = Math.sqrt((x - port.getOffset().x) * (x - port.getOffset().x) 
 					+ (y - port.getOffset().y) * (y - port.getOffset().y));
-			if (ndist < mindist) {
+			if (ndist <= mindist) {
 				mindist = ndist;
 				index = i;
 			}
