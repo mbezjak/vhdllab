@@ -26,11 +26,11 @@ public class SchemaVHDLGenerator implements IVHDLGenerator {
 		ISchemaInfo info = sd.deserializeSchema(new StringReader(f.getContent()));
 		
 		SchemaInfo2VHDL vhdlgen = new SchemaInfo2VHDL();
-		String vhdl = vhdlgen.generateVHDL(info);
-		
-		if (vhdl == null) throw new ServiceException("Are there invalidated components or empty in ports?");
-		
-		return new VHDLGenerationResult(vhdl);
+		return vhdlgen.generateVHDL(info);
 	}
 
 }
+
+
+
+
