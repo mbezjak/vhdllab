@@ -34,7 +34,7 @@ public class NameAndPortNameChanger implements IParameterEvent {
 	/* static fields */
 	private static final List<ChangeTuple> changes = new ArrayList<ChangeTuple>();
 	private static final List<ChangeTuple> ro_ch = Collections.unmodifiableList(changes);
-	{
+	static {
 		changes.add(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}
 	
