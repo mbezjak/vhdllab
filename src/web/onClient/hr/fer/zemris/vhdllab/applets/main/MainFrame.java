@@ -75,7 +75,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -94,27 +93,27 @@ import javax.swing.event.ChangeListener;
 public final class MainFrame extends JFrame implements IComponentProvider,
 		PreferencesListener {
 
-//	{
-//		try {
-//			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
-//					.getSystemLookAndFeelClassName());
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (InstantiationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IllegalAccessException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (UnsupportedLookAndFeelException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	// {
+	// try {
+	// javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
+	// .getSystemLookAndFeelClassName());
+	// } catch (ClassNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// } catch (InstantiationException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// } catch (IllegalAccessException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// } catch (UnsupportedLookAndFeelException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * An exit status ok indicating normal application termination.
 	 */
@@ -128,7 +127,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 
 	private Map<ComponentPlacement, JTabbedPane> tabbedContainers;
 	private IStatusBar statusBar;
-	private JToolBar toolBar;
 
 	private JSplitPane projectExplorerSplitPane;
 	private JSplitPane viewSplitPane;
@@ -137,8 +135,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	private JPanel centerPanel;
 	private JComponent normalCenterPanel;
 	private Container parentOfMaximizedComponent = null;
-
-	private About about;
 
 	private IComponentContainer componentContainer;
 	private IComponentStorage componentStorage;
@@ -518,7 +514,23 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		// }
 	}
 
-	public void exit(int status) {
+	private void exitWithConfirmation() {
+		if (confirmExit()) {
+			exit(EXIT_STATUS_OK);
+		}
+	}
+
+	private boolean confirmExit() {
+		String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
+		String key = LanguageConstants.DIALOG_CONFIRM_EXIT;
+		ResourceBundle bundle = ResourceBundleProvider.getBundle(name);
+		String text = bundle.getString(key);
+		Frame owner = SystemContext.getFrameOwner();
+		int option = JOptionPane.showConfirmDialog(owner, text);
+		return option == JOptionPane.YES_OPTION;
+	}
+
+	private void exit(int status) {
 		try {
 			if (systemContainer != null) {
 				((DefaultSystemContainer) systemContainer).dispose();
@@ -546,7 +558,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		sis.removeSingleInstanceListener(sisListener);
 		System.exit(status);
 	}
-	
+
 	/**
 	 * This is an implementation of {@link Applet#init()} method and it is
 	 * intended to be executed by EDT.
@@ -704,7 +716,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	}
 
 	private void initGUI() {
-		about = new About(this);
 		JMenuBar menuBar = new PrivateMenuBar().setupMainMenu();
 		this.setJMenuBar(menuBar);
 
@@ -714,9 +725,9 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			pane.setComponentPopupMenu(menubar
 					.setupPopupMenuForComponents(pane));
 		}
-		
-//		toolBar = new PrivateToolBar().setup();
-//		add(toolBar, BorderLayout.NORTH);
+
+		// toolBar = new PrivateToolBar().setup();
+		// add(toolBar, BorderLayout.NORTH);
 	}
 
 	private JPanel setupStatusBar() {
@@ -1023,10 +1034,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					IEditor editor = editorManager.getSelectedEditor();
-					if(editor == null) {
+					if (editor == null) {
 						return;
 					}
-					systemContainer.getEditorManager().saveEditorExplicitly(editor);
+					systemContainer.getEditorManager().saveEditorExplicitly(
+							editor);
 				}
 			});
 			menu.add(menuItem);
@@ -1050,7 +1062,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					IEditor editor = editorManager.getSelectedEditor();
-					if(editor == null) {
+					if (editor == null) {
 						return;
 					}
 					systemContainer.getEditorManager().closeEditor(editor);
@@ -1076,7 +1088,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					exit(EXIT_STATUS_OK);
+					exitWithConfirmation();
 				}
 			});
 			menu.add(menuItem);
@@ -1329,7 +1341,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					about.setVisible(true);
+					About.instance().setVisible(true);
 				}
 			});
 			menu.add(menuItem);
@@ -1772,10 +1784,10 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		}
 
 	}
-	
+
 	private SISListener sisListener;
 	private SingleInstanceService sis;
-	
+
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -1792,12 +1804,13 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				frame.sis = sis;
 				frame.sisListener = new SISListener(frame);
 				sis.addSingleInstanceListener(frame.sisListener);
-				
-				frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+				frame
+						.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 				frame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosing(WindowEvent e) {
-						frame.exit(EXIT_STATUS_OK);
+						frame.exitWithConfirmation();
 					}
 				});
 				frame.setTitle("VHDLLab");
@@ -1810,18 +1823,18 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			}
 		});
 	}
-	
+
 	private static class SISListener implements SingleInstanceListener {
 		private JFrame frame;
-		
+
 		public SISListener(JFrame frame) {
 			this.frame = frame;
 		}
-		
-        public void newActivation(String[] params) {
-        	frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        	frame.toFront();
-        }
-    }
+
+		public void newActivation(String[] params) {
+			frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			frame.toFront();
+		}
+	}
 
 }

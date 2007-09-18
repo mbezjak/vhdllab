@@ -30,6 +30,7 @@ import hr.fer.zemris.vhdllab.utilities.FileUtil;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLDependencyExtractor;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
@@ -485,10 +486,10 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return uf;
 	}
 
-	public String generateVHDL(File file) throws ServiceException {
+	public VHDLGenerationResult generateVHDL(File file) throws ServiceException {
 		if (file.getFileType().equals(FileTypes.FT_VHDL_SOURCE)
 				|| file.getFileType().equals(FileTypes.FT_PREDEFINED)) {
-			return file.getContent();
+			return new VHDLGenerationResult(file.getContent());
 		} else if (file.getFileType().equals(FileTypes.FT_VHDL_TB)) {
 			IVHDLGenerator generator = new Testbench();
 			return generator.generateVHDL(file, this);

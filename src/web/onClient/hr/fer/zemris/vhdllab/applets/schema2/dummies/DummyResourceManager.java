@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
@@ -18,109 +19,93 @@ public class DummyResourceManager implements IResourceManager {
 
 	@Override
 	public void addVetoableResourceListener(VetoableResourceListener l) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public CompilationResult compile(String projectName, String fileName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean createNewProject(String projectName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean createNewResource(String projectName, String fileName,
 			String type) throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean createNewResource(String projectName, String fileName,
 			String type, String data) throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void deleteFile(String projectName, String fileName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void deleteProject(String projectName) throws UniformAppletException {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean existsFile(String projectName, String fileName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean existsProject(String projectName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Hierarchy extractHierarchy(String projectName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<String> getAllCircuits(String projectName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<String> getAllProjects() throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<String> getAllTestbenches(String projectName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CircuitInterface getCircuitInterfaceFor(String projectName,
 			String fileName) throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getFileType(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<String> getFilesFor(String projectName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -151,95 +136,80 @@ public class DummyResourceManager implements IResourceManager {
 
 	@Override
 	public VetoableResourceListener[] getVetoableResourceListeners() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean isCircuit(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isCompilable(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isCorrectEntityName(String name) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isCorrectProjectName(String name) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isSimulatable(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isSimulation(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isTestbench(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void removeAllVetoableResourceListeners() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void removeVetoableResourceListener(VetoableResourceListener l) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public SimulationResult simulate(String projectName, String fileName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String generateVHDL(String projectName, String fileName)
+	public VHDLGenerationResult generateVHDL(String projectName, String fileName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getFileContent(String projectName, String fileName)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void saveFile(String projectName, String fileName, String content)
 			throws UniformAppletException {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean isCorrectFileName(String name) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -248,7 +218,6 @@ public class DummyResourceManager implements IResourceManager {
 	 */
 	@Override
 	public boolean canGenerateVHDLCode(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -257,7 +226,6 @@ public class DummyResourceManager implements IResourceManager {
 	 */
 	@Override
 	public void saveErrorMessage(String content) throws UniformAppletException {
-		// TODO Auto-generated method stub
 		
 	}
 

@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.dummies.DummySystemContainer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
@@ -16,6 +15,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSe
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummySystemContainer;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
 import hr.fer.zemris.vhdllab.model.File;

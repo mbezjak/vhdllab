@@ -168,7 +168,7 @@ public class GHDLCompiler implements ICompiler {
 		
 		try {
 			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new java.io.File(destDir,src.getFileName()+".vhdl")),"UTF-8"));
-			bw.write(vhdlman.generateVHDL(src));
+			bw.write(vhdlman.generateVHDL(src).getVhdl());
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			throw new IOException("Could not copy file.");

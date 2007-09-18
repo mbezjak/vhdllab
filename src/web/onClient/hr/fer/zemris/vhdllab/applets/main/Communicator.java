@@ -31,6 +31,7 @@ import hr.fer.zemris.vhdllab.communicaton.methods.SimulateFileMethod;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 import hr.fer.zemris.vhdllab.vhdl.model.Pair;
@@ -326,7 +327,7 @@ public class Communicator {
 		return h;
 	}
 
-	public String generateVHDL(String projectName, String fileName)
+	public VHDLGenerationResult generateVHDL(String projectName, String fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");

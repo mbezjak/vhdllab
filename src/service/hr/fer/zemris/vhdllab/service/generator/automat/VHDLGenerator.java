@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -47,7 +48,7 @@ public class VHDLGenerator implements IVHDLGenerator {
 		return parsedVHDL;
 	}
 
-	public String generateVHDL(File f, VHDLLabManager labman) throws ServiceException {
+	public VHDLGenerationResult generateVHDL(File f, VHDLLabManager labman) throws ServiceException {
 		AUTParser aut=new AUTParser();
 		
 		try {
@@ -68,7 +69,7 @@ public class VHDLGenerator implements IVHDLGenerator {
 			parsedVHDL=inter.getData();
 		}else
 			throw new ServiceException("nemoguce generirati VHDL");
-		return parsedVHDL;
+		return new VHDLGenerationResult(parsedVHDL);
 	}
 
 	private boolean provjera(LinkedList<Stanje> stanja, AUTPodatci podatci) {

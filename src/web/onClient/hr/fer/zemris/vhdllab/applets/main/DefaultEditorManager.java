@@ -23,6 +23,7 @@ import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -155,7 +156,7 @@ public class DefaultEditorManager implements IEditorManager {
 			return null;
 		}
 
-		String data;
+		VHDLGenerationResult data;
 		try {
 			data = resourceManager.generateVHDL(projectName, fileName);
 		} catch (UniformAppletException e) {
@@ -166,7 +167,7 @@ public class DefaultEditorManager implements IEditorManager {
 			echoStatusText(text, MessageType.ERROR);
 			return null;
 		}
-		FileContent content = new FileContent(projectName, fileName, data);
+		FileContent content = new FileContent(projectName, fileName, data.getVhdl());
 		return openEditor(identifier, content);
 	}
 

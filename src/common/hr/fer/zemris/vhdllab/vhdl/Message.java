@@ -5,16 +5,10 @@ import java.io.Serializable;
 public class Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private MessageType type;
 	private String messageText;
 	private String messageEntity;
-
-	@Deprecated
-	public Message(String message) {
-		super();
-		if (message == null)
-			throw new NullPointerException("Message can not be null");
-		this.messageText = message;
-	}
 
 	/**
 	 * @param entity
@@ -23,11 +17,13 @@ public class Message implements Serializable {
 	 *            information could not be determined.
 	 * @param message
 	 *            message
+	 * @param type TODO
 	 */
-	public Message(String entity, String message) {
+	public Message(String entity, String message, MessageType type) {
 		super();
 		if (message == null)
 			throw new NullPointerException("Message can not be null");
+		this.type = type;
 		this.messageText = message;
 		this.messageEntity = entity;
 	}
@@ -45,34 +41,30 @@ public class Message implements Serializable {
 	public String getMessageEntity() {
 		return messageEntity;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	
+	public MessageType getType() {
+		return type;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((messageEntity == null) ? 0 : messageEntity.hashCode());
-		result = prime * result + messageText.hashCode();
+		result = prime * result
+				+ ((messageText == null) ? 0 : messageText.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof Message))
+		if (getClass() != obj.getClass())
 			return false;
 		final Message other = (Message) obj;
 		if (messageEntity == null) {
@@ -80,7 +72,15 @@ public class Message implements Serializable {
 				return false;
 		} else if (!messageEntity.equals(other.messageEntity))
 			return false;
-		if (!messageText.equals(other.messageText))
+		if (messageText == null) {
+			if (other.messageText != null)
+				return false;
+		} else if (!messageText.equals(other.messageText))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
 			return false;
 		return true;
 	}
@@ -88,7 +88,7 @@ public class Message implements Serializable {
 	@Override
 	public String toString() {
 		if (messageEntity != null && !messageEntity.equals(""))
-			return "[" + messageEntity + "] " + messageText;
+			return messageEntity + ":" + messageText;
 		return messageText;
 	}
 }

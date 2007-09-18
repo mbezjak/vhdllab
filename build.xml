@@ -64,9 +64,9 @@
   	<mkdir dir="${reports.tests}"/>
   	<mkdir dir="${reports.tests.html}"/>
   	
-  	<copy todir="${local.dir}" overwrite="true">
-  	  <fileset dir="${metadata.dir}"/>
-	</copy>
+  	<sync todir="${local.dir}" overwrite="on">
+		<fileset dir="${metadata.dir}" />  	
+  	</sync>
   	
   	<replace dir="${local.dir}" propertyfile="${configuration.properties}">
   	  <replacefilter token="@@database.dialect@@" property="database.dialect"/>
@@ -153,10 +153,6 @@
     <javac destdir="${build.dir}/service" includes="**/*.java" includeAntRuntime="false" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
       <src path="src/service"/>
       <src path="src/common"/>
-      <!-- only temporary solution!! -->
-      <src path="src/web/onClient"/>
-      <src path="src/i18n/common"/>
-      <!-- END only temporary solution!! -->
       <classpath refid="src.class.path"/>
     </javac>
   </target>
@@ -180,7 +176,7 @@
   </target>
 
   <target name="package-dao" depends="compile-dao,hibernate-hbm">
-    <jar destfile="${jlib.dir}/${app.name}-dao.jar">
+    <jar destfile="${jlib.dir}/${app.name}-dao.jar" index="true">
       <fileset dir="${build.dir}/dao" includes="**/*.class"/>
       <fileset dir="src/dao" excludes="**/*.java,**/*svn/**,**/*svn"/>
       <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
@@ -189,7 +185,7 @@
   </target>
 
   <target name="package-service" depends="compile-service">
-    <jar destfile="${jlib.dir}/${app.name}-service.jar">
+    <jar destfile="${jlib.dir}/${app.name}-service.jar" index="true">
       <fileset dir="${build.dir}/service" includes="**/*.class"/>
       <fileset dir="src/service" excludes="**/*.java,**/*svn/**,**/*svn"/>
       <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
@@ -197,7 +193,7 @@
   </target>
 
   <target name="package-web-onServer" depends="compile-web-onServer">
-  	<jar destfile="${jlib.dir}/${app.name}-web-onServer.jar">
+  	<jar destfile="${jlib.dir}/${app.name}-web-onServer.jar" index="true">
   	  <fileset dir="${build.dir}/web/onServer" includes="**/*.class"/>
       <fileset dir="src/web/onServer" excludes="**/*.java,**/*svn/**,**/*svn"/>
       <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
@@ -207,12 +203,11 @@
   
   <target name="package-web-onClient" depends="compile-web-onClient">
   	<jar destfile="${jlib.dir}/${app.name}-web-onClient.jar"
-  		manifest="local/onClient/META-INF/MANIFEST.MF">
+  		manifest="local/onClient/META-INF/MANIFEST.MF" index="true">
   	  <fileset dir="${build.dir}/web/onClient" includes="**/*.class"/>
       <fileset dir="src/web/onClient" excludes="**/*.java,**/*svn/**,**/*svn"/>
       <fileset dir="src/common" excludes="**/*.java,**/*svn/**,**/*svn"/>
    	  <fileset dir="src/i18n/client" excludes="**/*svn/**,**/*svn"/>
-   	  <fileset dir="images" excludes="**/*svn/**,**/*svn"/>
    	  <fileset dir="." includes="images/**/*" excludes="**/*svn/**,**/*svn"/>
    	  <fileset file="local/onClient/server.properties"/>
    	  <metainf dir="metadata/onClient/META-INF" excludes="**/*svn/**,**/*svn"/>
@@ -252,25 +247,25 @@
   </target>
 
   <target name="package-tests-dao" depends="compile-tests-dao">
-    <jar destfile="${jlib-tests.dir}/${app.name}-tests-dao.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-dao.jar" index="true">
       <fileset dir="${build.dir}/tests/dao" includes="**/*.class"/>
     </jar>
   </target>
 	
   <target name="package-tests-service" depends="compile-tests-service">
-    <jar destfile="${jlib-tests.dir}/${app.name}-tests-service.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-service.jar" index="true">
       <fileset dir="${build.dir}/tests/service" includes="**/*.class"/>
     </jar>
   </target>
 	
   <target name="package-tests-web-onServer" depends="compile-tests-web-onServer">
-    <jar destfile="${jlib-tests.dir}/${app.name}-tests-web-onServer.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-web-onServer.jar" index="true">
       <fileset dir="${build.dir}/tests/web/onServer" includes="**/*.class"/>
     </jar>
   </target>
 
   <target name="package-tests-web-onClient" depends="compile-tests-web-onClient">
-    <jar destfile="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar">
+    <jar destfile="${jlib-tests.dir}/${app.name}-tests-web-onClient.jar" index="true">
       <fileset dir="${build.dir}/tests/web/onClient" includes="**/*.class"/>
   	  <fileset dir="${local.dir}" includes="log4j.properties"/>
     </jar>

@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
@@ -266,14 +267,14 @@ public interface IResourceManager {
 	 *            a project name that contains a file
 	 * @param fileName
 	 *            a file name of a file to generate vhdl code from
-	 * @return a vhdl code for specified resource
+	 * @return a vhdl generation result for specified resource
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 * @throws UniformAppletException
 	 *             if exceptional condition occurs (for example server is not
 	 *             responding)
 	 */
-	String generateVHDL(String projectName, String fileName)
+	VHDLGenerationResult generateVHDL(String projectName, String fileName)
 			throws UniformAppletException;
 
 	/**

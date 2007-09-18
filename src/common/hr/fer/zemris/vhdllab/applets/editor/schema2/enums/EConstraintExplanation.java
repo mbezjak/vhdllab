@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.schema2.enums;
+package hr.fer.zemris.vhdllab.applets.editor.schema2.enums;
 
 
 
@@ -10,6 +10,7 @@ public enum EConstraintExplanation {
 			return "No information."; 
 		}
 		
+		@Override
 		public boolean isAllowed() { return false; }
 	},
 	

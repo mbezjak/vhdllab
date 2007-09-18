@@ -1,22 +1,18 @@
 package hr.fer.zemris.vhdllab.vhdl;
 
-public class SimulationMessage extends Message {
+public final class SimulationMessage extends Message {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param entity Entity name of simulation unit for which message is generated 
-	 * @param message message
-	 */
+	
 	public SimulationMessage(String entity, String message) {
-		super(entity, message);
+		this(entity, message, MessageType.ERROR);
 	}
 	
-	@Deprecated
-	public SimulationMessage(String message) {
-		super(message);
+	public SimulationMessage(String entity, String message, MessageType type) {
+		super(entity, message, type);
 	}
-	
+
 	protected SimulationMessage(Message message) {
 		super(message);
 	}

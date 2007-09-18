@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.model.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 
 import java.io.StringReader;
 
@@ -20,7 +21,7 @@ import java.io.StringReader;
  */
 public class SchemaVHDLGenerator implements IVHDLGenerator {
 
-	public String generateVHDL(File f, VHDLLabManager labman) throws ServiceException {
+	public VHDLGenerationResult generateVHDL(File f, VHDLLabManager labman) throws ServiceException {
 		SchemaDeserializer sd = new SchemaDeserializer();
 		ISchemaInfo info = sd.deserializeSchema(new StringReader(f.getContent()));
 		
@@ -29,7 +30,7 @@ public class SchemaVHDLGenerator implements IVHDLGenerator {
 		
 		if (vhdl == null) throw new ServiceException("Are there invalidated components or empty in ports?");
 		
-		return vhdl;
+		return new VHDLGenerationResult(vhdl);
 	}
 
 }

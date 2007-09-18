@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.model.Project;
 import hr.fer.zemris.vhdllab.model.UserFile;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.VHDLGenerator;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
@@ -549,11 +550,11 @@ public interface VHDLLabManager {
 	 * 
 	 * @param file
 	 *            file for which VHDL must be generated
-	 * @return VHDL source for specified file
+	 * @return VHDL generation result for specified file
 	 * @throws ServiceException
 	 *             if any exception occurs (such as {@linkplain DAOException})
 	 */
-	public String generateVHDL(File file) throws ServiceException;
+	public VHDLGenerationResult generateVHDL(File file) throws ServiceException;
 
 	/**
 	 * Extracts circuit interface out of file content.

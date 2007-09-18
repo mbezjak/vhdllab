@@ -33,6 +33,7 @@
 		@@archive@@
 	</resources>
 
-	<application-desc main-class="@@app.main.class@@" />
+	<application-desc main-class="@@app.main.class@@">
+	</application-desc>
 
 </jnlp>

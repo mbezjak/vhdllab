@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.utilities.StringFormat;
 import hr.fer.zemris.vhdllab.vhdl.CompilationResult;
 import hr.fer.zemris.vhdllab.vhdl.SimulationResult;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
@@ -330,7 +331,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public String generateVHDL(String projectName, String fileName)
+	public VHDLGenerationResult generateVHDL(String projectName, String fileName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -554,7 +555,7 @@ public class DefaultResourceManager implements IResourceManager {
 		}
 		return FileTypes.isSimulation(type);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -604,6 +605,7 @@ public class DefaultResourceManager implements IResourceManager {
 		}
 		return isCircuit(projectName, fileName)
 				|| isTestbench(projectName, fileName);
+		// TODO ovdje dodat i isPredefined
 	}
 
 	/*

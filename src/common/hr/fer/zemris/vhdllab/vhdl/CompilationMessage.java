@@ -1,21 +1,13 @@
 package hr.fer.zemris.vhdllab.vhdl;
 
 
-public class CompilationMessage extends Message {
+public final class CompilationMessage extends Message {
 	
 	private static final long serialVersionUID = 1L;
 
 	private int row;
 	private int column;
 	
-	@Deprecated
-	public CompilationMessage(String message, int row, int column) {
-		super(message);
-		if(row < 0 || column < 0) throw new IllegalArgumentException("Row or column can not be negative.");
-		this.row = row;
-		this.column = column;
-	}
-
 	protected CompilationMessage(Message message, int row, int column) {
 		super(message);
 		if(row < 0 || column < 0) throw new IllegalArgumentException("Row or column can not be negative.");
@@ -24,7 +16,11 @@ public class CompilationMessage extends Message {
 	}
 
 	public CompilationMessage(String entity, String message, int row, int column) {
-		super(entity, message);
+		this(entity, message, MessageType.ERROR, row, column);
+	}
+	
+	public CompilationMessage(String entity, String message, MessageType type, int row, int column) {
+		super(entity, message, type);
 		if(row < 0 || column < 0) throw new IllegalArgumentException("Row or column can not be negative.");
 		this.row = row;
 		this.column = column;

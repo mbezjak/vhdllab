@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.schema2.constants;
+package hr.fer.zemris.vhdllab.applets.editor.schema2.constants;
 
 
 @Deprecated

@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator;
 import hr.fer.zemris.vhdllab.utilities.StringFormat;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
@@ -30,7 +31,7 @@ public class Testbench implements IVHDLGenerator {
 	 * @see hr.fer.zemris.vhdllab.service.generator.IVHDLGenerator#generateVHDL(hr.fer.zemris.vhdllab.model.File,
 	 *      hr.fer.zemris.vhdllab.service.VHDLLabManager)
 	 */
-	public String generateVHDL(File f, VHDLLabManager labman)
+	public VHDLGenerationResult generateVHDL(File f, VHDLLabManager labman)
 			throws ServiceException {
 		if (f == null)
 			throw new NullPointerException("File can not be null.");
@@ -52,7 +53,7 @@ public class Testbench implements IVHDLGenerator {
 		} catch (Exception e) {
 			throw new ServiceException(e.getMessage());
 		}
-		return vhdl;
+		return new VHDLGenerationResult(vhdl);
 	}
 
 	/**

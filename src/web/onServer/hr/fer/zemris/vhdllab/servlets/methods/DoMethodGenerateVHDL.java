@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLLabManager;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
 import hr.fer.zemris.vhdllab.servlets.ManagerProvider;
+import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 
 import java.io.Serializable;
 
@@ -33,16 +34,16 @@ public class DoMethodGenerateVHDL extends AbstractRegisteredMethod {
 		if (fileId == null) {
 			return;
 		}
-		String vhdl;
+		VHDLGenerationResult result;
 		try {
 			File file = labman.loadFile(fileId);
 			checkFileSecurity(method, file);
-			vhdl = labman.generateVHDL(file);
+			result = labman.generateVHDL(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_GENERATE_VHDL, "fileId=" + fileId);
 			return;
 		}
-		method.setResult(vhdl);
+		method.setResult(result);
 	}
 
 }

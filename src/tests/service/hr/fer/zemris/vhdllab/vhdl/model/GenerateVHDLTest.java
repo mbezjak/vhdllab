@@ -31,7 +31,7 @@ public class GenerateVHDLTest {
 		String vhdl = null;
 		CompilationResult result = null;
 		try {
-			vhdl = vhdlLabman.generateVHDL(automat);
+			vhdl = vhdlLabman.generateVHDL(automat).getVhdl();
 			result = vhdlLabman.compile(automat);
 		} catch (RuntimeException e) {
 			e.printStackTrace();

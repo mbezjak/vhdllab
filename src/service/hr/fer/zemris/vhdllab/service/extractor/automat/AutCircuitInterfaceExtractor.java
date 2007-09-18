@@ -10,7 +10,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 public class AutCircuitInterfaceExtractor implements ICircuitInterfaceExtractor {
 
 	public CircuitInterface extractCircuitInterface(File f) throws ServiceException {
-		String VHDL=new VHDLGenerator().generateVHDL(f,null);
+		String VHDL=new VHDLGenerator().generateVHDL(f,null).getVhdl();
 		CircuitInterface circuit=Extractor.extractCircuitInterface(VHDL);
 		return circuit;
 	}

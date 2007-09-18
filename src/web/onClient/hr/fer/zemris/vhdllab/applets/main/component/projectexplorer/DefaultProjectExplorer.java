@@ -408,6 +408,7 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 		private static final long serialVersionUID = 3562380292516384882L;
 		private String type;
 		private Icon vhdl = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_source_16.png"));
+		private Icon predefined = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_predefined_16.png"));
 		private Icon tb = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_testbench_16.png"));
 		private Icon automat = new ImageIcon(getClass().getClassLoader().getResource(
 				"images/icons/file_automaton_16.png"));
@@ -450,9 +451,12 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			type = systemContainer.getResourceManager().getFileType(
 					nodeProjectName, node.toString());
 
-			if (FileTypes.FT_VHDL_SOURCE.equals(type) || FileTypes.FT_PREDEFINED.equals(type)) {
+			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
 				setIcon(vhdl);
 				setToolTipText("VHDL source file");
+			} else if (FileTypes.FT_PREDEFINED.equals(type)) {
+				setIcon(predefined);
+				setToolTipText("Predefined file");
 			} else if (FileTypes.FT_VHDL_TB.equals(type)) {
 				setIcon(tb);
 				setToolTipText("Testbench");

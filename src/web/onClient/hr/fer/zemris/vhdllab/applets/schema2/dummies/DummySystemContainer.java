@@ -37,97 +37,81 @@ public class DummySystemContainer implements ISystemContainer {
 
 	@Override
 	public boolean compile(FileIdentifier file) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean compile(IEditor editor) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean compile(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean compileLastHistoryResult() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean compileWithDialog() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean createNewFileInstance(String type) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean createNewProjectInstance() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public IComponentProvider getComponentProvider() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public FileIdentifier getSelectedFile() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getSelectedProject() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IStatusBar getStatusBar() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean simulate(FileIdentifier file) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean simulate(IEditor editor) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean simulate(String projectName, String fileName) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean simulateLastHistoryResult() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean simulateWithDialog() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -136,7 +120,6 @@ public class DummySystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public IEditorManager getEditorManager() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -146,7 +129,6 @@ public class DummySystemContainer implements ISystemContainer {
 	@Override
 	public List<IEditor> showSaveDialog(String title, String message,
 			List<IEditor> editorsToBeSaved) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -155,7 +137,6 @@ public class DummySystemContainer implements ISystemContainer {
 	 */
 	@Override
 	public IViewManager getViewManager() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

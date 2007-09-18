@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.schema2.interfaces;
+package hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces;
 
 
 /**
