@@ -4,7 +4,7 @@
 package hr.fer.zemris.vhdllab.client.core.prefs;
 
 /**
- * A preferences event fired by {@link PreferencesListener} when a property has
+ * A preferences event fired by {@link UserPreferencesListener} when a property has
  * changed. This class is immutable and therefor thread-safe.
  * 
  * @author Miro Bezjak

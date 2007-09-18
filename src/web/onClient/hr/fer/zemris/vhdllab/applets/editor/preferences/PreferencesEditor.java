@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
-import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener;
+import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferencesListener;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 
 import java.awt.BorderLayout;
@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 public class PreferencesEditor extends AbstractEditor implements
-		PreferencesListener {
+		UserPreferencesListener {
 
 	private static final long serialVersionUID = 1L;
 

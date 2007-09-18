@@ -29,7 +29,7 @@ public abstract class AbstractMethod<T extends Serializable> implements
 			throw new NullPointerException("Method cant be null");
 		}
 		this.method = method;
-		setUserId(SystemContext.getUserId());
+		setUserId(SystemContext.instance().getUserId());
 		parameters = new HashMap<String, Serializable>();
 		result = null;
 		statusCode = STATUS_NOT_SET;

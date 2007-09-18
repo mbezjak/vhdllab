@@ -26,7 +26,7 @@ public class About {
 		this.scroll = new JScrollPane(content);
 		this.scroll.setPreferredSize(new Dimension(600, 600));
 		aboutContent = new JOptionPane(scroll, JOptionPane.INFORMATION_MESSAGE);
-		this.dialog = this.aboutContent.createDialog(SystemContext.getFrameOwner(), "About");
+		this.dialog = this.aboutContent.createDialog(SystemContext.instance().getFrameOwner(), "About");
 	}
 	
 	public void setVisible(boolean isVisible) {

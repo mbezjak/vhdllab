@@ -64,7 +64,7 @@
   	<mkdir dir="${reports.tests}"/>
   	<mkdir dir="${reports.tests.html}"/>
   	
-  	<sync todir="${local.dir}" overwrite="on">
+  	<sync todir="${local.dir}" overwrite="true">
 		<fileset dir="${metadata.dir}" />  	
   	</sync>
   	
@@ -102,8 +102,9 @@
   	  <replacefilter token="@@app.main.class@@" property="app.main.class"/>
   	  <replacefilter token="@@app.splash@@" property="app.splash"/>
   	  <replacefilter token="@@app.icon@@" property="app.icon"/>
+  	  <replacefilter token="@@app.client.archive@@" property="app.client.archive"/>
   	</replace>
-  	
+
   	<replace dir="${local.dir}/web" propertyfile="${configuration.properties}">
   	  <replacefilter token="@@app.name@@" property="app.name"/>
   	  <replacefilter token="@@app.title@@" property="app.title"/>

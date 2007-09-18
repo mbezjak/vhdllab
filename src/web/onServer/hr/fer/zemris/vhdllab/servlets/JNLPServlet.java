@@ -57,11 +57,14 @@ public class JNLPServlet extends HttpServlet {
 		jnlp = jnlp.replaceAll("@@codebase@@", p.getProperty("codebase"));
 
 		String archives = p.getProperty("archive");
-		String[] array = archives.split(",");
+		String[] array = archives.split(" ");
 		StringBuilder sb = new StringBuilder(100);
 		boolean first = true;
 		for (String a : array) {
 			a = a.trim();
+			if(a.equals("")) {
+				continue;
+			}
 			sb.append("<jar href= \"").append(a).append("\" ");
 			if (first) {
 				first = false;

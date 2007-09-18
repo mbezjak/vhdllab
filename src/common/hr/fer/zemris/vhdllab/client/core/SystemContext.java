@@ -10,21 +10,30 @@ import java.awt.Frame;
  *
  */
 public class SystemContext {
-
-	private static String userId;
-	private static Frame frameOwner;
 	
-	public static String getUserId() {
+	private static final SystemContext INSTANCE = new SystemContext();
+	
+	private SystemContext() {
+	}
+	
+	public static SystemContext instance() {
+		return INSTANCE;
+	}
+
+	private String userId;
+	private Frame frameOwner;
+	
+	public String getUserId() {
 		return userId;
 	}
-	public static void setUserId(String userId) {
-		SystemContext.userId = userId;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
-	public static Frame getFrameOwner() {
+	public Frame getFrameOwner() {
 		return frameOwner;
 	}
-	public static void setFrameOwner(Frame owner) {
-		SystemContext.frameOwner = owner;
+	public void setFrameOwner(Frame owner) {
+		this.frameOwner = owner;
 	}
 	
 }

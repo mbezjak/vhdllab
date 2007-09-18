@@ -32,7 +32,7 @@ public class ExplicitSaveSimulation implements IExplicitSave {
 	@Override
 	public void save(IEditor editor, ISystemContainer container)
 			throws UniformAppletException {
-		Frame owner = SystemContext.getFrameOwner();
+		Frame owner = SystemContext.instance().getFrameOwner();
 		String name = JOptionPane.showInputDialog(owner,
 				"Enter a name under which to save this resource:");
 		if (name == null || name.equals("")) {

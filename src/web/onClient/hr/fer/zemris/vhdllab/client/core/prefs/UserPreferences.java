@@ -49,7 +49,7 @@ public final class UserPreferences {
 	 * A bidi map of registered listeners. key=registeredListener,
 	 * value=propertyNames.
 	 */
-	private Map<PreferencesListener, Collection<String>> bidiListeners;
+	private Map<UserPreferencesListener, Collection<String>> bidiListeners;
 
 	/**
 	 * Contains all properties.
@@ -76,7 +76,7 @@ public final class UserPreferences {
 		UserPreferences pref = instance();
 		pref.properties = (Properties) p.clone();
 		pref.listeners = new HashMap<String, EventListenerList>();
-		pref.bidiListeners = new HashMap<PreferencesListener, Collection<String>>();
+		pref.bidiListeners = new HashMap<UserPreferencesListener, Collection<String>>();
 	}
 
 	/**
@@ -316,7 +316,7 @@ public final class UserPreferences {
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	public synchronized void addPreferencesListener(PreferencesListener l,
+	public synchronized void addPreferencesListener(UserPreferencesListener l,
 			String name) {
 		if (l == null) {
 			throw new NullPointerException("Preferences listener cant be null");
@@ -327,7 +327,7 @@ public final class UserPreferences {
 		if (!listeners.containsKey(name)) {
 			listeners.put(name, new EventListenerList());
 		}
-		listeners.get(name).add(PreferencesListener.class, l);
+		listeners.get(name).add(UserPreferencesListener.class, l);
 		if (!bidiListeners.containsKey(l)) {
 			bidiListeners.put(l, new ArrayList<String>());
 		}
@@ -342,7 +342,7 @@ public final class UserPreferences {
 	 * @throws NullPointerException
 	 *             if <code>l</code> is <code>null</code>
 	 */
-	public synchronized void removePreferencesListener(PreferencesListener l) {
+	public synchronized void removePreferencesListener(UserPreferencesListener l) {
 		if (l == null) {
 			throw new NullPointerException("Preferences listener cant be null");
 		}
@@ -363,7 +363,7 @@ public final class UserPreferences {
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	public synchronized void removePreferencesListener(PreferencesListener l,
+	public synchronized void removePreferencesListener(UserPreferencesListener l,
 			String name) {
 		if (l == null) {
 			throw new NullPointerException("Preferences listener cant be null");
@@ -373,7 +373,7 @@ public final class UserPreferences {
 		}
 		if (listeners.containsKey(name)) {
 			EventListenerList list = listeners.get(name);
-			list.remove(PreferencesListener.class, l);
+			list.remove(UserPreferencesListener.class, l);
 			if (list.getListenerCount() == 0) {
 				listeners.remove(name);
 			}
@@ -415,8 +415,8 @@ public final class UserPreferences {
 			return;
 		}
 		PreferencesEvent event = new PreferencesEvent(name, oldValue, newValue);
-		for (PreferencesListener l : list
-				.getListeners(PreferencesListener.class)) {
+		for (UserPreferencesListener l : list
+				.getListeners(UserPreferencesListener.class)) {
 			l.propertyChanged(event);
 		}
 	}

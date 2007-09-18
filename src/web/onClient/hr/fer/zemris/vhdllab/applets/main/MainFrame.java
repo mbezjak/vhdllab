@@ -23,8 +23,8 @@ import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
-import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
+import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferencesListener;
 import hr.fer.zemris.vhdllab.constants.FileTypes;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
@@ -53,6 +53,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.security.AccessControlException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ import javax.jnlp.ServiceManager;
 import javax.jnlp.SingleInstanceListener;
 import javax.jnlp.SingleInstanceService;
 import javax.jnlp.UnavailableServiceException;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -91,7 +93,7 @@ import javax.swing.event.ChangeListener;
  * @see ISystemContainer
  */
 public final class MainFrame extends JFrame implements IComponentProvider,
-		PreferencesListener {
+		UserPreferencesListener {
 
 	// {
 	// try {
@@ -525,7 +527,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		String key = LanguageConstants.DIALOG_CONFIRM_EXIT;
 		ResourceBundle bundle = ResourceBundleProvider.getBundle(name);
 		String text = bundle.getString(key);
-		Frame owner = SystemContext.getFrameOwner();
+		Frame owner = SystemContext.instance().getFrameOwner();
 		int option = JOptionPane.showConfirmDialog(owner, text);
 		return option == JOptionPane.YES_OPTION;
 	}
@@ -712,7 +714,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	 */
 	private void setFrameOwner() {
 		Frame owner = JOptionPane.getFrameForComponent(this);
-		SystemContext.setFrameOwner(owner);
+		SystemContext.instance().setFrameOwner(owner);
 	}
 
 	private void initGUI() {
@@ -1819,6 +1821,9 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				frame.pack();
 				frame.setVisible(true);
 				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				
+				URL resource = frame.getClass().getClassLoader().getResource("images/icons/vhdllab_main_16.png");
+				frame.setIconImage(new ImageIcon(resource).getImage());
 				frame.init();
 			}
 		});

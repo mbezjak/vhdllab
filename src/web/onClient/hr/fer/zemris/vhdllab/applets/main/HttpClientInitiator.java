@@ -294,7 +294,7 @@ public final class HttpClientInitiator implements Initiator {
 		if (credentials == null) {
 			try {
 				// also sets credentials
-//				showLoginDialog(displayRetryMessage);
+				// showLoginDialog(displayRetryMessage);
 				credentials = new UsernamePasswordCredentials("test", "a");
 			} catch (SecurityException e) {
 				throw new UniformAppletException(e);
@@ -402,7 +402,7 @@ public final class HttpClientInitiator implements Initiator {
 			client.getParams().setAuthenticationPreemptive(false);
 			client.getState().clearCredentials();
 			// reset userId in system context
-			SystemContext.setUserId(credentials.getUserName());
+			SystemContext.instance().setUserId(credentials.getUserName());
 		}
 	}
 
@@ -460,7 +460,7 @@ public final class HttpClientInitiator implements Initiator {
 	 *             if user refused to provider proper username and password
 	 */
 	private void showLoginDialogImpl(boolean displayRetryMessage) {
-		Frame owner = SystemContext.getFrameOwner();
+		Frame owner = SystemContext.instance().getFrameOwner();
 		String message;
 		if (displayRetryMessage) {
 			String name = LoginDialog.BUNDLE_NAME;
@@ -539,7 +539,7 @@ public final class HttpClientInitiator implements Initiator {
 			authenticate();
 			status = execute(postMethod, false);
 			// reset userId in request method
-			requestMethod.setUserId(SystemContext.getUserId());
+			requestMethod.setUserId(SystemContext.instance().getUserId());
 		}
 		if (status != HttpStatus.SC_OK) {
 			throw new UniformAppletException("Unexpected http status code: "

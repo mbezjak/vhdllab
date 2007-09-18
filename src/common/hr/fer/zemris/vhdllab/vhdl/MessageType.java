@@ -18,7 +18,11 @@ public enum MessageType {
 	/**
 	 * A message type that indicates an error.
 	 */
-	ERROR;
+	ERROR,
+	/**
+	 * A message type that indicates a warning.
+	 */
+	WARNING;
 
 	private MessageType() {
 	}

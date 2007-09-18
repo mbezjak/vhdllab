@@ -9,7 +9,7 @@ import java.util.EventListener;
  * @version 1.0
  * @since 1/9/2007
  */
-public interface PreferencesListener extends EventListener {
+public interface UserPreferencesListener extends EventListener {
 
 	/**
 	 * Invoked when <code>name</code> property value in
