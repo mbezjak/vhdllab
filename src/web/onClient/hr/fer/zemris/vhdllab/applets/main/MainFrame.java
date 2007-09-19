@@ -36,6 +36,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -812,15 +813,19 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JComponent c = (JComponent) pane.getSelectedComponent();
-					if (c == null) {
-						return;
-					}
-					ComponentGroup group = componentContainer
-							.getComponentGroup(c);
-					if (group.equals(ComponentGroup.EDITOR)) {
-						systemContainer.getEditorManager()
-								.saveEditorExplicitly((IEditor) c);
+					try {
+						JComponent c = (JComponent) pane.getSelectedComponent();
+						if (c == null) {
+							return;
+						}
+						ComponentGroup group = componentContainer
+								.getComponentGroup(c);
+						if (group.equals(ComponentGroup.EDITOR)) {
+							systemContainer.getEditorManager()
+									.saveEditorExplicitly((IEditor) c);
+						}
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -831,19 +836,23 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					List<IEditor> editorsToSave = new ArrayList<IEditor>(pane
-							.getTabCount());
-					for (int i = 0; i < pane.getTabCount(); i++) {
-						JComponent c = (JComponent) pane.getComponentAt(i);
-						ComponentGroup group = componentContainer
-								.getComponentGroup(c);
-						if (group.equals(ComponentGroup.EDITOR)) {
-							editorsToSave.add((IEditor) c);
-						}
+					try {
+						List<IEditor> editorsToSave = new ArrayList<IEditor>(
+								pane.getTabCount());
+						for (int i = 0; i < pane.getTabCount(); i++) {
+							JComponent c = (JComponent) pane.getComponentAt(i);
+							ComponentGroup group = componentContainer
+									.getComponentGroup(c);
+							if (group.equals(ComponentGroup.EDITOR)) {
+								editorsToSave.add((IEditor) c);
+							}
 
+						}
+						systemContainer.getEditorManager().saveEditors(
+								editorsToSave);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
-					systemContainer.getEditorManager().saveEditors(
-							editorsToSave);
 				}
 			});
 			menuBar.add(menuItem);
@@ -854,18 +863,22 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JComponent selectedComponent = (JComponent) pane
-							.getSelectedComponent();
-					if (selectedComponent == null) {
-						return;
-					}
-					ComponentGroup group = componentContainer
-							.getComponentGroup(selectedComponent);
-					if (group.equals(ComponentGroup.EDITOR)) {
-						systemContainer.getEditorManager().closeEditor(
-								(IEditor) selectedComponent);
-					} else {
-						componentStorage.remove(selectedComponent);
+					try {
+						JComponent selectedComponent = (JComponent) pane
+								.getSelectedComponent();
+						if (selectedComponent == null) {
+							return;
+						}
+						ComponentGroup group = componentContainer
+								.getComponentGroup(selectedComponent);
+						if (group.equals(ComponentGroup.EDITOR)) {
+							systemContainer.getEditorManager().closeEditor(
+									(IEditor) selectedComponent);
+						} else {
+							componentStorage.remove(selectedComponent);
+						}
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -876,31 +889,35 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					int index = pane.getSelectedIndex();
-					if (index == -1) {
-						return;
-					}
-					List<IEditor> editorsToClose = new ArrayList<IEditor>(pane
-							.getTabCount());
-					List<JComponent> componentsToClose = new ArrayList<JComponent>(
-							pane.getTabCount());
-					for (int i = 0; i < pane.getTabCount(); i++) {
-						if (i == index) {
-							continue;
+					try {
+						int index = pane.getSelectedIndex();
+						if (index == -1) {
+							return;
 						}
-						JComponent c = (JComponent) pane.getComponentAt(i);
-						ComponentGroup group = componentContainer
-								.getComponentGroup(c);
-						if (group.equals(ComponentGroup.EDITOR)) {
-							editorsToClose.add((IEditor) c);
-						} else {
-							componentsToClose.add(c);
+						List<IEditor> editorsToClose = new ArrayList<IEditor>(
+								pane.getTabCount());
+						List<JComponent> componentsToClose = new ArrayList<JComponent>(
+								pane.getTabCount());
+						for (int i = 0; i < pane.getTabCount(); i++) {
+							if (i == index) {
+								continue;
+							}
+							JComponent c = (JComponent) pane.getComponentAt(i);
+							ComponentGroup group = componentContainer
+									.getComponentGroup(c);
+							if (group.equals(ComponentGroup.EDITOR)) {
+								editorsToClose.add((IEditor) c);
+							} else {
+								componentsToClose.add(c);
+							}
 						}
-					}
-					systemContainer.getEditorManager().closeEditors(
-							editorsToClose);
-					for (JComponent c : componentsToClose) {
-						componentStorage.remove(c);
+						systemContainer.getEditorManager().closeEditors(
+								editorsToClose);
+						for (JComponent c : componentsToClose) {
+							componentStorage.remove(c);
+						}
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -911,24 +928,28 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					List<IEditor> editorsToClose = new ArrayList<IEditor>(pane
-							.getTabCount());
-					List<JComponent> componentsToClose = new ArrayList<JComponent>(
-							pane.getTabCount());
-					for (int i = 0; i < pane.getTabCount(); i++) {
-						JComponent c = (JComponent) pane.getComponentAt(i);
-						ComponentGroup group = componentContainer
-								.getComponentGroup(c);
-						if (group.equals(ComponentGroup.EDITOR)) {
-							editorsToClose.add((IEditor) c);
-						} else {
-							componentsToClose.add(c);
+					try {
+						List<IEditor> editorsToClose = new ArrayList<IEditor>(
+								pane.getTabCount());
+						List<JComponent> componentsToClose = new ArrayList<JComponent>(
+								pane.getTabCount());
+						for (int i = 0; i < pane.getTabCount(); i++) {
+							JComponent c = (JComponent) pane.getComponentAt(i);
+							ComponentGroup group = componentContainer
+									.getComponentGroup(c);
+							if (group.equals(ComponentGroup.EDITOR)) {
+								editorsToClose.add((IEditor) c);
+							} else {
+								componentsToClose.add(c);
+							}
 						}
-					}
-					systemContainer.getEditorManager().closeEditors(
-							editorsToClose);
-					for (JComponent c : componentsToClose) {
-						componentStorage.remove(c);
+						systemContainer.getEditorManager().closeEditors(
+								editorsToClose);
+						for (JComponent c : componentsToClose) {
+							componentStorage.remove(c);
+						}
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -966,7 +987,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.createNewProjectInstance();
+					try {
+						systemContainer.createNewProjectInstance();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -978,8 +1003,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer
-							.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
+					try {
+						systemContainer
+								.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -990,7 +1019,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
+					try {
+						systemContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -1001,8 +1034,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer
-							.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
+					try {
+						systemContainer
+								.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -1013,8 +1050,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer
-							.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
+					try {
+						systemContainer
+								.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			submenu.add(menuItem);
@@ -1035,12 +1076,16 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					IEditor editor = editorManager.getSelectedEditor();
-					if (editor == null) {
-						return;
+					try {
+						IEditor editor = editorManager.getSelectedEditor();
+						if (editor == null) {
+							return;
+						}
+						systemContainer.getEditorManager().saveEditorExplicitly(
+								editor);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
-					systemContainer.getEditorManager().saveEditorExplicitly(
-							editor);
 				}
 			});
 			menu.add(menuItem);
@@ -1051,7 +1096,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().saveAllEditors();
+					try {
+						systemContainer.getEditorManager().saveAllEditors();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1063,11 +1112,15 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					IEditor editor = editorManager.getSelectedEditor();
-					if (editor == null) {
-						return;
+					try {
+						IEditor editor = editorManager.getSelectedEditor();
+						if (editor == null) {
+							return;
+						}
+						systemContainer.getEditorManager().closeEditor(editor);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
-					systemContainer.getEditorManager().closeEditor(editor);
 				}
 			});
 			menu.add(menuItem);
@@ -1078,7 +1131,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().closeAllEditors();
+					try {
+						systemContainer.getEditorManager().closeAllEditors();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1090,7 +1147,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					exitWithConfirmation();
+					try {
+						exitWithConfirmation();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+						System.exit(EXIT_STATUS_ERROR);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1114,12 +1176,16 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JComponent component = componentContainer
-							.getSelectedComponent();
-					if (component != null) {
-						ComponentPlacement placement = componentContainer
-								.getComponentPlacement(component);
-						maximizeComponent(getTabbedPane(placement));
+					try {
+						JComponent component = componentContainer
+								.getSelectedComponent();
+						if (component != null) {
+							ComponentPlacement placement = componentContainer
+									.getComponentPlacement(component);
+							maximizeComponent(getTabbedPane(placement));
+						}
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -1142,7 +1208,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 								.createViewIdentifier(viewType);
 						systemContainer.getViewManager().openView(identifier);
-					} catch (Exception ex) {
+					} catch (RuntimeException ex) {
 						String text = bundle
 								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle
@@ -1152,6 +1218,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								new String[] { viewTitle });
 						SystemLog.instance().addSystemMessage(text,
 								MessageType.ERROR);
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -1168,7 +1235,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 								.createViewIdentifier(viewType);
 						systemContainer.getViewManager().openView(identifier);
-					} catch (Exception ex) {
+					} catch (RuntimeException ex) {
 						String text = bundle
 								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle
@@ -1178,6 +1245,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								new String[] { viewTitle });
 						SystemLog.instance().addSystemMessage(text,
 								MessageType.ERROR);
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -1194,7 +1262,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 								.createViewIdentifier(viewType);
 						systemContainer.getViewManager().openView(identifier);
-					} catch (Exception ex) {
+					} catch (RuntimeException ex) {
 						String text = bundle
 								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle
@@ -1204,6 +1272,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								new String[] { viewTitle });
 						SystemLog.instance().addSystemMessage(text,
 								MessageType.ERROR);
+						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
 			});
@@ -1217,7 +1286,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				public void actionPerformed(ActionEvent e) {
 					try {
 						systemContainer.getViewManager().openProjectExplorer();
-					} catch (Exception ex) {
+					} catch (RuntimeException ex) {
 						String text = bundle
 								.getString(LanguageConstants.STATUSBAR_CANT_OPEN_VIEW);
 						String viewTitle = bundle
@@ -1227,6 +1296,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								new String[] { viewTitle });
 						SystemLog.instance().addSystemMessage(text,
 								MessageType.ERROR);
+						SystemLog.instance().addErrorMessage(ex);
 					}
 
 				}
@@ -1248,7 +1318,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.compileWithDialog();
+					try {
+						systemContainer.compileWithDialog();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1259,7 +1333,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.compile(editorManager.getSelectedEditor());
+					try {
+						systemContainer.compile(editorManager.getSelectedEditor());
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1270,7 +1348,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.compileLastHistoryResult();
+					try {
+						systemContainer.compileLastHistoryResult();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1282,7 +1364,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.simulateWithDialog();
+					try {
+						systemContainer.simulateWithDialog();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1293,7 +1379,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.simulate(editorManager.getSelectedEditor());
+					try {
+						systemContainer.simulate(editorManager.getSelectedEditor());
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1304,7 +1394,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.simulateLastHistoryResult();
+					try {
+						systemContainer.simulateLastHistoryResult();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1316,8 +1410,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().viewVHDLCode(
-							editorManager.getSelectedEditor());
+					try {
+						systemContainer.getEditorManager().viewVHDLCode(
+								editorManager.getSelectedEditor());
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1329,7 +1427,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer.getEditorManager().openPreferences();
+					try {
+						systemContainer.getEditorManager().openPreferences();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1343,7 +1445,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem(bundle.getString(key));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					About.instance().setVisible(true);
+					try {
+						About.instance().setVisible(true);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1356,9 +1462,13 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem("Show view Error History");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-							.createViewIdentifier(ComponentTypes.VIEW_ERROR_HISTORY);
-					systemContainer.getViewManager().openView(identifier);
+					try {
+						IComponentIdentifier<?> identifier = ComponentIdentifierFactory
+								.createViewIdentifier(ComponentTypes.VIEW_ERROR_HISTORY);
+						systemContainer.getViewManager().openView(identifier);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1370,7 +1480,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						int error = 1 / 0;
 						System.out.println(error);
 					} catch (RuntimeException ex) {
-						ex.printStackTrace();
 						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
@@ -1381,8 +1490,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem("Create new property");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					systemContainer
-							.createNewFileInstance(FileTypes.FT_PREFERENCES);
+					try {
+						systemContainer
+								.createNewFileInstance(FileTypes.FT_PREFERENCES);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1391,8 +1504,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem = new JMenuItem("Show new dialog");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(MainFrame.this,
-							"is it modal?");
+					try {
+						JOptionPane.showMessageDialog(MainFrame.this,
+								"is it modal?");
+					} catch (HeadlessException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
 				}
 			});
 			menu.add(menuItem);
@@ -1821,8 +1938,9 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				frame.pack();
 				frame.setVisible(true);
 				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				
-				URL resource = frame.getClass().getClassLoader().getResource("images/icons/vhdllab_main_16.png");
+
+				URL resource = frame.getClass().getClassLoader().getResource(
+						"images/icons/vhdllab_main_16.png");
 				frame.setIconImage(new ImageIcon(resource).getImage());
 				frame.init();
 			}

@@ -25,8 +25,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -371,6 +369,7 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
 			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+			SystemLog.instance().addErrorMessage(e);
 			return;
 		}
 	}
@@ -448,8 +447,12 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 					.getUserObject();
 
 			// provjeri kojeg je tipa
-			type = systemContainer.getResourceManager().getFileType(
-					nodeProjectName, node.toString());
+			try {
+				type = systemContainer.getResourceManager().getFileType(
+						nodeProjectName, node.toString());
+			} catch (RuntimeException e) {
+				SystemLog.instance().addErrorMessage(e);
+			}
 
 			if (FileTypes.FT_VHDL_SOURCE.equals(type)) {
 				setIcon(vhdl);
@@ -611,154 +614,158 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			String fileName = null;
 			String name = null;
 
-			if (event.getSource().equals(addProject)) {
-				systemContainer.createNewProjectInstance();
-			} else if (event.getSource().equals(addVHDL)) {
-				systemContainer.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
-			} else if (event.getSource().equals(addTb)) {
-				systemContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
-			} else if (event.getSource().equals(addSchema)) {
-				systemContainer
-						.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
-			} else if (event.getSource().equals(addAutomat)) {
-				systemContainer
-						.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
-			} else if (event.getSource().equals(compile)) {
-				fileName = getFileName();
-				if (fileName != null) {
+			try {
+				if (event.getSource().equals(addProject)) {
+					systemContainer.createNewProjectInstance();
+				} else if (event.getSource().equals(addVHDL)) {
+					systemContainer.createNewFileInstance(FileTypes.FT_VHDL_SOURCE);
+				} else if (event.getSource().equals(addTb)) {
+					systemContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
+				} else if (event.getSource().equals(addSchema)) {
+					systemContainer
+							.createNewFileInstance(FileTypes.FT_VHDL_STRUCT_SCHEMA);
+				} else if (event.getSource().equals(addAutomat)) {
+					systemContainer
+							.createNewFileInstance(FileTypes.FT_VHDL_AUTOMAT);
+				} else if (event.getSource().equals(compile)) {
+					fileName = getFileName();
+					if (fileName != null) {
+						name = getProjectName();
+						if (name != null) {
+							systemContainer.compile(name, fileName);
+						}
+					}
+				} else if (event.getSource().equals(simulate)) {
+					fileName = getFileName();
+					if (fileName != null) {
+						name = getProjectName();
+						if (name != null) {
+							systemContainer.simulate(name, fileName);
+						}
+					}
+				} else if (event.getSource().equals(setActive)) {
+					// selektirani projekt postaje aktivni projekt
 					name = getProjectName();
 					if (name != null) {
-						systemContainer.compile(name, fileName);
+						projectName = name;
 					}
-				}
-			} else if (event.getSource().equals(simulate)) {
-				fileName = getFileName();
-				if (fileName != null) {
-					name = getProjectName();
-					if (name != null) {
-						systemContainer.simulate(name, fileName);
+				} else if (event.getSource().equals(viewVHDL)) {
+					fileName = getFileName();
+					if (fileName != null) {
+						name = getProjectName();
+						if (name != null) {
+							FileIdentifier file = new FileIdentifier(name, fileName);
+							IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+									.createViewVHDLIdentifier(file);
+							systemContainer.getEditorManager().viewVHDLCode(
+									identifier);
+						}
 					}
-				}
-			} else if (event.getSource().equals(setActive)) {
-				// selektirani projekt postaje aktivni projekt
-				name = getProjectName();
-				if (name != null) {
-					projectName = name;
-				}
-			} else if (event.getSource().equals(viewVHDL)) {
-				fileName = getFileName();
-				if (fileName != null) {
-					name = getProjectName();
-					if (name != null) {
-						FileIdentifier file = new FileIdentifier(name, fileName);
-						IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-								.createViewVHDLIdentifier(file);
-						systemContainer.getEditorManager().viewVHDLCode(
-								identifier);
+				} else if (event.getSource().equals(deleteFile)) {
+					deleteFile();
+				} else if (event.getSource().equals(deleteProject)) {
+					deleteProject();
+				} else if (event.getSource().equals(xusesY)) {
+					if (currentHierarchy.equals(X_USES_Y)) {
+						return;
 					}
-				}
-			} else if (event.getSource().equals(deleteFile)) {
-				deleteFile();
-			} else if (event.getSource().equals(deleteProject)) {
-				deleteProject();
-			} else if (event.getSource().equals(xusesY)) {
-				if (currentHierarchy.equals(X_USES_Y)) {
-					return;
-				}
-				List<String> projects = allProjects;
-				expandedNodes.clear();
-				currentHierarchy = X_USES_Y;
-				tree = treeNormal;
-				treeModel = treeModelNormal;
-				root = topNormal;
+					List<String> projects = allProjects;
+					expandedNodes.clear();
+					currentHierarchy = X_USES_Y;
+					tree = treeNormal;
+					treeModel = treeModelNormal;
+					root = topNormal;
 
-				// obrisi sve prijasnje projekte iz stabla i napravi nove
-				topNormal.removeAllChildren();
-				treeModel.reload();
-				// nakon toga dohvati sve projekte is project containera i
-				// kreiraj
-				// podstablo za taj projekt
-				for (String project : projects) {
-					PeNode tempNode = new PeNode(project);
-					treeModelNormal.insertNodeInto(tempNode, topNormal,
-							topNormal.getChildCount());
-					// topInverse.add(tempNode);
-					buildXusesYForOneProject(project, tempNode);
-				}
+					// obrisi sve prijasnje projekte iz stabla i napravi nove
+					topNormal.removeAllChildren();
+					treeModel.reload();
+					// nakon toga dohvati sve projekte is project containera i
+					// kreiraj
+					// podstablo za taj projekt
+					for (String project : projects) {
+						PeNode tempNode = new PeNode(project);
+						treeModelNormal.insertNodeInto(tempNode, topNormal,
+								topNormal.getChildCount());
+						// topInverse.add(tempNode);
+						buildXusesYForOneProject(project, tempNode);
+					}
 
-				treeModel.reload();
-				cp.removeAll();
-				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
-				cp.add(toolbarPanel);
-				cp.add(treeView);
-				cp.repaint();
-				cp.validate();
-			} else if (event.getSource().equals(xusedInY)) {
-				if (currentHierarchy.equals(X_USED_IN_Y)) {
-					return;
-				}
-				List<String> projects = allProjects;
-				expandedNodes.clear();
-				currentHierarchy = X_USED_IN_Y;
-				tree = treeInverse;
-				treeModel = treeModelInverse;
-				root = topInverse;
+					treeModel.reload();
+					cp.removeAll();
+					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+					cp.add(toolbarPanel);
+					cp.add(treeView);
+					cp.repaint();
+					cp.validate();
+				} else if (event.getSource().equals(xusedInY)) {
+					if (currentHierarchy.equals(X_USED_IN_Y)) {
+						return;
+					}
+					List<String> projects = allProjects;
+					expandedNodes.clear();
+					currentHierarchy = X_USED_IN_Y;
+					tree = treeInverse;
+					treeModel = treeModelInverse;
+					root = topInverse;
 
-				// obrisi sve prijasnje projekte iz stabla i napravi nove
-				topInverse.removeAllChildren();
-				treeModel.reload();
-				// nakon toga dohvati sve projekte is project containera i
-				// kreiraj
-				// podstablo za taj projekt
-				for (String project : projects) {
-					PeNode tempNode = new PeNode(project);
-					treeModelInverse.insertNodeInto(tempNode, topInverse,
-							topInverse.getChildCount());
-					// topInverse.add(tempNode);
-					buildXusedInYForOneProject(project, tempNode);
-				}
+					// obrisi sve prijasnje projekte iz stabla i napravi nove
+					topInverse.removeAllChildren();
+					treeModel.reload();
+					// nakon toga dohvati sve projekte is project containera i
+					// kreiraj
+					// podstablo za taj projekt
+					for (String project : projects) {
+						PeNode tempNode = new PeNode(project);
+						treeModelInverse.insertNodeInto(tempNode, topInverse,
+								topInverse.getChildCount());
+						// topInverse.add(tempNode);
+						buildXusedInYForOneProject(project, tempNode);
+					}
 
-				treeModel.reload();
-				// izbrisi prethodno stablo iz panela i dodaj novo
-				cp.removeAll();
-				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
-				cp.add(toolbarPanel);
-				cp.add(treeViewInverse);
-				cp.repaint();
-				cp.validate();
-			} else if (event.getSource().equals(flat)) {
-				if (currentHierarchy.equals(FLAT)) {
-					return;
-				}
-				List<String> projects = allProjects;
-				expandedNodes.clear();
-				currentHierarchy = FLAT;
-				tree = treeFlat;
-				treeModel = treeModelFlat;
-				root = topFlat;
+					treeModel.reload();
+					// izbrisi prethodno stablo iz panela i dodaj novo
+					cp.removeAll();
+					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+					cp.add(toolbarPanel);
+					cp.add(treeViewInverse);
+					cp.repaint();
+					cp.validate();
+				} else if (event.getSource().equals(flat)) {
+					if (currentHierarchy.equals(FLAT)) {
+						return;
+					}
+					List<String> projects = allProjects;
+					expandedNodes.clear();
+					currentHierarchy = FLAT;
+					tree = treeFlat;
+					treeModel = treeModelFlat;
+					root = topFlat;
 
-				// obrisi sve prijasnje projekte iz stabla i napravi nove
-				topFlat.removeAllChildren();
-				treeModel.reload();
-				// nakon toga dohvati sve projekte is project containera i
-				// kreiraj
-				// podstablo za taj projekt
-				for (String project : projects) {
-					PeNode tempNode = new PeNode(project);
-					treeModelFlat.insertNodeInto(tempNode, topFlat, topFlat
-							.getChildCount());
-					// topInverse.add(tempNode);
-					buildFlatForOneProject(project, tempNode);
-				}
+					// obrisi sve prijasnje projekte iz stabla i napravi nove
+					topFlat.removeAllChildren();
+					treeModel.reload();
+					// nakon toga dohvati sve projekte is project containera i
+					// kreiraj
+					// podstablo za taj projekt
+					for (String project : projects) {
+						PeNode tempNode = new PeNode(project);
+						treeModelFlat.insertNodeInto(tempNode, topFlat, topFlat
+								.getChildCount());
+						// topInverse.add(tempNode);
+						buildFlatForOneProject(project, tempNode);
+					}
 
-				treeModel.reload();
-				// izbrisi prethodno stablo iz panela i dodaj novo
-				cp.removeAll();
-				cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
-				cp.add(toolbarPanel);
-				cp.add(treeViewFlat);
-				cp.repaint();
-				cp.validate();
+					treeModel.reload();
+					// izbrisi prethodno stablo iz panela i dodaj novo
+					cp.removeAll();
+					cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
+					cp.add(toolbarPanel);
+					cp.add(treeViewFlat);
+					cp.repaint();
+					cp.validate();
+				}
+			} catch (RuntimeException e) {
+				SystemLog.instance().addErrorMessage(e);
 			}
 			TreePath treePath = tree.getSelectionPath();
 			// tree.setExpandedState(treePath, true);
@@ -793,27 +800,31 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 				expandedNodes.remove(workingTreePath);
 			}
 
-			if (selPath != null) {
-				if (event.getClickCount() == 1) {
-					name = getProjectName();
-					if (name != null) {
-						projectName = name;
-					}
-
-				} else if (event.getClickCount() == 2) {
-					fileName = getFileName();
-					if (fileName != null) {
+			try {
+				if (selPath != null) {
+					if (event.getClickCount() == 1) {
 						name = getProjectName();
 						if (name != null) {
-							FileIdentifier file = new FileIdentifier(name,
-									fileName);
-							IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-									.createFileEditorIdentifier(file);
-							systemContainer.getEditorManager()
-									.openEditorByResource(identifier);
+							projectName = name;
+						}
+
+					} else if (event.getClickCount() == 2) {
+						fileName = getFileName();
+						if (fileName != null) {
+							name = getProjectName();
+							if (name != null) {
+								FileIdentifier file = new FileIdentifier(name,
+										fileName);
+								IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+										.createFileEditorIdentifier(file);
+								systemContainer.getEditorManager()
+										.openEditorByResource(identifier);
+							}
 						}
 					}
 				}
+			} catch (RuntimeException e) {
+				SystemLog.instance().addErrorMessage(e);
 			}
 
 		}
@@ -1058,10 +1069,8 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			hierarchy = systemContainer.getResourceManager().extractHierarchy(
 					projectName);
 		} catch (UniformAppletException e) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			throw new NullPointerException(sw.toString());
+			SystemLog.instance().addErrorMessage(e);
+			return;
 		}
 		PeNode rootNode = null;
 		for (String string : hierarchy.getRootNodes()) {
@@ -1104,10 +1113,8 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			hierarchy = systemContainer.getResourceManager().extractHierarchy(
 					projectName);
 		} catch (UniformAppletException e) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			throw new NullPointerException(sw.toString());
+			SystemLog.instance().addErrorMessage(e);
+			return;
 		}
 
 		// dohvaca sve root cvorove tog projekta i nakon sto dohvati rootove
@@ -1202,10 +1209,8 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 			hierarchy = systemContainer.getResourceManager().extractHierarchy(
 					projectName);
 		} catch (UniformAppletException e) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			throw new NullPointerException(sw.toString());
+			SystemLog.instance().addErrorMessage(e);
+			return;
 		}
 
 		for (String string : hierarchy.getRootNodes()) {
@@ -1478,8 +1483,8 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 						node.toString());
 				this.allProjects.remove(node.toString());
 			} catch (UniformAppletException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				SystemLog.instance().addErrorMessage(e);
+				return;
 			}
 		}
 
