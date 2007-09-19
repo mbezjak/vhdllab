@@ -33,7 +33,7 @@ app.homepage =
 jnlp.file = launch.jnlp
 ### Client application dependencies + application itself ### 
 ### a first jar must be application itself				 ###
-app.client.archive = vhdllab-web-onClient.jar commons-logging.jar commons-collections.jar commons-beanutils.jar commons-digester.jar commons-codec.jar commons-httpclient.jar
+app.client.archive = vhdllab-web-onClient.jar commons-logging.jar commons-collections.jar commons-beanutils.jar commons-digester.jar commons-codec.jar commons-httpclient.jar log4j.jar
 ### An application vendor ###
 app.vendor = FER Java team, University of Zagreb, Croatia
 ### A policy for jnlp file on how to update an application ###

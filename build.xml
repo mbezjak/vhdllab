@@ -211,6 +211,7 @@
    	  <fileset dir="src/i18n/client" excludes="**/*svn/**,**/*svn"/>
    	  <fileset dir="." includes="images/**/*" excludes="**/*svn/**,**/*svn"/>
    	  <fileset file="local/onClient/server.properties"/>
+   	  <fileset file="local/log4j.properties"/>
    	  <metainf dir="metadata/onClient/META-INF" excludes="**/*svn/**,**/*svn"/>
   	</jar>
   </target>
@@ -483,6 +484,7 @@
       <fileset file="${basedir}/${lib.dir}/commons-codec.jar"/>
       <fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar"/>
 	  <fileset file="${basedir}/${lib.dir}/hibernate/commons-logging.jar"/>
+	  <fileset file="${basedir}/${lib.dir}/hibernate/log4j.jar"/>
       <fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils.jar"/>
       <fileset file="${basedir}/${local.dir}/.java.policy"/>
     </copy>
@@ -581,6 +583,7 @@
     <fileset dir="${lib.dir}" includes="commons-codec.jar"/>
     <fileset dir="${lib.dir}/xdoclet" includes="commons-beanutils.jar"/>
     <fileset dir="${lib.dir}/hibernate" includes="commons-collections.jar,commons-logging.jar"/>
+  	<fileset file="${basedir}/${lib.dir}/hibernate/log4j.jar"/>
     <fileset dir="${local.dir}" includes=".java.policy"/>
 	<lib dir="${jlib.dir}" includes="*.jar"/>
     <lib dir="${lib.dir}" includes="*.jar"/>
