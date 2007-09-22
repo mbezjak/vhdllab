@@ -263,7 +263,7 @@ public class SchemaInfo2VHDL {
 		// prepare signals
 		for (ISchemaWire wire : info.getWires()) {
 			/* if signal is redundant do not declare it */
-			if (renamedsignals.containsKey(wire.getName().toString())) continue;
+			if (renamedsignals.containsKey(wire.getName())) continue;
 			
 			/* declare signal */
 			sb.append("SIGNAL ").append(wire.getName()).append(": std_logic;\n");
