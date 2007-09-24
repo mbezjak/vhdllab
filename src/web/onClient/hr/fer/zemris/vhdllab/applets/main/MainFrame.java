@@ -159,23 +159,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			@Override
 			public void run() {
 				try {
-					// SwingUtilities.invokeAndWait(new Runnable() {
-					// @Override
-					// public void run() {
-					// initSystem();
-					// }
-					// });
-					try {
-						// UIManager.setLookAndFeel(new
-						// SyntheticaBlackStarLookAndFeel());
-						// UIManager.setLookAndFeel(new SubstanceLookAndFeel());
-						// SubstanceLookAndFeel.setCurrentTheme(new
-						// SubstanceBusinessBlackSteelLookAndFeel());
-						// SyntheticaLookAndFeel.setAntiAliasEnabled(true);
-						// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
@@ -493,9 +476,13 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					JOptionPane.showMessageDialog(MainFrame.this, "vhdllab is exiting due to abnormal exceptional condition");
+					exit(EXIT_STATUS_ERROR);
 				} catch (InvocationTargetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					JOptionPane.showMessageDialog(MainFrame.this, "vhdllab is exiting due to abnormal exceptional condition in initialization");
+					exit(EXIT_STATUS_ERROR);
 				}
 			}
 		});
