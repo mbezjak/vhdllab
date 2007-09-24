@@ -192,10 +192,11 @@ public class SchemaMainPanel extends AbstractEditor {
 				circint = resourceManager
 						.getCircuitInterfaceFor(projectname, name);
 			} catch (UniformAppletException e) {
-				throw new SchemaException(
-						"Could not fetch circuit interface for circuit '"
-								+ name + "' in project '" + projectname + "'.",
-						e);
+				continue;
+//				throw new SchemaException(
+//						"Could not fetch circuit interface for circuit '"
+//								+ name + "' in project '" + projectname + "'.",
+//						e);
 			}
 
 			usercircuits.add(circint);
