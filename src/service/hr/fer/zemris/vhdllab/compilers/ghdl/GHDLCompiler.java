@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -73,17 +74,18 @@ public class GHDLCompiler implements ICompiler {
 			cmdList.add(executable);
 			cmdList.add("-a");
 			if(otherFiles!=null) {
-				for(int i = otherFiles.size()-1; i >= 0; i--) {
+				for(int i = 0; i < otherFiles.size(); i++) {
 					cmdList.add(otherFiles.get(i).getFileName()+".vhdl");
 				}
 			}
-			for(int i = dbFiles.size()-1; i >= 0; i--) {
+			for(int i = 0; i < dbFiles.size(); i++) {
 				cmdList.add(dbFiles.get(i).getFileName()+".vhdl");
 			}
 			String[] cmd = new String[cmdList.size()];
 			cmdList.toArray(cmd);
 			// STEP 4: execute the call
 			// -----------------------------------------------------------
+			System.out.println("Will execute: "+Arrays.toString(cmd));
 			final List<String> errors = new LinkedList<String>();
 			Process proc = Runtime.getRuntime().exec(cmd,null,tmpDir);
 			InputConsumer consumer = new InputConsumer(proc.getInputStream(),proc.getErrorStream(),errors,errors);

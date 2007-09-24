@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -78,11 +79,11 @@ public class GHDLSimulator implements ISimulator {
 			cmdList.add(executable);
 			cmdList.add("-a");
 			if(otherFiles!=null) {
-				for(int i = otherFiles.size()-1; i >= 0; i--) {
+				for(int i = 0; i < otherFiles.size(); i++) {
 					cmdList.add(otherFiles.get(i).getFileName()+".vhdl");
 				}
 			}
-			for(int i = dbFiles.size()-1; i >= 0; i--) {
+			for(int i = 0; i < dbFiles.size(); i++) {
 				cmdList.add(dbFiles.get(i).getFileName()+".vhdl");
 			}
 			String[] cmd = new String[cmdList.size()];
@@ -90,6 +91,7 @@ public class GHDLSimulator implements ISimulator {
 			// STEP 4: execute the call
 			// -----------------------------------------------------------
 			final List<String> errors = new LinkedList<String>();
+			System.out.println("Will execute: "+Arrays.toString(cmd));
 			Process proc = Runtime.getRuntime().exec(cmd,null,tmpDir);
 			InputConsumer consumer = new InputConsumer(proc.getInputStream(),proc.getErrorStream(),errors,errors);
 			consumer.waitForThreads();
@@ -110,6 +112,7 @@ public class GHDLSimulator implements ISimulator {
 			// STEP 6: execute the call
 			// -----------------------------------------------------------
 			errors.clear();
+			System.out.println("Will execute: "+Arrays.toString(cmd));
 			proc = Runtime.getRuntime().exec(cmd,null,tmpDir);
 			consumer = new InputConsumer(proc.getInputStream(),proc.getErrorStream(),errors,errors);
 			consumer.waitForThreads();

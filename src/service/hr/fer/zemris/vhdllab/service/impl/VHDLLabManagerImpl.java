@@ -34,6 +34,7 @@ import hr.fer.zemris.vhdllab.vhdl.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Extractor;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
+import hr.fer.zemris.vhdllab.vhdl.model.Pair;
 import hr.fer.zemris.vhdllab.vhdl.tb.TestBenchDependencyExtractor;
 import hr.fer.zemris.vhdllab.vhdl.tb.Testbench;
 
@@ -46,10 +47,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -72,6 +76,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			}
 		}
 		deps.removeAll(otherFiles);
+
+		orderDependencies(file, deps);
 
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream(
 				"compiler.properties");
@@ -112,6 +118,108 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 		return compiler.compile(deps, otherFiles, file, this);
 	}
 
+	/**
+	 * Call this method to order file dependencies list so that they can be
+	 * passed to compiler/simulator in correct order.
+	 * @param file original file
+	 * @param deps list of file dependencies
+	 * @throws ServiceException
+	 */
+	private void orderDependencies(File file, List<File> deps) throws ServiceException {
+		Hierarchy h = extractHierarchy(file.getProject());
+		Pair[] pairs = h.pairsAsArray();
+		
+		Set<String> names = new HashSet<String>();
+		for(File f : deps) {
+			names.add(f.getFileName().toUpperCase());
+		}
+		String[] namesArray = new String[names.size()];
+		names.toArray(namesArray);
+		
+		Map<String,String[]> parents = new HashMap<String, String[]>();
+		List<String> tmpParents = new ArrayList<String>();
+		for(int i = 0; i < pairs.length; i++) {
+			String child = pairs[i].getFileName().toUpperCase();
+			if(!names.contains(child)) continue;
+			tmpParents.clear();
+			for(String p : pairs[i].getParents()) {
+				p = p.toUpperCase();
+				if(!names.contains(p)) continue;
+				tmpParents.add(p);
+			}
+			if(tmpParents.size()<=0) continue;
+			String[] array = new String[tmpParents.size()];
+			tmpParents.toArray(array);
+			parents.put(child, array);
+		}
+		// Here we have for each used child its parents; now lets order things
+		final Map<String, MutableInt> orders = new HashMap<String, MutableInt>();
+		for(int i = 0; i < namesArray.length; i++) {
+			orders.put(namesArray[i], new MutableInt(0));
+		}
+		while(true) {
+			boolean modified = false;
+			for(int i = 0; i < namesArray.length; i++) {
+				String[] prnts = parents.get(namesArray[i]);
+				if(prnts==null) continue;
+				int max = -1;
+				for(int j = 0; j < prnts.length; j++) {
+					MutableInt m = orders.get(prnts[j]);
+					if(m.getValue()>max) max = m.getValue();
+				}
+				if(prnts.length>0) {
+					MutableInt m = orders.get(namesArray[i]);
+					if(m.getValue()<=max) {
+						m.setValue(max+1);
+						modified = true;
+					}
+				}
+			}
+			if(!modified) break;
+		}
+		
+		// Sada svatko ima svoj redni broj; sortiraj originalnu listu po njemu!
+		Collections.sort(deps, new Comparator<File>() {
+			@Override
+			public int compare(File o1, File o2) {
+				String n1 = o1.getFileName().toUpperCase();
+				String n2 = o2.getFileName().toUpperCase();
+				MutableInt m1 = orders.get(n1);
+				MutableInt m2 = orders.get(n2);
+				int r = m1.getValue() - m2.getValue();
+				// Sortiraj naopacke po brojevima!
+				if(r!=0) return -r;
+				// Unutar istog broja sortiraj abecedno!
+				return n1.compareTo(n2);
+			}
+		});
+	}
+
+	/**
+	 * Helper class used as mutable integer storage.
+	 * Not safe for general collections usage (no hashCode
+	 * and equals implemented).
+	 * @author marcupic
+	 */
+	private static class MutableInt {
+		private int value;
+		public MutableInt() {
+		}
+		public MutableInt(int value) {
+			this.value = value;
+		}
+		public int getValue() {
+			return value;
+		}
+		public void setValue(int value) {
+			this.value = value;
+		}
+		@Override
+		public String toString() {
+			return String.valueOf(value);
+		}
+	}
+	
 	public File createNewFile(Project project, String fileName, String fileType)
 			throws ServiceException {
 		File file = new File();
@@ -612,6 +720,8 @@ public class VHDLLabManagerImpl implements VHDLLabManager {
 			}
 		}
 		deps.removeAll(otherFiles);
+
+		orderDependencies(file, deps);
 
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream(
 				"simulator.properties");

@@ -219,4 +219,21 @@ public class Hierarchy implements Iterable<Pair>, Serializable {
 		}
 	}
 
+	/**
+	 * Gets a total number of pairs in this hierarchy.
+	 * @return number of pairs
+	 */
+	public int getParsCount() {
+		return pairs.size();
+	}
+	
+	/**
+	 * Gets a collection of pairs as an array.
+	 * @return array of pairs
+	 */
+	public Pair[] pairsAsArray() {
+		Pair[] p = new Pair[pairs.size()];
+		pairs.toArray(p);
+		return p;
+	}
 }
