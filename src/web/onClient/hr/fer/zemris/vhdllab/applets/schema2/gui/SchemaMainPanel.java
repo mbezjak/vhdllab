@@ -165,16 +165,18 @@ public class SchemaMainPanel extends AbstractEditor {
 		try {
 			circuitnames = resourceManager.getAllCircuits(projectname);
 		} catch (Exception e) {
-			throw new SchemaException("Could not fetch circuits in project '"
-					+ projectname + "'.", e);
+			return new ArrayList<CircuitInterface>();
+//			throw new SchemaException("Could not fetch circuits in project '"
+//					+ projectname + "'.", e);
 		}
 
 		Hierarchy hierarchy;
 		try {
 			hierarchy = resourceManager.extractHierarchy(projectname);
 		} catch (UniformAppletException e1) {
-			throw new SchemaException("Cannot extract hierarchy for project '"
-					+ projectname + "'.", e1);
+			return new ArrayList<CircuitInterface>();
+//			throw new SchemaException("Cannot extract hierarchy for project '"
+//					+ projectname + "'.", e1);
 		}
 
 		List<CircuitInterface> usercircuits = new ArrayList<CircuitInterface>();
