@@ -659,7 +659,6 @@ public final class HttpClientInitiator implements Initiator {
 			String text = ResourceBundleProvider.getBundle(name).getString(key);
 			// report an error (a custom message for a user to see)
 			log.addSystemMessage(text, MessageType.ERROR);
-			// rethrow as UniformAppletException
 			throw new UniformAppletException(e);
 		} finally {
 			if (shouldRelease) {

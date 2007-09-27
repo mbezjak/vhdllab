@@ -38,6 +38,11 @@ public class JNLPServlet extends HttpServlet {
 	 * A content of created jnlp file.
 	 */
 	private static String jnlp;
+	
+	/**
+	 * Last modified time.
+	 */
+	private static long modTime;
 
 	/*
 	 * (non-Javadoc)
@@ -47,6 +52,7 @@ public class JNLPServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		modTime = System.currentTimeMillis() / 1000 * 1000;
 		ServletContext context = config.getServletContext();
 		InputStream is = context.getResourceAsStream(PARAM_FILE);
 		Properties p = FileUtil.getProperties(is);
@@ -102,6 +108,14 @@ public class JNLPServlet extends HttpServlet {
 		response.setContentLength(jnlp.length());
 		response.getWriter().print(jnlp);
 		response.getWriter().flush();
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#getLastModified(javax.servlet.http.HttpServletRequest)
+	 */
+	@Override
+	protected long getLastModified(HttpServletRequest req) {
+		return modTime;
 	}
 
 }
