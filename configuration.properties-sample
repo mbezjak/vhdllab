@@ -94,6 +94,7 @@ database.normal.password =
 
 hibernate.cache.use_query_cache = true
 hibernate.cache.provider_class = net.sf.ehcache.hibernate.Provider
+hibernate.connection.provider_class = org.hibernate.connection.DBCPConnectionProvider
 database.connection.pool.size = 20
 database.show.sql = false
 database.use.reflection.optimizer = false
