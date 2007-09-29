@@ -19,6 +19,7 @@
 	<classpathentry kind="lib" path="libs/junit.jar"/>
 	<classpathentry kind="lib" path="libs/mysql/mysql-connector-java-3.1.13-bin.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/cglib-full-2.0.2.jar"/>
+	<classpathentry kind="lib" path="libs/hibernate/commons-dbcp-1.2.2.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/commons-collections.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/commons-logging.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate/dom4j-1.4.jar"/>
