@@ -474,10 +474,7 @@
   	<mkdir dir="${tomcat.app.dir}/WEB-INF/classes"/>
   	
     <copy todir="${tomcat.app.dir}" overwrite="true">
-      <fileset file="${basedir}/html/*"/>
-      <!-- TODO this is only temporary: -->
-      <fileset file="${basedir}/html/pages/*"/>
-      <!-- END TEMPORARY -->
+      <fileset dir="${basedir}/html"/>
       <fileset dir="." includes="images/**/*"/>
       <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar"/>
       <fileset file="${basedir}/${lib.dir}/commons-digester.jar"/>
@@ -574,24 +571,26 @@
     <war destfile="${app.name}.war"
     	webxml="${local.dir}/web/web.xml">
     	
-    <!-- TODO: When security constraints are in place vhdllab.html will
-    	have to be excluded from war (also its jar dependencies) -->
-   	<fileset dir="${html.pages.dir}" includes="*"/>
-    <fileset dir="." includes="images/**/*"/>
-    <fileset dir="${jlib.dir}" includes="vhdllab-web-onClient.jar"/>
-    <fileset dir="${lib.dir}" includes="commons-digester.jar"/>
-    <fileset dir="${lib.dir}" includes="commons-httpclient.jar"/>
-    <fileset dir="${lib.dir}" includes="commons-codec.jar"/>
-    <fileset dir="${lib.dir}/xdoclet" includes="commons-beanutils.jar"/>
-    <fileset dir="${lib.dir}/hibernate" includes="commons-collections.jar,commons-logging.jar"/>
-  	<fileset file="${basedir}/${lib.dir}/hibernate/log4j.jar"/>
-    <fileset dir="${local.dir}" includes=".java.policy"/>
-	<lib dir="${jlib.dir}" includes="*.jar"/>
-    <lib dir="${lib.dir}" includes="*.jar"/>
-    <lib dir="${lib.dir}/hibernate" includes="*.jar"/>
-    <lib dir="${lib.dir}/mysql" includes="*.jar"/>
-    <lib dir="${lib.dir}/xdoclet" includes="*.jar"/>
-    <classes file="${local.dir}/log4j.properties"/>
+	   	<fileset dir="${basedir}/html" />
+	    <fileset dir="." includes="images/**/*"/>
+	    <fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar"/>
+	    <fileset file="${basedir}/${lib.dir}/commons-digester.jar"/>
+	    <fileset file="${basedir}/${lib.dir}/commons-httpclient.jar"/>
+	    <fileset file="${basedir}/${lib.dir}/commons-codec.jar"/>
+	    <fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar"/>
+	  	<fileset file="${basedir}/${lib.dir}/hibernate/commons-logging.jar"/>
+	  	<fileset file="${basedir}/${lib.dir}/hibernate/log4j.jar"/>
+	    <fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils.jar"/>
+	    <fileset file="${basedir}/${local.dir}/.java.policy"/>
+	    <webinf dir="${basedir}/local/web" />
+		<lib file="${basedir}/${jlib.dir}/${app.name}-dao.jar"/>
+		<lib file="${basedir}/${jlib.dir}/${app.name}-service.jar"/>
+		<lib file="${basedir}/${jlib.dir}/${app.name}-web-onServer.jar"/>
+	    <lib dir="${lib.dir}" includes="*.jar" excludes="servlet-api.jar"/>
+	    <lib dir="${lib.dir}/hibernate" includes="*.jar"/>
+	    <lib dir="${lib.dir}/mysql" includes="*.jar"/>
+	    <lib dir="${lib.dir}/xdoclet" includes="*.jar"/>
+	    <classes file="${local.dir}/log4j.properties"/>
     </war>
   </target>
 	
