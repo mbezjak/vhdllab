@@ -162,6 +162,14 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
+							try {
+								System.getProperty("org.apache.commons.logging.LogFactory.HashtableImpl");
+							} catch (AccessControlException e) {
+								JOptionPane.showMessageDialog(MainFrame.this,
+										"VHDLLab doesn't have permission to lookup cirtain property. Please install .java.policy correctly.");
+								exit(EXIT_STATUS_ERROR);
+							}
+
 							setupGlassPane();
 							getGlassPane().setVisible(true);
 							initBasicGUI();
@@ -187,7 +195,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 									MainFrame.this);
 						}
 					});
-					// Thread.sleep(2000);
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
@@ -243,6 +250,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								// UserPreferences
 							} catch (UniformAppletException e) {
 								e.printStackTrace();
+								throw new IllegalStateException(e);
 							}
 							try {
 								/*
@@ -300,7 +308,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 										componentContainer);
 							} catch (AccessControlException e) {
 								e.printStackTrace();
-								return;
+								throw new IllegalStateException(e);
 								// TODO ovo treba malo modificirat i rec da se
 								// applet nemoze dignut
 								// ako nije .java.policy na svojem mjestu
@@ -309,12 +317,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								// nece bit u
 								// development fazi
 								e.printStackTrace();
+								throw new IllegalStateException(e);
 								// StringWriter sw = new StringWriter();
 								// PrintWriter pw = new PrintWriter(sw);
 								// e.printStackTrace(pw);
 								// JOptionPane.showMessageDialog(this,
 								// sw.toString());
-								return;
 							}
 						}
 					});
@@ -401,7 +409,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 										.getConfiguration();
 							} catch (UniformAppletException e) {
 								e.printStackTrace();
-								return;
+								throw new IllegalStateException(e);
 							}
 							editorManager = new DefaultEditorManager(
 									componentStorage, conf, systemContainer);
@@ -419,7 +427,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								systemContainer.init();
 							} catch (UniformAppletException e) {
 								e.printStackTrace();
-								return;
+								throw new IllegalStateException(e);
 							}
 
 							UserPreferences
@@ -476,12 +484,16 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(MainFrame.this, "vhdllab is exiting due to abnormal exceptional condition");
+					JOptionPane
+							.showMessageDialog(MainFrame.this,
+									"vhdllab is exiting due to exceptional condition");
 					exit(EXIT_STATUS_ERROR);
 				} catch (InvocationTargetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(MainFrame.this, "vhdllab is exiting due to abnormal exceptional condition in initialization");
+					JOptionPane
+							.showMessageDialog(MainFrame.this,
+									"vhdllab is exiting due to exceptional condition in initialization");
 					exit(EXIT_STATUS_ERROR);
 				}
 			}
@@ -1007,7 +1019,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						systemContainer.createNewFileInstance(FileTypes.FT_VHDL_TB);
+						systemContainer
+								.createNewFileInstance(FileTypes.FT_VHDL_TB);
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
@@ -1068,8 +1081,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						if (editor == null) {
 							return;
 						}
-						systemContainer.getEditorManager().saveEditorExplicitly(
-								editor);
+						systemContainer.getEditorManager()
+								.saveEditorExplicitly(editor);
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
@@ -1321,7 +1334,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						systemContainer.compile(editorManager.getSelectedEditor());
+						systemContainer.compile(editorManager
+								.getSelectedEditor());
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
@@ -1367,7 +1381,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						systemContainer.simulate(editorManager.getSelectedEditor());
+						systemContainer.simulate(editorManager
+								.getSelectedEditor());
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
