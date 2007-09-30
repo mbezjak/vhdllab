@@ -45,7 +45,7 @@ app.main.class = hr.fer.zemris.vhdllab.applets.main.MainFrame
 ### A parameter to jnlp file for a client application ###
 jnlp.vm.parameter = -client
 ### A splash screen ###
-app.splash = splash.png
+app.splash = splash_no_letters.png
 ### An application icon ###
 app.icon = icons/vhdllab_main_32.png
 
