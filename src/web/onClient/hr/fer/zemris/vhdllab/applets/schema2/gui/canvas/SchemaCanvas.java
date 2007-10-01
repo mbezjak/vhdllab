@@ -497,7 +497,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 							)
 					);
 					ICommandResponse response = controller.send(move);
-					System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+					//System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
 				}
 			}
 		}
@@ -553,14 +553,20 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			Rectangle rect = components.getComponentBounds(comp.getName());
 			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, MIN_COMPONENT_DISTANCE);
 			if(port != null){
-				point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
-						CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
-				decrementer.reset();
+				if(port.getMapping()==null){
+					point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
+							CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
+					decrementer.reset();
+				}else{
+					point = new CriticalPoint(wires.fetchWire(port.getMapping()), alignToGrid(x), alignToGrid(y));
+				}
 			}else{
 				point = null;
 			}
 
-		}else{		
+		}
+		
+		if(point == null){		
 			ISchemaWire wire = wires.fetchWire(x, y, Constants.GRID_SIZE/2-1);
 			if(wire != null){
 				point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));

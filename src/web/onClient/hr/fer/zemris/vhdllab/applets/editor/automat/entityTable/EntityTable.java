@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
+import hr.fer.zemris.vhdllab.utilities.StringFormat;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
@@ -300,18 +301,25 @@ public class EntityTable extends JPanel implements IEntityWizard{
 			bundle=CachedResourceBundles.getBundle("Client_EntityTable_ApplicationResources","en");
 		this.container = container; 
 		}
-
+	/**
+	 * Funkcija provjerava dali su uneseni podatci u tablici dobri.
+	 */
 	public boolean isDataCorrect() {
 		Set<String> test = new HashSet<String>();
 		for(int i = 0; i < model.getRowCount()-1; i++){
-			if(test.contains(model.getValueAt(i, 0))) 
+			if(test.contains(model.getValueAt(i, 0)) || 
+					!StringFormat.isCorrectPortName((String) model.getValueAt(i, 0))) 
 				return false;
 			else test.add((String) model.getValueAt(i, 0));
 		}
 		try {
-			if(container.getResourceManager().existsFile(container.getSelectedProject(), imeSklop.getText()))
+			if(container.getResourceManager().existsFile(container.getSelectedProject(), imeSklop.getText())
+					|| !StringFormat.isCorrectFileName(imeSklop.getText()))
 				return false;
 		} catch (UniformAppletException e) {
+			System.out.println("Error isDataCorrect EntityTable");
+			e.printStackTrace();
+		} catch (NullPointerException e){
 			System.out.println("Error isDataCorrect EntityTable");
 			e.printStackTrace();
 		}

@@ -341,8 +341,14 @@ public class AutoDrawer extends JPanel{
 			if(st.oy+2*radijus+10>maxY)maxY=st.oy+2*radijus+10;
 		}
 		
-		this.setPreferredSize(new Dimension(maxX,maxY));
-		AutoDrawer.this.revalidate();
+		Dimension d = this.getPreferredSize();
+		//System.out.println(d.getHeight());
+		//System.out.println(d.getWidth());
+		
+		if(d.getHeight()< maxY || d.getWidth()< maxX){
+			this.setPreferredSize(new Dimension(maxX,maxY));
+		}
+		this.revalidate();
 	}
 
 	/**
@@ -362,6 +368,7 @@ public class AutoDrawer extends JPanel{
 	private void nacrtajSklop(){
 		if(dataSet()){
 			checkOKness();
+			resizeComponent();
 			Graphics2D g=(Graphics2D)img.getGraphics();
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(getOKColor());
@@ -814,8 +821,8 @@ public class AutoDrawer extends JPanel{
 	 * @param y
 	 */
 	private void pomjeriSliku(int x, int y) {
-		if(x>AutoDrawer.this.getWidth())AutoDrawer.this.setPreferredSize(new Dimension(x,AutoDrawer.this.getHeight()));
-		if(y>AutoDrawer.this.getHeight())AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),y));
+//TODO		//if(x+radijus>AutoDrawer.this.getWidth())AutoDrawer.this.setPreferredSize(new Dimension(x+radijus,AutoDrawer.this.getHeight()));
+		//if(y+radijus>AutoDrawer.this.getHeight())AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),y+radijus));
 
 		if(x<3.3*radijus||y<3.3*radijus) moveAll(x,y);	//TODO i tu je odmak!!!
 		AutoDrawer.this.revalidate();

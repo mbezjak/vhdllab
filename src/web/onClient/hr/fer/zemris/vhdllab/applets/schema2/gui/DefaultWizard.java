@@ -45,7 +45,19 @@ public class DefaultWizard implements IWizard {
 		EntityTable table = new EntityTable();
 		table.setProjectContainer(container);
 		table.init();
-		int option = JOptionPane.showOptionDialog(parent, table, "New Schema", optionType, messageType, null, options, options[0]);
+		
+		int option = 0;
+		boolean flag = false;
+		
+		do{
+			flag = false;
+			option = JOptionPane.showOptionDialog(parent, table, "New Schema", optionType, messageType, null, options, options[0]);
+			if(!table.isDataCorrect() && option == JOptionPane.OK_OPTION){
+				flag = true;
+				JOptionPane.showMessageDialog(parent, "Bad input!");
+			}
+		}while(flag);
+		
 		if(option == JOptionPane.OK_OPTION) {
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
