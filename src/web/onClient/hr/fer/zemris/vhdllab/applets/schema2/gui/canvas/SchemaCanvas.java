@@ -553,11 +553,12 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			Rectangle rect = components.getComponentBounds(comp.getName());
 			SchemaPort port = comp.getSchemaPort(x-rect.x, y-rect.y, MIN_COMPONENT_DISTANCE);
 			if(port != null){
-				if(port.getMapping()==null){
+				if(port.getMapping()==null||port.getMapping().equals(new Caseless(""))){
 					point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
 							CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
 					decrementer.reset();
 				}else{
+					Caseless c = port.getMapping();
 					point = new CriticalPoint(wires.fetchWire(port.getMapping()), alignToGrid(x), alignToGrid(y));
 				}
 			}else{
