@@ -37,7 +37,7 @@ public class DoMethodSimulateFile extends AbstractRegisteredMethod {
 		SimulationResult result;
 		try {
 			File file = labman.loadFile(fileId);
-			checkFileSecurity(method, file);
+			checkFileSecurity(request, method, file);
 			result = labman.runSimulation(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_GET_SIMULATION_RESULT, "fileId=" + fileId);

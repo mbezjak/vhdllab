@@ -33,7 +33,7 @@ public class DoMethodDeleteFile extends AbstractRegisteredMethod {
 			return;
 		}
 		try {
-			checkFileSecurity(method, labman, fileId);
+			checkFileSecurity(request, method, labman, fileId);
 			labman.deleteFile(fileId);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_DELETE_FILE, "fileId=" + fileId);

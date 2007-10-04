@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
@@ -16,6 +17,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
@@ -974,6 +976,40 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			key = LanguageConstants.MENU_FILE;
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
+			
+			// FIXME open projects from user;; sfusano!
+			menuItem = new JMenuItem("Open");
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						String userId = JOptionPane.showInputDialog(MainFrame.this, "Enter userId to view its projects");
+						if(userId == null || userId.equals("")) {
+							return;
+						}
+						List<String> projects = communicator.getAllProjects(userId);
+						IComponentIdentifier<?> ci = ComponentIdentifierFactory.createProjectExplorerIdentifier();
+						IView view = systemContainer.getViewManager().getOpenedView(ci);
+						IProjectExplorer pe = view.asInterface(IProjectExplorer.class);
+						for(String projectName : projects) {
+							pe.addProject(projectName);
+						}
+					} catch (UniformAppletException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
+				}
+			});
+			boolean superuser;
+			try {
+				superuser = communicator.isSuperuser();
+			} catch (UniformAppletException ex) {
+				SystemLog.instance().addErrorMessage(ex);
+				superuser = false;
+			}
+			if(superuser) {
+				menu.add(menuItem);
+			}
 
 			// New sub menu
 			key = LanguageConstants.MENU_FILE_NEW;

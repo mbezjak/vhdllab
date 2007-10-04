@@ -39,7 +39,7 @@ public class DoMethodCreateFile extends AbstractRegisteredMethod {
 		File file;
 		try {
 			Project project = labman.loadProject(projectId);
-			checkProjectSecurity(method, project);
+			checkProjectSecurity(request, method, project);
 			file = labman.createNewFile(project, fileName, fileType);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_CREATE_FILE, "projectId=" + projectId

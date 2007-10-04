@@ -34,7 +34,7 @@ public class DoMethodRenameProject extends AbstractRegisteredMethod {
 			return;
 		}
 		try {
-			checkProjectSecurity(method, labman, projectId);
+			checkProjectSecurity(request, method, labman, projectId);
 			labman.renameProject(projectId, newName);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_RENAME_PROJECT, "projectId=" + projectId + ", name="

@@ -34,7 +34,7 @@ public class DoMethodRenameFile extends AbstractRegisteredMethod {
 			return;
 		}
 		try {
-			checkFileSecurity(method, labman, fileId);
+			checkFileSecurity(request, method, labman, fileId);
 			labman.renameFile(fileId, newName);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_RENAME_FILE, "fileId=" + fileId + ", name="

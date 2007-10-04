@@ -38,7 +38,7 @@ public class DoMethodExtractDependencies extends AbstractRegisteredMethod {
 		List<File> files;
 		try {
 			File file = labman.loadFile(fileId);
-			checkFileSecurity(method, file);
+			checkFileSecurity(request, method, file);
 			files = labman.extractDependencies(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_EXTRACT_DEPENDENCIES,

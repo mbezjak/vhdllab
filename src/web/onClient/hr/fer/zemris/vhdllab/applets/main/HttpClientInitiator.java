@@ -209,15 +209,19 @@ public final class HttpClientInitiator implements Initiator {
 
 	/**
 	 * Returns <code>true</code> if session is valid (a server doesn't return
-	 * with <code>401-UNAUTHORIZED</code> status). If however server responds
-	 * with <code>401</code> status this method will return <code>false</code>.
+	 * with <code>401-UNAUTHORIZED</code> or <code>403-FORBIDDEN</code>
+	 * status). If however server responds with <code>401</code> or
+	 * <code>403</code> status this method will return <code>false</code>.
 	 * 
-	 * @return <code>false</code> if server returns <code>401</code> status
-	 *         code; <code>false</code> otherwise
+	 * @return <code>false</code> if server returns <code>401</code> or
+	 *         <code>403</code> status code; <code>false</code> otherwise
 	 */
 	private boolean isSessionValid() {
 		/*
 		 * This method is called only once: during initialization!
+		 * 
+		 * 403 happens when user has an account on server but isn't in correct
+		 * role.
 		 */
 		String url = properties.getProperty(AUTH_URL);
 		GetMethod method = new GetMethod(url);
@@ -228,7 +232,8 @@ public final class HttpClientInitiator implements Initiator {
 		} catch (UniformAppletException e) {
 			return false;
 		}
-		return status != HttpStatus.SC_UNAUTHORIZED;
+		return status != HttpStatus.SC_UNAUTHORIZED
+				&& status != HttpStatus.SC_FORBIDDEN;
 	}
 
 	/**
@@ -294,8 +299,8 @@ public final class HttpClientInitiator implements Initiator {
 		if (credentials == null) {
 			try {
 				// also sets credentials
-				 showLoginDialog(displayRetryMessage);
-//				credentials = new UsernamePasswordCredentials("test", "a");
+				showLoginDialog(displayRetryMessage);
+				// credentials = new UsernamePasswordCredentials("test", "a");
 			} catch (SecurityException e) {
 				throw new UniformAppletException(e);
 			}
@@ -313,7 +318,8 @@ public final class HttpClientInitiator implements Initiator {
 		GetMethod method = new GetMethod(url);
 		method.setDoAuthentication(true);
 		int status = execute(method, true);
-		if (status == HttpStatus.SC_UNAUTHORIZED) {
+		if (status == HttpStatus.SC_UNAUTHORIZED
+				|| status == HttpStatus.SC_FORBIDDEN) {
 			// retry authentication if current authentication failed
 			credentials = null;
 			client.getState().clearCredentials();
@@ -534,7 +540,8 @@ public final class HttpClientInitiator implements Initiator {
 		postMethod.setRequestEntity(new ByteArrayRequestEntity(requestArray));
 
 		int status = execute(postMethod, false);
-		if (status == HttpStatus.SC_UNAUTHORIZED) {
+		if (status == HttpStatus.SC_UNAUTHORIZED
+				|| status == HttpStatus.SC_FORBIDDEN) {
 			postMethod.releaseConnection();
 			authenticate();
 			status = execute(postMethod, false);

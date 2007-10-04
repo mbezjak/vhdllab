@@ -37,7 +37,7 @@ public class DoMethodExtractHierarchy extends AbstractRegisteredMethod {
 		Hierarchy h;
 		try {
 			Project project = labman.loadProject(projectId);
-			checkProjectSecurity(method, project);
+			checkProjectSecurity(request, method, project);
 			h = labman.extractHierarchy(project);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_EXTRACT_HIERARCHY,

@@ -37,7 +37,7 @@ public class DoMethodCompileFile extends AbstractRegisteredMethod {
 		CompilationResult result;
 		try {
 			File file = labman.loadFile(fileId);
-			checkFileSecurity(method, file);
+			checkFileSecurity(request, method, file);
 			result = labman.compile(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_GET_COMPILATION_RESULT, "fileId=" + fileId);

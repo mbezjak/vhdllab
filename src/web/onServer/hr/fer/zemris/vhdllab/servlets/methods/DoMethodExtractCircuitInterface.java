@@ -38,7 +38,7 @@ public class DoMethodExtractCircuitInterface extends AbstractRegisteredMethod {
 		CircuitInterface ci;
 		try {
 			File file = labman.loadFile(fileId);
-			checkFileSecurity(method, file);
+			checkFileSecurity(request, method, file);
 			ci = labman.extractCircuitInterface(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_EXTRACT_CIRCUIT_INTERFACE,

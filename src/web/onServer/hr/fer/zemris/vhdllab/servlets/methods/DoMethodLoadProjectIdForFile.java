@@ -40,7 +40,7 @@ public class DoMethodLoadProjectIdForFile extends AbstractRegisteredMethod {
 			method.setStatus(SE_CAN_NOT_FIND_FILE, "fileId=" + fileId);
 			return;
 		}
-		checkFileSecurity(method, file);
+		checkFileSecurity(request, method, file);
 		method.setResult(file.getProject().getId());
 	}
 	

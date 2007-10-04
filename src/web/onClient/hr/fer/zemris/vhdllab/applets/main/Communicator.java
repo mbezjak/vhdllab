@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.communicaton.Method;
 import hr.fer.zemris.vhdllab.communicaton.methods.CompileFileMethod;
@@ -17,6 +18,7 @@ import hr.fer.zemris.vhdllab.communicaton.methods.FindFilesByProjectMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.FindProjectsByUserMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.FindUserFilesByUserMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.GenerateVHDLMethod;
+import hr.fer.zemris.vhdllab.communicaton.methods.IsSuperuserMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.LoadFileContentMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.LoadFileNameMethod;
 import hr.fer.zemris.vhdllab.communicaton.methods.LoadFileTypeMethod;
@@ -109,6 +111,33 @@ public class Communicator {
 		return projectNames;
 	}
 
+	public List<String> getAllProjects(String userId) throws UniformAppletException {
+		FindProjectsByUserMethod method = new FindProjectsByUserMethod(userId);
+		initiate(method);
+		List<Long> projectIdentifiers = method.getResult();
+		
+		List<String> projectNames = new ArrayList<String>();
+		for (Long id : projectIdentifiers) {
+			String projectName = cache.getProjectForIdentifier(id);
+			if (projectName == null) {
+				LoadProjectNameMethod loadProjectNameMethod = new LoadProjectNameMethod(
+						id);
+				initiate(loadProjectNameMethod);
+				String name = loadProjectNameMethod.getResult();
+				cache.cacheItem(name, id);
+				projectName = cache.getProjectForIdentifier(id);
+			}
+			projectNames.add(projectName);
+		}
+		return projectNames;
+	}
+	
+	public boolean isSuperuser() throws UniformAppletException {
+		IsSuperuserMethod method = new IsSuperuserMethod(SystemContext.instance().getUserId());
+		initiate(method);
+		return method.getResult().booleanValue();
+	}
+	
 	public List<String> findFilesByProject(String projectName)
 			throws UniformAppletException {
 		if (projectName == null) {

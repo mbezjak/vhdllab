@@ -37,7 +37,7 @@ public class DoMethodGenerateVHDL extends AbstractRegisteredMethod {
 		VHDLGenerationResult result;
 		try {
 			File file = labman.loadFile(fileId);
-			checkFileSecurity(method, file);
+			checkFileSecurity(request, method, file);
 			result = labman.generateVHDL(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_GENERATE_VHDL, "fileId=" + fileId);

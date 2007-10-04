@@ -123,7 +123,7 @@ public class AjaxServlet extends HttpServlet {
 	 */
 	private boolean isSecurityValid(Method<Serializable> method,
 			HttpServletRequest request) {
-		return method.getUserId().equals(request.getRemoteUser());
+		return method.getUserId().equals(request.getRemoteUser()) || request.isUserInRole("admin");
 	}
 
 	/**

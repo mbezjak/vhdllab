@@ -42,7 +42,7 @@ public class DoMethodFindFileByName extends AbstractRegisteredMethod {
 					+ ", name=" + fileName);
 			return;
 		}
-		checkFileSecurity(method, file);
+		checkFileSecurity(request, method, file);
 		method.setResult(file.getId());
 	}
 

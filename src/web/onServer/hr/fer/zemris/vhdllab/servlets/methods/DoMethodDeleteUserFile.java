@@ -34,7 +34,7 @@ public class DoMethodDeleteUserFile extends AbstractRegisteredMethod {
 			return;
 		}
 		try {
-			checkUserFileSecurity(method, labman, fileId);
+			checkUserFileSecurity(request, method, labman, fileId);
 			labman.deleteUserFile(fileId);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_DELETE_FILE, "fileId=" + fileId);

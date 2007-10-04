@@ -34,7 +34,7 @@ public class DoMethodExistsProject extends AbstractRegisteredMethod {
 		}
 		boolean exists;
 		try {
-			checkProjectSecurity(method, labman, projectId);
+			checkProjectSecurity(request, method, labman, projectId);
 			exists = labman.existsProject(projectId);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_DETERMINE_EXISTANCE_OF_PROJECT,

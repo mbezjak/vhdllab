@@ -42,7 +42,7 @@ public class DoMethodFindFilesByProject extends AbstractRegisteredMethod {
 			method.setStatus(SE_CAN_NOT_FIND_PROJECT, "projectId=" + projectId);
 			return;
 		}
-		checkProjectSecurity(method, project);
+		checkProjectSecurity(request, method, project);
 		ArrayList<Long> files = new ArrayList<Long>(project.getFiles().size());
 		for(File f : project.getFiles()) {
 			files.add(f.getId());

@@ -35,7 +35,7 @@ public class DoMethodExistsFile2 extends AbstractRegisteredMethod {
 		}
 		boolean exists;
 		try {
-			checkProjectSecurity(method, labman, projectId);
+			checkProjectSecurity(request, method, labman, projectId);
 			exists = labman.existsFile(projectId, fileName);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE,

@@ -25,17 +25,24 @@ public abstract class AbstractMethod<T extends Serializable> implements
 	private String statusMessage;
 
 	public AbstractMethod(String method) {
+		this(method, SystemContext.instance().getUserId());
+	}
+
+	public AbstractMethod(String method, String userId) {
 		if (method == null) {
 			throw new NullPointerException("Method cant be null");
 		}
+		if (userId == null) {
+			throw new NullPointerException("User identifier cant be null");
+		}
 		this.method = method;
-		setUserId(SystemContext.instance().getUserId());
+		setUserId(userId);
 		parameters = new HashMap<String, Serializable>();
 		result = null;
 		statusCode = STATUS_NOT_SET;
 		statusMessage = null;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

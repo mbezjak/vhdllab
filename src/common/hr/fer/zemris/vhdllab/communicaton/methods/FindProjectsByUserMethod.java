@@ -19,4 +19,8 @@ public final class FindProjectsByUserMethod extends AbstractMethod<ArrayList<Lon
 		super("find.projects.by.user");
 	}
 
+	public FindProjectsByUserMethod(String userId) {
+		super("find.projects.by.user", userId);
+	}
+	
 }

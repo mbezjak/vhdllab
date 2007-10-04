@@ -34,7 +34,7 @@ public class DoMethodSaveFile extends AbstractRegisteredMethod {
 			return;
 		}
 		try {
-			checkFileSecurity(method, labman, fileId);
+			checkFileSecurity(request, method, labman, fileId);
 			labman.saveFile(fileId, content);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_SAVE_FILE, "fileId=" + fileId);

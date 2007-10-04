@@ -40,7 +40,7 @@ public class DoMethodLoadProjectName extends AbstractRegisteredMethod {
 			method.setStatus(SE_CAN_NOT_FIND_PROJECT, "projectId=" + projectId);
 			return;
 		}
-		checkProjectSecurity(method, project);
+		checkProjectSecurity(request, method, project);
 		method.setResult(project.getProjectName());
 	}
 	

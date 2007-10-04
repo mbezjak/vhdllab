@@ -13,6 +13,8 @@ import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author Miro Bezjak
  * 
@@ -23,42 +25,42 @@ public abstract class AbstractRegisteredMethod implements RegisteredMethod {
 		return (VHDLLabManager) provider.get(ManagerProvider.VHDL_LAB_MANAGER);
 	}
 
-	protected void checkUserFileSecurity(Method<Serializable> method,
+	protected void checkUserFileSecurity(HttpServletRequest request, Method<Serializable> method,
 			VHDLLabManager labman, Long fileId) throws ServiceException {
 		UserFile file = labman.loadUserFile(fileId);
-		checkUserFileSecurity(method, file);
+		checkUserFileSecurity(request, method, file);
 	}
 
-	protected void checkUserFileSecurity(Method<Serializable> method,
+	protected void checkUserFileSecurity(HttpServletRequest request, Method<Serializable> method,
 			UserFile file) {
 		String fileUser = file.getOwnerID();
-		checkUsersForSecurity(fileUser, method.getUserId());
+		checkUsersForSecurity(request, fileUser, method.getUserId());
 	}
 
-	protected void checkFileSecurity(Method<Serializable> method,
+	protected void checkFileSecurity(HttpServletRequest request, Method<Serializable> method,
 			VHDLLabManager labman, Long fileId) throws ServiceException {
 		File file = labman.loadFile(fileId);
-		checkFileSecurity(method, file);
+		checkFileSecurity(request, method, file);
 	}
 
-	protected void checkFileSecurity(Method<Serializable> method, File file) {
-		checkProjectSecurity(method, file.getProject());
+	protected void checkFileSecurity(HttpServletRequest request, Method<Serializable> method, File file) {
+		checkProjectSecurity(request, method, file.getProject());
 	}
 
-	protected void checkProjectSecurity(Method<Serializable> method,
+	protected void checkProjectSecurity(HttpServletRequest request, Method<Serializable> method,
 			VHDLLabManager labman, Long projectId) throws ServiceException {
 		Project project = labman.loadProject(projectId);
-		checkProjectSecurity(method, project);
+		checkProjectSecurity(request, method, project);
 	}
 
-	protected void checkProjectSecurity(Method<Serializable> method,
+	protected void checkProjectSecurity(HttpServletRequest request, Method<Serializable> method,
 			Project project) {
 		String projectUser = project.getOwnerId();
-		checkUsersForSecurity(projectUser, method.getUserId());
+		checkUsersForSecurity(request, projectUser, method.getUserId());
 	}
 
-	protected void checkUsersForSecurity(String resourceUser, String methodUser) {
-		if (!ModelUtil.userIdAreEqual(resourceUser, methodUser)) {
+	protected void checkUsersForSecurity(HttpServletRequest request, String resourceUser, String methodUser) {
+		if (!ModelUtil.userIdAreEqual(resourceUser, methodUser) && !request.isUserInRole("admin")) {
 			throw new SecurityException();
 		}
 	}
