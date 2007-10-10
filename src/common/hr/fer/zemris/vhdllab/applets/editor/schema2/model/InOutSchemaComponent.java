@@ -116,7 +116,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 							Caseless vecwpos = new Caseless(cmpname + "(" + i + ")");
 							if (!mappedto.equals(vecwpos)) {
 								sb.append(getName()).append("(").append(i).append(")");
-								sb.append(" <= ").append(rename(mappedto)).append('\n');
+								sb.append(" <= ").append(rename(mappedto)).append(";\n");
 								// TODO vidi portrel.port.getName()
 							}
 						}

@@ -80,19 +80,39 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			int i = 0;
 			for (PortRelation portrel : portrelations) {
 				Type tp = portrel.port.getType();
+				Direction dir = portrel.port.getDirection();
 				String signame = signames.get(i);
 				if (tp.isVector()) {
-					int vecpos = tp.getRangeFrom();
-					boolean downto = tp.hasVectorDirectionDOWNTO();
-					for (SchemaPort related : portrel.relatedTo) {
-						Caseless mappedto = related.getMapping();
-						if (!Caseless.isNullOrEmpty(mappedto)) {
-							sb.append(signame).append('(').append(vecpos).append(')');
-							sb.append(" <= ").append(rename(mappedto));
-							sb.append(";\n");
+					if (dir.isIN()) {
+						// assign signal to temporary vector
+						int vecpos = tp.getRangeFrom();
+						boolean downto = tp.hasVectorDirectionDOWNTO();
+						for (SchemaPort related : portrel.relatedTo) {
+							Caseless mappedto = related.getMapping();
+							if (!Caseless.isNullOrEmpty(mappedto)) {
+								sb.append(signame).append('(').append(vecpos).append(')');
+								sb.append(" <= ").append(rename(mappedto));
+								sb.append(";\n");
+							}
+							if (downto) vecpos--;
+							else vecpos++;
 						}
-						if (downto) vecpos--;
-						else vecpos++;
+					} else if (dir.isOUT()) {
+						// assign temporary vector to signal
+						int vecpos = tp.getRangeFrom();
+						boolean downto = tp.hasVectorDirectionDOWNTO();
+						for (SchemaPort related : portrel.relatedTo) {
+							Caseless mappedto = related.getMapping();
+							if (!Caseless.isNullOrEmpty(mappedto)) {
+								sb.append(rename(mappedto)).append(" <= ");
+								sb.append(signame).append('(').append(vecpos).append(')');
+								sb.append(";\n");
+							}
+							if (downto) vecpos--;
+							else vecpos++;
+						}
+					} else {
+						throw new NotImplementedException("Only IN and OUT implemented.");
 					}
 				}
 				i++;
@@ -133,8 +153,8 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 					} else {
 						sb.append(signames.get(i));
 					}
+					i++; // ovo mora bit u ovom redu, majke t', a ne red nize!!!
 				}
-				i++;
 				
 				sb.append(')');
 			}
