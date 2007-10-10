@@ -228,14 +228,15 @@ public class WirePreLocator {
 
 	private Caseless createName(int x1, int y1, int x2, int y2) {
 		StringBuilder build = new StringBuilder("WIRE_");
-		build.append(x1).append("_").append(y1).append("_")
-			.append(x2).append("_").append(y2);
+		build.append(normalize(x1)).append("_").append(normalize(y1)).append("_")
+			.append(normalize(x2)).append("_").append(normalize(y2));
 		return new Caseless(build.toString());
 	}
 
-	
-	
-	
+	private String normalize(int x) {
+		return x<0?"M"+String.valueOf(Math.abs(x)):String.valueOf(x);
+	}
+
 	public void draw(Graphics2D g) {
 		if(orientation == VERT_FIRST){
 			g.drawLine(x1, y1, x1, y2);
