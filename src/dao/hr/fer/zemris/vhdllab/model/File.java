@@ -42,7 +42,7 @@ public class File implements Comparable<File> {
 	 * @hibernate.property
 	 * 	column="CONTENT"
 	 *  type = "text"
-	 *  length="65535"
+	 *  length="16000000"
 	 */
 	public String getContent() {
 		return content;

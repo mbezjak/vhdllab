@@ -25,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -583,7 +585,8 @@ public final class HttpClientInitiator implements Initiator {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(BYTE_ARRAY_SIZE);
 		ObjectOutputStream oos = null;
 		try {
-			oos = new ObjectOutputStream(bos);
+			GZIPOutputStream gzip = new GZIPOutputStream(bos);
+			oos = new ObjectOutputStream(gzip);
 			oos.writeObject(method);
 		} catch (IOException e) {
 			SystemLog.instance().addErrorMessage(e);
@@ -617,7 +620,11 @@ public final class HttpClientInitiator implements Initiator {
 		ObjectInputStream ois = null;
 		try {
 			InputStream is = method.getResponseBodyAsStream();
-			ois = new ObjectInputStream(is);
+//			String s = FileUtil.readFile(is);
+//			System.out.println(s);
+//			System.out.println(s.getBytes().length);
+			GZIPInputStream gzip = new GZIPInputStream(is);
+			ois = new ObjectInputStream(gzip);
 			return (Method<T>) ois.readObject();
 		} catch (IOException e) {
 			SystemLog.instance().addErrorMessage(e);

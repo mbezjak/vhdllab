@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -135,7 +137,8 @@ public class AjaxServlet extends HttpServlet {
 	private Method<Serializable> deserializeObject(HttpServletRequest request)
 			throws IOException {
 		InputStream is = request.getInputStream();
-		ObjectInputStream ois = new ObjectInputStream(is);
+		GZIPInputStream gzip = new GZIPInputStream(is);
+		ObjectInputStream ois = new ObjectInputStream(gzip);
 		try {
 			return (Method<Serializable>) ois.readObject();
 		} catch (ClassNotFoundException e) {
@@ -168,10 +171,10 @@ public class AjaxServlet extends HttpServlet {
 			throws IOException {
 		response.setContentType("application/octet-stream");
 		response.setHeader("Cache-Control", "no-cache");
-		ObjectOutputStream oos = new ObjectOutputStream(response
-				.getOutputStream());
+		GZIPOutputStream gzip = new GZIPOutputStream(response.getOutputStream());
+		ObjectOutputStream oos = new ObjectOutputStream(gzip);
 		oos.writeObject(method);
-		oos.flush();
+		oos.close(); // must be close (just flushing isn't enough)
 	}
 
 }
