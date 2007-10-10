@@ -558,8 +558,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 							CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
 					decrementer.reset();
 				}else{
-					Caseless c = port.getMapping();
-					point = new CriticalPoint(wires.fetchWire(port.getMapping()), alignToGrid(x), alignToGrid(y));
+//					Caseless c = port.getMapping();//TODO pitaj aleksa za ovaj getMapping!!
+//					point = new CriticalPoint(wires.fetchWire(port.getMapping()), alignToGrid(x), alignToGrid(y));
+					point = null;
 				}
 			}else{
 				point = null;
