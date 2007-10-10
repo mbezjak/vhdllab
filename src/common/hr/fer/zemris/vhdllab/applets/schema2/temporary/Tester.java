@@ -1,13 +1,10 @@
 //package hr.fer.zemris.vhdllab.applets.schema2.temporary;
 //
-//import hr.fer.zemris.vhdllab.applets.editor.schema2.dummies.DummySystemContainer;
+//import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQueryResult;
-//import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
-//import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+//import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
-//import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.AddWireCommand;
-//import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.InstantiateComponentCommand;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.InspectWalkability;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.SmartConnect;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.misc.WalkabilityMap;
@@ -16,6 +13,7 @@
 //import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 //import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 //import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+//import hr.fer.zemris.vhdllab.applets.schema2.dummies.DummySystemContainer;
 //import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 //import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
 //import hr.fer.zemris.vhdllab.model.File;
@@ -25,6 +23,8 @@
 //
 //import java.awt.BorderLayout;
 //import java.awt.Dimension;
+//import java.beans.PropertyChangeEvent;
+//import java.beans.PropertyChangeListener;
 //import java.io.IOException;
 //import java.io.StringReader;
 //import java.io.StringWriter;
@@ -142,12 +142,12 @@
 //		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		frame.pack();
 //		
-//		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 100, 300, 350, 300);
-//		mpanel.getController().send(addwire);
-//		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(
-//				new Caseless("VL_OR"), 0, 0);
-//		mpanel.getController().send(instantiate);
-//		ISchemaComponent cmp = mpanel.getController().getSchemaInfo().getComponents().fetchComponent(70, 50, 10);
+////		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 100, 300, 350, 300);
+////		mpanel.getController().send(addwire);
+////		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(
+////				new Caseless("VL_OR"), 0, 0);
+////		mpanel.getController().send(instantiate);
+////		ISchemaComponent cmp = mpanel.getController().getSchemaInfo().getComponents().fetchComponent(70, 50, 10);
 ////		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
 ////		mpanel.getController().send(expand);
 ////		expand = new ExpandWireCommand(new Caseless("zica1"), 150, 100, 300, 100);
@@ -159,15 +159,20 @@
 ////				new WireSegment(150, 50, 150, 100));
 ////		mpanel.getController().send(delndiv);
 //		
-//		SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
-//		System.out.println(si2vhdl.generateVHDL(mpanel.getController().getSchemaInfo()));
-//		
 //		InspectWalkability inspect = new InspectWalkability(false);
 //		IQueryResult result = mpanel.getController().send(inspect);
 //		
 //		SmartConnect connect = new SmartConnect(new XYLocation(10, 10), new XYLocation(250, 150),
 //				(WalkabilityMap)(result.get(InspectWalkability.KEY_WALKABILITY)));
 //		result = mpanel.getController().send(connect);
+//		
+//		final ISchemaInfo nfo = mpanel.getController().getSchemaInfo();
+//		mpanel.getController().addListener(EPropertyChange.ANY_CHANGE, new PropertyChangeListener() {
+//			public void propertyChange(PropertyChangeEvent evt) {
+//				SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
+//				System.out.println(si2vhdl.generateVHDL(nfo).getVhdl());
+//			}
+//		});
 //		
 //		SchemaCircuitInterfaceExtractor sciextract = new SchemaCircuitInterfaceExtractor();
 //		try {

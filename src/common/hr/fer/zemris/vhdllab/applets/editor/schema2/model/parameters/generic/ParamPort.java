@@ -94,6 +94,12 @@ public class ParamPort implements IGenericValue {
 		
 		return pw;
 	}
+	@Override
+	public String toString() {
+		return port.toString();
+	}
+	
+	
 	
 }
 

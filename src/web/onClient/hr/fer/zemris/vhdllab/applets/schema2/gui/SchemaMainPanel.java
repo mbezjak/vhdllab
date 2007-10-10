@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaCore;
