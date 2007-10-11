@@ -228,7 +228,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 	
 	@Override
 	public void redo() {
-		super.undo();
+		super.redo();
 		if (undo.canRedo()) {
 			try {
 				undo.redo();
