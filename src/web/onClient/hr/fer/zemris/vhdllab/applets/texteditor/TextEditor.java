@@ -211,6 +211,36 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 		text.setText(content.getContent());
 	}
 
+	@Override
+	public void undo() {
+		super.undo();
+		if (undo.canUndo()) {
+			try {
+				undo.undo();
+			} catch (CannotUndoException ex) {
+				System.out.println("Unable to undo: " + ex);
+				ex.printStackTrace();
+			}
+			undoAction.updateUndoState();
+			redoAction.updateRedoState();
+		}
+	}
+	
+	@Override
+	public void redo() {
+		super.undo();
+		if (undo.canRedo()) {
+			try {
+				undo.redo();
+			} catch (CannotUndoException ex) {
+				System.out.println("Unable to redo: " + ex);
+				ex.printStackTrace();
+			}
+			undoAction.updateUndoState();
+			redoAction.updateRedoState();
+		}
+	}
+
 	public FileContent getInitialFileContent(Component parent,
 			String projectName) {
 		String[] options = new String[] { "OK", "Cancel" };
@@ -229,8 +259,9 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			try {
 				if (container.getResourceManager().existsFile(projectName,
 						ci.getEntityName())) {
-					SystemLog.instance().addSystemMessage(ci.getEntityName()
-							+ " already exists!", MessageType.INFORMATION);
+					SystemLog.instance().addSystemMessage(
+							ci.getEntityName() + " already exists!",
+							MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {
 				e.printStackTrace();
@@ -288,7 +319,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			line--;
 		}
 		int last = content.indexOf('\n', pos) + 1;
-		if(last == 0) {
+		if (last == 0) {
 			last = content.length();
 		}
 		try {

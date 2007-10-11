@@ -14,6 +14,8 @@ public interface IEditor {
 	EditorListener[] getEditorListeners();
 	public boolean setModified(boolean flag);
 	boolean isModified();
+	void undo();
+	void redo();
 	
 	/**
 	 * Sets a FileContent that mostly represents internal format that is used in Editor.

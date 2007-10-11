@@ -129,6 +129,22 @@ public abstract class AbstractEditor extends JPanel implements IEditor {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#undo()
+	 */
+	@Override
+	public void undo() {
+	}
+	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#redo()
+	 */
+	@Override
+	public void redo() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#setSavable(boolean)
 	 */
 	@Override

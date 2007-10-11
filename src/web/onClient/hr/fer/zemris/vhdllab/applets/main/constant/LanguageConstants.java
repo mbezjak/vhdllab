@@ -63,6 +63,8 @@ public class LanguageConstants {
 	public static final String MENU_FILE_CLOSE_OTHER = "menu.file.close.other";
 	public static final String MENU_FILE_CLOSE_ALL = "menu.file.close.all";
 	public static final String MENU_FILE_EXIT = "menu.file.exit";
+	public static final String MENU_EDIT_UNDO = "menu.edit.undo";
+	public static final String MENU_EDIT_REDO = "menu.edit.redo";
 	public static final String MENU_VIEW_MAXIMIZE_ACTIVE_WINDOW = "menu.view.maximize.active.window";
 	public static final String MENU_VIEW_SHOW_VIEW = "menu.view.show.view";
 	public static final String MENU_VIEW_SHOW_VIEW_COMPILATION_ERRORS = "menu.view.show.view.compilation.errors";

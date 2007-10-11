@@ -1200,7 +1200,45 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
 			menuBar.add(menu);
+			
+			// Undo menu
+			key = LanguageConstants.MENU_EDIT_UNDO;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						IEditor editor = editorManager.getSelectedEditor();
+						if (editor == null) {
+							return;
+						}
+						editor.undo();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
+				}
+			});
+			menu.add(menuItem);
 
+			// Undo menu
+			key = LanguageConstants.MENU_EDIT_REDO;
+			menuItem = new JMenuItem(bundle.getString(key));
+			setCommonMenuAttributes(menuItem, key);
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						IEditor editor = editorManager.getSelectedEditor();
+						if (editor == null) {
+							return;
+						}
+						editor.redo();
+					} catch (RuntimeException ex) {
+						SystemLog.instance().addErrorMessage(ex);
+					}
+				}
+			});
+			menu.add(menuItem);
+			
 			// View menu
 			key = LanguageConstants.MENU_VIEW;
 			menu = new JMenu(bundle.getString(key));
