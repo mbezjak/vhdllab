@@ -48,6 +48,10 @@ public class ComponentPrototyper implements ISchemaPrototypeCollection {
 	public Map<Caseless, ISchemaComponent> getPrototypes() {
 		return prototypes;
 	}
+	
+	public boolean containsPrototype(Caseless prototypename) {
+		return prototypes.containsKey(prototypename);
+	}
 
 	public void clearPrototypes() {
 		prototypes.clear();
@@ -60,6 +64,15 @@ public class ComponentPrototyper implements ISchemaPrototypeCollection {
 			if (iter.next().getValue().getComponentType().equals(cmptype)) iter.remove();
 		}
 	}
+
+	public boolean removePrototype(Caseless prototypename) {
+		if (!prototypes.containsKey(prototypename)) return false;
+		
+		prototypes.remove(prototypename);
+		
+		return true;
+	}
+	
 	
 	
 

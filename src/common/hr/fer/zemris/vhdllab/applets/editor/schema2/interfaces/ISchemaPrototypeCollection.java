@@ -73,10 +73,23 @@ public interface ISchemaPrototypeCollection {
 	void clearPrototypes();
 	
 	/**
+	 * Vraca true ako postoji prototip tog imena.
+	 * @param prototypename
+	 * @return
+	 */
+	boolean containsPrototype(Caseless prototypename);
+	
+	/**
 	 * Brise samo prototipove navedenog tipa.
 	 * @param cmptype
 	 */
 	void clearPrototypes(EComponentType cmptype);
+	
+	/**
+	 * Brise prototip navedenog imena ako takav postoji.
+	 * @param prototypename
+	 */
+	boolean removePrototype(Caseless prototypename);
 	
 }
 

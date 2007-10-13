@@ -3,13 +3,18 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaCore;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.LocalController;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaCore;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.AddUpdatePredefinedPrototype;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.InvalidateObsoleteUserComponents;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.RebuildPrototypeCollection;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.RemovePrototype;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
@@ -39,6 +44,7 @@ import java.io.StringWriter;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -329,6 +335,66 @@ public class SchemaMainPanel extends AbstractEditor {
 		}
 		return dw;
 	}
+	
+	public boolean isProtoInEditor(Caseless cmpname) {
+		boolean isused = false;
+
+		ISchemaInfo nfo = controller.getSchemaInfo();
+		for (Entry<Caseless, ISchemaComponent> ntry : nfo.getPrototypes().entrySet()) {
+			if (ntry.getKey().equals(cmpname)) {
+				isused = true;
+				break;
+			}
+		}
+		
+		return isused;
+	}
+	
+	public boolean isPlacedInEditor(String fileName) {
+		boolean isplaced = false;
+		
+		for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
+			CircuitInterface plcci = plc.comp.getCircuitInterface();
+			if (plcci.getEntityName().equalsIgnoreCase(fileName)) {
+				isplaced = true;
+				break;
+			}
+		}
+		
+		return isplaced;
+	}
+	
+	private boolean hasCircuitInterfaceChanged(String fileName, CircuitInterface ci) {
+		for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
+			CircuitInterface plcci = plc.comp.getCircuitInterface();
+			if (plcci.getEntityName().equalsIgnoreCase(fileName)) {
+				if (!ci.equals(plcci)) return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean shouldBeAdded(String projectname, String filename) {
+		Hierarchy hierarchy;
+		try {
+			hierarchy = resourceManager.extractHierarchy(projectname);
+		} catch (UniformAppletException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		String thisname = getFileName();
+		System.out.println("This = " + thisname + "; other = " + filename);
+		if (thisname.equals(filename) || hierarchy.getDescendantsForParent(filename).contains(thisname)) {
+			System.out.println("Other should NOT be added to this.");
+			return false;
+		}
+		else {
+			System.out.println("Other should be added to this.");
+			return true;
+		}
+	}
 
 	@Override
 	public void init() {
@@ -353,52 +419,137 @@ public class SchemaMainPanel extends AbstractEditor {
 		appletListener = new VetoableResourceAdapter() {
 			@Override
 			public void resourceSaved(String projectName, String fileName) {
+//				if (fileName.equals(SchemaMainPanel.this.content.getFileName())) return;
+//				
+//				boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
+//				
+//				List<CircuitInterface> usercis = getUserPrototypeList();
+//				controller.send(new RebuildPrototypeCollection(null, usercis));
+//				controller.send(new InvalidateObsoleteUserComponents(usercis));
+//				
+//				SchemaMainPanel.this.setModified(oldmodifiedstatus);
+				
+				// don't do anything if this editor was saved
 				if (fileName.equals(SchemaMainPanel.this.content.getFileName())) return;
 				
+				// don't add a non circuit
+				if (!resourceManager.isCircuit(projectName, fileName)) return;
+				
+				// shouldn't be added to prototypes
+				if (!shouldBeAdded(projectName, fileName)) {
+					// then remove it, if it's used in schema
+					Caseless cfn = new Caseless(fileName);
+					if (isProtoInEditor(cfn)) {
+						boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
+						controller.send(new RemovePrototype(cfn));
+						if (isPlacedInEditor(fileName)) {
+							controller.send(new InvalidateObsoleteUserComponents(
+								controller.getSchemaInfo().getPrototyper()));
+						} else {
+							// only prototype changes were made
+							SchemaMainPanel.this.setModified(oldmodifiedstatus);
+						}
+					}
+					return;
+				}
+				
+				// must be added to prototype collection
+				CircuitInterface ci;
+				try {
+					ci = resourceManager.getCircuitInterfaceFor(projectName, fileName);
+				} catch (UniformAppletException e) {
+					e.printStackTrace();
+					return;
+				}
+				
 				boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
-				
-				List<CircuitInterface> usercis = getUserPrototypeList();
-				controller.send(new RebuildPrototypeCollection(null, usercis));
-				controller.send(new InvalidateObsoleteUserComponents(usercis));
-				
-				SchemaMainPanel.this.setModified(oldmodifiedstatus);
+				boolean isplaced = isPlacedInEditor(fileName);
+				controller.send(new AddUpdatePredefinedPrototype(ci));
+				if (isplaced) {
+					// now check if circuit interface has changed
+					if (hasCircuitInterfaceChanged(fileName, ci)) {
+						// only perform invalidation if circuit interface has changed
+						controller.send(new InvalidateObsoleteUserComponents(
+								controller.getSchemaInfo().getPrototyper()));
+					} else {
+						// changes were made only to the prototype collection
+						SchemaMainPanel.this.setModified(oldmodifiedstatus);
+					}
+				} else {
+					// changes were made only to the prototype collection
+					SchemaMainPanel.this.setModified(oldmodifiedstatus);
+				}
 			}
 
 			@Override
 			public void resourceCreated(String projectName, String fileName, String type) {
+				// don't add a non-circuit
+				if (!resourceManager.isCircuit(projectName, fileName)) return;
+				
+				// check hierarchy to see if this should be added
+				if (!shouldBeAdded(projectName, fileName)) return;
+				
+				// we must add - fetch circuit interface
+				CircuitInterface ci;
+				try {
+					ci = resourceManager.getCircuitInterfaceFor(projectName, fileName);
+				} catch (UniformAppletException e) {
+					e.printStackTrace();
+					return;
+				}
+				
 				boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
-				
-				List<CircuitInterface> usercis = getUserPrototypeList();
-				controller.send(new RebuildPrototypeCollection(null, usercis));
-				controller.send(new InvalidateObsoleteUserComponents(usercis));
-				
+				controller.send(new AddUpdatePredefinedPrototype(ci));
 				SchemaMainPanel.this.setModified(oldmodifiedstatus);
 			}
 
 			@Override
 			public void resourceDeleted(String projectName, String fileName) {
-				/* check if the deleted resource was used in schema */
-				boolean isused = false;
-
-				for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
-					CircuitInterface plcci = plc.comp.getCircuitInterface();
-					if (plcci.getEntityName().equalsIgnoreCase(fileName)) {
-						isused = true;
-						break;
-					}
-				}
+				// don't bother with non-circuits
+				if (!resourceManager.isCircuit(projectName, fileName)) return;
 				
-				/* perform changes */
-				if (isused) {
-					boolean oldmodifiedstatus = isModified();
-					
-					List<CircuitInterface> usercis = getUserPrototypeList();
-					controller.send(new RebuildPrototypeCollection(null, usercis));
-					controller.send(new InvalidateObsoleteUserComponents(usercis));
-					
+				// check if it was used in editor at all
+				Caseless cfn = new Caseless(fileName);
+				if (!isProtoInEditor(cfn)) return;
+				
+				// it was used in editor, thus, it must be removed
+				boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
+				controller.send(new RemovePrototype(cfn));
+				if (isPlacedInEditor(fileName)) {
+					controller.send(new InvalidateObsoleteUserComponents(
+							controller.getSchemaInfo().getPrototyper()));
+				} else {
+					// only changes to prototypes were made
 					SchemaMainPanel.this.setModified(oldmodifiedstatus);
 				}
 			}
+
+//			@Override
+//			public void resourceDeleted(String projectName, String fileName) {
+//				/* check if the deleted resource was used in schema */
+//				boolean isused = false;
+//
+//				for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
+//					CircuitInterface plcci = plc.comp.getCircuitInterface();
+//					if (plcci.getEntityName().equalsIgnoreCase(fileName)) {
+//						isused = true;
+//						break;
+//					}
+//				}
+//				
+//				/* perform changes */
+//				if (isused) {
+//					boolean oldmodifiedstatus = isModified();
+//					
+//					List<CircuitInterface> usercis = getUserPrototypeList();
+//					controller.send(new RebuildPrototypeCollection(null, usercis));
+//					controller.send(new InvalidateObsoleteUserComponents(usercis));
+//					
+//					SchemaMainPanel.this.setModified(oldmodifiedstatus);
+//				}
+//			}
+			
+			
 			
 		};
 		resourceManager.addVetoableResourceListener(appletListener);

@@ -120,8 +120,9 @@ public final class SchemaPort {
 	 * Vraca zicu na koju je spojen port.
 	 * 
 	 * @return
-	 * Null ako nije spojen ni na sto,
+	 * Null ili prazan string ako nije spojen ni na sto,
 	 * ime signala inace.
+	 * @see Caseless.isNullOrEmpty()
 	 */
 	public final Caseless getMapping() {
 		return mappedto;

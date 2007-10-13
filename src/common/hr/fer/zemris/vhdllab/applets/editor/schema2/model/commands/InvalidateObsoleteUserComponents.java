@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaPrototypeCollection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
@@ -21,6 +22,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 
 /**
@@ -43,6 +45,22 @@ public class InvalidateObsoleteUserComponents implements ICommand {
 
 	/* ctors */
 	
+	
+	/**
+	 * Obavlja invalidaciju smatrajuci vazecima iskljucivo
+	 * sucelja navedena u prototipu.
+	 */
+	public InvalidateObsoleteUserComponents(ISchemaPrototypeCollection prototyper) {
+		circuits = new HashSet<CircuitInterface>();
+		for (Entry<Caseless, ISchemaComponent> ntry : prototyper.getPrototypes().entrySet()) {
+			circuits.add(ntry.getValue().getCircuitInterface());
+		}
+	}
+	
+	/**
+	 * Obavlja invalidaciju smatrajuci vazecima iskljucivo
+	 * sucelja navedena u ovoj listi.
+	 */
 	public InvalidateObsoleteUserComponents(List<CircuitInterface> userCircuits) {
 		circuits = new HashSet<CircuitInterface>();
 		for (CircuitInterface ci : userCircuits) {
