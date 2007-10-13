@@ -316,7 +316,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 		}
 		if (!contains(identifier)) {
 			throw new IllegalArgumentException("Component " + identifier
-					+ " not stored");
+					+ " is not stored");
 		}
 		JComponent component = getComponent(identifier);
 		return componentContainer.getComponentTitle(component);
@@ -335,7 +335,7 @@ public class DefaultComponentStorage implements IComponentStorage {
 		}
 		if (!contains(identifier)) {
 			throw new IllegalArgumentException("Component " + identifier
-					+ " not stored");
+					+ " is not stored");
 		}
 		JComponent component = getComponent(identifier);
 		componentContainer.setComponentToolTipText(component, tooltip);

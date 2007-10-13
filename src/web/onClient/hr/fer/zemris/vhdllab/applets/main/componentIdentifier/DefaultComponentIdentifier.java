@@ -160,7 +160,7 @@ public class DefaultComponentIdentifier<T> implements IComponentIdentifier<T> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(100);
+		StringBuilder sb = new StringBuilder(30);
 		sb.append(group.toString()).append("$").append(type).append("#");
 		if (isSingletonInstance()) {
 			sb.append(modifier.toString());

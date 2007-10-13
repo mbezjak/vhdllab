@@ -167,7 +167,16 @@ public class DefaultEditorManager implements IEditorManager {
 			echoStatusText(text, MessageType.ERROR);
 			return null;
 		}
-		FileContent content = new FileContent(projectName, fileName, data.getVhdl());
+		if (!data.isSuccessful()) {
+			String text = bundle
+					.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
+			text = PlaceholderUtil.replacePlaceholders(text,
+					new String[] { fileName });
+			echoStatusText(text, MessageType.ERROR);
+			return null;
+		}
+		FileContent content = new FileContent(projectName, fileName, data
+				.getVhdl());
 		return openEditor(identifier, content);
 	}
 
@@ -252,9 +261,9 @@ public class DefaultEditorManager implements IEditorManager {
 		editor.setFileContent(content);
 		editor.setModified(false);
 		// End of initialization
-		
+
 		editor.addEditorListener(new EditorModifiedListener());
-		
+
 		String tooltipSpecial;
 		if (readOnly) {
 			tooltipSpecial = bundle

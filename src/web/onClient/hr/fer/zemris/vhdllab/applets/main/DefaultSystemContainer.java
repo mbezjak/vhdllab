@@ -909,7 +909,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 		@Override
 		public void resourceSimulated(String projectName, String fileName,
 				SimulationResult result) {
-			if (result.getWaveform() != null) {
+			if (result.getWaveform() != null && !result.getWaveform().equals("")) {
 				FileIdentifier file = new FileIdentifier(projectName, fileName);
 				IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
 						.createSimulationEditorIdentifier(file);

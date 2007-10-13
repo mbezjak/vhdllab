@@ -165,10 +165,13 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						@Override
 						public void run() {
 							try {
-								System.getProperty("org.apache.commons.logging.LogFactory.HashtableImpl");
+								System
+										.getProperty("org.apache.commons.logging.LogFactory.HashtableImpl");
 							} catch (AccessControlException e) {
-								JOptionPane.showMessageDialog(MainFrame.this,
-										"VHDLLab doesn't have permission to lookup cirtain property. Please install .java.policy correctly.");
+								JOptionPane
+										.showMessageDialog(
+												MainFrame.this,
+												"VHDLLab doesn't have permission to lookup cirtain property. Please install .java.policy correctly.");
 								exit(EXIT_STATUS_ERROR);
 							}
 
@@ -486,9 +489,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					JOptionPane
-							.showMessageDialog(MainFrame.this,
-									"vhdllab is exiting due to exceptional condition");
+					JOptionPane.showMessageDialog(MainFrame.this,
+							"vhdllab is exiting due to exceptional condition");
 					exit(EXIT_STATUS_ERROR);
 				} catch (InvocationTargetException e) {
 					// TODO Auto-generated catch block
@@ -976,21 +978,27 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			key = LanguageConstants.MENU_FILE;
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
-			
+
 			// FIXME open projects from user;; sfusano!
 			menuItem = new JMenuItem("Open");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						String userId = JOptionPane.showInputDialog(MainFrame.this, "Enter userId to view its projects");
-						if(userId == null || userId.equals("")) {
+						String userId = JOptionPane.showInputDialog(
+								MainFrame.this,
+								"Enter userId to view its projects");
+						if (userId == null || userId.equals("")) {
 							return;
 						}
-						List<String> projects = communicator.getAllProjects(userId);
-						IComponentIdentifier<?> ci = ComponentIdentifierFactory.createProjectExplorerIdentifier();
-						IView view = systemContainer.getViewManager().getOpenedView(ci);
-						IProjectExplorer pe = view.asInterface(IProjectExplorer.class);
-						for(String projectName : projects) {
+						List<String> projects = communicator
+								.getAllProjects(userId);
+						IComponentIdentifier<?> ci = ComponentIdentifierFactory
+								.createProjectExplorerIdentifier();
+						IView view = systemContainer.getViewManager()
+								.getOpenedView(ci);
+						IProjectExplorer pe = view
+								.asInterface(IProjectExplorer.class);
+						for (String projectName : projects) {
 							pe.addProject(projectName);
 						}
 					} catch (UniformAppletException ex) {
@@ -1007,7 +1015,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				SystemLog.instance().addErrorMessage(ex);
 				superuser = false;
 			}
-			if(superuser) {
+			if (superuser) {
 				menu.add(menuItem);
 			}
 
@@ -1200,7 +1208,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menu = new JMenu(bundle.getString(key));
 			setCommonMenuAttributes(menu, key);
 			menuBar.add(menu);
-			
+
 			// Undo menu
 			key = LanguageConstants.MENU_EDIT_UNDO;
 			menuItem = new JMenuItem(bundle.getString(key));
@@ -1238,7 +1246,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				}
 			});
 			menu.add(menuItem);
-			
+
 			// View menu
 			key = LanguageConstants.MENU_VIEW;
 			menu = new JMenu(bundle.getString(key));
@@ -1487,8 +1495,11 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						systemContainer.getEditorManager().viewVHDLCode(
-								editorManager.getSelectedEditor());
+						IEditor editor = editorManager.getSelectedEditor();
+						if (editor == null) {
+							return;
+						}
+						systemContainer.getEditorManager().viewVHDLCode(editor);
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
