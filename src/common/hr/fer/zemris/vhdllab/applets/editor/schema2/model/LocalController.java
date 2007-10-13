@@ -31,11 +31,14 @@ import java.util.Map;
  */
 public class LocalController implements ISchemaController {
 	
+	/* static fields */
+	private static final int COMMAND_STACK_SIZE = 30;
+	
 	/* private fields */
 	private PropertyChangeSupport support;
 	private ISchemaCore core;
-	private List<ICommand> undolist;
-	private List<ICommand> redolist;
+	private LinkedList<ICommand> undolist;
+	private LinkedList<ICommand> redolist;
 	private Map<IQuery, IQueryResult> querycache;
 	private Map<EPropertyChange, List<IQuery>> queryindex;
 	
@@ -102,6 +105,7 @@ public class LocalController implements ISchemaController {
 			redolist.clear();
 			if (command.isUndoable()) {
 				undolist.add(command);
+				if (undolist.size() > COMMAND_STACK_SIZE) undolist.removeFirst();
 			} else {
 				undolist.clear();
 			}
@@ -185,8 +189,8 @@ public class LocalController implements ISchemaController {
 	public ICommandResponse redo() throws CommandExecutorException {
 		if (redolist.isEmpty())
 			throw new CommandExecutorException("Empty redo command stack.");
-		ICommand comm = redolist.get(redolist.size() - 1);
-		redolist.remove(redolist.size() - 1);
+		ICommand comm = redolist.getLast();
+		redolist.removeLast();
 
 		ICommandResponse response = core.executeCommand(comm);
 		if (!response.isSuccessful()) {
@@ -204,8 +208,8 @@ public class LocalController implements ISchemaController {
 	public ICommandResponse undo() throws CommandExecutorException {
 		if (undolist.isEmpty())
 			throw new CommandExecutorException("Empty undo command stack.");
-		ICommand comm = undolist.get(undolist.size() - 1);
-		undolist.remove(undolist.size() - 1);
+		ICommand comm = undolist.getLast();
+		undolist.removeLast();
 
 		ICommandResponse response = core.executeCommand(comm);
 		if (!response.isSuccessful()) {

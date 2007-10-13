@@ -10,12 +10,14 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaEntity;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.CaselessParameter;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.TextParameter;
 import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultCircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.DefaultPort;
 import hr.fer.zemris.vhdllab.vhdl.model.Port;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ import java.util.Set;
 public class SchemaEntity implements ISchemaEntity {
 	
 	/* static fields */
-	
+	private static final String KEY_DESCRIPTION = "Description";	
 	
 	/* private fields */
 	private IParameterCollection parameters;
@@ -40,6 +42,7 @@ public class SchemaEntity implements ISchemaEntity {
 	 */
 	public SchemaEntity() {
 		parameters = new SchemaParameterCollection();
+		initDefaultParameters(new Caseless("schema"));
 	}
 	
 	
@@ -51,12 +54,15 @@ public class SchemaEntity implements ISchemaEntity {
 	 */
 	public SchemaEntity(Caseless circIntName) {
 		parameters = new SchemaParameterCollection();
-		initDefaultParameters();
+		initDefaultParameters(circIntName);
 	}
 	
-	private void initDefaultParameters() {
-		IParameter param = new CaselessParameter(KEY_NAME, false, new Caseless("schema01"));
-		parameters.addParameter(param);
+	private void initDefaultParameters(Caseless initialName) {
+		parameters.clear();
+		IParameter nameparam = new CaselessParameter(KEY_NAME, false, initialName);
+		parameters.addParameter(nameparam);
+		IParameter txtparam = new TextParameter(KEY_DESCRIPTION, false, "");
+		parameters.addParameter(txtparam);
 	}
 	
 	
@@ -108,8 +114,8 @@ public class SchemaEntity implements ISchemaEntity {
 	}
 
 	public void reset() {
-		parameters.clear();
-		initDefaultParameters();
+		Caseless name = getName();
+		initDefaultParameters(name);
 	}
 	
 	

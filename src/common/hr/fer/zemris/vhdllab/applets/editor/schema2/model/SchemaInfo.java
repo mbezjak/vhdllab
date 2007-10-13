@@ -14,9 +14,12 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaWireCollec
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Rect2d;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.ParameterFactory;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.EntityWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.PortFactory;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.ShortcutTable;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.WireWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
@@ -34,14 +37,16 @@ public class SchemaInfo implements ISchemaInfo {
 	private ISchemaComponentCollection components;
 	private ISchemaEntity entity;
 	private ISchemaPrototypeCollection prototypes;
+	private ShortcutTable shortcuts;
 	
 	
 
 	public SchemaInfo() {
 		wires = new SimpleSchemaWireCollection();
 		components = new SimpleSchemaComponentCollection();
-		entity = new SchemaEntity(new Caseless(""));
+		entity = new SchemaEntity(new Caseless("schema"));
 		prototypes = new ComponentPrototyper();
+		shortcuts = new ShortcutTable();
 	}
 	
 	
@@ -78,6 +83,11 @@ public class SchemaInfo implements ISchemaInfo {
 		return prototypes;
 	}
 	
+	public void setShortcutTable(ShortcutTable table) {
+		if (table == null) throw new NullPointerException("Shortcut table cannot be null.");
+		shortcuts = table;
+	}
+	
 	public void addWire(ISchemaWire wire) {
 		try {
 			wires.addWire(wire);
@@ -85,6 +95,87 @@ public class SchemaInfo implements ISchemaInfo {
 			throw new IllegalStateException();
 		} catch (OverlapException e) {
 			throw new IllegalStateException();
+		}
+	}
+	
+	/**
+	 * Assumes a shortcut table has been set.
+	 * Creates a wire, but replaces the drawer name
+	 * from shortcut map before.
+	 * Replaces the parameter and event name shortcuts with
+	 * full names.
+	 * @param wrapper
+	 */
+	public void addWireWrapper(WireWrapper wrapper) {
+		// replace drawer name shortcut
+		wrapper.drawername = shortcuts.get(wrapper.drawername);
+		
+		// replace parameter name shortcuts
+		for (ParameterWrapper pw : wrapper.params) {
+			pw.setParamClassName(shortcuts.get(pw.getParamClassName()));
+			String eventname = pw.getEventName();
+			if (eventname != null && !eventname.equals("")) {
+				pw.setEventName(shortcuts.get(eventname));
+			}
+		}
+		
+		// create and add a wire
+		SchemaWire wire = new SchemaWire();
+		wire.setDrawer(wrapper.drawername);
+		for (ParameterWrapper pw : wrapper.params) {
+			wire.addParameter(pw);
+		}
+		for (WireSegment ws : wrapper.segs) {
+			wire.insertSegment(ws);
+		}
+		
+		try {
+			wires.addWire(wire);
+		} catch (DuplicateKeyException e) {
+			throw new IllegalStateException();
+		} catch (OverlapException e) {
+			throw new IllegalStateException();
+		}
+	}
+	
+	/**
+	 * Replaces the drawer shortcut with the value
+	 * from the shortcut map, and then adds a component.
+	 * Replaces the parameter, value and event name shortcuts with
+	 * full names.
+	 * Also replaces the class name.
+	 * Assumes a shortcut table has been set.
+	 */
+	public void replaceDrawerAndAddComponent(ComponentWrapper compwrap) {
+		// replace component class name
+		compwrap.setComponentClassName(shortcuts.get(compwrap.getComponentClassName()));
+		
+		// replace drawer name shortcut
+		compwrap.setDrawerName(shortcuts.get(compwrap.getDrawerName()));
+		
+		// replace parameter name shortcuts
+		for (ParameterWrapper pw : compwrap.getParamWrappers()) {
+			pw.setParamClassName(shortcuts.get(pw.getParamClassName()));
+			String eventname = pw.getEventName();
+			if (eventname != null && !eventname.equals("")) {
+				pw.setEventName(shortcuts.get(eventname));
+			}
+			pw.setValueType(shortcuts.get(pw.getValueType()));
+		}
+		
+		// add component
+		try {
+			Class cls = Class.forName(compwrap.getComponentClassName());
+			Class[] partypes = new Class[1];
+			partypes[0] = ComponentWrapper.class;
+			Constructor<ISchemaComponent> ct = cls.getConstructor(partypes);
+			Object[] params = new Object[1];
+			params[0] = compwrap;
+			ISchemaComponent cmp = ct.newInstance(params);
+			components.addComponent(compwrap.getX(), compwrap.getY(), cmp);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Could not create component.", e);
 		}
 	}
 	
@@ -109,6 +200,7 @@ public class SchemaInfo implements ISchemaInfo {
 		
 		// fill with parameters
 		IParameterCollection params = ent.getParameters();
+		params.clear();
 		for (ParameterWrapper paramwrap : entwrap.getParameters()) {
 			params.addParameter(ParameterFactory.createParameter(paramwrap));
 		}

@@ -33,23 +33,14 @@ public class SchemaDeserializer {
 	
 	/* methods */
 	
-	public SchemaInfo deserializeSchema(Reader reader) {
-		Digester digester = new Digester();
-		digester.setValidating(false);
-		
-		
+	private void setRules_v1(Digester digester) {
 		// schema info
 		digester.addObjectCreate("schemaInfo", SchemaInfo.class);
 		
 
 		// wires
 		digester.addObjectCreate("schemaInfo/wires/schemaWire", SchemaWire.class);
-		
-//		digester.addObjectCreate("schemaInfo/wires/schemaWire/nodes/node", XYLocation.class);
-//		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/nodes/node/x", "x");
-//		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/nodes/node/y", "y");
-//		digester.addSetNext("schemaInfo/wires/schemaWire/nodes/node", "addNode");
-		
+
 		digester.addObjectCreate("schemaInfo/wires/schemaWire/segments/segment", WireSegment.class);
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/segments/segment/x1", "x1");
 		digester.addBeanPropertySetter("schemaInfo/wires/schemaWire/segments/segment/y1", "y1");
@@ -148,9 +139,131 @@ public class SchemaDeserializer {
 //		digester.addSetNext("schemaInfo/entity/portList/port", "addPortWrapper");
 		
 		digester.addSetNext("schemaInfo/entity", "setEntityFromWrapper");
+	}
+	
+	private void setRules_v2(Digester digester) {
+		// schema info
+		digester.addObjectCreate("schemaInfo_v2", SchemaInfo.class);
+
+		
+		// shortcuts
+		digester.addObjectCreate("schemaInfo_v2/shortcuts", ShortcutTable.class);
+		
+		digester.addCallMethod("schemaInfo_v2/shortcuts/s", "add", 1);
+		digester.addCallParam("schemaInfo_v2/shortcuts/s", 0);
+		
+		digester.addSetNext("schemaInfo_v2/shortcuts", "setShortcutTable");
+		
+
+		// wires
+		digester.addObjectCreate("schemaInfo_v2/wires/wire", WireWrapper.class);
+
+		digester.addObjectCreate("schemaInfo_v2/wires/wire/segs/seg", WireSegment.class);
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/segs/seg/x1", "x1");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/segs/seg/y1", "y1");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/segs/seg/x2", "x2");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/segs/seg/y2", "y2");
+		digester.addSetNext("schemaInfo_v2/wires/wire/segs/seg", "addWireSegment");
+		
+		digester.addCallMethod("schemaInfo_v2/wires/wire/drawerName", "setDrawer", 1);
+		digester.addCallParam("schemaInfo_v2/wires/wire/drawerName", 0);
+		
+		digester.addObjectCreate("schemaInfo_v2/wires/wire/params/par", ParameterWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/cls", "paramClassName");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/gen", "generic");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/pt", "paramType");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/name", "name");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/val", "value");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/vt", "valueType");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/allowed", "allowedValues");
+		digester.addBeanPropertySetter("schemaInfo_v2/wires/wire/params/par/event", "eventName");
+		digester.addSetNext("schemaInfo_v2/wires/wire/params/par", "addParameterWrapper");
+		
+		digester.addSetNext("schemaInfo_v2/wires/wire", "addWireWrapper");
 		
 		
+		// components
+		digester.addObjectCreate("schemaInfo_v2/components/comp", ComponentWrapper.class);
 		
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/cls", "componentClassName");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/x", "x");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/y", "y");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/wdt", "width");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/hgt", "height");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/name", "componentName");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/filenm", "codeFileName");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/cat", "categoryName");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/drawer", "drawerName");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/generic", "genericComponent");
+		
+		digester.addObjectCreate("schemaInfo_v2/components/comp/params/par", ParameterWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/cls", "paramClassName");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/gen", "generic");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/pt", "paramType");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/name", "name");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/val", "value");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/vt", "valueType");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/allowed", "allowedValues");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/params/par/event", "eventName");
+		digester.addSetNext("schemaInfo_v2/components/comp/params/par", "addParameterWrapper");
+		
+		digester.addObjectCreate("schemaInfo_v2/components/comp/ports/port", PortWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/nm", "name");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/dir", "direction");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/or", "orientation");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/tp", "type");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/va", "vectorAscension");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/lo", "lowerBound");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/hi", "upperBound");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/ports/port/relations", "relations");
+		digester.addSetNext("schemaInfo_v2/components/comp/ports/port", "addPortWrapper");
+		
+		digester.addObjectCreate("schemaInfo_v2/components/comp/schports/sp", SchemaPortWrapper.class);
+		digester.addCallMethod("schemaInfo_v2/components/comp/schports/sp/x", "setXOffset", 1);
+		digester.addCallParam("schemaInfo_v2/components/comp/schports/sp/x", 0);
+		digester.addCallMethod("schemaInfo_v2/components/comp/schports/sp/y", "setYOffset", 1);
+		digester.addCallParam("schemaInfo_v2/components/comp/schports/sp/y", 0);
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/schports/sp/nm", "stringName");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/schports/sp/mp", "stringMapping");
+		digester.addBeanPropertySetter("schemaInfo_v2/components/comp/schports/sp/p", "portindex");
+		digester.addSetNext("schemaInfo_v2/components/comp/schports/sp", "addSchemaPort");
+		
+		digester.addSetNext("schemaInfo_v2/components/comp", "replaceDrawerAndAddComponent");
+		
+		
+		// entity
+		digester.addObjectCreate("schemaInfo_v2/entity", EntityWrapper.class);
+		
+		digester.addObjectCreate("schemaInfo_v2/entity/params/par", ParameterWrapper.class);
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/cls", "paramClassName");
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/gen", "generic");
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/pt", "paramType");
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/name", "name");
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/val", "value");
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/vt", "valueType");
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/allowed", "allowedValues");
+		digester.addBeanPropertySetter("schemaInfo_v2/entity/params/par/event", "eventName");
+		digester.addSetNext("schemaInfo_v2/entity/params/par", "addParameterWrapper");
+		
+//		digester.addObjectCreate("schemaInfo/entity/portList/port", PortWrapper.class);
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/nm", "name");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/dir", "direction");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/type", "type");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/va", "vectorAscension");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/lower", "lowerBound");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/upper", "upperBound");
+//		digester.addBeanPropertySetter("schemaInfo/entity/portList/port/relations", "relations");
+//		digester.addSetNext("schemaInfo/entity/portList/port", "addPortWrapper");
+		
+		digester.addSetNext("schemaInfo_v2/entity", "setEntityFromWrapper");
+	}
+	
+	public SchemaInfo deserializeSchema(Reader reader) {
+		Digester digester = new Digester();
+		digester.setValidating(false);
+		
+		setRules_v1(digester);
+		setRules_v2(digester);
 		
 		try {
 			return (SchemaInfo)digester.parse(reader);

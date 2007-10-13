@@ -21,6 +21,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Port;
 import java.awt.Component;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 
@@ -73,7 +74,12 @@ public class DefaultWizard implements IWizard {
 			ISchemaInfo info = new SchemaInfo();
 
 			try {
-				info.getEntity().getParameters().setValue(SchemaEntity.KEY_NAME, new Caseless(ci.getEntityName()));
+				Caseless cname = new Caseless(ci.getEntityName());
+				info.getEntity().getParameters().setValue(SchemaEntity.KEY_NAME, cname);
+				HashSet<Object> allowed = new HashSet<Object>();
+				allowed.add(cname);
+				info.getEntity().getParameters().getParameter(SchemaEntity.KEY_NAME).getConstraint()
+				.setPossibleValues(allowed);
 			} catch (Exception e) {
 				e.printStackTrace();
 				SystemLog.instance().addSystemMessage("Internal error!", MessageType.INFORMATION);

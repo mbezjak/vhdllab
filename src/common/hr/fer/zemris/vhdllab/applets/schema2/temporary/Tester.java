@@ -171,6 +171,16 @@
 //			public void propertyChange(PropertyChangeEvent evt) {
 //				SchemaInfo2VHDL si2vhdl = new SchemaInfo2VHDL();
 //				System.out.println(si2vhdl.generateVHDL(nfo).getVhdl());
+//				SchemaSerializer ss = new SchemaSerializer();
+//				StringWriter sw = new StringWriter();
+//				try {
+//					ss.serializeSchema(sw, nfo);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				System.out.println(sw.toString());
+//				SchemaDeserializer sd = new SchemaDeserializer();
+//				ISchemaInfo info = sd.deserializeSchema(new StringReader(sw.toString()));
 //			}
 //		});
 //		

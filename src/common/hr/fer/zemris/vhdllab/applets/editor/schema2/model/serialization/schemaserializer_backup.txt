@@ -4,8 +4,6 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EParamTypes;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IParameter;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IParameterCollection;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IParameterEvent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaEntity;
@@ -24,9 +22,7 @@ import hr.fer.zemris.vhdllab.vhdl.model.Type;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -42,14 +38,11 @@ public class SchemaSerializer {
 	/* static fields */
 	
 	
-	/* private fields */
-	private Map<String, String> shortcutmap;
-	private int sccount;
+	
 	
 	/* ctors */
 	
 	public SchemaSerializer() {
-		shortcutmap = new HashMap<String, String>();
 	}
 	
 	
@@ -64,118 +57,21 @@ public class SchemaSerializer {
 		appendLine(writer);
 		appendLine(writer);
 		
-		writer.append("<schemaInfo_v2>");
+		writer.append("<schemaInfo>");
 		appendLine(writer);
 		appendLine(writer);
 		appendLine(writer);
 		
-		serializeShortcuts(writer, info);
 		serializeEntity(writer, info.getEntity());
 		serializeComponents(writer, info.getComponents());
 		serializeWires(writer, info.getWires());
 		
-		writer.append("</schemaInfo_v2>");
+		writer.append("</schemaInfo>");
 		appendLine(writer);
 		appendLine(writer);
 		appendLine(writer);
 	}
 	
-	private void serializeParametersInShortcutTable(Writer writer, IParameterCollection params)
-		throws IOException
-	{
-		for (IParameter param : params) {
-			String parname = param.getClass().getName();
-			if (!shortcutmap.containsKey(parname)) {
-				String shortcut = "p" + (++sccount);
-				shortcutmap.put(parname, shortcut);
-				writer.append("<s>");
-				writer.append(shortcut + ShortcutTable.SPLIT_SYMBOL + parname);
-				writer.append("</s>");
-				appendLine(writer);
-			}
-			
-			IParameterEvent event = param.getParameterEvent();
-			if (event != null) {
-				String evname = event.getClass().getName();
-				if (!shortcutmap.containsKey(evname)) {
-					String shortcut = "e" + (++sccount);
-					shortcutmap.put(evname, shortcut);
-					writer.append("<s>");
-					writer.append(shortcut + ShortcutTable.SPLIT_SYMBOL + evname);
-					writer.append("</s>");
-					appendLine(writer);
-				}
-			}
-			
-			String valuename = param.getValue().getClass().getName();
-			if (!shortcutmap.containsKey(valuename)) {
-				String shortcut = "v" + (++sccount);
-				shortcutmap.put(valuename, shortcut);
-				writer.append("<s>");
-				writer.append(shortcut + ShortcutTable.SPLIT_SYMBOL + valuename);
-				writer.append("</s>");
-				appendLine(writer);
-			}
-		}
-	}
-	
-	private void serializeShortcuts(Writer writer, ISchemaInfo info) throws IOException {
-		// create shortcut tag
-		writer.append("<shortcuts>");
-		appendLine(writer);
-		appendLine(writer);
-		
-		// save drawer names, event names, and parameter names
-		sccount = 0;
-		shortcutmap.clear();
-		for (ISchemaWire w : info.getWires()) {
-			// drawer
-			String drawername = w.getDrawer().getClass().getName();
-			if (!shortcutmap.containsKey(drawername)) {
-				String shortcut = "d" + (++sccount);
-				shortcutmap.put(drawername, shortcut);
-				writer.append("<s>");
-				writer.append(shortcut + ShortcutTable.SPLIT_SYMBOL + drawername);
-				writer.append("</s>");
-				appendLine(writer);
-			}
-			
-			// parameter names and events
-			serializeParametersInShortcutTable(writer, w.getParameters());
-		}
-		for (PlacedComponent plc : info.getComponents()) {
-			// component classname
-			String cmpclsname = plc.comp.getClass().getName();
-			if (!shortcutmap.containsKey(cmpclsname)) {
-				String shortcut = "c" + (++sccount);
-				shortcutmap.put(cmpclsname, shortcut);
-				writer.append("<s>");
-				writer.append(shortcut + ShortcutTable.SPLIT_SYMBOL + cmpclsname);
-				writer.append("</s>");
-				appendLine(writer);
-			}
-			
-			// drawer
-			String drawername = plc.comp.getDrawer().getClass().getName();
-			if (!shortcutmap.containsKey(drawername)) {
-				String shortcut = "d" + (++sccount);
-				shortcutmap.put(drawername, shortcut);
-				writer.append("<s>");
-				writer.append(shortcut + ShortcutTable.SPLIT_SYMBOL + drawername);
-				writer.append("</s>");
-				appendLine(writer);
-			}
-			
-			// parameter names and events
-			serializeParametersInShortcutTable(writer, plc.comp.getParameters());
-		}
-		
-		writer.append("</shortcuts>");
-		appendLine(writer);
-		appendLine(writer);
-	}
-
-
 	private final void appendLine(Writer writer) throws IOException {
 		writer.append('\n'); // not platform independent :(
 	}
@@ -185,12 +81,12 @@ public class SchemaSerializer {
 		appendLine(writer);
 		appendLine(writer);
 		
-		writer.append("<params>");
+		writer.append("<parameters>");
 		appendLine(writer);
 		for (IParameter param : entity.getParameters()) {
 			serializeParameter(writer, param);
 		}
-		writer.append("</params>");
+		writer.append("</parameters>");
 		appendLine(writer);
 		appendLine(writer);
 		
@@ -225,71 +121,67 @@ public class SchemaSerializer {
 		appendLine(writer);
 	}
 	
-	private String rename(String name) {
-		String shortcutname = shortcutmap.get(name);
-		return shortcutname;
-	}
 	
 	private void serializeComponent(Writer writer, ISchemaComponent component, int x, int y) throws IOException {
-		writer.append("<comp>");
+		writer.append("<schemaComponent>");
 		appendLine(writer);
 		
-		writer.append("<cls>").append(rename(component.getClass().getName())).append("</cls>");
+		writer.append("<componentClassName>").append(component.getClass().getName()).append("</componentClassName>");
 		appendLine(writer);
 		writer.append("<x>").append(Integer.toString(x)).append("</x>");
 		appendLine(writer);
 		writer.append("<y>").append(Integer.toString(y)).append("</y>");
 		appendLine(writer);
 		try {
-			writer.append("<name>").append(component.getTypeName().toString()).append("</name>");
+			writer.append("<componentName>").append(component.getTypeName().toString()).append("</componentName>");
 		} catch (NullPointerException e) {
 			System.err.println("Kemija ga: " + component.getName() + ", tip=" + component.getTypeName());
 			e.printStackTrace();
 			throw e;
 		}
 		appendLine(writer);
-		writer.append("<filenm>").append(component.getCodeFileName()).append("</filenm>");
+		writer.append("<codeFileName>").append(component.getCodeFileName()).append("</codeFileName>");
 		appendLine(writer);
-		writer.append("<cat>").append(component.getCategoryName()).append("</cat>");
+		writer.append("<categoryName>").append(component.getCategoryName()).append("</categoryName>");
 		appendLine(writer);
-		writer.append("<drawer>").append(rename(component.getDrawer().getClass().getName())).append("</drawer>");
+		writer.append("<drawerName>").append(component.getDrawer().getClass().getName()).append("</drawerName>");
 		appendLine(writer);
-		writer.append("<generic>").append(Boolean.toString(component.isGeneric())).append("</generic>");
+		writer.append("<genericComponent>").append(Boolean.toString(component.isGeneric())).append("</genericComponent>");
 		appendLine(writer);
-		writer.append("<wdt>").append(Integer.toString(component.getWidth())).append("</wdt>");
+		writer.append("<width>").append(Integer.toString(component.getWidth())).append("</width>");
 		appendLine(writer);
-		writer.append("<hgt>").append(Integer.toString(component.getHeight())).append("</hgt>");
+		writer.append("<height>").append(Integer.toString(component.getHeight())).append("</height>");
 		appendLine(writer);
-		writer.append("<params>");
+		writer.append("<parameters>");
 		appendLine(writer);
 		for (IParameter param : component.getParameters()) {
 			serializeParameter(writer, param);
 		}
-		writer.append("</params>");
+		writer.append("</parameters>");
 		appendLine(writer);
-		writer.append("<ports>");
+		writer.append("<portList>");
 		appendLine(writer);
 		for (int i = 0, sz = component.portCount(); i < sz; i++) {
 			serializePort(writer, component.getPort(i), component.getPortOrientation(i));
 		}
-		writer.append("</ports>");
+		writer.append("</portList>");
 		appendLine(writer);
-		writer.append("<schports>");
+		writer.append("<schemaPortList>");
 		appendLine(writer);
 		Iterator<SchemaPort> spit = component.schemaPortIterator();
 		while (spit.hasNext()) {
 			serializeSchemaPort(writer, spit.next());
 		}
-		writer.append("</schports>");
+		writer.append("</schemaPortList>");
 		appendLine(writer);
 		
-		writer.append("</comp>");
+		writer.append("</schemaComponent>");
 		appendLine(writer);
 		appendLine(writer);
 	}
 
 	private void serializeSchemaPort(Writer writer, SchemaPort port) throws IOException {
-		writer.append("<sp>");
+		writer.append("<schemaPort>");
 		appendLine(writer);
 		
 		XYLocation portoff = port.getOffset();
@@ -297,14 +189,14 @@ public class SchemaSerializer {
 		appendLine(writer);
 		writer.append("<y>").append(Integer.toString(portoff.y)).append("</y>");
 		appendLine(writer);
-		writer.append("<nm>").append(port.getName().toString()).append("</nm>");
+		writer.append("<name>").append(port.getName().toString()).append("</name>");
 		appendLine(writer);
-		writer.append("<mp>").append((port.getMapping() != null) ? (port.getMapping().toString()) : "").append("</mp>");
+		writer.append("<mapping>").append((port.getMapping() != null) ? (port.getMapping().toString()) : "").append("</mapping>");
 		appendLine(writer);
-		writer.append("<p>").append(Integer.toString(port.getPortindex())).append("</p>");
+		writer.append("<portIndex>").append(Integer.toString(port.getPortindex())).append("</portIndex>");
 		appendLine(writer);
 		
-		writer.append("</sp>");
+		writer.append("</schemaPort>");
 		appendLine(writer);
 	}
 
@@ -324,7 +216,7 @@ public class SchemaSerializer {
 	}
 	
 	private void serializeWire(Writer writer, ISchemaWire wire) throws IOException {
-		writer.append("<wire>");
+		writer.append("<schemaWire>");
 		appendLine(writer);
 		
 //		writer.append("<nodes>");
@@ -339,10 +231,10 @@ public class SchemaSerializer {
 //		writer.append("</nodes>");
 //		appendLine(writer);
 		
-		writer.append("<segs>");
+		writer.append("<segments>");
 		appendLine(writer);
 		for (WireSegment segment : wire.getSegments()) {
-			writer.append("<seg>");
+			writer.append("<segment>");
 			appendLine(writer);
 			writer.append("<x1>").append(Integer.toString(segment.getStart().x)).append("</x1>");
 			writer.append("<y1>").append(Integer.toString(segment.getStart().y)).append("</y1>");
@@ -350,21 +242,21 @@ public class SchemaSerializer {
 			writer.append("<x2>").append(Integer.toString(segment.getEnd().x)).append("</x2>");
 			writer.append("<y2>").append(Integer.toString(segment.getEnd().y)).append("</y2>");
 			appendLine(writer);
-			writer.append("</seg>");
+			writer.append("</segment>");
 			appendLine(writer);
 		}
-		writer.append("</segs>");
+		writer.append("</segments>");
 		appendLine(writer);
 		
-		writer.append("<params>");
+		writer.append("<parameters>");
 		appendLine(writer);
 		for (IParameter param : wire.getParameters()) {
 			serializeParameter(writer, param);
 		}
-		writer.append("</params>");
+		writer.append("</parameters>");
 		appendLine(writer);
 		
-		writer.append("</wire>");
+		writer.append("</schemaWire>");
 		appendLine(writer);
 		appendLine(writer);
 	}
@@ -373,29 +265,29 @@ public class SchemaSerializer {
 
 
 	private void serializeParameter(Writer writer, IParameter parameter) throws IOException {
-		writer.append("<par>");
+		writer.append("<parameter>");
 		appendLine(writer);
 		
-		writer.append("<cls>").append(rename(parameter.getClass().getName())).append("</cls>");
+		writer.append("<paramClassName>").append(parameter.getClass().getName()).append("</paramClassName>");
 		appendLine(writer);
-		writer.append("<gen>").append(Boolean.toString(parameter.isGeneric())).append("</gen>");
+		writer.append("<generic>").append(Boolean.toString(parameter.isGeneric())).append("</generic>");
 		appendLine(writer);
-		writer.append("<pt>").append(parameter.getType().toString()).append("</pt>");
+		writer.append("<paramType>").append(parameter.getType().toString()).append("</paramType>");
 		appendLine(writer);
 		writer.append("<name>").append(parameter.getName()).append("</name>");
 		appendLine(writer);
 		EParamTypes tp = parameter.getType();
 		if (tp == EParamTypes.OBJECT) {
 			ISerializable serializable_object = (ISerializable)parameter.getValue();
-			writer.append("<val>").append(serializable_object.serialize()).append("</val>");
+			writer.append("<value>").append(serializable_object.serialize()).append("</value>");
 		} else {
-			writer.append("<val>").append(parameter.getValue().toString()).append("</val>");
+			writer.append("<value>").append(parameter.getValue().toString()).append("</value>");
 		}
 		appendLine(writer);
-		writer.append("<vt>").append(rename(parameter.getValue().getClass().getName())).append("</vt>");
+		writer.append("<valueType>").append(parameter.getValue().getClass().getName()).append("</valueType>");
 		appendLine(writer);
 		Set<Object> allowed = parameter.getConstraint().getPossibleValues();
-		writer.append("<allowed>");
+		writer.append("<allowedValues>");
 		if (allowed != null) {
 			if (tp == EParamTypes.OBJECT) {
 				ISerializable serializable_object;
@@ -409,13 +301,13 @@ public class SchemaSerializer {
 				}
 			}
 		}
-		writer.append("</allowed>");
+		writer.append("</allowedValues>");
 		appendLine(writer);
-		writer.append("<event>").append((parameter.getParameterEvent() != null) 
-				? (rename(parameter.getParameterEvent().getClass().getName())) : ("")).append("</event>");
+		writer.append("<eventName>").append((parameter.getParameterEvent() != null) 
+				? (parameter.getParameterEvent().getClass().getName()) : ("")).append("</eventName>");
 		appendLine(writer);
 		
-		writer.append("</par>");
+		writer.append("</parameter>");
 		appendLine(writer);
 	}
 	
@@ -424,28 +316,28 @@ public class SchemaSerializer {
 		writer.append("<port>");
 		appendLine(writer);
 		
-		writer.append("<nm>").append(port.getName()).append("</nm>");
+		writer.append("<name>").append(port.getName()).append("</name>");
 		appendLine(writer);
-		writer.append("<dir>").append(port.getDirection().toString()).append("</dir>");
+		writer.append("<direction>").append(port.getDirection().toString()).append("</direction>");
 		appendLine(writer);
-		writer.append("<or>").append(orient.toString()).append("</or>");
+		writer.append("<orientation>").append(orient.toString()).append("</orientation>");
 		appendLine(writer);
 		Type pt = port.getType();
-		writer.append("<tp>").append(pt.getTypeName()).append("</tp>");
+		writer.append("<type>").append(pt.getTypeName()).append("</type>");
 		appendLine(writer);
 		if (pt.isScalar()) {
-			writer.append("<va></va>");
+			writer.append("<vectorAscension></vectorAscension>");
 			appendLine(writer);
-			writer.append("<lo></lo>");
+			writer.append("<lowerBound></lowerBound>");
 			appendLine(writer);
-			writer.append("<hi></hi>");
+			writer.append("<upperBound></upperBound>");
 			appendLine(writer);
 		} else {
-			writer.append("<va>").append(fromVecDir(pt.getVectorDirection())).append("</va>");
+			writer.append("<vectorAscension>").append(fromVecDir(pt.getVectorDirection())).append("</vectorAscension>");
 			appendLine(writer);
-			writer.append("<lo>").append(Integer.toString(pt.getRangeFrom())).append("</lo>");
+			writer.append("<lowerBound>").append(Integer.toString(pt.getRangeFrom())).append("</lowerBound>");
 			appendLine(writer);
-			writer.append("<hi>").append(Integer.toString(pt.getRangeTo())).append("</hi>");
+			writer.append("<upperBound>").append(Integer.toString(pt.getRangeTo())).append("</upperBound>");
 			appendLine(writer);
 		}
 		
