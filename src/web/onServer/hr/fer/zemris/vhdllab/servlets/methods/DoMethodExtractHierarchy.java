@@ -42,6 +42,8 @@ public class DoMethodExtractHierarchy extends AbstractRegisteredMethod {
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_EXTRACT_HIERARCHY,
 					"projectId=" + projectId);
+			// TODO ovo je samo temp
+			e.printStackTrace();
 			return;
 		}
 		method.setResult(h);
