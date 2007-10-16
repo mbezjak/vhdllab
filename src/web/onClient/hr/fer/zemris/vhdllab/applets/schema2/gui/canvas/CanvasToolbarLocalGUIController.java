@@ -44,6 +44,7 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 
 	// TODO makni kasnije
 	private boolean gridON = true;
+	private boolean smartConectON = true;
 
 	// #########
 
@@ -144,5 +145,14 @@ public class CanvasToolbarLocalGUIController implements ILocalGuiController {
 	public void setGridON(boolean gridON) {
 		this.gridON = gridON;
 		support.firePropertyChange("GRID", null, null);
+	}
+
+	public boolean isSmartConectON() {
+		return smartConectON;
+	}
+
+	public void setSmartConectON(boolean smartConectON) {
+		this.smartConectON = smartConectON;
+		support.firePropertyChange("SMARTCONNECT", null, null);
 	}
 }

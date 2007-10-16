@@ -74,6 +74,24 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 			
 		});
 		
+		final JToggleButton c = new JToggleButton("SMART CONNECT ON");
+		c.setSelected(true);
+		c.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				if(localController.isSmartConectON()){
+					c.setText("SMART CONNECT OFF");
+					c.setSelected(false);
+					localController.setSmartConectON(false);
+				}else{
+					c.setText("SMART CONNECT ON");
+					c.setSelected(true);
+					localController.setSmartConectON(true);
+				}
+			}
+			
+		});
+		
 		//############################
 		
 		this.add(selactState);
@@ -82,6 +100,7 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 		
 		//#####
 		this.add(b);
+		this.add(c);
 		//#####
 		
 	}

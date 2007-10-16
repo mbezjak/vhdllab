@@ -103,4 +103,6 @@ public interface ILocalGuiController {
 	
 	public boolean isGridON();
 	public void setGridON(boolean gridON);
+	public void setSmartConectON(boolean smartConectON);
+	public boolean isSmartConectON();
 }

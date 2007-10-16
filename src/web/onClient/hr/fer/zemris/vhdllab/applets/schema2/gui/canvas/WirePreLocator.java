@@ -12,7 +12,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.PlugWireComma
 
 import java.awt.Graphics2D;
 
-public class WirePreLocator {
+public class WirePreLocator implements IWirePreLocator {
 
 	public static int HORIZ_FIRST = 0;
 	public static int VERT_FIRST = 1;
@@ -50,62 +50,107 @@ public class WirePreLocator {
 		this(x1,y1,x2,y2,0,0,0);
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#getOdmak1()
+	 */
 	public int getOdmak1() {
 		return devition1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setOdmak1(int)
+	 */
 	public void setOdmak1(int odmak1) {
 		this.devition1 = odmak1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#getOdmak2()
+	 */
 	public int getOdmak2() {
 		return deviation2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setOdmak2(int)
+	 */
 	public void setOdmak2(int odmak2) {
 		this.deviation2 = odmak2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#getOrientation()
+	 */
 	public int getOrientation() {
 		return orientation;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setOrientation(int)
+	 */
 	public void setOrientation(int orientation) {
 		this.orientation = orientation;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#getX1()
+	 */
 	public int getX1() {
 		return x1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setX1(int)
+	 */
 	public void setX1(int x1) {
 		this.x1 = x1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#getX2()
+	 */
 	public int getX2() {
 		return x2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setX2(int)
+	 */
 	public void setX2(int x2) {
 		this.x2 = x2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#getY1()
+	 */
 	public int getY1() {
 		return y1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setY1(int)
+	 */
 	public void setY1(int y1) {
 		this.y1 = y1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#getY2()
+	 */
 	public int getY2() {
 		return y2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setY2(int)
+	 */
 	public void setY2(int y2) {
 		this.y2 = y2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#instantiateWire(hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController, hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CriticalPoint, hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CriticalPoint)
+	 */
 	public void instantiateWire(ISchemaController controller, CriticalPoint wireBeginning, CriticalPoint wireEnding) {
 		//TODO srediti za razlicit orientation i odmak ako ce to uopce postojati
 		if((wireBeginning == null || wireBeginning.getType()==CriticalPoint.ON_COMPONENT_PLUG) &&
@@ -237,6 +282,9 @@ public class WirePreLocator {
 		return x<0?"M"+String.valueOf(Math.abs(x)):String.valueOf(x);
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#draw(java.awt.Graphics2D)
+	 */
 	public void draw(Graphics2D g) {
 		if(orientation == VERT_FIRST){
 			g.drawLine(x1, y1, x1, y2);
@@ -248,18 +296,30 @@ public class WirePreLocator {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#isWireInstance()
+	 */
 	public boolean isWireInstance() {
 		return (Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))>10) && wireInstantiable;
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#isWireInstantiable()
+	 */
 	public boolean isWireInstantiable() {
 		return wireInstantiable;
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setWireInstantiable(boolean)
+	 */
 	public void setWireInstantiable(boolean wireInstantiable) {
 		this.wireInstantiable = wireInstantiable;
 	}
 
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setWireInstantiable(hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CriticalPoint, hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CriticalPoint)
+	 */
 	public void setWireInstantiable(CriticalPoint wireBeginning, CriticalPoint wireEnding) {
 		if(wireBeginning != null && wireEnding != null){
 			if(wireBeginning.getType()==CriticalPoint.ON_WIRE_PLUG && wireEnding.getType()==CriticalPoint.ON_WIRE_PLUG){
@@ -277,7 +337,10 @@ public class WirePreLocator {
 		
 	}
 
-	public void setWireOrientation() {
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.IWirePreLocator#setWireOrientation()
+	 */
+	public void revalidateWire() {
 		double d = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 		if(d>Constants.GRID_SIZE-1&&d<Constants.GRID_SIZE+1){
 			if(Math.abs(x1-x2)>Math.abs(y1-y2)) 

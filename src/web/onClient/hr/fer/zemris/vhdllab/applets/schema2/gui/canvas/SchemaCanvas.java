@@ -42,6 +42,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -105,7 +106,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	/**
 	 * Sadr�ani svi podatci o zici za dodati...
 	 */
-	private WirePreLocator preLoc = null;
+	private IWirePreLocator preLoc = null;
 	
 	/**
 	 * trenutni critical point nad kojim je mis
@@ -437,7 +438,13 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 						x=wireBeginning.getX();
 						y=wireBeginning.getY();
 					}
-					preLoc = new WirePreLocator(x,y,x,y);
+					if(localController.isSmartConectON()){
+						preLoc = new AdvancedWirePreLocator(new ArrayList<WireSegment>(),controller);
+						preLoc.setX1(x);
+						preLoc.setY1(y);
+					}else{
+						preLoc = new WirePreLocator(x,y,x,y);
+					}
 				}else if(state.equals(ECanvasState.MOVE_STATE)){
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
 					if(comp!=null){
@@ -457,8 +464,11 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 						x=wireEnding.getX();
 						y=wireEnding.getY();
 					}
+				
 					preLoc.setX2(x);
 					preLoc.setY2(y);
+					preLoc.revalidateWire();
+				
 					preLoc.setWireInstantiable(wireBeginning,wireEnding);
 
 					if(preLoc.isWireInstance()){
@@ -485,7 +495,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 				point = getCriticalPoint(e.getX(), e.getY());
 				preLoc.setWireInstantiable(wireBeginning,point);
-				preLoc.setWireOrientation();
+
+				preLoc.revalidateWire();
+				
 				modifyTimerStatus();
 				repaint();
 			}else if(state.equals(ECanvasState.MOVE_STATE)&&componentToMove!=null){
