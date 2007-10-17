@@ -13,6 +13,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaError;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.CommandResponse;
 
+import java.util.List;
+
 
 
 
@@ -31,6 +33,7 @@ public class ExpandWireCommand implements ICommand {
 	/* private fields */
 	private Caseless name;
 	private WireSegment segment;
+	private List<WireSegment> seglst;
 	
 	
 	/* ctors */
@@ -51,6 +54,19 @@ public class ExpandWireCommand implements ICommand {
 					"horizontal and vertical segments");
 		
 		segment = new WireSegment(x1, y1, x2, y2);
+		seglst = null;
+	}
+	
+	/**
+	 * Prosiruje zicu imena wirename sa listom segmenata.
+	 */
+	public ExpandWireCommand(Caseless wirename, List<WireSegment> segments) {
+		name = wirename;
+		
+		if (segments == null) throw new IllegalArgumentException("Segments cannot be null.");
+		
+		segment = null;
+		seglst = segments;
 	}
 	
 	
@@ -72,9 +88,25 @@ public class ExpandWireCommand implements ICommand {
 					"Wire with name '" + name + "' does not exist"));
 		}
 		
-		if (!wire.insertSegment(segment)) return new CommandResponse(
-				new SchemaError(EErrorTypes.WIRE_OVERLAP,
-				"Segment would overlap with other segments."));
+		if (segment != null) {
+			if (!wire.insertSegment(segment)) return new CommandResponse(
+					new SchemaError(EErrorTypes.WIRE_OVERLAP,
+					"Segment would overlap with other segments."));
+		} else {
+			int i = -1;
+			for (WireSegment ws : seglst) {
+				if (!wire.insertSegment(ws)) {
+					// return to previous state
+					for (; i >= 0; i--) {
+						wire.removeSegment(seglst.get(i));
+					}
+					return new CommandResponse(
+						new SchemaError(EErrorTypes.WIRE_OVERLAP,
+						"One of the segments would overlap with other segments."));
+				}
+				i++;
+			}
+		}
 		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}
@@ -87,9 +119,17 @@ public class ExpandWireCommand implements ICommand {
 					"Wire with name '" + name + "' does not exist"));
 		}
 		
-		boolean found = wire.removeSegment(segment);
-		if (!found) return new CommandResponse(new SchemaError(EErrorTypes.CANNOT_UNDO,
-				"Formerly inserted wire segment not found."));
+		if (segment != null) {
+			boolean found = wire.removeSegment(segment);
+			if (!found) return new CommandResponse(new SchemaError(EErrorTypes.CANNOT_UNDO,
+					"Formerly inserted wire segment not found."));
+		} else {
+			for (WireSegment ws : seglst) {
+				boolean found = wire.removeSegment(ws);
+				if (!found) return new CommandResponse(new SchemaError(EErrorTypes.CANNOT_UNDO,
+						"Formerly inserted wire segment not found."));
+			}
+		}
 		
 		return new CommandResponse(new ChangeTuple(EPropertyChange.CANVAS_CHANGE));
 	}
