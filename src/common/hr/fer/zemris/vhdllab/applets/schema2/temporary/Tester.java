@@ -3,8 +3,11 @@
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQueryResult;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
+//import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
+//import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.AddWireCommand;
+//import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.InstantiateComponentCommand;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.InspectWalkability;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.SmartConnect;
 //import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.misc.WalkabilityMap;
@@ -142,11 +145,11 @@
 //		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		frame.pack();
 //		
-////		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 100, 300, 350, 300);
-////		mpanel.getController().send(addwire);
-////		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(
-////				new Caseless("VL_OR"), 0, 0);
-////		mpanel.getController().send(instantiate);
+//		AddWireCommand addwire = new AddWireCommand(new Caseless("zica1"), 100, 300, 350, 300);
+//		mpanel.getController().send(addwire);
+//		InstantiateComponentCommand instantiate = new InstantiateComponentCommand(
+//				new Caseless("VL_OR"), 150, 50);
+//		mpanel.getController().send(instantiate);
 ////		ISchemaComponent cmp = mpanel.getController().getSchemaInfo().getComponents().fetchComponent(70, 50, 10);
 ////		ExpandWireCommand expand = new ExpandWireCommand(new Caseless("zica1"), 150, 50, 150, 100);
 ////		mpanel.getController().send(expand);
@@ -181,6 +184,8 @@
 //				System.out.println(sw.toString());
 //				SchemaDeserializer sd = new SchemaDeserializer();
 //				ISchemaInfo info = sd.deserializeSchema(new StringReader(sw.toString()));
+//				
+//				System.out.println(nfo.getWires().distanceTo(new Caseless("zica1"), 120, 310));
 //			}
 //		});
 //		

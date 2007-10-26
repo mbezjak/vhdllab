@@ -229,6 +229,37 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 	}
 	
 	
+	public int distanceTo(Caseless name, int xfrom, int yfrom) {
+		PlacedComponent plc = components.get(name);
+		
+		// no such component
+		if (plc == null) return ISchemaComponentCollection.NO_COMPONENT;
+		
+		// is click within component
+		int w = plc.comp.getWidth(), h = plc.comp.getHeight();
+		if (xfrom >= plc.pos.x && yfrom >= plc.pos.y &&
+				xfrom <= (plc.pos.x + w) && yfrom <= (plc.pos.y + h))
+		{
+			return 0;
+		}
+		
+		// click is outside component
+		int xmin, ymin;
+		if (xfrom < plc.pos.x) {
+			xmin = plc.pos.x - xfrom;
+		} else {
+			xmin = xfrom - (plc.pos.x + w);
+		}
+		if (yfrom < plc.pos.y) {
+			ymin = plc.pos.y - yfrom;
+		} else {
+			ymin = yfrom - (plc.pos.y + h);
+		}
+		
+		return (xmin < ymin) ? (xmin) : (ymin);
+	}
+
+
 	public Set<Caseless> getComponentNames() {
 		return components.keySet();
 	}

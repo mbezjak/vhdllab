@@ -26,6 +26,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
  *
  */
 public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
+	
+	public static final int NO_COMPONENT = -1;
 		
 	/**
 	 * Dohvaca komponentu zadanog imena.
@@ -237,6 +239,23 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 * @throws UnknownKeyException
 	 */
 	int getComponentIndex(Caseless name) throws UnknownKeyException;
+	
+	/**
+	 * Vraca udaljenost od navedene komponente.
+	 * 
+	 * @param name
+	 * @param xfrom
+	 * X lokacija od koje se mjeri udaljenost do komponente.
+	 * @param yfrom
+	 * Y lokacija od koje se mjeri udaljenost do komponente.
+	 * @return
+	 * Ako komponenta navedenog imena ne postoji, vraca se
+	 * ISchemaComponentCollection.NO_COMPONENT.
+	 * U protivnom se vraca udaljenost do komponente,
+	 * ili 0 u slucaju da je (xfrom, yfrom) unutar same
+	 * komponente.
+	 */
+	int distanceTo(Caseless name, int xfrom, int yfrom);
 	
 	/**
 	 * Vraca skup imena komponenata na shemi,

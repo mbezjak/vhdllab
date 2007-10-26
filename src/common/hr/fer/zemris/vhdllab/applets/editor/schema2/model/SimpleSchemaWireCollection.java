@@ -127,6 +127,23 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	
 	
 
+	public int distanceTo(Caseless name, int xfrom, int yfrom) {
+		ISchemaWire wire = wires.get(name);
+		
+		// no such wire
+		if (wire == null) return ISchemaWireCollection.NO_WIRE;
+		
+		// iterate segments and seek for the closest one
+		int dist = Integer.MAX_VALUE;
+		for (WireSegment ws : wire.getSegments()) {
+			int t = ws.calcDist(xfrom, yfrom);
+			if (t < dist) dist = t;
+		}
+
+		return dist;
+	}
+
+
 	public Rect2d getBounds(Caseless wireName) {
 		ISchemaWire wire = wires.get(wireName);
 		

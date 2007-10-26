@@ -19,6 +19,8 @@ import java.util.Set;
  */
 public interface ISchemaWireCollection extends Iterable<ISchemaWire> {
 	
+	public static final int NO_WIRE = -1;
+	
 	/**
 	 * Dohvaca zicu zadanog imena.
 	 * 
@@ -131,6 +133,25 @@ public interface ISchemaWireCollection extends Iterable<ISchemaWire> {
 	 * u kolekciji.
 	 */
 	void removeWire(Caseless wireName) throws UnknownKeyException;
+	
+	/**
+	 * Vraca udaljenost do navedene zice.
+	 * 
+	 * @param name
+	 * @param xfrom
+	 * X lokacija od koje se mjeri udaljenost do zice.
+	 * @param yfrom
+	 * Y lokacija od koje se mjeri udaljenost do zice.
+	 * @return
+	 * Ako zica navedenog imena ne postoji, vraca se
+	 * ISchemaWireCollection.NO_WIRE.
+	 * U protivnom se vraca udaljenost do zice,
+	 * ili 0 u slucaju da je (xfrom, yfrom) na samoj
+	 * zici.
+	 * Iznimno, vraca Integer.MAX_VALUE, ako zica
+	 * nema segmenata (rubni slucaj).
+	 */
+	int distanceTo(Caseless name, int xfrom, int yfrom);
 	
 	/**
 	 * Vraca skup imena zica na shemi,
