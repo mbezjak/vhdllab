@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.AddWireCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.BindWireCommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.ExpandWireCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.PlugWireCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.InspectWalkability;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.SmartConnect;
@@ -99,7 +100,7 @@ public class AdvancedWirePreLocator implements IWirePreLocator{
 		//Caseless wireName = wireBeginning.getName();
 		Caseless wireName = createName(x1,y1,x2,y2);
 
-		ICommand instantiate = new AddWireCommand(wireName,segmentList);//TODO ovdije expand!!!
+		ICommand instantiate = new ExpandWireCommand(wireName,segmentList);
 		ICommandResponse response = controller.send(instantiate);
 		System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
 
