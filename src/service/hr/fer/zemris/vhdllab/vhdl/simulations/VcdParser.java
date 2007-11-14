@@ -161,10 +161,30 @@ public class VcdParser
 			endSignIndex = vcdLines[index].indexOf("$end");
 			if (vcdLines[index].indexOf("$var") == 0)
 			{	
+				// Popravio Marko Cupic - 2007-11-14 - 9 sati navecer, nakon dugog dana!
+				String[] parts = vcdLines[index].split(" ");
+				asciiSignalSimbols.add(parts[3].charAt(0));
+				signalName = parts[4];
+				completeSignalName.setLength(0);
+				completeSignalName.append(scopeName.getFirst()).append(signalName);
+                if (!parts[2].equals("1"))
+                {
+                    completeSignalName.insert(0, "+ ");
+                }
+				signalValues.put(completeSignalName.toString(), new ArrayList<String>());
+                if (completeSignalName.length() > maximumSignalNameLength)
+                {
+                    maximumSignalNameLength = completeSignalName.length();
+                }
+
+				/*
+				 * OVO ISPOD JE ORIGINAL OD BORISA, I MOJI KOMENTARI
 				asciiSignalSimbols.add(vcdLines[index].charAt(11));
+				// Ako je signal visebitni (viseznamenkasti), ime nije na poziciji 13!
 				signalName = vcdLines[index].substring(13, endSignIndex - 1);
 				completeSignalName.setLength(0);
 				completeSignalName.append(scopeName.getFirst()).append(signalName);
+				// signal koji je 16-bitni pocinje s 1 i treba dobiti +!!!
                 if (vcdLines[index].charAt(9) != '1')
                 {
                     completeSignalName.insert(0, "+ ");
@@ -174,6 +194,7 @@ public class VcdParser
                 {
                     maximumSignalNameLength = completeSignalName.length();
                 }
+                */
 			}
 			else if (vcdLines[index].indexOf ("$scope") == 0)
 			{

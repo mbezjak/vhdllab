@@ -288,6 +288,20 @@ class SignalNamesPanel extends JPanel
         return  getHeight();
     }
 
+	/**
+	 * Helper function for vector limits extraction.
+	 * @param name full name of vector, eg. "+ /tb_d[0:15]"
+	 * @return an 2-element array containing limits, eg. [0,15] 
+	 */
+	private static int[] extractVectorLimits(String name) {
+		int start = name.indexOf('[');
+		int end = name.indexOf(']');
+		int colon = name.indexOf(':');
+		return new int[] {
+			Integer.parseInt(name.substring(start+1, colon)),
+			Integer.parseInt(name.substring(colon+1, end))
+		};
+	}
 
 	/**
 	 * Ekspandira bit-vektor.  Umjesto bit-vektora zapisuju se njegovi clanovi u listu signala.
@@ -300,16 +314,23 @@ class SignalNamesPanel extends JPanel
 		/* defaultIndex je index bit-vektora u default polju imena signala s kojim se barata */
 		Integer defaultIndex = currentVectorIndex.get(index);
 		String tempSignalName;
-        int startVector = Integer.valueOf(signalNames.get(index)
+		int[] limits = extractVectorLimits(signalNames.get(index));
+        int startVector = limits[0];
+        int endVector = limits[1];
+        
+/*      GRANICE MOGU BITI I VISEZNAMENKASTI BROJEVI!!!
+ *      int startVector = Integer.valueOf(signalNames.get(index)
 				.charAt(signalNames.get(index).length() - 4)) - 48;
         int endVector = Integer.valueOf(signalNames.get(index)
 				.charAt(signalNames.get(index).length() - 2)) - 48;
-
+*/
 		/* duljine vektora, s tim da je duljina umanjena za 1 od stvarne duljine */
         int vectorSize = Math.abs(startVector - endVector);
 		/* Izvadi ime vektora bez oznake velicine vektora ([...]) */
 		tempSignalName = signalNames.get(index).substring(1, 
-				signalNames.get(index).length() - 5);
+				signalNames.get(index).indexOf('['));
+//		tempSignalName = signalNames.get(index).substring(1, 
+//				signalNames.get(index).length() - 5);
 		signalNames.remove(index);
 		signalNames.add(index, "-" + tempSignalName + "[" + startVector + "]");
 		if (startVector < endVector)
