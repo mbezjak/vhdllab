@@ -398,33 +398,53 @@ public class Platno2 extends JComponent {
 
 	
 	
-	
+	private static final boolean DEBUG_UNESI_PODATAK = false; 
 	private void unesi_podatak(int x, int y) {
-		
+
+		if(DEBUG_UNESI_PODATAK) System.out.println("NOVI PROLAZ ******************************** x="+x+", y="+y);
+
 		Signal[] ul=this.podatci_t;
 		
 		
 			
 		//slaze podatke o tome gdje je koji nacrtan i u kakvom je stanju
-		String[] polje=new String[100];
+
+		int max=0;
+		for(int i=0;i<ul.length;i++){
+			
+			if(ul[i].tip.contentEquals("scalar")){
+				max++;
+				
+			}else if(ul[i].tip.contentEquals("vector")){
+				if(ul[i].exp){
+					for(int k=0;k<ul[i].brojBitova;k++){
+						max++;
+					}
+				} else {
+					max++;
+				}
+			}
+		}
+		String[] polje=new String[max+1];
+		
 		int n=0;
 		for(int i=0;i<ul.length;i++){
 			
 			if(ul[i].tip.contentEquals("scalar")){
 				polje[n]=ul[i].ime+" "+String.valueOf(-1);
+				if(DEBUG_UNESI_PODATAK) System.out.println("polje["+n+"]"+polje[n]);
 				n++;
-				
-			}else if(ul[i].tip.contentEquals("vector")){
+			} else if(ul[i].tip.contentEquals("vector")) {
 				if(ul[i].exp){
 					for(int k=0;k<ul[i].brojBitova;k++){
 						polje[n]=ul[i].ime+" "+String.valueOf(k);
+						if(DEBUG_UNESI_PODATAK) System.out.println("polje["+n+"]"+polje[n]);
 						n++;
 					}
-					
 				}else{
 					polje[n]=ul[i].ime+" "+String.valueOf(-2);
+					if(DEBUG_UNESI_PODATAK) System.out.println("polje["+n+"]"+polje[n]);
 					n++;
-					
 				}
 			}
 		}
@@ -444,10 +464,12 @@ public class Platno2 extends JComponent {
 		
 		//pronalazi na kojem mjestu se nalazi signal kojeg treba mjenjati
 		for(int i=0;i<n;i++){
-			if(y<(this.getY()+20+i*30+2)&y>(this.getY()+20+i*30-10-2)){
+			//if(y<(this.getY()+20+i*30+2)&y>(this.getY()+20+i*30-10-2)){
+			if(y>(20+i*30-10-2) && y<(20+i*30+2)){
 				signal=i;
 				
-				if(y<(this.getY()+20+i*30+2)&y>(this.getY()+20+i*30-5)){
+				//if(y<(this.getY()+20+i*30+2)&y>(this.getY()+20+i*30-5)){
+				if(y>(20+i*30-5) && y<(20+i*30+2)){
 					nova_vrijednost=0;
 					f=true;
 					break;
@@ -460,7 +482,7 @@ public class Platno2 extends JComponent {
 			
 		}
 		
-		
+		if(DEBUG_UNESI_PODATAK) System.out.println("this.getY()="+this.getY()+", signal="+signal+", nova vrijednost: "+nova_vrijednost+", f="+f);
 		
 		if(signal==-1)return;//ako je kliknuto na mjestu gdje nuje nista nacrtano
 		
@@ -475,8 +497,7 @@ public class Platno2 extends JComponent {
 			}
 		}
 		
-		
-		
+		if(DEBUG_UNESI_PODATAK) System.out.println("Redni broj u polju: "+redni_broj_u_polju+", ime={"+ime+"}, bit={"+bit+"}");
 		
 		//--------------------------
 		String signal_za_promjeniti=null;
@@ -493,6 +514,7 @@ public class Platno2 extends JComponent {
 			f=false;
 		}
 		
+		if(DEBUG_UNESI_PODATAK) System.out.println("f="+f);
 		
 		
 		
