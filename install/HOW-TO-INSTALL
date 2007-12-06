@@ -45,7 +45,7 @@ Following must be done in order to prepare project.
 			* statements for linux users:
 				$JAVA_HOME/bin/keytool -genkey -alias tomcat -keypass changeit -keyalg RSA
 				$JAVA_HOME/bin/keytool -export -alias tomcat -keypass changeit -file server.crt
-				sudo $JAVA_HOME/bin/keytool -import -file server.crt -keypass changeit -keystore $JAVA_HOME%/jre/lib/security/cacerts
+				sudo $JAVA_HOME/bin/keytool -import -file server.crt -keypass changeit -keystore $JAVA_HOME/jre/lib/security/cacerts
 			* statements for windows users:
 				%JAVA_HOME%\bin\keytool -genkey -alias tomcat -keypass changeit -keyalg RSA
 				%JAVA_HOME%\bin\keytool -export -alias tomcat -keypass changeit -file server.crt
