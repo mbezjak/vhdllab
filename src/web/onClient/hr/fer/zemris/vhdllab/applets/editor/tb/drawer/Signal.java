@@ -285,6 +285,21 @@ public class Signal {
 		return temp;
 	}
 
+	public long getTimeOfLastChange() {
+		if(data == null) return 0;
+		int p = data.lastIndexOf('(');
+		if(p == -1) return 0;
+		int k = data.indexOf(',', p+1);
+		if(k == -1) return 0;
+		long ldur = 0;
+		try {
+			String dur = data.substring(p+1, k).trim();
+			ldur = Long.parseLong(dur);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return ldur;
+	}
 
 	public void postavi_sve_bitove(String[] signal_za_promjeniti_p) {
 				

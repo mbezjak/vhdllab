@@ -126,12 +126,22 @@ public class Aplet extends AbstractEditor implements IWizard {
 	}
 	
 	private String createData() {
+		System.out.println("-----------------");
 		StringBuilder data = new StringBuilder();
 		data.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<testbench>\n");
 		data.append("<file>").append(fileDepends).append("</file>\n");
 		data.append("<measureUnit>").append(measureUnit != null ? measureUnit : "ns").append("</measureUnit>\n");
-		data.append("<duration>").append(duration != null ? duration : "700").append("</duration>\n");
+
 		Signal[] signals=this.in_panel.podatci_t;
+		long ldur = 0;
+		for(Signal s : signals) {
+			ldur = Math.max(ldur, s.getTimeOfLastChange());
+		}
+		//System.out.println("Utvrdio sam da je ldur="+ldur);
+		//System.out.println("duration="+duration);
+		// TODO: Ovdje sam nasilno pregazio polje duration; kasnije popraviti!
+		duration = String.valueOf(ldur);
+		data.append("<duration>").append(duration != null ? duration : String.valueOf(ldur)).append("</duration>\n");
 		
 		for(Signal s : signals) {
 			data.append(s.toString().trim()).append("\n");
