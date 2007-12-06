@@ -537,6 +537,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	}
 
 	private void exit(int status) {
+		//JOptionPane.showConfirmDialog(this, "Sada cu se zatvoriti...");
 		try {
 			if (systemContainer != null) {
 				((DefaultSystemContainer) systemContainer).dispose();

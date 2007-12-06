@@ -666,6 +666,7 @@ public final class HttpClientInitiator implements Initiator {
 			SystemLog.instance().addErrorMessage(e);
 			throw new UniformAppletException(e);
 		} catch (IOException e) {
+			//e.printStackTrace();
 			SystemLog log = SystemLog.instance();
 			log.addErrorMessage(e); // log an exception
 			String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;

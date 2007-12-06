@@ -211,6 +211,7 @@ public class Testbench implements IVHDLGenerator {
 			}
 			time = slot.getTime();
 		}
+		vhdl.append("\t\twait for 10 ns;\n");
 		vhdl.append("\t\twait;\n");
 	}
 
