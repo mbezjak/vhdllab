@@ -61,7 +61,7 @@ class Scale extends JPanel
     private final int SCALE_HEIGHT = 30;
         
     /** Piksel na kojem pocinje iscrtavanje skale */
-    private int SCALE_START_POINT_IN_PIXELS = 0;;
+    private int SCALE_START_POINT_IN_PIXELS = 0;
 
     /** Svaki vrijednost na skali pocinje od 19. piksela */
     private final int SCALE_VALUE_YAXIS = 19;
@@ -174,10 +174,9 @@ class Scale extends JPanel
             double operand1 = transitionPoints[i + 1];
 			double operand2 = transitionPoints[i];
 			durationsInFemtoSeconds[i] = operand1 - operand2;
-
-            /* crta pocetne valne oblike sa scaleFaktorom 1 */
-            drawDefaultWave();
         }
+        /* crta pocetne valne oblike sa scaleFaktorom 1 */
+        drawDefaultWave();
 	}
 
 
@@ -199,7 +198,7 @@ class Scale extends JPanel
          * se na temelju nje postavlja skala u najmanju jedinicu i mnozi ostatak s
          * odgovarajucim 10^x faktorom.
          * */
-        String minimumDuration = String.valueOf((int)temporaryDurations[0]);
+        String minimumDuration = String.valueOf((long)temporaryDurations[0]);
 		//System.out.println("minimalna razlika je " + minimumDuration);
         
 		int numberOfEndZeroes = 0;
