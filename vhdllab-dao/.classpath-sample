@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main"/>
+	<classpathentry kind="src" path="src/tests"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-entities"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/test/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/build/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/hibernate/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/commons-pool-1.3.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/commons-dbcp-1.2.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
