@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="ant-project"/>
+	<classpathentry kind="src" path="ant-tasks"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/build/ant.jar"/>
 	<classpathentry kind="output" path="bin"/>
