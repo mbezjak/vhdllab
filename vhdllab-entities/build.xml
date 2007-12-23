@@ -1,48 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project name="vhdllab-entities" basedir="." default="package">
 
-	<!-- ======= MAIN CONFIGURATION FILE ================================== -->
-	<property name="configuration.properties" value="../configuration.properties" />
-	<property file="configuration.properties" />
-
-	<!-- ======= DIRECTORY STRUCTURE ====================================== -->
-	<!-- source directories -->
-	<property name="src.main.dir" value="src/main" />
-	<property name="src.tests.dir" value="src/tests" />
-	<property name="lib.dir" value="../vhdllab-misc/libs" />
-	<property name="metadata.dir" value="../metadata" />
-	<!-- build directories -->
-	<property name="build.dir" value="build" />
-	<property name="jlib.dir" value="jlibs" />
-	<property name="jlib.tests.dir" value="${jlib.dir}/tests" />
-	<property name="javadoc.dir" value="javadoc" />
-	<property name="local.dir" value="../local" />
-	<property name="reports.dir" value="reports" />
-	<property name="reports.tests.dir" value="${reports.dir}/tests" />
-	<property name="reports.tests.html.dir" value="${reports.tests.dir}/html" />
-	<!-- convenience properties -->
-	<property name="build.main.dir" value="${build.dir}/main" />
-	<property name="build.tests.dir" value="${build.dir}/tests" />
-	<property name="local.client" value="${local.dir}/client" />
-	<property name="local.server" value="${local.dir}/server" />
-	<property name="client.log4j.dir" value="${local.client}" />
-	<property name="client.log4j.file" value="${client.log4j.dir}/log4j.properties" />
-	<property name="server.log4j.dir" value="${local.server}/WEB-INF/classes" />
-	<property name="server.log4j.file" value="${server.log4j.dir}/log4j.properties" />
-	<property name="persistence.dir" value="${local.dir}/persistence" />
-	<property name="persistence.file" value="${persistence.dir}/META-INF/persistence.xml" />
-
+	<import file="../common.xml" />
+	
 	<!-- ======= CLASSPATH SETUP ========================================== -->
 	<path id="src.classpath">
 		<fileset dir="${lib.dir}" includes="ejb3-persistence.jar" />
 		<fileset dir="${lib.dir}/hibernate" includes="hibernate-annotations.jar" />
 	</path>
 
-	<!-- ======= START OF DEFINED TARGETS ================================= -->
+	<!-- ======= TARGET DEFINITIONS ======================================= -->
 	
-	<target name="once">
-		<copy file=".classpath-sample" tofile=".classpath" overwrite="true" verbose="true"/>
-		<copy file=".project-sample" tofile=".project" overwrite="true" verbose="true"/>
+	<target name="e">
+		<echo>${lib.dir}</echo>
 	</target>
 	
 	<target name="set-additional-properties">
