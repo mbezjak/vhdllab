@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project name="vhdllab-entities" basedir="." default="package">
+<project name="vhdllab" basedir="." default="package">
 
 	<!-- ======= MAIN CONFIGURATION FILE ================================== -->
 	<property name="configuration.properties" value="configuration.properties" />
@@ -44,6 +44,8 @@
 		<subant inheritall="false" target="once">
 			<fileset dir="." includes="**/build.xml" excludes="build.xml"/>
 		</subant>
+		<copy file=".classpath-sample" tofile=".classpath" overwrite="true" verbose="true"/>
+		<copy file=".project-sample" tofile=".project" overwrite="true" verbose="true"/>
 		<copy file="${configuration.properties}-sample" tofile="${configuration.properties}" overwrite="true" verbose="true" />
 	</target>
 	
