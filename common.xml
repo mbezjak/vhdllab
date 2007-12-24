@@ -1,10 +1,29 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
-	<!-- This build file is used only by vhdllab subprojects! -->
+	<!-- MUST FOLLOW:
+	This build file is used only by vhdllab subprojects and should NOT be
+	used by, for example, a build.xml file in this directory! This is
+	because of special references to libs and local directory (check libs.dir
+	and local.dir properties to see)
+	-->
 	
+	<!-- USAGE NOTE:
+	This build file requires 2 classpath references and 2 special properties
+	to be set before invoking any target.
+
+		Classpath reference (junit reference is not needed by any of them):
+			compile.classpath - used for compiling a code
+			runtime.classpath - used for running tests
+
+		Special properties:
+			debug - a flag set when compiling a code
+			runtime.log4j.dir - a directory containing log4j.properties file used for logging
+
+	-->
+
 
 	<!-- ======= MAIN CONFIGURATION FILE ================================== -->
-	<property name="configuration.properties" value="../configuration.properties" />
+	<property name="configuration.properties" value="${basedir}/../configuration.properties" />
 	<property file="configuration.properties" />
 
 	<!-- ======= DIRECTORY STRUCTURE ====================================== -->
@@ -12,7 +31,6 @@
 	<property name="src.main.dir" value="src/main" />
 	<property name="src.tests.dir" value="src/tests" />
 	<property name="libs.dir" value="../libs" />
-	<property name="metadata.dir" value="../metadata" />
 	<!-- build directories -->
 	<property name="build.dir" value="build" />
 	<property name="build.main.dir" value="${build.dir}/main" />
@@ -24,7 +42,11 @@
 	<property name="reports.tests.dir" value="${reports.dir}/tests" />
 	<property name="reports.tests.html.dir" value="${reports.tests.dir}/html" />
 	<property name="local.dir" value="../local" />
-	<!-- convenience properties -->
+	
+	<!-- jar names -->
+	<property name="project.jar" value="${jlibs.dir}/${ant.project.name}.jar" />
+	<property name="project.tests.jar" value="${jlibs.tests.dir}/${ant.project.name}-tests.jar" />
+	<!-- convenience properties (not used in this build file) -->
 	<property name="local.client" value="${local.dir}/client" />
 	<property name="local.server" value="${local.dir}/server" />
 	<property name="client.log4j.dir" value="${local.client}" />
@@ -33,13 +55,142 @@
 	<property name="server.log4j.file" value="${server.log4j.dir}/log4j.properties" />
 	<property name="persistence.dir" value="${local.dir}/persistence" />
 	<property name="persistence.file" value="${persistence.dir}/META-INF/persistence.xml" />
+	
+	<path id="junit.classpath">
+		<fileset file="${libs.dir}/test/junit-4.4.jar" />
+	</path>
 
 
 	<!-- ======= TARGET DEFINITIONS ======================================= -->
-	
+
 	<target name="once">
-		<copy file=".classpath-sample" tofile=".classpath" overwrite="true" verbose="true"/>
-		<copy file=".project-sample" tofile=".project" overwrite="true" verbose="true"/>
+		<copy file=".classpath-sample" tofile=".classpath" overwrite="true" verbose="true" />
+		<copy file=".project-sample" tofile=".project" overwrite="true" verbose="true" />
 	</target>
+
+	<target name="init">
+		<available file="${configuration.properties}" property="configuration.properties.present" />
+		<fail unless="configuration.properties.present">
+      		${configuration.properties} file is not present. You have a sample ${configuration.properties}-sample. Please copy this file under correct name and customize it.
+    	</fail>
+
+		<tstamp />
+
+		<!-- ant call so that that task (prepair-local) is done only once -->
+		<ant antfile="../build.xml" target="prepair-local" inheritrefs="false" inheritall="false" />
+
+		<!-- common build directories -->
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.main.dir}" />
+		<mkdir dir="${build.tests.dir}" />
+		<mkdir dir="${jlibs.dir}" />
+		<mkdir dir="${jlibs.tests.dir}" />
+		<mkdir dir="${javadoc.dir}" />
+		<mkdir dir="${reports.tests.html.dir}" />
+	</target>
+
+	<target name="clean">
+		<delete quiet="true" includeEmptyDirs="true">
+			<fileset dir="${build.dir}" />
+			<fileset dir="${jlibs.dir}" />
+			<fileset dir="${javadoc.dir}" />
+			<fileset dir="${reports.dir}" />
+		</delete>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac destdir="${build.main.dir}" includes="**/*.java"
+			includeAntRuntime="false" debug="${debug}"
+			debuglevel="${debug.level}" encoding="UTF-8">
+			<src path="${src.main.dir}" />
+			<classpath>
+				<path refid="compile.classpath" />
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="package" depends="compile">
+		<jar destfile="${project.jar}" index="false" duplicate="fail">
+			<fileset dir="${build.main.dir}" includes="**/*.class" />
+			<fileset dir="${src.main.dir}" excludes="**/*.java,**/*svn/**,**/*svn" />
+		</jar>
+	</target>
+
+	<target name="compile-tests" depends="compile">
+		<javac destdir="${build.tests.dir}" includes="**/*.java"
+			includeAntRuntime="false" debug="true"
+			debuglevel="lines,vars,source" encoding="UTF-8">
+			<src path="${src.tests.dir}" />
+			<classpath>
+				<path refid="compile.classpath" />
+				<path refid="junit.classpath" />
+				<pathelement location="${build.main.dir}"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="package-tests" depends="compile-tests">
+		<jar destfile="${project.tests.jar}" index="false">
+			<fileset dir="${build.tests.dir}" includes="**/*.class" />
+		</jar>
+	</target>
+	
+	<target name="run-tests" depends="package,package-tests">
+		<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
+			<classpath>
+				<path refid="runtime.classpath" />
+				<path refid="junit.classpath" />
+				<pathelement location="${project.jar}" />
+				<pathelement location="${project.tests.jar}" />
+				<pathelement location="${runtime.log4j.dir}"/>
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="no" todir="${reports.tests.dir}">
+				<fileset dir="${build.tests.dir}">
+					<include name="**/*Test*"/>
+					<exclude name="**/*$$*"/> <!-- exclude nested classes -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="tests-report" depends="run-tests">
+		<junitreport todir="${reports.tests.html.dir}">
+			<fileset dir="${reports.tests.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports.tests.html.dir}" />
+		</junitreport>
+	</target>
+
+	<target name="show-tests-report" depends="tests-report">
+		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
+			classpath="../${jlibs.dir}/ant-tasks.jar" />
+		<!-- NOTE: uri must be composed of basedir! -->
+		<openURI uri="file:${basedir}/${reports.tests.html.dir}/index.html"/>
+	</target>
+	
+	<target name="javadoc">
+		<javadoc destdir="${javadoc.dir}" author="true"
+			classpathref="compile.classpath" nodeprecated="false"
+			nodeprecatedlist="false" noindex="false" nonavbar="false"
+			notree="false" packagenames="*" splitindex="true"
+			use="true" version="true" encoding="UTF-8">
+			<fileset dir="${src.main.dir}" />
+			<link href="http://java.sun.com/javase/6/docs/api/" />
+		</javadoc>
+	</target>
+	
+	<target name="test" depends="run-tests,show-tests-report" />
+	
+	<target name="all" depends="package,javadoc,test" />
+
+	<target name="rebuild" depends="clean,package" />
+
+	<target name="rebuild-all" depends="clean,all" />
+
+	<target name="rebuild-doc" depends="clean,javadoc" />
 	
 </project>

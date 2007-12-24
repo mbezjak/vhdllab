@@ -2,7 +2,7 @@
 <project name="vhdllab" basedir="." default="package">
 
 	<!-- ======= MAIN CONFIGURATION FILE ================================== -->
-	<property name="configuration.properties" value="${basedir}/configuration.properties" />
+	<property name="configuration.properties" value="configuration.properties" />
 	<property file="configuration.properties" />
 
 	<!-- ======= DIRECTORY STRUCTURE ====================================== -->
@@ -30,8 +30,8 @@
 	<property name="images.dir" value="${src.images.dir}" /> <!-- must be relative! -->
 	<!-- build directories -->
 	<property name="build.dir" value="${basedir}/build" />
-	<property name="jlib.dir" value="${basedir}/jlibs" />
-	<property name="jlib.tests.dir" value="${jlib.dir}/tests" />
+	<property name="jlibs.dir" value="${basedir}/jlibs" />
+	<property name="jlib.tests.dir" value="${jlibs.dir}/tests" />
 	<property name="javadoc.dir" value="${basedir}/javadoc" />
 	<property name="local.dir" value="${basedir}/local" />
 	<property name="reports.dir" value="${basedir}/reports" />
@@ -94,11 +94,11 @@
 	<property name="dao.tests.jar" value="${dao.jar.basename}-tests.jar" />
 	<property name="entities.tests.jar" value="${entities.jar.basename}-tests.jar" />
 	<!-- convenience properties for jar locations -->
-	<property name="jlib.client.jar" value="${jlib.dir}/${client.jar}" />
-	<property name="jlib.presentation.jar" value="${jlib.dir}/${presentation.jar}" />
-	<property name="jlib.service.jar" value="${jlib.dir}/${service.jar}" />
-	<property name="jlib.dao.jar" value="${jlib.dir}/${dao.jar}" />
-	<property name="jlib.entities.jar" value="${jlib.dir}/${entities.jar}" />
+	<property name="jlib.client.jar" value="${jlibs.dir}/${client.jar}" />
+	<property name="jlib.presentation.jar" value="${jlibs.dir}/${presentation.jar}" />
+	<property name="jlib.service.jar" value="${jlibs.dir}/${service.jar}" />
+	<property name="jlib.dao.jar" value="${jlibs.dir}/${dao.jar}" />
+	<property name="jlib.entities.jar" value="${jlibs.dir}/${entities.jar}" />
 	<property name="jlib.tests.client.jar" value="${jlib.tests.dir}/${client.tests.jar}" />
 	<property name="jlib.tests.presentation.jar" value="${jlib.tests.dir}/${presentation.tests.jar}" />
 	<property name="jlib.tests.service.jar" value="${jlib.tests.dir}/${service.tests.jar}" />
@@ -126,6 +126,34 @@
 		<copy file=".classpath-sample" tofile=".classpath" overwrite="true" verbose="true"/>
 		<copy file=".project-sample" tofile=".project" overwrite="true" verbose="true"/>
 		<copy file="${configuration.properties}-sample" tofile="${configuration.properties}" overwrite="true" verbose="true" />
+	</target>
+	
+	<target name="prepair-local">
+		<mkdir dir="${local.dir}"/>
+		<sync todir="${local.dir}" overwrite="true">
+			<fileset dir="${metadata.dir}" />
+		</sync>
+
+		<!-- compile ant source folder so custom tasks can be used -->
+		<mkdir dir="ant-build"/>
+		<mkdir dir="${jlibs.dir}"/>
+		<javac destdir="ant-build" srcdir="ant-tasks" includes="**/*.java" />
+		<jar destfile="${jlibs.dir}/ant-tasks.jar" >
+			<fileset dir="ant-build" />
+		</jar>
+		<delete quiet="true" includeemptydirs="true" >
+			<fileset dir="ant-build" />
+		</delete>
+
+		<!-- define create filter task -->
+		<taskdef name="createFilter" classname="hr.fer.zemris.vhdllab.ant.CreateFilterFileTask"
+			classpath="${jlibs.dir}/ant-tasks.jar" />
+
+		<!-- create a filter file for replace task -->
+		<createFilter filterfile="${local.dir}/filter.properties" prefix="@@" sufix="@@" />
+		
+		<replace dir="${local.dir}"	includes="**/*" excludes="filter.properties"
+			replacefilterfile="${local.dir}/filter.properties" summary="true"/>
 	</target>
 	
 	<target name="set-additional-properties">
@@ -165,14 +193,15 @@
 		<property name="" value="" />
 	</target>
 	
-	<target name="init" depends="set-additional-properties">
+	<target name="init" depends="prepair-local,set-additional-properties">
 		<available file="${configuration.properties}" property="configuration.properties.present" />
 		<fail unless="configuration.properties.present">
       		${configuration.properties} file is not present. You have a sample ${configuration.properties}-sample. Please copy this file under correct name and customize it.
     	</fail>
 		
 		<tstamp />
-
+		
+		<!--
 		<mkdir dir="${build.main.client}" />
 		<mkdir dir="${build.main.presentation}" />
 		<mkdir dir="${build.main.service}" />
@@ -186,38 +215,19 @@
 		<mkdir dir="${build.tests.entities}" />
 		<mkdir dir="${build.tests.common}" />
 		<mkdir dir="${build.ant}" />
-		<mkdir dir="${jlib.dir}" />
+		<mkdir dir="${jlibs.dir}" />
 		<mkdir dir="${jlib.tests.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${local.dir}" />
 		<mkdir dir="${reports.tests.html.dir}" />
-	</target>
-	
-	<target name="prepair" depends="init">
-		<sync todir="${local.dir}" overwrite="true">
-			<fileset dir="${metadata.dir}" />
-		</sync>
-
-		<!-- compile ant source folder so custom tasks can be used -->
-		<javac destdir="${build.ant}" srcdir="${src.ant}" includes="**/*.java" />
-
-		<!-- define custom tasks -->
-		<taskdef name="createFilter" classname="hr.fer.zemris.vhdllab.ant.CreateFilterFileTask"
-			classpath="${build.ant}" />
-		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
-			classpath="${build.ant}" />
-
-		<!-- create a filter file for replace task -->
-		<createFilter filterfile="${local.dir}/filter.properties" prefix="@@" sufix="@@" />
 		
-		<replace dir="${local.dir}"	includes="**/*" excludes="filter.properties"
-			replacefilterfile="${local.dir}/filter.properties" summary="true"/>
+		 -->
 	</target>
 	
 	<target name="clean">
 		<delete quiet="true" includeEmptyDirs="true">
 			<fileset dir="${build.dir}" />
-			<fileset dir="${jlib.dir}" />
+			<fileset dir="${jlibs.dir}" />
 			<fileset dir="${javadoc.dir}" />
 			<fileset dir="${local.dir}" />
 			<fileset dir="${reports.dir}" />
@@ -226,7 +236,7 @@
 	</target>
 	
 	<!-- ======= COMPILE MAIN SOURCE TARGETS ============================== -->
-	<target name="compile-entities" depends="prepair">
+	<target name="compile-entities" depends="init">
 		<javac destdir="${build.main.entities}" includes="**/*.java"
 			includeAntRuntime="false" debug="${server.debug}"
 			debuglevel="${debug.level}" encoding="UTF-8">
@@ -279,7 +289,7 @@
 		</javac>
 	</target>
 
-	<target name="compile-client" depends="prepair">
+	<target name="compile-client" depends="init">
 		<javac destdir="${build.main.client}" includes="**/*.java"
 			includeAntRuntime="false" debug="${client.debug}"
 			debuglevel="${debug.level}" encoding="UTF-8">
@@ -611,7 +621,7 @@
 			<fileset file="${basedir}/html/pages/*" />
 			<!-- END TEMPORARY -->
 			<fileset dir="." includes="images/**/*" />
-			<fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar" />
+			<fileset file="${basedir}/${jlibs.dir}/${app.name}-web-onClient.jar" />
 			<fileset file="${basedir}/${lib.dir}/commons-digester.jar" />
 			<fileset file="${basedir}/${lib.dir}/commons-httpclient.jar" />
 			<fileset file="${basedir}/${lib.dir}/commons-codec.jar" />
@@ -627,9 +637,9 @@
 		</copy>
 
 		<copy todir="${tomcat.app.dir}/WEB-INF/lib" overwrite="true">
-			<fileset file="${basedir}/${jlib.dir}/${app.name}-dao.jar" />
-			<fileset file="${basedir}/${jlib.dir}/${app.name}-service.jar" />
-			<fileset file="${basedir}/${jlib.dir}/${app.name}-web-onServer.jar" />
+			<fileset file="${basedir}/${jlibs.dir}/${app.name}-dao.jar" />
+			<fileset file="${basedir}/${jlibs.dir}/${app.name}-service.jar" />
+			<fileset file="${basedir}/${jlibs.dir}/${app.name}-web-onServer.jar" />
 			<fileset file="${basedir}/${lib.dir}/*.*" excludes="servlet-api.jar" />
 			<fileset file="${basedir}/${lib.dir}/hibernate/*.*" />
 			<fileset file="${basedir}/${lib.dir}/mysql/*.*" />
@@ -715,7 +725,7 @@
     	have to be excluded from war (also its jar dependencies) -->
 			<fileset dir="${html.pages.dir}" includes="*" />
 			<fileset dir="." includes="images/**/*" />
-			<fileset dir="${jlib.dir}" includes="vhdllab-web-onClient.jar" />
+			<fileset dir="${jlibs.dir}" includes="vhdllab-web-onClient.jar" />
 			<fileset dir="${lib.dir}" includes="commons-digester.jar" />
 			<fileset dir="${lib.dir}" includes="commons-httpclient.jar" />
 			<fileset dir="${lib.dir}" includes="commons-codec.jar" />
@@ -723,7 +733,7 @@
 			<fileset dir="${lib.dir}/hibernate" includes="commons-collections.jar,commons-logging.jar" />
 			<fileset file="${basedir}/${lib.dir}/hibernate/log4j.jar" />
 			<fileset dir="${local.dir}" includes=".java.policy" />
-			<lib dir="${jlib.dir}" includes="*.jar" />
+			<lib dir="${jlibs.dir}" includes="*.jar" />
 			<lib dir="${lib.dir}" includes="*.jar" />
 			<lib dir="${lib.dir}/hibernate" includes="*.jar" />
 			<lib dir="${lib.dir}/mysql" includes="*.jar" />
