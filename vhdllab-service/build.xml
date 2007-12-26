@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project name="vhdllab-service" basedir="." default="package">
+
+	<import file="../common.xml" />
+	<property file="${configuration.properties}" /> <!-- has to be reloaded! -->
+	
+	<!-- ======= CLASSPATH SETUP ========================================== -->
+	<path id="compile.classpath">
+		<fileset dir="${libs.dir}" includes="commons-dbcp-1.2.2.jar "/>
+		<fileset dir="${libs.dir}" includes="commons-logging-1.1.jar" />
+		<fileset dir="${libs.dir}" includes="log4j-1.2.15.jar" />
+		<fileset dir="${libs.dir}" includes="ejb3-persistence.jar" />
+		<fileset dir="${libs.dir}/hibernate" includes="hibernate3.jar" />
+		<fileset dir="${libs.dir}/build" includes="servlet-api.jar" />
+		<!-- Dependency project -->
+		<fileset dir="../vhdllab-entities/${jlibs.dir}" includes="*" />
+		<!-- Special dependent library (because of annotations in dependent project) -->
+		<fileset dir="${libs.dir}/hibernate" includes="hibernate-annotations.jar" />
+	</path>
+	<path id="runtime.classpath" />
+	
+	<!-- ======= SPECIAL PROPERTIES ======================================= -->
+	<property name="dependencies" value="vhdllab-entities/build.xml" />
+	<property name="debug" value="${server.debug}" />
+	<property name="runtime.log4j.dir" value="${server.log4j.dir}" />
+
+</project>

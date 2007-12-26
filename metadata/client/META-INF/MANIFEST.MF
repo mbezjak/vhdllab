@@ -1,0 +1,3 @@
+SplashScreen-Image: images/@@app.splash@@
+Main-Class: @@app.main.class@@
+Class-Path: @@app.client.archive@@
