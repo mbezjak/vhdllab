@@ -164,17 +164,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
-							try {
-								System
-										.getProperty("org.apache.commons.logging.LogFactory.HashtableImpl");
-							} catch (AccessControlException e) {
-								JOptionPane
-										.showMessageDialog(
-												MainFrame.this,
-												"VHDLLab doesn't have permission to lookup cirtain property. Please install .java.policy correctly.");
-								exit(EXIT_STATUS_ERROR);
-							}
-
 							setupGlassPane();
 							getGlassPane().setVisible(true);
 							initBasicGUI();
