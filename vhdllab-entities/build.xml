@@ -15,4 +15,7 @@
 	<property name="debug" value="${server.debug}" />
 	<property name="runtime.log4j.dir" value="${server.log4j.dir}" />
 
+	<!-- ======= SPECIAL PURPOSE PACKAGE ADDON ============================ -->
+	<fileset id="package.addon" dir="." excludes="**/*"/>
+
 </project>
