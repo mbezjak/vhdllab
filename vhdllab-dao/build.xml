@@ -26,22 +26,7 @@
 		<fileset dir="${libs.dir}" includes="commons-pool-1.3.jar" />
 		<fileset dir="${libs.dir}" includes="mysql-connector-java-3.1.13-bin.jar" />
 		<fileset dir="${libs.dir}" includes="ehcache-1.3.0.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="hibernate3.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="hibernate-annotations.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="hibernate-commons-annotations.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="hibernate-entitymanager.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="jboss-archive-browsing.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="dom4j-1.6.1.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="javassist.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="cglib-2.1.3.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="asm.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="antlr-2.7.6.jar" />
-		<fileset dir="${libs.dir}/hibernate" includes="jta.jar" />
-		<!-- Rest of hibernate dependencies (better safe then sorry) -->
-		<fileset dir="${libs.dir}" includes="asm-attrs.jar" />
-		<fileset dir="${libs.dir}" includes="connector.jar" />
-		<fileset dir="${libs.dir}" includes="jaas.jar" />
-		<fileset dir="${libs.dir}" includes="xml-apis.jar" />
+		<fileset dir="${libs.dir}/hibernate" includes="*" />
 		<!-- Dependency project -->
 		<fileset dir="../vhdllab-entities/${jlibs.dir}" includes="*" />
 	</path>
