@@ -61,6 +61,12 @@ public class EntityManagerUtil {
 			// suppress error
 		}
 	}
+	
+	/**
+	 * Don't let anyone instantiate this class.
+	 */
+	private EntityManagerUtil() {
+	}
 
 	/**
 	 * Creates an entity manager factor. Repeated invocation of this method will

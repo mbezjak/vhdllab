@@ -3,8 +3,9 @@
 	<!-- MUST FOLLOW:
 	This build file is used only by vhdllab subprojects and should NOT be
 	used by, for example, a build.xml file in this directory! This is
-	because of special references to libs and local directory (check libs.dir
-	and local.dir properties to see)
+	because of special references to a directory where this file is
+	located (a container directory for all subprojects). For example,
+	check libs.dir and local.dir properties.
 	-->
 	
 	<!-- USAGE NOTE:
@@ -29,7 +30,6 @@
 					a project doesn't have anything else to add then create
 					an empty fileset. Example:
 					'<fileset id="package.addon" dir="." excludes="**/*"/>'
-
 	-->
 
 
@@ -124,8 +124,7 @@
 		<resolveDependencies target="package" deps="${dependencies}"/>
 	</target>
 	
-	<target name="compile" depends="init">
-		<antcall target="resolve-dependencies" />
+	<target name="compile" depends="init,resolve-dependencies">
 		<javac destdir="${build.main.dir}" includes="**/*.java"
 			includeAntRuntime="false" debug="${debug}"
 			debuglevel="${debug.level}" encoding="UTF-8">
@@ -201,7 +200,7 @@
 		<openURI uri="file:${basedir}/${reports.tests.html.dir}/index.html"/>
 	</target>
 	
-	<target name="javadoc">
+	<target name="javadoc" depends="resolve-dependencies">
 		<javadoc destdir="${javadoc.dir}" author="true"
 			classpathref="compile.classpath" nodeprecated="false"
 			nodeprecatedlist="false" noindex="false" nonavbar="false"

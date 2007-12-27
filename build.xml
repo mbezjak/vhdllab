@@ -28,7 +28,7 @@
 	<property name="persistence.file" value="${persistence.dir}/META-INF/persistence.xml" />
 
 	<!-- ======= TARGET DEFINITIONS ======================================= -->
-
+	
 	<target name="once">
 		<subant inheritall="false" target="once">
 			<fileset dir="." includes="**/build.xml" excludes="build.xml"/>
