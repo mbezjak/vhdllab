@@ -98,3 +98,26 @@ TODO 108) [CLOSED]   wizard za compilation
 TODO 109) [CLOSED]   Trebalo bi slozit onaj dependency u Extractor-u
 TODO 110) [CLOSED]   Napravit wizard za new VHDL source
 TODO 111) [CLOSED]   Statusbar history (slicno ko i ovo gore, znaci isto jedan JTextField ili JList i svaki put kad se promijeni status bar tu se prikaze u obliku vrijeme : statusBarContent)
+
+
+*************************************************************
+***************** TEMATSKI GRUPIRANI ZADACI *****************
+*************************************************************
+
+Prikaz rezultata simulacije
+--------------------------------------------
+
+TODO 1) [OPEN]       Valni oblici svih su prikazani kao da imaju promjenu svaki puta kada bilo koji signal ima promjenu;
+                     oni signali koji nemaju na tom mjestu promjenu moraju biti prikazani korektno!
+TODO 2) [OPEN]       Napraviti parser binarnog izlaza simulatora koji u sebi ima i signali koji su definirani korisnickim
+                     tipom (bez toga automat ne radi kako spada)
+TODO 3) [OPEN]       Kursori rade neispravno ako se koristi ZOOM
+TODO 4) [OPEN]       Kod prikaza visebitnih signala omoguciti prikaz ispisanih vrijednosti u radlicitim bazama:
+                     binarno, oktalno, dekadsko, heksadekadsko
+
+Definiranje novog testbencha
+--------------------------------------------
+
+TODO 1) [OPEN]       Napisati novi testbench. Podrzati: kombinacijske sklopove, sekvencijske sklopove (u ovom drugom omoguciti
+                     odabir signala takta, tHIGH, tLOW, te tSETUP i tHOLD). Omoguciti automatsko popunjavanje signala najcescim
+                     operacijama (toggle odredeni broj puta, brojanje, ...)
