@@ -87,7 +87,7 @@ public class UserFileTest {
 	}
 
 	/**
-	 * Wrong object type as parameter to compareTo method
+	 * Non-user-file type
 	 */
 	@Test(expected=ClassCastException.class)
 	public void compareTo2() {

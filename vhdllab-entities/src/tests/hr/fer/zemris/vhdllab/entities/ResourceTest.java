@@ -89,7 +89,7 @@ public class ResourceTest {
 	public void compareTo() {
 		resource.compareTo(null);
 	}
-
+	
 	/**
 	 * Only ids (if set) are important in equals, hashCode and compareTo
 	 */
