@@ -190,7 +190,7 @@ public class Resource<T> implements Serializable, Comparable<Resource<T>> {
 		if (this == other)
 			return 0;
 		if (other == null)
-			return 1;
+			throw new NullPointerException("Other resource cant be null");
 
 		if (id == null) {
 			if (other.id != null)

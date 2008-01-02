@@ -53,6 +53,7 @@ public class ResourceTest {
 		assertTrue(resource != resource2);
 		assertEquals(resource, resource2);
 		assertEquals(resource.hashCode(), resource2.hashCode());
+		assertEquals(0, resource.compareTo(resource2));
 	}
 
 	/**
@@ -79,6 +80,14 @@ public class ResourceTest {
 		assertEquals(resource, resource);
 		assertNotSame(resource, null);
 		assertNotSame(resource, "a string object");
+	}
+	
+	/**
+	 * Null object as parameter to compareTo method
+	 */
+	@Test(expected=NullPointerException.class)
+	public void compareTo() {
+		resource.compareTo(null);
 	}
 
 	/**

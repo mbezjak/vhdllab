@@ -14,6 +14,11 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+/**
+ * @author Miro Bezjak
+ * @since 2/1/2008
+ * @version 1.0
+ */
 @Entity
 @AttributeOverrides(value = {
 		@AttributeOverride(name = "content", column = @Column(name = "content", length = 65535, nullable = false)),
@@ -80,6 +85,9 @@ public class UserFile extends Resource<String> implements Serializable {
 		if (!super.equals(obj)) {
 			return false;
 		}
+		if (getId() != null) {
+			return true;
+		}
 		final UserFile other = (UserFile) obj;
 		if (getUserId() == null) {
 			if (other.getUserId() != null)
@@ -87,6 +95,43 @@ public class UserFile extends Resource<String> implements Serializable {
 		} else if (!getUserId().equalsIgnoreCase(other.getUserId()))
 			return false;
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.entities.Resource#compareTo(hr.fer.zemris.vhdllab.entities.Resource)
+	 */
+	@Override
+	public int compareTo(Resource<String> o) {
+		if (this == o)
+			return 0;
+		if (o == null)
+			throw new NullPointerException("Other resource cant be null");
+		if(!(o instanceof UserFile)) {
+			throw new ClassCastException("Object is not of User file type");
+		}
+		final UserFile other = (UserFile) o;
+		int val = super.compareTo(other);
+		if(getId() != null || val != 0) {
+			return val;
+		}
+		if (getUserId() == null) {
+			if (other.getUserId() != null)
+				return -1;
+		} else if (other.getUserId() == null) {
+			return 1;
+		} else {
+			val = getUserId().compareToIgnoreCase(other.getUserId());
+		}
+		
+		if(val < 0) {
+			return -1;
+		} else if(val > 0) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 	/*
