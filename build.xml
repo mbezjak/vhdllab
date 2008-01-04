@@ -145,8 +145,8 @@
 		</subant>
 		<copy todir="${jlibs.dir}">
 			<!--<fileset dir="vhdllab-client/jlibs" includes="*" />
-			<fileset dir="vhdllab-common/jlibs" includes="*" />
-			<fileset dir="vhdllab-dao/jlibs" includes="*" />-->
+			<fileset dir="vhdllab-common/jlibs" includes="*" />-->
+			<fileset dir="vhdllab-dao/jlibs" includes="*" />
 			<fileset dir="vhdllab-entities/jlibs" includes="*" />
 			<!--<fileset dir="vhdllab-presentation/jlibs" includes="*" />
 			<fileset dir="vhdllab-service/jlibs" includes="*" />-->
@@ -167,8 +167,8 @@
 		</subant>
 		<copy todir="${jlibs.tests.dir}">
 			<!--<fileset dir="vhdllab-client/jlibs/tests" includes="*" />
-			<fileset dir="vhdllab-common/jlibs/tests" includes="*" />
-			<fileset dir="vhdllab-dao/jlibs/tests" includes="*" />-->
+			<fileset dir="vhdllab-common/jlibs/tests" includes="*" />-->
+			<fileset dir="vhdllab-dao/jlibs/tests" includes="*" />
 			<fileset dir="vhdllab-entities/jlibs/tests" includes="*" />
 			<!--<fileset dir="vhdllab-presentation/jlibs/tests" includes="*" />
 			<fileset dir="vhdllab-service/jlibs/tests" includes="*" />-->
@@ -185,8 +185,8 @@
 	<target name="tests-report" depends="run-tests">
 		<copy todir="${reports.tests.dir}">
 			<!--<fileset dir="vhdllab-client/${reports.tests.dir}" />
-			<fileset dir="vhdllab-common/${reports.tests.dir}" />
-			<fileset dir="vhdllab-dao/${reports.tests.dir}" />-->
+			<fileset dir="vhdllab-common/${reports.tests.dir}" />-->
+			<fileset dir="vhdllab-dao/${reports.tests.dir}" />
 			<fileset dir="vhdllab-entities/${reports.tests.dir}"/>
 			<!--<fileset dir="vhdllab-presentation/${reports.tests.dir}" />
 			<fileset dir="vhdllab-service/${reports.tests.dir}" />-->
@@ -210,8 +210,8 @@
 		<mkdir dir="src-all"/>
 		<copy todir="src-all">
 			<!--<fileset dir="vhdllab-client/src/main" />
-			<fileset dir="vhdllab-common/src/main" />
-			<fileset dir="vhdllab-dao/src/main" />-->
+			<fileset dir="vhdllab-common/src/main" />-->
+			<fileset dir="vhdllab-dao/src/main" />
 			<fileset dir="vhdllab-entities/src/main"/>
 			<!--<fileset dir="vhdllab-presentation/src/main" />
 			<fileset dir="vhdllab-service/src/main" />-->
@@ -243,18 +243,14 @@
 		<taskdef name="hibernatetool" 
 		        classname="org.hibernate.tool.ant.HibernateToolTask">
 			<classpath>
-				<pathelement location="${libs.dir}/build/hibernate-tools.jar"/>
+				<fileset dir="${libs.dir}" includes="**/*.jar" />
 			</classpath>
 		</taskdef>
 
 		<hibernatetool destdir="${local.dir}">
 			<classpath>
-				<path>
-					<fileset dir="${libs.dir}"/>
-				</path>
-				<pathelement location="${jlibs.dir}/vhdllab-dao.jar"/>
+ 				<pathelement location="${jlibs.dir}/vhdllab-dao.jar"/> <!-- for DBCP connection provider -->
 				<pathelement location="${jlibs.dir}/vhdllab-entities.jar"/>
-				<pathelement location="${persistence.dir}"/>
 				<pathelement location="${server.log4j.dir}"/>
 			</classpath>
 			<jpaconfiguration/>
