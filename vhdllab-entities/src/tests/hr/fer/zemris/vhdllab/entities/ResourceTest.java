@@ -4,14 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * A test case for {@link Resource} entity.
+ * A test case for {@link Resource} superclass entity.
  * 
  * @author Miro Bezjak
  */
@@ -22,13 +24,25 @@ public class ResourceTest {
 	private static final String NAME = "resource.name";
 	private static final String TYPE = "resource.type";
 	private static final String CONTENT = "...resource content...";
-	private static final Date CREATED = Date.valueOf("2008-01-02");
+	private static final Date CREATED;
 	private static final Long NEW_ID = Long.valueOf(654321);
 	private static final String NEW_PARENT = "new." + PARENT;
 	private static final String NEW_NAME = "new." + NAME;
 	private static final String NEW_TYPE = "new." + TYPE;
 	private static final String NEW_CONTENT = "new." + CONTENT;
-	private static final Date NEW_CREATED = Date.valueOf("2000-12-31");
+	private static final Date NEW_CREATED;
+
+	static {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm");
+		try {
+			CREATED = df.parse("2008-01-02 13-45");
+			NEW_CREATED = df.parse("2000-12-31 07-13");
+		} catch (ParseException e) {
+			// should never happen. but if pattern should change report it by
+			// throwing exception.
+			throw new IllegalStateException(e);
+		}
+	}
 
 	private Resource<String> resource;
 	private Resource<String> resource2;
@@ -81,15 +95,15 @@ public class ResourceTest {
 		assertNotSame(resource, null);
 		assertNotSame(resource, "a string object");
 	}
-	
+
 	/**
 	 * Null object as parameter to compareTo method
 	 */
-	@Test(expected=NullPointerException.class)
+	@Test(expected = NullPointerException.class)
 	public void compareTo() {
 		resource.compareTo(null);
 	}
-	
+
 	/**
 	 * Only ids (if set) are important in equals, hashCode and compareTo
 	 */
@@ -113,7 +127,8 @@ public class ResourceTest {
 		resource2.setId(NEW_ID);
 		assertNotSame(resource, resource2);
 		assertNotSame(resource.hashCode(), resource2.hashCode());
-		assertEquals(ID.compareTo(NEW_ID) < 0 ? -1 : 1, resource.compareTo(resource2));
+		assertEquals(ID.compareTo(NEW_ID) < 0 ? -1 : 1, resource
+				.compareTo(resource2));
 	}
 
 	/**
@@ -170,7 +185,8 @@ public class ResourceTest {
 		resource2.setName(NEW_NAME);
 		assertNotSame(resource, resource2);
 		assertNotSame(resource.hashCode(), resource2.hashCode());
-		assertEquals(NAME.compareTo(NEW_NAME) < 0 ? -1 : 1, resource.compareTo(resource2));
+		assertEquals(NAME.compareTo(NEW_NAME) < 0 ? -1 : 1, resource
+				.compareTo(resource2));
 	}
 
 	/**
@@ -183,7 +199,8 @@ public class ResourceTest {
 		resource2.setType(NEW_TYPE);
 		assertNotSame(resource, resource2);
 		assertNotSame(resource.hashCode(), resource2.hashCode());
-		assertEquals(TYPE.compareTo(NEW_TYPE) < 0 ? -1 : 1, resource.compareTo(resource2));
+		assertEquals(TYPE.compareTo(NEW_TYPE) < 0 ? -1 : 1, resource
+				.compareTo(resource2));
 	}
 
 	/**

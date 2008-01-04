@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
  * @version 1.0
  */
 @MappedSuperclass
-public class Resource<T> implements Serializable, Comparable<Resource<T>> {
+class Resource<T> implements Serializable, Comparable<Resource<T>> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -65,7 +65,7 @@ public class Resource<T> implements Serializable, Comparable<Resource<T>> {
 	}
 
 	@Basic
-	@Column(name = "type", length = 255, nullable = false)
+	@Column(name = "type", length = 255, nullable = false, updatable = false)
 	public String getType() {
 		return type;
 	}
@@ -74,18 +74,20 @@ public class Resource<T> implements Serializable, Comparable<Resource<T>> {
 		this.type = type;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * Note that column length is only theoretically the amount specified. This
 	 * is because some DBMS won't listen to specified length. e.g. MySQL will
 	 * set data type to 'mediumtext' which has fixed amount of characters
 	 * (16,777,215 (2^24 – 1) characters). Also this is huge amount of data
-	 * (16MB) and when sending data over network (local or internet) DBMS could
+	 * (16MB) and when sending data over network (local or Internet) DBMS could
 	 * refuse to accept it. In MySQL this can be controlled by
 	 * 'max_allowed_packet' server variable which is by default set to less then
 	 * 'mediumtext' size (default value is 16,776,192).
 	 */
 	@Basic
-	@Column(name = "content", length = 16000000)
+	@Column(name = "content", length = 16000000, nullable = false)
 	public String getContent() {
 		return content;
 	}
@@ -248,7 +250,7 @@ public class Resource<T> implements Serializable, Comparable<Resource<T>> {
 		 */
 		StringBuilder sb = new StringBuilder(20);
 		sb.append("id=").append(id).append(", name=").append(name).append(
-				", type=").append(type);
+				", type=").append(type).append(", created=").append(created);
 		return sb.toString();
 	}
 
