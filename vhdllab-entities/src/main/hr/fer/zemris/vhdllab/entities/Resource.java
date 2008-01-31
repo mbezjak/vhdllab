@@ -12,15 +12,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * This is a generic class for all resources. Basically it defines all
- * properties that a resource must have.
+ * This is a superclass for all resources. Basically it defines all properties
+ * that a resource must have.
  * 
  * @author Miro Bezjak
- * @since 2/1/2008
+ * @since 31/1/2008
  * @version 1.0
  */
 @MappedSuperclass
-class Resource<T> implements Serializable, Comparable<Resource<T>> {
+class Resource implements Serializable, Comparable<Resource> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -29,18 +29,16 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 	private String type;
 	private String content;
 	private Date created;
-	private T parent;
 
 	public Resource() {
 	}
 
-	public Resource(Resource<T> r) {
+	public Resource(Resource r) {
 		this.id = r.id;
 		this.name = r.name;
 		this.type = r.type;
 		this.content = r.content;
 		this.created = r.created;
-		this.parent = r.parent;
 	}
 
 	@Id
@@ -106,14 +104,6 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 		this.created = created;
 	}
 
-	public T getParent() {
-		return parent;
-	}
-
-	public void setParent(T parent) {
-		this.parent = parent;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,11 +111,6 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 	 */
 	@Override
 	public int hashCode() {
-		/*
-		 * NOTE: Parent is not used in this method because of possibility to
-		 * enter endless loop (when this object and parent form bidirectional
-		 * relationship).
-		 */
 		final int prime = 31;
 		int result = 1;
 		if (id != null) {
@@ -133,8 +118,6 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 		}
 		result = prime * result
 				+ ((name == null) ? 0 : name.toLowerCase().hashCode());
-		result = prime * result
-				+ ((type == null) ? 0 : type.toLowerCase().hashCode());
 		return result;
 	}
 
@@ -145,18 +128,13 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		/*
-		 * NOTE: Parent is not used in this method because of possibility to
-		 * enter endless loop (when this object and parent form bidirectional
-		 * relationship).
-		 */
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (!(obj instanceof Resource))
 			return false;
-		final Resource<?> other = (Resource<?>) obj;
+		final Resource other = (Resource) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -169,11 +147,6 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 				return false;
 		} else if (!name.equalsIgnoreCase(other.name))
 			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equalsIgnoreCase(other.type))
-			return false;
 		return true;
 	}
 
@@ -183,12 +156,7 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Resource<T> other) {
-		/*
-		 * NOTE: Parent is not used in this method because of possibility to
-		 * enter endless loop (when this object and parent form bidirectional
-		 * relationship).
-		 */
+	public int compareTo(Resource other) {
 		if (this == other)
 			return 0;
 		if (other == null)
@@ -212,20 +180,6 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 			return 1;
 		} else {
 			val = name.compareToIgnoreCase(other.name);
-			if (val < 0)
-				return -1;
-			else if (val > 0)
-				return 1;
-		}
-
-		// rest is invoked if both ids are null, and names are equal
-		if (type == null) {
-			if (other.type != null)
-				return -1;
-		} else if (other.type == null) {
-			return 1;
-		} else {
-			val = type.compareToIgnoreCase(other.type);
 		}
 
 		if (val < 0)
@@ -243,14 +197,11 @@ class Resource<T> implements Serializable, Comparable<Resource<T>> {
 	 */
 	@Override
 	public String toString() {
-		/*
-		 * NOTE: Parent is not used in this method because of possibility to
-		 * enter endless loop (when this object and parent form bidirectional
-		 * relationship).
-		 */
-		StringBuilder sb = new StringBuilder(20);
-		sb.append("id=").append(id).append(", name=").append(name).append(
-				", type=").append(type).append(", created=").append(created);
+		StringBuilder sb = new StringBuilder(30);
+		sb.append("id=").append(id);
+		sb.append(", name=").append(name);
+		sb.append(", type=").append(type);
+		sb.append(", created=").append(created);
 		return sb.toString();
 	}
 

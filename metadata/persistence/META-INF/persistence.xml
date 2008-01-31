@@ -4,7 +4,6 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>hr.fer.zemris.vhdllab.entities.File</class>
 		<class>hr.fer.zemris.vhdllab.entities.Project</class>
-		<class>hr.fer.zemris.vhdllab.entities.GlobalFile</class>
 		<class>hr.fer.zemris.vhdllab.entities.UserFile</class>
 		<properties>
 			<property name="hibernate.dialect"

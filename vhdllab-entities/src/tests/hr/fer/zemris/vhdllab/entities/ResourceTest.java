@@ -20,13 +20,11 @@ import org.junit.Test;
 public class ResourceTest {
 
 	private static final Long ID = Long.valueOf(123456);
-	private static final String PARENT = "parent.container";
 	private static final String NAME = "resource.name";
 	private static final String TYPE = "resource.type";
 	private static final String CONTENT = "...resource content...";
 	private static final Date CREATED;
 	private static final Long NEW_ID = Long.valueOf(654321);
-	private static final String NEW_PARENT = "new." + PARENT;
 	private static final String NEW_NAME = "new." + NAME;
 	private static final String NEW_TYPE = "new." + TYPE;
 	private static final String NEW_CONTENT = "new." + CONTENT;
@@ -44,19 +42,18 @@ public class ResourceTest {
 		}
 	}
 
-	private Resource<String> resource;
-	private Resource<String> resource2;
+	private Resource res;
+	private Resource res2;
 
 	@Before
 	public void initEachTest() {
-		resource = new Resource<String>();
-		resource.setId(ID);
-		resource.setParent(PARENT);
-		resource.setName(NAME);
-		resource.setType(TYPE);
-		resource.setContent(CONTENT);
-		resource.setCreated(CREATED);
-		resource2 = new Resource<String>(resource);
+		res = new Resource();
+		res.setId(ID);
+		res.setName(NAME);
+		res.setType(TYPE);
+		res.setContent(CONTENT);
+		res.setCreated(CREATED);
+		res2 = new Resource(res);
 	}
 
 	/**
@@ -64,10 +61,10 @@ public class ResourceTest {
 	 */
 	@Test
 	public void copyConstructor() {
-		assertTrue(resource != resource2);
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
+		assertTrue("same reference.", res != res2);
+		assertEquals("not equal.", res, res2);
+		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
+		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
 	}
 
 	/**
@@ -78,12 +75,11 @@ public class ResourceTest {
 		/*
 		 * Setters are tested indirectly. @Before method uses setters.
 		 */
-		assertEquals(ID, resource.getId());
-		assertEquals(PARENT, resource.getParent());
-		assertEquals(NAME, resource.getName());
-		assertEquals(TYPE, resource.getType());
-		assertEquals(CONTENT, resource.getContent());
-		assertEquals(CREATED, resource.getCreated());
+		assertEquals("getId.", ID, res.getId());
+		assertEquals("getName.", NAME, res.getName());
+		assertEquals("getType.", TYPE, res.getType());
+		assertEquals("getContent.", CONTENT, res.getContent());
+		assertEquals("getCreated.", CREATED, res.getCreated());
 	}
 
 	/**
@@ -91,9 +87,9 @@ public class ResourceTest {
 	 */
 	@Test
 	public void equals() {
-		assertEquals(resource, resource);
-		assertNotSame(resource, null);
-		assertNotSame(resource, "a string object");
+		assertEquals("not equal.", res, res);
+		assertNotSame("resource is equal to null.", res, null);
+		assertNotSame("can compare with string object.", res, "a string object");
 	}
 
 	/**
@@ -101,7 +97,7 @@ public class ResourceTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void compareTo() {
-		resource.compareTo(null);
+		res.compareTo(null);
 	}
 
 	/**
@@ -109,14 +105,13 @@ public class ResourceTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo() {
-		resource2.setParent(NEW_PARENT);
-		resource2.setName(NEW_NAME);
-		resource2.setType(NEW_TYPE);
-		resource2.setContent(NEW_CONTENT);
-		resource2.setCreated(NEW_CREATED);
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
+		res2.setName(NEW_NAME);
+		res2.setType(NEW_TYPE);
+		res2.setContent(NEW_CONTENT);
+		res2.setCreated(NEW_CREATED);
+		assertEquals("not equal.", res, res2);
+		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
+		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
 	}
 
 	/**
@@ -124,29 +119,26 @@ public class ResourceTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() {
-		resource2.setId(NEW_ID);
-		assertNotSame(resource, resource2);
-		assertNotSame(resource.hashCode(), resource2.hashCode());
-		assertEquals(ID.compareTo(NEW_ID) < 0 ? -1 : 1, resource
-				.compareTo(resource2));
+		res2.setId(NEW_ID);
+		assertNotSame("equal.", res, res2);
+		assertNotSame("hashCode same.", res.hashCode(), res2.hashCode());
+		assertEquals("not compared by id.", ID.compareTo(NEW_ID) < 0 ? -1 : 1,
+				res.compareTo(res2));
 	}
 
 	/**
-	 * Ids are null, then name and type is important
+	 * Ids are null, then name is important
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo3() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource.setParent(NEW_PARENT);
-		resource2.setParent(NEW_PARENT);
-		resource.setContent(NEW_CONTENT);
-		resource2.setContent(NEW_CONTENT);
-		resource.setCreated(NEW_CREATED);
-		resource2.setCreated(NEW_CREATED);
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
+		res.setId(null);
+		res2.setId(null);
+		res2.setType(NEW_TYPE);
+		res2.setContent(NEW_CONTENT);
+		res2.setCreated(NEW_CREATED);
+		assertEquals("not equal.", res, res2);
+		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
+		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
 	}
 
 	/**
@@ -154,103 +146,46 @@ public class ResourceTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo4() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource2.setName(NAME.toUpperCase());
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
-	}
-
-	/**
-	 * Resource type is case insensitive
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo5() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource2.setType(TYPE.toUpperCase());
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
+		res.setId(null);
+		res2.setId(null);
+		res2.setName(NAME.toUpperCase());
+		assertEquals("not equal.", res, res2);
+		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
+		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
 	}
 
 	/**
 	 * Ids are null and names are not equal
 	 */
 	@Test
+	public void equalsHashCodeAndCompareTo5() {
+		res.setId(null);
+		res2.setId(null);
+		res2.setName(NEW_NAME);
+		assertNotSame("equal.", res, res2);
+		assertNotSame("hashCode same.", res.hashCode(), res2.hashCode());
+		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
+				: 1, res.compareTo(res2));
+	}
+
+	/**
+	 * Ids and names are null
+	 */
+	@Test
 	public void equalsHashCodeAndCompareTo6() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource2.setName(NEW_NAME);
-		assertNotSame(resource, resource2);
-		assertNotSame(resource.hashCode(), resource2.hashCode());
-		assertEquals(NAME.compareTo(NEW_NAME) < 0 ? -1 : 1, resource
-				.compareTo(resource2));
-	}
-
-	/**
-	 * Ids are null and types are not equal
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo7() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource2.setType(NEW_TYPE);
-		assertNotSame(resource, resource2);
-		assertNotSame(resource.hashCode(), resource2.hashCode());
-		assertEquals(TYPE.compareTo(NEW_TYPE) < 0 ? -1 : 1, resource
-				.compareTo(resource2));
-	}
-
-	/**
-	 * Ids and names are null, then type is important
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo8() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource.setName(null);
-		resource2.setName(null);
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
-	}
-
-	/**
-	 * Ids and type are null, then name is important
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo9() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource.setType(null);
-		resource2.setType(null);
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
-	}
-
-	/**
-	 * Ids, types and names are null
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo10() {
-		resource.setId(null);
-		resource2.setId(null);
-		resource.setName(null);
-		resource2.setName(null);
-		resource.setType(null);
-		resource2.setType(null);
-		assertEquals(resource, resource2);
-		assertEquals(resource.hashCode(), resource2.hashCode());
-		assertEquals(0, resource.compareTo(resource2));
+		res.setId(null);
+		res2.setId(null);
+		res.setName(null);
+		res2.setName(null);
+		assertEquals("not equal.", res, res2);
+		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
+		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")
 	@Test
 	public void asString() {
-		System.out.println(resource.toString());
+		System.out.println(res.toString());
 	}
 
 }

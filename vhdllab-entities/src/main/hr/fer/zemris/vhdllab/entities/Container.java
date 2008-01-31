@@ -6,41 +6,53 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
  * This is a generic class for all containers. Basically it defines all
- * properties that a container must have.
+ * properties that a container must have. A container simply contains a
+ * collection of resources.
  * 
  * @author Miro Bezjak
- * @since 3/1/2008
+ * @since 31/1/2008
  * @version 1.0
  */
 @MappedSuperclass
-class Container<T extends Resource<Container<T>>> implements Serializable,
-		Comparable<Container<T>> {
+class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
+				TContainer extends Container<TBidiResource, TContainer>>
+		implements Serializable,
+		Comparable<Container<TBidiResource, TContainer>> {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	private String name;
 	private Date created;
-	private Set<T> children;
+	private Set<TBidiResource> children;
 
 	public Container() {
-		children = new HashSet<T>();
+		children = new HashSet<TBidiResource>();
 	}
 
-	public Container(Container<T> c) {
+	public Container(Container<TBidiResource, TContainer> c) {
 		this.id = c.id;
 		this.name = c.name;
 		this.created = c.created;
-		this.children = c.children;
+		/*
+		 * children is not referenced to reduce aliasing problems
+		 */
+		this.children = new HashSet<TBidiResource>();
 	}
 
 	@Id
@@ -74,25 +86,30 @@ class Container<T extends Resource<Container<T>>> implements Serializable,
 		this.created = created;
 	}
 
-	public Set<T> getChildren() {
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.LAZY)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+	public Set<TBidiResource> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Set<T> children) {
+	public void setChildren(Set<TBidiResource> children) {
 		this.children = children;
 	}
-	
-	public void addChild(T child) {
-		if(child.getParent() != null) {
+
+	public void addChild(TBidiResource child) {
+		if (child.getParent() != null) {
 			child.getParent().removeChild(child);
 		}
-		child.setParent(this);
 		children.add(child);
 	}
-	
-	public void removeChild(T child) {
-		children.remove(child);
-		child.setParent(null);
+
+	public void removeChild(TBidiResource child) {
+		if (child == null) {
+			throw new NullPointerException("Child cant be null");
+		}
+		if (children.remove(child)) {
+			child.setParent(null);
+		}
 	}
 
 	/*
@@ -125,7 +142,7 @@ class Container<T extends Resource<Container<T>>> implements Serializable,
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final Container<?> other = (Container<?>) obj;
+		final Container<?, ?> other = (Container<?, ?>) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -147,7 +164,7 @@ class Container<T extends Resource<Container<T>>> implements Serializable,
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Container<T> other) {
+	public int compareTo(Container<TBidiResource, TContainer> other) {
 		if (this == other)
 			return 0;
 		if (other == null)
@@ -192,10 +209,11 @@ class Container<T extends Resource<Container<T>>> implements Serializable,
 		 * NOTE: children is accessed through getter because of possibility of
 		 * using CGLIB (or similar technology) by persistence provider.
 		 */
-		StringBuilder sb = new StringBuilder(20 + getChildren().size() * 20);
-		sb.append("id=").append(id).append(", name=").append(name).append(
-				", created=").append(created).append(", children=").append(
-				getChildren());
+		StringBuilder sb = new StringBuilder(30 + getChildren().size() * 30);
+		sb.append("id=").append(id);
+		sb.append(", name=").append(name);
+		sb.append(", created=").append(created);
+		sb.append(", children={").append(getChildren()).append("}");
 		return sb.toString();
 	}
 

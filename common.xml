@@ -5,10 +5,10 @@
 	used by, for example, a build.xml file in this directory! This is
 	because of special references to a directory where this file is
 	located (a container directory for all subprojects). For example,
-	check libs.dir and local.dir properties.
+	check libs.dir and local.dir properties in this file.
 	-->
 	
-	<!-- USAGE NOTE:
+	<!-- USAGE NOTE (for build.xml files importing this file):
 	This build file requires 2 classpath references, 3 special properties
 	and 1 special fileset reference to be set before invoking any target.
 
@@ -26,9 +26,9 @@
 		
 		Special fileset:
 			package.addon - a fileset that will be included in project jar
-					when preforming package; this fileset must be set! If
-					a project doesn't have anything else to add then create
-					an empty fileset. Example:
+					when preforming 'package' target; this fileset must be
+					set! If a project doesn't have anything else to add then
+					create an empty fileset. Example:
 					'<fileset id="package.addon" dir="." excludes="**/*"/>'
 	-->
 

@@ -16,6 +16,7 @@
 	<property name="runtime.log4j.dir" value="${server.log4j.dir}" />
 
 	<!-- ======= SPECIAL PURPOSE PACKAGE ADDON ============================ -->
+	<!-- include nothing -->
 	<fileset id="package.addon" dir="." excludes="**/*"/>
 
 </project>

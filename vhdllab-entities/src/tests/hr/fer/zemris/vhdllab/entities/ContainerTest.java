@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.entities;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -16,14 +18,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * A test case for {@link Resource} superclass entity.
+ * A test case for {@link Container} superclass entity.
  * 
  * @author Miro Bezjak
  */
 public class ContainerTest {
 
 	private static final Long ID = Long.valueOf(123456);
-	private static final String NAME = "resource.name";
+	private static final String NAME = "container.name";
 	private static final Date CREATED;
 	private static final Long NEW_ID = Long.valueOf(654321);
 	private static final String NEW_NAME = "new." + NAME;
@@ -41,7 +43,8 @@ public class ContainerTest {
 		}
 	}
 
-	private class CustomResource extends Resource<Container<CustomResource>> {
+	private class CustomResource extends
+			BidiResource<CustomContainer, CustomResource> {
 		private static final long serialVersionUID = 1L;
 
 		public CustomResource() {
@@ -53,38 +56,51 @@ public class ContainerTest {
 		}
 	}
 
-	private Container<CustomResource> container;
-	private Container<CustomResource> container2;
-	private CustomResource resource;
-	private CustomResource resource2;
+	private class CustomContainer extends
+			Container<CustomResource, CustomContainer> {
+		private static final long serialVersionUID = 1L;
+
+		public CustomContainer() {
+			super();
+		}
+
+		public CustomContainer(CustomContainer c) {
+			super(c);
+		}
+	}
+
+	private CustomContainer con;
+	private CustomContainer con2;
+	private CustomResource res;
+	private CustomResource res2;
 	private Set<CustomResource> children;
 
 	@Before
 	public void initEachTest() {
-		container = new Container<CustomResource>();
-		container.setId(ID);
-		container.setName(NAME);
-		container.setCreated(CREATED);
-		container2 = new Container<CustomResource>(container);
-		
-		resource = new CustomResource();
-		resource.setId(Long.valueOf(10));
-		resource.setName("resource1.name");
-		resource.setType("resource1.type");
-		resource.setContent("resource1.content");
-		resource.setCreated(Calendar.getInstance().getTime());
-		resource2 = new CustomResource(); // not added immediately to container
-		resource2.setId(Long.valueOf(20));
-		resource2.setName("resource2.name");
-		resource2.setType("resource2.type");
-		resource2.setContent("resource2.content");
-		resource2.setCreated(Calendar.getInstance().getTime());
-		CustomResource resourceDuplicate = new CustomResource(resource);
-		
-		container.addChild(resource);
-		container2.addChild(resourceDuplicate);
+		con = new CustomContainer();
+		con.setId(ID);
+		con.setName(NAME);
+		con.setCreated(CREATED);
+		con2 = new CustomContainer(con);
+
+		res = new CustomResource();
+		res.setId(Long.valueOf(10));
+		res.setName("resource1.name");
+		res.setType("resource1.type");
+		res.setContent("resource1.content");
+		res.setCreated(Calendar.getInstance().getTime());
+		res2 = new CustomResource(); // not added immediately to container
+		res2.setId(Long.valueOf(20));
+		res2.setName("resource2.name");
+		res2.setType("resource2.type");
+		res2.setContent("resource2.content");
+		res2.setCreated(Calendar.getInstance().getTime());
+		CustomResource resourceDuplicate = new CustomResource(res);
+
+		con.addChild(res);
+		con2.addChild(resourceDuplicate);
 		children = new HashSet<CustomResource>();
-		children.add(resource);
+		children.add(res);
 	}
 
 	/**
@@ -92,11 +108,25 @@ public class ContainerTest {
 	 */
 	@Test
 	public void copyConstructor() {
-		assertTrue(container != container2);
-		assertEquals(container, container2);
-		assertEquals(container.hashCode(), container2.hashCode());
-		assertEquals(0, container.compareTo(container2));
-		assertEquals(container.getChildren(), container2.getChildren());
+		assertTrue("same reference.", con != con2);
+		assertEquals("not equal.", con, con2);
+		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
+		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
+		assertEquals("children not same.", con.getChildren(), con2
+				.getChildren());
+	}
+
+	/**
+	 * Test references to children
+	 */
+	@Test
+	public void copyConstructor2() {
+		con2 = new CustomContainer(con);
+		assertEquals("reference to children is copied.",
+				new HashSet<CustomResource>(0), con2.getChildren());
+		assertNotNull("original children reference is missing.", con
+				.getChildren());
+		assertEquals("children has been modified.", children, con.getChildren());
 	}
 
 	/**
@@ -107,20 +137,20 @@ public class ContainerTest {
 		/*
 		 * Setters are tested indirectly. @Before method uses setters.
 		 */
-		assertEquals(ID, container.getId());
-		assertEquals(NAME, container.getName());
-		assertEquals(CREATED, container.getCreated());
-		assertEquals(children, container.getChildren());
+		assertEquals("getId.", ID, con.getId());
+		assertEquals("getName.", NAME, con.getName());
+		assertEquals("getCreated.", CREATED, con.getCreated());
+		assertEquals("getChildren.", children, con.getChildren());
 	}
 
 	/**
-	 * Test equals with self, null, and non-resource object
+	 * Test equals with self, null, and non-container object
 	 */
 	@Test
 	public void equals() {
-		assertEquals(container, container);
-		assertNotSame(container, null);
-		assertNotSame(container, "a string object");
+		assertEquals("not equal.", con, con);
+		assertNotSame("file is equal to null.", con, null);
+		assertNotSame("can compare with string object.", con, "a string object");
 	}
 
 	/**
@@ -128,7 +158,7 @@ public class ContainerTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void compareTo() {
-		container.compareTo(null);
+		con.compareTo(null);
 	}
 
 	/**
@@ -136,12 +166,12 @@ public class ContainerTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo() {
-		container2.setName(NEW_NAME);
-		container2.setCreated(NEW_CREATED);
-		container2.setChildren(new HashSet<CustomResource>());
-		assertEquals(container, container2);
-		assertEquals(container.hashCode(), container2.hashCode());
-		assertEquals(0, container.compareTo(container2));
+		con2.setName(NEW_NAME);
+		con2.setCreated(NEW_CREATED);
+		con2.setChildren(new HashSet<CustomResource>());
+		assertEquals("not equal.", con, con2);
+		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
+		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
 	}
 
 	/**
@@ -149,11 +179,11 @@ public class ContainerTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() {
-		container2.setId(NEW_ID);
-		assertNotSame(container, container2);
-		assertNotSame(container.hashCode(), container2.hashCode());
-		assertEquals(ID.compareTo(NEW_ID) < 0 ? -1 : 1, container
-				.compareTo(container2));
+		con2.setId(NEW_ID);
+		assertNotSame("equal.", con, con2);
+		assertNotSame("hashCode same.", con.hashCode(), con2.hashCode());
+		assertEquals("not compared by id.", ID.compareTo(NEW_ID) < 0 ? -1 : 1,
+				con.compareTo(con2));
 	}
 
 	/**
@@ -161,15 +191,13 @@ public class ContainerTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo3() {
-		container.setId(null);
-		container2.setId(null);
-		container.setCreated(NEW_CREATED);
-		container2.setCreated(NEW_CREATED);
-		container.setChildren(new HashSet<CustomResource>());
-		container2.setChildren(new HashSet<CustomResource>());
-		assertEquals(container, container2);
-		assertEquals(container.hashCode(), container2.hashCode());
-		assertEquals(0, container.compareTo(container2));
+		con.setId(null);
+		con2.setId(null);
+		con2.setCreated(NEW_CREATED);
+		con2.setChildren(new HashSet<CustomResource>());
+		assertEquals("not equal.", con, con2);
+		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
+		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
 	}
 
 	/**
@@ -177,12 +205,12 @@ public class ContainerTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo4() {
-		container.setId(null);
-		container2.setId(null);
-		container2.setName(NAME.toUpperCase());
-		assertEquals(container, container2);
-		assertEquals(container.hashCode(), container2.hashCode());
-		assertEquals(0, container.compareTo(container2));
+		con.setId(null);
+		con2.setId(null);
+		con2.setName(NAME.toUpperCase());
+		assertEquals("not equal.", con, con2);
+		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
+		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
 	}
 
 	/**
@@ -190,13 +218,13 @@ public class ContainerTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo5() {
-		container.setId(null);
-		container2.setId(null);
-		container2.setName(NEW_NAME);
-		assertNotSame(container, container2);
-		assertNotSame(container.hashCode(), container2.hashCode());
-		assertEquals(NAME.compareTo(NEW_NAME) < 0 ? -1 : 1, container
-				.compareTo(container2));
+		con.setId(null);
+		con2.setId(null);
+		con2.setName(NEW_NAME);
+		assertNotSame("equal.", con, con2);
+		assertNotSame("hashCode same.", con.hashCode(), con2.hashCode());
+		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
+				: 1, con.compareTo(con2));
 	}
 
 	/**
@@ -204,94 +232,91 @@ public class ContainerTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo10() {
-		container.setId(null);
-		container2.setId(null);
-		container.setName(null);
-		container2.setName(null);
-		assertEquals(container, container2);
-		assertEquals(container.hashCode(), container2.hashCode());
-		assertEquals(0, container.compareTo(container2));
+		con.setId(null);
+		con2.setId(null);
+		con.setName(null);
+		con2.setName(null);
+		assertEquals("not equal.", con, con2);
+		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
+		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
 	}
-	
+
 	/**
 	 * Resource is null
 	 */
-	@Test(expected=NullPointerException.class)
+	@Test(expected = NullPointerException.class)
 	public void addChild() {
-		container.addChild(null);
+		con.addChild(null);
 	}
-	
+
 	/**
 	 * Add a resource
 	 */
 	@Test
 	public void addChild2() {
-		container.addChild(resource2);
-		children.add(resource2);
-		assertTrue(container.getChildren().contains(resource2));
-		assertEquals(children, container.getChildren());
-		assertEquals(container, resource2.getParent());
+		con.addChild(res2);
+		children.add(res2);
+		assertTrue("child not added.", con.getChildren().contains(res2));
+		assertEquals("children not same.", children, con.getChildren());
 	}
-	
+
 	/**
 	 * Add a resource that is already in another container
 	 */
 	@Test
 	public void addChild3() {
-		Container<CustomResource> newContainer = new Container<CustomResource>();
+		CustomContainer newContainer = new CustomContainer();
 		newContainer.setId(NEW_ID);
 		newContainer.setName(NEW_NAME);
 		newContainer.setCreated(NEW_CREATED);
-		Container<CustomResource> previousContainer = resource.getParent();
-		newContainer.addChild(resource);
-		assertEquals(children, newContainer.getChildren());
-		assertEquals(newContainer, resource.getParent());
-		assertEquals(false, previousContainer.getChildren().contains(resource));
+		newContainer.addChild(res);
+		assertEquals("child not added.", children, newContainer.getChildren());
 	}
-	
+
 	/**
 	 * Add a resource that is already in that container
 	 */
 	@Test
 	public void addChild4() {
-		container.addChild(resource);
-		assertEquals(children, container.getChildren());
-		assertEquals(1, container.getChildren().size());
-		assertEquals(container, resource.getParent());
+		con.addChild(res);
+		assertEquals("children not same.", children, con.getChildren());
+		assertEquals("children is changed.", 1, con.getChildren().size());
 	}
-	
+
 	/**
 	 * Resource is null
 	 */
-	@Test(expected=NullPointerException.class)
+	@Test(expected = NullPointerException.class)
 	public void removeChild() {
-		container.removeChild(null);
+		con.removeChild(null);
 	}
-	
+
 	/**
 	 * Remove a resource
 	 */
 	@Test
 	public void removeChild2() {
-		container.removeChild(resource);
-		assertEquals(new HashSet<CustomResource>(0), container.getChildren());
-		assertEquals(null, resource.getParent());
+		con.removeChild(res);
+		assertEquals("children not empty.", new HashSet<CustomResource>(0), con
+				.getChildren());
+		assertNull("parent is not set to null.", res.getParent());
 	}
-	
+
 	/**
 	 * Remove a resource that does not exists in a container
 	 */
 	@Test
 	public void removeChild3() {
-		container.removeChild(resource2);
-		assertEquals(children, container.getChildren());
-		assertEquals(null, resource2.getParent());
+		con2.getChildren().clear();
+		con2.addChild(res2);
+		con.removeChild(res2);
+		assertEquals("children is changed.", children, con.getChildren());
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")
 	@Test
 	public void asString() {
-		System.out.println(container.toString());
+		System.out.println(con.toString());
 	}
 
 }

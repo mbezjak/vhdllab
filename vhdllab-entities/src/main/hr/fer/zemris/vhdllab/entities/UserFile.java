@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.entities;
 import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -15,39 +15,44 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
+ * A user file stores preferences for a user.
+ * 
  * @author Miro Bezjak
- * @since 2/1/2008
+ * @since 31/1/2008
  * @version 1.0
  */
 @Entity
-@AttributeOverrides(value = {
-		@AttributeOverride(name = "content", column = @Column(name = "content", length = 65535, nullable = false)),
-		@AttributeOverride(name = "parent", column = @Column(name = "userId", length = 255, nullable = false)) })
+@AttributeOverride(name = "content", column = @Column(name = "content", length = 65535, nullable = false))
 @Table(name = "user_files", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"name", "userId" }) })
 @NamedQueries(value = {
 		@NamedQuery(name = UserFile.FIND_BY_NAME_QUERY, query = "select f from UserFile as f where f.userId = :userId and f.name = :name order by f.id"),
 		@NamedQuery(name = UserFile.FIND_BY_USER_QUERY, query = "select f from UserFile as f where f.userId = :userId order by f.id") })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class UserFile extends Resource<String> implements Serializable {
+public class UserFile extends Resource implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	public static final String FIND_BY_NAME_QUERY = "user.file.find.by.name";
 	public static final String FIND_BY_USER_QUERY = "user.file.find.by.user";
+
+	private String userId;
 
 	public UserFile() {
 	}
 
 	public UserFile(UserFile file) {
 		super(file);
+		this.userId = file.userId;
 	}
 
+	@Basic
+	@Column(name = "userId", length = 255, nullable = false, updatable = false)
 	public String getUserId() {
-		return getParent();
+		return userId;
 	}
 
 	public void setUserId(String userId) {
-		setParent(userId);
+		this.userId = userId;
 	}
 
 	/*
@@ -103,17 +108,17 @@ public class UserFile extends Resource<String> implements Serializable {
 	 * @see hr.fer.zemris.vhdllab.entities.Resource#compareTo(hr.fer.zemris.vhdllab.entities.Resource)
 	 */
 	@Override
-	public int compareTo(Resource<String> o) {
+	public int compareTo(Resource o) {
 		if (this == o)
 			return 0;
 		if (o == null)
 			throw new NullPointerException("Other resource cant be null");
-		if(!(o instanceof UserFile)) {
+		if (!(o instanceof UserFile)) {
 			throw new ClassCastException("Object is not of User file type");
 		}
 		final UserFile other = (UserFile) o;
 		int val = super.compareTo(other);
-		if(getId() != null || val != 0) {
+		if (getId() != null || val != 0) {
 			return val;
 		}
 		if (getUserId() == null) {
@@ -124,10 +129,10 @@ public class UserFile extends Resource<String> implements Serializable {
 		} else {
 			val = getUserId().compareToIgnoreCase(other.getUserId());
 		}
-		
-		if(val < 0) {
+
+		if (val < 0) {
 			return -1;
-		} else if(val > 0) {
+		} else if (val > 0) {
 			return 1;
 		} else {
 			return 0;
@@ -141,9 +146,10 @@ public class UserFile extends Resource<String> implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(40);
-		sb.append("User File [").append(super.toString()).append(", userId=")
-				.append(getUserId()).append("]");
+		StringBuilder sb = new StringBuilder(50);
+		sb.append("User File [").append(super.toString());
+		sb.append(", userId=").append(getUserId());
+		sb.append("]");
 		return sb.toString();
 	}
 }

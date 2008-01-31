@@ -15,11 +15,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * A test case for {@link File} entity.
+ * A test case for {@link LibraryFile} class.
  * 
  * @author Miro Bezjak
  */
-public class FileTest {
+public class LibraryFileTest {
 
 	private static final Long ID = Long.valueOf(123456);
 	private static final String NAME = "file.name";
@@ -30,7 +30,7 @@ public class FileTest {
 	private static final String NEW_TYPE = "new." + TYPE;
 	private static final String NEW_CONTENT = "new." + CONTENT;
 	private static final Date NEW_CREATED;
-	private static final Project NEW_PROJECT;
+	private static final Library NEW_LIBRARY;
 
 	static {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm");
@@ -42,34 +42,34 @@ public class FileTest {
 			// throwing exception.
 			throw new IllegalStateException(e);
 		}
-		NEW_PROJECT = new Project();
-		NEW_PROJECT.setId(Long.valueOf(5555));
-		NEW_PROJECT.setName("new.project.name");
+		NEW_LIBRARY = new Library();
+		NEW_LIBRARY.setId(Long.valueOf(5555));
+		NEW_LIBRARY.setName("new.library.name");
 	}
 
-	private Project project;
-	private Project project2;
-	private File file;
-	private File file2;
+	private Library lib;
+	private Library lib2;
+	private LibraryFile file;
+	private LibraryFile file2;
 
 	@Before
 	public void initEachTest() {
-		file = new File();
+		file = new LibraryFile();
 		file.setId(ID);
 		file.setName(NAME);
 		file.setType(TYPE);
 		file.setContent(CONTENT);
 		file.setCreated(CREATED);
-		file2 = new File(file);
+		file2 = new LibraryFile(file);
 
-		project = new Project();
-		project.setId(Long.valueOf(10));
-		project.setName("library1.name");
-		project.setCreated(Calendar.getInstance().getTime());
-		project2 = new Project(project);
+		lib = new Library();
+		lib.setId(Long.valueOf(10));
+		lib.setName("library1.name");
+		lib.setCreated(Calendar.getInstance().getTime());
+		lib2 = new Library(lib);
 
-		project.addFile(file);
-		project2.addFile(file2);
+		lib.addLibraryFile(file);
+		lib2.addLibraryFile(file2);
 	}
 
 	/**
@@ -84,16 +84,16 @@ public class FileTest {
 	}
 
 	/**
-	 * Test references to project
+	 * Test references to library
 	 */
 	@Test
 	public void copyConstructor2() {
-		file2 = new File(file);
-		assertNull("reference to project is copied.", file2.getProject());
+		file2 = new LibraryFile(file);
+		assertNull("reference to library is copied.", file2.getLibrary());
 	}
 
 	/**
-	 * Test equals with self, null, and non-file object
+	 * Test equals with self, null, and non-library-file object
 	 */
 	@Test
 	public void equals() {
@@ -113,7 +113,7 @@ public class FileTest {
 	}
 
 	/**
-	 * Non-file type
+	 * Non-library-file type
 	 */
 	@Test(expected = ClassCastException.class)
 	public void compareTo2() {
@@ -121,21 +121,22 @@ public class FileTest {
 	}
 
 	/**
-	 * Only ids (if set) are important in equals, hashcode and compareTo
+	 * Only ids (if set) are important in equals, hashCode and compareTo
 	 */
 	@Test
-	public void equalsAndHashCodeAndCompareTo() {
+	public void equalsHashCodeAndCompareTo() {
 		file2.setName(NEW_NAME);
 		file2.setType(NEW_TYPE);
 		file2.setContent(NEW_CONTENT);
-		file2.setProject(NEW_PROJECT);
+		file2.setCreated(NEW_CREATED);
+		file2.setLibrary(NEW_LIBRARY);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
 	}
 
 	/**
-	 * Ids are null, then name and project is important
+	 * Ids are null, then name and library is important
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() {
@@ -150,17 +151,17 @@ public class FileTest {
 	}
 
 	/**
-	 * Ids are null and projects are not equal
+	 * Ids are null and libraries are not equal
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo3() {
 		file.setId(null);
 		file2.setId(null);
-		file2.setProject(NEW_PROJECT);
+		file2.setLibrary(NEW_LIBRARY);
 		assertNotSame("equal.", file, file2);
 		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
-		assertEquals("not compared by project.", file.getProject().compareTo(
-				file2.getProject()) < 0 ? -1 : 1, file.compareTo(file2));
+		assertEquals("not compared by library.", file.getLibrary().compareTo(
+				file2.getLibrary()) < 0 ? -1 : 1, file.compareTo(file2));
 	}
 
 	/**
@@ -178,7 +179,7 @@ public class FileTest {
 	}
 
 	/**
-	 * Ids, names and projects are null
+	 * Ids, names and libraries are null
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo5() {
@@ -186,8 +187,8 @@ public class FileTest {
 		file2.setId(null);
 		file.setName(null);
 		file2.setName(null);
-		file.setProject(null);
-		file2.setProject(null);
+		file.setLibrary(null);
+		file2.setLibrary(null);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
@@ -196,7 +197,7 @@ public class FileTest {
 	@Ignore("must be tested by a user and this has already been tested")
 	@Test
 	public void asString() {
-		System.out.println(file);
+		System.out.println(file.toString());
 	}
 
 }
