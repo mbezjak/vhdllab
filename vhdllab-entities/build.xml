@@ -20,3 +20,4 @@
 	<fileset id="package.addon" dir="." excludes="**/*"/>
 
 </project>
+

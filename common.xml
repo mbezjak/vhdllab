@@ -195,7 +195,7 @@
 
 	<target name="show-tests-report" depends="tests-report">
 		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
-			classpath="../${jlibs.dir}/ant-tasks.jar" />
+			classpath="../${jlibs.dir}/vhdllab-misc.jar" />
 		<!-- NOTE: uri must be composed of basedir! -->
 		<openURI uri="file:${basedir}/${reports.tests.html.dir}/index.html"/>
 	</target>

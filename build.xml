@@ -82,19 +82,13 @@
 		</sync>
 
 		<!-- compile ant source folder so custom tasks can be used -->
-		<mkdir dir="ant-build"/>
-		<mkdir dir="${jlibs.dir}"/>
-		<javac destdir="ant-build" srcdir="ant-tasks" includes="**/*.java" />
-		<jar destfile="${jlibs.dir}/ant-tasks.jar" >
-			<fileset dir="ant-build" />
-		</jar>
-		<delete quiet="true" includeemptydirs="true" >
-			<fileset dir="ant-build" />
-		</delete>
+		<subant inheritall="false" target="package" antfile="build.xml" buildpath="vhdllab-misc" />
+		<mkdir dir="${jlibs.dir}" />
+		<copy todir="${jlibs.dir}" file="vhdllab-misc/${jlibs.dir}/vhdllab-misc.jar"></copy>
 
 		<!-- define create filter task -->
 		<taskdef name="createFilter" classname="hr.fer.zemris.vhdllab.ant.CreateFilterFileTask"
-			classpath="${jlibs.dir}/ant-tasks.jar" />
+			classpath="${jlibs.dir}/vhdllab-misc.jar" />
 
 		<!-- create a filter file for replace task -->
 		<createFilter filterfile="${local.dir}/filter.properties" prefix="@@" sufix="@@" />
@@ -201,7 +195,7 @@
 
 	<target name="show-tests-report" depends="tests-report">
 		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
-			classpath="${jlibs.dir}/ant-tasks.jar" />
+			classpath="${jlibs.dir}/vhdllab-misc.jar" />
 		<!-- NOTE: uri must be composed of basedir! -->
 		<openURI uri="file:${basedir}/${reports.tests.html.dir}/index.html"/>
 	</target>

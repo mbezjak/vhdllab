@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project name="vhdllab-misc" basedir="." default="package">
+
+	<import file="../common.xml" />
+	<property file="${configuration.properties}" /><!-- has to be reloaded! -->
+	
+	<!-- ======= CLASSPATH SETUP ========================================== -->
+	<path id="compile.classpath">
+		<fileset dir="${libs.dir}/build" includes="ant.jar" />
+	</path>
+	<path id="runtime.classpath" />
+	
+	<!-- ======= SPECIAL PROPERTIES ======================================= -->
+	<property name="debug" value="true" />
+	<property name="runtime.log4j.dir" value="${server.log4j.dir}" />
+
+	<!-- ======= SPECIAL PURPOSE PACKAGE ADDON ============================ -->
+	<!-- include nothing -->
+	<fileset id="package.addon" dir="." excludes="**/*"/>
+	
+	<!-- ======= SPECIAL INIT TASK FOR THIS PROJECT ======================= -->
+	<!--
+		This is a special project and it does not need to call prepair-build
+		target in '../build.xml' file. (This prevents endless loops). Other
+		then that this init target is exact copy of the original in common.xml
+		file.
+	-->
+	<target name="init">
+		<available file="${configuration.properties}" property="configuration.properties.present" />
+		<fail unless="configuration.properties.present">
+			${configuration.properties} file is not present. You have a sample ${configuration.properties}-sample. Please copy this file under correct name and customize it.
+    	</fail>
+
+		<tstamp />
+
+		<!-- This is where this init target differs from original in common.xml -->
+		<!--
+			Do not call prepair-local for this project!
+		<ant antfile="../build.xml" target="prepair-local" inheritrefs="false" inheritall="false" />
+		-->
+		
+		<!-- common build directories -->
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.main.dir}" />
+		<mkdir dir="${build.tests.dir}" />
+		<mkdir dir="${jlibs.dir}" />
+		<mkdir dir="${jlibs.tests.dir}" />
+		<mkdir dir="${javadoc.dir}" />
+		<mkdir dir="${reports.tests.html.dir}" />
+	</target>
+
+</project>

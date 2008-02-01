@@ -1,39 +1,39 @@
 ###############################################################################
-### Application configuration properties									###
+### Application configuration properties                                    ###
 ###############################################################################
 
 
 ###############################################################################
-###	General properties														###
+### General properties                                                      ###
 ###############################################################################
-### application name														###
+### application name                                                        ###
 app.name = vhdllab
 
 
 ###############################################################################
-###	Main debug properties													###
-###	- this are main debug properties. If they are set to true then they		###
-### will alter certain aspects of client or server application (depending	###
-### on which property is set to true). For example: if either one is set to	###
-### true they will be compiled without debug information or if client.debug	###
-### is set to true it will enable more features that is nice to have when	###
-### developing client application.											###
-### NOTE: 'client.debug' and 'server.debug' are global properties and once	###
-### set there is no need to modify any code in either client or server		###
-### application (i.e. ant build script will modify anything else for you	###
-### automatically)															###
+### Main debug properties                                                   ###
+### - this are main debug properties. If they are set to true then they     ###
+### will alter certain aspects of client or server application (depending   ###
+### on which property is set to true). For example: if either one is set to ###
+### true they will be compiled without debug information or if client.debug ###
+### is set to true it will enable more features that is nice to have when   ###
+### developing client application.                                          ###
+### NOTE: 'client.debug' and 'server.debug' are global properties and once  ###
+### set there is no need to modify any code in either client or server      ###
+### application (i.e. ant build script will modify anything else for you    ###
+### automatically)                                                          ###
 ###############################################################################
 client.debug = true
 #client.debug = false
 server.debug = true
 #server.debug = false
 
-### Additional debug property												###
-### Debug level for javac when debugging is enabled							###
+### Additional debug property                                               ###
+### Debug level for javac when debugging is enabled                         ###
 debug.level = lines,vars,source
 
 
 ###############################################################################
-###	Client application properties											###
+### Client application properties                                           ###
 ###############################################################################
 app.client.libs = vhdllab-web-onClient.jar commons-logging.jar commons-collections.jar commons-beanutils.jar commons-digester.jar commons-codec.jar commons-httpclient.jar log4j.jar
