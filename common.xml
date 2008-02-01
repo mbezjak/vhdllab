@@ -41,7 +41,7 @@
 	<!-- source directories -->
 	<property name="src.main.dir" value="src/main" />
 	<property name="src.tests.dir" value="src/tests" />
-	<property name="libs.dir" value="../libs" />
+	<property name="libs.dir" value="../vhdllab-misc/libs" />
 	<!-- build directories -->
 	<property name="build.dir" value="build" />
 	<property name="build.main.dir" value="${build.dir}/main" />

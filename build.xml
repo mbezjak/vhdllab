@@ -7,7 +7,7 @@
 
 	<!-- ======= DIRECTORY STRUCTURE ====================================== -->
 	<!-- source directories -->
-	<property name="libs.dir" value="libs" />
+	<property name="libs.dir" value="vhdllab-misc/libs" />
 	<property name="metadata.dir" value="metadata" />
 	<!-- build directories -->
 	<property name="jlibs.dir" value="jlibs" />
