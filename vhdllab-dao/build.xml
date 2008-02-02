@@ -2,7 +2,7 @@
 <project name="vhdllab-dao" basedir="." default="package">
 
 	<import file="../common.xml" />
-	<property file="${configuration.properties}" /> <!-- has to be reloaded! -->
+	<property file="${configuration.properties}" /><!-- has to be reloaded! -->
 	
 	<!-- ======= CLASSPATH SETUP ========================================== -->
 	<path id="compile.classpath">
@@ -14,7 +14,7 @@
 		<fileset dir="${libs.dir}/build" includes="servlet-api.jar" />
 		<!-- Dependency project -->
 		<fileset dir="../vhdllab-entities/${jlibs.dir}" includes="*" />
-		<!-- Special dependent library (because of annotations in dependent project) -->
+		<!-- Inherited dependent library (because of annotations in dependent project) -->
 		<fileset dir="${libs.dir}/hibernate" includes="hibernate-annotations.jar" />
 	</path>
 	<path id="runtime.classpath" >

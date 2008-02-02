@@ -2,7 +2,7 @@
 <project name="vhdllab-client" basedir="." default="package">
 
 	<import file="../common.xml" />
-	<property file="${configuration.properties}" /> <!-- has to be reloaded! -->
+	<property file="${configuration.properties}" /><!-- has to be reloaded! -->
 	
 	<!-- ======= CLASSPATH SETUP ========================================== -->
 	<path id="compile.classpath">
