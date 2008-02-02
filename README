@@ -1,0 +1,73 @@
+
+                        VHDLLab project overview
+                               Version 0.1
+
+===============================================================================
+    Contents:
+        0) Who should read this
+        1) Introduction
+        2) Prerequisites
+        3) vhdllab-subprojects
+        4) Other directories
+        5) Building
+        6) The build files
+        7) Contacts
+        8) Developers
+===============================================================================
+0) Who should read this
+This documentation will try to elaborate how vhdllab is organized and how to
+build vhdllab from source. If you simply wish to install vhdllab server then
+read '2) Prerequisites' and INSTALL file instead.
+
+1) Introduction
+VHDLLab is a web based IDE for VHDL (programming language). It is designed for
+educational purpose as an alternative for commercial products that provide
+solutions for VHDL. The need for VHDLLab appeared at Faculty of Electrical
+Engineering and Computing, University of Zagreb, Croatia when VHDL was taught
+in Digital Electronics course. Originally WebISE was used by students when
+programming VHDL code. But WebISE has many problems (huge footprint,
+unnecessary features, inability to create automatons, lots of bugs, problems
+with licence that disallows universities to distribute program, etc.). VHDLLab
+was designed as a lightweight alternative to fix those problems.
+
+VHDLLab has a client-server architecture. Client being a program where students
+work to design digital components and server part that implements all necessary
+features (code compilation & simulation, data storage, etc.). VHDLLab server is
+a central server that is required for client to work! VHDLLab client can't work
+as a standalone application (for example, as Eclipse IDE can). The reason for
+this is to enable student to work at home, dorm or university without the need
+to exchange files between computers. Other neat feature is that is simplifies
+installation procedure for a student. In fact student just needs to start one
+program (there is no installation at all!).
+
+In the rest of the text a student will be referred to as a user (of VHDLLab
+client application).
+
+2) Prerequisites
+In order to compile VHDLLab you will need the following:
+    - Java JDK 6 (http://java.sun.com/javase/downloads/)
+    - Apache Ant 1.7 (http://ant.apache.org/)
+    - Apache Tomcat 5 (http://tomcat.apache.org/)
+    - MySQL (http://dev.mysql.com/downloads/) - this can be changed to any
+      other DBMS that hibernate (http://www.hibernate.org/) supports
+      (basically any DBMS you want).
+
+Make sure you install them correctly and update PATH environmental variable.
+A user that runs VHDLLab client will only need Java JRE 6.
+
+3) vhdllab-subprojects
+By now you probably now that VHDLLab is divided into two projects: client and
+server. But that's not all. Server is designed as a 3-tier architecture (bottom
+to top): dao, service and presentation. So instead of designing VHDLLab as one
+project it consists of several subprojects. All subdirectories that begin with
+'vhdllab-' are subprojects of VHDLLab project. Also worth mentioning is that
+all subprojects are Eclipse projects.
+
+    vhdllab-entities - 
+    vhdllab-dao - this is a dao tier of VHDLLab server. 
+    vhdllab-service - 
+    vhdllab-presentation - 
+    vhdllab-client - 
+    vhdllab-common - 
+    vhdllab-misc - 
+
