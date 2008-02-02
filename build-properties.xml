@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+    <!--
+    This build file simply sets properties used in common.xml and/or build.xml
+    in this directory.
+    -->
+
+    <!-- USAGE NOTE (for build files importing this file):
+    This build file requires a 'relative.path' property to be set before
+    importing this file. This relative.path property should always point
+    to top vhdllab directory (this directory - where this file is located).
+    Reason for this is to easily set, for example, libs.dir and local.dir
+    properties.
+
+    HINT:
+        - in build.xml file (located in this directory) this property
+            should be set to '.' (without quotation marks)
+        - in common.xml file (located in this directory) this property
+            should be set to '..' (without quotation marks)
+    -->
+
+
+    <!-- ======= MAIN CONFIGURATION FILE ================================== -->
+    <property name="configuration.properties" value="${relative.path}/configuration.properties" />
+    <property file="configuration.properties" />
+
+    <!-- ======= DIRECTORY STRUCTURE ====================================== -->
+    <!-- source directories -->
+    <property name="src.main.dir" value="src/main" />
+    <property name="src.tests.dir" value="src/tests" />
+    <property name="libs.dir" value="${relative.path}/vhdllab-misc/libs" />
+    <!-- build directories -->
+    <property name="build.dir" value="build" />
+    <property name="build.main.dir" value="${build.dir}/main" />
+    <property name="build.tests.dir" value="${build.dir}/tests" />
+    <property name="jlibs.dir" value="jlibs" />
+    <property name="jlibs.tests.dir" value="${jlibs.dir}/tests" />
+    <property name="jlibs.misc.dir" value="${jlibs.dir}/misc" />
+    <property name="javadoc.dir" value="javadoc" />
+    <property name="reports.dir" value="reports" />
+    <property name="reports.tests.dir" value="${reports.dir}/tests" />
+    <property name="reports.tests.html.dir" value="${reports.tests.dir}/html" />
+    <property name="local.dir" value="${relative.path}/local" />
+    <property name="metadata.dir" value="${relative.path}/metadata" />
+
+    <!-- jar names -->
+    <property name="project.jar" value="${jlibs.dir}/${ant.project.name}.jar" />
+    <property name="project.tests.jar" value="${jlibs.tests.dir}/${ant.project.name}-tests.jar" />
+    <property name="vhdllab.misc.jar" value="${relative.path}/${jlibs.misc.dir}/vhdllab-misc.jar" />
+    <!-- convenience properties (not used in this build file) -->
+    <property name="local.client" value="${local.dir}/client" />
+    <property name="local.server" value="${local.dir}/server" />
+    <property name="client.log4j.dir" value="${local.client}" />
+    <property name="client.log4j.file" value="${client.log4j.dir}/log4j.properties" />
+    <property name="server.log4j.dir" value="${local.server}/WEB-INF/classes" />
+    <property name="server.log4j.file" value="${server.log4j.dir}/log4j.properties" />
+    <property name="persistence.dir" value="${local.dir}/persistence" />
+    <property name="persistence.file" value="${persistence.dir}/META-INF/persistence.xml" />
+
+</project>

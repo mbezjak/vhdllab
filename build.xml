@@ -1,40 +1,52 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project name="vhdllab" basedir="." default="package">
 
-	<!-- ======= MAIN CONFIGURATION FILE ================================== -->
-	<property name="configuration.properties" value="configuration.properties" />
-	<property file="configuration.properties" />
+	<property name="relative.path" value="." />
+	<import file="build-properties.xml" />
+	
+	<macrodef name="subprojectsRunTarget">
+		<attribute name="target"/>
+		<sequential>
+			<subant inheritall="false" inheritrefs="false" target="@{target}">
+				<property name="prepair.local.done" value="true"/>
+				<!-- ordered list to optimize dependency resolving -->
+				<filelist dir="." files="vhdllab-misc,vhdllab-common,vhdllab-entities,vhdllab-dao,vhdllab-service,vhdllab-presentation,vhdllab-client" />
+			</subant>
+		</sequential>
+	</macrodef>
 
-	<!-- ======= DIRECTORY STRUCTURE ====================================== -->
-	<!-- source directories -->
-	<property name="libs.dir" value="vhdllab-misc/libs" />
-	<property name="metadata.dir" value="metadata" />
-	<!-- build directories -->
-	<property name="jlibs.dir" value="jlibs" />
-	<property name="jlibs.tests.dir" value="${jlibs.dir}/tests" />
-	<property name="javadoc.dir" value="javadoc" />
-	<property name="local.dir" value="local" />
-	<property name="reports.dir" value="reports" />
-	<property name="reports.tests.dir" value="${reports.dir}/tests" />
-	<property name="reports.tests.html.dir" value="${reports.tests.dir}/html" />
-	<!-- convenience properties for build directories -->
-	<property name="local.client" value="${local.dir}/${src.client.dir}" />
-	<property name="local.server" value="${local.dir}/server" />
-	<property name="client.log4j.dir" value="${local.client}" />
-	<property name="client.log4j.file" value="${client.log4j.dir}/log4j.properties" />
-	<property name="server.log4j.dir" value="${local.server}/WEB-INF/classes" />
-	<property name="server.log4j.file" value="${server.log4j.dir}/log4j.properties" />
-	<property name="persistence.dir" value="${local.dir}/persistence" />
-	<property name="persistence.file" value="${persistence.dir}/META-INF/persistence.xml" />
+	<macrodef name="subprojectsNoMiscRunTarget">
+		<!-- difference from subprojectsRunTarget is that vhdllab-misc is not included here -->
+		<attribute name="target"/>
+		<sequential>
+			<subant inheritall="false" inheritrefs="false" target="@{target}">
+				<property name="prepair.local.done" value="true"/>
+				<!-- ordered list to optimize dependency resolving -->
+				<filelist dir="." files="vhdllab-common,vhdllab-entities,vhdllab-dao,vhdllab-service,vhdllab-presentation,vhdllab-client" />
+			</subant>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="subprojectsNoMiscCopy">
+		<attribute name="toDir"/>
+		<attribute name="fromDir"/>
+		<attribute name="includes"/>
+		<sequential>
+			<copy todir="@{toDir}" overwrite="true">
+				<!--<fileset dir="vhdllab-client/@{fromDir}" includes="@{includes}" />
+				<fileset dir="vhdllab-common/@{fromDir}" includes="@{includes}" />-->
+				<fileset dir="vhdllab-dao/@{fromDir}" includes="@{includes}" />
+				<fileset dir="vhdllab-entities/@{fromDir}" includes="@{includes}" />
+				<!--<fileset dir="vhdllab-presentation/@{fromDir}" includes="@{includes}" />
+				<fileset dir="vhdllab-service/@{fromDir}" includes="@{includes}" />-->
+			</copy>
+		</sequential>
+	</macrodef>
 
 	<!-- ======= TARGET DEFINITIONS ======================================= -->
 	
 	<target name="once">
-		<subant inheritall="false" target="once">
-			<fileset dir="." includes="**/build.xml" excludes="build.xml"/>
-		</subant>
-		<copy file=".classpath-sample" tofile=".classpath" overwrite="true" verbose="true"/>
-		<copy file=".project-sample" tofile=".project" overwrite="true" verbose="true"/>
+		<subprojectsRunTarget target="once"/>
 		<copy file="${configuration.properties}-sample" tofile="${configuration.properties}" overwrite="true" verbose="true" />
 	</target>
 
@@ -82,13 +94,14 @@
 		</sync>
 
 		<!-- compile ant source folder so custom tasks can be used -->
-		<subant inheritall="false" target="package" antfile="build.xml" buildpath="vhdllab-misc" />
-		<mkdir dir="${jlibs.dir}" />
-		<copy todir="${jlibs.dir}" file="vhdllab-misc/${jlibs.dir}/vhdllab-misc.jar"></copy>
+		<subant inheritall="false" inheritrefs="false" target="package"
+			antfile="build.xml" buildpath="vhdllab-misc" />
+		<mkdir dir="${jlibs.misc.dir}" />
+		<copy todir="${jlibs.misc.dir}" file="vhdllab-misc/${jlibs.dir}/vhdllab-misc.jar" />
 
 		<!-- define create filter task -->
 		<taskdef name="createFilter" classname="hr.fer.zemris.vhdllab.ant.CreateFilterFileTask"
-			classpath="${jlibs.dir}/vhdllab-misc.jar" />
+			classpath="${vhdllab.misc.jar}" />
 
 		<!-- create a filter file for replace task -->
 		<createFilter filterfile="${local.dir}/filter.properties" prefix="@@" sufix="@@" />
@@ -113,9 +126,7 @@
 	</target>
 
 	<target name="clean">
-		<subant inheritall="false" target="clean">
-			<fileset dir="." includes="**/build.xml" excludes="build.xml"/>
-		</subant>
+		<subprojectsRunTarget target="clean"/>
 		<delete quiet="true" includeEmptyDirs="true">
 			<fileset dir="${jlibs.dir}" />
 			<fileset dir="${javadoc.dir}" />
@@ -126,65 +137,29 @@
 	</target>
 
 	<target name="compile" depends="init">
-		<subant inheritall="false" target="compile">
-			<property name="prepair.local.done" value="true"/>
-			<dirset dir="." includes="vhdllab-*" />
-		</subant>
+		<subprojectsNoMiscRunTarget target="compile" />
 	</target>
 
 	<target name="package" depends="compile">
-		<subant inheritall="false" target="package">
-			<property name="prepair.local.done" value="true"/>
-			<fileset dir="." includes="**/build.xml" excludes="build.xml" />
-		</subant>
-		<copy todir="${jlibs.dir}">
-			<!--<fileset dir="vhdllab-client/jlibs" includes="*" />
-			<fileset dir="vhdllab-common/jlibs" includes="*" />-->
-			<fileset dir="vhdllab-dao/jlibs" includes="*" />
-			<fileset dir="vhdllab-entities/jlibs" includes="*" />
-			<!--<fileset dir="vhdllab-presentation/jlibs" includes="*" />
-			<fileset dir="vhdllab-service/jlibs" includes="*" />-->
-		</copy>
+		<subprojectsNoMiscRunTarget target="package"/>
+		<subprojectsNoMiscCopy todir="${jlibs.dir}" fromdir="${jlibs.dir}" includes="*"/>
 	</target>
 
 	<target name="compile-tests" depends="compile">
-		<subant inheritall="false" target="compile-tests">
-			<property name="prepair.local.done" value="true"/>
-			<fileset dir="." includes="**/build.xml" excludes="build.xml"/>
-		</subant>
+		<subprojectsNoMiscRunTarget target="compile-tests" />
 	</target>
 
 	<target name="package-tests" depends="compile-tests">
-		<subant inheritall="false" target="package-tests">
-			<property name="prepair.local.done" value="true" />
-			<fileset dir="." includes="**/build.xml" excludes="build.xml" />
-		</subant>
-		<copy todir="${jlibs.tests.dir}">
-			<!--<fileset dir="vhdllab-client/jlibs/tests" includes="*" />
-			<fileset dir="vhdllab-common/jlibs/tests" includes="*" />-->
-			<fileset dir="vhdllab-dao/jlibs/tests" includes="*" />
-			<fileset dir="vhdllab-entities/jlibs/tests" includes="*" />
-			<!--<fileset dir="vhdllab-presentation/jlibs/tests" includes="*" />
-			<fileset dir="vhdllab-service/jlibs/tests" includes="*" />-->
-		</copy>
+		<subprojectsNoMiscRunTarget target="package-tests" />
+		<subprojectsNoMiscCopy todir="${jlibs.tests.dir}" fromdir="${jlibs.tests.dir}" includes="*"/>
 	</target>
 
 	<target name="run-tests" depends="package,package-tests">
-		<subant inheritall="false" target="run-tests">
-			<property name="prepair.local.done" value="true" />
-			<fileset dir="." includes="**/build.xml" excludes="build.xml" />
-		</subant>
+		<subprojectsNoMiscRunTarget target="run-tests" />
 	</target>
 
 	<target name="tests-report" depends="run-tests">
-		<copy todir="${reports.tests.dir}">
-			<!--<fileset dir="vhdllab-client/${reports.tests.dir}" />
-			<fileset dir="vhdllab-common/${reports.tests.dir}" />-->
-			<fileset dir="vhdllab-dao/${reports.tests.dir}" />
-			<fileset dir="vhdllab-entities/${reports.tests.dir}"/>
-			<!--<fileset dir="vhdllab-presentation/${reports.tests.dir}" />
-			<fileset dir="vhdllab-service/${reports.tests.dir}" />-->
-		</copy>
+		<subprojectsNoMiscCopy todir="${reports.tests.dir}" fromdir="${reports.tests.dir}" includes="**/*"/>
 		<junitreport todir="${reports.tests.html.dir}">
 			<fileset dir="${reports.tests.dir}">
 				<include name="TEST-*.xml" />
@@ -195,21 +170,14 @@
 
 	<target name="show-tests-report" depends="tests-report">
 		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
-			classpath="${jlibs.dir}/vhdllab-misc.jar" />
+			classpath="${vhdllab.misc.jar}" />
 		<!-- NOTE: uri must be composed of basedir! -->
 		<openURI uri="file:${basedir}/${reports.tests.html.dir}/index.html"/>
 	</target>
 
 	<target name="javadoc">
 		<mkdir dir="src-all"/>
-		<copy todir="src-all">
-			<!--<fileset dir="vhdllab-client/src/main" />
-			<fileset dir="vhdllab-common/src/main" />-->
-			<fileset dir="vhdllab-dao/src/main" />
-			<fileset dir="vhdllab-entities/src/main"/>
-			<!--<fileset dir="vhdllab-presentation/src/main" />
-			<fileset dir="vhdllab-service/src/main" />-->
-		</copy>
+		<subprojectsNoMiscCopy todir="src-all" fromdir="src/main" includes="**/*"/>
 		<javadoc destdir="${javadoc.dir}" author="true" nodeprecated="false"
 			nodeprecatedlist="false" noindex="false" nonavbar="false"
 			notree="false" packagenames="*" splitindex="true"
@@ -388,10 +356,12 @@
 			<classes file="${client.log4j.file}" />
 		</war>
 	</target>
+	
+	<!-- ======= META TARGETS ============================================= -->
 
 	<target name="test" depends="run-tests,show-tests-report" />
 
-	<target name="clean-all" depends="clean, clean-tomcat" />
+	<target name="clean-all" depends="clean,clean-tomcat" />
 
 	<target name="hibernate" depends="schema-export" />
 

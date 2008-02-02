@@ -20,7 +20,8 @@
 			dependencies - a set of project names separated by a comma that
 					form a dependencies of this project; if project has no
 					dependencies then this property must not be set!
-			debug - a flag set when compiling a code
+			debug - a flag indicating if code should be compiled with debug
+					information
 			runtime.log4j.dir - a directory containing log4j.properties file
 					used for logging
 		
@@ -31,42 +32,10 @@
 					create an empty fileset. Example:
 					'<fileset id="package.addon" dir="." excludes="**/*"/>'
 	-->
-
-
-	<!-- ======= MAIN CONFIGURATION FILE ================================== -->
-	<property name="configuration.properties" value="${basedir}/../configuration.properties" />
-	<property file="configuration.properties" />
-
-	<!-- ======= DIRECTORY STRUCTURE ====================================== -->
-	<!-- source directories -->
-	<property name="src.main.dir" value="src/main" />
-	<property name="src.tests.dir" value="src/tests" />
-	<property name="libs.dir" value="../vhdllab-misc/libs" />
-	<!-- build directories -->
-	<property name="build.dir" value="build" />
-	<property name="build.main.dir" value="${build.dir}/main" />
-	<property name="build.tests.dir" value="${build.dir}/tests" />
-	<property name="jlibs.dir" value="jlibs" />
-	<property name="jlibs.tests.dir" value="${jlibs.dir}/tests" />
-	<property name="javadoc.dir" value="javadoc" />
-	<property name="reports.dir" value="reports" />
-	<property name="reports.tests.dir" value="${reports.dir}/tests" />
-	<property name="reports.tests.html.dir" value="${reports.tests.dir}/html" />
-	<property name="local.dir" value="../local" />
 	
-	<!-- jar names -->
-	<property name="project.jar" value="${jlibs.dir}/${ant.project.name}.jar" />
-	<property name="project.tests.jar" value="${jlibs.tests.dir}/${ant.project.name}-tests.jar" />
-	<!-- convenience properties (not used in this build file) -->
-	<property name="local.client" value="${local.dir}/client" />
-	<property name="local.server" value="${local.dir}/server" />
-	<property name="client.log4j.dir" value="${local.client}" />
-	<property name="client.log4j.file" value="${client.log4j.dir}/log4j.properties" />
-	<property name="server.log4j.dir" value="${local.server}/WEB-INF/classes" />
-	<property name="server.log4j.file" value="${server.log4j.dir}/log4j.properties" />
-	<property name="persistence.dir" value="${local.dir}/persistence" />
-	<property name="persistence.file" value="${persistence.dir}/META-INF/persistence.xml" />
-	
+	<property name="relative.path" value=".." />
+	<import file="build-properties.xml" />
+
 	<path id="junit.classpath">
 		<fileset file="${libs.dir}/test/junit-4.4.jar" />
 	</path>
@@ -195,7 +164,7 @@
 
 	<target name="show-tests-report" depends="tests-report">
 		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
-			classpath="../${jlibs.dir}/vhdllab-misc.jar" />
+			classpath="${vhdllab.misc.jar}" />
 		<!-- NOTE: uri must be composed of basedir! -->
 		<openURI uri="file:${basedir}/${reports.tests.html.dir}/index.html"/>
 	</target>
@@ -210,6 +179,8 @@
 			<link href="http://java.sun.com/javase/6/docs/api/" />
 		</javadoc>
 	</target>
+	
+	<!-- ======= META TARGETS ============================================= -->
 	
 	<target name="test" depends="run-tests,show-tests-report" />
 	
