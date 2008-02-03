@@ -8,16 +8,17 @@
         1) Introduction
         2) Prerequisites
         3) vhdllab-subprojects
-        4) Other directories
+        4) Other source directories
         5) Building
         6) The build files
         7) Contacts
         8) Developers
 ===============================================================================
 0) Who should read this
-This documentation will try to elaborate how vhdllab is organized and how to
-build vhdllab from source. If you simply wish to install vhdllab server then
+This documentation will try to elaborate how VHDLLab is organized and how to
+build VHDLLab from source. If you simply wish to install VHDLLab server then
 read '2) Prerequisites' and INSTALL file instead.
+
 
 1) Introduction
 VHDLLab is a web based IDE for VHDL (programming language). It is designed for
@@ -28,7 +29,8 @@ in Digital Electronics course. Originally WebISE was used by students when
 programming VHDL code. But WebISE has many problems (huge footprint,
 unnecessary features, inability to create automatons, lots of bugs, problems
 with licence that disallows universities to distribute program, etc.). VHDLLab
-was designed as a lightweight alternative to fix those problems.
+was designed as a lightweight alternative to fix those problems and add few
+other features.
 
 VHDLLab has a client-server architecture. Client being a program where students
 work to design digital components and server part that implements all necessary
@@ -43,6 +45,7 @@ program (there is no installation at all!).
 In the rest of the text a student will be referred to as a user (of VHDLLab
 client application).
 
+
 2) Prerequisites
 In order to compile VHDLLab you will need the following:
     - Java JDK 6 (http://java.sun.com/javase/downloads/)
@@ -55,19 +58,141 @@ In order to compile VHDLLab you will need the following:
 Make sure you install them correctly and update PATH environmental variable.
 A user that runs VHDLLab client will only need Java JRE 6.
 
+
 3) vhdllab-subprojects
 By now you probably now that VHDLLab is divided into two projects: client and
-server. But that's not all. Server is designed as a 3-tier architecture (bottom
+server. But that is't all. Server is designed as a 3-tier architecture (bottom
 to top): dao, service and presentation. So instead of designing VHDLLab as one
 project it consists of several subprojects. All subdirectories that begin with
 'vhdllab-' are subprojects of VHDLLab project. Also worth mentioning is that
-all subprojects are Eclipse projects.
+all subprojects are eclipse projects. However since each developer can define
+its own .project and .classpath eclipse files only sample are provided. They
+are called .project-sample and .classpath-sample respectfully. All you need to
+do is copy (if working with svn copy of vhdllab they be careful not to
+rename/move them instead!) sample files to their intended names
+(.project-sample -> .project; .classpath-sample -> .classpath). To speed things
+up you can use 'ant once' command (this will do exactly what you need to do but
+faster).
 
-    vhdllab-entities - 
-    vhdllab-dao - this is a dao tier of VHDLLab server. 
-    vhdllab-service - 
-    vhdllab-presentation - 
-    vhdllab-client - 
-    vhdllab-common - 
-    vhdllab-misc - 
+Graphical representation of subprojects layout and communication:
+ * each dashed box (composed of -) represents one subproject (one jar file)
+ * presentation and service are in bigger boxed for esthetical reasons (not
+   because they are 'bigger' projects)
 
+  +------------------+        +============+        +~~~~~~~~~~~~~~~~~+
+  |    client app    |   +--->|  Internet  |<------>|  Apache Tomcat  |<---+
+  |                  |   |    +============+        +~~~~~~~~~~~~~~~~~+    |
+  |  +------------+  |   |                                                 |
+  |  |   client   |<-+---+                          +----------------------+--+
+  |  +------------+  |                              |      server app      |  |
+  |  +------------+  |                              |                      |  |
+  |  |   common   |  |                              |  +----------------+  |  |
+  |  +------------+  |                              |  |                |<-+  |
+  |                  |                              |  |  presentation  |     |
+  +------------------+                              |  |                |<-+  |
+                                                    |  +----------------+  |  |
+                                                    |  +----------------+  |  |
+                                                    |  |                |<-+  |
+                                                    |  |    service     |     |
+                                                    |  |                |<-+  |
+                                                    |  +----------------+  |  |
+                                                    |  +----------------+  |  |
+                                                    |  |      dao       |<-+  |
+                                                    |  +----------------+     |
+                                                    |  +----------------+     |
+                                                    |  |    entities    |     |
+                                                    |  +----------------+     |
+                                                    |  +----------------+     |
+                                                    |  |     common     |     |
+                                                    |  +----------------+     |
+                                                    |                         |
+                                                    +-------------------------+
+
+Note: Apache Tomcat is used as a mediator between Internet and presentation
+      project!
+Note: vhdllab-dao is further linked to (uses) persistence provider (Hibernate)
+      that communicates with DBMS (MySQL).
+Note: vhdllab-common project is included in both client and server application.
+Note: various third-party libraries aren't included in representation.
+
+Description of each subproject:
+  a) vhdllab-entities
+        All entities are defined in this project. This entities are used
+        throughout server projects so they are extracted in separate project.
+        This project defines all models (as in model in MVC pattern) used in
+        server.
+  b) vhdllab-dao
+        This is a dao tier of VHDLLab server. It defines how an entity is
+        persisted. Implementation detail: it uses JPA and Hibernate as a
+        persistence provider to persist an entity.
+  c) vhdllab-service
+        Second tier of 3-tier architecture (controller in MVC pattern) that
+        manipulates with entities. In other words this is where all features
+        are implemented (aside from data persistence which is implemented in
+        dao tier). Like code compilation & simulation, circuit interface
+        extraction, dependency checking, VHDL code generation, etc.
+  d) vhdllab-presentation
+        Exposes a standard API and defines a protocol for client-server
+        communication. Implementation detail: this protocol is wrapped inside
+        ubiquitous HTTP.
+  e) vhdllab-client
+        A client application that user uses to draw/model/write digital
+        components. As said before, it does't contain any implemented features
+        but instead sends such requests to VHDLLab server to process and return
+        results.
+  f) vhdllab-common
+        Since VHDLLab is divided into client and server application it would be
+        unreasonable to copy code that is used in both applications. Instead a
+        vhdllab-common exists for just that purpose. Note that code inside this
+        project must not depend on subprojects described above (a-e)! In fact
+        such code should not even compile!
+  g) vhdllab-misc
+        This is a special project. One that is't used during runtime but rather
+        during compile time usually by eclipse. Since there are several
+        subprojects and they all use, most of the time, same third-party
+        libraries, instead of copying or defining absolute paths to those
+        libraries this project is used as a "library project" where other
+        projects list _relative_ paths to dependency libraries. In addition
+        it contains custom ant tasks needed by build files and all source
+        non-java files, like source documentation (odt), images (xcf), etc.
+
+
+4) Other source directories
+There is only one more source directory besides all subprojects directories. 
+Source directory being ones that are present before code is compiled. Once
+build script is invoked other directories will be created. They are called
+build directories.
+
+That other source directory is 'metadata'. This is where all configuration
+files are located. Any file in metadata directory must be text based and may
+contain special tokens that are replaced when building VHDLLab. But more on
+that in next chapter.
+
+
+5) Building
+
+
+6) The build files
+
+
+7) Contacts
+Send ideas, suggestions, bug reports to vhdllab@gmail.com. Sorry for no bug
+tracker.
+
+google group: http://groups.google.com/group/vhdllab
+mail list: mailto:vhdllab@googlegroups.com
+
+
+8) Developers
+These are original developers that developed VHDLLab:
+ * mr.sc. Marko Čupić (project lead), mailto: Marko.Cupic@fer.hr
+ * Ivan Alić, student, mailto:Ivan.Alic@fer.hr
+ * Miro Bezjak, student, mailto: Miro.Bezjak@fer.hr
+ * Davor Delač, student, mailto: Davor.Delac@fer.hr
+ * Boris Ožegović, student, mailto: Boris.Ozegovic@fer.hr
+ * Aleksandar Prokopec, student, mailto: Aleksandar.Prokopec@fer.hr
+ * Tomislav Rajaković, student, mailto: Tomislav.Rajakovic@fer.hr
+
+
+Thank you for using VHDLLab and thanks to developers for continuing development
+of VHDLLab.
