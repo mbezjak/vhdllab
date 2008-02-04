@@ -39,7 +39,7 @@ features (code compilation & simulation, data storage, etc.). VHDLLab server is
 a central server that is required for client to work! VHDLLab client can't work
 as a standalone application (for example, as Eclipse IDE can). The reason for
 this is to enable student to work at home, dorm or university without the need
-to exchange files between computers. Other neat feature is that is simplifies
+to exchange files between computers. Other neat feature is that it simplifies
 installation procedure for a student. In fact student just needs to start one
 program (there is no installation at all!).
 
@@ -62,14 +62,14 @@ A user that runs VHDLLab client will only need Java JRE 6.
 
 3) vhdllab-subprojects
 By now you probably now that VHDLLab is divided into two projects: client and
-server. But that is't all. Server is designed as a 3-tier architecture (bottom
+server. But that isn't all. Server is designed as a 3-tier architecture (bottom
 to top): dao, service and presentation. So instead of designing VHDLLab as one
 project it consists of several subprojects. All directories that begin with
 'vhdllab-' are subprojects of VHDLLab project. Also worth mentioning is that
 all subprojects are eclipse projects. However since each developer can define
-its own .project and .classpath eclipse files only sample are provided. They
+its own .project and .classpath eclipse files only samples are provided. They
 are called .project-sample and .classpath-sample respectfully. All you need to
-do is copy (if working with svn copy of vhdllab they be careful not to
+do is copy (if working with svn copy of vhdllab then be careful not to
 rename/move them instead!) sample files to their intended names
 (.project-sample -> .project; .classpath-sample -> .classpath). To speed things
 up you can use 'ant once' command (this will do exactly what you need to do but
