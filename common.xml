@@ -54,7 +54,7 @@
 
 	<!-- ======= TARGET DEFINITIONS ======================================= -->
 
-	<target name="once">
+	<target name="once" description="Creates eclipse files out of samples">
 		<copy file=".classpath-sample" tofile=".classpath" overwrite="true" verbose="true" />
 		<copy file=".project-sample" tofile=".project" overwrite="true" verbose="true" />
 	</target>
@@ -80,7 +80,7 @@
 		<mkdir dir="${reports.tests.html.dir}" />
 	</target>
 
-	<target name="clean">
+	<target name="clean" description="Deletes all build directories">
 		<delete quiet="true" includeEmptyDirs="true">
 			<fileset dir="${build.dir}" />
 			<fileset dir="${jlibs.dir}" />
@@ -93,7 +93,7 @@
 		<resolveDependencies target="package" deps="${dependencies}"/>
 	</target>
 	
-	<target name="compile" depends="init,resolve-dependencies">
+	<target name="compile" depends="init,resolve-dependencies" description="Compiles all source code">
 		<javac destdir="${build.main.dir}" includes="**/*.java"
 			includeAntRuntime="false" debug="${debug}"
 			debuglevel="${debug.level}" encoding="UTF-8">
@@ -104,7 +104,7 @@
 		</javac>
 	</target>
 	
-	<target name="package" depends="compile">
+	<target name="package" depends="compile" description="Creates jar files">
 		<jar destfile="${project.jar}" index="false" duplicate="fail">
 			<fileset dir="${build.main.dir}" includes="**/*.class" />
 			<fileset dir="${src.main.dir}" excludes="**/*.java,**/*svn/**,**/*svn" />
@@ -112,7 +112,7 @@
 		</jar>
 	</target>
 
-	<target name="compile-tests" depends="compile">
+	<target name="compile-tests" depends="compile" description="Compiles all tests">
 		<!-- dependencies are resolved in compile target! -->
 		<javac destdir="${build.tests.dir}" includes="**/*.java"
 			includeAntRuntime="false" debug="true"
@@ -126,13 +126,13 @@
 		</javac>
 	</target>
 	
-	<target name="package-tests" depends="compile-tests">
+	<target name="package-tests" depends="compile-tests" description="Creates test jar files">
 		<jar destfile="${project.tests.jar}" index="false">
 			<fileset dir="${build.tests.dir}" includes="**/*.class" />
 		</jar>
 	</target>
 	
-	<target name="run-tests" depends="package,package-tests">
+	<target name="run-tests" depends="package,package-tests" description="Starts all tests">
 		<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
 			<classpath>
 				<path refid="runtime.classpath" />
@@ -153,7 +153,7 @@
 		</junit>
 	</target>
 	
-	<target name="tests-report" depends="run-tests">
+	<target name="tests-report" depends="run-tests" description="Generates a tests report">
 		<junitreport todir="${reports.tests.html.dir}">
 			<fileset dir="${reports.tests.dir}">
 				<include name="TEST-*.xml" />
@@ -162,14 +162,14 @@
 		</junitreport>
 	</target>
 
-	<target name="show-tests-report" depends="tests-report">
+	<target name="show-tests-report" depends="tests-report" description="Shows tests report in a browser">
 		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
 			classpath="${vhdllab.misc.jar}" />
 		<!-- NOTE: uri must be composed of basedir! -->
 		<openURI uri="file:${basedir}/${reports.tests.html.dir}/index.html"/>
 	</target>
 	
-	<target name="javadoc" depends="resolve-dependencies">
+	<target name="javadoc" depends="resolve-dependencies" description="Creates javadoc files">
 		<javadoc destdir="${javadoc.dir}" author="true"
 			classpathref="compile.classpath" nodeprecated="false"
 			nodeprecatedlist="false" noindex="false" nonavbar="false"
@@ -182,9 +182,9 @@
 	
 	<!-- ======= META TARGETS ============================================= -->
 	
-	<target name="test" depends="run-tests,show-tests-report" />
+	<target name="test" depends="run-tests,show-tests-report" description="Runs all tests and opens a tests report"/>
 	
-	<target name="all" depends="package,javadoc,test" />
+	<target name="all" depends="package,javadoc,test" description="Creates all jars, javadoc, runs all tests and opens a tests report" />
 
 	<target name="rebuild" depends="clean,package" />
 
