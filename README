@@ -180,6 +180,14 @@ file. All those replaced files are located in 'local' (or working) directory.
 No one should use files in metadata directory even if they don't contain any
 special token. Refer them through local directory instead.
 
+Example:
+  $ cat configuration.properties
+  app.name = vhdllab
+  $ cat metadata/example.txt
+  This application's name is @@app.name@@
+  $ cat local/example.txt
+  This application's name is vhdllab
+
 These are build directories that are created when building VHDLLab project:
  * local
     Just described. Contains all metadata files but with those special tokens
@@ -197,11 +205,12 @@ These are build directories that are created when building VHDLLab project:
 
 
 5) Building
-Building VHDLLab is very simple. You just need to invoke 'package' target (by
-running 'ant target_name' command). This will build whole application and
-create jar files. Those jars can be found in jlibs build directory.
+Building VHDLLab is very simple. You just need to invoke 'package' target. This
+will build whole application and create jar files. Those jars can be found in
+jlibs build directory.
 
-These are other targets that you can use:
+These are other targets that you can use (invoke them by using
+'ant target_name' command):
  * once
     Already explained. This will copy all .project-sample and .classpath-sample
     to their intended names for all subprojects and by doing this enable you to
@@ -248,10 +257,10 @@ contain exactly the same targets none of them actually defines any targets.
 Instead each of them imports common.xml file (in this directory) and that file
 defines somewhat 'generified' targets. This 'generified' means that it uses
 properties, paths and filesets that are not defined in common.xml file but
-rather in build.xml files in every subproject. Here is what that means. A
-subproject's build.xml file first imports common.xml, then defines its own
-compile.classpath that common.xml script uses as a classpath when compiling a
-code. Different subproject will defined different compile.classpath.
+rather in build.xml files in every subproject. For example: A subproject's
+build.xml file first imports common.xml, then defines its own compile.classpath
+that common.xml script uses as a classpath when compiling a code. Different
+subproject will define different compile.classpath.
 
 A master build script (VHDLLab project wide) is in this directory (build.xml).
 Most of targets are very simple. They just iterate through all subprojects
