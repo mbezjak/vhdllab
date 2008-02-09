@@ -18,7 +18,9 @@
 0) Who should read this
 This documentation will try to elaborate how VHDLLab is organized and how to
 build VHDLLab from source. If you simply wish to install VHDLLab server then
-read '2) Prerequisites' and INSTALL file instead.
+read chapter 2: Prerequisites and INSTALL file instead. If, however, you want
+to quickly set up your eclipse workspace (import VHDLLab in it) then read
+QUICK_START file instead.
 
 
 1) Introduction
@@ -159,26 +161,28 @@ Description of each subproject:
 
 
 4) Other directories
-There is only one more source directory besides all subprojects directories. 
+There are only two more source directories besides all subproject directories.
 Source directory are ones that are present before code is compiled. Once build
 script is invoked other directories will be created. They are called build
 directories.
 
-That other source directory is 'metadata'. This is where all configuration
-files are located (like persistence.xml, web.xml, log4j.properties, etc.). Any
-file in metadata directory must be text based and may contain special tokens
-that are replaced when building VHDLLab. This special tokens enable having just
-one global configuration.properties file (sample is
-configuration.properties-sample file). This main configuration is where you
-need to define, for example, a database url, user and password, how code should
-be compiled (with or without debug information), etc. (check that file to see
-other configuration properties). Then all that information can be used in any
-file inside metadata directory by using this special tokens. Tokens are
-composed like this: @@name_of_a_key_in_main_conf_file@@. Now during build any
-such token will be replaced by a value of specified key in main configuration
-file. All those replaced files are located in 'local' (or working) directory.
-No one should use files in metadata directory even if they don't contain any
-special token. Refer them through local directory instead.
+'install' source directory contains instruction on how to install VHDLLab
+server. The other source directory is 'metadata'. This is where all
+configuration files are located (like persistence.xml, web.xml,
+log4j.properties, etc.). Any file in metadata directory must be text based and
+may contain special tokens that are replaced when building VHDLLab. This
+special tokens enable having just one global configuration.properties file
+(sample is configuration.properties-sample file). This main configuration is
+where you need to define, for example, a database url, user and password, how
+code should be compiled (with or without debug information), etc. (check that
+file to see other configuration properties). Then all that information can be
+used in any file inside metadata directory by using this special tokens. Tokens
+are composed like this: @@name_of_a_key_in_main_conf_file@@. Now during build
+any such token will be replaced by a value of specified key in main
+configuration file. All those replaced files are located in 'local'
+(or working) directory. No one should use files in metadata directory even if
+they don't contain any special token. Refer them through local directory
+instead.
 
 Example:
   $ cat configuration.properties
@@ -217,6 +221,10 @@ These are other targets that you can use (invoke them by using
     import those projects in eclipse workspace. It will also copy sample of
     main configuration file (configuration.properties-sample) to intended name
     (configuration.properties).
+ * eclipse
+    To run client application or tests inside eclipse some projects might
+    require configuration files (in local directory) to be copied to eclipse
+    source folders (i.e. to be in classpath). This target does just that.
  * clean
     Deletes all build directories (all compiled source code, built jars, etc.).
  * compile

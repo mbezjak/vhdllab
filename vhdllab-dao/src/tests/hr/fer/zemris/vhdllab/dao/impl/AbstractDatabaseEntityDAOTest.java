@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
-import hr.fer.zemris.vhdllab.entities.GlobalFile;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 
 import org.junit.After;
@@ -13,23 +12,23 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Tests for {@link AbstractEntityDAO} class.
+ * Tests for {@link AbstractDatabaseEntityDAO} class.
  * 
  * @author Miro Bezjak
  */
-public class AbstractEntityDAOTest {
+public class AbstractDatabaseEntityDAOTest {
 
 	private static final Long UNUSED_ID = Long.valueOf(Long.MAX_VALUE);
 
-	private static AbstractEntityDAO<GlobalFile> dao;
+	private static AbstractDatabaseEntityDAO<UserFile> dao;
 
 	@BeforeClass
 	public static void initTestCase() throws DAOException {
 		/*
-		 * Entity type is not important in this test case so GlobalFileDAOImpl
+		 * Entity type is not important in this test case so UserFileDAOImpl
 		 * was picked because it is the simplest one.
 		 */
-		dao = new GlobalFileDAOImpl();
+		dao = new UserFileDAOImpl();
 		EntityManagerUtil.createEntityManagerFactory();
 	}
 
@@ -42,7 +41,29 @@ public class AbstractEntityDAOTest {
 	public void destroyEachTest() throws DAOException {
 		EntityManagerUtil.closeEntityManager();
 	}
-
+	
+	/**
+	 * clazz is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor() throws DAOException {
+		class DummyDAO extends AbstractDatabaseEntityDAO<String> {
+			public DummyDAO() {
+				super(null);
+			}
+		}
+		
+		new DummyDAO();
+	}
+	
+	/**
+	 * id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void create() throws DAOException {
+		dao.create(null);
+	}
+	
 	/**
 	 * id is null
 	 */

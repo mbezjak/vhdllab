@@ -1,16 +1,43 @@
 package hr.fer.zemris.vhdllab.dao;
 
 /**
- * Defines 4 common methods for manipulating entities. An entity is any object
- * that can be persisted in DAO layer.
+ * Defines 5 common methods for manipulating entities. An entity is any object
+ * that can be persisted in DAO tier.
  * 
  * @param <T>
  *            type of an entity
  * @author Miro Bezjak
  * @version 1.0
- * @since 27/9/2007
+ * @since 6/2/2008
  */
 public interface EntityDAO<T> {
+
+	/**
+	 * Creates a new entity. All constraints are defined in entity itself
+	 * through <code>javax.persistence</code> annotations.
+	 * 
+	 * @param entity
+	 *            an entity that will be created
+	 * @throws DAOException
+	 *             if exceptional condition occurs
+	 * @throws NullPointerException
+	 *             if <code>entity</code> is <code>null</code>
+	 */
+	void create(T entity) throws DAOException;
+
+	/**
+	 * Updates an existing entity. If entity doesn't exist then this method will
+	 * throw <code>DAOException</code>. All constraints are defined in entity
+	 * itself through <code>javax.persistence</code> annotations.
+	 * 
+	 * @param entity
+	 *            an entity that will be updated
+	 * @throws DAOException
+	 *             if exceptional condition occurs
+	 * @throws NullPointerException
+	 *             if <code>entity</code> is <code>null</code>
+	 */
+	void save(T entity) throws DAOException;
 
 	/**
 	 * Retrieves an entity with specified identifier. A {@link DAOException}
@@ -27,32 +54,6 @@ public interface EntityDAO<T> {
 	T load(Long id) throws DAOException;
 
 	/**
-	 * Saves (or updates) an entity. All constraints are defined in entity
-	 * itself through <code>javax.persistence</code> annotations.
-	 * 
-	 * @param entity
-	 *            an entity that will be saved (or updated)
-	 * @throws DAOException
-	 *             if exceptional condition occurs
-	 * @throws NullPointerException
-	 *             if <code>entity</code> is <code>null</code>
-	 */
-	void save(T entity) throws DAOException;
-
-	/**
-	 * Deletes an entity. If entity doesn't exist then this method will throw
-	 * <code>DAOException</code>.
-	 * 
-	 * @param id
-	 *            an identifier of an entity to delete
-	 * @throws DAOException
-	 *             if exceptional condition occurs
-	 * @throws NullPointerException
-	 *             if <code>id</code> is <code>null</code>
-	 */
-	void delete(Long id) throws DAOException;
-
-	/**
 	 * Returns <code>true</code> if an entity with specified identifier exists
 	 * or <code>false</code> otherwise.
 	 * 
@@ -66,5 +67,18 @@ public interface EntityDAO<T> {
 	 *             if <code>id</code> is <code>null</code>
 	 */
 	boolean exists(Long id) throws DAOException;
+
+	/**
+	 * Deletes an entity. If entity doesn't exist then this method will throw
+	 * <code>DAOException</code>.
+	 * 
+	 * @param id
+	 *            an identifier of an entity to delete
+	 * @throws DAOException
+	 *             if exceptional condition occurs
+	 * @throws NullPointerException
+	 *             if <code>id</code> is <code>null</code>
+	 */
+	void delete(Long id) throws DAOException;
 
 }

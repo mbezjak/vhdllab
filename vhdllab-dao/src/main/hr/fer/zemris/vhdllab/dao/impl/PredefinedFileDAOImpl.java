@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
-import hr.fer.zemris.vhdllab.dao.PredefinedFileDAO;
 import hr.fer.zemris.vhdllab.entities.File;
 
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.List;
  * 
  * @author Miro Bezjak
  * @version 1.0
- * @since 21/10/2007
+ * @since 6/2/2008
  */
-public class PredefinedFileDAOImpl implements PredefinedFileDAO {
+public final class PredefinedFileDAOImpl implements PredefinedFileDAO {
 
 	private java.io.File basedir;
 

@@ -1,53 +1,59 @@
 package hr.fer.zemris.vhdllab.dao;
 
+import hr.fer.zemris.vhdllab.server.ServerException;
+
 /**
- * Exception indicating an exceptional condition in DAO layer.
+ * Exception indicating an exceptional condition in DAO tier.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
-public class DAOException extends Exception {
+public class DAOException extends ServerException {
 
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Creates a DAO exception without a message and a cause.
-	 */
-	public DAOException() {
-		super();
-	}
-
+	
 	/**
 	 * Creates a DAO exception with a specified <code>message</code>.
 	 * 
+	 * @param statusCode
+	 *            indicating why this exception occurred
 	 * @param message
 	 *            a specified message
 	 */
-	public DAOException(String message) {
-		super(message);
-	}
-
-	/**
-	 * Creates a DAO exception with a specified <code>message</code> and
-	 * <code>cause</code>.
-	 * 
-	 * @param message
-	 *            a specified message
-	 * @param cause
-	 *            a cause of this exception
-	 */
-	public DAOException(String message, Throwable cause) {
-		super(message, cause);
+	public DAOException(short statusCode, String message) {
+		super(statusCode, message);
 	}
 
 	/**
 	 * Creates a DAO exception with a specified <code>cause</code> and no
 	 * message.
 	 * 
+	 * @param statusCode
+	 *            indicating why this exception occurred
 	 * @param cause
 	 *            a cause of this exception
 	 */
-	public DAOException(Throwable cause) {
-		super(cause);
+	public DAOException(short statusCode, Throwable cause) {
+		super(statusCode, cause);
+	}
+
+	/**
+	 * Creates a DAO exception with a specified <code>message</code> and
+	 * <code>cause</code>.
+	 * 
+	 * @param statusCode
+	 *            indicating why this exception occurred
+	 * @param message
+	 *            a specified message
+	 * @param cause
+	 *            a cause of this exception
+	 * @throws NullPointerException
+	 *             if both <code>message</code> and <code>cause</code> is
+	 *             <code>null</code>
+	 */
+	public DAOException(short statusCode, String message, Throwable cause) {
+		super(statusCode, message, cause);
 	}
 
 }

@@ -7,6 +7,8 @@ import hr.fer.zemris.vhdllab.entities.File;
  * {@link File} model.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
 public interface FileDAO extends EntityDAO<File> {
 

@@ -9,6 +9,8 @@ import java.util.List;
  * {@link Project} model.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
 public interface ProjectDAO extends EntityDAO<Project> {
 
@@ -36,7 +38,7 @@ public interface ProjectDAO extends EntityDAO<Project> {
 	 *            owner of project
 	 * @param name
 	 *            a name of a project
-	 * @return a project
+	 * @return a specified project
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */

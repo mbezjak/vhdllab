@@ -11,9 +11,9 @@ import java.util.List;
  * 
  * @author Miro Bezjak
  * @version 1.0
- * @since 27/9/2007
+ * @since 6/2/2008
  */
-public class UserFileDAOImpl extends AbstractEntityDAO<UserFile> implements
+public final class UserFileDAOImpl extends AbstractDatabaseEntityDAO<UserFile> implements
 		UserFileDAO {
 
 	/**

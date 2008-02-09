@@ -11,9 +11,9 @@ import java.util.List;
  * 
  * @author Miro Bezjak
  * @version 1.0
- * @since 27/9/2007
+ * @since 6/2/2008
  */
-public class ProjectDAOImpl extends AbstractEntityDAO<Project> implements
+public final class ProjectDAOImpl extends AbstractDatabaseEntityDAO<Project> implements
 		ProjectDAO {
 
 	/**

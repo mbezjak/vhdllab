@@ -3,7 +3,9 @@
 	<classpathentry kind="src" path="src/main"/>
 	<classpathentry kind="src" path="src/tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-misc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-entities"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-common"/>
 	<classpathentry kind="lib" path="/vhdllab-misc/libs/test/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="/vhdllab-misc/libs/commons-collections-2.1.1.jar"/>
 	<classpathentry kind="lib" path="/vhdllab-misc/libs/commons-dbcp-1.2.2.jar"/>

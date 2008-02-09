@@ -9,6 +9,8 @@ import java.util.List;
  * {@link UserFile} model.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
 public interface UserFileDAO extends EntityDAO<UserFile> {
 

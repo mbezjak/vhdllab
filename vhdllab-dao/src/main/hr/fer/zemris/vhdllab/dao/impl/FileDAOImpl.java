@@ -9,9 +9,9 @@ import hr.fer.zemris.vhdllab.entities.File;
  * 
  * @author Miro Bezjak
  * @version 1.0
- * @since 27/9/2007
+ * @since 6/2/2008
  */
-public final class FileDAOImpl extends AbstractEntityDAO<File> implements
+public final class FileDAOImpl extends AbstractDatabaseEntityDAO<File> implements
 		FileDAO {
 
 	/**

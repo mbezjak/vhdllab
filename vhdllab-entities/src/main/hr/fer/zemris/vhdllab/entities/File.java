@@ -22,7 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @AssociationOverride(name = "parent", joinColumns = { @JoinColumn(name = "project_id", nullable = false, updatable = false) })
 @Table(name = "files", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"name", "project_id" }) })
-@NamedQuery(name = File.FIND_BY_NAME_QUERY, query = "select f from File as f where f.name = :name and f.project.id = :id order by f.id")
+@NamedQuery(name = File.FIND_BY_NAME_QUERY, query = "select f from File as f where f.name = :name and f.parent.id = :id order by f.id")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class File extends BidiResource<Project, File> {
 

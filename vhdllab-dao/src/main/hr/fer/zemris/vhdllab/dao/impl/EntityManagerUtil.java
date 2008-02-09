@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
+import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import java.lang.management.ManagementFactory;
 
@@ -18,9 +19,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jmx.StatisticsService;
 
 /**
- * This is a help class for creating entity managers.
+ * This is a helper class for creating entity managers.
+ * 
+ * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
-public class EntityManagerUtil {
+public final class EntityManagerUtil {
 
 	/**
 	 * A name of persistence unit in persistence.xml file.
@@ -48,7 +53,8 @@ public class EntityManagerUtil {
 		try {
 			factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 		} catch (RuntimeException e) {
-			log.fatal("Error in building entity manager factory", e);
+			log.fatal("Error in building entity manager factory.", e);
+			// throw exception to cancel system initialization
 			throw new ExceptionInInitializerError(e);
 		}
 
@@ -57,11 +63,13 @@ public class EntityManagerUtil {
 			PERSISTENCE_OBJECT_NAME = new ObjectName(
 					"Hibernate:type=statistics,application=VHDLLab");
 		} catch (Exception e) {
-			log.error("Error during instantiating persistence object name", e);
+			// this should never happen but if it does then just log it!
+			log.error("Error during instantiating persistence object name.", e);
+				PERSISTENCE_OBJECT_NAME = null;
 			// suppress error
 		}
 	}
-	
+
 	/**
 	 * Don't let anyone instantiate this class.
 	 */
@@ -86,7 +94,7 @@ public class EntityManagerUtil {
 		try {
 			factory.close();
 		} catch (RuntimeException e) {
-			log.error("Error during closing of entity manager factory", e);
+			log.error("Error during closing entity manager factory.", e);
 		}
 	}
 
@@ -104,7 +112,7 @@ public class EntityManagerUtil {
 			try {
 				em = factory.createEntityManager();
 			} catch (RuntimeException e) {
-				log.error("Error during creating entity manager", e);
+				log.error("Error during creating entity manager.", e);
 				// rethrow exception
 				throw e;
 			}
@@ -123,7 +131,7 @@ public class EntityManagerUtil {
 			try {
 				em.close();
 			} catch (RuntimeException e) {
-				log.error("Error during closing entity manager", e);
+				log.error("Error during closing entity manager.", e);
 			}
 		}
 	}
@@ -149,8 +157,8 @@ public class EntityManagerUtil {
 			try {
 				tx.begin();
 			} catch (PersistenceException e) {
-				log.error("Error during beginning transaction", e);
-				throw new DAOException(e);
+				log.error("Error during beginning transaction.", e);
+				throw new DAOException(StatusCodes.SERVER_ERROR, e);
 			}
 		}
 	}
@@ -168,8 +176,8 @@ public class EntityManagerUtil {
 			try {
 				tx.commit();
 			} catch (PersistenceException e) {
-				log.warn("Possible error during commiting transaction", e);
-				throw new DAOException(e);
+				log.warn("Possible error during commiting transaction.", e);
+				throw new DAOException(StatusCodes.SERVER_ERROR, e);
 			}
 		}
 	}
@@ -183,7 +191,8 @@ public class EntityManagerUtil {
 			try {
 				tx.rollback();
 			} catch (PersistenceException e) {
-				log.error("Error during transaction rollback", e);
+				log.error("Error during transaction rollback.", e);
+				// nothing to do if this happens so suppress exception
 			}
 		}
 	}
@@ -196,8 +205,9 @@ public class EntityManagerUtil {
 	 *             if any error occurs
 	 */
 	public static void registerPersistenceJMX() throws Exception {
-		if(PERSISTENCE_OBJECT_NAME == null) {
-			throw new NullPointerException("Persistence object name not initialized");
+		if (PERSISTENCE_OBJECT_NAME == null) {
+			throw new NullPointerException(
+					"Persistence object name not initialized.");
 		}
 		try {
 			Session session = (Session) currentEntityManager().getDelegate();
@@ -205,14 +215,14 @@ public class EntityManagerUtil {
 			StatisticsService statsMBean = new StatisticsService();
 			statsMBean.setSessionFactory(sf);
 			statsMBean.setStatisticsEnabled(true);
-			
+
 			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 			mbs.registerMBean(statsMBean, PERSISTENCE_OBJECT_NAME);
 		} catch (Exception e) {
 			/*
 			 * Log and rethrow exception
 			 */
-			log.error("Error during registring hibernate statistics service to MBean server", e);
+			log.error("Error during registring hibernate statistics service to MBean server.", e);
 			throw e;
 		}
 	}
@@ -231,7 +241,7 @@ public class EntityManagerUtil {
 			/*
 			 * Log and rethrow exception
 			 */
-			log.error("Error during unregistring hibernate statistics service", e);
+			log.error("Error during unregistring hibernate statistics service.", e);
 			throw e;
 		}
 	}

@@ -109,7 +109,7 @@
 		<replace dir="${local.dir}"	includes="**/*" excludes="filter.properties"
 			replacefilterfile="${local.dir}/filter.properties" summary="true"/>
 	</target>
-
+	
 	<target name="init" depends="set-additional-properties,prepair-local">
 		<available file="${configuration.properties}" property="configuration.properties.present" />
 		<fail unless="configuration.properties.present">
@@ -124,7 +124,7 @@
 		<mkdir dir="${local.dir}" />
 		<mkdir dir="${reports.tests.html.dir}" />
 	</target>
-
+	
 	<target name="clean" description="Deletes all build directories">
 		<subprojectsRunTarget target="clean"/>
 		<delete quiet="true" includeEmptyDirs="true">
@@ -134,6 +134,10 @@
 			<fileset dir="${reports.dir}" />
 			<fileset file="${app.name}.war" />
 		</delete>
+	</target>
+
+	<target name="eclipse" depends="init" description="Copies all necessary configuration files to eclipse source folders">
+		<subprojectsRunTarget target="eclipse"/>
 	</target>
 
 	<target name="compile" depends="init" description="Compiles all source code">

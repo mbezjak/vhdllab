@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.dao.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.EntityDAO;
+import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import java.util.List;
 
@@ -11,16 +12,17 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 /**
- * This class fully implements {@link EntityDAO} interface and in addition it
- * defines extra methods for finding entities through queries.
+ * This class fully implements {@link EntityDAO} interface by persisting
+ * entities to database and in addition it defines extra methods for finding
+ * entities through queries.
  * 
  * @param <T>
  *            an entity type
  * @author Miro Bezjak
- * @version 1.0.1
- * @since 27/9/2007
+ * @version 1.0
+ * @since 6/2/2008
  */
-public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
+public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 
 	/**
 	 * A query hint key for hibernate persistence provider to set query as
@@ -41,33 +43,30 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @throws NullPointerException
 	 *             if <code>clazz</code> is <code>null</code>
 	 */
-	public AbstractEntityDAO(Class<T> clazz) {
+	public AbstractDatabaseEntityDAO(Class<T> clazz) {
 		if (clazz == null) {
 			throw new NullPointerException("Entity class cant be null");
 		}
 		this.clazz = clazz;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.dao.DAOCommon#load(java.lang.Long)
-	 */
+	
 	@Override
-	public T load(Long id) throws DAOException {
-		T entity = loadEntityImpl(id);
+	public void create(T entity) throws DAOException {
 		if (entity == null) {
-			throw new DAOException(clazz.getCanonicalName() + "[" + id + "]"
-					+ " does't exit");
+			throw new NullPointerException("Entity cant be null");
 		}
-		return entity;
+		EntityManager em = EntityManagerUtil.currentEntityManager();
+		EntityManagerUtil.beginTransaction();
+		try {
+			em.persist(entity);
+		} catch (PersistenceException e) {
+			EntityManagerUtil.rollbackTransaction();
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
+		} finally {
+			EntityManagerUtil.commitTransaction();
+		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.dao.DAOCommon#save(java.lang.Object)
-	 */
+	
 	@Override
 	public void save(T entity) throws DAOException {
 		if (entity == null) {
@@ -79,17 +78,28 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			em.persist(entity);
 		} catch (PersistenceException e) {
 			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(e);
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
 		} finally {
 			EntityManagerUtil.commitTransaction();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.dao.DAOCommon#delete(java.lang.Long)
-	 */
+	@Override
+	public T load(Long id) throws DAOException {
+		T entity = loadEntityImpl(id);
+		if (entity == null) {
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, clazz.getCanonicalName() + "[" + id + "]"
+					+ " does't exit");
+		}
+		return entity;
+	}
+
+	@Override
+	public boolean exists(Long id) throws DAOException {
+		T entity = loadEntityImpl(id);
+		return entity != null;
+	}
+
 	@Override
 	public void delete(Long id) throws DAOException {
 		if (id == null) {
@@ -100,27 +110,16 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 		try {
 			T entity = em.find(clazz, id);
 			if (entity == null) {
-				throw new DAOException(clazz.getCanonicalName() + "[" + id
+				throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, clazz.getCanonicalName() + "[" + id
 						+ "]" + " does't exit");
 			}
 			em.remove(entity);
 		} catch (PersistenceException e) {
 			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(e);
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
 		} finally {
 			EntityManagerUtil.commitTransaction();
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.dao.DAOCommon#exists(java.lang.Long)
-	 */
-	@Override
-	public boolean exists(Long id) throws DAOException {
-		T entity = loadEntityImpl(id);
-		return entity != null;
 	}
 
 	/**
@@ -176,7 +175,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			Object[] paramValues) throws DAOException {
 		T entity = findSingleEntityImpl(namedQuery, paramNames, paramValues);
 		if (entity == null) {
-			throw new DAOException("No entity for such constraints");
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, "No entity for such constraints");
 		}
 		return entity;
 	}
@@ -208,7 +207,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 		List<T> entities = findEntityListImpl(namedQuery, paramNames,
 				paramValues);
 		if (entities == null) {
-			throw new DAOException("No entities for such constraints");
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, "No entities for such constraints");
 		}
 		return entities;
 	}
@@ -236,7 +235,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			return em.find(clazz, id);
 		} catch (PersistenceException e) {
 			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(e);
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
 		} finally {
 			EntityManagerUtil.commitTransaction();
 		}
@@ -278,7 +277,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			return null;
 		} catch (PersistenceException e) {
 			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(e);
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
 		} finally {
 			EntityManagerUtil.commitTransaction();
 		}
@@ -325,7 +324,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			return null;
 		} catch (PersistenceException e) {
 			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(e);
+			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
 		} finally {
 			EntityManagerUtil.commitTransaction();
 		}

@@ -89,6 +89,13 @@
 		</delete>
 	</target>
 	
+	<target name="eclipse" depends="init" description="Copies all necessary configuration files to eclipse source folders">
+		<copy todir="${src.main.dir}">
+		    <fileset dir="${runtime.log4j.dir}" includes="log4j.properties"/>
+			<fileset refid="package.addon" />
+		</copy>
+	</target>
+
 	<target name="resolve-dependencies" if="dependencies">
 		<resolveDependencies target="package" deps="${dependencies}"/>
 	</target>
@@ -139,7 +146,7 @@
 				<path refid="junit.classpath" />
 				<pathelement location="${project.jar}" />
 				<pathelement location="${project.tests.jar}" />
-				<pathelement location="${runtime.log4j.dir}"/>
+				<pathelement location="${runtime.log4j.dir}/log4j.properties"/>
 			</classpath>
 
 			<formatter type="xml" />

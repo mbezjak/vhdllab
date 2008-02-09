@@ -19,5 +19,10 @@
 	<!-- include nothing -->
 	<fileset id="package.addon" dir="." excludes="**/*"/>
 
+	<!-- Target override -->
+	<target name="eclipse">
+		<!-- No need to copy anything -->
+	</target>
+
 </project>
 

@@ -7,8 +7,10 @@ import javax.servlet.ServletContextListener;
  * A servlet context listener for registering and unregistering persistence JMX.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
-public class PersistenceJMXLifecycle implements ServletContextListener {
+public final class PersistenceJMXLifecycle implements ServletContextListener {
 
 	/*
 	 * (non-Javadoc)
@@ -20,7 +22,7 @@ public class PersistenceJMXLifecycle implements ServletContextListener {
 		try {
 			EntityManagerUtil.registerPersistenceJMX();
 		} catch (Exception e) {
-			// already logged
+			// already logged and nothing to do
 		}
 	}
 
@@ -34,7 +36,7 @@ public class PersistenceJMXLifecycle implements ServletContextListener {
 		try {
 			EntityManagerUtil.unregisterPersistenceJMX();
 		} catch (Exception e) {
-			// already logged
+			// already logged and nothing to do
 		}
 	}
 

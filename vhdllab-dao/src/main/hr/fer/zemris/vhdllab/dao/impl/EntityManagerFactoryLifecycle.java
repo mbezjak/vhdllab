@@ -7,11 +7,13 @@ import javax.servlet.ServletContextListener;
  * A servlet context listener for creating and destroying entity manager factory
  * associated with servlet context. An entity manager factory will be created
  * when web application is initializing and will be destroyed when web
- * application is destroying.
+ * application is shutting down.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
-public class EntityManagerFactoryLifecycle implements ServletContextListener {
+public final class EntityManagerFactoryLifecycle implements ServletContextListener {
 
 	/*
 	 * (non-Javadoc)

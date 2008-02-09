@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.entities.UserFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -54,6 +55,8 @@ public class UserFileDAOImplTest {
 		file.setUserId(USER_ID);
 		file.setName(NAME);
 		file.setContent("<pref><value>schematic</value></pref>");
+		file.setCreated(new Date());
+		file.setType("a type");
 	}
 
 	@After

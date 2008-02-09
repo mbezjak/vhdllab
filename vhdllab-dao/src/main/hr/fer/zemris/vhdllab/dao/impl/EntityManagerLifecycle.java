@@ -9,8 +9,10 @@ import javax.servlet.ServletRequestListener;
  * entity-manager-per-request idiom.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since 6/2/2008
  */
-public class EntityManagerLifecycle implements ServletRequestListener {
+public final class EntityManagerLifecycle implements ServletRequestListener {
 
 	/*
 	 * (non-Javadoc)

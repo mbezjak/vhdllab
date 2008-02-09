@@ -49,4 +49,8 @@
 		<mkdir dir="${reports.tests.html.dir}" />
 	</target>
 
+	<target name="eclipse">
+		<!-- No need to copy anything -->
+	</target>
+
 </project>
