@@ -4,6 +4,9 @@ import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.entities.File;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This is a default implementation of {@link FileDAO}.
  * 
@@ -31,9 +34,10 @@ public final class FileDAOImpl extends AbstractDatabaseEntityDAO<File> implement
 	public boolean exists(Long projectId, String name) throws DAOException {
 		checkParameters(projectId, name);
 		String namedQuery = File.FIND_BY_NAME_QUERY;
-		String[] paramNames = new String[] { "id", "name" };
-		Object[] paramValues = new Object[] { projectId, name };
-		return existsEntity(namedQuery, paramNames, paramValues);
+		Map<String, Object> params = new HashMap<String, Object>(2);
+		params.put("id", projectId);
+		params.put("name", name);
+		return existsEntity(namedQuery, params);
 	}
 
 	/*
@@ -46,9 +50,10 @@ public final class FileDAOImpl extends AbstractDatabaseEntityDAO<File> implement
 	public File findByName(Long projectId, String name) throws DAOException {
 		checkParameters(projectId, name);
 		String namedQuery = File.FIND_BY_NAME_QUERY;
-		String[] paramNames = new String[] { "id", "name" };
-		Object[] paramValues = new Object[] { projectId, name };
-		return findSingleEntity(namedQuery, paramNames, paramValues);
+		Map<String, Object> params = new HashMap<String, Object>(2);
+		params.put("id", projectId);
+		params.put("name", name);
+		return findSingleEntity(namedQuery, params);
 	}
 
 	/**

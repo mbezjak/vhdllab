@@ -1,5 +1,10 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
+/**
+ * Helper class for all dao test cases.
+ * 
+ * @author Miro Bezjak
+ */
 public class StringGenerationUtil {
 
 	/**

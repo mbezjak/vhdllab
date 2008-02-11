@@ -5,11 +5,16 @@ import hr.fer.zemris.vhdllab.dao.EntityDAO;
 import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class fully implements {@link EntityDAO} interface by persisting
@@ -31,6 +36,12 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	private static final String CACHEABLE_HINT = "org.hibernate.cacheable";
 
 	/**
+	 * A logger for this class.
+	 */
+	private static final Logger log = Logger
+			.getLogger(AbstractDatabaseEntityDAO.class);
+
+	/**
 	 * A class of an entity.
 	 */
 	private Class<T> clazz;
@@ -49,57 +60,59 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 		}
 		this.clazz = clazz;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#create(java.lang.Object)
+	 */
 	@Override
 	public void create(T entity) throws DAOException {
-		if (entity == null) {
-			throw new NullPointerException("Entity cant be null");
-		}
-		EntityManager em = EntityManagerUtil.currentEntityManager();
-		EntityManagerUtil.beginTransaction();
-		try {
-			em.persist(entity);
-		} catch (PersistenceException e) {
-			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
-		} finally {
-			EntityManagerUtil.commitTransaction();
-		}
-	}
-	
-	@Override
-	public void save(T entity) throws DAOException {
-		if (entity == null) {
-			throw new NullPointerException("Entity cant be null");
-		}
-		EntityManager em = EntityManagerUtil.currentEntityManager();
-		EntityManagerUtil.beginTransaction();
-		try {
-			em.persist(entity);
-		} catch (PersistenceException e) {
-			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
-		} finally {
-			EntityManagerUtil.commitTransaction();
-		}
+		persist(entity);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#save(java.lang.Object)
+	 */
+	@Override
+	public void save(T entity) throws DAOException {
+		persist(entity);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#load(java.lang.Long)
+	 */
 	@Override
 	public T load(Long id) throws DAOException {
 		T entity = loadEntityImpl(id);
 		if (entity == null) {
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, clazz.getCanonicalName() + "[" + id + "]"
-					+ " does't exit");
+			throw new DAOException(StatusCodes.DAO_DOESNT_EXIST, clazz
+					.getCanonicalName()
+					+ "[" + id + "]" + " doesn't exit");
 		}
 		return entity;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#exists(java.lang.Long)
+	 */
 	@Override
 	public boolean exists(Long id) throws DAOException {
 		T entity = loadEntityImpl(id);
 		return entity != null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#delete(java.lang.Long)
+	 */
 	@Override
 	public void delete(Long id) throws DAOException {
 		if (id == null) {
@@ -110,16 +123,16 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 		try {
 			T entity = em.find(clazz, id);
 			if (entity == null) {
-				throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, clazz.getCanonicalName() + "[" + id
-						+ "]" + " does't exit");
+				throw new DAOException(StatusCodes.DAO_DOESNT_EXIST, clazz
+						.getCanonicalName()
+						+ "[" + id + "]" + " doesn't exit");
 			}
 			em.remove(entity);
 		} catch (PersistenceException e) {
-			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
-		} finally {
-			EntityManagerUtil.commitTransaction();
+			log.error("Unexpected error.", e);
+			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
+		EntityManagerUtil.commitAndCloseTransaction();
 	}
 
 	/**
@@ -127,25 +140,20 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * 
 	 * @param namedQuery
 	 *            a name of a named query
-	 * @param paramNames
-	 *            an array of parameter names defined in query string
-	 * @param paramValues
-	 *            an array of parameter values that will replace parameter names
+	 * @param paramters
+	 *            a parameters to named query
 	 * @return an entity list
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>paramNames</code> and <code>paramValues</code>
-	 *             don't have the same length
 	 * @throws ClassCastException
 	 *             if query result is not of type specified through generics of
 	 *             this class
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	public boolean existsEntity(String namedQuery, String[] paramNames,
-			Object[] paramValues) throws DAOException {
-		T entity = findSingleEntityImpl(namedQuery, paramNames, paramValues);
+	protected final boolean existsEntity(String namedQuery,
+			Map<String, Object> paramters) throws DAOException {
+		T entity = findSingleEntityImpl(namedQuery, paramters);
 		return entity != null;
 	}
 
@@ -155,27 +163,23 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * 
 	 * @param namedQuery
 	 *            a name of a named query
-	 * @param paramNames
-	 *            an array of parameter names defined in query string
-	 * @param paramValues
-	 *            an array of parameter values that will replace parameter names
+	 * @param parameters
+	 *            a parameters to named query
 	 * @return an entity
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>paramNames</code> and <code>paramValues</code>
-	 *             don't have the same length
 	 * @throws ClassCastException
 	 *             if query result is not of type specified through generics of
 	 *             this class
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	public T findSingleEntity(String namedQuery, String[] paramNames,
-			Object[] paramValues) throws DAOException {
-		T entity = findSingleEntityImpl(namedQuery, paramNames, paramValues);
+	protected final T findSingleEntity(String namedQuery,
+			Map<String, Object> parameters) throws DAOException {
+		T entity = findSingleEntityImpl(namedQuery, parameters);
 		if (entity == null) {
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, "No entity for such constraints");
+			throw new DAOException(StatusCodes.DAO_DOESNT_EXIST,
+					"No entity for such constraints");
 		}
 		return entity;
 	}
@@ -186,30 +190,53 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * 
 	 * @param namedQuery
 	 *            a name of a named query
-	 * @param paramNames
-	 *            an array of parameter names defined in query string
-	 * @param paramValues
-	 *            an array of parameter values that will replace parameter names
+	 * @param parameters
+	 *            a parameters to named query
 	 * @return an entity list
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>paramNames</code> and <code>paramValues</code>
-	 *             don't have the same length
 	 * @throws ClassCastException
 	 *             if query result is not of type specified through generics of
 	 *             this class
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	public List<T> findEntityList(String namedQuery, String[] paramNames,
-			Object[] paramValues) throws DAOException {
-		List<T> entities = findEntityListImpl(namedQuery, paramNames,
-				paramValues);
+	protected final List<T> findEntityList(String namedQuery,
+			Map<String, Object> parameters) throws DAOException {
+		List<T> entities = findEntityListImpl(namedQuery, parameters);
 		if (entities == null) {
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, "No entities for such constraints");
+			throw new DAOException(StatusCodes.DAO_DOESNT_EXIST,
+					"No entities for such constraints");
 		}
 		return entities;
+	}
+
+	/**
+	 * Persists given entity.
+	 * 
+	 * @param entity
+	 *            an entity to persist
+	 * @throws NullPointerException
+	 *             if <code>entity</code> is <code>null</code>
+	 * @throws DAOException
+	 *             if exceptional condition occurs
+	 */
+	private void persist(T entity) throws DAOException {
+		if (entity == null) {
+			throw new NullPointerException("Entity cant be null");
+		}
+		EntityManager em = EntityManagerUtil.currentEntityManager();
+		EntityManagerUtil.beginTransaction();
+		try {
+			em.persist(entity);
+		} catch (EntityExistsException e) {
+			log.error("Possible constraint violation: " + entity, e);
+			throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
+		} catch (PersistenceException e) {
+			log.error("Unexpected error.", e);
+			throw new DAOException(StatusCodes.SERVER_ERROR, e);
+		}
+		EntityManagerUtil.commitAndCloseTransaction();
 	}
 
 	/**
@@ -231,14 +258,15 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 		}
 		EntityManager em = EntityManagerUtil.currentEntityManager();
 		EntityManagerUtil.beginTransaction();
+		T entity;
 		try {
-			return em.find(clazz, id);
+			entity = em.find(clazz, id);
 		} catch (PersistenceException e) {
-			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
-		} finally {
-			EntityManagerUtil.commitTransaction();
+			log.error("Unexpected error.", e);
+			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
+		EntityManagerUtil.commitAndCloseTransaction();
+		return entity;
 	}
 
 	/**
@@ -247,16 +275,11 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * 
 	 * @param namedQuery
 	 *            a name of a named query
-	 * @param paramNames
-	 *            an array of parameter names defined in query string
-	 * @param paramValues
-	 *            an array of parameter values that will replace parameter names
+	 * @param parameters
+	 *            a parameters to named query
 	 * @return an entity
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>paramNames</code> and <code>paramValues</code>
-	 *             don't have the same length
 	 * @throws ClassCastException
 	 *             if query result is not of type specified through generics of
 	 *             this class
@@ -264,23 +287,26 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 *             if exceptional condition occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private T findSingleEntityImpl(String namedQuery, String[] paramNames,
-			Object[] paramValues) throws DAOException {
-		checkParams(namedQuery, paramNames, paramValues);
+	private T findSingleEntityImpl(String namedQuery,
+			Map<String, Object> parameters) throws DAOException {
+		checkParams(namedQuery, parameters);
 		EntityManagerUtil.beginTransaction();
 		T entity;
 		try {
-			Query query = createQuery(namedQuery, paramNames, paramValues);
+			Query query = createQuery(namedQuery, parameters);
 			entity = (T) query.getSingleResult();
 		} catch (NoResultException e) {
 			EntityManagerUtil.rollbackTransaction();
 			return null;
+		} catch (EntityExistsException e) {
+			log.error("Possible constraint violation: named query: "
+					+ namedQuery + ", params: " + parameters.toString(), e);
+			throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
 		} catch (PersistenceException e) {
-			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
-		} finally {
-			EntityManagerUtil.commitTransaction();
+			log.error("Unexpected error.", e);
+			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
+		EntityManagerUtil.commitAndCloseTransaction();
 		if (entity.getClass() != clazz) {
 			throw new ClassCastException("Expected " + clazz.getCanonicalName()
 					+ " but found " + entity.getClass().getCanonicalName());
@@ -294,16 +320,11 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * 
 	 * @param namedQuery
 	 *            a name of a named query
-	 * @param paramNames
-	 *            an array of parameter names defined in query string
-	 * @param paramValues
-	 *            an array of parameter values that will replace parameter names
+	 * @param parameters
+	 *            a parameters to named query
 	 * @return an entity list
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>paramNames</code> and <code>paramValues</code>
-	 *             don't have the same length
 	 * @throws ClassCastException
 	 *             if query result is not of type specified through generics of
 	 *             this class
@@ -311,23 +332,22 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 *             if exceptional condition occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private List<T> findEntityListImpl(String namedQuery, String[] paramNames,
-			Object[] paramValues) throws DAOException {
-		checkParams(namedQuery, paramNames, paramValues);
+	private List<T> findEntityListImpl(String namedQuery,
+			Map<String, Object> parameters) throws DAOException {
+		checkParams(namedQuery, parameters);
 		EntityManagerUtil.beginTransaction();
 		List<T> entities;
 		try {
-			Query query = createQuery(namedQuery, paramNames, paramValues);
+			Query query = createQuery(namedQuery, parameters);
 			entities = query.getResultList();
 		} catch (NoResultException e) {
 			EntityManagerUtil.rollbackTransaction();
 			return null;
 		} catch (PersistenceException e) {
-			EntityManagerUtil.rollbackTransaction();
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, e);
-		} finally {
-			EntityManagerUtil.commitTransaction();
+			log.error("Unexpected error.", e);
+			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
+		EntityManagerUtil.commitAndCloseTransaction();
 		if (!entities.isEmpty() && entities.get(0).getClass() != clazz) {
 			throw new ClassCastException("Expected " + clazz.getCanonicalName()
 					+ " but found "
@@ -341,25 +361,17 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * 
 	 * @param namedQuery
 	 *            a name of a named query
-	 * @param paramNames
-	 *            an array of parameter names defined in query string
-	 * @param paramValues
-	 *            an array of parameter values that will replace parameter names
+	 * @param parameters
+	 *            a parameters to named query
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>paramNames</code> and <code>paramValues</code>
-	 *             don't have the same length
 	 */
-	private void checkParams(String namedQuery, String[] paramNames,
-			Object[] paramValues) {
+	private void checkParams(String namedQuery, Map<String, Object> parameters) {
 		if (namedQuery == null) {
 			throw new NullPointerException("Named query cant be null");
 		}
-		if (paramNames.length != paramValues.length) {
-			throw new IllegalArgumentException(paramNames.length
-					+ " parameter names while " + paramValues.length
-					+ "parameter values");
+		if (parameters == null) {
+			throw new NullPointerException("Query parameters can't be null");
 		}
 	}
 
@@ -368,18 +380,15 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * 
 	 * @param namedQuery
 	 *            a name of a named query
-	 * @param paramNames
-	 *            an array of parameter names defined in query string
-	 * @param paramValues
-	 *            an array of parameter values that will replace parameter names
+	 * @param parameters
+	 *            a parameters to named query
 	 * @return created query
 	 */
-	private Query createQuery(String namedQuery, String[] paramNames,
-			Object[] paramValues) {
+	private Query createQuery(String namedQuery, Map<String, Object> parameters) {
 		EntityManager em = EntityManagerUtil.currentEntityManager();
 		Query query = em.createNamedQuery(namedQuery);
-		for (int i = 0; i < paramNames.length; i++) {
-			query.setParameter(paramNames[i], paramValues[i]);
+		for (Entry<String, Object> entry : parameters.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
 		}
 		/*
 		 * Sets a query as cacheable. This hint is implementation dependent.

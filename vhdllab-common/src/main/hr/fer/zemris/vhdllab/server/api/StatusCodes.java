@@ -42,14 +42,41 @@ public final class StatusCodes {
 	 */
 	public static final short INTERNAL_SERVER_ERROR = 500;
 	/**
-	 * A server error has occurred where server refuses to give additional information.
+	 * A server error has occurred where server refuses to give additional
+	 * information.
 	 */
 	public static final short SERVER_ERROR = 501;
-	
-	public static final short DAO_CREATE_ERROR = 1100;
-	
-	public static final short DAO_ALREADY_EXISTS = 1101;
-	
-	public static final short DAO_CONTENT_TOO_LONG = 1000;
+
+	/**
+	 * Entity doesn't exist. For example: can't retrieve entity name when it
+	 * doesn't exist.
+	 */
+	public static final short DAO_DOESNT_EXIST = 1100;
+	/**
+	 * Entity with such constraints already exists. For example: saving two
+	 * files with same name in same project.
+	 */
+	public static final short DAO_ALREADY_EXISTS = 1110;
+	/**
+	 * Entity name is too long.
+	 */
+	public static final short DAO_NAME_TOO_LONG = 1200;
+	/**
+	 * Entity type is too long.
+	 */
+	public static final short DAO_TYPE_TOO_LONG = 1210;
+	/**
+	 * Entity content is too long.
+	 */
+	public static final short DAO_CONTENT_TOO_LONG = 1220;
+	/**
+	 * User ID is too long.
+	 */
+	public static final short DAO_USER_ID_TOO_LONG = 1230;
+	/**
+	 * File type can't be any string. Must only be one of registered file types
+	 * (see server.xml configuration file).
+	 */
+	public static final short DAO_INVALID_FILE_TYPE = 1300;
 
 }

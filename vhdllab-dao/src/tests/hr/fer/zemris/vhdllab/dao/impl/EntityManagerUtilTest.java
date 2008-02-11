@@ -34,7 +34,7 @@ public class EntityManagerUtilTest {
 	public void currentEntityManager() {
 		EntityManager em1 = EntityManagerUtil.currentEntityManager();
 		EntityManager em2 = EntityManagerUtil.currentEntityManager();
-		assertTrue(em1 == em2);
+		assertTrue("Not same Entity Manager reference.", em1 == em2);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class EntityManagerUtilTest {
 			@Override
 			public void run() {
 				EntityManager em2 = EntityManagerUtil.currentEntityManager();
-				assertTrue(em1 != em2);
+				assertTrue("Same Entity Manager reference.", em1 != em2);
 			}
 		});
 		t.start();

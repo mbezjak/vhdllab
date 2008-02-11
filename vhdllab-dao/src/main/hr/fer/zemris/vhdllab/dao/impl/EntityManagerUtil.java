@@ -65,7 +65,7 @@ public final class EntityManagerUtil {
 		} catch (Exception e) {
 			// this should never happen but if it does then just log it!
 			log.error("Error during instantiating persistence object name.", e);
-				PERSISTENCE_OBJECT_NAME = null;
+			PERSISTENCE_OBJECT_NAME = null;
 			// suppress error
 		}
 	}
@@ -164,11 +164,11 @@ public final class EntityManagerUtil {
 	}
 
 	/**
-	 * Commits a transaction. If no transaction is opened then this method will
+	 * Commits a transaction. If no transaction is opened, then this method will
 	 * do nothing.
 	 * 
 	 * @throws DAOException
-	 *             if exception occurred during committing of transaction
+	 *             if exception occurred during transaction committing
 	 */
 	public static void commitTransaction() throws DAOException {
 		EntityTransaction tx = getTransaction();
@@ -194,6 +194,24 @@ public final class EntityManagerUtil {
 				log.error("Error during transaction rollback.", e);
 				// nothing to do if this happens so suppress exception
 			}
+		}
+	}
+
+	/**
+	 * Commits a transaction. If no transaction is opened, then this method will
+	 * do nothing. If any error occurs during transaction committing then this
+	 * method will rollback.
+	 * 
+	 * @throws DAOException
+	 *             if exception occurred during transaction committing
+	 */
+	public static void commitAndCloseTransaction() throws DAOException {
+		try {
+			commitTransaction();
+		} catch (DAOException e) {
+			rollbackTransaction();
+			// rethrow dao exception
+			throw e;
 		}
 	}
 
@@ -241,7 +259,7 @@ public final class EntityManagerUtil {
 			/*
 			 * Log and rethrow exception
 			 */
-			log.error("Error during unregistring hibernate statistics service.", e);
+			log.error( "Error during unregistring hibernate statistics service.", e);
 			throw e;
 		}
 	}

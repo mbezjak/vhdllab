@@ -45,6 +45,7 @@
 		<mkdir dir="${build.tests.dir}" />
 		<mkdir dir="${jlibs.dir}" />
 		<mkdir dir="${jlibs.tests.dir}" />
+		<mkdir dir="${jlibs.deps.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${reports.tests.html.dir}" />
 	</target>

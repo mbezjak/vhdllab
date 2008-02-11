@@ -4,7 +4,9 @@ import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.entities.Project;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is a default implementation of {@link ProjectDAO}.
@@ -33,9 +35,10 @@ public final class ProjectDAOImpl extends AbstractDatabaseEntityDAO<Project> imp
 	public boolean exists(String userId, String name) throws DAOException {
 		checkParameters(userId, name);
 		String namedQuery = Project.FIND_BY_NAME_QUERY;
-		String[] paramNames = new String[] { "userId", "name" };
-		Object[] paramValues = new Object[] { userId, name };
-		return existsEntity(namedQuery, paramNames, paramValues);
+		Map<String, Object> params = new HashMap<String, Object>(2);
+		params.put("userId", userId);
+		params.put("name", name);
+		return existsEntity(namedQuery, params);
 	}
 
 	/*
@@ -48,9 +51,10 @@ public final class ProjectDAOImpl extends AbstractDatabaseEntityDAO<Project> imp
 	public Project findByName(String userId, String name) throws DAOException {
 		checkParameters(userId, name);
 		String namedQuery = Project.FIND_BY_NAME_QUERY;
-		String[] paramNames = new String[] { "userId", "name" };
-		Object[] paramValues = new Object[] { userId, name };
-		return findSingleEntity(namedQuery, paramNames, paramValues);
+		Map<String, Object> params = new HashMap<String, Object>(2);
+		params.put("userId", userId);
+		params.put("name", name);
+		return findSingleEntity(namedQuery, params);
 	}
 
 	/*
@@ -62,9 +66,9 @@ public final class ProjectDAOImpl extends AbstractDatabaseEntityDAO<Project> imp
 	public List<Project> findByUser(String userId) throws DAOException {
 		checkParameter(userId);
 		String namedQuery = Project.FIND_BY_USER_QUERY;
-		String[] paramNames = new String[] { "userId" };
-		Object[] paramValues = new Object[] { userId };
-		return findEntityList(namedQuery, paramNames, paramValues);
+		Map<String, Object> params = new HashMap<String, Object>(1);
+		params.put("userId", userId);
+		return findEntityList(namedQuery, params);
 	}
 
 	/**

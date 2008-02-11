@@ -35,6 +35,7 @@
     <property name="build.tests.dir" value="${build.dir}/tests" />
     <property name="jlibs.dir" value="jlibs" />
     <property name="jlibs.tests.dir" value="${jlibs.dir}/tests" />
+    <property name="jlibs.deps.dir" value="${jlibs.dir}/deps" />
     <property name="jlibs.misc.dir" value="${jlibs.dir}/misc" />
     <property name="javadoc.dir" value="javadoc" />
     <property name="reports.dir" value="reports" />

@@ -40,17 +40,6 @@
 		<fileset file="${libs.dir}/test/junit-4.4.jar" />
 	</path>
 	
-	<macrodef name="resolveDependencies">
-		<attribute name="target"/>
-		<attribute name="deps"/>
-		<sequential>
-			<subant inheritall="false" target="@{target}">
-				<property name="prepair.local.done" value="true" />
-				<dirset dir=".." includes="@{deps}" />
-			</subant>
-		</sequential>
-	</macrodef>
-
 
 	<!-- ======= TARGET DEFINITIONS ======================================= -->
 
@@ -76,6 +65,7 @@
 		<mkdir dir="${build.tests.dir}" />
 		<mkdir dir="${jlibs.dir}" />
 		<mkdir dir="${jlibs.tests.dir}" />
+		<mkdir dir="${jlibs.deps.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${reports.tests.html.dir}" />
 	</target>
@@ -97,7 +87,17 @@
 	</target>
 
 	<target name="resolve-dependencies" if="dependencies">
-		<resolveDependencies target="package" deps="${dependencies}"/>
+		<subant inheritall="false" target="dependency">
+			<property name="prepair.local.done" value="true" />
+			<property name="dependency.dir" value="${basedir}/${jlibs.deps.dir}" />
+			<dirset dir=".." includes="${dependencies}" />
+		</subant>
+	</target>
+	
+	<target name="dependency" depends="package">
+		<copy todir="${dependency.dir}" overwrite="true" verbose="true">
+			<fileset dir="${jlibs.dir}" includes="*.jar" />
+		</copy>
 	</target>
 	
 	<target name="compile" depends="init,resolve-dependencies" description="Compiles all source code">
@@ -107,12 +107,13 @@
 			<src path="${src.main.dir}" />
 			<classpath>
 				<path refid="compile.classpath" />
+				<fileset dir="${jlibs.deps.dir}" includes="*.jar" />
 			</classpath>
 		</javac>
 	</target>
 	
 	<target name="package" depends="compile" description="Creates jar files">
-		<jar destfile="${project.jar}" index="false" duplicate="fail">
+		<jar destfile="${project.jar}" index="false" duplicate="preserve">
 			<fileset dir="${build.main.dir}" includes="**/*.class" />
 			<fileset dir="${src.main.dir}" excludes="**/*.java,**/*svn/**,**/*svn" />
 			<fileset refid="package.addon" />
@@ -129,6 +130,7 @@
 				<path refid="compile.classpath" />
 				<path refid="junit.classpath" />
 				<pathelement location="${build.main.dir}"/>
+				<fileset dir="${jlibs.deps.dir}" includes="*.jar" />
 			</classpath>
 		</javac>
 	</target>
@@ -146,6 +148,7 @@
 				<path refid="junit.classpath" />
 				<pathelement location="${project.jar}" />
 				<pathelement location="${project.tests.jar}" />
+				<fileset dir="${jlibs.deps.dir}" includes="*.jar" />
 				<pathelement location="${runtime.log4j.dir}/log4j.properties"/>
 			</classpath>
 

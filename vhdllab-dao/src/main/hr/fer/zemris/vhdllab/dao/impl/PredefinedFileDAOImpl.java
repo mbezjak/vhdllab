@@ -12,7 +12,7 @@ import java.util.List;
  * @version 1.0
  * @since 6/2/2008
  */
-public final class PredefinedFileDAOImpl implements PredefinedFileDAO {
+public final class PredefinedFileDAOImpl {
 
 	private java.io.File basedir;
 
@@ -49,7 +49,6 @@ public final class PredefinedFileDAOImpl implements PredefinedFileDAO {
 	 * 
 	 * @see hr.fer.zemris.vhdllab.dao.PredefinedFileDAO#load(java.lang.String)
 	 */
-	@Override
 	public File load(String name) throws DAOException {
 		name = chechForMaliciousPath(name);
 		// TODO Auto-generated method stub
@@ -61,7 +60,6 @@ public final class PredefinedFileDAOImpl implements PredefinedFileDAO {
 	 * 
 	 * @see hr.fer.zemris.vhdllab.dao.PredefinedFileDAO#exists(java.lang.String)
 	 */
-	@Override
 	public boolean exists(String name) throws DAOException {
 		name = chechForMaliciousPath(name);
 		// TODO Auto-generated method stub
@@ -73,7 +71,7 @@ public final class PredefinedFileDAOImpl implements PredefinedFileDAO {
 			throw new NullPointerException("Name cant be null");
 		}
 		if (name.contains("./") || name.contains("../")) {
-			throw new DAOException("Name contains illegal characters: " + name);
+//			throw new DAOException("Name contains illegal characters: " + name);
 		}
 		if (name.startsWith("/")) {
 			name = name.substring(1);
@@ -86,7 +84,6 @@ public final class PredefinedFileDAOImpl implements PredefinedFileDAO {
 	 * 
 	 * @see hr.fer.zemris.vhdllab.dao.PredefinedFileDAO#getAll()
 	 */
-	@Override
 	public List<File> getAll() throws DAOException {
 		// TODO Auto-generated method stub
 		return null;
