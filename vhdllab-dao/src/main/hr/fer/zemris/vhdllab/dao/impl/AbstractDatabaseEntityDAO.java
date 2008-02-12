@@ -64,21 +64,25 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#create(java.lang.Object)
-	 */
-	@Override
-	public void create(T entity) throws DAOException {
-		persist(entity);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#save(java.lang.Object)
 	 */
 	@Override
 	public void save(T entity) throws DAOException {
-		persist(entity);
+		if (entity == null) {
+			throw new NullPointerException("Entity cant be null");
+		}
+		EntityManager em = EntityManagerUtil.currentEntityManager();
+		EntityManagerUtil.beginTransaction();
+		try {
+			em.persist(entity);
+		} catch (EntityExistsException e) {
+			log.error("Possible constraint violation: " + entity, e);
+			throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
+		} catch (PersistenceException e) {
+			log.error("Unexpected error.", e);
+			throw new DAOException(StatusCodes.SERVER_ERROR, e);
+		}
+		EntityManagerUtil.commitAndCloseTransaction();
 	}
 
 	/*
@@ -209,34 +213,6 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 					"No entities for such constraints");
 		}
 		return entities;
-	}
-
-	/**
-	 * Persists given entity.
-	 * 
-	 * @param entity
-	 *            an entity to persist
-	 * @throws NullPointerException
-	 *             if <code>entity</code> is <code>null</code>
-	 * @throws DAOException
-	 *             if exceptional condition occurs
-	 */
-	private void persist(T entity) throws DAOException {
-		if (entity == null) {
-			throw new NullPointerException("Entity cant be null");
-		}
-		EntityManager em = EntityManagerUtil.currentEntityManager();
-		EntityManagerUtil.beginTransaction();
-		try {
-			em.persist(entity);
-		} catch (EntityExistsException e) {
-			log.error("Possible constraint violation: " + entity, e);
-			throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
-		} catch (PersistenceException e) {
-			log.error("Unexpected error.", e);
-			throw new DAOException(StatusCodes.SERVER_ERROR, e);
-		}
-		EntityManagerUtil.commitAndCloseTransaction();
 	}
 
 	/**

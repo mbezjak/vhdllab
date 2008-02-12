@@ -24,16 +24,105 @@ class Resource implements Serializable, Comparable<Resource> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Maximum name length.
+	 */
+	public static final int NAME_LENGTH = 255;
+	/**
+	 * Maximum type length.
+	 */
+	public static final int TYPE_LENGTH = 255;
+	/**
+	 * Maximum content length.
+	 */
+	public static final int CONTENT_LENGTH = 16000000; // ~ 16 MB
+
+	@Id
+	@GeneratedValue
+	@Column(name = "id", updatable = false, insertable = false)
 	private Long id;
+	@Basic
+	@Column(name = "name", length = NAME_LENGTH, nullable = false)
 	private String name;
+	@Basic
+	@Column(name = "type", length = TYPE_LENGTH, nullable = false, updatable = false)
 	private String type;
+	@Basic
+	@Column(name = "content", length = CONTENT_LENGTH, nullable = false)
 	private String content;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created", nullable = false, updatable = false)
 	private Date created;
 
-	public Resource() {
+	/**
+	 * Constructor for persistence provider.
+	 */
+	Resource() {
 	}
 
+	/**
+	 * Creates a resource with specified name and type. Content will be set to
+	 * empty string.
+	 * 
+	 * @param name
+	 *            a name of a resource
+	 * @param type
+	 *            a type of a resource
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public Resource(String name, String type) {
+		this(name, type, "");
+	}
+
+	/**
+	 * Creates a resource with specified name, type and content.
+	 * 
+	 * @param name
+	 *            a name of a resource
+	 * @param type
+	 *            a type of a resource
+	 * @param a
+	 *            content of a resource
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public Resource(String name, String type, String content) {
+		if (type == null) {
+			throw new NullPointerException("Type cant be null");
+		}
+		if (type.length() > TYPE_LENGTH) {
+			throw new IllegalArgumentException("Type must be <= " + TYPE_LENGTH
+					+ " but was: " + type.length());
+		}
+		this.type = type;
+		setName(name);
+		setContent(content);
+		this.created = new Date();
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param r
+	 *            a resource object to duplicate
+	 * @throws NullPointerException
+	 *             if <code>r</code> is <code>null</code>
+	 */
 	public Resource(Resource r) {
+		if (r == null) {
+			throw new NullPointerException("Resource cant be null");
+		}
 		this.id = r.id;
 		this.name = r.name;
 		this.type = r.type;
@@ -41,67 +130,98 @@ class Resource implements Serializable, Comparable<Resource> {
 		this.created = r.created;
 	}
 
-	@Id
-	@GeneratedValue
-	@Column(name = "id", updatable = false, insertable = false)
+	/**
+	 * Returns a unique identifier for every instance. If an instance was not
+	 * persisted then this method will return <code>null</code>.
+	 * 
+	 * @return a unique identifier for every instance
+	 */
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@Basic
-	@Column(name = "name", length = 255, nullable = false)
+	/**
+	 * Returns a name of this resource. Return value will never be
+	 * <code>null</code>. A name is case insensitive.
+	 * 
+	 * @return a name of this resource
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Sets a name for this resource.
+	 * 
+	 * @param name
+	 *            a name for this resource
+	 * @throws NullPointerException
+	 *             if <code>name</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>name</code> is too long
+	 * @see #NAME_LENGTH
+	 */
 	public void setName(String name) {
+		if (name == null) {
+			throw new NullPointerException("Name cant be null");
+		}
+		if (name.length() > NAME_LENGTH) {
+			throw new IllegalArgumentException("Name must be <= " + NAME_LENGTH
+					+ " but was: " + name.length());
+		}
 		this.name = name;
 	}
 
-	@Basic
-	@Column(name = "type", length = 255, nullable = false, updatable = false)
+	/**
+	 * Returns a type of this resource. Return value will never be
+	 * <code>null</code>. A type is case insensitive.
+	 * 
+	 * @return a type of this resource
+	 */
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns a content of this resource. Return value will never be
+	 * <code>null</code>.
 	 * 
-	 * Note that column length is only theoretically the amount specified. This
-	 * is because some DBMS won't listen to specified length. e.g. MySQL will
-	 * set data type to 'mediumtext' which has fixed amount of characters
-	 * (16,777,215 (2^24 – 1) characters). Also this is huge amount of data
-	 * (16MB) and when sending data over network (local or Internet) DBMS could
-	 * refuse to accept it. In MySQL this can be controlled by
-	 * 'max_allowed_packet' server variable which is by default set to less then
-	 * 'mediumtext' size (default value is 16,776,192).
+	 * @return a content of this resource
 	 */
-	@Basic
-	@Column(name = "content", length = 16000000, nullable = false)
 	public String getContent() {
 		return content;
 	}
 
+	/**
+	 * Sets a content for this resource.
+	 * 
+	 * @param content
+	 *            a content for this resource
+	 * @throws NullPointerException
+	 *             if <code>content</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>content</code> is too long
+	 * @see #CONTENT_LENGTH
+	 */
 	public void setContent(String content) {
+		if (content == null) {
+			throw new NullPointerException("Name cant be null");
+		}
+		if (content.length() > CONTENT_LENGTH) {
+			throw new IllegalArgumentException("Content must be <= "
+					+ CONTENT_LENGTH + " but was: " + content.length());
+		}
 		this.content = content;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created", nullable = false, updatable = false)
+	/**
+	 * Returns a created date of this resource. Return value will never be
+	 * <code>null</code>.
+	 * 
+	 * @return a created date of this resource
+	 */
 	public Date getCreated() {
 		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
 	}
 
 	/*
@@ -116,8 +236,7 @@ class Resource implements Serializable, Comparable<Resource> {
 		if (id != null) {
 			return prime * result + id.hashCode();
 		}
-		result = prime * result
-				+ ((name == null) ? 0 : name.toLowerCase().hashCode());
+		result = prime * result + name.toLowerCase().hashCode();
 		return result;
 	}
 
@@ -142,12 +261,7 @@ class Resource implements Serializable, Comparable<Resource> {
 			return true;
 
 		// rest is invoked if both ids are null
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equalsIgnoreCase(other.name))
-			return false;
-		return true;
+		return name.equalsIgnoreCase(other.name);
 	}
 
 	/*
@@ -172,15 +286,7 @@ class Resource implements Serializable, Comparable<Resource> {
 		}
 
 		// rest is invoked if both ids are null
-		long val = 0;
-		if (name == null) {
-			if (other.name != null)
-				return -1;
-		} else if (other.name == null) {
-			return 1;
-		} else {
-			val = name.compareToIgnoreCase(other.name);
-		}
+		long val = name.compareToIgnoreCase(other.name);
 
 		if (val < 0)
 			return -1;
@@ -202,6 +308,7 @@ class Resource implements Serializable, Comparable<Resource> {
 		sb.append(", name=").append(name);
 		sb.append(", type=").append(type);
 		sb.append(", created=").append(created);
+		sb.append(", contentLength=").append(content.length());
 		return sb.toString();
 	}
 

@@ -1,13 +1,13 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Before;
@@ -42,9 +42,13 @@ public class FileTest {
 			// throwing exception.
 			throw new IllegalStateException(e);
 		}
-		NEW_PROJECT = new Project();
-		NEW_PROJECT.setId(Long.valueOf(5555));
-		NEW_PROJECT.setName("new.project.name");
+		NEW_PROJECT = new Project("new.user.identifier", "new.project.name");
+		try {
+			injectValueToPrivateField(NEW_PROJECT, "id", Long.valueOf(5555));
+		} catch (Exception e) {
+			// should never happen.
+			throw new IllegalStateException(e);
+		}
 	}
 
 	private Project project;
@@ -53,50 +57,56 @@ public class FileTest {
 	private File file2;
 
 	@Before
-	public void initEachTest() {
-		file = new File();
-		file.setId(ID);
-		file.setName(NAME);
-		file.setType(TYPE);
-		file.setContent(CONTENT);
-		file.setCreated(CREATED);
-		file2 = new File(file);
-
-		project = new Project();
-		project.setId(Long.valueOf(10));
-		project.setName("library1.name");
-		project.setCreated(Calendar.getInstance().getTime());
+	public void initEachTest() throws Exception {
+		project = new Project("user.identifier", "project.name");
+		injectValueToPrivateField(project, "id", Long.valueOf(10));
+		injectValueToPrivateField(project, "created", new Date());
 		project2 = new Project(project);
 
-		project.addFile(file);
-		project2.addFile(file2);
+		file = new File(project, NAME, TYPE, CONTENT);
+		injectValueToPrivateField(file, "id", ID);
+		injectValueToPrivateField(file, "created", CREATED);
+		file2 = new File(file, project2);
+	}
+
+	/**
+	 * Test references to project and project references back to file
+	 */
+	@Test
+	public void constructor() throws Exception {
+		File newFile = new File(NEW_PROJECT, NAME, TYPE);
+		assertNotNull("project reference not copied.", newFile.getProject());
+		assertEquals(NEW_PROJECT, newFile.getProject());
+		assertTrue(NEW_PROJECT.getChildren().contains(newFile));
 	}
 
 	/**
 	 * Test copy constructor
 	 */
 	@Test
-	public void copyConstructor() {
+	public void copyConstructor() throws Exception {
 		assertTrue("same reference.", file != file2);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
 	}
-
+	
 	/**
-	 * Test references to project
+	 * Test references to project and project references back to file
 	 */
 	@Test
-	public void copyConstructor2() {
-		file2 = new File(file);
-		assertNull("reference to project is copied.", file2.getProject());
+	public void copyConstructor2() throws Exception {
+		File newFile = new File(file, NEW_PROJECT);
+		assertNotNull("project reference not copied.", newFile.getProject());
+		assertEquals(NEW_PROJECT, newFile.getProject());
+		assertTrue(NEW_PROJECT.getChildren().contains(newFile));
 	}
 
 	/**
 	 * Test equals with self, null, and non-file object
 	 */
 	@Test
-	public void equals() {
+	public void equals() throws Exception {
 		assertEquals("not equal.", file, file);
 		assertNotSame("file is equal to null.", file, null);
 		assertNotSame("can compare with string object.", file,
@@ -108,7 +118,7 @@ public class FileTest {
 	 * Null object as parameter to compareTo method
 	 */
 	@Test(expected = NullPointerException.class)
-	public void compareTo() {
+	public void compareTo() throws Exception {
 		file.compareTo(null);
 	}
 
@@ -116,19 +126,19 @@ public class FileTest {
 	 * Non-file type
 	 */
 	@Test(expected = ClassCastException.class)
-	public void compareTo2() {
-		file.compareTo(new Resource());
+	public void compareTo2() throws Exception {
+		file.compareTo(new Resource(NAME, TYPE));
 	}
 
 	/**
 	 * Only ids (if set) are important in equals, hashcode and compareTo
 	 */
 	@Test
-	public void equalsAndHashCodeAndCompareTo() {
+	public void equalsHashCodeAndCompareTo() throws Exception {
 		file2.setName(NEW_NAME);
-		file2.setType(NEW_TYPE);
 		file2.setContent(NEW_CONTENT);
-		file2.setProject(NEW_PROJECT);
+		injectValueToPrivateField(file2, "type", NEW_TYPE);
+		injectValueToPrivateField(file2, "parent", NEW_PROJECT);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
@@ -138,12 +148,12 @@ public class FileTest {
 	 * Ids are null, then name and project is important
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo2() {
-		file.setId(null);
-		file2.setId(null);
-		file2.setType(NEW_TYPE);
+	public void equalsHashCodeAndCompareTo2() throws Exception {
+		injectValueToPrivateField(file, "id", null);
+		injectValueToPrivateField(file2, "id", null);
+		injectValueToPrivateField(file2, "type", NEW_TYPE);
+		injectValueToPrivateField(file2, "created", NEW_CREATED);
 		file2.setContent(NEW_CONTENT);
-		file2.setCreated(NEW_CREATED);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
@@ -153,44 +163,14 @@ public class FileTest {
 	 * Ids are null and projects are not equal
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo3() {
-		file.setId(null);
-		file2.setId(null);
-		file2.setProject(NEW_PROJECT);
+	public void equalsHashCodeAndCompareTo3() throws Exception {
+		injectValueToPrivateField(file, "id", null);
+		injectValueToPrivateField(file2, "id", null);
+		injectValueToPrivateField(file2, "parent", NEW_PROJECT);
 		assertNotSame("equal.", file, file2);
 		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
 		assertEquals("not compared by project.", file.getProject().compareTo(
 				file2.getProject()) < 0 ? -1 : 1, file.compareTo(file2));
-	}
-
-	/**
-	 * Ids and names are null, then library is important
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo4() {
-		file.setId(null);
-		file2.setId(null);
-		file.setName(null);
-		file2.setName(null);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
-	}
-
-	/**
-	 * Ids, names and projects are null
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo5() {
-		file.setId(null);
-		file2.setId(null);
-		file.setName(null);
-		file2.setName(null);
-		file.setProject(null);
-		file2.setProject(null);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

@@ -1,13 +1,14 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Before;
@@ -38,62 +39,88 @@ public class BidiResourceTest {
 		}
 	}
 
-	private class CustomResource extends
-			BidiResource<CustomContainer, CustomResource> {
+	private class MockResource extends
+			BidiResource<MockContainer, MockResource> {
 		private static final long serialVersionUID = 1L;
 
-		public CustomResource() {
-			super();
+		public MockResource(MockContainer parent, String name, String type) {
+			super(parent, name, type);
+			parent.addChild(this);
 		}
 
-		public CustomResource(CustomResource r) {
-			super(r);
+		public MockResource(MockContainer parent, String name, String type,
+				String content) {
+			super(parent, name, type, content);
+			parent.addChild(this);
+		}
+
+		public MockResource(MockResource r, MockContainer parent) {
+			super(r, parent);
+			parent.addChild(this);
 		}
 	}
 
-	private class CustomContainer extends
-			Container<CustomResource, CustomContainer> {
+	private class MockContainer extends Container<MockResource, MockContainer> {
 		private static final long serialVersionUID = 1L;
 
-		public CustomContainer() {
-			super();
+		public MockContainer(String name) {
+			super(name);
 		}
 
-		public CustomContainer(CustomContainer c) {
+		public MockContainer(MockContainer c) {
 			super(c);
 		}
 	}
 
-	private CustomContainer con;
-	private CustomContainer con2;
-	private CustomResource res;
-	private CustomResource res2;
+	private MockContainer con;
+	private MockContainer con2;
+	private MockResource res;
+	private MockResource res2;
 
 	@Before
-	public void initEachTest() {
-		res = new CustomResource();
-		res.setId(ID);
-		res.setName(NAME);
-		res.setType(TYPE);
-		res.setContent(CONTENT);
-		res.setCreated(CREATED);
-		res2 = new CustomResource(res);
+	public void initEachTest() throws Exception {
+		con = new MockContainer("container1.name");
+		injectValueToPrivateField(con, "id", Long.valueOf(10));
+		injectValueToPrivateField(con, "created", new Date());
+		con2 = new MockContainer(con);
 
-		con = new CustomContainer();
-		con.setId(Long.valueOf(10));
-		con.setName("container1.name");
-		con.setCreated(Calendar.getInstance().getTime());
-		con2 = new CustomContainer(con);
+		res = new MockResource(con, NAME, TYPE, CONTENT);
+		injectValueToPrivateField(res, "id", ID);
+		injectValueToPrivateField(res, "created", CREATED);
+		res2 = new MockResource(res, con2);
+	}
 
-		con.addChild(res);
-		con2.addChild(res2);
+	/**
+	 * Parent is null.
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor() throws Exception {
+		new MockResource(null, NAME, TYPE);
+	}
+
+	/**
+	 * Parent is null.
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor2() throws Exception {
+		new MockResource(null, NAME, TYPE, CONTENT);
+	}
+
+	/**
+	 * Parent is not null.
+	 */
+	@Test
+	public void constructor3() throws Exception {
+		MockResource resource = new MockResource(con, NAME, TYPE, CONTENT);
+		assertNotNull("parent is not set.", resource.getParent());
+		assertEquals("non-expected parent is set.", con, resource.getParent());
 	}
 
 	/**
 	 * Test copy constructor
 	 */
 	@Test
-	public void copyConstructor() {
+	public void copyConstructor() throws Exception {
 		assertTrue("same reference.", res != res2);
 		assertEquals("not equal.", res, res2);
 		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
@@ -104,27 +131,38 @@ public class BidiResourceTest {
 	 * Test references to parent
 	 */
 	@Test
-	public void copyConstructor2() {
-		res2 = new CustomResource(res);
-		assertNull("reference to parent is copied.", res2.getParent());
+	public void copyConstructor2() throws Exception {
+		res2 = new MockResource(res, con2);
+		assertNotNull("parent is not set.", res2.getParent());
+		assertEquals("non-expected parent is set.", con, res2.getParent());
+	}
+	
+	/**
+	 * Disconnects a bidi-resource from container.
+	 */
+	@Test
+	public void disconnect() throws Exception {
+		res.disconnect();
+		assertNull("resource is not disconnected.", res.getParent());
 	}
 
 	/**
 	 * Test equals with self, null, and non-bidi-resource object
 	 */
 	@Test
-	public void equals() {
+	public void equals() throws Exception {
 		assertEquals("not equal.", res, res);
 		assertNotSame("file is equal to null.", res, null);
 		assertNotSame("can compare with string object.", res, "a string object");
-		assertNotSame("can compare with resource object.", res, new Resource());
+		assertNotSame("can compare with resource object.", res, new Resource(
+				NAME, TYPE));
 	}
 
 	/**
 	 * Null object as parameter to compareTo method
 	 */
 	@Test(expected = NullPointerException.class)
-	public void compareTo() {
+	public void compareTo() throws Exception {
 		res.compareTo(null);
 	}
 
@@ -132,8 +170,8 @@ public class BidiResourceTest {
 	 * Non-bidi-resource type
 	 */
 	@Test(expected = ClassCastException.class)
-	public void compareTo2() {
-		res.compareTo(new Resource());
+	public void compareTo2() throws Exception {
+		res.compareTo(new Resource(NAME, TYPE));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

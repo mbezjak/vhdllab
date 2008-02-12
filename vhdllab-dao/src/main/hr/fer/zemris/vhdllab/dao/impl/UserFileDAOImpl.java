@@ -3,9 +3,7 @@ package hr.fer.zemris.vhdllab.dao.impl;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.entities.UserFile;
-import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +17,7 @@ import java.util.Map;
  */
 public final class UserFileDAOImpl extends AbstractDatabaseEntityDAO<UserFile>
 		implements UserFileDAO {
-	
+
 	/**
 	 * Sole constructor.
 	 */
@@ -30,73 +28,10 @@ public final class UserFileDAOImpl extends AbstractDatabaseEntityDAO<UserFile>
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.dao.impl.AbstractDatabaseEntityDAO#create(java.lang.Object)
+	 * @see hr.fer.zemris.vhdllab.dao.impl.AbstractDatabaseEntityDAO#save(java.lang.Object)
 	 */
 	@Override
-	public void create(UserFile entity) throws DAOException {
-		if(entity.getName() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User file name is null");
-		}
-		if(entity.getType() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User file type is null");
-		}
-		if(entity.getContent() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User file content is null");
-		}
-		if(entity.getUserId() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User identifier is null");
-		}
-		if(entity.getCreated() != null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "Created date is set");
-		}
-		if(entity.getName().length() > DAOUtil.columnLengthFor(UserFile.class, "name")) {
-			throw new DAOException(StatusCodes.DAO_NAME_TOO_LONG, "User file name too long");
-		}
-		if(entity.getType().length() > DAOUtil.columnLengthFor(UserFile.class, "type")) {
-			throw new DAOException(StatusCodes.DAO_TYPE_TOO_LONG, "User file type too long");
-		}
-		if(entity.getContent().length() > DAOUtil.columnLengthFor(UserFile.class, "content")) {
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, "User file content too long");
-		}
-		if(entity.getUserId().length() > DAOUtil.columnLengthFor(UserFile.class, "userId")) {
-			throw new DAOException(StatusCodes.DAO_USER_ID_TOO_LONG, "User identifier too long");
-		}
-		entity.setCreated(new Date());
-		super.create(entity);
-	}
-	
-	@Override
 	public void save(UserFile entity) throws DAOException {
-		if(entity.getName() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User file name is null");
-		}
-		if(entity.getType() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User file type is null");
-		}
-		if(entity.getContent() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User file content is null");
-		}
-		if(entity.getUserId() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "User identifier is null");
-		}
-		if(entity.getCreated() == null) {
-			throw new DAOException(StatusCodes.SERVER_ERROR, "Created date is null");
-		}
-		if(entity.getName().length() > DAOUtil.columnLengthFor(UserFile.class, "name")) {
-			throw new DAOException(StatusCodes.DAO_NAME_TOO_LONG, "User file name too long");
-		}
-		if(entity.getType().length() > DAOUtil.columnLengthFor(UserFile.class, "type")) {
-			throw new DAOException(StatusCodes.DAO_TYPE_TOO_LONG, "User file type too long");
-		}
-		if(entity.getContent().length() > DAOUtil.columnLengthFor(UserFile.class, "content")) {
-			throw new DAOException(StatusCodes.DAO_CONTENT_TOO_LONG, "User file content too long");
-		}
-		if(entity.getUserId().length() > DAOUtil.columnLengthFor(UserFile.class, "userId")) {
-			throw new DAOException(StatusCodes.DAO_USER_ID_TOO_LONG, "User identifier too long");
-		}
-//		if(!exists(entity.getUserId(), entity.getName())) {
-//			throw new DAOException(StatusCodes.DAO_DOESNT_EXIST, "Such file doesn't exist");
-//		}
 		super.save(entity);
 	}
 

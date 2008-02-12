@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,37 +21,112 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * @version 1.0
  */
 @Entity
-@AttributeOverride(name = "content", column = @Column(name = "content", length = 65535, nullable = false))
 @Table(name = "user_files", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"name", "userId" }) })
 @NamedQueries(value = {
 		@NamedQuery(name = UserFile.FIND_BY_NAME_QUERY, query = "select f from UserFile as f where f.userId = :userId and f.name = :name order by f.id"),
 		@NamedQuery(name = UserFile.FIND_BY_USER_QUERY, query = "select f from UserFile as f where f.userId = :userId order by f.id") })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class UserFile extends Resource implements Serializable {
+public class UserFile extends Resource implements Ownable, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * A named query for finding user files by name.
+	 */
 	public static final String FIND_BY_NAME_QUERY = "user.file.find.by.name";
+	/**
+	 * A named query for finding all user files containing specified userId.
+	 */
 	public static final String FIND_BY_USER_QUERY = "user.file.find.by.user";
 
+	@Basic
+	@Column(name = "userId", length = USER_ID_LENGTH, nullable = false, updatable = false)
 	private String userId;
-
-	public UserFile() {
+	
+	/**
+	 * Constructor for persistence provider.
+	 */
+	UserFile() {
+		super();
 	}
 
+	/**
+	 * Creates a user file with specified userId, name and type. Content will be
+	 * set to empty string.
+	 * 
+	 * @param userId
+	 *            a user identifier that this user files belongs to
+	 * @param name
+	 *            a name of a user file
+	 * @param type
+	 *            a type of a user file
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #USER_ID_LENGTH
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public UserFile(String userId, String name, String type) {
+		this(userId, name, type, "");
+	}
+
+	/**
+	 * Creates a user file with specified userId, name, type and content.
+	 * 
+	 * @param userId
+	 *            a user identifier that this user files belongs to
+	 * @param name
+	 *            a name of a user file
+	 * @param type
+	 *            a type of a user file
+	 * @param content
+	 *            a content of a user file
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #USER_ID_LENGTH
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public UserFile(String userId, String name, String type, String content) {
+		super(name, type, content);
+		if (userId == null) {
+			throw new NullPointerException("User identifier cant be null");
+		}
+		if (userId.length() > USER_ID_LENGTH) {
+			throw new IllegalArgumentException("User identifier must be <= "
+					+ USER_ID_LENGTH + " but was: " + userId.length());
+		}
+		this.userId = userId;
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param file
+	 *            a user file object to duplicate
+	 * @throws NullPointerException
+	 *             if <code>file</code> is <code>null</code>
+	 */
 	public UserFile(UserFile file) {
 		super(file);
 		this.userId = file.userId;
 	}
 
-	@Basic
-	@Column(name = "userId", length = 255, nullable = false, updatable = false)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.entities.Ownable#getUserId()
+	 */
+	@Override
 	public String getUserId() {
 		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 
 	/*
@@ -67,10 +141,7 @@ public class UserFile extends Resource implements Serializable {
 		if (getId() != null) {
 			return result;
 		}
-		result = prime
-				* result
-				+ ((getUserId() == null) ? 0 : getUserId().toLowerCase()
-						.hashCode());
+		result = prime * result + getUserId().toLowerCase().hashCode();
 		return result;
 	}
 
@@ -94,12 +165,7 @@ public class UserFile extends Resource implements Serializable {
 			return true;
 		}
 		final UserFile other = (UserFile) obj;
-		if (getUserId() == null) {
-			if (other.getUserId() != null)
-				return false;
-		} else if (!getUserId().equalsIgnoreCase(other.getUserId()))
-			return false;
-		return true;
+		return getUserId().equalsIgnoreCase(other.getUserId());
 	}
 
 	/*
@@ -112,7 +178,7 @@ public class UserFile extends Resource implements Serializable {
 		if (this == o)
 			return 0;
 		if (o == null)
-			throw new NullPointerException("Other resource cant be null");
+			throw new NullPointerException("Other user file cant be null");
 		if (!(o instanceof UserFile)) {
 			throw new ClassCastException("Object is not of User file type");
 		}
@@ -121,14 +187,7 @@ public class UserFile extends Resource implements Serializable {
 		if (getId() != null || val != 0) {
 			return val;
 		}
-		if (getUserId() == null) {
-			if (other.getUserId() != null)
-				return -1;
-		} else if (other.getUserId() == null) {
-			return 1;
-		} else {
-			val = getUserId().compareToIgnoreCase(other.getUserId());
-		}
+		val = getUserId().compareToIgnoreCase(other.getUserId());
 
 		if (val < 0) {
 			return -1;
@@ -147,8 +206,8 @@ public class UserFile extends Resource implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(50);
-		sb.append("User File [").append(super.toString());
-		sb.append(", userId=").append(getUserId());
+		sb.append("User File [userId=").append(getUserId());
+		sb.append(", ").append(super.toString());
 		sb.append("]");
 		return sb.toString();
 	}

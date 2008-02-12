@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -32,20 +33,65 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 				TContainer extends Container<TBidiResource, TContainer>>
 		implements Serializable,
-		Comparable<Container<TBidiResource, TContainer>> {
+		Comparable<Container<TBidiResource, TContainer>>,
+		Iterable<TBidiResource> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Maximum name length.
+	 */
+	public static final int NAME_LENGTH = 255;
+
+	@Id
+	@GeneratedValue
+	@Column(name = "id", updatable = false, insertable = false)
 	private Long id;
+	@Basic
+	@Column(name = "name", length = NAME_LENGTH, nullable = false)
 	private String name;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created", nullable = false, updatable = false)
 	private Date created;
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.LAZY)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Set<TBidiResource> children;
 
-	public Container() {
-		children = new HashSet<TBidiResource>();
+	/**
+	 * Constructor for persistence provider.
+	 */
+	Container() {
 	}
 
+	/**
+	 * Creates a container with specified name.
+	 * 
+	 * @param name
+	 *            a name of a container
+	 * @throws NullPointerException
+	 *             if <code>name</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>name</code> is too long
+	 * @see #NAME_LENGTH
+	 */
+	public Container(String name) {
+		setName(name);
+		this.children = new HashSet<TBidiResource>();
+		this.created = new Date();
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param c
+	 *            a container object to duplicate
+	 * @throws NullPointerException
+	 *             if <code>c</code> is <code>null</code>
+	 */
 	public Container(Container<TBidiResource, TContainer> c) {
+		if (c == null) {
+			throw new NullPointerException("Container cant be null");
+		}
 		this.id = c.id;
 		this.name = c.name;
 		this.created = c.created;
@@ -55,61 +101,125 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 		this.children = new HashSet<TBidiResource>();
 	}
 
-	@Id
-	@GeneratedValue
-	@Column(name = "id", updatable = false, insertable = false)
+	/**
+	 * Returns a unique identifier for every instance. If an instance was not
+	 * persisted then this method will return <code>null</code>.
+	 * 
+	 * @return a unique identifier for every instance
+	 */
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@Basic
-	@Column(name = "name", length = 255, nullable = false)
+	/**
+	 * Returns a name of this container. Return value will never be
+	 * <code>null</code>. A name is case insensitive.
+	 * 
+	 * @return a name of this container
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Sets a name for this container.
+	 * 
+	 * @param name
+	 *            a name for this container
+	 * @throws NullPointerException
+	 *             if <code>name</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>name</code> is too long
+	 * @see #NAME_LENGTH
+	 */
 	public void setName(String name) {
+		if (name == null) {
+			throw new NullPointerException("Name cant be null");
+		}
+		if (name.length() > NAME_LENGTH) {
+			throw new IllegalArgumentException("Name must be <= " + NAME_LENGTH
+					+ " but was: " + name.length());
+		}
 		this.name = name;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created", nullable = false, updatable = false)
+	/**
+	 * Returns a created date of this container. Return value will never be
+	 * <code>null</code>.
+	 * 
+	 * @return a created date of this container
+	 */
 	public Date getCreated() {
 		return created;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.LAZY)
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	public Set<TBidiResource> getChildren() {
+	/**
+	 * Getter for persistence provider. To enable lazy loading.
+	 * 
+	 * @return children
+	 */
+	Set<TBidiResource> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Set<TBidiResource> children) {
-		this.children = children;
-	}
-
-	public void addChild(TBidiResource child) {
-		if (child.getParent() != null) {
-			child.getParent().removeChild(child);
-		}
-		children.add(child);
-	}
-
-	public void removeChild(TBidiResource child) {
+	/**
+	 * Adds a <code>child</code> to a collection of resources for this
+	 * container.
+	 * 
+	 * @param child
+	 *            a resource to add
+	 * @throws NullPointerException
+	 *             if <code>child</code> is <code>null</code>
+	 */
+	void addChild(TBidiResource child) {
 		if (child == null) {
 			throw new NullPointerException("Child cant be null");
 		}
-		if (children.remove(child)) {
-			child.setParent(null);
+		getChildren().add(child);
+	}
+
+	/**
+	 * Removes a resource from this container.
+	 * 
+	 * @param child
+	 *            a resource to remove
+	 * @throws NullPointerException
+	 *             is <code>child</code> is <code>null</code>
+	 */
+	void removeChild(TBidiResource child) {
+		if (child == null) {
+			throw new NullPointerException("Child cant be null");
 		}
+		if (getChildren().remove(child)) {
+			child.disconnect();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<TBidiResource> iterator() {
+		return new Iterator<TBidiResource>() {
+			private Iterator<TBidiResource> iterator = getChildren().iterator();
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+
+			@Override
+			public TBidiResource next() {
+				return iterator.next();
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("Cant remove resource");
+			}
+		};
 	}
 
 	/*
@@ -124,8 +234,7 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 		if (id != null) {
 			return prime * result + id.hashCode();
 		}
-		result = prime * result
-				+ ((name == null) ? 0 : name.toLowerCase().hashCode());
+		result = prime * result + name.toLowerCase().hashCode();
 		return result;
 	}
 
@@ -150,12 +259,7 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 			return true;
 
 		// rest is invoked if both ids are null
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equalsIgnoreCase(other.name))
-			return false;
-		return true;
+		return name.equalsIgnoreCase(other.name);
 	}
 
 	/*
@@ -180,15 +284,7 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 		}
 
 		// rest is invoked if both ids are null
-		long val = 0;
-		if (name == null) {
-			if (other.name != null)
-				return -1;
-		} else if (other.name == null) {
-			return 1;
-		} else {
-			val = name.compareToIgnoreCase(other.name);
-		}
+		long val = name.compareToIgnoreCase(other.name);
 
 		if (val < 0)
 			return -1;
@@ -213,7 +309,8 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 		sb.append("id=").append(id);
 		sb.append(", name=").append(name);
 		sb.append(", created=").append(created);
-		sb.append(", children={").append(getChildren()).append("}");
+		sb.append(", children(").append(getChildren().size());
+		sb.append(")={").append(getChildren()).append("}");
 		return sb.toString();
 	}
 

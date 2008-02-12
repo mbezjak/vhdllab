@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.generateJunkString;
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -8,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,71 +44,110 @@ public class ContainerTest {
 		}
 	}
 
-	private class CustomResource extends
-			BidiResource<CustomContainer, CustomResource> {
+	private class MockResource extends
+			BidiResource<MockContainer, MockResource> {
 		private static final long serialVersionUID = 1L;
 
-		public CustomResource() {
-			super();
+		public MockResource(MockContainer parent, String name, String type) {
+			super(parent, name, type);
+			parent.addChild(this);
 		}
 
-		public CustomResource(CustomResource r) {
-			super(r);
+		public MockResource(MockContainer parent, String name, String type,
+				String content) {
+			super(parent, name, type, content);
+			parent.addChild(this);
+		}
+
+		public MockResource(MockResource r, MockContainer parent) {
+			super(r, parent);
+			parent.addChild(this);
 		}
 	}
 
-	private class CustomContainer extends
-			Container<CustomResource, CustomContainer> {
+	private class MockContainer extends Container<MockResource, MockContainer> {
 		private static final long serialVersionUID = 1L;
 
-		public CustomContainer() {
-			super();
+		public MockContainer(String name) {
+			super(name);
 		}
 
-		public CustomContainer(CustomContainer c) {
+		public MockContainer(MockContainer c) {
 			super(c);
 		}
 	}
 
-	private CustomContainer con;
-	private CustomContainer con2;
-	private CustomResource res;
-	private CustomResource res2;
-	private Set<CustomResource> children;
+	private MockContainer con;
+	private MockContainer con2;
+	private MockResource res;
+	private MockResource res2;
+	private Set<MockResource> children;
 
 	@Before
-	public void initEachTest() {
-		con = new CustomContainer();
-		con.setId(ID);
-		con.setName(NAME);
-		con.setCreated(CREATED);
-		con2 = new CustomContainer(con);
+	public void initEachTest() throws Exception {
+		con = new MockContainer(NAME);
+		injectValueToPrivateField(con, "id", ID);
+		injectValueToPrivateField(con, "created", CREATED);
+		con2 = new MockContainer(con);
 
-		res = new CustomResource();
-		res.setId(Long.valueOf(10));
-		res.setName("resource1.name");
-		res.setType("resource1.type");
-		res.setContent("resource1.content");
-		res.setCreated(Calendar.getInstance().getTime());
-		res2 = new CustomResource(); // not added immediately to container
-		res2.setId(Long.valueOf(20));
-		res2.setName("resource2.name");
-		res2.setType("resource2.type");
-		res2.setContent("resource2.content");
-		res2.setCreated(Calendar.getInstance().getTime());
-		CustomResource resourceDuplicate = new CustomResource(res);
+		res = new MockResource(con, "resource.name", "resource.type",
+				"resource.content");
+		injectValueToPrivateField(res, "id", Long.valueOf(10));
+		injectValueToPrivateField(res, "created", new Date());
+		res2 = new MockResource(res, con2);
 
-		con.addChild(res);
-		con2.addChild(resourceDuplicate);
-		children = new HashSet<CustomResource>();
+		// not same because resource was added when id was not set. so now it
+		// has different hash code.
+		assertNotSame("files are equal.", con.getChildren(), con2.getChildren());
+		Set<MockResource> set = new HashSet<MockResource>();
+		set.add(res);
+		injectValueToPrivateField(con, "children", set);
+		assertEquals("children not same.", con.getChildren(), con2
+				.getChildren());
+
+		children = new HashSet<MockResource>();
 		children.add(res);
+	}
+
+	/**
+	 * Name is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor() throws Exception {
+		new MockContainer((String) null);
+	}
+
+	/**
+	 * Name is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor2() throws Exception {
+		new MockContainer(generateJunkString(Container.NAME_LENGTH + 1));
+	}
+
+	/**
+	 * Children and created date are not null
+	 */
+	@Test
+	public void constructor3() throws Exception {
+		MockContainer mock = new MockContainer(NAME);
+		assertNotNull("created date is null.", mock.getCreated());
+		assertNotNull("children is null.", mock.getChildren());
+	}
+
+	/**
+	 * Container is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void copyConstructor() throws Exception {
+		new MockContainer((MockContainer) null);
 	}
 
 	/**
 	 * Test copy constructor
 	 */
 	@Test
-	public void copyConstructor() {
+	public void copyConstructor2() throws Exception {
 		assertTrue("same reference.", con != con2);
 		assertEquals("not equal.", con, con2);
 		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
@@ -120,10 +160,10 @@ public class ContainerTest {
 	 * Test references to children
 	 */
 	@Test
-	public void copyConstructor2() {
-		con2 = new CustomContainer(con);
+	public void copyConstructor3() throws Exception {
+		con2 = new MockContainer(con);
 		assertEquals("reference to children is copied.",
-				new HashSet<CustomResource>(0), con2.getChildren());
+				new HashSet<MockResource>(0), con2.getChildren());
 		assertNotNull("original children reference is missing.", con
 				.getChildren());
 		assertEquals("children has been modified.", children, con.getChildren());
@@ -133,7 +173,7 @@ public class ContainerTest {
 	 * Test getters and setters
 	 */
 	@Test
-	public void gettersAndSetters() {
+	public void gettersAndSetters() throws Exception {
 		/*
 		 * Setters are tested indirectly. @Before method uses setters.
 		 */
@@ -144,10 +184,35 @@ public class ContainerTest {
 	}
 
 	/**
+	 * Name is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void setName() throws Exception {
+		con.setName(null);
+	}
+
+	/**
+	 * Name is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void setName2() throws Exception {
+		con.setName(generateJunkString(Container.NAME_LENGTH + 1));
+	}
+
+	/**
+	 * Everything is ok
+	 */
+	@Test
+	public void setName3() throws Exception {
+		con.setName(NEW_NAME);
+		assertEquals("new name not set.", NEW_NAME, con.getName());
+	}
+
+	/**
 	 * Test equals with self, null, and non-container object
 	 */
 	@Test
-	public void equals() {
+	public void equals() throws Exception {
 		assertEquals("not equal.", con, con);
 		assertNotSame("file is equal to null.", con, null);
 		assertNotSame("can compare with string object.", con, "a string object");
@@ -157,7 +222,7 @@ public class ContainerTest {
 	 * Null object as parameter to compareTo method
 	 */
 	@Test(expected = NullPointerException.class)
-	public void compareTo() {
+	public void compareTo() throws Exception {
 		con.compareTo(null);
 	}
 
@@ -165,10 +230,11 @@ public class ContainerTest {
 	 * Only ids (if set) are important in equals, hashCode and compareTo
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo() {
+	public void equalsHashCodeAndCompareTo() throws Exception {
 		con2.setName(NEW_NAME);
-		con2.setCreated(NEW_CREATED);
-		con2.setChildren(new HashSet<CustomResource>());
+		injectValueToPrivateField(con2, "created", NEW_CREATED);
+		injectValueToPrivateField(con2, "children",
+				new HashSet<MockResource>(0));
 		assertEquals("not equal.", con, con2);
 		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
 		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
@@ -178,8 +244,8 @@ public class ContainerTest {
 	 * Ids are different
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo2() {
-		con2.setId(NEW_ID);
+	public void equalsHashCodeAndCompareTo2() throws Exception {
+		injectValueToPrivateField(con2, "id", NEW_ID);
 		assertNotSame("equal.", con, con2);
 		assertNotSame("hashCode same.", con.hashCode(), con2.hashCode());
 		assertEquals("not compared by id.", ID.compareTo(NEW_ID) < 0 ? -1 : 1,
@@ -190,11 +256,12 @@ public class ContainerTest {
 	 * Ids are null, then name is important
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo3() {
-		con.setId(null);
-		con2.setId(null);
-		con2.setCreated(NEW_CREATED);
-		con2.setChildren(new HashSet<CustomResource>());
+	public void equalsHashCodeAndCompareTo3() throws Exception {
+		injectValueToPrivateField(con, "id", null);
+		injectValueToPrivateField(con2, "id", null);
+		injectValueToPrivateField(con2, "created", NEW_CREATED);
+		injectValueToPrivateField(con2, "children",
+				new HashSet<MockResource>(0));
 		assertEquals("not equal.", con, con2);
 		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
 		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
@@ -204,9 +271,9 @@ public class ContainerTest {
 	 * Resource name is case insensitive
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo4() {
-		con.setId(null);
-		con2.setId(null);
+	public void equalsHashCodeAndCompareTo4() throws Exception {
+		injectValueToPrivateField(con, "id", NEW_ID);
+		injectValueToPrivateField(con2, "id", NEW_ID);
 		con2.setName(NAME.toUpperCase());
 		assertEquals("not equal.", con, con2);
 		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
@@ -217,9 +284,9 @@ public class ContainerTest {
 	 * Ids are null and names are not equal
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo5() {
-		con.setId(null);
-		con2.setId(null);
+	public void equalsHashCodeAndCompareTo5() throws Exception {
+		injectValueToPrivateField(con, "id", null);
+		injectValueToPrivateField(con2, "id", null);
 		con2.setName(NEW_NAME);
 		assertNotSame("equal.", con, con2);
 		assertNotSame("hashCode same.", con.hashCode(), con2.hashCode());
@@ -228,24 +295,10 @@ public class ContainerTest {
 	}
 
 	/**
-	 * Ids and names are null
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo10() {
-		con.setId(null);
-		con2.setId(null);
-		con.setName(null);
-		con2.setName(null);
-		assertEquals("not equal.", con, con2);
-		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
-		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
-	}
-
-	/**
 	 * Resource is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void addChild() {
+	public void addChild() throws Exception {
 		con.addChild(null);
 	}
 
@@ -253,7 +306,7 @@ public class ContainerTest {
 	 * Add a resource
 	 */
 	@Test
-	public void addChild2() {
+	public void addChild2() throws Exception {
 		con.addChild(res2);
 		children.add(res2);
 		assertTrue("child not added.", con.getChildren().contains(res2));
@@ -261,23 +314,10 @@ public class ContainerTest {
 	}
 
 	/**
-	 * Add a resource that is already in another container
-	 */
-	@Test
-	public void addChild3() {
-		CustomContainer newContainer = new CustomContainer();
-		newContainer.setId(NEW_ID);
-		newContainer.setName(NEW_NAME);
-		newContainer.setCreated(NEW_CREATED);
-		newContainer.addChild(res);
-		assertEquals("child not added.", children, newContainer.getChildren());
-	}
-
-	/**
 	 * Add a resource that is already in that container
 	 */
 	@Test
-	public void addChild4() {
+	public void addChild3() throws Exception {
 		con.addChild(res);
 		assertEquals("children not same.", children, con.getChildren());
 		assertEquals("children is changed.", 1, con.getChildren().size());
@@ -287,7 +327,7 @@ public class ContainerTest {
 	 * Resource is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void removeChild() {
+	public void removeChild() throws Exception {
 		con.removeChild(null);
 	}
 
@@ -295,9 +335,9 @@ public class ContainerTest {
 	 * Remove a resource
 	 */
 	@Test
-	public void removeChild2() {
+	public void removeChild2() throws Exception {
 		con.removeChild(res);
-		assertEquals("children not empty.", new HashSet<CustomResource>(0), con
+		assertEquals("children not empty.", new HashSet<MockResource>(0), con
 				.getChildren());
 		assertNull("parent is not set to null.", res.getParent());
 	}
@@ -306,10 +346,11 @@ public class ContainerTest {
 	 * Remove a resource that does not exists in a container
 	 */
 	@Test
-	public void removeChild3() {
-		con2.getChildren().clear();
-		con2.addChild(res2);
-		con.removeChild(res2);
+	public void removeChild3() throws Exception {
+		MockContainer mockContainer = new MockContainer("mock.name");
+		MockResource mockResource = new MockResource(mockContainer,
+				"mock.name", "mock.type");
+		con.removeChild(mockResource);
 		assertEquals("children is changed.", children, con.getChildren());
 	}
 

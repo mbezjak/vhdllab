@@ -27,27 +27,121 @@ class BidiResource<TContainer extends Container<TBidiResource, TContainer>,
 
 	private static final long serialVersionUID = 1L;
 
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	private TContainer parent;
 
-	public BidiResource() {
+	/**
+	 * Constructor for persistence provider.
+	 */
+	BidiResource() {
 		super();
 	}
 
-	public BidiResource(BidiResource<TContainer, TBidiResource> resource) {
-		super(resource);
-		/*
-		 * parent is not referenced to reduce aliasing problems
-		 */
-		this.parent = null;
+	/**
+	 * Creates a bidi-resource with specified name and type. Content will be set
+	 * to empty string.
+	 * 
+	 * @param parent
+	 *            a container of a bidi-resource
+	 * @param name
+	 *            a name of a bidi-resource
+	 * @param type
+	 *            a type of a bidi-resource
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public BidiResource(TContainer parent, String name, String type) {
+		this(parent, name, type, "");
 	}
 
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	public TContainer getParent() {
+	/**
+	 * Creates a bidi-resource with specified name, type and content.
+	 * 
+	 * @param parent
+	 *            a container of a bidi-resource
+	 * @param name
+	 *            a name of a bidi-resource
+	 * @param type
+	 *            a type of a bidi-resource
+	 * @param a
+	 *            content of a bidi-resource
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public BidiResource(TContainer parent, String name, String type,
+			String content) {
+		super(name, type, content);
+		if (parent == null) {
+			throw new NullPointerException("Parent cant be null");
+		}
+		this.parent = parent;
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param resource
+	 *            a bidi-resource object to duplicate
+	 * @param parent
+	 *            a container for duplicate
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 */
+	public BidiResource(BidiResource<TContainer, TBidiResource> resource,
+			TContainer parent) {
+		super(resource);
+		if (parent == null) {
+			throw new NullPointerException("Parent cant be null");
+		}
+		this.parent = parent;
+	}
+
+	/**
+	 * Returns a container of bidi-resource. Return value will be
+	 * <code>null</code> if this bidi-resource is disconnected from its
+	 * container.
+	 * 
+	 * @return a container of bidi-resource
+	 */
+	TContainer getParent() {
 		return parent;
 	}
 
-	public void setParent(TContainer parent) {
-		this.parent = parent;
+	/**
+	 * Removes reference to parent. This method should be called when deleting a
+	 * bidi-resource.
+	 */
+	void disconnect() {
+		parent = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.entities.Resource#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		/*
+		 * Overriding just to check if given resource is a bidi-resource.
+		 */
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof BidiResource<?, ?>))
+			return false;
+		return super.equals(obj);
 	}
 
 	/*

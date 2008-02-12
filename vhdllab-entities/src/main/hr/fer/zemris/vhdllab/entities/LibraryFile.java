@@ -1,9 +1,11 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import javax.persistence.Entity;
+
 /**
  * A file that belongs to a library. Libraries are stored on file system and for
  * that a custom dao implementation is written. Because of that this class is
- * not an entity!
+ * not an entity (at least not {@link Entity})!
  * 
  * @author Miro Bezjak
  * @since 31/1/2008
@@ -13,20 +15,82 @@ public class LibraryFile extends BidiResource<Library, LibraryFile> {
 
 	private static final long serialVersionUID = 1L;
 
-	public LibraryFile() {
+	/**
+	 * Constructor for persistence provider.
+	 */
+	LibraryFile() {
 		super();
 	}
 
-	public LibraryFile(LibraryFile f) {
-		super(f);
+	/**
+	 * Creates a library file with specified name and type. Content will be set
+	 * to empty string.
+	 * 
+	 * @param library
+	 *            a container of a library file
+	 * @param name
+	 *            a name of a library file
+	 * @param type
+	 *            a type of a library file
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public LibraryFile(Library library, String name, String type) {
+		this(library, name, type, "");
 	}
 
+	/**
+	 * Creates a library file with specified name, type and content.
+	 * 
+	 * @param library
+	 *            a container of a library file
+	 * @param name
+	 *            a name of a library file
+	 * @param type
+	 *            a type of a library file
+	 * @param content
+	 *            content of a library file
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public LibraryFile(Library library, String name, String type, String content) {
+		super(library, name, type, content);
+		library.addChild(this);
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param file
+	 *            a library file object to duplicate
+	 * @param library
+	 *            a container for duplicate
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 */
+	public LibraryFile(LibraryFile file, Library library) {
+		super(file, library);
+		library.addChild(this);
+	}
+
+	/**
+	 * Returns a container for this file. Return value will be <code>null</code>
+	 * only if file doesn't belong to any library.
+	 * 
+	 * @return a container for this file
+	 */
 	public Library getLibrary() {
 		return getParent();
-	}
-
-	public void setLibrary(Library l) {
-		setParent(l);
 	}
 
 	/*

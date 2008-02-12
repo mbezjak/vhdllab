@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.generateJunkString;
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -47,22 +49,60 @@ public class UserFileTest {
 	private UserFile file2;
 
 	@Before
-	public void initEachTest() {
-		file = new UserFile();
-		file.setId(ID);
-		file.setUserId(USER_ID);
-		file.setName(NAME);
-		file.setType(TYPE);
-		file.setContent(CONTENT);
-		file.setCreated(CREATED);
+	public void initEachTest() throws Exception {
+		file = new UserFile(USER_ID, NAME, TYPE, CONTENT);
+		injectValueToPrivateField(file, "id", ID);
+		injectValueToPrivateField(file, "created", CREATED);
 		file2 = new UserFile(file);
+	}
+
+	/**
+	 * User id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor() throws Exception {
+		new UserFile(null, NAME, TYPE);
+	}
+
+	/**
+	 * User id is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor2() throws Exception {
+		new UserFile(generateJunkString(UserFile.USER_ID_LENGTH + 1), NAME,
+				TYPE);
+	}
+
+	/**
+	 * User id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor3() throws Exception {
+		new UserFile(null, NAME, TYPE, CONTENT);
+	}
+
+	/**
+	 * User id is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor4() throws Exception {
+		new UserFile(generateJunkString(UserFile.USER_ID_LENGTH + 1), NAME,
+				TYPE, CONTENT);
+	}
+
+	/**
+	 * User file is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void copyConstructor() throws Exception {
+		new UserFile(null);
 	}
 
 	/**
 	 * Test copy constructor
 	 */
 	@Test
-	public void copyConstructor() {
+	public void copyConstructor2() throws Exception {
 		assertTrue("same reference.", file != file2);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
@@ -73,7 +113,7 @@ public class UserFileTest {
 	 * Test getters and setters
 	 */
 	@Test
-	public void gettersAndSetters() {
+	public void gettersAndSetters() throws Exception {
 		/*
 		 * Setters are tested indirectly. @Before method uses setters.
 		 */
@@ -84,19 +124,20 @@ public class UserFileTest {
 	 * Test equals with self, null, and non-user-file object
 	 */
 	@Test
-	public void equals() {
+	public void equals() throws Exception {
 		assertEquals("not equal.", file, file);
 		assertNotSame("file is equal to null.", file, null);
 		assertNotSame("can compare with string object.", file,
 				"a string object");
-		assertNotSame("can compare with resource object.", file, new Resource());
+		assertNotSame("can compare with resource object.", file, new Resource(
+				NAME, TYPE));
 	}
 
 	/**
 	 * Null object as parameter to compareTo method
 	 */
 	@Test(expected = NullPointerException.class)
-	public void compareTo() {
+	public void compareTo() throws Exception {
 		file.compareTo(null);
 	}
 
@@ -104,20 +145,20 @@ public class UserFileTest {
 	 * Non-user-file type
 	 */
 	@Test(expected = ClassCastException.class)
-	public void compareTo2() {
-		file.compareTo(new Resource());
+	public void compareTo2() throws Exception {
+		file.compareTo(new Resource(NAME, TYPE));
 	}
 
 	/**
 	 * Only ids (if set) are important in equals, hashCode and compareTo
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo() {
-		file2.setUserId(NEW_USER_ID);
+	public void equalsHashCodeAndCompareTo() throws Exception {
 		file2.setName(NEW_NAME);
-		file2.setType(NEW_TYPE);
 		file2.setContent(NEW_CONTENT);
-		file2.setCreated(NEW_CREATED);
+		injectValueToPrivateField(file2, "userId", NEW_USER_ID);
+		injectValueToPrivateField(file2, "type", NEW_TYPE);
+		injectValueToPrivateField(file2, "created", NEW_CREATED);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
@@ -127,12 +168,12 @@ public class UserFileTest {
 	 * Ids are null, then name and userId is important
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo2() {
-		file.setId(null);
-		file2.setId(null);
-		file2.setType(NEW_TYPE);
+	public void equalsHashCodeAndCompareTo2() throws Exception {
+		injectValueToPrivateField(file, "id", null);
+		injectValueToPrivateField(file2, "id", null);
+		injectValueToPrivateField(file2, "type", NEW_TYPE);
+		injectValueToPrivateField(file2, "created", NEW_CREATED);
 		file2.setContent(NEW_CONTENT);
-		file2.setCreated(NEW_CREATED);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
@@ -142,10 +183,10 @@ public class UserFileTest {
 	 * User id is case insensitive
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo3() {
-		file.setId(null);
-		file2.setId(null);
-		file2.setUserId(USER_ID.toUpperCase());
+	public void equalsHashCodeAndCompareTo3() throws Exception {
+		injectValueToPrivateField(file, "id", null);
+		injectValueToPrivateField(file2, "id", null);
+		injectValueToPrivateField(file2, "userId", USER_ID.toUpperCase());
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
@@ -155,45 +196,15 @@ public class UserFileTest {
 	 * Ids are null and user ids are not equal
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo4() {
-		file.setId(null);
-		file2.setId(null);
-		file2.setUserId(NEW_USER_ID);
+	public void equalsHashCodeAndCompareTo4() throws Exception {
+		injectValueToPrivateField(file, "id", null);
+		injectValueToPrivateField(file2, "id", null);
+		injectValueToPrivateField(file2, "userId", NEW_USER_ID);
 		assertNotSame("equal.", file, file2);
 		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
 		assertEquals("not compared by user id.",
 				USER_ID.compareTo(NEW_USER_ID) < 0 ? -1 : 1, file
 						.compareTo(file2));
-	}
-
-	/**
-	 * Ids and names are null, then user id is important
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo5() {
-		file.setId(null);
-		file2.setId(null);
-		file.setName(null);
-		file2.setName(null);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
-	}
-
-	/**
-	 * Ids, names and user ids are null
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo6() {
-		file.setId(null);
-		file2.setId(null);
-		file.setName(null);
-		file2.setName(null);
-		file.setUserId(null);
-		file2.setUserId(null);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

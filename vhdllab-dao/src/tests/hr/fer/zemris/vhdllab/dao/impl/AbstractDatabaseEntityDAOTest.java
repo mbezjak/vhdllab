@@ -62,14 +62,6 @@ public class AbstractDatabaseEntityDAOTest {
 	 * id is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void create() throws DAOException {
-		dao.create(null);
-	}
-	
-	/**
-	 * id is null
-	 */
-	@Test(expected = NullPointerException.class)
 	public void save() throws DAOException {
 		dao.save(null);
 	}
@@ -145,11 +137,9 @@ public class AbstractDatabaseEntityDAOTest {
 	@Test
 	public void existsEntity3() throws DAOException {
 		// prepair project
-		Project project = new Project();
-		project.setName("project.name");
-		project.setUserId("user.identifier");
+		Project project = new Project("user.identifier", "project.name");
 		ProjectDAO projectDAO = new ProjectDAOImpl();
-		projectDAO.create(project);
+		projectDAO.save(project);
 
 		Map<String, Object> params = new HashMap<String, Object>(2);
 		params.put("name", "project.name");
@@ -188,11 +178,9 @@ public class AbstractDatabaseEntityDAOTest {
 	@Test
 	public void findSingleEntity3() throws DAOException {
 		// prepair project
-		Project project = new Project();
-		project.setName("project.name");
-		project.setUserId("user.identifier");
+		Project project = new Project("user.identifier", "project.name");
 		ProjectDAO projectDAO = new ProjectDAOImpl();
-		projectDAO.create(project);
+		projectDAO.save(project);
 
 		Map<String, Object> params = new HashMap<String, Object>(2);
 		params.put("name", "project.name");
@@ -231,11 +219,9 @@ public class AbstractDatabaseEntityDAOTest {
 	@Test
 	public void findEntityList3() throws DAOException {
 		// prepair project
-		Project project = new Project();
-		project.setName("project.name");
-		project.setUserId("user.identifier");
+		Project project = new Project("user.identifier", "project.name");
 		ProjectDAO projectDAO = new ProjectDAOImpl();
-		projectDAO.create(project);
+		projectDAO.save(project);
 
 		Map<String, Object> params = new HashMap<String, Object>(2);
 		params.put("name", "project.name");

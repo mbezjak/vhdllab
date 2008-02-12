@@ -1,6 +1,9 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.generateJunkString;
+import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
@@ -46,21 +49,140 @@ public class ResourceTest {
 	private Resource res2;
 
 	@Before
-	public void initEachTest() {
-		res = new Resource();
-		res.setId(ID);
-		res.setName(NAME);
-		res.setType(TYPE);
-		res.setContent(CONTENT);
-		res.setCreated(CREATED);
+	public void initEachTest() throws Exception {
+		res = new Resource(NAME, TYPE, CONTENT);
+		injectValueToPrivateField(res, "id", ID);
+		injectValueToPrivateField(res, "created", CREATED);
 		res2 = new Resource(res);
+	}
+
+	/**
+	 * Name is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor() throws Exception {
+		new Resource(null, TYPE);
+	}
+
+	/**
+	 * Type is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor2() throws Exception {
+		new Resource(NAME, null);
+	}
+
+	/**
+	 * Name is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor3() throws Exception {
+		new Resource(generateJunkString(Resource.NAME_LENGTH + 1), TYPE);
+	}
+
+	/**
+	 * Type is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor4() throws Exception {
+		new Resource(NAME, generateJunkString(Resource.TYPE_LENGTH + 1));
+	}
+
+	/**
+	 * Content and created date is not null
+	 */
+	@Test
+	public void constructor5() throws Exception {
+		Resource resource = new Resource(NAME, TYPE);
+		assertNotNull("content is null.", resource.getContent());
+		assertNotNull("created date is null.", resource.getCreated());
+	}
+
+	/**
+	 * Name is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor6() throws Exception {
+		new Resource(null, TYPE, CONTENT);
+	}
+
+	/**
+	 * Type is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor7() throws Exception {
+		new Resource(NAME, null, CONTENT);
+	}
+
+	/**
+	 * Content is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void constructor8() throws Exception {
+		new Resource(NAME, TYPE, null);
+	}
+
+	/**
+	 * Name is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor9() throws Exception {
+		new Resource(generateJunkString(Resource.NAME_LENGTH + 1), TYPE,
+				CONTENT);
+	}
+
+	/**
+	 * Type is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor10() throws Exception {
+		new Resource(NAME, generateJunkString(Resource.TYPE_LENGTH + 1),
+				CONTENT);
+	}
+
+	/**
+	 * Content is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor11() throws Exception {
+		new Resource(NAME, TYPE,
+				generateJunkString(Resource.CONTENT_LENGTH + 1));
+	}
+
+	/**
+	 * Created date is not null
+	 */
+	@Test
+	public void constructor12() throws Exception {
+		Resource resource = new Resource(NAME, TYPE, CONTENT);
+		assertNotNull("created date is null.", resource.getCreated());
+	}
+
+	/**
+	 * Created date depends on real time
+	 */
+	@Test
+	public void constructor13() throws Exception {
+		Resource resource = new Resource(NAME, TYPE, CONTENT);
+		Thread.sleep(1, 0); // sleep 1 ms
+		Resource resource2 = new Resource(NAME, TYPE, CONTENT);
+		assertTrue("created date doesn't depend on real time.", resource2
+				.getCreated().compareTo(resource.getCreated()) > 0);
+	}
+
+	/**
+	 * Resource is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void copyConstructor() throws Exception {
+		new Resource(null);
 	}
 
 	/**
 	 * Test copy constructor
 	 */
 	@Test
-	public void copyConstructor() {
+	public void copyConstructor2() throws Exception {
 		assertTrue("same reference.", res != res2);
 		assertEquals("not equal.", res, res2);
 		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
@@ -71,7 +193,7 @@ public class ResourceTest {
 	 * Test getters and setters
 	 */
 	@Test
-	public void gettersAndSetters() {
+	public void gettersAndSetters() throws Exception {
 		/*
 		 * Setters are tested indirectly. @Before method uses setters.
 		 */
@@ -83,10 +205,60 @@ public class ResourceTest {
 	}
 
 	/**
+	 * Name is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void setName() throws Exception {
+		res.setName(null);
+	}
+
+	/**
+	 * Name is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void setName2() throws Exception {
+		res.setName(generateJunkString(Resource.NAME_LENGTH + 1));
+	}
+
+	/**
+	 * Everything is ok
+	 */
+	@Test
+	public void setName3() throws Exception {
+		res.setName(NEW_NAME);
+		assertEquals("new name not set.", NEW_NAME, res.getName());
+	}
+
+	/**
+	 * Content is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void setContent() throws Exception {
+		res.setContent(null);
+	}
+
+	/**
+	 * Content is too long
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void setContent2() throws Exception {
+		res.setContent(generateJunkString(Resource.CONTENT_LENGTH + 1));
+	}
+
+	/**
+	 * Everything is ok
+	 */
+	@Test
+	public void setContent3() throws Exception {
+		res.setContent(NEW_CONTENT);
+		assertEquals("new content not set.", NEW_CONTENT, res.getContent());
+	}
+
+	/**
 	 * Test equals with self, null, and non-resource object
 	 */
 	@Test
-	public void equals() {
+	public void equals() throws Exception {
 		assertEquals("not equal.", res, res);
 		assertNotSame("resource is equal to null.", res, null);
 		assertNotSame("can compare with string object.", res, "a string object");
@@ -96,7 +268,7 @@ public class ResourceTest {
 	 * Null object as parameter to compareTo method
 	 */
 	@Test(expected = NullPointerException.class)
-	public void compareTo() {
+	public void compareTo() throws Exception {
 		res.compareTo(null);
 	}
 
@@ -104,11 +276,10 @@ public class ResourceTest {
 	 * Only ids (if set) are important in equals, hashCode and compareTo
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo() {
+	public void equalsHashCodeAndCompareTo() throws Exception {
 		res2.setName(NEW_NAME);
-		res2.setType(NEW_TYPE);
 		res2.setContent(NEW_CONTENT);
-		res2.setCreated(NEW_CREATED);
+		injectValueToPrivateField(res2, "type", NEW_TYPE);
 		assertEquals("not equal.", res, res2);
 		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
 		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
@@ -118,8 +289,8 @@ public class ResourceTest {
 	 * Ids are different
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo2() {
-		res2.setId(NEW_ID);
+	public void equalsHashCodeAndCompareTo2() throws Exception {
+		injectValueToPrivateField(res2, "id", NEW_ID);
 		assertNotSame("equal.", res, res2);
 		assertNotSame("hashCode same.", res.hashCode(), res2.hashCode());
 		assertEquals("not compared by id.", ID.compareTo(NEW_ID) < 0 ? -1 : 1,
@@ -130,12 +301,12 @@ public class ResourceTest {
 	 * Ids are null, then name is important
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo3() {
-		res.setId(null);
-		res2.setId(null);
-		res2.setType(NEW_TYPE);
+	public void equalsHashCodeAndCompareTo3() throws Exception {
+		injectValueToPrivateField(res, "id", null);
+		injectValueToPrivateField(res2, "id", null);
+		injectValueToPrivateField(res2, "type", NEW_TYPE);
+		injectValueToPrivateField(res2, "created", NEW_CREATED);
 		res2.setContent(NEW_CONTENT);
-		res2.setCreated(NEW_CREATED);
 		assertEquals("not equal.", res, res2);
 		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
 		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
@@ -145,9 +316,9 @@ public class ResourceTest {
 	 * Resource name is case insensitive
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo4() {
-		res.setId(null);
-		res2.setId(null);
+	public void equalsHashCodeAndCompareTo4() throws Exception {
+		injectValueToPrivateField(res, "id", null);
+		injectValueToPrivateField(res2, "id", null);
 		res2.setName(NAME.toUpperCase());
 		assertEquals("not equal.", res, res2);
 		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
@@ -158,28 +329,14 @@ public class ResourceTest {
 	 * Ids are null and names are not equal
 	 */
 	@Test
-	public void equalsHashCodeAndCompareTo5() {
-		res.setId(null);
-		res2.setId(null);
+	public void equalsHashCodeAndCompareTo5() throws Exception {
+		injectValueToPrivateField(res, "id", null);
+		injectValueToPrivateField(res2, "id", null);
 		res2.setName(NEW_NAME);
 		assertNotSame("equal.", res, res2);
 		assertNotSame("hashCode same.", res.hashCode(), res2.hashCode());
 		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
 				: 1, res.compareTo(res2));
-	}
-
-	/**
-	 * Ids and names are null
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo6() {
-		res.setId(null);
-		res2.setId(null);
-		res.setName(null);
-		res2.setName(null);
-		assertEquals("not equal.", res, res2);
-		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
-		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

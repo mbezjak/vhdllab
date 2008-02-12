@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
@@ -27,23 +26,88 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class File extends BidiResource<Project, File> {
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * A named query for finding files by name.
+	 */
 	public static final String FIND_BY_NAME_QUERY = "file.find.by.name";
 
-	public File() {
+	/**
+	 * Constructor for persistence provider.
+	 */
+	File() {
 		super();
 	}
 
-	public File(File f) {
-		super(f);
+	/**
+	 * Creates a file with specified name and type. Content will be set to empty
+	 * string.
+	 * 
+	 * @param project
+	 *            a container of a file
+	 * @param name
+	 *            a name of a file
+	 * @param type
+	 *            a type of a file
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public File(Project project, String name, String type) {
+		this(project, name, type, "");
 	}
 
-	@Transient
+	/**
+	 * Creates a file with specified name, type and content.
+	 * 
+	 * @param project
+	 *            a container of a file
+	 * @param name
+	 *            a name of a file
+	 * @param type
+	 *            a type of a file
+	 * @param content
+	 *            content of a file
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 * @see #TYPE_LENGTH
+	 * @see #CONTENT_LENGTH
+	 */
+	public File(Project project, String name, String type, String content) {
+		super(project, name, type, content);
+		project.addChild(this);
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param file
+	 *            a file object to duplicate
+	 * @param project
+	 *            a container for duplicate
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 */
+	public File(File file, Project project) {
+		super(file, project);
+		project.addChild(this);
+	}
+
+	/**
+	 * Returns a container for this file. Return value will be <code>null</code>
+	 * only if file doesn't belong to any project.
+	 * 
+	 * @return a container for this file
+	 */
 	public Project getProject() {
 		return getParent();
-	}
-
-	public void setProject(Project project) {
-		setParent(project);
 	}
 
 	/*

@@ -1,17 +1,21 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
-import static hr.fer.zemris.vhdllab.dao.impl.StringGenerationUtil.generateJunkString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
+import hr.fer.zemris.vhdllab.server.FileTypes;
+import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.After;
@@ -29,11 +33,8 @@ public class ProjectDAOImplTest {
 
 	private static final String NAME = "simple.project.name";
 	private static final String USER_ID = "user.identifier";
-	private static final Long UNUSED_ID = Long.valueOf(Long.MAX_VALUE);
 	private static final String UNUSED_NAME = "unused.name";
 	private static final String UNUSED_USER_ID = "unused.user.identifier";
-	private static final int MAX_NAME_LENGTH = 255;
-	private static final int MAX_USER_ID_LENGTH = MAX_NAME_LENGTH;
 
 	private static FileDAO fileDAO;
 	private static ProjectDAO dao;
@@ -55,14 +56,9 @@ public class ProjectDAOImplTest {
 	}
 
 	private void initFiles() throws DAOException {
-		project = new Project();
-		project.setName(NAME);
-		project.setUserId(USER_ID);
-		file = new File();
-		file.setName("file.name");
-		file.setType("file.type");
-		file.setContent("<file>int main() {}</file>");
-		project.addFile(file);
+		project = new Project(USER_ID, NAME);
+		file = new File(project, "file.name", FileTypes.VHDL_SOURCE,
+				"<file>int main() {}</file>");
 	}
 
 	@After
@@ -93,7 +89,121 @@ public class ProjectDAOImplTest {
 	public void saveAndLoad() throws DAOException {
 		dao.save(project);
 		Project loadedProject = dao.load(project.getId());
-		assertEquals(project, loadedProject);
+		assertEquals("projects not equal.", project, loadedProject);
+		assertEquals("user ids not equal.", USER_ID, loadedProject.getUserId());
+		assertEquals("names not equal.", NAME, loadedProject.getName());
+	}
+
+	/**
+	 * Project is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void save() throws DAOException {
+		dao.save(null);
+	}
+
+	/**
+	 * Once project is persisted an ID is no longer null
+	 */
+	@Test
+	public void save2() throws DAOException {
+		assertNull("project has id set.", project.getId());
+		dao.save(project);
+		assertNotNull("project id wasn't set after creation.", project.getId());
+	}
+
+	/**
+	 * Project name can be a part of update statement
+	 */
+	@Test
+	public void save3() throws Exception {
+		dao.save(project);
+		project.setName(UNUSED_NAME);
+		dao.save(project);
+		assertEquals("projects not same after name was updated.", project, dao
+				.load(project.getId()));
+	}
+
+	/**
+	 * Project name and user id are unique (i.e. form secondary key)
+	 */
+	@Test
+	public void save4() throws Exception {
+		dao.save(project);
+		Project newProject = new Project(USER_ID, NAME);
+		try {
+			dao.save(newProject);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_ALREADY_EXISTS) {
+				fail("Invalid status code in DAOException");
+			}
+		}
+	}
+
+	/**
+	 * Project name and user id are unique (i.e. form secondary key)
+	 */
+	@Test(expected = DAOException.class)
+	public void save5() throws Exception {
+		dao.save(project);
+		Project newProject = new Project(USER_ID, UNUSED_NAME);
+		dao.save(newProject);
+		newProject.setName(NAME);
+		dao.save(newProject);
+	}
+
+	/**
+	 * Save a file with same user id but different name
+	 */
+	@Test
+	public void save7() throws Exception {
+		dao.save(project);
+		Project newProject = new Project(USER_ID, UNUSED_NAME);
+		dao.save(newProject);
+		newProject.setName("different.project.name");
+		dao.save(newProject);
+		assertTrue("new project not saved.", dao.exists(newProject.getId()));
+		assertEquals("projects are not same.", newProject, dao.load(newProject
+				.getId()));
+	}
+
+	/**
+	 * Save a project with same name but different user id
+	 */
+	@Test
+	public void save8() throws Exception {
+		dao.save(project);
+		Project newProject = new Project(UNUSED_USER_ID, NAME);
+		dao.save(newProject);
+		assertTrue("new project not saved.", dao.exists(newProject.getId()));
+		assertEquals("projects are not same.", newProject, dao.load(newProject
+				.getId()));
+	}
+
+	/**
+	 * add a file after a project is saved
+	 */
+	@Test
+	public void save9() throws DAOException {
+		dao.save(project);
+		File newFile = new File(project, "new.file.name", "new.file.type");
+		dao.save(project);
+
+		Project loadedProject = dao.load(project.getId());
+		assertTrue("file not save.", fileDAO.exists(newFile.getId()));
+		assertTrue("file not save.", fileDAO.exists(loadedProject.getId(),
+				newFile.getName()));
+		assertEquals("projects not equal.", project, loadedProject);
+		boolean found = false;
+		for (File f : loadedProject) {
+			if (f.equals(newFile)) {
+				found = true;
+			}
+		}
+		if (!found) {
+			fail("project doesn't contain a new file.");
+		}
 	}
 
 	/**
@@ -103,9 +213,50 @@ public class ProjectDAOImplTest {
 	public void delete() throws DAOException {
 		dao.save(project);
 		dao.delete(project.getId());
-		assertEquals(false, dao.exists(project.getId()));
-		assertEquals(false, dao.exists(project.getUserId(), project.getName()));
-		assertEquals(false, fileDAO.exists(file.getId()));
+		assertFalse("project still exists.", dao.exists(project.getId()));
+		assertFalse("project still exists.", dao.exists(project.getUserId(),
+				project.getName()));
+		assertFalse("file still exists.", fileDAO.exists(file.getId()));
+	}
+
+	/**
+	 * remove a file form a project then save project
+	 */
+	@Test
+	public void delete2() throws DAOException {
+		System.out.println(file.hashCode());
+		for (File f : project) {
+			System.out.println(f.hashCode());
+		}
+		dao.save(project);
+		System.out.println(file.hashCode());
+		for (File f : project) {
+			System.out.println(f.hashCode());
+		}
+		project.removeFile(file);
+		for (File f : project) {
+			System.out.println(f.hashCode());
+		}
+		/*
+		 * Project must be loaded. because 'project.removeFile(file)' doesn't
+		 * work. Reason for this is hashCode implementation. HashCode for a file
+		 * was calculated before id field was set and now, after it was saved,
+		 * it calculated hashCode differently.
+		 */
+		Project loadedProject = dao.load(project.getId());
+		loadedProject.removeFile(file);
+		assertNull("file not removed from collection.", file.getProject());
+		dao.save(loadedProject);
+		assertFalse("file still exists.", fileDAO.exists(file.getId()));
+		boolean found = false;
+		for (File f : loadedProject) {
+			if (f.equals(file)) {
+				found = true;
+			}
+		}
+		if (found) {
+			fail("project contains a removed file.");
+		}
 	}
 
 	/**
@@ -129,8 +280,10 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void exists3() throws DAOException {
-		assertEquals(false, dao.exists(UNUSED_USER_ID, NAME));
-		assertEquals(false, dao.exists(USER_ID, UNUSED_NAME));
+		assertFalse("file exists when it shouldn't.", dao.exists(
+				UNUSED_USER_ID, NAME));
+		assertFalse("file exists when it shouldn't.", dao.exists(USER_ID,
+				UNUSED_NAME));
 	}
 
 	/**
@@ -139,169 +292,12 @@ public class ProjectDAOImplTest {
 	@Test
 	public void exists4() throws DAOException {
 		dao.save(project);
-		assertEquals(true, dao.exists(project.getId()));
-		assertEquals(true, dao.exists(project.getUserId(), project.getName()));
-		assertEquals(true, dao.exists(project.getUserId().toUpperCase(),
-				project.getName().toUpperCase()));
-	}
-
-	/**
-	 * Once project is persisted an ID is no longer null
-	 */
-	@Test()
-	public void save() throws DAOException {
-		assertEquals(null, project.getId());
-		dao.save(project);
-		assertNotSame(null, project.getId());
-	}
-
-	/**
-	 * ID can't be a part of insert statement
-	 */
-	@Test(expected = DAOException.class)
-	public void save2() throws DAOException {
-		project.setId(UNUSED_ID);
-		dao.save(project);
-	}
-
-	/**
-	 * ID can't be a part of update statement
-	 */
-	@Test(expected = DAOException.class)
-	public void save3() throws DAOException {
-		dao.save(project);
-		project.setId(UNUSED_ID);
-		dao.save(project);
-	}
-
-	/**
-	 * user id is null
-	 */
-	@Test(expected = DAOException.class)
-	public void save4() throws DAOException {
-		project.setUserId(null);
-		dao.save(project);
-	}
-
-	/**
-	 * user id is of max length
-	 */
-	@Test()
-	public void save5() throws DAOException {
-		project.setUserId(generateJunkString(MAX_USER_ID_LENGTH));
-		dao.save(project);
-		// delete project afterwards
-		dao.delete(project.getId());
-	}
-
-	/**
-	 * user id is too long
-	 */
-	@Test(expected = DAOException.class)
-	public void save6() throws DAOException {
-		project.setUserId(generateJunkString(MAX_USER_ID_LENGTH + 1));
-		dao.save(project);
-	}
-
-	/**
-	 * name is null
-	 */
-	@Test(expected = DAOException.class)
-	public void save7() throws DAOException {
-		project.setName(null);
-		dao.save(project);
-	}
-
-	/**
-	 * user id and name are unique
-	 */
-	@Test(expected = DAOException.class)
-	public void save8() throws DAOException {
-		dao.save(project);
-		Project clone = new Project(project);
-		clone.setId(null);
-		clone.setFiles(null);
-		dao.save(clone);
-	}
-
-	/**
-	 * name is of max length
-	 */
-	@Test()
-	public void save9() throws DAOException {
-		project.setName(generateJunkString(MAX_NAME_LENGTH));
-		dao.save(project);
-	}
-
-	/**
-	 * name is too long
-	 */
-	@Test(expected = DAOException.class)
-	public void save10() throws DAOException {
-		project.setName(generateJunkString(MAX_NAME_LENGTH + 1));
-		dao.save(project);
-	}
-
-	/**
-	 * save a project then update it
-	 */
-	@Test
-	public void save11() throws DAOException {
-		dao.save(project);
-		project.setUserId(UNUSED_USER_ID);
-		project.setName(UNUSED_NAME);
-		project.setFiles(null);
-		dao.save(project);
-		assertEquals(true, dao.exists(project.getId()));
-		assertEquals(project, dao.load(project.getId()));
-	}
-
-	/**
-	 * save a project with same user id but different name
-	 */
-	@Test
-	public void save12() throws DAOException {
-		Project newProject = new Project();
-		newProject.setUserId(USER_ID);
-		newProject.setName(UNUSED_NAME);
-		newProject.setFiles(null);
-		dao.save(project);
-		dao.save(newProject);
-		assertEquals(true, dao.exists(newProject.getId()));
-		assertEquals(newProject, dao.load(newProject.getId()));
-	}
-
-	/**
-	 * save a project with same name but different user id
-	 */
-	@Test
-	public void save13() throws DAOException {
-		Project newProject = new Project();
-		newProject.setUserId(UNUSED_USER_ID);
-		newProject.setName(NAME);
-		newProject.setFiles(null);
-		dao.save(project);
-		dao.save(newProject);
-		assertEquals(true, dao.exists(newProject.getId()));
-		assertEquals(newProject, dao.load(newProject.getId()));
-	}
-
-	/**
-	 * add a file after a project is saved
-	 */
-	@Test
-	public void save14() throws DAOException {
-		dao.save(project);
-		File newFile = new File();
-		newFile.setName("new.file.name");
-		newFile.setType("new.file.type");
-		project.addFile(newFile);
-		dao.save(project);
-
-		Project loadedProject = dao.load(project.getId());
-		assertEquals(new HashSet<File>(project.getFiles()), new HashSet<File>(
-				loadedProject.getFiles()));
-		assertEquals(project, loadedProject);
+		assertTrue("project doesn't exist.", dao.exists(project.getId()));
+		assertTrue("project doesn't exist.", dao.exists(project.getUserId(),
+				project.getName()));
+		assertTrue("project name and user id are not case insensitive.", dao
+				.exists(project.getUserId().toUpperCase(), project.getName()
+						.toUpperCase()));
 	}
 
 	/**
@@ -342,10 +338,11 @@ public class ProjectDAOImplTest {
 	@Test
 	public void findByName5() throws DAOException {
 		dao.save(project);
-		assertEquals(project, dao.findByName(project.getUserId(), project
-				.getName()));
-		assertEquals(project, dao.findByName(project.getUserId().toUpperCase(),
-				project.getName().toUpperCase()));
+		assertEquals("project not found.", project, dao.findByName(project
+				.getUserId(), project.getName()));
+		assertEquals("project name and user id are not case insensitive.",
+				project, dao.findByName(project.getUserId().toUpperCase(),
+						project.getName().toUpperCase()));
 	}
 
 	/**
@@ -372,8 +369,9 @@ public class ProjectDAOImplTest {
 		dao.save(project);
 		List<Project> projects = new ArrayList<Project>(1);
 		projects.add(project);
-		assertEquals(projects, dao.findByUser(project.getUserId()));
-		assertEquals(projects, dao
+		assertEquals("projects not equal.", projects, dao.findByUser(project
+				.getUserId()));
+		assertEquals("user id is not case insensitive.", projects, dao
 				.findByUser(project.getUserId().toUpperCase()));
 	}
 
@@ -382,17 +380,15 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void findByUser4() throws DAOException {
-		Project project2 = new Project();
-		project2.setUserId(USER_ID);
-		project2.setName(UNUSED_NAME);
-		project2.setFiles(null);
+		Project project2 = new Project(USER_ID, UNUSED_NAME);
 		dao.save(project);
 		dao.save(project2);
 		List<Project> projects = new ArrayList<Project>(2);
 		projects.add(project);
 		projects.add(project2);
-		assertEquals(projects, dao.findByUser(project.getUserId()));
-		assertEquals(projects, dao
+		assertEquals("collections not equal.", projects, dao.findByUser(project
+				.getUserId()));
+		assertEquals("user id is not case insensitive.", projects, dao
 				.findByUser(project.getUserId().toUpperCase()));
 	}
 
@@ -401,22 +397,21 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void findByUser5() throws DAOException {
-		Project project2 = new Project();
-		project2.setUserId(UNUSED_USER_ID);
-		project2.setName(UNUSED_NAME);
-		project2.setFiles(null);
+		Project project2 = new Project(UNUSED_USER_ID, UNUSED_NAME);
 		dao.save(project);
 		dao.save(project2);
 		List<Project> collection1 = new ArrayList<Project>(1);
 		List<Project> collection2 = new ArrayList<Project>(1);
 		collection1.add(project);
 		collection2.add(project2);
-		assertEquals(collection1, dao.findByUser(project.getUserId()));
-		assertEquals(collection1, dao.findByUser(project.getUserId()
-				.toUpperCase()));
-		assertEquals(collection2, dao.findByUser(project2.getUserId()));
-		assertEquals(collection2, dao.findByUser(project2.getUserId()
-				.toUpperCase()));
+		assertEquals("collections not equal.", collection1, dao
+				.findByUser(project.getUserId()));
+		assertEquals("user id is not case insensitive.", collection1, dao
+				.findByUser(project.getUserId().toUpperCase()));
+		assertEquals("collections not equal.", collection2, dao
+				.findByUser(project2.getUserId()));
+		assertEquals("user id is not case insensitive.", collection2, dao
+				.findByUser(project2.getUserId().toUpperCase()));
 	}
 
 	/**
@@ -429,9 +424,8 @@ public class ProjectDAOImplTest {
 		System.out.print("Prepairing Project cache test...");
 		EntityManagerUtil.currentEntityManager();
 		for (int i = 0; i < 500; i++) {
-			Project p = new Project();
-			p.setUserId(USER_ID);
-			p.setName("name" + (i + 1));
+			String name = "name" + (i + 1);
+			Project p = new Project(USER_ID, name);
 			dao.save(p);
 		}
 		EntityManagerUtil.closeEntityManager();
@@ -458,7 +452,60 @@ public class ProjectDAOImplTest {
 			long end = System.currentTimeMillis();
 			System.out.println("Project.findByUser() - query cache test: "
 					+ (end - start) + "ms");
-			assertNotSame(null, projects);
+			assertNotNull("projects are null", projects);
+		}
+		/*
+		 * Pause so user can view statistics in jconsole
+		 */
+		Thread.sleep(Long.MAX_VALUE);
+	}
+
+	/**
+	 * Test to see if hibernate second level collection cache is working
+	 */
+	@Ignore("already tested")
+	@Test
+	public void collectionLazyLoadingTest() throws Exception {
+		// prepair test by storing 500 files in database
+		System.out.print("Prepairing Project cache collection test...");
+		for (int i = 0; i < 500; i++) {
+			String name = "name" + (i + 1);
+			new File(project, name, FileTypes.VHDL_SOURCE, "abcdef");
+		}
+		EntityManagerUtil.currentEntityManager();
+		dao.save(project);
+		EntityManagerUtil.closeEntityManager();
+		System.out.println("done");
+		/*
+		 * Register hibernate statistics service to see if second level cache is
+		 * working.
+		 */
+		EntityManagerUtil.registerPersistenceJMX();
+
+		/*
+		 * Actual test (not automated - requires user interaction). Note that
+		 * caching behavioral can't be determined just by looking at spent time.
+		 * One reason for this is because above test preparation indirectly
+		 * populates caches. On the other hand by simply viewing statistics of
+		 * persistence provider user can be sure that caches are working.
+		 * jconsole tool will help with that.
+		 * 
+		 * Also note that lazy loading will have to be disabled in order to
+		 * preform this test!
+		 */
+		for (int i = 0; i < 5; i++) {
+			EntityManagerUtil.currentEntityManager();
+			long start = System.currentTimeMillis();
+			Project p = dao.load(project.getId());
+			for (File f : p) {
+				assertNotNull("file id is null.", f.getId());
+				assertNotNull("file name is null.", f.getName());
+			}
+			EntityManagerUtil.closeEntityManager();
+			long end = System.currentTimeMillis();
+			System.out.println("Project.files - cache test: " + (end - start)
+					+ "ms");
+			assertNotNull("project is null", p);
 		}
 		/*
 		 * Pause so user can view statistics in jconsole
@@ -475,11 +522,8 @@ public class ProjectDAOImplTest {
 		// prepair test by storing 500 files in database
 		System.out.print("Prepairing Project cache collection test...");
 		for (int i = 0; i < 500; i++) {
-			File f = new File();
-			f.setName("name" + (i + 1));
-			f.setType("file.type");
-			f.setContent("abcdef");
-			project.addFile(f);
+			String name = "name" + (i + 1);
+			new File(project, name, FileTypes.VHDL_SOURCE, "abcdef");
 		}
 		EntityManagerUtil.currentEntityManager();
 		dao.save(project);
@@ -510,11 +554,12 @@ public class ProjectDAOImplTest {
 			long end = System.currentTimeMillis();
 			System.out.println("Project.files - cache test: " + (end - start)
 					+ "ms");
-			assertNotSame(null, p);
+			assertNotNull("project is null", p);
 		}
 		/*
 		 * Pause so user can view statistics in jconsole
 		 */
 		Thread.sleep(Long.MAX_VALUE);
 	}
+
 }

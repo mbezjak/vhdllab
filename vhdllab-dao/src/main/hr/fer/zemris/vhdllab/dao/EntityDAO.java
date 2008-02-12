@@ -13,25 +13,11 @@ package hr.fer.zemris.vhdllab.dao;
 public interface EntityDAO<T> {
 
 	/**
-	 * Creates a new entity. All constraints are defined in entity itself
-	 * through <code>javax.persistence</code> annotations.
+	 * Saves or updates an existing entity. All constraints are defined in
+	 * entity itself through <code>javax.persistence</code> annotations.
 	 * 
 	 * @param entity
-	 *            an entity that will be created
-	 * @throws DAOException
-	 *             if exceptional condition occurs
-	 * @throws NullPointerException
-	 *             if <code>entity</code> is <code>null</code>
-	 */
-	void create(T entity) throws DAOException;
-
-	/**
-	 * Updates an existing entity. If entity doesn't exist then this method will
-	 * throw <code>DAOException</code>. All constraints are defined in entity
-	 * itself through <code>javax.persistence</code> annotations.
-	 * 
-	 * @param entity
-	 *            an entity that will be updated
+	 *            an entity that will be saved or updated
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 * @throws NullPointerException

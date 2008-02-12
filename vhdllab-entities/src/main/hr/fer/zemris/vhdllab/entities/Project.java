@@ -1,14 +1,11 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import java.util.Set;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
@@ -28,57 +25,87 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		@NamedQuery(name = Project.FIND_BY_NAME_QUERY, query = "select p from Project as p where p.userId = :userId and p.name = :name order by p.id"),
 		@NamedQuery(name = Project.FIND_BY_USER_QUERY, query = "select p from Project as p where p.userId = :userId order by p.id") })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Project extends Container<File, Project> {
+public class Project extends Container<File, Project> implements Ownable {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * A named query for finding projects by name.
+	 */
 	public static final String FIND_BY_NAME_QUERY = "project.find.by.name";
+	/**
+	 * A named query for finding all projects containing specified userId.
+	 */
 	public static final String FIND_BY_USER_QUERY = "project.find.by.user";
-	
+
+	@Basic
+	@Column(name = "userId", length = 255, nullable = false, updatable = false)
 	private String userId;
 
-	public Project() {
+	/**
+	 * Constructor for persistence provider.
+	 */
+	Project() {
 		super();
 	}
 
+	/**
+	 * Creates a project with specified userId and name.
+	 * 
+	 * @param userId
+	 *            a user identifier that this user files belongs to
+	 * @param name
+	 *            a name of a project
+	 * @throws NullPointerException
+	 *             if either parameter is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if either parameter is too long
+	 * @see #NAME_LENGTH
+	 */
+	public Project(String userId, String name) {
+		super(name);
+		if (userId == null) {
+			throw new NullPointerException("User identifier cant be null");
+		}
+		if (userId.length() > USER_ID_LENGTH) {
+			throw new IllegalArgumentException("User identifier must be <= "
+					+ USER_ID_LENGTH + " but was: " + userId.length());
+		}
+		this.userId = userId;
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param p
+	 *            a project object to duplicate
+	 * @throws NullPointerException
+	 *             if <code>p</code> is <code>null</code>
+	 */
 	public Project(Project p) {
 		super(p);
 		this.userId = p.getUserId();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.entities.Ownable#getUserId()
+	 */
 	@Override
-	public void addChild(File child) {
-		/*
-		 * Overridden method to set parent for a child
-		 */
-		super.addChild(child);
-		child.setParent(this);
-	}
-
-	public void addFile(File f) {
-		addChild(f);
-	}
-
-	public void removeFile(File f) {
-		removeChild(f);
-	}
-
-	@Transient
-	public Set<File> getFiles() {
-		return getChildren();
-	}
-	
-	public void setFiles(Set<File> files) {
-		setChildren(files);
-	}
-
-	@Basic
-	@Column(name = "userId", length = 255, nullable = false, updatable = false)
 	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	/**
+	 * Removes a file from this project.
+	 * 
+	 * @param f
+	 *            a file to remove
+	 * @throws NullPointerException
+	 *             is <code>f</code> is <code>null</code>
+	 */
+	public void removeFile(File f) {
+		removeChild(f);
 	}
 
 	/*
@@ -172,7 +199,7 @@ public class Project extends Container<File, Project> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(30 + getFiles().size() * 30);
+		StringBuilder sb = new StringBuilder(30 + getChildren().size() * 30);
 		sb.append("Project [").append(super.toString()).append("]");
 		return sb.toString();
 	}

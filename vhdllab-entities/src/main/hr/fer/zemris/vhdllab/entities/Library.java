@@ -1,11 +1,11 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import java.util.Set;
+import javax.persistence.Entity;
 
 /**
  * A library is a collection of library files. Libraries are stored on file
  * system and for that a custom dao implementation is written. Because of that
- * this class is not an entity!
+ * this class is not an entity (at least not {@link Entity})!
  * 
  * @author Miro Bezjak
  * @since 31/1/2008
@@ -15,37 +15,50 @@ public class Library extends Container<LibraryFile, Library> {
 
 	private static final long serialVersionUID = 1L;
 
-	public Library() {
+	/**
+	 * Constructor for persistence provider.
+	 */
+	Library() {
 		super();
 	}
 
+	/**
+	 * Creates a library with specified name.
+	 * 
+	 * @param name
+	 *            a name of a library
+	 * @throws NullPointerException
+	 *             if <code>name</code> is <code>null</code>
+	 * @throws IllegalArgumentException
+	 *             if <code>name</code> is too long
+	 * @see #NAME_LENGTH
+	 */
+	public Library(String name) {
+		super(name);
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param l
+	 *            a library object to duplicate
+	 * @throws NullPointerException
+	 *             if <code>l</code> is <code>null</code>
+	 */
 	public Library(Library l) {
 		super(l);
 	}
-
-	@Override
-	public void addChild(LibraryFile child) {
-		/*
-		 * Overridden method to set parent for a child
-		 */
-		super.addChild(child);
-		child.setParent(this);
-	}
-
-	public void addLibraryFile(LibraryFile f) {
-		addChild(f);
-	}
-
+	
+	/**
+	 * Removes a file from this library.
+	 * 
+	 * @param f
+	 *            a library file to remove
+	 * @throws NullPointerException
+	 *             is <code>f</code> is <code>null</code>
+	 */
 	public void removeLibraryFile(LibraryFile f) {
 		removeChild(f);
-	}
-
-	public Set<LibraryFile> getLibraryFiles() {
-		return getChildren();
-	}
-
-	public void setLibraryFiles(Set<LibraryFile> files) {
-		setChildren(files);
 	}
 
 	/*
@@ -75,7 +88,7 @@ public class Library extends Container<LibraryFile, Library> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(30 + getLibraryFiles().size() * 30);
+		StringBuilder sb = new StringBuilder(30 + getChildren().size() * 30);
 		sb.append("Library [").append(super.toString()).append("]");
 		return sb.toString();
 	}
