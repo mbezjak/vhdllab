@@ -35,4 +35,14 @@ public class FileTypes {
 	 */
 	public static final String VHDL_AUTOMATON = "vhdl.automaton";
 
+	/**
+	 * A user preferences file type.
+	 */
+	public static final String PREFERENCES_USER = "preferences.user";
+	
+	/**
+	 * A global preferences file type.
+	 */
+	public static final String PREFERENCES_GLOBAL = "preferences.global";
+	
 }

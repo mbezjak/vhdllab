@@ -20,6 +20,9 @@ public interface EntityDAO<T> {
 	 *            an entity that will be saved or updated
 	 * @throws DAOException
 	 *             if exceptional condition occurs
+	 * @throws UnsupportedOperationException
+	 *             if implementation doesn't support writing (persisting) an
+	 *             entity
 	 * @throws NullPointerException
 	 *             if <code>entity</code> is <code>null</code>
 	 */
@@ -62,6 +65,9 @@ public interface EntityDAO<T> {
 	 *            an identifier of an entity to delete
 	 * @throws DAOException
 	 *             if exceptional condition occurs
+	 * @throws UnsupportedOperationException
+	 *             if implementation doesn't support writing (persisting) an
+	 *             entity
 	 * @throws NullPointerException
 	 *             if <code>id</code> is <code>null</code>
 	 */

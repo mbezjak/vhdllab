@@ -60,7 +60,7 @@ public class Library extends Container<LibraryFile, Library> {
 	 * @throws NullPointerException
 	 *             is <code>f</code> is <code>null</code>
 	 */
-	public void removeLibraryFile(LibraryFile f) {
+	public void removeFile(LibraryFile f) {
 		removeChild(f);
 	}
 
@@ -72,7 +72,7 @@ public class Library extends Container<LibraryFile, Library> {
 	 * 
 	 * @return an unmodifiable set of library files
 	 */
-	public Set<LibraryFile> getLibraryFiles() {
+	public Set<LibraryFile> getFiles() {
 		return Collections.unmodifiableSet(getChildren());
 	}
 

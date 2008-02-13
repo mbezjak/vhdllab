@@ -68,7 +68,7 @@ public class LibraryTest {
 	 */
 	@Test(expected = UnsupportedOperationException.class)
 	public void getLibraryFiles() throws Exception {
-		Set<LibraryFile> files = lib.getLibraryFiles();
+		Set<LibraryFile> files = lib.getFiles();
 		Library newLibrary = new Library("new.library.name");
 		LibraryFile newFile = new LibraryFile(newLibrary, "new.file.name",
 				"new.file.type");

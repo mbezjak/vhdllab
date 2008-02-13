@@ -12,6 +12,7 @@
 				value="com.mysql.jdbc.Driver" />
 			<property name="hibernate.connection.provider_class"
 				value="org.hibernate.connection.DBCPConnectionProvider" />
+			<property name="hibernate.connection.pool_size" value="20" />
 			<property name="hibernate.connection.username" value="test" />
 			<property name="hibernate.connection.password" value="a" />
 			<property name="hibernate.connection.url"

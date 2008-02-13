@@ -113,10 +113,19 @@ public class ProjectDAOImplTest {
 	}
 
 	/**
+	 * Cascade to saving files when creating a project
+	 */
+	@Test
+	public void save3() throws DAOException {
+		dao.save(project);
+		assertTrue("file not saved.", fileDAO.exists(file.getId()));
+	}
+	
+	/**
 	 * Project name and user id are unique (i.e. form secondary key)
 	 */
 	@Test
-	public void save3() throws Exception {
+	public void save4() throws Exception {
 		dao.save(project);
 		Project newProject = new Project(USER_ID, NAME);
 		try {
@@ -130,10 +139,10 @@ public class ProjectDAOImplTest {
 	}
 
 	/**
-	 * Save a file with same user id but different name
+	 * Save a project with same user id but different name
 	 */
 	@Test
-	public void save4() throws Exception {
+	public void save5() throws Exception {
 		dao.save(project);
 		Project newProject = new Project(USER_ID, NEW_NAME);
 		dao.save(newProject);
@@ -146,7 +155,7 @@ public class ProjectDAOImplTest {
 	 * Save a project with same name but different user id
 	 */
 	@Test
-	public void save8() throws Exception {
+	public void save6() throws Exception {
 		dao.save(project);
 		Project newProject = new Project(NEW_USER_ID, NAME);
 		dao.save(newProject);
@@ -159,7 +168,7 @@ public class ProjectDAOImplTest {
 	 * add a file after a project is saved
 	 */
 	@Test
-	public void save9() throws DAOException {
+	public void save7() throws DAOException {
 		dao.save(project);
 		File newFile = new File(project, "new.file.name", "new.file.type");
 		dao.save(project);
@@ -174,11 +183,20 @@ public class ProjectDAOImplTest {
 	}
 
 	/**
+	 * Id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void load() throws Exception {
+		dao.load(null);
+	}
+
+	/**
 	 * save a project then delete it
 	 */
 	@Test
 	public void delete() throws DAOException {
 		dao.save(project);
+		assertTrue("project not saved.", dao.exists(project.getId()));
 		dao.delete(project.getId());
 		assertFalse("project still exists.", dao.exists(project.getId()));
 		assertFalse("project still exists.", dao.exists(project.getUserId(),
@@ -187,11 +205,12 @@ public class ProjectDAOImplTest {
 	}
 
 	/**
-	 * remove a file form a project then save project
+	 * remove a file from a project then save project
 	 */
 	@Test
 	public void delete2() throws DAOException {
 		dao.save(project);
+		assertTrue("file not saved.", fileDAO.exists(file.getId()));
 		project.removeFile(file);
 		assertNull("file not removed from collection.", file.getProject());
 		assertFalse("file still in collection.", project.getFiles().contains(
@@ -203,10 +222,35 @@ public class ProjectDAOImplTest {
 	}
 
 	/**
-	 * user id is null
+	 * id is null
 	 */
 	@Test(expected = NullPointerException.class)
 	public void exists() throws DAOException {
+		dao.exists((Long)null);
+	}
+
+	/**
+	 * non-existing id
+	 */
+	@Test
+	public void exists2() throws DAOException {
+		assertFalse("project exists.", dao.exists(Long.MAX_VALUE));
+	}
+	
+	/**
+	 * everything ok
+	 */
+	@Test
+	public void exists3() throws DAOException {
+		dao.save(project);
+		assertTrue("project doesn't exist.", dao.exists(project.getId()));
+	}
+	
+	/**
+	 * user id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void exists4() throws DAOException {
 		dao.exists(null, NAME);
 	}
 
@@ -214,7 +258,7 @@ public class ProjectDAOImplTest {
 	 * name is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists2() throws DAOException {
+	public void exists5() throws DAOException {
 		dao.exists(USER_ID, null);
 	}
 
@@ -222,7 +266,7 @@ public class ProjectDAOImplTest {
 	 * non-existing name and user id
 	 */
 	@Test
-	public void exists3() throws DAOException {
+	public void exists6() throws DAOException {
 		assertFalse("file exists when it shouldn't.", dao.exists(NEW_USER_ID,
 				NAME));
 		assertFalse("file exists when it shouldn't.", dao.exists(USER_ID,
@@ -233,7 +277,7 @@ public class ProjectDAOImplTest {
 	 * everything ok
 	 */
 	@Test
-	public void exists4() throws DAOException {
+	public void exists7() throws DAOException {
 		dao.save(project);
 		assertTrue("project doesn't exist.", dao.exists(project.getId()));
 		assertTrue("project doesn't exist.", dao.exists(project.getUserId(),
@@ -262,17 +306,31 @@ public class ProjectDAOImplTest {
 	/**
 	 * non-existing user id
 	 */
-	@Test(expected = DAOException.class)
+	@Test
 	public void findByName3() throws DAOException {
-		dao.findByName(NEW_USER_ID, NAME);
+		try {
+			dao.findByName(NEW_USER_ID, NAME);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_DOESNT_EXIST) {
+				fail("Invalid status code in DAOException");
+			}
+		}
 	}
 
 	/**
 	 * non-existing name
 	 */
-	@Test(expected = DAOException.class)
+	@Test
 	public void findByName4() throws DAOException {
-		dao.findByName(USER_ID, NEW_NAME);
+		try {
+			dao.findByName(USER_ID, NEW_NAME);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_DOESNT_EXIST) {
+				fail("Invalid status code in DAOException");
+			}
+		}
 	}
 
 	/**

@@ -90,6 +90,7 @@ public class FileDAOImplTest {
 		assertEquals("file not equal after creating and loading it.", file,
 				loadedFile);
 		assertEquals("names are not same.", NAME, loadedFile.getName());
+		assertEquals("projects are not same.", project, loadedFile.getProject());
 	}
 
 	/**
@@ -222,11 +223,20 @@ public class FileDAOImplTest {
 	}
 
 	/**
+	 * Id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void load() throws Exception {
+		dao.load(null);
+	}
+
+	/**
 	 * Save a file then delete it
 	 */
 	@Test
 	public void delete() throws Exception {
 		dao.save(file);
+		assertTrue("file not saved.", dao.exists(file.getId()));
 		dao.delete(file.getId());
 		assertFalse("file exists after it was deleted.", dao.exists(file
 				.getId()));
@@ -235,10 +245,35 @@ public class FileDAOImplTest {
 	}
 
 	/**
-	 * project id is null
+	 * id is null
 	 */
 	@Test(expected = NullPointerException.class)
 	public void exists() throws DAOException {
+		dao.exists((Long) null);
+	}
+
+	/**
+	 * non-existing id
+	 */
+	@Test
+	public void exists2() throws DAOException {
+		assertFalse("file exists.", dao.exists(Long.MAX_VALUE));
+	}
+
+	/**
+	 * everything ok
+	 */
+	@Test
+	public void exists3() throws DAOException {
+		dao.save(file);
+		assertTrue("file doesn't exist.", dao.exists(file.getId()));
+	}
+
+	/**
+	 * project id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void exists4() throws DAOException {
 		dao.exists(null, NAME);
 	}
 
@@ -246,7 +281,7 @@ public class FileDAOImplTest {
 	 * name is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists2() throws DAOException {
+	public void exists5() throws DAOException {
 		dao.exists(file.getProject().getId(), null);
 	}
 
@@ -254,7 +289,7 @@ public class FileDAOImplTest {
 	 * non-existing project id and name
 	 */
 	@Test
-	public void exists3() throws Exception {
+	public void exists6() throws Exception {
 		assertFalse("file with unused project id exists.", dao.exists(
 				NEW_PROJECT_ID, NAME));
 		assertFalse("file with unused name exists.", dao.exists(
@@ -265,7 +300,7 @@ public class FileDAOImplTest {
 	 * everything ok
 	 */
 	@Test
-	public void exists4() throws Exception {
+	public void exists7() throws Exception {
 		dao.save(file);
 		assertTrue("file doesn't exists after creation.", dao.exists(file
 				.getId()));
@@ -294,17 +329,31 @@ public class FileDAOImplTest {
 	/**
 	 * non-existing project id
 	 */
-	@Test(expected = DAOException.class)
+	@Test
 	public void findByName3() throws DAOException {
-		dao.findByName(NEW_PROJECT_ID, NAME);
+		try {
+			dao.findByName(NEW_PROJECT_ID, NAME);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_DOESNT_EXIST) {
+				fail("Invalid status code in DAOException");
+			}
+		}
 	}
 
 	/**
 	 * non-existing name
 	 */
-	@Test(expected = DAOException.class)
+	@Test
 	public void findByName4() throws DAOException {
-		dao.findByName(file.getProject().getId(), NEW_NAME);
+		try {
+			dao.findByName(file.getProject().getId(), NEW_NAME);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_DOESNT_EXIST) {
+				fail("Invalid status code in DAOException");
+			}
+		}
 	}
 
 	/**

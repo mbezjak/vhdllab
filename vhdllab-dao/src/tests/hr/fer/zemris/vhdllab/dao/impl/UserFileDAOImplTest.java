@@ -184,11 +184,20 @@ public class UserFileDAOImplTest {
 	}
 
 	/**
+	 * Id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void load() throws Exception {
+		dao.load(null);
+	}
+
+	/**
 	 * Save a file then delete it
 	 */
 	@Test
 	public void delete() throws Exception {
 		dao.save(file);
+		assertTrue("file not saved.", dao.exists(file.getId()));
 		dao.delete(file.getId());
 		assertFalse("file exists after it was deleted.", dao.exists(file
 				.getId()));
@@ -197,10 +206,35 @@ public class UserFileDAOImplTest {
 	}
 
 	/**
+	 * id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void exists() throws DAOException {
+		dao.exists((Long)null);
+	}
+
+	/**
+	 * non-existing id
+	 */
+	@Test
+	public void exists2() throws DAOException {
+		assertFalse("file exists.", dao.exists(Long.MAX_VALUE));
+	}
+	
+	/**
+	 * everything ok
+	 */
+	@Test
+	public void exists3() throws DAOException {
+		dao.save(file);
+		assertTrue("file doesn't exist.", dao.exists(file.getId()));
+	}
+	
+	/**
 	 * user id is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists() throws Exception {
+	public void exists4() throws Exception {
 		dao.exists(null, NAME);
 	}
 
@@ -208,7 +242,7 @@ public class UserFileDAOImplTest {
 	 * name is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists2() throws Exception {
+	public void exists5() throws Exception {
 		dao.exists(USER_ID, null);
 	}
 
@@ -216,7 +250,7 @@ public class UserFileDAOImplTest {
 	 * non-existing name and user id
 	 */
 	@Test
-	public void exists3() throws Exception {
+	public void exists6() throws Exception {
 		assertFalse("file with unused user id exists.", dao.exists(NEW_USER_ID,
 				NAME));
 		assertFalse("file with unused name exists.", dao.exists(USER_ID,
@@ -227,7 +261,7 @@ public class UserFileDAOImplTest {
 	 * everything ok
 	 */
 	@Test
-	public void exists4() throws Exception {
+	public void exists7() throws Exception {
 		dao.save(file);
 		assertTrue("file doesn't exists after creation.", dao.exists(file
 				.getId()));
@@ -257,17 +291,31 @@ public class UserFileDAOImplTest {
 	/**
 	 * non-existing user id
 	 */
-	@Test(expected = DAOException.class)
+	@Test
 	public void findByName3() throws Exception {
-		dao.findByName(NEW_USER_ID, NAME);
+		try {
+			dao.findByName(NEW_USER_ID, NAME);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_DOESNT_EXIST) {
+				fail("Invalid status code in DAOException");
+			}
+		}
 	}
 
 	/**
 	 * non-existing name
 	 */
-	@Test(expected = DAOException.class)
+	@Test
 	public void findByName4() throws Exception {
-		dao.findByName(USER_ID, NEW_NAME);
+		try {
+			dao.findByName(USER_ID, NEW_NAME);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_DOESNT_EXIST) {
+				fail("Invalid status code in DAOException");
+			}
+		}
 	}
 
 	/**
