@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Before;
@@ -49,19 +48,7 @@ public class LibraryTest {
 		lib2 = new Library(lib);
 
 		file = new LibraryFile(lib, "file.name", "file.type", "file.content");
-		injectValueToPrivateField(file, "id", Long.valueOf(10));
-		injectValueToPrivateField(file, "created", new Date());
 		new LibraryFile(file, lib2);
-		
-		// not same because file was added when id was not set. so now it has
-		// different hash code.
-		assertNotSame("files are equal.", lib.getChildren(), lib2
-				.getChildren());
-		Set<LibraryFile> set = new HashSet<LibraryFile>();
-		set.add(file);
-		injectValueToPrivateField(lib, "children", set);
-		assertEquals("children not same.", lib.getChildren(), lib2
-				.getChildren());
 	}
 
 	/**
@@ -74,6 +61,18 @@ public class LibraryTest {
 		assertEquals("hashCode not same.", lib.hashCode(), lib2.hashCode());
 		assertEquals("not equal by compareTo.", 0, lib.compareTo(lib2));
 		assertEquals("files not same.", lib.getChildren(), lib2.getChildren());
+	}
+
+	/**
+	 * Test if returned set is modifiable
+	 */
+	@Test(expected = UnsupportedOperationException.class)
+	public void getLibraryFiles() throws Exception {
+		Set<LibraryFile> files = lib.getLibraryFiles();
+		Library newLibrary = new Library("new.library.name");
+		LibraryFile newFile = new LibraryFile(newLibrary, "new.file.name",
+				"new.file.type");
+		files.add(newFile);
 	}
 
 	/**

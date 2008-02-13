@@ -1,20 +1,22 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
-import static hr.fer.zemris.vhdllab.dao.impl.StringGenerationUtil.generateJunkString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
-
-import java.util.HashSet;
+import hr.fer.zemris.vhdllab.server.FileTypes;
+import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -25,16 +27,12 @@ import org.junit.Test;
 public class FileDAOImplTest {
 
 	private static final String NAME = "simple.file.name";
-	private static final String TYPE = "simple.file.type";
+	private static final String TYPE = FileTypes.VHDL_SCHEMA;
 	private static final String USER_ID = "user.identifier";
-	private static final Long UNUSED_ID = Long.valueOf(Long.MAX_VALUE);
-	private static final Long UNUSED_PROJECT_ID = Long
-			.valueOf(Long.MAX_VALUE - 1);
-	private static final String UNUSED_NAME = "unused.name";
-	private static final String UNUSED_TYPE = "unused.type";
-	private static final int MAX_NAME_LENGTH = 255;
-	private static final int MAX_TYPE_LENGTH = MAX_NAME_LENGTH;
-	private static final int MAX_CONTENT_LENGTH = 16000000;
+	private static final String CONTENT = "<pref><value>schematic</value></pref>";
+	private static final Long NEW_PROJECT_ID = Long.valueOf(Long.MAX_VALUE);
+	private static final String NEW_NAME = "new." + NAME;
+	private static final String NEW_CONTENT = "library ieee;";
 
 	private static FileDAO dao;
 	private static ProjectDAO projectDAO;
@@ -56,18 +54,12 @@ public class FileDAOImplTest {
 	}
 
 	private void initFiles() throws DAOException {
-		project = new Project();
-		project.setName("project.name");
-		project.setUserId(USER_ID);
+		project = new Project(USER_ID, "project.name");
 		EntityManagerUtil.currentEntityManager();
 		projectDAO.save(project);
 		EntityManagerUtil.closeEntityManager();
 
-		file = new File();
-		file.setName(NAME);
-		file.setType(TYPE);
-		file.setContent("<file>int main() {}</file>");
-		project.addFile(file);
+		file = new File(project, NAME, TYPE, CONTENT);
 	}
 
 	@After
@@ -95,19 +87,151 @@ public class FileDAOImplTest {
 	public void saveAndLoad() throws DAOException {
 		dao.save(file);
 		File loadedFile = dao.load(file.getId());
-		assertEquals(file, loadedFile);
+		assertEquals("file not equal after creating and loading it.", file,
+				loadedFile);
+		assertEquals("names are not same.", NAME, loadedFile.getName());
 	}
 
 	/**
-	 * save a file then delete it
+	 * File is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void save() throws DAOException {
+		dao.save(null);
+	}
+
+	/**
+	 * Once file is persisted an ID is no longer null
+	 */
+	@Test()
+	public void save2() throws DAOException {
+		assertNull("file has id set.", file.getId());
+		dao.save(file);
+		assertNotNull("file id wasn't set after creation.", file.getId());
+	}
+
+	/**
+	 * File content can be a part of update statement
 	 */
 	@Test
-	public void delete() throws DAOException {
+	public void save3() throws Exception {
+		dao.save(file);
+		file.setContent(NEW_CONTENT);
+		dao.save(file);
+		assertEquals("files not same after content was updated.", file, dao
+				.load(file.getId()));
+	}
+
+	/**
+	 * File type can't be any string. Must be only one of registered file types.
+	 */
+	@Test
+	public void save4() throws Exception {
+		dao.save(file);
+		File newFile = new File(project, NAME, "invalid.file.type", CONTENT);
+		try {
+			dao.save(newFile);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_INVALID_FILE_TYPE) {
+				fail("Invalid status code in DAOException");
+			}
+		}
+	}
+
+	/**
+	 * non-existing project (can't cascade to persist a project)
+	 */
+	@Test(expected = DAOException.class)
+	public void save5() throws DAOException {
+		Project newProject = new Project(USER_ID, "new.project.name");
+		File newFile = new File(file, newProject);
+		dao.save(newFile);
+	}
+
+	/**
+	 * If project is saved then file can be persisted
+	 */
+	@Test
+	public void save6() throws DAOException {
+		Project newProject = new Project(USER_ID, "new.project.name");
+		projectDAO.save(newProject);
+		File newFile = new File(file, newProject);
+		dao.save(newFile);
+		assertTrue("file doesn't exist.", dao.exists(newFile.getId()));
+		assertTrue("file doesn't exist.", dao.exists(newProject.getId(),
+				newFile.getName()));
+		Project loadedProject = projectDAO.load(newProject.getId());
+		assertTrue("collection isn't updated.", loadedProject.getFiles()
+				.contains(newFile));
+	}
+
+	/**
+	 * File name and project id are unique (i.e. form secondary key)
+	 */
+	@Test
+	public void save7() throws Exception {
+		dao.save(file);
+		File newFile = new File(project, file.getName(), TYPE, CONTENT);
+		try {
+			dao.save(newFile);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_ALREADY_EXISTS) {
+				fail("Invalid status code in DAOException");
+			}
+		}
+	}
+
+	/**
+	 * Save a file with same project but different name
+	 */
+	@Test
+	public void save8() throws Exception {
+		dao.save(file);
+		File newFile = new File(project, NEW_NAME, TYPE, CONTENT);
+		dao.save(newFile);
+		assertTrue("new file not saved.", dao.exists(newFile.getId()));
+		assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
+	}
+
+	/**
+	 * Save a file with same name but different project
+	 */
+	@Test
+	public void save9() throws Exception {
+		dao.save(file);
+		Project newProject = new Project(USER_ID, "new.project.name");
+		projectDAO.save(newProject);
+		File newFile = new File(newProject, NAME, TYPE, CONTENT);
+		dao.save(file);
+		assertTrue("new file not saved.", dao.exists(newFile.getId()));
+		assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
+	}
+
+	/**
+	 * save a file then update it
+	 */
+	@Test
+	public void save10() throws DAOException {
+		dao.save(file);
+		file.setContent("abc");
+		dao.save(file);
+		assertTrue("file doesn't exist.", dao.exists(file.getId()));
+		assertEquals("file not updated.", file, dao.load(file.getId()));
+	}
+
+	/**
+	 * Save a file then delete it
+	 */
+	@Test
+	public void delete() throws Exception {
 		dao.save(file);
 		dao.delete(file.getId());
-		assertEquals(false, dao.exists(file.getId()));
-		assertEquals(false, dao.exists(file.getProject().getId(), file
-				.getName()));
+		assertFalse("file exists after it was deleted.", dao.exists(file
+				.getId()));
+		assertFalse("file exists after it was deleted.", dao.exists(project
+				.getId(), file.getName()));
 	}
 
 	/**
@@ -130,203 +254,25 @@ public class FileDAOImplTest {
 	 * non-existing project id and name
 	 */
 	@Test
-	public void exists3() throws DAOException {
-		assertEquals(false, dao.exists(UNUSED_PROJECT_ID, file.getName()));
-		assertEquals(false, dao.exists(file.getProject().getId(), UNUSED_NAME));
+	public void exists3() throws Exception {
+		assertFalse("file with unused project id exists.", dao.exists(
+				NEW_PROJECT_ID, NAME));
+		assertFalse("file with unused name exists.", dao.exists(
+				project.getId(), NEW_NAME));
 	}
 
 	/**
 	 * everything ok
 	 */
 	@Test
-	public void exists4() throws DAOException {
+	public void exists4() throws Exception {
 		dao.save(file);
-		assertEquals(true, dao.exists(file.getId()));
-		assertEquals(true, dao
-				.exists(file.getProject().getId(), file.getName()));
-		assertEquals(true, dao.exists(file.getProject().getId(), file.getName()
-				.toUpperCase()));
-	}
-
-	/**
-	 * Once file is persisted an ID is no longer null
-	 */
-	@Test()
-	public void save() throws DAOException {
-		assertEquals(null, file.getId());
-		dao.save(file);
-		assertNotSame(null, file.getId());
-	}
-
-	/**
-	 * ID can't be a part of insert statement
-	 */
-	@Test(expected = DAOException.class)
-	public void save2() throws DAOException {
-		file.setId(UNUSED_ID);
-		dao.save(file);
-	}
-
-	/**
-	 * ID can't be a part of update statement
-	 */
-	@Test(expected = DAOException.class)
-	public void save3() throws DAOException {
-		dao.save(file);
-		file.setId(UNUSED_ID);
-		dao.save(file);
-	}
-
-	/**
-	 * name is null
-	 */
-	@Test(expected = DAOException.class)
-	public void save4() throws DAOException {
-		file.setName(null);
-		dao.save(file);
-	}
-
-	/**
-	 * name is of max length
-	 */
-	@Test()
-	public void save5() throws DAOException {
-		file.setName(generateJunkString(MAX_NAME_LENGTH));
-		dao.save(file);
-	}
-
-	/**
-	 * name is too long
-	 */
-	@Test(expected = DAOException.class)
-	public void save6() throws DAOException {
-		file.setName(generateJunkString(MAX_NAME_LENGTH + 1));
-		dao.save(file);
-	}
-
-	/**
-	 * type is null
-	 */
-	@Test(expected = DAOException.class)
-	public void save7() throws DAOException {
-		file.setType(null);
-		dao.save(file);
-	}
-
-	/**
-	 * type is of max length
-	 */
-	@Test()
-	public void save8() throws DAOException {
-		file.setType(generateJunkString(MAX_TYPE_LENGTH));
-		dao.save(file);
-	}
-
-	/**
-	 * type is too long
-	 */
-	@Test(expected = DAOException.class)
-	public void save9() throws DAOException {
-		file.setType(generateJunkString(MAX_TYPE_LENGTH + 1));
-		dao.save(file);
-	}
-
-	/**
-	 * content is null
-	 */
-	@Test
-	public void save10() throws DAOException {
-		file.setContent(null);
-		dao.save(file);
-	}
-
-	/**
-	 * content is of max length
-	 */
-	@Test()
-	public void save11() throws DAOException {
-		file.setContent(generateJunkString(MAX_CONTENT_LENGTH));
-		dao.save(file);
-	}
-
-	/**
-	 * content is too long
-	 */
-	@Test(expected = DAOException.class)
-	public void save12() throws DAOException {
-		// add 1MB to MAX_CONTENT_LENGTH to be sure
-		file.setContent(generateJunkString(MAX_CONTENT_LENGTH + 1000000));
-		dao.save(file);
-	}
-
-	/**
-	 * project is null
-	 */
-	@Test(expected = DAOException.class)
-	public void save13() throws DAOException {
-		file.setProject(null);
-		dao.save(file);
-	}
-
-	/**
-	 * non-existing project (can't cascade to persist a project)
-	 */
-	@Ignore("there is no way to implement this feature because mysql is alowing foreign reference to be set to any value")
-	@Test(expected = DAOException.class)
-	public void save14() throws DAOException {
-		Project newProject = new Project();
-		newProject.setId(UNUSED_PROJECT_ID);
-		newProject.setUserId(USER_ID);
-		newProject.setName("new.project.name");
-		newProject.addFile(file);
-		dao.save(file);
-	}
-
-	/**
-	 * project id and name are unique
-	 */
-	@Test(expected = DAOException.class)
-	public void save15() throws DAOException {
-		dao.save(file);
-		File clone = new File(file);
-		clone.setId(null);
-		clone.setType("type");
-		clone.setContent("abc");
-		dao.save(clone);
-	}
-
-	/**
-	 * save a file then update it
-	 */
-	@Test
-	public void save16() throws DAOException {
-		dao.save(file);
-		file.setName(UNUSED_NAME);
-		file.setType(UNUSED_TYPE);
-		file.setContent("abc");
-		dao.save(file);
-		assertEquals(true, dao.exists(file.getId()));
-		assertEquals(file, dao.load(file.getId()));
-	}
-
-	/**
-	 * project ID can't be updated
-	 */
-	@Test
-	public void save17() throws DAOException {
-		Project newProject = new Project(project);
-		newProject.setId(null);
-		newProject.setFiles(new HashSet<File>(0));
-		newProject.setName("new.project.name");
-		projectDAO.save(newProject);
-		dao.save(file);
-
-		newProject.addFile(file);
-		dao.save(file);
-		EntityManagerUtil.closeEntityManager();
-		EntityManagerUtil.currentEntityManager();
-		assertEquals(true, dao.exists(file.getId()));
-		assertEquals(project, dao.load(file.getId()).getProject());
+		assertTrue("file doesn't exists after creation.", dao.exists(file
+				.getId()));
+		assertTrue("file doesn't exists after creation.", dao.exists(project
+				.getId(), file.getName()));
+		assertTrue("file name is not case insensitive.", dao.exists(project
+				.getId(), file.getName().toUpperCase()));
 	}
 
 	/**
@@ -350,7 +296,7 @@ public class FileDAOImplTest {
 	 */
 	@Test(expected = DAOException.class)
 	public void findByName3() throws DAOException {
-		dao.findByName(UNUSED_PROJECT_ID, NAME);
+		dao.findByName(NEW_PROJECT_ID, NAME);
 	}
 
 	/**
@@ -358,19 +304,19 @@ public class FileDAOImplTest {
 	 */
 	@Test(expected = DAOException.class)
 	public void findByName4() throws DAOException {
-		dao.findByName(file.getProject().getId(), UNUSED_NAME);
+		dao.findByName(file.getProject().getId(), NEW_NAME);
 	}
 
 	/**
 	 * everything ok
 	 */
 	@Test
-	public void findByName5() throws DAOException {
+	public void findByName5() throws Exception {
 		dao.save(file);
-		assertEquals(file, dao.findByName(file.getProject().getId(), file
-				.getName()));
-		assertEquals(file, dao.findByName(file.getProject().getId(), file
-				.getName().toUpperCase()));
+		assertEquals("files are not same.", file, dao.findByName(project
+				.getId(), file.getName()));
+		assertEquals("file name is not case insensitive.", file, dao
+				.findByName(project.getId(), file.getName().toUpperCase()));
 	}
 
 }

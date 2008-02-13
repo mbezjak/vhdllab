@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -107,6 +110,18 @@ public class Project extends Container<File, Project> implements Ownable {
 	public void removeFile(File f) {
 		removeChild(f);
 	}
+	
+	/**
+	 * Returns an unmodifiable set of files. Return value will never be
+	 * <code>null</code>. Beware of performance penalties when using this
+	 * method. If you simply wish to iterate over a collection then used
+	 * {@link #iterator()} method instead.
+	 * 
+	 * @return an unmodifiable set of files
+	 */
+	public Set<File> getFiles() {
+		return Collections.unmodifiableSet(getChildren());
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -117,13 +132,7 @@ public class Project extends Container<File, Project> implements Ownable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		if (getId() != null) {
-			return result;
-		}
-		result = prime
-				* result
-				+ ((getUserId() == null) ? 0 : getUserId().toLowerCase()
-						.hashCode());
+		result = prime * result + getUserId().toLowerCase().hashCode();
 		return result;
 	}
 
@@ -143,16 +152,8 @@ public class Project extends Container<File, Project> implements Ownable {
 		if (!super.equals(obj)) {
 			return false;
 		}
-		if (getId() != null) {
-			return true;
-		}
 		final Project other = (Project) obj;
-		if (getUserId() == null) {
-			if (other.getUserId() != null)
-				return false;
-		} else if (!getUserId().equalsIgnoreCase(other.getUserId()))
-			return false;
-		return true;
+		return getUserId().equalsIgnoreCase(other.getUserId());
 	}
 
 	/*
@@ -171,17 +172,10 @@ public class Project extends Container<File, Project> implements Ownable {
 		}
 		final Project other = (Project) o;
 		int val = super.compareTo(other);
-		if (getId() != null || val != 0) {
+		if (val != 0) {
 			return val;
 		}
-		if (getUserId() == null) {
-			if (other.getUserId() != null)
-				return -1;
-		} else if (other.getUserId() == null) {
-			return 1;
-		} else {
-			val = getUserId().compareToIgnoreCase(other.getUserId());
-		}
+		val = getUserId().compareToIgnoreCase(other.getUserId());
 
 		if (val < 0) {
 			return -1;

@@ -111,16 +111,15 @@ public class UserFileDAOImplTest {
 	}
 
 	/**
-	 * File name and content can be a part of update statement
+	 * File content can be a part of update statement
 	 */
 	@Test
 	public void save3() throws Exception {
 		dao.save(file);
-		file.setName(NEW_NAME);
-		file.setName(NEW_CONTENT);
+		file.setContent(NEW_CONTENT);
 		dao.save(file);
-		assertEquals("files not same after name and content was updated.",
-				file, dao.load(file.getId()));
+		assertEquals("files not same after content was updated.", file, dao
+				.load(file.getId()));
 	}
 
 	/**
@@ -130,7 +129,7 @@ public class UserFileDAOImplTest {
 	public void save4() throws Exception {
 		dao.save(file);
 		UserFile newFile = new UserFile(USER_ID, NAME, "invalid.file.type",
-				NEW_CONTENT);
+				CONTENT);
 		try {
 			dao.save(newFile);
 			fail("Expected DAOException");
@@ -159,28 +158,13 @@ public class UserFileDAOImplTest {
 	}
 
 	/**
-	 * File name and user id are unique (i.e. form secondary key)
+	 * Save a file with same user id but different name
 	 */
-	@Test(expected = DAOException.class)
+	@Test
 	public void save6() throws Exception {
 		dao.save(file);
 		UserFile newFile = new UserFile(USER_ID, NEW_NAME, NEW_TYPE,
 				NEW_CONTENT);
-		dao.save(newFile);
-		newFile.setName(NAME);
-		dao.save(newFile);
-	}
-
-	/**
-	 * Save a file with same user id but different name
-	 */
-	@Test
-	public void save7() throws Exception {
-		dao.save(file);
-		UserFile newFile = new UserFile(USER_ID, NEW_NAME, NEW_TYPE,
-				NEW_CONTENT);
-		dao.save(newFile);
-		newFile.setName("different.file.name");
 		dao.save(newFile);
 		assertTrue("new file not saved.", dao.exists(newFile.getId()));
 		assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
@@ -190,7 +174,7 @@ public class UserFileDAOImplTest {
 	 * Save a file with same name but different user id
 	 */
 	@Test
-	public void save8() throws Exception {
+	public void save7() throws Exception {
 		dao.save(file);
 		UserFile newFile = new UserFile(NEW_USER_ID, NAME, NEW_TYPE,
 				NEW_CONTENT);

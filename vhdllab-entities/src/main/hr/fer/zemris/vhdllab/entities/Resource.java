@@ -58,6 +58,7 @@ class Resource implements Serializable, Comparable<Resource> {
 	 * Constructor for persistence provider.
 	 */
 	Resource() {
+		super();
 	}
 
 	/**
@@ -98,6 +99,13 @@ class Resource implements Serializable, Comparable<Resource> {
 	 * @see #CONTENT_LENGTH
 	 */
 	public Resource(String name, String type, String content) {
+		if (name == null) {
+			throw new NullPointerException("Name cant be null");
+		}
+		if (name.length() > NAME_LENGTH) {
+			throw new IllegalArgumentException("Name must be <= " + NAME_LENGTH
+					+ " but was: " + name.length());
+		}
 		if (type == null) {
 			throw new NullPointerException("Type cant be null");
 		}
@@ -106,7 +114,7 @@ class Resource implements Serializable, Comparable<Resource> {
 					+ " but was: " + type.length());
 		}
 		this.type = type;
-		setName(name);
+		this.name = name;
 		setContent(content);
 		this.created = new Date();
 	}
@@ -148,28 +156,6 @@ class Resource implements Serializable, Comparable<Resource> {
 	 */
 	public String getName() {
 		return name;
-	}
-
-	/**
-	 * Sets a name for this resource.
-	 * 
-	 * @param name
-	 *            a name for this resource
-	 * @throws NullPointerException
-	 *             if <code>name</code> is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is too long
-	 * @see #NAME_LENGTH
-	 */
-	public void setName(String name) {
-		if (name == null) {
-			throw new NullPointerException("Name cant be null");
-		}
-		if (name.length() > NAME_LENGTH) {
-			throw new IllegalArgumentException("Name must be <= " + NAME_LENGTH
-					+ " but was: " + name.length());
-		}
-		this.name = name;
 	}
 
 	/**
@@ -233,9 +219,6 @@ class Resource implements Serializable, Comparable<Resource> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		if (id != null) {
-			return prime * result + id.hashCode();
-		}
 		result = prime * result + name.toLowerCase().hashCode();
 		return result;
 	}
@@ -254,13 +237,6 @@ class Resource implements Serializable, Comparable<Resource> {
 		if (!(obj instanceof Resource))
 			return false;
 		final Resource other = (Resource) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (id.equals(other.id))
-			return true;
-
-		// rest is invoked if both ids are null
 		return name.equalsIgnoreCase(other.name);
 	}
 
@@ -275,17 +251,6 @@ class Resource implements Serializable, Comparable<Resource> {
 			return 0;
 		if (other == null)
 			throw new NullPointerException("Other resource cant be null");
-
-		if (id == null) {
-			if (other.id != null)
-				return -1;
-		} else if (other.id == null) {
-			return 1;
-		} else {
-			return id.compareTo(other.id);
-		}
-
-		// rest is invoked if both ids are null
 		long val = name.compareToIgnoreCase(other.name);
 
 		if (val < 0)

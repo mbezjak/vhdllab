@@ -10,8 +10,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.junit.Before;
@@ -44,39 +46,6 @@ public class ContainerTest {
 		}
 	}
 
-	private class MockResource extends
-			BidiResource<MockContainer, MockResource> {
-		private static final long serialVersionUID = 1L;
-
-		public MockResource(MockContainer parent, String name, String type) {
-			super(parent, name, type);
-			parent.addChild(this);
-		}
-
-		public MockResource(MockContainer parent, String name, String type,
-				String content) {
-			super(parent, name, type, content);
-			parent.addChild(this);
-		}
-
-		public MockResource(MockResource r, MockContainer parent) {
-			super(r, parent);
-			parent.addChild(this);
-		}
-	}
-
-	private class MockContainer extends Container<MockResource, MockContainer> {
-		private static final long serialVersionUID = 1L;
-
-		public MockContainer(String name) {
-			super(name);
-		}
-
-		public MockContainer(MockContainer c) {
-			super(c);
-		}
-	}
-
 	private MockContainer con;
 	private MockContainer con2;
 	private MockResource res;
@@ -92,18 +61,7 @@ public class ContainerTest {
 
 		res = new MockResource(con, "resource.name", "resource.type",
 				"resource.content");
-		injectValueToPrivateField(res, "id", Long.valueOf(10));
-		injectValueToPrivateField(res, "created", new Date());
 		res2 = new MockResource(res, con2);
-
-		// not same because resource was added when id was not set. so now it
-		// has different hash code.
-		assertNotSame("files are equal.", con.getChildren(), con2.getChildren());
-		Set<MockResource> set = new HashSet<MockResource>();
-		set.add(res);
-		injectValueToPrivateField(con, "children", set);
-		assertEquals("children not same.", con.getChildren(), con2
-				.getChildren());
 
 		children = new HashSet<MockResource>();
 		children.add(res);
@@ -133,6 +91,8 @@ public class ContainerTest {
 		MockContainer mock = new MockContainer(NAME);
 		assertNotNull("created date is null.", mock.getCreated());
 		assertNotNull("children is null.", mock.getChildren());
+		assertEquals("children is not empty.", Collections.emptySet(), mock
+				.getChildren());
 	}
 
 	/**
@@ -163,7 +123,7 @@ public class ContainerTest {
 	public void copyConstructor3() throws Exception {
 		con2 = new MockContainer(con);
 		assertEquals("reference to children is copied.",
-				new HashSet<MockResource>(0), con2.getChildren());
+				Collections.emptySet(), con2.getChildren());
 		assertNotNull("original children reference is missing.", con
 				.getChildren());
 		assertEquals("children has been modified.", children, con.getChildren());
@@ -181,31 +141,6 @@ public class ContainerTest {
 		assertEquals("getName.", NAME, con.getName());
 		assertEquals("getCreated.", CREATED, con.getCreated());
 		assertEquals("getChildren.", children, con.getChildren());
-	}
-
-	/**
-	 * Name is null
-	 */
-	@Test(expected = NullPointerException.class)
-	public void setName() throws Exception {
-		con.setName(null);
-	}
-
-	/**
-	 * Name is too long
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void setName2() throws Exception {
-		con.setName(generateJunkString(Container.NAME_LENGTH + 1));
-	}
-
-	/**
-	 * Everything is ok
-	 */
-	@Test
-	public void setName3() throws Exception {
-		con.setName(NEW_NAME);
-		assertEquals("new name not set.", NEW_NAME, con.getName());
 	}
 
 	/**
@@ -227,71 +162,39 @@ public class ContainerTest {
 	}
 
 	/**
-	 * Only ids (if set) are important in equals, hashCode and compareTo
+	 * Only names are important in equals, hashCode and compareTo
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo() throws Exception {
-		con2.setName(NEW_NAME);
+		injectValueToPrivateField(con2, "id", NEW_ID);
 		injectValueToPrivateField(con2, "created", NEW_CREATED);
-		injectValueToPrivateField(con2, "children",
-				new HashSet<MockResource>(0));
+		injectValueToPrivateField(con2, "children", Collections.emptySet());
 		assertEquals("not equal.", con, con2);
 		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
 		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
 	}
 
 	/**
-	 * Ids are different
+	 * Names are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
-		injectValueToPrivateField(con2, "id", NEW_ID);
+		injectValueToPrivateField(con2, "name", NEW_NAME);
 		assertNotSame("equal.", con, con2);
 		assertNotSame("hashCode same.", con.hashCode(), con2.hashCode());
-		assertEquals("not compared by id.", ID.compareTo(NEW_ID) < 0 ? -1 : 1,
-				con.compareTo(con2));
+		assertEquals("not compared by id.", NAME.compareTo(NEW_NAME) < 0 ? -1
+				: 1, con.compareTo(con2));
 	}
 
 	/**
-	 * Ids are null, then name is important
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo3() throws Exception {
-		injectValueToPrivateField(con, "id", null);
-		injectValueToPrivateField(con2, "id", null);
-		injectValueToPrivateField(con2, "created", NEW_CREATED);
-		injectValueToPrivateField(con2, "children",
-				new HashSet<MockResource>(0));
-		assertEquals("not equal.", con, con2);
-		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
-		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
-	}
-
-	/**
-	 * Resource name is case insensitive
+	 * Name is case insensitive
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo4() throws Exception {
-		injectValueToPrivateField(con, "id", NEW_ID);
-		injectValueToPrivateField(con2, "id", NEW_ID);
-		con2.setName(NAME.toUpperCase());
+		injectValueToPrivateField(con2, "name", NAME.toUpperCase());
 		assertEquals("not equal.", con, con2);
 		assertEquals("hashCode not same.", con.hashCode(), con2.hashCode());
 		assertEquals("not equal by compareTo.", 0, con.compareTo(con2));
-	}
-
-	/**
-	 * Ids are null and names are not equal
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo5() throws Exception {
-		injectValueToPrivateField(con, "id", null);
-		injectValueToPrivateField(con2, "id", null);
-		con2.setName(NEW_NAME);
-		assertNotSame("equal.", con, con2);
-		assertNotSame("hashCode same.", con.hashCode(), con2.hashCode());
-		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
-				: 1, con.compareTo(con2));
 	}
 
 	/**
@@ -337,7 +240,7 @@ public class ContainerTest {
 	@Test
 	public void removeChild2() throws Exception {
 		con.removeChild(res);
-		assertEquals("children not empty.", new HashSet<MockResource>(0), con
+		assertEquals("children not empty.", Collections.emptySet(), con
 				.getChildren());
 		assertNull("parent is not set to null.", res.getParent());
 	}
@@ -352,6 +255,48 @@ public class ContainerTest {
 				"mock.name", "mock.type");
 		con.removeChild(mockResource);
 		assertEquals("children is changed.", children, con.getChildren());
+	}
+
+	/**
+	 * Test iterator on current collection
+	 */
+	@Test
+	public void iterator() throws Exception {
+		Iterator<MockResource> iterator = con.iterator();
+		Iterator<MockResource> childrenIterator = con.getChildren().iterator();
+		assertEquals("don't have next element.", childrenIterator.hasNext(),
+				iterator.hasNext());
+		assertEquals("next elements not equal.", childrenIterator.next(),
+				iterator.next());
+		assertEquals("next element exists.", childrenIterator.hasNext(),
+				iterator.hasNext());
+	}
+
+	/**
+	 * Test iterator after adding an element to collection
+	 */
+	@Test
+	public void iterator2() throws Exception {
+		new MockResource(con, "res.name", "res.type");
+		Iterator<MockResource> iterator = con.iterator();
+		Iterator<MockResource> childrenIterator = con.getChildren().iterator();
+		assertEquals("don't have next element.", childrenIterator.hasNext(),
+				iterator.hasNext());
+		assertEquals("next elements not equal.", childrenIterator.next(),
+				iterator.next());
+		assertEquals("next element exists.", childrenIterator.hasNext(),
+				iterator.hasNext());
+	}
+
+	/**
+	 * Remove an element using iterator
+	 */
+	@Test(expected = UnsupportedOperationException.class)
+	public void iterator3() throws Exception {
+		Iterator<MockResource> iterator = con.iterator();
+		assertTrue("element missing.", iterator.hasNext());
+		assertEquals("wrong element.", res, iterator.next());
+		iterator.remove();
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

@@ -33,8 +33,8 @@ public class ProjectDAOImplTest {
 
 	private static final String NAME = "simple.project.name";
 	private static final String USER_ID = "user.identifier";
-	private static final String UNUSED_NAME = "unused.name";
-	private static final String UNUSED_USER_ID = "unused.user.identifier";
+	private static final String NEW_NAME = "new" + NAME;
+	private static final String NEW_USER_ID = "new" + USER_ID;
 
 	private static FileDAO fileDAO;
 	private static ProjectDAO dao;
@@ -76,7 +76,7 @@ public class ProjectDAOImplTest {
 		for (Project p : dao.findByUser(USER_ID)) {
 			dao.delete(p.getId());
 		}
-		for (Project p : dao.findByUser(UNUSED_USER_ID)) {
+		for (Project p : dao.findByUser(NEW_USER_ID)) {
 			dao.delete(p.getId());
 		}
 		EntityManagerUtil.closeEntityManager();
@@ -113,22 +113,10 @@ public class ProjectDAOImplTest {
 	}
 
 	/**
-	 * Project name can be a part of update statement
-	 */
-	@Test
-	public void save3() throws Exception {
-		dao.save(project);
-		project.setName(UNUSED_NAME);
-		dao.save(project);
-		assertEquals("projects not same after name was updated.", project, dao
-				.load(project.getId()));
-	}
-
-	/**
 	 * Project name and user id are unique (i.e. form secondary key)
 	 */
 	@Test
-	public void save4() throws Exception {
+	public void save3() throws Exception {
 		dao.save(project);
 		Project newProject = new Project(USER_ID, NAME);
 		try {
@@ -142,26 +130,12 @@ public class ProjectDAOImplTest {
 	}
 
 	/**
-	 * Project name and user id are unique (i.e. form secondary key)
-	 */
-	@Test(expected = DAOException.class)
-	public void save5() throws Exception {
-		dao.save(project);
-		Project newProject = new Project(USER_ID, UNUSED_NAME);
-		dao.save(newProject);
-		newProject.setName(NAME);
-		dao.save(newProject);
-	}
-
-	/**
 	 * Save a file with same user id but different name
 	 */
 	@Test
-	public void save7() throws Exception {
+	public void save4() throws Exception {
 		dao.save(project);
-		Project newProject = new Project(USER_ID, UNUSED_NAME);
-		dao.save(newProject);
-		newProject.setName("different.project.name");
+		Project newProject = new Project(USER_ID, NEW_NAME);
 		dao.save(newProject);
 		assertTrue("new project not saved.", dao.exists(newProject.getId()));
 		assertEquals("projects are not same.", newProject, dao.load(newProject
@@ -174,7 +148,7 @@ public class ProjectDAOImplTest {
 	@Test
 	public void save8() throws Exception {
 		dao.save(project);
-		Project newProject = new Project(UNUSED_USER_ID, NAME);
+		Project newProject = new Project(NEW_USER_ID, NAME);
 		dao.save(newProject);
 		assertTrue("new project not saved.", dao.exists(newProject.getId()));
 		assertEquals("projects are not same.", newProject, dao.load(newProject
@@ -195,15 +169,8 @@ public class ProjectDAOImplTest {
 		assertTrue("file not save.", fileDAO.exists(loadedProject.getId(),
 				newFile.getName()));
 		assertEquals("projects not equal.", project, loadedProject);
-		boolean found = false;
-		for (File f : loadedProject) {
-			if (f.equals(newFile)) {
-				found = true;
-			}
-		}
-		if (!found) {
-			fail("project doesn't contain a new file.");
-		}
+		assertTrue("project doesn't contain a new file.", loadedProject
+				.getFiles().contains(newFile));
 	}
 
 	/**
@@ -224,39 +191,15 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void delete2() throws DAOException {
-		System.out.println(file.hashCode());
-		for (File f : project) {
-			System.out.println(f.hashCode());
-		}
 		dao.save(project);
-		System.out.println(file.hashCode());
-		for (File f : project) {
-			System.out.println(f.hashCode());
-		}
 		project.removeFile(file);
-		for (File f : project) {
-			System.out.println(f.hashCode());
-		}
-		/*
-		 * Project must be loaded. because 'project.removeFile(file)' doesn't
-		 * work. Reason for this is hashCode implementation. HashCode for a file
-		 * was calculated before id field was set and now, after it was saved,
-		 * it calculated hashCode differently.
-		 */
-		Project loadedProject = dao.load(project.getId());
-		loadedProject.removeFile(file);
 		assertNull("file not removed from collection.", file.getProject());
-		dao.save(loadedProject);
+		assertFalse("file still in collection.", project.getFiles().contains(
+				file));
+		dao.save(project);
 		assertFalse("file still exists.", fileDAO.exists(file.getId()));
-		boolean found = false;
-		for (File f : loadedProject) {
-			if (f.equals(file)) {
-				found = true;
-			}
-		}
-		if (found) {
-			fail("project contains a removed file.");
-		}
+		assertFalse("project still contains a file.", project.getFiles()
+				.contains(file));
 	}
 
 	/**
@@ -280,10 +223,10 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void exists3() throws DAOException {
-		assertFalse("file exists when it shouldn't.", dao.exists(
-				UNUSED_USER_ID, NAME));
+		assertFalse("file exists when it shouldn't.", dao.exists(NEW_USER_ID,
+				NAME));
 		assertFalse("file exists when it shouldn't.", dao.exists(USER_ID,
-				UNUSED_NAME));
+				NEW_NAME));
 	}
 
 	/**
@@ -321,7 +264,7 @@ public class ProjectDAOImplTest {
 	 */
 	@Test(expected = DAOException.class)
 	public void findByName3() throws DAOException {
-		dao.findByName(UNUSED_USER_ID, NAME);
+		dao.findByName(NEW_USER_ID, NAME);
 	}
 
 	/**
@@ -329,7 +272,7 @@ public class ProjectDAOImplTest {
 	 */
 	@Test(expected = DAOException.class)
 	public void findByName4() throws DAOException {
-		dao.findByName(USER_ID, UNUSED_NAME);
+		dao.findByName(USER_ID, NEW_NAME);
 	}
 
 	/**
@@ -358,7 +301,7 @@ public class ProjectDAOImplTest {
 	 */
 	@Test()
 	public void findByUser2() throws DAOException {
-		assertEquals(Collections.emptyList(), dao.findByUser(UNUSED_USER_ID));
+		assertEquals(Collections.emptyList(), dao.findByUser(NEW_USER_ID));
 	}
 
 	/**
@@ -380,7 +323,7 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void findByUser4() throws DAOException {
-		Project project2 = new Project(USER_ID, UNUSED_NAME);
+		Project project2 = new Project(USER_ID, NEW_NAME);
 		dao.save(project);
 		dao.save(project2);
 		List<Project> projects = new ArrayList<Project>(2);
@@ -397,7 +340,7 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void findByUser5() throws DAOException {
-		Project project2 = new Project(UNUSED_USER_ID, UNUSED_NAME);
+		Project project2 = new Project(NEW_USER_ID, NEW_NAME);
 		dao.save(project);
 		dao.save(project2);
 		List<Project> collection1 = new ArrayList<Project>(1);

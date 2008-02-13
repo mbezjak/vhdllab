@@ -39,39 +39,6 @@ public class BidiResourceTest {
 		}
 	}
 
-	private class MockResource extends
-			BidiResource<MockContainer, MockResource> {
-		private static final long serialVersionUID = 1L;
-
-		public MockResource(MockContainer parent, String name, String type) {
-			super(parent, name, type);
-			parent.addChild(this);
-		}
-
-		public MockResource(MockContainer parent, String name, String type,
-				String content) {
-			super(parent, name, type, content);
-			parent.addChild(this);
-		}
-
-		public MockResource(MockResource r, MockContainer parent) {
-			super(r, parent);
-			parent.addChild(this);
-		}
-	}
-
-	private class MockContainer extends Container<MockResource, MockContainer> {
-		private static final long serialVersionUID = 1L;
-
-		public MockContainer(String name) {
-			super(name);
-		}
-
-		public MockContainer(MockContainer c) {
-			super(c);
-		}
-	}
-
 	private MockContainer con;
 	private MockContainer con2;
 	private MockResource res;
@@ -80,8 +47,6 @@ public class BidiResourceTest {
 	@Before
 	public void initEachTest() throws Exception {
 		con = new MockContainer("container1.name");
-		injectValueToPrivateField(con, "id", Long.valueOf(10));
-		injectValueToPrivateField(con, "created", new Date());
 		con2 = new MockContainer(con);
 
 		res = new MockResource(con, NAME, TYPE, CONTENT);
@@ -154,8 +119,7 @@ public class BidiResourceTest {
 		assertEquals("not equal.", res, res);
 		assertNotSame("file is equal to null.", res, null);
 		assertNotSame("can compare with string object.", res, "a string object");
-		assertNotSame("can compare with resource object.", res, new Resource(
-				NAME, TYPE));
+		assertNotSame("can compare with resource object.", res, new Resource());
 	}
 
 	/**
@@ -171,7 +135,7 @@ public class BidiResourceTest {
 	 */
 	@Test(expected = ClassCastException.class)
 	public void compareTo2() throws Exception {
-		res.compareTo(new Resource(NAME, TYPE));
+		res.compareTo(new Resource());
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

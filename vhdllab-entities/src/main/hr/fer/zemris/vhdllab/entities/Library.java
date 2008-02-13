@@ -1,5 +1,8 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.persistence.Entity;
 
 /**
@@ -48,7 +51,7 @@ public class Library extends Container<LibraryFile, Library> {
 	public Library(Library l) {
 		super(l);
 	}
-	
+
 	/**
 	 * Removes a file from this library.
 	 * 
@@ -59,6 +62,37 @@ public class Library extends Container<LibraryFile, Library> {
 	 */
 	public void removeLibraryFile(LibraryFile f) {
 		removeChild(f);
+	}
+
+	/**
+	 * Returns an unmodifiable set of library files. Return value will never be
+	 * <code>null</code>. Beware of performance penalties when using this
+	 * method. If you simply wish to iterate over a collection then used
+	 * {@link #iterator()} method instead.
+	 * 
+	 * @return an unmodifiable set of library files
+	 */
+	public Set<LibraryFile> getLibraryFiles() {
+		return Collections.unmodifiableSet(getChildren());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.entities.Container#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		/*
+		 * Overriding just to check if given resource is a library.
+		 */
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Library))
+			return false;
+		return super.equals(obj);
 	}
 
 	/*

@@ -8,9 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -55,19 +54,7 @@ public class ProjectTest {
 		project2 = new Project(project);
 
 		file = new File(project, "file.name", "file.type", "file.content");
-		injectValueToPrivateField(file, "id", Long.valueOf(10));
-		injectValueToPrivateField(file, "created", new Date());
 		new File(file, project2);
-
-		// not same because file was added when id was not set. so now it has
-		// different hash code.
-		assertNotSame("files are equal.", project.getChildren(), project2
-				.getChildren());
-		Set<File> set = new HashSet<File>();
-		set.add(file);
-		injectValueToPrivateField(project, "children", set);
-		assertEquals("children not same.", project.getChildren(), project2
-				.getChildren());
 	}
 
 	/**
@@ -87,6 +74,15 @@ public class ProjectTest {
 	}
 
 	/**
+	 * User id is not null
+	 */
+	@Test
+	public void constructor3() throws Exception {
+		Project newProject = new Project(USER_ID, NAME);
+		assertEquals("user id not set.", USER_ID, newProject.getUserId());
+	}
+
+	/**
 	 * Test copy constructor
 	 */
 	@Test
@@ -99,7 +95,7 @@ public class ProjectTest {
 		assertEquals("files not same.", project.getChildren(), project2
 				.getChildren());
 	}
-	
+
 	/**
 	 * Test getters and setters
 	 */
@@ -141,14 +137,13 @@ public class ProjectTest {
 	}
 
 	/**
-	 * Only ids (if set) are important in equals, hashCode and compareTo
+	 * Only user ids and names are important in equals, hashCode and compareTo
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo() throws Exception {
-		project2.setName(NEW_NAME);
-		injectValueToPrivateField(project2, "userId", NEW_USER_ID);
+		project2 = new Project(USER_ID, NAME);
 		injectValueToPrivateField(project2, "created", NEW_CREATED);
-		injectValueToPrivateField(project2, "children", new HashSet<File>(0));
+		injectValueToPrivateField(project2, "children", Collections.emptySet());
 		assertEquals("not equal.", project, project2);
 		assertEquals("hashCode not same.", project.hashCode(), project2
 				.hashCode());
@@ -156,48 +151,39 @@ public class ProjectTest {
 	}
 
 	/**
-	 * Ids are null, then name and userId is important
+	 * Names are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
-		injectValueToPrivateField(project, "id", null);
-		injectValueToPrivateField(project2, "id", null);
-		injectValueToPrivateField(project2, "created", NEW_CREATED);
-		injectValueToPrivateField(project2, "children", new HashSet<File>(0));
-		assertEquals("not equal.", project, project2);
-		assertEquals("hashCode not same.", project.hashCode(), project2
-				.hashCode());
-		assertEquals("not equal by compareTo.", 0, project.compareTo(project2));
+		injectValueToPrivateField(project2, "name", NEW_NAME);
+		assertNotSame("equal.", project, project2);
+		assertNotSame("hashCode same.", project.hashCode(), project2.hashCode());
+		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
+				: 1, project.compareTo(project2));
 	}
 
 	/**
-	 * User id is case insensitive
+	 * User ids are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo3() throws Exception {
-		injectValueToPrivateField(project, "id", null);
-		injectValueToPrivateField(project2, "id", null);
-		injectValueToPrivateField(project2, "userId", USER_ID.toUpperCase());
-		injectValueToPrivateField(project2, "children", new HashSet<File>(0));
-		assertEquals("not equal.", project, project2);
-		assertEquals("hashCode not same.", project.hashCode(), project2
-				.hashCode());
-		assertEquals("not equal by compareTo.", 0, project.compareTo(project2));
-	}
-
-	/**
-	 * Ids are null and user ids are not equal
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo4() throws Exception {
-		injectValueToPrivateField(project, "id", null);
-		injectValueToPrivateField(project2, "id", null);
 		injectValueToPrivateField(project2, "userId", NEW_USER_ID);
 		assertNotSame("equal.", project, project2);
 		assertNotSame("hashCode same.", project.hashCode(), project2.hashCode());
 		assertEquals("not compared by user id.",
 				USER_ID.compareTo(NEW_USER_ID) < 0 ? -1 : 1, project
 						.compareTo(project2));
+	}
+
+	/**
+	 * User id is case insensitive
+	 */
+	@Test
+	public void equalsHashCodeAndCompareTo4() throws Exception {
+		injectValueToPrivateField(project2, "userId", USER_ID.toUpperCase());
+		assertEquals("not equal.", project, project2);
+		assertEquals("hashCode not same.", project.hashCode(), project2.hashCode());
+		assertEquals("not equal by compareTo.", 0, project.compareTo(project2));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

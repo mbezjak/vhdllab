@@ -26,6 +26,7 @@ public class LibraryFileTest {
 	private static final String TYPE = "file.type";
 	private static final String CONTENT = "...file content...";
 	private static final Date CREATED;
+	private static final Long NEW_ID = Long.valueOf(654321);
 	private static final String NEW_NAME = "new." + NAME;
 	private static final String NEW_TYPE = "new." + TYPE;
 	private static final String NEW_CONTENT = "new." + CONTENT;
@@ -59,8 +60,6 @@ public class LibraryFileTest {
 	@Before
 	public void initEachTest() throws Exception {
 		lib = new Library("library.name");
-		injectValueToPrivateField(lib, "id", Long.valueOf(10));
-		injectValueToPrivateField(lib, "created", new Date());
 		lib2 = new Library(lib);
 
 		file = new LibraryFile(lib, NAME, TYPE, CONTENT);
@@ -79,7 +78,7 @@ public class LibraryFileTest {
 		assertEquals(NEW_LIBRARY, newFile.getLibrary());
 		assertTrue(NEW_LIBRARY.getChildren().contains(newFile));
 	}
-	
+
 	/**
 	 * Test copy constructor
 	 */
@@ -131,47 +130,43 @@ public class LibraryFileTest {
 	}
 
 	/**
-	 * Only ids (if set) are important in equals, hashCode and compareTo
+	 * Only libraries and names are important in equals, hashcode and compareTo
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo() throws Exception {
-		file2.setName(NEW_NAME);
-		file2.setContent(NEW_CONTENT);
+		injectValueToPrivateField(file2, "id", NEW_ID);
 		injectValueToPrivateField(file2, "type", NEW_TYPE);
+		injectValueToPrivateField(file2, "content", NEW_CONTENT);
 		injectValueToPrivateField(file2, "created", NEW_CREATED);
-		injectValueToPrivateField(file2, "parent", NEW_LIBRARY);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
 		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
 	}
 
 	/**
-	 * Ids are null, then name and library is important
+	 * Names are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
-		injectValueToPrivateField(file, "id", null);
-		injectValueToPrivateField(file2, "id", null);
-		injectValueToPrivateField(file2, "type", NEW_TYPE);
-		injectValueToPrivateField(file2, "created", NEW_CREATED);
-		file2.setContent(NEW_CONTENT);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
+		injectValueToPrivateField(file2, "name", NEW_NAME);
+		assertNotSame("equal.", file, file2);
+		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
+		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
+				: 1, file.compareTo(file2));
 	}
 
 	/**
-	 * Ids are null and libraries are not equal
+	 * Libraries are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo3() throws Exception {
-		injectValueToPrivateField(file, "id", null);
-		injectValueToPrivateField(file2, "id", null);
-		injectValueToPrivateField(file2, "parent", NEW_LIBRARY);
-		assertNotSame("equal.", file, file2);
-		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
-		assertEquals("not compared by library.", file.getLibrary().compareTo(
-				file2.getLibrary()) < 0 ? -1 : 1, file.compareTo(file2));
+		LibraryFile newFile = new LibraryFile(NEW_LIBRARY, NAME, TYPE, CONTENT);
+		injectValueToPrivateField(file2, "id", ID);
+		injectValueToPrivateField(file2, "created", CREATED);
+		assertNotSame("equal.", file, newFile);
+		assertNotSame("hashCode same.", file.hashCode(), newFile.hashCode());
+		assertEquals("not compared by project.", file.getLibrary().compareTo(
+				newFile.getLibrary()) < 0 ? -1 : 1, file.compareTo(newFile));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

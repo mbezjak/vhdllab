@@ -119,9 +119,6 @@ public class File extends BidiResource<Project, File> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		if (getId() != null) {
-			return result;
-		}
 		result = prime * result
 				+ ((getProject() == null) ? 0 : getProject().hashCode());
 		return result;
@@ -142,9 +139,6 @@ public class File extends BidiResource<Project, File> {
 			return false;
 		if (!super.equals(obj)) {
 			return false;
-		}
-		if (getId() != null) {
-			return true;
 		}
 		final File other = (File) obj;
 		if (getProject() == null) {
@@ -170,7 +164,7 @@ public class File extends BidiResource<Project, File> {
 		}
 		final File other = o;
 		int val = super.compareTo(other);
-		if (getId() != null || val != 0) {
+		if (val != 0) {
 			return val;
 		}
 		if (getProject() == null) {

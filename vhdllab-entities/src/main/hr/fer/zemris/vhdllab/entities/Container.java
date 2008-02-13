@@ -19,6 +19,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 /**
  * This is a generic class for all containers. Basically it defines all
@@ -54,6 +55,7 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 	@Column(name = "created", nullable = false, updatable = false)
 	private Date created;
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.LAZY)
+	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Set<TBidiResource> children;
 
@@ -61,6 +63,7 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 	 * Constructor for persistence provider.
 	 */
 	Container() {
+		super();
 	}
 
 	/**
@@ -75,7 +78,14 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 	 * @see #NAME_LENGTH
 	 */
 	public Container(String name) {
-		setName(name);
+		if (name == null) {
+			throw new NullPointerException("Name cant be null");
+		}
+		if (name.length() > NAME_LENGTH) {
+			throw new IllegalArgumentException("Name must be <= " + NAME_LENGTH
+					+ " but was: " + name.length());
+		}
+		this.name = name;
 		this.children = new HashSet<TBidiResource>();
 		this.created = new Date();
 	}
@@ -122,28 +132,6 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 	}
 
 	/**
-	 * Sets a name for this container.
-	 * 
-	 * @param name
-	 *            a name for this container
-	 * @throws NullPointerException
-	 *             if <code>name</code> is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is too long
-	 * @see #NAME_LENGTH
-	 */
-	public void setName(String name) {
-		if (name == null) {
-			throw new NullPointerException("Name cant be null");
-		}
-		if (name.length() > NAME_LENGTH) {
-			throw new IllegalArgumentException("Name must be <= " + NAME_LENGTH
-					+ " but was: " + name.length());
-		}
-		this.name = name;
-	}
-
-	/**
 	 * Returns a created date of this container. Return value will never be
 	 * <code>null</code>.
 	 * 
@@ -156,7 +144,7 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 	/**
 	 * Getter for persistence provider. To enable lazy loading.
 	 * 
-	 * @return children
+	 * @return children in this container
 	 */
 	Set<TBidiResource> getChildren() {
 		return children;
@@ -231,9 +219,6 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		if (id != null) {
-			return prime * result + id.hashCode();
-		}
 		result = prime * result + name.toLowerCase().hashCode();
 		return result;
 	}
@@ -252,13 +237,6 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 		if (getClass() != obj.getClass())
 			return false;
 		final Container<?, ?> other = (Container<?, ?>) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (id.equals(other.id))
-			return true;
-
-		// rest is invoked if both ids are null
 		return name.equalsIgnoreCase(other.name);
 	}
 
@@ -274,16 +252,6 @@ class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 		if (other == null)
 			throw new NullPointerException("Other container cant be null");
 
-		if (id == null) {
-			if (other.id != null)
-				return -1;
-		} else if (other.id == null) {
-			return 1;
-		} else {
-			return id.compareTo(other.id);
-		}
-
-		// rest is invoked if both ids are null
 		long val = name.compareToIgnoreCase(other.name);
 
 		if (val < 0)

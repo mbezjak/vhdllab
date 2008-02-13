@@ -27,6 +27,7 @@ public class UserFileTest {
 	private static final String TYPE = "file.type";
 	private static final String CONTENT = "...file content...";
 	private static final Date CREATED;
+	private static final Long NEW_ID = Long.valueOf(654321);
 	private static final String NEW_USER_ID = "new." + USER_ID;
 	private static final String NEW_NAME = "new." + NAME;
 	private static final String NEW_TYPE = "new." + TYPE;
@@ -129,8 +130,7 @@ public class UserFileTest {
 		assertNotSame("file is equal to null.", file, null);
 		assertNotSame("can compare with string object.", file,
 				"a string object");
-		assertNotSame("can compare with resource object.", file, new Resource(
-				NAME, TYPE));
+		assertNotSame("can compare with resource object.", file, new Resource());
 	}
 
 	/**
@@ -146,18 +146,16 @@ public class UserFileTest {
 	 */
 	@Test(expected = ClassCastException.class)
 	public void compareTo2() throws Exception {
-		file.compareTo(new Resource(NAME, TYPE));
+		file.compareTo(new Resource());
 	}
 
 	/**
-	 * Only ids (if set) are important in equals, hashCode and compareTo
+	 * Only user ids and names are important in equals, hashCode and compareTo
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo() throws Exception {
-		file2.setName(NEW_NAME);
-		file2.setContent(NEW_CONTENT);
-		injectValueToPrivateField(file2, "userId", NEW_USER_ID);
-		injectValueToPrivateField(file2, "type", NEW_TYPE);
+		file2 = new UserFile(USER_ID, NAME, NEW_TYPE, NEW_CONTENT);
+		injectValueToPrivateField(file2, "id", NEW_ID);
 		injectValueToPrivateField(file2, "created", NEW_CREATED);
 		assertEquals("not equal.", file, file2);
 		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
@@ -165,46 +163,39 @@ public class UserFileTest {
 	}
 
 	/**
-	 * Ids are null, then name and userId is important
+	 * Names are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
-		injectValueToPrivateField(file, "id", null);
-		injectValueToPrivateField(file2, "id", null);
-		injectValueToPrivateField(file2, "type", NEW_TYPE);
-		injectValueToPrivateField(file2, "created", NEW_CREATED);
-		file2.setContent(NEW_CONTENT);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
+		injectValueToPrivateField(file2, "name", NEW_NAME);
+		assertNotSame("equal.", file, file2);
+		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
+		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
+				: 1, file.compareTo(file2));
 	}
 
 	/**
-	 * User id is case insensitive
+	 * User ids are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo3() throws Exception {
-		injectValueToPrivateField(file, "id", null);
-		injectValueToPrivateField(file2, "id", null);
-		injectValueToPrivateField(file2, "userId", USER_ID.toUpperCase());
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
-	}
-
-	/**
-	 * Ids are null and user ids are not equal
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo4() throws Exception {
-		injectValueToPrivateField(file, "id", null);
-		injectValueToPrivateField(file2, "id", null);
 		injectValueToPrivateField(file2, "userId", NEW_USER_ID);
 		assertNotSame("equal.", file, file2);
 		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
 		assertEquals("not compared by user id.",
 				USER_ID.compareTo(NEW_USER_ID) < 0 ? -1 : 1, file
 						.compareTo(file2));
+	}
+
+	/**
+	 * User id is case insensitive
+	 */
+	@Test
+	public void equalsHashCodeAndCompareTo4() throws Exception {
+		injectValueToPrivateField(file2, "userId", USER_ID.toUpperCase());
+		assertEquals("not equal.", file, file2);
+		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
+		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

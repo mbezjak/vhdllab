@@ -205,31 +205,6 @@ public class ResourceTest {
 	}
 
 	/**
-	 * Name is null
-	 */
-	@Test(expected = NullPointerException.class)
-	public void setName() throws Exception {
-		res.setName(null);
-	}
-
-	/**
-	 * Name is too long
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void setName2() throws Exception {
-		res.setName(generateJunkString(Resource.NAME_LENGTH + 1));
-	}
-
-	/**
-	 * Everything is ok
-	 */
-	@Test
-	public void setName3() throws Exception {
-		res.setName(NEW_NAME);
-		assertEquals("new name not set.", NEW_NAME, res.getName());
-	}
-
-	/**
 	 * Content is null
 	 */
 	@Test(expected = NullPointerException.class)
@@ -273,43 +248,28 @@ public class ResourceTest {
 	}
 
 	/**
-	 * Only ids (if set) are important in equals, hashCode and compareTo
+	 * Only names are important in equals, hashCode and compareTo
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo() throws Exception {
-		res2.setName(NEW_NAME);
-		res2.setContent(NEW_CONTENT);
-		injectValueToPrivateField(res2, "type", NEW_TYPE);
+		res2 = new Resource(NAME, NEW_TYPE, NEW_CONTENT);
+		injectValueToPrivateField(res2, "id", NEW_ID);
+		injectValueToPrivateField(res2, "created", NEW_CREATED);
 		assertEquals("not equal.", res, res2);
 		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
 		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
 	}
 
 	/**
-	 * Ids are different
+	 * Names are different
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
-		injectValueToPrivateField(res2, "id", NEW_ID);
+		injectValueToPrivateField(res2, "name", NEW_NAME);
 		assertNotSame("equal.", res, res2);
 		assertNotSame("hashCode same.", res.hashCode(), res2.hashCode());
-		assertEquals("not compared by id.", ID.compareTo(NEW_ID) < 0 ? -1 : 1,
-				res.compareTo(res2));
-	}
-
-	/**
-	 * Ids are null, then name is important
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo3() throws Exception {
-		injectValueToPrivateField(res, "id", null);
-		injectValueToPrivateField(res2, "id", null);
-		injectValueToPrivateField(res2, "type", NEW_TYPE);
-		injectValueToPrivateField(res2, "created", NEW_CREATED);
-		res2.setContent(NEW_CONTENT);
-		assertEquals("not equal.", res, res2);
-		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
-		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
+		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
+				: 1, res.compareTo(res2));
 	}
 
 	/**
@@ -317,26 +277,10 @@ public class ResourceTest {
 	 */
 	@Test
 	public void equalsHashCodeAndCompareTo4() throws Exception {
-		injectValueToPrivateField(res, "id", null);
-		injectValueToPrivateField(res2, "id", null);
-		res2.setName(NAME.toUpperCase());
+		injectValueToPrivateField(res2, "name", NAME.toUpperCase());
 		assertEquals("not equal.", res, res2);
 		assertEquals("hashCode not same.", res.hashCode(), res2.hashCode());
 		assertEquals("not equal by compareTo.", 0, res.compareTo(res2));
-	}
-
-	/**
-	 * Ids are null and names are not equal
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo5() throws Exception {
-		injectValueToPrivateField(res, "id", null);
-		injectValueToPrivateField(res2, "id", null);
-		res2.setName(NEW_NAME);
-		assertNotSame("equal.", res, res2);
-		assertNotSame("hashCode same.", res.hashCode(), res2.hashCode());
-		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
-				: 1, res.compareTo(res2));
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

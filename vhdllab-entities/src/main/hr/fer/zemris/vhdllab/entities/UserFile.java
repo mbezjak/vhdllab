@@ -43,7 +43,7 @@ public class UserFile extends Resource implements Ownable, Serializable {
 	@Basic
 	@Column(name = "userId", length = USER_ID_LENGTH, nullable = false, updatable = false)
 	private String userId;
-	
+
 	/**
 	 * Constructor for persistence provider.
 	 */
@@ -138,9 +138,6 @@ public class UserFile extends Resource implements Ownable, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		if (getId() != null) {
-			return result;
-		}
 		result = prime * result + getUserId().toLowerCase().hashCode();
 		return result;
 	}
@@ -160,9 +157,6 @@ public class UserFile extends Resource implements Ownable, Serializable {
 			return false;
 		if (!super.equals(obj)) {
 			return false;
-		}
-		if (getId() != null) {
-			return true;
 		}
 		final UserFile other = (UserFile) obj;
 		return getUserId().equalsIgnoreCase(other.getUserId());
@@ -184,7 +178,7 @@ public class UserFile extends Resource implements Ownable, Serializable {
 		}
 		final UserFile other = (UserFile) o;
 		int val = super.compareTo(other);
-		if (getId() != null || val != 0) {
+		if (val != 0) {
 			return val;
 		}
 		val = getUserId().compareToIgnoreCase(other.getUserId());

@@ -102,9 +102,6 @@ public class LibraryFile extends BidiResource<Library, LibraryFile> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		if (getId() != null) {
-			return result;
-		}
 		result = prime * result
 				+ ((getLibrary() == null) ? 0 : getLibrary().hashCode());
 		return result;
@@ -125,9 +122,6 @@ public class LibraryFile extends BidiResource<Library, LibraryFile> {
 			return false;
 		if (!super.equals(obj)) {
 			return false;
-		}
-		if (getId() != null) {
-			return true;
 		}
 		final LibraryFile other = (LibraryFile) obj;
 		if (getLibrary() == null) {
@@ -154,7 +148,7 @@ public class LibraryFile extends BidiResource<Library, LibraryFile> {
 		}
 		final LibraryFile other = (LibraryFile) o;
 		int val = super.compareTo(other);
-		if (getId() != null || val != 0) {
+		if (val != 0) {
 			return val;
 		}
 		if (getLibrary() == null) {
