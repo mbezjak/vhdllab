@@ -8,8 +8,8 @@ TODO 02) [CLOSED]   Napisati kod koji pokrece compiler.
 
 Boris Ozegovic
 --------------------------------------------
-TODO 03) [OPEN]   VcdParser treba implementirati ISimulationParser (15.)
-TODO 04) [OPEN]   CompilationResults treba implementirati ICompilationParser (15.)
+TODO 03) [ABANDONED]   VcdParser treba implementirati ISimulationParser (15.)
+TODO 04) [ABANDONED]   CompilationResults treba implementirati ICompilationParser (15.)
 TODO 05) [CLOSED]   Maknuti IWizard i IEditor iz CompilationErrors i Miro treba stvoriti (15.) neko novo sucelje za taj panel
 TODO 06) [CLOSED]   Iskoristiti klase SimulationResult i CompilationResults (15.) (tu je dilema...)
 TODO 07) [CLOSED]   Maknuti iritantni pomak scrolla ako su kursori u vidljivom polju (16.)
