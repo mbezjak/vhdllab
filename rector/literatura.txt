@@ -1,0 +1,8 @@
+http://java.sun.com/javase/6/docs/
+http://java.sun.com/docs/books/tutorial/
+http://www.junit.org/
+http://ant.apache.org/
+http://tomcat.apache.org/
+http://www.hibernate.org/
+http://ghdl.free.fr/
+
