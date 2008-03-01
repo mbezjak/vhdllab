@@ -5,4 +5,4 @@ http://ant.apache.org/
 http://tomcat.apache.org/
 http://www.hibernate.org/
 http://ghdl.free.fr/
-
+Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides - Design Patterns
