@@ -133,7 +133,7 @@ public class AutoDrawer extends JPanel{
 	 */
 	
 	public AutoDrawer(IEditor editor) {
-		super();
+//		super();
 		this.setOpaque(true);
 		createGUI();
 		//this.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
@@ -243,7 +243,7 @@ public class AutoDrawer extends JPanel{
 	private void nacrtajSklop(int eventx,int eventy){
 		if(dataSet()){
 		checkOKness();
-		resizeComponent();
+//		resizeComponent();
 		Graphics2D g=(Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(getOKColor());
@@ -342,12 +342,20 @@ public class AutoDrawer extends JPanel{
 		}
 		
 		Dimension d = this.getPreferredSize();
-		//System.out.println(d.getHeight());
-		//System.out.println(d.getWidth());
+//		System.out.println("#############");
+//		System.out.println(d.getHeight());
+//		System.out.println(d.getWidth());
+//		System.out.println("XXXXXXXXXXXXX");
+//		System.out.println(maxX);
+//		System.out.println(maxY);
 		
-		if(d.getHeight()< maxY || d.getWidth()< maxX){
-			this.setPreferredSize(new Dimension(maxX,maxY));
-		}
+		this.setPreferredSize(new Dimension(maxX,maxY));
+		
+//		if(d.getHeight()< maxY || d.getWidth()< maxX){
+//			if(d.getHeight()> maxY) maxY = (int) d.getHeight();
+//			if(d.getWidth()>maxX) maxX = (int) d.getWidth();
+//			this.setPreferredSize(new Dimension(maxX,maxY));
+//		}
 		this.revalidate();
 	}
 
@@ -368,7 +376,7 @@ public class AutoDrawer extends JPanel{
 	private void nacrtajSklop(){
 		if(dataSet()){
 			checkOKness();
-			resizeComponent();
+//			resizeComponent();
 			Graphics2D g=(Graphics2D)img.getGraphics();
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(getOKColor());
@@ -613,15 +621,15 @@ public class AutoDrawer extends JPanel{
 		return cl;
 	}
 	
-	@Override
-	public Dimension getPreferredSize() {
-		int x,y;
-		x=this.getWidth();
-		y=this.getHeight();
-		if(x==0)x=1;
-		if(y==0)y=1;
-		return new Dimension(x,y);
-	}
+//	@Override
+//	public Dimension getPreferredSize() {
+//		int x,y;
+//		x=this.getWidth();
+//		y=this.getHeight();
+//		if(x==0)x=1;
+//		if(y==0)y=1;
+//		return new Dimension(x,y);
+//	}
 
 	/**
 	 * Ova metoda provjerava dali je mis na podrucju selekcije prijelaza pr
@@ -821,21 +829,21 @@ public class AutoDrawer extends JPanel{
 	 * @param y
 	 */
 	private void pomjeriSliku(int x, int y) {
-//TODO		//if(x+radijus>AutoDrawer.this.getWidth())AutoDrawer.this.setPreferredSize(new Dimension(x+radijus,AutoDrawer.this.getHeight()));
-		//if(y+radijus>AutoDrawer.this.getHeight())AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),y+radijus));
-
-		if(x<3.3*radijus||y<3.3*radijus) moveAll(x,y);	//TODO i tu je odmak!!!
-		AutoDrawer.this.revalidate();
-	}
-
-	private void moveAll(int x, int y) {
-		final int odmak=(int) (3.3*radijus);
-		for(Stanje s:stanja){
-			s.ox-=(x<odmak?x-odmak:0);
-			s.oy-=(y<odmak?y-odmak:0);
-		}
-		if(x<odmak)AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth()-x+odmak,AutoDrawer.this.getHeight()));
-		if(y<odmak)AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),AutoDrawer.this.getHeight()-y+odmak));
+////TODO		//if(x+radijus>AutoDrawer.this.getWidth())AutoDrawer.this.setPreferredSize(new Dimension(x+radijus,AutoDrawer.this.getHeight()));
+//		//if(y+radijus>AutoDrawer.this.getHeight())AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),y+radijus));
+//
+//		if(x<3.3*radijus||y<3.3*radijus) moveAll(x,y);	//TODO i tu je odmak!!!
+//		AutoDrawer.this.revalidate();
+//	}
+//
+//	private void moveAll(int x, int y) {
+//		final int odmak=(int) (3.3*radijus);
+//		for(Stanje s:stanja){
+//			s.ox-=(x<odmak?x-odmak:0);
+//			s.oy-=(y<odmak?y-odmak:0);
+//		}
+//		if(x<odmak)AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth()-x+odmak,AutoDrawer.this.getHeight()));
+//		if(y<odmak)AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),AutoDrawer.this.getHeight()-y+odmak));
 	}
 	
 	
@@ -882,6 +890,7 @@ public class AutoDrawer extends JPanel{
 			}
 			
 			if(stanjeRada==4){
+				resizeComponent();
 				nacrtajSklop(e.getX(),e.getY());
 			}
 			
@@ -960,6 +969,7 @@ public class AutoDrawer extends JPanel{
 					stanjeRada=1;
 					stanjeZaDodati=null;
 					setStanjeRada(2);
+					resizeComponent();
 					repaint();
 				}
 
@@ -1080,6 +1090,7 @@ public class AutoDrawer extends JPanel{
 				if(selektiran.oy<0)selektiran.oy=0;*/
 				selektiran.boja=Color.BLACK;
 				selektiran=null;
+				resizeComponent();
 				repaint();
 				pressed=false;
 			}
