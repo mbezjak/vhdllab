@@ -7,9 +7,26 @@
 	<!-- ======= CLASSPATH SETUP ========================================== -->
 	<path id="compile.classpath">
 	</path>
-	<path id="runtime.classpath" />
+	<path id="runtime.classpath">
+		<!-- Dependency projects -->
+		<fileset dir="../vhdllab-dao/${jlibs.dir}" includes="*" />
+		<fileset dir="../vhdllab-entities/${jlibs.dir}" includes="*" />
+		<!-- Inherited dependent libraries -->
+		<fileset dir="${libs.dir}" includes="commons-digester-1.8.jar"/>
+		<fileset dir="${libs.dir}" includes="commons-beanutils.jar"/>
+		<fileset dir="${libs.dir}" includes="ejb3-persistence.jar" />
+		<fileset dir="${libs.dir}" includes="log4j-1.2.15.jar" />
+		<fileset dir="${libs.dir}" includes="commons-logging-1.1.1.jar" />
+		<fileset dir="${libs.dir}" includes="commons-collections-2.1.1.jar" />
+		<fileset dir="${libs.dir}" includes="commons-dbcp-1.2.2.jar" />
+		<fileset dir="${libs.dir}" includes="commons-pool-1.3.jar" />
+		<fileset dir="${libs.dir}" includes="mysql-connector-java-3.1.13-bin.jar" />
+		<fileset dir="${libs.dir}" includes="ehcache-1.3.0.jar" />
+		<fileset dir="${libs.dir}/hibernate" includes="*" />
+	</path>
 	
 	<!-- ======= SPECIAL PROPERTIES ======================================= -->
+	<property name="dependencies" value="vhdllab-dao,vhdllab-entities,vhdllab-common" />
 	<property name="debug" value="${server.debug}" />
 	<property name="runtime.log4j.dir" value="${server.log4j.dir}" />
 
