@@ -2,8 +2,10 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 	<persistence-unit name="hibernate">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>hr.fer.zemris.vhdllab.entities.File</class>
 		<class>hr.fer.zemris.vhdllab.entities.Project</class>
+		<class>hr.fer.zemris.vhdllab.entities.File</class>
+		<class>hr.fer.zemris.vhdllab.entities.Library</class>
+		<class>hr.fer.zemris.vhdllab.entities.LibraryFile</class>
 		<class>hr.fer.zemris.vhdllab.entities.UserFile</class>
 		<properties>
 			<property name="hibernate.dialect"

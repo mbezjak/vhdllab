@@ -4,19 +4,38 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A library is a collection of library files. Libraries are stored on file
- * system and for that a custom dao implementation is written. Because of that
- * this class is not an entity (at least not {@link Entity})!
+ * A library is a collection of library files.
  * 
  * @author Miro Bezjak
  * @since 31/1/2008
  * @version 1.0
  */
+@Entity
+@Table(name = "libraries", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
+@NamedQueries(value = {
+		@NamedQuery(name = Library.FIND_BY_NAME_QUERY, query = "select l from Library as l where l.name = :name order by l.id"),
+		@NamedQuery(name = Library.GET_ALL_QUERY, query = "select l from Library as l order by l.id") })
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Library extends Container<LibraryFile, Library> {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * A named query for finding libraries by name.
+	 */
+	public static final String FIND_BY_NAME_QUERY = "library.find.by.name";
+	/**
+	 * A named query for finding all libraries.
+	 */
+	public static final String GET_ALL_QUERY = "library.get.all";
 
 	/**
 	 * Constructor for persistence provider.

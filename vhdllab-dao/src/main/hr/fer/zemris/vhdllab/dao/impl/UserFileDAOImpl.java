@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 1.0
  * @since 6/2/2008
  */
-public final class UserFileDAOImpl extends AbstractDatabaseEntityDAO<UserFile>
+public final class UserFileDAOImpl extends AbstractEntityDAO<UserFile>
 		implements UserFileDAO {
 
 	/**
@@ -23,16 +23,6 @@ public final class UserFileDAOImpl extends AbstractDatabaseEntityDAO<UserFile>
 	 */
 	public UserFileDAOImpl() {
 		super(UserFile.class);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.dao.impl.AbstractDatabaseEntityDAO#save(java.lang.Object)
-	 */
-	@Override
-	public void save(UserFile entity) throws DAOException {
-		super.save(entity);
 	}
 
 	/*

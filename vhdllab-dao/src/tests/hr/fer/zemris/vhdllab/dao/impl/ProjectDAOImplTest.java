@@ -451,7 +451,7 @@ public class ProjectDAOImplTest {
 			List<Project> projects = dao.findByUser(USER_ID);
 			EntityManagerUtil.closeEntityManager();
 			long end = System.currentTimeMillis();
-			System.out.println("Project.findByUser() - query cache test: "
+			System.out.println("ProjectDAO.findByUser() - query cache test: "
 					+ (end - start) + "ms");
 			assertNotNull("projects are null", projects);
 		}

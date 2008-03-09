@@ -439,7 +439,7 @@ public class UserFileDAOImplTest {
 			List<UserFile> files = dao.findByUser(USER_ID);
 			EntityManagerUtil.closeEntityManager();
 			long end = System.currentTimeMillis();
-			System.out.println("UserFile.findByUser() - cache test: "
+			System.out.println("UserFileDAO.findByUser() - cache test: "
 					+ (end - start) + "ms");
 			assertNotNull("collection is null.", files);
 		}

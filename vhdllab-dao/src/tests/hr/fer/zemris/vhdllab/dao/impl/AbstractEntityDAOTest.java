@@ -16,15 +16,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Tests for {@link AbstractDatabaseEntityDAO} class.
+ * Tests for {@link AbstractEntityDAO} class.
  * 
  * @author Miro Bezjak
  */
-public class AbstractDatabaseEntityDAOTest {
+public class AbstractEntityDAOTest {
 
 	private static final Long UNUSED_ID = Long.valueOf(Long.MAX_VALUE);
 
-	private static AbstractDatabaseEntityDAO<UserFile> dao;
+	private static AbstractEntityDAO<UserFile> dao;
 
 	@BeforeClass
 	public static void initTestCase() throws DAOException {
@@ -32,7 +32,7 @@ public class AbstractDatabaseEntityDAOTest {
 		 * Entity type is not important in this test case so UserFile was picked
 		 * because it is the simplest one.
 		 */
-		dao = new AbstractDatabaseEntityDAO<UserFile>(UserFile.class) {
+		dao = new AbstractEntityDAO<UserFile>(UserFile.class) {
 			// empty implementation
 		};
 		EntityManagerUtil.createEntityManagerFactory();
@@ -53,7 +53,7 @@ public class AbstractDatabaseEntityDAOTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void constructor() throws DAOException {
-		new AbstractDatabaseEntityDAO<UserFile>(null) {
+		new AbstractEntityDAO<UserFile>(null) {
 			// empty implementation
 		};
 	}

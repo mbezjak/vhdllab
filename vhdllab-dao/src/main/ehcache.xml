@@ -74,13 +74,22 @@
         timeToLiveSeconds="1200"
         />
 
-    <!-- cache for GlobalFile -->
-    <cache name="hr.fer.zemris.vhdllab.entities.GlobalFile"
-        maxElementsInMemory="50"
+    <!-- cache for Library -->
+    <cache name="hr.fer.zemris.vhdllab.entities.Library"
+        maxElementsInMemory="100"
         eternal="false"
         overflowToDisk="true"
-        timeToIdleSeconds="300"
-        timeToLiveSeconds="600"
+        timeToIdleSeconds="600"
+        timeToLiveSeconds="1200"
+        />
+
+    <!-- cache for LibraryFile -->
+    <cache name="hr.fer.zemris.vhdllab.entities.LibraryFile"
+        maxElementsInMemory="500"
+        eternal="false"
+        overflowToDisk="true"
+        timeToIdleSeconds="600"
+        timeToLiveSeconds="1200"
         />
 
     <!-- cache for UserFile -->

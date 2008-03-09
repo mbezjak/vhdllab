@@ -1,19 +1,35 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import javax.persistence.AssociationOverride;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A file that belongs to a library. Libraries are stored on file system and for
- * that a custom dao implementation is written. Because of that this class is
- * not an entity (at least not {@link Entity})!
+ * A file that belongs to a library.
  * 
  * @author Miro Bezjak
  * @since 31/1/2008
  * @version 1.0
  */
+@Entity
+@AssociationOverride(name = "parent", joinColumns = { @JoinColumn(name = "library_id", nullable = false, updatable = false) })
+@Table(name = "library_files", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"name", "library_id" }) })
+@NamedQuery(name = LibraryFile.FIND_BY_NAME_QUERY, query = "select l from LibraryFile as l where l.name = :name and l.parent.id = :id order by l.id")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class LibraryFile extends BidiResource<Library, LibraryFile> {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * A named query for finding library files by name.
+	 */
+	public static final String FIND_BY_NAME_QUERY = "library.file.find.by.name";
 
 	/**
 	 * Constructor for persistence provider.

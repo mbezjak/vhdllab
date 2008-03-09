@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * @version 1.0
  * @since 6/2/2008
  */
-public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
+public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 
 	/**
 	 * A query hint key for hibernate persistence provider to set query as
@@ -39,7 +39,7 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * A logger for this class.
 	 */
 	private static final Logger log = Logger
-			.getLogger(AbstractDatabaseEntityDAO.class);
+			.getLogger(AbstractEntityDAO.class);
 
 	/**
 	 * A class of an entity.
@@ -54,7 +54,7 @@ public abstract class AbstractDatabaseEntityDAO<T> implements EntityDAO<T> {
 	 * @throws NullPointerException
 	 *             if <code>clazz</code> is <code>null</code>
 	 */
-	public AbstractDatabaseEntityDAO(Class<T> clazz) {
+	public AbstractEntityDAO(Class<T> clazz) {
 		if (clazz == null) {
 			throw new NullPointerException("Entity class cant be null");
 		}

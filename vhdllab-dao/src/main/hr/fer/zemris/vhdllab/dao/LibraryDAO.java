@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.dao;
 
 import hr.fer.zemris.vhdllab.entities.Library;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * This interface extends {@link EntityDAO} to define extra methods for
@@ -42,12 +42,12 @@ public interface LibraryDAO extends EntityDAO<Library> {
 
 	/**
 	 * Finds all defined libraries. Return value will never be <code>null</code>
-	 * although it can be empty set.
+	 * although it can be empty list.
 	 * 
 	 * @return a all defined libraries
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	Set<Library> getAll() throws DAOException;
+	List<Library> getAll() throws DAOException;
 
 }

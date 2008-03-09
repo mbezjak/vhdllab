@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.dao.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.dao.DAOException;
@@ -12,11 +14,8 @@ import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.server.FileTypes;
 import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.Writer;
-
-import org.junit.AfterClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,110 +26,253 @@ import org.junit.Test;
  */
 public class LibraryFileDAOImplTest {
 
-	private static final String NAME = "AND";
-	private static final Long NEW_LIBRARY_ID = Long.MAX_VALUE;
+	private static final String NAME = "simple.file.name";
+	private static final String TYPE = FileTypes.VHDL_SCHEMA;
+	private static final String CONTENT = "<pref><value>schematic</value></pref>";
+	private static final Long NEW_LIBRARY_ID = Long.valueOf(Long.MAX_VALUE);
 	private static final String NEW_NAME = "new." + NAME;
-
-	private static final java.io.File basedir;
-	static {
-		String tempDir = System.getProperty("java.io.tmpdir");
-		tempDir += "/vhdllab";
-		basedir = new java.io.File(tempDir);
-	}
+	private static final String NEW_CONTENT = "library ieee;";
 
 	private static LibraryFileDAO dao;
-	private static Library library;
-	private static LibraryFile file;
+	private static LibraryDAO libraryDAO;
+	private Library library;
+	private LibraryFile file;
 
 	@BeforeClass
-	public static void initTestCase() throws Exception {
-		basedir.mkdir();
-		initConfFile();
-		initLibrary();
-		dao = new LibraryFileDAOImpl(basedir);
+	public static void initTestCase() throws DAOException {
+		dao = new LibraryFileDAOImpl();
+		libraryDAO = new LibraryDAOImpl();
+		EntityManagerUtil.createEntityManagerFactory();
+		destroyFiles();
 	}
 
-	private static void initConfFile() throws Exception {
-		String path = basedir.getPath();
-		path += "/libraries.xml";
-		Writer writer = new BufferedWriter(new FileWriter(path, false));
-		writer.append("<libraries>\n\t");
-		writer.append("<library name=\"predefined\" extension=\"vhdl\" ");
-		writer.append("mappedTo=\"").append(FileTypes.VHDL_SOURCE);
-		writer.append("\" />\n\t");
-		writer.append("<library name=\"preferences\" extension=\"txt\" ");
-		writer.append("mappedTo=\"").append(FileTypes.PREFERENCES_GLOBAL);
-		writer.append("\" />\n");
-		writer.append("</libraries>\n");
-		writer.close();
+	@Before
+	public void initEachTest() throws DAOException {
+		initFiles();
+		EntityManagerUtil.currentEntityManager();
 	}
 
-	private static void initLibrary() throws Exception {
-		String lib = basedir.getPath() + "/" + "predefined";
-		new java.io.File(lib).mkdir();
-		String filePath = lib + "/" + NAME + ".vhdl";
+	private void initFiles() throws DAOException {
+		library = new Library("library.name");
+		EntityManagerUtil.currentEntityManager();
+		libraryDAO.save(library);
+		EntityManagerUtil.closeEntityManager();
 
-		Writer writer = new BufferedWriter(new FileWriter(filePath, false));
-		writer.append("library ieee; entity andCircuit...");
-		writer.close();
-
-		LibraryDAO libraryDAO = new LibraryDAOImpl(basedir);
-		library = libraryDAO.findByName("predefined");
-		file = library.iterator().next(); // first file
+		file = new LibraryFile(library, NAME, TYPE, CONTENT);
 	}
 
-	@AfterClass
-	public static void destroyEachTest() {
-		deleteDir(basedir);
-		basedir.delete();
+	@After
+	public void destroyEachTest() throws DAOException {
+		EntityManagerUtil.closeEntityManager();
+		destroyFiles();
 	}
 
-	private static void deleteDir(java.io.File dir) {
-		for (java.io.File f : dir.listFiles()) {
-			if (f.isDirectory()) {
-				deleteDir(f);
+	private static void destroyFiles() throws DAOException {
+		/*
+		 * Create a new entity manager for destroying files to isolate any
+		 * errors in a test
+		 */
+		EntityManagerUtil.currentEntityManager();
+		for (Library p : libraryDAO.getAll()) {
+			libraryDAO.delete(p.getId());
+		}
+		EntityManagerUtil.closeEntityManager();
+	}
+
+	/**
+	 * save a file then load it and see it they are the same
+	 */
+	@Test
+	public void saveAndLoad() throws DAOException {
+		dao.save(file);
+		LibraryFile loadedFile = dao.load(file.getId());
+		assertEquals("file not equal after creating and loading it.", file,
+				loadedFile);
+		assertEquals("names are not same.", NAME, loadedFile.getName());
+		assertEquals("libraries are not same.", library, loadedFile.getLibrary());
+	}
+
+	/**
+	 * File is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void save() throws DAOException {
+		dao.save(null);
+	}
+
+	/**
+	 * Once file is persisted an ID is no longer null
+	 */
+	@Test()
+	public void save2() throws DAOException {
+		assertNull("file has id set.", file.getId());
+		dao.save(file);
+		assertNotNull("file id wasn't set after creation.", file.getId());
+	}
+
+	/**
+	 * File content can be a part of update statement
+	 */
+	@Test
+	public void save3() throws Exception {
+		dao.save(file);
+		file.setContent(NEW_CONTENT);
+		dao.save(file);
+		assertEquals("files not same after content was updated.", file, dao
+				.load(file.getId()));
+	}
+
+	/**
+	 * File type can't be any string. Must be only one of registered file types.
+	 */
+	@Test
+	public void save4() throws Exception {
+		dao.save(file);
+		LibraryFile newFile = new LibraryFile(library, NAME, "invalid.file.type", CONTENT);
+		try {
+			dao.save(newFile);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_INVALID_FILE_TYPE) {
+				fail("Invalid status code in DAOException");
 			}
-			f.delete();
 		}
 	}
 
 	/**
-	 * Save operation is not permitted
+	 * non-existing library (can't cascade to persist a library)
 	 */
-	@Test(expected = UnsupportedOperationException.class)
-	public void save() throws DAOException {
+	@Test(expected = DAOException.class)
+	public void save5() throws DAOException {
+		Library newLibrary = new Library("new.library.name");
+		LibraryFile newFile = new LibraryFile(file, newLibrary);
+		dao.save(newFile);
+	}
+
+	/**
+	 * If library is saved then file can be persisted
+	 */
+	@Test
+	public void save6() throws DAOException {
+		Library newLibrary = new Library("new.library.name");
+		libraryDAO.save(newLibrary);
+		LibraryFile newFile = new LibraryFile(file, newLibrary);
+		dao.save(newFile);
+		assertTrue("file doesn't exist.", dao.exists(newFile.getId()));
+		assertTrue("file doesn't exist.", dao.exists(newLibrary.getId(),
+				newFile.getName()));
+		Library loadedLibrary = libraryDAO.load(newLibrary.getId());
+		assertTrue("collection isn't updated.", loadedLibrary.getFiles()
+				.contains(newFile));
+	}
+
+	/**
+	 * File name and library id are unique (i.e. form secondary key)
+	 */
+	@Test
+	public void save7() throws Exception {
 		dao.save(file);
+		LibraryFile newFile = new LibraryFile(library, file.getName(), TYPE, CONTENT);
+		try {
+			dao.save(newFile);
+			fail("Expected DAOException");
+		} catch (DAOException e) {
+			if (e.getStatusCode() != StatusCodes.DAO_ALREADY_EXISTS) {
+				fail("Invalid status code in DAOException");
+			}
+		}
 	}
 
 	/**
-	 * Delete operation is not permitted
+	 * Save a file with same library but different name
 	 */
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
+	public void save8() throws Exception {
+		dao.save(file);
+		LibraryFile newFile = new LibraryFile(library, NEW_NAME, TYPE, CONTENT);
+		dao.save(newFile);
+		assertTrue("new file not saved.", dao.exists(newFile.getId()));
+		assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
+	}
+
+	/**
+	 * Save a file with same name but different library
+	 */
+	@Test
+	public void save9() throws Exception {
+		dao.save(file);
+		Library newLibrary = new Library("new.library.name");
+		libraryDAO.save(newLibrary);
+		LibraryFile newFile = new LibraryFile(newLibrary, NAME, TYPE, CONTENT);
+		dao.save(file);
+		assertTrue("new file not saved.", dao.exists(newFile.getId()));
+		assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
+	}
+
+	/**
+	 * save a file then update it
+	 */
+	@Test
+	public void save10() throws DAOException {
+		dao.save(file);
+		file.setContent("abc");
+		dao.save(file);
+		assertTrue("file doesn't exist.", dao.exists(file.getId()));
+		assertEquals("file not updated.", file, dao.load(file.getId()));
+	}
+
+	/**
+	 * Id is null
+	 */
+	@Test(expected = NullPointerException.class)
+	public void load() throws Exception {
+		dao.load(null);
+	}
+
+	/**
+	 * Save a file then delete it
+	 */
+	@Test
 	public void delete() throws Exception {
+		dao.save(file);
+		assertTrue("file not saved.", dao.exists(file.getId()));
 		dao.delete(file.getId());
+		assertFalse("file exists after it was deleted.", dao.exists(file
+				.getId()));
+		assertFalse("file exists after it was deleted.", dao.exists(library
+				.getId(), file.getName()));
 	}
 
 	/**
-	 * Load by identifier operation is not permitted
+	 * id is null
 	 */
-	@Test(expected = UnsupportedOperationException.class)
-	public void load() throws DAOException {
-		dao.load(file.getId());
-	}
-	
-	/**
-	 * Exists by identifier operation is not permitted
-	 */
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expected = NullPointerException.class)
 	public void exists() throws DAOException {
-		dao.load(file.getId());
+		dao.exists((Long) null);
+	}
+
+	/**
+	 * non-existing id
+	 */
+	@Test
+	public void exists2() throws DAOException {
+		assertFalse("file exists.", dao.exists(Long.MAX_VALUE));
+	}
+
+	/**
+	 * everything ok
+	 */
+	@Test
+	public void exists3() throws DAOException {
+		dao.save(file);
+		assertTrue("file doesn't exist.", dao.exists(file.getId()));
 	}
 
 	/**
 	 * library id is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists2() throws DAOException {
+	public void exists4() throws DAOException {
 		dao.exists(null, NAME);
 	}
 
@@ -138,7 +280,7 @@ public class LibraryFileDAOImplTest {
 	 * name is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists3() throws DAOException {
+	public void exists5() throws DAOException {
 		dao.exists(file.getLibrary().getId(), null);
 	}
 
@@ -146,7 +288,7 @@ public class LibraryFileDAOImplTest {
 	 * non-existing library id and name
 	 */
 	@Test
-	public void exists4() throws Exception {
+	public void exists6() throws Exception {
 		assertFalse("file with unused library id exists.", dao.exists(
 				NEW_LIBRARY_ID, NAME));
 		assertFalse("file with unused name exists.", dao.exists(
@@ -157,7 +299,8 @@ public class LibraryFileDAOImplTest {
 	 * everything ok
 	 */
 	@Test
-	public void exists5() throws Exception {
+	public void exists7() throws Exception {
+		dao.save(file);
 		assertTrue("file doesn't exists after creation.", dao.exists(file
 				.getId()));
 		assertTrue("file doesn't exists after creation.", dao.exists(library
@@ -213,22 +356,11 @@ public class LibraryFileDAOImplTest {
 	}
 
 	/**
-	 * File has different extension then one provided in libraries.xml file.
-	 */
-	@Test(expected = DAOException.class)
-	public void findByName5() throws Exception {
-		String path = basedir.getPath() + "/" + library.getName() + "/"
-				+ "example.txt";
-		new java.io.File(path).createNewFile();
-		// wrong. expected '.vhdl' not '.txt'!
-		dao.findByName(file.getLibrary().getId(), "example");
-	}
-
-	/**
 	 * everything ok
 	 */
 	@Test
-	public void findByName6() throws Exception {
+	public void findByName5() throws Exception {
+		dao.save(file);
 		assertEquals("files are not same.", file, dao.findByName(library
 				.getId(), file.getName()));
 		assertEquals("file name is not case insensitive.", file, dao

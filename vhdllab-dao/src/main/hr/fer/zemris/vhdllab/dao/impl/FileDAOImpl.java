@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 1.0
  * @since 6/2/2008
  */
-public final class FileDAOImpl extends AbstractDatabaseEntityDAO<File> implements
+public final class FileDAOImpl extends AbstractEntityDAO<File> implements
 		FileDAO {
 
 	/**

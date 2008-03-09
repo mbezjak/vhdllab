@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 1.0
  * @since 6/2/2008
  */
-public final class ProjectDAOImpl extends AbstractDatabaseEntityDAO<Project> implements
+public final class ProjectDAOImpl extends AbstractEntityDAO<Project> implements
 		ProjectDAO {
 
 	/**
