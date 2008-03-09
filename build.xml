@@ -33,12 +33,12 @@
 		<attribute name="includes"/>
 		<sequential>
 			<copy todir="@{toDir}" overwrite="true">
-				<!--<fileset dir="vhdllab-client/@{fromDir}" includes="@{includes}" />
-				<fileset dir="vhdllab-common/@{fromDir}" includes="@{includes}" />-->
+				<fileset dir="vhdllab-client/@{fromDir}" includes="@{includes}" />
+				<fileset dir="vhdllab-common/@{fromDir}" includes="@{includes}" />
 				<fileset dir="vhdllab-dao/@{fromDir}" includes="@{includes}" />
 				<fileset dir="vhdllab-entities/@{fromDir}" includes="@{includes}" />
-				<!--<fileset dir="vhdllab-presentation/@{fromDir}" includes="@{includes}" />
-				<fileset dir="vhdllab-service/@{fromDir}" includes="@{includes}" />-->
+				<fileset dir="vhdllab-presentation/@{fromDir}" includes="@{includes}" />
+				<fileset dir="vhdllab-service/@{fromDir}" includes="@{includes}" />
 			</copy>
 		</sequential>
 	</macrodef>

@@ -37,6 +37,8 @@ public interface EntityDAO<T> {
 	 * @return an entity with specified identifier
 	 * @throws DAOException
 	 *             if exceptional condition occurs
+	 * @throws UnsupportedOperationException
+	 *             if implementation doesn't support identifiers on an entity
 	 * @throws NullPointerException
 	 *             if <code>id</code> is <code>null</code>
 	 */
@@ -52,6 +54,8 @@ public interface EntityDAO<T> {
 	 *         otherwise
 	 * @throws DAOException
 	 *             if exceptional condition occurs
+	 * @throws UnsupportedOperationException
+	 *             if implementation doesn't support identifiers on an entity
 	 * @throws NullPointerException
 	 *             if <code>id</code> is <code>null</code>
 	 */

@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.dao.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.dao.DAOException;
@@ -15,6 +14,7 @@ import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.Writer;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -53,7 +53,7 @@ public class LibraryFileDAOImplTest {
 	private static void initConfFile() throws Exception {
 		String path = basedir.getPath();
 		path += "/libraries.xml";
-		BufferedWriter writer = new BufferedWriter(new FileWriter(path, false));
+		Writer writer = new BufferedWriter(new FileWriter(path, false));
 		writer.append("<libraries>\n\t");
 		writer.append("<library name=\"predefined\" extension=\"vhdl\" ");
 		writer.append("mappedTo=\"").append(FileTypes.VHDL_SOURCE);
@@ -70,8 +70,7 @@ public class LibraryFileDAOImplTest {
 		new java.io.File(lib).mkdir();
 		String filePath = lib + "/" + NAME + ".vhdl";
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,
-				false));
+		Writer writer = new BufferedWriter(new FileWriter(filePath, false));
 		writer.append("library ieee; entity andCircuit...");
 		writer.close();
 
@@ -112,56 +111,26 @@ public class LibraryFileDAOImplTest {
 	}
 
 	/**
-	 * Id is null
+	 * Load by identifier operation is not permitted
 	 */
-	@Test(expected = NullPointerException.class)
-	public void load() throws Exception {
-		dao.load(null);
+	@Test(expected = UnsupportedOperationException.class)
+	public void load() throws DAOException {
+		dao.load(file.getId());
 	}
-
+	
 	/**
-	 * Everything ok
+	 * Exists by identifier operation is not permitted
 	 */
-	@Test
-	public void load2() throws Exception {
-		LibraryFile loadedFile = dao.load(file.getId());
-		assertEquals("files not equal.", file, loadedFile);
-		assertNotNull("created date is null.", loadedFile.getCreated());
-		assertNotNull("content is null.", loadedFile.getContent());
-		assertEquals("types not equal.", FileTypes.VHDL_SOURCE, loadedFile
-				.getType());
-		assertEquals("libraries not equal.", library, loadedFile.getLibrary());
-	}
-
-	/**
-	 * id is null
-	 */
-	@Test(expected = NullPointerException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void exists() throws DAOException {
-		dao.exists((Long) null);
-	}
-
-	/**
-	 * non-existing id
-	 */
-	@Test
-	public void exists2() throws DAOException {
-		assertFalse("file exists.", dao.exists(Long.MAX_VALUE));
-	}
-
-	/**
-	 * everything ok
-	 */
-	@Test
-	public void exists3() throws DAOException {
-		assertTrue("file doesn't exist.", dao.exists(file.getId()));
+		dao.load(file.getId());
 	}
 
 	/**
 	 * library id is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists4() throws DAOException {
+	public void exists2() throws DAOException {
 		dao.exists(null, NAME);
 	}
 
@@ -169,7 +138,7 @@ public class LibraryFileDAOImplTest {
 	 * name is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void exists5() throws DAOException {
+	public void exists3() throws DAOException {
 		dao.exists(file.getLibrary().getId(), null);
 	}
 
@@ -177,7 +146,7 @@ public class LibraryFileDAOImplTest {
 	 * non-existing library id and name
 	 */
 	@Test
-	public void exists6() throws Exception {
+	public void exists4() throws Exception {
 		assertFalse("file with unused library id exists.", dao.exists(
 				NEW_LIBRARY_ID, NAME));
 		assertFalse("file with unused name exists.", dao.exists(
@@ -188,7 +157,7 @@ public class LibraryFileDAOImplTest {
 	 * everything ok
 	 */
 	@Test
-	public void exists7() throws Exception {
+	public void exists5() throws Exception {
 		assertTrue("file doesn't exists after creation.", dao.exists(file
 				.getId()));
 		assertTrue("file doesn't exists after creation.", dao.exists(library

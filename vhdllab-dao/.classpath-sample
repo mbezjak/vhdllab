@@ -34,5 +34,7 @@
 	<classpathentry kind="lib" path="/vhdllab-misc/libs/hibernate/jta.jar"/>
 	<classpathentry kind="lib" path="/vhdllab-misc/libs/hibernate/xml-apis.jar"/>
 	<classpathentry kind="lib" path="/vhdllab-misc/libs/build/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/commons-digester-1.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
