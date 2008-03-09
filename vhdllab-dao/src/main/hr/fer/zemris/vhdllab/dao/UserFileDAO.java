@@ -13,7 +13,7 @@ import java.util.List;
  * @since 6/2/2008
  */
 public interface UserFileDAO extends EntityDAO<UserFile> {
-
+	
 	/**
 	 * Returns <code>true</code> if a user file with specified
 	 * <code>ownerId</code> and <code>name</code> exists or

@@ -27,7 +27,7 @@ public class AbstractEntityDAOTest {
 	private static AbstractEntityDAO<UserFile> dao;
 
 	@BeforeClass
-	public static void initTestCase() throws DAOException {
+	public static void initTestCase() {
 		/*
 		 * Entity type is not important in this test case so UserFile was picked
 		 * because it is the simplest one.
@@ -39,12 +39,12 @@ public class AbstractEntityDAOTest {
 	}
 
 	@Before
-	public void initEachTest() throws DAOException {
+	public void initEachTest() {
 		EntityManagerUtil.currentEntityManager();
 	}
 
 	@After
-	public void destroyEachTest() throws DAOException {
+	public void destroyEachTest() {
 		EntityManagerUtil.closeEntityManager();
 	}
 
@@ -52,7 +52,7 @@ public class AbstractEntityDAOTest {
 	 * clazz is null
 	 */
 	@Test(expected = NullPointerException.class)
-	public void constructor() throws DAOException {
+	public void constructor() {
 		new AbstractEntityDAO<UserFile>(null) {
 			// empty implementation
 		};

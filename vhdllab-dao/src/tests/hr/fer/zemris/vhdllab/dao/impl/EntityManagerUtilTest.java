@@ -91,7 +91,7 @@ public class EntityManagerUtilTest {
 	 * {@link EntityManagerUtil#rollbackTransaction()} two times in a row
 	 */
 	@Test
-	public void rollbackTransaction() throws DAOException {
+	public void rollbackTransaction() {
 		EntityManagerUtil.rollbackTransaction();
 		EntityManagerUtil.rollbackTransaction();
 	}

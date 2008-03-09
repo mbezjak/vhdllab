@@ -154,7 +154,8 @@ public class File extends BidiResource<Project, File> {
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(File o) {
+	@Override
+	public int compareTo(Resource o) {
 		if (this == o)
 			return 0;
 		if (o == null)
@@ -162,7 +163,7 @@ public class File extends BidiResource<Project, File> {
 		if (!(o instanceof File)) {
 			throw new ClassCastException("Object is not of File type");
 		}
-		final File other = o;
+		final File other = (File) o;
 		int val = super.compareTo(other);
 		if (val != 0) {
 			return val;

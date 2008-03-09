@@ -6,8 +6,15 @@
 	
 	<!-- ======= CLASSPATH SETUP ========================================== -->
 	<path id="compile.classpath">
+		<fileset dir="${libs.dir}" includes="commons-digester-1.8.jar"/>
+		<fileset dir="${libs.dir}" includes="log4j-1.2.15.jar" />
 	</path>
-	<path id="runtime.classpath" />
+	<path id="runtime.classpath">
+		<fileset dir="${libs.dir}" includes="commons-digester-1.8.jar"/>
+		<fileset dir="${libs.dir}" includes="commons-beanutils.jar"/>
+		<fileset dir="${libs.dir}" includes="commons-logging-1.1.1.jar" />
+		<fileset dir="${libs.dir}" includes="log4j-1.2.15.jar" />
+	</path>
 	
 	<!-- ======= SPECIAL PROPERTIES ======================================= -->
 	<property name="debug" value="${server.debug}" />

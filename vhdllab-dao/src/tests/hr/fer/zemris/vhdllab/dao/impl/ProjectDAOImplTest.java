@@ -50,12 +50,12 @@ public class ProjectDAOImplTest {
 	}
 
 	@Before
-	public void initEachTest() throws DAOException {
+	public void initEachTest() {
 		initFiles();
 		EntityManagerUtil.currentEntityManager();
 	}
 
-	private void initFiles() throws DAOException {
+	private void initFiles() {
 		project = new Project(USER_ID, NAME);
 		file = new File(project, "file.name", FileTypes.VHDL_SOURCE,
 				"<file>int main() {}</file>");
@@ -307,7 +307,7 @@ public class ProjectDAOImplTest {
 	 * non-existing user id
 	 */
 	@Test
-	public void findByName3() throws DAOException {
+	public void findByName3() {
 		try {
 			dao.findByName(NEW_USER_ID, NAME);
 			fail("Expected DAOException");
@@ -322,7 +322,7 @@ public class ProjectDAOImplTest {
 	 * non-existing name
 	 */
 	@Test
-	public void findByName4() throws DAOException {
+	public void findByName4() {
 		try {
 			dao.findByName(USER_ID, NEW_NAME);
 			fail("Expected DAOException");

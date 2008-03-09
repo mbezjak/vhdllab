@@ -329,7 +329,7 @@ public class LibraryFileDAOImplTest {
 	 * non-existing library id
 	 */
 	@Test
-	public void findByName3() throws DAOException {
+	public void findByName3() {
 		try {
 			dao.findByName(NEW_LIBRARY_ID, NAME);
 			fail("Expected DAOException");
@@ -344,7 +344,7 @@ public class LibraryFileDAOImplTest {
 	 * non-existing name
 	 */
 	@Test
-	public void findByName4() throws DAOException {
+	public void findByName4() {
 		try {
 			dao.findByName(file.getLibrary().getId(), NEW_NAME);
 			fail("Expected DAOException");

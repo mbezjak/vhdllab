@@ -48,12 +48,12 @@ public class LibraryDAOImplTest {
 	}
 
 	@Before
-	public void initEachTest() throws DAOException {
+	public void initEachTest() {
 		initFiles();
 		EntityManagerUtil.currentEntityManager();
 	}
 
-	private void initFiles() throws DAOException {
+	private void initFiles() {
 		library = new Library(NAME);
 		file = new LibraryFile(library, "file.name", FileTypes.VHDL_SOURCE,
 				"<file>int main() {}</file>");
@@ -265,7 +265,7 @@ public class LibraryDAOImplTest {
 	 * non-existing name
 	 */
 	@Test
-	public void findByName2() throws DAOException {
+	public void findByName2() {
 		try {
 			dao.findByName(NEW_NAME);
 			fail("Expected DAOException");

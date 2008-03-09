@@ -330,7 +330,7 @@ public class FileDAOImplTest {
 	 * non-existing project id
 	 */
 	@Test
-	public void findByName3() throws DAOException {
+	public void findByName3() {
 		try {
 			dao.findByName(NEW_PROJECT_ID, NAME);
 			fail("Expected DAOException");
@@ -345,7 +345,7 @@ public class FileDAOImplTest {
 	 * non-existing name
 	 */
 	@Test
-	public void findByName4() throws DAOException {
+	public void findByName4() {
 		try {
 			dao.findByName(file.getProject().getId(), NEW_NAME);
 			fail("Expected DAOException");

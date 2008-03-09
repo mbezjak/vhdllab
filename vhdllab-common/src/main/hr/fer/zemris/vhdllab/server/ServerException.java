@@ -36,6 +36,17 @@ public class ServerException extends Exception {
 	 * Creates a server exception with a specified <code>cause</code> and no
 	 * message.
 	 * 
+	 * @param cause
+	 *            a cause of this exception
+	 */
+	public ServerException(ServerException cause) {
+		this(cause.getStatusCode(), null, cause);
+	}
+	
+	/**
+	 * Creates a server exception with a specified <code>cause</code> and no
+	 * message.
+	 * 
 	 * @param statusCode
 	 *            indicating why this exception occurred
 	 * @param cause
@@ -74,7 +85,7 @@ public class ServerException extends Exception {
 	 * @return a status code
 	 * @see StatusCodes
 	 */
-	public int getStatusCode() {
+	public short getStatusCode() {
 		return statusCode;
 	}
 

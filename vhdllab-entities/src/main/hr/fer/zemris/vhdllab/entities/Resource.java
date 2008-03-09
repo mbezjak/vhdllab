@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
  * @version 1.0
  */
 @MappedSuperclass
-class Resource implements Serializable, Comparable<Resource> {
+public class Resource implements Serializable, Comparable<Resource> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -88,8 +88,6 @@ class Resource implements Serializable, Comparable<Resource> {
 	 *            a name of a resource
 	 * @param type
 	 *            a type of a resource
-	 * @param a
-	 *            content of a resource
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 * @throws IllegalArgumentException

@@ -16,7 +16,7 @@ import javax.persistence.MappedSuperclass;
  * @version 1.0
  */
 @MappedSuperclass
-class BidiResource<TContainer extends Container<TBidiResource, TContainer>,
+public class BidiResource<TContainer extends Container<TBidiResource, TContainer>,
 					TBidiResource extends BidiResource<TContainer, TBidiResource>>
 		extends Resource {
 	/*
@@ -68,8 +68,6 @@ class BidiResource<TContainer extends Container<TBidiResource, TContainer>,
 	 *            a name of a bidi-resource
 	 * @param type
 	 *            a type of a bidi-resource
-	 * @param a
-	 *            content of a bidi-resource
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 * @throws IllegalArgumentException

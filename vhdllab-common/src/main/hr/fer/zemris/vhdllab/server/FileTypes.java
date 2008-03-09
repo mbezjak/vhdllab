@@ -7,7 +7,7 @@ package hr.fer.zemris.vhdllab.server;
  * @since 6/2/2008
  * @version 0.2
  */
-public class FileTypes {
+public final class FileTypes {
 
 	/**
 	 * Don't let anyone instantiate this class.
@@ -39,10 +39,5 @@ public class FileTypes {
 	 * A user preferences file type.
 	 */
 	public static final String PREFERENCES_USER = "preferences.user";
-	
-	/**
-	 * A global preferences file type.
-	 */
-	public static final String PREFERENCES_GLOBAL = "preferences.global";
 	
 }

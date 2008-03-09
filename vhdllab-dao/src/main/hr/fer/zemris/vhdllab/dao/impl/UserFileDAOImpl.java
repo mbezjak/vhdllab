@@ -3,10 +3,15 @@ package hr.fer.zemris.vhdllab.dao.impl;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.entities.UserFile;
+import hr.fer.zemris.vhdllab.server.api.StatusCodes;
+import hr.fer.zemris.vhdllab.server.conf.ServerConf;
+import hr.fer.zemris.vhdllab.server.conf.ServerConfParser;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 /**
  * This is a default implementation of {@link UserFileDAO}.
@@ -19,10 +24,36 @@ public final class UserFileDAOImpl extends AbstractEntityDAO<UserFile>
 		implements UserFileDAO {
 
 	/**
+	 * A log instance.
+	 */
+	private static final Logger log = Logger.getLogger(UserFileDAOImpl.class);
+
+	/**
 	 * Sole constructor.
 	 */
 	public UserFileDAOImpl() {
 		super(UserFile.class);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDAO#save(java.lang.Object)
+	 */
+	@Override
+	public void save(UserFile file) throws DAOException {
+		if (file == null) {
+			throw new NullPointerException("User file cant be null");
+		}
+		ServerConf conf = ServerConfParser.getConfiguration();
+		if (!conf.containsFileType(file.getType())) {
+			if(log.isInfoEnabled()) {
+				log.info("Found invalid file type: " + file.getType());
+			}
+			throw new DAOException(StatusCodes.DAO_INVALID_FILE_TYPE,
+					"File type " + file.getType() + " is invalid!");
+		}
+		super.save(file);
 	}
 
 	/*

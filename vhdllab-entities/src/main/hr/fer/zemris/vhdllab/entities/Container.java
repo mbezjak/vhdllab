@@ -31,7 +31,7 @@ import org.hibernate.annotations.Cascade;
  * @version 1.0
  */
 @MappedSuperclass
-class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
+public class Container<TBidiResource extends BidiResource<TContainer, TBidiResource>,
 				TContainer extends Container<TBidiResource, TContainer>>
 		implements Serializable,
 		Comparable<Container<TBidiResource, TContainer>>,
