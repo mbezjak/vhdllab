@@ -8,5 +8,12 @@
 			<accessrule kind="nonaccessible" pattern="**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-dao">
+		<accessrules>
+			<accessrule kind="nonaccessible" pattern="hr/fer/zemris/vhdllab/dao/impl/**"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-entities"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
