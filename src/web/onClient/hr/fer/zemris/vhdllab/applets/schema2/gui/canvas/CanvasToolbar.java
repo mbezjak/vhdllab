@@ -26,6 +26,7 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 	private JToggleButton selactState=null;
 	private JToggleButton deleteState=null;
 
+	@SuppressWarnings("unused")
 	private ResourceBundle bundle = null; //TODO kad aleks sredi bundle
 	
 	public CanvasToolbar(ResourceBundle bundle) {
@@ -51,7 +52,7 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 		ic=new ImageIcon(getClass().getResource("DeleteMode.png"));
 		deleteState=new JToggleButton(ic);
 		deleteState.setActionCommand("DELETE");
-		deleteState.setToolTipText("Delete...");
+		deleteState.setToolTipText("Delete wire...");
 		deleteState.addActionListener(this);
 		
 		//TODO ovo maknuti kad se srede stvari:
@@ -143,6 +144,7 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 		propertyChange(null);
 	}
 	
+	@SuppressWarnings("unused")
 	private void dummyStateChanger() {
 		ECanvasState state = localController.getState();
 		if(state.equals(ECanvasState.ADD_COMPONENT_STATE))

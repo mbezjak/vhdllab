@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController;
@@ -12,6 +14,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.LocalController;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaCore;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.AddUpdatePredefinedPrototype;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.DeleteComponentCommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.DeleteWireCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.InvalidateObsoleteUserComponents;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.RebuildPrototypeCollection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.RemovePrototype;
@@ -33,8 +37,10 @@ import hr.fer.zemris.vhdllab.vhdl.model.CircuitInterface;
 import hr.fer.zemris.vhdllab.vhdl.model.Hierarchy;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -46,9 +52,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 
 public class SchemaMainPanel extends AbstractEditor {
 
@@ -237,6 +246,40 @@ public class SchemaMainPanel extends AbstractEditor {
 				CanvasToolbarLocalGUIController.PROPERTY_CHANGE_SELECTION,
 				componentPropertyToolbar);
 
+		//#########Added by Delac: key listener for delete and escape action#########
+		this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
+				"delete_key_action");
+		this.getActionMap().put("delete_key_action", new AbstractAction() {
+			private static final long serialVersionUID = 1844240025875439799L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(localGUIController.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE){
+					if(SchemaCanvas.doDeleteWire(SchemaMainPanel.this)){
+						ICommand delete = new DeleteWireCommand(localGUIController.getSelectedComponent());
+						controller.send(delete);
+					}
+				}
+				else if(localGUIController.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT){
+					ICommand instantiate = new DeleteComponentCommand(localGUIController.getSelectedComponent());
+					controller.send(instantiate);
+				}
+			}
+		});
+		this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"escape_key_action");
+		this.getActionMap().put("escape_key_action", new AbstractAction() {
+			private static final long serialVersionUID = 1844240025875439799L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				localGUIController.setState(ECanvasState.MOVE_STATE);
+			}
+		});
+		//#############
+		
 		canvas.registerLocalController(localGUIController);
 		canvas.registerSchemaController(controller);
 

@@ -22,13 +22,13 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SimpleSchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SimpleSchemaWireCollection;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.DeleteComponentCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.DeleteSegmentAndDivideCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.DeleteWireCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.InstantiateComponentCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.MoveComponentCommand;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -167,6 +167,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		this.addMouseMotionListener(new Mose2());
 		this.setOpaque(true);
 		this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+		
 	}
 
 	//##########################
@@ -375,30 +376,95 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				}
 				else if(state.equals(ECanvasState.DELETE_STATE)){
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
+					int distToComp = -1;
 					if(comp != null){
-						ICommand instantiate = new DeleteComponentCommand(comp.getName());
-						ICommandResponse response = controller.send(instantiate);
-						System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+						//FIXME ovaj +5 je zbog crtanja komponenti
+						distToComp = 5 + Math.abs(components.distanceTo(comp.getName(), e.getX(), e.getY()));
+					}
+					ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
+					int distToWire = -1;
+					if(wire != null){
+						distToWire = Math.abs(wires.distanceTo(wire.getName(), e.getX(), e.getY()));
+					}
+					
+//					System.err.println("############ : -- "+distToComp + " ----- "+ distToWire);
+					
+					if(distToComp != -1){
+						if(distToWire != -1){
+							if(distToComp<distToWire){
+//								ICommand instantiate = new DeleteComponentCommand(comp.getName());
+//								controller.send(instantiate);
+							}else{
+								int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
+								WireSegment seg = wire.getSegments().get(segNo);
+								ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
+								controller.send(deleteSegment);
+							}
+						}else{
+//							ICommand instantiate = new DeleteComponentCommand(comp.getName());
+//							controller.send(instantiate);
+						}
 					}else{
-						ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
-						if(wire != null){
+						if(distToWire != -1){
 							int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
 							WireSegment seg = wire.getSegments().get(segNo);
 							ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
-							ICommandResponse response = controller.send(deleteSegment);
-							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+							controller.send(deleteSegment);
 						}
 					}
+//					if(comp != null){
+//						ICommand instantiate = new DeleteComponentCommand(comp.getName());
+//						ICommandResponse response = controller.send(instantiate);
+//						System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+//					}else{
+//						ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
+//						if(wire != null){
+//							int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
+//							WireSegment seg = wire.getSegments().get(segNo);
+//							ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
+//							ICommandResponse response = controller.send(deleteSegment);
+//							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
+//						}
+//					}
 				}
 				else if(state.equals(ECanvasState.MOVE_STATE)){
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
+					int distToComp = -1;
 					if(comp != null){
-						localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
-					}else{
-						ISchemaWire wir = wires.fetchWire(e.getX(), e.getY(),10);
-						if(wir!=null)
-							localController.setSelectedComponent(wir.getName(), CanvasToolbarLocalGUIController.TYPE_WIRE);
+						//FIXME ovaj +5 je zbog crtanja komponenti...
+						distToComp = 5 + Math.abs(components.distanceTo(comp.getName(), e.getX(), e.getY()));
 					}
+					ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
+					int distToWire = -1;
+					if(wire != null){
+						distToWire = Math.abs(wires.distanceTo(wire.getName(), e.getX(), e.getY()));
+					}
+					
+					System.err.println("############ : -- "+distToComp + " ----- "+ distToWire);
+					
+					if(distToComp != -1){
+						if(distToWire != -1){
+							if(distToComp<distToWire){
+								localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
+							}else{
+								localController.setSelectedComponent(wire.getName(), CanvasToolbarLocalGUIController.TYPE_WIRE);
+							}
+						}else{
+							localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
+						}
+					}else{
+						if(distToWire != -1){
+							localController.setSelectedComponent(wire.getName(), CanvasToolbarLocalGUIController.TYPE_WIRE);
+						}
+					}
+//					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
+//					if(comp != null){
+//						localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
+//					}else{
+//						ISchemaWire wir = wires.fetchWire(e.getX(), e.getY(),10);
+//						if(wir!=null)
+//							localController.setSelectedComponent(wir.getName(), CanvasToolbarLocalGUIController.TYPE_WIRE);
+//					}
 					
 				}
 			}else if(e.getButton()==MouseEvent.BUTTON3){
@@ -412,7 +478,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				}else if(state.equals(ECanvasState.DELETE_STATE)){
 					ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
 					if(wire != null){
-						if(doDeleteWire()){
+						if(doDeleteWire(SchemaCanvas.this)){
 							ICommand delete = new DeleteWireCommand(wire.getName());
 							ICommandResponse response = controller.send(delete);
 							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
@@ -508,7 +574,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 									alignToGrid(e.getX()-comp.getWidth()/2),alignToGrid(e.getY()-comp.getHeight()/2)
 							)
 					);
-					ICommandResponse response = controller.send(move);
+					controller.send(move);
 					//System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
 				}
 			}
@@ -536,13 +602,13 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		
 	}
 
-	private boolean doDeleteWire() {
+	public static boolean doDeleteWire(Component comp) {
 		String[] options={"Yes",
 				"No"
 		};
 		JLabel name=new JLabel("Delete entire wire?");
 		JOptionPane optionPane=new JOptionPane(name,JOptionPane.QUESTION_MESSAGE,JOptionPane.OK_CANCEL_OPTION,null,options,options[0]);
-		JDialog dialog=optionPane.createDialog(this,"VHDLLAB");
+		JDialog dialog=optionPane.createDialog(comp,"VHDLLAB");
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setVisible(true);
 		Object selected=optionPane.getValue();
