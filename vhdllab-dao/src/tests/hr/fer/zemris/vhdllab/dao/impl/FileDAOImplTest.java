@@ -245,6 +245,39 @@ public class FileDAOImplTest {
 	}
 
 	/**
+	 * Save a project and a file in same session then delete a file
+	 */
+	@Test
+	public void delete2() throws Exception {
+		project = new Project(project.getUserId(), "new.project.name");
+		projectDAO.save(project);
+		file = new File(file, project);
+		dao.save(file);
+		assertTrue("file not saved.", dao.exists(file.getId()));
+		dao.delete(file.getId());
+		assertFalse("file exists after it was deleted.", dao.exists(file
+				.getId()));
+		assertFalse("file exists after it was deleted.", dao.exists(project
+				.getId(), file.getName()));
+	}
+	
+	/**
+	 * Delete a file in another session
+	 */
+	@Test
+	public void delete3() throws Exception {
+		dao.save(file);
+		assertTrue("file not saved.", dao.exists(file.getId()));
+		EntityManagerUtil.closeEntityManager();
+		EntityManagerUtil.currentEntityManager();
+		dao.delete(file.getId());
+		assertFalse("file exists after it was deleted.", dao.exists(file
+				.getId()));
+		assertFalse("file exists after it was deleted.", dao.exists(project
+				.getId(), file.getName()));
+	}
+	
+	/**
 	 * id is null
 	 */
 	@Test(expected = NullPointerException.class)

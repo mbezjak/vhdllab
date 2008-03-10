@@ -38,8 +38,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	/**
 	 * A logger for this class.
 	 */
-	private static final Logger log = Logger
-			.getLogger(AbstractEntityDAO.class);
+	private static final Logger log = Logger.getLogger(AbstractEntityDAO.class);
 
 	/**
 	 * A class of an entity.
@@ -131,12 +130,22 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 						.getCanonicalName()
 						+ "[" + id + "]" + " doesn't exit");
 			}
+			preDeleteAction(entity);
 			em.remove(entity);
 		} catch (PersistenceException e) {
 			log.error("Unexpected error.", e);
 			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
 		EntityManagerUtil.commitAndCloseTransaction();
+	}
+
+	/**
+	 * This method is called each time an entity is about to be deleted.
+	 * 
+	 * @param entity
+	 *            an entity that will be deleted
+	 */
+	protected void preDeleteAction(T entity) {
 	}
 
 	/**

@@ -15,5 +15,7 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/vhdllab-entities"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="/vhdllab-misc/libs/test/junit-4.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -89,7 +89,8 @@ public class LibraryFileDAOImplTest {
 		assertEquals("file not equal after creating and loading it.", file,
 				loadedFile);
 		assertEquals("names are not same.", NAME, loadedFile.getName());
-		assertEquals("libraries are not same.", library, loadedFile.getLibrary());
+		assertEquals("libraries are not same.", library, loadedFile
+				.getLibrary());
 	}
 
 	/**
@@ -128,7 +129,8 @@ public class LibraryFileDAOImplTest {
 	@Test
 	public void save4() throws Exception {
 		dao.save(file);
-		LibraryFile newFile = new LibraryFile(library, NAME, "invalid.file.type", CONTENT);
+		LibraryFile newFile = new LibraryFile(library, NAME,
+				"invalid.file.type", CONTENT);
 		try {
 			dao.save(newFile);
 			fail("Expected DAOException");
@@ -172,7 +174,8 @@ public class LibraryFileDAOImplTest {
 	@Test
 	public void save7() throws Exception {
 		dao.save(file);
-		LibraryFile newFile = new LibraryFile(library, file.getName(), TYPE, CONTENT);
+		LibraryFile newFile = new LibraryFile(library, file.getName(), TYPE,
+				CONTENT);
 		try {
 			dao.save(newFile);
 			fail("Expected DAOException");
@@ -236,6 +239,39 @@ public class LibraryFileDAOImplTest {
 	public void delete() throws Exception {
 		dao.save(file);
 		assertTrue("file not saved.", dao.exists(file.getId()));
+		dao.delete(file.getId());
+		assertFalse("file exists after it was deleted.", dao.exists(file
+				.getId()));
+		assertFalse("file exists after it was deleted.", dao.exists(library
+				.getId(), file.getName()));
+	}
+
+	/**
+	 * Save a library and a file in same session then delete a file
+	 */
+	@Test
+	public void delete2() throws Exception {
+		library = new Library("new.library.name");
+		libraryDAO.save(library);
+		file = new LibraryFile(file, library);
+		dao.save(file);
+		assertTrue("file not saved.", dao.exists(file.getId()));
+		dao.delete(file.getId());
+		assertFalse("file exists after it was deleted.", dao.exists(file
+				.getId()));
+		assertFalse("file exists after it was deleted.", dao.exists(library
+				.getId(), file.getName()));
+	}
+
+	/**
+	 * Delete a file in another session
+	 */
+	@Test
+	public void delete3() throws Exception {
+		dao.save(file);
+		assertTrue("file not saved.", dao.exists(file.getId()));
+		EntityManagerUtil.closeEntityManager();
+		EntityManagerUtil.currentEntityManager();
 		dao.delete(file.getId());
 		assertFalse("file exists after it was deleted.", dao.exists(file
 				.getId()));

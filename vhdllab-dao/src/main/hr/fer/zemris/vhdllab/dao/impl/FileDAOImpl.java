@@ -37,6 +37,23 @@ public final class FileDAOImpl extends AbstractEntityDAO<File> implements
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDAO#preDeleteAction(java.lang.Object)
+	 */
+	@Override
+	protected void preDeleteAction(File file) {
+		/*
+		 * If file and it's project are persisted and then a file attempts to be
+		 * deleted, all in the same session (EntityManager), file needs to be
+		 * removed from project before deleting it. Check
+		 * FileDAOImplTest#delete2() test to see an example.
+		 */
+		file.getProject().removeFile(file);
+		super.preDeleteAction(file);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDAO#save(java.lang.Object)
 	 */
 	@Override
