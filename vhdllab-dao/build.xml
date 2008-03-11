@@ -12,8 +12,6 @@
 		<fileset dir="${libs.dir}" includes="ejb3-persistence.jar" />
 		<fileset dir="${libs.dir}/hibernate" includes="hibernate3.jar" />
 		<fileset dir="${libs.dir}/build" includes="servlet-api.jar" />
-		<!-- Dependency project -->
-		<fileset dir="../vhdllab-entities/${jlibs.dir}" includes="*" />
 		<!-- Inherited dependent library (because of annotations in dependent project) -->
 		<fileset dir="${libs.dir}/hibernate" includes="hibernate-annotations.jar" />
 	</path>
