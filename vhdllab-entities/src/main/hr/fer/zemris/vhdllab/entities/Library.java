@@ -98,25 +98,6 @@ public class Library extends Container<LibraryFile, Library> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.entities.Container#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		/*
-		 * Overriding just to check if given resource is a library.
-		 */
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Library))
-			return false;
-		return super.equals(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see hr.fer.zemris.vhdllab.entities.Resource#compareTo(hr.fer.zemris.vhdllab.entities.Resource)
 	 */
 	@Override

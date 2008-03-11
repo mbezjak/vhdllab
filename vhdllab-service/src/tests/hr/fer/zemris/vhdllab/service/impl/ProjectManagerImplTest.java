@@ -17,13 +17,13 @@ import org.junit.Test;
  */
 public class ProjectManagerImplTest {
 
+	private static ProjectManager manager;
+
 	@BeforeClass
 	public static void initOnce() {
 		manager = new ProjectManagerImpl(new ProjectDAOImpl());
 		EntityManagerUtil.createEntityManagerFactory();
 	}
-
-	private static ProjectManager manager;
 
 	/**
 	 * Test save and delete.

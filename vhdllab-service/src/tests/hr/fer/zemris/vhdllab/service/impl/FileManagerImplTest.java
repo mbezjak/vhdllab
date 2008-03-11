@@ -21,15 +21,15 @@ import org.junit.Test;
  */
 public class FileManagerImplTest {
 
+	private static FileManager manager;
+	private static ProjectManager projectManager;
+
 	@BeforeClass
 	public static void initOnce() {
 		manager = new FileManagerImpl(new FileDAOImpl());
 		projectManager = new ProjectManagerImpl(new ProjectDAOImpl());
 		EntityManagerUtil.createEntityManagerFactory();
 	}
-
-	private static FileManager manager;
-	private static ProjectManager projectManager;
 
 	/**
 	 * Test save and delete.

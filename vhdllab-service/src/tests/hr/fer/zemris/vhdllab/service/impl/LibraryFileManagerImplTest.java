@@ -21,15 +21,15 @@ import org.junit.Test;
  */
 public class LibraryFileManagerImplTest {
 
+	private static LibraryFileManager manager;
+	private static LibraryManager libraryManager;
+
 	@BeforeClass
 	public static void initOnce() {
 		manager = new LibraryFileManagerImpl(new LibraryFileDAOImpl());
 		libraryManager = new LibraryManagerImpl(new LibraryDAOImpl());
 		EntityManagerUtil.createEntityManagerFactory();
 	}
-
-	private static LibraryFileManager manager;
-	private static LibraryManager libraryManager;
 
 	/**
 	 * Test save and delete.

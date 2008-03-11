@@ -18,13 +18,13 @@ import org.junit.Test;
  */
 public class UserFileManagerImplTest {
 
+	private static UserFileManager manager;
+
 	@BeforeClass
 	public static void initOnce() {
 		manager = new UserFileManagerImpl(new UserFileDAOImpl());
 		EntityManagerUtil.createEntityManagerFactory();
 	}
-
-	private static UserFileManager manager;
 
 	/**
 	 * Test save and delete.

@@ -17,13 +17,13 @@ import org.junit.Test;
  */
 public class LibraryManagerImplTest {
 
+	private static LibraryManager manager;
+
 	@BeforeClass
 	public static void initOnce() {
 		manager = new LibraryManagerImpl(new LibraryDAOImpl());
 		EntityManagerUtil.createEntityManagerFactory();
 	}
-
-	private static LibraryManager manager;
 
 	/**
 	 * Test save and delete.

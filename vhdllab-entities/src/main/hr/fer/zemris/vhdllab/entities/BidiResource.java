@@ -126,25 +126,6 @@ public class BidiResource<TContainer extends Container<TBidiResource, TContainer
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see hr.fer.zemris.vhdllab.entities.Resource#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		/*
-		 * Overriding just to check if given resource is a bidi-resource.
-		 */
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof BidiResource<?, ?>))
-			return false;
-		return super.equals(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see hr.fer.zemris.vhdllab.entities.Resource#compareTo(hr.fer.zemris.vhdllab.entities.Resource)
 	 */
 	@Override
