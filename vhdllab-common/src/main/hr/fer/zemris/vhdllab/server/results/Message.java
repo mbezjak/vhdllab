@@ -4,30 +4,36 @@ import java.io.Serializable;
 
 /**
  * Represents a single result message.
+ * <p>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
  */
 public class Message implements Serializable {
-	/*
-	 * This class is immutable and therefor thread-safe.
-	 */
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * A type of a message.
+	 * 
+	 * @serial
 	 */
 	private final MessageType type;
 	/**
 	 * A text of a message.
+	 * 
+	 * @serial
 	 */
 	private final String messageText;
 	/**
 	 * Entity name of a unit for which message is generated. Please note that
 	 * this can be an empty string, if appropriate information could not be
 	 * determined.
+	 * 
+	 * @serial
 	 */
 	private final String entityName;
 

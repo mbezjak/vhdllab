@@ -81,7 +81,7 @@ public class ContentResultTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals(CONTENT, result.getContent());
+		assertEquals("getContent", CONTENT, result.getContent());
 	}
 
 	/**

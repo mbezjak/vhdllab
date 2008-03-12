@@ -4,20 +4,22 @@ import java.util.List;
 
 /**
  * Represents a result that has a content.
+ * <p>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
  */
 public class ContentResult<T extends Message> extends Result<T> {
-	/*
-	 * This class is immutable and therefor thread-safe.
-	 */
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * A result content.
+	 * 
+	 * @serial
 	 */
 	private final String content;
 

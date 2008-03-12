@@ -7,6 +7,9 @@ import java.util.List;
 
 /**
  * Represents a some kind of a result.
+ * <p>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @param <T>
  *            a message type
@@ -15,22 +18,25 @@ import java.util.List;
  * @since vhdllab2
  */
 public class Result<T extends Message> implements Serializable {
-	/*
-	 * This class is immutable and therefor thread-safe.
-	 */
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * A result status. For example, an exit code of processes exec method.
+	 * 
+	 * @serial
 	 */
 	private final Integer status;
 	/**
 	 * A flag indicating if result finished successfully.
+	 * 
+	 * @serial
 	 */
 	private final boolean successful;
 	/**
 	 * A list of result messages.
+	 * 
+	 * @serial
 	 */
 	private final List<T> messages;
 

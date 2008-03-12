@@ -85,9 +85,9 @@ public class MessageTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals(TYPE, message.getType());
-		assertEquals(TEXT, message.getMessageText());
-		assertEquals(ENTITY_NAME, message.getEntityName());
+		assertEquals("getType", TYPE, message.getType());
+		assertEquals("getText", TEXT, message.getMessageText());
+		assertEquals("getEntityName", ENTITY_NAME, message.getEntityName());
 	}
 
 	/**

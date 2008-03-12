@@ -136,8 +136,8 @@ public class CompilationMessageTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals(ROW, message.getRow());
-		assertEquals(COLUMN, message.getColumn());
+		assertEquals("getRow", ROW, message.getRow());
+		assertEquals("getColumn", COLUMN, message.getColumn());
 	}
 
 	/**

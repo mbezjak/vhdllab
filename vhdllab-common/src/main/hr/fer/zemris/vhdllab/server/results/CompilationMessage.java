@@ -2,24 +2,28 @@ package hr.fer.zemris.vhdllab.server.results;
 
 /**
  * Represents a compilation message.
+ * <p>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
  */
 public final class CompilationMessage extends Message {
-	/*
-	 * This class is immutable and therefor thread-safe.
-	 */
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * A row where message occurred.
+	 * 
+	 * @serial
 	 */
 	private int row;
 	/**
 	 * A column where message occurred.
+	 * 
+	 * @serial
 	 */
 	private int column;
 

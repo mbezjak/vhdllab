@@ -36,7 +36,7 @@ public class ResultTest {
 		message = new Message(MessageType.SUCCESSFUL, "successfull message",
 				null);
 	}
-	
+
 	/**
 	 * Result is null
 	 */
@@ -105,9 +105,9 @@ public class ResultTest {
 		Result<Message> newResult = new Result<Message>(STATUS, SUCCESSFUL,
 				messages);
 
-		assertEquals(STATUS, newResult.getStatus());
-		assertEquals(SUCCESSFUL, newResult.isSuccessful());
-		assertEquals(messages, newResult.getMessages());
+		assertEquals("getStatus", STATUS, newResult.getStatus());
+		assertEquals("isSuccessful", SUCCESSFUL, newResult.isSuccessful());
+		assertEquals("getMessages", messages, newResult.getMessages());
 	}
 
 	/**

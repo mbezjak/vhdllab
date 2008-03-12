@@ -4,6 +4,9 @@ import java.util.List;
 
 /**
  * Represents a vhdl generation result.
+ * <p>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @author Miro Bezjak
  * @version 1.0
@@ -11,9 +14,6 @@ import java.util.List;
  */
 public final class VHDLGenerationResult extends
 		ContentResult<VHDLGenerationMessage> {
-	/*
-	 * This class is immutable and therefor thread-safe.
-	 */
 
 	private static final long serialVersionUID = 1L;
 

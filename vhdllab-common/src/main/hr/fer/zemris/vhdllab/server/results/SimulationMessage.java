@@ -2,15 +2,15 @@ package hr.fer.zemris.vhdllab.server.results;
 
 /**
  * Represents a simulation message.
+ * <p>
+ * This class is immutable and therefor thread-safe.
+ * </p>
  * 
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
  */
 public final class SimulationMessage extends Message {
-	/*
-	 * This class is immutable and therefor thread-safe.
-	 */
 
 	private static final long serialVersionUID = 1L;
 
