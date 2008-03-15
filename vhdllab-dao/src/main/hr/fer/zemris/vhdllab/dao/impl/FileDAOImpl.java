@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.entities.File;
-import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 import hr.fer.zemris.vhdllab.server.conf.ServerConf;
 import hr.fer.zemris.vhdllab.server.conf.ServerConfParser;
 

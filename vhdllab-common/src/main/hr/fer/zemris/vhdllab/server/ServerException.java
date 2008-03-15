@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.server;
 
-import hr.fer.zemris.vhdllab.server.api.StatusCodes;
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 
 /**
  * Exception indicating an exceptional condition in server. This exception also

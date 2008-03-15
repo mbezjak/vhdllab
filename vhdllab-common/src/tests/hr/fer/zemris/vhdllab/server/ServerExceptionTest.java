@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import hr.fer.zemris.vhdllab.server.api.StatusCodes;
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 
 import org.junit.Test;
 

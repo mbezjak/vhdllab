@@ -2,10 +2,10 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.dao.impl.UserFileDAOImpl;
 import hr.fer.zemris.vhdllab.entities.UserFile;
-import hr.fer.zemris.vhdllab.server.FileTypes;
 import hr.fer.zemris.vhdllab.service.UserFileManager;
 
 import org.junit.BeforeClass;

@@ -6,13 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.LibraryDAO;
 import hr.fer.zemris.vhdllab.dao.LibraryFileDAO;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
-import hr.fer.zemris.vhdllab.server.FileTypes;
-import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import org.junit.After;
 import org.junit.Before;

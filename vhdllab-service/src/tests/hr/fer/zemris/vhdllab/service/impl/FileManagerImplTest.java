@@ -2,12 +2,12 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.dao.impl.FileDAOImpl;
 import hr.fer.zemris.vhdllab.dao.impl.ProjectDAOImpl;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
-import hr.fer.zemris.vhdllab.server.FileTypes;
 import hr.fer.zemris.vhdllab.service.FileManager;
 import hr.fer.zemris.vhdllab.service.ProjectManager;
 

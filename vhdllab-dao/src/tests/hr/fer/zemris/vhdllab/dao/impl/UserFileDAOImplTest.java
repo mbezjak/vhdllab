@@ -6,11 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
 import hr.fer.zemris.vhdllab.entities.UserFile;
-import hr.fer.zemris.vhdllab.server.FileTypes;
-import hr.fer.zemris.vhdllab.server.api.StatusCodes;
 
 import java.util.ArrayList;
 import java.util.Collections;

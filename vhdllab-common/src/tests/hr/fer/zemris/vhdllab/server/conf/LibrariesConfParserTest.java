@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.server.conf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import hr.fer.zemris.vhdllab.server.FileTypes;
+import hr.fer.zemris.vhdllab.api.FileTypes;
 
 import java.io.BufferedWriter;
 import java.io.File;
