@@ -93,8 +93,8 @@ public class RangeTest {
 	 */
 	@Test
 	public void fromEqualTo() throws Exception {
-		Range range = new Range(3, VectorDirection.DOWNTO, 3);
-		assertEquals("bounds not equal.", range.getFrom(), range.getTo());
+		Range newRange = new Range(3, VectorDirection.DOWNTO, 3);
+		assertEquals("bounds not equal.", newRange.getFrom(), newRange.getTo());
 	}
 
 	/**
@@ -102,8 +102,8 @@ public class RangeTest {
 	 */
 	@Test
 	public void fromEqualTo2() throws Exception {
-		Range range = new Range(3, VectorDirection.TO, 3);
-		assertEquals("bounds not equal.", range.getFrom(), range.getTo());
+		Range newRange = new Range(3, VectorDirection.TO, 3);
+		assertEquals("bounds not equal.", newRange.getFrom(), newRange.getTo());
 	}
 
 	/**
@@ -200,10 +200,22 @@ public class RangeTest {
 		assertEquals("ranges not equal", range, newRange);
 	}
 
+	/**
+	 * Range is a vector.
+	 */
 	@Ignore("must be tested by a user and this has already been tested")
 	@Test
 	public void asString() {
 		System.out.println(range.toString());
 	}
 
+	/**
+	 * Range is a scalar.
+	 */
+	@Ignore("must be tested by a user and this has already been tested")
+	@Test
+	public void asString2() {
+		System.out.println(Range.SCALAR.toString());
+	}
+	
 }

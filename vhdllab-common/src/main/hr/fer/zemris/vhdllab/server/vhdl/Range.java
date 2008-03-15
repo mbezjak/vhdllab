@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
+ * @see VectorDirection
  */
 public final class Range implements Serializable {
 
@@ -231,6 +232,9 @@ public final class Range implements Serializable {
 	 */
 	@Override
 	public String toString() {
+		if(isScalar()) {
+			return "scalar";
+		}
 		StringBuilder sb = new StringBuilder(10);
 		sb.append(from).append(" ");
 		sb.append(direction).append(" ");

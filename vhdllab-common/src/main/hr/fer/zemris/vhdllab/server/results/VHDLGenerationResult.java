@@ -66,7 +66,7 @@ public final class VHDLGenerationResult extends
 	 * 
 	 * @return a vhdl code
 	 */
-	protected String getVHDL() {
+	public String getVHDL() {
 		return getContent();
 	}
 

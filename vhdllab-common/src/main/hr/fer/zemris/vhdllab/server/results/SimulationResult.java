@@ -65,7 +65,7 @@ public final class SimulationResult extends ContentResult<SimulationMessage> {
 	 * 
 	 * @return a waveform
 	 */
-	protected String getWaveform() {
+	public String getWaveform() {
 		return getContent();
 	}
 
