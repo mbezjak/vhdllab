@@ -4,14 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -89,7 +81,7 @@ public class CircuitInterfaceTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals("getName", NAME, ci.getName());
+		assertEquals("getName.", NAME, ci.getName());
 	}
 
 	/**
@@ -106,7 +98,7 @@ public class CircuitInterfaceTest {
 	@Test
 	public void getPort2() throws Exception {
 		Port retrievedPort = ci.getPort(PORT.getName());
-		assertEquals("ports not equal", PORT, retrievedPort);
+		assertEquals("ports not equal.", PORT, retrievedPort);
 	}
 
 	/**
@@ -115,7 +107,7 @@ public class CircuitInterfaceTest {
 	@Test
 	public void getPort3() throws Exception {
 		Port retrievedPort = ci.getPort(PORT.getName().toUpperCase());
-		assertEquals("ports not equal", PORT, retrievedPort);
+		assertEquals("ports not equal.", PORT, retrievedPort);
 	}
 
 	/**
@@ -124,7 +116,7 @@ public class CircuitInterfaceTest {
 	@Test
 	public void getPort4() throws Exception {
 		Port retrievedPort = ci.getPort("unknown.port.name");
-		assertNull("port not null", retrievedPort);
+		assertNull("port not null.", retrievedPort);
 	}
 
 	/**
@@ -163,8 +155,8 @@ public class CircuitInterfaceTest {
 		CircuitInterface newCi = new CircuitInterface(ci.getName(), ci
 				.getPorts());
 
-		assertEquals("circuit interface not equal", ci, newCi);
-		assertEquals("circuit interface not equal", ci.hashCode(), newCi
+		assertEquals("circuit interfaces not equal.", ci, newCi);
+		assertEquals("circuit interfaces not equal.", ci.hashCode(), newCi
 				.hashCode());
 	}
 
@@ -176,8 +168,8 @@ public class CircuitInterfaceTest {
 		CircuitInterface newCi = new CircuitInterface(ci.getName()
 				.toUpperCase(), ci.getPorts());
 
-		assertEquals("circuit interface not equal", ci, newCi);
-		assertEquals("circuit interface not equal", ci.hashCode(), newCi
+		assertEquals("circuit interfaces not equal.", ci, newCi);
+		assertEquals("circuit interfaces not equal.", ci.hashCode(), newCi
 				.hashCode());
 	}
 
@@ -189,8 +181,8 @@ public class CircuitInterfaceTest {
 		CircuitInterface newCi = new CircuitInterface("new.entity.name", ci
 				.getPorts());
 
-		assertNotSame("circuit interface are equal", ci, newCi);
-		assertNotSame("circuit interface are equal", ci.hashCode(), newCi
+		assertNotSame("circuit interfaces are equal.", ci, newCi);
+		assertNotSame("circuit interfaces are equal.", ci.hashCode(), newCi
 				.hashCode());
 	}
 
@@ -204,8 +196,8 @@ public class CircuitInterfaceTest {
 		ports.add(newPort);
 		CircuitInterface newCi = new CircuitInterface(ci.getName(), ports);
 
-		assertNotSame("circuit interface are equal", ci, newCi);
-		assertNotSame("circuit interface are equal", ci.hashCode(), newCi
+		assertNotSame("circuit interfaces are equal.", ci, newCi);
+		assertNotSame("circuit interfaces are equal.", ci.hashCode(), newCi
 				.hashCode());
 	}
 
@@ -242,7 +234,7 @@ public class CircuitInterfaceTest {
 				bos.toByteArray()));
 		CircuitInterface newCi = (CircuitInterface) bis.readObject();
 
-		assertEquals("circuit interfaces not equal", ci, newCi);
+		assertEquals("circuit interfaces not equal.", ci, newCi);
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

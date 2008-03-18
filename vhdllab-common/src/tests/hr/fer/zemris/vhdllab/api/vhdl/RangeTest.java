@@ -5,9 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -114,9 +111,9 @@ public class RangeTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals("getFrom", FROM, range.getFrom());
-		assertEquals("getTo", TO, range.getTo());
-		assertEquals("getDirection", DIRECTION, range.getDirection());
+		assertEquals("getFrom.", FROM, range.getFrom());
+		assertEquals("getTo.", TO, range.getTo());
+		assertEquals("getDirection.", DIRECTION, range.getDirection());
 		assertTrue("range not a vector.", range.isVector());
 	}
 
@@ -139,8 +136,8 @@ public class RangeTest {
 		Range newRange = new Range(range.getFrom(), range.getDirection(), range
 				.getTo());
 
-		assertEquals("range not equal", range, newRange);
-		assertEquals("range not equal", range.hashCode(), newRange.hashCode());
+		assertEquals("ranges not equal.", range, newRange);
+		assertEquals("ranges not equal.", range.hashCode(), newRange.hashCode());
 	}
 
 	/**
@@ -150,8 +147,8 @@ public class RangeTest {
 	public void hashCodeAndEquals2() throws Exception {
 		Range newRange = new Range(10, range.getDirection(), range.getTo());
 
-		assertNotSame("range are equal", range, newRange);
-		assertNotSame("range are equal", range.hashCode(), newRange.hashCode());
+		assertNotSame("ranges are equal.", range, newRange);
+		assertNotSame("ranges are equal.", range.hashCode(), newRange.hashCode());
 	}
 
 	/**
@@ -161,8 +158,8 @@ public class RangeTest {
 	public void hashCodeAndEquals3() throws Exception {
 		Range newRange = new Range(range.getFrom(), range.getDirection(), 1);
 
-		assertNotSame("range are equal", range, newRange);
-		assertNotSame("range are equal", range.hashCode(), newRange.hashCode());
+		assertNotSame("ranges are equal.", range, newRange);
+		assertNotSame("ranges are equal.", range.hashCode(), newRange.hashCode());
 	}
 
 	/**
@@ -200,7 +197,7 @@ public class RangeTest {
 
 		assertEquals("directions are not equal.", range.getDirection(),
 				newRange.getDirection());
-		assertEquals("ranges not equal", range, newRange);
+		assertEquals("ranges not equal.", range, newRange);
 	}
 
 	/**

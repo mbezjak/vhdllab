@@ -3,10 +3,6 @@ package hr.fer.zemris.vhdllab.api.results;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
-import hr.fer.zemris.vhdllab.api.results.Message;
-import hr.fer.zemris.vhdllab.api.results.MessageType;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -140,8 +136,8 @@ public class CompilationMessageTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals("getRow", ROW, message.getRow());
-		assertEquals("getColumn", COLUMN, message.getColumn());
+		assertEquals("getRow.", ROW, message.getRow());
+		assertEquals("getColumn.", COLUMN, message.getColumn());
 	}
 
 	/**
@@ -165,8 +161,8 @@ public class CompilationMessageTest {
 		CompilationMessage newMessage = new CompilationMessage(message, ROW,
 				COLUMN);
 
-		assertEquals("messages not equal", message, newMessage);
-		assertEquals("messages not equal", message.hashCode(), newMessage
+		assertEquals("messages not equal.", message, newMessage);
+		assertEquals("messages not equal.", message.hashCode(), newMessage
 				.hashCode());
 	}
 
@@ -178,8 +174,8 @@ public class CompilationMessageTest {
 		CompilationMessage newMessage = new CompilationMessage(message, 5,
 				COLUMN);
 
-		assertNotSame("messages are equal", message, newMessage);
-		assertNotSame("messages are equal", message.hashCode(), newMessage
+		assertNotSame("messages are equal.", message, newMessage);
+		assertNotSame("messages are equal.", message.hashCode(), newMessage
 				.hashCode());
 	}
 
@@ -190,8 +186,8 @@ public class CompilationMessageTest {
 	public void hashCodeAndEquals3() throws Exception {
 		CompilationMessage newMessage = new CompilationMessage(message, ROW, 5);
 
-		assertNotSame("messages are equal", message, newMessage);
-		assertNotSame("messages are equal", message.hashCode(), newMessage
+		assertNotSame("messages are equal.", message, newMessage);
+		assertNotSame("messages are equal.", message.hashCode(), newMessage
 				.hashCode());
 	}
 

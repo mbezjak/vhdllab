@@ -85,9 +85,7 @@ public class Library extends Container<LibraryFile, Library> {
 
 	/**
 	 * Returns an unmodifiable set of library files. Return value will never be
-	 * <code>null</code>. Beware of performance penalties when using this
-	 * method. If you simply wish to iterate over a collection then used
-	 * {@link #iterator()} method instead.
+	 * <code>null</code>.
 	 * 
 	 * @return an unmodifiable set of library files
 	 */

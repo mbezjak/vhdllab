@@ -3,10 +3,6 @@ package hr.fer.zemris.vhdllab.api.results;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import hr.fer.zemris.vhdllab.api.results.Message;
-import hr.fer.zemris.vhdllab.api.results.MessageType;
-import hr.fer.zemris.vhdllab.api.results.Result;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -109,9 +105,9 @@ public class ResultTest {
 		Result<Message> newResult = new Result<Message>(STATUS, SUCCESSFUL,
 				messages);
 
-		assertEquals("getStatus", STATUS, newResult.getStatus());
-		assertEquals("isSuccessful", SUCCESSFUL, newResult.isSuccessful());
-		assertEquals("getMessages", messages, newResult.getMessages());
+		assertEquals("getStatus.", STATUS, newResult.getStatus());
+		assertEquals("isSuccessful.", SUCCESSFUL, newResult.isSuccessful());
+		assertEquals("getMessages.", messages, newResult.getMessages());
 	}
 
 	/**
@@ -156,8 +152,8 @@ public class ResultTest {
 		Result<Message> newResult = new Result<Message>(result.getStatus(),
 				result.isSuccessful(), result.getMessages());
 
-		assertEquals("results not equal", result, newResult);
-		assertEquals("results not equal", result.hashCode(), newResult
+		assertEquals("results not equal.", result, newResult);
+		assertEquals("results not equal.", result.hashCode(), newResult
 				.hashCode());
 	}
 
@@ -169,8 +165,8 @@ public class ResultTest {
 		Result<Message> newResult = new Result<Message>(Integer.valueOf(0),
 				SUCCESSFUL, MESSAGES);
 
-		assertNotSame("results are equal", result, newResult);
-		assertNotSame("results are equal", result.hashCode(), newResult
+		assertNotSame("results are equal.", result, newResult);
+		assertNotSame("results are equal.", result.hashCode(), newResult
 				.hashCode());
 	}
 
@@ -182,8 +178,8 @@ public class ResultTest {
 		Result<Message> newResult = new Result<Message>(STATUS, !SUCCESSFUL,
 				MESSAGES);
 
-		assertNotSame("results are equal", result, newResult);
-		assertNotSame("results are equal", result.hashCode(), newResult
+		assertNotSame("results are equal.", result, newResult);
+		assertNotSame("results are equal.", result.hashCode(), newResult
 				.hashCode());
 	}
 
@@ -197,8 +193,8 @@ public class ResultTest {
 		Result<Message> newResult = new Result<Message>(result.getStatus(),
 				result.isSuccessful(), messages);
 
-		assertNotSame("results are equal", result, newResult);
-		assertNotSame("results are equal", result.hashCode(), newResult
+		assertNotSame("results are equal.", result, newResult);
+		assertNotSame("results are equal.", result.hashCode(), newResult
 				.hashCode());
 	}
 

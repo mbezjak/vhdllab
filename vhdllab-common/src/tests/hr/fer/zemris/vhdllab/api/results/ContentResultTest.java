@@ -3,10 +3,6 @@ package hr.fer.zemris.vhdllab.api.results;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import hr.fer.zemris.vhdllab.api.results.ContentResult;
-import hr.fer.zemris.vhdllab.api.results.Message;
-import hr.fer.zemris.vhdllab.api.results.Result;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -85,7 +81,7 @@ public class ContentResultTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals("getContent", CONTENT, result.getContent());
+		assertEquals("getContent.", CONTENT, result.getContent());
 	}
 
 	/**
@@ -109,8 +105,8 @@ public class ContentResultTest {
 		ContentResult<Message> newResult = new ContentResult<Message>(result,
 				CONTENT);
 
-		assertEquals("results not equal", result, newResult);
-		assertEquals("results not equal", result.hashCode(), newResult
+		assertEquals("results not equal.", result, newResult);
+		assertEquals("results not equal.", result.hashCode(), newResult
 				.hashCode());
 	}
 
@@ -122,8 +118,8 @@ public class ContentResultTest {
 		ContentResult<Message> newResult = new ContentResult<Message>(result,
 				"new.content");
 
-		assertNotSame("results are equal", result, newResult);
-		assertNotSame("results are equal", result.hashCode(), newResult
+		assertNotSame("results are equal.", result, newResult);
+		assertNotSame("results are equal.", result.hashCode(), newResult
 				.hashCode());
 	}
 

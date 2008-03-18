@@ -3,9 +3,6 @@ package hr.fer.zemris.vhdllab.api.results;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import hr.fer.zemris.vhdllab.api.results.Message;
-import hr.fer.zemris.vhdllab.api.results.MessageType;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -88,9 +85,9 @@ public class MessageTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals("getType", TYPE, message.getType());
-		assertEquals("getText", TEXT, message.getMessageText());
-		assertEquals("getEntityName", ENTITY_NAME, message.getEntityName());
+		assertEquals("getType.", TYPE, message.getType());
+		assertEquals("getText.", TEXT, message.getMessageText());
+		assertEquals("getEntityName.", ENTITY_NAME, message.getEntityName());
 	}
 
 	/**
@@ -111,8 +108,8 @@ public class MessageTest {
 	public void hashCodeAndEquals() throws Exception {
 		Message newMessage = new Message(message);
 
-		assertEquals("messages not equal", message, newMessage);
-		assertEquals("messages not equal", message.hashCode(), newMessage
+		assertEquals("messages not equal.", message, newMessage);
+		assertEquals("messages not equal.", message.hashCode(), newMessage
 				.hashCode());
 	}
 
@@ -123,8 +120,8 @@ public class MessageTest {
 	public void hashCodeAndEquals2() throws Exception {
 		Message newMessage = new Message(MessageType.ERROR, TEXT, ENTITY_NAME);
 
-		assertNotSame("messages are equal", message, newMessage);
-		assertNotSame("messages are equal", message.hashCode(), newMessage
+		assertNotSame("messages are equal.", message, newMessage);
+		assertNotSame("messages are equal.", message.hashCode(), newMessage
 				.hashCode());
 	}
 
@@ -135,8 +132,8 @@ public class MessageTest {
 	public void hashCodeAndEquals3() throws Exception {
 		Message newMessage = new Message(TYPE, "different text", ENTITY_NAME);
 
-		assertNotSame("messages are equal", message, newMessage);
-		assertNotSame("messages are equal", message.hashCode(), newMessage
+		assertNotSame("messages are equal.", message, newMessage);
+		assertNotSame("messages are equal.", message.hashCode(), newMessage
 				.hashCode());
 	}
 
@@ -147,8 +144,8 @@ public class MessageTest {
 	public void hashCodeAndEquals4() throws Exception {
 		Message newMessage = new Message(TYPE, TEXT, "new.entity.name");
 
-		assertNotSame("messages are equal", message, newMessage);
-		assertNotSame("messages are equal", message.hashCode(), newMessage
+		assertNotSame("messages are equal.", message, newMessage);
+		assertNotSame("messages are equal.", message.hashCode(), newMessage
 				.hashCode());
 	}
 

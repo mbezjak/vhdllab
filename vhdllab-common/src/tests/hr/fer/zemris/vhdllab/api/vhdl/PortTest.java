@@ -3,13 +3,6 @@ package hr.fer.zemris.vhdllab.api.vhdl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -68,9 +61,9 @@ public class PortTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals("getName", NAME, port.getName());
-		assertEquals("getDirection", DIRECTION, port.getDirection());
-		assertEquals("getType", TYPE, port.getType());
+		assertEquals("getName.", NAME, port.getName());
+		assertEquals("getDirection.", DIRECTION, port.getDirection());
+		assertEquals("getType.", TYPE, port.getType());
 	}
 
 	/**
@@ -92,8 +85,8 @@ public class PortTest {
 		Port newPort = new Port(port.getName(), port.getDirection(), port
 				.getType());
 
-		assertEquals("port not equal", port, newPort);
-		assertEquals("port not equal", port.hashCode(), newPort.hashCode());
+		assertEquals("ports not equal.", port, newPort);
+		assertEquals("ports not equal.", port.hashCode(), newPort.hashCode());
 	}
 
 	/**
@@ -104,8 +97,8 @@ public class PortTest {
 		Port newPort = new Port(port.getName().toUpperCase(), port
 				.getDirection(), port.getType());
 
-		assertEquals("port not equal", port, newPort);
-		assertEquals("port not equal", port.hashCode(), newPort.hashCode());
+		assertEquals("ports not equal.", port, newPort);
+		assertEquals("ports not equal.", port.hashCode(), newPort.hashCode());
 	}
 
 	/**
@@ -116,8 +109,8 @@ public class PortTest {
 		Port newPort = new Port("new.port.name", port.getDirection(), port
 				.getType());
 
-		assertNotSame("port are equal", port, newPort);
-		assertNotSame("port are equal", port.hashCode(), newPort.hashCode());
+		assertNotSame("ports are equal.", port, newPort);
+		assertNotSame("ports are equal.", port.hashCode(), newPort.hashCode());
 	}
 
 	/**
@@ -128,8 +121,8 @@ public class PortTest {
 		Port newPort = new Port(port.getName(), PortDirection.OUT, port
 				.getType());
 
-		assertNotSame("port are equal", port, newPort);
-		assertNotSame("port are equal", port.hashCode(), newPort.hashCode());
+		assertNotSame("ports are equal.", port, newPort);
+		assertNotSame("ports are equal.", port.hashCode(), newPort.hashCode());
 	}
 
 	/**
@@ -140,8 +133,8 @@ public class PortTest {
 		Type newType = new Type(TypeName.STD_LOGIC, Range.SCALAR);
 		Port newPort = new Port(port.getName(), port.getDirection(), newType);
 
-		assertNotSame("port are equal", port, newPort);
-		assertNotSame("port are equal", port.hashCode(), newPort.hashCode());
+		assertNotSame("ports are equal.", port, newPort);
+		assertNotSame("ports are equal.", port.hashCode(), newPort.hashCode());
 	}
 
 	/**
@@ -177,7 +170,7 @@ public class PortTest {
 				bos.toByteArray()));
 		Port newPort = (Port) bis.readObject();
 
-		assertEquals("ports not equal", port, newPort);
+		assertEquals("ports not equal.", port, newPort);
 	}
 
 	@Ignore("must be tested by a user and this has already been tested")

@@ -3,11 +3,6 @@ package hr.fer.zemris.vhdllab.api.vhdl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -72,8 +67,8 @@ public class TypeTest {
 	 */
 	@Test
 	public void gettersAndSetters() throws Exception {
-		assertEquals("getTypeName", TYPE_NAME, type.getTypeName());
-		assertEquals("getRange", RANGE, type.getRange());
+		assertEquals("getTypeName.", TYPE_NAME, type.getTypeName());
+		assertEquals("getRange.", RANGE, type.getRange());
 	}
 
 	/**
@@ -94,8 +89,8 @@ public class TypeTest {
 	public void hashCodeAndEquals() throws Exception {
 		Type newType = new Type(type.getTypeName(), type.getRange());
 
-		assertEquals("type not equal", type, newType);
-		assertEquals("type not equal", type.hashCode(), newType.hashCode());
+		assertEquals("types not equal.", type, newType);
+		assertEquals("types not equal.", type.hashCode(), newType.hashCode());
 	}
 
 	/**
@@ -105,8 +100,8 @@ public class TypeTest {
 	public void hashCodeAndEquals2() throws Exception {
 		Type newType = new Type(TypeName.STD_LOGIC, Range.SCALAR);
 
-		assertNotSame("type are equal", type, newType);
-		assertNotSame("type are equal", type.hashCode(), newType.hashCode());
+		assertNotSame("types are equal.", type, newType);
+		assertNotSame("types are equal.", type.hashCode(), newType.hashCode());
 	}
 
 	/**
@@ -142,9 +137,9 @@ public class TypeTest {
 				bos.toByteArray()));
 		Type newType = (Type) bis.readObject();
 
-		assertEquals("type names are not equal.", type.getTypeName(), newType
+		assertEquals("types names are not equal.", type.getTypeName(), newType
 				.getTypeName());
-		assertEquals("types not equal", type, newType);
+		assertEquals("types not equal.", type, newType);
 	}
 
 	/**
