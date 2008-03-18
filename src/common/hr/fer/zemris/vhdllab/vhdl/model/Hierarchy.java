@@ -39,8 +39,7 @@ public class Hierarchy implements Iterable<Pair>, Serializable {
 	 */
 	public Hierarchy(String projectName) {
 		if (projectName == null) {
-			throw new NullPointerException(
-					"Project name or pairs can not be null.");
+			throw new NullPointerException("Project name cant be null.");
 		}
 		this.pairs = new TreeSet<Pair>();
 		this.pairsMap = new HashMap<String, Pair>();
