@@ -15,6 +15,11 @@ public final class FileTypeMapping {
 	private String type;
 
 	/**
+	 * A VHDL generator class name.
+	 */
+	private String generator;
+
+	/**
 	 * Default constructor.
 	 */
 	public FileTypeMapping() {
@@ -54,6 +59,30 @@ public final class FileTypeMapping {
 		this.type = type;
 	}
 
+	/**
+	 * Returns a <code>VHDL</code> generator class name.
+	 * 
+	 * @return a <code>VHDL</code> generator class name
+	 */
+	public String getGenerator() {
+		return generator;
+	}
+
+	/**
+	 * Sets a <code>VHDL</code> generator class name.
+	 * 
+	 * @param generator
+	 *            a <code>VHDL</code> generator class name
+	 */
+	public void setGenerator(String generator) {
+		this.generator = generator;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -64,6 +93,8 @@ public final class FileTypeMapping {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + type.hashCode();
+		result = prime * result
+				+ ((generator == null) ? 0 : generator.hashCode());
 		return result;
 	}
 
@@ -81,7 +112,14 @@ public final class FileTypeMapping {
 		if (!(obj instanceof FileTypeMapping))
 			return false;
 		final FileTypeMapping other = (FileTypeMapping) obj;
-		return type.equals(other.type);
+		if (!type.equals(other.type))
+			return false;
+		if (generator == null) {
+			if (other.generator != null)
+				return false;
+		} else if (!generator.equals(other.generator))
+			return false;
+		return true;
 	}
 
 	/*
@@ -91,9 +129,10 @@ public final class FileTypeMapping {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(20);
+		StringBuilder sb = new StringBuilder(30);
 		sb.append("mapping ");
 		sb.append("type=").append(type);
+		sb.append(", generator=").append(generator);
 		return sb.toString();
 	}
 

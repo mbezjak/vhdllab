@@ -4,12 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import hr.fer.zemris.vhdllab.api.FileTypes;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,29 +14,6 @@ import org.junit.Test;
  */
 public class LibrariesConfParserTest {
 
-	private static final File confFile;
-	static {
-		try {
-			confFile = File.createTempFile("vhdllab", "server-conf");
-			confFile.deleteOnExit();
-		} catch (IOException e) {
-			throw new IllegalStateException("Could not create temp file", e);
-		}
-	}
-
-	@BeforeClass
-	public static void initTestCase() throws Exception {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(confFile,
-				false));
-		writer.append("<server>\n\t");
-		writer.append("<fileTypeMapping type=\"").append(FileTypes.VHDL_SOURCE);
-		writer.append("\" />\n\t");
-		writer.append("<fileTypeMapping type=\"").append(FileTypes.VHDL_SCHEMA);
-		writer.append("\" />\n");
-		writer.append("</server>\n");
-		writer.close();
-	}
-
 	/**
 	 * Test getConfiguration.
 	 */
@@ -51,12 +22,16 @@ public class LibrariesConfParserTest {
 		FileTypeMapping m;
 		ServerConf expectedConf = new ServerConf();
 		m = new FileTypeMapping(FileTypes.VHDL_SOURCE);
+		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.SourceGenerator");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
+		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.VHDL_SCHEMA);
+		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.SchemaGenerator");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.VHDL_AUTOMATON);
+		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.AutomatonGenerator");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.PREFERENCES_USER);
 		expectedConf.addFileTypeMapping(m);

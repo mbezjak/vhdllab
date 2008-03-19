@@ -59,7 +59,7 @@ public class AbstractEntityDAOTest {
 	}
 
 	/**
-	 * id is null
+	 * Entity is null
 	 */
 	@Test(expected = NullPointerException.class)
 	public void save() throws DAOException {

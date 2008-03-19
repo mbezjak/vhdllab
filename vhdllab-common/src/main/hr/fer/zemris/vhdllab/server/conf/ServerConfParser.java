@@ -83,6 +83,7 @@ public final class ServerConfParser {
 		digester.addObjectCreate("server/fileTypeMapping",
 				FileTypeMapping.class);
 		digester.addSetProperties("server/fileTypeMapping", "type", "type");
+		digester.addSetProperties("server/fileTypeMapping/generator", "name", "generator");
 		digester.addSetNext("server/fileTypeMapping", "addFileTypeMapping");
 
 		return (ServerConf) digester.parse(is);

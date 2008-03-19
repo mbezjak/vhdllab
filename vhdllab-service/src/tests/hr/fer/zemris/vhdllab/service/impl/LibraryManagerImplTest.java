@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
@@ -42,6 +43,23 @@ public class LibraryManagerImplTest {
 		manager.delete(library.getId());
 		assertFalse("library not deleted.", manager.exists(library.getId()));
 		assertFalse("library not deleted.", manager.exists(library.getName()));
+		EntityManagerUtil.closeEntityManager();
+	}
+
+	/**
+	 * Test loading predefined library
+	 */
+	@Test
+	public void getPredefinedLibrary() throws Exception {
+		String name = "predefined";
+		EntityManagerUtil.currentEntityManager();
+		Library library = new Library(name);
+		manager.save(library);
+
+		assertEquals("library names dont match.", name, manager
+				.getPredefinedLibrary().getName());
+
+		manager.delete(library.getId());
 		EntityManagerUtil.closeEntityManager();
 	}
 

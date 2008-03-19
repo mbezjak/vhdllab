@@ -38,7 +38,7 @@ public final class VHDLGenerationResult extends
 	 */
 	public VHDLGenerationResult(boolean successful,
 			List<VHDLGenerationMessage> messages, String content) {
-		super(null, successful, messages, content);
+		super(successful, messages, content);
 	}
 
 	/**

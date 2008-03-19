@@ -5,9 +5,23 @@
 -->
 <server>
 	<!-- A fileTypeMapping defined a file type that server recognizes -->
-	<fileTypeMapping type="vhdl.source" />
-	<fileTypeMapping type="vhdl.testbench" />
-	<fileTypeMapping type="vhdl.schema" />
-	<fileTypeMapping type="vhdl.automaton" />
+	
+	<fileTypeMapping type="vhdl.source">
+		<generator name="hr.fer.zemris.vhdllab.service.generators.SourceGenerator" />
+	</fileTypeMapping>
+	
+	<fileTypeMapping type="vhdl.testbench">
+		<generator name="hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator" />
+	</fileTypeMapping>
+	
+	<fileTypeMapping type="vhdl.schema">
+		<generator name="hr.fer.zemris.vhdllab.service.generators.SchemaGenerator" />
+	</fileTypeMapping>
+	
+	<fileTypeMapping type="vhdl.automaton">
+			<generator name="hr.fer.zemris.vhdllab.service.generators.AutomatonGenerator" />
+	</fileTypeMapping>
+	
 	<fileTypeMapping type="preferences.user" />
+	
 </server>

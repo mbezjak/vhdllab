@@ -61,7 +61,8 @@ public class ContentResult<T extends Message> extends Result<T> {
 	 *             <code>null</code>
 	 */
 	public ContentResult(boolean successful, List<T> messages, String content) {
-		this(null, successful, messages, content);
+		this(successful ? Integer.valueOf(0) : Integer.valueOf(1), successful,
+				messages, content);
 	}
 
 	/**

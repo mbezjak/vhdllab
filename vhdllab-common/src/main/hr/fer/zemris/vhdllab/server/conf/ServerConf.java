@@ -115,7 +115,7 @@ public final class ServerConf {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(mappings.size() * 20);
+		StringBuilder sb = new StringBuilder(mappings.size() * 30);
 		sb.append("Server configuration: {\n");
 		for (FileTypeMapping m : mappings.values()) {
 			sb.append(m).append("\n");

@@ -37,7 +37,7 @@ public final class SimulationResult extends ContentResult<SimulationMessage> {
 	 */
 	public SimulationResult(boolean successful,
 			List<SimulationMessage> messages, String content) {
-		super(null, successful, messages, content);
+		super(successful, messages, content);
 	}
 
 	/**

@@ -19,6 +19,11 @@ public final class LibraryManagerImpl extends AbstractEntityManager<Library>
 		implements LibraryManager {
 
 	/**
+	 * A name of a predefined library.
+	 */
+	private static final String PREDEFINED_LIBRARY_NAME = "predefined";
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param dao
@@ -68,6 +73,16 @@ public final class LibraryManagerImpl extends AbstractEntityManager<Library>
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see hr.fer.zemris.vhdllab.service.LibraryManager#getPredefinedLibrary()
+	 */
+	@Override
+	public Library getPredefinedLibrary() throws ServiceException {
+		return findByName(PREDEFINED_LIBRARY_NAME);
 	}
 
 	/*

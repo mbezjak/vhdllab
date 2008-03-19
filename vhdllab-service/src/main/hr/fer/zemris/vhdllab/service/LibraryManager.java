@@ -29,8 +29,8 @@ public interface LibraryManager extends EntityManager<Library> {
 
 	/**
 	 * Finds all libraries whose <code>name</code> is specified by parameter.
-	 * Return value will never be <code>null</code>. A {@link ServiceException}
-	 * will be thrown if such library doesn't exist.
+	 * Return value will never be <code>null</code>. A
+	 * {@link ServiceException} will be thrown if such library doesn't exist.
 	 * 
 	 * @param name
 	 *            a name of a library
@@ -39,6 +39,15 @@ public interface LibraryManager extends EntityManager<Library> {
 	 *             if exceptional condition occurs
 	 */
 	Library findByName(String name) throws ServiceException;
+
+	/**
+	 * Returns a library with predefined files.
+	 * 
+	 * @return a library with predefined files
+	 * @throws ServiceException
+	 *             if exceptional condition occurs
+	 */
+	Library getPredefinedLibrary() throws ServiceException;
 
 	/**
 	 * Finds all defined libraries. Return value will never be <code>null</code>
