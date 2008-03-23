@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<Automat>
+<Podatci_Sklopa>
+<Ime>automaton</Ime>
+<Tip>Moore</Tip>
+<Interfac>a IN std_logic
+b IN std_logic
+c OUT std_logic</Interfac>
+<Pocetno_Stanje>A</Pocetno_Stanje>
+<Reset>0</Reset>
+<Clock>falling_edge</Clock>
+<Sirina>1389</Sirina>
+<Visina>613</Visina>
+</Podatci_Sklopa>
+<Stanje>
+<Ime>A</Ime>
+<Izlaz>1</Izlaz>
+<Ox>213</Ox>
+<Oy>202</Oy>
+<Else>A</Else>
+</Stanje>
+<Stanje>
+<Ime>B</Ime>
+<Izlaz>0</Izlaz>
+<Ox>360</Ox>
+<Oy>201</Oy>
+<Else>B</Else>
+</Stanje>
+<Stanje>
+<Ime>C</Ime>
+<Izlaz>1</Izlaz>
+<Ox>278</Ox>
+<Oy>116</Oy>
+<Else>C</Else>
+</Stanje>
+<Prijelaz>
+<Iz>A</Iz>
+<U>C</U>
+<Pobuda>1-</Pobuda>
+</Prijelaz>
+<Prijelaz>
+<Iz>B</Iz>
+<U>A</U>
+<Pobuda>0-</Pobuda>
+</Prijelaz>
+<Prijelaz>
+<Iz>B</Iz>
+<U>C</U>
+<Pobuda>1-</Pobuda>
+</Prijelaz>
+</Automat>

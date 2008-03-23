@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!-- The Basics -->
+	<groupId>hr.fer.zemris.vhdllab</groupId>
+	<artifactId>vhdllab</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>vhdllab-api</module>
+		<module>vhdllab-server-commons</module>
+		<module>vhdllab-service</module>
+		<module>vhdllab-dao</module>
+		<module>vhdllab-entities</module>
+		<module>vhdllab-test-commons</module>
+	</modules>
+
+
+	<!-- More Project Information -->
+	<name>VHDLLab</name>
+	<description>
+		VHDLLab is a web based IDE for VHDL (programming language). It
+		is designed for educational purpose as an alternative for
+		commercial products that provide solutions for VHDL. The need
+		for VHDLLab appeared at Faculty of Electrical Engineering and
+		Computing, University of Zagreb, Croatia when VHDL was taught in
+		Digital Electronics course. Originally WebISE was used by
+		students when programming VHDL code. But WebISE has many
+		problems (huge footprint, unnecessary features, inability to
+		create automatons, lots of bugs, problems with license that
+		disallows universities to distribute program, etc.). VHDLLab was
+		designed as a lightweight alternative to fix those problems and
+		add few other features.
+	</description>
+
+
+	<!-- Build Settings (defined for inheritance) -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<filters>
+			<!--
+				reference a configuration.properties in
+				VHDLLab meta-project (this project)
+			-->
+			<filter>../configuration.properties</filter>
+		</filters>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<links>
+						<link>
+							http://java.sun.com/javase/6/docs/api/
+						</link>
+					</links>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<linkXref>true</linkXref>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>1.6</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<configuration>
+					<omitVisitors>
+						FindDeadLocalStores,UnreadFields
+					</omitVisitors>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
+
+
+	<!-- Environment Settings -->
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Maven2 repository</name>
+			<url>http://repository.jboss.com/maven2/</url>
+		</repository>
+		<repository>
+			<id>codehaus</id>
+			<name>Codehaus Maven2 repository</name>
+			<url>http://repository.codehaus.org/</url>
+		</repository>
+	</repositories>
+</project>

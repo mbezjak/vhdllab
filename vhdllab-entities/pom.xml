@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>vhdllab</artifactId>
+		<groupId>hr.fer.zemris.vhdllab</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>vhdllab-entities</artifactId>
+
+	<dependencies>
+		<!-- Compile dependencies -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.3.1.GA</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+
+
+	<name>VHDLLab-Entities</name>
+	<description>
+		VHDLLab entities is a module of VHDLLab server. It defines all
+		entities that are used throughout server (i.e. models on top of
+		which server is built).
+	</description>
+</project>
