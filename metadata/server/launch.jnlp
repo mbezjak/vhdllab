@@ -9,7 +9,7 @@
 		<homepage href="@@app.homepage@@"/>
 		<description kind="one-line">A web based IDE for VHDL.</description>
 		<description kind="tooltip">A web based IDE for VHDL.</description>
-		<description kind="short">A cross-platform web based IDE for VHDL programming language.</description>
+		<description kind="short">A cross-platform web based IDE for VHDL (programming language).</description>
 		
 		<icon href="images/@@app.splash@@" kind="splash"/>
 		<icon href="images/@@app.icon@@" kind="shortcut"/>
