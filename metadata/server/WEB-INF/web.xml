@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+    <display-name>VHDLLab</display-name>
+    <description>
+      The VHDLLab application
+    </description>
+
+    <!-- Application events listeners start -->
+
+    <listener>
+        <listener-class>hr.fer.zemris.vhdllab.dao.impl.PersistenceJMXLifecycle</listener-class>
+    </listener>
+    <listener>
+        <listener-class>hr.fer.zemris.vhdllab.dao.impl.EntityManagerFactoryLifecycle</listener-class>
+    </listener>
+    <listener>
+        <listener-class>hr.fer.zemris.vhdllab.dao.impl.EntityManagerLifecycle</listener-class>
+    </listener>
+    <listener>
+        <listener-class>hr.fer.zemris.vhdllab.servlets.InitManagerProvider</listener-class>
+    </listener>
+
+    <!-- Application events listeners end -->
+
+    <!-- JSPC servlet mappings start -->
+
+    <servlet>
+        <servlet-name>JNLPServlet</servlet-name>
+        <servlet-class>hr.fer.zemris.vhdllab.servlets.JNLPServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>JNLPServlet</servlet-name>
+        <url-pattern>/launch.jnlp</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AjaxServlet</servlet-name>
+        <servlet-class>hr.fer.zemris.vhdllab.servlets.AjaxServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AjaxServlet</servlet-name>
+        <url-pattern>/doAjax</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AuthenticationPingServlet</servlet-name>
+        <servlet-class>hr.fer.zemris.vhdllab.servlets.AuthenticationPingServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AuthenticationPingServlet</servlet-name>
+        <url-pattern>/authentication/ping</url-pattern>
+    </servlet-mapping>
+
+    <!-- JSPC servlet mappings end -->
+
+    <!-- Security constraints start -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>VHDLLAB</web-resource-name>
+            <description>Require users to authenticate</description>
+            <url-pattern>/vhdllab.jsp</url-pattern>
+            <url-pattern>/doAjax</url-pattern>
+            <url-pattern>/authentication/ping</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Define who can access this url-pattern</description>
+            <role-name>student</role-name>
+            <role-name>admin</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+        	<!-- For now transport guarantee is set to NONE but once server is deployed it should be CONFIDENTIAL -->
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+    </login-config>
+
+    <security-role>
+        <description>Student role (can use vhdllab)</description>
+        <role-name>student</role-name>
+    </security-role>
+    <security-role>
+        <description>Administrator role (also can use vhdllab)</description>
+        <role-name>admin</role-name>
+    </security-role>
+    <!-- Security constraints end -->
+
+</web-app>

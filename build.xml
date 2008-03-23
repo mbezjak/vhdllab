@@ -1,0 +1,754 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project name="vhdllab" basedir="." default="package">
+
+	<!-- ======= MAIN CONFIGURATION FILE ================================== -->
+	<property name="configuration.properties" value="${basedir}/configuration.properties" />
+	<property file="configuration.properties" />
+
+	<!-- ======= DIRECTORY STRUCTURE ====================================== -->
+	<!-- source directories -->
+	<property name="src.base.dir" value="${basedir}/src" />
+	<!-- following directories are inside src.base dir -->
+	<property name="src.main.dir" value="main" />
+	<property name="src.tests.dir" value="tests" />
+	<property name="src.i18n.dir" value="i18n" />
+	<property name="src.ant.dir" value="ant" />
+	<property name="src.images.dir" value="images" />
+	<property name="src.doc.dir" value="docs" />
+	<!-- following directories are inside src.main.dir and src.tests.dir,
+		in addition src.client.dir and src.presentation.dir are inside src.i18n.dir -->
+	<property name="src.client.dir" value="client" />
+	<property name="src.presentation.dir" value="presentation" />
+	<property name="src.service.dir" value="service" />
+	<property name="src.dao.dir" value="dao" />
+	<property name="src.entities.dir" value="entities" />
+	<property name="src.client.dir" value="client" />
+	<property name="src.common.dir" value="common" />
+	<!-- rest of source directories -->
+	<property name="lib.dir" value="${basedir}/libs" />
+	<property name="metadata.dir" value="${basedir}/metadata" />
+	<property name="images.dir" value="${src.images.dir}" /> <!-- must be relative! -->
+	<!-- build directories -->
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="jlib.dir" value="${basedir}/jlibs" />
+	<property name="jlib.tests.dir" value="${jlib.dir}/tests" />
+	<property name="javadoc.dir" value="${basedir}/javadoc" />
+	<property name="local.dir" value="${basedir}/local" />
+	<property name="reports.dir" value="${basedir}/reports" />
+	<property name="reports.tests.dir" value="${reports.dir}/tests" />
+	<property name="reports.tests.html.dir" value="${reports.tests.dir}/html" />
+	<!-- convenience properties for source directories -->
+	<property name="src.main.client" value="${src.base.dir}/${src.main.dir}/${src.client.dir}" />
+	<property name="src.main.presentation" value="${src.base.dir}/${src.main.dir}/${src.presentation.dir}" />
+	<property name="src.main.service" value="${src.base.dir}/${src.main.dir}/${src.service.dir}" />
+	<property name="src.main.dao" value="${src.base.dir}/${src.main.dir}/${src.dao.dir}" />
+	<property name="src.main.entities" value="${src.base.dir}/${src.main.dir}/${src.entities.dir}" />
+	<property name="src.main.common" value="${src.base.dir}/${src.main.dir}/${src.common.dir}" />
+	<property name="src.tests.client" value="${src.base.dir}/${src.tests.dir}/${src.client.dir}" />
+	<property name="src.tests.presentation" value="${src.base.dir}/${src.tests.dir}/${src.presentation.dir}" />
+	<property name="src.tests.service" value="${src.base.dir}/${src.tests.dir}/${src.service.dir}" />
+	<property name="src.tests.dao" value="${src.base.dir}/${src.tests.dir}/${src.dao.dir}" />
+	<property name="src.tests.entities" value="${src.base.dir}/${src.tests.dir}/${src.entities.dir}" />
+	<property name="src.tests.common" value="${src.base.dir}/${src.tests.dir}/${src.common.dir}" />
+	<property name="src.i18n.client" value="${src.base.dir}/${src.i18n.dir}/${src.client.dir}" />
+	<property name="src.i18n.server" value="${src.base.dir}/${src.i18n.dir}/server" />
+	<property name="src.ant" value="${src.base.dir}/${src.ant.dir}" />
+	<!-- convenience properties for build directories -->
+	<property name="build.main.client" value="${build.dir}/${src.main.dir}/${src.client.dir}" />
+	<property name="build.main.presentation" value="${build.dir}/${src.main.dir}/${src.presentation.dir}" />
+	<property name="build.main.service" value="${build.dir}/${src.main.dir}/${src.service.dir}" />
+	<property name="build.main.dao" value="${build.dir}/${src.main.dir}/${src.dao.dir}" />
+	<property name="build.main.entities" value="${build.dir}/${src.main.dir}/${src.entities.dir}" />
+	<property name="build.main.common" value="${build.dir}/${src.main.dir}/${src.common.dir}" />
+	<property name="build.tests.client" value="${build.dir}/${src.tests.dir}/${src.client.dir}" />
+	<property name="build.tests.presentation" value="${build.dir}/${src.tests.dir}/${src.presentation.dir}" />
+	<property name="build.tests.service" value="${build.dir}/${src.tests.dir}/${src.service.dir}" />
+	<property name="build.tests.dao" value="${build.dir}/${src.tests.dir}/${src.dao.dir}" />
+	<property name="build.tests.entities" value="${build.dir}/${src.tests.dir}/${src.entities.dir}" />
+	<property name="build.tests.common" value="${build.dir}/${src.tests.dir}/${src.common.dir}" />
+	<property name="build.ant" value="${build.dir}/${src.ant.dir}" />
+	<property name="local.client" value="${local.dir}/${src.client.dir}" />
+	<property name="local.server" value="${local.dir}/server" />
+	<property name="client.log4j.dir" value="${local.client}" />
+	<property name="client.log4j.file" value="${client.log4j.dir}/log4j.properties" />
+	<property name="server.log4j.dir" value="${local.server}/WEB-INF/classes" />
+	<property name="server.log4j.file" value="${server.log4j.dir}/log4j.properties" />
+	<property name="persistence.dir" value="${local.dir}/persistence" />
+	<property name="persistence.file" value="${persistence.dir}/META-INF/persistence.xml" />
+
+	<!-- ======= NAME OF JARS IN JLIB DIR ================================= -->
+	<property name="client.jar.basename" value="${app.name}-${src.client.dir}" />
+	<property name="presentation.jar.basename" value="${app.name}-${src.presentation.dir}" />
+	<property name="service.jar.basename" value="${app.name}-${src.service.dir}" />
+	<property name="dao.jar.basename" value="${app.name}-${src.dao.dir}" />
+	<property name="entities.jar.basename" value="${app.name}-${src.entities.dir}" />
+	<!-- convenience properties for jars in jlib -->
+	<property name="client.jar" value="${client.jar.basename}.jar" />
+	<property name="presentation.jar" value="${presentation.jar.basename}.jar" />
+	<property name="service.jar" value="${service.jar.basename}.jar" />
+	<property name="dao.jar" value="${dao.jar.basename}.jar" />
+	<property name="entities.jar" value="${entities.jar.basename}.jar" />
+	<property name="client.tests.jar" value="${client.jar.basename}-tests.jar" />
+	<property name="presentation.tests.jar" value="${presentation.jar.basename}-tests.jar" />
+	<property name="service.tests.jar" value="${service.jar.basename}-tests.jar" />
+	<property name="dao.tests.jar" value="${dao.jar.basename}-tests.jar" />
+	<property name="entities.tests.jar" value="${entities.jar.basename}-tests.jar" />
+	<!-- convenience properties for jar locations -->
+	<property name="jlib.client.jar" value="${jlib.dir}/${client.jar}" />
+	<property name="jlib.presentation.jar" value="${jlib.dir}/${presentation.jar}" />
+	<property name="jlib.service.jar" value="${jlib.dir}/${service.jar}" />
+	<property name="jlib.dao.jar" value="${jlib.dir}/${dao.jar}" />
+	<property name="jlib.entities.jar" value="${jlib.dir}/${entities.jar}" />
+	<property name="jlib.tests.client.jar" value="${jlib.tests.dir}/${client.tests.jar}" />
+	<property name="jlib.tests.presentation.jar" value="${jlib.tests.dir}/${presentation.tests.jar}" />
+	<property name="jlib.tests.service.jar" value="${jlib.tests.dir}/${service.tests.jar}" />
+	<property name="jlib.tests.dao.jar" value="${jlib.tests.dir}/${dao.tests.jar}" />
+	<property name="jlib.tests.entities.jar" value="${jlib.tests.dir}/${entities.tests.jar}" />
+
+	<!-- ======= CLASSPATH SETUP ========================================== -->
+	<path id="entities.classpath">
+		<fileset dir="${lib.dir}" includes="ejb3-persistence.jar" />
+		<fileset dir="${lib.dir}/hibernate" includes="hibernate-annotations.jar" />
+	</path>
+	<path id="server.classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+	<path id="client.classpath">
+		<fileset dir="${lib.dir}" includes="${app.client.libs}" />
+	</path>
+
+	<!-- ======= START OF DEFINED TARGETS ================================= -->
+	
+	<target name="set-additional-properties">
+		<antcall target="set-additional-client-properties"/>
+		<antcall target="set-additional-server-properties"/>
+	</target>
+	
+	<target name="set-additional-client-properties">
+		<condition property="should.set.client.debug.properties">
+			<equals arg1="true" arg2="${client.debug}" casesensitive="false" trim="true" />
+		</condition>
+		<antcall target="set-client-debug-properties"/>
+		<antcall target="set-client-normal-properties"/>
+	</target>
+	
+	<target name="set-additional-server-properties">
+		<condition property="should.set.server.debug.properties">
+			<equals arg1="true" arg2="${server.debug}" casesensitive="false" trim="true" />
+		</condition>
+		<antcall target="set-server-debug-properties"/>
+		<antcall target="set-server-normal-properties"/>
+	</target>
+	
+	<target name="set-client-debug-properties" if="should.set.client.debug.properties">
+		<property name="" value="" />
+	</target>
+	
+	<target name="set-client-normal-properties" unless="should.set.client.debug.properties">
+		<property name="" value="" />
+	</target>
+	
+	<target name="set-server-debug-properties" if="should.set.server.debug.properties">
+		<property name="" value="" />
+	</target>
+	
+	<target name="set-server-normal-properties" unless="should.set.server.debug.properties">
+		<property name="" value="" />
+	</target>
+	
+	<target name="init" depends="set-additional-properties">
+		<available file="${configuration.properties}" property="configuration.properties.present" />
+		<fail unless="configuration.properties.present">
+      		${configuration.properties} file is not present. You have a sample ${configuration.properties}-sample. Please copy this file under correct name and customize it.
+    	</fail>
+		
+		<tstamp />
+
+		<mkdir dir="${build.main.client}" />
+		<mkdir dir="${build.main.presentation}" />
+		<mkdir dir="${build.main.service}" />
+		<mkdir dir="${build.main.dao}" />
+		<mkdir dir="${build.main.entities}" />
+		<mkdir dir="${build.main.common}" />
+		<mkdir dir="${build.tests.client}" />
+		<mkdir dir="${build.tests.presentation}" />
+		<mkdir dir="${build.tests.service}" />
+		<mkdir dir="${build.tests.dao}" />
+		<mkdir dir="${build.tests.entities}" />
+		<mkdir dir="${build.tests.common}" />
+		<mkdir dir="${build.ant}" />
+		<mkdir dir="${jlib.dir}" />
+		<mkdir dir="${jlib.tests.dir}" />
+		<mkdir dir="${javadoc.dir}" />
+		<mkdir dir="${local.dir}" />
+		<mkdir dir="${reports.tests.html.dir}" />
+	</target>
+	
+	<target name="prepair" depends="init">
+		<sync todir="${local.dir}" overwrite="true">
+			<fileset dir="${metadata.dir}" />
+		</sync>
+
+		<!-- compile ant source folder so custom tasks can be used -->
+		<javac destdir="${build.ant}" srcdir="${src.ant}" includes="**/*.java" />
+
+		<!-- define custom tasks -->
+		<taskdef name="createFilter" classname="hr.fer.zemris.vhdllab.ant.CreateFilterFileTask"
+			classpath="${build.ant}" />
+		<taskdef name="openURI" classname="hr.fer.zemris.vhdllab.ant.OpenURITask"
+			classpath="${build.ant}" />
+
+		<!-- create a filter file for replace task -->
+		<createFilter filterfile="${local.dir}/filter.properties" prefix="@@" sufix="@@" />
+		
+		<replace dir="${local.dir}"	includes="**/*" excludes="filter.properties"
+			replacefilterfile="${local.dir}/filter.properties" summary="true"/>
+	</target>
+	
+	<target name="clean">
+		<delete quiet="true" includeEmptyDirs="true">
+			<fileset dir="${build.dir}" />
+			<fileset dir="${jlib.dir}" />
+			<fileset dir="${javadoc.dir}" />
+			<fileset dir="${local.dir}" />
+			<fileset dir="${reports.dir}" />
+			<fileset file="${app.name}.war" />
+		</delete>
+	</target>
+	
+	<!-- ======= COMPILE MAIN SOURCE TARGETS ============================== -->
+	<target name="compile-entities" depends="prepair">
+		<javac destdir="${build.main.entities}" includes="**/*.java"
+			includeAntRuntime="false" debug="${server.debug}"
+			debuglevel="${debug.level}" encoding="UTF-8">
+			<src path="${src.main.entities}" />
+			<classpath>
+				<path refid="entities.classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-dao" depends="compile-entities">
+		<javac destdir="${build.main.dao}" includes="**/*.java"
+			includeAntRuntime="false" debug="${server.debug}"
+			debuglevel="${debug.level}" encoding="UTF-8">
+			<src path="${src.main.dao}" />
+			<src path="${src.main.common}" />
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${build.main.entities}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-service" depends="compile-dao">
+		<javac destdir="${build.main.service}" includes="**/*.java"
+			includeAntRuntime="false" debug="${server.debug}"
+			debuglevel="${debug.level}" encoding="UTF-8">
+			<src path="${src.main.service}" />
+			<src path="${src.main.common}" />
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${build.main.entities}"/>
+				<pathelement location="${build.main.dao}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-presentation" depends="compile-service">
+		<javac destdir="${build.main.presentation}" includes="**/*.java"
+			includeAntRuntime="false" debug="${server.debug}"
+			debuglevel="${debug.level}" encoding="UTF-8">
+			<src path="${src.main.presentation}" />
+			<src path="${src.main.entities}" />
+			<src path="${src.main.common}" />
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${build.main.entities}"/>
+				<pathelement location="${build.main.service}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-client" depends="prepair">
+		<javac destdir="${build.main.client}" includes="**/*.java"
+			includeAntRuntime="false" debug="${client.debug}"
+			debuglevel="${debug.level}" encoding="UTF-8">
+			<src path="${src.main.client}" />
+			<src path="${src.main.common}" />
+			<classpath>
+				<path refid="client.classpath" />
+			</classpath>
+		</javac>
+	</target>
+	
+	<!-- ======= PACKAGE MAIN SOURCE TARGETS ============================== -->
+	<target name="package-entities" depends="compile-entities">
+		<jar destfile="${jlib.entities.jar}" index="true" duplicate="fail">
+			<fileset dir="${build.main.entities}" includes="**/*.class" />
+			<fileset dir="${src.main.entities}" excludes="**/*.java,**/*svn/**,**/*svn" />
+		</jar>
+	</target>
+
+	<target name="package-dao" depends="compile-dao">
+		<jar destfile="${jlib.dao.jar}" index="true" duplicate="fail">
+			<fileset dir="${build.main.dao}" includes="**/*.class" />
+			<fileset dir="${src.main.dao}" excludes="**/*.java,**/*svn/**,**/*svn" />
+			<fileset dir="${src.main.common}" excludes="**/*.java,**/*svn/**,**/*svn" />
+			<metainf file="${persistence.file}" />
+		</jar>
+	</target>
+
+	<target name="package-service" depends="compile-service">
+		<jar destfile="${jlib.service.jar}" index="true" duplicate="fail">
+			<fileset dir="${build.main.service}" includes="**/*.class" />
+			<fileset dir="${src.main.service}" excludes="**/*.java,**/*svn/**,**/*svn" />
+			<fileset dir="${src.main.common}" excludes="**/*.java,**/*svn/**,**/*svn" />
+		</jar>
+	</target>
+
+	<target name="package-presentation" depends="compile-presentation">
+		<jar destfile="${jlib.presentation.jar}" index="true" duplicate="fail">
+			<fileset dir="${build.main.presentation}" includes="**/*.class" />
+			<fileset dir="${src.main.presentation}" excludes="**/*.java,**/*svn/**,**/*svn" />
+			<fileset dir="${src.main.common}" excludes="**/*.java,**/*svn/**,**/*svn" />
+			<fileset dir="${src.i18n.server}" excludes="**/*svn/**,**/*svn" />
+		</jar>
+	</target>
+
+	<target name="package-client" depends="compile-client">
+		<jar destfile="${jlib.client.jar}" index="true" duplicate="fail"
+			manifest="${local.client}/META-INF/MANIFEST.MF">
+			<fileset dir="${build.main.presentation}" includes="**/*.class" />
+			<fileset dir="${src.main.presentation}" excludes="**/*.java,**/*svn/**,**/*svn" />
+			<fileset dir="${src.main.common}" excludes="**/*.java,**/*svn/**,**/*svn" />
+			<fileset dir="${src.i18n.client}" excludes="**/*svn/**,**/*svn" />
+			<fileset dir="${local.client}" includes="**/*" excludes="META-INF"/>
+			<fileset dir="${basedir}" includes="${images.dir}/**/*" excludes="**/*svn/**,**/*svn" />
+			<metainf dir="${local.client}/META-INF" excludes="MANIFEST.MF,**/*svn/**,**/*svn" />
+		</jar>
+	</target>
+	
+	<!-- ======= COMPILE TESTS TARGETS ==================================== -->
+	<target name="compile-tests-entities" depends="compile-entities">
+		<javac destdir="${build.tests.entities}" includes="**/*java"
+			includeAntRuntime="false" debug="true"
+			debuglevel="lines,vars,source" encoding="UTF-8">
+			<src path="${src.tests.entities}" />
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${build.main.entities}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-tests-dao" depends="compile-dao">
+		<javac destdir="${build.tests.dao}" includes="**/*java"
+			includeAntRuntime="false" debug="true"
+			debuglevel="lines,vars,source" encoding="UTF-8">
+			<src path="${src.tests.dao}" />
+			<src path="${src.tests.common}" />
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${build.main.dao}"/>
+				<pathelement location="${build.main.entities}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-tests-service" depends="compile-service">
+		<javac destdir="${build.tests.service}" includes="**/*java"
+			includeAntRuntime="false" debug="true"
+			debuglevel="lines,vars,source" encoding="UTF-8">
+			<src path="${src.tests.service}" />
+			<src path="${src.tests.common}" />
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${build.main.service}"/>
+				<pathelement location="${build.main.entities}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-tests-presentation" depends="compile-presentation">
+		<javac destdir="${build.tests.presentation}" includes="**/*java"
+			includeAntRuntime="false" debug="true"
+			debuglevel="lines,vars,source" encoding="UTF-8">
+			<src path="${src.tests.presentation}" />
+			<src path="${src.tests.common}" />
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${build.main.presentation}"/>
+				<pathelement location="${build.main.entities}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-tests-client" depends="compile-client">
+		<javac destdir="${build.tests.client}" includes="**/*java"
+			includeAntRuntime="false" debug="true"
+			debuglevel="lines,vars,source" encoding="UTF-8">
+			<src path="${src.tests.client}" />
+			<src path="${src.tests.common}" />
+			<classpath>
+				<path refid="client.classpath" />
+				<pathelement location="${build.main.client}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- ======= PACKAGE TESTS TARGETS ==================================== -->
+	<target name="package-tests-entities" depends="compile-tests-entities">
+		<jar destfile="${jlib.tests.entities.jar}" index="true">
+			<fileset dir="${build.tests.entities}" includes="**/*.class" />
+		</jar>
+	</target>
+
+	<target name="package-tests-dao" depends="compile-tests-dao">
+		<jar destfile="${jlib.tests.dao.jar}" index="true">
+			<fileset dir="${build.tests.dao}" includes="**/*.class" />
+		</jar>
+	</target>
+
+	<target name="package-tests-service" depends="compile-tests-service">
+		<jar destfile="${jlib.tests.service.jar}" index="true">
+			<fileset dir="${build.tests.service}" includes="**/*.class" />
+		</jar>
+	</target>
+
+	<target name="package-tests-presentation" depends="compile-tests-presentation">
+		<jar destfile="${jlib.tests.presentation.jar}" index="true">
+			<fileset dir="${build.tests.presentation}" includes="**/*.class" />
+		</jar>
+	</target>
+
+	<target name="package-tests-client" depends="compile-tests-client">
+		<jar destfile="${jlib.tests.client.jar}" index="true">
+			<fileset dir="${build.tests.client}" includes="**/*.class" />
+		</jar>
+	</target>
+
+	<!-- ======= RUN TESTS TARGETS ======================================== -->
+	<target name="run-tests-entities" depends="package-entities,package-tests-entities">
+		<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${jlib.entities.jar}" />
+				<pathelement location="${jlib.tests.entities.jar}" />
+				<pathelement location="${server.log4j.dir}"/>
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="no" todir="${reports.tests.dir}">
+				<fileset dir="${build.tests.entities}">
+					<include name="**/*Test*"/>
+					<exclude name="**/*$$*"/> <!-- exclude nested classes -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="run-tests-dao" depends="package-dao,package-tests-dao">
+		<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${jlib.dao.jar}" />
+				<pathelement location="${build.main.entities}" />
+				<pathelement location="${jlib.tests.dao.jar}" />
+				<pathelement location="${server.log4j.dir}"/>
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="no" todir="${reports.tests.dir}">
+				<fileset dir="${build.tests.dao}">
+					<include name="**/*Test*"/>
+					<exclude name="**/*$$*"/> <!-- exclude nested classes -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="run-tests-service" depends="package-service,package-tests-service">
+		<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${jlib.service.jar}" />
+				<pathelement location="${build.main.entities}" />
+				<pathelement location="${jlib.tests.service.jar}" />
+				<pathelement location="${server.log4j.dir}"/>
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="no" todir="${reports.tests.dir}">
+				<fileset dir="${build.tests.service}">
+					<include name="**/*Test*"/>
+					<exclude name="**/*$$*"/> <!-- exclude nested classes -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="run-tests-presentation" depends="package-presentation,package-tests-presentation">
+		<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
+			<classpath>
+				<path refid="server.classpath" />
+				<pathelement location="${jlib.presentation.jar}" />
+				<pathelement location="${build.main.entities}" />
+				<pathelement location="${jlib.tests.presentation.jar}" />
+				<pathelement location="${server.log4j.dir}"/>
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="no" todir="${reports.tests.dir}">
+				<fileset dir="${build.tests.presentation}">
+					<include name="**/*Test*"/>
+					<exclude name="**/*$$*"/> <!-- exclude nested classes -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="run-tests-client" depends="package-client,package-tests-client">
+		<junit fork="no" printsummary="no" haltonfailure="no" haltonerror="no">
+			<classpath>
+				<path refid="server.classpath" /> <!-- must be server.classpath -->
+				<pathelement location="${jlib.client.jar}" />
+				<pathelement location="${jlib.tests.client.jar}" />
+				<pathelement location="${server.log4j.dir}"/>
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="no" todir="${reports.tests.dir}">
+				<fileset dir="${build.tests.client}">
+					<include name="**/*Test*"/>
+					<exclude name="**/*$$*"/> <!-- exclude nested classes -->
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<!-- ======= GENERATE TEST RESULTS TARGETS ============================ -->
+	<target name="tests-report" depends="run-tests">
+		<junitreport todir="${reports.tests.html.dir}">
+			<fileset dir="${reports.tests.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports.tests.html.dir}" />
+		</junitreport>
+	</target>
+
+	<target name="show-tests-report" depends="tests-report">
+		<openURI uri="file:${reports.tests.html.dir}/index.html"/>
+	</target>
+	
+	<!-- ======= JAVADOC TARGET =========================================== -->
+	<target name="javadoc">
+		<javadoc destdir="${javadoc.dir}" author="true"
+			classpathref="server.classpath" nodeprecated="false"
+			nodeprecatedlist="false" noindex="false" nonavbar="false"
+			notree="false" packagenames="*" splitindex="true"
+			use="true" version="true" encoding="UTF-8">
+			<fileset dir="${src.main.client}" />
+			<fileset dir="${src.main.presentation}" />
+			<fileset dir="${src.main.service}" />
+			<fileset dir="${src.main.dao}" />
+			<fileset dir="${src.main.entities}" />
+			<fileset dir="${src.main.common}" />
+			<link href="http://java.sun.com/javase/6/docs/api/" />
+		</javadoc>
+	</target>
+
+	<target name="schema-export" depends="compile-dao">
+		<input validargs="y,n" addproperty="hibernate.run.task">Danger! Running this task will destroy existing database shema at address '${database.url}' and create a new one. Loss of data is imminent! Are you sure you want to proceed?</input>
+		<condition property="do.abort">
+			<equals arg1="n" arg2="${hibernate.run.task}" />
+		</condition>
+		<fail if="do.abort">Build aborted by user.</fail>
+		
+		<taskdef name="hibernatetool" 
+		        classname="org.hibernate.tool.ant.HibernateToolTask"
+				classpathref="server.classpath" />
+		
+		<hibernatetool destdir="${local.dir}">
+		 <classpath>
+		 	<path refid="server.classpath" />
+			<pathelement location="${build.main.dao}"/>
+			<pathelement location="${build.main.entities}"/>
+			<pathelement location="${persistence.dir}"/>
+			<pathelement location="${server.log4j.dir}"/>
+		 </classpath>
+		 <jpaconfiguration/>
+		 <hbm2ddl export="true" outputfilename="sql.ddl" drop="true"/>
+		</hibernatetool>
+	</target>
+
+	<target name="tomcat" depends="package">
+		<fail unless="tomcat.dir">Tomcat directory not set! Edit this information in configuration.properties file.
+  	</fail>
+		<property name="tomcat.app.dir" value="${tomcat.dir}/webapps/${app.name}" />
+		<mkdir dir="${tomcat.app.dir}" />
+		<mkdir dir="${tomcat.app.dir}/WEB-INF" />
+		<mkdir dir="${tomcat.app.dir}/WEB-INF/lib" />
+		<mkdir dir="${tomcat.app.dir}/WEB-INF/classes" />
+
+		<copy todir="${tomcat.app.dir}" overwrite="true">
+			<fileset file="${basedir}/html/*" />
+			<!-- TODO this is only temporary: -->
+			<fileset file="${basedir}/html/pages/*" />
+			<!-- END TEMPORARY -->
+			<fileset dir="." includes="images/**/*" />
+			<fileset file="${basedir}/${jlib.dir}/${app.name}-web-onClient.jar" />
+			<fileset file="${basedir}/${lib.dir}/commons-digester.jar" />
+			<fileset file="${basedir}/${lib.dir}/commons-httpclient.jar" />
+			<fileset file="${basedir}/${lib.dir}/commons-codec.jar" />
+			<fileset file="${basedir}/${lib.dir}/hibernate/commons-collections.jar" />
+			<fileset file="${basedir}/${lib.dir}/hibernate/commons-logging.jar" />
+			<fileset file="${basedir}/${lib.dir}/hibernate/log4j.jar" />
+			<fileset file="${basedir}/${lib.dir}/xdoclet/commons-beanutils.jar" />
+			<fileset file="${basedir}/${local.dir}/.java.policy" />
+		</copy>
+
+		<copy todir="${tomcat.app.dir}/WEB-INF" overwrite="true">
+			<fileset dir="${basedir}/local/web" />
+		</copy>
+
+		<copy todir="${tomcat.app.dir}/WEB-INF/lib" overwrite="true">
+			<fileset file="${basedir}/${jlib.dir}/${app.name}-dao.jar" />
+			<fileset file="${basedir}/${jlib.dir}/${app.name}-service.jar" />
+			<fileset file="${basedir}/${jlib.dir}/${app.name}-web-onServer.jar" />
+			<fileset file="${basedir}/${lib.dir}/*.*" excludes="servlet-api.jar" />
+			<fileset file="${basedir}/${lib.dir}/hibernate/*.*" />
+			<fileset file="${basedir}/${lib.dir}/mysql/*.*" />
+			<fileset file="${basedir}/${lib.dir}/xdoclet/*.*" />
+		</copy>
+
+		<copy todir="${tomcat.app.dir}/WEB-INF/classes" overwrite="true">
+			<fileset file="${client.log4j.file}" />
+		</copy>
+
+		<available property="java.policy.exists" file="${user.home}/.java.policy" />
+		<condition property="should.override.java.policy">
+			<and>
+				<isset property="java.policy.exists" />
+				<equals arg1="true" arg2="${override.java.policy}" casesensitive="false" trim="true" />
+			</and>
+		</condition>
+		<condition property="dont.override.java.policy">
+			<and>
+				<isset property="java.policy.exists" />
+				<or>
+					<not>
+						<isset property="override.java.policy" />
+					</not>
+					<equals arg1="false" arg2="${override.java.policy}" casesensitive="false" trim="true" />
+				</or>
+			</and>
+		</condition>
+		<antcall target="copy-java-policy-doesnt-exist" />
+		<antcall target="override-java-policy" />
+		<antcall target="dont-override-java-policy" />
+
+	</target>
+	
+	<target name="copy-java-policy-doesnt-exist" unless="java.policy.exists">
+		<echo>File '.java.policy' does not exists in ${user.home}. Copying file...</echo>
+		<copy todir="${user.home}" verbose="true">
+			<fileset file="${local.dir}/.java.policy" />
+		</copy>
+	</target>
+
+	<target name="override-java-policy" if="should.override.java.policy">
+		<echo>Overring file '${user.home}${file.separator}.java.policy' with '.${file.separator}${local.dir}${file.separator}.java.policy'</echo>
+		<copy todir="${user.home}" overwrite="true" verbose="true">
+			<fileset file="${local.dir}/.java.policy" />
+		</copy>
+	</target>
+
+	<target name="dont-override-java-policy" if="dont.override.java.policy">
+		<echo>Modify your existing '${user.home}${file.separator}.java.policy' so that it contains contents of '.${file.separator}${local.dir}${file.separator}.java.policy'</echo>
+	</target>
+
+	<target name="clean-tomcat">
+		<property name="tomcat.app.dir" value="${tomcat.dir}${file.separator}webapps${file.separator}${app.name}" />
+		<delete quiet="true" includeEmptyDirs="true">
+			<fileset dir="${tomcat.app.dir}" />
+		</delete>
+	</target>
+
+	<target name="run-tomcat" depends="kill-tomcat,tomcat">
+		<property environment="env" />
+		<exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.exec}" spawn="true">
+		</exec>
+	</target>
+	
+	<target name="deploy" depends="war">
+		<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"
+			classpathref="server.class.path"/>
+		
+	    <deploy url="${url}" username="${username}" password="${password}"
+	            path="${path}" war="file:${build}${path}.war" update="true"/>
+	</target>
+
+	<target name="kill-tomcat">
+		<exec executable="${tomcat.dir}${file.separator}bin${file.separator}${tomcat.shutdown.exec}" spawn="true">
+		</exec>
+	</target>
+
+	<target name="war" depends="package">
+		<war destfile="${app.name}.war" webxml="${local.dir}/web/web.xml">
+
+			<!-- TODO: When security constraints are in place vhdllab.html will
+    	have to be excluded from war (also its jar dependencies) -->
+			<fileset dir="${html.pages.dir}" includes="*" />
+			<fileset dir="." includes="images/**/*" />
+			<fileset dir="${jlib.dir}" includes="vhdllab-web-onClient.jar" />
+			<fileset dir="${lib.dir}" includes="commons-digester.jar" />
+			<fileset dir="${lib.dir}" includes="commons-httpclient.jar" />
+			<fileset dir="${lib.dir}" includes="commons-codec.jar" />
+			<fileset dir="${lib.dir}/xdoclet" includes="commons-beanutils.jar" />
+			<fileset dir="${lib.dir}/hibernate" includes="commons-collections.jar,commons-logging.jar" />
+			<fileset file="${basedir}/${lib.dir}/hibernate/log4j.jar" />
+			<fileset dir="${local.dir}" includes=".java.policy" />
+			<lib dir="${jlib.dir}" includes="*.jar" />
+			<lib dir="${lib.dir}" includes="*.jar" />
+			<lib dir="${lib.dir}/hibernate" includes="*.jar" />
+			<lib dir="${lib.dir}/mysql" includes="*.jar" />
+			<lib dir="${lib.dir}/xdoclet" includes="*.jar" />
+			<classes file="${client.log4j.file}" />
+		</war>
+	</target>
+
+	<target name="compile" depends="compile-dao,compile-service,compile-presentation,compile-client" />
+
+	<target name="compile-tests" depends="compile-tests-dao,compile-tests-service,compile-tests-presentation,compile-tests-client" />
+
+	<target name="package-server" depends="package-dao,package-service,package-presentation" />
+
+	<target name="package" depends="package-entities,package-dao,package-service,package-presentation,package-client" />
+
+	<target name="package-tests" depends="package-tests-entities,package-tests-dao,package-tests-service,package-tests-presentation,package-tests-client" />
+
+	<target name="run-tests" depends="run-tests-entities,run-tests-dao,run-tests-service,run-tests-presentation,run-tests-client" />
+
+	<target name="test" depends="run-tests,show-tests-report" />
+
+	<target name="clean-all" depends="clean, clean-tomcat" />
+
+	<target name="hibernate" depends="schema-export" />
+
+	<target name="install" depends="hibernate, war" />
+
+	<target name="all" depends="package,javadoc,show-tests-report" />
+
+	<target name="rebuild" depends="clean,package" />
+
+	<target name="rebuild-all" depends="clean,package,javadoc,show-tests-report" />
+
+	<target name="rebuild-doc" depends="clean,javadoc" />
+
+</project>
