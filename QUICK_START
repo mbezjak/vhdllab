@@ -2,7 +2,7 @@ In order to quickly setup your eclipse workspace (import VHDLLab in it) read
 this quick manual.
 
 Before preceding any further make sure you have at least Java JDK 6 and Apache
-Ant 1.7 installed and your PATH environmental variable set (i.e. you can run
+Ant 1.7 installed and your PATH environmental variable is set (i.e. you can run
 java and ant from your shell/command line).
 
 Run these command and import VHDLLab subprojects into your eclipse workspace:
