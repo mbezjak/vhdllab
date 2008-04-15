@@ -106,7 +106,7 @@ public final class HttpClientInitiator implements Initiator {
 	private static final int BYTE_ARRAY_SIZE = 1000;
 
 	/**
-	 * A minimum session length. Length is in seconds.
+	 * A minimum session length in seconds.
 	 */
 	private static final int MINIMUM_SESSION_LENGTH = 60;
 
