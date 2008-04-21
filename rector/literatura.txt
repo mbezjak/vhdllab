@@ -5,4 +5,7 @@ http://ant.apache.org/
 http://tomcat.apache.org/
 http://www.hibernate.org/
 http://ghdl.free.fr/
+http://ghdl.free.fr/ghdl/index.html
 Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides - Design Patterns
+http://www.xilinx.com/ise/logic_design_prod/webpack.htm
+http://www.xilinx.com/ise/optional_prod/mxe.htm
