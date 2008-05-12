@@ -15,12 +15,12 @@ import org.junit.Test;
 
 /**
  * A test case for {@link Port}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class PortTest {
 
-	private static final String NAME = "port.name";
+	private static final String NAME = "port_name";
 	private static final PortDirection DIRECTION = PortDirection.IN;
 	private static final Type TYPE = new Type(TypeName.STD_LOGIC_VECTOR,
 			new Range(4, VectorDirection.DOWNTO, 1));
@@ -54,6 +54,14 @@ public class PortTest {
 	@Test(expected = NullPointerException.class)
 	public void constructor3() throws Exception {
 		new Port(NAME, DIRECTION, null);
+	}
+
+	/**
+	 * Name is not correct port name
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor4() throws Exception {
+	    new Port("port", DIRECTION, TYPE);
 	}
 
 	/**
@@ -106,7 +114,7 @@ public class PortTest {
 	 */
 	@Test
 	public void hashCodeAndEquals3() throws Exception {
-		Port newPort = new Port("new.port.name", port.getDirection(), port
+		Port newPort = new Port("new_port_name", port.getDirection(), port
 				.getType());
 
 		assertNotSame("ports are equal.", port, newPort);

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 /**
  * Very simple test case for {@link ProjectManagerImpl}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class ProjectManagerImplTest {
@@ -31,7 +31,7 @@ public class ProjectManagerImplTest {
 	@Test
 	public void saveAndDelete() throws Exception {
 		EntityManagerUtil.currentEntityManager();
-		Project project = new Project("user.id", "project.name");
+		Project project = new Project("user.id", "project_name");
 		assertFalse("project already exists.", manager.exists(project
 				.getUserId(), project.getName()));
 

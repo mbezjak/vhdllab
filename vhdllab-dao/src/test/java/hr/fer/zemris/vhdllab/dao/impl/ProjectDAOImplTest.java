@@ -26,15 +26,15 @@ import org.junit.Test;
 
 /**
  * Tests for {@link ProjectDAOImpl}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class ProjectDAOImplTest {
 
-	private static final String NAME = "simple.project.name";
+	private static final String NAME = "simple_project_name";
 	private static final String USER_ID = "user.identifier";
-	private static final String NEW_NAME = "new" + NAME;
-	private static final String NEW_USER_ID = "new" + USER_ID;
+	private static final String NEW_NAME = "new_" + NAME;
+	private static final String NEW_USER_ID = "new_" + USER_ID;
 
 	private static FileDAO fileDAO;
 	private static ProjectDAO dao;
@@ -120,7 +120,7 @@ public class ProjectDAOImplTest {
 		dao.save(project);
 		assertTrue("file not saved.", fileDAO.exists(file.getId()));
 	}
-	
+
 	/**
 	 * Project name and user id are unique (i.e. form secondary key)
 	 */
@@ -182,6 +182,22 @@ public class ProjectDAOImplTest {
 				.getFiles().contains(newFile));
 	}
 
+    /**
+     * Project name can't be any string. Must be of correct format.
+     */
+    @Test
+    public void save8() {
+        Project newProject = new Project(USER_ID, "_proj_and");
+        try {
+            dao.save(newProject);
+            fail("Expected DAOException");
+        } catch (DAOException e) {
+            if (e.getStatusCode() != StatusCodes.DAO_INVALID_PROJECT_NAME) {
+                fail("Invalid status code in DAOException");
+            }
+        }
+    }
+
 	/**
 	 * Id is null
 	 */
@@ -236,7 +252,7 @@ public class ProjectDAOImplTest {
 	public void exists2() throws DAOException {
 		assertFalse("project exists.", dao.exists(Long.MAX_VALUE));
 	}
-	
+
 	/**
 	 * everything ok
 	 */
@@ -245,7 +261,7 @@ public class ProjectDAOImplTest {
 		dao.save(project);
 		assertTrue("project doesn't exist.", dao.exists(project.getId()));
 	}
-	
+
 	/**
 	 * user id is null
 	 */
@@ -490,7 +506,7 @@ public class ProjectDAOImplTest {
 		 * populates caches. On the other hand by simply viewing statistics of
 		 * persistence provider user can be sure that caches are working.
 		 * jconsole tool will help with that.
-		 * 
+		 *
 		 * Also note that lazy loading will have to be disabled in order to
 		 * preform this test!
 		 */
@@ -543,7 +559,7 @@ public class ProjectDAOImplTest {
 		 * populates caches. On the other hand by simply viewing statistics of
 		 * persistence provider user can be sure that caches are working.
 		 * jconsole tool will help with that.
-		 * 
+		 *
 		 * Also note that lazy loading will have to be disabled in order to
 		 * preform this test!
 		 */

@@ -18,7 +18,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link SourceGenerator}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class SourceGeneratorTest {
@@ -28,7 +28,7 @@ public class SourceGeneratorTest {
      */
     @Test
     public void generateVHDL() throws Exception {
-        Project project = new Project("user.id", "project.name");
+        Project project = new Project("user.id", "project_name");
         String type = FileTypes.VHDL_SOURCE;
         List<NameAndContent> list = FileContentProvider.getContent(type);
         assumeTrue(list.size() >= 1);

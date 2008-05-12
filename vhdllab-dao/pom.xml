@@ -29,6 +29,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>hr.fer.zemris.vhdllab</groupId>
+			<artifactId>vhdllab-commons</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
 			<version>3.2.6.ga</version>

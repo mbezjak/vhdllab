@@ -13,12 +13,12 @@
 	<artifactId>vhdllab-server-commons</artifactId>
 
 	<dependencies>
-		<dependency>
-			<groupId>hr.fer.zemris.vhdllab</groupId>
-			<artifactId>vhdllab-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>hr.fer.zemris.vhdllab</groupId>
+            <artifactId>vhdllab-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

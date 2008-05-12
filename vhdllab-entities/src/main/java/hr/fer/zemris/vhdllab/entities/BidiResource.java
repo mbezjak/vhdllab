@@ -122,7 +122,7 @@ public class BidiResource<TContainer extends Container<TBidiResource, TContainer
 	void disconnect() {
 		parent = null;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

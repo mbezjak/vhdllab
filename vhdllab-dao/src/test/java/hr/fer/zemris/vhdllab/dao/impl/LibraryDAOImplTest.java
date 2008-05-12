@@ -26,13 +26,13 @@ import org.junit.Test;
 
 /**
  * Tests for {@link LibraryDAOImpl}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class LibraryDAOImplTest {
 
 	private static final String NAME = "simple.library.name";
-	private static final String NEW_NAME = "new" + NAME;
+	private static final String NEW_NAME = "new." + NAME;
 
 	private static LibraryFileDAO fileDAO;
 	private static LibraryDAO dao;
@@ -382,7 +382,7 @@ public class LibraryDAOImplTest {
 		 * populates caches. On the other hand by simply viewing statistics of
 		 * persistence provider user can be sure that caches are working.
 		 * jconsole tool will help with that.
-		 * 
+		 *
 		 * Also note that lazy loading will have to be disabled in order to
 		 * preform this test!
 		 */
@@ -435,7 +435,7 @@ public class LibraryDAOImplTest {
 		 * populates caches. On the other hand by simply viewing statistics of
 		 * persistence provider user can be sure that caches are working.
 		 * jconsole tool will help with that.
-		 * 
+		 *
 		 * Also note that lazy loading will have to be disabled in order to
 		 * preform this test!
 		 */

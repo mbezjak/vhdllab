@@ -6,6 +6,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
+import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
+import hr.fer.zemris.vhdllab.api.vhdl.Port;
+import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
+import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.dao.DAOContainer;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.entities.File;
@@ -13,18 +17,22 @@ import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.server.conf.FileTypeMapping;
 import hr.fer.zemris.vhdllab.server.conf.ServerConf;
 import hr.fer.zemris.vhdllab.server.conf.ServerConfParser;
+import hr.fer.zemris.vhdllab.service.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.VHDLGenerator;
+import hr.fer.zemris.vhdllab.service.extractors.SourceExtractor;
 import hr.fer.zemris.vhdllab.service.generators.SourceGenerator;
 import hr.fer.zemris.vhdllab.test.FileContentProvider;
 import hr.fer.zemris.vhdllab.test.NameAndContent;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,7 +41,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link VHDLLabServiceManager}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class VHDLLabServiceManagerTest {
@@ -41,6 +49,7 @@ public class VHDLLabServiceManagerTest {
     private static final String USER_ID = "user.id";
 
     private static String generatorClass;
+    private static String extractorClass;
     private static ServiceContainer container;
     private static VHDLLabServiceManager man;
     private static Project project;
@@ -49,19 +58,21 @@ public class VHDLLabServiceManagerTest {
     @BeforeClass
     public static void initOnce() throws Exception {
         container = new ServiceContainer(new DAOContainer());
-        man = (VHDLLabServiceManager) container.getServiceManager();
 
         EntityManagerUtil.createEntityManagerFactory();
         EntityManagerUtil.currentEntityManager();
-        project = new Project(USER_ID, "project.name");
-        file = new File(project, "file.name", FileTypes.VHDL_SOURCE,
-                "library ieee;...");
+        project = new Project(USER_ID, "project_name");
+        String type = FileTypes.VHDL_SOURCE;
+        List<NameAndContent> contents = FileContentProvider.getContent(type);
+        NameAndContent content = contents.get(0);
+        file = new File(project, content.getName(), type, content.getContent());
         container.getProjectManager().save(project);
         EntityManagerUtil.closeEntityManager();
 
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         generatorClass = mapping.getGenerator();
+        extractorClass = mapping.getExtractor();
     }
 
     @Before
@@ -69,6 +80,8 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.setGenerator(generatorClass);
+        mapping.setExtractor(extractorClass);
+        man = (VHDLLabServiceManager) container.getServiceManager();
     }
 
     @AfterClass
@@ -79,6 +92,27 @@ public class VHDLLabServiceManagerTest {
     }
 
     /**
+     * Test initialization in constructor.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void constructor() throws Exception {
+        Class<?> clazz = man.getClass();
+        Field field = clazz.getDeclaredField("generators");
+        field.setAccessible(true);
+        Map<String, VHDLGenerator> generators = (Map<String, VHDLGenerator>) field
+                .get(man);
+        assertTrue("not defined generators.", generators.size() > 0);
+
+        field = clazz.getDeclaredField("extractors");
+        field.setAccessible(true);
+        Map<String, CircuitInterfaceExtractor> extractors = (Map<String, CircuitInterfaceExtractor>) field
+                .get(man);
+        assertTrue("not defined extractors.", extractors.size() > 0);
+
+    }
+
+    /**
      * Generator class name is null
      */
     @Test
@@ -86,11 +120,13 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.setGenerator(null);
+        man = new VHDLLabServiceManager();
 
         try {
             man.generateVHDL(file);
+            fail("Expected ServiceException");
         } catch (ServiceException e) {
-            if (!e.getMessage().contains("No generator defined")) {
+            if (!e.getMessage().contains("No generator for type")) {
                 fail("Wrong exception thrown!");
             }
         }
@@ -104,9 +140,11 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.setGenerator(ExceptionThrowingGenerator.class.getName());
+        man = new VHDLLabServiceManager();
 
         try {
             man.generateVHDL(file);
+            fail("Expected ServiceException");
         } catch (ServiceException e) {
             if (!e.getMessage().contains("exception during generation")) {
                 fail("Wrong exception thrown!");
@@ -122,9 +160,11 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.setGenerator(NullGenerator.class.getName());
+        man = new VHDLLabServiceManager();
 
         try {
             man.generateVHDL(file);
+            fail("Expected ServiceException");
         } catch (ServiceException e) {
             if (!e.getMessage().contains("returned null result")) {
                 fail("Wrong exception thrown!");
@@ -162,7 +202,7 @@ public class VHDLLabServiceManagerTest {
      */
     @Test
     public void generateVHDL6() throws Exception {
-        List<File> files = getGenerableFile();
+        List<File> files = getGenerableFiles();
 
         for (File f : files) {
             VHDLGenerationResult result = man.generateVHDL(f);
@@ -175,7 +215,7 @@ public class VHDLLabServiceManagerTest {
      */
     @Test
     public void generateVHDL7() throws Exception {
-        List<File> files = getGenerableFile();
+        List<File> files = getGenerableFiles();
 
         for (FileTypeMapping m : getGeneratorMappings()) {
             Class<?> genClass = Class.forName(m.getGenerator());
@@ -196,7 +236,7 @@ public class VHDLLabServiceManagerTest {
      */
     @Test
     public void generateVHDL8() throws Exception {
-        List<File> files = getGenerableFile();
+        List<File> files = getGenerableFiles();
 
         for (FileTypeMapping m : getGeneratorMappings()) {
             Class<?> genClass = Class.forName(m.getGenerator());
@@ -205,6 +245,164 @@ public class VHDLLabServiceManagerTest {
                 VHDLGenerationResult r1 = gen.generateVHDL(f);
                 VHDLGenerationResult r2 = gen.generateVHDL(f);
                 assertEquals("generator isn't deterministic.", r1, r2);
+            }
+        }
+    }
+
+    /**
+     * Extractor class name is null
+     */
+    @Test
+    public void extractCircuitInterface() {
+        ServerConf conf = ServerConfParser.getConfiguration();
+        FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
+        mapping.setExtractor(null);
+        man = new VHDLLabServiceManager();
+
+        try {
+            man.extractCircuitInterface(file);
+            fail("Expected ServiceException");
+        } catch (ServiceException e) {
+            if (!e.getMessage().contains("No extractor for type")) {
+                fail("Wrong exception thrown!");
+            }
+        }
+    }
+
+    /**
+     * Extractor threw runtime exception
+     */
+    @Test
+    public void extractCircuitInterface2() throws Exception {
+        ServerConf conf = ServerConfParser.getConfiguration();
+        FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
+        mapping.setExtractor(ExceptionThrowingExtractor.class.getName());
+        man = new VHDLLabServiceManager();
+
+        try {
+            man.extractCircuitInterface(file);
+            fail("Expected ServiceException");
+        } catch (ServiceException e) {
+            if (!e.getMessage().contains("exception during extraction")) {
+                fail("Wrong exception thrown!");
+            }
+        }
+    }
+
+    /**
+     * Extractor returned null
+     */
+    @Test
+    public void extractCircuitInterface3() throws Exception {
+        ServerConf conf = ServerConfParser.getConfiguration();
+        FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
+        mapping.setExtractor(NullExtractor.class.getName());
+        man = new VHDLLabServiceManager();
+
+        try {
+            man.extractCircuitInterface(file);
+            fail("Expected ServiceException");
+        } catch (ServiceException e) {
+            if (!e.getMessage().contains("returned null result")) {
+                fail("Wrong exception thrown!");
+            }
+        }
+    }
+
+    /**
+     * everthing ok
+     */
+    @Test
+    public void extractCircuitInterface4() throws Exception {
+        CircuitInterface ci = man.extractCircuitInterface(file);
+        assertEquals("testing wrong component.", "comp_and", ci.getName());
+        List<Port> ports = ci.getPorts();
+        assertEquals("wrong port count.", 3, ports.size());
+        Port p = ports.get(0);
+        assertEquals("wrong name.", "a", p.getName());
+        assertEquals("wrong direction.", PortDirection.IN, p.getDirection());
+        assertEquals("wrong type name.", TypeName.STD_LOGIC, p.getType()
+                .getTypeName());
+        assertTrue("wrong range.", p.getType().getRange().isScalar());
+
+        p = ports.get(1);
+        assertEquals("wrong name.", "b", p.getName());
+        assertEquals("wrong direction.", PortDirection.IN, p.getDirection());
+        assertEquals("wrong type name.", TypeName.STD_LOGIC, p.getType()
+                .getTypeName());
+        assertTrue("wrong range.", p.getType().getRange().isScalar());
+
+        p = ports.get(2);
+        assertEquals("wrong name.", "f", p.getName());
+        assertEquals("wrong direction.", PortDirection.OUT, p.getDirection());
+        assertEquals("wrong type name.", TypeName.STD_LOGIC, p.getType()
+                .getTypeName());
+        assertTrue("wrong range.", p.getType().getRange().isScalar());
+    }
+
+    /**
+     * Test that every extractor can be instantiated.
+     */
+    @Test
+    public void extractCircuitInterface5() throws Exception {
+        for (FileTypeMapping m : getExtractorMappings()) {
+            CircuitInterfaceExtractor extractor = (CircuitInterfaceExtractor) Class
+                    .forName(m.getExtractor()).newInstance();
+            assertNotNull("extractor not instantiated.", extractor);
+        }
+    }
+
+    /**
+     * On few examples see the extractor doesn't return null.
+     */
+    @Test
+    public void extractCircuitInterface6() throws Exception {
+        List<File> files = getExtractableFiles();
+
+        for (File f : files) {
+            CircuitInterface ci = man.extractCircuitInterface(f);
+            assertNotNull("result is null.", ci);
+        }
+    }
+
+    /**
+     * Test that every extractor is stateless.
+     */
+    @Test
+    public void extractCircuitInterface7() throws Exception {
+        List<File> files = getExtractableFiles();
+
+        for (FileTypeMapping m : getExtractorMappings()) {
+            Class<?> genClass = Class.forName(m.getExtractor());
+            CircuitInterfaceExtractor e1 = (CircuitInterfaceExtractor) genClass
+                    .newInstance();
+            for (File f : filterByType(files, m.getType())) {
+                CircuitInterfaceExtractor e2 = (CircuitInterfaceExtractor) genClass
+                        .newInstance();
+                CircuitInterface ci1 = e1.extractCircuitInterface(f);
+                CircuitInterface ci2 = e1.extractCircuitInterface(f);
+                CircuitInterface ci3 = e2.extractCircuitInterface(f);
+                assertEquals("extractor isn't stateless.", ci1, ci2);
+                assertEquals("extractor isn't stateless.", ci2, ci3);
+            }
+        }
+    }
+
+    /**
+     * Test that every extractor is deterministic.
+     */
+    @Test
+    public void extractCircuitInterface8() throws Exception {
+        List<File> files = getExtractableFiles();
+
+        for (FileTypeMapping m : getExtractorMappings()) {
+            Class<?> genClass = Class.forName(m.getExtractor());
+            CircuitInterfaceExtractor ext = (CircuitInterfaceExtractor) genClass
+                    .newInstance();
+            for (File f : filterByType(files, m.getType())) {
+                CircuitInterface ci1 = ext.extractCircuitInterface(f);
+                CircuitInterface ci2 = ext.extractCircuitInterface(f);
+                assertEquals("extractor isn't deterministic.", ci1, ci2);
             }
         }
     }
@@ -227,6 +425,27 @@ public class VHDLLabServiceManagerTest {
         VHDLGenerator gen = invokeMethod(method, FileTypes.VHDL_SOURCE);
         assertTrue("wrong class instantiated.",
                 gen.getClass() == SourceGenerator.class);
+    }
+
+    /**
+     * Extractor not defined
+     */
+    @Test(expected = ServiceException.class)
+    public void getExtractor() throws Exception {
+        Method method = getPrivateMethod("getExtractor", String.class);
+        invokeMethod(method, FileTypes.PREFERENCES_USER);
+    }
+
+    /**
+     * everything ok
+     */
+    @Test
+    public void getExtractor2() throws Exception {
+        Method method = getPrivateMethod("getExtractor", String.class);
+        CircuitInterfaceExtractor ext = invokeMethod(method,
+                FileTypes.VHDL_SOURCE);
+        assertTrue("wrong class instantiated.",
+                ext.getClass() == SourceExtractor.class);
     }
 
     /**
@@ -290,9 +509,25 @@ public class VHDLLabServiceManagerTest {
     /**
      * Returns all dummy files that can be generated.
      */
-    private List<File> getGenerableFile() throws Exception {
+    private List<File> getGenerableFiles() throws Exception {
         List<File> files = new ArrayList<File>();
         for (FileTypeMapping m : getGeneratorMappings()) {
+            String type = m.getType();
+            List<NameAndContent> list = FileContentProvider.getContent(type);
+            for (NameAndContent nc : list) {
+                File f = new File(project, nc.getName(), type, nc.getContent());
+                files.add(f);
+            }
+        }
+        return files;
+    }
+
+    /**
+     * Returns all dummy files that can be extracted.
+     */
+    private List<File> getExtractableFiles() throws Exception {
+        List<File> files = new ArrayList<File>();
+        for (FileTypeMapping m : getExtractorMappings()) {
             String type = m.getType();
             List<NameAndContent> list = FileContentProvider.getContent(type);
             for (NameAndContent nc : list) {
@@ -312,6 +547,21 @@ public class VHDLLabServiceManagerTest {
         for (String type : conf.getFileTypes()) {
             FileTypeMapping mapping = conf.getFileTypeMapping(type);
             if (mapping.getGenerator() != null) {
+                mappings.add(mapping);
+            }
+        }
+        return mappings;
+    }
+
+    /**
+     * Returns all file type mappings that have defined extractors.
+     */
+    private List<FileTypeMapping> getExtractorMappings() throws Exception {
+        List<FileTypeMapping> mappings = new ArrayList<FileTypeMapping>();
+        ServerConf conf = ServerConfParser.getConfiguration();
+        for (String type : conf.getFileTypes()) {
+            FileTypeMapping mapping = conf.getFileTypeMapping(type);
+            if (mapping.getExtractor() != null) {
                 mappings.add(mapping);
             }
         }
@@ -355,11 +605,35 @@ public class VHDLLabServiceManagerTest {
     }
 
     /**
+     * A dummy implementation that throws exception during circuit interface
+     * extraction.
+     */
+    public static class ExceptionThrowingExtractor implements
+            CircuitInterfaceExtractor {
+        @Override
+        public CircuitInterface extractCircuitInterface(File f)
+                throws ServiceException {
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
      * A dummy implementation return null as a generation result.
      */
     public static class NullGenerator implements VHDLGenerator {
         @Override
         public VHDLGenerationResult generateVHDL(File f)
+                throws ServiceException {
+            return null;
+        }
+    }
+
+    /**
+     * A dummy implementation return null circuit interface.
+     */
+    public static class NullExtractor implements CircuitInterfaceExtractor {
+        @Override
+        public CircuitInterface extractCircuitInterface(File f)
                 throws ServiceException {
             return null;
         }

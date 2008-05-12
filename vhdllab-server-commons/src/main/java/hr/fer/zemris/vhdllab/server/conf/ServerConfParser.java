@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 
 /**
  * A parser for server configuration file (server.xml).
- * 
+ *
  * @author Miro Bezjak
  * @version 1.0
  * @since 6/2/2008
@@ -56,7 +56,7 @@ public final class ServerConfParser {
 	/**
 	 * Returns a server configuration or <code>null</code> if any error
 	 * occurs.
-	 * 
+	 *
 	 * @return a server configuration
 	 */
 	public static ServerConf getConfiguration() {
@@ -65,7 +65,7 @@ public final class ServerConfParser {
 
 	/**
 	 * Parsers a configuration file.
-	 * 
+	 *
 	 * @param is
 	 *            an input stream to a configuration file
 	 * @return a parsed configuration
@@ -84,6 +84,7 @@ public final class ServerConfParser {
 				FileTypeMapping.class);
 		digester.addSetProperties("server/fileTypeMapping", "type", "type");
 		digester.addSetProperties("server/fileTypeMapping/generator", "name", "generator");
+		digester.addSetProperties("server/fileTypeMapping/extractor", "name", "extractor");
 		digester.addSetNext("server/fileTypeMapping", "addFileTypeMapping");
 
 		return (ServerConf) digester.parse(is);

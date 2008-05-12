@@ -16,7 +16,7 @@ import org.junit.Test;
 
 /**
  * Very simple test case for {@link FileManagerImpl}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class FileManagerImplTest {
@@ -37,10 +37,10 @@ public class FileManagerImplTest {
 	@Test
 	public void saveAndDelete() throws Exception {
 		EntityManagerUtil.currentEntityManager();
-		Project project = new Project("user.id", "project.name");
+		Project project = new Project("user.id", "project_name");
 		projectManager.save(project);
 
-		File file = new File(project, "file.name", FileTypes.VHDL_SOURCE);
+		File file = new File(project, "file_name", FileTypes.VHDL_SOURCE);
 		manager.save(file);
 		assertTrue("file doesn't exist.", manager.exists(file.getId()));
 		assertTrue("file doesn't exist.", manager.exists(project.getId(), file

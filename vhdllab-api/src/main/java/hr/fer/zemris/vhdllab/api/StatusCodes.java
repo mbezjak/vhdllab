@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.api;
 
+import hr.fer.zemris.vhdllab.api.util.StringFormat;
+
 /**
  * This class contains status code constants. They describe a status of a
  * response (sent by server). Almost all of them describe what type of error
@@ -19,64 +21,82 @@ package hr.fer.zemris.vhdllab.api;
  * <li>[3000, 4000) - errors in presentation tier</li>
  * </ul>
  * </p>
- * 
+ *
  * @author Miro Bezjak
  * @version 1.0
  * @since 6/2/2008
  */
 public final class StatusCodes {
 
-	/**
-	 * Don't let anyone instantiate this class.
-	 */
-	private StatusCodes() {
-	}
+    /**
+     * Don't let anyone instantiate this class.
+     */
+    private StatusCodes() {
+    }
 
-	/**
-	 * Indicates that a request (sent by client application) is successfully
-	 * processed.
-	 */
-	public static final short OK = 200;
-	/**
-	 * An unknown error occurred on server.
-	 */
-	public static final short INTERNAL_SERVER_ERROR = 500;
-	/**
-	 * A server error has occurred where server refuses to give additional
-	 * information.
-	 */
-	public static final short SERVER_ERROR = 501;
+    /**
+     * Indicates that a request (sent by client application) is successfully
+     * processed.
+     */
+    public static final short OK = 200;
+    /**
+     * An unknown error occurred on server.
+     */
+    public static final short INTERNAL_SERVER_ERROR = 500;
+    /**
+     * A server error has occurred where server refuses to give additional
+     * information.
+     */
+    public static final short SERVER_ERROR = 501;
 
-	/**
-	 * Entity doesn't exist. For example: can't retrieve entity name when it
-	 * doesn't exist.
-	 */
-	public static final short DAO_DOESNT_EXIST = 1100;
-	/**
-	 * Entity with such constraints already exists. For example: saving two
-	 * files with same name in same project.
-	 */
-	public static final short DAO_ALREADY_EXISTS = 1110;
-	/**
-	 * Entity name is too long.
-	 */
-	public static final short DAO_NAME_TOO_LONG = 1200;
-	/**
-	 * Entity type is too long.
-	 */
-	public static final short DAO_TYPE_TOO_LONG = 1210;
-	/**
-	 * Entity content is too long.
-	 */
-	public static final short DAO_CONTENT_TOO_LONG = 1220;
-	/**
-	 * User ID is too long.
-	 */
-	public static final short DAO_USER_ID_TOO_LONG = 1230;
-	/**
-	 * File type can't be any string. Must only be one of registered file types
-	 * (see server.xml configuration file).
-	 */
-	public static final short DAO_INVALID_FILE_TYPE = 1300;
+    /**
+     * Entity doesn't exist. For example: can't retrieve entity name when it
+     * doesn't exist.
+     */
+    public static final short DAO_DOESNT_EXIST = 1100;
+    /**
+     * Entity with such constraints already exists. For example: saving two
+     * files with same name in same project.
+     */
+    public static final short DAO_ALREADY_EXISTS = 1110;
+    /**
+     * Entity name is too long.
+     */
+    public static final short DAO_NAME_TOO_LONG = 1200;
+    /**
+     * Entity type is too long.
+     */
+    public static final short DAO_TYPE_TOO_LONG = 1210;
+    /**
+     * Entity content is too long.
+     */
+    public static final short DAO_CONTENT_TOO_LONG = 1220;
+    /**
+     * User ID is too long.
+     */
+    public static final short DAO_USER_ID_TOO_LONG = 1230;
+    /**
+     * File type can't be any string. Must only be one of registered file types
+     * (see server.xml configuration file).
+     */
+    public static final short DAO_INVALID_FILE_TYPE = 1300;
+    /**
+     * File name can't be any string. Must only be correctly formed.
+     *
+     * @see StringFormat#isCorrectFileName(String)
+     */
+    public static final short DAO_INVALID_FILE_NAME = 1310;
+    /**
+     * Project name can't be any string. Must only be correctly formed.
+     *
+     * @see StringFormat#isCorrectProjectName(String)
+     */
+    public static final short DAO_INVALID_PROJECT_NAME = 1400;
+
+    /**
+     * Could not extract circuit interface for specified file. For example, VHDL
+     * code is not correctly written.
+     */
+    public static final short SERVICE_CANT_EXTRACT_CI = 2010;
 
 }

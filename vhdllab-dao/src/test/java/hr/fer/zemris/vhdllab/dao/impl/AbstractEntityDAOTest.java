@@ -17,7 +17,7 @@ import org.junit.Test;
 
 /**
  * Tests for {@link AbstractEntityDAO} class.
- * 
+ *
  * @author Miro Bezjak
  */
 public class AbstractEntityDAOTest {
@@ -137,12 +137,12 @@ public class AbstractEntityDAOTest {
 	@Test
 	public void existsEntity3() throws DAOException {
 		// prepair project
-		Project project = new Project("user.identifier", "project.name");
+		Project project = new Project("user.identifier", "project_name");
 		ProjectDAO projectDAO = new ProjectDAOImpl();
 		projectDAO.save(project);
 
 		Map<String, Object> params = new HashMap<String, Object>(2);
-		params.put("name", "project.name");
+		params.put("name", "project_name");
 		params.put("userId", "user.identifier");
 		try {
 			dao.existsEntity(Project.FIND_BY_NAME_QUERY, params);
@@ -178,12 +178,12 @@ public class AbstractEntityDAOTest {
 	@Test
 	public void findSingleEntity3() throws DAOException {
 		// prepair project
-		Project project = new Project("user.identifier", "project.name");
+		Project project = new Project("user.identifier", "project_name");
 		ProjectDAO projectDAO = new ProjectDAOImpl();
 		projectDAO.save(project);
 
 		Map<String, Object> params = new HashMap<String, Object>(2);
-		params.put("name", "project.name");
+		params.put("name", "project_name");
 		params.put("userId", "user.identifier");
 		try {
 			dao.findSingleEntity(Project.FIND_BY_NAME_QUERY, params);
@@ -219,12 +219,12 @@ public class AbstractEntityDAOTest {
 	@Test
 	public void findEntityList3() throws DAOException {
 		// prepair project
-		Project project = new Project("user.identifier", "project.name");
+		Project project = new Project("user.identifier", "project_name");
 		ProjectDAO projectDAO = new ProjectDAOImpl();
 		projectDAO.save(project);
 
 		Map<String, Object> params = new HashMap<String, Object>(2);
-		params.put("name", "project.name");
+		params.put("name", "project_name");
 		params.put("userId", "user.identifier");
 		try {
 			dao.findEntityList(Project.FIND_BY_NAME_QUERY, params);

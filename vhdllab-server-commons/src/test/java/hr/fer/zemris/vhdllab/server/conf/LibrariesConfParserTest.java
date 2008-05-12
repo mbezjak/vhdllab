@@ -9,7 +9,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link ServerConfParser}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class LibrariesConfParserTest {
@@ -23,15 +23,19 @@ public class LibrariesConfParserTest {
 		ServerConf expectedConf = new ServerConf();
 		m = new FileTypeMapping(FileTypes.VHDL_SOURCE);
 		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.SourceGenerator");
+		m.setExtractor("hr.fer.zemris.vhdllab.service.extractors.SourceExtractor");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
-		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator");
+//		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator");
+//      m.setExtractor("hr.fer.zemris.vhdllab.service.extractors.TestbenchExtractor");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.VHDL_SCHEMA);
-		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.SchemaGenerator");
+//		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.SchemaGenerator");
+//      m.setExtractor("hr.fer.zemris.vhdllab.service.extractors.SchemaExtractor");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.VHDL_AUTOMATON);
-		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.AutomatonGenerator");
+//		m.setGenerator("hr.fer.zemris.vhdllab.service.generators.AutomatonGenerator");
+//      m.setExtractor("hr.fer.zemris.vhdllab.service.extractors.AutomatonExtractor");
 		expectedConf.addFileTypeMapping(m);
 		m = new FileTypeMapping(FileTypes.PREFERENCES_USER);
 		expectedConf.addFileTypeMapping(m);

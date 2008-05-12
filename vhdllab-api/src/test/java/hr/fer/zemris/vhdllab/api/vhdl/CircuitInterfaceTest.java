@@ -19,17 +19,17 @@ import org.junit.Test;
 
 /**
  * A test case for {@link CircuitInterface}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class CircuitInterfaceTest {
 
-	private static final String NAME = "entity.name";
+	private static final String NAME = "entity_name";
 	private static Port PORT;
 	static {
 		Type type = new Type(TypeName.STD_LOGIC_VECTOR, new Range(4,
 				VectorDirection.DOWNTO, 1));
-		PORT = new Port("port.name", PortDirection.IN, type);
+		PORT = new Port("port_name", PortDirection.IN, type);
 	}
 
 	private CircuitInterface ci;
@@ -74,6 +74,14 @@ public class CircuitInterfaceTest {
 	public void constructor4() throws Exception {
 		ports.add(PORT);
 		new CircuitInterface(NAME, ports);
+	}
+
+	/**
+	 * Name is not correct entity name
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void constructor5() throws Exception {
+	    new CircuitInterface("entity", ports);
 	}
 
 	/**
@@ -178,7 +186,7 @@ public class CircuitInterfaceTest {
 	 */
 	@Test
 	public void hashCodeAndEquals3() throws Exception {
-		CircuitInterface newCi = new CircuitInterface("new.entity.name", ci
+		CircuitInterface newCi = new CircuitInterface("new_entity_name", ci
 				.getPorts());
 
 		assertNotSame("circuit interfaces are equal.", ci, newCi);

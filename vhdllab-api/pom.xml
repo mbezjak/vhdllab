@@ -11,6 +11,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>vhdllab-api</artifactId>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
