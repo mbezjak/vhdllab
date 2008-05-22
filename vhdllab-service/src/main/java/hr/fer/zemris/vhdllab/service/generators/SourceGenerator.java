@@ -12,25 +12,25 @@ import java.util.List;
 
 /**
  * A generator for a {@link FileTypes#VHDL_SOURCE} file type.
- * 
+ *
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
  */
 public final class SourceGenerator implements VHDLGenerator {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.service.VHDLGenerator#generateVHDL(hr.fer.zemris.vhdllab.entities.File)
-	 */
-	@Override
-	public VHDLGenerationResult generateVHDL(File file) throws ServiceException {
-		List<VHDLGenerationMessage> messages = Collections.emptyList();
-		String vhdl = file.getContent();
-		VHDLGenerationResult result = new VHDLGenerationResult(true, messages,
-				vhdl);
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see hr.fer.zemris.vhdllab.service.VHDLGenerator#execute(hr.fer.zemris.vhdllab.entities.File)
+     */
+    @Override
+    public VHDLGenerationResult execute(File file) throws ServiceException {
+        List<VHDLGenerationMessage> messages = Collections.emptyList();
+        String vhdl = file.getContent();
+        VHDLGenerationResult result = new VHDLGenerationResult(true, messages,
+                vhdl);
+        return result;
+    }
 
 }

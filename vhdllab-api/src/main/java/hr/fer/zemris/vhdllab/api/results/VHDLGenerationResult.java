@@ -7,7 +7,7 @@ import java.util.List;
  * <p>
  * This class is immutable and therefor thread-safe.
  * </p>
- * 
+ *
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
@@ -25,7 +25,7 @@ public final class VHDLGenerationResult extends
 	 * <code>successful ? Integer.valueOf(0) : Integer.valueOf(1)</code>
 	 * </blockquote>
 	 * </p>
-	 * 
+	 *
 	 * @param successful
 	 *            a flag indicating if result finished successfully
 	 * @param messages
@@ -43,7 +43,7 @@ public final class VHDLGenerationResult extends
 
 	/**
 	 * Constructs a vhdl generation result out of specified parameters.
-	 * 
+	 *
 	 * @param status
 	 *            a result status
 	 * @param successful
@@ -63,11 +63,19 @@ public final class VHDLGenerationResult extends
 
 	/**
 	 * Returns a vhdl code.
-	 * 
+	 *
 	 * @return a vhdl code
 	 */
 	public String getVHDL() {
 		return getContent();
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.api.results.Result#toString()
+	 */
+	@Override
+	public String toString() {
+	    return super.toString() + ", vhdl={\n" + getVHDL() + "\n}";
 	}
 
 }

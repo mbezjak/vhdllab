@@ -26,7 +26,7 @@ public class VhdlUtilTest {
     /**
      * Another vhdl code snippet.
      */
-    private static final String CODE2 = "architecture\t  arch of     circuitAND\n\t\t\t;";
+    private static final String CODE2 = "architecture\t  arch of  \r\n    circuitAND\n\t\t\t;";
 
     /**
      * Source is empty.
@@ -137,8 +137,8 @@ public class VhdlUtilTest {
      */
     @Test
     public void removeWhiteSpaces4() {
-        assertEquals("whitespace at the end.", "entity circuit;",
-                VhdlUtil.removeWhiteSpaces("entity\t\tcircuit;\r\t"));
+        assertEquals("whitespace at the end.", "entity circuit;", VhdlUtil
+                .removeWhiteSpaces("entity\t\tcircuit;\r\n"));
     }
 
     /**

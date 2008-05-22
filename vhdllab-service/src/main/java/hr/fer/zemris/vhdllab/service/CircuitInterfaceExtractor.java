@@ -14,9 +14,8 @@ import hr.fer.zemris.vhdllab.entities.File;
  * </p>
  * <p>
  * An extractor implementation must be stateless! Meaning that repeated
- * invocation of {@link #extractCircuitInterface(File)} method on the same
- * object instance must return the same result as if it was invoked on different
- * object instance!
+ * invocation of {@link #execute(File)} method on the same object instance must
+ * return the same result as if it was invoked on different object instance!
  * </p>
  * <p>
  * An extractor implementation must also be deterministic! Meaning that repeated
@@ -27,7 +26,7 @@ import hr.fer.zemris.vhdllab.entities.File;
  * @version 1.0
  * @since vhdllab2
  */
-public interface CircuitInterfaceExtractor {
+public interface CircuitInterfaceExtractor extends Functionality<CircuitInterface> {
 
     /**
      * Returns a circuit interface for specified file. Return value can never be
@@ -44,7 +43,6 @@ public interface CircuitInterfaceExtractor {
      * @throws ServiceException
      *             if exceptional condition occurs
      */
-    public CircuitInterface extractCircuitInterface(File file)
-            throws ServiceException;
+    CircuitInterface execute(File file) throws ServiceException;
 
 }

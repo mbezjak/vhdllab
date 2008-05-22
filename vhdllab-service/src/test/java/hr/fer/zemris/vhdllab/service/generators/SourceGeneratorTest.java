@@ -35,7 +35,7 @@ public class SourceGeneratorTest {
         NameAndContent nc = list.get(0);
         File f = new File(project, nc.getName(), type, nc.getContent());
         VHDLGenerator gen = new SourceGenerator();
-        VHDLGenerationResult result = gen.generateVHDL(f);
+        VHDLGenerationResult result = gen.execute(f);
         assertTrue("result not successful.", result.isSuccessful());
         assertEquals("status not equal.", Integer.valueOf(0), result
                 .getStatus());

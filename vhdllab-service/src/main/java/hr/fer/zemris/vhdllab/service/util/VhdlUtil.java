@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.service.util;
 /**
  * Helper class for manipulating VHDL source code.
  *
+ * @author marcupic
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
@@ -59,51 +60,12 @@ public final class VhdlUtil {
      *         character, and there are no whitespace successions.
      */
     public static String removeWhiteSpaces(String source) {
-        char[] chs = source.toCharArray();
-        int pos = 0;
-        int i;
-        for (i = 0; i < chs.length - 1; i++) {
-            chs[pos] = chs[i];
-            if (chs[i] == ' ' || chs[i] == '\n' || chs[i] == '\t'
-                    || chs[i] == '\r') {
-                chs[pos] = ' ';
-                if (pos == 0) {
-                    pos--;
-                }
-                char c = chs[i + 1];
-                if (c == ' ' || c == '\n' || c == '\t' || chs[i] == '\r') {
-                    do {
-                        i++;
-                        if (i + 1 >= chs.length) {
-                            break;
-                        }
-                        c = chs[i + 1];
-                    } while (c == ' ' || c == '\n' || c == '\t'
-                            || chs[i] == '\r');
-                }
-                pos++;
-                continue;
-            }
-            pos++;
-        }
-        if (i < chs.length) {
-            i = chs.length - 1;
-            if (chs[i] != ' ' && chs[i] != '\n' && chs[i] != '\t'
-                    || chs[i] == '\r') {
-                chs[pos] = chs[i];
-                pos++;
-            }
-        }
-        if (pos == 0) {
-            return new String();
-        }
-        if (chs[pos - 1] == ' ') {
-            pos--;
-        }
-        if (pos == 0) {
-            return new String();
-        }
-        return new String(chs, 0, pos);
+        String s = source;
+        s = s.replaceAll("\t+", " ");
+        s = s.replaceAll("\r+", " ");
+        s = s.replaceAll("\n+", " ");
+        s = s.replaceAll(" +", " ");
+        return s.trim();
     }
 
 }

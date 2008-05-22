@@ -13,9 +13,8 @@ import hr.fer.zemris.vhdllab.entities.File;
  * </p>
  * <p>
  * A generator implementation must be stateless! Meaning that repeated
- * invocation of {@link #generateVHDL(File)} method on the same object instance
- * must return the same result as if it was invoked on different object
- * instance!
+ * invocation of {@link #execute(File)} method on the same object instance must
+ * return the same result as if it was invoked on different object instance!
  * </p>
  * <p>
  * A generator implementation must also be deterministic! Meaning that repeated
@@ -26,7 +25,7 @@ import hr.fer.zemris.vhdllab.entities.File;
  * @version 1.0
  * @since vhdllab2
  */
-public interface VHDLGenerator {
+public interface VHDLGenerator extends Functionality<VHDLGenerationResult> {
 
     /**
      * Returns a VHDL generation result for specified file. Return value can
@@ -43,5 +42,5 @@ public interface VHDLGenerator {
      * @throws ServiceException
      *             if exceptional condition occurs
      */
-    VHDLGenerationResult generateVHDL(File file) throws ServiceException;
+    VHDLGenerationResult execute(File file) throws ServiceException;
 }

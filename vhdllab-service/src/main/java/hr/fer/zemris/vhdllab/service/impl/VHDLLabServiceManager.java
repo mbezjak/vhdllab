@@ -5,12 +5,12 @@ import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.server.conf.FileTypeMapping;
+import hr.fer.zemris.vhdllab.server.conf.FunctionalityType;
 import hr.fer.zemris.vhdllab.server.conf.ServerConf;
 import hr.fer.zemris.vhdllab.server.conf.ServerConfParser;
-import hr.fer.zemris.vhdllab.service.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.Functionality;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.ServiceManager;
-import hr.fer.zemris.vhdllab.service.VHDLGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +35,11 @@ public final class VHDLLabServiceManager implements ServiceManager {
     /**
      * A default length of a various reports in characters.
      *
-     * e.g. see {@link #reportGeneration(String, VHDLGenerationResult, long)}
+     * @see #reportFunctionality(FunctionalityType, String, Object, long)
      */
     private static final int REPORT_LENGTH = 1000;
 
-    private final Map<String, VHDLGenerator> generators;
-    private final Map<String, CircuitInterfaceExtractor> extractors;
+    private final Map<String, Map<FunctionalityType, Functionality<?>>> functionalities;
 
     /**
      * Default constructor.
@@ -50,13 +49,38 @@ public final class VHDLLabServiceManager implements ServiceManager {
      *             (e.g. specified generator class name could not be found)
      */
     public VHDLLabServiceManager() {
-        generators = new HashMap<String, VHDLGenerator>();
-        extractors = new HashMap<String, CircuitInterfaceExtractor>();
+        functionalities = new HashMap<String, Map<FunctionalityType, Functionality<?>>>();
         ServerConf conf = ServerConfParser.getConfiguration();
         for (String type : conf.getFileTypes()) {
             FileTypeMapping m = conf.getFileTypeMapping(type);
-            addGenerator(m);
-            addExtractor(m);
+            for (FunctionalityType t : FunctionalityType.values()) {
+                String className = m.getFunctionality(t);
+                if (className != null) {
+                    Functionality<?> func = instantiateClass(className);
+                    Map<FunctionalityType, Functionality<?>> map = functionalities
+                            .get(type);
+                    if (map == null) {
+                        map = new HashMap<FunctionalityType, Functionality<?>>();
+                        functionalities.put(type, map);
+                    }
+                    map.put(t, func);
+                    if (log.isDebugEnabled()) {
+                        StringBuilder sb = new StringBuilder(40);
+                        sb.append("Instantiated ").append(t);
+                        sb.append(" functionality ").append(className);
+                        sb.append(" for file type: ").append(type);
+                        log.debug(sb.toString());
+                    }
+                } else {
+                    if (log.isDebugEnabled()) {
+                        StringBuilder sb = new StringBuilder(40);
+                        sb.append(t);
+                        sb.append(" functionality not defined for file type: ");
+                        sb.append(type);
+                        log.debug(sb.toString());
+                    }
+                }
+            }
         }
     }
 
@@ -67,26 +91,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
      */
     @Override
     public VHDLGenerationResult generateVHDL(File file) throws ServiceException {
-        VHDLGenerator generator = getGenerator(file.getType());
-        String className = generator.getClass().getCanonicalName();
-        VHDLGenerationResult result;
-        long start = System.currentTimeMillis();
-        try {
-            result = generator.generateVHDL(file);
-        } catch (RuntimeException e) {
-            String message = className + " threw exception during generation!";
-            log.error(message, e);
-            throw new ServiceException(INTERNAL_SERVER_ERROR, message);
-        }
-        long end = System.currentTimeMillis();
-        if (result == null) {
-            String message = "Generator " + className
-                    + " returned null result!";
-            log.error(message);
-            throw new ServiceException(INTERNAL_SERVER_ERROR, message);
-        }
-        reportGeneration(className, result, end - start);
-        return result;
+        return executeFunctionality(file, FunctionalityType.GENERATOR);
     }
 
     /*
@@ -97,108 +102,99 @@ public final class VHDLLabServiceManager implements ServiceManager {
     @Override
     public CircuitInterface extractCircuitInterface(File file)
             throws ServiceException {
-        CircuitInterfaceExtractor extractor = getExtractor(file.getType());
-        String className = extractor.getClass().getCanonicalName();
-        CircuitInterface ci;
+        return executeFunctionality(file, FunctionalityType.EXTRACTOR);
+    }
+
+    /**
+     * Executes functionality for specified <code>file</code> and returns a
+     * result of execution.
+     *
+     * @param <T>
+     *            result type of a functionality execution
+     * @param file
+     *            a file for whom to execute specified functionality
+     * @param funcType
+     *            a functionality to be executed
+     * @return result of an execution
+     * @throws ServiceException
+     *             if functionality throws exception during execution or
+     *             returned <code>null</code> result
+     */
+    private <T> T executeFunctionality(File file, FunctionalityType funcType)
+            throws ServiceException {
+        Functionality<T> functionality = getFunctionality(file.getType(),
+                funcType);
+        String className = functionality.getClass().getCanonicalName();
+        T result;
         long start = System.currentTimeMillis();
         try {
-            ci = extractor.extractCircuitInterface(file);
+            result = functionality.execute(file);
         } catch (RuntimeException e) {
-            String message = className + " threw exception during extraction!";
+            String message = className + " threw exception during execution!";
             log.error(message, e);
             throw new ServiceException(INTERNAL_SERVER_ERROR, message);
         }
         long end = System.currentTimeMillis();
-        if (ci == null) {
-            String message = "Extractor " + className
+        if (result == null) {
+            String message = funcType + " functionality " + className
                     + " returned null result!";
             log.error(message);
             throw new ServiceException(INTERNAL_SERVER_ERROR, message);
         }
-        reportExtraction(className, ci, end - start);
-        return ci;
+        reportFunctionality(funcType, className, result, end - start);
+        return result;
     }
 
     /**
-     * Returns a VHDL generator for specified file type. Return value will never
-     * be <code>null</code>.
+     * Returns an object implementing specified functionality for a file type.
+     * Return value will never be <code>null</code>.
      *
-     * @param type
-     *            a file type for whom to return generator
-     * @return a VHDL generator for specified file type
+     * @param <T>
+     *            result type of a functionality execution
+     * @param fileType
+     *            a file type for whom to return object implementing specified
+     *            functionality
+     * @param funcType
+     *            a functionality that returned object is implementing
+     * @return an object implementing specified functionality for a file type
      * @throws ServiceException
-     *             if no generator for specified file type could be found
+     *             if such object doesn't exist
      */
-    private VHDLGenerator getGenerator(String type) throws ServiceException {
-        VHDLGenerator gen = generators.get(type);
-        if (gen == null) {
-            throw new ServiceException(INTERNAL_SERVER_ERROR,
-                    "No generator for type: " + type);
+    @SuppressWarnings("unchecked")
+    private <T> Functionality<T> getFunctionality(String fileType,
+            FunctionalityType funcType) throws ServiceException {
+        Map<FunctionalityType, Functionality<?>> map = functionalities
+                .get(fileType);
+        Functionality<T> func = (Functionality<T>) map.get(funcType);
+        if (func == null) {
+            StringBuilder sb = new StringBuilder(40);
+            sb.append("No functionality ").append(funcType);
+            sb.append(" defined for file type: ").append(fileType);
+            throw new ServiceException(INTERNAL_SERVER_ERROR, sb.toString());
         }
-        return gen;
+        return func;
     }
 
     /**
-     * Returns a circuit interface extractor for specified file type. Return
-     * value will never be <code>null</code>.
+     * If debugging is enabled then this method will log an execution of
+     * specified functionality.
      *
-     * @param type
-     *            a file type for whom to return extractor
-     * @return a circuit interface extractor for specified file type
-     * @throws ServiceException
-     *             if no extractor for specified file type could be found
-     */
-    private CircuitInterfaceExtractor getExtractor(String type)
-            throws ServiceException {
-        CircuitInterfaceExtractor ext = extractors.get(type);
-        if (ext == null) {
-            throw new ServiceException(INTERNAL_SERVER_ERROR,
-                    "No extractor for type: " + type);
-        }
-        return ext;
-    }
-
-    /**
-     * If debugging is enabled then this method will log a VHDL generation.
-     *
+     * @param funcType
+     *            a type of a functionality that was executed
      * @param className
-     *            a generator class name
+     *            a functionality class name
      * @param result
-     *            a VHDL generation result
+     *            a result of an execution
      * @param length
-     *            a time in milliseconds that generation took
+     *            a time in milliseconds that execution took
      */
-    private void reportGeneration(String className,
-            VHDLGenerationResult result, long length) {
+    private void reportFunctionality(FunctionalityType funcType,
+            String className, Object result, long length) {
         if (log.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder(REPORT_LENGTH);
-            sb.append("Generator ").append(className);
-            sb.append(" finished generation in ");
+            sb.append(funcType).append(" functionality ").append(className);
+            sb.append(" finished execution in ");
             sb.append(length).append("ms:\n").append(result);
-            sb.append("\nGenerated VHDL code:\n").append(result.getVHDL());
-            sb.append("\n-----------------------------------");
-            log.debug(sb.toString());
-        }
-    }
-
-    /**
-     * If debugging is enabled then this method will log a circuit interface
-     * extraction.
-     *
-     * @param className
-     *            an extractor class name
-     * @param ci
-     *            a circuit interface
-     * @param length
-     *            a time in milliseconds that extraction took
-     */
-    private void reportExtraction(String className, CircuitInterface ci,
-            long length) {
-        if (log.isDebugEnabled()) {
-            StringBuilder sb = new StringBuilder(REPORT_LENGTH);
-            sb.append("Extractor ").append(className);
-            sb.append(" finished extracion in ");
-            sb.append(length).append("ms:\n").append(ci);
             sb.append("\n-----------------------------------");
             log.debug(sb.toString());
         }
@@ -239,52 +235,6 @@ public final class VHDLLabServiceManager implements ServiceManager {
             String message = "Inappropriate class type!";
             log.error(message, e);
             throw new IllegalStateException(message);
-        }
-    }
-
-    /**
-     * Adds a generator for file type based on specified file type mapping.
-     *
-     * @param m
-     *            a mapping for whom to add a generator
-     */
-    private void addGenerator(FileTypeMapping m) {
-        String type = m.getType();
-        String className = m.getGenerator();
-        if (className != null) {
-            VHDLGenerator gen = instantiateClass(className);
-            generators.put(type, gen);
-            if (log.isDebugEnabled()) {
-                log.debug("Instantiated generator " + className
-                        + " for file type: " + type);
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("No defined generator for file type: " + type);
-            }
-        }
-    }
-
-    /**
-     * Adds an extractor for file type based on specified file type mapping.
-     *
-     * @param m
-     *            a mapping for whom to add an extractor
-     */
-    private void addExtractor(FileTypeMapping m) {
-        String type = m.getType();
-        String className = m.getExtractor();
-        if (className != null) {
-            CircuitInterfaceExtractor ext = instantiateClass(className);
-            extractors.put(type, ext);
-            if (log.isDebugEnabled()) {
-                log.debug("Instantiated extractor " + className
-                        + " for file type: " + type);
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("No defined extractor for file type: " + type);
-            }
         }
     }
 

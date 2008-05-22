@@ -35,13 +35,13 @@ public final class ServerConfParser {
 			}
 		} catch (Exception e) {
 			CONFIGURATION = null;
-			log.fatal("Could not parse server configuration", e);
+			log.fatal("Could not parse server configuration!", e);
 		} finally {
 			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
-					log.warn("Failed to close server conf file.", e);
+					log.warn("Failed to close server conf file!", e);
 				}
 			}
 		}
@@ -83,8 +83,9 @@ public final class ServerConfParser {
 		digester.addObjectCreate("server/fileTypeMapping",
 				FileTypeMapping.class);
 		digester.addSetProperties("server/fileTypeMapping", "type", "type");
-		digester.addSetProperties("server/fileTypeMapping/generator", "name", "generator");
-		digester.addSetProperties("server/fileTypeMapping/extractor", "name", "extractor");
+		digester.addCallMethod("server/fileTypeMapping/functionality", "addFunctionality", 2);
+		digester.addCallParam("server/fileTypeMapping/functionality", 0, "type");
+		digester.addCallParam("server/fileTypeMapping/functionality", 1, "class");
 		digester.addSetNext("server/fileTypeMapping", "addFileTypeMapping");
 
 		return (ServerConf) digester.parse(is);

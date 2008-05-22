@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.server.conf;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * A single file type mapping.
  *
@@ -14,20 +18,13 @@ public final class FileTypeMapping {
      */
     private String type;
 
-    /**
-     * A VHDL generator class name.
-     */
-    private String generator;
-
-    /**
-     * A circuit interface extractor class name.
-     */
-    private String extractor;
+    private final Map<FunctionalityType, String> functionalities;
 
     /**
      * Default constructor.
      */
     public FileTypeMapping() {
+        functionalities = new HashMap<FunctionalityType, String>();
     }
 
     /**
@@ -39,6 +36,7 @@ public final class FileTypeMapping {
      *             if type is <code>null</code>
      */
     public FileTypeMapping(String type) {
+        this();
         setType(type);
     }
 
@@ -65,48 +63,49 @@ public final class FileTypeMapping {
     }
 
     /**
-     * Returns a <code>VHDL</code> generator class name.
+     * Adds a functionality type.
      *
-     * @return a <code>VHDL</code> generator class name
+     * @param funcType
+     *            a functionality type
+     * @param clazz
+     *            a class implementing specified functionality type
+     * @throws NullPointerException
+     *             if either parameter is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if <code>funcType</code> is an unknown functionality type
      */
-    public String getGenerator() {
-        return generator;
+    public void addFunctionality(String funcType, String clazz) {
+        if (type == null) {
+            throw new NullPointerException("Functionality type cant be null");
+        }
+        if (clazz == null) {
+            throw new NullPointerException("Functionality class cant be null");
+        }
+        FunctionalityType t = FunctionalityType.valueOf(funcType
+                .toUpperCase(Locale.ENGLISH));
+        if (t == null) {
+            throw new IllegalArgumentException(funcType
+                    + " is an unknown functionality type");
+        }
+        functionalities.put(t, clazz);
     }
 
     /**
-     * Sets a <code>VHDL</code> generator class name.
+     * Returns name of a class implementing specified functionality type.
      *
-     * @param generator
-     *            a <code>VHDL</code> generator class name
+     * @param funcType
+     *            a functionality type
+     * @return a name of a class implementing specified functionality type
+     * @throws NullPointerException
+     *             if <code>funcType</code> is <code>null</code>
      */
-    public void setGenerator(String generator) {
-        this.generator = generator;
+    public String getFunctionality(FunctionalityType funcType) {
+        if (funcType == null) {
+            throw new NullPointerException("Functionality type cant be null");
+        }
+        return functionalities.get(funcType);
     }
 
-    /**
-     * Returns a circuit interface extractor class name.
-     *
-     * @return a circuit interface extractor class name
-     */
-    public String getExtractor() {
-        return extractor;
-    }
-
-    /**
-     * Sets a circuit interface extractor class name.
-     *
-     * @param extractor
-     *            a circuit interface extractor class name
-     */
-    public void setExtractor(String extractor) {
-        this.extractor = extractor;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     /*
      * (non-Javadoc)
      *
@@ -117,10 +116,7 @@ public final class FileTypeMapping {
         final int prime = 31;
         int result = 1;
         result = prime * result + type.hashCode();
-        result = prime * result
-                + ((generator == null) ? 0 : generator.hashCode());
-        result = prime * result
-                + ((extractor == null) ? 0 : extractor.hashCode());
+        result = prime * result + functionalities.hashCode();
         return result;
     }
 
@@ -140,15 +136,7 @@ public final class FileTypeMapping {
         final FileTypeMapping other = (FileTypeMapping) obj;
         if (!type.equals(other.type))
             return false;
-        if (generator == null) {
-            if (other.generator != null)
-                return false;
-        } else if (!generator.equals(other.generator))
-            return false;
-        if (extractor == null) {
-            if (other.extractor != null)
-                return false;
-        } else if (!extractor.equals(other.extractor))
+        if (!functionalities.equals(other.functionalities))
             return false;
         return true;
     }
@@ -163,8 +151,7 @@ public final class FileTypeMapping {
         StringBuilder sb = new StringBuilder(30);
         sb.append("mapping ");
         sb.append("type=").append(type);
-        sb.append(", generator=").append(generator);
-        sb.append(", extractor=").append(extractor);
+        sb.append(", functionalities=").append(functionalities);
         return sb.toString();
     }
 
