@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
-import hr.fer.zemris.vhdllab.dao.DAOContainer;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
@@ -52,7 +51,7 @@ public class VHDLLabServiceManagerTest {
 
     @BeforeClass
     public static void initOnce() throws Exception {
-        container = new ServiceContainer(new DAOContainer());
+        container = ServiceContainer.instance();
 
         EntityManagerUtil.createEntityManagerFactory();
         EntityManagerUtil.currentEntityManager();
@@ -182,15 +181,18 @@ public class VHDLLabServiceManagerTest {
                         .newInstance();
                 for (File f : filterByType(files, types.getKey())) {
                     Functionality<Object> i2 = (Functionality<Object>) funcClass
-                    .newInstance();
+                            .newInstance();
                     Object r1 = i1.execute(f);
                     Object r2 = i1.execute(f);
                     Object r3 = i2.execute(f);
                     assertNotNull("functionality implementor returned null", r1);
                     assertNotNull("functionality implementor returned null", r2);
                     assertNotNull("functionality implementor returned null", r3);
-                    assertEquals("functionality implementor isn't deterministic.", r1, r2);
-                    assertEquals("functionality implementor isn't stateless.", r2, r3);
+                    assertEquals(
+                            "functionality implementor isn't deterministic.",
+                            r1, r2);
+                    assertEquals("functionality implementor isn't stateless.",
+                            r2, r3);
                 }
             }
         }
@@ -262,7 +264,7 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         for (String type : conf.getFileTypes()) {
             List<NameAndContent> list = FileContentProvider.getContent(type);
-            if(list == null) {
+            if (list == null) {
                 continue;
             }
             for (NameAndContent nc : list) {

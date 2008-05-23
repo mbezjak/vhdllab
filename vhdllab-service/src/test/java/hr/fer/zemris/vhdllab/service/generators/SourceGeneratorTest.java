@@ -27,7 +27,7 @@ public class SourceGeneratorTest {
      * everything ok.
      */
     @Test
-    public void generateVHDL() throws Exception {
+    public void execute() throws Exception {
         Project project = new Project("user.id", "project_name");
         String type = FileTypes.VHDL_SOURCE;
         List<NameAndContent> list = FileContentProvider.getContent(type);

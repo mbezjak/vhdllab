@@ -4,6 +4,8 @@ import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
 
+import java.util.List;
+
 /**
  * This is an interface representing a service manager. It defines all business
  * logic.
@@ -21,6 +23,8 @@ public interface ServiceManager {
      * @param file
      *            a file for which VHDL must be generated
      * @return <code>VHDL</code> generation result for specified file
+     * @throws NullPointerException
+     *             if <code>file</code> is <code>null</code>
      * @throws ServiceException
      *             if any exception occurs
      */
@@ -32,10 +36,31 @@ public interface ServiceManager {
      * @param file
      *            a file for which circuit interface must be extracted
      * @return circuit interface for specified file
+     * @throws NullPointerException
+     *             if <code>file</code> is <code>null</code>
      * @throws ServiceException
      *             if any exception occurs
      */
-    public CircuitInterface extractCircuitInterface(File file)
+    CircuitInterface extractCircuitInterface(File file) throws ServiceException;
+
+    /**
+     * Returns a list of files on which specified file depends on. Transitive
+     * dependencies are included based on <code>includeTransitive</code> flag.
+     * Return value will never be <code>null</code>, although it can be an
+     * empty list if file has no dependencies.
+     *
+     * @param file
+     *            a file for which dependencies must be extracted
+     * @param includeTransitive
+     *            a flag indicating if transitive dependencies are to be
+     *            included
+     * @return a list of files on which specified file depends on
+     * @throws NullPointerException
+     *             if <code>file</code> is <code>null</code>
+     * @throws ServiceException
+     *             if any exception occurs
+     */
+    List<File> extractDependencies(File file, boolean includeTransitive)
             throws ServiceException;
 
 }

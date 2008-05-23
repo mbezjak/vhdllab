@@ -99,4 +99,10 @@ public final class StatusCodes {
      */
     public static final short SERVICE_CANT_EXTRACT_CI = 2010;
 
+    /**
+     * Could not extract dependencies for specified file. For example, VHDL code
+     * is not correctly written.
+     */
+    public static final short SERVICE_CANT_EXTRACT_DEPENDENCIES = 2020;
+
 }

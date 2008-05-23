@@ -1,14 +1,13 @@
 package hr.fer.zemris.vhdllab.service;
 
 import static org.junit.Assert.assertTrue;
-import hr.fer.zemris.vhdllab.dao.DAOContainer;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * A test case for {@link ServiceContainer} class.
- * 
+ *
  * @author Miro Bezjak
  */
 public class ServiceContainerTest {
@@ -17,7 +16,7 @@ public class ServiceContainerTest {
 
 	@BeforeClass
 	public static void initOnce() {
-		container = new ServiceContainer(new DAOContainer());
+		container = ServiceContainer.instance();
 	}
 
 	/**

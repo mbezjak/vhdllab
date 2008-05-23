@@ -1,20 +1,31 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import static hr.fer.zemris.vhdllab.api.StatusCodes.INTERNAL_SERVER_ERROR;
+import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.server.conf.FileTypeMapping;
 import hr.fer.zemris.vhdllab.server.conf.FunctionalityType;
 import hr.fer.zemris.vhdllab.server.conf.ServerConf;
 import hr.fer.zemris.vhdllab.server.conf.ServerConfParser;
+import hr.fer.zemris.vhdllab.service.FileManager;
 import hr.fer.zemris.vhdllab.service.Functionality;
+import hr.fer.zemris.vhdllab.service.LibraryFileManager;
+import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.ServiceManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -103,6 +114,79 @@ public final class VHDLLabServiceManager implements ServiceManager {
     public CircuitInterface extractCircuitInterface(File file)
             throws ServiceException {
         return executeFunctionality(file, FunctionalityType.EXTRACTOR);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see hr.fer.zemris.vhdllab.service.ServiceManager#extractDependencies(hr.fer.zemris.vhdllab.entities.File,
+     *      boolean)
+     */
+    @Override
+    public List<File> extractDependencies(File file, boolean includeTransitive)
+            throws ServiceException {
+        if (!includeTransitive) {
+            List<String> firstLevelDeps = executeFunctionality(file,
+                    FunctionalityType.DEPENDENCY);
+            List<File> dependencies = new ArrayList<File>(firstLevelDeps.size());
+            ServiceContainer container = ServiceContainer.instance();
+            FileManager fileMan = container.getFileManager();
+            LibraryFileManager libFileMan = container.getLibraryFileManager();
+            Long projectId = file.getProject().getId();
+            Long libraryId = container.getLibraryManager()
+                    .getPredefinedLibrary().getId();
+            for (String name : firstLevelDeps) {
+                File dep;
+                if (fileMan.exists(projectId, name)) {
+                    dep = fileMan.findByName(file.getProject().getId(), name);
+                } else if (libFileMan.exists(libraryId, name)) {
+                    LibraryFile libraryFile = libFileMan.findByName(libraryId,
+                            name);
+                    dep = new File(file.getProject(), name,
+                            FileTypes.VHDL_PREDEFINED, libraryFile.getContent());
+                } else {
+                    StringBuilder message = new StringBuilder(50);
+                    message.append("Given dependency ").append(name);
+                    message.append(" for file ").append(file.toString());
+                    message.append(" doesn't exist!");
+                    if (log.isEnabledFor(Level.ERROR)) {
+                        log.error(message.toString());
+                    }
+                    dep = null;
+                }
+                if (dep != null) {
+                    dependencies.add(dep);
+                }
+            }
+            return dependencies;
+        }
+        Set<File> visitedFiles = new HashSet<File>();
+        List<File> notYetAnalyzedFiles = new LinkedList<File>();
+        notYetAnalyzedFiles.add(file);
+        visitedFiles.add(file);
+        while (!notYetAnalyzedFiles.isEmpty()) {
+            File f = notYetAnalyzedFiles.remove(0);
+            List<File> dependancies = extractDependencies(f, false);
+            for (File dependancy : dependancies) {
+                if (visitedFiles.contains(dependancy)) {
+                    continue;
+                }
+                notYetAnalyzedFiles.add(dependancy);
+                visitedFiles.add(dependancy);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            StringBuilder message = new StringBuilder(
+                    20 + visitedFiles.size() * 50);
+            message.append("Extracted dependencies for file:");
+            message.append(file.toString()).append(" {\n");
+            for (File f : visitedFiles) {
+                message.append(f).append("\n");
+            }
+            message.append("}");
+            log.debug(message.toString());
+        }
+        return new ArrayList<File>(visitedFiles);
     }
 
     /**

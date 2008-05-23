@@ -26,24 +26,40 @@ public class ServerConfParserTest {
                 "hr.fer.zemris.vhdllab.service.generators.SourceGenerator");
         m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
                 "hr.fer.zemris.vhdllab.service.extractors.SourceExtractor");
+        m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
+                "hr.fer.zemris.vhdllab.service.dependencies.SourceDependency");
+        expectedConf.addFileTypeMapping(m);
+        m = new FileTypeMapping(FileTypes.VHDL_PREDEFINED);
+        m.addFunctionality(FunctionalityType.GENERATOR.toString(),
+                "hr.fer.zemris.vhdllab.service.generators.SourceGenerator");
+        // m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
+        // "hr.fer.zemris.vhdllab.service.extractors.SourceExtractor");
+        m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
+                "hr.fer.zemris.vhdllab.service.dependencies.PredefinedDependency");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
         // "hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator");
         // m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
         // "hr.fer.zemris.vhdllab.service.extractors.TestbenchExtractor");
+        // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
+        // "hr.fer.zemris.vhdllab.service.dependencies.TestbenchDependency");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_SCHEMA);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
         // "hr.fer.zemris.vhdllab.service.generators.SchemaGenerator");
         // m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
         // "hr.fer.zemris.vhdllab.service.extractors.SchemaExtractor");
+        // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
+        // "hr.fer.zemris.vhdllab.service.dependencies.SchemaDependency");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_AUTOMATON);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
         // "hr.fer.zemris.vhdllab.service.generators.AutomatonGenerator");
         // m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
         // "hr.fer.zemris.vhdllab.service.extractors.AutomatonExtractor");
+        // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
+        // "hr.fer.zemris.vhdllab.service.dependencies.AutomatonDependency");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.PREFERENCES_USER);
         expectedConf.addFileTypeMapping(m);

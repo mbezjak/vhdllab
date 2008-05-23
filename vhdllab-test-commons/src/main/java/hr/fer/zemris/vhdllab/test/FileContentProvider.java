@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * A simple utility that will retrieve a realistic file contents (i.e. files
  * that are actual VHDL components). This is useful when writing tests.
- * 
+ *
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
@@ -42,18 +42,22 @@ public final class FileContentProvider {
 	 */
 	private static void initContents() {
 		contents.put(FileTypes.VHDL_SOURCE, new ArrayList<NameAndContent>());
+		contents.put(FileTypes.VHDL_PREDEFINED, new ArrayList<NameAndContent>());
 		contents.put(FileTypes.VHDL_SCHEMA, new ArrayList<NameAndContent>());
 		contents.put(FileTypes.VHDL_AUTOMATON, new ArrayList<NameAndContent>());
 		contents.put(FileTypes.VHDL_TESTBENCH, new ArrayList<NameAndContent>());
-		
+
 		List<NameAndContent> list = contents.get(FileTypes.VHDL_SOURCE);
 		list.add(readFile("comp_and"));
 		list.add(readFile("complex_source"));
 		list.add(readFile("ultra_complex_source"));
-		
+
+		list = contents.get(FileTypes.VHDL_PREDEFINED);
+        list.add(readFile("VL_OR"));
+
 		list = contents.get(FileTypes.VHDL_SCHEMA);
 		list.add(readFile("comp_or"));
-		
+
 		list = contents.get(FileTypes.VHDL_AUTOMATON);
 		list.add(readFile("automaton"));
 	}
@@ -61,7 +65,7 @@ public final class FileContentProvider {
 	/**
 	 * Reads and returns a file content for a file with specified
 	 * <code>name</code>.
-	 * 
+	 *
 	 * @param name
 	 *            a name of a file to read
 	 * @return a file content and name
@@ -97,7 +101,7 @@ public final class FileContentProvider {
 
 	/**
 	 * Retrieves a realistic file contents for specified file <code>type</code>.
-	 * 
+	 *
 	 * @param type
 	 *            a file type for whom to retrieve content
 	 * @return a list file name and content

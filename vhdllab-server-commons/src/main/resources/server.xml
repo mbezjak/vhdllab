@@ -15,6 +15,19 @@
       class="hr.fer.zemris.vhdllab.service.generators.SourceGenerator" />
     <functionality type="extractor"
       class="hr.fer.zemris.vhdllab.service.extractors.SourceExtractor" />
+    <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.SourceDependency" />
+  </fileTypeMapping>
+
+  <fileTypeMapping type="vhdl.predefined">
+    <functionality type="generator"
+      class="hr.fer.zemris.vhdllab.service.generators.SourceGenerator" />
+    <!-- CIRCUIT INTERFACE CAN'T BE EXTRACTED FOR PREDEFINED FILES
+    <functionality type="extractor"
+      class="hr.fer.zemris.vhdllab.service.extractors.SourceExtractor" />
+    -->
+    <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.PredefinedDependency" />
   </fileTypeMapping>
 
   <fileTypeMapping type="vhdl.testbench">
@@ -22,6 +35,8 @@
       class="hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator" /> -->
     <!-- <functionality type="extractor"
       class="hr.fer.zemris.vhdllab.service.extractors.TestbenchExtractor" /> -->
+    <!-- <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.TestbenchDependency" /> -->
   </fileTypeMapping>
 
   <fileTypeMapping type="vhdl.schema">
@@ -29,6 +44,8 @@
       class="hr.fer.zemris.vhdllab.service.generators.SchemaGenerator" /> -->
     <!-- <functionality type="extractor"
       class="hr.fer.zemris.vhdllab.service.extractors.SchemaExtractor" /> -->
+    <!-- <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.SchemaDependency" /> -->
   </fileTypeMapping>
 
   <fileTypeMapping type="vhdl.automaton">
@@ -36,6 +53,8 @@
       class="hr.fer.zemris.vhdllab.service.generators.AutomatonGenerator" /> -->
     <!-- <functionality type="extractor"
       class="hr.fer.zemris.vhdllab.service.extractors.AutomatonExtractor" /> -->
+    <!-- <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.AutomatonDependency" /> -->
   </fileTypeMapping>
 
   <fileTypeMapping type="preferences.user" />

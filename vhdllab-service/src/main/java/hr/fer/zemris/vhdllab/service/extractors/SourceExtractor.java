@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * A extractor for a {@link FileTypes#VHDL_SOURCE} file type.
+ * An extractor for a {@link FileTypes#VHDL_SOURCE} file type.
  *
  * @author Miro Bezjak
  * @version 1.0
@@ -35,6 +35,7 @@ public final class SourceExtractor implements CircuitInterfaceExtractor {
 
     // constants used in parsing
     private static final String ENTITY = "ENTITY";
+    private static final String GENERIC = "GENERIC";
     private static final String END = "END";
     private final static String IS = "IS";
     private final static String PORT = "PORT";
@@ -84,7 +85,8 @@ public final class SourceExtractor implements CircuitInterfaceExtractor {
                 throwException();
             }
             int end2 = maybeNext(source, WHITESPACE, end + SEMICOLON.length());
-            if (source.startsWith(END, end2)) {
+            if (source.startsWith(END, end2)
+                    || source.startsWith(GENERIC, end2)) {
                 if (source.startsWith(RIGHT_BRACKET + WHITESPACE, end - 2)) {
                     end -= 2;
                 } else if (source.startsWith(RIGHT_BRACKET, end - 1)) {
@@ -211,23 +213,22 @@ public final class SourceExtractor implements CircuitInterfaceExtractor {
         pos = end + WHITESPACE.length();
         pos = next(source, IS, pos);
         pos = next(source, WHITESPACE, pos);
-        int pos2 = maybeNext(source, PORT, pos);
-        if (pos != pos2) {
-            pos = maybeNext(source, WHITESPACE, pos2);
-            pos = next(source, LEFT_BRACKET, pos);
-            pos = maybeNext(source, WHITESPACE, pos);
-            pos = parsePorts(ports, source, original, pos);
-            pos = maybeNext(source, WHITESPACE, pos);
-            pos = next(source, RIGHT_BRACKET, pos);
-            pos = maybeNext(source, WHITESPACE, pos);
-            pos = next(source, SEMICOLON, pos);
-            pos = maybeNext(source, WHITESPACE, pos);
+        if (source.startsWith(PORT, pos)) {
+            pos = port(ports, source, original, pos);
+            if (source.startsWith(GENERIC, pos)) {
+                pos = generic(source, pos);
+            }
+        } else if (source.startsWith(GENERIC, pos)) {
+            pos = generic(source, pos);
+            if (source.startsWith(PORT, pos)) {
+                pos = port(ports, source, original, pos);
+            }
         }
         pos = next(source, END, pos);
         pos = next(source, WHITESPACE, pos);
-        pos2 = maybeNext(source, ENTITY, pos);
-        if (pos != pos2) {
-            pos = next(source, WHITESPACE, pos2);
+        if (source.startsWith(ENTITY, pos)) {
+            pos += ENTITY.length();
+            pos = next(source, WHITESPACE, pos);
         }
         pos = next(source, entityName.toUpperCase(Locale.ENGLISH), pos);
         pos = maybeNext(source, WHITESPACE, pos);
@@ -238,6 +239,36 @@ public final class SourceExtractor implements CircuitInterfaceExtractor {
             throwException();
             return null;
         }
+    }
+
+    private int generic(String source, int p) throws ServiceException {
+        int pos = p + GENERIC.length();
+        pos = maybeNext(source, WHITESPACE, pos);
+        pos = next(source, LEFT_BRACKET, pos);
+        pos = source.indexOf(RIGHT_BRACKET, pos);
+        if (pos == -1) {
+            throwException();
+        }
+        pos += RIGHT_BRACKET.length();
+        pos = maybeNext(source, WHITESPACE, pos);
+        pos = next(source, SEMICOLON, pos);
+        pos = maybeNext(source, WHITESPACE, pos);
+        return pos;
+    }
+
+    private int port(List<Port> ports, String source, String original, int p)
+            throws ServiceException {
+        int pos = p + PORT.length();
+        pos = maybeNext(source, WHITESPACE, pos);
+        pos = next(source, LEFT_BRACKET, pos);
+        pos = maybeNext(source, WHITESPACE, pos);
+        pos = parsePorts(ports, source, original, pos);
+        pos = maybeNext(source, WHITESPACE, pos);
+        pos = next(source, RIGHT_BRACKET, pos);
+        pos = maybeNext(source, WHITESPACE, pos);
+        pos = next(source, SEMICOLON, pos);
+        pos = maybeNext(source, WHITESPACE, pos);
+        return pos;
     }
 
     private void throwException() throws ServiceException {

@@ -13,6 +13,8 @@ import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.service.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
+import hr.fer.zemris.vhdllab.test.FileContentProvider;
+import hr.fer.zemris.vhdllab.test.NameAndContent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +38,25 @@ public class SourceExtractorTest {
         extractor = new SourceExtractor();
         Project project = new Project("user.id", "project_name");
         file = new File(project, "file_name", FileTypes.VHDL_SOURCE);
+    }
+
+    /**
+     * Comments are ignored.
+     */
+    @Test
+    public void executeExample() throws Exception {
+        List<NameAndContent> list = FileContentProvider
+                .getContent(FileTypes.VHDL_SOURCE);
+        NameAndContent nc = list.get(0); // comp_and
+        file.setContent(nc.getContent());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "comp_and", ci.getName());
+        List<Port> ports = new ArrayList<Port>(3);
+        Type type = new Type(TypeName.STD_LOGIC, Range.SCALAR);
+        ports.add(new Port("a", PortDirection.IN, type));
+        ports.add(new Port("b", PortDirection.IN, type));
+        ports.add(new Port("f", PortDirection.OUT, type));
+        assertEquals("ports not equal.", ports, ci.getPorts());
     }
 
     /**
@@ -277,7 +298,7 @@ public class SourceExtractorTest {
     }
 
     /**
-     * Either PORT or END must be after IS.
+     * Either PORT, GENERIC or END must be after IS.
      */
     @Test(expected = ServiceException.class)
     public void executeIs4() throws Exception {
@@ -286,6 +307,152 @@ public class SourceExtractorTest {
         sb.append("END circuitAND;");
         file.setContent(sb.toString());
         extractor.execute(file);
+    }
+
+    /**
+     * Whitespace or left bracket must be after GENERIC.
+     */
+    @Test(expected = ServiceException.class)
+    public void executeGeneric() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERICwrong(\n");
+        sb.append("n: positive := 2);\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        extractor.execute(file);
+    }
+
+    /**
+     * Whitespace or semicolon must be after right bracket of GENERIC clause.
+     */
+    @Test(expected = ServiceException.class)
+    public void executeGeneric2() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC (\n");
+        sb.append("n: positive := 2)wrong;\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        extractor.execute(file);
+    }
+
+    /**
+     * Whitespace is after GENERIC.
+     */
+    @Test
+    public void executeGeneric3() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC (\n");
+        sb.append("n: positive := 2);\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "circuitAND", ci.getName());
+        assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
+    }
+
+    /**
+     * Left bracket is after GENERIC.
+     */
+    @Test
+    public void executeGeneric4() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC(\n");
+        sb.append("n: positive := 2);\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "circuitAND", ci.getName());
+        assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
+    }
+
+    /**
+     * Whitespace is after right bracket.
+     */
+    @Test
+    public void executeGeneric5() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC(\n");
+        sb.append("n: positive := 2) ;\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "circuitAND", ci.getName());
+        assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
+    }
+
+    /**
+     * After whitespace must be semicolon.
+     */
+    @Test(expected = ServiceException.class)
+    public void executeGeneric6() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC(\n");
+        sb.append("n: positive := 2) wrong;\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        extractor.execute(file);
+    }
+
+    /**
+     * Semicolon is after right bracket.
+     */
+    @Test
+    public void executeGeneric7() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC(\n");
+        sb.append("n: positive := 2);\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "circuitAND", ci.getName());
+        assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
+    }
+
+    /**
+     * Whitespace, END or PORT must be after GENERIC clause.
+     */
+    @Test(expected = ServiceException.class)
+    public void executeGeneric8() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC(\n");
+        sb.append("n: positive := 2);wrong\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        extractor.execute(file);
+    }
+
+    /**
+     * Whitespace is after GENERIC clause.
+     */
+    @Test
+    public void executeGeneric9() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC(\n");
+        sb.append("n: positive := 2); ");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "circuitAND", ci.getName());
+        assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
+    }
+
+    /**
+     * PORT is after GENERIC clause.
+     */
+    @Test
+    public void executeGeneric10() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS GENERIC(\n");
+        sb.append("n: positive := 2);\n");
+        sb.append("PORT(a:IN std_logic);\n");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "circuitAND", ci.getName());
+        List<Port> ports = new ArrayList<Port>(1);
+        Type type = new Type(TypeName.STD_LOGIC, Range.SCALAR);
+        ports.add(new Port("a", PortDirection.IN, type));
+        assertEquals("ports not equal.", ports, ci.getPorts());
     }
 
     /**
@@ -449,7 +616,7 @@ public class SourceExtractorTest {
     }
 
     /**
-     * Whitespace or END must be after semicolon.
+     * Whitespace, END or GENERIC must be after semicolon.
      */
     @Test(expected = ServiceException.class)
     public void executePort11() throws Exception {
@@ -462,7 +629,7 @@ public class SourceExtractorTest {
     }
 
     /**
-     * Whitespace or END must be after semicolon.
+     * GENERIC or END must be after semicolon.
      */
     @Test(expected = ServiceException.class)
     public void executePort12() throws Exception {
@@ -499,7 +666,26 @@ public class SourceExtractorTest {
     public void executePort14() throws Exception {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS PORT(\n");
+        sb.append("a:IN std_logic); ");
+        sb.append("END circuitAND;");
+        file.setContent(sb.toString());
+        CircuitInterface ci = extractor.execute(file);
+        assertEquals("wrong entity name.", "circuitAND", ci.getName());
+        List<Port> ports = new ArrayList<Port>(1);
+        Type type = new Type(TypeName.STD_LOGIC, Range.SCALAR);
+        ports.add(new Port("a", PortDirection.IN, type));
+        assertEquals("ports not equal.", ports, ci.getPorts());
+    }
+
+    /**
+     * Generic is after PORT clause.
+     */
+    @Test
+    public void executePort15() throws Exception {
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic);\n");
+        sb.append("GENERIC(a:positive := 2);\n");
         sb.append("END circuitAND;");
         file.setContent(sb.toString());
         CircuitInterface ci = extractor.execute(file);

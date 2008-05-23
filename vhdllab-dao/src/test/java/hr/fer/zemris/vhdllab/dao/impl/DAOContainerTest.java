@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link DAOContainer} class.
- * 
+ *
  * @author Miro Bezjak
  */
 public class DAOContainerTest {
@@ -17,7 +17,7 @@ public class DAOContainerTest {
 
 	@BeforeClass
 	public static void initOnce() {
-		container = new DAOContainer();
+		container = DAOContainer.instance();
 	}
 
 	/**
