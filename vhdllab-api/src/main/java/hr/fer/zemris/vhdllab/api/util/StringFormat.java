@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.api.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
@@ -38,27 +39,32 @@ public final class StringFormat {
         notValidVHDLNames = new HashSet<String>(50);
         InputStream is = StringFormat.class.getClassLoader()
                 .getResourceAsStream(NOT_VALID_FILE);
-        StringBuilder sb = new StringBuilder(1000);
+        BufferedReader reader = null;
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, NOT_VALID_FILE_ENCODING));
+            reader = new BufferedReader(new InputStreamReader(is,
+                    NOT_VALID_FILE_ENCODING));
             String s;
             while ((s = reader.readLine()) != null) {
-                sb.append(s);
-                sb.append('\n');
+                s = s.trim();
+                if (s.equals("") || s.startsWith("#")) {
+                    continue;
+                }
+                notValidVHDLNames.add(s.toLowerCase());
             }
-            sb.toString();
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
-        }
-
-        String data = sb.toString();
-        for (String s : data.split("\n")) {
-            s = s.trim();
-            if (s.equals("") || s.startsWith("#")) {
-                continue;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ignored) {
+                }
+            } else if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
             }
-            notValidVHDLNames.add(s.toLowerCase());
         }
     }
 

@@ -83,10 +83,6 @@ public final class FileTypeMapping {
         }
         FunctionalityType t = FunctionalityType.valueOf(funcType
                 .toUpperCase(Locale.ENGLISH));
-        if (t == null) {
-            throw new IllegalArgumentException(funcType
-                    + " is an unknown functionality type");
-        }
         functionalities.put(t, clazz);
     }
 
