@@ -10,7 +10,10 @@ import hr.fer.zemris.vhdllab.test.FileContentProvider;
 import hr.fer.zemris.vhdllab.test.NameAndContent;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +47,7 @@ public class SourceDependencyTest {
         NameAndContent nc = list.get(0);
         File f = new File(project, nc.getName(), type, nc.getContent());
         DependencyExtractor dep = new PredefinedDependency();
-        assertEquals("wrong dependencies extrated.", Collections.emptyList(),
+        assertEquals("wrong dependencies extrated.", Collections.emptySet(),
                 dep.execute(f));
     }
 
@@ -58,9 +61,10 @@ public class SourceDependencyTest {
         sb.append("ENTITY WORK.circuitAND IS ");
         sb.append("PORT(a, b, f);");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 1, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
     }
 
     /**
@@ -73,9 +77,9 @@ public class SourceDependencyTest {
         sb.append("circuitAND IS ");
         sb.append("PORT(a, b, f);");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 1, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
+        assertEquals("wrong dependency.", "circuitAND", deps.iterator().next());
     }
 
     /**
@@ -88,10 +92,11 @@ public class SourceDependencyTest {
         sb.append(" \t\t  IS PORT(a, b, f);\n ");
         sb.append("\tCOMPONENT \t\r\n   circuitOR \tIS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 2, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
-        assertEquals("wrong dependency.", "circuitOR", deps.get(1));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
+        assertEquals("wrong dependency.", "circuitOR", iterator.next());
     }
 
     /**
@@ -103,10 +108,11 @@ public class SourceDependencyTest {
         sb.append("ENTITY WORK.circuitAND IS PORT(a,b,f);");
         sb.append("COMPONENT circuitOR IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 2, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
-        assertEquals("wrong dependency.", "circuitOR", deps.get(1));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
+        assertEquals("wrong dependency.", "circuitOR", iterator.next());
     }
 
     /**
@@ -118,10 +124,11 @@ public class SourceDependencyTest {
         sb.append("eNtItY WoRk.circuitAND IS PORT(a,b,f);");
         sb.append("CompoNEnt circuitOR IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 2, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
-        assertEquals("wrong dependency.", "circuitOR", deps.get(1));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
+        assertEquals("wrong dependency.", "circuitOR", iterator.next());
     }
 
     /**
@@ -132,7 +139,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("empty content");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -144,7 +151,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -156,7 +163,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITYwrong");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -170,7 +177,7 @@ public class SourceDependencyTest {
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -182,7 +189,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY WORK");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -194,7 +201,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY WORK.circuitAND");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -206,9 +213,10 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY WORK.circuitAND IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 1, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
     }
 
     /**
@@ -221,11 +229,12 @@ public class SourceDependencyTest {
         sb.append("ENTITY WORK.circuitOR IS...");
         sb.append("ENTITY WORK.circuitXOR IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 3, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
-        assertEquals("wrong dependency.", "circuitOR", deps.get(1));
-        assertEquals("wrong dependency.", "circuitXOR", deps.get(2));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
+        assertEquals("wrong dependency.", "circuitOR", iterator.next());
+        assertEquals("wrong dependency.", "circuitXOR", iterator.next());
     }
 
     /**
@@ -236,7 +245,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("COMPONENT");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -248,7 +257,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("COMPONENTwrong");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -260,7 +269,7 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("COMPONENT circuitAND");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 0, deps.size());
     }
 
@@ -272,9 +281,10 @@ public class SourceDependencyTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("COMPONENT circuitAND IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 1, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
     }
 
     /**
@@ -287,11 +297,12 @@ public class SourceDependencyTest {
         sb.append("COMPONENT circuitOR IS...");
         sb.append("COMPONENT circuitXOR IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 3, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
-        assertEquals("wrong dependency.", "circuitOR", deps.get(1));
-        assertEquals("wrong dependency.", "circuitXOR", deps.get(2));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
+        assertEquals("wrong dependency.", "circuitOR", iterator.next());
+        assertEquals("wrong dependency.", "circuitXOR", iterator.next());
     }
 
     /**
@@ -305,12 +316,14 @@ public class SourceDependencyTest {
         sb.append("COMPONENT circuitXOR IS...");
         sb.append("COMPONENT circuitNAND IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 4, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
-        assertEquals("wrong dependency.", "circuitOR", deps.get(1));
-        assertEquals("wrong dependency.", "circuitXOR", deps.get(2));
-        assertEquals("wrong dependency.", "circuitNAND", deps.get(3));
+        Set<String> expected = new HashSet<String>(4);
+        expected.add("circuitAND");
+        expected.add("circuitOR");
+        expected.add("circuitXOR");
+        expected.add("circuitNAND");
+        assertEquals("wrong dependency.", expected, deps);
     }
 
     /**
@@ -324,12 +337,14 @@ public class SourceDependencyTest {
         sb.append("ENTITY WORK.circuitOR IS...");
         sb.append("COMPONENT circuitNAND IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 4, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
-        assertEquals("wrong dependency.", "circuitOR", deps.get(1));
-        assertEquals("wrong dependency.", "circuitXOR", deps.get(2));
-        assertEquals("wrong dependency.", "circuitNAND", deps.get(3));
+        Set<String> expected = new HashSet<String>(4);
+        expected.add("circuitAND");
+        expected.add("circuitOR");
+        expected.add("circuitXOR");
+        expected.add("circuitNAND");
+        assertEquals("wrong dependency.", expected, deps);
     }
 
     /**
@@ -341,9 +356,10 @@ public class SourceDependencyTest {
         sb.append("ENTITY WORK.circuitAND IS...");
         sb.append("ENTITY WORK.circuitAND IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 1, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
     }
 
     /**
@@ -355,9 +371,10 @@ public class SourceDependencyTest {
         sb.append("COMPONENT circuitAND IS...");
         sb.append("COMPONENT circuitAND IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 1, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
     }
 
     /**
@@ -369,9 +386,10 @@ public class SourceDependencyTest {
         sb.append("ENTITY WORK.circuitAND IS...");
         sb.append("COMPONENT circuitAND IS...");
         file.setContent(sb.toString());
-        List<String> deps = extractor.execute(file);
+        Set<String> deps = extractor.execute(file);
         assertEquals("wrong dependencies extracted.", 1, deps.size());
-        assertEquals("wrong dependency.", "circuitAND", deps.get(0));
+        Iterator<String> iterator = deps.iterator();
+        assertEquals("wrong dependency.", "circuitAND", iterator.next());
     }
 
 }

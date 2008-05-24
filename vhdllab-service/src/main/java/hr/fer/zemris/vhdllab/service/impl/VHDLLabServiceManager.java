@@ -1,23 +1,21 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import static hr.fer.zemris.vhdllab.api.StatusCodes.INTERNAL_SERVER_ERROR;
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
-import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.server.conf.FileTypeMapping;
 import hr.fer.zemris.vhdllab.server.conf.FunctionalityType;
 import hr.fer.zemris.vhdllab.server.conf.ServerConf;
 import hr.fer.zemris.vhdllab.server.conf.ServerConfParser;
 import hr.fer.zemris.vhdllab.service.FileManager;
 import hr.fer.zemris.vhdllab.service.Functionality;
-import hr.fer.zemris.vhdllab.service.LibraryFileManager;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.ServiceManager;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -123,51 +120,48 @@ public final class VHDLLabServiceManager implements ServiceManager {
      *      boolean)
      */
     @Override
-    public List<File> extractDependencies(File file, boolean includeTransitive)
+    public Set<String> extractDependencies(File file, boolean includeTransitive)
             throws ServiceException {
         if (!includeTransitive) {
-            List<String> firstLevelDeps = executeFunctionality(file,
-                    FunctionalityType.DEPENDENCY);
-            List<File> dependencies = new ArrayList<File>(firstLevelDeps.size());
-            ServiceContainer container = ServiceContainer.instance();
-            FileManager fileMan = container.getFileManager();
-            LibraryFileManager libFileMan = container.getLibraryFileManager();
-            Long projectId = file.getProject().getId();
-            Long libraryId = container.getLibraryManager()
-                    .getPredefinedLibrary().getId();
-            for (String name : firstLevelDeps) {
-                File dep;
-                if (fileMan.exists(projectId, name)) {
-                    dep = fileMan.findByName(file.getProject().getId(), name);
-                } else if (libFileMan.exists(libraryId, name)) {
-                    LibraryFile libraryFile = libFileMan.findByName(libraryId,
-                            name);
-                    dep = new File(file.getProject(), name,
-                            FileTypes.VHDL_PREDEFINED, libraryFile.getContent());
-                } else {
-                    StringBuilder message = new StringBuilder(50);
-                    message.append("Given dependency ").append(name);
-                    message.append(" for file ").append(file.toString());
-                    message.append(" doesn't exist!");
-                    if (log.isEnabledFor(Level.ERROR)) {
-                        log.error(message.toString());
-                    }
-                    dep = null;
-                }
-                if (dep != null) {
-                    dependencies.add(dep);
-                }
-            }
-            return dependencies;
+            return executeFunctionality(file, FunctionalityType.DEPENDENCY);
         }
-        Set<File> visitedFiles = new HashSet<File>();
-        List<File> notYetAnalyzedFiles = new LinkedList<File>();
-        notYetAnalyzedFiles.add(file);
-        visitedFiles.add(file);
+        return extractAllDependencies(file);
+    }
+
+    /**
+     * Retrieves all dependencies (including transitive) for given file.
+     * Returned value can never be <code>null</code> although it can be empty
+     * collection.
+     *
+     * @param file
+     *            a file for whom to retrieve all dependencies
+     * @return all dependencies (including transitive) for given file
+     * @throws ServiceException
+     *             if exceptional condition occurs
+     */
+    private Set<String> extractAllDependencies(File file)
+            throws ServiceException {
+        /*
+         * This method extracts all dependencies by recursively invoking
+         * #extract(File, boolean) method for every first level dependency
+         * found.
+         */
+        FileManager fileMan = ServiceContainer.instance().getFileManager();
+        Set<String> visitedFiles = new HashSet<String>();
+        List<String> notYetAnalyzedFiles = new LinkedList<String>();
+        notYetAnalyzedFiles.add(file.getName());
+        visitedFiles.add(file.getName());
         while (!notYetAnalyzedFiles.isEmpty()) {
-            File f = notYetAnalyzedFiles.remove(0);
-            List<File> dependancies = extractDependencies(f, false);
-            for (File dependancy : dependancies) {
+            String name = notYetAnalyzedFiles.remove(0);
+            Long projectId = file.getProject().getId();
+            Set<String> dependancies;
+            if (fileMan.exists(projectId, name)) {
+                File f = fileMan.findByName(projectId, name);
+                dependancies = extractDependencies(f, false);
+            } else {
+                dependancies = Collections.emptySet();
+            }
+            for (String dependancy : dependancies) {
                 if (visitedFiles.contains(dependancy)) {
                     continue;
                 }
@@ -180,13 +174,14 @@ public final class VHDLLabServiceManager implements ServiceManager {
                     20 + visitedFiles.size() * 50);
             message.append("Extracted dependencies for file:");
             message.append(file.toString()).append(" {\n");
-            for (File f : visitedFiles) {
-                message.append(f).append("\n");
+            for (String n : visitedFiles) {
+                message.append(n).append("\n");
             }
             message.append("}");
             log.debug(message.toString());
         }
-        return new ArrayList<File>(visitedFiles);
+        visitedFiles.remove(file.getName());
+        return Collections.unmodifiableSet(visitedFiles);
     }
 
     /**
@@ -200,6 +195,8 @@ public final class VHDLLabServiceManager implements ServiceManager {
      * @param funcType
      *            a functionality to be executed
      * @return result of an execution
+     * @throws NullPointerException
+     *             if <code>file</code> is <code>null</code>
      * @throws ServiceException
      *             if functionality throws exception during execution or
      *             returned <code>null</code> result
@@ -249,6 +246,11 @@ public final class VHDLLabServiceManager implements ServiceManager {
             FunctionalityType funcType) throws ServiceException {
         Map<FunctionalityType, Functionality<?>> map = functionalities
                 .get(fileType);
+        if (map == null) {
+            String message = "No functionalities for file type: " + fileType;
+            log.error(message);
+            throw new ServiceException(StatusCodes.SERVER_ERROR, message);
+        }
         Functionality<T> func = (Functionality<T>) map.get(funcType);
         if (func == null) {
             StringBuilder sb = new StringBuilder(40);

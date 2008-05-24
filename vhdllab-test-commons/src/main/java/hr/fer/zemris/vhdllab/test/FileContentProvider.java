@@ -49,14 +49,12 @@ public final class FileContentProvider {
 
 		List<NameAndContent> list = contents.get(FileTypes.VHDL_SOURCE);
 		list.add(readFile("comp_and"));
+		list.add(readFile("comp_or"));
 		list.add(readFile("complex_source"));
 		list.add(readFile("ultra_complex_source"));
 
 		list = contents.get(FileTypes.VHDL_PREDEFINED);
         list.add(readFile("VL_OR"));
-
-		list = contents.get(FileTypes.VHDL_SCHEMA);
-		list.add(readFile("comp_or"));
 
 		list = contents.get(FileTypes.VHDL_AUTOMATON);
 		list.add(readFile("automaton"));

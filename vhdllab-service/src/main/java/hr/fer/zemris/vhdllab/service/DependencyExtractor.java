@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.service;
 
 import hr.fer.zemris.vhdllab.entities.File;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Dependency extractors extract all first level (and only first level)
@@ -27,11 +27,11 @@ import java.util.List;
  * @version 1.0
  * @since vhdllab2
  */
-public interface DependencyExtractor extends Functionality<List<String>> {
+public interface DependencyExtractor extends Functionality<Set<String>> {
 
     /**
-     * Returns a list of file names that specified file depends upon. Return
-     * value can never be <code>null</code>.
+     * Returns a collection of file names that specified file depends upon.
+     * Return value can never be <code>null</code>.
      * <p>
      * Implementor can expect <code>file</code> parameter to always be not
      * <code>null</code> and that a <code>file</code> will be of appropriate
@@ -40,9 +40,9 @@ public interface DependencyExtractor extends Functionality<List<String>> {
      *
      * @param file
      *            a file for which dependency must be extracted
-     * @return a list of file names that specified file depends upon
+     * @return a collection of file names that specified file depends upon
      * @throws ServiceException
      *             if exceptional condition occurs
      */
-    List<String> execute(File file) throws ServiceException;
+    Set<String> execute(File file) throws ServiceException;
 }

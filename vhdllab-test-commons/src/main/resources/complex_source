@@ -8,12 +8,12 @@ ENTITY complex_source IS PORT (
 	f : OUT Std_Logic);
 end complex_source;
 
-ARCHITECTURE arch OF complex_source IS 
+ARCHITECTURE arch OF complex_source IS
 SIGNAL sig: std_logic;
 
 BEGIN
 
-u1: entity work.vl_and PORT MAP (a, b, sig);
-u2: entity work.vl_and PORT MAP (c, sig, f);
+u1: entity work.comp_and PORT MAP (a, b, sig);
+u2: entity work.comp_and PORT MAP (c, sig, f);
 
 END arch;

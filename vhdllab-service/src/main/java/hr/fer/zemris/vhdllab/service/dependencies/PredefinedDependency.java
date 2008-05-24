@@ -6,7 +6,7 @@ import hr.fer.zemris.vhdllab.service.DependencyExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 /**
  * A dependency extractor for a {@link FileTypes#VHDL_PREDEFINED} file type.
@@ -23,8 +23,8 @@ public final class PredefinedDependency implements DependencyExtractor {
      * @see hr.fer.zemris.vhdllab.service.DependencyExtractor#execute(hr.fer.zemris.vhdllab.entities.File)
      */
     @Override
-    public List<String> execute(File file) throws ServiceException {
-        return Collections.emptyList();
+    public Set<String> execute(File file) throws ServiceException {
+        return Collections.emptySet();
     }
 
 }

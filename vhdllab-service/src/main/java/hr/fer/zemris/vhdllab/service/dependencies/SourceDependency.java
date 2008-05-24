@@ -6,9 +6,9 @@ import hr.fer.zemris.vhdllab.service.DependencyExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.util.VhdlUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A dependency extractor for a {@link FileTypes#VHDL_SOURCE} file type.
@@ -33,16 +33,16 @@ public final class SourceDependency implements DependencyExtractor {
      * @see hr.fer.zemris.vhdllab.service.DependencyExtractor#execute(hr.fer.zemris.vhdllab.entities.File)
      */
     @Override
-    public List<String> execute(File file) throws ServiceException {
+    public Set<String> execute(File file) throws ServiceException {
         String source = file.getContent();
         source = VhdlUtil.decomment(source);
         source = VhdlUtil.removeWhiteSpaces(source);
         return extract(source);
     }
 
-    private List<String> extract(String original) {
-        List<String> dependencies = new ArrayList<String>();
-        List<String> uppercaseDependencies = new ArrayList<String>();
+    private Set<String> extract(String original) {
+        Set<String> dependencies = new HashSet<String>();
+        Set<String> uppercaseDependencies = new HashSet<String>();
         String source = original.toUpperCase(Locale.ENGLISH);
 
         int pos = 0;

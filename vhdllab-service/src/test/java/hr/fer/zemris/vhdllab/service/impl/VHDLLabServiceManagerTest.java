@@ -93,29 +93,38 @@ public class VHDLLabServiceManagerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void constructor() throws Exception {
-        Class<?> clazz = man.getClass();
-        Field field = clazz.getDeclaredField("functionalities");
-        field.setAccessible(true);
+        Field field = getPrivateField("functionalities");
         Map<String, Map<FunctionalityType, Functionality<?>>> functionalities = (Map<String, Map<FunctionalityType, Functionality<?>>>) field
                 .get(man);
         assertTrue("no defined functionalities.", functionalities.size() > 0);
     }
 
     /**
-     * Functionality class name is null.
+     * File is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void executeFunctionality() throws Exception {
+        Method method = getPrivateMethod("executeFunctionality", File.class, FunctionalityType.class);
+        invokeMethod(method, null, FunctionalityType.GENERATOR);
+    }
+
+    /**
+     * File with specified file type doesn't have any functionality defined.
      */
     @Test(expected = ServiceException.class)
-    public void executeFunctionality() throws Exception {
-        // no simulation defined for VHDL source file type
-        // man.simulate(file);
-        fail("not yet implemented!");
+    public void executeFunctionality2() throws Exception {
+        File f = new File(project, "file_name_1", FileTypes.PREFERENCES_USER);
+        man.generateVHDL(f);
+
+        // test cleanup
+        project.removeFile(f);
     }
 
     /**
      * Implementor threw runtime exception.
      */
     @Test(expected = ServiceException.class)
-    public void executeFunctionality2() throws Exception {
+    public void executeFunctionality3() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.addFunctionality(FunctionalityType.GENERATOR.toString(),
@@ -128,7 +137,7 @@ public class VHDLLabServiceManagerTest {
      * Implementor returned null.
      */
     @Test(expected = ServiceException.class)
-    public void executeFunctionality3() throws Exception {
+    public void executeFunctionality4() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.addFunctionality(FunctionalityType.GENERATOR.toString(),
@@ -142,7 +151,7 @@ public class VHDLLabServiceManagerTest {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void executeFunctionality4() throws Exception {
+    public void executeFunctionality5() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
         Field field = getPrivateField("functionalities");
         Map<String, Map<FunctionalityType, Functionality<?>>> functionalities = (Map<String, Map<FunctionalityType, Functionality<?>>>) field
@@ -164,7 +173,7 @@ public class VHDLLabServiceManagerTest {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void executeFunctionality5() throws Exception {
+    public void executeFunctionality6() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
         List<File> files = getAllFiles();
         Field field = getPrivateField("functionalities");

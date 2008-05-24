@@ -4,7 +4,7 @@ import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is an interface representing a service manager. It defines all business
@@ -44,23 +44,25 @@ public interface ServiceManager {
     CircuitInterface extractCircuitInterface(File file) throws ServiceException;
 
     /**
-     * Returns a list of files on which specified file depends on. Transitive
-     * dependencies are included based on <code>includeTransitive</code> flag.
-     * Return value will never be <code>null</code>, although it can be an
-     * empty list if file has no dependencies.
+     * Returns an unmodifiable collection of file names representing files on
+     * which specified file depends on. Transitive dependencies are included
+     * based on <code>includeTransitive</code> flag. Return value will never
+     * be <code>null</code>, although it can be an empty collection if a file
+     * has no dependencies.
      *
      * @param file
      *            a file for which dependencies must be extracted
      * @param includeTransitive
      *            a flag indicating if transitive dependencies are to be
      *            included
-     * @return a list of files on which specified file depends on
+     * @return an unmodifiable collection of file names representing files on
+     *         which specified file depends on
      * @throws NullPointerException
      *             if <code>file</code> is <code>null</code>
      * @throws ServiceException
      *             if any exception occurs
      */
-    List<File> extractDependencies(File file, boolean includeTransitive)
+    Set<String> extractDependencies(File file, boolean includeTransitive)
             throws ServiceException;
 
 }
