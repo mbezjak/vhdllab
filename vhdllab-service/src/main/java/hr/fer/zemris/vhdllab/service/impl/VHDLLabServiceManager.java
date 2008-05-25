@@ -1,10 +1,14 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import static hr.fer.zemris.vhdllab.api.StatusCodes.INTERNAL_SERVER_ERROR;
+import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
+import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.server.conf.FileTypeMapping;
 import hr.fer.zemris.vhdllab.server.conf.FunctionalityType;
 import hr.fer.zemris.vhdllab.server.conf.ServerConf;
@@ -159,6 +163,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
                 File f = fileMan.findByName(projectId, name);
                 dependancies = extractDependencies(f, false);
             } else {
+                // else a predefined file and they don't have dependencies
                 dependancies = Collections.emptySet();
             }
             for (String dependancy : dependancies) {
@@ -182,6 +187,61 @@ public final class VHDLLabServiceManager implements ServiceManager {
         }
         visitedFiles.remove(file.getName());
         return Collections.unmodifiableSet(visitedFiles);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see hr.fer.zemris.vhdllab.service.ServiceManager#extractHierarchy(hr.fer.zemris.vhdllab.entities.Project)
+     */
+    @Override
+    public Hierarchy extractHierarchy(Project project) throws ServiceException {
+        Set<File> files = project.getFiles();
+        Map<String, HierarchyNode> resolvedNodes = new HashMap<String, HierarchyNode>(
+                files.size());
+        for (File file : files) {
+            String name = file.getName();
+            if (resolvedNodes.containsKey(name.toLowerCase())) {
+                continue;
+            }
+            HierarchyNode node = new HierarchyNode(name, file.getType(), null);
+            resolvedNodes.put(name.toLowerCase(), node);
+            resolveHierarchy(file, resolvedNodes);
+        }
+        Hierarchy hierarchy = new Hierarchy(project.getName(),
+                new HashSet<HierarchyNode>(resolvedNodes.values()));
+        return hierarchy;
+    }
+
+    private void resolveHierarchy(File nodeFile,
+            Map<String, HierarchyNode> resolvedNodes) throws ServiceException {
+        Set<String> dependencies = extractDependencies(nodeFile, false);
+        FileManager fileMan = ServiceContainer.instance().getFileManager();
+        Long projectId = nodeFile.getProject().getId();
+        for (String name : dependencies) {
+            HierarchyNode parent = resolvedNodes.get(nodeFile.getName()
+                    .toLowerCase());
+            if (resolvedNodes.containsKey(name)) {
+                HierarchyNode depNode = resolvedNodes.get(name);
+                parent.addDependency(depNode);
+            } else {
+                File dep = null;
+                String type;
+                if (fileMan.exists(projectId, name)) {
+                    dep = fileMan.findByName(projectId, name);
+                    type = dep.getType();
+                } else {
+                    // else its a predefined file
+                    type = FileTypes.VHDL_PREDEFINED;
+                }
+                HierarchyNode depNode = new HierarchyNode(name, type, parent);
+                resolvedNodes.put(name.toLowerCase(), depNode);
+                if (dep != null) {
+                    // predefined files don't have dependencies
+                    resolveHierarchy(dep, resolvedNodes);
+                }
+            }
+        }
     }
 
     /**

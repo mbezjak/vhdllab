@@ -133,6 +133,20 @@ public class VHDLLabServiceManagerDependencyTest {
                 .extractDependencies(file, true));
     }
 
+    /**
+     * Extract all dependencies from a complex component.
+     */
+    @Test
+    public void extractAllDependencies2() throws Exception {
+        File file = fileMan.findByName(project.getId(), "comp_oror");
+        Set<String> dependencies = new HashSet<String>(3);
+        dependencies.add("comp_or");
+        dependencies.add("comp_or2");
+        dependencies.add("vl_or");
+        assertEquals("wrong dependency.", dependencies, man
+                .extractDependencies(file, true));
+    }
+
     private static void prepairProject(String type) {
         List<NameAndContent> contents = FileContentProvider.getContent(type);
         for (NameAndContent nc : contents) {

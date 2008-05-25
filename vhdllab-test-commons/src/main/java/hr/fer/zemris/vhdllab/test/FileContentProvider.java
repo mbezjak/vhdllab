@@ -50,6 +50,8 @@ public final class FileContentProvider {
 		List<NameAndContent> list = contents.get(FileTypes.VHDL_SOURCE);
 		list.add(readFile("comp_and"));
 		list.add(readFile("comp_or"));
+		list.add(readFile("comp_or2"));
+		list.add(readFile("comp_oror"));
 		list.add(readFile("complex_source"));
 		list.add(readFile("ultra_complex_source"));
 

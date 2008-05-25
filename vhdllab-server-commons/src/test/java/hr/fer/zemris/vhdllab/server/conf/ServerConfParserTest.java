@@ -29,14 +29,6 @@ public class ServerConfParserTest {
         m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
                 "hr.fer.zemris.vhdllab.service.dependencies.SourceDependency");
         expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.VHDL_PREDEFINED);
-        m.addFunctionality(FunctionalityType.GENERATOR.toString(),
-                "hr.fer.zemris.vhdllab.service.generators.SourceGenerator");
-        // m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
-        // "hr.fer.zemris.vhdllab.service.extractors.SourceExtractor");
-        m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
-                "hr.fer.zemris.vhdllab.service.dependencies.PredefinedDependency");
-        expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
         // "hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator");
@@ -60,6 +52,8 @@ public class ServerConfParserTest {
         // "hr.fer.zemris.vhdllab.service.extractors.AutomatonExtractor");
         // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
         // "hr.fer.zemris.vhdllab.service.dependencies.AutomatonDependency");
+        expectedConf.addFileTypeMapping(m);
+        m = new FileTypeMapping(FileTypes.VHDL_PREDEFINED);
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.PREFERENCES_USER);
         expectedConf.addFileTypeMapping(m);

@@ -46,7 +46,7 @@ public class SourceDependencyTest {
         assumeTrue(list.size() >= 1);
         NameAndContent nc = list.get(0);
         File f = new File(project, nc.getName(), type, nc.getContent());
-        DependencyExtractor dep = new PredefinedDependency();
+        DependencyExtractor dep = new SourceDependency();
         assertEquals("wrong dependencies extrated.", Collections.emptySet(),
                 dep.execute(f));
     }

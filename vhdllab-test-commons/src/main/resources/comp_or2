@@ -1,0 +1,15 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY comp_or2 IS PORT (
+    ins : IN Std_Logic_vector(1 downto 0);
+    f : OUT Std_Logic);
+end comp_or2;
+
+ARCHITECTURE arch OF comp_or2 IS
+
+BEGIN
+
+u1: entity work.vl_or PORT MAP (ins, f);
+
+END arch;

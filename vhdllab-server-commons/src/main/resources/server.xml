@@ -19,17 +19,6 @@
       class="hr.fer.zemris.vhdllab.service.dependencies.SourceDependency" />
   </fileTypeMapping>
 
-  <fileTypeMapping type="vhdl.predefined">
-    <functionality type="generator"
-      class="hr.fer.zemris.vhdllab.service.generators.SourceGenerator" />
-    <!-- CIRCUIT INTERFACE CAN'T BE EXTRACTED FOR PREDEFINED FILES
-    <functionality type="extractor"
-      class="hr.fer.zemris.vhdllab.service.extractors.SourceExtractor" />
-    -->
-    <functionality type="dependency"
-      class="hr.fer.zemris.vhdllab.service.dependencies.PredefinedDependency" />
-  </fileTypeMapping>
-
   <fileTypeMapping type="vhdl.testbench">
     <!-- <functionality type="generator"
       class="hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator" /> -->
@@ -56,6 +45,8 @@
     <!-- <functionality type="dependency"
       class="hr.fer.zemris.vhdllab.service.dependencies.AutomatonDependency" /> -->
   </fileTypeMapping>
+
+  <fileTypeMapping type="vhdl.predefined" />
 
   <fileTypeMapping type="preferences.user" />
 

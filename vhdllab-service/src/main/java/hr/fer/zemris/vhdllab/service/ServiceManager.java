@@ -1,8 +1,10 @@
 package hr.fer.zemris.vhdllab.service;
 
+import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.Project;
 
 import java.util.Set;
 
@@ -64,5 +66,19 @@ public interface ServiceManager {
      */
     Set<String> extractDependencies(File file, boolean includeTransitive)
             throws ServiceException;
+
+    /**
+     * Returns a hierarchy for specified project. Return value will never be
+     * <code>null</code>.
+     *
+     * @param project
+     *            a project for whom to extract hierarchy
+     * @return a hierarchy for specified project
+     * @throws NullPointerException
+     *             if <code>project</code> is <code>null</code>
+     * @throws ServiceException
+     *             if any exception occurs
+     */
+    Hierarchy extractHierarchy(Project project) throws ServiceException;
 
 }
