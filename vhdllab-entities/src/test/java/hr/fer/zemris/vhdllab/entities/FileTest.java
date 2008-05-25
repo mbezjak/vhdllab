@@ -2,8 +2,8 @@ package hr.fer.zemris.vhdllab.entities;
 
 import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -17,7 +17,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link File} entity.
- * 
+ *
  * @author Miro Bezjak
  */
 public class FileTest {
@@ -119,10 +119,11 @@ public class FileTest {
 	@Test
 	public void equals() throws Exception {
 		assertEquals("not equal.", file, file);
-		assertNotSame("file is equal to null.", file, null);
-		assertNotSame("can compare with string object.", file,
-				"a string object");
-		assertNotSame("can compare with resource object.", file, new Resource());
+        assertFalse("file is equal to null.", file.equals(null));
+        assertFalse("can compare with string object.", file
+                .equals("a string object"));
+        assertFalse("can compare with resource object.", file
+                .equals(new Resource()));
 	}
 
 	/**
@@ -161,8 +162,8 @@ public class FileTest {
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
 		injectValueToPrivateField(file2, "name", NEW_NAME);
-		assertNotSame("equal.", file, file2);
-		assertNotSame("hashCode same.", file.hashCode(), file2.hashCode());
+        assertFalse("equal.", file.equals(file2));
+        assertFalse("hashCode same.", file.hashCode() == file2.hashCode());
 		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
 				: 1, file.compareTo(file2));
 	}
@@ -175,8 +176,8 @@ public class FileTest {
 		File newFile = new File(NEW_PROJECT, NAME, TYPE, CONTENT);
 		injectValueToPrivateField(file2, "id", ID);
 		injectValueToPrivateField(file2, "created", CREATED);
-		assertNotSame("equal.", file, newFile);
-		assertNotSame("hashCode same.", file.hashCode(), newFile.hashCode());
+        assertFalse("equal.", file.equals(newFile));
+        assertFalse("hashCode same.", file.hashCode() == newFile.hashCode());
 		assertEquals("not compared by project.", file.getProject().compareTo(
 				newFile.getProject()) < 0 ? -1 : 1, file.compareTo(newFile));
 	}

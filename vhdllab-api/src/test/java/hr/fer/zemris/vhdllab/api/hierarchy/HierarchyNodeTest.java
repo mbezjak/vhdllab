@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.api.hierarchy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import hr.fer.zemris.vhdllab.api.FileTypes;
 
@@ -248,9 +247,9 @@ public class HierarchyNodeTest {
     @Test
     public void equals() throws Exception {
         assertEquals("not equal.", root, root);
-        assertNotSame("port is equal to null.", root, null);
-        assertNotSame("can compare with string object.", root,
-                "a string object");
+        assertFalse("node is equal to null.", root.equals(null));
+        assertFalse("can compare with string object.", root
+                .equals("a string object"));
     }
 
     /**
@@ -287,8 +286,8 @@ public class HierarchyNodeTest {
         HierarchyNode newRoot = new HierarchyNode(NEW_NAME, root.getFileType(),
                 null);
 
-        assertNotSame("hierarchy nodes are equal.", root, newRoot);
-        assertNotSame("hierarchy nodes are equal.", root.hashCode(), newRoot
+        assertFalse("hierarchy nodes are equal.", root.equals(newRoot));
+        assertFalse("hierarchy nodes are equal.", root.hashCode() == newRoot
                 .hashCode());
     }
 

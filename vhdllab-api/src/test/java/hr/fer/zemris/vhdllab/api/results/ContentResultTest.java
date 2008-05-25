@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.api.results;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +16,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link ContentResult}.
- * 
+ *
  * @author Miro Bezjak
  */
 public class ContentResultTest {
@@ -90,11 +90,11 @@ public class ContentResultTest {
 	@Test
 	public void equals() throws Exception {
 		assertEquals("not equal.", result, result);
-		assertNotSame("result is equal to null.", result, null);
-		assertNotSame("can compare with string object.", result,
-				"a string object");
-		assertNotSame("can compare with result object.", result,
-				new Result<Message>(result));
+        assertFalse("result is equal to null.", result.equals(null));
+        assertFalse("can compare with string object.", result
+                .equals("a string object"));
+        assertFalse("can compare with result object.", result
+                .equals(new Result<Message>(result)));
 	}
 
 	/**
@@ -118,9 +118,9 @@ public class ContentResultTest {
 		ContentResult<Message> newResult = new ContentResult<Message>(result,
 				"new.content");
 
-		assertNotSame("results are equal.", result, newResult);
-		assertNotSame("results are equal.", result.hashCode(), newResult
-				.hashCode());
+        assertFalse("results are equal.", result.equals(newResult));
+        assertFalse("results are equal.", result.hashCode() == newResult
+                .hashCode());
 	}
 
 	/**

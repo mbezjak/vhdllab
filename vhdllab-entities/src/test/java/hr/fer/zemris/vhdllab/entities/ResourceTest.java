@@ -3,8 +3,8 @@ package hr.fer.zemris.vhdllab.entities;
 import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.generateJunkString;
 import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -17,7 +17,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link Resource} superclass entity.
- * 
+ *
  * @author Miro Bezjak
  */
 public class ResourceTest {
@@ -245,8 +245,9 @@ public class ResourceTest {
 	@Test
 	public void equals() throws Exception {
 		assertEquals("not equal.", res, res);
-		assertNotSame("resource is equal to null.", res, null);
-		assertNotSame("can compare with string object.", res, "a string object");
+        assertFalse("resource is equal to null.", res.equals(null));
+        assertFalse("can compare with string object.", res
+                .equals(new Resource()));
 	}
 
 	/**
@@ -276,8 +277,8 @@ public class ResourceTest {
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
 		injectValueToPrivateField(res2, "name", NEW_NAME);
-		assertNotSame("equal.", res, res2);
-		assertNotSame("hashCode same.", res.hashCode(), res2.hashCode());
+        assertFalse("equal.", res.equals(res2));
+        assertFalse("hashCode same.", res.hashCode() == res2.hashCode());
 		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
 				: 1, res.compareTo(res2));
 	}

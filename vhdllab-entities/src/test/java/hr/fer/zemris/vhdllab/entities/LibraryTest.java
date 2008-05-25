@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.entities;
 
 import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -16,7 +16,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link Library} class.
- * 
+ *
  * @author Miro Bezjak
  */
 public class LibraryTest {
@@ -81,9 +81,11 @@ public class LibraryTest {
 	@Test
 	public void equals() throws Exception {
 		assertEquals("not equal.", lib, lib);
-		assertNotSame("file is equal to null.", lib, null);
-		assertNotSame("can compare with string object.", lib, "a string object");
-		assertNotSame("can compare with resource object.", lib, new Resource());
+        assertFalse("library is equal to null.", lib.equals(null));
+        assertFalse("can compare with string object.", lib
+                .equals("a string object"));
+        assertFalse("can compare with resource object.", lib
+                .equals(new Resource()));
 	}
 
 	/**

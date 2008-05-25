@@ -3,8 +3,8 @@ package hr.fer.zemris.vhdllab.entities;
 import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.generateJunkString;
 import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -22,7 +22,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link Container} superclass entity.
- * 
+ *
  * @author Miro Bezjak
  */
 public class ContainerTest {
@@ -142,7 +142,7 @@ public class ContainerTest {
 		assertEquals("getCreated.", CREATED, con.getCreated());
 		assertEquals("getChildren.", children, con.getChildren());
 	}
-	
+
 	/**
 	 * getCreated returns a defensive copy of a date
 	 */
@@ -159,8 +159,9 @@ public class ContainerTest {
 	@Test
 	public void equals() throws Exception {
 		assertEquals("not equal.", con, con);
-		assertNotSame("file is equal to null.", con, null);
-		assertNotSame("can compare with string object.", con, "a string object");
+        assertFalse("container is equal to null.", con.equals(null));
+        assertFalse("can compare with string object.", con
+                .equals("a string object"));
 	}
 
 	/**
@@ -190,8 +191,9 @@ public class ContainerTest {
 	@Test
 	public void equalsHashCodeAndCompareTo2() throws Exception {
 		injectValueToPrivateField(con2, "name", NEW_NAME);
-		assertNotSame("equal.", con, con2);
-		assertNotSame("hashCode same.", con.hashCode(), con2.hashCode());
+
+        assertFalse("equal.", con.equals(con2));
+        assertFalse("hashCode same.", con.hashCode() == con2.hashCode());
 		assertEquals("not compared by id.", NAME.compareTo(NEW_NAME) < 0 ? -1
 				: 1, con.compareTo(con2));
 	}
