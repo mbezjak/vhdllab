@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import hr.fer.zemris.vhdllab.api.FileTypes;
 
+import java.util.Properties;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -21,6 +23,12 @@ public class ServerConfParserTest {
     public void getConfiguration() throws Exception {
         FileTypeMapping m;
         ServerConf expectedConf = new ServerConf();
+        Properties p = new Properties();
+        p.setProperty("compiler.executable", "value not part of equals");
+        p.setProperty("compiler.tmpDir", "value not part of equals");
+        p.setProperty("simulator.executable", "value not part of equals");
+        p.setProperty("simulator.tmpDir", "value not part of equals");
+        expectedConf.setProperties(p);
         m = new FileTypeMapping(FileTypes.VHDL_SOURCE);
         m.addFunctionality(FunctionalityType.GENERATOR.toString(),
                 "hr.fer.zemris.vhdllab.service.generators.SourceGenerator");
@@ -28,6 +36,8 @@ public class ServerConfParserTest {
                 "hr.fer.zemris.vhdllab.service.extractors.SourceExtractor");
         m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
                 "hr.fer.zemris.vhdllab.service.dependencies.SourceDependency");
+        m.addFunctionality(FunctionalityType.COMPILER.toString(),
+                "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
@@ -36,6 +46,8 @@ public class ServerConfParserTest {
         // "hr.fer.zemris.vhdllab.service.extractors.TestbenchExtractor");
         // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
         // "hr.fer.zemris.vhdllab.service.dependencies.TestbenchDependency");
+        m.addFunctionality(FunctionalityType.COMPILER.toString(),
+                "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_SCHEMA);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
@@ -44,6 +56,8 @@ public class ServerConfParserTest {
         // "hr.fer.zemris.vhdllab.service.extractors.SchemaExtractor");
         // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
         // "hr.fer.zemris.vhdllab.service.dependencies.SchemaDependency");
+        m.addFunctionality(FunctionalityType.COMPILER.toString(),
+                "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_AUTOMATON);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
@@ -52,6 +66,8 @@ public class ServerConfParserTest {
         // "hr.fer.zemris.vhdllab.service.extractors.AutomatonExtractor");
         // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
         // "hr.fer.zemris.vhdllab.service.dependencies.AutomatonDependency");
+        m.addFunctionality(FunctionalityType.COMPILER.toString(),
+                "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_PREDEFINED);
         expectedConf.addFileTypeMapping(m);

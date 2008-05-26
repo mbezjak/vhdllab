@@ -2,12 +2,15 @@ package hr.fer.zemris.vhdllab.service;
 
 import hr.fer.zemris.vhdllab.entities.File;
 
+import java.util.Properties;
 import java.util.Set;
 
 /**
  * Dependency extractors extract all first level (and only first level)
  * dependencies for given file. All extractors must have an empty public default
- * constructor for proper initialization!
+ * constructor for proper initialization! After extractor is instantiated
+ * {@link #configure(Properties)} method will be called to configure an
+ * extractor.
  * <p>
  * Each extractor extracts dependency for a file with specific file type (i.e.
  * for a file that a extractor can understand). To register an extractor to a

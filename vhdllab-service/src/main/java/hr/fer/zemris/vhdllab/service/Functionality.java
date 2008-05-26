@@ -3,6 +3,8 @@ package hr.fer.zemris.vhdllab.service;
 import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.entities.File;
 
+import java.util.Properties;
+
 /**
  * Describes an extra functionality associated with certain file type. For
  * instance, all files having one of VHDL file type (see {@link FileTypes}
@@ -11,7 +13,9 @@ import hr.fer.zemris.vhdllab.entities.File;
  * simulating VHDL code.
  * <p>
  * All implementors of this interface must have an empty public default
- * constructor for proper initialization!
+ * constructor for proper initialization! After functionality is instantiated
+ * {@link #configure(Properties)} method will be called to configure a
+ * functionality.
  * </p>
  *
  * @param <T>
@@ -24,8 +28,21 @@ import hr.fer.zemris.vhdllab.entities.File;
 public interface Functionality<T> {
 
     /**
+     * Configures a functionality. Implementor can expect
+     * <code>properties</code> parameter to always be not <code>null</code>.
+     *
+     * @param properties
+     *            properties for configuration
+     * @throws RuntimeException
+     *             if functionality can't be configured with specified
+     *             properties
+     */
+    void configure(Properties properties);
+
+    /**
      * Preforms a functionality for specified file and returns a result. Return
-     * value can never be <code>null</code>.
+     * value can never be <code>null</code>. Implementor can expect
+     * <code>file</code> parameter to always be not <code>null</code>.
      *
      * @param file
      *            a file for which to preform functionality

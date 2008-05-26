@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.service;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
@@ -80,5 +81,19 @@ public interface ServiceManager {
      *             if any exception occurs
      */
     Hierarchy extractHierarchy(Project project) throws ServiceException;
+
+    /**
+     * Compiles specified file and returns a result of a compilation. Returned
+     * value will never be <code>null</code>.
+     *
+     * @param file
+     *            a file to compile
+     * @return a compilation result
+     * @throws NullPointerException
+     *             if <code>file</code> is <code>null</code>
+     * @throws ServiceException
+     *             if any exception occurs
+     */
+    CompilationResult compile(File file) throws ServiceException;
 
 }

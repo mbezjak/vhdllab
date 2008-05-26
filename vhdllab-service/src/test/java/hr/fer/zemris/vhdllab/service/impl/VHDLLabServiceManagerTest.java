@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import hr.fer.zemris.vhdllab.api.FileTypes;
-import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
@@ -16,7 +15,6 @@ import hr.fer.zemris.vhdllab.server.conf.ServerConfParser;
 import hr.fer.zemris.vhdllab.service.Functionality;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
-import hr.fer.zemris.vhdllab.service.VHDLGenerator;
 import hr.fer.zemris.vhdllab.test.FileContentProvider;
 import hr.fer.zemris.vhdllab.test.NameAndContent;
 
@@ -26,8 +24,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.Map.Entry;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -54,17 +55,9 @@ public class VHDLLabServiceManagerTest {
         container = ServiceContainer.instance();
 
         EntityManagerUtil.createEntityManagerFactory();
-        EntityManagerUtil.currentEntityManager();
-        project = new Project(USER_ID, "project_name");
-        String type = FileTypes.VHDL_SOURCE;
-        List<NameAndContent> contents = FileContentProvider.getContent(type);
-        NameAndContent content = contents.get(0);
-        file = new File(project, content.getName(), type, content.getContent());
-        container.getProjectManager().save(project);
-        EntityManagerUtil.closeEntityManager();
 
         ServerConf conf = ServerConfParser.getConfiguration();
-        FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
+        FileTypeMapping mapping = conf.getFileTypeMapping(FileTypes.VHDL_SOURCE);
         generatorClass = mapping.getFunctionality(FunctionalityType.GENERATOR);
         extractorClass = mapping.getFunctionality(FunctionalityType.EXTRACTOR);
     }
@@ -72,19 +65,36 @@ public class VHDLLabServiceManagerTest {
     @Before
     public void initEachTest() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
-        FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
+        FileTypeMapping mapping = conf.getFileTypeMapping(FileTypes.VHDL_SOURCE);
         mapping.addFunctionality(FunctionalityType.GENERATOR.toString(),
                 generatorClass);
         mapping.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
                 extractorClass);
         man = new VHDLLabServiceManager();
+
+        EntityManagerUtil.currentEntityManager();
+        project = new Project(USER_ID, "project_name");
+        prepairProject(FileTypes.VHDL_SOURCE);
+//        prepairProject(FileTypes.VHDL_SCHEMA);
+//        prepairProject(FileTypes.VHDL_AUTOMATON);
+        container.getProjectManager().save(project);
+        file = container.getFileManager().findByName(project.getId(),
+                "comp_and");
+    }
+
+    @After
+    public void destroyEachTest() throws Exception {
+        EntityManagerUtil.closeEntityManager();
+        EntityManagerUtil.currentEntityManager();
+        container.getProjectManager().delete(project.getId());
+        EntityManagerUtil.closeEntityManager();
     }
 
     @AfterClass
     public static void destroyClass() throws Exception {
-        EntityManagerUtil.currentEntityManager();
-        container.getProjectManager().delete(project.getId());
-        EntityManagerUtil.closeEntityManager();
+//        EntityManagerUtil.currentEntityManager();
+//        container.getProjectManager().delete(project.getId());
+//        EntityManagerUtil.closeEntityManager();
     }
 
     /**
@@ -104,7 +114,8 @@ public class VHDLLabServiceManagerTest {
      */
     @Test(expected = NullPointerException.class)
     public void executeFunctionality() throws Exception {
-        Method method = getPrivateMethod("executeFunctionality", File.class, FunctionalityType.class);
+        Method method = getPrivateMethod("executeFunctionality", File.class,
+                FunctionalityType.class);
         invokeMethod(method, null, FunctionalityType.GENERATOR);
     }
 
@@ -128,7 +139,7 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.addFunctionality(FunctionalityType.GENERATOR.toString(),
-                ExceptionThrowingGenerator.class.getName());
+                ExceptionThrowingFunctionality.class.getName());
         man = new VHDLLabServiceManager();
         man.generateVHDL(file);
     }
@@ -141,7 +152,7 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         FileTypeMapping mapping = conf.getFileTypeMapping(file.getType());
         mapping.addFunctionality(FunctionalityType.GENERATOR.toString(),
-                NullGenerator.class.getName());
+                NullFunctionality.class.getName());
         man = new VHDLLabServiceManager();
         man.generateVHDL(file);
     }
@@ -175,7 +186,7 @@ public class VHDLLabServiceManagerTest {
     @Test
     public void executeFunctionality6() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
-        List<File> files = getAllFiles();
+        Set<File> files = project.getFiles();
         Field field = getPrivateField("functionalities");
         Map<String, Map<FunctionalityType, Functionality<?>>> functionalities = (Map<String, Map<FunctionalityType, Functionality<?>>>) field
                 .get(man);
@@ -211,10 +222,11 @@ public class VHDLLabServiceManagerTest {
      * non-existing class
      */
     @Test
-    public void instantiateClass() throws Exception {
-        Method method = getPrivateMethod("instantiateClass", String.class);
+    public void configureFunctionality() throws Exception {
+        Method method = getPrivateMethod("configureFunctionality",
+                String.class, Properties.class);
         try {
-            invokeMethod(method, "non.existing.class");
+            invokeMethod(method, "non.existing.class", new Properties());
         } catch (IllegalStateException e) {
             if (!e.getMessage().contains("doesn't exist")) {
                 fail("Wrong exception thrown!");
@@ -226,10 +238,11 @@ public class VHDLLabServiceManagerTest {
      * class doesn't have default constructor
      */
     @Test
-    public void instantiateClass2() throws Exception {
-        Method method = getPrivateMethod("instantiateClass", String.class);
+    public void configureFunctionality2() throws Exception {
+        Method method = getPrivateMethod("configureFunctionality",
+                String.class, Properties.class);
         try {
-            invokeMethod(method, "java.lang.Integer");
+            invokeMethod(method, "java.lang.Integer", new Properties());
         } catch (IllegalStateException e) {
             if (!e.getMessage().contains("couldn't be instantiated")) {
                 fail("Wrong exception thrown!");
@@ -241,10 +254,12 @@ public class VHDLLabServiceManagerTest {
      * class doesn't have public default constructor
      */
     @Test
-    public void instantiateClass3() throws Exception {
-        Method method = getPrivateMethod("instantiateClass", String.class);
+    public void configureFunctionality3() throws Exception {
+        Method method = getPrivateMethod("configureFunctionality",
+                String.class, Properties.class);
         try {
-            invokeMethod(method, "hr.fer.zemris.vhdllab.entities.Resource");
+            invokeMethod(method, "hr.fer.zemris.vhdllab.entities.Resource",
+                    new Properties());
         } catch (IllegalStateException e) {
             if (!e.getMessage().contains("public default constructor")) {
                 fail("Wrong exception thrown!");
@@ -253,9 +268,37 @@ public class VHDLLabServiceManagerTest {
     }
 
     /**
+     * class is not a functionality.
+     */
+    @Test
+    public void configureFunctionality4() throws Exception {
+        Method method = getPrivateMethod("configureFunctionality",
+                String.class, Properties.class);
+        try {
+            invokeMethod(method, "java.lang.String", new Properties());
+        } catch (IllegalStateException e) {
+            if (!e.getMessage().contains("Inappropriate class type")) {
+                fail("Wrong exception thrown!");
+            }
+        }
+    }
+
+    /**
+     * After class is instantiated, configure method is called.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void configureFunctionality5() throws Exception {
+        Method method = getPrivateMethod("configureFunctionality",
+                String.class, Properties.class);
+        Properties p = new Properties();
+        p.setProperty("test", "calling configure method");
+        invokeMethod(method, ConfiguringFunctionality.class.getName(), p);
+    }
+
+    /**
      * Returns only those files that have specified type.
      */
-    private List<File> filterByType(List<File> files, String type) {
+    private List<File> filterByType(Set<File> files, String type) {
         List<File> filtered = new ArrayList<File>();
         for (File f : files) {
             if (f.getType().equalsIgnoreCase(type)) {
@@ -263,25 +306,6 @@ public class VHDLLabServiceManagerTest {
             }
         }
         return filtered;
-    }
-
-    /**
-     * Returns all dummy files.
-     */
-    private List<File> getAllFiles() throws Exception {
-        List<File> files = new ArrayList<File>();
-        ServerConf conf = ServerConfParser.getConfiguration();
-        for (String type : conf.getFileTypes()) {
-            List<NameAndContent> list = FileContentProvider.getContent(type);
-            if (list == null) {
-                continue;
-            }
-            for (NameAndContent nc : list) {
-                File f = new File(project, nc.getName(), type, nc.getContent());
-                files.add(f);
-            }
-        }
-        return files;
     }
 
     /**
@@ -318,23 +342,57 @@ public class VHDLLabServiceManagerTest {
         return field;
     }
 
+    private static void prepairProject(String type) {
+        List<NameAndContent> contents = FileContentProvider.getContent(type);
+        for (NameAndContent nc : contents) {
+            new File(project, nc.getName(), type, nc.getContent());
+        }
+    }
+
     /**
-     * A dummy implementation that throws exception during VHDL generation.
+     * A dummy implementation that throws exception during execution.
      */
-    public static class ExceptionThrowingGenerator implements VHDLGenerator {
+    public static class ExceptionThrowingFunctionality implements
+            Functionality<Object> {
         @Override
-        public VHDLGenerationResult execute(File f) throws ServiceException {
+        public void configure(Properties properties) {
+        }
+
+        @Override
+        public Object execute(File f) throws ServiceException {
             throw new IllegalStateException();
         }
     }
 
     /**
-     * A dummy implementation return null as a generation result.
+     * A dummy implementation return null as an execution result.
      */
-    public static class NullGenerator implements VHDLGenerator {
+    public static class NullFunctionality implements Functionality<Object> {
         @Override
-        public VHDLGenerationResult execute(File f) throws ServiceException {
+        public void configure(Properties properties) {
+        }
+
+        @Override
+        public Object execute(File f) throws ServiceException {
             return null;
+        }
+    }
+
+    /**
+     * A dummy implementation that throws {@link IllegalArgumentException} when
+     * configure method is called and thus indicating that configure method is
+     * called after class initialization.
+     */
+    public static class ConfiguringFunctionality implements
+            Functionality<Object> {
+        @Override
+        public void configure(Properties properties) {
+            throw new IllegalArgumentException();
+        }
+
+        @Override
+        public Object execute(File f) throws ServiceException {
+            return new Object();
         }
     }
 

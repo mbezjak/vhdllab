@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.service.util.VhdlUtil;
 
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -26,6 +27,15 @@ public final class SourceDependency implements DependencyExtractor {
     private final static String WHITESPACE = " ";
     private final static String DOT = ".";
     private final static String SEMICOLON = ";";
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see hr.fer.zemris.vhdllab.service.Functionality#configure(java.util.Properties)
+     */
+    @Override
+    public void configure(Properties properties) {
+    }
 
     /*
      * (non-Javadoc)

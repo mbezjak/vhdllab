@@ -3,10 +3,14 @@ package hr.fer.zemris.vhdllab.service;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
 
+import java.util.Properties;
+
 /**
  * Circuit interface extractors extract circuit interface out of a specified
  * file. All extractors must have an empty public default constructor for proper
- * initialization!
+ * initialization! After extractor is instantiated
+ * {@link #configure(Properties)} method will be called to configure an
+ * extractor.
  * <p>
  * Each extractors extracts circuit interface for a file with specific file type
  * (i.e. for a file that an extractor can understand). To register an extractor
@@ -26,7 +30,8 @@ import hr.fer.zemris.vhdllab.entities.File;
  * @version 1.0
  * @since vhdllab2
  */
-public interface CircuitInterfaceExtractor extends Functionality<CircuitInterface> {
+public interface CircuitInterfaceExtractor extends
+        Functionality<CircuitInterface> {
 
     /**
      * Returns a circuit interface for specified file. Return value can never be

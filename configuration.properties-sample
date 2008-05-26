@@ -1,7 +1,10 @@
 ###############################################################################
 ### Application configuration properties                                    ###
 ###############################################################################
-
+compiler.executable = /usr/bin/ghdl
+compiler.tmpDir = /home/lord/tmp/vhdllab/compilations
+simulator.executable = /usr/bin/ghdl
+simulator.tmpDir = /home/lord/tmp/vhdllab/simulations
 
 ###############################################################################
 ### General properties                                                      ###

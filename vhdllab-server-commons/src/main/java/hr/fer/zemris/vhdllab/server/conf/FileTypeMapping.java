@@ -18,6 +18,9 @@ public final class FileTypeMapping {
      */
     private String type;
 
+    /**
+     * Defined functionalities for a file type.
+     */
     private final Map<FunctionalityType, String> functionalities;
 
     /**
@@ -75,7 +78,7 @@ public final class FileTypeMapping {
      *             if <code>funcType</code> is an unknown functionality type
      */
     public void addFunctionality(String funcType, String clazz) {
-        if (type == null) {
+        if (funcType == null) {
             throw new NullPointerException("Functionality type cant be null");
         }
         if (clazz == null) {
@@ -144,7 +147,7 @@ public final class FileTypeMapping {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(30);
+        StringBuilder sb = new StringBuilder(100);
         sb.append("mapping ");
         sb.append("type=").append(type);
         sb.append(", functionalities=").append(functionalities);

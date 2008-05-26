@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.service.VHDLGenerator;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * A generator for a {@link FileTypes#VHDL_SOURCE} file type.
@@ -18,6 +19,15 @@ import java.util.List;
  * @since vhdllab2
  */
 public final class SourceGenerator implements VHDLGenerator {
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see hr.fer.zemris.vhdllab.service.Functionality#configure(java.util.Properties)
+     */
+    @Override
+    public void configure(Properties properties) {
+    }
 
     /*
      * (non-Javadoc)

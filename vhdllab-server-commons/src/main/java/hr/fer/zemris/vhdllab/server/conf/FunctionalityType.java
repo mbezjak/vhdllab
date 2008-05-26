@@ -9,8 +9,8 @@ import hr.fer.zemris.vhdllab.api.FileTypes;
  * generating VHDL code, extracting circuit interface, extracting dependencies
  * compiling and simulating a VHDL code.
  * <p>
- * Usually a file type is associated with all (except for {@link #SIMULATOR})
- * or none of functionality types defined in this enum.
+ * Usually (but not necessary) a file type is associated with all (except for
+ * {@link #SIMULATOR}) or none of functionality types defined in this enum.
  * </p>
  *
  * @author Miro Bezjak

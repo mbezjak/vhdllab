@@ -3,9 +3,13 @@ package hr.fer.zemris.vhdllab.service;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.entities.File;
 
+import java.util.Properties;
+
 /**
  * VHDL generators generate VHDL code out of a specified file. All generators
  * must have an empty public default constructor for proper initialization!
+ * After extractor is instantiated {@link #configure(Properties)} method will be
+ * called to configure a generator.
  * <p>
  * Each generator generates VHDL code for a file with specific file type (i.e.
  * for a file that a generator can understand). To register a generator to a

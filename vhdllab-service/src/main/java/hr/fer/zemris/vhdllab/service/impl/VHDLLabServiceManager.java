@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
+import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
@@ -25,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -63,12 +65,14 @@ public final class VHDLLabServiceManager implements ServiceManager {
     public VHDLLabServiceManager() {
         functionalities = new HashMap<String, Map<FunctionalityType, Functionality<?>>>();
         ServerConf conf = ServerConfParser.getConfiguration();
+        Properties properties = conf.getProperties();
         for (String type : conf.getFileTypes()) {
             FileTypeMapping m = conf.getFileTypeMapping(type);
             for (FunctionalityType t : FunctionalityType.values()) {
                 String className = m.getFunctionality(t);
                 if (className != null) {
-                    Functionality<?> func = instantiateClass(className);
+                    Functionality<?> func = configureFunctionality(className,
+                            properties);
                     Map<FunctionalityType, Functionality<?>> map = functionalities
                             .get(type);
                     if (map == null) {
@@ -213,8 +217,22 @@ public final class VHDLLabServiceManager implements ServiceManager {
         return hierarchy;
     }
 
+    /**
+     * Resolves a hierarchy tree for specified file. Resolved hierarchy trees
+     * gets added to <code>resolvedNodes</code> parameter.
+     *
+     * @param nodeFile
+     *            a file for whom to resolve hierarchy tree
+     * @param resolvedNodes
+     *            contains hierarchy tree for all resolved files
+     * @throws ServiceException
+     *             if exceptional condition occurs
+     */
     private void resolveHierarchy(File nodeFile,
             Map<String, HierarchyNode> resolvedNodes) throws ServiceException {
+        /*
+         * This method resolves a hierarchy by recursively invoking itself.
+         */
         Set<String> dependencies = extractDependencies(nodeFile, false);
         FileManager fileMan = ServiceContainer.instance().getFileManager();
         Long projectId = nodeFile.getProject().getId();
@@ -242,6 +260,16 @@ public final class VHDLLabServiceManager implements ServiceManager {
                 }
             }
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see hr.fer.zemris.vhdllab.service.ServiceManager#compile(hr.fer.zemris.vhdllab.entities.File)
+     */
+    @Override
+    public CompilationResult compile(File file) throws ServiceException {
+        return executeFunctionality(file, FunctionalityType.COMPILER);
     }
 
     /**
@@ -347,20 +375,26 @@ public final class VHDLLabServiceManager implements ServiceManager {
     }
 
     /**
-     * Instantiates specified class by invoking default constructor. Return
-     * value will never be <code>null</code>.
+     * Instantiates and configured specified functionality by invoking default
+     * constructor and {@link Functionality#configure(Properties)} method.
+     * Return value will never be <code>null</code>.
      *
      * @param className
-     *            a name of a class to instantiate
-     * @return an instantiated object of specified class
+     *            a class name of a functionality
+     * @param properties
+     *            properties for functionality configuration
+     * @return configured functionality
      * @throws IllegalStateException
      *             if exceptional condition occurs
+     * @throws RuntimeException
+     *             if functionality threw exception during configuration
      */
-    @SuppressWarnings("unchecked")
-    private <T> T instantiateClass(String className) {
-        Object object = null;
+    private Functionality<?> configureFunctionality(String className,
+            Properties properties) {
+        Functionality<?> functionality = null;
         try {
-            object = Class.forName(className).newInstance();
+            functionality = (Functionality<?>) Class.forName(className)
+                    .newInstance();
         } catch (InstantiationException e) {
             String message = className + " couldn't be instantiated!";
             log.error(message, e);
@@ -374,14 +408,13 @@ public final class VHDLLabServiceManager implements ServiceManager {
             String message = "Class " + className + " doesn't exist!";
             log.error(message, e);
             throw new IllegalStateException(message);
-        }
-        try {
-            return (T) object;
         } catch (ClassCastException e) {
             String message = "Inappropriate class type!";
             log.error(message, e);
             throw new IllegalStateException(message);
         }
+        functionality.configure(properties);
+        return functionality;
     }
 
 }

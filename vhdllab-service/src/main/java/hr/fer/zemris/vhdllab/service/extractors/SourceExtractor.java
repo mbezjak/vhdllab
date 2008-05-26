@@ -18,6 +18,7 @@ import hr.fer.zemris.vhdllab.service.util.VhdlUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 /**
  * An extractor for a {@link FileTypes#VHDL_SOURCE} file type.
@@ -45,6 +46,15 @@ public final class SourceExtractor implements CircuitInterfaceExtractor {
     private final static String COMMA = ",";
     private final static String LEFT_BRACKET = "(";
     private final static String RIGHT_BRACKET = ")";
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see hr.fer.zemris.vhdllab.service.Functionality#configure(java.util.Properties)
+     */
+    @Override
+    public void configure(Properties properties) {
+    }
 
     /*
      * (non-Javadoc)
