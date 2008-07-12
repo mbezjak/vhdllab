@@ -49,6 +49,7 @@ public interface IQuery {
 	/**
 	 * Lista tipa promjena na koje je osjetljiv ovaj upit.
 	 * Ako se desi promjena ovog tipa, upit ce biti izbrisan iz cachea.
+	 * Ne smije biti mijenjana!!
 	 * 
 	 * @return
 	 */
