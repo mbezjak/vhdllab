@@ -29,8 +29,8 @@ public final class WalkabilityMap {
 	/* static fields */
 	public static final int FROM_NORTH = 1;
 	public static final int FROM_SOUTH = 2;
-	public static final int FROM_EAST = 4;
-	public static final int FROM_WEST = 8;
+	public static final int FROM_WEST = 4;
+	public static final int FROM_EAST = 8;
 	public static final int STEP = Constants.GRID_SIZE;
 	
 
@@ -53,9 +53,26 @@ public final class WalkabilityMap {
 		if (walkindex == null) return true;
 		return (walkindex & comingFrom) != 0;
 	}
-	
-	
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		XYLocation loc = new XYLocation();
+		for (int j = 0; j < 500; j += Constants.GRID_SIZE) {
+			for (int i = 0; i < 600; i += Constants.GRID_SIZE) {
+				loc.x = i; loc.y = j;
+				Integer walk = walkmap.get(loc);
+				if (walk == null) walk = 15;
+				if (walk != 15) {
+					if (walk < 10) sb.append(' ');
+					sb.append(walk).append(' ');
+				} else sb.append("-- ");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
 }
 
 

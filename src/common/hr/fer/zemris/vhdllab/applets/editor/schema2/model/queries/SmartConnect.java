@@ -43,6 +43,11 @@ public class SmartConnect implements IQuery {
 			costsofar = tohere;
 			estimate = totarget;
 		}
+		@Override
+		public String toString() {
+			if (parent != null) return parentloc.toString() + parent.toString();
+			else return "";
+		}
 	}
 
 	
@@ -178,6 +183,7 @@ public class SmartConnect implements IQuery {
 
 			/* goal not reached - expand current node */
 			for (int i = 0, j = 1, t = 2; !(i == 0 && j == 1 && t != 2); t = i, i = j, j = -t) {
+//				System.out.println(i + ", " + j + "; t = " + t);
 				finder.x = currxy.x + i * STEP;
 				finder.y = currxy.y + j * STEP;
 				ANode neighbour = null;
@@ -216,7 +222,7 @@ public class SmartConnect implements IQuery {
 		if (goal == null) return null;
 		
 		/* otherwise, path must be reconstructed */
-		List<WireSegment> path = reconstructPath(goal);
+		List<WireSegment> path = reconstructPath(goal, finder);
 		
 		/* finish cutoffs */
 		WireSegment firstseg = null, lastseg = null;
@@ -282,21 +288,21 @@ public class SmartConnect implements IQuery {
 				mindist = dist; closest.x = xstart; closest.y = ystart;
 			}
 			
-			xstart = xstart + 1;
+			xstart = xstart + STEP;
 			dist = Math.abs(target.x - xstart) + Math.abs(target.y - ystart);
 			start.x = xstart;
 			if (dist < mindist && isWalkable(info, start, null)) { 
 				mindist = dist; closest.x = xstart; closest.y = ystart;
 			}
 
-			ystart = ystart + 1;
+			ystart = ystart + STEP;
 			dist = Math.abs(target.x - xstart) + Math.abs(target.y - ystart);
 			start.y = ystart;
 			if (dist < mindist && isWalkable(info, start, null)) { 
 				mindist = dist; closest.x = xstart; closest.y = ystart;
 			}
 			
-			xstart = xstart - 1;
+			xstart = xstart - STEP;
 			dist = Math.abs(target.x - xstart) + Math.abs(target.y - ystart);
 			start.x = xstart;
 			if (dist < mindist && isWalkable(info, start, null)) { 
@@ -319,12 +325,13 @@ public class SmartConnect implements IQuery {
 		}
 	}
 
-	private List<WireSegment> reconstructPath(ANode goal) {
+	private List<WireSegment> reconstructPath(ANode goal, XYLocation modend) {
 		List<WireSegment> segs = new ArrayList<WireSegment>();
-		int x, y, xstart = end.x, ystart = end.y;
+		int x, y, xstart = modend.x, ystart = modend.y;
 		boolean vertical = false;
 		
 		/* prepare */
+//		System.out.println(goal.toString());
 		if (goal.parent == null) return segs;
 		x = goal.parentloc.x;
 		y = goal.parentloc.y;
@@ -407,10 +414,10 @@ public class SmartConnect implements IQuery {
 				/* parent location exists */
 				switch (parentloc.x - loc.x + 10 * (parentloc.y - loc.y)) {
 				case -10:
-					direction = WalkabilityMap.FROM_EAST;
+					direction = WalkabilityMap.FROM_WEST;
 					break;
 				case 10:
-					direction = WalkabilityMap.FROM_WEST;
+					direction = WalkabilityMap.FROM_EAST;
 					break;
 				case -100:
 					direction = WalkabilityMap.FROM_NORTH;

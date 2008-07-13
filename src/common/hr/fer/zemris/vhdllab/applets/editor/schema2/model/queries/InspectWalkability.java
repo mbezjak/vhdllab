@@ -6,8 +6,10 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQuery;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaWire;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Rect2d;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.QueryResult;
@@ -36,7 +38,7 @@ public class InspectWalkability implements IQuery {
 	private static final String QUERY_NAME = InspectWalkability.class.getSimpleName();
 	private static final int STEP = Constants.GRID_SIZE;
 	private static final Integer ALLUNWALKABLE = 0;
-	private static final Integer HORIZONTALLY_WALKABLE = WalkabilityMap.FROM_EAST | WalkabilityMap.FROM_WEST;
+	private static final Integer HORIZONTALLY_WALKABLE = WalkabilityMap.FROM_WEST | WalkabilityMap.FROM_EAST;
 	private static final Integer VERTICALLY_WALKABLE = WalkabilityMap.FROM_NORTH | WalkabilityMap.FROM_SOUTH;
 	private static final List<EPropertyChange> propdepend = new ArrayList<EPropertyChange>();
 	private static final List<EPropertyChange> ro_pd = Collections.unmodifiableList(propdepend);	
@@ -98,6 +100,9 @@ public class InspectWalkability implements IQuery {
 			/* handle walkability */
 			if (quick) quickHandleCmp(placed, tx, ty, walkability);
 			else handleCmp(placed, tx, ty, walkability);
+			
+			/* handle pins */
+			handleSchemaPorts(placed, walkability);
 		}
 		
 		/* iterate through wires and map unwalkable grid points */
@@ -117,9 +122,34 @@ public class InspectWalkability implements IQuery {
 		walkability.width = ((maxx - minx) / STEP + 1) * STEP;
 		walkability.height = ((maxy - miny) / STEP + 1) * STEP;
 		
+		System.out.println(walkability.toString());
+		
 		return new QueryResult(KEY_WALKABILITY, walkability);
 	}
 	
+	private static void handleSchemaPorts(PlacedComponent placed, WalkabilityMap walkability) {
+		int wdt = placed.comp.getWidth(), hgt = placed.comp.getHeight();
+		for (SchemaPort sp : placed.comp.getSchemaPorts()) {
+			if (!Caseless.isNullOrEmpty(sp.getMapping())) continue;
+			XYLocation offset = sp.getOffset();
+			XYLocation sploc = new XYLocation(placed.pos.x + offset.x, placed.pos.y + offset.y);
+			Integer walkstatus = ALLUNWALKABLE;
+			if (offset.x == 0) {
+				walkstatus = walkstatus | WalkabilityMap.FROM_WEST;
+			}
+			if (offset.x == wdt) {
+				walkstatus = walkstatus | WalkabilityMap.FROM_EAST;
+			}
+			if (offset.y == 0) {
+				walkstatus = walkstatus | WalkabilityMap.FROM_NORTH;
+			}
+			if (offset.y == hgt) {
+				walkstatus = walkstatus | WalkabilityMap.FROM_SOUTH;
+			}
+			walkability.walkmap.put(sploc, walkstatus);
+		}
+	}
+
 	private static void handleCmp(PlacedComponent placed, int tox, int toy, WalkabilityMap walkability) {
 		int fromx = placed.pos.x, fromy = placed.pos.y;
 		fromx = (fromx / STEP + (((fromx % STEP) == 0 || fromx < 0) ? (0) : (1))) * STEP;
@@ -143,10 +173,10 @@ public class InspectWalkability implements IQuery {
 			walkability.walkmap.put(new XYLocation(i, fromy), ALLUNWALKABLE);
 			walkability.walkmap.put(new XYLocation(i, toy), ALLUNWALKABLE);
 		}
-		toy--; fromy++;
+		toy -= STEP; fromy += STEP;
 		for (int j = fromy; j <= toy; j += STEP) {
-			walkability.walkmap.put(new XYLocation(j, fromx), ALLUNWALKABLE);
-			walkability.walkmap.put(new XYLocation(j, tox), ALLUNWALKABLE);
+			walkability.walkmap.put(new XYLocation(fromx, j), ALLUNWALKABLE);
+			walkability.walkmap.put(new XYLocation(tox, j), ALLUNWALKABLE);
 		}
 	}
 	
@@ -161,6 +191,11 @@ public class InspectWalkability implements IQuery {
 				
 				/* handle it */
 				end = segment.getEnd();
+				if (start.y > end.y) {
+					XYLocation tmp = start;
+					start = end;
+					end = tmp;
+				}
 				int fromy = (start.y / STEP + (((start.y % STEP) == 0 || start.y < 0) ? (0) : (1))) * STEP;
 				int toy = (end.y / STEP + (((end.y % STEP) == 0 || end.y > 0) ? (0) : (-1))) * STEP;
 				for (int j = fromy; j <= toy; j += STEP) {
@@ -172,6 +207,11 @@ public class InspectWalkability implements IQuery {
 				
 				/* handle it */
 				end = segment.getEnd();
+				if (start.x > end.x) {
+					XYLocation tmp = start;
+					start = end;
+					end = tmp;
+				}
 				int fromx = (start.x / STEP + (((start.x % STEP) == 0 || start.x < 0) ? (0) : (1))) * STEP;
 				int tox = (end.x / STEP + (((end.x % STEP) == 0 || end.x > 0) ? (0) : (-1))) * STEP;
 				for (int i = fromx; i <= tox; i += STEP) {

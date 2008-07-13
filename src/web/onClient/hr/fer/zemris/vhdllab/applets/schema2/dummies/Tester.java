@@ -167,12 +167,12 @@ public class Tester {
 //				new WireSegment(150, 50, 150, 100));
 //		mpanel.getController().send(delndiv);
 		
-		InspectWalkability inspect = new InspectWalkability(false);
-		IQueryResult result = mpanel.getController().send(inspect);
+//		InspectWalkability inspect = new InspectWalkability(false);
+//		IQueryResult result = mpanel.getController().send(inspect);
 		
-		SmartConnect connect = new SmartConnect(new XYLocation(10, 10), new XYLocation(250, 150),
-				(WalkabilityMap)(result.get(InspectWalkability.KEY_WALKABILITY)));
-		result = mpanel.getController().send(connect);
+//		SmartConnect connect = new SmartConnect(new XYLocation(10, 10), new XYLocation(250, 150),
+//				(WalkabilityMap)(result.get(InspectWalkability.KEY_WALKABILITY)));
+//		result = mpanel.getController().send(connect);
 		
 		final ISchemaInfo nfo = mpanel.getController().getSchemaInfo();
 		mpanel.getController().addListener(EPropertyChange.ANY_CHANGE, new PropertyChangeListener() {
