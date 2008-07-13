@@ -74,10 +74,14 @@ public class DefaultComponentDrawer implements IComponentDrawer {
 				graphics.drawLine(offset.x, offset.y, offset.x, h/2);
 			}
 			
-			if (!Caseless.isNullOrEmpty(mapping)) continue;
-			
 			Color c = graphics.getColor();
-			graphics.setColor(Color.WHITE);
+			if (!Caseless.isNullOrEmpty(mapping)) {
+				// pin connected
+				graphics.setColor(Color.BLACK);
+			} else {
+				// pin not connected
+				graphics.setColor(Color.WHITE);
+			}
 			graphics.fillOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
 			graphics.setColor(c);
 			graphics.drawOval(offset.x - PORT_SIZE / 2, offset.y - PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
