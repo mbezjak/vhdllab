@@ -65,4 +65,11 @@ public class CanvasColorProvider {
 	 * Color of a component to be added to the model
 	 */
 	public static final Color COMPONENT_TO_ADD = Color.RED;
+
+	/**
+	 * Color of all signal lines connected to selected component
+	 */
+	public static final Color SIGNAL_LINE_SELECTED_ONCOMP = Color.ORANGE;
+
+	public static final Color SIGNAL_LINE_SELECTED_PORT = Color.ORANGE;
 }

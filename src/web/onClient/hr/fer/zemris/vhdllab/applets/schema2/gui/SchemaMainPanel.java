@@ -257,13 +257,17 @@ public class SchemaMainPanel extends AbstractEditor {
 			public void actionPerformed(ActionEvent e) {
 				if(localGUIController.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE){
 					if(SchemaCanvas.doDeleteWire(SchemaMainPanel.this)){
-						ICommand delete = new DeleteWireCommand(localGUIController.getSelectedComponent());
+						Caseless sel = localGUIController.getSelectedComponent();
+						localGUIController.setSelectedComponent(sel, CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED);
+						ICommand delete = new DeleteWireCommand(sel);
 						controller.send(delete);
 					}
 				}
 				else if(localGUIController.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_COMPONENT){
-					ICommand instantiate = new DeleteComponentCommand(localGUIController.getSelectedComponent());
-					controller.send(instantiate);
+					Caseless sel = localGUIController.getSelectedComponent();
+					localGUIController.setSelectedComponent(sel, CanvasToolbarLocalGUIController.TYPE_NOTHING_SELECTED);
+					ICommand delete = new DeleteComponentCommand(sel);
+					controller.send(delete);
 				}
 			}
 		});

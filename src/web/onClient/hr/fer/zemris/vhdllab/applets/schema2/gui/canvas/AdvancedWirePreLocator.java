@@ -97,8 +97,8 @@ public class AdvancedWirePreLocator implements IWirePreLocator{
 	}
 
 	private void expandWire(ISchemaController controller, CriticalPoint wireBeginning, CriticalPoint wireEnding) {
-		//Caseless wireName = wireBeginning.getName();
-		Caseless wireName = createName(x1,y1,x2,y2);
+		Caseless wireName = wireBeginning.getName();
+		//Caseless wireName = createName(x1,y1,x2,y2);
 
 		ICommand instantiate = new ExpandWireCommand(wireName,segmentList);
 		ICommandResponse response = controller.send(instantiate);
@@ -204,6 +204,7 @@ public class AdvancedWirePreLocator implements IWirePreLocator{
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void revalidateWire() {
 		IQuery inspect = new InspectWalkability(true); 

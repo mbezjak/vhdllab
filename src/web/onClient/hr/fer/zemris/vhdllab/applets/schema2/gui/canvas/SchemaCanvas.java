@@ -7,6 +7,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.UnknownComponentP
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQuery;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController;
@@ -26,6 +28,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.DeleteSegment
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.DeleteWireCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.InstantiateComponentCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.MoveComponentCommand;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.FindConnectedPins;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -44,6 +47,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -204,6 +208,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	 * and wires collections.
 	 *
 	 */
+	@SuppressWarnings("unchecked")
 	private void drawComponents() {
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -262,6 +267,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					CanvasColorProvider.SIGNAL_LINE_SELECTED:
 						CanvasColorProvider.SIGNAL_LINE);
 			wires.fetchWire(name).getDrawer().draw(g, drawProperties);
+			
 			Rect2d rect = wires.getBounds(name);
 			if(rect.left + rect.width + 10 > sizeX)sizeX =rect.left + rect.width + 10;
 			if(rect.top + rect.height + 10 > sizeY)sizeY =rect.top + rect.height + 10;
@@ -285,17 +291,51 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			preLoc.draw(g);
 			g.setColor(temp);			
 		}
-		
+
 		if(point!=null){
 			point.draw(g, decrementer.getIznos());
 		}
+
+		if(type == CanvasToolbarLocalGUIController.TYPE_WIRE 
+				&& !Caseless.isNullOrEmpty(sel)){
+			drawConnectedPins(g,sel);
+		}
 		
+		if(type == CanvasToolbarLocalGUIController.TYPE_COMPONENT 
+				&& !Caseless.isNullOrEmpty(sel)){
+			ISchemaComponent comp = components.fetchComponent(sel);
+			Color cl = g.getColor();
+			g.setColor(CanvasColorProvider.SIGNAL_LINE_SELECTED_ONCOMP);
+			for (SchemaPort sp : comp.getSchemaPorts()) {
+				Caseless mappedto = sp.getMapping();
+				if (Caseless.isNullOrEmpty(mappedto)) continue;
+				else {
+					wires.fetchWire(mappedto).getDrawer().draw(g, drawProperties);
+					drawConnectedPins(g, mappedto);
+				}
+			}
+			g.setColor(cl);
+		}
+
 		setCanvasSize(sizeX,sizeY);
-		
+
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
 	
+	@SuppressWarnings("unchecked")
+	private void drawConnectedPins(Graphics2D g, Caseless sel) {
+		IQuery q = new FindConnectedPins(sel);
+		IQueryResult r = controller.send(q);
+		List<XYLocation> locList = (List<XYLocation>) r.get(FindConnectedPins.KEY_PIN_LOCATIONS);
+		Color cl = g.getColor();
+		g.setColor(CanvasColorProvider.SIGNAL_LINE_SELECTED_PORT);
+		for(XYLocation xy:locList){
+			g.fillOval(xy.x-4, xy.y-4, 8, 8);
+		}
+		g.setColor(cl);		
+	}
+
 	private void setCanvasSize(int sizeX, int sizeY) {
 		Insets in = this.getInsets();
 		this.setPreferredSize(new Dimension(sizeX+in.left+in.right, sizeY+in.top+in.bottom));
@@ -378,7 +418,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
 					int distToComp = -1;
 					if(comp != null){
-						//FIXME ovaj +5 je zbog crtanja komponenti
+						//+5 je zbog crtanja komponenti
 						distToComp = 5 + Math.abs(components.distanceTo(comp.getName(), e.getX(), e.getY()));
 					}
 					ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
@@ -431,7 +471,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
 					int distToComp = -1;
 					if(comp != null){
-						//FIXME ovaj +5 je zbog crtanja komponenti...
+						//+5 je zbog crtanja komponenti...
 						distToComp = 5 + Math.abs(components.distanceTo(comp.getName(), e.getX(), e.getY()));
 					}
 					ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
@@ -440,7 +480,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 						distToWire = Math.abs(wires.distanceTo(wire.getName(), e.getX(), e.getY()));
 					}
 					
-					System.err.println("############ : -- "+distToComp + " ----- "+ distToWire);
+					//System.err.println("############ : -- "+distToComp + " ----- "+ distToWire);
 					
 					if(distToComp != -1){
 						if(distToWire != -1){
@@ -515,6 +555,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
 					if(comp!=null){
 						componentToMove = comp.getName();
+						localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
 					}
 				}
 			}
