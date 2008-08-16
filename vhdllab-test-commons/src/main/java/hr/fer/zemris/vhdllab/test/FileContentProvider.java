@@ -55,6 +55,12 @@ public final class FileContentProvider {
 		list.add(readFile("complex_source"));
 		list.add(readFile("ultra_complex_source"));
 
+		list = contents.get(FileTypes.VHDL_TESTBENCH);
+		list.add(readFile("comp_and_tb"));
+		list.add(readFile("complex_source_tb"));
+		list.add(readFile("ultra_complex_source_tb"));
+		list.add(readFile("comp_oror_tb"));
+		
 		list = contents.get(FileTypes.VHDL_PREDEFINED);
         list.add(readFile("VL_OR"));
 

@@ -40,14 +40,16 @@ public class ServerConfParserTest {
                 "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
-        // m.addFunctionality(FunctionalityType.GENERATOR.toString(),
-        // "hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator");
-        // m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
-        // "hr.fer.zemris.vhdllab.service.extractors.TestbenchExtractor");
-        // m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
-        // "hr.fer.zemris.vhdllab.service.dependencies.TestbenchDependency");
+        m.addFunctionality(FunctionalityType.GENERATOR.toString(),
+                "hr.fer.zemris.vhdllab.service.generators.tb.Testbench");
+        m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
+                "hr.fer.zemris.vhdllab.service.extractors.tb.TestbenchExtractor");
+        m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
+                "hr.fer.zemris.vhdllab.service.dependencies.tb.TestBenchDependencyExtractor");
         m.addFunctionality(FunctionalityType.COMPILER.toString(),
                 "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
+        m.addFunctionality(FunctionalityType.SIMULATOR.toString(),
+                "hr.fer.zemris.vhdllab.service.simulator.GHDLSimulator");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_SCHEMA);
         // m.addFunctionality(FunctionalityType.GENERATOR.toString(),

@@ -24,7 +24,7 @@ import java.util.Properties;
  * A compiler implementation must also be deterministic! Meaning that repeated
  * invocation of the same file parameter must return the same result!
  * </p>
- *
+ * 
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
@@ -38,7 +38,7 @@ public interface Compiler extends Functionality<CompilationResult> {
      * Implementor can expect <code>file</code> parameter to always be not
      * <code>null</code>.
      * </p>
-     *
+     * 
      * @param file
      *            a file to compile
      * @return a compilation result
@@ -46,4 +46,5 @@ public interface Compiler extends Functionality<CompilationResult> {
      *             if exceptional condition occurs
      */
     CompilationResult execute(File file) throws ServiceException;
+
 }

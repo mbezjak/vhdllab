@@ -21,7 +21,7 @@ import hr.fer.zemris.vhdllab.api.util.StringFormat;
  * <li>[3000, 4000) - errors in presentation tier</li>
  * </ul>
  * </p>
- *
+ * 
  * @author Miro Bezjak
  * @version 1.0
  * @since 6/2/2008
@@ -82,13 +82,13 @@ public final class StatusCodes {
     public static final short DAO_INVALID_FILE_TYPE = 1300;
     /**
      * File name can't be any string. Must only be correctly formed.
-     *
+     * 
      * @see StringFormat#isCorrectFileName(String)
      */
     public static final short DAO_INVALID_FILE_NAME = 1310;
     /**
      * Project name can't be any string. Must only be correctly formed.
-     *
+     * 
      * @see StringFormat#isCorrectProjectName(String)
      */
     public static final short DAO_INVALID_PROJECT_NAME = 1400;
@@ -104,5 +104,11 @@ public final class StatusCodes {
      * is not correctly written.
      */
     public static final short SERVICE_CANT_EXTRACT_DEPENDENCIES = 2020;
+
+    /**
+     * Could not generate VHDL code for specified file. For example, one of
+     * dependencies doesn't exist.
+     */
+    public static final short SERVICE_CANT_GENERATE_VHDL_CODE = 2030;
 
 }

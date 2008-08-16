@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
+import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.File;
@@ -272,6 +273,14 @@ public final class VHDLLabServiceManager implements ServiceManager {
         return executeFunctionality(file, FunctionalityType.COMPILER);
     }
 
+    /* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.service.ServiceManager#simulate(hr.fer.zemris.vhdllab.entities.File)
+     */
+    @Override
+    public SimulationResult simulate(File file) throws ServiceException {
+        return executeFunctionality(file, FunctionalityType.SIMULATOR);
+    }
+    
     /**
      * Executes functionality for specified <code>file</code> and returns a
      * result of execution.

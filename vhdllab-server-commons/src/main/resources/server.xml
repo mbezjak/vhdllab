@@ -22,14 +22,16 @@
   </fileTypeMapping>
 
   <fileTypeMapping type="vhdl.testbench">
-    <!-- <functionality type="generator"
-      class="hr.fer.zemris.vhdllab.service.generators.TestbenchGenerator" /> -->
-    <!-- <functionality type="extractor"
-      class="hr.fer.zemris.vhdllab.service.extractors.TestbenchExtractor" /> -->
-    <!-- <functionality type="dependency"
-      class="hr.fer.zemris.vhdllab.service.dependencies.TestbenchDependency" /> -->
+    <functionality type="generator"
+      class="hr.fer.zemris.vhdllab.service.generators.tb.Testbench" />
+    <functionality type="extractor"
+      class="hr.fer.zemris.vhdllab.service.extractors.tb.TestbenchExtractor" />
+    <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.tb.TestBenchDependencyExtractor" />
     <functionality type="compiler"
       class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
+    <functionality type="simulator"
+      class="hr.fer.zemris.vhdllab.service.simulator.GHDLSimulator" />
   </fileTypeMapping>
 
   <fileTypeMapping type="vhdl.schema">
