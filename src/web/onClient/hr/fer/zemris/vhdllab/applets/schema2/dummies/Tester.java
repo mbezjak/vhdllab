@@ -5,15 +5,10 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQuery;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQueryResult;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.AddWireCommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.InstantiateComponentCommand;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.FindConnectedComponents;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.FindConnectedPins;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.InspectWalkability;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.SmartConnect;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.model.queries.misc.WalkabilityMap;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
@@ -36,9 +31,8 @@ import java.io.StringWriter;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
-import de.muntjak.tinylookandfeel.TinyLookAndFeel;
+//import de.muntjak.tinylookandfeel.TinyLookAndFeel;
 
 
 
@@ -47,15 +41,15 @@ import de.muntjak.tinylookandfeel.TinyLookAndFeel;
 
 public class Tester {
 	
-	{
-		try {
-//			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-			TinyLookAndFeel lnf = new TinyLookAndFeel();
-			UIManager.setLookAndFeel(lnf);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	{
+//		try {
+////			javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+//			TinyLookAndFeel lnf = new TinyLookAndFeel();
+//			UIManager.setLookAndFeel(lnf);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	@SuppressWarnings("unused")
 	private static class TestComp implements Comparable {

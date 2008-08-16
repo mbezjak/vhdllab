@@ -225,7 +225,6 @@ public class Testbench implements IVHDLGenerator {
 	 * @param gen
 	 *            a generator from where to draw information.
 	 */
-	@SuppressWarnings("unchecked")
 	private List<Slot> createProcessList(CircuitInterface ci, Generator gen) {
 		Slot tmp = new Slot(0);
 		Map<Slot, Slot> table = new HashMap<Slot, Slot>();
@@ -356,7 +355,7 @@ public class Testbench implements IVHDLGenerator {
 		 * Compares this Slot with the specified object for order. Two slots are
 		 * compared by time.
 		 * 
-		 * @param a
+		 * @param other
 		 *            <code>Slot</code> to be compared.
 		 * @return the value 0 if the argument slot is equal to this slot; a
 		 *         value less than 0 if this slot has time less than the slot
@@ -405,7 +404,7 @@ public class Testbench implements IVHDLGenerator {
 		 * 
 		 * @return a hash code value for this <code>Slot</code> instance.
 		 * @see java.lang.String#hashCode()
-		 * @see java.lang.List#hashCode()
+		 * @see java.util.List#hashCode()
 		 */
 		@Override
 		public int hashCode() {
