@@ -19,6 +19,7 @@
     <module>vhdllab-entities</module>
     <module>vhdllab-test-commons</module>
     <module>vhdllab-commons</module>
+    <module>vhdllab-presentation</module>
   </modules>
 
 
