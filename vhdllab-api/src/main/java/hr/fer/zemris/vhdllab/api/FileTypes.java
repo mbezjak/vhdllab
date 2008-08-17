@@ -44,4 +44,9 @@ public final class FileTypes {
      */
     public static final String PREFERENCES_USER = "preferences.user";
 
+    /**
+     * A library file type used for storing client application errors.
+     */
+    public static final String ERROR = "error";
+    
 }

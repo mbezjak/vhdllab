@@ -22,5 +22,10 @@
       <version>4.4</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>commons-digester</groupId>
+    	<artifactId>commons-digester</artifactId>
+    	<version>1.8</version>
+    </dependency>
   </dependencies>
 </project>

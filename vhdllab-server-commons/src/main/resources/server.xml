@@ -59,6 +59,8 @@
   <fileTypeMapping type="vhdl.predefined" />
 
   <fileTypeMapping type="preferences.user" />
+  
+  <fileTypeMapping type="error" />
 
   <!--
     Global properties for all functionalities.

@@ -1,22 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>vhdllab</artifactId>
     <groupId>hr.fer.zemris.vhdllab</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>hr.fer.zemris.vhdllab</groupId>
   <artifactId>vhdllab-presentation</artifactId>
+  
   <name>VHDLLab presentation</name>
-  <version>0.0.1-SNAPSHOT</version>
-  <description/>
+  <description></description>
+  
   <dependencies>
-    <dependency>
-      <groupId>hr.fer.zemris.vhdllab</groupId>
-      <artifactId>vhdllab-server-commons</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
     <dependency>
       <groupId>hr.fer.zemris.vhdllab</groupId>
       <artifactId>vhdllab-service</artifactId>
@@ -25,9 +24,19 @@
     </dependency>
     <dependency>
       <groupId>hr.fer.zemris.vhdllab</groupId>
+      <artifactId>vhdllab-server-commons</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>hr.fer.zemris.vhdllab</groupId>
       <artifactId>vhdllab-test-commons</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.picocontainer</groupId>
+      <artifactId>picocontainer</artifactId>
+      <version>2.0.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -36,10 +45,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.picocontainer</groupId>
-      <artifactId>picocontainer</artifactId>
-      <version>2.0.2</version>
-      <scope>compile</scope>
+    	<groupId>hr.fer.zemris.vhdllab</groupId>
+    	<artifactId>vhdllab-commons</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

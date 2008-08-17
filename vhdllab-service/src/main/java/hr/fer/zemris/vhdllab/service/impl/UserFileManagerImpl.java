@@ -1,8 +1,14 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
+import hr.fer.zemris.vhdllab.entities.Library;
+import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.entities.UserFile;
+import hr.fer.zemris.vhdllab.preferences.global.PreferencesParser;
+import hr.fer.zemris.vhdllab.preferences.global.Property;
+import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.UserFileManager;
 
@@ -16,75 +22,116 @@ import java.util.List;
  * @since vhdllab2
  */
 public final class UserFileManagerImpl extends AbstractEntityManager<UserFile>
-		implements UserFileManager {
+        implements UserFileManager {
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param dao
-	 *            a data access object for an entity
-	 * @throws NullPointerException
-	 *             if <code>dao</code> is <code>null</code>
-	 */
-	public UserFileManagerImpl(UserFileDAO dao) {
-		super(dao);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param dao
+     *            a data access object for an entity
+     * @throws NullPointerException
+     *             if <code>dao</code> is <code>null</code>
+     */
+    public UserFileManagerImpl(UserFileDAO dao) {
+        super(dao);
+    }
 
-	/**
-	 * Returns a data access object of same type as constructor accepts it.
-	 * 
-	 * @return a data access object
-	 */
-	private UserFileDAO getDAO() {
-		/*
-		 * Can cast because sole constructor accepts object of this type.
-		 */
-		return (UserFileDAO) dao;
-	}
+    /**
+     * Returns a data access object of same type as constructor accepts it.
+     * 
+     * @return a data access object
+     */
+    private UserFileDAO getDAO() {
+        /*
+         * Can cast because sole constructor accepts object of this type.
+         */
+        return (UserFileDAO) dao;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.service.UserFileManager#exists(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean exists(String userId, String name) throws ServiceException {
-		try {
-			return getDAO().exists(userId, name);
-		} catch (DAOException e) {
-			throw new ServiceException(e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * hr.fer.zemris.vhdllab.service.UserFileManager#exists(java.lang.String,
+     * java.lang.String)
+     */
+    @Override
+    public boolean exists(String userId, String name) throws ServiceException {
+        try {
+            return getDAO().exists(userId, name);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.service.UserFileManager#findByName(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public UserFile findByName(String userId, String name)
-			throws ServiceException {
-		try {
-			return getDAO().findByName(userId, name);
-		} catch (DAOException e) {
-			throw new ServiceException(e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * hr.fer.zemris.vhdllab.service.UserFileManager#findByName(java.lang.String
+     * , java.lang.String)
+     */
+    @Override
+    public UserFile findByName(String userId, String name)
+            throws ServiceException {
+        UserFile file = null;
+        if (exists(userId, name)) {
+            try {
+                file = getDAO().findByName(userId, name);
+            } catch (DAOException e) {
+                e.printStackTrace();
+                throw new ServiceException(StatusCodes.DAO_DOESNT_EXIST, e);
+            }
+        } else {
+            ServiceContainer container = ServiceContainer.instance();
+            Library lib = container.getLibraryManager().findByName("preferences");
+            LibraryFile globalFile = container.getLibraryFileManager().findByName(lib.getId(), name);
+            file = synchronizeUserFile(globalFile, userId);
+        }
+        return file;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.service.UserFileManager#findByUser(java.lang.String)
-	 */
-	@Override
-	public List<UserFile> findByUser(String userId) throws ServiceException {
-		try {
-			return getDAO().findByUser(userId);
-		} catch (DAOException e) {
-			throw new ServiceException(e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * hr.fer.zemris.vhdllab.service.UserFileManager#findByUser(java.lang.String
+     * )
+     */
+    @Override
+    public List<UserFile> findByUser(String userId) throws ServiceException {
+        try {
+            List<UserFile> files = getDAO().findByUser(userId);
+            ServiceContainer container = ServiceContainer.instance();
+            Library lib = container.getLibraryManager().findByName("preferences");
+            for (LibraryFile globalFile : lib.getFiles()) {
+                boolean found = false;
+                for (UserFile userFile : files) {
+                    if (userFile.getName().equalsIgnoreCase(
+                            globalFile.getName())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    UserFile uf = synchronizeUserFile(globalFile, userId);
+                    files.add(uf);
+                }
+            }
+            return files;
+        } catch (DAOException e) {
+            e.printStackTrace();
+            throw new ServiceException(StatusCodes.DAO_DOESNT_EXIST, e);
+        }
+    }
+
+    private UserFile synchronizeUserFile(LibraryFile file, String userId)
+            throws ServiceException {
+        UserFile uf = new UserFile(userId, file.getName(), file.getType());
+        Property property = PreferencesParser.parseProperty(file.getContent());
+        uf.setContent(property.getData().getDefaultValue());
+        save(uf);
+        return uf;
+    }
 
 }

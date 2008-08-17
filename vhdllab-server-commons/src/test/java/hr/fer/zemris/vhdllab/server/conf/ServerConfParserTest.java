@@ -75,6 +75,8 @@ public class ServerConfParserTest {
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.PREFERENCES_USER);
         expectedConf.addFileTypeMapping(m);
+        m = new FileTypeMapping(FileTypes.ERROR);
+        expectedConf.addFileTypeMapping(m);
 
         ServerConf conf = ServerConfParser.getConfiguration();
         System.out.println(expectedConf);
