@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>war</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+    <moduleSet>
+      <includes>
+        <include>hr.fer.zemris.vhdllab:vhdllab-presentation</include>
+      </includes>
+      <binaries>
+        <outputFileNameMapping>${module.artifactId}-${module.version}.${module.extension}</outputFileNameMapping>
+        <outputDirectory>/WEB-INF/lib/</outputDirectory>
+        <unpack>false</unpack>
+      </binaries>
+    </moduleSet>
+  </moduleSets>
+  <files>
+    <file>
+      <source>vhdllab-dao/src/main/resources/log4j.properties</source>
+      <outputDirectory>/WEB-INF/classes/</outputDirectory>
+    </file>
+    <file>
+      <source>vhdllab-presentation/src/main/site/web.xml</source>
+      <outputDirectory>/WEB-INF/</outputDirectory>
+    </file>
+  </files>
+</assembly>
