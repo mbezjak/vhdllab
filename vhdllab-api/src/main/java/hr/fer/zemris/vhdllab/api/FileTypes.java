@@ -40,6 +40,11 @@ public final class FileTypes {
     public static final String VHDL_AUTOMATON = "vhdl.automaton";
 
     /**
+     * A vhdl simulation file type.
+     */
+    public static final String VHDL_SIMULATION = "vhdl.simulation";
+    
+    /**
      * A user preferences file type.
      */
     public static final String PREFERENCES_USER = "preferences.user";

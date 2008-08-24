@@ -1,0 +1,39 @@
+package hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions;
+
+
+
+
+
+
+
+/**
+ * Baca se u slucaju da metoda nije
+ * implementirana.
+ * 
+ * @author brijest
+ *
+ */
+public class NotImplementedException extends RuntimeException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public NotImplementedException() {
+		super();
+	}
+
+	public NotImplementedException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
+
+	public NotImplementedException(String arg0) {
+		super(arg0);
+	}
+
+	public NotImplementedException(Throwable arg0) {
+		super(arg0);
+	}
+	
+}

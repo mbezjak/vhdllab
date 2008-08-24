@@ -27,5 +27,10 @@
     	<artifactId>commons-digester</artifactId>
     	<version>1.8</version>
     </dependency>
+    <dependency>
+    	<groupId>hr.fer.zemris.vhdllab</groupId>
+    	<artifactId>vhdllab-api</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>

@@ -56,6 +56,8 @@
       class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
   </fileTypeMapping>
 
+  <fileTypeMapping type="vhdl.simulation" />
+  
   <fileTypeMapping type="vhdl.predefined" />
 
   <fileTypeMapping type="preferences.user" />

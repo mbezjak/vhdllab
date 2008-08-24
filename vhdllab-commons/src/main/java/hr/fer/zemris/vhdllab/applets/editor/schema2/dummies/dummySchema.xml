@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<schemaInfo>
+
+	<entity>
+		<parameters>
+			<parameter>
+				<paramClassName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.CaselessParameter</paramClassName>
+				<generic>false</generic>
+				<paramType>CASELESS</paramType>
+				<name>Name</name>
+				<value>dummyName</value>
+				<valueType>hr.fer.zemris.vhdllab.applets.schema2.misc.Caseless</valueType>
+				<allowedValues></allowedValues>
+				<eventName>hr.fer.zemris.vhdllab.applets.schema2.model.parameters.events.NameChanger</eventName>
+			</parameter>
+		</parameters>
+	</entity>
+
+	<wires>
+		
+	</wires>
+	
+	<components>
+		
+	</components>
+	
+</schemaInfo>
+
+
+
+
+
+
+
+
+
+
+

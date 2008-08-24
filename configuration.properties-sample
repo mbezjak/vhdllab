@@ -1,3 +1,23 @@
+app.name = vhdllab
+app.title = VHDLLab
+app.vendor = FER Java team, University of Zagreb, Croatia
+app.homepage =
+app.splash = splash_no_letters.png
+app.icon = icons/vhdllab_main_32.png
+
+app.host = localhost
+app.communication.protocol = https
+app.communication.port = 8443
+http.port = 8080
+https.port = 8443
+jnlp.file = launch.jnlp
+app.client.archive = vhdllab-web-onClient.jar commons-logging.jar commons-collections.jar commons-beanutils.jar commons-digester.jar commons-codec.jar commons-httpclient.jar log4j.jar
+app.main.class = hr.fer.zemris.vhdllab.applets.main.MainFrame
+jnlp.update.policy = always
+jnlp.vm.parameter = -client
+
+# TODO: clean upper properties!!
+
 ###############################################################################
 ### Application configuration properties                                    ###
 ###############################################################################

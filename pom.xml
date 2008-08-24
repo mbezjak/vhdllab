@@ -20,6 +20,7 @@
     <module>vhdllab-test-commons</module>
     <module>vhdllab-commons</module>
     <module>vhdllab-presentation</module>
+    <module>vhdllab-client</module>
   </modules>
 
 
@@ -150,6 +151,14 @@
       <id>codehaus</id>
       <name>Codehaus Maven2 repository</name>
       <url>http://repository.codehaus.org/</url>
+    </repository>
+    <repository><!-- For javax.jnlp only -->
+      <id>springRichclientRepository</id>
+      <name>Spring rich client repository</name>
+      <url>http://spring-rich-c.sourceforge.net/maven2repository</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
   </repositories>
 </project>
