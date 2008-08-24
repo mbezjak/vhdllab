@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.initialize;
 
+import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
@@ -9,6 +10,8 @@ import hr.fer.zemris.vhdllab.service.LibraryFileManager;
 import hr.fer.zemris.vhdllab.service.LibraryManager;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
+import hr.fer.zemris.vhdllab.servlets.initialize.predefinedFiles.PredefinedInitializer;
+import hr.fer.zemris.vhdllab.servlets.initialize.predefinedFiles.PredefinedInitializer.FileAndContent;
 import hr.fer.zemris.vhdllab.servlets.initialize.preferencesFiles.PreferencesInitializer;
 
 /**
@@ -31,10 +34,10 @@ public class InitServerData {
 	}
 
 	/**
-	 * Initializes all global files.
+	 * Initializes all global files and predefined files.
 	 * @throws ServiceException 
 	 */
-	public void initGlobalFiles() throws ServiceException {
+	public void initFiles() throws ServiceException {
 	    LibraryManager libman = container.getLibraryManager();
 	    LibraryFileManager libfileman = container.getLibraryFileManager();
 	    
@@ -55,6 +58,21 @@ public class InitServerData {
 				e.printStackTrace();
 			}
 		}
+		
+		lib = new Library("predefined");
+        libman.save(lib);
+        
+        PredefinedInitializer predefined = PredefinedInitializer.instance();
+        for (FileAndContent fc : predefined.getSources()) {
+            try {
+                if(!libfileman.exists(lib.getId(), fc.getFileName())) {
+                    LibraryFile file = new LibraryFile(lib, fc.getFileName(), FileTypes.VHDL_PREDEFINED, fc.getContent());
+                    libfileman.save(file);
+                }
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }
         EntityManagerUtil.closeEntityManager();
 	}
 	

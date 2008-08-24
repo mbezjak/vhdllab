@@ -31,7 +31,7 @@ public class InitServerDataNotJUnit {
 		EntityManagerUtil.createEntityManagerFactory();
 		EntityManagerUtil.currentEntityManager();
 		try {
-		    d.initGlobalFiles();
+		    d.initFiles();
 		    Library lib = container.getLibraryManager().findByName("preferences");
 			System.out.println(lib);
 			
@@ -39,6 +39,9 @@ public class InitServerDataNotJUnit {
 			for (UserFile uf : userFiles) {
 			    System.out.println(uf);
             }
+			
+			lib = container.getLibraryManager().findByName("predefined");
+            System.out.println(lib);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}

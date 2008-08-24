@@ -21,7 +21,7 @@ public class InitManagerProvider implements ServletContextListener {
 		// initialize server data
 		InitServerData initData = new InitServerData(ServiceContainer.instance());
 		try {
-            initData.initGlobalFiles();
+            initData.initFiles();
         } catch (ServiceException e) {
             e.printStackTrace();
         }
