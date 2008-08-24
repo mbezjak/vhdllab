@@ -76,6 +76,10 @@
         <directory>${basedir}/src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
+      <resource>
+        <directory>${basedir}/src/main/site</directory>
+        <filtering>true</filtering>
+      </resource>
     </resources>
   </build>
 

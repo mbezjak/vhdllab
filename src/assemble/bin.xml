@@ -17,14 +17,29 @@
       </binaries>
     </moduleSet>
   </moduleSets>
+  <fileSets>
+    <fileSet>
+      <directory>vhdllab-presentation/target/classes</directory>
+      <includes>
+        <include>*.xml</include>
+        <include>*.properties</include>
+        <include>*.jnlp</include>
+      </includes>
+      <outputDirectory>/WEB-INF/</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>vhdllab-presentation/src/main/resources</directory>
+      <outputDirectory>/WEB-INF/</outputDirectory>
+    </fileSet>
+  </fileSets>
   <files>
     <file>
       <source>vhdllab-dao/src/main/resources/log4j.properties</source>
       <outputDirectory>/WEB-INF/classes/</outputDirectory>
     </file>
-    <file>
-      <source>vhdllab-presentation/src/main/site/web.xml</source>
-      <outputDirectory>/WEB-INF/</outputDirectory>
-    </file>
+<!--    <file>-->
+<!--      <source>vhdllab-presentation/src/main/site/web.xml</source>-->
+<!--      <outputDirectory>/WEB-INF/</outputDirectory>-->
+<!--    </file>-->
   </files>
 </assembly>

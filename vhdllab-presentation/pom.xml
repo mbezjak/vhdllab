@@ -12,7 +12,7 @@
   </parent>
   <artifactId>vhdllab-presentation</artifactId>
   
-  <name>VHDLLab presentation</name>
+  <name>VHDLLab-Presentation</name>
   <description></description>
   
   <dependencies>
