@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is a server configuration file. It defines all file types that server
+  recognizes and associates various actions based on those types.
+-->
+<server>
+  <!-- A fileTypeMapping defines a file type that server recognizes.
+
+    The following attribute is required for fileTypeMapping:
+    type - a string describing file type. use only English alphabet and . (dot)
+  -->
+
+  <fileTypeMapping type="vhdl.source">
+    <functionality type="generator"
+      class="hr.fer.zemris.vhdllab.service.generators.SourceGenerator" />
+    <functionality type="extractor"
+      class="hr.fer.zemris.vhdllab.service.extractors.SourceExtractor" />
+    <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.SourceDependency" />
+    <functionality type="compiler"
+      class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
+  </fileTypeMapping>
+
+  <fileTypeMapping type="vhdl.testbench">
+    <functionality type="generator"
+      class="hr.fer.zemris.vhdllab.service.generators.tb.Testbench" />
+    <functionality type="extractor"
+      class="hr.fer.zemris.vhdllab.service.extractors.tb.TestbenchExtractor" />
+    <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.tb.TestBenchDependencyExtractor" />
+    <functionality type="compiler"
+      class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
+    <functionality type="simulator"
+      class="hr.fer.zemris.vhdllab.service.simulator.GHDLSimulator" />
+  </fileTypeMapping>
+
+  <fileTypeMapping type="vhdl.schema">
+    <functionality type="generator"
+      class="hr.fer.zemris.vhdllab.service.generators.SchemaVHDLGenerator" />
+    <functionality type="extractor"
+      class="hr.fer.zemris.vhdllab.service.extractors.SchemaCircuitInterfaceExtractor" />
+    <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.SchemaDependency" />
+    <functionality type="compiler"
+      class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
+  </fileTypeMapping>
+
+  <fileTypeMapping type="vhdl.automaton">
+    <functionality type="generator"
+      class="hr.fer.zemris.vhdllab.service.generators.automat.AutVHDLGenerator" />
+    <functionality type="extractor"
+      class="hr.fer.zemris.vhdllab.service.extractors.AutCircuitInterfaceExtractor" />
+    <functionality type="dependency"
+      class="hr.fer.zemris.vhdllab.service.dependencies.AUTDependancy" />
+    <functionality type="compiler"
+      class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
+  </fileTypeMapping>
+
+  <fileTypeMapping type="vhdl.simulation" />
+  
+  <fileTypeMapping type="vhdl.predefined" />
+
+  <fileTypeMapping type="preferences.user" />
+  
+  <fileTypeMapping type="error" />
+
+  <!--
+    Global properties for all functionalities.
+    This properties will be passed to every instantiated functionality!
+  -->
+  <properties>
+    <property key="compiler.executable" value="${compiler.executable}" />
+    <property key="compiler.tmpDir" value="${compiler.tmpDir}" />
+    <property key="simulator.executable" value="${simulator.executable}" />
+    <property key="simulator.tmpDir" value="${simulator.tmpDir}" />
+  </properties>
+
+</server>

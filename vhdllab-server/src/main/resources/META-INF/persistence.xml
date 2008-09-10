@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+	<persistence-unit name="hibernate">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>hr.fer.zemris.vhdllab.entities.Project</class>
+		<class>hr.fer.zemris.vhdllab.entities.File</class>
+		<class>hr.fer.zemris.vhdllab.entities.Library</class>
+		<class>hr.fer.zemris.vhdllab.entities.LibraryFile</class>
+		<class>hr.fer.zemris.vhdllab.entities.UserFile</class>
+		<properties>
+			<property name="hibernate.connection.url" value="${hibernate.connection.url}" />
+			<property name="hibernate.connection.username" value="${hibernate.connection.username}" />
+			<property name="hibernate.connection.password" value="${hibernate.connection.password}" />
+<!--			<property name="hibernate.connection.pool_size" value="${hibernate.connection.pool_size}" />-->
+			<property name="hibernate.dialect" value="${hibernate.dialect}" />
+			<property name="hibernate.connection.driver_class" value="${hibernate.connection.driver_class}" />
+			<property name="hibernate.connection.provider_class" value="${hibernate.connection.provider_class}" />
+			<property name="hibernate.cache.provider_class" value="${hibernate.cache.provider_class}" />
+			<property name="hibernate.cache.use_second_level_cache" value="${hibernate.cache.use_second_level_cache}" />
+			<property name="hibernate.cache.use_query_cache" value="${hibernate.cache.use_query_cache}" />
+			<property name="hibernate.show_sql" value="${hibernate.show_sql}" />
+			<property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+
+            <!-- DBCP configuration -->
+            <property name="hibernate.dbcp.maxActive">20</property>
+            <property name="hibernate.dbcp.maxIdle">8</property>
+            <property name="hibernate.dbcp.maxWait">5000</property>
+            <property name="hibernate.dbcp.whenExhaustedAction">1</property><!-- 1=block connection -->
+            <property name="hibernate.dbcp.testOnBorrow">true</property>
+            <property name="hibernate.dbcp.testOnReturn">false</property>
+            <property name="hibernate.dbcp.validationQuery">SELECT 1</property><!-- MySQL valid -->
+            <property name="hibernate.dbcp.ps.maxActive">20</property>
+            <property name="hibernate.dbcp.ps.maxIdle">8</property>
+            <property name="hibernate.dbcp.ps.maxWait">5000</property>
+            <property name="hibernate.dbcp.ps.whenExhaustedAction">1</property>
+		</properties>
+	</persistence-unit>
+</persistence>

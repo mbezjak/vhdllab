@@ -65,10 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.jnlp.ServiceManager;
 import javax.jnlp.SingleInstanceListener;
-import javax.jnlp.SingleInstanceService;
-import javax.jnlp.UnavailableServiceException;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -551,7 +548,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		} catch (Exception ignored) {
 			ignored.printStackTrace();
 		}
-		sis.removeSingleInstanceListener(sisListener);
+//		sis.removeSingleInstanceListener(sisListener);
 		System.exit(status);
 	}
 
@@ -1981,25 +1978,25 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 
 	}
 
-	private SISListener sisListener;
-	private SingleInstanceService sis;
+//	private SISListener sisListener;
+//	private SingleInstanceService sis;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				final MainFrame frame = new MainFrame();
-				SingleInstanceService sis;
-				try {
-					sis = (SingleInstanceService) ServiceManager
-							.lookup("javax.jnlp.SingleInstanceService");
-				} catch (UnavailableServiceException e) {
-					e.printStackTrace();
-					sis = null;
-				}
-				frame.sis = sis;
-				frame.sisListener = new SISListener(frame);
-				sis.addSingleInstanceListener(frame.sisListener);
+//				SingleInstanceService sis;
+//				try {
+//					sis = (SingleInstanceService) ServiceManager
+//							.lookup("javax.jnlp.SingleInstanceService");
+//				} catch (UnavailableServiceException e) {
+//					e.printStackTrace();
+//					sis = null;
+//				}
+//				frame.sis = sis;
+//				frame.sisListener = new SISListener(frame);
+//				sis.addSingleInstanceListener(frame.sisListener);
 
 				frame
 						.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -2017,7 +2014,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 				URL resource = frame.getClass().getClassLoader().getResource(
-						"images/icons/vhdllab_main_16.png");
+						"icons/vhdllab_main_16.png");
 				frame.setIconImage(new ImageIcon(resource).getImage());
 				frame.init();
 			}

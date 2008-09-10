@@ -162,9 +162,9 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 	/* mapa datoteka po projektu. */
 	private Map<String, List<String>> filesByProjects;
 
-	private Icon normal = new ImageIcon(getClass().getClassLoader().getResource("images/icons/hierarchy_xusesy_32.png"));
-	private Icon inverse = new ImageIcon(getClass().getClassLoader().getResource("images/icons/hierarchy_xusedbyy_32.png"));
-	private Icon flatIcon = new ImageIcon(getClass().getClassLoader().getResource("images/icons/hierarchy_flat_32.png"));
+	private Icon normal = new ImageIcon(getClass().getClassLoader().getResource("icons/hierarchy_xusesy_32.png"));
+	private Icon inverse = new ImageIcon(getClass().getClassLoader().getResource("icons/hierarchy_xusedbyy_32.png"));
+	private Icon flatIcon = new ImageIcon(getClass().getClassLoader().getResource("icons/hierarchy_flat_32.png"));
 	private JButton normalButton = new JButton(normal);
 	private JButton inverseButton = new JButton(inverse);
 	private JButton flatButton = new JButton(flatIcon);
@@ -406,19 +406,19 @@ public class DefaultProjectExplorer extends JPanel implements IView,
 		 */
 		private static final long serialVersionUID = 3562380292516384882L;
 		private String type;
-		private Icon vhdl = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_source_16.png"));
-		private Icon predefined = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_predefined_16.png"));
-		private Icon tb = new ImageIcon(getClass().getClassLoader().getResource("images/icons/file_testbench_16.png"));
+		private Icon vhdl = new ImageIcon(getClass().getClassLoader().getResource("icons/file_source_16.png"));
+		private Icon predefined = new ImageIcon(getClass().getClassLoader().getResource("icons/file_predefined_16.png"));
+		private Icon tb = new ImageIcon(getClass().getClassLoader().getResource("icons/file_testbench_16.png"));
 		private Icon automat = new ImageIcon(getClass().getClassLoader().getResource(
-				"images/icons/file_automaton_16.png"));
+				"icons/file_automaton_16.png"));
 		private Icon schema = new ImageIcon(getClass().getClassLoader()
-				.getResource("images/icons/file_schema_16.png"));
+				.getResource("icons/file_schema_16.png"));
 		private Icon simulation = new ImageIcon(getClass().getClassLoader().getResource(
-				"images/icons/file_simulation_16.png"));
+				"icons/file_simulation_16.png"));
 		private Icon project = new ImageIcon(getClass().getClassLoader().getResource(
-				"images/icons/project_16.png"));
+				"icons/project_16.png"));
 		private Icon defaultIcon = new ImageIcon(getClass().getClassLoader().getResource(
-		"images/icons/file_16.png"));
+		"icons/file_16.png"));
 
 		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value,

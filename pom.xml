@@ -12,15 +12,9 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>vhdllab-api</module>
-    <module>vhdllab-server-commons</module>
-    <module>vhdllab-service</module>
-    <module>vhdllab-dao</module>
-    <module>vhdllab-entities</module>
-    <module>vhdllab-test-commons</module>
-    <module>vhdllab-commons</module>
-    <module>vhdllab-presentation</module>
     <module>vhdllab-client</module>
+    <module>vhdllab-server</module>
+    <module>vhdllab-common</module>
   </modules>
 
 
@@ -55,6 +49,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <inherited>false</inherited>
         <configuration>
           <finalName>vhdllab</finalName>
           <appendAssemblyId>false</appendAssemblyId>
@@ -62,6 +57,38 @@
             <descriptor>src/assemble/bin.xml</descriptor>
           </descriptors>
         </configuration>
+      </plugin>
+      <plugin>
+        <!--
+            Using ant for deploying to tomcat because tomcat-maven-plugin
+            doesn't work when invoked on non-war project (such as this pom
+            project). It ignores such projects.
+            
+            Deploy to tomcat using 'mvn antrun:run' command.
+         -->
+        <artifactId>maven-antrun-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <tasks>
+            <property file="configuration.properties" />
+            <property name="path"     value="/vhdllab"/>
+            <property name="url"      value="http://${app.host}:${http.port}/manager"/>
+            <property name="username" value="${tomcat.manager.username}"/>
+            <property name="password" value="${tomcat.manager.password}"/>
+
+            <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"
+                    classpathref="maven.plugin.classpath"/>
+            <deploy url="${url}" username="${username}" password="${password}"
+                    path="${path}" update="true" war="target/vhdllab.war"/>
+          </tasks>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina-ant</artifactId>
+            <version>5.5.23</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
 
@@ -83,6 +110,45 @@
       </resource>
     </resources>
   </build>
+
+  <!-- Defines dependencies that every module has. -->
+  <dependencies>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.1</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <!-- Not using 1.2.15 because of weird dependencies in that version -->
+        <version>1.2.14</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.5</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <reporting>
     <plugins>

@@ -1,0 +1,22 @@
+<assembly>
+  <id>all</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory></outputDirectory>
+      <outputFileNameMapping></outputFileNameMapping>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/*.txt</exclude>
+          <exclude>META-INF/LICENSE*</exclude>
+          <exclude>META-INF/NOTICE*</exclude>
+        </excludes>
+      </unpackOptions>
+      <scope>runtime</scope>
+    </dependencySet>
+  </dependencySets>
+</assembly>

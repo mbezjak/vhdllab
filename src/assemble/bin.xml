@@ -8,7 +8,7 @@
   <moduleSets>
     <moduleSet>
       <includes>
-        <include>hr.fer.zemris.vhdllab:vhdllab-presentation</include>
+        <include>hr.fer.zemris.vhdllab:vhdllab-server</include>
       </includes>
       <binaries>
         <outputFileNameMapping>${module.artifactId}-${module.version}.${module.extension}</outputFileNameMapping>
@@ -19,27 +19,23 @@
   </moduleSets>
   <fileSets>
     <fileSet>
-      <directory>vhdllab-presentation/target/classes</directory>
+      <directory>vhdllab-server/target/classes</directory>
       <includes>
-        <include>*.xml</include>
-        <include>*.properties</include>
-        <include>*.jnlp</include>
+        <include>web.xml</include>
+        <include>parameters.properties</include>
+        <include>launch.jnlp</include>
       </includes>
-      <outputDirectory>/WEB-INF/</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>vhdllab-presentation/src/main/resources</directory>
       <outputDirectory>/WEB-INF/</outputDirectory>
     </fileSet>
   </fileSets>
   <files>
     <file>
-      <source>vhdllab-dao/src/main/resources/log4j.properties</source>
+      <source>vhdllab-server/src/main/resources/log4j.properties</source>
       <outputDirectory>/WEB-INF/classes/</outputDirectory>
     </file>
-<!--    <file>-->
-<!--      <source>vhdllab-presentation/src/main/site/web.xml</source>-->
-<!--      <outputDirectory>/WEB-INF/</outputDirectory>-->
-<!--    </file>-->
+    <file>
+      <source>vhdllab-client/target/vhdllab-client-${pom.version}-all.jar</source>
+      <outputDirectory></outputDirectory>
+    </file>
   </files>
 </assembly>
