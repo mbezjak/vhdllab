@@ -183,6 +183,9 @@ public class DefaultResourceManager implements IResourceManager {
 		if (fileName == null) {
 			throw new NullPointerException("File name can not be null.");
 		}
+		if(isPredefined(projectName, fileName)) {
+		    return;
+		}
 		try {
 			fireBeforeResourceDeletion(projectName, fileName);
 		} catch (ResourceVetoException e) {
