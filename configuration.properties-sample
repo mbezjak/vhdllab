@@ -16,8 +16,8 @@ app.main.class = hr.fer.zemris.vhdllab.applets.main.MainFrame
 jnlp.update.policy = always
 jnlp.vm.parameter = -client
 
-tomcat.manager.username = manager
-tomcat.manager.password = a
+tomcat.manager.username = username
+tomcat.manager.password = password
 
 # TODO: clean upper properties!!
 
