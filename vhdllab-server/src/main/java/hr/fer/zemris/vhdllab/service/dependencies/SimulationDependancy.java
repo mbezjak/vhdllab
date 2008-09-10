@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
-public class AUTDependancy implements DependencyExtractor {
+public class SimulationDependancy implements DependencyExtractor {
 
     /*
      * (non-Javadoc)

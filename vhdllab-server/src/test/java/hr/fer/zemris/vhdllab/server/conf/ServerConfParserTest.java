@@ -72,6 +72,8 @@ public class ServerConfParserTest {
                 "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_SIMULATION);
+        m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
+                "hr.fer.zemris.vhdllab.service.dependencies.SimulationDependancy");
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_PREDEFINED);
         expectedConf.addFileTypeMapping(m);

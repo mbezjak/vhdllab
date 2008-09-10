@@ -344,7 +344,8 @@ public final class VHDLLabServiceManager implements ServiceManager {
         Map<FunctionalityType, Functionality<?>> map = functionalities
                 .get(fileType);
         if (map == null) {
-            String message = "No functionalities for file type: " + fileType;
+            String message = "No functionalities (at all) for file type: "
+                    + fileType;
             log.error(message);
             throw new ServiceException(StatusCodes.SERVER_ERROR, message);
         }
