@@ -430,6 +430,21 @@ public interface IResourceManager {
 	boolean isCircuit(String projectName, String fileName);
 
 	/**
+     * Returns <code>true</code> if specified file is a predefined file (i.e.
+     * part of a library) or <code>false</code> otherwise. If either
+     * <code>projectName</code> or <code>fileName</code> is <code>null</code>
+     * then this method will return <code>false</code>.
+     * 
+     * @param projectName
+     *            project name that contains a file
+     * @param fileName
+     *            a name of a file
+     * @return <code>true</code> if specified file is a predefined file (i.e.
+     *         part of a library); <code>false</code> otherwise
+     */
+    boolean isPredefined(String projectName, String fileName);
+	
+	/**
 	 * Returns <code>true</code> if specified file is a testbench (i.e. a
 	 * component in vhdl with no ports, input nor output) or <code>false</code>
 	 * otherwise. If either <code>projectName</code> or <code>fileName</code>

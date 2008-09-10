@@ -124,7 +124,7 @@ public class DefaultResourceManager implements IResourceManager {
 		if (fileName == null) {
 			throw new NullPointerException("File name cant be null");
 		}
-		if (fileName == null) {
+		if (type == null) {
 			throw new NullPointerException("File type cant be null");
 		}
 		try {
@@ -507,6 +507,25 @@ public class DefaultResourceManager implements IResourceManager {
 	}
 
 	/*
+     * (non-Javadoc)
+     * 
+     * @see
+     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isPredefined
+     * (java.lang.String, java.lang.String)
+     */
+	@Override
+	public boolean isPredefined(String projectName, String fileName) {
+	    if (projectName == null || fileName == null) {
+	        return false;
+	    }
+	    String type = getFileType(projectName, fileName);
+	    if (type == null) {
+	        return false;
+	    }
+	    return FileTypesUtil.isPredefined(type);
+	}
+	
+	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isTestbench(java.lang.String,
@@ -602,9 +621,9 @@ public class DefaultResourceManager implements IResourceManager {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
-		return isCircuit(projectName, fileName)
-				|| isTestbench(projectName, fileName);
-		// TODO ovdje dodat i isPredefined
+		return (isCircuit(projectName, fileName)
+				|| isTestbench(projectName, fileName))
+				&& !isPredefined(projectName, fileName);
 	}
 
 	/*

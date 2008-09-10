@@ -230,4 +230,10 @@ public class DummyResourceManager implements IResourceManager {
 		
 	}
 
+    @Override
+    public boolean isPredefined(String projectName, String fileName) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
