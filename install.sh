@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mvn package assembly:assembly antrun:run -Dmaven.test.skip=true
+mvn install assembly:assembly antrun:run -Dmaven.test.skip=true

@@ -54,7 +54,7 @@
           <finalName>vhdllab</finalName>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptors>
-            <descriptor>src/assemble/bin.xml</descriptor>
+            <descriptor>src/assemble/war.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>

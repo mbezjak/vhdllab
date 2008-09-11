@@ -21,20 +21,21 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
-            <descriptor>src/assemble/all.xml</descriptor>
+            <descriptor>src/assemble/with-deps.xml</descriptor>
           </descriptors>
         </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <id>make-assembly-with-deps</id> <!-- this is used for inheritance merges -->
             <phase>package</phase> <!-- append to the packaging phase. -->
             <goals>
-              <goal>assembly</goal> <!-- goals == mojos -->
+              <goal>single</goal> <!-- goals == mojos -->
             </goals>
           </execution>
         </executions>
       </plugin>
     </plugins>
+    <finalName>${artifactId}</finalName>
   </build>
   
   <dependencies>

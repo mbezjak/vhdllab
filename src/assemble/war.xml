@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-  <id>bin</id>
+  <id>war</id>
   <formats>
     <format>war</format>
   </formats>
@@ -34,7 +34,7 @@
       <outputDirectory>/WEB-INF/classes/</outputDirectory>
     </file>
     <file>
-      <source>vhdllab-client/target/vhdllab-client-${pom.version}-all.jar</source>
+      <source>vhdllab-client/target/vhdllab-client-with-deps.jar</source>
       <outputDirectory></outputDirectory>
     </file>
   </files>

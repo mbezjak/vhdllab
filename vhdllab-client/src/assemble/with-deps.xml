@@ -1,5 +1,5 @@
 <assembly>
-  <id>all</id>
+  <id>with-deps</id>
   <formats>
     <format>jar</format>
   </formats>
@@ -19,4 +19,10 @@
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/images</directory>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+  </fileSets>
 </assembly>
