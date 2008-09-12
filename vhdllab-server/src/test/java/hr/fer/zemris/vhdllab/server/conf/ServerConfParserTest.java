@@ -41,11 +41,11 @@ public class ServerConfParserTest {
         expectedConf.addFileTypeMapping(m);
         m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
         m.addFunctionality(FunctionalityType.GENERATOR.toString(),
-                "hr.fer.zemris.vhdllab.service.generators.tb.Testbench");
+                "hr.fer.zemris.vhdllab.service.generators.TestbenchVHDLGenerator");
         m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
-                "hr.fer.zemris.vhdllab.service.extractors.tb.TestbenchExtractor");
+                "hr.fer.zemris.vhdllab.service.extractors.TestbenchExtractor");
         m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
-                "hr.fer.zemris.vhdllab.service.dependencies.tb.TestBenchDependencyExtractor");
+                "hr.fer.zemris.vhdllab.service.dependencies.TestbenchDependencyExtractor");
         m.addFunctionality(FunctionalityType.COMPILER.toString(),
                 "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         m.addFunctionality(FunctionalityType.SIMULATOR.toString(),

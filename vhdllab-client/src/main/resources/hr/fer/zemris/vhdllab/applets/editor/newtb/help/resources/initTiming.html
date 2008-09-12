@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+	<h1>Initialize Timing Dialog</h1>
+	<p>Initialize Timing Dialog koristi se za postavljanje inicijalnih vremenskih
+	parametara nekog testbencha. Ovaj prozor otvara se samo jednom, prilikom 
+	stvaranja novog testbencha. Parametre poput Check Ouputs, Assign Inputs, 
+	Clock Time High, Clock Time Low, te Input Setup Time moguće je unijeti 
+	samo na ovom mjestu.</p>
+	<p>VHDL Lab pruža mogućnost stvaranja dva tipa testbencha: Single Clock Testbench i Combinatorial Testbench.</p>
+	<h2>Single Clock Testbench</h2>
+	<p>Ovaj tip testbencha može se stvoriti jedino ako model koji se testira sadrži barem jedan skalarni signal.<p>
+	<h3>Upute za stvaranje novog Single Clock testbencha:</h3>
+	<ol>
+		<li>U okviru Clock Information odabere se Single Clock, te ime signala koji će predstavljati clock.</li>
+		<li>U Clock Timing Information okviru odabere se okidajući brid, padajući (Falling Edge) ili rastući (Rising Edge).</li>
+		<li>U istom tom okviru podese se sljedeći parametri:  Clock Time High, Clock Time Low, te Input Setup Time.</li>
+		<li>U okviru Time Scale Information unese se duljina trajanja testbencha, te vremenska skala.</li>
+	</ol>
+	<h2>Combinatorial Testbench</h2>
+	<h3>Upute za stvaranje novog Combinatorial testbencha:</h3>
+	<ol>
+		<li>U okviru Clock Information odabere se Combinatorial.</li>
+		<li>U Combinatorial Timing Information okviru podese se Check Ouputs i Assign Inputs parametri.</li>
+		<li>U okviru Time Scale Information unese se duljina trajanja testbencha, te vremenska skala.</li>
+	</ol>
+</body>
+</html>

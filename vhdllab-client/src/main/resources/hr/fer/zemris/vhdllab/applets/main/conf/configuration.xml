@@ -44,12 +44,8 @@
 
 		<editor id="editor.testbench">
 			<class>
-				hr.fer.zemris.vhdllab.applets.editor.tb.drawer.Aplet
+				hr.fer.zemris.vhdllab.applets.editor.newtb.TestbenchEditor
 			</class>
-			<!-- a new testbench class -->
-			<!--
-				<class>hr.fer.zemris.vhdllab.applets.editor.tb3.TestbenchEditor</class>
-			-->
 			<fileType>vhdl.testbench</fileType>
 			<savable>true</savable>
 			<readonly>false</readonly>
