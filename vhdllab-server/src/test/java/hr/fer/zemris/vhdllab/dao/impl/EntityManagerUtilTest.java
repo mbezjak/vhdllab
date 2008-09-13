@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -26,6 +27,17 @@ public class EntityManagerUtilTest {
 		EntityManagerUtil.closeEntityManager();
 	}
 
+	/**
+	 * Two invocations on {@link EntityManagerUtil#createEntityManagerFactory()}
+	 * will return same reference to entity manager factory
+	 */
+	@Test
+	public void createEntityManagerFactory() {
+	    EntityManagerFactory f1 = EntityManagerUtil.createEntityManagerFactory();
+	    EntityManagerFactory f2 = EntityManagerUtil.createEntityManagerFactory();
+	    assertTrue("Not same Entity Manager Factory reference.", f1 == f2);
+	}
+	
 	/**
 	 * Two invocations on {@link EntityManagerUtil#currentEntityManager()}
 	 * method from same thread will return same reference to entity manager
@@ -74,6 +86,9 @@ public class EntityManagerUtilTest {
 	public void beginTransaction() throws DAOException {
 		EntityManagerUtil.beginTransaction();
 		EntityManagerUtil.beginTransaction();
+
+		// test cleanup
+		EntityManagerUtil.commitAndCloseTransaction();
 	}
 
 	/**

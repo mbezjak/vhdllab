@@ -80,11 +80,12 @@ public final class EntityManagerUtil {
 	 * Creates an entity manager factor. Repeated invocation of this method will
 	 * do nothing (i.e. an entity manager factory can't initialize twice).
 	 */
-	public static void createEntityManagerFactory() {
+	public static EntityManagerFactory createEntityManagerFactory() {
 		/*
 		 * Method is empty because initialization is done in a static block
 		 * instead to ensure a final modifier.
 		 */
+	    return factory;
 	}
 
 	/**

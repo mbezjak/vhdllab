@@ -234,7 +234,12 @@ public final class VHDLLabServiceManager implements ServiceManager {
         /*
          * This method resolves a hierarchy by recursively invoking itself.
          */
-        Set<String> dependencies = extractDependencies(nodeFile, false);
+        Set<String> dependencies;
+        try {
+            dependencies = extractDependencies(nodeFile, false);
+        } catch (ServiceException e) {
+            dependencies = Collections.emptySet();
+        }
         FileManager fileMan = ServiceContainer.instance().getFileManager();
         Long projectId = nodeFile.getProject().getId();
         for (String name : dependencies) {

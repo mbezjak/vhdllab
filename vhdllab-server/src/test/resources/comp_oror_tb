@@ -1,8 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<testbench>
-<file>comp_oror</file>
-<measureUnit>ns</measureUnit>
-<duration>200</duration>
-<signal name="INS" type="vector" rangeFrom="1" rangeTo="0">(0,00)(50,10)(100,01)(150,11)(200,00)</signal>
-</testbench>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TestBench><TestBenchInfo><SourceName>comp_oror</SourceName><SimulationLength>200</SimulationLength></TestBenchInfo><InitTimingInfo><TestBenchType type="combinatorial"/><TestBenchLength>1000</TestBenchLength><TimeScale>ns</TimeScale><CombinatorialInfo assignInputsTime="25" checkOutputsTime="25"/></InitTimingInfo><Signals><Signal dimension="2" direction="downto" name="ins" type="vector">(0,00)(50,10)(100,01)(150,11)(200,00)</Signal></Signals></TestBench>

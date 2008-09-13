@@ -29,7 +29,7 @@ import org.junit.Test;
 
 /**
  * A test case for {@link VHDLLabServiceManager}'s extractHierarchy method.
- *
+ * 
  * @author Miro Bezjak
  */
 public class VHDLLabServiceManagerHierarchyTest {
@@ -257,6 +257,36 @@ public class VHDLLabServiceManagerHierarchyTest {
         Set<HierarchyNode> actualNodes = getNodes(hierarchy);
         assertEquals("hierarchy nodes not same.", nodes, actualNodes);
         checkNodeDependencies(nodes, actualNodes);
+    }
+
+    /**
+     * One dependency can't be resolved. Hierarchy is constructed without
+     * affected dependency.
+     */
+    @Test
+    public void extractHierarchyFaultyDependency() throws Exception {
+        Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(1);
+        String name = "comp_and_tb";
+        String type = FileTypes.VHDL_TESTBENCH;
+        prepairFaultyFile(name, type);
+        nodes.add(new HierarchyNode(name, type, null));
+        Hierarchy expected = new Hierarchy(project.getName(), nodes);
+
+        Hierarchy hierarchy = man.extractHierarchy(project);
+        assertEquals("hierarchy names not same.", expected, hierarchy);
+        Set<HierarchyNode> actualNodes = getNodes(hierarchy);
+        assertEquals("hierarchy nodes not same.", nodes, actualNodes);
+        checkNodeDependencies(nodes, actualNodes);
+    }
+
+    /**
+     * Persists specified file but without a content thereby creating faulty
+     * file.
+     */
+    private void prepairFaultyFile(String name, String type)
+            throws ServiceException {
+        new File(project, name, type, "faulty content");
+        container.getProjectManager().save(project);
     }
 
     /**

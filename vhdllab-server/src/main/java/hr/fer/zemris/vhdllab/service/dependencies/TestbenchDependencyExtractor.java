@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service.dependencies;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformTestbenchParserException;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.Testbench;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.TestbenchParser;
@@ -40,8 +41,7 @@ public class TestbenchDependencyExtractor implements DependencyExtractor {
 		try {
 			tb = TestbenchParser.parseXml(source);
 		} catch (UniformTestbenchParserException e) {
-			e.printStackTrace();
-			return null;
+			throw new ServiceException(StatusCodes.SERVICE_CANT_EXTRACT_DEPENDENCIES, e);
 		}
 		
         Set<String> dependencies = new HashSet<String>(1);

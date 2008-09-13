@@ -1,9 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<testbench>
-<file>comp_and</file>
-<measureUnit>ns</measureUnit>
-<duration>400</duration>
-<signal name="A" type="scalar">(0,0)(50,1)(100,0)(150,1)(200,0)(250,1)(300,0)(350,1)(400,0)</signal>
-<signal name="B" type="scalar">(0,0)(100,1)(200,0)(300,1)(400,0)</signal>
-</testbench>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TestBench><TestBenchInfo><SourceName>comp_and</SourceName><SimulationLength>200</SimulationLength></TestBenchInfo><InitTimingInfo><TestBenchType type="combinatorial"/><TestBenchLength>1000</TestBenchLength><TimeScale>ns</TimeScale><CombinatorialInfo assignInputsTime="25" checkOutputsTime="25"/></InitTimingInfo><Signals><Signal name="b" type="scalar">(0,0)(50,1)(100,0)(150,1)(200,0)</Signal><Signal name="a" type="scalar">(0,0)(100,1)(200,0)</Signal></Signals></TestBench>

@@ -254,7 +254,6 @@ public class HierarchyTest {
     /**
      * Simulate serialization tempering
      */
-    @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void readResolve() throws Exception {
         Field field = hierarchy.getClass().getDeclaredField("projectName");
@@ -273,7 +272,6 @@ public class HierarchyTest {
     /**
      * Serialize then deserialize
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void readResolve2() throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

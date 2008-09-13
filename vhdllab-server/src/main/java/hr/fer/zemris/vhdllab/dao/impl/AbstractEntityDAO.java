@@ -76,9 +76,11 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 		try {
 			em.persist(entity);
 		} catch (EntityExistsException e) {
+            EntityManagerUtil.rollbackTransaction();
 			log.error("Possible constraint violation: " + entity, e);
 			throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
 		} catch (PersistenceException e) {
+		    EntityManagerUtil.rollbackTransaction();
 		    if(e.getCause() instanceof ConstraintViolationException) {
 		        /*
 		         * When upgraded to hibernate to version 3.3.0.GA it seems that
@@ -139,6 +141,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 		try {
 			T entity = em.find(clazz, id);
 			if (entity == null) {
+	            EntityManagerUtil.rollbackTransaction();
 				throw new DAOException(StatusCodes.DAO_DOESNT_EXIST, clazz
 						.getCanonicalName()
 						+ "[" + id + "]" + " doesn't exit");
@@ -146,6 +149,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			preDeleteAction(entity);
 			em.remove(entity);
 		} catch (PersistenceException e) {
+            EntityManagerUtil.rollbackTransaction();
 			log.error("Unexpected error.", e);
 			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
@@ -260,6 +264,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 		try {
 			entity = em.find(clazz, id);
 		} catch (PersistenceException e) {
+            EntityManagerUtil.rollbackTransaction();
 			log.error("Unexpected error.", e);
 			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
@@ -297,10 +302,12 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			EntityManagerUtil.rollbackTransaction();
 			return null;
 		} catch (EntityExistsException e) {
+            EntityManagerUtil.rollbackTransaction();
 			log.error("Possible constraint violation: named query: "
 					+ namedQuery + ", params: " + parameters.toString(), e);
 			throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
 		} catch (PersistenceException e) {
+            EntityManagerUtil.rollbackTransaction();
 			log.error("Unexpected error.", e);
 			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}
@@ -342,6 +349,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 			EntityManagerUtil.rollbackTransaction();
 			return null;
 		} catch (PersistenceException e) {
+            EntityManagerUtil.rollbackTransaction();
 			log.error("Unexpected error.", e);
 			throw new DAOException(StatusCodes.SERVER_ERROR, e);
 		}

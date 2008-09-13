@@ -11,9 +11,9 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.SignalChange;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.VectorSignal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +50,8 @@ public abstract class Testbench implements Iterable<Signal>, SignalChangeListene
 		this.testBenchLength = testBenchLength;
 		this.timeScale = timeScale;
 		this.simulationLength = 0;
-		this.signalMap = new HashMap<String, Signal>();
+		// changed to LinkedHashMap by Miro to preserve ordering
+		this.signalMap = new LinkedHashMap<String, Signal>();
 		
 		this.listeners = new ArrayList<TestbenchListener>();
 		this.suspendedChangedSignals = new HashSet<Signal>();
