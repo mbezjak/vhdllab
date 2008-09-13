@@ -46,7 +46,9 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
 	private static final long serialVersionUID = 1L;
 	
 	private Testbench testbench = null;
-	
+    private JTestbench jTestbench = null;
+    private boolean GUICreated = false; 
+    
 	private void initTestbench(String xml) {
 		try {
 			this.testbench = TestbenchParser.parseXml(xml);
@@ -56,7 +58,9 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
 	}
 	
 	private void createGUI() {
-		final JTestbench jTestbench = new JTestbench(this.testbench);
+        this.GUICreated = true;
+        
+        this.jTestbench = new JTestbench(this.testbench);
 		
 		JPanel topPanel = new JPanel(new BorderLayout());
 		JPanel topLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -66,7 +70,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
 		JButton zoomOutButton = new JButton("Zoom out");
 		JButton optimalZoom = new JButton("Optimal zoom");
 		final JComboBox radixSelector = new JComboBox(new String[] {"Binary", "Decimal", "Hexadecimal"});
-		radixSelector.setSelectedItem(jTestbench.getTestbenchRadix().toString());
+        radixSelector.setSelectedItem(this.jTestbench.getTestbenchRadix().toString());
 		topLeftPanel.add(zoomInButton);
 		topLeftPanel.add(zoomOutButton);
 		topLeftPanel.add(optimalZoom);
@@ -80,7 +84,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
 		
 		this.setLayout(new BorderLayout());
 		this.add(topPanel, BorderLayout.NORTH);
-		this.add(jTestbench, BorderLayout.CENTER);
+        this.add(this.jTestbench, BorderLayout.CENTER);
 		
 		zoomInButton.addActionListener(new ActionListener() {
 			@Override
@@ -125,18 +129,29 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
 
 	@Override
 	public String getData() {
-		return this.testbench.toXml();
+        if(this.testbench == null) {
+            return "";
+        } else {
+            return this.testbench.toXml();
+        }
 	}
 
 	@Override
 	public IWizard getWizard() {
 		return this;
 	}
+	
+	@Override
+	public boolean isModified() {
+	    return true;
+	}
 
 	@Override
 	public void init() {
 		super.init();
-		this.createGUI();
+        if(!this.GUICreated) {
+            this.createGUI();
+        }
 	}
 
 	@Override
@@ -144,7 +159,10 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
 		super.setFileContent(content);
 		setModified(false);
 		this.initTestbench(content.getContent());
-		this.init();
+        if(!this.GUICreated) {
+            this.createGUI();
+        }
+        this.jTestbench.setModel(this.testbench);
 	}
 
 	@Override
