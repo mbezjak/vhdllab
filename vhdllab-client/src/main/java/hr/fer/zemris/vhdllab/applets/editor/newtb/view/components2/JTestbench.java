@@ -61,6 +61,8 @@ public class JTestbench extends JPanel implements TestbenchListener {
         }
     }
     
+    private ChangeListener changeListener = null;
+    
     private static final boolean DEBUG_MODE = true;
         
     private static final long serialVersionUID = 1L;
@@ -99,7 +101,6 @@ public class JTestbench extends JPanel implements TestbenchListener {
         this.setModel(model);
         
         this.setValueDialog = new SetSignalChangeValueDialog();
-        
         this.testbenchRadix = Radix.Binary;
     }
     
@@ -117,6 +118,9 @@ public class JTestbench extends JPanel implements TestbenchListener {
                 }
             }
             
+            if(this.model != null) {
+                this.model.removeTestbenchListener(this);
+            }
             this.model = model;
             this.model.addTestbenchListener(this);
             
@@ -621,12 +625,8 @@ public class JTestbench extends JPanel implements TestbenchListener {
     }
 
     @Override
-    public void signalAdded(String signalName) {
-        this.repaint();     
-    }
-
-    @Override
     public void signalChanged(String signalName) {
+        this.fireTestbenchChanged();
         this.repaint();
         
         if(DEBUG_MODE) {
@@ -636,6 +636,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
 
     @Override
     public void simulationLengthChanged() {
+        this.fireTestbenchChanged();
         this.drawArea.moveMarker(this.model.getTestbench().getSimulationLength());
         this.repaint();
         
@@ -646,6 +647,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
 
     @Override
     public void testBenchLengthChanged() {
+        this.fireTestbenchChanged();
         this.repaint();
         
         if(DEBUG_MODE) {
@@ -727,5 +729,15 @@ public class JTestbench extends JPanel implements TestbenchListener {
         }
         this.testbenchRadix = testbenchRadix;
         this.repaint();
+    }
+    
+    private void fireTestbenchChanged() {
+        if(this.changeListener != null) {
+            this.changeListener.stateChanged(new ChangeEvent(this));
+        }
+    }
+    
+    public void setChangeListener(ChangeListener l) {
+        this.changeListener = l;
     }
 }
