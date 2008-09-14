@@ -1,4 +1,4 @@
-﻿package hr.fer.zemris.vhdllab.service.generators;
+package hr.fer.zemris.vhdllab.service.generators;
 
 import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
@@ -531,3 +531,4 @@ public class TestbenchVHDLGenerator implements VHDLGenerator {
     
     
 }
+
