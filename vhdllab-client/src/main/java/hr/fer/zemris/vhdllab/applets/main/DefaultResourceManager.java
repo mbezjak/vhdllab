@@ -101,18 +101,6 @@ public class DefaultResourceManager implements IResourceManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#createNewResource(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public boolean createNewResource(String projectName, String fileName,
-			String type) throws UniformAppletException {
-		return createNewResource(projectName, fileName, type, null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#createNewResource(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -127,6 +115,9 @@ public class DefaultResourceManager implements IResourceManager {
 		if (type == null) {
 			throw new NullPointerException("File type cant be null");
 		}
+		if (data == null) {
+		    throw new NullPointerException("File data cant be null");
+		}
 		try {
 			fireBeforeResourceCreation(projectName, fileName, type);
 		} catch (ResourceVetoException e) {
@@ -138,6 +129,7 @@ public class DefaultResourceManager implements IResourceManager {
 		} catch (ResourceVetoException e) {
 			// rollback
 			deleteFile(projectName, fileName);
+			// FIXME should this return false?
 		}
 		return true;
 	}
@@ -164,6 +156,7 @@ public class DefaultResourceManager implements IResourceManager {
 		} catch (ResourceVetoException e) {
 			// rollback
 			deleteProject(projectName);
+            // FIXME should this return false?
 		}
 		return true;
 	}

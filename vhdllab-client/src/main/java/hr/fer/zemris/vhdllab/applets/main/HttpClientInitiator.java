@@ -186,7 +186,6 @@ public final class HttpClientInitiator implements Initiator {
 	 * Registers a new {@link ProtocolSocketFactory} for <code>https</code>
 	 * protocol. This factory will accept self-signed certificate.
 	 */
-	@SuppressWarnings("unused")
 	private void registerProtocol() {
 		int port = Integer.parseInt(properties.getProperty(HTTPS_PORT));
 		Protocol easyhttps = new Protocol("https",
@@ -448,9 +447,8 @@ public final class HttpClientInitiator implements Initiator {
 				Throwable cause = e.getCause();
 				if (cause instanceof SecurityException) {
 					throw new SecurityException(cause);
-				} else {
-					SystemLog.instance().addErrorMessage(e);
 				}
+				SystemLog.instance().addErrorMessage(e);
 			}
 		}
 	}
@@ -493,19 +491,19 @@ public final class HttpClientInitiator implements Initiator {
 			if (option == JOptionPane.YES_OPTION) {
 				throw new SecurityException(
 						"User refused to provide proper username and password");
-			} else {
-				/*
-				 * Since this is a recursive loop and a user controls it, by
-				 * pressing no to a confirm dialog and a cancel to login dialog,
-				 * may lead to OutOfMemoryError but since these conditions are
-				 * so extreme (because user would have to repeat this loop
-				 * possibly thousands or even millions of times) there is no
-				 * need to prevent OutOfMemoryError.
-				 */
-				// show login dialog again
-				showLoginDialogImpl(displayRetryMessage);
-				// after recursive loop simply exit
 			}
+
+			/*
+			 * Since this is a recursive loop and a user controls it, by
+			 * pressing no to a confirm dialog and a cancel to login dialog,
+			 * may lead to OutOfMemoryError but since these conditions are
+			 * so extreme (because user would have to repeat this loop
+			 * possibly thousands or even millions of times) there is no
+			 * need to prevent OutOfMemoryError.
+			 */
+			// show login dialog again
+			showLoginDialogImpl(displayRetryMessage);
+			// after recursive loop simply exit
 		}
 	}
 

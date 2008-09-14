@@ -37,12 +37,6 @@ public class DummyResourceManager implements IResourceManager {
 
 	@Override
 	public boolean createNewResource(String projectName, String fileName,
-			String type) throws UniformAppletException {
-		return false;
-	}
-
-	@Override
-	public boolean createNewResource(String projectName, String fileName,
 			String type, String data) throws UniformAppletException {
 		return false;
 	}

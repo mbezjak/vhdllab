@@ -29,6 +29,7 @@ public class DoMethodCreateFile extends AbstractRegisteredMethod {
         Long projectId = method.getParameter(Long.class, PROP_ID);
         String fileName = method.getParameter(String.class, PROP_FILE_NAME);
         String fileType = method.getParameter(String.class, PROP_FILE_TYPE);
+        String content = method.getParameter(String.class, PROP_FILE_CONTENT);
         if (projectId == null || fileName == null || fileType == null) {
             return;
         }
@@ -36,7 +37,7 @@ public class DoMethodCreateFile extends AbstractRegisteredMethod {
         try {
             Project project = container.getProjectManager().load(projectId);
             checkProjectSecurity(request, method, project);
-            file = new File(project, fileName, fileType);
+            file = new File(project, fileName, fileType, content);
             container.getFileManager().save(file);
         } catch (ServiceException e) {
             method.setStatus(SE_CAN_NOT_CREATE_FILE, "projectId=" + projectId

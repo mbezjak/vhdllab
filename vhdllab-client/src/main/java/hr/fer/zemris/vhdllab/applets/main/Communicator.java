@@ -230,11 +230,6 @@ public class Communicator {
 		cache.cacheItem(projectName, projectIdentifier);
 	}
 
-	public void createFile(String projectName, String fileName, String type)
-			throws UniformAppletException {
-		createFile(projectName, fileName, type, null);
-	}
-
 	public void createFile(String projectName, String fileName, String type,
 			String data) throws UniformAppletException {
 		if (projectName == null)
@@ -247,14 +242,11 @@ public class Communicator {
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
 		CreateFileMethod method = new CreateFileMethod(projectIdentifier,
-				fileName, type, userId);
+				fileName, type, data, userId);
 		initiate(method);
 
 		Long fileIdentifier = method.getResult();
 		cache.cacheItem(projectName, fileName, fileIdentifier);
-		if (data != null) {
-			saveFile(projectName, fileName, data);
-		}
 	}
 
 	public void saveFile(String projectName, String fileName, String content)
