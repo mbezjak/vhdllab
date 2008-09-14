@@ -35,6 +35,16 @@
         </executions>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/images</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
     <finalName>${artifactId}</finalName>
   </build>
   
