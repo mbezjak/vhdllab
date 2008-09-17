@@ -265,7 +265,7 @@ public class InitTimingDialog extends JDialog {
 		JPanel clockInformation = new JPanel(new BorderLayout());
 		{
 			JPanel singleClock = new JPanel(new GridLayout(1,3));
-			singleClockButton = new JRadioButton("Sigle Clock");
+			singleClockButton = new JRadioButton("Single Clock");
 			singleClockButton.addActionListener(new ActionListener(){
 
 				@Override

@@ -63,7 +63,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
     
     private ChangeListener changeListener = null;
     
-    private static final boolean DEBUG_MODE = true;
+    private static final boolean DEBUG_MODE = false;
         
     private static final long serialVersionUID = 1L;
     
