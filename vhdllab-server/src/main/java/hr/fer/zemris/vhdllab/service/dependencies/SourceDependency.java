@@ -1,7 +1,8 @@
 package hr.fer.zemris.vhdllab.service.dependencies;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.service.DependencyExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.util.VhdlUtil;
@@ -12,7 +13,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * A dependency extractor for a {@link FileTypes#VHDL_SOURCE} file type.
+ * A dependency extractor for a {@link FileType#SOURCE} file type.
  *
  * @author Miro Bezjak
  * @version 1.0
@@ -43,16 +44,15 @@ public final class SourceDependency implements DependencyExtractor {
      * @see hr.fer.zemris.vhdllab.service.DependencyExtractor#execute(hr.fer.zemris.vhdllab.entities.File)
      */
     @Override
-    public Set<String> execute(File file) throws ServiceException {
-        String source = file.getContent();
+    public Set<Caseless> execute(File file) throws ServiceException {
+        String source = file.getData();
         source = VhdlUtil.decomment(source);
         source = VhdlUtil.removeWhiteSpaces(source);
         return extract(source);
     }
 
-    private Set<String> extract(String original) {
-        Set<String> dependencies = new HashSet<String>();
-        Set<String> uppercaseDependencies = new HashSet<String>();
+    private Set<Caseless> extract(String original) {
+        Set<Caseless> dependencies = new HashSet<Caseless>();
         String source = original.toUpperCase(Locale.ENGLISH);
 
         int pos = 0;
@@ -82,12 +82,9 @@ public final class SourceDependency implements DependencyExtractor {
                 pos = start;
                 continue;
             }
-            String component = original.substring(start, pos);
-            if (!uppercaseDependencies.contains(component
-                    .toUpperCase(Locale.ENGLISH))) {
+            Caseless component = new Caseless(original.substring(start, pos));
+            if (!dependencies.contains(component)) {
                 dependencies.add(component);
-                uppercaseDependencies
-                        .add(component.toUpperCase(Locale.ENGLISH));
             }
         }
 
@@ -111,12 +108,9 @@ public final class SourceDependency implements DependencyExtractor {
                 pos = start;
                 continue;
             }
-            String component = original.substring(start, pos);
-            if (!uppercaseDependencies.contains(component
-                    .toUpperCase(Locale.ENGLISH))) {
+            Caseless component = new Caseless(original.substring(start, pos));
+            if (!dependencies.contains(component)) {
                 dependencies.add(component);
-                uppercaseDependencies
-                        .add(component.toUpperCase(Locale.ENGLISH));
             }
         }
         return dependencies;

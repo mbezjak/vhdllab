@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.MessageType;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.service.Compiler;
@@ -101,15 +102,15 @@ public class GhdlCompiler implements Compiler {
     public CompilationResult execute(File file) throws ServiceException {
         ServiceManager man = ServiceContainer.instance().getServiceManager();
         Hierarchy hierarchy = man.extractHierarchy(file.getProject());
-        List<String> names = new ArrayList<String>();
+        List<Caseless> names = new ArrayList<Caseless>();
         orderFiles(hierarchy, names, file.getName());
         return compile(names, file);
     }
 
-    private void orderFiles(Hierarchy hierarchy, List<String> names, String n) {
-        Set<String> dependencies = hierarchy.getDependenciesForFile(n);
+    private void orderFiles(Hierarchy hierarchy, List<Caseless> names, Caseless n) {
+        Set<Caseless> dependencies = hierarchy.getDependenciesForFile(n);
         if (!dependencies.isEmpty()) {
-            for (String s : dependencies) {
+            for (Caseless s : dependencies) {
                 orderFiles(hierarchy, names, s);
             }
         }
@@ -118,7 +119,7 @@ public class GhdlCompiler implements Compiler {
         }
     }
 
-    private CompilationResult compile(List<String> names, File compileFile) {
+    private CompilationResult compile(List<Caseless> names, File compileFile) {
         java.io.File tmpFile = null;
         java.io.File tmpDir = null;
         try {
@@ -129,8 +130,8 @@ public class GhdlCompiler implements Compiler {
             tmpDir.mkdirs();
             // STEP 2: copy all vhdl files there
             // -----------------------------------------------------------
-            Long projectId = compileFile.getProject().getId();
-            for (String n : names) {
+            Integer projectId = compileFile.getProject().getId();
+            for (Caseless n : names) {
                 copyFile(n, tmpDir, projectId);
             }
             // STEP 3: prepare compiler call
@@ -239,7 +240,7 @@ public class GhdlCompiler implements Compiler {
         tmpDir.delete();
     }
 
-    private void copyFile(String name, java.io.File destDir, Long projectId)
+    private void copyFile(Caseless name, java.io.File destDir, Integer projectId)
             throws IOException, ServiceException {
         BufferedWriter bw = null;
 
@@ -255,12 +256,12 @@ public class GhdlCompiler implements Compiler {
                 File src = fileMan.findByName(projectId, name);
                 content = man.generateVHDL(src).getVHDL();
             } else {
-                Long libraryId = container.getLibraryManager()
+                Integer libraryId = container.getLibraryManager()
                         .getPredefinedLibrary().getId();
                 LibraryFileManager libFileMan = container
                         .getLibraryFileManager();
                 LibraryFile src = libFileMan.findByName(libraryId, name);
-                content = src.getContent();
+                content = src.getData();
             }
             bw.write(content);
         } catch (IOException ex) {

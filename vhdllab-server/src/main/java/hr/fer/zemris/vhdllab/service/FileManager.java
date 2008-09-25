@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 
 /**
@@ -25,7 +26,7 @@ public interface FileManager extends EntityManager<File> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(Long projectId, String name) throws ServiceException;
+	boolean exists(Integer projectId, Caseless name) throws ServiceException;
 
 	/**
 	 * Returns a file with specified project identifier and file name. Return
@@ -40,6 +41,6 @@ public interface FileManager extends EntityManager<File> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	File findByName(Long projectId, String name) throws ServiceException;
+	File findByName(Integer projectId, Caseless name) throws ServiceException;
 
 }

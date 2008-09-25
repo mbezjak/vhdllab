@@ -10,6 +10,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,7 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public boolean compile(String projectName, String fileName) {
+	public boolean compile(Caseless projectName, Caseless fileName) {
 		return false;
 	}
 
@@ -64,7 +66,7 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public boolean createNewFileInstance(String type) {
+	public boolean createNewFileInstance(FileType type) {
 		return false;
 	}
 
@@ -84,7 +86,7 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public String getSelectedProject() {
+	public Caseless getSelectedProject() {
 		return null;
 	}
 
@@ -104,7 +106,7 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public boolean simulate(String projectName, String fileName) {
+	public boolean simulate(Caseless projectName, Caseless fileName) {
 		return false;
 	}
 

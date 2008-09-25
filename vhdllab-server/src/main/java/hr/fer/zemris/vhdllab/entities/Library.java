@@ -1,128 +1,178 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 /**
  * A library is a collection of library files.
  * 
  * @author Miro Bezjak
- * @since 31/1/2008
  * @version 1.0
+ * @since vhdllab2
  */
-@Entity
-@Table(name = "libraries", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
-@NamedQueries(value = {
-		@NamedQuery(name = Library.FIND_BY_NAME_QUERY, query = "select l from Library as l where l.name = :name order by l.id"),
-		@NamedQuery(name = Library.GET_ALL_QUERY, query = "select l from Library as l order by l.id") })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Library extends Container<LibraryFile, Library> {
+public final class Library extends LibraryInfo {
 
-	private static final long serialVersionUID = 1L;
-	/**
-	 * A named query for finding libraries by name.
-	 */
-	public static final String FIND_BY_NAME_QUERY = "library.find.by.name";
-	/**
-	 * A named query for finding all libraries.
-	 */
-	public static final String GET_ALL_QUERY = "library.get.all";
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructor for persistence provider.
-	 */
-	Library() {
-		super();
-	}
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<LibraryFile> files;
 
-	/**
-	 * Creates a library with specified name.
-	 * 
-	 * @param name
-	 *            a name of a library
-	 * @throws NullPointerException
-	 *             if <code>name</code> is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if <code>name</code> is too long
-	 * @see #NAME_LENGTH
-	 */
-	public Library(String name) {
-		super(name);
-	}
+    /**
+     * Default constructor for persistence provider.
+     */
+    Library() {
+        super();
+        initFiles();
+    }
 
-	/**
-	 * Copy constructor.
-	 * 
-	 * @param l
-	 *            a library object to duplicate
-	 * @throws NullPointerException
-	 *             if <code>l</code> is <code>null</code>
-	 */
-	public Library(Library l) {
-		super(l);
-	}
+    /**
+     * Constructs a library out of specified <code>name</code>.
+     * 
+     * @param name
+     *            a name of a library
+     * @throws NullPointerException
+     *             if <code>name</code> is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if <code>name</code> is too long or isn't correctly formatted
+     * @see #NAME_LENGTH
+     */
+    public Library(Caseless name) {
+        super(name);
+        initFiles();
+    }
 
-	/**
-	 * Removes a file from this library.
-	 * 
-	 * @param f
-	 *            a library file to remove
-	 * @throws NullPointerException
-	 *             is <code>f</code> is <code>null</code>
-	 */
-	public void removeFile(LibraryFile f) {
-		removeChild(f);
-	}
+    /**
+     * Copy constructor.
+     * <p>
+     * Note: <code>id</code> and <code>version</code> properties are not copied.
+     * </p>
+     * <p>
+     * Note: files are not duplicated to reduce aliasing problems.
+     * </p>
+     * 
+     * @param library
+     *            a library to duplicate
+     * @throws NullPointerException
+     *             if <code>library</code> is <code>null</code>
+     */
+    public Library(Library library) {
+        super(library);
+        /*
+         * Files is not referenced to reduce aliasing problems!
+         */
+        initFiles();
+    }
 
-	/**
-	 * Returns an unmodifiable set of library files. Return value will never be
-	 * <code>null</code>.
-	 * 
-	 * @return an unmodifiable set of library files
-	 */
-	public Set<LibraryFile> getFiles() {
-		return Collections.unmodifiableSet(getChildren());
-	}
+    /**
+     * Initializes file collection.
+     */
+    private void initFiles() {
+        this.files = new HashSet<LibraryFile>();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.entities.Resource#compareTo(hr.fer.zemris.vhdllab.entities.Resource)
-	 */
-	@Override
-	public int compareTo(Container<LibraryFile, Library> o) {
-		/*
-		 * Overriding just to check if given resource is a library.
-		 */
-		if (this == o)
-			return 0;
-		if (o == null)
-			throw new NullPointerException("Other library cant be null");
-		if (!(o instanceof Library)) {
-			throw new ClassCastException("Object is not of Library type");
-		}
-		return super.compareTo(o);
-	}
+    /**
+     * Adds a <code>file</code> to a this library.
+     * 
+     * @param file
+     *            a file to add
+     * @throws NullPointerException
+     *             if <code>file</code> is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if a <code>file</code> already belongs to a library
+     */
+    public void addFile(LibraryFile file) {
+        if (file == null) {
+            throw new NullPointerException("File can't be null");
+        }
+        if (file.getLibrary() != null) {
+            if (file.getLibrary() == this) {
+                // a file is already in this library
+                return;
+            }
+            throw new IllegalArgumentException(file.toString()
+                    + " already belongs to a library; this library is "
+                    + this.toString());
+        }
+        /*
+         * Must set a library to a file before adding it to a collection because
+         * library is required for hash code calculation (in library file).
+         * 
+         * @see LibraryFile#hashCode()
+         */
+        file.setLibrary(this);
+        getFiles().add(file);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.entities.Container#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder(30 + getChildren().size() * 30);
-		sb.append("Library [").append(super.toString()).append("]");
-		return sb.toString();
-	}
+    /**
+     * Removes a file from this library.
+     * 
+     * @param file
+     *            a file to remove
+     * @throws NullPointerException
+     *             is <code>file</code> is <code>null</code>
+     */
+    public void removeFile(LibraryFile file) {
+        if (file == null) {
+            throw new NullPointerException("File can't be null");
+        }
+        if (file.getLibrary() != this) {
+            throw new IllegalArgumentException(file.toString()
+                    + " doesn't belong to this " + this.toString());
+        }
+        // referencing though getter because of lazy loading
+        if (getFiles().remove(file)) {
+            file.setLibrary(null);
+        }
+    }
+
+    /**
+     * Returns a set of library files. Return value will never be
+     * <code>null</code>.
+     * <p>
+     * Note: although this method returns direct reference to library files (and
+     * not unmodifiable proxy) adding and deleting a library file <b>must</b> be
+     * done using {@link #addFile(LibraryFile)} and
+     * {@link #removeFile(LibraryFile)} methods.
+     * </p>
+     * 
+     * @return a set of library files
+     */
+    public Set<LibraryFile> getFiles() {
+        return files;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        // referencing though getter because of lazy loading
+        return new ToStringBuilder(this)
+                    .appendSuper(super.toString())
+                    .append("files", getFiles(), false)
+                    .toString();
+    }
+
+    /**
+     * Ensures that properties are in correct state after deserialization.
+     */
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        in.defaultReadObject();
+        if (files == null) {
+            throw new NullPointerException("Files can't be null");
+        }
+    }
 
 }

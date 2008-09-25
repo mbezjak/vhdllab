@@ -6,10 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.UserFileDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 
 import java.util.ArrayList;
@@ -29,13 +29,11 @@ import org.junit.Test;
  */
 public class UserFileDAOImplTest {
 
-    private static final String NAME = "simple.file.name";
-    private static final String USER_ID = "user.identifier";
-    private static final String TYPE = FileTypes.VHDL_SCHEMA;
+    private static final Caseless NAME = new Caseless("simple_file_name");
+    private static final Caseless USER_ID = new Caseless("user.identifier");
     private static final String CONTENT = "<pref><value>schematic</value></pref>";
-    private static final String NEW_NAME = "new." + TYPE;
-    private static final String NEW_USER_ID = "new." + USER_ID;
-    private static final String NEW_TYPE = FileTypes.VHDL_SOURCE;
+    private static final Caseless NEW_NAME = new Caseless("new_" + NAME);
+    private static final Caseless NEW_USER_ID = new Caseless("new." + USER_ID);
     private static final String NEW_CONTENT = "library ieee;";
 
     private static UserFileDAO dao;
@@ -55,7 +53,7 @@ public class UserFileDAOImplTest {
     }
 
     private void initFiles() throws Exception {
-        file = new UserFile(USER_ID, NAME, TYPE, CONTENT);
+        file = new UserFile(USER_ID, NAME, CONTENT);
     }
 
     @After
@@ -116,42 +114,10 @@ public class UserFileDAOImplTest {
     @Test
     public void save3() throws Exception {
         dao.save(file);
-        file.setContent(NEW_CONTENT);
+        file.setData(NEW_CONTENT);
         dao.save(file);
         assertEquals("files not same after content was updated.", file, dao
                 .load(file.getId()));
-    }
-
-    /**
-     * File type can't be any string. Must be only one of registered file types.
-     */
-    @Test
-    public void save4() throws Exception {
-        dao.save(file);
-        UserFile newFile = new UserFile(USER_ID, NAME, "invalid.file.type",
-                CONTENT);
-        try {
-            dao.save(newFile);
-            fail("Expected DAOException");
-        } catch (DAOException e) {
-            if (e.getStatusCode() != StatusCodes.DAO_INVALID_FILE_TYPE) {
-                fail("Invalid status code in DAOException");
-            }
-        }
-    }
-
-    /**
-     * File type can't be any string. Must be only one of registered file types
-     * but is case insensitive.
-     */
-    @Test
-    public void save5() throws Exception {
-        UserFile newFile = new UserFile(USER_ID, NEW_NAME,
-                FileTypes.VHDL_SOURCE.toUpperCase(), CONTENT);
-        dao.save(newFile);
-        UserFile loadedFile = dao.load(newFile.getId());
-        assertEquals("types not equal.", newFile.getType(), loadedFile
-                .getType());
     }
 
     /**
@@ -160,7 +126,7 @@ public class UserFileDAOImplTest {
     @Test
     public void save6() throws Exception {
         dao.save(file);
-        UserFile newFile = new UserFile(USER_ID, NAME, NEW_TYPE, NEW_CONTENT);
+        UserFile newFile = new UserFile(USER_ID, NAME, NEW_CONTENT);
         try {
             dao.save(newFile);
             fail("Expected DAOException");
@@ -177,8 +143,7 @@ public class UserFileDAOImplTest {
     @Test
     public void save7() throws Exception {
         dao.save(file);
-        UserFile newFile = new UserFile(USER_ID, NEW_NAME, NEW_TYPE,
-                NEW_CONTENT);
+        UserFile newFile = new UserFile(USER_ID, NEW_NAME, NEW_CONTENT);
         dao.save(newFile);
         assertTrue("new file not saved.", dao.exists(newFile.getId()));
         assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
@@ -190,8 +155,7 @@ public class UserFileDAOImplTest {
     @Test
     public void save8() throws Exception {
         dao.save(file);
-        UserFile newFile = new UserFile(NEW_USER_ID, NAME, NEW_TYPE,
-                NEW_CONTENT);
+        UserFile newFile = new UserFile(NEW_USER_ID, NAME, NEW_CONTENT);
         dao.save(newFile);
         assertTrue("new file not saved.", dao.exists(newFile.getId()));
         assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
@@ -224,7 +188,7 @@ public class UserFileDAOImplTest {
      */
     @Test(expected = NullPointerException.class)
     public void exists() throws DAOException {
-        dao.exists((Long) null);
+        dao.exists((Integer) null);
     }
 
     /**
@@ -232,7 +196,7 @@ public class UserFileDAOImplTest {
      */
     @Test
     public void exists2() throws DAOException {
-        assertFalse("file exists.", dao.exists(Long.MAX_VALUE));
+        assertFalse("file exists.", dao.exists(Integer.MAX_VALUE));
     }
 
     /**
@@ -282,8 +246,7 @@ public class UserFileDAOImplTest {
         assertTrue("file doesn't exists after creation.", dao.exists(file
                 .getUserId(), file.getName()));
         assertTrue("user id and file name are not case insensitive.", dao
-                .exists(file.getUserId().toUpperCase(), file.getName()
-                        .toUpperCase()));
+                .exists(file.getUserId(), file.getName()));
     }
 
     /**
@@ -341,8 +304,7 @@ public class UserFileDAOImplTest {
         assertEquals("files are not same.", file, dao.findByName(file
                 .getUserId(), file.getName()));
         assertEquals("user id and file name are not case insensitive.", file,
-                dao.findByName(file.getUserId().toUpperCase(), file.getName()
-                        .toUpperCase()));
+                dao.findByName(file.getUserId(), file.getName()));
     }
 
     /**
@@ -373,7 +335,7 @@ public class UserFileDAOImplTest {
         assertEquals("collections are not same.", files, dao.findByUser(file
                 .getUserId()));
         assertEquals("user id is not case insensitive.", files, dao
-                .findByUser(file.getUserId().toUpperCase()));
+                .findByUser(file.getUserId()));
     }
 
     /**
@@ -381,8 +343,7 @@ public class UserFileDAOImplTest {
      */
     @Test
     public void findByUser4() throws Exception {
-        UserFile newFile = new UserFile(USER_ID, NEW_NAME, NEW_TYPE,
-                NEW_CONTENT);
+        UserFile newFile = new UserFile(USER_ID, NEW_NAME, NEW_CONTENT);
         dao.save(file);
         dao.save(newFile);
         List<UserFile> files = new ArrayList<UserFile>(2);
@@ -391,7 +352,7 @@ public class UserFileDAOImplTest {
         assertEquals("collections are not same.", files, dao.findByUser(file
                 .getUserId()));
         assertEquals("user id is not case insensitive.", files, dao
-                .findByUser(file.getUserId().toUpperCase()));
+                .findByUser(file.getUserId()));
     }
 
     /**
@@ -399,8 +360,7 @@ public class UserFileDAOImplTest {
      */
     @Test
     public void findByUser5() throws Exception {
-        UserFile newFile = new UserFile(NEW_USER_ID, NEW_NAME, NEW_TYPE,
-                NEW_CONTENT);
+        UserFile newFile = new UserFile(NEW_USER_ID, NEW_NAME, NEW_CONTENT);
         dao.save(file);
         dao.save(newFile);
         List<UserFile> collection1 = new ArrayList<UserFile>(1);
@@ -410,11 +370,11 @@ public class UserFileDAOImplTest {
         assertEquals("collections are not same.", collection1, dao
                 .findByUser(file.getUserId()));
         assertEquals("collections are not same.", collection1, dao
-                .findByUser(file.getUserId().toUpperCase()));
+                .findByUser(file.getUserId()));
         assertEquals("user id is not case insensitive.", collection2, dao
                 .findByUser(newFile.getUserId()));
         assertEquals("user id is not case insensitive.", collection2, dao
-                .findByUser(newFile.getUserId().toUpperCase()));
+                .findByUser(newFile.getUserId()));
     }
 
     /**
@@ -428,7 +388,7 @@ public class UserFileDAOImplTest {
         EntityManagerUtil.currentEntityManager();
         for (int i = 0; i < 500; i++) {
             String name = "name" + (i + 1);
-            UserFile f = new UserFile(USER_ID, name, NEW_TYPE, NEW_CONTENT);
+            UserFile f = new UserFile(USER_ID, new Caseless(name), NEW_CONTENT);
             dao.save(f);
         }
         EntityManagerUtil.closeEntityManager();

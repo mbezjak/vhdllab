@@ -2,12 +2,12 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.dao.impl.FileDAOImpl;
 import hr.fer.zemris.vhdllab.dao.impl.ProjectDAOImpl;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
+import hr.fer.zemris.vhdllab.entities.StubFactory;
 import hr.fer.zemris.vhdllab.service.FileManager;
 import hr.fer.zemris.vhdllab.service.ProjectManager;
 
@@ -37,10 +37,11 @@ public class FileManagerImplTest {
 	@Test
 	public void saveAndDelete() throws Exception {
 		EntityManagerUtil.currentEntityManager();
-		Project project = new Project("user.id", "project_name");
+		Project project = StubFactory.create(Project.class, 400);
 		projectManager.save(project);
 
-		File file = new File(project, "file_name", FileTypes.VHDL_SOURCE);
+		File file = StubFactory.create(File.class, 400);
+		project.addFile(file);
 		manager.save(file);
 		assertTrue("file doesn't exist.", manager.exists(file.getId()));
 		assertTrue("file doesn't exist.", manager.exists(project.getId(), file

@@ -7,6 +7,8 @@ import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.List;
 
@@ -72,7 +74,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    boolean createNewProject(String projectName) throws UniformAppletException;
+    boolean createNewProject(Caseless projectName) throws UniformAppletException;
 
     /**
      * Creates a new resource.
@@ -93,7 +95,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    boolean createNewResource(String projectName, String fileName, String type,
+    boolean createNewResource(Caseless projectName, Caseless fileName, FileType type,
             String data) throws UniformAppletException;
 
     /**
@@ -109,7 +111,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    void deleteFile(String projectName, String fileName)
+    void deleteFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /**
@@ -123,7 +125,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    void deleteProject(String projectName) throws UniformAppletException;
+    void deleteProject(Caseless projectName) throws UniformAppletException;
 
     /**
      * Returns <code>true</code> if a file with <code>fileName</code> already
@@ -141,7 +143,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    boolean existsFile(String projectName, String fileName)
+    boolean existsFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /**
@@ -158,7 +160,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    boolean existsProject(String projectName) throws UniformAppletException;
+    boolean existsProject(Caseless projectName) throws UniformAppletException;
 
     /**
      * Returns all projects for a user. Return value will never be
@@ -169,7 +171,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    List<String> getAllProjects() throws UniformAppletException;
+    List<Caseless> getAllProjects() throws UniformAppletException;
 
     /**
      * Returns all files in specified project. Return value will never be
@@ -184,7 +186,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    List<String> getFilesFor(String projectName) throws UniformAppletException;
+    List<Caseless> getFilesFor(Caseless projectName) throws UniformAppletException;
 
     /**
      * Returns all circuits in a specified project. Return value will never be
@@ -198,9 +200,9 @@ public interface IResourceManager {
      * @throws UniformAppletException
      *             if exceptional condition occurs (for example server is not
      *             responding)
-     * @see #isCircuit(String, String)
+     * @see #isCircuit(Caseless, Caseless)
      */
-    List<String> getAllCircuits(String projectName)
+    List<Caseless> getAllCircuits(Caseless projectName)
             throws UniformAppletException;
 
     /**
@@ -215,9 +217,9 @@ public interface IResourceManager {
      * @throws UniformAppletException
      *             if exceptional condition occurs (for example server is not
      *             responding)
-     * @see #isTestbench(String, String)
+     * @see #isTestbench(Caseless, Caseless)
      */
-    List<String> getAllTestbenches(String projectName)
+    List<Caseless> getAllTestbenches(Caseless projectName)
             throws UniformAppletException;
 
     /**
@@ -235,7 +237,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    CircuitInterface getCircuitInterfaceFor(String projectName, String fileName)
+    CircuitInterface getCircuitInterfaceFor(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /**
@@ -253,7 +255,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    VHDLGenerationResult generateVHDL(String projectName, String fileName)
+    VHDLGenerationResult generateVHDL(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /**
@@ -271,7 +273,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    String getFileContent(String projectName, String fileName)
+    String getFileContent(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /**
@@ -287,7 +289,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    String getPredefinedFileContent(String fileName)
+    String getPredefinedFileContent(Caseless fileName)
             throws UniformAppletException;
 
     /**
@@ -305,7 +307,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    void saveFile(String projectName, String fileName, String content)
+    void saveFile(Caseless projectName, Caseless fileName, String content)
             throws UniformAppletException;
 
     /**
@@ -333,7 +335,7 @@ public interface IResourceManager {
      *             if either parameter is <code>null</code>
      * @return a type of a specified file
      */
-    String getFileType(String projectName, String fileName);
+    FileType getFileType(Caseless projectName, Caseless fileName);
 
     /**
      * Returns an extracted hierarchy for a specified project. Return value will
@@ -348,7 +350,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    Hierarchy extractHierarchy(String projectName)
+    Hierarchy extractHierarchy(Caseless projectName)
             throws UniformAppletException;
 
     /* COMPILATION METHOD */
@@ -368,7 +370,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    CompilationResult compile(String projectName, String fileName)
+    CompilationResult compile(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /* SIMULATION METHOD */
@@ -388,7 +390,7 @@ public interface IResourceManager {
      *             if exceptional condition occurs (for example server is not
      *             responding)
      */
-    SimulationResult simulate(String projectName, String fileName)
+    SimulationResult simulate(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /* IS-SOMETHING METHODS */
@@ -406,7 +408,7 @@ public interface IResourceManager {
      * @return <code>true</code> if specified file is a circuit (i.e. represents
      *         a component in a vhdl); <code>false</code> otherwise
      */
-    boolean isCircuit(String projectName, String fileName);
+    boolean isCircuit(Caseless projectName, Caseless fileName);
 
     /**
      * Returns <code>true</code> if specified file is a predefined file (i.e.
@@ -421,7 +423,7 @@ public interface IResourceManager {
      * @return <code>true</code> if specified file is a predefined file (i.e.
      *         part of a library); <code>false</code> otherwise
      */
-    boolean isPredefined(String projectName, String fileName);
+    boolean isPredefined(Caseless projectName, Caseless fileName);
 
     /**
      * Returns <code>true</code> if specified file is a testbench (i.e. a
@@ -442,7 +444,7 @@ public interface IResourceManager {
      *         component in vhdl with no ports, input nor output);
      *         <code>false</code> otherwise
      */
-    boolean isTestbench(String projectName, String fileName);
+    boolean isTestbench(Caseless projectName, Caseless fileName);
 
     /**
      * Returns <code>true</code> if specified file is a simulation (i.e. a
@@ -458,7 +460,7 @@ public interface IResourceManager {
      *         simulation result of a vhdl simulator); <code>false</code>
      *         otherwise
      */
-    boolean isSimulation(String projectName, String fileName);
+    boolean isSimulation(Caseless projectName, Caseless fileName);
 
     /**
      * Returns <code>true</code> if specified file is a compilable (i.e. is a
@@ -477,7 +479,7 @@ public interface IResourceManager {
      * @return <code>true</code> if specified file is a compilable (i.e. is a
      *         component in vhdl); <code>false</code> otherwise
      */
-    boolean isCompilable(String projectName, String fileName);
+    boolean isCompilable(Caseless projectName, Caseless fileName);
 
     /**
      * Returns <code>true</code> if specified file is a simulatable (i.e. is a
@@ -492,7 +494,7 @@ public interface IResourceManager {
      * @return <code>true</code> if specified file is a simulatable (i.e. is a
      *         testbench in vhdl); <code>false</code> otherwise
      */
-    boolean isSimulatable(String projectName, String fileName);
+    boolean isSimulatable(Caseless projectName, Caseless fileName);
 
     /**
      * Returns <code>true</code> if specified file can generate vhdl code or
@@ -507,7 +509,7 @@ public interface IResourceManager {
      * @return <code>true</code> if specified file can generate vhdl code;
      *         <code>false</code> otherwise
      */
-    boolean canGenerateVHDLCode(String projectName, String fileName);
+    boolean canGenerateVHDLCode(Caseless projectName, Caseless fileName);
 
     /**
      * Ignore case and check if <code>name</code> is a correct entity name.
@@ -527,7 +529,7 @@ public interface IResourceManager {
      * @return <code>true</code> if <code>name</code> is a correct name;
      *         <code>false</code> otherwise.
      */
-    boolean isCorrectEntityName(String name);
+    boolean isCorrectEntityName(Caseless name);
 
     /**
      * Ignore case and check if <code>name</code> is a correct file name.
@@ -547,7 +549,7 @@ public interface IResourceManager {
      * @return <code>true</code> if <code>name</code> is a correct name;
      *         <code>false</code> otherwise.
      */
-    boolean isCorrectFileName(String name);
+    boolean isCorrectFileName(Caseless name);
 
     /**
      * Ignore case and check if <code>name</code> is a correct project name.
@@ -567,6 +569,6 @@ public interface IResourceManager {
      * @return <code>true</code> if <code>name</code> is a correct name;
      *         <code>false</code> otherwise.
      */
-    boolean isCorrectProjectName(String name);
+    boolean isCorrectProjectName(Caseless name);
 
 }

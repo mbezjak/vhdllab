@@ -72,8 +72,8 @@ public class ParamPort implements IGenericValue {
 	}
 	
 	private String fromVecDir(String vectorDirection) {
-		if (vectorDirection.equals(VectorDirection.TO)) return PortWrapper.ASCEND;
-		else if (vectorDirection.equals(VectorDirection.DOWNTO)) return PortWrapper.DESCEND;
+		if (vectorDirection.equals(VectorDirection.TO.toString())) return PortWrapper.ASCEND;
+		else if (vectorDirection.equals(VectorDirection.DOWNTO.toString())) return PortWrapper.DESCEND;
 		else throw new IllegalStateException("Vector direction '" + vectorDirection + "' is unknown.");
 	}
 	

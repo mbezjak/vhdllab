@@ -10,7 +10,7 @@
     type - a string describing file type. use only English alphabet and . (dot)
   -->
 
-  <fileTypeMapping type="vhdl.source">
+  <fileTypeMapping type="SOURCE">
     <functionality type="generator"
       class="hr.fer.zemris.vhdllab.service.generators.SourceGenerator" />
     <functionality type="extractor"
@@ -21,7 +21,7 @@
       class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
   </fileTypeMapping>
 
-  <fileTypeMapping type="vhdl.testbench">
+  <fileTypeMapping type="TESTBENCH">
     <functionality type="generator"
       class="hr.fer.zemris.vhdllab.service.generators.TestbenchVHDLGenerator" />
     <functionality type="extractor"
@@ -34,7 +34,7 @@
       class="hr.fer.zemris.vhdllab.service.simulator.GHDLSimulator" />
   </fileTypeMapping>
 
-  <fileTypeMapping type="vhdl.schema">
+  <fileTypeMapping type="SCHEMA">
     <functionality type="generator"
       class="hr.fer.zemris.vhdllab.service.generators.SchemaVHDLGenerator" />
     <functionality type="extractor"
@@ -45,7 +45,7 @@
       class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
   </fileTypeMapping>
 
-  <fileTypeMapping type="vhdl.automaton">
+  <fileTypeMapping type="AUTOMATON">
     <functionality type="generator"
       class="hr.fer.zemris.vhdllab.service.generators.automat.AutVHDLGenerator" />
     <functionality type="extractor"
@@ -56,16 +56,12 @@
       class="hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler" />
   </fileTypeMapping>
 
-  <fileTypeMapping type="vhdl.simulation">
+  <fileTypeMapping type="SIMULATION">
     <functionality type="dependency"
       class="hr.fer.zemris.vhdllab.service.dependencies.SimulationDependancy" />
   </fileTypeMapping>
   
-  <fileTypeMapping type="vhdl.predefined" />
-
-  <fileTypeMapping type="preferences.user" />
-  
-  <fileTypeMapping type="error" />
+  <fileTypeMapping type="PREDEFINED" />
 
   <!--
     Global properties for all functionalities.

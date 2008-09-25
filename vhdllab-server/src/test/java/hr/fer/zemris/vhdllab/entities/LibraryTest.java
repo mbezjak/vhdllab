@@ -1,113 +1,213 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * A test case for {@link Library} class.
- *
+ * A test case for {@link Library} entity.
+ * 
  * @author Miro Bezjak
  */
 public class LibraryTest {
 
-	private static final Long ID = Long.valueOf(123456);
-	private static final String NAME = "library.name";
-	private static final Date CREATED;
+    private Library library;
 
-	static {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm");
-		try {
-			CREATED = df.parse("2008-01-02 13-45");
-		} catch (ParseException e) {
-			// should never happen. but if pattern should change report it by
-			// throwing exception.
-			throw new IllegalStateException(e);
-		}
-	}
+    @Before
+    public void initEachTest() throws Exception {
+        library = StubFactory.create(Library.class, 1);
+        LibraryFile file = StubFactory.create(LibraryFile.class, 1);
+        library.addFile(file);
+    }
 
-	private Library lib;
-	private Library lib2;
-	private LibraryFile file;
+    /**
+     * Name is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void constructor() throws Exception {
+        new Library((Caseless) null);
+    }
 
-	@Before
-	public void initEachTest() throws Exception {
-		lib = new Library(NAME);
-		injectValueToPrivateField(lib, "id", ID);
-		injectValueToPrivateField(lib, "created", CREATED);
-		lib2 = new Library(lib);
+    /**
+     * Files isn't null after creation.
+     */
+    @Test
+    public void constructor2() throws Exception {
+        Caseless name = StubFactory.getStubValue("name", 1);
+        Library another = new Library(name);
+        assertNotNull("files is null.", another.getFiles());
+        assertTrue("files not empty.", another.getFiles().isEmpty());
+    }
 
-		file = new LibraryFile(lib, "file.name", "file.type", "file.content");
-		new LibraryFile(file, lib2);
-	}
+    /**
+     * Library is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void copyConstructor() throws Exception {
+        new Library((Library) null);
+    }
 
-	/**
-	 * Test copy constructor
-	 */
-	@Test
-	public void copyConstructor() throws Exception {
-		assertTrue("same reference.", lib != lib2);
-		assertEquals("not equal.", lib, lib2);
-		assertEquals("hashCode not same.", lib.hashCode(), lib2.hashCode());
-		assertEquals("not equal by compareTo.", 0, lib.compareTo(lib2));
-		assertEquals("files not same.", lib.getChildren(), lib2.getChildren());
-	}
+    /**
+     * Test copy constructor.
+     */
+    @Test
+    public void copyConstructor2() throws Exception {
+        Set<LibraryFile> files = library.getFiles();
+        Library another = new Library(library);
+        assertTrue("same reference.", library != another);
+        assertEquals("not equal.", library, another);
+        assertEquals("hashCode not same.", library.hashCode(), another
+                .hashCode());
+        assertEquals("files are copied.", Collections.emptySet(), another
+                .getFiles());
+        assertNotNull("original file reference is missing.", library.getFiles());
+        assertEquals("original files has been modified.", files, library
+                .getFiles());
+    }
 
-	/**
-	 * Test if returned set is modifiable
-	 */
-	@Test(expected = UnsupportedOperationException.class)
-	public void getLibraryFiles() throws Exception {
-		Set<LibraryFile> files = lib.getFiles();
-		Library newLibrary = new Library("new.library.name");
-		LibraryFile newFile = new LibraryFile(newLibrary, "new.file.name",
-				"new.file.type");
-		files.add(newFile);
-	}
+    /**
+     * Get files returns a modifiable version. (users are discouraged to use
+     * direct files reference to add or remove a file)
+     */
+    @Test
+    public void getLibraryFiles() throws Exception {
+        Set<LibraryFile> files = new HashSet<LibraryFile>(library.getFiles());
+        LibraryFile anotherFile = StubFactory.create(LibraryFile.class, 2);
+        library.getFiles().add(anotherFile);
+        files.add(anotherFile);
+        assertTrue("file not added.", library.getFiles().contains(anotherFile));
+        assertEquals("file size not same.", files.size(), library.getFiles()
+                .size());
+        assertEquals("files not same.", files, library.getFiles());
+    }
 
-	/**
-	 * Test equals with self, null, and non-library object
-	 */
-	@Test
-	public void equals() throws Exception {
-		assertEquals("not equal.", lib, lib);
-        assertFalse("library is equal to null.", lib.equals(null));
-        assertFalse("can compare with string object.", lib
-                .equals("a string object"));
-        assertFalse("can compare with resource object.", lib
-                .equals(new Resource()));
-	}
+    /**
+     * File is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void addLibraryFile() {
+        library.addFile(null);
+    }
 
-	/**
-	 * Null object as parameter to compareTo method
-	 */
-	@Test(expected = NullPointerException.class)
-	public void compareTo() throws Exception {
-		lib.compareTo(null);
-	}
+    /**
+     * Add a file.
+     */
+    @Test
+    public void addLibraryFile2() throws Exception {
+        Set<LibraryFile> files = new HashSet<LibraryFile>(library.getFiles());
+        LibraryFile anotherFile = StubFactory.create(LibraryFile.class, 2);
+        library.addFile(anotherFile);
+        files.add(anotherFile);
+        assertTrue("file not added.", library.getFiles().contains(anotherFile));
+        assertEquals("file size not same.", files.size(), library.getFiles()
+                .size());
+        assertEquals("files not same.", files, library.getFiles());
+    }
 
-	/**
-	 * Non-library type
-	 */
-	@Test(expected = ClassCastException.class)
-	public void compareTo2() throws Exception {
-		lib.compareTo(new Container<LibraryFile, Library>());
-	}
+    /**
+     * Add a file that is already in that library.
+     */
+    @Test
+    public void addLibraryFile3() throws Exception {
+        Set<LibraryFile> files = new HashSet<LibraryFile>(library.getFiles());
+        LibraryFile file = library.getFiles().iterator().next();
+        library.addFile(file);
+        assertEquals("files not same.", files, library.getFiles());
+        assertEquals("files is changed.", 1, library.getFiles().size());
+    }
 
-	@Ignore("must be tested by a user and this has already been tested")
-	@Test
-	public void asString() {
-		System.out.println(lib.toString());
-	}
+    /**
+     * Add a file that is already in another library.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void addLibraryFile4() throws Exception {
+        Library another = new Library(library);
+        LibraryFile file = library.getFiles().iterator().next();
+        another.addFile(file);
+    }
+
+    /**
+     * File is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void removeLibraryFile() throws Exception {
+        library.removeFile(null);
+    }
+
+    /**
+     * Remove a file.
+     */
+    @Test
+    public void removeLibraryFile2() throws Exception {
+        LibraryFile file = library.getFiles().iterator().next();
+        library.removeFile(file);
+        assertEquals("files not empty.", Collections.emptySet(), library
+                .getFiles());
+        assertNull("library isn't set to null.", file.getLibrary());
+    }
+
+    /**
+     * Remove a file that doesn't belong to any library.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void removeLibraryFile3() throws Exception {
+        LibraryFile anotherLibraryFile = StubFactory.create(LibraryFile.class,
+                2);
+        library.removeFile(anotherLibraryFile);
+    }
+
+    /**
+     * Remove a file that belongs to another library.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void removeLibraryFile4() throws Exception {
+        LibraryFile file = library.getFiles().iterator().next();
+        Library another = new Library(library);
+        another.removeFile(file);
+    }
+
+    /**
+     * Test equals to LibraryInfo since Library doesn't override equals and
+     * hashCode.
+     */
+    @Test
+    public void equalsAndHashCode() throws Exception {
+        LibraryInfo info = new LibraryInfo(library);
+        assertTrue("not same.", info.equals(library));
+        assertTrue("not same.", library.equals(info));
+        assertEquals("hashcode not same.", info.hashCode(), library.hashCode());
+    }
+
+    /**
+     * Entities are same after deserialization.
+     */
+    @Test
+    public void serialization() throws Exception {
+        Object deserialized = SerializationUtils.clone(library);
+        assertEquals("not same.", library, deserialized);
+    }
+
+    /**
+     * Simulate data tempering - files is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void serialization2() throws Exception {
+        StubFactory.setProperty(library, "files", 300);
+        SerializationUtils.clone(library);
+    }
+
+    @Test
+    public void asString() {
+        System.out.println(library);
+    }
 
 }

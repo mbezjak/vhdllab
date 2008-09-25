@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.dialog;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -706,9 +707,9 @@ public class SaveDialog extends JDialog {
     private class SaveItem {
     	
     	/** Name of a project displayed next to file name in checkbox */
-    	private String projectName;
+    	private Caseless projectName;
     	/** Name of a file displayed in checkbox */
-    	private String fileName;
+    	private Caseless fileName;
     	/** Indicating if checkbox is selected */
     	private boolean selected;
     	
@@ -718,7 +719,7 @@ public class SaveDialog extends JDialog {
     	 * @param projectName a name of a project
     	 * @param fileName a name of a file
     	 */
-    	public SaveItem(boolean selected, String projectName, String fileName) {
+    	public SaveItem(boolean selected, Caseless projectName, Caseless fileName) {
     		this.selected = selected;
     		this.projectName = projectName;
     		this.fileName = fileName;
@@ -743,7 +744,7 @@ public class SaveDialog extends JDialog {
 		 * Getter for file name.
 		 * @return file name
 		 */
-		public String getFileName() {
+		public Caseless getFileName() {
 			return fileName;
 		}
 
@@ -751,7 +752,7 @@ public class SaveDialog extends JDialog {
 		 * Getter for project name.
 		 * @return project name
 		 */
-		public String getProjectName() {
+		public Caseless getProjectName() {
 			return projectName;
 		}
 

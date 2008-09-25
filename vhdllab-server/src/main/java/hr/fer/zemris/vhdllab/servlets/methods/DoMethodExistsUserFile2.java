@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
 
@@ -24,11 +25,11 @@ public class DoMethodExistsUserFile2 extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
+        Caseless fileName = method.getParameter(Caseless.class, PROP_FILE_NAME);
 		if (fileName == null) {
 			return;
 		}
-		String userId = method.getUserId();
+		Caseless userId = method.getUserId();
 		boolean exists;
 		try {
 			exists = container.getUserFileManager().exists(userId, fileName);

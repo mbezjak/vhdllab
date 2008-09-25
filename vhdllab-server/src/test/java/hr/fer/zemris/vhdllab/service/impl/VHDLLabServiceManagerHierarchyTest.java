@@ -1,11 +1,12 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import static org.junit.Assert.assertEquals;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.service.ProjectManager;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
@@ -34,7 +35,7 @@ import org.junit.Test;
  */
 public class VHDLLabServiceManagerHierarchyTest {
 
-    private static final String USER_ID = "user.id";
+    private static final Caseless USER_ID = new Caseless("user.id");
 
     private static ServiceContainer container;
     private static ProjectManager projectMan;
@@ -52,7 +53,7 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Before
     public void initEachTest() throws Exception {
         EntityManagerUtil.currentEntityManager();
-        project = new Project(USER_ID, "project_name");
+        project = new Project(USER_ID, new Caseless("project_name"));
         projectMan.save(project);
     }
 
@@ -90,8 +91,8 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Test
     public void extractHierarchyTopLevel() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(1);
-        String name = "comp_and";
-        String type = FileTypes.VHDL_SOURCE;
+        Caseless name = new Caseless("comp_and");
+        FileType type = FileType.SOURCE;
         prepairFile(name, type);
         nodes.add(new HierarchyNode(name, type, null));
         Hierarchy expected = new Hierarchy(project.getName(), nodes);
@@ -109,13 +110,13 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Test
     public void extractHierarchyComplex() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
-        String name = "comp_or"; // uses vl_or - predefined file
-        String type = FileTypes.VHDL_SOURCE;
+        Caseless name = new Caseless("comp_or"); // uses vl_or - predefined file
+        FileType type = FileType.SOURCE;
         prepairFile(name, type);
         HierarchyNode node = new HierarchyNode(name, type, null);
         nodes.add(node);
-        name = "vl_or";
-        type = FileTypes.VHDL_PREDEFINED;
+        name = new Caseless("vl_or");
+        type = FileType.PREDEFINED;
         nodes.add(new HierarchyNode(name, type, node));
         Hierarchy expected = new Hierarchy(project.getName(), nodes);
 
@@ -132,17 +133,17 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Test
     public void extractHierarchyComplex2() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
-        String name = "comp_or";
-        String type = FileTypes.VHDL_SOURCE;
+        Caseless name = new Caseless("comp_or");
+        FileType type = FileType.SOURCE;
         prepairFile(name, type);
         HierarchyNode node = new HierarchyNode(name, type, null);
         nodes.add(node);
-        name = "vl_or";
-        type = FileTypes.VHDL_PREDEFINED;
+        name = new Caseless("vl_or");
+        type = FileType.PREDEFINED;
         nodes.add(new HierarchyNode(name, type, node));
 
-        name = "comp_and"; // standalone component
-        type = FileTypes.VHDL_SOURCE;
+        name = new Caseless("comp_and"); // standalone component
+        type = FileType.SOURCE;
         prepairFile(name, type);
         nodes.add(new HierarchyNode(name, type, null));
         Hierarchy expected = new Hierarchy(project.getName(), nodes);
@@ -160,22 +161,22 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Test
     public void extractHierarchyComplex3() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
-        String name = "comp_or";
-        String type = FileTypes.VHDL_SOURCE;
+        Caseless name = new Caseless("comp_or");
+        FileType type = FileType.SOURCE;
         prepairFile(name, type);
         HierarchyNode node = new HierarchyNode(name, type, null);
         nodes.add(node);
-        name = "vl_or";
-        type = FileTypes.VHDL_PREDEFINED;
+        name = new Caseless("vl_or");
+        type = FileType.PREDEFINED;
         nodes.add(new HierarchyNode(name, type, node));
 
-        name = "complex_source";
-        type = FileTypes.VHDL_SOURCE;
+        name = new Caseless("complex_source");
+        type = FileType.SOURCE;
         prepairFile(name, type);
         node = new HierarchyNode(name, type, null);
         nodes.add(node);
-        name = "comp_and";
-        type = FileTypes.VHDL_SOURCE;
+        name = new Caseless("comp_and");
+        type = FileType.SOURCE;
         prepairFile(name, type);
         nodes.add(new HierarchyNode(name, type, node));
         Hierarchy expected = new Hierarchy(project.getName(), nodes);
@@ -194,22 +195,22 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Test
     public void extractHierarchyComplex4() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
-        String name = "comp_or";
-        String type = FileTypes.VHDL_SOURCE;
+        Caseless name = new Caseless("comp_or");
+        FileType type = FileType.SOURCE;
         prepairFile(name, type);
         HierarchyNode node = new HierarchyNode(name, type, null);
         nodes.add(node);
-        name = "vl_or";
-        type = FileTypes.VHDL_PREDEFINED;
+        name = new Caseless("vl_or");
+        type = FileType.PREDEFINED;
         nodes.add(new HierarchyNode(name, type, node));
 
-        name = "comp_or2";
-        type = FileTypes.VHDL_SOURCE;
+        name = new Caseless("comp_or2");
+        type = FileType.SOURCE;
         prepairFile(name, type);
         node = new HierarchyNode(name, type, null);
         nodes.add(node);
-        name = "vl_or";
-        type = FileTypes.VHDL_PREDEFINED;
+        name = new Caseless("vl_or");
+        type = FileType.PREDEFINED;
         nodes.add(new HierarchyNode(name, type, node));
         Hierarchy expected = new Hierarchy(project.getName(), nodes);
 
@@ -226,28 +227,28 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Test
     public void extractHierarchyComplex5() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
-        String name = "ultra_complex_source";
-        String type = FileTypes.VHDL_SOURCE;
+        Caseless name = new Caseless("ultra_complex_source");
+        FileType type = FileType.SOURCE;
         prepairFile(name, type);
         HierarchyNode node = new HierarchyNode(name, type, null);
         nodes.add(node);
 
-        name = "comp_or";
-        type = FileTypes.VHDL_SOURCE;
+        name = new Caseless("comp_or");
+        type = FileType.SOURCE;
         prepairFile(name, type);
         HierarchyNode n1 = new HierarchyNode(name, type, node);
         nodes.add(n1);
-        name = "vl_or";
-        type = FileTypes.VHDL_PREDEFINED;
+        name = new Caseless("vl_or");
+        type = FileType.PREDEFINED;
         nodes.add(new HierarchyNode(name, type, n1));
 
-        name = "complex_source";
-        type = FileTypes.VHDL_SOURCE;
+        name = new Caseless("complex_source");
+        type = FileType.SOURCE;
         prepairFile(name, type);
         HierarchyNode n2 = new HierarchyNode(name, type, node);
         nodes.add(n2);
-        name = "comp_and";
-        type = FileTypes.VHDL_SOURCE;
+        name = new Caseless("comp_and");
+        type = FileType.SOURCE;
         prepairFile(name, type);
         nodes.add(new HierarchyNode(name, type, n2));
         Hierarchy expected = new Hierarchy(project.getName(), nodes);
@@ -266,8 +267,8 @@ public class VHDLLabServiceManagerHierarchyTest {
     @Test
     public void extractHierarchyFaultyDependency() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(1);
-        String name = "comp_and_tb";
-        String type = FileTypes.VHDL_TESTBENCH;
+        Caseless name = new Caseless("comp_and_tb");
+        FileType type = FileType.TESTBENCH;
         prepairFaultyFile(name, type);
         nodes.add(new HierarchyNode(name, type, null));
         Hierarchy expected = new Hierarchy(project.getName(), nodes);
@@ -283,21 +284,23 @@ public class VHDLLabServiceManagerHierarchyTest {
      * Persists specified file but without a content thereby creating faulty
      * file.
      */
-    private void prepairFaultyFile(String name, String type)
+    private void prepairFaultyFile(Caseless name, FileType type)
             throws ServiceException {
-        new File(project, name, type, "faulty content");
+        File f = new File(type, name, "faulty content");
+        project.addFile(f);
         container.getProjectManager().save(project);
     }
 
     /**
      * Persists specified file.
      */
-    private static void prepairFile(String name, String type)
+    private static void prepairFile(Caseless name, FileType type)
             throws ServiceException {
         List<NameAndContent> contents = FileContentProvider.getContent(type);
         for (NameAndContent nc : contents) {
-            if (nc.getName().equalsIgnoreCase(name)) {
-                new File(project, nc.getName(), type, nc.getContent());
+            if (nc.getName().equals(name)) {
+                File f = new File(type, nc.getName(), nc.getContent());
+                project.addFile(f);
                 container.getProjectManager().save(project);
             }
         }

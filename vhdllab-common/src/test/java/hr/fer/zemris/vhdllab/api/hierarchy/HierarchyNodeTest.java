@@ -4,7 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,9 +25,9 @@ import org.junit.Test;
  */
 public class HierarchyNodeTest {
 
-    private final static String NAME = "file.name";
-    private final static String TYPE = FileTypes.VHDL_SOURCE;
-    private final static String NEW_NAME = "new" + NAME;
+    private final static Caseless NAME = new Caseless("file.name");
+    private final static FileType TYPE = FileType.SOURCE;
+    private final static Caseless NEW_NAME = new Caseless("new" + NAME);
 
     private HierarchyNode root;
 
@@ -84,46 +85,20 @@ public class HierarchyNodeTest {
     }
 
     /**
-     * Duplicate dependency - name is case insensitive
+     * Self dependency
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor5() throws Exception {
         new HierarchyNode(NAME, TYPE, root);
-        new HierarchyNode(NAME.toUpperCase(), TYPE, root); // duplicate
-    }
-
-    /**
-     * Self dependency
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void constructor6() throws Exception {
-        new HierarchyNode(NAME, TYPE, root);
-    }
-
-    /**
-     * Self dependency - name is case insensitive
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void constructor7() throws Exception {
-        new HierarchyNode(NAME.toUpperCase(), TYPE, root);
     }
 
     /**
      * cyclic dependency
      */
     @Test(expected = IllegalArgumentException.class)
-    public void constructor8() throws Exception {
+    public void constructor6() throws Exception {
         HierarchyNode node = new HierarchyNode(NEW_NAME, TYPE, root);
         new HierarchyNode(NAME, TYPE, node);
-    }
-
-    /**
-     * cyclic dependency - name is case insensitive
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void constructor9() throws Exception {
-        HierarchyNode node = new HierarchyNode(NEW_NAME, TYPE, root);
-        new HierarchyNode(NAME.toUpperCase(), TYPE, node);
     }
 
     /**
@@ -154,55 +129,28 @@ public class HierarchyNodeTest {
     }
 
     /**
-     * Duplicate dependency - name is case insensitive.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void addDependency4() throws Exception {
-        root.addDependency(new HierarchyNode(NAME, TYPE, null));
-        root.addDependency(new HierarchyNode(NAME.toUpperCase(), TYPE, null)); // duplicate
-    }
-
-    /**
      * Self dependency.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void addDependency5() throws Exception {
+    public void addDependency4() throws Exception {
         root.addDependency(root);
-    }
-
-    /**
-     * Self dependency - name is case insensitive.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void addDependency6() throws Exception {
-        root.addDependency(new HierarchyNode(NAME.toUpperCase(), TYPE, null));
     }
 
     /**
      * cyclic dependency.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void addDependency7() throws Exception {
+    public void addDependency5() throws Exception {
         HierarchyNode node = new HierarchyNode(NEW_NAME, TYPE, null);
         root.addDependency(node);
         node.addDependency(new HierarchyNode(NAME, TYPE, null));
     }
 
     /**
-     * cyclic dependency - name is case insensitive.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void addDependency8() throws Exception {
-        HierarchyNode node = new HierarchyNode(NEW_NAME, TYPE, null);
-        root.addDependency(node);
-        node.addDependency(new HierarchyNode(NAME.toUpperCase(), TYPE, null));
-    }
-
-    /**
      * Parent is set after dependency is added.
      */
     @Test
-    public void addDependency9() throws Exception {
+    public void addDependency6() throws Exception {
         HierarchyNode node = new HierarchyNode(NEW_NAME, TYPE, null);
         root.addDependency(node);
         HierarchyNode parent = (HierarchyNode) readPrivateField(node, "parent");
@@ -235,9 +183,9 @@ public class HierarchyNodeTest {
      */
     @Test
     public void getDependencies2() throws Exception {
-        String name = "A fIlE NaMe.";
+        Caseless name = new Caseless("A fIlE NaMe.");
         new HierarchyNode(name, TYPE, root);
-        String returnedName = root.getDependencies().iterator().next();
+        Caseless returnedName = root.getDependencies().iterator().next();
         assertEquals("names not equal.", name, returnedName);
     }
 
@@ -258,20 +206,7 @@ public class HierarchyNodeTest {
     @Test
     public void hashCodeAndEquals() throws Exception {
         HierarchyNode newRoot = new HierarchyNode(root.getFileName(),
-                FileTypes.VHDL_AUTOMATON, null);
-
-        assertEquals("hierarchy nodes not equal.", root, newRoot);
-        assertEquals("hierarchy nodes not equal.", root.hashCode(), newRoot
-                .hashCode());
-    }
-
-    /**
-     * File name is case insensitive.
-     */
-    @Test
-    public void hashCodeAndEquals2() throws Exception {
-        HierarchyNode newRoot = new HierarchyNode(root.getFileName()
-                .toUpperCase(), root.getFileType(), null);
+                FileType.AUTOMATON, null);
 
         assertEquals("hierarchy nodes not equal.", root, newRoot);
         assertEquals("hierarchy nodes not equal.", root.hashCode(), newRoot
@@ -282,7 +217,7 @@ public class HierarchyNodeTest {
      * Name is different
      */
     @Test
-    public void hashCodeAndEquals3() throws Exception {
+    public void hashCodeAndEquals2() throws Exception {
         HierarchyNode newRoot = new HierarchyNode(NEW_NAME, root.getFileType(),
                 null);
 
@@ -294,7 +229,6 @@ public class HierarchyNodeTest {
     /**
      * Simulate serialization tempering
      */
-    @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void readResolve() throws Exception {
         Field field = root.getClass().getDeclaredField("fileName");
@@ -313,7 +247,6 @@ public class HierarchyNodeTest {
     /**
      * Serialize then deserialize
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void readResolve2() throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -334,7 +267,6 @@ public class HierarchyNodeTest {
     /**
      * After deserialization node is immutable.
      */
-    @SuppressWarnings("unchecked")
     @Test(expected = IllegalStateException.class)
     public void readResolve3() throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

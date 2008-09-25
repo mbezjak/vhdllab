@@ -1,64 +1,40 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.generateJunkString;
-import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * A test case for {@link Project} entity.
- *
+ * 
  * @author Miro Bezjak
  */
 public class ProjectTest {
 
-    private static final Long ID = Long.valueOf(123456);
-    private static final String NAME = "project.name";
-    private static final String USER_ID = "user.identifier";
-    private static final Date CREATED;
-    private static final String NEW_NAME = "new.project.name";
-    private static final String NEW_USER_ID = "new.user.identifier";
-    private static final Date NEW_CREATED;
-
-    static {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm");
-        try {
-            CREATED = df.parse("2008-01-02 13-45");
-            NEW_CREATED = df.parse("2000-12-31 07-13");
-        } catch (ParseException e) {
-            // should never happen. but if pattern should change report it by
-            // throwing exception.
-            throw new IllegalStateException(e);
-        }
-    }
+    private static final Caseless NAME = StubFactory.getStubValue("name", 1);
+    private static final Caseless USER_ID = StubFactory.getStubValue("userId",
+            1);
 
     private Project project;
-    private Project project2;
-    private File file;
 
     @Before
     public void initEachTest() throws Exception {
-        project = new Project(USER_ID, NAME);
-        injectValueToPrivateField(project, "id", ID);
-        injectValueToPrivateField(project, "created", CREATED);
-        project2 = new Project(project);
-
-        file = new File(project, "file.name", "file.type", "file.content");
-        new File(file, project2);
+        project = StubFactory.create(Project.class, 1);
+        File file = StubFactory.create(File.class, 1);
+        project.addFile(file);
     }
 
     /**
-     * User id is null
+     * User id is null.
      */
     @Test(expected = NullPointerException.class)
     public void constructor() throws Exception {
@@ -66,128 +42,179 @@ public class ProjectTest {
     }
 
     /**
-     * User id is too long
+     * Name is null.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
-        new Project(generateJunkString(Project.USER_ID_LENGTH + 1), NAME);
+        new Project(USER_ID, null);
     }
 
     /**
-     * User id is not null
+     * Files isn't null after creation.
      */
     @Test
     public void constructor3() throws Exception {
-        Project newProject = new Project(USER_ID, NAME);
-        assertEquals("user id not set.", USER_ID, newProject.getUserId());
+        Project another = new Project(USER_ID, NAME);
+        assertNotNull("files is null.", another.getFiles());
+        assertTrue("files not empty.", another.getFiles().isEmpty());
     }
 
     /**
-     * Test copy constructor
-     */
-    @Test
-    public void copyConstructor() throws Exception {
-        assertTrue("same reference.", project != project2);
-        assertEquals("not equal.", project, project2);
-        assertEquals("hashCode not same.", project.hashCode(), project2
-                .hashCode());
-        assertEquals("not equal by compareTo.", 0, project.compareTo(project2));
-        assertEquals("files not same.", project.getChildren(), project2
-                .getChildren());
-    }
-
-    /**
-     * Test getters and setters
-     */
-    @Test
-    public void gettersAndSetters() throws Exception {
-        /*
-         * Setters are tested indirectly. @Before method uses setters.
-         */
-        assertEquals("getUserId.", USER_ID, project.getUserId());
-    }
-
-    /**
-     * Test equals with self, null, and non-project object
-     */
-    @Test
-    public void equals() throws Exception {
-        assertEquals("not equal.", project, project);
-        assertFalse("project is equal to null.", project.equals(null));
-        assertFalse("can compare with string object.", project
-                .equals("a string object"));
-        assertFalse("can compare with resource object.", project
-                .equals(new Resource()));
-    }
-
-    /**
-     * Null object as parameter to compareTo method
+     * Project is null.
      */
     @Test(expected = NullPointerException.class)
-    public void compareTo() throws Exception {
-        project.compareTo(null);
+    public void copyConstructor() throws Exception {
+        new Project(null);
     }
 
     /**
-     * Non-project type
-     */
-    @Test(expected = ClassCastException.class)
-    public void compareTo2() throws Exception {
-        project.compareTo(new Container<File, Project>());
-    }
-
-    /**
-     * Only user ids and names are important in equals, hashCode and compareTo
+     * Test copy constructor.
      */
     @Test
-    public void equalsHashCodeAndCompareTo() throws Exception {
-        project2 = new Project(USER_ID, NAME);
-        injectValueToPrivateField(project2, "created", NEW_CREATED);
-        injectValueToPrivateField(project2, "children", Collections.emptySet());
-        assertEquals("not equal.", project, project2);
-        assertEquals("hashCode not same.", project.hashCode(), project2
+    public void copyConstructor2() throws Exception {
+        Set<File> files = project.getFiles();
+        Project another = new Project(project);
+        assertTrue("same reference.", project != another);
+        assertEquals("not equal.", project, another);
+        assertEquals("hashCode not same.", project.hashCode(), another
                 .hashCode());
-        assertEquals("not equal by compareTo.", 0, project.compareTo(project2));
+        assertEquals("files are copied.", Collections.emptySet(), another
+                .getFiles());
+        assertNotNull("original file reference is missing.", project.getFiles());
+        assertEquals("original files has been modified.", files, project
+                .getFiles());
     }
 
     /**
-     * Names are different
+     * Get files returns a modifiable version. (users are discouraged to use
+     * direct files reference to add or remove a file)
      */
     @Test
-    public void equalsHashCodeAndCompareTo2() throws Exception {
-        injectValueToPrivateField(project2, "name", NEW_NAME);
-        assertFalse("equal.", project.equals(project2));
-        assertFalse("hashCode same.", project.hashCode() == project2.hashCode());
-        assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
-                : 1, project.compareTo(project2));
+    public void getFiles() throws Exception {
+        Set<File> files = new HashSet<File>(project.getFiles());
+        File anotherFile = StubFactory.create(File.class, 2);
+        project.getFiles().add(anotherFile);
+        files.add(anotherFile);
+        assertTrue("file not added.", project.getFiles().contains(anotherFile));
+        assertEquals("file size not same.", files.size(), project.getFiles()
+                .size());
+        assertEquals("files not same.", files, project.getFiles());
     }
 
     /**
-     * User ids are different
+     * File is null.
      */
-    @Test
-    public void equalsHashCodeAndCompareTo3() throws Exception {
-        injectValueToPrivateField(project2, "userId", NEW_USER_ID);
-        assertFalse("equal.", project.equals(project2));
-        assertFalse("hashCode same.", project.hashCode() == project2.hashCode());
-        assertEquals("not compared by user id.",
-                USER_ID.compareTo(NEW_USER_ID) < 0 ? -1 : 1, project
-                        .compareTo(project2));
+    @Test(expected = NullPointerException.class)
+    public void addFile() {
+        project.addFile(null);
     }
 
     /**
-     * User id is case insensitive
+     * Add a file.
      */
     @Test
-    public void equalsHashCodeAndCompareTo4() throws Exception {
-        injectValueToPrivateField(project2, "userId", USER_ID.toUpperCase());
-        assertEquals("not equal.", project, project2);
-        assertEquals("hashCode not same.", project.hashCode(), project2
-                .hashCode());
-        assertEquals("not equal by compareTo.", 0, project.compareTo(project2));
+    public void addFile2() throws Exception {
+        Set<File> files = new HashSet<File>(project.getFiles());
+        File anotherFile = StubFactory.create(File.class, 2);
+        project.addFile(anotherFile);
+        files.add(anotherFile);
+        assertTrue("file not added.", project.getFiles().contains(anotherFile));
+        assertEquals("file size not same.", files.size(), project.getFiles()
+                .size());
+        assertEquals("files not same.", files, project.getFiles());
     }
 
-    @Ignore("must be tested by a user and this has already been tested")
+    /**
+     * Add a file that is already in that project.
+     */
+    @Test
+    public void addFile3() throws Exception {
+        Set<File> files = new HashSet<File>(project.getFiles());
+        File file = project.getFiles().iterator().next();
+        project.addFile(file);
+        assertEquals("files not same.", files, project.getFiles());
+        assertEquals("files is changed.", 1, project.getFiles().size());
+    }
+
+    /**
+     * Add a file that is already in another project.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void addFile4() throws Exception {
+        Project another = new Project(project);
+        File file = project.getFiles().iterator().next();
+        another.addFile(file);
+    }
+
+    /**
+     * File is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void removeFile() throws Exception {
+        project.removeFile(null);
+    }
+
+    /**
+     * Remove a file.
+     */
+    @Test
+    public void removeFile2() throws Exception {
+        File file = project.getFiles().iterator().next();
+        project.removeFile(file);
+        assertEquals("files not empty.", Collections.emptySet(), project
+                .getFiles());
+        assertNull("project isn't set to null.", file.getProject());
+    }
+
+    /**
+     * Remove a file that doesn't belong to any project.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void removeFile3() throws Exception {
+        File anotherFile = StubFactory.create(File.class, 2);
+        project.removeFile(anotherFile);
+    }
+
+    /**
+     * Remove a file that belongs to another project.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void removeFile4() throws Exception {
+        File file = project.getFiles().iterator().next();
+        Project another = new Project(project);
+        another.removeFile(file);
+    }
+
+    /**
+     * Test equals to ProjectInfo since Project doesn't override equals and
+     * hashCode.
+     */
+    @Test
+    public void equalsAndHashCode() throws Exception {
+        ProjectInfo info = new ProjectInfo(project);
+        assertTrue("not same.", info.equals(project));
+        assertTrue("not same.", project.equals(info));
+        assertEquals("hashcode not same.", info.hashCode(), project.hashCode());
+    }
+
+    /**
+     * Entities are same after deserialization.
+     */
+    @Test
+    public void serialization() throws Exception {
+        Object deserialized = SerializationUtils.clone(project);
+        assertEquals("not same.", project, deserialized);
+    }
+
+    /**
+     * Simulate data tempering - files is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void serialization2() throws Exception {
+        StubFactory.setProperty(project, "files", 300);
+        SerializationUtils.clone(project);
+    }
+
     @Test
     public void asString() {
         System.out.println(project);

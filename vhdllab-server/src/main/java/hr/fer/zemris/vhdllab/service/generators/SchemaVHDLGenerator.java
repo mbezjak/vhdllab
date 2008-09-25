@@ -38,7 +38,7 @@ public class SchemaVHDLGenerator implements VHDLGenerator {
     @Override
     public VHDLGenerationResult execute(File file) throws ServiceException {
 		SchemaDeserializer sd = new SchemaDeserializer();
-		ISchemaInfo info = sd.deserializeSchema(new StringReader(file.getContent()));
+		ISchemaInfo info = sd.deserializeSchema(new StringReader(file.getData()));
 		
 		SchemaInfo2VHDL vhdlgen = new SchemaInfo2VHDL();
 		return vhdlgen.generateVHDL(info);

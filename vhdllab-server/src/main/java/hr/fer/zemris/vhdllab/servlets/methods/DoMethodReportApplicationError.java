@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -32,10 +32,11 @@ public class DoMethodReportApplicationError extends AbstractRegisteredMethod {
 		if (content == null) {
 			return;
 		}
-		String userId = method.getUserId();
+		Caseless userId = method.getUserId();
 		try {
-		    Library lib = container.getLibraryManager().findByName("errors");
-		    LibraryFile file = new LibraryFile(lib, new Date().toString(), FileTypes.ERROR, content);
+		    Library lib = container.getLibraryManager().findByName(new Caseless("errors"));
+		    LibraryFile file = new LibraryFile(new Caseless(new Date().toString()), content);
+		    lib.addFile(file);
 			container.getLibraryFileManager().save(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_SAVE_FILE, "userId=" + userId);

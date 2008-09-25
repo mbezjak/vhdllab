@@ -33,7 +33,7 @@ public class AutVHDLGenerator implements VHDLGenerator {
 		AUTParser aut=new AUTParser();
 		
 		try {
-			aut.AUTParse(file.getContent());
+			aut.AUTParse(file.getData());
 		} catch (Exception e) {
 			throw new ServiceException(StatusCodes.SERVER_ERROR, e.getMessage());
 		}

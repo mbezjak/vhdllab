@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 
 import java.util.Properties;
@@ -30,7 +31,7 @@ import java.util.Set;
  * @version 1.0
  * @since vhdllab2
  */
-public interface DependencyExtractor extends Functionality<Set<String>> {
+public interface DependencyExtractor extends Functionality<Set<Caseless>> {
 
     /**
      * Returns a collection of file names that specified file depends upon.
@@ -47,5 +48,5 @@ public interface DependencyExtractor extends Functionality<Set<String>> {
      * @throws ServiceException
      *             if exceptional condition occurs
      */
-    Set<String> execute(File file) throws ServiceException;
+    Set<Caseless> execute(File file) throws ServiceException;
 }

@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main.dialog;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -103,7 +104,7 @@ public class RunDialog extends JDialog {
 	/** System Container to enable communication */
 	private ISystemContainer container;
 	/** Currently displayed project */
-	private String currentProject;
+	private Caseless currentProject;
 
 	/**
 	 * A Popup menu that will contain all projects and will allow to change
@@ -342,21 +343,21 @@ public class RunDialog extends JDialog {
 		popupMenu = new JPopupMenu();
 		Font font = popupMenu.getFont();
 		FontMetrics metrics = popupMenu.getFontMetrics(font);
-		List<String> allProjects;
+		List<Caseless> allProjects;
 		try {
 			allProjects = container.getResourceManager().getAllProjects();
 		} catch (UniformAppletException e1) {
-			allProjects = new ArrayList<String>();
+			allProjects = new ArrayList<Caseless>();
 		}
-		for (final String project : allProjects) {
-			JMenuItem item = new JMenuItem(project);
+		for (final Caseless project : allProjects) {
+			JMenuItem item = new JMenuItem(project.toString());
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					changeCurrentProjectTo(project);
 				}
 			});
 			popupMenu.add(item);
-			int stringWidth = metrics.stringWidth(project);
+			int stringWidth = metrics.stringWidth(project.toString());
 			if (stringWidth > width) {
 				width = stringWidth;
 			}
@@ -512,7 +513,7 @@ public class RunDialog extends JDialog {
 		if (getOption() != RunDialog.OK_OPTION || currentProject == null) {
 			return null;
 		}
-		String fileName = (String) fileList.getSelectedValue();
+		Caseless fileName = (Caseless) fileList.getSelectedValue();
 		return new FileIdentifier(currentProject, fileName);
 	}
 
@@ -648,7 +649,7 @@ public class RunDialog extends JDialog {
 	 */
 	private void setupList() {
 		listModel.clear();
-		List<String> files = null;
+		List<Caseless> files = null;
 		try {
 			if (currentProject != null) {
 				if (dialogType == RunDialog.COMPILATION_TYPE) {
@@ -665,7 +666,7 @@ public class RunDialog extends JDialog {
 		if (files == null) {
 			files = Collections.emptyList();
 		}
-		for (String file : files) {
+		for (Caseless file : files) {
 			listModel.addElement(file);
 		}
 	}
@@ -678,13 +679,13 @@ public class RunDialog extends JDialog {
 	 * @param projectName
 	 *            a project to make current
 	 */
-	private void changeCurrentProjectTo(String projectName) {
+	private void changeCurrentProjectTo(Caseless projectName) {
 		// current project is null only when there is no project to display
 		if (currentProject == null)
 			return;
 		if (!currentProject.equals(projectName)) {
-			String text = currentProjectLabel.getText().replace(currentProject,
-					projectName);
+			String text = currentProjectLabel.getText().replace(currentProject.toString(),
+					projectName.toString());
 			currentProjectLabel.setText(text);
 			currentProject = projectName;
 			setupList();

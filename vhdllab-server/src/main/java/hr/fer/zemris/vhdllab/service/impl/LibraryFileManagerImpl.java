@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.LibraryFileDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.service.LibraryFileManager;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -47,7 +48,7 @@ public final class LibraryFileManagerImpl extends
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean exists(Long libraryId, String name) throws ServiceException {
+	public boolean exists(Integer libraryId, Caseless name) throws ServiceException {
 		try {
 			return getDAO().exists(libraryId, name);
 		} catch (DAOException e) {
@@ -62,7 +63,7 @@ public final class LibraryFileManagerImpl extends
 	 *      java.lang.String)
 	 */
 	@Override
-	public LibraryFile findByName(Long libraryId, String name)
+	public LibraryFile findByName(Integer libraryId, Caseless name)
 			throws ServiceException {
 		try {
 			return getDAO().findByName(libraryId, name);

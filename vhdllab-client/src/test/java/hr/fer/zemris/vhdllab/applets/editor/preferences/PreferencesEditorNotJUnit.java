@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -40,7 +41,7 @@ public class PreferencesEditorNotJUnit extends JFrame {
 		Properties p = new Properties();
 		p.setProperty("a", "b");
 		UserPreferences.instance().init(p);
-		FileContent content = new FileContent("about", "config", "");
+		FileContent content = new FileContent(new Caseless("about"), new Caseless("config"), "");
 		editor.setFileContent(content);
 		
 		add(editor, BorderLayout.CENTER);

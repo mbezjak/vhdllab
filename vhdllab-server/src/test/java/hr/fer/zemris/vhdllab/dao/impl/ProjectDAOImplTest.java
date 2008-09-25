@@ -6,12 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
 
 import java.util.ArrayList;
@@ -31,10 +32,10 @@ import org.junit.Test;
  */
 public class ProjectDAOImplTest {
 
-	private static final String NAME = "simple_project_name";
-	private static final String USER_ID = "user.identifier";
-	private static final String NEW_NAME = "new_" + NAME;
-	private static final String NEW_USER_ID = "new_" + USER_ID;
+    private static final Caseless NAME = new Caseless("simple_project_name");
+    private static final Caseless USER_ID = new Caseless("user.identifier");
+    private static final Caseless NEW_NAME = new Caseless("new_" + NAME);
+    private static final Caseless NEW_USER_ID = new Caseless("new." + USER_ID);
 
 	private static FileDAO fileDAO;
 	private static ProjectDAO dao;
@@ -57,8 +58,9 @@ public class ProjectDAOImplTest {
 
 	private void initFiles() {
 		project = new Project(USER_ID, NAME);
-		file = new File(project, "file.name", FileTypes.VHDL_SOURCE,
-				"<file>int main() {}</file>");
+        file = new File(FileType.SOURCE, new Caseless("file_name"),
+                "<file>int main() {}</file>");
+        project.addFile(file);
 	}
 
 	@After
@@ -170,7 +172,9 @@ public class ProjectDAOImplTest {
 	@Test
 	public void save7() throws DAOException {
 		dao.save(project);
-		File newFile = new File(project, "new.file.name", "new.file.type");
+		File newFile = new File(FileType.SOURCE, new Caseless("new_file_name"),
+                "file content");
+        project.addFile(newFile);
 		dao.save(project);
 
 		Project loadedProject = dao.load(project.getId());
@@ -181,22 +185,6 @@ public class ProjectDAOImplTest {
 		assertTrue("project doesn't contain a new file.", loadedProject
 				.getFiles().contains(newFile));
 	}
-
-    /**
-     * Project name can't be any string. Must be of correct format.
-     */
-    @Test
-    public void save8() {
-        Project newProject = new Project(USER_ID, "_proj_and");
-        try {
-            dao.save(newProject);
-            fail("Expected DAOException");
-        } catch (DAOException e) {
-            if (e.getStatusCode() != StatusCodes.DAO_INVALID_PROJECT_NAME) {
-                fail("Invalid status code in DAOException");
-            }
-        }
-    }
 
 	/**
 	 * Id is null
@@ -242,7 +230,7 @@ public class ProjectDAOImplTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void exists() throws DAOException {
-		dao.exists((Long)null);
+		dao.exists((Integer)null);
 	}
 
 	/**
@@ -250,7 +238,7 @@ public class ProjectDAOImplTest {
 	 */
 	@Test
 	public void exists2() throws DAOException {
-		assertFalse("project exists.", dao.exists(Long.MAX_VALUE));
+		assertFalse("project exists.", dao.exists(Integer.MAX_VALUE));
 	}
 
 	/**
@@ -299,8 +287,7 @@ public class ProjectDAOImplTest {
 		assertTrue("project doesn't exist.", dao.exists(project.getUserId(),
 				project.getName()));
 		assertTrue("project name and user id are not case insensitive.", dao
-				.exists(project.getUserId().toUpperCase(), project.getName()
-						.toUpperCase()));
+				.exists(project.getUserId(), project.getName()));
 	}
 
 	/**
@@ -358,8 +345,8 @@ public class ProjectDAOImplTest {
 		assertEquals("project not found.", project, dao.findByName(project
 				.getUserId(), project.getName()));
 		assertEquals("project name and user id are not case insensitive.",
-				project, dao.findByName(project.getUserId().toUpperCase(),
-						project.getName().toUpperCase()));
+				project, dao.findByName(project.getUserId(),
+						project.getName()));
 	}
 
 	/**
@@ -389,7 +376,7 @@ public class ProjectDAOImplTest {
 		assertEquals("projects not equal.", projects, dao.findByUser(project
 				.getUserId()));
 		assertEquals("user id is not case insensitive.", projects, dao
-				.findByUser(project.getUserId().toUpperCase()));
+				.findByUser(project.getUserId()));
 	}
 
 	/**
@@ -406,7 +393,7 @@ public class ProjectDAOImplTest {
 		assertEquals("collections not equal.", projects, dao.findByUser(project
 				.getUserId()));
 		assertEquals("user id is not case insensitive.", projects, dao
-				.findByUser(project.getUserId().toUpperCase()));
+				.findByUser(project.getUserId()));
 	}
 
 	/**
@@ -424,11 +411,11 @@ public class ProjectDAOImplTest {
 		assertEquals("collections not equal.", collection1, dao
 				.findByUser(project.getUserId()));
 		assertEquals("user id is not case insensitive.", collection1, dao
-				.findByUser(project.getUserId().toUpperCase()));
+				.findByUser(project.getUserId()));
 		assertEquals("collections not equal.", collection2, dao
 				.findByUser(project2.getUserId()));
 		assertEquals("user id is not case insensitive.", collection2, dao
-				.findByUser(project2.getUserId().toUpperCase()));
+				.findByUser(project2.getUserId()));
 	}
 
 	/**
@@ -442,7 +429,7 @@ public class ProjectDAOImplTest {
 		EntityManagerUtil.currentEntityManager();
 		for (int i = 0; i < 500; i++) {
 			String name = "name" + (i + 1);
-			Project p = new Project(USER_ID, name);
+			Project p = new Project(USER_ID, new Caseless(name));
 			dao.save(p);
 		}
 		EntityManagerUtil.closeEntityManager();
@@ -487,7 +474,8 @@ public class ProjectDAOImplTest {
 		System.out.print("Prepairing Project cache collection test...");
 		for (int i = 0; i < 500; i++) {
 			String name = "name" + (i + 1);
-			new File(project, name, FileTypes.VHDL_SOURCE, "abcdef");
+            File f = new File(FileType.SOURCE, new Caseless(name), "abcdef");
+            project.addFile(f);
 		}
 		EntityManagerUtil.currentEntityManager();
 		dao.save(project);
@@ -514,7 +502,7 @@ public class ProjectDAOImplTest {
 			EntityManagerUtil.currentEntityManager();
 			long start = System.currentTimeMillis();
 			Project p = dao.load(project.getId());
-			for (File f : p) {
+			for (File f : p.getFiles()) {
 				assertNotNull("file id is null.", f.getId());
 				assertNotNull("file name is null.", f.getName());
 			}
@@ -540,7 +528,8 @@ public class ProjectDAOImplTest {
 		System.out.print("Prepairing Project cache collection test...");
 		for (int i = 0; i < 500; i++) {
 			String name = "name" + (i + 1);
-			new File(project, name, FileTypes.VHDL_SOURCE, "abcdef");
+			File f = new File(FileType.SOURCE, new Caseless(name), "abcdef");
+            project.addFile(f);
 		}
 		EntityManagerUtil.currentEntityManager();
 		dao.save(project);

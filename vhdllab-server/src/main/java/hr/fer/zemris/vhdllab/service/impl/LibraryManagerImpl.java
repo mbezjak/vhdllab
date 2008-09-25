@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.LibraryDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.service.LibraryManager;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -21,7 +22,7 @@ public final class LibraryManagerImpl extends AbstractEntityManager<Library>
 	/**
 	 * A name of a predefined library.
 	 */
-	private static final String PREDEFINED_LIBRARY_NAME = "predefined";
+	private static final Caseless PREDEFINED_LIBRARY_NAME = new Caseless("predefined");
 
 	/**
 	 * Constructor.
@@ -53,7 +54,7 @@ public final class LibraryManagerImpl extends AbstractEntityManager<Library>
 	 * @see hr.fer.zemris.vhdllab.service.LibraryManager#exists(java.lang.String)
 	 */
 	@Override
-	public boolean exists(String name) throws ServiceException {
+	public boolean exists(Caseless name) throws ServiceException {
 		try {
 			return getDAO().exists(name);
 		} catch (DAOException e) {
@@ -67,7 +68,7 @@ public final class LibraryManagerImpl extends AbstractEntityManager<Library>
 	 * @see hr.fer.zemris.vhdllab.service.LibraryManager#findByName(java.lang.String)
 	 */
 	@Override
-	public Library findByName(String name) throws ServiceException {
+	public Library findByName(Caseless name) throws ServiceException {
 		try {
 			return getDAO().findByName(name);
 		} catch (DAOException e) {

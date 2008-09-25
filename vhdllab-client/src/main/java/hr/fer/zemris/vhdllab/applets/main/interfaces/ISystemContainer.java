@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public interface ISystemContainer {
 	 * @see #compileLastHistoryResult()
 	 * @see #compile(FileIdentifier)
 	 * @see #compile(IEditor)
-	 * @see #compile(String, String)
+	 * @see #compile(Caseless, Caseless)
 	 */
 	boolean compileWithDialog();
 
@@ -47,7 +49,7 @@ public interface ISystemContainer {
 	 * @see #compileWithDialog()
 	 * @see #compile(FileIdentifier)
 	 * @see #compile(IEditor)
-	 * @see #compile(String, String)
+	 * @see #compile(Caseless, Caseless)
 	 */
 	boolean compileLastHistoryResult();
 
@@ -59,7 +61,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not compilable (simulation for example)
 	 * therefor this method will not compile such resource. To check if a
 	 * resource is compilable invoke
-	 * {@link IResourceManager#isCompilable(String, String)} method.
+	 * {@link IResourceManager#isCompilable(Caseless, Caseless)} method.
 	 * </p>
 	 * 
 	 * @param file
@@ -69,7 +71,7 @@ public interface ISystemContainer {
 	 * @see #compileWithDialog()
 	 * @see #compileLastHistoryResult()
 	 * @see #compile(IEditor)
-	 * @see #compile(String, String)
+	 * @see #compile(Caseless, Caseless)
 	 */
 	boolean compile(FileIdentifier file);
 
@@ -82,7 +84,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not compilable (simulation for example)
 	 * therefor this method will not compile such resource. To check if a
 	 * resource is compilable invoke
-	 * {@link IResourceManager#isCompilable(String, String)} method.
+	 * {@link IResourceManager#isCompilable(Caseless, Caseless)} method.
 	 * </p>
 	 * 
 	 * @param editor
@@ -92,7 +94,7 @@ public interface ISystemContainer {
 	 * @see #compileWithDialog()
 	 * @see #compileLastHistoryResult()
 	 * @see #compile(FileIdentifier)
-	 * @see #compile(String, String)
+	 * @see #compile(Caseless, Caseless)
 	 */
 	boolean compile(IEditor editor);
 
@@ -115,7 +117,7 @@ public interface ISystemContainer {
 	 * @see #compile(FileIdentifier)
 	 * @see #compile(IEditor)
 	 */
-	boolean compile(String projectName, String fileName);
+	boolean compile(Caseless projectName, Caseless fileName);
 
 	/* SIMULATE RESOURCE METHODS */
 
@@ -129,7 +131,7 @@ public interface ISystemContainer {
 	 * @see #simulateLastHistoryResult()
 	 * @see #simulate(FileIdentifier)
 	 * @see #simulate(IEditor)
-	 * @see #simulate(String, String)
+	 * @see #simulate(Caseless, Caseless)
 	 */
 	boolean simulateWithDialog();
 
@@ -145,7 +147,7 @@ public interface ISystemContainer {
 	 * @see #simulateWithDialog()
 	 * @see #simulate(FileIdentifier)
 	 * @see #simulate(IEditor)
-	 * @see #simulate(String, String)
+	 * @see #simulate(Caseless, Caseless)
 	 */
 	boolean simulateLastHistoryResult();
 
@@ -157,7 +159,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not simulatable (vhdl source for example)
 	 * therefor this method will not simulate such resource. To check if a
 	 * resource is simulatable invoke
-	 * {@link IResourceManager#isSimulatable(String, String)} method.
+	 * {@link IResourceManager#isSimulatable(Caseless, Caseless)} method.
 	 * </p>
 	 * 
 	 * @param file
@@ -167,7 +169,7 @@ public interface ISystemContainer {
 	 * @see #simulateWithDialog()
 	 * @see #simulateLastHistoryResult()
 	 * @see #simulate(IEditor)
-	 * @see #simulate(String, String)
+	 * @see #simulate(Caseless, Caseless)
 	 */
 	boolean simulate(FileIdentifier file);
 
@@ -180,7 +182,7 @@ public interface ISystemContainer {
 	 * Note that some resource is not simulatable (vhdl source for example)
 	 * therefor this method will not simulate such resource. To check if a
 	 * resource is simulatable invoke
-	 * {@link IResourceManager#isSimulatable(String, String)} method.
+	 * {@link IResourceManager#isSimulatable(Caseless, Caseless)} method.
 	 * </p>
 	 * 
 	 * @param editor
@@ -190,7 +192,7 @@ public interface ISystemContainer {
 	 * @see #simulateWithDialog()
 	 * @see #simulateLastHistoryResult()
 	 * @see #simulate(FileIdentifier)
-	 * @see #simulate(String, String)
+	 * @see #simulate(Caseless, Caseless)
 	 */
 	boolean simulate(IEditor editor);
 
@@ -213,7 +215,7 @@ public interface ISystemContainer {
 	 * @see #simulate(FileIdentifier)
 	 * @see #simulate(IEditor)
 	 */
-	boolean simulate(String projectName, String fileName);
+	boolean simulate(Caseless projectName, Caseless fileName);
 
 	/* RESOURCE MANIPULATION METHODS */
 
@@ -239,7 +241,7 @@ public interface ISystemContainer {
 	 * @throws NullPointerException
 	 *             if <code>type</code> is <code>null</code>
 	 */
-	boolean createNewFileInstance(String type);
+	boolean createNewFileInstance(FileType type);
 
 	/**
 	 * Returns a currently selected project in a project explorer or
@@ -248,7 +250,7 @@ public interface ISystemContainer {
 	 * @return a currently selected project in a project explorer or
 	 *         <code>null</code> if no project is selected
 	 */
-	String getSelectedProject();
+	Caseless getSelectedProject();
 
 	/**
 	 * Returns a currently selected file in a project explorer or

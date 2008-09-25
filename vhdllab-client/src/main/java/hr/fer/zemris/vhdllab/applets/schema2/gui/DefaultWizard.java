@@ -39,7 +39,7 @@ public class DefaultWizard implements IWizard {
 	}
 
 	public FileContent getInitialFileContent(Component parent,
-			String projectName) {
+	        hr.fer.zemris.vhdllab.entities.Caseless projectName) {
 		String[] options = new String[] {"OK", "Cancel"};
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
@@ -63,7 +63,7 @@ public class DefaultWizard implements IWizard {
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if(container.getResourceManager().existsFile(projectName, ci.getName())) {
+				if(container.getResourceManager().existsFile(projectName, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()))) {
 					SystemLog.instance().addSystemMessage(ci.getName() + " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {
@@ -114,7 +114,7 @@ public class DefaultWizard implements IWizard {
 				SystemLog.instance().addSystemMessage("Internal error!", MessageType.INFORMATION);
 				return null;
 			}
-			return new FileContent(projectName, ci.getName(), writer.toString());
+			return new FileContent(projectName, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()), writer.toString());
 		} else return null;
 	}
 

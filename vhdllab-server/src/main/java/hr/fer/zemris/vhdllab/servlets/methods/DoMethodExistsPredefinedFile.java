@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
@@ -26,13 +27,13 @@ public class DoMethodExistsPredefinedFile extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
+        Caseless fileName = method.getParameter(Caseless.class, PROP_FILE_NAME);
 		if (fileName == null) {
 			return;
 		}
 		boolean exists;
 		try {
-		    Library lib = container.getLibraryManager().findByName("predefined");
+		    Library lib = container.getLibraryManager().findByName(new Caseless("preferences"));
 			exists = container.getLibraryFileManager().exists(lib.getId(), fileName);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_DETERMINE_EXISTANCE_OF_FILE, "name="

@@ -34,7 +34,7 @@ public class SchemaCircuitInterfaceExtractor implements
     public CircuitInterface execute(File file) throws ServiceException {
         SchemaDeserializer sd = new SchemaDeserializer();
         ISchemaInfo info = sd.deserializeSchema(new StringReader(file
-                .getContent()));
+                .getData()));
 
         return info.getEntity().getCircuitInterface(info);
     }

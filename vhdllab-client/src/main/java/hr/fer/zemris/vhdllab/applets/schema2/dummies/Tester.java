@@ -127,7 +127,7 @@ public class Tester {
 		// test setFileContent
 		IWizard wiz = new DefaultWizard();
 		wiz.setSystemContainer(new DummySystemContainer());
-		FileContent fc = wiz.getInitialFileContent(null, "dummyProject");
+		FileContent fc = wiz.getInitialFileContent(null, new hr.fer.zemris.vhdllab.entities.Caseless("dummyProject"));
 		mpanel.setFileContent(fc);
 		
 		// create frame

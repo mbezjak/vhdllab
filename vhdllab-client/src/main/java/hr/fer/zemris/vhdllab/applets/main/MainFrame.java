@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
@@ -29,6 +28,8 @@ import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferencesListener;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
@@ -977,15 +978,15 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						if (userId == null || userId.equals("")) {
 							return;
 						}
-						List<String> projects = communicator
-								.getAllProjects(userId);
+						List<Caseless> projects = communicator
+								.getAllProjects(new Caseless(userId));
 						IComponentIdentifier<?> ci = ComponentIdentifierFactory
 								.createProjectExplorerIdentifier();
 						IView view = systemContainer.getViewManager()
 								.getOpenedView(ci);
 						IProjectExplorer pe = view
 								.asInterface(IProjectExplorer.class);
-						for (String projectName : projects) {
+						for (Caseless projectName : projects) {
 							pe.addProject(projectName);
 						}
 					} catch (UniformAppletException ex) {
@@ -1033,12 +1034,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			setCommonMenuAttributes(menuItem, key);
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					try {
-						systemContainer
-								.createNewFileInstance(FileTypes.VHDL_SOURCE);
-					} catch (RuntimeException ex) {
-						SystemLog.instance().addErrorMessage(ex);
-					}
+                    try {
+                        systemContainer
+                                .createNewFileInstance(FileType.SOURCE);
+                    } catch (RuntimeException ex) {
+                        SystemLog.instance().addErrorMessage(ex);
+                    }
 				}
 			});
 			submenu.add(menuItem);
@@ -1051,7 +1052,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				public void actionPerformed(ActionEvent e) {
 					try {
 						systemContainer
-								.createNewFileInstance(FileTypes.VHDL_TESTBENCH);
+								.createNewFileInstance(FileType.TESTBENCH);
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
@@ -1067,7 +1068,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				public void actionPerformed(ActionEvent e) {
 					try {
 						systemContainer
-								.createNewFileInstance(FileTypes.VHDL_SCHEMA);
+								.createNewFileInstance(FileType.SCHEMA);
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
@@ -1083,7 +1084,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				public void actionPerformed(ActionEvent e) {
 					try {
 						systemContainer
-								.createNewFileInstance(FileTypes.VHDL_AUTOMATON);
+								.createNewFileInstance(FileType.AUTOMATON);
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
@@ -1553,20 +1554,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					try {
 						int error = 1 / 0;
 						System.out.println(error);
-					} catch (RuntimeException ex) {
-						SystemLog.instance().addErrorMessage(ex);
-					}
-				}
-			});
-			menu.add(menuItem);
-
-			menu.addSeparator();
-			menuItem = new JMenuItem("Create new property");
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					try {
-						systemContainer
-								.createNewFileInstance(FileTypes.PREFERENCES_USER);
 					} catch (RuntimeException ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}

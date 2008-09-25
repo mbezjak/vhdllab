@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.server.conf;
 
+import hr.fer.zemris.vhdllab.entities.FileType;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,7 +20,7 @@ public final class ServerConf {
     /**
      * All defined file type mappings.
      */
-    private final Map<String, FileTypeMapping> mappings;
+    private final Map<FileType, FileTypeMapping> mappings;
 
     /**
      * Global properties for all functionalities.
@@ -29,7 +31,7 @@ public final class ServerConf {
      * Default constructor.
      */
     public ServerConf() {
-        mappings = new HashMap<String, FileTypeMapping>();
+        mappings = new HashMap<FileType, FileTypeMapping>();
         properties = new Properties();
     }
 
@@ -45,7 +47,7 @@ public final class ServerConf {
         if (mapping == null) {
             throw new NullPointerException("File type mapping cant be null");
         }
-        mappings.put(mapping.getType().toLowerCase(), mapping);
+        mappings.put(FileType.valueOf(mapping.getType()), mapping);
     }
 
     /**
@@ -58,8 +60,8 @@ public final class ServerConf {
      * @throws NullPointerException
      *             if <code>type</code> is <code>null</code>
      */
-    public FileTypeMapping getFileTypeMapping(String type) {
-        return mappings.get(type.toLowerCase());
+    public FileTypeMapping getFileTypeMapping(FileType type) {
+        return mappings.get(type);
     }
 
     /**
@@ -95,7 +97,7 @@ public final class ServerConf {
      * @return <code>true</code> if <code>type</code> is specified in server
      *         configuration or <code>false</code> otherwise
      */
-    public boolean containsFileType(String type) {
+    public boolean containsFileType(FileType type) {
         return getFileTypeMapping(type) != null;
     }
 
@@ -105,8 +107,8 @@ public final class ServerConf {
      *
      * @return all defined file types
      */
-    public Set<String> getFileTypes() {
-        return new HashSet<String>(mappings.keySet());
+    public Set<FileType> getFileTypes() {
+        return new HashSet<FileType>(mappings.keySet());
     }
 
     /*

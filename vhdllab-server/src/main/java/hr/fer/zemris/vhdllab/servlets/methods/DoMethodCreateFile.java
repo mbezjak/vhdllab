@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
@@ -26,9 +28,9 @@ public class DoMethodCreateFile extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-        Long projectId = method.getParameter(Long.class, PROP_ID);
-        String fileName = method.getParameter(String.class, PROP_FILE_NAME);
-        String fileType = method.getParameter(String.class, PROP_FILE_TYPE);
+        Integer projectId = method.getParameter(Integer.class, PROP_ID);
+        Caseless fileName = method.getParameter(Caseless.class, PROP_FILE_NAME);
+        FileType fileType = method.getParameter(FileType.class, PROP_FILE_TYPE);
         String content = method.getParameter(String.class, PROP_FILE_CONTENT);
         if (projectId == null || fileName == null || fileType == null) {
             return;
@@ -37,7 +39,8 @@ public class DoMethodCreateFile extends AbstractRegisteredMethod {
         try {
             Project project = container.getProjectManager().load(projectId);
             checkProjectSecurity(request, method, project);
-            file = new File(project, fileName, fileType, content);
+            file = new File(fileType, fileName, content);
+            project.addFile(file);
             container.getFileManager().save(file);
         } catch (ServiceException e) {
             method.setStatus(SE_CAN_NOT_CREATE_FILE, "projectId=" + projectId

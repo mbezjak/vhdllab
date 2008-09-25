@@ -33,6 +33,8 @@ import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
 import java.awt.Frame;
@@ -329,8 +331,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 		if (editor == null) {
 			return false;
 		}
-		String projectName = editor.getProjectName();
-		String fileName = editor.getFileName();
+		Caseless projectName = editor.getProjectName();
+		Caseless fileName = editor.getFileName();
 		return compile(projectName, fileName);
 	}
 
@@ -341,7 +343,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean compile(String projectName, String fileName) {
+	public boolean compile(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
@@ -350,7 +352,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			result = resourceManager.compile(projectName, fileName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+			text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
 					fileName, projectName });
 			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return false;
@@ -411,8 +413,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 		if (editor == null) {
 			return false;
 		}
-		String projectName = editor.getProjectName();
-		String fileName = editor.getFileName();
+		Caseless projectName = editor.getProjectName();
+		Caseless fileName = editor.getFileName();
 		return simulate(projectName, fileName);
 	}
 
@@ -423,7 +425,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean simulate(String projectName, String fileName) {
+	public boolean simulate(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
@@ -432,7 +434,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			result = resourceManager.simulate(projectName, fileName);
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+			text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
 					fileName, projectName });
 			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return false;
@@ -454,7 +456,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			return false;
 		}
 		try {
-			return resourceManager.createNewProject(projectName);
+			return resourceManager.createNewProject(new Caseless(projectName));
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_PROJECT);
 			text = PlaceholderUtil.replacePlaceholders(text,
@@ -470,11 +472,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#createNewFileInstance(java.lang.String)
 	 */
 	@Override
-	public boolean createNewFileInstance(String type) {
+	public boolean createNewFileInstance(FileType type) {
 		if (type == null) {
 			throw new NullPointerException("File type cant be null");
 		}
-		String projectName = getSelectedProject();
+		Caseless projectName = getSelectedProject();
 		if (projectName == null) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
 			SystemLog.instance()
@@ -488,7 +490,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			return false;
 		}
 		projectName = content.getProjectName();
-		String fileName = content.getFileName();
+		Caseless fileName = content.getFileName();
 		String data = content.getContent();
 		try {
 			return resourceManager.createNewResource(projectName, fileName,
@@ -496,13 +498,13 @@ public class DefaultSystemContainer implements ISystemContainer {
 		} catch (UniformAppletException e) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_FILE);
 			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
+					new Caseless[] { fileName });
 			SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 			return false;
 		}
 	}
 
-	private IEditor getNewEditorInstanceByFileType(String type) {
+	private IEditor getNewEditorInstanceByFileType(FileType type) {
 		EditorProperties ep = configuration.getEditorPropertiesByFileType(type);
 		String clazz = ep.getClazz();
 		IEditor editor;
@@ -521,7 +523,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getSelectedProject()
 	 */
 	@Override
-	public String getSelectedProject() {
+	public Caseless getSelectedProject() {
 		IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 				.createProjectExplorerIdentifier();
 		if (!viewManager.isViewOpened(identifier)) {
@@ -618,7 +620,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 * @throws NullPointerException
 	 *             if wizard is <code>null</code>
 	 */
-	private FileContent initWizard(IWizard wizard, String projectName) {
+	private FileContent initWizard(IWizard wizard, Caseless projectName) {
 		if (wizard == null) {
 			throw new NullPointerException("Wizard cant be null");
 		}
@@ -710,14 +712,14 @@ public class DefaultSystemContainer implements ISystemContainer {
 		String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
 		String currentProjectTitle = getBundleString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_TITLE);
 		String changeCurrentProjectButton = getBundleString(LanguageConstants.DIALOG_RUN_CHANGE_CURRENT_PROJECT_BUTTON);
-		String projectName = getSelectedProject();
+		Caseless projectName = getSelectedProject();
 		String currentProjectLabel;
 		if (projectName == null) {
 			currentProjectLabel = getBundleString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);
 		} else {
 			currentProjectLabel = getBundleString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_LABEL);
 			currentProjectLabel = PlaceholderUtil.replacePlaceholders(
-					currentProjectLabel, new String[] { projectName });
+					currentProjectLabel, new Caseless[] { projectName });
 		}
 
 		RunDialog dialog = new RunDialog(parentFrame, true, this, dialogType);
@@ -766,11 +768,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class BeforeCompilationCheckCompilableAndSaveEditors extends
 			VetoableResourceAdapter {
 		@Override
-		public void beforeResourceCompilation(String projectName,
-				String fileName) throws ResourceVetoException {
+		public void beforeResourceCompilation(Caseless projectName,
+		        Caseless fileName) throws ResourceVetoException {
 			if (!resourceManager.isCompilable(projectName, fileName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
-				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+				text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
 						fileName, projectName });
 				SystemLog.instance().addSystemMessage(text,
 						MessageType.INFORMATION);
@@ -797,10 +799,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class AfterCompilationEcho extends VetoableResourceAdapter {
 		@Override
-		public void resourceCompiled(String projectName, String fileName,
+		public void resourceCompiled(Caseless projectName, Caseless fileName,
 				CompilationResult result) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_COMPILED);
-			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+			text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
 					fileName, projectName });
 			SystemLog.instance()
 					.addSystemMessage(text, MessageType.INFORMATION);
@@ -815,7 +817,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class AfterCompilationOpenView extends VetoableResourceAdapter {
 		@Override
-		public void resourceCompiled(String projectName, String fileName,
+		public void resourceCompiled(Caseless projectName, Caseless fileName,
 				CompilationResult result) {
 			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 					.createViewIdentifier(ComponentTypes.VIEW_COMPILATION_ERRORS);
@@ -836,11 +838,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class BeforeSimulationCheckSimulatableAndSaveEditors extends
 			VetoableResourceAdapter {
 		@Override
-		public void beforeResourceSimulation(String projectName, String fileName)
+		public void beforeResourceSimulation(Caseless projectName, Caseless fileName)
 				throws ResourceVetoException {
 			if (!resourceManager.isSimulatable(projectName, fileName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
-				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+				text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
 						fileName, projectName });
 				SystemLog.instance().addSystemMessage(text,
 						MessageType.INFORMATION);
@@ -868,10 +870,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class AfterSimulationEcho extends VetoableResourceAdapter {
 		@Override
-		public void resourceSimulated(String projectName, String fileName,
+		public void resourceSimulated(Caseless projectName, Caseless fileName,
 				SimulationResult result) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_SIMULATED);
-			text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+			text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
 					fileName, projectName });
 			SystemLog.instance()
 					.addSystemMessage(text, MessageType.INFORMATION);
@@ -886,7 +888,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class AfterSimulationOpenView extends VetoableResourceAdapter {
 		@Override
-		public void resourceSimulated(String projectName, String fileName,
+		public void resourceSimulated(Caseless projectName, Caseless fileName,
 				SimulationResult result) {
 			IComponentIdentifier<?> identifier = ComponentIdentifierFactory
 					.createViewIdentifier(ComponentTypes.VIEW_SIMULATION_ERRORS);
@@ -907,7 +909,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class AfterSimulationOpenEditor extends VetoableResourceAdapter {
 		@Override
-		public void resourceSimulated(String projectName, String fileName,
+		public void resourceSimulated(Caseless projectName, Caseless fileName,
 				SimulationResult result) {
 			if (result.getWaveform() != null && !result.getWaveform().equals("")) {
 				FileIdentifier file = new FileIdentifier(projectName, fileName);
@@ -928,7 +930,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class BeforeProjectCreationCheckExistence extends
 			VetoableResourceAdapter {
 		@Override
-		public void beforeProjectCreation(String projectName)
+		public void beforeProjectCreation(Caseless projectName)
 				throws ResourceVetoException {
 			boolean exists;
 			try {
@@ -936,7 +938,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			} catch (UniformAppletException e) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
 				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { projectName });
+						new Caseless[] { projectName });
 				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 				// veto project creation
 				throw new ResourceVetoException();
@@ -944,7 +946,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 			if (exists) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
 				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { projectName });
+						new Caseless[] { projectName });
 				SystemLog.instance().addSystemMessage(text,
 						MessageType.INFORMATION);
 				// veto project creation
@@ -962,12 +964,12 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class BeforeProjectCreationCheckCorrectName extends
 			VetoableResourceAdapter {
 		@Override
-		public void beforeProjectCreation(String projectName)
+		public void beforeProjectCreation(Caseless projectName)
 				throws ResourceVetoException {
 			if (!resourceManager.isCorrectProjectName(projectName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { projectName });
+						new Caseless[] { projectName });
 				SystemLog.instance().addSystemMessage(text,
 						MessageType.INFORMATION);
 				// veto project creation
@@ -983,10 +985,10 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class AfterProjectCreationEcho extends VetoableResourceAdapter {
 		@Override
-		public void projectCreated(String projectName) {
+		public void projectCreated(Caseless projectName) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
 			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { projectName });
+					new Caseless[] { projectName });
 			SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 		}
 	}
@@ -999,22 +1001,22 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class BeforeResourceCreationCheckExistence extends
 			VetoableResourceAdapter {
 		@Override
-		public void beforeResourceCreation(String projectName, String fileName,
-				String type) throws ResourceVetoException {
+		public void beforeResourceCreation(Caseless projectName, Caseless fileName,
+				FileType type) throws ResourceVetoException {
 			boolean exists;
 			try {
 				exists = resourceManager.existsFile(projectName, fileName);
 			} catch (UniformAppletException e) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_FILE_EXISTENCE);
 				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { fileName });
+						new Caseless[] { fileName });
 				SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
 				// veto resource creation
 				throw new ResourceVetoException();
 			}
 			if (exists) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_FILE);
-				text = PlaceholderUtil.replacePlaceholders(text, new String[] {
+				text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
 						fileName, projectName });
 				SystemLog.instance().addSystemMessage(text,
 						MessageType.INFORMATION);
@@ -1032,12 +1034,12 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class BeforeResourceCreationCheckCorrectName extends
 			VetoableResourceAdapter {
 		@Override
-		public void beforeResourceCreation(String projectName, String fileName,
-				String type) throws ResourceVetoException {
+		public void beforeResourceCreation(Caseless projectName, Caseless fileName,
+				FileType type) throws ResourceVetoException {
 			if (!resourceManager.isCorrectFileName(fileName)) {
 				String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
 				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { fileName });
+						new Caseless[] { fileName });
 				SystemLog.instance().addSystemMessage(text,
 						MessageType.INFORMATION);
 				// veto project creation
@@ -1053,11 +1055,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class AfterResourceCreationEcho extends VetoableResourceAdapter {
 		@Override
-		public void resourceCreated(String projectName, String fileName,
-				String type) {
+		public void resourceCreated(Caseless projectName, Caseless fileName,
+				FileType type) {
 			String text = getBundleString(LanguageConstants.STATUSBAR_FILE_CREATED);
 			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
+					new Caseless[] { fileName });
 			SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 		}
 	}
@@ -1070,8 +1072,8 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class AfterResourceCreationOpenEditor extends
 			VetoableResourceAdapter {
 		@Override
-		public void resourceCreated(String projectName, String fileName,
-				String type) {
+		public void resourceCreated(Caseless projectName, Caseless fileName,
+				FileType type) {
 			FileIdentifier file = new FileIdentifier(projectName, fileName);
 			IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
 					.createFileEditorIdentifier(file);
@@ -1087,11 +1089,11 @@ public class DefaultSystemContainer implements ISystemContainer {
 	 */
 	private class ResourceSavedEcho extends VetoableResourceAdapter {
 		@Override
-		public void resourceSaved(String projectName, String fileName) {
+		public void resourceSaved(Caseless projectName, Caseless fileName) {
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_FILE_SAVED);
 			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
+					new Caseless[] { fileName });
 			SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
 		}
 	}
@@ -1104,7 +1106,7 @@ public class DefaultSystemContainer implements ISystemContainer {
 	private class ResourceDeletedCloseEditor extends VetoableResourceAdapter {
 		
 		@Override
-		public void resourceDeleted(String projectName, String fileName) {
+		public void resourceDeleted(Caseless projectName, Caseless fileName) {
 			// TODO napravit ovo. kvagu kolko problema s tim.
 		}
 	}

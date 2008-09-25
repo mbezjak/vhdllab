@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.service.extractors;
 
 import static org.junit.Assert.assertEquals;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
@@ -9,8 +8,11 @@ import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
+import hr.fer.zemris.vhdllab.entities.StubFactory;
 import hr.fer.zemris.vhdllab.service.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.test.FileContentProvider;
@@ -34,10 +36,11 @@ public class SourceExtractorTest {
     private static File file;
 
     @BeforeClass
-    public static void initClass() {
+    public static void initClass() throws Exception {
         extractor = new SourceExtractor();
-        Project project = new Project("user.id", "project_name");
-        file = new File(project, "file_name", FileTypes.VHDL_SOURCE);
+        file = new File(FileType.SOURCE, new Caseless("file_name"), "");
+        Project project = StubFactory.create(Project.class, 400);
+        project.addFile(file);
     }
 
     /**
@@ -46,9 +49,9 @@ public class SourceExtractorTest {
     @Test
     public void executeExample() throws Exception {
         List<NameAndContent> list = FileContentProvider
-                .getContent(FileTypes.VHDL_SOURCE);
+                .getContent(FileType.SOURCE);
         NameAndContent nc = list.get(0); // comp_and
-        file.setContent(nc.getContent());
+        file.setData(nc.getContent());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "comp_and", ci.getName());
         List<Port> ports = new ArrayList<Port>(3);
@@ -68,7 +71,7 @@ public class SourceExtractorTest {
         sb.append("-- ENTITY circuitOR IS\n");
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -83,7 +86,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY -- circuitOR\n");
         sb.append("circuitAND IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -101,7 +104,7 @@ public class SourceExtractorTest {
         sb.append("c :  OUT\t\t std_logic_vector (  8   DOWNTO   1  )  \t\t");
         sb.append("\t\t) \t ;  \n");
         sb.append("   END \r\n\t   circuitAND   ; ");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(3);
@@ -126,7 +129,7 @@ public class SourceExtractorTest {
         sb.append("a   ,   b  :  IN\t\t std_logic  \t\t  ");
         sb.append("\t\t) \t ;  \n");
         sb.append("   END \r\n\t   circuitAND   ; ");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(3);
@@ -149,7 +152,7 @@ public class SourceExtractorTest {
         sb.append("a,b:IN std_logic;");
         sb.append("c:OUT std_logic_vector(8 DOWNTO 1));");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(3);
@@ -172,7 +175,7 @@ public class SourceExtractorTest {
         sb.append("c:OUT std_logic_vector(8 DOWNTO 1);");
         sb.append("a,b:IN std_logic);");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(3);
@@ -193,7 +196,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("eNtItY circuitAND is\n");
         sb.append("enD CiRCUitAnd;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -208,7 +211,7 @@ public class SourceExtractorTest {
         sb.append("before doesn't matter.\n");
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -222,7 +225,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("circuitAND IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -234,7 +237,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITYcircuitAND IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -246,7 +249,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY _circuitAND IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -258,7 +261,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END circuitOR;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -270,7 +273,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuit AND IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -282,7 +285,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND wrong IS\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -293,7 +296,7 @@ public class SourceExtractorTest {
     public void executeIs3() throws Exception {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND ISEND circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -305,7 +308,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS wrong\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -318,7 +321,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERICwrong(\n");
         sb.append("n: positive := 2);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -331,7 +334,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC (\n");
         sb.append("n: positive := 2)wrong;\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -344,7 +347,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC (\n");
         sb.append("n: positive := 2);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -359,7 +362,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC(\n");
         sb.append("n: positive := 2);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -374,7 +377,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC(\n");
         sb.append("n: positive := 2) ;\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -389,7 +392,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC(\n");
         sb.append("n: positive := 2) wrong;\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -402,7 +405,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC(\n");
         sb.append("n: positive := 2);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -417,7 +420,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC(\n");
         sb.append("n: positive := 2);wrong\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -430,7 +433,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS GENERIC(\n");
         sb.append("n: positive := 2); ");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());
@@ -446,7 +449,7 @@ public class SourceExtractorTest {
         sb.append("n: positive := 2);\n");
         sb.append("PORT(a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -464,7 +467,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORTwrong(\n");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -477,7 +480,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -495,7 +498,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (\n");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -513,7 +516,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (\n");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -531,7 +534,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -549,7 +552,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (");
         sb.append("a:IN std_logic(;\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -562,7 +565,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (");
         sb.append("a:IN std_logic),\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -575,7 +578,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (");
         sb.append("a:IN std_logic) ,\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -588,7 +591,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic) ;\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -606,7 +609,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -624,7 +627,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (");
         sb.append("a:IN std_logic);wrong");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -637,7 +640,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT (");
         sb.append("a:IN std_logic); wrong");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -650,7 +653,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic);");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -668,7 +671,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic); ");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -687,7 +690,7 @@ public class SourceExtractorTest {
         sb.append("a:IN std_logic);\n");
         sb.append("GENERIC(a:positive := 2);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -705,7 +708,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("_a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -718,7 +721,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a.:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -731,7 +734,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a :IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -749,7 +752,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -767,7 +770,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a,.:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -780,7 +783,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a, .:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -793,7 +796,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a,b:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -812,7 +815,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a,b,c:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -832,7 +835,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a,a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -845,7 +848,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:wrong std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -858,7 +861,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a: IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -876,7 +879,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_wrong);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -889,7 +892,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic(8 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -902,7 +905,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic,\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -915,7 +918,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -933,7 +936,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic );\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -952,7 +955,7 @@ public class SourceExtractorTest {
         sb.append("a:IN std_logic;");
         sb.append("b:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -972,7 +975,7 @@ public class SourceExtractorTest {
         sb.append("a:IN std_logic;");
         sb.append("a:IN std_logic);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -986,7 +989,7 @@ public class SourceExtractorTest {
         sb.append("a:IN std_logic;");
         sb.append("a:IN std_logic_vector(8 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -999,7 +1002,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic;);");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1013,7 +1016,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector;(8 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1026,7 +1029,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector (8 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -1045,7 +1048,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(.8 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1058,7 +1061,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector( 8 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -1077,7 +1080,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(n DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1090,7 +1093,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 wrong 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1103,7 +1106,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 DOWNTO_1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1116,7 +1119,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 DOWNTO n));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1129,7 +1132,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 DOWNTO 11));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1142,7 +1145,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 TO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1155,7 +1158,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(1 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -1174,7 +1177,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(1 TO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -1193,7 +1196,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 DOWNTO 1.));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1206,7 +1209,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 DOWNTO 1 ));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -1225,7 +1228,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 DOWNTO 1).);\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1238,7 +1241,7 @@ public class SourceExtractorTest {
         sb.append("ENTITY circuitAND IS PORT(\n");
         sb.append("a:IN std_logic_vector(8 DOWNTO 1) );\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -1258,7 +1261,7 @@ public class SourceExtractorTest {
         sb.append("a:IN std_logic_vector(8 DOWNTO 1) ;");
         sb.append("b:IN std_logic_vector(8 DOWNTO 1));\n");
         sb.append("END circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         List<Port> ports = new ArrayList<Port>(1);
@@ -1277,7 +1280,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS\n");
         sb.append("ENDcircuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1289,7 +1292,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END wrong circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1301,7 +1304,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END circuitAND.");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1313,7 +1316,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END circuitAND .");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1325,7 +1328,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END ENTITYcircuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         extractor.execute(file);
     }
 
@@ -1337,7 +1340,7 @@ public class SourceExtractorTest {
         StringBuilder sb = new StringBuilder(50);
         sb.append("ENTITY circuitAND IS\n");
         sb.append("END ENTITY circuitAND;");
-        file.setContent(sb.toString());
+        file.setData(sb.toString());
         CircuitInterface ci = extractor.execute(file);
         assertEquals("wrong entity name.", "circuitAND", ci.getName());
         assertEquals("ports not empty.", Collections.emptyList(), ci.getPorts());

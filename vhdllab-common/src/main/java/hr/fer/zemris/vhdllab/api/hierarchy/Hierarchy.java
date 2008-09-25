@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.api.hierarchy;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,15 +23,15 @@ public final class Hierarchy implements Serializable {
 	/**
 	 * A name of a project for whom a hierarchy is built.
 	 */
-	private final String projectName;
+	private final Caseless projectName;
 	/**
 	 * A set of nodes for each file in a project.
 	 */
-	private final Map<String, HierarchyNode> nodes;
+	private final Map<Caseless, HierarchyNode> nodes;
 	/**
 	 * A set of files that aren't used by any other file.
 	 */
-	private final transient Set<String> topLevelFiles;
+	private final transient Set<Caseless> topLevelFiles;
 
 	/**
 	 * Constructs a hierarchy for specified project. <code>nodes</code>
@@ -42,7 +44,7 @@ public final class Hierarchy implements Serializable {
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	public Hierarchy(String projectName, Set<HierarchyNode> nodes) {
+	public Hierarchy(Caseless projectName, Set<HierarchyNode> nodes) {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
 		}
@@ -50,15 +52,15 @@ public final class Hierarchy implements Serializable {
 			throw new NullPointerException("Top level nodes cant be null");
 		}
 		this.projectName = projectName;
-		this.nodes = new HashMap<String, HierarchyNode>(nodes.size());
-		this.topLevelFiles = new HashSet<String>(nodes.size());
+		this.nodes = new HashMap<Caseless, HierarchyNode>(nodes.size());
+		this.topLevelFiles = new HashSet<Caseless>(nodes.size());
 		for (HierarchyNode n : nodes) {
 			this.topLevelFiles.add(n.getFileName());
 		}
 		for (HierarchyNode n : nodes) {
 			HierarchyNode clone = new HierarchyNode(n);
-			this.nodes.put(clone.getFileName().toLowerCase(), clone);
-			for (String name : clone.getDependencies()) {
+			this.nodes.put(clone.getFileName(), clone);
+			for (Caseless name : clone.getDependencies()) {
 				this.topLevelFiles.remove(name);
 			}
 		}
@@ -69,7 +71,7 @@ public final class Hierarchy implements Serializable {
 	 * 
 	 * @return a name of a project for whom a hierarchy is built
 	 */
-	public String getProjectName() {
+	public Caseless getProjectName() {
 		return projectName;
 	}
 
@@ -80,7 +82,7 @@ public final class Hierarchy implements Serializable {
 	 * 
 	 * @return a set of files (their names) that are not used in any other file
 	 */
-	public Set<String> getTopLevelFiles() {
+	public Set<Caseless> getTopLevelFiles() {
 		return Collections.unmodifiableSet(topLevelFiles);
 	}
 
@@ -98,11 +100,11 @@ public final class Hierarchy implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if specified file doesn't exist in a hierarchy
 	 */
-	public Set<String> getDependenciesForFile(String name) {
+	public Set<Caseless> getDependenciesForFile(Caseless name) {
 		if (name == null) {
 			throw new NullPointerException("File name cant be null");
 		}
-		HierarchyNode node = nodes.get(name.toLowerCase());
+		HierarchyNode node = nodes.get(name);
 		if (node == null) {
 			throw new IllegalArgumentException("No such file: " + name);
 		}
@@ -122,8 +124,8 @@ public final class Hierarchy implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if specified file doesn't exist in a hierarchy
 	 */
-	public Set<String> getAllDependenciesForFile(String name) {
-		Set<String> dependencies = new HashSet<String>();
+	public Set<Caseless> getAllDependenciesForFile(Caseless name) {
+		Set<Caseless> dependencies = new HashSet<Caseless>();
 		resolveDependencies(name, dependencies);
 		return dependencies;
 	}
@@ -140,10 +142,10 @@ public final class Hierarchy implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if specified file doesn't exist in a hierarchy
 	 */
-	private void resolveDependencies(String name, Set<String> dependencies) {
-		Set<String> names = getDependenciesForFile(name);
+	private void resolveDependencies(Caseless name, Set<Caseless> dependencies) {
+		Set<Caseless> names = getDependenciesForFile(name);
 		dependencies.addAll(names);
-		for (String n : names) {
+		for (Caseless n : names) {
 			resolveDependencies(n, dependencies);
 		}
 	}
@@ -166,7 +168,7 @@ public final class Hierarchy implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + projectName.toLowerCase().hashCode();
+		result = prime * result + projectName.hashCode();
 		return result;
 	}
 
@@ -184,7 +186,7 @@ public final class Hierarchy implements Serializable {
 		if (!(obj instanceof Hierarchy))
 			return false;
 		final Hierarchy other = (Hierarchy) obj;
-		return projectName.equalsIgnoreCase(other.projectName);
+		return projectName.equals(other.projectName);
 	}
 
 	/*

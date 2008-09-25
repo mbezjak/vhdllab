@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformTestbenchParserException;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.Testbench;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.TestbenchParser;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.service.DependencyExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -34,18 +35,18 @@ public class TestbenchDependencyExtractor implements DependencyExtractor {
      * @see hr.fer.zemris.vhdllab.service.DependencyExtractor#execute(hr.fer.zemris.vhdllab.entities.File)
      */
     @Override
-    public Set<String> execute(File file) throws ServiceException {
+    public Set<Caseless> execute(File file) throws ServiceException {
 		Testbench tb = null;
         
-		String source = file.getContent();
+		String source = file.getData();
 		try {
 			tb = TestbenchParser.parseXml(source);
 		} catch (UniformTestbenchParserException e) {
 			throw new ServiceException(StatusCodes.SERVICE_CANT_EXTRACT_DEPENDENCIES, e);
 		}
 		
-        Set<String> dependencies = new HashSet<String>(1);
-        dependencies.add(tb.getSourceName());
+        Set<Caseless> dependencies = new HashSet<Caseless>(1);
+        dependencies.add(new Caseless(tb.getSourceName()));
 
         return dependencies;
 	}

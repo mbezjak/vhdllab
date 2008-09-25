@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.model;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 /**
  * Represents a one file and its content.
  * 
@@ -8,9 +10,9 @@ package hr.fer.zemris.vhdllab.applets.main.model;
 public final class FileContent {
 
 	/** A name of a project */
-	private String projectName;
+	private Caseless projectName;
 	/** A name of a file */
-	private String fileName;
+	private Caseless fileName;
 	/** A content of a file that this class represents */
 	private String content;
 
@@ -38,7 +40,7 @@ public final class FileContent {
 	 * @throws NullPointerException
 	 *             if <code>content</code> is <code>null</code>
 	 */
-	public FileContent(String projectName, String fileName, String content) {
+	public FileContent(Caseless projectName, Caseless fileName, String content) {
 		if (content == null) {
 			throw new NullPointerException("Content can not be null.");
 		}
@@ -76,7 +78,7 @@ public final class FileContent {
 	 * 
 	 * @return a name of a file
 	 */
-	public String getFileName() {
+	public Caseless getFileName() {
 		return fileName;
 	}
 
@@ -85,7 +87,7 @@ public final class FileContent {
 	 * 
 	 * @return a name of a project
 	 */
-	public String getProjectName() {
+	public Caseless getProjectName() {
 		return projectName;
 	}
 

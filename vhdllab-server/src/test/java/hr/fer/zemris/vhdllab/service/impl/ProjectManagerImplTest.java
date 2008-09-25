@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.dao.impl.ProjectDAOImpl;
 import hr.fer.zemris.vhdllab.entities.Project;
+import hr.fer.zemris.vhdllab.entities.StubFactory;
 import hr.fer.zemris.vhdllab.service.ProjectManager;
 
 import org.junit.BeforeClass;
@@ -31,7 +32,7 @@ public class ProjectManagerImplTest {
 	@Test
 	public void saveAndDelete() throws Exception {
 		EntityManagerUtil.currentEntityManager();
-		Project project = new Project("user.id", "project_name");
+        Project project = StubFactory.create(Project.class, 400);
 		assertFalse("project already exists.", manager.exists(project
 				.getUserId(), project.getName()));
 

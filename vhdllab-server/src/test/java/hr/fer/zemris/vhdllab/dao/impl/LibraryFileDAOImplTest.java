@@ -6,11 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.LibraryDAO;
 import hr.fer.zemris.vhdllab.dao.LibraryFileDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 
@@ -21,16 +21,16 @@ import org.junit.Test;
 
 /**
  * Tests for {@link LibraryFileDAOImpl}.
- *
+ * 
  * @author Miro Bezjak
  */
 public class LibraryFileDAOImplTest {
 
-    private static final String NAME = "simple.file.name";
-    private static final String TYPE = FileTypes.VHDL_SCHEMA;
+    private static final Caseless NAME = new Caseless("simple_file_name");
     private static final String CONTENT = "<pref><value>schematic</value></pref>";
-    private static final Long NEW_LIBRARY_ID = Long.valueOf(Long.MAX_VALUE);
-    private static final String NEW_NAME = "new." + NAME;
+    private static final Integer NEW_LIBRARY_ID = Integer
+            .valueOf(Integer.MAX_VALUE);
+    private static final Caseless NEW_NAME = new Caseless("new_" + NAME);
     private static final String NEW_CONTENT = "library ieee;";
 
     private static LibraryFileDAO dao;
@@ -53,12 +53,13 @@ public class LibraryFileDAOImplTest {
     }
 
     private void initFiles() throws DAOException {
-        library = new Library("library.name");
+        library = new Library(new Caseless("library_name"));
         EntityManagerUtil.currentEntityManager();
         libraryDAO.save(library);
         EntityManagerUtil.closeEntityManager();
 
-        file = new LibraryFile(library, NAME, TYPE, CONTENT);
+        file = new LibraryFile(NAME, CONTENT);
+        library.addFile(file);
     }
 
     @After
@@ -117,42 +118,10 @@ public class LibraryFileDAOImplTest {
     @Test
     public void save3() throws Exception {
         dao.save(file);
-        file.setContent(NEW_CONTENT);
+        file.setData(NEW_CONTENT);
         dao.save(file);
         assertEquals("files not same after content was updated.", file, dao
                 .load(file.getId()));
-    }
-
-    /**
-     * File type can't be any string. Must be only one of registered file types.
-     */
-    @Test
-    public void save4() throws Exception {
-        dao.save(file);
-        LibraryFile newFile = new LibraryFile(library, NAME,
-                "invalid.file.type", CONTENT);
-        try {
-            dao.save(newFile);
-            fail("Expected DAOException");
-        } catch (DAOException e) {
-            if (e.getStatusCode() != StatusCodes.DAO_INVALID_FILE_TYPE) {
-                fail("Invalid status code in DAOException");
-            }
-        }
-    }
-
-    /**
-     * File type can't be any string. Must be only one of registered file types
-     * but is case insensitive.
-     */
-    @Test
-    public void save5() throws Exception {
-        LibraryFile newFile = new LibraryFile(library, NAME,
-                FileTypes.VHDL_SOURCE.toUpperCase(), CONTENT);
-        dao.save(newFile);
-        LibraryFile loadedFile = dao.load(newFile.getId());
-        assertEquals("types not equal.", newFile.getType(), loadedFile
-                .getType());
     }
 
     /**
@@ -160,8 +129,9 @@ public class LibraryFileDAOImplTest {
      */
     @Test(expected = DAOException.class)
     public void save6() throws DAOException {
-        Library newLibrary = new Library("new.library.name");
-        LibraryFile newFile = new LibraryFile(file, newLibrary);
+        Library newLibrary = new Library(new Caseless("new_library_name"));
+        LibraryFile newFile = new LibraryFile(file);
+        newLibrary.addFile(newFile);
         dao.save(newFile);
     }
 
@@ -170,9 +140,10 @@ public class LibraryFileDAOImplTest {
      */
     @Test
     public void save7() throws DAOException {
-        Library newLibrary = new Library("new.library.name");
+        Library newLibrary = new Library(new Caseless("new_library_name"));
         libraryDAO.save(newLibrary);
-        LibraryFile newFile = new LibraryFile(file, newLibrary);
+        LibraryFile newFile = new LibraryFile(file);
+        newLibrary.addFile(newFile);
         dao.save(newFile);
         assertTrue("file doesn't exist.", dao.exists(newFile.getId()));
         assertTrue("file doesn't exist.", dao.exists(newLibrary.getId(),
@@ -188,8 +159,8 @@ public class LibraryFileDAOImplTest {
     @Test
     public void save8() throws Exception {
         dao.save(file);
-        LibraryFile newFile = new LibraryFile(library, file.getName(), TYPE,
-                CONTENT);
+        LibraryFile newFile = new LibraryFile(file.getName(), CONTENT);
+        library.addFile(newFile);
         try {
             dao.save(newFile);
             fail("Expected DAOException");
@@ -206,7 +177,8 @@ public class LibraryFileDAOImplTest {
     @Test
     public void save9() throws Exception {
         dao.save(file);
-        LibraryFile newFile = new LibraryFile(library, NEW_NAME, TYPE, CONTENT);
+        LibraryFile newFile = new LibraryFile(NEW_NAME, CONTENT);
+        library.addFile(newFile);
         dao.save(newFile);
         assertTrue("new file not saved.", dao.exists(newFile.getId()));
         assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
@@ -218,9 +190,10 @@ public class LibraryFileDAOImplTest {
     @Test
     public void save10() throws Exception {
         dao.save(file);
-        Library newLibrary = new Library("new.library.name");
+        Library newLibrary = new Library(new Caseless("new_library_name"));
         libraryDAO.save(newLibrary);
-        LibraryFile newFile = new LibraryFile(newLibrary, NAME, TYPE, CONTENT);
+        LibraryFile newFile = new LibraryFile(NAME, CONTENT);
+        newLibrary.addFile(newFile);
         dao.save(file);
         assertTrue("new file not saved.", dao.exists(newFile.getId()));
         assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
@@ -232,7 +205,7 @@ public class LibraryFileDAOImplTest {
     @Test
     public void save11() throws DAOException {
         dao.save(file);
-        file.setContent("abc");
+        file.setData("abc");
         dao.save(file);
         assertTrue("file doesn't exist.", dao.exists(file.getId()));
         assertEquals("file not updated.", file, dao.load(file.getId()));
@@ -265,9 +238,10 @@ public class LibraryFileDAOImplTest {
      */
     @Test
     public void delete2() throws Exception {
-        library = new Library("new.library.name");
+        library = new Library(new Caseless("new_library_name"));
         libraryDAO.save(library);
-        file = new LibraryFile(file, library);
+        file = new LibraryFile(file);
+        library.addFile(file);
         dao.save(file);
         assertTrue("file not saved.", dao.exists(file.getId()));
         dao.delete(file.getId());
@@ -298,7 +272,7 @@ public class LibraryFileDAOImplTest {
      */
     @Test(expected = NullPointerException.class)
     public void exists() throws DAOException {
-        dao.exists((Long) null);
+        dao.exists((Integer) null);
     }
 
     /**
@@ -306,7 +280,7 @@ public class LibraryFileDAOImplTest {
      */
     @Test
     public void exists2() throws DAOException {
-        assertFalse("file exists.", dao.exists(Long.MAX_VALUE));
+        assertFalse("file exists.", dao.exists(Integer.MAX_VALUE));
     }
 
     /**
@@ -356,7 +330,7 @@ public class LibraryFileDAOImplTest {
         assertTrue("file doesn't exists after creation.", dao.exists(library
                 .getId(), file.getName()));
         assertTrue("file name is not case insensitive.", dao.exists(library
-                .getId(), file.getName().toUpperCase()));
+                .getId(), file.getName()));
     }
 
     /**
@@ -414,7 +388,7 @@ public class LibraryFileDAOImplTest {
         assertEquals("files are not same.", file, dao.findByName(library
                 .getId(), file.getName()));
         assertEquals("file name is not case insensitive.", file, dao
-                .findByName(library.getId(), file.getName().toUpperCase()));
+                .findByName(library.getId(), file.getName()));
     }
 
 }

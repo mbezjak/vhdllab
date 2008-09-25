@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentC
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.service.DependencyExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -34,18 +35,18 @@ public class SchemaDependency implements DependencyExtractor {
      * .vhdllab.entities.File)
      */
     @Override
-    public Set<String> execute(File file) throws ServiceException {
-        Set<String> retlist = new HashSet<String>();
+    public Set<Caseless> execute(File file) throws ServiceException {
+        Set<Caseless> retlist = new HashSet<Caseless>();
         SchemaDeserializer sd = new SchemaDeserializer();
         ISchemaInfo info = sd.deserializeSchema(new StringReader(file
-                .getContent()));
+                .getData()));
         ISchemaComponentCollection components = info.getComponents();
 
         for (PlacedComponent placed : components) {
             String filename = placed.comp.getCodeFileName();
             if (filename == null || filename.trim().equals(""))
                 continue;
-            retlist.add(filename);
+            retlist.add(new Caseless(filename));
         }
 
         return retlist;

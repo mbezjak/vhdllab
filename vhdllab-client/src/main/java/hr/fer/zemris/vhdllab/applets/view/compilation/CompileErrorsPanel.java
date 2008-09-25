@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.view.compilation;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
@@ -13,6 +12,7 @@ import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
@@ -113,7 +113,7 @@ public class CompileErrorsPanel extends JPanel implements IView {
 			IEditor editor;
 			if (container.getResourceManager().getFileType(
 					resource.getProjectName(), resource.getFileName()).equals(
-					FileTypes.VHDL_SOURCE)) {
+					FileType.SOURCE)) {
 				IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
 						.createFileEditorIdentifier(resource);
 				editor = container.getEditorManager().getOpenedEditor(

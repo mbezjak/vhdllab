@@ -1,8 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -18,7 +19,7 @@ import java.io.InputStreamReader;
 
 public class DummyWizard implements IWizard {
 
-	public FileContent getInitialFileContent(Component parent, String projectName) {
+	public FileContent getInitialFileContent(Component parent, Caseless projectName) {
 //		URL url = this.getClass().getResource("dummySchema.xml");
 		InputStream in = this.getClass().getResourceAsStream("dummySchema.xml");
 //		FileReader freader;
@@ -41,7 +42,7 @@ public class DummyWizard implements IWizard {
 			return null;
 		}
 		
-		FileContent fc = new FileContent(projectName, "dummyName", sb.toString());
+		FileContent fc = new FileContent(projectName, new Caseless("dummyName"), sb.toString());
 		
 		return fc;
 	}

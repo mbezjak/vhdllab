@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.service.ProjectManager;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -49,7 +50,7 @@ public final class ProjectManagerImpl extends AbstractEntityManager<Project>
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean exists(String userId, String name) throws ServiceException {
+	public boolean exists(Caseless userId, Caseless name) throws ServiceException {
 		try {
 			return getDAO().exists(userId, name);
 		} catch (DAOException e) {
@@ -64,7 +65,7 @@ public final class ProjectManagerImpl extends AbstractEntityManager<Project>
 	 *      java.lang.String)
 	 */
 	@Override
-	public Project findByName(String userId, String name)
+	public Project findByName(Caseless userId, Caseless name)
 			throws ServiceException {
 		try {
 			return getDAO().findByName(userId, name);
@@ -79,7 +80,7 @@ public final class ProjectManagerImpl extends AbstractEntityManager<Project>
 	 * @see hr.fer.zemris.vhdllab.service.ProjectManager#findByUser(java.lang.String)
 	 */
 	@Override
-	public List<Project> findByUser(String userId) throws ServiceException {
+	public List<Project> findByUser(Caseless userId) throws ServiceException {
 		try {
 			return getDAO().findByUser(userId);
 		} catch (DAOException e) {

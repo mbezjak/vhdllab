@@ -5,7 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.dao.impl.LibraryDAOImpl;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
+import hr.fer.zemris.vhdllab.entities.StubFactory;
 import hr.fer.zemris.vhdllab.service.LibraryManager;
 
 import org.junit.BeforeClass;
@@ -32,7 +34,7 @@ public class LibraryManagerImplTest {
 	@Test
 	public void saveAndDelete() throws Exception {
 		EntityManagerUtil.currentEntityManager();
-		Library library = new Library("library.name");
+        Library library = StubFactory.create(Library.class, 400);
 		assertFalse("library already exists.", manager
 				.exists(library.getName()));
 
@@ -51,7 +53,7 @@ public class LibraryManagerImplTest {
 	 */
 	@Test
 	public void getPredefinedLibrary() throws Exception {
-		String name = "predefined";
+	    Caseless name = new Caseless("predefined");
 		EntityManagerUtil.currentEntityManager();
 		Library library = new Library(name);
 		manager.save(library);

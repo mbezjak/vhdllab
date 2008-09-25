@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ public class SerializationUtil {
 		List<FileIdentifier> files = new ArrayList<FileIdentifier>(lines.length);
 		for(String s : lines) {
 			String[] info = s.split(PROJECT_FILE_SEPARATOR);
-			FileIdentifier f = new FileIdentifier(info[0], info[1]);
+			FileIdentifier f = new FileIdentifier(new Caseless(info[0]), new Caseless(info[1]));
 			files.add(f);
 		}
 		return files;

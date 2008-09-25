@@ -29,6 +29,7 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -171,7 +172,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
 
     @Override
     public FileContent getInitialFileContent(Component parent,
-            String projectName) {
+            Caseless projectName) {
         RunDialog dialog = new RunDialog(parent, true, container, RunDialog.COMPILATION_TYPE);
         dialog.setChangeProjectButtonText("change");
         dialog.setTitle("Select a file for which to create testbench");
@@ -179,7 +180,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         dialog.startDialog();
         if(dialog.getOption() != RunDialog.OK_OPTION) return null;
         FileIdentifier file = dialog.getSelectedFile();
-        if(!projectName.equalsIgnoreCase(file.getProjectName())) {
+        if(!projectName.equals(file.getProjectName())) {
             SystemLog.instance().addSystemMessage("Cant create testbench for file outside of '"+projectName+"'", MessageType.INFORMATION);
             return null;
         }
@@ -204,7 +205,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
             else {
                 // Provjera dal postoje duplikati
                 try {
-                    if(container.getResourceManager().existsFile(projectName, testbench)) {
+                    if(container.getResourceManager().existsFile(projectName, new Caseless(testbench))) {
                         JOptionPane.showMessageDialog(
                                 null,
                                 "A file with the name you specified already exists.",
@@ -221,16 +222,16 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         }
         
         while(true) {
-            InitTimingDialog initTimingDialog = new InitTimingDialog(parent, true, ci, testbench, projectName);
+            InitTimingDialog initTimingDialog = new InitTimingDialog(parent, true, ci, testbench, projectName.toString());
             initTimingDialog.startDialog();
             if(initTimingDialog.getOption() != RunDialog.OK_OPTION) return null;
             
             Testbench tb = null;
             
             try {
-                tb = this.getInitialTestbench(initTimingDialog, file.getFileName());
+                tb = this.getInitialTestbench(initTimingDialog, file.getFileName().toString());
                 this.addSignals(tb, ci);
-                return new FileContent(projectName, testbench, tb.toXml());
+                return new FileContent(projectName, new Caseless(testbench), tb.toXml());
             }
             catch(UniformTestbenchException ex) {
                 JOptionPane.showMessageDialog(

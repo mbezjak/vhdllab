@@ -3,10 +3,11 @@ package hr.fer.zemris.vhdllab.service.compiler;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.entities.Project;
@@ -32,7 +33,7 @@ import org.junit.Test;
  */
 public class GhdlCompilerTest {
 
-    private static final String USER_ID = "user.id";
+    private static final Caseless USER_ID = new Caseless("user.id");
 
     private static ServiceContainer container;
     private static FileManager fileMan;
@@ -48,11 +49,11 @@ public class GhdlCompilerTest {
 
         EntityManagerUtil.createEntityManagerFactory();
         EntityManagerUtil.currentEntityManager();
-        project = new Project(USER_ID, "project_name");
-        prepairProject(FileTypes.VHDL_SOURCE);
+        project = new Project(USER_ID, new Caseless("project_name"));
+        prepairProject(FileType.SOURCE);
         container.getProjectManager().save(project);
 
-        library = new Library("predefined");
+        library = new Library(new Caseless("predefined"));
         prepairLibrary();
         container.getLibraryManager().save(library);
         EntityManagerUtil.closeEntityManager();
@@ -89,7 +90,7 @@ public class GhdlCompilerTest {
      */
     @Test
     public void compile() throws Exception {
-        File file = fileMan.findByName(project.getId(), "comp_and");
+        File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
         CompilationResult result = man.compile(file);
         assertTrue("not a successful compilation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
@@ -102,7 +103,7 @@ public class GhdlCompilerTest {
      */
     @Test
     public void compile2() throws Exception {
-        File file = fileMan.findByName(project.getId(), "complex_source");
+        File file = fileMan.findByName(project.getId(), new Caseless("complex_source"));
         CompilationResult result = man.compile(file);
         assertTrue("not a successful compilation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
@@ -115,7 +116,7 @@ public class GhdlCompilerTest {
      */
     @Test
     public void compile3() throws Exception {
-        File file = fileMan.findByName(project.getId(), "ultra_complex_source");
+        File file = fileMan.findByName(project.getId(), new Caseless("ultra_complex_source"));
         CompilationResult result = man.compile(file);
         assertTrue("not a successful compilation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
@@ -128,7 +129,7 @@ public class GhdlCompilerTest {
      */
     @Test
     public void compile4() throws Exception {
-        File file = fileMan.findByName(project.getId(), "comp_oror");
+        File file = fileMan.findByName(project.getId(), new Caseless("comp_oror"));
         CompilationResult result = man.compile(file);
         assertTrue("not a successful compilation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
@@ -141,11 +142,11 @@ public class GhdlCompilerTest {
      */
     @Test
     public void compile5() throws Exception {
-        File file = fileMan.findByName(project.getId(), "comp_and");
-        String content = file.getContent();
+        File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
+        String content = file.getData();
         // missing half of a file
         content = content.substring(0, content.length() / 2);
-        file.setContent(content);
+        file.setData(content);
         fileMan.save(file);
 
         CompilationResult result = man.compile(file);
@@ -154,18 +155,20 @@ public class GhdlCompilerTest {
         assertFalse("no error messages.", result.getMessages().isEmpty());
     }
 
-    private static void prepairProject(String type) {
+    private static void prepairProject(FileType type) {
         List<NameAndContent> contents = FileContentProvider.getContent(type);
         for (NameAndContent nc : contents) {
-            new File(project, nc.getName(), type, nc.getContent());
+            File f = new File(type, nc.getName(), nc.getContent());
+            project.addFile(f);
         }
     }
 
     private static void prepairLibrary() {
-        String type = FileTypes.VHDL_PREDEFINED;
+        FileType type = FileType.PREDEFINED;
         List<NameAndContent> contents = FileContentProvider.getContent(type);
         for (NameAndContent nc : contents) {
-            new LibraryFile(library, nc.getName(), type, nc.getContent());
+            LibraryFile f = new LibraryFile(nc.getName(), nc.getContent());
+            library.addFile(f);
         }
     }
 

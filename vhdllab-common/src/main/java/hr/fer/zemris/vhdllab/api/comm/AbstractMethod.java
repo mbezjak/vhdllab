@@ -3,6 +3,8 @@
  */
 package hr.fer.zemris.vhdllab.api.comm;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,14 +19,14 @@ public abstract class AbstractMethod<T extends Serializable> implements
     private static final long serialVersionUID = 1L;
     
     private final String method;
-	private String userId;
+	private Caseless userId;
 	private final Map<String, Serializable> parameters;
 
 	private T result;
 	private int statusCode;
 	private String statusMessage;
 
-	public AbstractMethod(String method, String userId) {
+	public AbstractMethod(String method, Caseless userId) {
 		if (method == null) {
 			throw new NullPointerException("Method cant be null");
 		}
@@ -55,7 +57,7 @@ public abstract class AbstractMethod<T extends Serializable> implements
 	 * @see hr.fer.zemris.vhdllab.communicaton.IMethod#getUserId()
 	 */
 	@Override
-	public String getUserId() {
+	public Caseless getUserId() {
 		return userId;
 	}
 
@@ -65,7 +67,7 @@ public abstract class AbstractMethod<T extends Serializable> implements
 	 * @see hr.fer.zemris.vhdllab.communicaton.Method#setUserId(java.lang.String)
 	 */
 	@Override
-	public void setUserId(String userId) {
+	public void setUserId(Caseless userId) {
 		if(userId == null) {
 			throw new NullPointerException("User identifier cant be null");
 		}

@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.applets.main.event;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.EventListener;
 
@@ -25,7 +27,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @throws ResourceVetoException
 	 *             thrown to indicate a veto for this action
 	 */
-	void beforeProjectCreation(String projectName) throws ResourceVetoException;
+	void beforeProjectCreation(Caseless projectName) throws ResourceVetoException;
 
 	/**
 	 * Indicates that a project has been created.
@@ -33,7 +35,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param projectName
 	 *            a name of a created project
 	 */
-	void projectCreated(String projectName);
+	void projectCreated(Caseless projectName);
 
 	/**
 	 * Indicates that a project is about to be deleted. If someone vetoes this
@@ -44,7 +46,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @throws ResourceVetoException
 	 *             thrown to indicate a veto for this action
 	 */
-	void beforeProjectDeletion(String projectName) throws ResourceVetoException;
+	void beforeProjectDeletion(Caseless projectName) throws ResourceVetoException;
 
 	/**
 	 * Indicates that a project has been deleted.
@@ -52,7 +54,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param projectName
 	 *            a name of a deleted project
 	 */
-	void projectDeleted(String projectName);
+	void projectDeleted(Caseless projectName);
 
 	/**
 	 * Indicates that a resource is about to be created. If someone vetoes this
@@ -67,7 +69,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @throws ResourceVetoException
 	 *             thrown to indicate a veto for this action
 	 */
-	void beforeResourceCreation(String projectName, String fileName, String type)
+	void beforeResourceCreation(Caseless projectName, Caseless fileName, FileType type)
 			throws ResourceVetoException;
 
 	/**
@@ -80,7 +82,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param type
 	 *            a file type
 	 */
-	void resourceCreated(String projectName, String fileName, String type);
+	void resourceCreated(Caseless projectName, Caseless fileName, FileType type);
 
 	/**
 	 * Indicates that a resource is about to be deleted. If someone vetoes this
@@ -93,7 +95,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @throws ResourceVetoException
 	 *             thrown to indicate a veto for this action
 	 */
-	void beforeResourceDeletion(String projectName, String fileName)
+	void beforeResourceDeletion(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException;
 
 	/**
@@ -104,7 +106,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param fileName
 	 *            a name of a deleted file
 	 */
-	void resourceDeleted(String projectName, String fileName);
+	void resourceDeleted(Caseless projectName, Caseless fileName);
 	
 	/**
 	 * Indicates that a resource has been saved.
@@ -114,7 +116,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param fileName
 	 *            a name of a deleted file
 	 */
-	void resourceSaved(String projectName, String fileName);
+	void resourceSaved(Caseless projectName, Caseless fileName);
 
 	/**
 	 * Indicates that a resource is about to be compiled. If someone vetoes this
@@ -127,7 +129,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @throws ResourceVetoException
 	 *             thrown to indicate a veto for this action
 	 */
-	void beforeResourceCompilation(String projectName, String fileName)
+	void beforeResourceCompilation(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException;
 
 	/**
@@ -140,7 +142,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param result
 	 *            a compilation result
 	 */
-	void resourceCompiled(String projectName, String fileName,
+	void resourceCompiled(Caseless projectName, Caseless fileName,
 			CompilationResult result);
 
 	/**
@@ -154,7 +156,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @throws ResourceVetoException
 	 *             thrown to indicate a veto for this action
 	 */
-	void beforeResourceSimulation(String projectName, String fileName)
+	void beforeResourceSimulation(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException;
 
 	/**
@@ -167,7 +169,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param result
 	 *            a simulation result
 	 */
-	void resourceSimulated(String projectName, String fileName,
+	void resourceSimulated(Caseless projectName, Caseless fileName,
 			SimulationResult result);
 
 }

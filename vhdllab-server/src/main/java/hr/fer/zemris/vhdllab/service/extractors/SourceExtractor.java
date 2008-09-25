@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.service.extractors;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.util.StringFormat;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
@@ -11,6 +10,7 @@ import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.service.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.util.VhdlUtil;
@@ -21,8 +21,8 @@ import java.util.Locale;
 import java.util.Properties;
 
 /**
- * An extractor for a {@link FileTypes#VHDL_SOURCE} file type.
- *
+ * An extractor for a {@link FileType#SOURCE} file type.
+ * 
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
@@ -49,8 +49,10 @@ public final class SourceExtractor implements CircuitInterfaceExtractor {
 
     /*
      * (non-Javadoc)
-     *
-     * @see hr.fer.zemris.vhdllab.service.Functionality#configure(java.util.Properties)
+     * 
+     * @see
+     * hr.fer.zemris.vhdllab.service.Functionality#configure(java.util.Properties
+     * )
      */
     @Override
     public void configure(Properties properties) {
@@ -58,15 +60,17 @@ public final class SourceExtractor implements CircuitInterfaceExtractor {
 
     /*
      * (non-Javadoc)
-     *
-     * @see hr.fer.zemris.vhdllab.service.CircuitInterfaceExtractor#extractCircuitInterface(hr.fer.zemris.vhdllab.entities.File)
+     * 
+     * @seehr.fer.zemris.vhdllab.service.CircuitInterfaceExtractor#
+     * extractCircuitInterface(hr.fer.zemris.vhdllab.entities.File)
      */
     @Override
     public CircuitInterface execute(File file) throws ServiceException {
-        return extractCircuitInterface(file.getContent());
+        return extractCircuitInterface(file.getData());
     }
-    
-    public CircuitInterface extractCircuitInterface(String source) throws ServiceException {
+
+    public CircuitInterface extractCircuitInterface(String source)
+            throws ServiceException {
         String cleanedSource = source;
         cleanedSource = VhdlUtil.decomment(cleanedSource);
         cleanedSource = VhdlUtil.removeWhiteSpaces(cleanedSource);

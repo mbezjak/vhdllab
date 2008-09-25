@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.dao;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public interface UserFileDAO extends EntityDAO<UserFile> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(String userId, String name) throws DAOException;
+	boolean exists(Caseless userId, Caseless name) throws DAOException;
 
 	/**
 	 * Finds all user files whose owner and name are specified by parameters.
@@ -46,7 +47,7 @@ public interface UserFileDAO extends EntityDAO<UserFile> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	UserFile findByName(String userId, String name) throws DAOException;
+	UserFile findByName(Caseless userId, Caseless name) throws DAOException;
 
 	/**
 	 * Finds all user files whose owner is specified user. Return value will
@@ -58,6 +59,6 @@ public interface UserFileDAO extends EntityDAO<UserFile> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	List<UserFile> findByUser(String userId) throws DAOException;
+	List<UserFile> findByUser(Caseless userId) throws DAOException;
 
 }

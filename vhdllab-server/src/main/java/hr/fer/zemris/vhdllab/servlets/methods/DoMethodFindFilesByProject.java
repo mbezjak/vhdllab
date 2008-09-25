@@ -27,7 +27,7 @@ public class DoMethodFindFilesByProject extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		Long projectId = method.getParameter(Long.class, PROP_ID);
+        Integer projectId = method.getParameter(Integer.class, PROP_ID);
 		if (projectId == null) {
 			return;
 		}
@@ -39,7 +39,7 @@ public class DoMethodFindFilesByProject extends AbstractRegisteredMethod {
 			return;
 		}
 		checkProjectSecurity(request, method, project);
-		ArrayList<Long> files = new ArrayList<Long>(project.getFiles().size());
+		ArrayList<Integer> files = new ArrayList<Integer>(project.getFiles().size());
 		for(File f : project.getFiles()) {
 			files.add(f.getId());
 		}

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.Component;
 
@@ -51,7 +52,7 @@ public interface IWizard {
 	 * <p>
 	 * This method should only display a wizard! Not actual editors to display
 	 * returning file content (do not invoke method
-	 * {@link ISystemContainer#openEditor(String, String, boolean, boolean)}).
+	 * {@link ISystemContainer#openEditor(Caseless, Caseless, boolean, boolean)}).
 	 * <p>
 	 * Returned value may be <code>null</code>. In that case it indicates
 	 * either editor does not have a wizard or user clicked on a
@@ -66,6 +67,6 @@ public interface IWizard {
 	 *            should created file be placed
 	 * @return an initial <code>FileContent</code>
 	 */
-	FileContent getInitialFileContent(Component parent, String projectName);
+	FileContent getInitialFileContent(Component parent, Caseless projectName);
 
 }

@@ -26,7 +26,7 @@ public class DoMethodSaveUserFile extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		Long fileId = method.getParameter(Long.class, PROP_ID);
+        Integer fileId = method.getParameter(Integer.class, PROP_ID);
 		String content = method.getParameter(String.class, PROP_FILE_CONTENT);
 		if (fileId == null || content == null) {
 			return;
@@ -35,7 +35,7 @@ public class DoMethodSaveUserFile extends AbstractRegisteredMethod {
 			checkUserFileSecurity(request, method, fileId);
 			UserFileManager man = container.getUserFileManager();
 			UserFile file = man.load(fileId);
-			file.setContent(content);
+			file.setData(content);
 			man.save(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_SAVE_FILE, "fileId=" + fileId);

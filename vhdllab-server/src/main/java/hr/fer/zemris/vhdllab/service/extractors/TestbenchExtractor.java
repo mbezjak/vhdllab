@@ -13,7 +13,7 @@ public class TestbenchExtractor implements CircuitInterfaceExtractor {
 
     @Override
     public CircuitInterface execute(File file) throws ServiceException {
-        return new CircuitInterface(file.getName(), new ArrayList<Port>(0));
+        return new CircuitInterface(file.getName().toString(), new ArrayList<Port>(0));
     }
 
     @Override

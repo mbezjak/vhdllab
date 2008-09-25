@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.dao;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 
 /**
@@ -28,7 +29,7 @@ public interface FileDAO extends EntityDAO<File> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(Long projectId, String name) throws DAOException;
+	boolean exists(Integer projectId, Caseless name) throws DAOException;
 
 	/**
 	 * Returns a file with specified project identifier and file name. Return
@@ -43,6 +44,6 @@ public interface FileDAO extends EntityDAO<File> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	File findByName(Long projectId, String name) throws DAOException;
+	File findByName(Integer projectId, Caseless name) throws DAOException;
 
 }

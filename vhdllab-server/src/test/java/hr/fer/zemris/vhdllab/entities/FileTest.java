@@ -1,191 +1,169 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import static hr.fer.zemris.vhdllab.entities.EntitiesUtil.injectValueToPrivateField;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
-
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * A test case for {@link File} entity.
- *
+ * 
  * @author Miro Bezjak
  */
 public class FileTest {
 
-	private static final Long ID = Long.valueOf(123456);
-	private static final String NAME = "file.name";
-	private static final String TYPE = "file.type";
-	private static final String CONTENT = "...file content...";
-	private static final Date CREATED;
-	private static final Long NEW_ID = Long.valueOf(654321);
-	private static final String NEW_NAME = "new." + NAME;
-	private static final String NEW_TYPE = "new." + TYPE;
-	private static final String NEW_CONTENT = "new." + CONTENT;
-	private static final Date NEW_CREATED;
-	private static final Project NEW_PROJECT;
+    private File file;
 
-	static {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm");
-		try {
-			CREATED = df.parse("2008-01-02 13-45");
-			NEW_CREATED = df.parse("2000-12-31 07-13");
-		} catch (ParseException e) {
-			// should never happen. but if pattern should change report it by
-			// throwing exception.
-			throw new IllegalStateException(e);
-		}
-		NEW_PROJECT = new Project("new.user.identifier", "new.project.name");
-		try {
-			injectValueToPrivateField(NEW_PROJECT, "id", Long.valueOf(5555));
-		} catch (Exception e) {
-			// should never happen.
-			throw new IllegalStateException(e);
-		}
-	}
+    @Before
+    public void initEachTest() throws Exception {
+        file = StubFactory.create(File.class, 1);
+    }
 
-	private Project project;
-	private Project project2;
-	private File file;
-	private File file2;
+    /**
+     * Test that properties are correctly set in constructor.
+     */
+    @Test
+    public void constructor() throws Exception {
+        Caseless name = StubFactory.getStubValue("name", 1);
+        FileType type = StubFactory.getStubValue("type", 1);
+        String data = StubFactory.getStubValue("data", 1);
+        assertEquals("names not same.", name, file.getName());
+        assertEquals("types not same.", type, file.getType());
+        assertEquals("data not same.", data, file.getData());
+    }
 
-	@Before
-	public void initEachTest() throws Exception {
-		project = new Project("user.identifier", "project.name");
-		project2 = new Project(project);
+    /**
+     * Test copy constructor.
+     */
+    @Test
+    public void copyConstructor() throws Exception {
+        Project project = StubFactory.create(Project.class, 1);
+        project.addFile(file);
+        File another = new File(file);
+        assertTrue("same reference.", file != another);
+        assertFalse("equal.", file.equals(another));
+        assertNotSame("hashCode same.", file.hashCode(), another.hashCode());
+        assertNull("project reference copied.", another.getProject());
+        assertTrue("original file's project is modified.", project == file
+                .getProject());
+        assertFalse("original file's project's files is modified.", project
+                .getFiles().contains(another));
+    }
 
-		file = new File(project, NAME, TYPE, CONTENT);
-		injectValueToPrivateField(file, "id", ID);
-		injectValueToPrivateField(file, "created", CREATED);
-		file2 = new File(file, project2);
-	}
+    /**
+     * Post remove project reference is only set once
+     * {@link Project#removeFile(File)} method has been called and {@link File}
+     * retains that reference until File#getPostRemoveProjectReference() has
+     * been called.
+     */
+    @Test
+    public void getPostRemoveProjectReference() throws Exception {
+        assertNull("not null.", file.getPostRemoveProjectReference());
+        file.setProject(null);
+        assertNull("not null.", file.getProject());
+        assertNull("not null.", file.getPostRemoveProjectReference());
+        Project project = StubFactory.create(Project.class, 1);
+        project.addFile(file);
+        assertNull("not null.", file.getPostRemoveProjectReference());
+        project.removeFile(file);
+        assertTrue("not same reference.", project == file
+                .getPostRemoveProjectReference());
+        assertNull("reference was not self-destructed.", file
+                .getPostRemoveProjectReference());
+    }
 
-	/**
-	 * Test references to project and project references back to file
-	 */
-	@Test
-	public void constructor() throws Exception {
-		File newFile = new File(NEW_PROJECT, NAME, TYPE);
-		assertNotNull("project reference not copied.", newFile.getProject());
-		assertEquals(NEW_PROJECT, newFile.getProject());
-		assertTrue(NEW_PROJECT.getChildren().contains(newFile));
-	}
-
-	/**
-	 * Test copy constructor
-	 */
-	@Test
-	public void copyConstructor() throws Exception {
-		assertTrue("same reference.", file != file2);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
-	}
-
-	/**
-	 * Test references to project and project references back to file
-	 */
-	@Test
-	public void copyConstructor2() throws Exception {
-		File newFile = new File(file, NEW_PROJECT);
-		assertNotNull("project reference not copied.", newFile.getProject());
-		assertEquals(NEW_PROJECT, newFile.getProject());
-		assertTrue(NEW_PROJECT.getChildren().contains(newFile));
-	}
-
-	/**
-	 * Test if returned set is modifiable
-	 */
-	@Test(expected = UnsupportedOperationException.class)
-	public void getLibraryFiles() throws Exception {
-		Set<File> files = project.getFiles();
-		Project newProject = new Project("new.user.id", "new.project.name");
-		File newFile = new File(newProject, "new.file.name", "new.file.type");
-		files.add(newFile);
-	}
-
-	/**
-	 * Test equals with self, null, and non-file object
-	 */
-	@Test
-	public void equals() throws Exception {
-		assertEquals("not equal.", file, file);
+    /**
+     * Test equals with self, null, and non-File.
+     */
+    @Test
+    public void equals() throws Exception {
+        assertEquals("not equal.", file, file);
         assertFalse("file is equal to null.", file.equals(null));
         assertFalse("can compare with string object.", file
-                .equals("a string object"));
-        assertFalse("can compare with resource object.", file
-                .equals(new Resource()));
-	}
+                .equals("string object"));
+    }
 
-	/**
-	 * Null object as parameter to compareTo method
-	 */
-	@Test(expected = NullPointerException.class)
-	public void compareTo() throws Exception {
-		file.compareTo(null);
-	}
+    /**
+     * Only projects and names are important in equals and hashCode.
+     */
+    @Test
+    public void equalsAndHashCode() throws Exception {
+        Project project = StubFactory.create(Project.class, 1);
+        Project anotherProject = new Project(project);
+        File anotherFile = StubFactory.create(File.class, 2);
+        project.addFile(file);
+        anotherProject.addFile(anotherFile);
+        StubFactory.setProperty(anotherFile, "name", 1);
+        assertEquals("not equal.", file, anotherFile);
+        assertEquals("hashCode not same.", file.hashCode(), anotherFile
+                .hashCode());
+    }
 
-	/**
-	 * Non-file type
-	 */
-	@Test(expected = ClassCastException.class)
-	public void compareTo2() throws Exception {
-		file.compareTo(new Resource());
-	}
+    /**
+     * Projects are different.
+     */
+    @Test
+    public void equalsAndHashCode2() throws Exception {
+        Project project = StubFactory.create(Project.class, 1);
+        Project anotherProject = StubFactory.create(Project.class, 2);
+        File anotherFile = new File(file);
+        project.addFile(file);
+        anotherProject.addFile(anotherFile);
+        assertFalse("equal.", file.equals(anotherFile));
+        assertNotSame("same hashCode.", file.hashCode(), anotherFile.hashCode());
+    }
 
-	/**
-	 * Only projects and names are important in equals, hashcode and compareTo
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo() throws Exception {
-		injectValueToPrivateField(file2, "id", NEW_ID);
-		injectValueToPrivateField(file2, "type", NEW_TYPE);
-		injectValueToPrivateField(file2, "content", NEW_CONTENT);
-		injectValueToPrivateField(file2, "created", NEW_CREATED);
-		assertEquals("not equal.", file, file2);
-		assertEquals("hashCode not same.", file.hashCode(), file2.hashCode());
-		assertEquals("not equal by compareTo.", 0, file.compareTo(file2));
-	}
+    /**
+     * Projects are different (one is null).
+     */
+    @Test
+    public void equalsAndHashCode3() throws Exception {
+        Project project = StubFactory.create(Project.class, 1);
+        File anotherFile = new File(file);
+        project.addFile(file);
+        assertFalse("equal.", file.equals(anotherFile));
+        assertNotSame("same hashCode.", file.hashCode(), anotherFile.hashCode());
+    }
 
-	/**
-	 * Names are different
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo2() throws Exception {
-		injectValueToPrivateField(file2, "name", NEW_NAME);
-        assertFalse("equal.", file.equals(file2));
-        assertFalse("hashCode same.", file.hashCode() == file2.hashCode());
-		assertEquals("not compared by name.", NAME.compareTo(NEW_NAME) < 0 ? -1
-				: 1, file.compareTo(file2));
-	}
+    /**
+     * Names are different.
+     */
+    @Test
+    public void equalsAndHashCode4() throws Exception {
+        Project project = StubFactory.create(Project.class, 1);
+        Project anotherProject = new Project(project);
+        File anotherFile = StubFactory.create(File.class, 1);
+        project.addFile(file);
+        anotherProject.addFile(anotherFile);
+        StubFactory.setProperty(anotherFile, "name", 2);
+        assertFalse("equal.", file.equals(anotherFile));
+        assertNotSame("same hashCode.", file.hashCode(), anotherFile.hashCode());
+    }
 
-	/**
-	 * Projects are different
-	 */
-	@Test
-	public void equalsHashCodeAndCompareTo3() throws Exception {
-		File newFile = new File(NEW_PROJECT, NAME, TYPE, CONTENT);
-		injectValueToPrivateField(file2, "id", ID);
-		injectValueToPrivateField(file2, "created", CREATED);
-        assertFalse("equal.", file.equals(newFile));
-        assertFalse("hashCode same.", file.hashCode() == newFile.hashCode());
-		assertEquals("not compared by project.", file.getProject().compareTo(
-				newFile.getProject()) < 0 ? -1 : 1, file.compareTo(newFile));
-	}
+    /**
+     * Entities are same after deserialization.
+     */
+    @Test
+    public void serialization() throws Exception {
+        Object deserialized = SerializationUtils.clone(file);
+        assertEquals("not same.", file, deserialized);
+    }
 
-	@Ignore("must be tested by a user and this has already been tested")
-	@Test
-	public void asString() {
-		System.out.println(file);
-	}
+    @Test
+    public void asString() {
+        System.out.println(file);
+    }
+
+    @Test
+    public void asStringInProject() throws Exception {
+        Project project = StubFactory.create(Project.class, 1);
+        project.addFile(file);
+        System.out.println(file);
+    }
 
 }

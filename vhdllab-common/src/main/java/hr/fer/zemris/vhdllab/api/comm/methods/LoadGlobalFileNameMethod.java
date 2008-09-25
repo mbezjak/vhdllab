@@ -1,17 +1,19 @@
 package hr.fer.zemris.vhdllab.api.comm.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.AbstractIdParameterMethod;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 /**
  * @author Miro Bezjak
- *
+ * 
  */
-public final class LoadGlobalFileNameMethod extends AbstractIdParameterMethod<String> {
+public final class LoadGlobalFileNameMethod extends
+        AbstractIdParameterMethod<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public LoadGlobalFileNameMethod(Long id, String userId) {
-		super("load.global.file.name", userId, id);
-	}
+    public LoadGlobalFileNameMethod(Integer id, Caseless userId) {
+        super("load.global.file.name", userId, id);
+    }
 
 }

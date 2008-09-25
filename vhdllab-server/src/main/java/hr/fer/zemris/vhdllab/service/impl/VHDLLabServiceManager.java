@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import static hr.fer.zemris.vhdllab.api.StatusCodes.INTERNAL_SERVER_ERROR;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
@@ -9,7 +8,9 @@ import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.server.conf.FileTypeMapping;
 import hr.fer.zemris.vhdllab.server.conf.FunctionalityType;
@@ -54,7 +55,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
      */
     private static final int REPORT_LENGTH = 1000;
 
-    private final Map<String, Map<FunctionalityType, Functionality<?>>> functionalities;
+    private final Map<FileType, Map<FunctionalityType, Functionality<?>>> functionalities;
 
     /**
      * Default constructor.
@@ -64,10 +65,10 @@ public final class VHDLLabServiceManager implements ServiceManager {
      *             (e.g. specified generator class name could not be found)
      */
     public VHDLLabServiceManager() {
-        functionalities = new HashMap<String, Map<FunctionalityType, Functionality<?>>>();
+        functionalities = new HashMap<FileType, Map<FunctionalityType, Functionality<?>>>();
         ServerConf conf = ServerConfParser.getConfiguration();
         Properties properties = conf.getProperties();
-        for (String type : conf.getFileTypes()) {
+        for (FileType type : conf.getFileTypes()) {
             FileTypeMapping m = conf.getFileTypeMapping(type);
             for (FunctionalityType t : FunctionalityType.values()) {
                 String className = m.getFunctionality(t);
@@ -129,7 +130,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
      *      boolean)
      */
     @Override
-    public Set<String> extractDependencies(File file, boolean includeTransitive)
+    public Set<Caseless> extractDependencies(File file, boolean includeTransitive)
             throws ServiceException {
         if (!includeTransitive) {
             return executeFunctionality(file, FunctionalityType.DEPENDENCY);
@@ -148,7 +149,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
      * @throws ServiceException
      *             if exceptional condition occurs
      */
-    private Set<String> extractAllDependencies(File file)
+    private Set<Caseless> extractAllDependencies(File file)
             throws ServiceException {
         /*
          * This method extracts all dependencies by recursively invoking
@@ -156,14 +157,14 @@ public final class VHDLLabServiceManager implements ServiceManager {
          * found.
          */
         FileManager fileMan = ServiceContainer.instance().getFileManager();
-        Set<String> visitedFiles = new HashSet<String>();
-        List<String> notYetAnalyzedFiles = new LinkedList<String>();
+        Set<Caseless> visitedFiles = new HashSet<Caseless>();
+        List<Caseless> notYetAnalyzedFiles = new LinkedList<Caseless>();
         notYetAnalyzedFiles.add(file.getName());
         visitedFiles.add(file.getName());
         while (!notYetAnalyzedFiles.isEmpty()) {
-            String name = notYetAnalyzedFiles.remove(0);
-            Long projectId = file.getProject().getId();
-            Set<String> dependancies;
+            Caseless name = notYetAnalyzedFiles.remove(0);
+            Integer projectId = file.getProject().getId();
+            Set<Caseless> dependancies;
             if (fileMan.exists(projectId, name)) {
                 File f = fileMan.findByName(projectId, name);
                 dependancies = extractDependencies(f, false);
@@ -171,7 +172,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
                 // else a predefined file and they don't have dependencies
                 dependancies = Collections.emptySet();
             }
-            for (String dependancy : dependancies) {
+            for (Caseless dependancy : dependancies) {
                 if (visitedFiles.contains(dependancy)) {
                     continue;
                 }
@@ -184,7 +185,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
                     20 + visitedFiles.size() * 50);
             message.append("Extracted dependencies for file:");
             message.append(file.toString()).append(" {\n");
-            for (String n : visitedFiles) {
+            for (Caseless n : visitedFiles) {
                 message.append(n).append("\n");
             }
             message.append("}");
@@ -202,15 +203,15 @@ public final class VHDLLabServiceManager implements ServiceManager {
     @Override
     public Hierarchy extractHierarchy(Project project) throws ServiceException {
         Set<File> files = project.getFiles();
-        Map<String, HierarchyNode> resolvedNodes = new HashMap<String, HierarchyNode>(
+        Map<Caseless, HierarchyNode> resolvedNodes = new HashMap<Caseless, HierarchyNode>(
                 files.size());
         for (File file : files) {
-            String name = file.getName();
-            if (resolvedNodes.containsKey(name.toLowerCase())) {
+            Caseless name = file.getName();
+            if (resolvedNodes.containsKey(name)) {
                 continue;
             }
             HierarchyNode node = new HierarchyNode(name, file.getType(), null);
-            resolvedNodes.put(name.toLowerCase(), node);
+            resolvedNodes.put(name, node);
             resolveHierarchy(file, resolvedNodes);
         }
         Hierarchy hierarchy = new Hierarchy(project.getName(),
@@ -230,36 +231,35 @@ public final class VHDLLabServiceManager implements ServiceManager {
      *             if exceptional condition occurs
      */
     private void resolveHierarchy(File nodeFile,
-            Map<String, HierarchyNode> resolvedNodes) throws ServiceException {
+            Map<Caseless, HierarchyNode> resolvedNodes) throws ServiceException {
         /*
          * This method resolves a hierarchy by recursively invoking itself.
          */
-        Set<String> dependencies;
+        Set<Caseless> dependencies;
         try {
             dependencies = extractDependencies(nodeFile, false);
         } catch (ServiceException e) {
             dependencies = Collections.emptySet();
         }
         FileManager fileMan = ServiceContainer.instance().getFileManager();
-        Long projectId = nodeFile.getProject().getId();
-        for (String name : dependencies) {
-            HierarchyNode parent = resolvedNodes.get(nodeFile.getName()
-                    .toLowerCase());
+        Integer projectId = nodeFile.getProject().getId();
+        for (Caseless name : dependencies) {
+            HierarchyNode parent = resolvedNodes.get(nodeFile.getName());
             if (resolvedNodes.containsKey(name)) {
                 HierarchyNode depNode = resolvedNodes.get(name);
                 parent.addDependency(depNode);
             } else {
                 File dep = null;
-                String type;
+                FileType type;
                 if (fileMan.exists(projectId, name)) {
                     dep = fileMan.findByName(projectId, name);
                     type = dep.getType();
                 } else {
                     // else its a predefined file
-                    type = FileTypes.VHDL_PREDEFINED;
+                    type = FileType.PREDEFINED;
                 }
                 HierarchyNode depNode = new HierarchyNode(name, type, parent);
-                resolvedNodes.put(name.toLowerCase(), depNode);
+                resolvedNodes.put(name, depNode);
                 if (dep != null) {
                     // predefined files don't have dependencies
                     resolveHierarchy(dep, resolvedNodes);
@@ -344,7 +344,7 @@ public final class VHDLLabServiceManager implements ServiceManager {
      *             if such object doesn't exist
      */
     @SuppressWarnings("unchecked")
-    private <T> Functionality<T> getFunctionality(String fileType,
+    private <T> Functionality<T> getFunctionality(FileType fileType,
             FunctionalityType funcType) throws ServiceException {
         Map<FunctionalityType, Functionality<?>> map = functionalities
                 .get(fileType);

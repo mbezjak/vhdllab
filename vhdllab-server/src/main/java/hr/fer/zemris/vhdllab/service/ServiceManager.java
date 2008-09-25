@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
 
@@ -66,7 +67,7 @@ public interface ServiceManager {
      * @throws ServiceException
      *             if any exception occurs
      */
-    Set<String> extractDependencies(File file, boolean includeTransitive)
+    Set<Caseless> extractDependencies(File file, boolean includeTransitive)
             throws ServiceException;
 
     /**

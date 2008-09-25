@@ -9,6 +9,8 @@ import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,8 +106,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean createNewResource(String projectName, String fileName,
-			String type, String data) throws UniformAppletException {
+	public boolean createNewResource(Caseless projectName, Caseless fileName,
+			FileType type, String data) throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
 		}
@@ -140,7 +142,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#createNewProject(java.lang.String)
 	 */
 	@Override
-	public boolean createNewProject(String projectName)
+	public boolean createNewProject(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -168,7 +170,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public void deleteFile(String projectName, String fileName)
+	public void deleteFile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
@@ -194,7 +196,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#deleteProject(java.lang.String)
 	 */
 	@Override
-	public void deleteProject(String projectName) throws UniformAppletException {
+	public void deleteProject(Caseless projectName) throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -214,7 +216,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean existsFile(String projectName, String fileName)
+	public boolean existsFile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -231,7 +233,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#existsProject(java.lang.String)
 	 */
 	@Override
-	public boolean existsProject(String projectName)
+	public boolean existsProject(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -247,7 +249,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getAllProjects()
 	 */
 	@Override
-	public List<String> getAllProjects() throws UniformAppletException {
+	public List<Caseless> getAllProjects() throws UniformAppletException {
 		return communicator.getAllProjects();
 	}
 
@@ -257,7 +259,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getFilesFor(java.lang.String)
 	 */
 	@Override
-	public List<String> getFilesFor(String projectName)
+	public List<Caseless> getFilesFor(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -271,11 +273,11 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getAllCircuits(java.lang.String)
 	 */
 	@Override
-	public List<String> getAllCircuits(String projectName)
+	public List<Caseless> getAllCircuits(Caseless projectName)
 			throws UniformAppletException {
-		List<String> fileNames = getFilesFor(projectName);
-		List<String> circuits = new ArrayList<String>();
-		for (String name : fileNames) {
+		List<Caseless> fileNames = getFilesFor(projectName);
+		List<Caseless> circuits = new ArrayList<Caseless>();
+		for (Caseless name : fileNames) {
 			if (isCircuit(projectName, name)) {
 				circuits.add(name);
 			}
@@ -289,11 +291,11 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getAllTestbenches(java.lang.String)
 	 */
 	@Override
-	public List<String> getAllTestbenches(String projectName)
+	public List<Caseless> getAllTestbenches(Caseless projectName)
 			throws UniformAppletException {
-		List<String> fileNames = getFilesFor(projectName);
-		List<String> testbenches = new ArrayList<String>();
-		for (String name : fileNames) {
+		List<Caseless> fileNames = getFilesFor(projectName);
+		List<Caseless> testbenches = new ArrayList<Caseless>();
+		for (Caseless name : fileNames) {
 			if (isTestbench(projectName, name)) {
 				testbenches.add(name);
 			}
@@ -308,8 +310,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public CircuitInterface getCircuitInterfaceFor(String projectName,
-			String fileName) throws UniformAppletException {
+	public CircuitInterface getCircuitInterfaceFor(Caseless projectName,
+	        Caseless fileName) throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
 		}
@@ -326,7 +328,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public VHDLGenerationResult generateVHDL(String projectName, String fileName)
+	public VHDLGenerationResult generateVHDL(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -344,7 +346,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public String getFileContent(String projectName, String fileName)
+	public String getFileContent(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -361,7 +363,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getPredefinedFileContent(java.lang.String)
 	 */
 	@Override
-	public String getPredefinedFileContent(String fileName)
+	public String getPredefinedFileContent(Caseless fileName)
 			throws UniformAppletException {
 		if (fileName == null) {
 			throw new NullPointerException("File name cant be null");
@@ -376,7 +378,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void saveFile(String projectName, String fileName, String content)
+	public void saveFile(Caseless projectName, Caseless fileName, String content)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -411,7 +413,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public String getFileType(String projectName, String fileName) {
+	public FileType getFileType(Caseless projectName, Caseless fileName) {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
 		}
@@ -431,7 +433,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#extractHierarchy(java.lang.String)
 	 */
 	@Override
-	public Hierarchy extractHierarchy(String projectName)
+	public Hierarchy extractHierarchy(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
@@ -448,7 +450,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public CompilationResult compile(String projectName, String fileName)
+	public CompilationResult compile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		try {
 			fireBeforeResourceCompilation(projectName, fileName);
@@ -469,7 +471,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public SimulationResult simulate(String projectName, String fileName)
+	public SimulationResult simulate(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		try {
 			fireBeforeResourceSimulation(projectName, fileName);
@@ -491,15 +493,15 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean isCircuit(String projectName, String fileName) {
+	public boolean isCircuit(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
-		String type = getFileType(projectName, fileName);
+		FileType type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
 		}
-		return FileTypesUtil.isCircuit(type);
+		return FileType.isCircuit(type);
 	}
 
 	/*
@@ -510,15 +512,15 @@ public class DefaultResourceManager implements IResourceManager {
      * (java.lang.String, java.lang.String)
      */
 	@Override
-	public boolean isPredefined(String projectName, String fileName) {
+	public boolean isPredefined(Caseless projectName, Caseless fileName) {
 	    if (projectName == null || fileName == null) {
 	        return false;
 	    }
-	    String type = getFileType(projectName, fileName);
+	    FileType type = getFileType(projectName, fileName);
 	    if (type == null) {
 	        return false;
 	    }
-	    return FileTypesUtil.isPredefined(type);
+	    return type.equals(FileType.PREDEFINED);
 	}
 	
 	/*
@@ -528,15 +530,15 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean isTestbench(String projectName, String fileName) {
+	public boolean isTestbench(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
-		String type = getFileType(projectName, fileName);
+		FileType type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
 		}
-		if (FileTypesUtil.isTestbench(type)) {
+		if (type.equals(FileType.TESTBENCH)) {
 			return true;
 		}
 
@@ -559,15 +561,15 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean isSimulation(String projectName, String fileName) {
+	public boolean isSimulation(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
-		String type = getFileType(projectName, fileName);
+		FileType type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
 		}
-		return FileTypesUtil.isSimulation(type);
+		return type.equals(FileType.SIMULATION);
 	}
 	
 	/*
@@ -577,15 +579,15 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean isCompilable(String projectName, String fileName) {
+	public boolean isCompilable(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
-		String type = getFileType(projectName, fileName);
+		FileType type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
 		}
-		return FileTypesUtil.isCircuit(type) && !FileTypesUtil.isPredefined(type);
+		return FileType.isCircuit(type) && !type.equals(FileType.PREDEFINED);
 	}
 
 	/*
@@ -595,15 +597,15 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean isSimulatable(String projectName, String fileName) {
+	public boolean isSimulatable(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
-		String type = getFileType(projectName, fileName);
+		FileType type = getFileType(projectName, fileName);
 		if (type == null) {
 			return false;
 		}
-		return FileTypesUtil.isTestbench(type);
+		return type.equals(FileType.TESTBENCH);
 	}
 
 	/*
@@ -613,7 +615,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean canGenerateVHDLCode(String projectName, String fileName) {
+	public boolean canGenerateVHDLCode(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null) {
 			return false;
 		}
@@ -628,8 +630,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCorrectEntityName(java.lang.String)
 	 */
 	@Override
-	public boolean isCorrectEntityName(String name) {
-		return StringFormat.isCorrectEntityName(name);
+	public boolean isCorrectEntityName(Caseless name) {
+		return StringFormat.isCorrectEntityName(name.toString());
 	}
 
 	/*
@@ -638,8 +640,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCorrectFileName(java.lang.String)
 	 */
 	@Override
-	public boolean isCorrectFileName(String name) {
-		return StringFormat.isCorrectFileName(name);
+	public boolean isCorrectFileName(Caseless name) {
+		return StringFormat.isCorrectFileName(name.toString());
 	}
 
 	/*
@@ -648,8 +650,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCorrectProjectName(java.lang.String)
 	 */
 	@Override
-	public boolean isCorrectProjectName(String name) {
-		return StringFormat.isCorrectProjectName(name);
+	public boolean isCorrectProjectName(Caseless name) {
+		return StringFormat.isCorrectProjectName(name.toString());
 	}
 
 	/* FIRE EVENTS METHODS */
@@ -662,7 +664,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireBeforeProjectCreation(String projectName)
+	private void fireBeforeProjectCreation(Caseless projectName)
 			throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.beforeProjectCreation(projectName);
@@ -677,7 +679,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireProjectCreated(String projectName)
+	private void fireProjectCreated(Caseless projectName)
 			throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.projectCreated(projectName);
@@ -692,7 +694,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireBeforeProjectDeletion(String projectName)
+	private void fireBeforeProjectDeletion(Caseless projectName)
 			throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.beforeProjectDeletion(projectName);
@@ -705,7 +707,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @param projectName
 	 *            a name of a project
 	 */
-	private void fireProjectDeleted(String projectName) {
+	private void fireProjectDeleted(Caseless projectName) {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.projectDeleted(projectName);
 		}
@@ -723,8 +725,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireBeforeResourceCreation(String projectName,
-			String fileName, String type) throws ResourceVetoException {
+	private void fireBeforeResourceCreation(Caseless projectName,
+	        Caseless fileName, FileType type) throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.beforeResourceCreation(projectName, fileName, type);
 		}
@@ -742,8 +744,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireResourceCreated(String projectName, String fileName,
-			String type) throws ResourceVetoException {
+	private void fireResourceCreated(Caseless projectName, Caseless fileName,
+			FileType type) throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.resourceCreated(projectName, fileName, type);
 		}
@@ -759,7 +761,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireBeforeResourceDeletion(String projectName, String fileName)
+	private void fireBeforeResourceDeletion(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.beforeResourceDeletion(projectName, fileName);
@@ -774,7 +776,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @param fileName
 	 *            a name of a file
 	 */
-	private void fireResourceDeleted(String projectName, String fileName) {
+	private void fireResourceDeleted(Caseless projectName, Caseless fileName) {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.resourceDeleted(projectName, fileName);
 		}
@@ -790,8 +792,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireBeforeResourceCompilation(String projectName,
-			String fileName) throws ResourceVetoException {
+	private void fireBeforeResourceCompilation(Caseless projectName,
+	        Caseless fileName) throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.beforeResourceCompilation(projectName, fileName);
 		}
@@ -805,7 +807,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @param fileName
 	 *            a name of a file
 	 */
-	private void fireResourceSaved(String projectName, String fileName) {
+	private void fireResourceSaved(Caseless projectName, Caseless fileName) {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.resourceSaved(projectName, fileName);
 		}
@@ -821,7 +823,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @param result
 	 *            a compilation result
 	 */
-	private void fireResourceCompiled(String projectName, String fileName,
+	private void fireResourceCompiled(Caseless projectName, Caseless fileName,
 			CompilationResult result) {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.resourceCompiled(projectName, fileName, result);
@@ -838,8 +840,8 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws ResourceVetoException
 	 *             a veto
 	 */
-	private void fireBeforeResourceSimulation(String projectName,
-			String fileName) throws ResourceVetoException {
+	private void fireBeforeResourceSimulation(Caseless projectName,
+	        Caseless fileName) throws ResourceVetoException {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.beforeResourceSimulation(projectName, fileName);
 		}
@@ -855,7 +857,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @param result
 	 *            a compilation result
 	 */
-	private void fireResourceSimulated(String projectName, String fileName,
+	private void fireResourceSimulated(Caseless projectName, Caseless fileName,
 			SimulationResult result) {
 		for (VetoableResourceListener l : getVetoableResourceListeners()) {
 			l.resourceSimulated(projectName, fileName, result);

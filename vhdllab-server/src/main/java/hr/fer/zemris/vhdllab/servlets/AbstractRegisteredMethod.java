@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.servlets;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
-import hr.fer.zemris.vhdllab.utilities.ModelUtil;
 
 import java.io.Serializable;
 
@@ -25,19 +25,19 @@ public abstract class AbstractRegisteredMethod implements RegisteredMethod {
     }
 
 	protected void checkUserFileSecurity(HttpServletRequest request, Method<Serializable> method,
-	        Long fileId) throws ServiceException {
+	        Integer fileId) throws ServiceException {
 		UserFile file = container.getUserFileManager().load(fileId);
 		checkUserFileSecurity(request, method, file);
 	}
 
 	protected void checkUserFileSecurity(HttpServletRequest request, Method<Serializable> method,
 			UserFile file) {
-		String fileUser = file.getUserId();
+	    Caseless fileUser = file.getUserId();
 		checkUsersForSecurity(request, fileUser, method.getUserId());
 	}
 
 	protected void checkFileSecurity(HttpServletRequest request, Method<Serializable> method,
-	        Long fileId) throws ServiceException {
+	        Integer fileId) throws ServiceException {
 		File file = container.getFileManager().load(fileId);
 		checkFileSecurity(request, method, file);
 	}
@@ -47,19 +47,19 @@ public abstract class AbstractRegisteredMethod implements RegisteredMethod {
 	}
 
 	protected void checkProjectSecurity(HttpServletRequest request, Method<Serializable> method,
-	        Long projectId) throws ServiceException {
+	        Integer projectId) throws ServiceException {
 		Project project = container.getProjectManager().load(projectId);
 		checkProjectSecurity(request, method, project);
 	}
 
 	protected void checkProjectSecurity(HttpServletRequest request, Method<Serializable> method,
 			Project project) {
-		String projectUser = project.getUserId();
+	    Caseless projectUser = project.getUserId();
 		checkUsersForSecurity(request, projectUser, method.getUserId());
 	}
 
-	protected void checkUsersForSecurity(HttpServletRequest request, String resourceUser, String methodUser) {
-		if (!ModelUtil.userIdAreEqual(resourceUser, methodUser) && !request.isUserInRole("admin")) {
+	protected void checkUsersForSecurity(HttpServletRequest request, Caseless resourceUser, Caseless methodUser) {
+		if (!resourceUser.equals(methodUser) && !request.isUserInRole("admin")) {
 			throw new SecurityException();
 		}
 	}

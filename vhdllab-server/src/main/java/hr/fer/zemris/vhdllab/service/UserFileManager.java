@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface UserFileManager extends EntityManager<UserFile> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(String userId, String name) throws ServiceException;
+	boolean exists(Caseless userId, Caseless name) throws ServiceException;
 
 	/**
 	 * Finds all user files whose owner and name are specified by parameters.
@@ -43,7 +44,7 @@ public interface UserFileManager extends EntityManager<UserFile> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	UserFile findByName(String userId, String name) throws ServiceException;
+	UserFile findByName(Caseless userId, Caseless name) throws ServiceException;
 
 	/**
 	 * Finds all user files whose owner is specified user. Return value will
@@ -55,6 +56,6 @@ public interface UserFileManager extends EntityManager<UserFile> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	List<UserFile> findByUser(String userId) throws ServiceException;
+	List<UserFile> findByUser(Caseless userId) throws ServiceException;
 
 }

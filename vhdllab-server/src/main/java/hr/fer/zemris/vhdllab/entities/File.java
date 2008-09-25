@@ -1,12 +1,11 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.EntityListeners;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -14,100 +13,131 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * A file that belongs to a project.
  * 
  * @author Miro Bezjak
- * @since 31/1/2008
  * @version 1.0
+ * @since vhdllab2
  */
-@Entity
-@AssociationOverride(name = "parent", joinColumns = { @JoinColumn(name = "project_id", nullable = false, updatable = false) })
-@Table(name = "files", uniqueConstraints = { @UniqueConstraint(columnNames = {
-        "name", "project_id" }) })
-@NamedQuery(name = File.FIND_BY_NAME_QUERY, query = "select f from File as f where f.name = :name and f.parent.id = :id order by f.id")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class File extends BidiResource<Project, File> {
+@EntityListeners(HistoryListener.class)
+public final class File extends FileResource {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * A named query for finding files by name.
-     */
-    public static final String FIND_BY_NAME_QUERY = "file.find.by.name";
+    private Project project;
+    @Transient
+    private Project postRemoveProjectReference;
 
     /**
-     * Constructor for persistence provider.
+     * Default constructor for persistence provider.
      */
     File() {
         super();
     }
 
     /**
-     * Creates a file with specified name and type. Content will be set to empty
-     * string.
+     * Constructs a file out of specified <code>type</code> and
+     * <code>name</code> and <code>data</code>.
      * 
-     * @param project
-     *            a container of a file
-     * @param name
-     *            a name of a file
      * @param type
      *            a type of a file
+     * @param name
+     *            a name of a file
+     * @param data
+     *            a file data
      * @throws NullPointerException
      *             if either parameter is <code>null</code>
      * @throws IllegalArgumentException
-     *             if either parameter is too long
+     *             if either parameter is too long or <code>name</code> isn't
+     *             correctly formatted
      * @see #NAME_LENGTH
-     * @see #TYPE_LENGTH
-     * @see #CONTENT_LENGTH
+     * @see #DATA_LENGTH
      */
-    public File(Project project, String name, String type) {
-        this(project, name, type, "");
-    }
-
-    /**
-     * Creates a file with specified name, type and content.
-     * 
-     * @param project
-     *            a container of a file
-     * @param name
-     *            a name of a file
-     * @param type
-     *            a type of a file
-     * @param content
-     *            content of a file
-     * @throws NullPointerException
-     *             if either parameter is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if either parameter is too long
-     * @see #NAME_LENGTH
-     * @see #TYPE_LENGTH
-     * @see #CONTENT_LENGTH
-     */
-    public File(Project project, String name, String type, String content) {
-        super(project, name, type, content);
-        project.addChild(this);
+    public File(FileType type, Caseless name, String data) {
+        super(type, name, data);
+        project = null;
     }
 
     /**
      * Copy constructor.
+     * <p>
+     * Note: <code>id</code> and <code>version</code> properties are not copied.
+     * </p>
+     * <p>
+     * Note: reference to project is not duplicated.
+     * </p>
      * 
      * @param file
-     *            a file object to duplicate
-     * @param project
-     *            a container for duplicate
+     *            a file to duplicate
      * @throws NullPointerException
-     *             if either parameter is <code>null</code>
+     *             if <code>file</code> is <code>null</code>
      */
-    public File(File file, Project project) {
-        super(file, project);
-        project.addChild(this);
+    public File(File file) {
+        super(file);
+        project = null;
     }
 
     /**
-     * Returns a container for this file. Return value will be <code>null</code>
+     * Returns a project for this file. Return value will be <code>null</code>
      * only if file doesn't belong to any project.
      * 
-     * @return a container for this file
+     * @return a project for this file
      */
     public Project getProject() {
-        return getParent();
+        return project;
+    }
+
+    /**
+     * Sets a project for this file.
+     * 
+     * @param project a project to set; can be null
+     */
+    void setProject(Project project) {
+        if(project == null) {
+            setPostRemoveProjectReference(this.project);
+        }
+        this.project = project;
+    }
+
+    /**
+     * This is a leftover reference to a project that this file used to belong.
+     * When a file wants to be removed it need to be detached from project-file
+     * relationship by calling {@link Project#removeFile(File)} method. This
+     * will set project (property) to null. However this information is still
+     * required on post remove event (see {@link HistoryListener}) in order to
+     * set deletedOn timestamp on {@link FileHistory}. For that reason this
+     * property holds a reference to project even after project-file
+     * relationship (for this file) has been severed.
+     * <p>
+     * Please note that this method will destroy reference to a project once its
+     * been called. In other words first time its called it will return
+     * reference to a project but each other time it will return
+     * <code>null</code>. Reason for this is to minimize problem with garbage
+     * collection.
+     * </p>
+     * <p>
+     * THIS METHOD SHOULD NOT BE CALLED BY ANY OTHER THEN POST REMOVE EVENT
+     * METHOD IN {@link HistoryListener}!!
+     * </p>
+     * 
+     * @return the post remove project reference or <code>null</code> if it has
+     *         not been set
+     */
+    Project getPostRemoveProjectReference() {
+        if(this.postRemoveProjectReference != null) {
+            Project projectReference = this.postRemoveProjectReference;
+            setPostRemoveProjectReference(null);
+            return projectReference;
+        }
+        return null;
+    }
+
+    /**
+     * Sets a post remove project reference
+     * 
+     * @param project the post remove project reference to set
+     * @see #getPostRemoveProjectReference()
+     */
+    void setPostRemoveProjectReference(Project project) {
+        this.postRemoveProjectReference = project;
     }
 
     /*
@@ -117,11 +147,10 @@ public class File extends BidiResource<Project, File> {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((getProject() == null) ? 0 : getProject().hashCode());
-        return result;
+        return new HashCodeBuilder()
+                    .append(getProject())
+                    .appendSuper(super.hashCode())
+                    .toHashCode();
     }
 
     /*
@@ -137,53 +166,11 @@ public class File extends BidiResource<Project, File> {
             return false;
         if (!(obj instanceof File))
             return false;
-        if (!super.equals(obj)) {
-            return false;
-        }
-        final File other = (File) obj;
-        if (getProject() == null) {
-            if (other.getProject() != null)
-                return false;
-        } else if (!getProject().equals(other.getProject()))
-            return false;
-        return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
-    public int compareTo(Resource o) {
-        if (this == o)
-            return 0;
-        if (o == null)
-            throw new NullPointerException("Other file cant be null");
-        if (!(o instanceof File)) {
-            throw new ClassCastException("Object is not of File type");
-        }
-        final File other = (File) o;
-        int val = super.compareTo(other);
-        if (val != 0) {
-            return val;
-        }
-        if (getProject() == null) {
-            if (other.getProject() != null)
-                return -1;
-        } else if (other.getProject() == null) {
-            return 1;
-        } else {
-            val = getProject().compareTo(other.getProject());
-        }
-
-        if (val < 0) {
-            return -1;
-        } else if (val > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
+        File other = (File) obj;
+        return new EqualsBuilder()
+                    .append(getProject(), other.getProject())
+                    .appendSuper(super.equals(obj))
+                    .isEquals();
     }
 
     /*
@@ -193,15 +180,21 @@ public class File extends BidiResource<Project, File> {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(50);
-        sb.append("File [").append(super.toString());
-        Project project = getProject();
-        if (project != null) {
-            sb.append(", projectId=").append(project.getId());
-            sb.append(", projectName=").append(project.getName());
+        Project p = getProject();
+        Integer pId = null;
+        Caseless pUserId = null;
+        Caseless pName = null;
+        if (p != null) {
+            pId = p.getId();
+            pUserId = p.getUserId();
+            pName = p.getName();
         }
-        sb.append("]");
-        return sb.toString();
+        return new ToStringBuilder(this)
+                    .appendSuper(super.toString())
+                    .append("projectId", pId)
+                    .append("projectUserId", pUserId)
+                    .append("projectName", pName)
+                    .toString();
     }
 
 }

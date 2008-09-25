@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.test;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,10 +25,10 @@ public final class FileContentProvider {
 	/**
 	 * A map of file type -> file content
 	 */
-	private static final Map<String, List<NameAndContent>> contents;
+	private static final Map<FileType, List<NameAndContent>> contents;
 
 	static {
-		contents = new HashMap<String, List<NameAndContent>>();
+		contents = new HashMap<FileType, List<NameAndContent>>();
 		initContents();
 	}
 
@@ -41,13 +42,13 @@ public final class FileContentProvider {
 	 * Initializes a contents map with provided files.
 	 */
 	private static void initContents() {
-		contents.put(FileTypes.VHDL_SOURCE, new ArrayList<NameAndContent>());
-		contents.put(FileTypes.VHDL_PREDEFINED, new ArrayList<NameAndContent>());
-		contents.put(FileTypes.VHDL_SCHEMA, new ArrayList<NameAndContent>());
-		contents.put(FileTypes.VHDL_AUTOMATON, new ArrayList<NameAndContent>());
-		contents.put(FileTypes.VHDL_TESTBENCH, new ArrayList<NameAndContent>());
+		contents.put(FileType.SOURCE, new ArrayList<NameAndContent>());
+		contents.put(FileType.PREDEFINED, new ArrayList<NameAndContent>());
+		contents.put(FileType.SCHEMA, new ArrayList<NameAndContent>());
+		contents.put(FileType.AUTOMATON, new ArrayList<NameAndContent>());
+		contents.put(FileType.TESTBENCH, new ArrayList<NameAndContent>());
 
-		List<NameAndContent> list = contents.get(FileTypes.VHDL_SOURCE);
+		List<NameAndContent> list = contents.get(FileType.SOURCE);
 		list.add(readFile("comp_and"));
 		list.add(readFile("comp_or"));
 		list.add(readFile("comp_or2"));
@@ -55,16 +56,16 @@ public final class FileContentProvider {
 		list.add(readFile("complex_source"));
 		list.add(readFile("ultra_complex_source"));
 
-		list = contents.get(FileTypes.VHDL_TESTBENCH);
+		list = contents.get(FileType.TESTBENCH);
 		list.add(readFile("comp_and_tb"));
 		list.add(readFile("complex_source_tb"));
 		list.add(readFile("ultra_complex_source_tb"));
 		list.add(readFile("comp_oror_tb"));
 		
-		list = contents.get(FileTypes.VHDL_PREDEFINED);
+		list = contents.get(FileType.PREDEFINED);
         list.add(readFile("VL_OR"));
 
-		list = contents.get(FileTypes.VHDL_AUTOMATON);
+        list = contents.get(FileType.AUTOMATON);
 		list.add(readFile("automaton"));
 	}
 
@@ -102,7 +103,7 @@ public final class FileContentProvider {
 			reader.close();
 		} catch (IOException e) {
 		}
-		return new NameAndContent(name, content.toString());
+		return new NameAndContent(new Caseless(name), content.toString());
 	}
 
 	/**
@@ -112,7 +113,7 @@ public final class FileContentProvider {
 	 *            a file type for whom to retrieve content
 	 * @return a list file name and content
 	 */
-	public static List<NameAndContent> getContent(String type) {
+	public static List<NameAndContent> getContent(FileType type) {
 		return contents.get(type);
 	}
 

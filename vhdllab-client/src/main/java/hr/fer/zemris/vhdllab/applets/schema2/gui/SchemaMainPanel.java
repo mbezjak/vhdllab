@@ -35,6 +35,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUICon
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.CPToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.TabbedCTAddToolbar;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -173,9 +174,9 @@ public class SchemaMainPanel extends AbstractEditor {
 		if (container == null || content == null) return null;
 		System.out.println("Initializing user prototypes.");
 
-		String projectname = getProjectName();
-		String thisname = getFileName();
-		List<String> circuitnames = null;
+		hr.fer.zemris.vhdllab.entities.Caseless projectname = getProjectName();
+		hr.fer.zemris.vhdllab.entities.Caseless thisname = getFileName();
+		List<hr.fer.zemris.vhdllab.entities.Caseless> circuitnames = null;
 		try {
 			circuitnames = resourceManager.getAllCircuits(projectname);
 		} catch (Exception e) {
@@ -194,7 +195,7 @@ public class SchemaMainPanel extends AbstractEditor {
 		}
 
 		List<CircuitInterface> usercircuits = new ArrayList<CircuitInterface>();
-		for (String name : circuitnames) {
+		for (hr.fer.zemris.vhdllab.entities.Caseless name : circuitnames) {
 			// do not put prototypes for the modelled component or for
 			// components that depend on this component
 			if (thisname.equals(name)
@@ -397,12 +398,12 @@ public class SchemaMainPanel extends AbstractEditor {
 		return isused;
 	}
 	
-	public boolean isPlacedInEditor(String fileName) {
+	public boolean isPlacedInEditor(hr.fer.zemris.vhdllab.entities.Caseless fileName) {
 		boolean isplaced = false;
 		
 		for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
 			CircuitInterface plcci = plc.comp.getCircuitInterface();
-			if (plcci.getName().equalsIgnoreCase(fileName)) {
+			if (plcci.getName().equalsIgnoreCase(fileName.toString())) {
 				isplaced = true;
 				break;
 			}
@@ -411,10 +412,10 @@ public class SchemaMainPanel extends AbstractEditor {
 		return isplaced;
 	}
 	
-	private boolean hasCircuitInterfaceChanged(String fileName, CircuitInterface ci) {
+	private boolean hasCircuitInterfaceChanged(hr.fer.zemris.vhdllab.entities.Caseless fileName, CircuitInterface ci) {
 		for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
 			CircuitInterface plcci = plc.comp.getCircuitInterface();
-			if (plcci.getName().equalsIgnoreCase(fileName)) {
+			if (plcci.getName().equalsIgnoreCase(fileName.toString())) {
 				if (!ci.equals(plcci)) return true;
 			}
 		}
@@ -422,7 +423,7 @@ public class SchemaMainPanel extends AbstractEditor {
 		return false;
 	}
 	
-	public boolean shouldBeAdded(String projectname, String filename) {
+	public boolean shouldBeAdded(hr.fer.zemris.vhdllab.entities.Caseless projectname, hr.fer.zemris.vhdllab.entities.Caseless filename) {
 		Hierarchy hierarchy;
 		try {
 			hierarchy = resourceManager.extractHierarchy(projectname);
@@ -431,7 +432,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			return false;
 		}
 		
-		String thisname = getFileName();
+		hr.fer.zemris.vhdllab.entities.Caseless thisname = getFileName();
 		System.out.println("This = " + thisname + "; other = " + filename);
 		if (thisname.equals(filename) || hierarchy.getDependenciesForFile(filename).contains(thisname)) {
 			System.out.println("Other should NOT be added to this.");
@@ -465,7 +466,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
 		appletListener = new VetoableResourceAdapter() {
 			@Override
-			public void resourceSaved(String projectName, String fileName) {
+			public void resourceSaved(hr.fer.zemris.vhdllab.entities.Caseless projectName, hr.fer.zemris.vhdllab.entities.Caseless fileName) {
 //				if (fileName.equals(SchemaMainPanel.this.content.getFileName())) return;
 //				
 //				boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
@@ -485,7 +486,7 @@ public class SchemaMainPanel extends AbstractEditor {
 				// shouldn't be added to prototypes
 				if (!shouldBeAdded(projectName, fileName)) {
 					// then remove it, if it's used in schema
-					Caseless cfn = new Caseless(fileName);
+					Caseless cfn = new Caseless(fileName.toString());
 					if (isProtoInEditor(cfn)) {
 						boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
 						controller.send(new RemovePrototype(cfn));
@@ -529,7 +530,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			}
 
 			@Override
-			public void resourceCreated(String projectName, String fileName, String type) {
+			public void resourceCreated(hr.fer.zemris.vhdllab.entities.Caseless projectName, hr.fer.zemris.vhdllab.entities.Caseless fileName, FileType type) {
 				// don't add a non-circuit
 				if (!resourceManager.isCircuit(projectName, fileName)) return;
 				
@@ -551,12 +552,12 @@ public class SchemaMainPanel extends AbstractEditor {
 			}
 
 			@Override
-			public void resourceDeleted(String projectName, String fileName) {
+			public void resourceDeleted(hr.fer.zemris.vhdllab.entities.Caseless projectName, hr.fer.zemris.vhdllab.entities.Caseless fileName) {
 				// don't bother with non-circuits
 				if (!resourceManager.isCircuit(projectName, fileName)) return;
 				
 				// check if it was used in editor at all
-				Caseless cfn = new Caseless(fileName);
+				Caseless cfn = new Caseless(fileName.toString());
 				if (!isProtoInEditor(cfn)) return;
 				
 				// it was used in editor, thus, it must be removed

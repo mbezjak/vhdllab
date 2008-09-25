@@ -3,7 +3,6 @@
  */
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplicitSave;
@@ -12,6 +11,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.awt.Frame;
 
@@ -39,12 +40,12 @@ public class ExplicitSaveSimulation implements IExplicitSave {
 			return;
 		}
 		IResourceManager rm = container.getResourceManager();
-		if (!rm.isCorrectFileName(name)) {
+		if (!rm.isCorrectFileName(new Caseless(name))) {
 			SystemLog.instance().addSystemMessage("Invalid name!",
 					MessageType.INFORMATION);
 		}
-		String projectName = editor.getProjectName();
-		rm.createNewResource(projectName, name, FileTypes.VHDL_SIMULATION,
+		Caseless projectName = editor.getProjectName();
+		rm.createNewResource(projectName, new Caseless(name), FileType.SIMULATION,
 				editor.getData());
 		editor.setModified(false);
 	}

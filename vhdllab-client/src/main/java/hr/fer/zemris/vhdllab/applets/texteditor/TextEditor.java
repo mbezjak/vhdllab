@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -242,7 +243,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 	}
 
 	public FileContent getInitialFileContent(Component parent,
-			String projectName) {
+	        Caseless projectName) {
 		String[] options = new String[] { "OK", "Cancel" };
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
@@ -258,7 +259,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
 				if (container.getResourceManager().existsFile(projectName,
-						ci.getName())) {
+						new Caseless(ci.getName()))) {
 					SystemLog.instance().addSystemMessage(
 							ci.getName() + " already exists!",
 							MessageType.INFORMATION);
@@ -297,7 +298,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			sb.append("ARCHITECTURE arch OF ").append(ci.getName())
 					.append(" IS \n\nBEGIN\n\nEND arch;");
 
-			return new FileContent(projectName, ci.getName(), sb
+			return new FileContent(projectName, new Caseless(ci.getName()), sb
 					.toString());
 		} else
 			return null;

@@ -8,6 +8,8 @@ import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
 import hr.fer.zemris.vhdllab.applets.main.constant.ComponentTypes;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 /**
  * Defines methods that allows easy creation of various component identifiers.
@@ -69,11 +71,11 @@ public class ComponentIdentifierFactory {
 	 *             if either parameter is <code>null</code>
 	 */
 	public static IComponentIdentifier<FileIdentifier> createFileEditorIdentifier(
-			String projectName, String fileName) {
+	        Caseless projectName, Caseless fileName) {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
 		}
-		if (projectName == null) {
+		if (fileName == null) {
 			throw new NullPointerException("File name cant be null");
 		}
 		FileIdentifier file = new FileIdentifier(projectName, fileName);
@@ -94,7 +96,7 @@ public class ComponentIdentifierFactory {
 		if (file == null) {
 			throw new NullPointerException("File identifier cant be null");
 		}
-		String fileType = container.getResourceManager().getFileType(
+		FileType fileType = container.getResourceManager().getFileType(
 				file.getProjectName(), file.getFileName());
 		EditorProperties ep = conf.getEditorPropertiesByFileType(fileType);
 		return new EditorIdentifier<FileIdentifier>(ep.getId(), file);
@@ -130,11 +132,11 @@ public class ComponentIdentifierFactory {
 	 *             if either parameter is <code>null</code>
 	 */
 	public static IComponentIdentifier<FileIdentifier> createViewVHDLIdentifier(
-			String projectName, String fileName) {
+	        Caseless projectName, Caseless fileName) {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null");
 		}
-		if (projectName == null) {
+		if (fileName == null) {
 			throw new NullPointerException("File name cant be null");
 		}
 		FileIdentifier file = new FileIdentifier(projectName, fileName);

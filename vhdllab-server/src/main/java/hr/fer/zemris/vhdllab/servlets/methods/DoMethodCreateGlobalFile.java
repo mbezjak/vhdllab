@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -22,19 +23,18 @@ public class DoMethodCreateGlobalFile extends AbstractRegisteredMethod {
 	 */
 	@Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
-		String fileType = method.getParameter(String.class, PROP_FILE_TYPE);
-		if (fileName == null || fileType == null) {
+	    Caseless fileName = method.getParameter(Caseless.class, PROP_FILE_NAME);
+		if (fileName == null) {
 			return;
 		}
 		LibraryFile file;
 		try {
-		    Library lib = container.getLibraryManager().findByName("preferences");
-		    file = new LibraryFile(lib, fileName, fileType);
+		    Library lib = container.getLibraryManager().findByName(new Caseless("preferences"));
+		    file = new LibraryFile(fileName, "");
+		    lib.addFile(file);
 		    container.getLibraryFileManager().save(file);
 		} catch (ServiceException e) {
-			method.setStatus(SE_CAN_NOT_CREATE_FILE, "name=" + fileName
-					+ ", type=" + fileType);
+			method.setStatus(SE_CAN_NOT_CREATE_FILE, "name=" + fileName);
 			return;
 		}
 		method.setResult(file.getId());

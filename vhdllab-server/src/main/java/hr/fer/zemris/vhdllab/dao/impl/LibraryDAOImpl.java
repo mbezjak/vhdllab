@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.dao.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.LibraryDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 
 import java.util.HashMap;
@@ -31,12 +32,12 @@ public final class LibraryDAOImpl extends AbstractEntityDAO<Library> implements
 	 * @see hr.fer.zemris.vhdllab.dao.LibraryDAO#exists(java.lang.String)
 	 */
 	@Override
-	public boolean exists(String name) throws DAOException {
+	public boolean exists(Caseless name) throws DAOException {
 		checkParameters(name);
-		String namedQuery = Library.FIND_BY_NAME_QUERY;
+        String query = "select l from Library as l where l.name = :name order by l.id";
 		Map<String, Object> params = new HashMap<String, Object>(1);
 		params.put("name", name);
-		return existsEntity(namedQuery, params);
+		return existsEntity(query, params);
 	}
 
 	/*
@@ -45,12 +46,12 @@ public final class LibraryDAOImpl extends AbstractEntityDAO<Library> implements
 	 * @see hr.fer.zemris.vhdllab.dao.LibraryDAO#findByName(java.lang.String)
 	 */
 	@Override
-	public Library findByName(String name) throws DAOException {
+	public Library findByName(Caseless name) throws DAOException {
 		checkParameters(name);
-		String namedQuery = Library.FIND_BY_NAME_QUERY;
+        String query = "select l from Library as l where l.name = :name order by l.id";
 		Map<String, Object> params = new HashMap<String, Object>(1);
 		params.put("name", name);
-		return findSingleEntity(namedQuery, params);
+		return findSingleEntity(query, params);
 	}
 
 	/*
@@ -60,16 +61,16 @@ public final class LibraryDAOImpl extends AbstractEntityDAO<Library> implements
 	 */
 	@Override
 	public List<Library> getAll() throws DAOException {
-		String namedQuery = Library.GET_ALL_QUERY;
+        String query = "select l from Library as l order by l.id";
 		Map<String, Object> params = new HashMap<String, Object>(0);
-		return findEntityList(namedQuery, params);
+		return findEntityList(query, params);
 	}
 
 	/**
 	 * Throws {@link NullPointerException} is <code>name</code> is
 	 * <code>null</code>.
 	 */
-	private void checkParameters(String name) {
+	private void checkParameters(Caseless name) {
 		if (name == null) {
 			throw new NullPointerException("Name cant be null");
 		}

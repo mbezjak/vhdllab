@@ -1,43 +1,34 @@
 package hr.fer.zemris.vhdllab.server.conf;
 
 import static org.junit.Assert.fail;
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.junit.Test;
 
 /**
- * A mutual test case for {@link FileTypes} class and server configuration.
+ * A mutual test case for {@link FileType} class and server configuration.
  * 
  * @author Miro Bezjak
  */
 public class FileTypesTest {
 
 	/**
-	 * Check that every value defined in {@link FileTypes} is defined in main
+	 * Check that every value defined in {@link FileType} is defined in main
 	 * server configuration file and vice versa.
 	 */
 	@Test
 	public void equalToConfValues() throws Exception {
-		Class<FileTypes> clazz = FileTypes.class;
-		Set<String> values = new HashSet<String>();
-		for (Field f : clazz.getDeclaredFields()) {
-			String value = (String) f.get(null);
-			values.add(value);
-		}
-
 		ServerConf conf = ServerConfParser.getConfiguration();
-		Set<String> definedFileTypes = conf.getFileTypes();
-		for (String v : values) {
+		Set<FileType> definedFileTypes = conf.getFileTypes();
+		for (FileType v : FileType.values()) {
 			boolean found = false;
-			for (Iterator<String> it = definedFileTypes.iterator(); it
+			for (Iterator<FileType> it = definedFileTypes.iterator(); it
 					.hasNext();) {
-				String fileType = it.next();
-				if (fileType.equalsIgnoreCase(v)) {
+			    FileType fileType = it.next();
+				if (fileType.equals(v)) {
 					it.remove();
 					found = true;
 				}

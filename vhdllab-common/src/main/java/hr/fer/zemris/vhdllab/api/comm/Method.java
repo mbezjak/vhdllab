@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.api.comm;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 import java.io.Serializable;
 
 /**
@@ -10,9 +12,9 @@ public interface Method<T extends Serializable> extends Serializable, MethodCons
 
 	String getMethod();
 	
-	void setUserId(String userId);
+	void setUserId(Caseless userId);
 
-	String getUserId();
+	Caseless getUserId();
 	
 	Object getParameter(String param);
 	

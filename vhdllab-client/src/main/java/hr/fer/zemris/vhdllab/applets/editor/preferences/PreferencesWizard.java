@@ -1,9 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
-import hr.fer.zemris.vhdllab.applets.main.FileTypesUtil;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -11,6 +12,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -39,7 +41,7 @@ public class PreferencesWizard extends JPanel implements IWizard {
 
 	@Override
 	public FileContent getInitialFileContent(Component parent,
-			String projectName) {
+	        Caseless projectName) {
 		String tooltip;
 		final JPanel grid = new JPanel(new GridLayout(6, 2));
 
@@ -193,7 +195,7 @@ public class PreferencesWizard extends JPanel implements IWizard {
 				}
 				StringBuilder sb = new StringBuilder(1000);
 				sb.append("Informations on how to install a property\n\n");
-				if(!FileTypesUtil.values().contains(typeText.getText())) {
+				if(!Arrays.asList(FileType.values()).contains(typeText.getText().toUpperCase())) {
 					sb.append(" - file type ").append(typeText.getText())
 						.append(" does not exists so you need to add it.\n\t")
 						.append("* open src/common/hr.fer.zemris.vhdllab.constants.FileTypes class\n\t")

@@ -32,7 +32,7 @@ public class AutCircuitInterfaceExtractor implements CircuitInterfaceExtractor {
     public CircuitInterface execute(File file) throws ServiceException {
 		AUTParser aut=new AUTParser();
 		try {
-			aut.AUTParse(file.getContent());
+			aut.AUTParse(file.getData());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {

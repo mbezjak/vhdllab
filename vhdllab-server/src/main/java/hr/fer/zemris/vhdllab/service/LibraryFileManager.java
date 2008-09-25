@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 
 /**
@@ -25,7 +26,7 @@ public interface LibraryFileManager extends EntityManager<LibraryFile> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(Long libraryId, String name) throws ServiceException;
+	boolean exists(Integer libraryId, Caseless name) throws ServiceException;
 
 	/**
 	 * Returns a library file with specified library identifier and library file
@@ -41,6 +42,6 @@ public interface LibraryFileManager extends EntityManager<LibraryFile> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	LibraryFile findByName(Long libraryId, String name) throws ServiceException;
+	LibraryFile findByName(Integer libraryId, Caseless name) throws ServiceException;
 
 }

@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.service.generators;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationMessage;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
@@ -13,7 +12,9 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.Testbench;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.TestbenchParser;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.SignalChange;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.ServiceManager;
@@ -55,21 +56,21 @@ public class TestbenchVHDLGenerator implements VHDLGenerator {
     public VHDLGenerationResult execute(File file) throws ServiceException {
         if (file == null)
             throw new NullPointerException("File can not be null.");
-        if (!file.getType().equals(FileTypes.VHDL_TESTBENCH))
-            throw new IllegalArgumentException("File type must be " + FileTypes.VHDL_TESTBENCH);
+        if (!file.getType().equals(FileType.TESTBENCH))
+            throw new IllegalArgumentException("File type must be " + FileType.TESTBENCH);
 
         
-        String content = file.getContent();
+        String content = file.getData();
         
 
         Testbench tbInfo = null;
         try {
             tbInfo = TestbenchParser.parseXml(content);
         } catch (UniformTestbenchParserException e1) {
-            e1.printStackTrace();
+            throw new ServiceException(StatusCodes.SERVICE_CANT_GENERATE_VHDL_CODE, e1);
         }
         
-        String name = tbInfo.getSourceName();
+        Caseless name = new Caseless(tbInfo.getSourceName());
         
         
         File source = ServiceContainer.instance().getFileManager().findByName(file.getProject().getId(), name);
@@ -77,7 +78,7 @@ public class TestbenchVHDLGenerator implements VHDLGenerator {
         CircuitInterface ci = labman.extractCircuitInterface(source);
         String vhdl = null;
         try {
-            vhdl = generirajVHDL(file.getName(), name, ci, tbInfo);
+            vhdl = generirajVHDL(file.getName().toString(), name.toString(), ci, tbInfo);
         } catch (Exception e) {
             throw new ServiceException(StatusCodes.SERVICE_CANT_GENERATE_VHDL_CODE, e.getMessage());
         }
@@ -295,7 +296,7 @@ public class TestbenchVHDLGenerator implements VHDLGenerator {
          * Compares this object ChangesInMoment with the specified object for order. These two objects are
          * compared by time.
          * 
-         * @param a
+         * @param other
          *            <code>ChangesInMoment</code> to be compared.
          * @return the value 0 if the argument object ChangesInMoment is equal to this object; a
          *         value less than 0 if this object has time less than the object
@@ -344,7 +345,7 @@ public class TestbenchVHDLGenerator implements VHDLGenerator {
          * 
          * @return a hash code value for this <code>ChangesInMoment</code> instance.
          * @see java.lang.String#hashCode()
-         * @see java.lang.List#hashCode()
+         * @see java.util.List#hashCode()
          */
         @Override
         public int hashCode() {

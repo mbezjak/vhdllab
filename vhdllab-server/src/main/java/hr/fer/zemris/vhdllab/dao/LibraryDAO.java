@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.dao;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface LibraryDAO extends EntityDAO<Library> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(String name) throws DAOException;
+	boolean exists(Caseless name) throws DAOException;
 
 	/**
 	 * Finds all libraries whose <code>name</code> is specified by parameter.
@@ -41,7 +42,7 @@ public interface LibraryDAO extends EntityDAO<Library> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	Library findByName(String name) throws DAOException;
+	Library findByName(Caseless name) throws DAOException;
 
 	/**
 	 * Finds all defined libraries. Return value will never be <code>null</code>

@@ -1,13 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.util.List;
 
 public interface IProjectExplorer {
 	
-	void addFile(String projectName, String fileName);
-	void addProject(String projectName);
+	void addFile(Caseless projectName, Caseless fileName);
+	void addProject(Caseless projectName);
 	
 	/**
 	 * Sets an active project. An active project is a project which user is currently
@@ -26,13 +27,13 @@ public interface IProjectExplorer {
 	 * active project this method will return <code>null</code>.
 	 * @return a current active project or <code>null</code> if there is no active project.
 	 */
-	String getSelectedProject();
+	Caseless getSelectedProject();
 	FileIdentifier getSelectedFile();
-	List<String> getAllProjects();
-	List<String> getFilesByProject(String projectName);
-	void refreshProject(String projectName);
-	void closeProject(String projectName);
-	void removeProject(String projectName);
-	void removeFile(String projectName, String fileName);
+	List<Caseless> getAllProjects();
+	List<Caseless> getFilesByProject(Caseless projectName);
+	void refreshProject(Caseless projectName);
+	void closeProject(Caseless projectName);
+	void removeProject(Caseless projectName);
+	void removeFile(Caseless projectName, Caseless fileName);
 	
 }

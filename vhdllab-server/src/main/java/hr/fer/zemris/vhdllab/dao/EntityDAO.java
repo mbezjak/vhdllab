@@ -40,7 +40,7 @@ public interface EntityDAO<T> {
 	 * @throws NullPointerException
 	 *             if <code>id</code> is <code>null</code>
 	 */
-	T load(Long id) throws DAOException;
+	T load(Integer id) throws DAOException;
 
 	/**
 	 * Returns <code>true</code> if an entity with specified identifier exists
@@ -55,7 +55,7 @@ public interface EntityDAO<T> {
 	 * @throws NullPointerException
 	 *             if <code>id</code> is <code>null</code>
 	 */
-	boolean exists(Long id) throws DAOException;
+	boolean exists(Integer id) throws DAOException;
 
 	/**
 	 * Deletes an entity. If entity doesn't exist then this method will throw
@@ -68,6 +68,6 @@ public interface EntityDAO<T> {
 	 * @throws NullPointerException
 	 *             if <code>id</code> is <code>null</code>
 	 */
-	void delete(Long id) throws DAOException;
+	void delete(Integer id) throws DAOException;
 
 }

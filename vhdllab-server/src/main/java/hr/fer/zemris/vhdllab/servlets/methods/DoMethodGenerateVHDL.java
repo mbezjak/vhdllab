@@ -26,7 +26,7 @@ public class DoMethodGenerateVHDL extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		Long fileId = method.getParameter(Long.class, PROP_ID);
+        Integer fileId = method.getParameter(Integer.class, PROP_ID);
 		if (fileId == null) {
 			return;
 		}

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
@@ -25,8 +26,8 @@ public class DoMethodFindFileByName extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		Long projectId = method.getParameter(Long.class, PROP_ID);
-		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
+        Integer projectId = method.getParameter(Integer.class, PROP_ID);
+        Caseless fileName = method.getParameter(Caseless.class, PROP_FILE_NAME);
 		if (projectId == null || fileName == null) {
 			return;
 		}

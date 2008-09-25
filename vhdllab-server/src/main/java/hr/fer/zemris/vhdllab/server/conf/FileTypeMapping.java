@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.server.conf;
 
+import hr.fer.zemris.vhdllab.entities.FileType;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -38,9 +40,9 @@ public final class FileTypeMapping {
      * @throws NullPointerException
      *             if type is <code>null</code>
      */
-    public FileTypeMapping(String type) {
+    public FileTypeMapping(FileType type) {
         this();
-        setType(type);
+        setType(type.toString());
     }
 
     /**

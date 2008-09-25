@@ -4,9 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.server.conf.FileTypeMapping;
 import hr.fer.zemris.vhdllab.server.conf.FunctionalityType;
@@ -41,7 +42,7 @@ import org.junit.Test;
  */
 public class VHDLLabServiceManagerTest {
 
-    private static final String USER_ID = "user.id";
+    private static final Caseless USER_ID = new Caseless("user.id");
 
     private static String generatorClass;
     private static String extractorClass;
@@ -57,7 +58,7 @@ public class VHDLLabServiceManagerTest {
         EntityManagerUtil.createEntityManagerFactory();
 
         ServerConf conf = ServerConfParser.getConfiguration();
-        FileTypeMapping mapping = conf.getFileTypeMapping(FileTypes.VHDL_SOURCE);
+        FileTypeMapping mapping = conf.getFileTypeMapping(FileType.SOURCE);
         generatorClass = mapping.getFunctionality(FunctionalityType.GENERATOR);
         extractorClass = mapping.getFunctionality(FunctionalityType.EXTRACTOR);
     }
@@ -65,7 +66,7 @@ public class VHDLLabServiceManagerTest {
     @Before
     public void initEachTest() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
-        FileTypeMapping mapping = conf.getFileTypeMapping(FileTypes.VHDL_SOURCE);
+        FileTypeMapping mapping = conf.getFileTypeMapping(FileType.SOURCE);
         mapping.addFunctionality(FunctionalityType.GENERATOR.toString(),
                 generatorClass);
         mapping.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
@@ -73,13 +74,13 @@ public class VHDLLabServiceManagerTest {
         man = new VHDLLabServiceManager();
 
         EntityManagerUtil.currentEntityManager();
-        project = new Project(USER_ID, "project_name");
-        prepairProject(FileTypes.VHDL_SOURCE);
+        project = new Project(USER_ID, new Caseless("project_name"));
+        prepairProject(FileType.SOURCE);
 //        prepairProject(FileTypes.VHDL_SCHEMA);
 //        prepairProject(FileTypes.VHDL_AUTOMATON);
         container.getProjectManager().save(project);
         file = container.getFileManager().findByName(project.getId(),
-                "comp_and");
+                new Caseless("comp_and"));
     }
 
     @After
@@ -124,7 +125,8 @@ public class VHDLLabServiceManagerTest {
      */
     @Test(expected = ServiceException.class)
     public void executeFunctionality2() throws Exception {
-        File f = new File(project, "file_name_1", FileTypes.PREFERENCES_USER);
+        File f = new File(FileType.PREDEFINED, new Caseless("file_name_1"), "");
+        project.addFile(f);
         man.generateVHDL(f);
 
         // test cleanup
@@ -165,9 +167,9 @@ public class VHDLLabServiceManagerTest {
     public void executeFunctionality5() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
         Field field = getPrivateField("functionalities");
-        Map<String, Map<FunctionalityType, Functionality<?>>> functionalities = (Map<String, Map<FunctionalityType, Functionality<?>>>) field
+        Map<FileType, Map<FunctionalityType, Functionality<?>>> functionalities = (Map<FileType, Map<FunctionalityType, Functionality<?>>>) field
                 .get(man);
-        for (Entry<String, Map<FunctionalityType, Functionality<?>>> types : functionalities
+        for (Entry<FileType, Map<FunctionalityType, Functionality<?>>> types : functionalities
                 .entrySet()) {
             FileTypeMapping mapping = conf.getFileTypeMapping(types.getKey());
             for (Entry<FunctionalityType, Functionality<?>> func : types
@@ -188,9 +190,9 @@ public class VHDLLabServiceManagerTest {
         ServerConf conf = ServerConfParser.getConfiguration();
         Set<File> files = project.getFiles();
         Field field = getPrivateField("functionalities");
-        Map<String, Map<FunctionalityType, Functionality<?>>> functionalities = (Map<String, Map<FunctionalityType, Functionality<?>>>) field
+        Map<FileType, Map<FunctionalityType, Functionality<?>>> functionalities = (Map<FileType, Map<FunctionalityType, Functionality<?>>>) field
                 .get(man);
-        for (Entry<String, Map<FunctionalityType, Functionality<?>>> types : functionalities
+        for (Entry<FileType, Map<FunctionalityType, Functionality<?>>> types : functionalities
                 .entrySet()) {
             FileTypeMapping mapping = conf.getFileTypeMapping(types.getKey());
             for (Entry<FunctionalityType, Functionality<?>> func : types
@@ -298,10 +300,10 @@ public class VHDLLabServiceManagerTest {
     /**
      * Returns only those files that have specified type.
      */
-    private List<File> filterByType(Set<File> files, String type) {
+    private List<File> filterByType(Set<File> files, FileType type) {
         List<File> filtered = new ArrayList<File>();
         for (File f : files) {
-            if (f.getType().equalsIgnoreCase(type)) {
+            if (f.getType().equals(type)) {
                 filtered.add(f);
             }
         }
@@ -342,10 +344,11 @@ public class VHDLLabServiceManagerTest {
         return field;
     }
 
-    private static void prepairProject(String type) {
+    private static void prepairProject(FileType type) {
         List<NameAndContent> contents = FileContentProvider.getContent(type);
         for (NameAndContent nc : contents) {
-            new File(project, nc.getName(), type, nc.getContent());
+            File f = new File(type, nc.getName(), nc.getContent());
+            project.addFile(f);
         }
     }
 

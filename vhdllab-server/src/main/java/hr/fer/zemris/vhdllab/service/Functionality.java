@@ -1,13 +1,13 @@
 package hr.fer.zemris.vhdllab.service;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.Properties;
 
 /**
  * Describes an extra functionality associated with certain file type. For
- * instance, all files having one of VHDL file type (see {@link FileTypes}
+ * instance, all files having one of VHDL file type (see {@link FileType}
  * class) are capable of multiple extra functionalities: generating VHDL code,
  * extracting circuit interface, extracting dependencies, compiling and
  * simulating VHDL code.
@@ -23,7 +23,7 @@ import java.util.Properties;
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
- * @see FileTypes
+ * @see FileType
  */
 public interface Functionality<T> {
 

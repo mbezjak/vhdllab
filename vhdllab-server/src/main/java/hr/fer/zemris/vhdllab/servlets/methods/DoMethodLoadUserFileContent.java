@@ -25,7 +25,7 @@ public class DoMethodLoadUserFileContent extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		Long fileId = method.getParameter(Long.class, PROP_ID);
+        Integer fileId = method.getParameter(Integer.class, PROP_ID);
 		if (fileId == null) {
 			return;
 		}
@@ -37,7 +37,7 @@ public class DoMethodLoadUserFileContent extends AbstractRegisteredMethod {
 			return;
 		}
 		checkUserFileSecurity(request, method, file);
-		method.setResult(file.getContent());
+		method.setResult(file.getData());
 	}
 	
 }

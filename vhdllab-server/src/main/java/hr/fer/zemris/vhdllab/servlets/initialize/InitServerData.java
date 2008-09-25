@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.initialize;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.preferences.global.Preferences;
@@ -42,18 +42,19 @@ public class InitServerData {
 	    LibraryFileManager libfileman = container.getLibraryFileManager();
 	    
 	    EntityManagerUtil.currentEntityManager();
-	    if(!libman.exists("errors")) {
-	        libman.save(new Library("errors"));
+	    if(!libman.exists(new Caseless("errors"))) {
+	        libman.save(new Library(new Caseless("errors")));
 	    }
-	    Library lib = new Library("preferences");
-        if(!libman.exists("preferences")) {
+	    Library lib = new Library(new Caseless("preferences"));
+        if(!libman.exists(new Caseless("preferences"))) {
             libman.save(lib);
             PreferencesInitializer parser = PreferencesInitializer.instance();
             Preferences preferences = parser.getPreferences();
             for(Property p : preferences.getProperties()) {
                 try {
-                    if(!libfileman.exists(lib.getId(), p.getId())) {
-                        LibraryFile file = new LibraryFile(lib, p.getId(), p.getType(), parser.getSource(p.getId()));
+                    if(!libfileman.exists(lib.getId(), new Caseless(p.getId()))) {
+                        LibraryFile file = new LibraryFile(new Caseless(p.getId()), parser.getSource(p.getId()));
+                        lib.addFile(file);
                         libfileman.save(file);
                     }
                 } catch (ServiceException e) {
@@ -63,14 +64,15 @@ public class InitServerData {
         }
 	    
 		
-		lib = new Library("predefined");
-		if(!libman.exists("predefined")) {
+		lib = new Library(new Caseless("predefined"));
+		if(!libman.exists(new Caseless("predefined"))) {
 		    libman.save(lib);
 	        PredefinedInitializer predefined = PredefinedInitializer.instance();
 	        for (FileAndContent fc : predefined.getSources()) {
 	            try {
 	                if(!libfileman.exists(lib.getId(), fc.getFileName())) {
-	                    LibraryFile file = new LibraryFile(lib, fc.getFileName(), FileTypes.VHDL_PREDEFINED, fc.getContent());
+	                    LibraryFile file = new LibraryFile(fc.getFileName(), fc.getContent());
+	                    lib.addFile(file);
 	                    libfileman.save(file);
 	                }
 	            } catch (ServiceException e) {

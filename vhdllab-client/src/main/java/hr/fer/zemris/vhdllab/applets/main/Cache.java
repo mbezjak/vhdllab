@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,26 +12,26 @@ import java.util.Map.Entry;
 
 public class Cache {
 
-	private Map<FileIdentifier, Long> identifiers;
-	private Map<String, Long> userFileIdentifiers;
+	private Map<FileIdentifier, Integer> identifiers;
+	private Map<Caseless, Integer> userFileIdentifiers;
 	
-	private Map<Long, String> fileTypes;
+	private Map<Integer, FileType> fileTypes;
 
 	
 	public Cache() {
-		identifiers = new HashMap<FileIdentifier, Long>();
-		userFileIdentifiers = new HashMap<String, Long>();
-		fileTypes = new HashMap<Long, String>();
+		identifiers = new HashMap<FileIdentifier, Integer>();
+		userFileIdentifiers = new HashMap<Caseless, Integer>();
+		fileTypes = new HashMap<Integer, FileType>();
 	}
 
-	public boolean containsIdentifierFor(String projectName) {
+	public boolean containsIdentifierFor(Caseless projectName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
 		return getIdentifierFor(projectName) != null;
 	}
 
-	public boolean containsIdentifierFor(String projectName, String fileName) {
+	public boolean containsIdentifierFor(Caseless projectName, Caseless fileName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -39,12 +41,12 @@ public class Cache {
 		return getIdentifierFor(projectName, fileName) != null;
 	}
 	
-	public List<String> findFilesForProject(String projectName) {
+	public List<Caseless> findFilesForProject(Caseless projectName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
-		List<String> files = new ArrayList<String>();
-		for(Entry<FileIdentifier, Long> entry : identifiers.entrySet()) {
+		List<Caseless> files = new ArrayList<Caseless>();
+		for(Entry<FileIdentifier, Integer> entry : identifiers.entrySet()) {
 			FileIdentifier identifier = entry.getKey();
 			if(identifier.isFile() && identifier.getProjectName().equals(projectName)) {
 				files.add(identifier.getFileName());
@@ -53,9 +55,9 @@ public class Cache {
 		return files;
 	}
 	
-	public List<String> findFilesForProject() {
-		List<String> projects = new ArrayList<String>();
-		for(Entry<FileIdentifier, Long> entry : identifiers.entrySet()) {
+	public List<Caseless> findFilesForProject() {
+		List<Caseless> projects = new ArrayList<Caseless>();
+		for(Entry<FileIdentifier, Integer> entry : identifiers.entrySet()) {
 			FileIdentifier identifier = entry.getKey();
 			if(identifier.isProject()) {
 				projects.add(identifier.getProjectName());
@@ -64,23 +66,23 @@ public class Cache {
 		return projects;
 	}
 	
-	public Long getIdentifierForProperty(String name) {
+	public Integer getIdentifierForProperty(Caseless name) {
 		return userFileIdentifiers.get(name);
 	}
 	
-	public String getFileType(Long fileIdentifier) {
+	public FileType getFileType(Integer fileIdentifier) {
 		return fileTypes.get(fileIdentifier);
 	}
 
-	public void cacheFileType(Long fileIdentifier, String fileType) {
+	public void cacheFileType(Integer fileIdentifier, FileType fileType) {
 		fileTypes.put(fileIdentifier, fileType);
 	}
 
-	public FileIdentifier getFileForIdentifier(Long id) {
+	public FileIdentifier getFileForIdentifier(Integer id) {
 		if(id == null) {
 			throw new NullPointerException("File identifier can not be null.");
 		}
-		for(Entry<FileIdentifier, Long> entry : identifiers.entrySet()) {
+		for(Entry<FileIdentifier, Integer> entry : identifiers.entrySet()) {
 			FileIdentifier identifier = entry.getKey();
 			if(entry.getValue().equals(id) && identifier.isFile()) {
 				return identifier;
@@ -89,11 +91,11 @@ public class Cache {
 		return null;
 	}
 	
-	public String getProjectForIdentifier(Long id) {
+	public Caseless getProjectForIdentifier(Integer id) {
 		if(id == null) {
 			throw new NullPointerException("Project identifier can not be null.");
 		}
-		for(Entry<FileIdentifier, Long> entry : identifiers.entrySet()) {
+		for(Entry<FileIdentifier, Integer> entry : identifiers.entrySet()) {
 			FileIdentifier identifier = entry.getKey();
 			if(entry.getValue().equals(id) && identifier.isProject()) {
 				return identifier.getProjectName();
@@ -102,7 +104,7 @@ public class Cache {
 		return null;
 	}
 	
-	public Long getIdentifierFor(String projectName) {
+	public Integer getIdentifierFor(Caseless projectName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -110,7 +112,7 @@ public class Cache {
 		return identifiers.get(key);
 	}
 
-	public Long getIdentifierFor(String projectName, String fileName) {
+	public Integer getIdentifierFor(Caseless projectName, Caseless fileName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -121,7 +123,7 @@ public class Cache {
 		return identifiers.get(key);
 	}
 	
-	public void cacheUserFileItem(String name, Long userFileIdentifier) {
+	public void cacheUserFileItem(Caseless name, Integer userFileIdentifier) {
 		if(name == null) {
 			throw new NullPointerException("Name can not be null.");
 		}
@@ -131,7 +133,7 @@ public class Cache {
 		userFileIdentifiers.put(name, userFileIdentifier);
 	}
 	
-	public void cacheItem(String projectName, Long projectIdentifier) {
+	public void cacheItem(Caseless projectName, Integer projectIdentifier) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -142,7 +144,7 @@ public class Cache {
 		identifiers.put(key, projectIdentifier);
 	}
 
-	public void cacheItem(String projectName, String fileName, Long fileIdentifier) {
+	public void cacheItem(Caseless projectName, Caseless fileName, Integer fileIdentifier) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -156,14 +158,14 @@ public class Cache {
 		identifiers.put(key, fileIdentifier);
 	}
 
-	public void removeUserFileItem(String type) {
+	public void removeUserFileItem(FileType type) {
 		if(type == null) {
 			throw new NullPointerException("Type can not be null.");
 		}
 		userFileIdentifiers.remove(type);
 	}
 
-	public void removeItem(String projectName) {
+	public void removeItem(Caseless projectName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -171,7 +173,7 @@ public class Cache {
 		identifiers.remove(key);
 	}
 
-	public void removeItem(String projectName, String fileName) {
+	public void removeItem(Caseless projectName, Caseless fileName) {
 		if(projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
@@ -182,12 +184,12 @@ public class Cache {
 		identifiers.remove(key);
 	}
 
-	private FileIdentifier makeIdentifier(String projectName) {
+	private FileIdentifier makeIdentifier(Caseless projectName) {
 		FileIdentifier identifier = new FileIdentifier(projectName);
 		return identifier;
 	}
 
-	private FileIdentifier makeIdentifier(String projectName, String fileName) {
+	private FileIdentifier makeIdentifier(Caseless projectName, Caseless fileName) {
 		FileIdentifier identifier = new FileIdentifier(projectName, fileName);
 		return identifier;
 	}

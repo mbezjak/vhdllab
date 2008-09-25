@@ -6,11 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.LibraryDAO;
 import hr.fer.zemris.vhdllab.dao.LibraryFileDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 
@@ -31,8 +31,8 @@ import org.junit.Test;
  */
 public class LibraryDAOImplTest {
 
-	private static final String NAME = "simple.library.name";
-	private static final String NEW_NAME = "new." + NAME;
+    private static final Caseless NAME = new Caseless("simple_library_name");
+    private static final Caseless NEW_NAME = new Caseless("new_" + NAME);
 
 	private static LibraryFileDAO fileDAO;
 	private static LibraryDAO dao;
@@ -55,8 +55,8 @@ public class LibraryDAOImplTest {
 
 	private void initFiles() {
 		library = new Library(NAME);
-		file = new LibraryFile(library, "file.name", FileTypes.VHDL_SOURCE,
-				"<file>int main() {}</file>");
+        file = new LibraryFile(new Caseless("file_name"), "<file>int main() {}</file>");
+        library.addFile(file);
 	}
 
 	@After
@@ -151,8 +151,9 @@ public class LibraryDAOImplTest {
 	@Test
 	public void save6() throws DAOException {
 		dao.save(library);
-		LibraryFile newFile = new LibraryFile(library, "new.file.name",
-				"new.file.type");
+		LibraryFile newFile = new LibraryFile(new Caseless("new_file_name"),
+				"library file content");
+		library.addFile(newFile);
 		dao.save(library);
 
 		Library loadedLibrary = dao.load(library.getId());
@@ -206,7 +207,7 @@ public class LibraryDAOImplTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void exists() throws DAOException {
-		dao.exists((Long) null);
+		dao.exists((Integer) null);
 	}
 
 	/**
@@ -214,7 +215,7 @@ public class LibraryDAOImplTest {
 	 */
 	@Test
 	public void exists2() throws DAOException {
-		assertFalse("library exists.", dao.exists(Long.MAX_VALUE));
+		assertFalse("library exists.", dao.exists(Integer.MAX_VALUE));
 	}
 
 	/**
@@ -231,7 +232,7 @@ public class LibraryDAOImplTest {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void exists4() throws DAOException {
-		dao.exists((String) null);
+		dao.exists((Caseless) null);
 	}
 
 	/**
@@ -250,7 +251,7 @@ public class LibraryDAOImplTest {
 		dao.save(library);
 		assertTrue("library doesn't exist.", dao.exists(library.getId()));
 		assertTrue("library name is not case insensitive.", dao.exists(library
-				.getName().toUpperCase()));
+				.getName()));
 	}
 
 	/**
@@ -277,6 +278,19 @@ public class LibraryDAOImplTest {
 	}
 
 	/**
+     * everything ok
+     */
+    @Test
+    public void findByName3() throws DAOException {
+    	dao.save(library);
+    	Library l = dao.findByName(library.getName());
+    	assertEquals("library not found.", library, dao.findByName(library
+    			.getName()));
+    	assertEquals("library name is not case insensitive.", library, dao
+    			.findByName(library.getName()));
+    }
+
+    /**
 	 * everything ok
 	 */
 	@Test
@@ -296,18 +310,6 @@ public class LibraryDAOImplTest {
 	}
 
 	/**
-	 * everything ok
-	 */
-	@Test
-	public void findByName3() throws DAOException {
-		dao.save(library);
-		assertEquals("library not found.", library, dao.findByName(library
-				.getName()));
-		assertEquals("library name is not case insensitive.", library, dao
-				.findByName(library.getName().toUpperCase()));
-	}
-
-	/**
 	 * Test to see if hibernate second level cache is working
 	 */
 	@Ignore("already tested")
@@ -318,7 +320,7 @@ public class LibraryDAOImplTest {
 		EntityManagerUtil.currentEntityManager();
 		for (int i = 0; i < 500; i++) {
 			String name = "name" + (i + 1);
-			Library p = new Library(name);
+			Library p = new Library(new Caseless(name));
 			dao.save(p);
 		}
 		EntityManagerUtil.closeEntityManager();
@@ -363,7 +365,8 @@ public class LibraryDAOImplTest {
 		System.out.print("Prepairing Library cache collection test...");
 		for (int i = 0; i < 500; i++) {
 			String name = "name" + (i + 1);
-			new LibraryFile(library, name, FileTypes.VHDL_SOURCE, "abcdef");
+            LibraryFile l = new LibraryFile(new Caseless(name), "abcdef");
+            library.addFile(l);
 		}
 		EntityManagerUtil.currentEntityManager();
 		dao.save(library);
@@ -389,8 +392,8 @@ public class LibraryDAOImplTest {
 		for (int i = 0; i < 5; i++) {
 			EntityManagerUtil.currentEntityManager();
 			long start = System.currentTimeMillis();
-			Library p = dao.load(library.getId());
-			for (LibraryFile f : p) {
+			Library l = dao.load(library.getId());
+			for (LibraryFile f : l.getFiles()) {
 				assertNotNull("file id is null.", f.getId());
 				assertNotNull("file name is null.", f.getName());
 			}
@@ -398,7 +401,7 @@ public class LibraryDAOImplTest {
 			long end = System.currentTimeMillis();
 			System.out.println("Library.files - cache test: " + (end - start)
 					+ "ms");
-			assertNotNull("library is null", p);
+			assertNotNull("library is null", l);
 		}
 		/*
 		 * Pause so user can view statistics in jconsole
@@ -416,7 +419,8 @@ public class LibraryDAOImplTest {
 		System.out.print("Prepairing Library cache collection test...");
 		for (int i = 0; i < 500; i++) {
 			String name = "name" + (i + 1);
-			new LibraryFile(library, name, FileTypes.VHDL_SOURCE, "abcdef");
+			LibraryFile l = new LibraryFile(new Caseless(name), "abcdef");
+			library.addFile(l);
 		}
 		EntityManagerUtil.currentEntityManager();
 		dao.save(library);

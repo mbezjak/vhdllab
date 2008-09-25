@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.model;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 /**
  * This class uniquely identifies either a project or a file.
  * @author Miro Bezjak
@@ -7,9 +9,9 @@ package hr.fer.zemris.vhdllab.applets.main.model;
 public final class FileIdentifier {
 
 	/** A name of a project */
-	private String projectName;
+	private Caseless projectName;
 	/** A name of a file */
-	private String fileName;
+	private Caseless fileName;
 	
 	/**
 	 * Constructor for this class. File name can be <code>null</code> and if so
@@ -18,7 +20,7 @@ public final class FileIdentifier {
 	 * @param fileName a name of a file
 	 * @throws NullPointerException if <code>projectName</code> is <code>null</code>
 	 */
-	public FileIdentifier(String projectName, String fileName) {
+	public FileIdentifier(Caseless projectName, Caseless fileName) {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		this.projectName = projectName;
 		this.fileName = fileName;
@@ -31,7 +33,7 @@ public final class FileIdentifier {
 	 * @param projectName a name of a project
 	 * @throws NullPointerException if <code>projectName</code> is <code>null</code>
 	 */
-	public FileIdentifier(String projectName) {
+	public FileIdentifier(Caseless projectName) {
 		if(projectName == null) throw new NullPointerException("Project name can not be null.");
 		this.projectName = projectName;
 		this.fileName = null;
@@ -41,7 +43,7 @@ public final class FileIdentifier {
 	 * Getter for project name.
 	 * @return a name of a project
 	 */
-	public String getProjectName() {
+	public Caseless getProjectName() {
 		return projectName;
 	}
 	
@@ -50,7 +52,7 @@ public final class FileIdentifier {
 	 * then this <code>FileIdentifier</code> represents a project.
 	 * @return a file name of this FileIdentifier
 	 */
-	public String getFileName() {
+	public Caseless getFileName() {
 		return fileName;
 	}
 	
@@ -86,7 +88,7 @@ public final class FileIdentifier {
 		if(!this.projectName.equals(other.projectName)) return false;
 		if(this.isProject() && other.isProject()) return true;
 		else if(this.isFile() && other.isFile()) {
-			return this.fileName.equalsIgnoreCase(other.fileName);
+			return this.fileName.equals(other.fileName);
 		} else return false;
 	}
 	
@@ -97,7 +99,7 @@ public final class FileIdentifier {
 	public int hashCode() {
 		int hash = this.projectName.hashCode();
 		if(this.isFile()) {
-			hash ^= this.fileName.toUpperCase().hashCode();
+			hash ^= this.fileName.hashCode();
 		}
 		return hash;
 	}

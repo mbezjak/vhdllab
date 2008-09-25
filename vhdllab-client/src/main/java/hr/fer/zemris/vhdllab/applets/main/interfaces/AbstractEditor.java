@@ -5,6 +5,7 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.event.EditorListener;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
@@ -198,7 +199,7 @@ public abstract class AbstractEditor extends JPanel implements IEditor {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#getFileName()
 	 */
 	@Override
-	public String getFileName() {
+	public Caseless getFileName() {
 		return content.getFileName();
 	}
 
@@ -208,7 +209,7 @@ public abstract class AbstractEditor extends JPanel implements IEditor {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor#getProjectName()
 	 */
 	@Override
-	public String getProjectName() {
+	public Caseless getProjectName() {
 		return content.getProjectName();
 	}
 

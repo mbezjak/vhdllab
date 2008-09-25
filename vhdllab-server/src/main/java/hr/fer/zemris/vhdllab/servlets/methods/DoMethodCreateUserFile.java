@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
@@ -25,19 +26,18 @@ public class DoMethodCreateUserFile extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		String fileName = method.getParameter(String.class, PROP_FILE_NAME);
-		String fileType = method.getParameter(String.class, PROP_FILE_TYPE);
-		if (fileName == null || fileType == null) {
+        Caseless fileName = method.getParameter(Caseless.class, PROP_FILE_NAME);
+		if (fileName == null) {
 			return;
 		}
-		String userId = method.getUserId();
+		Caseless userId = method.getUserId();
 		UserFile file;
 		try {
-		    file = new UserFile(userId, fileName, fileType);
+		    file = new UserFile(userId, fileName, "");
 			container.getUserFileManager().save(file);
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_CREATE_FILE, "userId=" + userId
-					+ ", name=" + fileName + ", type=" + fileType);
+					+ ", name=" + fileName);
 			return;
 		}
 		method.setResult(file.getId());

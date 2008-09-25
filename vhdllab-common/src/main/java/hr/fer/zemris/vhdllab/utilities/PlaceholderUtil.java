@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.utilities;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 /**
  * Helper class for dealing with placeholders. Look at
  * <code>Client_Main_ApplicationResources_en.properties</code> file in
@@ -38,4 +40,13 @@ public class PlaceholderUtil {
 		return replaced;
 	}
 
+	public static String replacePlaceholders(String message,
+	        Caseless[] replacements) {
+	    String[] stringReplacements = new String[replacements.length];
+	    for (int i = 0; i < replacements.length; i++) {
+            stringReplacements[i] = replacements[i].toString();
+        }
+	    return replacePlaceholders(message, stringReplacements);
+	}
+	
 }

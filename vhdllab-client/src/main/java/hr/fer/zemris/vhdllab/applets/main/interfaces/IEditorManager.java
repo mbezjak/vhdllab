@@ -6,6 +6,7 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.util.List;
 
@@ -270,7 +271,7 @@ public interface IEditorManager {
 	 * @throws NullPointerException
 	 *             is <code>projectName</code> is <code>null</code>
 	 */
-	List<IEditor> getOpenedEditorsThatHave(String projectName);
+	List<IEditor> getOpenedEditorsThatHave(Caseless projectName);
 
 	/**
 	 * Returns a selected editor or <code>null</code> if no editor is

@@ -1,7 +1,10 @@
 package hr.fer.zemris.vhdllab.test;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
+
 /**
- * A simple structure that {@link FileContentProvider#getContent(String)}
+ * A simple structure that {@link FileContentProvider#getContent(FileType)}
  * returns.
  * 
  * @author Miro Bezjak
@@ -11,9 +14,9 @@ package hr.fer.zemris.vhdllab.test;
 public class NameAndContent {
 
 	private String content;
-	private String name;
+	private Caseless name;
 
-	public NameAndContent(String name, String content) {
+	public NameAndContent(Caseless name, String content) {
 		super();
 		this.name = name;
 		this.content = content;
@@ -23,7 +26,7 @@ public class NameAndContent {
 		return content;
 	}
 
-	public String getName() {
+	public Caseless getName() {
 		return name;
 	}
 

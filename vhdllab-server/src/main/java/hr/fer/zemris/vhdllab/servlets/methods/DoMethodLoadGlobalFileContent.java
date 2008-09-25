@@ -25,7 +25,7 @@ public class DoMethodLoadGlobalFileContent extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		Long fileId = method.getParameter(Long.class, PROP_ID);
+        Integer fileId = method.getParameter(Integer.class, PROP_ID);
 		if (fileId == null) {
 			return;
 		}
@@ -36,7 +36,7 @@ public class DoMethodLoadGlobalFileContent extends AbstractRegisteredMethod {
 			method.setStatus(SE_CAN_NOT_FIND_FILE, "fileId=" + fileId);
 			return;
 		}
-		method.setResult(file.getContent());
+		method.setResult(file.getData());
 	}
 	
 }

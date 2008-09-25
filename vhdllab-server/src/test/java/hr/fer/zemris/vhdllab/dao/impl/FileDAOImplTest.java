@@ -6,12 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.dao.ProjectDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
 
 import org.junit.After;
@@ -26,12 +27,12 @@ import org.junit.Test;
  */
 public class FileDAOImplTest {
 
-    private static final String NAME = "simple_file_name";
-    private static final String TYPE = FileTypes.VHDL_SCHEMA;
-    private static final String USER_ID = "user.identifier";
+    private static final Caseless NAME = new Caseless("simple_file_name");
+    private static final FileType TYPE = FileType.SCHEMA;
+    private static final Caseless USER_ID = new Caseless("user.identifier");
     private static final String CONTENT = "<pref><value>schematic</value></pref>";
-    private static final Long NEW_PROJECT_ID = Long.valueOf(Long.MAX_VALUE);
-    private static final String NEW_NAME = "new_" + NAME;
+    private static final Integer NEW_PROJECT_ID = Integer.valueOf(Integer.MAX_VALUE);
+    private static final Caseless NEW_NAME = new Caseless("new_" + NAME);
     private static final String NEW_CONTENT = "library ieee;";
 
     private static FileDAO dao;
@@ -54,12 +55,13 @@ public class FileDAOImplTest {
     }
 
     private void initFiles() throws DAOException {
-        project = new Project(USER_ID, "project_name");
+        project = new Project(USER_ID, new Caseless("project_name"));
         EntityManagerUtil.currentEntityManager();
         projectDAO.save(project);
         EntityManagerUtil.closeEntityManager();
 
-        file = new File(project, NAME, TYPE, CONTENT);
+        file = new File(TYPE, NAME, CONTENT);
+        project.addFile(file);
     }
 
     @After
@@ -117,49 +119,20 @@ public class FileDAOImplTest {
     @Test
     public void save3() throws Exception {
         dao.save(file);
-        file.setContent(NEW_CONTENT);
+        file.setData(NEW_CONTENT);
         dao.save(file);
         assertEquals("files not same after content was updated.", file, dao
                 .load(file.getId()));
     }
 
     /**
-     * File type can't be any string. Must be only one of registered file types.
-     */
-    @Test
-    public void save4() throws Exception {
-        File newFile = new File(project, NAME, "invalid.file.type", CONTENT);
-        try {
-            dao.save(newFile);
-            fail("Expected DAOException");
-        } catch (DAOException e) {
-            if (e.getStatusCode() != StatusCodes.DAO_INVALID_FILE_TYPE) {
-                fail("Invalid status code in DAOException");
-            }
-        }
-    }
-
-    /**
-     * File type can't be any string. Must be only one of registered file types
-     * but is case insensitive.
-     */
-    @Test
-    public void save5() throws Exception {
-        File newFile = new File(project, NAME, FileTypes.VHDL_SOURCE
-                .toUpperCase(), CONTENT);
-        dao.save(newFile);
-        File loadedFile = dao.load(newFile.getId());
-        assertEquals("types not equal.", newFile.getType(), loadedFile
-                .getType());
-    }
-
-    /**
      * non-existing project (can't cascade to persist a project)
      */
     @Test(expected = DAOException.class)
-    public void save6() throws DAOException {
-        Project newProject = new Project(USER_ID, "new.project.name");
-        File newFile = new File(file, newProject);
+    public void save4() throws DAOException {
+        Project newProject = new Project(USER_ID, new Caseless("new_project_name"));
+        File newFile = new File(file);
+        newProject.addFile(newFile);
         dao.save(newFile);
     }
 
@@ -167,10 +140,11 @@ public class FileDAOImplTest {
      * If project is saved then file can be persisted
      */
     @Test
-    public void save7() throws DAOException {
-        Project newProject = new Project(USER_ID, "new_project_name");
+    public void save5() throws DAOException {
+        Project newProject = new Project(USER_ID, new Caseless("new_project_name"));
         projectDAO.save(newProject);
-        File newFile = new File(file, newProject);
+        File newFile = new File(file);
+        newProject.addFile(newFile);
         dao.save(newFile);
         assertTrue("file doesn't exist.", dao.exists(newFile.getId()));
         assertTrue("file doesn't exist.", dao.exists(newProject.getId(),
@@ -184,9 +158,10 @@ public class FileDAOImplTest {
      * File name and project id are unique (i.e. form secondary key)
      */
     @Test
-    public void save8() throws Exception {
+    public void save6() throws Exception {
         dao.save(file);
-        File newFile = new File(project, file.getName(), TYPE, CONTENT);
+        File newFile = new File(TYPE, file.getName(), CONTENT);
+        project.addFile(newFile);
         try {
             dao.save(newFile);
             fail("Expected DAOException");
@@ -201,9 +176,10 @@ public class FileDAOImplTest {
      * Save a file with same project but different name
      */
     @Test
-    public void save9() throws Exception {
+    public void save7() throws Exception {
         dao.save(file);
-        File newFile = new File(project, NEW_NAME, TYPE, CONTENT);
+        File newFile = new File(TYPE, NEW_NAME, CONTENT);
+        project.addFile(newFile);
         dao.save(newFile);
         assertTrue("new file not saved.", dao.exists(newFile.getId()));
         assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
@@ -213,11 +189,12 @@ public class FileDAOImplTest {
      * Save a file with same name but different project
      */
     @Test
-    public void save10() throws Exception {
+    public void save8() throws Exception {
         dao.save(file);
-        Project newProject = new Project(USER_ID, "new_project_name");
+        Project newProject = new Project(USER_ID, new Caseless("new_project_name"));
         projectDAO.save(newProject);
-        File newFile = new File(newProject, NAME, TYPE, CONTENT);
+        File newFile = new File(TYPE, NAME, CONTENT);
+        newProject.addFile(newFile);
         dao.save(file);
         assertTrue("new file not saved.", dao.exists(newFile.getId()));
         assertEquals("files are not same.", newFile, dao.load(newFile.getId()));
@@ -227,28 +204,12 @@ public class FileDAOImplTest {
      * save a file then update it
      */
     @Test
-    public void save11() throws DAOException {
+    public void save9() throws DAOException {
         dao.save(file);
-        file.setContent("abc");
+        file.setData("abc");
         dao.save(file);
         assertTrue("file doesn't exist.", dao.exists(file.getId()));
         assertEquals("file not updated.", file, dao.load(file.getId()));
-    }
-
-    /**
-     * File name can't be any string. Must be of correct format.
-     */
-    @Test
-    public void save12() {
-        File newFile = new File(project, "and", FileTypes.VHDL_SOURCE);
-        try {
-            dao.save(newFile);
-            fail("Expected DAOException");
-        } catch (DAOException e) {
-            if (e.getStatusCode() != StatusCodes.DAO_INVALID_FILE_NAME) {
-                fail("Invalid status code in DAOException");
-            }
-        }
     }
 
     /**
@@ -278,9 +239,10 @@ public class FileDAOImplTest {
      */
     @Test
     public void delete2() throws Exception {
-        project = new Project(project.getUserId(), "new_project_name");
+        project = new Project(project.getUserId(), new Caseless("new_project_name"));
         projectDAO.save(project);
-        file = new File(file, project);
+        file = new File(file);
+        project.addFile(file);
         dao.save(file);
         assertTrue("file not saved.", dao.exists(file.getId()));
         dao.delete(file.getId());
@@ -311,7 +273,7 @@ public class FileDAOImplTest {
      */
     @Test(expected = NullPointerException.class)
     public void exists() throws DAOException {
-        dao.exists((Long) null);
+        dao.exists((Integer) null);
     }
 
     /**
@@ -319,7 +281,7 @@ public class FileDAOImplTest {
      */
     @Test
     public void exists2() throws DAOException {
-        assertFalse("file exists.", dao.exists(Long.MAX_VALUE));
+        assertFalse("file exists.", dao.exists(Integer.MAX_VALUE));
     }
 
     /**
@@ -369,7 +331,7 @@ public class FileDAOImplTest {
         assertTrue("file doesn't exists after creation.", dao.exists(project
                 .getId(), file.getName()));
         assertTrue("file name is not case insensitive.", dao.exists(project
-                .getId(), file.getName().toUpperCase()));
+                .getId(), file.getName()));
     }
 
     /**
@@ -427,7 +389,7 @@ public class FileDAOImplTest {
         assertEquals("files are not same.", file, dao.findByName(project
                 .getId(), file.getName()));
         assertEquals("file name is not case insensitive.", file, dao
-                .findByName(project.getId(), file.getName().toUpperCase()));
+                .findByName(project.getId(), file.getName()));
     }
 
 }

@@ -22,7 +22,7 @@ import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.utilities.ModelUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
 import java.util.ArrayList;
@@ -113,7 +113,6 @@ public class DefaultEditorManager implements IEditorManager {
 		return openEditor(identifier, "");
 	}
 
-	@SuppressWarnings("unchecked")
 	public IEditor viewVHDLCode(IEditor editor) {
 		if (editor == null) {
 			throw new NullPointerException("Editor cant be null");
@@ -145,13 +144,13 @@ public class DefaultEditorManager implements IEditorManager {
 			throw new IllegalArgumentException(
 					"Not enough information to view vhdl code");
 		}
-		String projectName = file.getProjectName();
-		String fileName = file.getFileName();
+		Caseless projectName = file.getProjectName();
+		Caseless fileName = file.getFileName();
 		if (!resourceManager.canGenerateVHDLCode(projectName, fileName)) {
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE_FOR_THAT_FILE);
 			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
+					new Caseless[] { fileName });
 			echoStatusText(text, MessageType.INFORMATION);
 			return null;
 		}
@@ -163,7 +162,7 @@ public class DefaultEditorManager implements IEditorManager {
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
 			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
+					new Caseless[] { fileName });
 			echoStatusText(text, MessageType.ERROR);
 			return null;
 		}
@@ -171,7 +170,7 @@ public class DefaultEditorManager implements IEditorManager {
 			String text = bundle
 					.getString(LanguageConstants.STATUSBAR_CANT_VIEW_VHDL_CODE);
 			text = PlaceholderUtil.replacePlaceholders(text,
-					new String[] { fileName });
+					new Caseless[] { fileName });
 			echoStatusText(text, MessageType.ERROR);
 			return null;
 		}
@@ -206,8 +205,8 @@ public class DefaultEditorManager implements IEditorManager {
 			throw new IllegalArgumentException(
 					"Not enough information to view vhdl code");
 		}
-		String projectName = file.getProjectName();
-		String fileName = file.getFileName();
+		Caseless projectName = file.getProjectName();
+		Caseless fileName = file.getFileName();
 		// only so content should not be loaded
 		if (isEditorOpened(identifier)) {
 			storage.setSelectedComponent(identifier);
@@ -273,8 +272,8 @@ public class DefaultEditorManager implements IEditorManager {
 					.getString(LanguageConstants.TOOLTIP_EDITOR_EDITABLE);
 		}
 		String type = identifier.getComponentType();
-		String[] replacements = new String[] { content.getFileName(),
-				content.getProjectName(), tooltipSpecial };
+		String[] replacements = new String[] { content.getFileName().toString(),
+				content.getProjectName().toString(), tooltipSpecial };
 		String title = bundle.getString(LanguageConstants.TITLE_FOR + type);
 		title = PlaceholderUtil.replacePlaceholders(title, replacements);
 		String tooltip = bundle.getString(LanguageConstants.TOOLTIP_FOR + type);
@@ -358,12 +357,12 @@ public class DefaultEditorManager implements IEditorManager {
 			return;
 		}
 		List<IEditor> savedEditors = new ArrayList<IEditor>();
-		List<String> projects = new ArrayList<String>();
+		List<Caseless> projects = new ArrayList<Caseless>();
 		for (IEditor editor : editorsToSave) {
 			boolean saved = saveEditorImpl(editor, false);
 			if (saved) {
 				savedEditors.add(editor);
-				String projectName = editor.getProjectName();
+				Caseless projectName = editor.getProjectName();
 				if (!projects.contains(projectName)) {
 					projects.add(projectName);
 				}
@@ -376,7 +375,7 @@ public class DefaultEditorManager implements IEditorManager {
 			IView view = container.getViewManager().getOpenedView(peIdentifier);
 			IProjectExplorer projectExplorer = view
 					.asInterface(IProjectExplorer.class);
-			for (String projectName : projects) {
+			for (Caseless projectName : projects) {
 				projectExplorer.refreshProject(projectName);
 			}
 		}
@@ -407,8 +406,8 @@ public class DefaultEditorManager implements IEditorManager {
 	 */
 	private boolean saveEditorImpl(IEditor editor, boolean tryExplicitly) {
 		if (editor.isSavable() && editor.isModified()) {
-			String fileName = editor.getFileName();
-			String projectName = editor.getProjectName();
+		    Caseless fileName = editor.getFileName();
+		    Caseless projectName = editor.getProjectName();
 			String content = editor.getData();
 			if (content == null) {
 				return false;
@@ -419,7 +418,7 @@ public class DefaultEditorManager implements IEditorManager {
 				String text = bundle
 						.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
 				text = PlaceholderUtil.replacePlaceholders(text,
-						new String[] { fileName });
+						new Caseless[] { fileName });
 				echoStatusText(text, MessageType.ERROR);
 				return false;
 			}
@@ -447,7 +446,7 @@ public class DefaultEditorManager implements IEditorManager {
 					String text = bundle
 							.getString(LanguageConstants.STATUSBAR_CANT_SAVE_FILE);
 					text = PlaceholderUtil.replacePlaceholders(text,
-							new String[] { editor.getFileName() });
+							new Caseless[] { editor.getFileName() });
 					echoStatusText(text, MessageType.ERROR);
 					return false;
 				}
@@ -592,7 +591,7 @@ public class DefaultEditorManager implements IEditorManager {
 	 *            <code>true</code> if an editor content has been changed;
 	 *            <code>false</code> otherwise.
 	 */
-	private void resetEditorTitle(String projectName, String fileName,
+	private void resetEditorTitle(Caseless projectName, Caseless fileName,
 			boolean modified) {
 		IComponentIdentifier<FileIdentifier> id = ComponentIdentifierFactory
 				.createFileEditorIdentifier(projectName, fileName);
@@ -726,17 +725,17 @@ public class DefaultEditorManager implements IEditorManager {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#getOpenedEditorsThatHave(java.lang.String)
 	 */
 	@Override
-	public List<IEditor> getOpenedEditorsThatHave(String projectName) {
+	public List<IEditor> getOpenedEditorsThatHave(Caseless projectName) {
 		if (projectName == null) {
 			throw new NullPointerException("Project name cant be null.");
 		}
 		List<IEditor> editorsHavingSpecifiedProject = new ArrayList<IEditor>();
 		for (IEditor e : getAllOpenedEditors()) {
-			String editorProjectName = e.getProjectName();
+		    Caseless editorProjectName = e.getProjectName();
 			if (editorProjectName == null) {
 				continue;
 			}
-			if (ModelUtil.projectNamesAreEqual(editorProjectName, projectName)) {
+			if (editorProjectName.equals(projectName)) {
 				editorsHavingSpecifiedProject.add(e);
 			}
 		}
@@ -875,7 +874,7 @@ public class DefaultEditorManager implements IEditorManager {
 		 *      java.lang.String, boolean)
 		 */
 		@Override
-		public void modified(String projectName, String fileName, boolean flag) {
+		public void modified(Caseless projectName, Caseless fileName, boolean flag) {
 			resetEditorTitle(projectName, fileName, flag);
 		}
 	}

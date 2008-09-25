@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -245,7 +246,7 @@ public class Automat extends AbstractEditor implements IWizard {
 	}
 
 	public FileContent getInitialFileContent(Component parent,
-			String projectName) {
+	        Caseless projectName) {
 		AUTPodatci pod = new AUTPodatci(parent, container, bundle);
 		// TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
 		String gen = null;
@@ -256,7 +257,7 @@ public class Automat extends AbstractEditor implements IWizard {
 					stanja);
 		} else
 			return null;
-		return new FileContent(projectName, pod.ime, gen);
+		return new FileContent(projectName, new Caseless(pod.ime), gen);
 	}
 
 	@Override

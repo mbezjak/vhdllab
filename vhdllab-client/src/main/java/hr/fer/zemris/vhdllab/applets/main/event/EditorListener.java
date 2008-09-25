@@ -3,6 +3,8 @@
  */
 package hr.fer.zemris.vhdllab.applets.main.event;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 import java.util.EventListener;
 
 /**
@@ -27,6 +29,6 @@ public interface EditorListener extends EventListener {
 	 *            <code>false</code> otherwise (i.e. an editor has just been
 	 *            saved)
 	 */
-	void modified(String projectName, String fileName, boolean flag);
+	void modified(Caseless projectName, Caseless fileName, boolean flag);
 
 }

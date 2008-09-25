@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.service.FileManager;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -28,19 +29,19 @@ public class DoMethodExtractDependencies extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		Long fileId = method.getParameter(Long.class, PROP_ID);
+        Integer fileId = method.getParameter(Integer.class, PROP_ID);
 		if (fileId == null) {
 			return;
 		}
-		ArrayList<Long> dependencies;
+		ArrayList<Integer> dependencies;
 		try {
 		    FileManager man = container.getFileManager();
 			File file = man.load(fileId);
-			Long projectId = file.getProject().getId();
+			Integer projectId = file.getProject().getId();
 			checkFileSecurity(request, method, file);
-			Set<String> names = container.getServiceManager().extractDependencies(file, true);
-			dependencies = new ArrayList<Long>(names.size());
-			for (String name : names) {
+			Set<Caseless> names = container.getServiceManager().extractDependencies(file, true);
+			dependencies = new ArrayList<Integer>(names.size());
+			for (Caseless name : names) {
                 File f = man.findByName(projectId, name);
                 dependencies.add(f.getId());
             }

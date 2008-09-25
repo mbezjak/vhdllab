@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class FileContentProviderTest {
 	@Test
 	public void readContent() throws Exception {
 		List<NameAndContent> list = FileContentProvider
-				.getContent(FileTypes.VHDL_SOURCE);
+				.getContent(FileType.SOURCE);
 		assertNotNull("file not read.", list);
 		assertFalse("empty list.", list.size() == 0);
 	}

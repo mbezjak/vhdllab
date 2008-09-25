@@ -3,10 +3,11 @@ package hr.fer.zemris.vhdllab.service.simulator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.entities.Project;
@@ -33,7 +34,7 @@ import org.junit.Test;
  */
 public class GhdlSimulatorTest {
 
-    private static final String USER_ID = "user.id";
+    private static final Caseless USER_ID = new Caseless("user.id");
 
     private static ServiceContainer container;
     private static FileManager fileMan;
@@ -49,12 +50,12 @@ public class GhdlSimulatorTest {
 
         EntityManagerUtil.createEntityManagerFactory();
         EntityManagerUtil.currentEntityManager();
-        project = new Project(USER_ID, "project_name");
-        prepairProject(FileTypes.VHDL_SOURCE);
-        prepairProject(FileTypes.VHDL_TESTBENCH);
+        project = new Project(USER_ID, new Caseless("project_name"));
+        prepairProject(FileType.SOURCE);
+        prepairProject(FileType.TESTBENCH);
         container.getProjectManager().save(project);
 
-        library = new Library("predefined");
+        library = new Library(new Caseless("predefined"));
         prepairLibrary();
         container.getLibraryManager().save(library);
         EntityManagerUtil.closeEntityManager();
@@ -91,7 +92,7 @@ public class GhdlSimulatorTest {
      */
     @Test(expected = ServiceException.class)
     public void simulateFileNotSimulatable() throws Exception {
-        File file = fileMan.findByName(project.getId(), "comp_and");
+        File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
         man.simulate(file);
     }
     
@@ -100,7 +101,7 @@ public class GhdlSimulatorTest {
      */
     @Test
     public void simulate() throws Exception {
-        File file = fileMan.findByName(project.getId(), "comp_and_tb");
+        File file = fileMan.findByName(project.getId(), new Caseless("comp_and_tb"));
         SimulationResult result = man.simulate(file);
         assertTrue("not a successful simulation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
@@ -113,7 +114,7 @@ public class GhdlSimulatorTest {
      */
     @Test
     public void simulate2() throws Exception {
-        File file = fileMan.findByName(project.getId(), "complex_source_tb");
+        File file = fileMan.findByName(project.getId(), new Caseless("complex_source_tb"));
         SimulationResult result = man.simulate(file);
         assertTrue("not a successful simulation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
@@ -126,7 +127,7 @@ public class GhdlSimulatorTest {
      */
     @Test
     public void simulate3() throws Exception {
-        File file = fileMan.findByName(project.getId(), "ultra_complex_source_tb");
+        File file = fileMan.findByName(project.getId(), new Caseless("ultra_complex_source_tb"));
         SimulationResult result = man.simulate(file);
         assertTrue("not a successful simulation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
@@ -139,8 +140,9 @@ public class GhdlSimulatorTest {
      */
     @Test
     public void simulate4() throws Exception {
-        File file = fileMan.findByName(project.getId(), "comp_oror_tb");
+        File file = fileMan.findByName(project.getId(), new Caseless("comp_oror_tb"));
         SimulationResult result = man.simulate(file);
+        System.out.println(result);
         assertTrue("not a successful simulation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
         assertEquals("not an empty list.", Collections.emptyList(), result
@@ -152,11 +154,11 @@ public class GhdlSimulatorTest {
      */
     @Test
     public void simulate5() throws Exception {
-        File file = fileMan.findByName(project.getId(), "comp_and_tb");
-        String content = file.getContent();
+        File file = fileMan.findByName(project.getId(), new Caseless("comp_and_tb"));
+        String content = file.getData();
         // missing half of a file
         content = content.substring(0, content.length() / 2);
-        file.setContent(content);
+        file.setData(content);
         fileMan.save(file);
 
         SimulationResult result = man.simulate(file);
@@ -165,18 +167,20 @@ public class GhdlSimulatorTest {
         assertFalse("no error messages.", result.getMessages().isEmpty());
     }
 
-    private static void prepairProject(String type) {
+    private static void prepairProject(FileType type) {
         List<NameAndContent> contents = FileContentProvider.getContent(type);
         for (NameAndContent nc : contents) {
-            new File(project, nc.getName(), type, nc.getContent());
+            File f = new File(type, nc.getName(), nc.getContent());
+            project.addFile(f);
         }
     }
 
     private static void prepairLibrary() {
-        String type = FileTypes.VHDL_PREDEFINED;
+        FileType type = FileType.PREDEFINED;
         List<NameAndContent> contents = FileContentProvider.getContent(type);
         for (NameAndContent nc : contents) {
-            new LibraryFile(library, nc.getName(), type, nc.getContent());
+            LibraryFile f = new LibraryFile(nc.getName(), nc.getContent());
+            library.addFile(f);
         }
     }
 

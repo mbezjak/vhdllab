@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.servlets;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
 import hr.fer.zemris.vhdllab.api.comm.MethodConstants;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -124,7 +125,7 @@ public class AjaxServlet extends HttpServlet {
      */
     private boolean isSecurityValid(Method<Serializable> method,
             HttpServletRequest request) {
-        return method.getUserId().equals(request.getRemoteUser())
+        return method.getUserId().equals(new Caseless(request.getRemoteUser()))
                 || request.isUserInRole("admin");
     }
 

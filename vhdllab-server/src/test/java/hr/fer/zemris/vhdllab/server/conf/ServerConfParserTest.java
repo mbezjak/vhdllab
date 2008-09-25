@@ -1,8 +1,7 @@
 package hr.fer.zemris.vhdllab.server.conf;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.Properties;
 
@@ -29,7 +28,7 @@ public class ServerConfParserTest {
         p.setProperty("simulator.executable", "value not part of equals");
         p.setProperty("simulator.tmpDir", "value not part of equals");
         expectedConf.setProperties(p);
-        m = new FileTypeMapping(FileTypes.VHDL_SOURCE);
+        m = new FileTypeMapping(FileType.SOURCE);
         m.addFunctionality(FunctionalityType.GENERATOR.toString(),
                 "hr.fer.zemris.vhdllab.service.generators.SourceGenerator");
         m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
@@ -39,7 +38,7 @@ public class ServerConfParserTest {
         m.addFunctionality(FunctionalityType.COMPILER.toString(),
                 "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.VHDL_TESTBENCH);
+        m = new FileTypeMapping(FileType.TESTBENCH);
         m.addFunctionality(FunctionalityType.GENERATOR.toString(),
                 "hr.fer.zemris.vhdllab.service.generators.TestbenchVHDLGenerator");
         m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
@@ -51,7 +50,7 @@ public class ServerConfParserTest {
         m.addFunctionality(FunctionalityType.SIMULATOR.toString(),
                 "hr.fer.zemris.vhdllab.service.simulator.GHDLSimulator");
         expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.VHDL_SCHEMA);
+        m = new FileTypeMapping(FileType.SCHEMA);
         m.addFunctionality(FunctionalityType.GENERATOR.toString(),
                 "hr.fer.zemris.vhdllab.service.generators.SchemaVHDLGenerator");
         m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
@@ -61,7 +60,7 @@ public class ServerConfParserTest {
         m.addFunctionality(FunctionalityType.COMPILER.toString(),
                 "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.VHDL_AUTOMATON);
+        m = new FileTypeMapping(FileType.AUTOMATON);
         m.addFunctionality(FunctionalityType.GENERATOR.toString(),
                 "hr.fer.zemris.vhdllab.service.generators.automat.AutVHDLGenerator");
         m.addFunctionality(FunctionalityType.EXTRACTOR.toString(),
@@ -71,32 +70,17 @@ public class ServerConfParserTest {
         m.addFunctionality(FunctionalityType.COMPILER.toString(),
                 "hr.fer.zemris.vhdllab.service.compiler.GhdlCompiler");
         expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.VHDL_SIMULATION);
+        m = new FileTypeMapping(FileType.SIMULATION);
         m.addFunctionality(FunctionalityType.DEPENDENCY.toString(),
                 "hr.fer.zemris.vhdllab.service.dependencies.SimulationDependancy");
         expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.VHDL_PREDEFINED);
-        expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.PREFERENCES_USER);
-        expectedConf.addFileTypeMapping(m);
-        m = new FileTypeMapping(FileTypes.ERROR);
+        m = new FileTypeMapping(FileType.PREDEFINED);
         expectedConf.addFileTypeMapping(m);
 
         ServerConf conf = ServerConfParser.getConfiguration();
         System.out.println(expectedConf);
         System.out.println(conf);
         assertEquals("configurations not equal.", expectedConf, conf);
-    }
-
-    /**
-     * File type is case insensitive
-     */
-    @Test
-    public void getFileTypeMapping() throws Exception {
-        ServerConf conf = ServerConfParser.getConfiguration();
-        FileTypeMapping mapping = conf.getFileTypeMapping(FileTypes.VHDL_SOURCE
-                .toUpperCase());
-        assertNotNull("file type is case sensitive.", mapping);
     }
 
     @Ignore("must be tested by a user and this has already been tested")

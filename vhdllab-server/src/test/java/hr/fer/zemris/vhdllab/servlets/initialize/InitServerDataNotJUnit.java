@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.initialize;
 
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceContainer;
@@ -32,15 +33,15 @@ public class InitServerDataNotJUnit {
 		EntityManagerUtil.currentEntityManager();
 		try {
 		    d.initFiles();
-		    Library lib = container.getLibraryManager().findByName("preferences");
+		    Library lib = container.getLibraryManager().findByName(new Caseless("preferences"));
 			System.out.println(lib);
 			
-			List<UserFile> userFiles = container.getUserFileManager().findByUser("uid:id-not-set");
+			List<UserFile> userFiles = container.getUserFileManager().findByUser(new Caseless("uid:id-not-set"));
 			for (UserFile uf : userFiles) {
 			    System.out.println(uf);
             }
 			
-			lib = container.getLibraryManager().findByName("predefined");
+			lib = container.getLibraryManager().findByName(new Caseless("predefined"));
             System.out.println(lib);
 		} catch (ServiceException e) {
 			e.printStackTrace();

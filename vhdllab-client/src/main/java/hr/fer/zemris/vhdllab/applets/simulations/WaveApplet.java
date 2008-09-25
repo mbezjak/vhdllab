@@ -4,6 +4,7 @@ package hr.fer.zemris.vhdllab.applets.simulations;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -1670,7 +1671,7 @@ public class WaveApplet extends AbstractEditor implements IWizard {
 		return this;
 	}
 
-	public FileContent getInitialFileContent(Component parent, String projectName) {
+	public FileContent getInitialFileContent(Component parent, Caseless projectName) {
 		return null;
 	}
 

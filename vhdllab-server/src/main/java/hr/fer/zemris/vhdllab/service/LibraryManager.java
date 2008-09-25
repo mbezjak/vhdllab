@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface LibraryManager extends EntityManager<Library> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(String name) throws ServiceException;
+	boolean exists(Caseless name) throws ServiceException;
 
 	/**
 	 * Finds all libraries whose <code>name</code> is specified by parameter.
@@ -38,7 +39,7 @@ public interface LibraryManager extends EntityManager<Library> {
 	 * @throws ServiceException
 	 *             if exceptional condition occurs
 	 */
-	Library findByName(String name) throws ServiceException;
+	Library findByName(Caseless name) throws ServiceException;
 
 	/**
 	 * Returns a library with predefined files.

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+        http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+  version="1.0">
+  <package>hr.fer.zemris.vhdllab.entities</package>
+  <access>FIELD</access>
+
+  <mapped-superclass class="EntityObject">
+    <attributes>
+      <id name="id">
+        <column updatable="false" insertable="false" />
+        <generated-value />
+      </id>
+      <version name="version" />
+      <embedded name="name">
+        <attribute-override name="inner">
+          <column name="name" length="255" nullable="false"
+            updatable="false" />
+        </attribute-override>
+      </embedded>
+    </attributes>
+  </mapped-superclass>
+
+  <mapped-superclass class="Resource">
+    <attributes>
+      <basic name="data">
+        <column length="16000000" nullable="false" /> <!-- length =~ 16MB -->
+      </basic>
+    </attributes>
+  </mapped-superclass>
+
+  <mapped-superclass class="UserFileInfo">
+    <attributes>
+      <embedded name="userId">
+        <attribute-override name="inner">
+          <column name="user_id" length="255" nullable="false"
+            updatable="false" />
+        </attribute-override>
+      </embedded>
+    </attributes>
+  </mapped-superclass>
+
+  <mapped-superclass class="FileResource">
+    <attributes>
+      <basic name="type">
+        <column length="255" nullable="false" updatable="false" />
+        <enumerated>STRING</enumerated>
+      </basic>
+    </attributes>
+  </mapped-superclass>
+
+  <mapped-superclass class="FileInfo">
+    <attributes>
+      <basic name="projectId">
+        <column name="project_id" />
+      </basic>
+    </attributes>
+  </mapped-superclass>
+
+  <mapped-superclass class="ProjectInfo">
+    <attributes>
+      <embedded name="userId">
+        <attribute-override name="inner">
+          <column name="user_id" length="255" nullable="false"
+            updatable="false" />
+        </attribute-override>
+      </embedded>
+    </attributes>
+  </mapped-superclass>
+
+  <mapped-superclass class="LibraryInfo">
+    <!-- Implementation is empty and dependent on EntityObject -->
+  </mapped-superclass>
+
+  <mapped-superclass class="FileInfoHistory">
+    <attributes>
+      <embedded name="history" />
+    </attributes>
+  </mapped-superclass>
+
+  <mapped-superclass class="ProjectInfoHistory">
+    <attributes>
+      <embedded name="history" />
+    </attributes>
+  </mapped-superclass>
+
+  <entity class="FileHistory">
+    <table name="file_history">
+      <unique-constraint>
+        <column-name>name</column-name>
+        <column-name>project_id</column-name>
+        <column-name>insert_version</column-name>
+        <column-name>update_version</column-name>
+      </unique-constraint>
+    </table>
+  </entity>
+
+  <entity class="ProjectHistory">
+    <table name="project_history">
+      <unique-constraint>
+        <column-name>name</column-name>
+        <column-name>user_id</column-name>
+        <column-name>insert_version</column-name>
+        <column-name>update_version</column-name>
+      </unique-constraint>
+    </table>
+  </entity>
+
+  <entity class="UserFile">
+    <table name="user_files">
+      <unique-constraint>
+        <column-name>name</column-name>
+        <column-name>user_id</column-name>
+      </unique-constraint>
+    </table>
+  </entity>
+
+  <entity class="File">
+    <table name="files">
+      <unique-constraint>
+        <column-name>name</column-name>
+        <column-name>project_id</column-name>
+      </unique-constraint>
+    </table>
+    <attributes>
+      <many-to-one name="project" fetch="LAZY" optional="false">
+        <join-column name="project_id" nullable="false"
+          updatable="false" />
+      </many-to-one>
+      <transient name="postRemoveProjectReference" />
+    </attributes>
+  </entity>
+
+  <entity class="Project">
+    <table name="projects">
+      <unique-constraint>
+        <column-name>name</column-name>
+        <column-name>user_id</column-name>
+      </unique-constraint>
+    </table>
+    <attributes>
+      <one-to-many name="files" mapped-by="project" fetch="LAZY">
+        <cascade>
+          <cascade-all />
+        </cascade>
+      </one-to-many>
+    </attributes>
+  </entity>
+
+  <entity class="LibraryFile">
+    <table name="library_files">
+      <unique-constraint>
+        <column-name>name</column-name>
+        <column-name>library_id</column-name>
+      </unique-constraint>
+    </table>
+    <attributes>
+      <many-to-one name="library" fetch="LAZY" optional="false">
+        <join-column name="library_id" nullable="false"
+          updatable="false" />
+      </many-to-one>
+    </attributes>
+  </entity>
+
+  <entity class="Library">
+    <table name="libraries">
+      <unique-constraint>
+        <column-name>name</column-name>
+      </unique-constraint>
+    </table>
+    <attributes>
+      <one-to-many name="files" mapped-by="library" fetch="LAZY">
+        <cascade>
+          <cascade-all />
+        </cascade>
+      </one-to-many>
+    </attributes>
+  </entity>
+
+  <embeddable class="History">
+    <description>Properties of this class are generated by database triggers!</description>
+    <attributes>
+      <basic name="insertVersion">
+        <column name="insert_version" updatable="false" nullable="false" />
+      </basic>
+      <basic name="updateVersion">
+        <column name="update_version" updatable="false" nullable="false" />
+      </basic>
+      <basic name="createdOn">
+        <column name="created_on" updatable="false" nullable="false" />
+        <temporal>TIMESTAMP</temporal>
+      </basic>
+      <basic name="deletedOn">
+        <column name="deleted_on" />
+        <temporal>TIMESTAMP</temporal>
+      </basic>
+    </attributes>
+  </embeddable>
+
+  <embeddable class="Caseless">
+    <attributes>
+      <basic name="inner" />
+    </attributes>
+  </embeddable>
+
+</entity-mappings>

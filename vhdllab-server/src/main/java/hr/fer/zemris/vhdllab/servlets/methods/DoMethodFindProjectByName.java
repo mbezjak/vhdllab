@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
@@ -26,12 +27,12 @@ public class DoMethodFindProjectByName extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		String projectName = method.getParameter(String.class,
+        Caseless projectName = method.getParameter(Caseless.class,
 				PROP_PROJECT_NAME);
 		if (projectName == null) {
 			return;
 		}
-		String userId = method.getUserId();
+		Caseless userId = method.getUserId();
 		Project project;
 		try {
 			project = container.getProjectManager().findByName(userId, projectName);

@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.api.comm;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
+
 import java.io.Serializable;
 
 /**
@@ -11,7 +13,7 @@ public abstract class AbstractIdParameterMethod<T extends Serializable> extends
 
     private static final long serialVersionUID = 1L;
 
-    public AbstractIdParameterMethod(String method, String userId, Long id) {
+    public AbstractIdParameterMethod(String method, Caseless userId, Integer id) {
 		super(method, userId);
 		setParameter(PROP_ID, id);
 	}

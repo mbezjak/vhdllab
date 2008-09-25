@@ -56,7 +56,7 @@ public abstract class AbstractEntityManager<T> implements EntityManager<T> {
 	 * @see hr.fer.zemris.vhdllab.service.EntityManager#load(java.lang.Long)
 	 */
 	@Override
-	public T load(Long id) throws ServiceException {
+	public T load(Integer id) throws ServiceException {
 		try {
 			return dao.load(id);
 		} catch (DAOException e) {
@@ -70,7 +70,7 @@ public abstract class AbstractEntityManager<T> implements EntityManager<T> {
 	 * @see hr.fer.zemris.vhdllab.service.EntityManager#exists(java.lang.Long)
 	 */
 	@Override
-	public boolean exists(Long id) throws ServiceException {
+	public boolean exists(Integer id) throws ServiceException {
 		try {
 			return dao.exists(id);
 		} catch (DAOException e) {
@@ -84,7 +84,7 @@ public abstract class AbstractEntityManager<T> implements EntityManager<T> {
 	 * @see hr.fer.zemris.vhdllab.service.EntityManager#delete(java.lang.Long)
 	 */
 	@Override
-	public void delete(Long id) throws ServiceException {
+	public void delete(Integer id) throws ServiceException {
 		try {
 			dao.delete(id);
 		} catch (DAOException e) {

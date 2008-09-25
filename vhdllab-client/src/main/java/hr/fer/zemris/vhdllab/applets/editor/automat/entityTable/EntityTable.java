@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.awt.BorderLayout;
@@ -313,7 +314,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 			else test.add((String) model.getValueAt(i, 0));
 		}
 		try {
-			if(container.getResourceManager().existsFile(container.getSelectedProject(), imeSklop.getText())
+			if(container.getResourceManager().existsFile(container.getSelectedProject(), new Caseless(imeSklop.getText()))
 					|| !StringFormat.isCorrectFileName(imeSklop.getText()))
 				return false;
 		} catch (UniformAppletException e) {

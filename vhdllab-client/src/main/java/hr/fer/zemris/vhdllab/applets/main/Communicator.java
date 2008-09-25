@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.api.FileTypes;
 import hr.fer.zemris.vhdllab.api.comm.Method;
 import hr.fer.zemris.vhdllab.api.comm.methods.CompileFileMethod;
 import hr.fer.zemris.vhdllab.api.comm.methods.CreateFileMethod;
@@ -36,6 +35,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class Communicator {
 
 	private Initiator initiator;
 	private Cache cache;
-	private String userId;
+	private Caseless userId;
 
 	public Communicator(Initiator initiator) {
 		if (initiator == null)
@@ -58,7 +59,7 @@ public class Communicator {
 	}
 
 	public void init() throws UniformAppletException {
-	    userId = SystemContext.instance().getUserId();
+	    userId = new Caseless(SystemContext.instance().getUserId());
 		loadUserPreferences();
 		// FIXME TMP SOLUTION
 		loadFileIds();
@@ -72,8 +73,8 @@ public class Communicator {
 		 * called nothing is cached so loadFileContent method assumes that such
 		 * file does not exist.
 		 */
-		for (String projectName : getAllProjects()) {
-			for (String fileName : findFilesByProject(projectName)) {
+		for (Caseless projectName : getAllProjects()) {
+			for (Caseless fileName : findFilesByProject(projectName)) {
 				// this is just extra it has nothing to do with the actual bug
 				loadFileType(projectName, fileName);
 			}
@@ -87,25 +88,25 @@ public class Communicator {
 			if (property == null) {
 				continue;
 			}
-			Long id = cache.getIdentifierForProperty(key);
+			Integer id = cache.getIdentifierForProperty(new Caseless(key));
 			SaveUserFileMethod method = new SaveUserFileMethod(id, property, userId);
 			initiate(method);
 		}
 	}
 
-	public List<String> getAllProjects() throws UniformAppletException {
+	public List<Caseless> getAllProjects() throws UniformAppletException {
 		FindProjectsByUserMethod method = new FindProjectsByUserMethod(userId);
 		initiate(method);
-		List<Long> projectIdentifiers = method.getResult();
+		List<Integer> projectIdentifiers = method.getResult();
 
-		List<String> projectNames = new ArrayList<String>();
-		for (Long id : projectIdentifiers) {
-			String projectName = cache.getProjectForIdentifier(id);
+		List<Caseless> projectNames = new ArrayList<Caseless>();
+		for (Integer id : projectIdentifiers) {
+		    Caseless projectName = cache.getProjectForIdentifier(id);
 			if (projectName == null) {
 				LoadProjectNameMethod loadProjectNameMethod = new LoadProjectNameMethod(
 						id, userId);
 				initiate(loadProjectNameMethod);
-				String name = loadProjectNameMethod.getResult();
+				Caseless name = loadProjectNameMethod.getResult();
 				cache.cacheItem(name, id);
 				projectName = cache.getProjectForIdentifier(id);
 			}
@@ -114,19 +115,19 @@ public class Communicator {
 		return projectNames;
 	}
 
-	public List<String> getAllProjects(String userId) throws UniformAppletException {
+	public List<Caseless> getAllProjects(Caseless userId) throws UniformAppletException {
 		FindProjectsByUserMethod method = new FindProjectsByUserMethod(userId);
 		initiate(method);
-		List<Long> projectIdentifiers = method.getResult();
+		List<Integer> projectIdentifiers = method.getResult();
 		
-		List<String> projectNames = new ArrayList<String>();
-		for (Long id : projectIdentifiers) {
-			String projectName = cache.getProjectForIdentifier(id);
+		List<Caseless> projectNames = new ArrayList<Caseless>();
+		for (Integer id : projectIdentifiers) {
+		    Caseless projectName = cache.getProjectForIdentifier(id);
 			if (projectName == null) {
 				LoadProjectNameMethod loadProjectNameMethod = new LoadProjectNameMethod(
 						id, userId);
 				initiate(loadProjectNameMethod);
-				String name = loadProjectNameMethod.getResult();
+				Caseless name = loadProjectNameMethod.getResult();
 				cache.cacheItem(name, id);
 				projectName = cache.getProjectForIdentifier(id);
 			}
@@ -136,33 +137,33 @@ public class Communicator {
 	}
 	
 	public boolean isSuperuser() throws UniformAppletException {
-		IsSuperuserMethod method = new IsSuperuserMethod(SystemContext.instance().getUserId());
+		IsSuperuserMethod method = new IsSuperuserMethod(new Caseless(SystemContext.instance().getUserId()));
 		initiate(method);
 		return method.getResult().booleanValue();
 	}
 	
-	public List<String> findFilesByProject(String projectName)
+	public List<Caseless> findFilesByProject(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null) {
 			throw new NullPointerException("Project name can not be null.");
 		}
-		Long projectIdentifier = cache.getIdentifierFor(projectName);
+		Integer projectIdentifier = cache.getIdentifierFor(projectName);
 		if (projectIdentifier == null) {
 			throw new UniformAppletException("Project does not exists!");
 		}
 		FindFilesByProjectMethod method = new FindFilesByProjectMethod(
 				projectIdentifier, userId);
 		initiate(method);
-		List<Long> fileIdentifiers = method.getResult();
+		List<Integer> fileIdentifiers = method.getResult();
 
-		List<String> fileNames = new ArrayList<String>();
-		for (Long id : fileIdentifiers) {
+		List<Caseless> fileNames = new ArrayList<Caseless>();
+		for (Integer id : fileIdentifiers) {
 			FileIdentifier identifier = cache.getFileForIdentifier(id);
 			if (identifier == null) {
 				LoadFileNameMethod loadFileNameMethod = new LoadFileNameMethod(
 						id, userId);
 				initiate(loadFileNameMethod);
-				String name = loadFileNameMethod.getResult();
+				Caseless name = loadFileNameMethod.getResult();
 				cache.cacheItem(projectName, name, id);
 				identifier = cache.getFileForIdentifier(id);
 			}
@@ -171,38 +172,38 @@ public class Communicator {
 		return fileNames;
 	}
 
-	public boolean existsFile(String projectName, String fileName)
+	public boolean existsFile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long projectIdentifier = cache.getIdentifierFor(projectName);
+		Integer projectIdentifier = cache.getIdentifierFor(projectName);
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
 		/* return invoker.existsFile(projectIdentifier, fileName); */
 		return cache.containsIdentifierFor(projectName, fileName);
 	}
 
-	public boolean existsProject(String projectName)
+	public boolean existsProject(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		/*
-		 * Long projectIdentifier = cache.getIdentifierFor(projectName);
+		 * Integer projectIdentifier = cache.getIdentifierFor(projectName);
 		 * if(projectIdentifier == null) return false; return
 		 * invoker.existsProject(projectIdentifier);
 		 */
 		return cache.containsIdentifierFor(projectName);
 	}
 
-	public void deleteFile(String projectName, String fileName)
+	public void deleteFile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		cache.removeItem(projectName, fileName);
@@ -210,10 +211,10 @@ public class Communicator {
 		initiate(method);
 	}
 
-	public void deleteProject(String projectName) throws UniformAppletException {
+	public void deleteProject(Caseless projectName) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		cache.removeItem(projectName);
@@ -221,16 +222,16 @@ public class Communicator {
 		initiate(method);
 	}
 
-	public void createProject(String projectName) throws UniformAppletException {
+	public void createProject(Caseless projectName) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		CreateProjectMethod method = new CreateProjectMethod(projectName, userId);
 		initiate(method);
-		Long projectIdentifier = method.getResult();
+		Integer projectIdentifier = method.getResult();
 		cache.cacheItem(projectName, projectIdentifier);
 	}
 
-	public void createFile(String projectName, String fileName, String type,
+	public void createFile(Caseless projectName, Caseless fileName, FileType type,
 			String data) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
@@ -238,18 +239,18 @@ public class Communicator {
 			throw new NullPointerException("File name can not be null.");
 		if (type == null)
 			throw new NullPointerException("File type can not be null.");
-		Long projectIdentifier = cache.getIdentifierFor(projectName);
+		Integer projectIdentifier = cache.getIdentifierFor(projectName);
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
 		CreateFileMethod method = new CreateFileMethod(projectIdentifier,
 				fileName, type, data, userId);
 		initiate(method);
 
-		Long fileIdentifier = method.getResult();
+		Integer fileIdentifier = method.getResult();
 		cache.cacheItem(projectName, fileName, fileIdentifier);
 	}
 
-	public void saveFile(String projectName, String fileName, String content)
+	public void saveFile(Caseless projectName, Caseless fileName, String content)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
@@ -257,20 +258,20 @@ public class Communicator {
 			throw new NullPointerException("File name can not be null.");
 		if (content == null)
 			throw new NullPointerException("File content can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		SaveFileMethod method = new SaveFileMethod(fileIdentifier, content, userId);
 		initiate(method);
 	}
 
-	public String loadFileContent(String projectName, String fileName)
+	public String loadFileContent(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null) {
 			// throw new UniformAppletException("File (" + fileName + "/"
 			// + projectName + ") does not exists!");
@@ -285,7 +286,7 @@ public class Communicator {
 		}
 	}
 
-	public String loadPredefinedFileContent(String fileName)
+	public String loadPredefinedFileContent(Caseless fileName)
 			throws UniformAppletException {
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
@@ -295,18 +296,18 @@ public class Communicator {
 		return method.getResult();
 	}
 
-	public String loadFileType(String projectName, String fileName)
+	public FileType loadFileType(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null) {
-			return FileTypes.VHDL_PREDEFINED;
+			return FileType.PREDEFINED;
 			// throw new UniformAppletException("File does not exists!");
 		}
-		String fileType = cache.getFileType(fileIdentifier);
+		FileType fileType = cache.getFileType(fileIdentifier);
 		if (fileType == null) {
 			LoadFileTypeMethod method = new LoadFileTypeMethod(fileIdentifier, userId);
 			initiate(method);
@@ -316,11 +317,11 @@ public class Communicator {
 		return fileType;
 	}
 
-	public Hierarchy extractHierarchy(String projectName)
+	public Hierarchy extractHierarchy(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
-		Long projectIdentifier = cache.getIdentifierFor(projectName);
+		Integer projectIdentifier = cache.getIdentifierFor(projectName);
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
 
@@ -329,8 +330,8 @@ public class Communicator {
 		initiate(hierarhyMethod);
 
 		Hierarchy h = hierarhyMethod.getResult();
-		for (String fileName : getAllForHierarchy(h)) {
-			Long id = cache.getIdentifierFor(projectName, fileName);
+		for (Caseless fileName : getAllForHierarchy(h)) {
+			Integer id = cache.getIdentifierFor(projectName, fileName);
 			if (id == null) {
 				ExistsFile2Method existsMethod = new ExistsFile2Method(
 						projectIdentifier, fileName, userId);
@@ -340,7 +341,7 @@ public class Communicator {
 					FindFileByNameMethod findMethod = new FindFileByNameMethod(
 							projectIdentifier, fileName, userId);
 					initiate(findMethod);
-					Long fileIdentifier = findMethod.getResult();
+					Integer fileIdentifier = findMethod.getResult();
 					cache.cacheItem(projectName, fileName, fileIdentifier);
 				} else {
 					// invoker.
@@ -350,32 +351,22 @@ public class Communicator {
 		return h;
 	}
 	
-	private Set<String> getAllForHierarchy(Hierarchy h) {
-	    // TODO pogledat dal ovo radi. nisam siguran sto se tice case insensitivity
-	    Set<String> names = new HashSet<String>(h.fileCount());
-	    Set<String> namesWithoutCasing = new HashSet<String>(h.fileCount());
-	    for (String f : h.getTopLevelFiles()) {
+	private Set<Caseless> getAllForHierarchy(Hierarchy h) {
+	    Set<Caseless> names = new HashSet<Caseless>(h.fileCount());
+	    for (Caseless f : h.getTopLevelFiles()) {
 	        names.add(f);
-	        namesWithoutCasing.add(f.toLowerCase());
-	        Set<String> alldeps = h.getAllDependenciesForFile(f);
-	        for (String dep : alldeps) {
-	            if(!namesWithoutCasing.contains(dep.toLowerCase())) {
-	                namesWithoutCasing.add(dep.toLowerCase());
-	                names.add(dep);
-	            }
-                
-            }
+	        names.addAll(h.getAllDependenciesForFile(f));
         }
 	    return names;
 	}
 
-	public VHDLGenerationResult generateVHDL(String projectName, String fileName)
+	public VHDLGenerationResult generateVHDL(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		GenerateVHDLMethod method = new GenerateVHDLMethod(fileIdentifier, userId);
@@ -383,13 +374,13 @@ public class Communicator {
 		return method.getResult();
 	}
 
-	public CompilationResult compile(String projectName, String fileName)
+	public CompilationResult compile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		CompileFileMethod method = new CompileFileMethod(fileIdentifier, userId);
@@ -397,13 +388,13 @@ public class Communicator {
 		return method.getResult();
 	}
 
-	public SimulationResult runSimulation(String projectName, String fileName)
+	public SimulationResult runSimulation(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		SimulateFileMethod method = new SimulateFileMethod(fileIdentifier, userId);
@@ -411,13 +402,13 @@ public class Communicator {
 		return method.getResult();
 	}
 
-	public CircuitInterface getCircuitInterfaceFor(String projectName,
-			String fileName) throws UniformAppletException {
+	public CircuitInterface getCircuitInterfaceFor(Caseless projectName,
+	        Caseless fileName) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		Long fileIdentifier = cache.getIdentifierFor(projectName, fileName);
+		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
 		ExtractCircuitInterfaceMethod method = new ExtractCircuitInterfaceMethod(
@@ -438,17 +429,17 @@ public class Communicator {
 		Properties properties = new Properties();
 		FindUserFilesByUserMethod findMethod = new FindUserFilesByUserMethod(userId);
 		initiate(findMethod);
-		List<Long> userFileIds = findMethod.getResult();
-		for (Long id : userFileIds) {
+		List<Integer> userFileIds = findMethod.getResult();
+		for (Integer id : userFileIds) {
 			LoadUserFileNameMethod nameMethod = new LoadUserFileNameMethod(id, userId);
 			initiate(nameMethod);
-			String name = nameMethod.getResult();
+			Caseless name = nameMethod.getResult();
 			cache.cacheUserFileItem(name, id);
 			LoadUserFileContentMethod contentMethod = new LoadUserFileContentMethod(
 					id, userId);
 			initiate(contentMethod);
 			String data = contentMethod.getResult();
-			properties.setProperty(name, data);
+			properties.setProperty(name.toString(), data);
 		}
 		UserPreferences.instance().init(properties);
 	}

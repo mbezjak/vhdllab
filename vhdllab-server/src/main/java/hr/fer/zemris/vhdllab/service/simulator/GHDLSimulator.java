@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.MessageType;
 import hr.fer.zemris.vhdllab.api.results.SimulationMessage;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.service.FileManager;
@@ -107,15 +108,15 @@ public class GHDLSimulator implements Simulator {
     public SimulationResult execute(File file) throws ServiceException {
         ServiceManager man = ServiceContainer.instance().getServiceManager();
         Hierarchy hierarchy = man.extractHierarchy(file.getProject());
-        List<String> names = new ArrayList<String>();
+        List<Caseless> names = new ArrayList<Caseless>();
         orderFiles(hierarchy, names, file.getName());
         return simulate(names, file);
     }
 
-    private void orderFiles(Hierarchy hierarchy, List<String> names, String n) {
-        Set<String> dependencies = hierarchy.getDependenciesForFile(n);
+    private void orderFiles(Hierarchy hierarchy, List<Caseless> names, Caseless n) {
+        Set<Caseless> dependencies = hierarchy.getDependenciesForFile(n);
         if (!dependencies.isEmpty()) {
-            for (String s : dependencies) {
+            for (Caseless s : dependencies) {
                 orderFiles(hierarchy, names, s);
             }
         }
@@ -124,7 +125,7 @@ public class GHDLSimulator implements Simulator {
         }
     }
 
-    public SimulationResult simulate(List<String> names, File simFile) {
+    public SimulationResult simulate(List<Caseless> names, File simFile) {
         java.io.File tmpFile = null;
         java.io.File tmpDir = null;
         try {
@@ -135,8 +136,8 @@ public class GHDLSimulator implements Simulator {
             tmpDir.mkdirs();
             // STEP 2: copy all vhdl files there
             // -----------------------------------------------------------
-            Long projectId = simFile.getProject().getId();
-            for (String n : names) {
+            Integer projectId = simFile.getProject().getId();
+            for (Caseless n : names) {
                 copyFile(n, tmpDir, projectId);
             }
             // STEP 3: prepare simulator call
@@ -169,7 +170,7 @@ public class GHDLSimulator implements Simulator {
             cmdList.clear();
             cmdList.add(executable);
             cmdList.add("--elab-run");
-            cmdList.add(simFile.getName());
+            cmdList.add(simFile.getName().toString());
             cmdList.add("--vcd=simout.vcd");
             cmd = new String[cmdList.size()];
             cmdList.toArray(cmd);
@@ -190,7 +191,7 @@ public class GHDLSimulator implements Simulator {
                 waveform = vcd.getResultInString();
             }
             return new SimulationResult(Integer.valueOf(retVal), retVal == 0,
-                    listToSimMessages(errors), waveform);
+                    listToSimMessages(errors), waveform == null ? "" : waveform);
         } catch (Throwable tr) {
             tr.printStackTrace();
         } finally {
@@ -240,7 +241,7 @@ public class GHDLSimulator implements Simulator {
         tmpDir.delete();
     }
 
-    private void copyFile(String name, java.io.File destDir, Long projectId)
+    private void copyFile(Caseless name, java.io.File destDir, Integer projectId)
             throws IOException, ServiceException {
         BufferedWriter bw = null;
 
@@ -256,12 +257,12 @@ public class GHDLSimulator implements Simulator {
                 File src = fileMan.findByName(projectId, name);
                 content = man.generateVHDL(src).getVHDL();
             } else {
-                Long libraryId = container.getLibraryManager()
+                Integer libraryId = container.getLibraryManager()
                         .getPredefinedLibrary().getId();
                 LibraryFileManager libFileMan = container
                         .getLibraryFileManager();
                 LibraryFile src = libFileMan.findByName(libraryId, name);
-                content = src.getContent();
+                content = src.getData();
             }
             bw.write(content);
         } catch (IOException ex) {

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service.dependencies;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.service.DependencyExtractor;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -29,7 +30,7 @@ public class SimulationDependancy implements DependencyExtractor {
      * .vhdllab.entities.File)
      */
     @Override
-    public Set<String> execute(File file) throws ServiceException {
+    public Set<Caseless> execute(File file) throws ServiceException {
         return Collections.emptySet();
     }
 

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.dao;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 
 /**
@@ -28,7 +29,7 @@ public interface LibraryFileDAO extends EntityDAO<LibraryFile> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(Long libraryId, String name) throws DAOException;
+	boolean exists(Integer libraryId, Caseless name) throws DAOException;
 
 	/**
 	 * Returns a library file with specified library identifier and library file
@@ -44,6 +45,6 @@ public interface LibraryFileDAO extends EntityDAO<LibraryFile> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	LibraryFile findByName(Long libraryId, String name) throws DAOException;
+	LibraryFile findByName(Integer libraryId, Caseless name) throws DAOException;
 
 }

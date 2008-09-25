@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.initialize.predefinedFiles;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.utilities.FileUtil;
 
 import java.io.InputStream;
@@ -53,19 +54,19 @@ public class PredefinedInitializer {
                 continue;
             String data = FileUtil.readFile(clazz.getResourceAsStream(s));
             FileAndContent fc = new FileAndContent();
-            fc.setFileName(s);
+            fc.setFileName(new Caseless(s));
             fc.setContent(data);
             sources.add(fc);
         }
 	}
 	
 	public static class FileAndContent {
-	    private String fileName;
+	    private Caseless fileName;
 	    private String content;
-        public String getFileName() {
+        public Caseless getFileName() {
             return fileName;
         }
-        public void setFileName(String fileName) {
+        public void setFileName(Caseless fileName) {
             this.fileName = fileName;
         }
         public String getContent() {

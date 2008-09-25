@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.conf;
 
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,12 +9,12 @@ import java.util.Map;
 public class ComponentConfiguration {
 
 	private Map<String, EditorProperties> editors;
-	private Map<String, EditorProperties> editorsByFileType;
+	private Map<FileType, EditorProperties> editorsByFileType;
 	private Map<String, ViewProperties> views;
 	
 	public ComponentConfiguration() {
 		editors = new HashMap<String, EditorProperties>();
-		editorsByFileType = new HashMap<String, EditorProperties>();
+		editorsByFileType = new HashMap<FileType, EditorProperties>();
 		views = new HashMap<String, ViewProperties>();
 	}
 	
@@ -21,7 +22,7 @@ public class ComponentConfiguration {
 		editors.put(editor.getId(), editor);
 		String fileType = editor.getFileType();
 		if(fileType != null) {
-			editorsByFileType.put(fileType, editor);
+			editorsByFileType.put(FileType.valueOf(fileType.toUpperCase()), editor);
 		}
 	}
 	
@@ -37,7 +38,7 @@ public class ComponentConfiguration {
 		return editors.get(id);
 	}
 	
-	public EditorProperties getEditorPropertiesByFileType(String type) {
+	public EditorProperties getEditorPropertiesByFileType(FileType type) {
 		return editorsByFileType.get(type);
 	}
 	

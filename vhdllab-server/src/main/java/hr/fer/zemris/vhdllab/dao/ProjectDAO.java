@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.dao;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Project;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public interface ProjectDAO extends EntityDAO<Project> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	boolean exists(String userId, String name) throws DAOException;
+	boolean exists(Caseless userId, Caseless name) throws DAOException;
 
 	/**
 	 * Finds all projects whose <code>userId</code> and <code>name</code>
@@ -45,7 +46,7 @@ public interface ProjectDAO extends EntityDAO<Project> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	Project findByName(String userId, String name) throws DAOException;
+	Project findByName(Caseless userId, Caseless name) throws DAOException;
 
 	/**
 	 * Finds all projects whose owner is specified user. Return value will never
@@ -57,6 +58,6 @@ public interface ProjectDAO extends EntityDAO<Project> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	List<Project> findByUser(String userId) throws DAOException;
+	List<Project> findByUser(Caseless userId) throws DAOException;
 
 }

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.UserFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.servlets.AbstractRegisteredMethod;
@@ -27,7 +28,7 @@ public class DoMethodFindUserFilesByUser extends AbstractRegisteredMethod {
      */
     @Override
     public void run(Method<Serializable> method, HttpServletRequest request) {
-		String userId = method.getUserId();
+        Caseless userId = method.getUserId();
 		List<UserFile> files;
 		try {
 			files = container.getUserFileManager().findByUser(userId);
@@ -35,7 +36,7 @@ public class DoMethodFindUserFilesByUser extends AbstractRegisteredMethod {
 			method.setStatus(SE_CAN_NOT_FIND_FILE, "userId=" + userId);
 			return;
 		}
-		ArrayList<Long> ids = new ArrayList<Long>(files.size());
+		ArrayList<Integer> ids = new ArrayList<Integer>(files.size());
 		for(UserFile f : files) {
 			ids.add(f.getId());
 		}

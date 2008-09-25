@@ -3,7 +3,8 @@ package hr.fer.zemris.vhdllab.api.hierarchy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import hr.fer.zemris.vhdllab.api.FileTypes;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,9 +26,9 @@ import org.junit.Test;
  */
 public class HierarchyTest {
 
-    private final static String NAME = "project.name";
-    private final static String NEW_NAME = "new" + NAME;
-    private final static String ROOT_NODE_NAME = "root";
+    private final static Caseless NAME = new Caseless("project.name");
+    private final static Caseless NEW_NAME = new Caseless("new" + NAME);
+    private final static Caseless ROOT_NODE_NAME = new Caseless("root");
 
     private Hierarchy hierarchy;
     private Set<HierarchyNode> nodes;
@@ -39,10 +40,10 @@ public class HierarchyTest {
     @Before
     public void initEachTest() {
         nodes = new HashSet<HierarchyNode>();
-        root = new HierarchyNode(ROOT_NODE_NAME, FileTypes.VHDL_SOURCE, null);
-        right = new HierarchyNode("right", FileTypes.VHDL_SOURCE, root);
-        left = new HierarchyNode("left", FileTypes.VHDL_SOURCE, root);
-        rightDep = new HierarchyNode("right-dep", FileTypes.VHDL_SOURCE, right);
+        root = new HierarchyNode(ROOT_NODE_NAME, FileType.SOURCE, null);
+        right = new HierarchyNode(new Caseless("right"), FileType.SOURCE, root);
+        left = new HierarchyNode(new Caseless("left"), FileType.SOURCE, root);
+        rightDep = new HierarchyNode(new Caseless("right-dep"), FileType.SOURCE, right);
         nodes.add(root);
         nodes.add(right);
         nodes.add(left);
@@ -71,13 +72,13 @@ public class HierarchyTest {
      */
     @Test
     public void constructor3() throws Exception {
-        Set<String> names = new HashSet<String>(1);
+        Set<Caseless> names = new HashSet<Caseless>(1);
         names.add(ROOT_NODE_NAME);
         assertEquals("top level files not equal.", names, hierarchy
                 .getTopLevelFiles());
 
-        String anotherRootName = "new.root.name";
-        nodes.add(new HierarchyNode(anotherRootName, FileTypes.VHDL_SCHEMA,
+        Caseless anotherRootName = new Caseless("new.root.name");
+        nodes.add(new HierarchyNode(anotherRootName, FileType.SCHEMA,
                 null));
         hierarchy = new Hierarchy(NAME, nodes);
         names.add(anotherRootName);
@@ -129,27 +130,14 @@ public class HierarchyTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void getDependenciesForFile2() throws Exception {
-        hierarchy.getDependenciesForFile("non-existing name");
-    }
-
-    /**
-     * Name is case insensitive
-     */
-    @Test
-    public void getDependenciesForFile3() throws Exception {
-        Set<String> actual = hierarchy.getDependenciesForFile(ROOT_NODE_NAME
-                .toUpperCase());
-        Set<String> expected = new HashSet<String>(2);
-        expected.add(left.getFileName());
-        expected.add(right.getFileName());
-        assertEquals("name is not case insensitive.", expected, actual);
+        hierarchy.getDependenciesForFile(new Caseless("non-existing name"));
     }
 
     /**
      * Returned set is immutable.
      */
     @Test(expected = UnsupportedOperationException.class)
-    public void getDependenciesForFile4() throws Exception {
+    public void getDependenciesForFile3() throws Exception {
         hierarchy.getDependenciesForFile(ROOT_NODE_NAME).remove(right);
     }
 
@@ -166,35 +154,21 @@ public class HierarchyTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void getAllDependenciesForFile2() throws Exception {
-        hierarchy.getAllDependenciesForFile("non-existing name");
-    }
-
-    /**
-     * Name is case insensitive
-     */
-    @Test
-    public void getAllDependenciesForFile3() throws Exception {
-        Set<String> actual = hierarchy.getAllDependenciesForFile(ROOT_NODE_NAME
-                .toUpperCase());
-        Set<String> expected = new HashSet<String>(2);
-        expected.add(left.getFileName());
-        expected.add(right.getFileName());
-        expected.add(rightDep.getFileName());
-        assertEquals("name is not case insensitive.", expected, actual);
+        hierarchy.getAllDependenciesForFile(new Caseless("non-existing name"));
     }
 
     /**
      * Duplicate node - unaffected result
      */
     @Test
-    public void getAllDependenciesForFile4() throws Exception {
+    public void getAllDependenciesForFile3() throws Exception {
         HierarchyNode newRightDep = new HierarchyNode(rightDep);
         nodes.add(newRightDep);
         hierarchy = new Hierarchy(NAME, nodes);
 
-        Set<String> actual = hierarchy
+        Set<Caseless> actual = hierarchy
                 .getAllDependenciesForFile(ROOT_NODE_NAME);
-        Set<String> expected = new HashSet<String>(2);
+        Set<Caseless> expected = new HashSet<Caseless>(3);
         expected.add(left.getFileName());
         expected.add(right.getFileName());
         expected.add(rightDep.getFileName());
@@ -226,23 +200,10 @@ public class HierarchyTest {
     }
 
     /**
-     * Project name is case insensitive.
-     */
-    @Test
-    public void hashCodeAndEquals2() throws Exception {
-        Hierarchy newRoot = new Hierarchy(NAME.toUpperCase(), Collections
-                .<HierarchyNode> emptySet());
-
-        assertEquals("hierarchies not equal.", hierarchy, newRoot);
-        assertEquals("hierarchies not equal.", hierarchy.hashCode(), newRoot
-                .hashCode());
-    }
-
-    /**
      * Name is different
      */
     @Test
-    public void hashCodeAndEquals3() throws Exception {
+    public void hashCodeAndEquals2() throws Exception {
         Hierarchy newRoot = new Hierarchy(NEW_NAME, Collections
                 .<HierarchyNode> emptySet());
 

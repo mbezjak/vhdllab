@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.utilities.ModelUtil;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -181,19 +181,19 @@ public class EditorPane {
 	public int indexOfEditor(IEditor editor) {
 		if (editor == null)
 			return -1;
-		String projectName = editor.getProjectName();
-		String fileName = editor.getFileName();
+		Caseless projectName = editor.getProjectName();
+		Caseless fileName = editor.getFileName();
 		return indexOfEditor(projectName, fileName);
 	}
 
-	public int indexOfEditor(String projectName, String fileName) {
+	public int indexOfEditor(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null)
 			return -1;
 		for (int i = 0; i < getTabCount(); i++) {
 			IEditor editor = getEditorAt(i);
-			if (ModelUtil.projectNamesAreEqual(projectName, editor
+			if (projectName.equals(editor
 					.getProjectName())
-					&& ModelUtil.fileNamesAreEqual(fileName, editor
+					&& fileName.equals(editor
 							.getFileName())) {
 
 				return i;
@@ -208,7 +208,7 @@ public class EditorPane {
 		return indexOfEditor(editor) != -1;
 	}
 
-	public boolean isEditorOpened(String projectName, String fileName) {
+	public boolean isEditorOpened(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null)
 			return false;
 		return indexOfEditor(projectName, fileName) != -1;
@@ -229,15 +229,15 @@ public class EditorPane {
 		List<IEditor> openedEditors = getAllOpenedEditors();
 		List<IEditor> editorsHavingSpecifiedProject = new ArrayList<IEditor>();
 		for (IEditor e : openedEditors) {
-			String editorProjectName = e.getProjectName();
-			if (ModelUtil.projectNamesAreEqual(editorProjectName, projectName)) {
+		    Caseless editorProjectName = e.getProjectName();
+			if (editorProjectName.equals(projectName)) {
 				editorsHavingSpecifiedProject.add(e);
 			}
 		}
 		return editorsHavingSpecifiedProject;
 	}
 
-	public IEditor getOpenedEditor(String projectName, String fileName) {
+	public IEditor getOpenedEditor(Caseless projectName, Caseless fileName) {
 		if (projectName == null || fileName == null)
 			return null;
 		int index = indexOfEditor(projectName, fileName);

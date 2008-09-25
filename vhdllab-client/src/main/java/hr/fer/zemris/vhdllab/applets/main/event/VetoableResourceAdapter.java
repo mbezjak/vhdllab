@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.applets.main.event;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 /**
  * An abstract adapter class for vetoable resource listener. The methods in this
@@ -21,62 +23,62 @@ public abstract class VetoableResourceAdapter implements
 		VetoableResourceListener {
 
 	@Override
-	public void beforeProjectCreation(String projectName)
+	public void beforeProjectCreation(Caseless projectName)
 			throws ResourceVetoException {
 	}
 
 	@Override
-	public void beforeProjectDeletion(String projectName)
+	public void beforeProjectDeletion(Caseless projectName)
 			throws ResourceVetoException {
 	}
 
 	@Override
-	public void beforeResourceCompilation(String projectName, String fileName)
+	public void beforeResourceCompilation(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException {
 	}
 
 	@Override
-	public void beforeResourceCreation(String projectName, String fileName,
-			String type) throws ResourceVetoException {
+	public void beforeResourceCreation(Caseless projectName, Caseless fileName,
+			FileType type) throws ResourceVetoException {
 	}
 
 	@Override
-	public void beforeResourceDeletion(String projectName, String fileName)
+	public void beforeResourceDeletion(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException {
 	}
 
 	@Override
-	public void beforeResourceSimulation(String projectName, String fileName)
+	public void beforeResourceSimulation(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException {
 	}
 
 	@Override
-	public void projectCreated(String projectName) {
+	public void projectCreated(Caseless projectName) {
 	}
 
 	@Override
-	public void projectDeleted(String projectName) {
+	public void projectDeleted(Caseless projectName) {
 	}
 
 	@Override
-	public void resourceCompiled(String projectName, String fileName,
+	public void resourceCompiled(Caseless projectName, Caseless fileName,
 			CompilationResult result) {
 	}
 
 	@Override
-	public void resourceCreated(String projectName, String fileName, String type) {
+	public void resourceCreated(Caseless projectName, Caseless fileName, FileType type) {
 	}
 
 	@Override
-	public void resourceDeleted(String projectName, String fileName) {
+	public void resourceDeleted(Caseless projectName, Caseless fileName) {
 	}
 	
 	@Override
-	public void resourceSaved(String projectName, String fileName) {
+	public void resourceSaved(Caseless projectName, Caseless fileName) {
 	}
 
 	@Override
-	public void resourceSimulated(String projectName, String fileName,
+	public void resourceSimulated(Caseless projectName, Caseless fileName,
 			SimulationResult result) {
 	}
 

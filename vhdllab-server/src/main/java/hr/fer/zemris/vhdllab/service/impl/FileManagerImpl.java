@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.service.FileManager;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -47,7 +48,7 @@ public final class FileManagerImpl extends AbstractEntityManager<File>
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean exists(Long projectId, String name) throws ServiceException {
+	public boolean exists(Integer projectId, Caseless name) throws ServiceException {
 		try {
 			return getDAO().exists(projectId, name);
 		} catch (DAOException e) {
@@ -62,7 +63,7 @@ public final class FileManagerImpl extends AbstractEntityManager<File>
 	 *      java.lang.String)
 	 */
 	@Override
-	public File findByName(Long projectId, String name) throws ServiceException {
+	public File findByName(Integer projectId, Caseless name) throws ServiceException {
 		try {
 			return getDAO().findByName(projectId, name);
 		} catch (DAOException e) {

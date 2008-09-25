@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
 import hr.fer.zemris.vhdllab.api.comm.Method;
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.service.ServiceException;
@@ -30,13 +31,13 @@ public class DoMethodGetAllGlobalFiles extends AbstractRegisteredMethod {
     public void run(Method<Serializable> method, HttpServletRequest request) {
 		Set<LibraryFile> files;
 		try {
-			Library lib = container.getLibraryManager().findByName("predefined");
+			Library lib = container.getLibraryManager().findByName(new Caseless("predefined"));
 			files = lib.getFiles();
 		} catch (ServiceException e) {
 			method.setStatus(SE_CAN_NOT_FIND_FILE);
 			return;
 		}
-		ArrayList<Long> ids = new ArrayList<Long>(files.size());
+		ArrayList<Integer> ids = new ArrayList<Integer>(files.size());
 		for(LibraryFile f : files) {
 			ids.add(f.getId());
 		}

@@ -89,6 +89,9 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 		         * persistence provider should throw EntityExistsException but
 		         * hibernate wraps ConstraintViolationException in
 		         * PersistenceException!
+		         * 
+		         * Reported as bug in hibernate JIRA:
+		         * http://opensource.atlassian.com/projects/hibernate/browse/EJB-382
 		         */
 	            log.error("Possible constraint violation: " + entity, e);
 	            throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
@@ -105,7 +108,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#load(java.lang.Long)
 	 */
 	@Override
-	public T load(Long id) throws DAOException {
+	public T load(Integer id) throws DAOException {
 		T entity = loadEntityImpl(id);
 		if (entity == null) {
 			throw new DAOException(StatusCodes.DAO_DOESNT_EXIST, clazz
@@ -121,7 +124,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#exists(java.lang.Long)
 	 */
 	@Override
-	public boolean exists(Long id) throws DAOException {
+	public boolean exists(Integer id) throws DAOException {
 		T entity = loadEntityImpl(id);
 		return entity != null;
 	}
@@ -132,7 +135,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @see hr.fer.zemris.vhdllab.dao.EntityDAO#delete(java.lang.Long)
 	 */
 	@Override
-	public void delete(Long id) throws DAOException {
+	public void delete(Integer id) throws DAOException {
 		if (id == null) {
 			throw new NullPointerException("Entity identifier cant be null");
 		}
@@ -166,12 +169,12 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	}
 
 	/**
-	 * Returns <code>true</code> if an entity was found in named query.
+	 * Returns <code>true</code> if an entity was found in a query.
 	 * 
-	 * @param namedQuery
-	 *            a name of a named query
+	 * @param query
+	 *            a query to execute
 	 * @param paramters
-	 *            a parameters to named query
+	 *            a parameters to a query
 	 * @return an entity list
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
@@ -181,20 +184,20 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	protected final boolean existsEntity(String namedQuery,
+	protected final boolean existsEntity(String query,
 			Map<String, Object> paramters) throws DAOException {
-		T entity = findSingleEntityImpl(namedQuery, paramters);
+		T entity = findSingleEntityImpl(query, paramters);
 		return entity != null;
 	}
 
 	/**
-	 * Returns a single entity found by specified named query. A
-	 * {@link DAOException} will be thrown no entity was found by named query.
+	 * Returns a single entity found by specified query. A
+	 * {@link DAOException} will be thrown no entity was found by a query.
 	 * 
-	 * @param namedQuery
-	 *            a name of a named query
+     * @param query
+     *            a query to execute
 	 * @param parameters
-	 *            a parameters to named query
+	 *            a parameters to a query
 	 * @return an entity
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
@@ -204,9 +207,9 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	protected final T findSingleEntity(String namedQuery,
+	protected final T findSingleEntity(String query,
 			Map<String, Object> parameters) throws DAOException {
-		T entity = findSingleEntityImpl(namedQuery, parameters);
+		T entity = findSingleEntityImpl(query, parameters);
 		if (entity == null) {
 			throw new DAOException(StatusCodes.DAO_DOESNT_EXIST,
 					"No entity for such constraints");
@@ -215,13 +218,13 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	}
 
 	/**
-	 * Returns a list of entities found by specified named query. A
-	 * {@link DAOException} will be thrown no entity was found by named query.
+	 * Returns a list of entities found by specified query. A
+	 * {@link DAOException} will be thrown no entity was found by a query.
 	 * 
-	 * @param namedQuery
-	 *            a name of a named query
+     * @param query
+     *            a query to execute
 	 * @param parameters
-	 *            a parameters to named query
+	 *            a parameters to a query
 	 * @return an entity list
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
@@ -231,9 +234,9 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	protected final List<T> findEntityList(String namedQuery,
+	protected final List<T> findEntityList(String query,
 			Map<String, Object> parameters) throws DAOException {
-		List<T> entities = findEntityListImpl(namedQuery, parameters);
+		List<T> entities = findEntityListImpl(query, parameters);
 		if (entities == null) {
 			throw new DAOException(StatusCodes.DAO_DOESNT_EXIST,
 					"No entities for such constraints");
@@ -254,7 +257,7 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 * @throws DAOException
 	 *             if exceptional condition occurs
 	 */
-	private T loadEntityImpl(Long id) throws DAOException {
+	private T loadEntityImpl(Integer id) throws DAOException {
 		if (id == null) {
 			throw new NullPointerException("Entity identifier cant be null");
 		}
@@ -273,13 +276,13 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	}
 
 	/**
-	 * Returns a single entity found by specified named query. If no entity was
-	 * found by named query then this method will return <code>null</code>.
+	 * Returns a single entity found by specified query. If no entity was
+	 * found by query then this method will return <code>null</code>.
 	 * 
-	 * @param namedQuery
-	 *            a name of a named query
+     * @param query
+     *            a query to execute
 	 * @param parameters
-	 *            a parameters to named query
+	 *            a parameters to a query
 	 * @return an entity
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
@@ -290,21 +293,21 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 *             if exceptional condition occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private T findSingleEntityImpl(String namedQuery,
+	private T findSingleEntityImpl(String queryString,
 			Map<String, Object> parameters) throws DAOException {
-		checkParams(namedQuery, parameters);
+		checkParams(queryString, parameters);
 		EntityManagerUtil.beginTransaction();
 		T entity;
 		try {
-			Query query = createQuery(namedQuery, parameters);
+			Query query = createQuery(queryString, parameters);
 			entity = (T) query.getSingleResult();
 		} catch (NoResultException e) {
 			EntityManagerUtil.rollbackTransaction();
 			return null;
 		} catch (EntityExistsException e) {
             EntityManagerUtil.rollbackTransaction();
-			log.error("Possible constraint violation: named query: "
-					+ namedQuery + ", params: " + parameters.toString(), e);
+			log.error("Possible constraint violation: query: "
+					+ queryString + ", params: " + parameters.toString(), e);
 			throw new DAOException(StatusCodes.DAO_ALREADY_EXISTS, e);
 		} catch (PersistenceException e) {
             EntityManagerUtil.rollbackTransaction();
@@ -320,13 +323,13 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	}
 
 	/**
-	 * Returns a list of entities found by specified named query. If no entity
-	 * was found by named query then this method will return <code>null</code>.
+	 * Returns a list of entities found by specified query. If no entity
+	 * was found by a query then this method will return <code>null</code>.
 	 * 
-	 * @param namedQuery
-	 *            a name of a named query
+     * @param query
+     *            a query to execute
 	 * @param parameters
-	 *            a parameters to named query
+	 *            a parameters to a query
 	 * @return an entity list
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
@@ -337,13 +340,13 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	 *             if exceptional condition occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private List<T> findEntityListImpl(String namedQuery,
+	private List<T> findEntityListImpl(String queryString,
 			Map<String, Object> parameters) throws DAOException {
-		checkParams(namedQuery, parameters);
+		checkParams(queryString, parameters);
 		EntityManagerUtil.beginTransaction();
 		List<T> entities;
 		try {
-			Query query = createQuery(namedQuery, parameters);
+			Query query = createQuery(queryString, parameters);
 			entities = query.getResultList();
 		} catch (NoResultException e) {
 			EntityManagerUtil.rollbackTransaction();
@@ -365,16 +368,16 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	/**
 	 * Throws adequate exception if parameters are faulty.
 	 * 
-	 * @param namedQuery
-	 *            a name of a named query
+     * @param query
+     *            a query to execute
 	 * @param parameters
-	 *            a parameters to named query
+	 *            a parameters to a query
 	 * @throws NullPointerException
 	 *             if either parameter is <code>null</code>
 	 */
-	private void checkParams(String namedQuery, Map<String, Object> parameters) {
-		if (namedQuery == null) {
-			throw new NullPointerException("Named query cant be null");
+	private void checkParams(String query, Map<String, Object> parameters) {
+		if (query == null) {
+			throw new NullPointerException("Query string cant be null");
 		}
 		if (parameters == null) {
 			throw new NullPointerException("Query parameters can't be null");
@@ -382,17 +385,17 @@ public abstract class AbstractEntityDAO<T> implements EntityDAO<T> {
 	}
 
 	/**
-	 * Creates a query out of named query and specified parameters.
+	 * Creates a query out of query string and specified parameters.
 	 * 
-	 * @param namedQuery
-	 *            a name of a named query
+     * @param query
+     *            a query to execute
 	 * @param parameters
-	 *            a parameters to named query
+	 *            a parameters to a query
 	 * @return created query
 	 */
-	private Query createQuery(String namedQuery, Map<String, Object> parameters) {
+	private Query createQuery(String queryString, Map<String, Object> parameters) {
 		EntityManager em = EntityManagerUtil.currentEntityManager();
-		Query query = em.createNamedQuery(namedQuery);
+		Query query = em.createQuery(queryString);
 		for (Entry<String, Object> entry : parameters.entrySet()) {
 			query.setParameter(entry.getKey(), entry.getValue());
 		}

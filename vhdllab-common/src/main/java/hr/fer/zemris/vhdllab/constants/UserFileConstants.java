@@ -14,7 +14,7 @@ public class UserFileConstants {
 	/* component placements */
 	public static final String SYSTEM_DEFAULT_EDITOR_PLACEMENT = "system.default.editor.placement";
 	public static final String SYSTEM_DEFAULT_VIEW_PLACEMENT = "system.default.view.placement";
-	public static final String SYSTEM_COMPONENT_PLACEMENT_FOR= "system.component.placement.for.";
+	public static final String SYSTEM_COMPONENT_PLACEMENT_FOR = "system.component.placement.for.";
 
 	public static final String SYSTEM_TOOLTIP_DURATION = "system.tooltip.duration";
 	
