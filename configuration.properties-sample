@@ -28,6 +28,12 @@ compiler.executable = /usr/bin/ghdl
 compiler.tmpDir = /home/lord/tmp/vhdllab/compilations
 simulator.executable = /usr/bin/ghdl
 simulator.tmpDir = /home/lord/tmp/vhdllab/simulations
+# parameters for 32bit OS
+compiler.parameters = -a
+simulator.parameters = --elab-run
+# parameters for 64bit OS
+#compiler.parameters = -a -Wc,-m32 -Wa,--gstabs -Wa,--32
+#simulator.parameters = --elab-run -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,-m32
 
 ###############################################################################
 ### General properties                                                      ###

@@ -105,8 +105,6 @@ public class GhdlSimulatorTest {
         SimulationResult result = man.simulate(file);
         assertTrue("not a successful simulation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
-        assertEquals("not an empty list.", Collections.emptyList(), result
-                .getMessages());
     }
 
     /**
@@ -131,8 +129,6 @@ public class GhdlSimulatorTest {
         SimulationResult result = man.simulate(file);
         assertTrue("not a successful simulation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
-        assertEquals("not an empty list.", Collections.emptyList(), result
-                .getMessages());
     }
 
     /**
@@ -145,8 +141,6 @@ public class GhdlSimulatorTest {
         System.out.println(result);
         assertTrue("not a successful simulation.", result.isSuccessful());
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
-        assertEquals("not an empty list.", Collections.emptyList(), result
-                .getMessages());
     }
 
     /**

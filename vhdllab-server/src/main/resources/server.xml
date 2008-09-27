@@ -69,8 +69,10 @@
   -->
   <properties>
     <property key="compiler.executable" value="${compiler.executable}" />
+    <property key="compiler.parameters" value="${compiler.parameters}" />
     <property key="compiler.tmpDir" value="${compiler.tmpDir}" />
     <property key="simulator.executable" value="${simulator.executable}" />
+    <property key="simulator.parameters" value="${simulator.parameters}" />
     <property key="simulator.tmpDir" value="${simulator.tmpDir}" />
   </properties>
 

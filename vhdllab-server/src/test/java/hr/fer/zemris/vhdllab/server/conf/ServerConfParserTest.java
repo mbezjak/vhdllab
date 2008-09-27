@@ -24,8 +24,10 @@ public class ServerConfParserTest {
         ServerConf expectedConf = new ServerConf();
         Properties p = new Properties();
         p.setProperty("compiler.executable", "value not part of equals");
+        p.setProperty("compiler.parameters", "value not part of equals");
         p.setProperty("compiler.tmpDir", "value not part of equals");
         p.setProperty("simulator.executable", "value not part of equals");
+        p.setProperty("simulator.parameters", "value not part of equals");
         p.setProperty("simulator.tmpDir", "value not part of equals");
         expectedConf.setProperties(p);
         m = new FileTypeMapping(FileType.SOURCE);

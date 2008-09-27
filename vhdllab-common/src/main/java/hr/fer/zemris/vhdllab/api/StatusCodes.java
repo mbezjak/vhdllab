@@ -111,4 +111,9 @@ public final class StatusCodes {
      */
     public static final short SERVICE_CANT_GENERATE_VHDL_CODE = 2030;
 
+    /**
+     * Could not simulate a testbench file.
+     */
+    public static final short SERVICE_CANT_SIMULATE = 2100;
+    
 }

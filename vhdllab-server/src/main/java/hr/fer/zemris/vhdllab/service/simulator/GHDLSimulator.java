@@ -1,9 +1,14 @@
 package hr.fer.zemris.vhdllab.service.simulator;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.MessageType;
 import hr.fer.zemris.vhdllab.api.results.SimulationMessage;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.TimeScale;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformTestbenchParserException;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.model.Testbench;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.model.TestbenchParser;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
@@ -23,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -51,6 +57,14 @@ public class GHDLSimulator implements Simulator {
      */
     private static final String EXECUTABLE_PROPERTY = "simulator.executable";
     /**
+     * Parameters to a GHDL executable file used for compilation.
+     */
+    private static final String COMPILER_PARAMETERS = "compiler.parameters";
+    /**
+     * Parameters to a GHDL executable file used for simulation.
+     */
+    private static final String SIMULATOR_PARAMETERS = "simulator.parameters";
+    /**
      * Property name for path to temporary root simulation directory.
      */
     private static final String TMPDIR_PROPERTY = "simulator.tmpDir";
@@ -59,6 +73,14 @@ public class GHDLSimulator implements Simulator {
      * Path to GHDL executable.
      */
     private String executable;
+    /**
+     * Parameters to GHDL executable used for compilation.
+     */
+    private String[] compilerParameters;
+    /**
+     * Parameters to GHDL executable used for simulation.
+     */
+    private String[] simulatorParameters;
     /**
      * Temporary root simulation directory.
      */
@@ -83,6 +105,16 @@ public class GHDLSimulator implements Simulator {
             throw new IllegalArgumentException(
                     "Specified GHDL executable doesn't exist: " + executable);
         }
+        String allParameters = properties.getProperty(SIMULATOR_PARAMETERS);
+        if (allParameters == null) {
+            throw new IllegalArgumentException("GHDL simulator parameters not defined!");
+        }
+        simulatorParameters = allParameters.split(" ");
+        allParameters = properties.getProperty(COMPILER_PARAMETERS);
+        if (allParameters == null) {
+            throw new IllegalArgumentException("GHDL compiler parameters not defined!");
+        }
+        compilerParameters = allParameters.split(" ");
         String dir = properties.getProperty(TMPDIR_PROPERTY);
         if (dir == null) {
             throw new IllegalArgumentException(
@@ -144,7 +176,7 @@ public class GHDLSimulator implements Simulator {
             // -----------------------------------------------------------
             List<String> cmdList = new ArrayList<String>(names.size() + 2);
             cmdList.add(executable);
-            cmdList.add("-a");
+            Collections.addAll(cmdList, compilerParameters);
             for (int i = 0; i < names.size(); i++) {
                 cmdList.add(names.get(i) + ".vhdl");
             }
@@ -167,11 +199,27 @@ public class GHDLSimulator implements Simulator {
             // simulate it.
             // STEP 5: prepare simulator call
             // -----------------------------------------------------------
+            
+            Testbench tb = null;
+            try {
+                tb = TestbenchParser.parseXml(simFile.getData());
+            } catch (UniformTestbenchParserException e) {
+                throw new ServiceException(StatusCodes.SERVICE_CANT_SIMULATE, e);
+            }
+            long simulationLength = tb.getSimulationLength();
+            if(simulationLength <= 0) {
+                simulationLength = 100;
+            } else {
+                simulationLength = simulationLength / TimeScale.getMultiplier(tb.getTimeScale());
+                simulationLength = (long) (simulationLength * 1.1); // increase by 10%
+            }
             cmdList.clear();
             cmdList.add(executable);
-            cmdList.add("--elab-run");
+            Collections.addAll(cmdList, simulatorParameters);
             cmdList.add(simFile.getName().toString());
             cmdList.add("--vcd=simout.vcd");
+            cmdList.add("--stop-delta=1000");
+            cmdList.add("--stop-time=" + simulationLength + tb.getTimeScale().toString().toLowerCase());
             cmd = new String[cmdList.size()];
             cmdList.toArray(cmd);
             // STEP 6: execute the call

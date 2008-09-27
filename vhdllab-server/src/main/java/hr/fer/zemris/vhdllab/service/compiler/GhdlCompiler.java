@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -51,6 +52,10 @@ public class GhdlCompiler implements Compiler {
      */
     private static final String EXECUTABLE_PROPERTY = "compiler.executable";
     /**
+     * Parameters to a GHDL executable file.
+     */
+    private static final String EXECUTABLE_PARAMETERS = "compiler.parameters";
+    /**
      * Property name for path to temporary root compilation directory.
      */
     private static final String TMPDIR_PROPERTY = "compiler.tmpDir";
@@ -59,6 +64,10 @@ public class GhdlCompiler implements Compiler {
      * Path to GHDL executable.
      */
     private String executable;
+    /**
+     * Parameters to GHDL executable.
+     */
+    private String[] parameters;
     /**
      * Temporary root compilation directory.
      */
@@ -79,6 +88,11 @@ public class GhdlCompiler implements Compiler {
             throw new IllegalArgumentException(
                     "Specified GHDL executable doesn't exist: " + executable);
         }
+        String allParameters = properties.getProperty(EXECUTABLE_PARAMETERS);
+        if (allParameters == null) {
+            throw new IllegalArgumentException("GHDL parameters not defined!");
+        }
+        parameters = allParameters.split(" ");
         String dir = properties.getProperty(TMPDIR_PROPERTY);
         if (dir == null) {
             throw new IllegalArgumentException(
@@ -138,7 +152,7 @@ public class GhdlCompiler implements Compiler {
             // -----------------------------------------------------------
             List<String> cmdList = new ArrayList<String>(names.size() + 2);
             cmdList.add(executable);
-            cmdList.add("-a");
+            Collections.addAll(cmdList, parameters);
             for (int i = 0; i < names.size(); i++) {
                 cmdList.add(names.get(i) + ".vhdl");
             }
