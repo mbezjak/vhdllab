@@ -85,5 +85,5 @@ hibernate.cache.provider_class = org.hibernate.cache.EhCacheProvider
 hibernate.cache.use_second_level_cache = true
 hibernate.cache.use_query_cache = true
 hibernate.show_sql = false
-hibernate.hbm2ddl.auto = validate
+hibernate.hbm2ddl.auto = update
 

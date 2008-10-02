@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.entities;
 
 import javax.persistence.EntityListeners;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -23,8 +22,7 @@ public final class File extends FileResource {
     private static final long serialVersionUID = 1L;
 
     private Project project;
-    @Transient
-    private Project postRemoveProjectReference;
+    private transient Project postRemoveProjectReference;
 
     /**
      * Default constructor for persistence provider.

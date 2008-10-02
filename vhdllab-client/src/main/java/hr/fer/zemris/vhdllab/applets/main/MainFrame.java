@@ -1533,7 +1533,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 
 			// Development menu
 			// TODO development menu only temporary solution
-/*			menu = new JMenu("Development");
+			menu = new JMenu("Development");
 			menuItem = new JMenuItem("Show view Error History");
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1574,7 +1574,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				}
 			});
 			menu.add(menuItem);
-*/			// TODO END TEMP SOLUTION
+			// TODO END TEMP SOLUTION
 
 			menuBar.add(menu);
 

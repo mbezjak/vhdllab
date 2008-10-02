@@ -100,8 +100,8 @@
   <entity class="ProjectHistory">
     <table name="project_history">
       <unique-constraint>
-        <column-name>name</column-name>
         <column-name>user_id</column-name>
+        <column-name>name</column-name>
         <column-name>insert_version</column-name>
         <column-name>update_version</column-name>
       </unique-constraint>
@@ -111,8 +111,8 @@
   <entity class="UserFile">
     <table name="user_files">
       <unique-constraint>
-        <column-name>name</column-name>
         <column-name>user_id</column-name>
+        <column-name>name</column-name>
       </unique-constraint>
     </table>
   </entity>
@@ -129,15 +129,14 @@
         <join-column name="project_id" nullable="false"
           updatable="false" />
       </many-to-one>
-      <transient name="postRemoveProjectReference" />
     </attributes>
   </entity>
 
   <entity class="Project">
     <table name="projects">
       <unique-constraint>
-        <column-name>name</column-name>
         <column-name>user_id</column-name>
+        <column-name>name</column-name>
       </unique-constraint>
     </table>
     <attributes>
