@@ -98,12 +98,12 @@ public class GhdlResults
             matrica[i] = temp[i].split(VALUE_LIMITER);
 			expandedSignalNames.add(false);
 			
-			if (matrica[i][1].length() != 1)
+			if (matrica[i][0].length() != 1)
             {
 				currentVectorIndex.add(i);
-				if (matrica[i][1].length() > maximumVectorSize)
+				if (matrica[i][0].length() > maximumVectorSize)
 				{
-					maximumVectorSize = matrica[i][1].length();
+					maximumVectorSize = matrica[i][0].length();
 				}
             }
 			else

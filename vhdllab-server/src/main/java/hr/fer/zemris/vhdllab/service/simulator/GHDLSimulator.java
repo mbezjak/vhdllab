@@ -193,7 +193,7 @@ public class GHDLSimulator implements Simulator {
             int retVal = proc.waitFor();
             if (retVal != 0) {
                 return new SimulationResult(Integer.valueOf(retVal), false,
-                        listToSimMessages(errors), null);
+                        listToSimMessages(errors), "");
             }
             // OK, here we have added files into project. Now we have to
             // simulate it.
