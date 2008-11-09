@@ -192,7 +192,7 @@ public final class SystemLog {
 	 *             if either parameter is <code>null</code>
 	 */
 	public void addErrorMessage(Throwable cause) {
-		addErrorMessage(new SystemMessage(cause));
+		addErrorMessage(new SystemError(cause));
 	}
 
 	/**
@@ -204,7 +204,7 @@ public final class SystemLog {
 	 * @throws NullPointerException
 	 *             if <code>message</code> is <code>null</code>
 	 */
-	public void addErrorMessage(SystemMessage message) {
+	public void addErrorMessage(SystemError message) {
 		if (message == null) {
 			throw new NullPointerException("Message cant be null");
 		}
@@ -379,7 +379,7 @@ public final class SystemLog {
 	 * @param message
 	 *            an added error message
 	 */
-	private void fireErrorMessageAdded(SystemMessage message) {
+	private void fireErrorMessageAdded(SystemError message) {
 		for (SystemLogListener l : getSystemLogListeners()) {
 			l.errorMessageAdded(message);
 		}

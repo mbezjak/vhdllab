@@ -24,7 +24,7 @@ public abstract class SystemLogAdapter implements SystemLogListener {
 	}
 
 	@Override
-	public void errorMessageAdded(SystemMessage message) {
+	public void errorMessageAdded(SystemError message) {
 	}
 
 	@Override

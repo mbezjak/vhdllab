@@ -115,5 +115,11 @@ public final class StatusCodes {
      * Could not simulate a testbench file.
      */
     public static final short SERVICE_CANT_SIMULATE = 2100;
-    
+
+    /**
+     * A file name and an entity name in a file dont match (cant simulatate if
+     * they are not same).
+     */
+    public static final short SERVICE_ENTITY_AND_FILE_NAME_DONT_MATCH = 2200;
+
 }

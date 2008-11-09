@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.comm.Method;
 import hr.fer.zemris.vhdllab.api.comm.MethodConstants;
 import hr.fer.zemris.vhdllab.api.comm.methods.GetSessionLengthMethod;
@@ -567,8 +568,13 @@ public final class HttpClientInitiator implements Initiator {
             throw new UniformAppletException(e);
         }
         if (requestMethod.getStatusCode() != MethodConstants.STATUS_OK) {
-            throw new UniformAppletException("Returned status code is "
-                    + requestMethod.getStatusCode());
+            String message;
+            if (requestMethod.getStatusCode() == StatusCodes.SERVICE_ENTITY_AND_FILE_NAME_DONT_MATCH) {
+                message = requestMethod.getStatusMessage();
+            } else {
+                message = "Returned status code is " + requestMethod.getStatusCode();
+            }
+            throw new UniformAppletException(message);
         }
     }
 

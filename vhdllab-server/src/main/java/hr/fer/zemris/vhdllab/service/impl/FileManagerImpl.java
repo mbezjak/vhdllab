@@ -1,11 +1,15 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.dao.DAOException;
 import hr.fer.zemris.vhdllab.dao.FileDAO;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.service.FileManager;
+import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
+import hr.fer.zemris.vhdllab.service.ServiceManager;
 
 /**
  * This is a default implementation of {@link FileManager}.
@@ -39,6 +43,28 @@ public final class FileManagerImpl extends AbstractEntityManager<File>
 		 * Can cast because sole constructor accepts object of this type.
 		 */
 		return (FileDAO) dao;
+	}
+
+	/* (non-Javadoc)
+	 * @see hr.fer.zemris.vhdllab.service.impl.AbstractEntityManager#save(java.lang.Object)
+	 */
+	@Override
+	public void save(File entity) throws ServiceException {
+	    if (entity.getType().equals(FileType.SOURCE)) {
+	        ServiceManager sm = ServiceContainer.instance().getServiceManager();
+            try {
+                sm.extractCircuitInterface(entity);
+            } catch (ServiceException e) {
+                if(e.getMessage().equals("Entity block is invalid.")) {
+                    throw new ServiceException(
+                            StatusCodes.SERVICE_ENTITY_AND_FILE_NAME_DONT_MATCH,
+                            "Resource "
+                                    + entity.getName()
+                                    + " must have only one entity with the same name.");
+                }
+            }
+	    }
+	    super.save(entity);
 	}
 
 	/*

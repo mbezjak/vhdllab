@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.view.error.history;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
+import hr.fer.zemris.vhdllab.client.core.log.SystemError;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
@@ -84,7 +85,7 @@ public class ErrorHistoryView extends JPanel implements IView {
 		}
 		systemLogListener = new SystemLogAdapter() {
 			@Override
-			public void errorMessageAdded(SystemMessage message) {
+			public void errorMessageAdded(SystemError message) {
 				addMessage(message);
 			}
 		};

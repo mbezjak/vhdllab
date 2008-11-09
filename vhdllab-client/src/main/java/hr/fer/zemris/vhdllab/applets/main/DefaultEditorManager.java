@@ -420,6 +420,7 @@ public class DefaultEditorManager implements IEditorManager {
 				text = PlaceholderUtil.replacePlaceholders(text,
 						new Caseless[] { fileName });
 				echoStatusText(text, MessageType.ERROR);
+				SystemLog.instance().addErrorMessage(e);
 				return false;
 			}
 			editor.setModified(false);

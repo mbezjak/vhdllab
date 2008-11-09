@@ -14,7 +14,7 @@ import java.util.Date;
  * @version 1.0
  * @since 19.8.2007
  */
-public final class SystemMessage {
+public class SystemMessage {
 
 	/**
 	 * An exact time when message occurred.

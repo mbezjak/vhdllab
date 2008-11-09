@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.comm.Method;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.File;
@@ -43,8 +44,12 @@ public class DoMethodCreateFile extends AbstractRegisteredMethod {
             project.addFile(file);
             container.getFileManager().save(file);
         } catch (ServiceException e) {
-            method.setStatus(SE_CAN_NOT_CREATE_FILE, "projectId=" + projectId
-                    + ", name=" + fileName + ", type=" + fileType);
+            if(e.getStatusCode() == StatusCodes.SERVICE_ENTITY_AND_FILE_NAME_DONT_MATCH) {
+                method.setStatus(e.getStatusCode(), e.getMessage());
+            } else {
+                method.setStatus(SE_CAN_NOT_CREATE_FILE, "projectId=" + projectId
+                        + ", name=" + fileName + ", type=" + fileType);
+            }
             return;
         }
         method.setResult(file.getId());

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemError;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
@@ -72,7 +73,7 @@ public final class InitializationGlassPane extends JPanel {
 			}
 			
 			@Override
-			public void errorMessageAdded(SystemMessage message) {
+			public void errorMessageAdded(SystemError message) {
 				systemMessageAdded(message);
 			}
 		};

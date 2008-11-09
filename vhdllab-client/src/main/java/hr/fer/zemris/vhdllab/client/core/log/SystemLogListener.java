@@ -29,7 +29,7 @@ public interface SystemLogListener extends EventListener {
 	 * @param message
 	 *            an error message added
 	 */
-	void errorMessageAdded(SystemMessage message);
+	void errorMessageAdded(SystemError message);
 
 	/**
 	 * Indicates that a compilation result target was added to the system log.

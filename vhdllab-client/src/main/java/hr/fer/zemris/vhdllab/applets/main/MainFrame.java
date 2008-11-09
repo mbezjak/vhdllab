@@ -23,7 +23,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
+import hr.fer.zemris.vhdllab.client.core.log.SystemError;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferencesListener;
@@ -444,6 +446,16 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 									stViewIdentifier);
 							systemContainer.getViewManager()
 									.openProjectExplorer();
+							
+							SystemLog.instance().addSystemLogListener(new SystemLogAdapter() {
+							   @Override
+    							public void errorMessageAdded(
+    							        SystemError message) {
+							       JOptionPane.showMessageDialog(MainFrame.this,
+                                        "Error occurred: " + message.getCause().getMessage(),
+                                        "Error occurred", JOptionPane.ERROR_MESSAGE);
+    							} 
+							});
 						}
 					});
 					// Thread.sleep(2000);

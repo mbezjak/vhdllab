@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.servlets.methods;
 
+import hr.fer.zemris.vhdllab.api.StatusCodes;
 import hr.fer.zemris.vhdllab.api.comm.Method;
 import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.service.FileManager;
@@ -38,7 +39,11 @@ public class DoMethodSaveFile extends AbstractRegisteredMethod {
 			file.setData(content);
 			man.save(file);
 		} catch (ServiceException e) {
-			method.setStatus(SE_CAN_NOT_SAVE_FILE, "fileId=" + fileId);
+            if(e.getStatusCode() == StatusCodes.SERVICE_ENTITY_AND_FILE_NAME_DONT_MATCH) {
+                method.setStatus(e.getStatusCode(), e.getMessage());
+            } else {
+                method.setStatus(SE_CAN_NOT_SAVE_FILE, "fileId=" + fileId);
+            }
 			return;
 		}
 		method.setResult(null);
