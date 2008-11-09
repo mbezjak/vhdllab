@@ -313,7 +313,11 @@ public final class VHDLLabServiceManager implements ServiceManager {
         try {
             result = functionality.execute(file);
         } catch (RuntimeException e) {
-            String message = className + " threw exception during execution!";
+            StringBuilder sb = new StringBuilder(30);
+            sb.append(className).append(" run by ");
+            sb.append(UserHolder.getUser());
+            sb.append(" threw exception during execution!");
+            String message = sb.toString();
             log.error(message, e);
             throw new ServiceException(INTERNAL_SERVER_ERROR, message);
         }
@@ -383,7 +387,9 @@ public final class VHDLLabServiceManager implements ServiceManager {
             StringBuilder sb = new StringBuilder(REPORT_LENGTH);
             sb.append(funcType).append(" functionality ").append(className);
             sb.append(" finished execution in ");
-            sb.append(length).append("ms:\n").append(result);
+            sb.append(length).append("ms run by user ");
+            sb.append(UserHolder.getUser());
+            sb.append(":\n").append(result);
             sb.append("\n-----------------------------------");
             log.debug(sb.toString());
         }

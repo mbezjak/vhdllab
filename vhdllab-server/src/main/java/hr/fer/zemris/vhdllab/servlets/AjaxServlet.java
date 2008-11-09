@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.servlets;
 import hr.fer.zemris.vhdllab.api.comm.Method;
 import hr.fer.zemris.vhdllab.api.comm.MethodConstants;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.service.impl.UserHolder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,6 +96,7 @@ public class AjaxServlet extends HttpServlet {
             method.setStatus(MethodConstants.SE_INVALID_METHOD_CALL);
             returnResponse(method, request, response);
         }
+        UserHolder.setUser(method.getUserId());
 
         try {
             regMethod.run(method, request);

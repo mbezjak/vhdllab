@@ -18,6 +18,7 @@ import hr.fer.zemris.vhdllab.service.ServiceContainer;
 import hr.fer.zemris.vhdllab.service.ServiceException;
 import hr.fer.zemris.vhdllab.service.ServiceManager;
 import hr.fer.zemris.vhdllab.service.Simulator;
+import hr.fer.zemris.vhdllab.service.impl.UserHolder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -163,7 +164,7 @@ public class GHDLSimulator implements Simulator {
         try {
             // STEP 1: create temporary directory
             // -----------------------------------------------------------
-            tmpFile = java.io.File.createTempFile("ghd", null, tmpRootDir);
+            tmpFile = java.io.File.createTempFile("ghd", "_run_by_user-" + UserHolder.getUser(), tmpRootDir);
             tmpDir = new java.io.File(tmpRootDir, "DIR" + tmpFile.getName());
             tmpDir.mkdirs();
             // STEP 2: copy all vhdl files there
