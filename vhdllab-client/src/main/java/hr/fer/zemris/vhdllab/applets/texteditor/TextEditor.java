@@ -275,6 +275,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			StringBuilder sb = new StringBuilder(
 					100 + ci.getPorts().size() * 20);
 			sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
+			sb.append("-- note: entity name and resource name must match\n");
 			sb.append("ENTITY ").append(ci.getName()).append(
 					" IS PORT (\n");
 			for (Port p : ci.getPorts()) {
