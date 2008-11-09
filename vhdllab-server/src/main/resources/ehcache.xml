@@ -30,7 +30,7 @@
 
         -->
     <defaultCache
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="true"
         timeToIdleSeconds="120"
@@ -65,6 +65,15 @@
         timeToLiveSeconds="1200"
         />
 
+    <!-- cache for collection of files in a project -->
+    <cache name="hr.fer.zemris.vhdllab.entities.Project.files"
+        maxElementsInMemory="500"
+        eternal="false"
+        overflowToDisk="true"
+        timeToIdleSeconds="600"
+        timeToLiveSeconds="1200"
+        />
+
     <!-- cache for File -->
     <cache name="hr.fer.zemris.vhdllab.entities.File"
         maxElementsInMemory="500"
@@ -83,6 +92,15 @@
         timeToLiveSeconds="1200"
         />
 
+    <!-- cache for collection of library files in a library -->
+    <cache name="hr.fer.zemris.vhdllab.entities.Library.files"
+        maxElementsInMemory="500"
+        eternal="false"
+        overflowToDisk="true"
+        timeToIdleSeconds="600"
+        timeToLiveSeconds="1200"
+        />
+
     <!-- cache for LibraryFile -->
     <cache name="hr.fer.zemris.vhdllab.entities.LibraryFile"
         maxElementsInMemory="500"
@@ -95,6 +113,24 @@
     <!-- cache for UserFile -->
     <cache name="hr.fer.zemris.vhdllab.entities.UserFile"
         maxElementsInMemory="100"
+        eternal="false"
+        overflowToDisk="true"
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="240"
+        />
+
+    <!-- cache for ProjectHistory -->
+    <cache name="hr.fer.zemris.vhdllab.entities.ProjectHistory"
+        maxElementsInMemory="50"
+        eternal="false"
+        overflowToDisk="true"
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="240"
+        />
+
+    <!-- cache for FileHistory -->
+    <cache name="hr.fer.zemris.vhdllab.entities.FileHistory"
+        maxElementsInMemory="50"
         eternal="false"
         overflowToDisk="true"
         timeToIdleSeconds="120"
