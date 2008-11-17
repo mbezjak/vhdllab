@@ -252,8 +252,69 @@
   
  
   
+  <bean id="clientLogsLibraryInitializerTarget" class="hr.fer.zemris.vhdllab.service.init.clientlogs.ClientLogsLibraryInitializer"/>
+  <bean id="predefinedLibraryInitializerTarget" class="hr.fer.zemris.vhdllab.service.init.predefined.PredefinedLibraryInitializer">
+    <property name="fileNames">
+      <set>
+        <value>VL_AND</value>
+        <value>VL_NAND</value>
+        <value>VL_NOR</value>
+        <value>VL_NOT</value>
+        <value>VL_OR</value>
+        <value>VL_XNOR</value>
+        <value>VL_XOR</value>
+      </set>
+    </property>
+  </bean>
+  <bean id="preferencesLibraryInitializerTarget" class="hr.fer.zemris.vhdllab.service.init.preferences.PreferencesLibraryInitializer">
+    <property name="fileNames">
+      <set>
+        <value>common.localization.language</value>
+        <value>system.always.save.resources</value>
+        <value>system.component.placement.for.view.project.explorer</value>
+        <value>system.default.editor.placement</value>
+        <value>system.default.view.placement</value>
+        <value>system.opened.editors</value>
+        <value>system.opened.views</value>
+        <value>system.project.explorer.width</value>
+        <value>system.sidebar.width</value>
+        <value>system.tooltip.duration</value>
+        <value>system.view.height</value>
+      </set>
+    </property>
+  </bean>
+  
+  <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
+    <property name="entityManagerFactory" ref="entityManagerFactory" />
+  </bean>
+  
+  <bean id="libraryInitializerProxyBase" class="org.springframework.aop.framework.ProxyFactoryBean"
+    abstract="true">
+    <property name="proxyInterfaces" value="hr.fer.zemris.vhdllab.service.init.LibraryInitializer" />
+    <property name="interceptorNames" value="jpaInterceptor" />
+  </bean>
+  
+  <bean id="clientLogsLibraryInitializer" parent="libraryInitializerProxyBase">
+    <property name="target" ref="clientLogsLibraryInitializerTarget" />
+  </bean>
 
+  <bean id="predefinedLibraryInitializer" parent="libraryInitializerProxyBase">
+    <property name="target" ref="predefinedLibraryInitializerTarget" />
+  </bean>
 
+  <bean id="preferencesLibraryInitializer" parent="libraryInitializerProxyBase">
+    <property name="target" ref="preferencesLibraryInitializerTarget" />
+  </bean>
+
+  <bean id="groupLibraryInitializer" class="hr.fer.zemris.vhdllab.service.init.GroupLibraryInitializer">
+    <property name="initializers">
+      <set>
+        <ref bean="clientLogsLibraryInitializer"/>
+        <ref bean="predefinedLibraryInitializer"/>
+        <ref bean="preferencesLibraryInitializer"/>
+      </set>
+    </property>
+  </bean>
 
 
 

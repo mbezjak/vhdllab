@@ -10,6 +10,7 @@ import hr.fer.zemris.vhdllab.entities.UserFileInfo;
 import hr.fer.zemris.vhdllab.preferences.global.PreferencesParser;
 import hr.fer.zemris.vhdllab.preferences.global.Property;
 import hr.fer.zemris.vhdllab.service.UserFileService;
+import hr.fer.zemris.vhdllab.service.init.preferences.PreferencesLibraryInitializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,8 @@ public class UserFileServiceImpl implements UserFileService {
     @Override
     public List<UserFileInfo> findByUser(Caseless userId) {
         List<UserFile> userFiles = dao.findByUser(userId);
-        Library lib = libraryDao.findByName(new Caseless("preferences"));
+        Library lib = libraryDao
+                .findByName(PreferencesLibraryInitializer.LIBRARY_NAME);
         for (LibraryFile globalFile : lib.getFiles()) {
             boolean found = false;
             for (UserFile userFile : userFiles) {

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface LibraryFileService {
     
-    void saveError(String data);
+    void saveClientLog(String data);
     
     List<LibraryFileInfo> getPredefinedFiles();
     

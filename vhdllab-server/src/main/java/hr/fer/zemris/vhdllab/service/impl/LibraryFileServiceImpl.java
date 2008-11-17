@@ -7,6 +7,8 @@ import hr.fer.zemris.vhdllab.entities.Library;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.entities.LibraryFileInfo;
 import hr.fer.zemris.vhdllab.service.LibraryFileService;
+import hr.fer.zemris.vhdllab.service.init.clientlogs.ClientLogsLibraryInitializer;
+import hr.fer.zemris.vhdllab.service.init.predefined.PredefinedLibraryInitializer;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,8 +24,9 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     private LibraryDao libraryDao;
 
     @Override
-    public void saveError(String data) {
-        Library errorsLibrary = libraryDao.findByName(new Caseless("errors"));
+    public void saveClientLog(String data) {
+        Library errorsLibrary = libraryDao
+                .findByName(ClientLogsLibraryInitializer.LIBRARY_NAME);
         LibraryFile error = new LibraryFile(
                 new Caseless(new Date().toString()), data);
         errorsLibrary.addFile(error);
@@ -32,8 +35,7 @@ public class LibraryFileServiceImpl implements LibraryFileService {
 
     @Override
     public List<LibraryFileInfo> getPredefinedFiles() {
-        Library predefinedLibrary = libraryDao.findByName(new Caseless(
-                "predefined"));
+        Library predefinedLibrary = getPredefinedLibrary();
         List<LibraryFileInfo> infoFiles = new ArrayList<LibraryFileInfo>(
                 predefinedLibrary.getFiles().size());
         for (LibraryFile file : predefinedLibrary.getFiles()) {
@@ -44,10 +46,13 @@ public class LibraryFileServiceImpl implements LibraryFileService {
 
     @Override
     public LibraryFileInfo findPredefinedByName(Caseless name) {
-        Library predefinedLibrary = libraryDao.findByName(new Caseless(
-        "predefined"));
+        Library predefinedLibrary = getPredefinedLibrary();
         LibraryFile file = dao.findByName(predefinedLibrary.getId(), name);
         return wrapToInfoObject(file);
+    }
+
+    private Library getPredefinedLibrary() {
+        return libraryDao.findByName(PredefinedLibraryInitializer.LIBRARY_NAME);
     }
 
     private LibraryFileInfo wrapToInfoObject(LibraryFile file) {

@@ -421,7 +421,7 @@ public class Communicator implements ICommunicator {
 	public void saveErrorMessage(String content) {
 		if (content == null)
 			throw new NullPointerException("Content can not be null.");
-		libraryFileService.saveError(content);
+		libraryFileService.saveClientLog(content);
 	}
 
 	private void loadUserPreferences() {
