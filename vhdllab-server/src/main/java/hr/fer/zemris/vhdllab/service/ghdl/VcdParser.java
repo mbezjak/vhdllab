@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.service.ghdl;
 
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -59,7 +58,7 @@ class VcdFileReader
 		{
 			System.out.println ("File input/output error");
 		}
-		return ((String[])list.toArray(new String[list.size()]));
+		return list.toArray(new String[list.size()]);
 	}
 }
 
@@ -275,7 +274,7 @@ public class VcdParser
             int i = 0;
             while (e.hasNext())
             {
-                ((List<String>)e.next()).add(values[i++]);
+                (e.next()).add(values[i++]);
             }
 		}
         this.resultToString();
