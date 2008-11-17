@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,7 +11,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public final class FileHistory extends FileInfoHistory {
+public class FileHistory extends FileInfoHistory {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,20 +33,8 @@ public final class FileHistory extends FileInfoHistory {
      * @throws NullPointerException
      *             if either parameter is <code>null</code>
      */
-    FileHistory(FileInfo file, History history) {
+    public FileHistory(FileInfo file, History history) {
         super(file, history);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                    .appendSuper(super.toString())
-                    .toString();
     }
 
 }

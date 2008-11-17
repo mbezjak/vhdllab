@@ -1,9 +1,14 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.FileStub;
+import hr.fer.zemris.vhdllab.entities.stub.FileStub2;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectStub;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,17 +25,12 @@ import org.junit.Test;
  */
 public class ProjectTest {
 
-    private static final Caseless NAME = StubFactory.getStubValue("name", 1);
-    private static final Caseless USER_ID = StubFactory.getStubValue("userId",
-            1);
-
-    private Project project;
+    private ProjectStub project;
 
     @Before
     public void initEachTest() throws Exception {
-        project = StubFactory.create(Project.class, 1);
-        File file = StubFactory.create(File.class, 1);
-        project.addFile(file);
+        project = new ProjectStub();
+        project.addFile(new FileStub());
     }
 
     /**
@@ -92,7 +92,7 @@ public class ProjectTest {
     @Test
     public void getFiles() throws Exception {
         Set<File> files = new HashSet<File>(project.getFiles());
-        File anotherFile = StubFactory.create(File.class, 2);
+        File anotherFile = new FileStub2();
         project.getFiles().add(anotherFile);
         files.add(anotherFile);
         assertTrue("file not added.", project.getFiles().contains(anotherFile));
@@ -115,7 +115,7 @@ public class ProjectTest {
     @Test
     public void addFile2() throws Exception {
         Set<File> files = new HashSet<File>(project.getFiles());
-        File anotherFile = StubFactory.create(File.class, 2);
+        File anotherFile = new FileStub2();
         project.addFile(anotherFile);
         files.add(anotherFile);
         assertTrue("file not added.", project.getFiles().contains(anotherFile));
@@ -171,7 +171,7 @@ public class ProjectTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void removeFile3() throws Exception {
-        File anotherFile = StubFactory.create(File.class, 2);
+        File anotherFile = new FileStub2();
         project.removeFile(anotherFile);
     }
 
@@ -211,7 +211,7 @@ public class ProjectTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(project, "files", 300);
+        project.setFiles(null);
         SerializationUtils.clone(project);
     }
 

@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @version 1.0
  * @since vhdllab2
  */
-class FileResource extends Resource {
+public class FileResource extends Resource {
 
     private static final long serialVersionUID = 1L;
 

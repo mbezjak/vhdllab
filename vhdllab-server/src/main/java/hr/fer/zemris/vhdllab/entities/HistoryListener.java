@@ -1,24 +1,27 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
-
 import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.annotation.Configurable;
+
+@Configurable("historyListener")
 public class HistoryListener {
+    
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
 
     private EntityManager newEntityManager() {
-        EntityManagerFactory factory = EntityManagerUtil
-                .createEntityManagerFactory();
-        EntityManager em = factory.createEntityManager();
+        EntityManager em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         return em;
     }

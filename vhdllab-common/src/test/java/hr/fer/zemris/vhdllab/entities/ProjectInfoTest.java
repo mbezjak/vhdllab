@@ -1,9 +1,16 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID_TOO_LONG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectInfoStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -13,16 +20,16 @@ import org.junit.Test;
  * A test case for {@link ProjectInfo}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class ProjectInfoTest {
 
-    private static final Caseless NAME = StubFactory.getStubValue("name", 1);
-
-    private ProjectInfo project;
+    private ProjectInfoStub project;
 
     @Before
     public void initEachTest() throws Exception {
-        project = StubFactory.create(ProjectInfo.class, 1);
+        project = new ProjectInfoStub();
     }
 
     /**
@@ -38,8 +45,7 @@ public class ProjectInfoTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor2() throws Exception {
-        Caseless userId = StubFactory.getStubValue("userId", 301);
-        new ProjectInfo(userId, NAME);
+        new ProjectInfo(USER_ID_TOO_LONG, NAME);
     }
 
     /**
@@ -80,9 +86,9 @@ public class ProjectInfoTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        ProjectInfo another = StubFactory.create(ProjectInfo.class, 2);
-        StubFactory.setProperty(another, "name", 1);
-        StubFactory.setProperty(another, "userId", 1);
+        ProjectInfoStub another = new ProjectInfoStub();
+        another.setId(ID_2);
+        another.setVersion(VERSION_2);
         assertEquals("not equal.", project, another);
         assertEquals("hashCode not same.", project.hashCode(), another
                 .hashCode());
@@ -93,8 +99,8 @@ public class ProjectInfoTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        ProjectInfo another = new ProjectInfo(project);
-        StubFactory.setProperty(another, "userId", 2);
+        ProjectInfoStub another = new ProjectInfoStub(project);
+        another.setUserId(USER_ID_2);
         assertFalse("equal.", project.equals(another));
         assertNotSame("same hashCode.", project.hashCode(), another.hashCode());
     }
@@ -104,8 +110,8 @@ public class ProjectInfoTest {
      */
     @Test
     public void equalsAndHashCode3() throws Exception {
-        ProjectInfo another = new ProjectInfo(project);
-        StubFactory.setProperty(another, "name", 2);
+        ProjectInfoStub another = new ProjectInfoStub(project);
+        another.setName(NAME_2);
         assertFalse("equal.", project.equals(another));
         assertNotSame("same hashCode.", project.hashCode(), another.hashCode());
     }
@@ -124,7 +130,7 @@ public class ProjectInfoTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(project, "userId", 300);
+        project.setUserId(null);
         SerializationUtils.clone(project);
     }
 
@@ -133,7 +139,7 @@ public class ProjectInfoTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization3() throws Exception {
-        StubFactory.setProperty(project, "userId", 301);
+        project.setUserId(USER_ID_TOO_LONG);
         SerializationUtils.clone(project);
     }
 

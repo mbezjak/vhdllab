@@ -1,25 +1,29 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA_TOO_LONG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.ResourceStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * A test case for Resource.
+ * A test case for {@link Resource}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class ResourceTest {
 
-    private static final Caseless NAME = StubFactory.getStubValue("name", 1);
-    private Resource res;
+    private ResourceStub res;
     
     @Before
     public void initEachTest() throws Exception {
-        res = StubFactory.create(Resource.class, 1);
+        res = new ResourceStub();
     }
 
     /**
@@ -35,8 +39,7 @@ public class ResourceTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor2() throws Exception {
-        String data = StubFactory.getStubValue("data", 301);
-        new Resource(NAME, data);
+        new Resource(NAME, DATA_TOO_LONG);
     }
 
     /**
@@ -85,7 +88,7 @@ public class ResourceTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(res, "data", 300);
+        res.setData(null);
         SerializationUtils.clone(res);
     }
 
@@ -94,7 +97,7 @@ public class ResourceTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization3() throws Exception {
-        StubFactory.setProperty(res, "data", 301);
+        res.setData(DATA_TOO_LONG);
         SerializationUtils.clone(res);
     }
 

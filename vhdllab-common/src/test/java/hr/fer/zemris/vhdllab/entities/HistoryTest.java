@@ -1,8 +1,14 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.DELETED_ON_BEFORE_ANYTHING;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.INSERT_VERSION;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.INSERT_VERSION_NEGATIVE;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.UPDATE_VERSION;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.UPDATE_VERSION_NEGATIVE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import hr.fer.zemris.vhdllab.entities.stub.HistoryStub;
 
 import java.util.Date;
 
@@ -14,14 +20,16 @@ import org.junit.Test;
  * A test case for {@link History}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class HistoryTest {
 
-    private History history;
+    private HistoryStub history;
 
     @Before
     public void initEachTest() throws Exception {
-        history = StubFactory.create(History.class, 1);
+        history = new HistoryStub();
     }
 
     /**
@@ -29,13 +37,13 @@ public class HistoryTest {
      */
     @Test
     public void constructorDefault() throws Exception {
-        history = new History();
-        assertEquals("insertVersion not 0.", Integer.valueOf(0), history
+        History another = new History();
+        assertEquals("insertVersion not 0.", Integer.valueOf(0), another
                 .getInsertVersion());
-        assertEquals("updateVersion not 0.", Integer.valueOf(0), history
+        assertEquals("updateVersion not 0.", Integer.valueOf(0), another
                 .getUpdateVersion());
-        assertNotNull("createdOn is null.", history.getCreatedOn());
-        assertNull("deletedOn is not null.", history.getDeletedOn());
+        assertNotNull("createdOn is null.", another.getCreatedOn());
+        assertNull("deletedOn is not null.", another.getDeletedOn());
     }
 
     /**
@@ -43,15 +51,13 @@ public class HistoryTest {
      */
     @Test
     public void constructor() throws Exception {
-        Integer insertVersion = 3;
-        Integer updateVersion = 7;
-        history = new History(insertVersion, updateVersion);
-        assertEquals("insertVersion is wrong.", insertVersion, history
+        History another = new History(INSERT_VERSION, UPDATE_VERSION);
+        assertEquals("insertVersion is wrong.", INSERT_VERSION, another
                 .getInsertVersion());
-        assertEquals("updateVersion is wrong.", updateVersion, history
+        assertEquals("updateVersion is wrong.", UPDATE_VERSION, another
                 .getUpdateVersion());
-        assertNotNull("createdOn is null.", history.getCreatedOn());
-        assertNull("deletedOn is not null.", history.getDeletedOn());
+        assertNotNull("createdOn is null.", another.getCreatedOn());
+        assertNull("deletedOn is not null.", another.getDeletedOn());
     }
 
     /**
@@ -59,7 +65,7 @@ public class HistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
-        new History(null, 1);
+        new History(null, UPDATE_VERSION);
     }
 
     /**
@@ -67,7 +73,7 @@ public class HistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor3() throws Exception {
-        new History(1, null);
+        new History(INSERT_VERSION, null);
     }
 
     /**
@@ -75,7 +81,7 @@ public class HistoryTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor4() throws Exception {
-        new History(-1, 1);
+        new History(INSERT_VERSION_NEGATIVE, UPDATE_VERSION);
     }
 
     /**
@@ -83,24 +89,17 @@ public class HistoryTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor5() throws Exception {
-        new History(1, -1);
+        new History(INSERT_VERSION, UPDATE_VERSION_NEGATIVE);
     }
 
     /**
-     * Set deleted on to null.
+     * Set deleted on.
      */
     @Test
     public void setDeletedOn() {
         assertNotNull("deleted on is null.", history.getDeletedOn());
         history.setDeletedOn(null);
         assertNull("delete on not set to null.", history.getDeletedOn());
-    }
-
-    /**
-     * Set deleted on to new timestamp.
-     */
-    @Test
-    public void setDeletedOn2() {
         Date timestamp = new Date();
         history.setDeletedOn(timestamp);
         assertEquals("timestamps not same.", timestamp, history.getDeletedOn());
@@ -110,11 +109,10 @@ public class HistoryTest {
      * Set deleted on to before created on.
      */
     @Test(expected = IllegalArgumentException.class)
-    public void setDeletedOn3() throws Exception {
-        Date deletedOn = StubFactory.getStubValue("deletedOn", 304);
-        history.setDeletedOn(deletedOn);
+    public void setDeletedOn2() throws Exception {
+        history.setDeletedOn(DELETED_ON_BEFORE_ANYTHING);
     }
-    
+
     /**
      * Entities are same after deserialization.
      */
@@ -136,7 +134,7 @@ public class HistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(history, "insertVersion", 300);
+        history.setInsertVersion(null);
         SerializationUtils.clone(history);
     }
 
@@ -145,7 +143,7 @@ public class HistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization3() throws Exception {
-        StubFactory.setProperty(history, "updateVersion", 300);
+        history.setUpdateVersion(null);
         SerializationUtils.clone(history);
     }
 
@@ -154,7 +152,7 @@ public class HistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization4() throws Exception {
-        StubFactory.setProperty(history, "createdOn", 300);
+        history.setCreatedOn(null);
         SerializationUtils.clone(history);
     }
 
@@ -163,7 +161,7 @@ public class HistoryTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization5() throws Exception {
-        StubFactory.setProperty(history, "insertVersion", 303);
+        history.setInsertVersion(INSERT_VERSION_NEGATIVE);
         SerializationUtils.clone(history);
     }
 
@@ -172,20 +170,19 @@ public class HistoryTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization6() throws Exception {
-        StubFactory.setProperty(history, "updateVersion", 303);
+        history.setUpdateVersion(UPDATE_VERSION_NEGATIVE);
         SerializationUtils.clone(history);
     }
-    
+
     /**
      * Simulate data tempering - deleted on is before created on.
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization7() throws Exception {
-        history = new History(); // ensures that createdOn is new Date()
-        StubFactory.setProperty(history, "deletedOn", 304);
+        history.setDeletedOnField(DELETED_ON_BEFORE_ANYTHING);
         SerializationUtils.clone(history);
     }
-    
+
     @Test
     public void testToString() {
         System.out.println(history);

@@ -1,10 +1,18 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IFileResourceStub.TYPE;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.FileStub;
+import hr.fer.zemris.vhdllab.entities.stub.FileStub2;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectStub;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectStub2;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -17,11 +25,11 @@ import org.junit.Test;
  */
 public class FileTest {
 
-    private File file;
+    private FileStub file;
 
     @Before
     public void initEachTest() throws Exception {
-        file = StubFactory.create(File.class, 1);
+        file = new FileStub();
     }
 
     /**
@@ -29,12 +37,9 @@ public class FileTest {
      */
     @Test
     public void constructor() throws Exception {
-        Caseless name = StubFactory.getStubValue("name", 1);
-        FileType type = StubFactory.getStubValue("type", 1);
-        String data = StubFactory.getStubValue("data", 1);
-        assertEquals("names not same.", name, file.getName());
-        assertEquals("types not same.", type, file.getType());
-        assertEquals("data not same.", data, file.getData());
+        assertEquals("names not same.", NAME, file.getName());
+        assertEquals("types not same.", TYPE, file.getType());
+        assertEquals("data not same.", DATA, file.getData());
     }
 
     /**
@@ -42,7 +47,7 @@ public class FileTest {
      */
     @Test
     public void copyConstructor() throws Exception {
-        Project project = StubFactory.create(Project.class, 1);
+        Project project = new Project();
         project.addFile(file);
         File another = new File(file);
         assertTrue("same reference.", file != another);
@@ -67,7 +72,7 @@ public class FileTest {
         file.setProject(null);
         assertNull("not null.", file.getProject());
         assertNull("not null.", file.getPostRemoveProjectReference());
-        Project project = StubFactory.create(Project.class, 1);
+        Project project = new ProjectStub();
         project.addFile(file);
         assertNull("not null.", file.getPostRemoveProjectReference());
         project.removeFile(file);
@@ -93,12 +98,12 @@ public class FileTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        Project project = StubFactory.create(Project.class, 1);
+        Project project = new ProjectStub();
         Project anotherProject = new Project(project);
-        File anotherFile = StubFactory.create(File.class, 2);
+        FileStub anotherFile = new FileStub2();
         project.addFile(file);
         anotherProject.addFile(anotherFile);
-        StubFactory.setProperty(anotherFile, "name", 1);
+        anotherFile.setName(NAME);
         assertEquals("not equal.", file, anotherFile);
         assertEquals("hashCode not same.", file.hashCode(), anotherFile
                 .hashCode());
@@ -109,8 +114,8 @@ public class FileTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        Project project = StubFactory.create(Project.class, 1);
-        Project anotherProject = StubFactory.create(Project.class, 2);
+        Project project = new ProjectStub();
+        Project anotherProject = new ProjectStub2();
         File anotherFile = new File(file);
         project.addFile(file);
         anotherProject.addFile(anotherFile);
@@ -123,7 +128,7 @@ public class FileTest {
      */
     @Test
     public void equalsAndHashCode3() throws Exception {
-        Project project = StubFactory.create(Project.class, 1);
+        Project project = new ProjectStub();
         File anotherFile = new File(file);
         project.addFile(file);
         assertFalse("equal.", file.equals(anotherFile));
@@ -135,12 +140,12 @@ public class FileTest {
      */
     @Test
     public void equalsAndHashCode4() throws Exception {
-        Project project = StubFactory.create(Project.class, 1);
+        Project project = new ProjectStub();
         Project anotherProject = new Project(project);
-        File anotherFile = StubFactory.create(File.class, 1);
+        FileStub anotherFile = new FileStub();
         project.addFile(file);
         anotherProject.addFile(anotherFile);
-        StubFactory.setProperty(anotherFile, "name", 2);
+        anotherFile.setName(NAME_2);
         assertFalse("equal.", file.equals(anotherFile));
         assertNotSame("same hashCode.", file.hashCode(), anotherFile.hashCode());
     }
@@ -161,7 +166,7 @@ public class FileTest {
 
     @Test
     public void asStringInProject() throws Exception {
-        Project project = StubFactory.create(Project.class, 1);
+        Project project = new ProjectStub();
         project.addFile(file);
         System.out.println(file);
     }

@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Project is a container for library files.
@@ -50,18 +49,6 @@ public class LibraryInfo extends EntityObject {
      */
     public LibraryInfo(LibraryInfo library) {
         super(library);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                    .appendSuper(super.toString())
-                    .toString();
     }
 
 }

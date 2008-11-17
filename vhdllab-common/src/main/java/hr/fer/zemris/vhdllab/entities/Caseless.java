@@ -22,7 +22,7 @@ public final class Caseless implements Serializable, Comparable<Caseless> {
     /**
      * An inner string
      */
-    public String inner;
+    private String inner;
 
     /**
      * Default constructor for persistence provider.
@@ -122,6 +122,24 @@ public final class Caseless implements Serializable, Comparable<Caseless> {
      */
     public int length() {
         return inner.length();
+    }
+
+    /**
+     * Returns caseless whose inner string is all upper case.
+     * 
+     * @return upper case caseless
+     */
+    public Caseless toUpperCase() {
+        return new Caseless(inner.toUpperCase(Locale.ENGLISH));
+    }
+
+    /**
+     * Returns caseless whose inner string is all lower case.
+     * 
+     * @return lower case caseless
+     */
+    public Caseless toLowerCase() {
+        return new Caseless(inner.toLowerCase(Locale.ENGLISH));
     }
 
 }

@@ -1,9 +1,22 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IFileInfoStub.PROJECT_ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IFileResourceStub.TYPE_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.CREATED_ON_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.DELETED_ON_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.INSERT_VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.UPDATE_VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.FileInfoHistoryStub;
+import hr.fer.zemris.vhdllab.entities.stub.FileInfoStub;
+import hr.fer.zemris.vhdllab.entities.stub.HistoryStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -13,14 +26,16 @@ import org.junit.Test;
  * A test case for {@link FileInfoHistory}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class FileInfoHistoryTest {
 
-    private FileInfoHistory file;
+    private FileInfoHistoryStub file;
 
     @Before
     public void initEachTest() throws Exception {
-        file = StubFactory.create(FileInfoHistory.class, 1);
+        file = new FileInfoHistoryStub();
     }
 
     /**
@@ -28,8 +43,7 @@ public class FileInfoHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor() throws Exception {
-        History history = StubFactory.getStubValue("history", 1);
-        new FileInfoHistory(null, history);
+        new FileInfoHistory(null, new HistoryStub());
     }
 
     /**
@@ -37,8 +51,7 @@ public class FileInfoHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
-        FileInfo fileInfo = StubFactory.getStubValue("fileInfo", 1);
-        new FileInfoHistory(fileInfo, null);
+        new FileInfoHistory(new FileInfoStub(), null);
     }
 
     /**
@@ -79,11 +92,14 @@ public class FileInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        FileInfoHistory another = StubFactory.create(FileInfoHistory.class, 2);
-        StubFactory.setProperty(another, "name", 1);
-        StubFactory.setProperty(another, "projectId", 1);
-        StubFactory.setProperty(another.getHistory(), "insertVersion", 1);
-        StubFactory.setProperty(another.getHistory(), "updateVersion", 1);
+        FileInfoHistoryStub another = new FileInfoHistoryStub();
+        another.setId(ID_2);
+        another.setVersion(VERSION_2);
+        another.setData(DATA_2);
+        another.setType(TYPE_2);
+        HistoryStub history = (HistoryStub) another.getHistory();
+        history.setCreatedOn(CREATED_ON_2);
+        history.setDeletedOn(DELETED_ON_2);
         assertEquals("not equal.", file, another);
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());
     }
@@ -93,8 +109,8 @@ public class FileInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        FileInfoHistory another = StubFactory.create(FileInfoHistory.class, 1);
-        StubFactory.setProperty(another.getHistory(), "insertVersion", 2);
+        FileInfoHistoryStub another = new FileInfoHistoryStub();
+        ((HistoryStub) another.getHistory()).setInsertVersion(INSERT_VERSION_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -104,8 +120,8 @@ public class FileInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode3() throws Exception {
-        FileInfoHistory another = StubFactory.create(FileInfoHistory.class, 1);
-        StubFactory.setProperty(another.getHistory(), "updateVersion", 2);
+        FileInfoHistoryStub another = new FileInfoHistoryStub();
+        ((HistoryStub) another.getHistory()).setInsertVersion(UPDATE_VERSION_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -115,8 +131,8 @@ public class FileInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode4() throws Exception {
-        FileInfoHistory another = new FileInfoHistory(file);
-        StubFactory.setProperty(another, "name", 2);
+        FileInfoHistoryStub another = new FileInfoHistoryStub(file);
+        another.setName(NAME_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -126,8 +142,8 @@ public class FileInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode5() throws Exception {
-        FileInfoHistory another = new FileInfoHistory(file);
-        StubFactory.setProperty(another, "projectId", 2);
+        FileInfoHistoryStub another = new FileInfoHistoryStub(file);
+        another.setProjectId(PROJECT_ID_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -146,7 +162,7 @@ public class FileInfoHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(file, "projectId", 300);
+        file.setProjectId(null);
         SerializationUtils.clone(file);
     }
 

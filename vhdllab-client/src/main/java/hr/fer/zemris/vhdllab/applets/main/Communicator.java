@@ -1,63 +1,67 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.api.comm.Method;
-import hr.fer.zemris.vhdllab.api.comm.methods.CompileFileMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.CreateFileMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.CreateProjectMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.DeleteFileMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.DeleteProjectMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.ExistsFile2Method;
-import hr.fer.zemris.vhdllab.api.comm.methods.ExtractCircuitInterfaceMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.ExtractHierarchyMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.FindFileByNameMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.FindFilesByProjectMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.FindProjectsByUserMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.FindUserFilesByUserMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.GenerateVHDLMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.IsSuperuserMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.LoadFileContentMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.LoadFileNameMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.LoadFileTypeMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.LoadPredefinedFileContentMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.LoadProjectNameMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.LoadUserFileContentMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.LoadUserFileNameMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.ReportApplicationErrorMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.SaveFileMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.SaveUserFileMethod;
-import hr.fer.zemris.vhdllab.api.comm.methods.SimulateFileMethod;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entities.UserFileInfo;
+import hr.fer.zemris.vhdllab.service.Compiler;
+import hr.fer.zemris.vhdllab.service.FileService;
+import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
+import hr.fer.zemris.vhdllab.service.LibraryFileService;
+import hr.fer.zemris.vhdllab.service.ProjectService;
+import hr.fer.zemris.vhdllab.service.Simulator;
+import hr.fer.zemris.vhdllab.service.UserFileService;
+import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-public class Communicator {
+import javax.annotation.Resource;
 
-	private Initiator initiator;
+public class Communicator implements ICommunicator {
+    
+    @Resource(name = "fileService")
+    private FileService fileService;
+    @Resource(name = "projectService")
+    private ProjectService projectService;
+    @Resource(name = "libraryFileService")
+    private LibraryFileService libraryFileService;
+    @Resource(name = "userFileService")
+    private UserFileService userFileService;
+    @Resource(name = "hierarchyExtractor")
+    private HierarchyExtractor hierarchyExtractor;
+    @Resource(name = "circuitInterfaceExtractor")
+    private CircuitInterfaceExtractor circuitInterfaceExtractor;
+    @Resource(name = "vhdlGenerator")
+    private VhdlGenerator vhdlGenerator;
+    @Resource(name = "compiler")
+    private Compiler compiler;
+    @Resource(name = "simulator")
+    private Simulator simulator;
+
 	private Cache cache;
 	private Caseless userId;
 
-	public Communicator(Initiator initiator) {
-		if (initiator == null)
-			throw new NullPointerException("Initiator can not be null.");
+	public Communicator() {
 		cache = new Cache();
-		this.initiator = initiator;
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#init()
+     */
 	public void init() throws UniformAppletException {
 	    userId = new Caseless(SystemContext.instance().getUserId());
 		loadUserPreferences();
@@ -81,67 +85,71 @@ public class Communicator {
 		}
 	}
 
-	public void dispose() throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#dispose()
+     */
+	public void dispose() {
 		UserPreferences preferences = UserPreferences.instance();
+		List<UserFileInfo> files = new ArrayList<UserFileInfo>();
 		for (String key : preferences.keys()) {
 			String property = preferences.get(key, null);
 			if (property == null) {
 				continue;
 			}
-			Integer id = cache.getIdentifierForProperty(new Caseless(key));
-			SaveUserFileMethod method = new SaveUserFileMethod(id, property, userId);
-			initiate(method);
+			UserFileInfo file = cache.getUserFile(new Caseless(key));
+			files.add(file);
 		}
+		userFileService.save(files);
 	}
 
-	public List<Caseless> getAllProjects() throws UniformAppletException {
-		FindProjectsByUserMethod method = new FindProjectsByUserMethod(userId);
-		initiate(method);
-		List<Integer> projectIdentifiers = method.getResult();
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#getAllProjects()
+     */
+	public List<Caseless> getAllProjects() {
+	    List<ProjectInfo> projects = projectService.findByUser(userId);
 
-		List<Caseless> projectNames = new ArrayList<Caseless>();
-		for (Integer id : projectIdentifiers) {
-		    Caseless projectName = cache.getProjectForIdentifier(id);
+	    List<Caseless> projectNames = new ArrayList<Caseless>();
+		for (ProjectInfo p : projects) {
+		    Caseless projectName = cache.getProjectForIdentifier(p);
 			if (projectName == null) {
-				LoadProjectNameMethod loadProjectNameMethod = new LoadProjectNameMethod(
-						id, userId);
-				initiate(loadProjectNameMethod);
-				Caseless name = loadProjectNameMethod.getResult();
-				cache.cacheItem(name, id);
-				projectName = cache.getProjectForIdentifier(id);
+				Caseless name = p.getName();
+				cache.cacheItem(name, p);
+				projectName = cache.getProjectForIdentifier(p);
 			}
 			projectNames.add(projectName);
 		}
 		return projectNames;
 	}
 
-	public List<Caseless> getAllProjects(Caseless userId) throws UniformAppletException {
-		FindProjectsByUserMethod method = new FindProjectsByUserMethod(userId);
-		initiate(method);
-		List<Integer> projectIdentifiers = method.getResult();
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#getAllProjects(hr.fer.zemris.vhdllab.entities.Caseless)
+     */
+	public List<Caseless> getAllProjects(Caseless userId) {
+        List<ProjectInfo> projects = projectService.findByUser(userId);
 		
 		List<Caseless> projectNames = new ArrayList<Caseless>();
-		for (Integer id : projectIdentifiers) {
-		    Caseless projectName = cache.getProjectForIdentifier(id);
-			if (projectName == null) {
-				LoadProjectNameMethod loadProjectNameMethod = new LoadProjectNameMethod(
-						id, userId);
-				initiate(loadProjectNameMethod);
-				Caseless name = loadProjectNameMethod.getResult();
-				cache.cacheItem(name, id);
-				projectName = cache.getProjectForIdentifier(id);
-			}
-			projectNames.add(projectName);
-		}
-		return projectNames;
+        for (ProjectInfo p : projects) {
+            Caseless projectName = cache.getProjectForIdentifier(p);
+            if (projectName == null) {
+                Caseless name = p.getName();
+                cache.cacheItem(name, p);
+                projectName = cache.getProjectForIdentifier(p);
+            }
+            projectNames.add(projectName);
+        }
+        return projectNames;
 	}
 	
-	public boolean isSuperuser() throws UniformAppletException {
-		IsSuperuserMethod method = new IsSuperuserMethod(new Caseless(SystemContext.instance().getUserId()));
-		initiate(method);
-		return method.getResult().booleanValue();
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#isSuperuser()
+     */
+	public boolean isSuperuser() {
+	    return false;
 	}
 	
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#findFilesByProject(hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public List<Caseless> findFilesByProject(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null) {
@@ -151,27 +159,24 @@ public class Communicator {
 		if (projectIdentifier == null) {
 			throw new UniformAppletException("Project does not exists!");
 		}
-		FindFilesByProjectMethod method = new FindFilesByProjectMethod(
-				projectIdentifier, userId);
-		initiate(method);
-		List<Integer> fileIdentifiers = method.getResult();
+		List<FileInfo> files = fileService.findByProject(projectIdentifier);
 
 		List<Caseless> fileNames = new ArrayList<Caseless>();
-		for (Integer id : fileIdentifiers) {
-			FileIdentifier identifier = cache.getFileForIdentifier(id);
+		for (FileInfo f : files) {
+			FileIdentifier identifier = cache.getFileForIdentifier(f);
 			if (identifier == null) {
-				LoadFileNameMethod loadFileNameMethod = new LoadFileNameMethod(
-						id, userId);
-				initiate(loadFileNameMethod);
-				Caseless name = loadFileNameMethod.getResult();
-				cache.cacheItem(projectName, name, id);
-				identifier = cache.getFileForIdentifier(id);
+				Caseless name = f.getName();
+				cache.cacheItem(projectName, name, f);
+				identifier = cache.getFileForIdentifier(f);
 			}
 			fileNames.add(identifier.getFileName());
 		}
 		return fileNames;
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#existsFile(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public boolean existsFile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -185,8 +190,10 @@ public class Communicator {
 		return cache.containsIdentifierFor(projectName, fileName);
 	}
 
-	public boolean existsProject(Caseless projectName)
-			throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#existsProject(hr.fer.zemris.vhdllab.entities.Caseless)
+     */
+	public boolean existsProject(Caseless projectName) {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		/*
@@ -197,8 +204,10 @@ public class Communicator {
 		return cache.containsIdentifierFor(projectName);
 	}
 
-	public void deleteFile(Caseless projectName, Caseless fileName)
-			throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#deleteFile(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
+	public void deleteFile(Caseless projectName, Caseless fileName) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
@@ -206,31 +215,36 @@ public class Communicator {
 		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
+		fileService.delete(cache.getFile(fileIdentifier));
 		cache.removeItem(projectName, fileName);
-		DeleteFileMethod method = new DeleteFileMethod(fileIdentifier, userId);
-		initiate(method);
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#deleteProject(hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public void deleteProject(Caseless projectName) throws UniformAppletException {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
-		Integer fileIdentifier = cache.getIdentifierFor(projectName);
-		if (fileIdentifier == null)
+		Integer projectIdentifier = cache.getIdentifierFor(projectName);
+		if (projectIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
+		projectService.delete(cache.getProject(projectIdentifier));
 		cache.removeItem(projectName);
-		DeleteProjectMethod method = new DeleteProjectMethod(fileIdentifier, userId);
-		initiate(method);
 	}
 
-	public void createProject(Caseless projectName) throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#createProject(hr.fer.zemris.vhdllab.entities.Caseless)
+     */
+	public void createProject(Caseless projectName) {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
-		CreateProjectMethod method = new CreateProjectMethod(projectName, userId);
-		initiate(method);
-		Integer projectIdentifier = method.getResult();
-		cache.cacheItem(projectName, projectIdentifier);
+		ProjectInfo savedProject = projectService.save(new ProjectInfo(userId, projectName));
+		cache.cacheItem(projectName, savedProject);
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#createFile(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.FileType, java.lang.String)
+     */
 	public void createFile(Caseless projectName, Caseless fileName, FileType type,
 			String data) throws UniformAppletException {
 		if (projectName == null)
@@ -242,14 +256,13 @@ public class Communicator {
 		Integer projectIdentifier = cache.getIdentifierFor(projectName);
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
-		CreateFileMethod method = new CreateFileMethod(projectIdentifier,
-				fileName, type, data, userId);
-		initiate(method);
-
-		Integer fileIdentifier = method.getResult();
-		cache.cacheItem(projectName, fileName, fileIdentifier);
+		FileInfo savedFile = fileService.save(new FileInfo(type, fileName, data, projectIdentifier));
+		cache.cacheItem(projectName, fileName, savedFile);
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#saveFile(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless, java.lang.String)
+     */
 	public void saveFile(Caseless projectName, Caseless fileName, String content)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -261,12 +274,16 @@ public class Communicator {
 		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		SaveFileMethod method = new SaveFileMethod(fileIdentifier, content, userId);
-		initiate(method);
+		FileInfo file = cache.getFile(fileIdentifier);
+		file.setData(content);
+		FileInfo savedFile = fileService.save(file);
+		cache.cacheFile(savedFile);
 	}
 
-	public String loadFileContent(Caseless projectName, Caseless fileName)
-			throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#loadFileContent(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
+	public String loadFileContent(Caseless projectName, Caseless fileName) {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
@@ -275,29 +292,24 @@ public class Communicator {
 		if (fileIdentifier == null) {
 			// throw new UniformAppletException("File (" + fileName + "/"
 			// + projectName + ") does not exists!");
-			LoadPredefinedFileContentMethod method = new LoadPredefinedFileContentMethod(fileName, userId);
-			initiate(method);
-			return method.getResult();
-		} else {
-			LoadFileContentMethod method = new LoadFileContentMethod(
-					fileIdentifier, userId);
-			initiate(method);
-			return method.getResult();
+		    return loadPredefinedFileContent(fileName);
 		}
+		return cache.getFile(fileIdentifier).getData();
 	}
 
-	public String loadPredefinedFileContent(Caseless fileName)
-			throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#loadPredefinedFileContent(hr.fer.zemris.vhdllab.entities.Caseless)
+     */
+	public String loadPredefinedFileContent(Caseless fileName) {
 		if (fileName == null)
 			throw new NullPointerException("File name can not be null.");
-		LoadPredefinedFileContentMethod method = new LoadPredefinedFileContentMethod(
-				fileName, userId);
-		initiate(method);
-		return method.getResult();
+        return libraryFileService.findPredefinedByName(fileName).getData();
 	}
 
-	public FileType loadFileType(Caseless projectName, Caseless fileName)
-			throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#loadFileType(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
+	public FileType loadFileType(Caseless projectName, Caseless fileName) {
 		if (projectName == null)
 			throw new NullPointerException("Project name can not be null.");
 		if (fileName == null)
@@ -307,16 +319,12 @@ public class Communicator {
 			return FileType.PREDEFINED;
 			// throw new UniformAppletException("File does not exists!");
 		}
-		FileType fileType = cache.getFileType(fileIdentifier);
-		if (fileType == null) {
-			LoadFileTypeMethod method = new LoadFileTypeMethod(fileIdentifier, userId);
-			initiate(method);
-			fileType = method.getResult();
-			cache.cacheFileType(fileIdentifier, fileType);
-		}
-		return fileType;
+		return cache.getFile(fileIdentifier).getType();
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#extractHierarchy(hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public Hierarchy extractHierarchy(Caseless projectName)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -325,26 +333,13 @@ public class Communicator {
 		if (projectIdentifier == null)
 			throw new UniformAppletException("Project does not exists!");
 
-		ExtractHierarchyMethod hierarhyMethod = new ExtractHierarchyMethod(
-				projectIdentifier, userId);
-		initiate(hierarhyMethod);
-
-		Hierarchy h = hierarhyMethod.getResult();
+		Hierarchy h = hierarchyExtractor.extract(cache.getProject(projectIdentifier));
 		for (Caseless fileName : getAllForHierarchy(h)) {
 			Integer id = cache.getIdentifierFor(projectName, fileName);
 			if (id == null) {
-				ExistsFile2Method existsMethod = new ExistsFile2Method(
-						projectIdentifier, fileName, userId);
-				initiate(existsMethod);
-				boolean exists = existsMethod.getResult().booleanValue();
-				if (exists) {
-					FindFileByNameMethod findMethod = new FindFileByNameMethod(
-							projectIdentifier, fileName, userId);
-					initiate(findMethod);
-					Integer fileIdentifier = findMethod.getResult();
-					cache.cacheItem(projectName, fileName, fileIdentifier);
-				} else {
-					// invoker.
+			    FileInfo file = fileService.findByName(projectIdentifier, fileName);
+				if (file != null) {
+					cache.cacheItem(projectName, fileName, file);
 				}
 			}
 		}
@@ -360,6 +355,9 @@ public class Communicator {
 	    return names;
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#generateVHDL(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public VHDLGenerationResult generateVHDL(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -369,11 +367,12 @@ public class Communicator {
 		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		GenerateVHDLMethod method = new GenerateVHDLMethod(fileIdentifier, userId);
-		initiate(method);
-		return method.getResult();
+		return vhdlGenerator.generate(cache.getFile(fileIdentifier));
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#compile(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public CompilationResult compile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -383,11 +382,12 @@ public class Communicator {
 		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		CompileFileMethod method = new CompileFileMethod(fileIdentifier, userId);
-		initiate(method);
-		return method.getResult();
+		return compiler.compile(cache.getFile(fileIdentifier));
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#runSimulation(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public SimulationResult runSimulation(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		if (projectName == null)
@@ -397,11 +397,12 @@ public class Communicator {
 		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		SimulateFileMethod method = new SimulateFileMethod(fileIdentifier, userId);
-		initiate(method);
-		return method.getResult();
+		return simulator.simulate(cache.getFile(fileIdentifier));
 	}
 
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#getCircuitInterfaceFor(hr.fer.zemris.vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     */
 	public CircuitInterface getCircuitInterfaceFor(Caseless projectName,
 	        Caseless fileName) throws UniformAppletException {
 		if (projectName == null)
@@ -411,42 +412,28 @@ public class Communicator {
 		Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
 		if (fileIdentifier == null)
 			throw new UniformAppletException("File does not exists!");
-		ExtractCircuitInterfaceMethod method = new ExtractCircuitInterfaceMethod(
-				fileIdentifier, userId);
-		initiate(method);
-		return method.getResult();
+		return circuitInterfaceExtractor.extract(cache.getFile(fileIdentifier));
 	}
 
-	public void saveErrorMessage(String content) throws UniformAppletException {
+	/* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#saveErrorMessage(java.lang.String)
+     */
+	public void saveErrorMessage(String content) {
 		if (content == null)
 			throw new NullPointerException("Content can not be null.");
-		ReportApplicationErrorMethod method = new ReportApplicationErrorMethod(
-				content, userId);
-		initiate(method);
+		libraryFileService.saveError(content);
 	}
 
-	private void loadUserPreferences() throws UniformAppletException {
+	private void loadUserPreferences() {
 		Properties properties = new Properties();
-		FindUserFilesByUserMethod findMethod = new FindUserFilesByUserMethod(userId);
-		initiate(findMethod);
-		List<Integer> userFileIds = findMethod.getResult();
-		for (Integer id : userFileIds) {
-			LoadUserFileNameMethod nameMethod = new LoadUserFileNameMethod(id, userId);
-			initiate(nameMethod);
-			Caseless name = nameMethod.getResult();
-			cache.cacheUserFileItem(name, id);
-			LoadUserFileContentMethod contentMethod = new LoadUserFileContentMethod(
-					id, userId);
-			initiate(contentMethod);
-			String data = contentMethod.getResult();
+		List<UserFileInfo> files = userFileService.findByUser(userId);
+		for (UserFileInfo f : files) {
+			Caseless name = f.getName();
+			cache.cacheUserFileItem(name, f);
+			String data = f.getData();
 			properties.setProperty(name.toString(), data);
 		}
 		UserPreferences.instance().init(properties);
-	}
-
-	private void initiate(Method<? extends Serializable> method)
-			throws UniformAppletException {
-		initiator.initiateCall(method);
 	}
 
 }

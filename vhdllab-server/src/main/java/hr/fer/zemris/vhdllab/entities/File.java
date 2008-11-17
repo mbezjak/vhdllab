@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import javax.persistence.EntityListeners;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -16,8 +14,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@EntityListeners(HistoryListener.class)
-public final class File extends FileResource {
+//@EntityListeners(HistoryListener.class)
+public class File extends FileResource {
 
     private static final long serialVersionUID = 1L;
 
@@ -88,7 +86,7 @@ public final class File extends FileResource {
      * 
      * @param project a project to set; can be null
      */
-    void setProject(Project project) {
+    protected void setProject(Project project) {
         if(project == null) {
             setPostRemoveProjectReference(this.project);
         }
@@ -119,7 +117,7 @@ public final class File extends FileResource {
      * @return the post remove project reference or <code>null</code> if it has
      *         not been set
      */
-    Project getPostRemoveProjectReference() {
+    protected Project getPostRemoveProjectReference() {
         if(this.postRemoveProjectReference != null) {
             Project projectReference = this.postRemoveProjectReference;
             setPostRemoveProjectReference(null);

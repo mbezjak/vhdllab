@@ -2,6 +2,9 @@ package hr.fer.zemris.vhdllab.entities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.HistoryStub;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectHistoryStub;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectInfoStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -14,11 +17,11 @@ import org.junit.Test;
  */
 public class ProjectHistoryTest {
 
-    private ProjectHistory history;
+    private ProjectHistoryStub history;
 
     @Before
     public void initEachTest() throws Exception {
-        history = StubFactory.create(ProjectHistory.class, 1);
+        history = new ProjectHistoryStub();
     }
 
     /**
@@ -26,8 +29,7 @@ public class ProjectHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor() throws Exception {
-        History h = StubFactory.getStubValue("history", 1);
-        new ProjectHistory(null, h);
+        new ProjectHistory(null, new HistoryStub());
     }
 
     /**
@@ -35,8 +37,7 @@ public class ProjectHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
-        ProjectInfo projectInfo = StubFactory.getStubValue("projectInfo", 1);
-        new ProjectHistory(projectInfo, null);
+        new ProjectHistory(new ProjectInfoStub(), null);
     }
 
     /**
@@ -45,7 +46,7 @@ public class ProjectHistoryTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        ProjectHistory another = StubFactory.create(ProjectHistory.class, 1);
+        ProjectHistory another = new ProjectHistoryStub();
         assertTrue("not same.", another.equals(history));
         assertTrue("not same.", history.equals(another));
         assertEquals("hashcode not same.", another.hashCode(), history

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.servlets.initialize;
+/*package hr.fer.zemris.vhdllab.servlets.initialize;
 
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
 import hr.fer.zemris.vhdllab.entities.Caseless;
@@ -14,18 +14,18 @@ import hr.fer.zemris.vhdllab.servlets.initialize.predefinedFiles.PredefinedIniti
 import hr.fer.zemris.vhdllab.servlets.initialize.predefinedFiles.PredefinedInitializer.FileAndContent;
 import hr.fer.zemris.vhdllab.servlets.initialize.preferencesFiles.PreferencesInitializer;
 
-/**
+*//**
  * Initializes data. For example: writes all global files.
  * @author Miro Bezjak
- */
+ *//*
 public class InitServerData {
 
 	private ServiceContainer container;
 
-	/**
+	*//**
 	 * Constructor.
 	 * @param mprov a manager provider
-	 */
+	 *//*
 	public InitServerData(ServiceContainer container) {
 		if(container == null) {
 			throw new NullPointerException("VHDLLabManager can not be null.");
@@ -33,10 +33,10 @@ public class InitServerData {
 		this.container = container;
 	}
 
-	/**
+	*//**
 	 * Initializes all global files and predefined files.
 	 * @throws ServiceException 
-	 */
+	 *//*
 	public void initFiles() throws ServiceException {
 	    LibraryManager libman = container.getLibraryManager();
 	    LibraryFileManager libfileman = container.getLibraryFileManager();
@@ -85,3 +85,4 @@ public class InitServerData {
 	}
 	
 }
+*/

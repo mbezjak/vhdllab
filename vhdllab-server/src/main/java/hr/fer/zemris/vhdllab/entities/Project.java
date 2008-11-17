@@ -5,8 +5,6 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.EntityListeners;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -20,8 +18,8 @@ import org.hibernate.annotations.Cascade;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@EntityListeners(HistoryListener.class)
-public final class Project extends ProjectInfo {
+//@EntityListeners(HistoryListener.class)
+public class Project extends ProjectInfo {
 
 	private static final long serialVersionUID = 1L;
 
@@ -79,7 +77,7 @@ public final class Project extends ProjectInfo {
          */
 		initFiles();
 	}
-	
+
 	/**
 	 * Initializes file collection.
 	 */
@@ -107,7 +105,7 @@ public final class Project extends ProjectInfo {
                 return;
             }
             throw new IllegalArgumentException(file.toString()
-                    + " already belongs to a project; this project is "
+                    + " already belongs to some project; this project is "
                     + this.toString());
         }
         /*

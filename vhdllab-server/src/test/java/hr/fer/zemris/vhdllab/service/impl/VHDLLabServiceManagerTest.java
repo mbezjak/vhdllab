@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.impl;
+/*package hr.fer.zemris.vhdllab.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,11 +35,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
+*//**
  * A test case for {@link VHDLLabServiceManager}.
  *
  * @author Miro Bezjak
- */
+ *//*
 public class VHDLLabServiceManagerTest {
 
     private static final Caseless USER_ID = new Caseless("user.id");
@@ -98,9 +98,9 @@ public class VHDLLabServiceManagerTest {
 //        EntityManagerUtil.closeEntityManager();
     }
 
-    /**
+    *//**
      * Test initialization in constructor.
-     */
+     *//*
     @SuppressWarnings("unchecked")
     @Test
     public void constructor() throws Exception {
@@ -110,9 +110,9 @@ public class VHDLLabServiceManagerTest {
         assertTrue("no defined functionalities.", functionalities.size() > 0);
     }
 
-    /**
+    *//**
      * File is null.
-     */
+     *//*
     @Test(expected = NullPointerException.class)
     public void executeFunctionality() throws Exception {
         Method method = getPrivateMethod("executeFunctionality", File.class,
@@ -120,9 +120,9 @@ public class VHDLLabServiceManagerTest {
         invokeMethod(method, null, FunctionalityType.GENERATOR);
     }
 
-    /**
+    *//**
      * File with specified file type doesn't have any functionality defined.
-     */
+     *//*
     @Test(expected = ServiceException.class)
     public void executeFunctionality2() throws Exception {
         File f = new File(FileType.PREDEFINED, new Caseless("file_name_1"), "");
@@ -133,9 +133,9 @@ public class VHDLLabServiceManagerTest {
         project.removeFile(f);
     }
 
-    /**
+    *//**
      * Implementor threw runtime exception.
-     */
+     *//*
     @Test(expected = ServiceException.class)
     public void executeFunctionality3() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
@@ -146,9 +146,9 @@ public class VHDLLabServiceManagerTest {
         man.generateVHDL(file);
     }
 
-    /**
+    *//**
      * Implementor returned null.
-     */
+     *//*
     @Test(expected = ServiceException.class)
     public void executeFunctionality4() throws Exception {
         ServerConf conf = ServerConfParser.getConfiguration();
@@ -159,9 +159,9 @@ public class VHDLLabServiceManagerTest {
         man.generateVHDL(file);
     }
 
-    /**
+    *//**
      * Every functionality implementor must be instantiable.
-     */
+     *//*
     @SuppressWarnings("unchecked")
     @Test
     public void executeFunctionality5() throws Exception {
@@ -181,9 +181,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * Every implementor must be stateless and deterministic.
-     */
+     *//*
     @SuppressWarnings("unchecked")
     @Test
     public void executeFunctionality6() throws Exception {
@@ -220,9 +220,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * non-existing class
-     */
+     *//*
     @Test
     public void configureFunctionality() throws Exception {
         Method method = getPrivateMethod("configureFunctionality",
@@ -236,9 +236,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * class doesn't have default constructor
-     */
+     *//*
     @Test
     public void configureFunctionality2() throws Exception {
         Method method = getPrivateMethod("configureFunctionality",
@@ -252,9 +252,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * class doesn't have public default constructor
-     */
+     *//*
     @Test
     public void configureFunctionality3() throws Exception {
         Method method = getPrivateMethod("configureFunctionality",
@@ -269,9 +269,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * class is not a functionality.
-     */
+     *//*
     @Test
     public void configureFunctionality4() throws Exception {
         Method method = getPrivateMethod("configureFunctionality",
@@ -285,9 +285,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * After class is instantiated, configure method is called.
-     */
+     *//*
     @Test(expected = IllegalArgumentException.class)
     public void configureFunctionality5() throws Exception {
         Method method = getPrivateMethod("configureFunctionality",
@@ -297,9 +297,9 @@ public class VHDLLabServiceManagerTest {
         invokeMethod(method, ConfiguringFunctionality.class.getName(), p);
     }
 
-    /**
+    *//**
      * Returns only those files that have specified type.
-     */
+     *//*
     private List<File> filterByType(Set<File> files, FileType type) {
         List<File> filtered = new ArrayList<File>();
         for (File f : files) {
@@ -310,9 +310,9 @@ public class VHDLLabServiceManagerTest {
         return filtered;
     }
 
-    /**
+    *//**
      * Invokes a method on service manager with a specified parameters.
-     */
+     *//*
     @SuppressWarnings("unchecked")
     private <T> T invokeMethod(Method method, Object... params)
             throws Exception {
@@ -325,9 +325,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * Returns an accessible private method.
-     */
+     *//*
     private Method getPrivateMethod(String name, Class<?>... params)
             throws Exception {
         Method method = man.getClass().getDeclaredMethod(name, params);
@@ -335,9 +335,9 @@ public class VHDLLabServiceManagerTest {
         return method;
     }
 
-    /**
+    *//**
      * Returns an accessible private field.
-     */
+     *//*
     private Field getPrivateField(String name) throws Exception {
         Field field = man.getClass().getDeclaredField(name);
         field.setAccessible(true);
@@ -352,9 +352,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * A dummy implementation that throws exception during execution.
-     */
+     *//*
     public static class ExceptionThrowingFunctionality implements
             Functionality<Object> {
         @Override
@@ -367,9 +367,9 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * A dummy implementation return null as an execution result.
-     */
+     *//*
     public static class NullFunctionality implements Functionality<Object> {
         @Override
         public void configure(Properties properties) {
@@ -381,11 +381,11 @@ public class VHDLLabServiceManagerTest {
         }
     }
 
-    /**
+    *//**
      * A dummy implementation that throws {@link IllegalArgumentException} when
      * configure method is called and thus indicating that configure method is
      * called after class initialization.
-     */
+     *//*
     public static class ConfiguringFunctionality implements
             Functionality<Object> {
         @Override
@@ -400,3 +400,4 @@ public class VHDLLabServiceManagerTest {
     }
 
 }
+*/

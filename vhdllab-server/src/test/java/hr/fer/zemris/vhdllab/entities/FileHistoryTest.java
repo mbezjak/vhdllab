@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.entities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.FileHistoryStub;
+import hr.fer.zemris.vhdllab.entities.stub.FileInfoStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -14,11 +16,11 @@ import org.junit.Test;
  */
 public class FileHistoryTest {
 
-    private FileHistory history;
+    private FileHistoryStub history;
 
     @Before
     public void initEachTest() throws Exception {
-        history = StubFactory.create(FileHistory.class, 1);
+        history = new FileHistoryStub();
     }
 
     /**
@@ -26,8 +28,7 @@ public class FileHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor() throws Exception {
-        History h = StubFactory.getStubValue("history", 1);
-        new FileHistory(null, h);
+        new FileHistory(null, new History());
     }
 
     /**
@@ -35,8 +36,7 @@ public class FileHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
-        FileInfo fileInfo = StubFactory.getStubValue("fileInfo", 1);
-        new FileHistory(fileInfo, null);
+        new FileHistory(new FileInfoStub(), null);
     }
 
     /**
@@ -45,7 +45,7 @@ public class FileHistoryTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        FileHistory another = StubFactory.create(FileHistory.class, 1);
+        FileHistory another = new FileHistoryStub();
         assertTrue("not same.", another.equals(history));
         assertTrue("not same.", history.equals(another));
         assertEquals("hashcode not same.", another.hashCode(), history

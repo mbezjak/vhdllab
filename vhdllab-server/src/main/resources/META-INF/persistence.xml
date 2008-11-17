@@ -1,38 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
- <persistence xmlns="http://java.sun.com/xml/ns/persistence"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
      http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
-   version="1.0">
-   
-	<persistence-unit name="hibernate" transaction-type="RESOURCE_LOCAL">
-  
-		<properties>
-			<property name="hibernate.connection.url" value="${hibernate.connection.url}" />
-			<property name="hibernate.connection.username" value="${hibernate.connection.username}" />
-			<property name="hibernate.connection.password" value="${hibernate.connection.password}" />
-<!--			<property name="hibernate.connection.pool_size" value="${hibernate.connection.pool_size}" />-->
-			<property name="hibernate.dialect" value="${hibernate.dialect}" />
-			<property name="hibernate.connection.driver_class" value="${hibernate.connection.driver_class}" />
-			<property name="hibernate.connection.provider_class" value="${hibernate.connection.provider_class}" />
-			<property name="hibernate.cache.provider_class" value="${hibernate.cache.provider_class}" />
-			<property name="hibernate.cache.use_second_level_cache" value="${hibernate.cache.use_second_level_cache}" />
-			<property name="hibernate.cache.use_query_cache" value="${hibernate.cache.use_query_cache}" />
-			<property name="hibernate.show_sql" value="${hibernate.show_sql}" />
-			<property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+  version="1.0">
 
-            <!-- DBCP configuration -->
-            <property name="hibernate.dbcp.maxActive" value="20"/>
-            <property name="hibernate.dbcp.maxIdle" value="8"/>
-            <property name="hibernate.dbcp.maxWait" value="5000"/>
-            <property name="hibernate.dbcp.whenExhaustedAction" value="1"/><!-- 1=block connection -->
-            <property name="hibernate.dbcp.testOnBorrow" value="true"/>
-            <property name="hibernate.dbcp.testOnReturn" value="false"/>
-            <property name="hibernate.dbcp.validationQuery" value="SELECT 1"/><!-- MySQL valid -->
-            <property name="hibernate.dbcp.ps.maxActive" value="20"/>
-            <property name="hibernate.dbcp.ps.maxIdle" value="8"/>
-            <property name="hibernate.dbcp.ps.maxWait" value="5000"/>
-            <property name="hibernate.dbcp.ps.whenExhaustedAction" value="1"/>
-		</properties>
-	</persistence-unit>
+  <persistence-unit name="vhdllab" transaction-type="RESOURCE_LOCAL">
+    <mapping-file>META-INF/orm.xml</mapping-file>
+    <exclude-unlisted-classes />
+  </persistence-unit>
 </persistence>

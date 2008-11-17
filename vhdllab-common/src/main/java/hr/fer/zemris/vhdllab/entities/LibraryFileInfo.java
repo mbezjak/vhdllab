@@ -14,7 +14,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @version 1.0
  * @since vhdllab2
  */
-public final class LibraryFileInfo extends FileResource {
+public class LibraryFileInfo extends Resource {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,13 +32,13 @@ public final class LibraryFileInfo extends FileResource {
      * <code>libraryId</code>.
      * 
      * @param file
-     *            a library file resource to duplicate
+     *            a resource to duplicate
      * @param libraryId
      *            a library identifier that a file belongs to
      * @throws NullPointerException
      *             if either parameter is <code>null</code>
      */
-    public LibraryFileInfo(FileResource file, Integer libraryId) {
+    public LibraryFileInfo(Resource file, Integer libraryId) {
         super(file);
         this.libraryId = libraryId;
         checkProperties();

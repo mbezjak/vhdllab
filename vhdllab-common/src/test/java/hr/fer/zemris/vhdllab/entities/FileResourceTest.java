@@ -1,24 +1,29 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.FileResourceStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * A test case for FileResource.
+ * A test case for {@link FileResource}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class FileResourceTest {
 
-    private FileResource file;
+    private FileResourceStub file;
 
     @Before
     public void initEachTest() throws Exception {
-        file = StubFactory.create(FileResource.class, 1);
+        file = new FileResourceStub();
     }
 
     /**
@@ -26,9 +31,7 @@ public class FileResourceTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor() throws Exception {
-        Caseless name = StubFactory.getStubValue("name", 1);
-        String data = StubFactory.getStubValue("data", 1);
-        new FileResource(null, name, data);
+        new FileResource(null, NAME, DATA);
     }
 
     /**
@@ -77,7 +80,7 @@ public class FileResourceTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(file, "type", 300);
+        file.setType(null);
         SerializationUtils.clone(file);
     }
 

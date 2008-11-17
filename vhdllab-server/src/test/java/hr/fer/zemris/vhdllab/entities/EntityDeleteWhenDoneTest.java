@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import hr.fer.zemris.vhdllab.dao.DAOException;
-
 import org.junit.Test;
 
 
@@ -44,7 +42,7 @@ public class EntityDeleteWhenDoneTest {
 //    }
     
     @Test
-    public void saveFile() throws DAOException {
+    public void saveFile() {
 //        EntityManagerUtil.createEntityManagerFactory();
 //        EntityManager em = EntityManagerUtil.currentEntityManager();
 //        EntityManagerUtil.beginTransaction();

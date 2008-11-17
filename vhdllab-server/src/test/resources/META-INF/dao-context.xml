@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+    <property name="url" value="jdbc:hsqldb:mem:vhdllab-testdb" />
+    <property name="username" value="sa" />
+    <property name="password" value="" />
+  </bean>
+
+  <bean id="entityManagerFactory"
+    class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <property name="persistenceXmlLocation" value="classpath:META-INF/persistence-test.xml" />
+    <property name="dataSource" ref="dataSource" />
+    <property name="jpaVendorAdapter">
+      <bean
+        class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <!--
+          Same as normal HSQL dialect but string columns are case
+          insensitive.
+        -->
+        <property name="databasePlatform"
+          value="hr.fer.zemris.vhdllab.dao.impl.support.CaseInsensitiveHSQLDialect" />
+        <property name="showSql" value="false" />
+      </bean>
+    </property>
+    <property name="jpaProperties">
+      <props>
+        <prop key="hibernate.cache.use_second_level_cache">false</prop>
+        <prop key="hibernate.cache.use_query_cache">false</prop>
+        <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory" />
+  </bean>
+
+  <context:annotation-config />
+  <tx:annotation-driven transaction-manager="transactionManager" />
+  <aop:aspectj-autoproxy />
+
+  <!-- DAO classes -->
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.LibraryDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.LibraryFileDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.UserFileDaoImpl"
+    autowire="autodetect" />
+
+  <!--
+    Support DAO classes - used to test entity hierarchy (common
+    properties in real entities)
+  -->
+  <bean id="entityObjectDao" class="hr.fer.zemris.vhdllab.dao.impl.support.EntityObjectDao"
+    autowire="autodetect" />
+
+  <bean id="resourceDao" class="hr.fer.zemris.vhdllab.dao.impl.support.ResourceDao"
+    autowire="autodetect" />
+
+  <!--
+    Emulates OpenEntityManagerInViewFilter that production ready
+    application will have installed.
+  -->
+  <bean
+    class="hr.fer.zemris.vhdllab.dao.impl.support.OpenEntityManagerInViewListener" />
+
+</beans>

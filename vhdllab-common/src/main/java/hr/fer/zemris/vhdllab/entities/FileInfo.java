@@ -28,6 +28,30 @@ public class FileInfo extends FileResource {
     }
 
     /**
+     * Constructs a file info out of specified <code>type</code>,
+     * <code>name</code>, <code>data</code> and <code>projectId</code>.
+     * 
+     * @param type
+     *            the type to set
+     * @param name
+     *            the name to set
+     * @param data
+     *            the data to set
+     * @param projectId
+     *            a project identifier that a file belongs to
+     * @throws NullPointerException
+     *             if either parameter is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if either parameter is too long or <code>name</code> isn't
+     *             correctly formatted
+     * @see #NAME_LENGTH
+     * @see #DATA_LENGTH
+     */
+    public FileInfo(FileType type, Caseless name, String data, Integer projectId) {
+        this(new FileResource(type, name, data), projectId);
+    }
+
+    /**
      * Constructs a file info out of specified <code>file</code> and
      * <code>projectId</code>.
      * 

@@ -40,11 +40,10 @@ public class ProjectInfo extends EntityObject implements Ownable {
      * @throws IllegalArgumentException
      *             if either parameter is too long or <code>name</code> isn't
      *             correctly formatted
-     * @see #isCorrectName()
      * @see #USER_ID_LENGTH
      * @see #NAME_LENGTH
      */
-    protected ProjectInfo(Caseless userId, Caseless name) {
+    public ProjectInfo(Caseless userId, Caseless name) {
         super(name);
         this.userId = userId;
         checkProperties();

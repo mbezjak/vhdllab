@@ -1,26 +1,34 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_NOT_CORRECTLY_FORMATTED;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_TOO_LONG;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.EntityObjectStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * A test case for EntityObject.
+ * A test case for {@link EntityObject}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class EntityObjectTest {
 
-    private EntityObject entity;
+    private EntityObjectStub entity;
 
     @Before
     public void initEachTest() throws Exception {
-        entity = StubFactory.create(EntityObject.class, 1);
+        entity = new EntityObjectStub();
     }
 
     /**
@@ -36,8 +44,7 @@ public class EntityObjectTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor2() throws Exception {
-        Caseless name = StubFactory.getStubValue("name", 301);
-        new EntityObject(name);
+        new EntityObject(NAME_TOO_LONG);
     }
 
     /**
@@ -45,8 +52,7 @@ public class EntityObjectTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor3() throws Exception {
-        Caseless name = StubFactory.getStubValue("name", 302);
-        new EntityObject(name);
+        new EntityObject(NAME_NOT_CORRECTLY_FORMATTED);
     }
 
     /**
@@ -67,6 +73,8 @@ public class EntityObjectTest {
         assertEquals("not equal.", entity, another);
         assertEquals("hashCode not same.", entity.hashCode(), another
                 .hashCode());
+        assertEquals("ids not same.", entity.getId(), another.getId());
+        assertEquals("versions not same.", entity.getVersion(), another.getVersion());
         assertEquals("names not same.", entity.getName(), another.getName());
     }
 
@@ -86,8 +94,9 @@ public class EntityObjectTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        EntityObject another = StubFactory.create(EntityObject.class, 2);
-        StubFactory.setProperty(another, "name", 1);
+        EntityObjectStub another = new EntityObjectStub();
+        another.setId(ID_2);
+        another.setVersion(VERSION_2);
         assertEquals("not equal.", entity, another);
         assertEquals("hashCode not same.", entity.hashCode(), another
                 .hashCode());
@@ -98,8 +107,8 @@ public class EntityObjectTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        EntityObject another = new EntityObject(entity);
-        StubFactory.setProperty(another, "name", 2);
+        EntityObjectStub another = new EntityObjectStub(entity);
+        another.setName(NAME_2);
         assertFalse("equal.", entity.equals(another));
         assertNotSame("same hashCode.", entity.hashCode(), another.hashCode());
     }
@@ -118,7 +127,7 @@ public class EntityObjectTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(entity, "name", 300);
+        entity.setName(null);
         SerializationUtils.clone(entity);
     }
 
@@ -127,7 +136,7 @@ public class EntityObjectTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization3() throws Exception {
-        StubFactory.setProperty(entity, "name", 301);
+        entity.setName(NAME_TOO_LONG);
         SerializationUtils.clone(entity);
     }
 
@@ -136,7 +145,7 @@ public class EntityObjectTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization4() throws Exception {
-        StubFactory.setProperty(entity, "name", 302);
+        entity.setName(NAME_NOT_CORRECTLY_FORMATTED);
         SerializationUtils.clone(entity);
     }
 

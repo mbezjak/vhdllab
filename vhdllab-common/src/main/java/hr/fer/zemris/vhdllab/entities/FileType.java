@@ -18,8 +18,15 @@ public enum FileType {
      * @return boolean indicating if specified type is a VHDL circuit
      */
     public static boolean isCircuit(FileType type) {
-        return type.equals(SOURCE) || type.equals(SCHEMA)
-                || type.equals(AUTOMATON) || type.equals(PREDEFINED);
+        switch (type) {
+        case SOURCE:
+        case SCHEMA:
+        case AUTOMATON:
+        case PREDEFINED:
+            return true;
+        default:
+            return false;
+        }
     }
 
 }

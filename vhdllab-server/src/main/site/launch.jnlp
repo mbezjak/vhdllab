@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- JNLP File for VHDLLab application -->
 
-<jnlp spec="6.0+" codebase="@@codebase@@" href="${jnlp.file}">
+<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/${app.name}/" href="${jnlp.file}">
 
 	<information>
 		<title>${app.title}</title>
@@ -30,7 +30,7 @@
 	<resources>
 		<java version="1.6+" href="http://java.sun.com/products/autodl/j2se"
 			java-vm-args="${jnlp.vm.parameter}"/>
-		@@archive@@
+	    <jar href="${app.client.archive}" download="eager" main="true"/>
 	</resources>
 
 	<application-desc main-class="${app.main.class}">

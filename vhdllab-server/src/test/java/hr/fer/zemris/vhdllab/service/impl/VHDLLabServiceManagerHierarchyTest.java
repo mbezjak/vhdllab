@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.impl;
+/*package hr.fer.zemris.vhdllab.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
@@ -28,11 +28,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
+*//**
  * A test case for {@link VHDLLabServiceManager}'s extractHierarchy method.
  * 
  * @author Miro Bezjak
- */
+ *//*
 public class VHDLLabServiceManagerHierarchyTest {
 
     private static final Caseless USER_ID = new Caseless("user.id");
@@ -63,17 +63,17 @@ public class VHDLLabServiceManagerHierarchyTest {
         EntityManagerUtil.closeEntityManager();
     }
 
-    /**
+    *//**
      * File is null.
-     */
+     *//*
     @Test(expected = NullPointerException.class)
     public void extractHierarchyNull() throws Exception {
         man.extractHierarchy(null);
     }
 
-    /**
+    *//**
      * Empty hierarchy.
-     */
+     *//*
     @Test
     public void extractHierarchyEmpty() throws Exception {
         Hierarchy hierarchy = man.extractHierarchy(project);
@@ -85,9 +85,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * One predefined file in a hierarchy.
-     */
+     *//*
     @Test
     public void extractHierarchyTopLevel() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(1);
@@ -104,9 +104,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * One file using another in a hierarchy.
-     */
+     *//*
     @Test
     public void extractHierarchyComplex() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
@@ -127,9 +127,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * One file using another and one file is standalone in a hierarchy.
-     */
+     *//*
     @Test
     public void extractHierarchyComplex2() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
@@ -155,9 +155,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * 2-2 hierarchy (n-m => n uses m components).
-     */
+     *//*
     @Test
     public void extractHierarchyComplex3() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
@@ -188,10 +188,10 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * 1-1, 1-1 hierarchy (n-m => n uses m components). Both top level component
      * uses the same simple component.
-     */
+     *//*
     @Test
     public void extractHierarchyComplex4() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
@@ -221,9 +221,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * 1-2-2 hierarchy (n-m => n uses m components).
-     */
+     *//*
     @Test
     public void extractHierarchyComplex5() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(2);
@@ -260,10 +260,10 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * One dependency can't be resolved. Hierarchy is constructed without
      * affected dependency.
-     */
+     *//*
     @Test
     public void extractHierarchyFaultyDependency() throws Exception {
         Set<HierarchyNode> nodes = new HashSet<HierarchyNode>(1);
@@ -280,10 +280,10 @@ public class VHDLLabServiceManagerHierarchyTest {
         checkNodeDependencies(nodes, actualNodes);
     }
 
-    /**
+    *//**
      * Persists specified file but without a content thereby creating faulty
      * file.
-     */
+     *//*
     private void prepairFaultyFile(Caseless name, FileType type)
             throws ServiceException {
         File f = new File(type, name, "faulty content");
@@ -291,9 +291,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         container.getProjectManager().save(project);
     }
 
-    /**
+    *//**
      * Persists specified file.
-     */
+     *//*
     private static void prepairFile(Caseless name, FileType type)
             throws ServiceException {
         List<NameAndContent> contents = FileContentProvider.getContent(type);
@@ -306,9 +306,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         }
     }
 
-    /**
+    *//**
      * Returns all hierarchy nodes defined in specified hierarchy.
-     */
+     *//*
     @SuppressWarnings("unchecked")
     private Set<HierarchyNode> getNodes(Hierarchy h) throws Exception {
         Field field = h.getClass().getDeclaredField("nodes");
@@ -318,9 +318,9 @@ public class VHDLLabServiceManagerHierarchyTest {
         return new HashSet(nodes.values());
     }
 
-    /**
+    *//**
      * Checks that two nodes contains the same dependencies.
-     */
+     *//*
     private void checkNodeDependencies(Set<HierarchyNode> expected,
             Set<HierarchyNode> actual) {
         Iterator<HierarchyNode> expectedIterator = expected.iterator();
@@ -338,3 +338,4 @@ public class VHDLLabServiceManagerHierarchyTest {
     }
 
 }
+*/

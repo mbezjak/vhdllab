@@ -39,7 +39,7 @@ public class ProjectInfoHistory extends ProjectInfo {
      * @throws NullPointerException
      *             if either parameter is <code>null</code>
      */
-    ProjectInfoHistory(ProjectInfo project, History history) {
+    public ProjectInfoHistory(ProjectInfo project, History history) {
         super(project);
         this.history = history;
         checkProperties();

@@ -1,10 +1,18 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_NOT_CORRECTLY_FORMATTED;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryFileStub;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryFileStub2;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryStub;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryStub2;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -17,11 +25,11 @@ import org.junit.Test;
  */
 public class LibraryFileTest {
 
-    private LibraryFile file;
+    private LibraryFileStub file;
 
     @Before
     public void initEachTest() throws Exception {
-        file = StubFactory.create(LibraryFile.class, 1);
+        file = new LibraryFileStub();
     }
 
     /**
@@ -29,10 +37,8 @@ public class LibraryFileTest {
      */
     @Test
     public void constructor() throws Exception {
-        Caseless name = StubFactory.getStubValue("name", 1);
-        String data = StubFactory.getStubValue("data", 1);
-        assertEquals("names not same.", name, file.getName());
-        assertEquals("data not same.", data, file.getData());
+        assertEquals("names not same.", NAME, file.getName());
+        assertEquals("data not same.", DATA, file.getData());
     }
 
     /**
@@ -40,10 +46,10 @@ public class LibraryFileTest {
      */
     @Test
     public void constructor2() throws Exception {
-        LibraryFile another = StubFactory.create(LibraryFile.class, 1);
-        StubFactory.setProperty(another, "name", 302);
-        Caseless caseless = StubFactory.getStubValue("name", 302);
-        assertEquals("name not set.", caseless, another.getName());
+        LibraryFileStub another = new LibraryFileStub();
+        another.setName(NAME_NOT_CORRECTLY_FORMATTED);
+        assertEquals("name not set.", NAME_NOT_CORRECTLY_FORMATTED, another
+                .getName());
     }
 
     /**
@@ -51,7 +57,7 @@ public class LibraryFileTest {
      */
     @Test
     public void copyConstructor() throws Exception {
-        Library library = StubFactory.create(Library.class, 1);
+        Library library = new LibraryStub();
         library.addFile(file);
         LibraryFile another = new LibraryFile(file);
         assertTrue("same reference.", file != another);
@@ -80,13 +86,12 @@ public class LibraryFileTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        Library library = StubFactory.create(Library.class, 1);
+        Library library = new LibraryStub();
         Library anotherLibrary = new Library(library);
-        LibraryFile anotherLibraryFile = StubFactory.create(LibraryFile.class,
-                2);
+        LibraryFileStub anotherLibraryFile = new LibraryFileStub2();
         library.addFile(file);
         anotherLibrary.addFile(anotherLibraryFile);
-        StubFactory.setProperty(anotherLibraryFile, "name", 1);
+        anotherLibraryFile.setName(NAME);
         assertEquals("not equal.", file, anotherLibraryFile);
         assertEquals("hashCode not same.", file.hashCode(), anotherLibraryFile
                 .hashCode());
@@ -97,8 +102,8 @@ public class LibraryFileTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        Library library = StubFactory.create(Library.class, 1);
-        Library anotherLibrary = StubFactory.create(Library.class, 2);
+        Library library = new LibraryStub();
+        Library anotherLibrary = new LibraryStub2();
         LibraryFile anotherLibraryFile = new LibraryFile(file);
         library.addFile(file);
         anotherLibrary.addFile(anotherLibraryFile);
@@ -112,7 +117,7 @@ public class LibraryFileTest {
      */
     @Test
     public void equalsAndHashCode3() throws Exception {
-        Library library = StubFactory.create(Library.class, 1);
+        Library library = new LibraryStub();
         LibraryFile anotherLibraryFile = new LibraryFile(file);
         library.addFile(file);
         assertFalse("equal.", file.equals(anotherLibraryFile));
@@ -125,13 +130,12 @@ public class LibraryFileTest {
      */
     @Test
     public void equalsAndHashCode4() throws Exception {
-        Library library = StubFactory.create(Library.class, 1);
+        Library library = new LibraryStub();
         Library anotherLibrary = new Library(library);
-        LibraryFile anotherLibraryFile = StubFactory.create(LibraryFile.class,
-                1);
+        LibraryFileStub anotherLibraryFile = new LibraryFileStub();
         library.addFile(file);
         anotherLibrary.addFile(anotherLibraryFile);
-        StubFactory.setProperty(anotherLibraryFile, "name", 2);
+        anotherLibraryFile.setName(NAME_2);
         assertFalse("equal.", file.equals(anotherLibraryFile));
         assertNotSame("same hashCode.", file.hashCode(), anotherLibraryFile
                 .hashCode());
@@ -153,7 +157,7 @@ public class LibraryFileTest {
 
     @Test
     public void asStringInLibrary() throws Exception {
-        Library library = StubFactory.create(Library.class, 1);
+        Library library = new LibraryStub();
         library.addFile(file);
         System.out.println(file);
     }

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.compiler;
+/*package hr.fer.zemris.vhdllab.service.compiler;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,11 +26,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
+*//**
  * A test case for {@link GhdlCompiler}.
  *
  * @author Miro Bezjak
- */
+ *//*
 public class GhdlCompilerTest {
 
     private static final Caseless USER_ID = new Caseless("user.id");
@@ -77,17 +77,17 @@ public class GhdlCompilerTest {
         EntityManagerUtil.closeEntityManager();
     }
 
-    /**
+    *//**
      * File is null.
-     */
+     *//*
     @Test(expected = NullPointerException.class)
     public void compileNull() throws Exception {
         man.compile(null);
     }
 
-    /**
+    *//**
      * Compilation of a simple component.
-     */
+     *//*
     @Test
     public void compile() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
@@ -98,9 +98,9 @@ public class GhdlCompilerTest {
                 .getMessages());
     }
 
-    /**
+    *//**
      * Compilation of a 1-1 hierarchy component.
-     */
+     *//*
     @Test
     public void compile2() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("complex_source"));
@@ -111,9 +111,9 @@ public class GhdlCompilerTest {
                 .getMessages());
     }
 
-    /**
+    *//**
      * Compilation of a 1-2-2 hierarchy component.
-     */
+     *//*
     @Test
     public void compile3() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("ultra_complex_source"));
@@ -124,9 +124,9 @@ public class GhdlCompilerTest {
                 .getMessages());
     }
 
-    /**
+    *//**
      * Compilation of a 1-2-1 hierarchy component.
-     */
+     *//*
     @Test
     public void compile4() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_oror"));
@@ -137,9 +137,9 @@ public class GhdlCompilerTest {
                 .getMessages());
     }
 
-    /**
+    *//**
      * Errors during compilation.
-     */
+     *//*
     @Test
     public void compile5() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
@@ -173,3 +173,4 @@ public class GhdlCompilerTest {
     }
 
 }
+*/

@@ -1,9 +1,20 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_NOT_CORRECTLY_FORMATTED;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID_TOO_LONG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.UserFileInfoStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -13,16 +24,16 @@ import org.junit.Test;
  * A test case for {@link UserFileInfo}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class UserFileInfoTest {
 
-    private static final Caseless NAME = StubFactory.getStubValue("name", 1);
-    private static final String DATA = StubFactory.getStubValue("data", 1);
-    private UserFileInfo file;
+    private UserFileInfoStub file;
 
     @Before
     public void initEachTest() throws Exception {
-        file = StubFactory.create(UserFileInfo.class, 1);
+        file = new UserFileInfoStub();
     }
 
     /**
@@ -38,8 +49,7 @@ public class UserFileInfoTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void constructor2() throws Exception {
-        Caseless userId = StubFactory.getStubValue("userId", 301);
-        new UserFileInfo(userId, NAME, DATA);
+        new UserFileInfo(USER_ID_TOO_LONG, NAME, DATA);
     }
 
     /**
@@ -47,10 +57,9 @@ public class UserFileInfoTest {
      */
     @Test
     public void constructor3() throws Exception {
-        Caseless caseless = StubFactory.getStubValue("name", 302);
-        Caseless userId = StubFactory.getStubValue("userId", 1);
-        UserFileInfo another = new UserFileInfo(userId, caseless, DATA);
-        assertEquals("name not set.", caseless, another.getName());
+        Caseless name = NAME_NOT_CORRECTLY_FORMATTED;
+        UserFileInfo another = new UserFileInfo(USER_ID, name, DATA);
+        assertEquals("name not set.", name, another.getName());
     }
 
     /**
@@ -89,9 +98,10 @@ public class UserFileInfoTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        UserFileInfo another = StubFactory.create(UserFileInfo.class, 2);
-        StubFactory.setProperty(another, "name", 1);
-        StubFactory.setProperty(another, "userId", 1);
+        UserFileInfoStub another = new UserFileInfoStub();
+        another.setId(ID_2);
+        another.setVersion(VERSION_2);
+        another.setData(DATA_2);
         assertEquals("not equal.", file, another);
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());
     }
@@ -101,8 +111,8 @@ public class UserFileInfoTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        UserFileInfo another = new UserFileInfo(file);
-        StubFactory.setProperty(another, "userId", 2);
+        UserFileInfoStub another = new UserFileInfoStub(file);
+        another.setUserId(USER_ID_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -112,8 +122,8 @@ public class UserFileInfoTest {
      */
     @Test
     public void equalsAndHashCode3() throws Exception {
-        UserFileInfo another = new UserFileInfo(file);
-        StubFactory.setProperty(another, "name", 2);
+        UserFileInfoStub another = new UserFileInfoStub(file);
+        another.setName(NAME_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -132,7 +142,7 @@ public class UserFileInfoTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(file, "userId", 300);
+        file.setUserId(null);
         SerializationUtils.clone(file);
     }
 
@@ -141,7 +151,7 @@ public class UserFileInfoTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void serialization3() throws Exception {
-        StubFactory.setProperty(file, "userId", 301);
+        file.setUserId(USER_ID_TOO_LONG);
         SerializationUtils.clone(file);
     }
 

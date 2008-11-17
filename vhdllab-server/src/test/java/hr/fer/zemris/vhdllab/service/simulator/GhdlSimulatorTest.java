@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.simulator;
+/*package hr.fer.zemris.vhdllab.service.simulator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -27,11 +27,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
+*//**
  * A test case for {@link GHDLSimulator}.
  *
  * @author Miro Bezjak
- */
+ *//*
 public class GhdlSimulatorTest {
 
     private static final Caseless USER_ID = new Caseless("user.id");
@@ -79,26 +79,26 @@ public class GhdlSimulatorTest {
         EntityManagerUtil.closeEntityManager();
     }
 
-    /**
+    *//**
      * File is null.
-     */
+     *//*
     @Test(expected = NullPointerException.class)
     public void simulateNull() throws Exception {
         man.simulate(null);
     }
 
-    /**
+    *//**
      * File is not simulatable.
-     */
+     *//*
     @Test(expected = ServiceException.class)
     public void simulateFileNotSimulatable() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
         man.simulate(file);
     }
     
-    /**
+    *//**
      * Simulation of a simple component.
-     */
+     *//*
     @Test
     public void simulate() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_and_tb"));
@@ -107,9 +107,9 @@ public class GhdlSimulatorTest {
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
     }
 
-    /**
+    *//**
      * Simulation of a 1-1 hierarchy component.
-     */
+     *//*
     @Test
     public void simulate2() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("complex_source_tb"));
@@ -120,9 +120,9 @@ public class GhdlSimulatorTest {
                 .getMessages());
     }
 
-    /**
+    *//**
      * Simulation of a 1-2-2 hierarchy component.
-     */
+     *//*
     @Test
     public void simulate3() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("ultra_complex_source_tb"));
@@ -131,9 +131,9 @@ public class GhdlSimulatorTest {
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
     }
 
-    /**
+    *//**
      * Simulation of a 1-2-1 hierarchy component.
-     */
+     *//*
     @Test
     public void simulate4() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_oror_tb"));
@@ -143,9 +143,9 @@ public class GhdlSimulatorTest {
         assertEquals("not a status 0.", Integer.valueOf(0), result.getStatus());
     }
 
-    /**
+    *//**
      * Errors during simulation.
-     */
+     *//*
     @Test
     public void simulate5() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_and_tb"));
@@ -179,3 +179,4 @@ public class GhdlSimulatorTest {
     }
 
 }
+*/

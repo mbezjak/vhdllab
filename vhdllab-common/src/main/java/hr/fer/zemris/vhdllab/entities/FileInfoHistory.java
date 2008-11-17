@@ -39,7 +39,7 @@ public class FileInfoHistory extends FileInfo {
      * @throws NullPointerException
      *             if either parameter is <code>null</code>
      */
-    FileInfoHistory(FileInfo file, History history) {
+    public FileInfoHistory(FileInfo file, History history) {
         super(file);
         this.history = history;
         checkProperties();

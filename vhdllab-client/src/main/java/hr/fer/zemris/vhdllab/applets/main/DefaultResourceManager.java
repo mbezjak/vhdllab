@@ -28,7 +28,7 @@ public class DefaultResourceManager implements IResourceManager {
 	/**
 	 * A resource provider.
 	 */
-	private Communicator communicator;
+	private ICommunicator communicator;
 
 	/**
 	 * Vetoable resource listeners.
@@ -44,7 +44,7 @@ public class DefaultResourceManager implements IResourceManager {
 	 * @throws NullPointerException
 	 *             if <code>communicator</code> is <code>null</code>
 	 */
-	public DefaultResourceManager(Communicator communicator) {
+	public DefaultResourceManager(ICommunicator communicator) {
 		super();
 		if (communicator == null) {
 			throw new NullPointerException("Communicator cant be null");
@@ -422,7 +422,7 @@ public class DefaultResourceManager implements IResourceManager {
 		}
 		try {
 			return communicator.loadFileType(projectName, fileName);
-		} catch (UniformAppletException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}

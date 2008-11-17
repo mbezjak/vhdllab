@@ -1,9 +1,20 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.CREATED_ON_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.DELETED_ON_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.INSERT_VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IHistoryStub.UPDATE_VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.HistoryStub;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectInfoHistoryStub;
+import hr.fer.zemris.vhdllab.entities.stub.ProjectInfoStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -13,14 +24,16 @@ import org.junit.Test;
  * A test case for {@link ProjectInfoHistory}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class ProjectInfoHistoryTest {
 
-    private ProjectInfoHistory project;
+    private ProjectInfoHistoryStub project;
 
     @Before
     public void initEachTest() throws Exception {
-        project = StubFactory.create(ProjectInfoHistory.class, 1);
+        project = new ProjectInfoHistoryStub();
     }
 
     /**
@@ -28,8 +41,7 @@ public class ProjectInfoHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor() throws Exception {
-        History history = StubFactory.getStubValue("history", 1);
-        new ProjectInfoHistory(null, history);
+        new ProjectInfoHistory(null, new HistoryStub());
     }
 
     /**
@@ -37,8 +49,7 @@ public class ProjectInfoHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
-        ProjectInfo projectInfo = StubFactory.getStubValue("projectInfo", 1);
-        new ProjectInfoHistory(projectInfo, null);
+        new ProjectInfoHistory(new ProjectInfoStub(), null);
     }
 
     /**
@@ -80,12 +91,12 @@ public class ProjectInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        ProjectInfoHistory another = StubFactory.create(
-                ProjectInfoHistory.class, 2);
-        StubFactory.setProperty(another, "name", 1);
-        StubFactory.setProperty(another, "userId", 1);
-        StubFactory.setProperty(another.getHistory(), "insertVersion", 1);
-        StubFactory.setProperty(another.getHistory(), "updateVersion", 1);
+        ProjectInfoHistoryStub another = new ProjectInfoHistoryStub();
+        another.setId(ID_2);
+        another.setVersion(VERSION_2);
+        HistoryStub history = (HistoryStub) another.getHistory();
+        history.setCreatedOn(CREATED_ON_2);
+        history.setDeletedOn(DELETED_ON_2);
         assertEquals("not equal.", project, another);
         assertEquals("hashCode not same.", project.hashCode(), another
                 .hashCode());
@@ -96,9 +107,8 @@ public class ProjectInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        ProjectInfoHistory another = StubFactory.create(
-                ProjectInfoHistory.class, 1);
-        StubFactory.setProperty(another.getHistory(), "insertVersion", 2);
+        ProjectInfoHistoryStub another = new ProjectInfoHistoryStub();
+        ((HistoryStub) another.getHistory()).setInsertVersion(INSERT_VERSION_2);
         assertFalse("equal.", project.equals(another));
         assertNotSame("same hashCode.", project.hashCode(), another.hashCode());
     }
@@ -108,9 +118,8 @@ public class ProjectInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode3() throws Exception {
-        ProjectInfoHistory another = StubFactory.create(
-                ProjectInfoHistory.class, 1);
-        StubFactory.setProperty(another.getHistory(), "updateVersion", 2);
+        ProjectInfoHistoryStub another = new ProjectInfoHistoryStub();
+        ((HistoryStub) another.getHistory()).setUpdateVersion(UPDATE_VERSION_2);
         assertFalse("equal.", project.equals(another));
         assertNotSame("same hashCode.", project.hashCode(), another.hashCode());
     }
@@ -120,8 +129,8 @@ public class ProjectInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode4() throws Exception {
-        ProjectInfoHistory another = new ProjectInfoHistory(project);
-        StubFactory.setProperty(another, "name", 2);
+        ProjectInfoHistoryStub another = new ProjectInfoHistoryStub(project);
+        another.setName(NAME_2);
         assertFalse("equal.", project.equals(another));
         assertNotSame("same hashCode.", project.hashCode(), another.hashCode());
     }
@@ -131,8 +140,8 @@ public class ProjectInfoHistoryTest {
      */
     @Test
     public void equalsAndHashCode5() throws Exception {
-        ProjectInfoHistory another = new ProjectInfoHistory(project);
-        StubFactory.setProperty(another, "userId", 2);
+        ProjectInfoHistoryStub another = new ProjectInfoHistoryStub(project);
+        another.setUserId(USER_ID_2);
         assertFalse("equal.", project.equals(another));
         assertNotSame("same hashCode.", project.hashCode(), another.hashCode());
     }
@@ -151,7 +160,7 @@ public class ProjectInfoHistoryTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(project, "userId", 300);
+        project.setUserId(null);
         SerializationUtils.clone(project);
     }
 

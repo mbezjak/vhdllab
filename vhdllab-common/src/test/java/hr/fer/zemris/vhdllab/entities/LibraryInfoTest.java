@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryInfoStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -11,14 +13,16 @@ import org.junit.Test;
  * A test case for {@link LibraryInfo}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class LibraryInfoTest {
 
-    private LibraryInfo library;
+    private LibraryInfoStub library;
 
     @Before
     public void initEachTest() throws Exception {
-        library = StubFactory.create(LibraryInfo.class, 1);
+        library = new LibraryInfoStub();
     }
 
     /**
@@ -26,8 +30,7 @@ public class LibraryInfoTest {
      */
     @Test
     public void constructor() throws Exception {
-        Caseless name = StubFactory.getStubValue("name", 1);
-        assertEquals("names not same.", name, library.getName());
+        assertEquals("names not same.", NAME, library.getName());
     }
 
     /**

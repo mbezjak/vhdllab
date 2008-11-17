@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.impl;
+/*package hr.fer.zemris.vhdllab.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import hr.fer.zemris.vhdllab.dao.impl.EntityManagerUtil;
@@ -21,11 +21,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
+*//**
  * A test case for {@link VHDLLabServiceManager}'s extractDependencies method.
  *
  * @author Miro Bezjak
- */
+ *//*
 public class VHDLLabServiceManagerDependencyTest {
 
     private static final Caseless USER_ID = new Caseless("user.id");
@@ -58,25 +58,25 @@ public class VHDLLabServiceManagerDependencyTest {
         EntityManagerUtil.closeEntityManager();
     }
 
-    /**
+    *//**
      * File is null.
-     */
+     *//*
     @Test(expected = NullPointerException.class)
     public void extractDependencyNull() throws Exception {
         man.extractDependencies(null, false);
     }
 
-    /**
+    *//**
      * File is null.
-     */
+     *//*
     @Test(expected = NullPointerException.class)
     public void extractDependencyNull2() throws Exception {
         man.extractDependencies(null, true);
     }
 
-    /**
+    *//**
      * Tests if returned collection is unmodifiable.
-     */
+     *//*
     @Test(expected = UnsupportedOperationException.class)
     public void extractDependencyUnmodifiableResult() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
@@ -84,9 +84,9 @@ public class VHDLLabServiceManagerDependencyTest {
         dependencies.add(new Caseless("new_dependency"));
     }
 
-    /**
+    *//**
      * Empty dependency.
-     */
+     *//*
     @Test
     public void extractDependencyFirstLevel() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_and"));
@@ -94,9 +94,9 @@ public class VHDLLabServiceManagerDependencyTest {
                 .extractDependencies(file, false));
     }
 
-    /**
+    *//**
      * One predefined file as a dependency.
-     */
+     *//*
     @Test
     public void extractDependencyFirstLevel2() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("complex_source"));
@@ -106,9 +106,9 @@ public class VHDLLabServiceManagerDependencyTest {
                 .extractDependencies(file, false));
     }
 
-    /**
+    *//**
      * Two files as a dependency.
-     */
+     *//*
     @Test
     public void extractDependencyFirstLevel3() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("ultra_complex_source"));
@@ -119,9 +119,9 @@ public class VHDLLabServiceManagerDependencyTest {
                 .extractDependencies(file, false));
     }
 
-    /**
+    *//**
      * Extract all dependencies from a complex component.
-     */
+     *//*
     @Test
     public void extractAllDependencies() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("ultra_complex_source"));
@@ -134,9 +134,9 @@ public class VHDLLabServiceManagerDependencyTest {
                 .extractDependencies(file, true));
     }
 
-    /**
+    *//**
      * Extract all dependencies from a complex component.
-     */
+     *//*
     @Test
     public void extractAllDependencies2() throws Exception {
         File file = fileMan.findByName(project.getId(), new Caseless("comp_oror"));
@@ -157,3 +157,4 @@ public class VHDLLabServiceManagerDependencyTest {
     }
 
 }
+*/

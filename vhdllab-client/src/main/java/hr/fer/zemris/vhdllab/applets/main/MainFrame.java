@@ -15,11 +15,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.Initiator;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
@@ -35,7 +33,6 @@ import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
-import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -86,6 +83,8 @@ import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Main applet is a container for all other modules. This is where all the GUI
@@ -146,8 +145,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	private IEditorManager editorManager;
 	private IViewManager viewManager;
 
-	private Communicator communicator;
-	private Initiator initiator;
+	private ICommunicator communicator;
 
 	/*
 	 * (non-Javadoc)
@@ -189,40 +187,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 									MainFrame.this);
 						}
 					});
-					SwingUtilities.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							ResourceBundle bundle = ResourceBundleProvider
-									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-							String text = bundle
-									.getString(LanguageConstants.STATUSBAR_INIT_INITIATOR);
-							SystemLog.instance().addSystemMessage(text,
-									MessageType.INFORMATION);
-						}
-					});
-					SwingUtilities.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							initiator = new HttpClientInitiator(null);
-							try {
-								initiator.init();
-							} catch (UniformAppletException e) {
-								exit(EXIT_STATUS_ERROR);
-							}
-						}
-					});
-					// Thread.sleep(2000);
-					SwingUtilities.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							ResourceBundle bundle = ResourceBundleProvider
-									.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-							String text = bundle
-									.getString(LanguageConstants.STATUSBAR_INIT_DONE);
-							SystemLog.instance().addSystemMessage(text,
-									MessageType.SUCCESSFUL);
-						}
-					});
 					// Thread.sleep(2000);
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
@@ -238,8 +202,12 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					SwingUtilities.invokeAndWait(new Runnable() {
 						@Override
 						public void run() {
-							communicator = new Communicator(initiator);
+						    ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+						    context.registerShutdownHook();
+						    context.refresh();
+							communicator = (ICommunicator) context.getBean("communicator");
 							try {
+							    SystemContext.instance().setUserId("test");
 								communicator.init(); // also initializes
 								// UserPreferences
 							} catch (UniformAppletException e) {
@@ -553,155 +521,8 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 		} catch (Exception ignored) {
 			ignored.printStackTrace();
 		}
-		try {
-			if (initiator != null) {
-				initiator.dispose();
-				initiator = null;
-			}
-		} catch (Exception ignored) {
-			ignored.printStackTrace();
-		}
 //		sis.removeSingleInstanceListener(sisListener);
 		System.exit(status);
-	}
-
-	/**
-	 * This is an implementation of {@link Applet#init()} method and it is
-	 * intended to be executed by EDT.
-	 */
-	private void initSystem() {
-		setupGlassPane();
-		getGlassPane().setVisible(true);
-		initBasicGUI();
-		setFrameOwner();
-		componentContainer = new DefaultComponentContainer(this);
-
-		IResourceManager resourceManager;
-		try {
-			initiator = new HttpClientInitiator(null);
-			initiator.init();
-			communicator = new Communicator(initiator);
-			communicator.init(); // also initializes UserPreferences
-
-			/*
-			 * It appears that some browsers, once page that presents this
-			 * applet is closed (i.e. a tab in a browser), doesn't shutdown JVM
-			 * (that contained this applet) but rather just dispose of this
-			 * applet (this class). This class has no problem with this (init
-			 * and destroy methods are called only once for each applet
-			 * instance), however SystemLog (a singleton) and
-			 * ResourceBundleProvider (contains static field and method) have
-			 * problem with this. Since they all operate under static context
-			 * (singleton is designed by having static instance field) and since
-			 * JVM is never shutdown they never loose references in their static
-			 * fields and thus always stay initialized! This is a problem
-			 * because those classes contains information on previous applet
-			 * instance (the whole system, not just this class). Because of this
-			 * they have to be reinitialized. Note however that once this applet
-			 * first starts this reinitialization is unnecessary but that is a
-			 * small price to pay for having "stateless" system.
-			 * 
-			 * Note that UserPreferences is another singleton class, however it
-			 * is not mentioned here because its initialization is done every
-			 * time in Communicator. UserPreferences can't operate without this
-			 * initialization so that class is safe. Check implementation of
-			 * UserPreferences#init(Properties) method to see why
-			 * UserPreferences is not one of critical "must-be-reinitialized"
-			 * class. UserPreferences is initialized in Communicator#init()
-			 * method.
-			 * 
-			 * Found in: Mozilla Firefox 2.0.0.6 (Linux version)
-			 * 
-			 * @since 2/9/2007
-			 */
-			ResourceBundleProvider.init();
-			// SystemLog.instance().clearAll();
-			/*
-			 * End of reinitialization code.
-			 */
-
-			resourceManager = new DefaultResourceManager(communicator);
-			componentStorage = new DefaultComponentStorage(componentContainer);
-		} catch (AccessControlException e) {
-			e.printStackTrace();
-			return;
-			// TODO ovo treba malo modificirat i rec da se applet nemoze dignut
-			// ako nije .java.policy na svojem mjestu
-		} catch (Throwable e) {
-			// TODO ovo se treba maknut kad MainApplet vise nece bit u
-			// development fazi
-			e.printStackTrace();
-			// StringWriter sw = new StringWriter();
-			// PrintWriter pw = new PrintWriter(sw);
-			// e.printStackTrace(pw);
-			// JOptionPane.showMessageDialog(this, sw.toString());
-			return;
-		}
-
-		// TODO ovo popravit
-		SystemLog.instance().addSystemMessage("Initializing GUI!",
-				MessageType.INFORMATION);
-
-		initGUI();
-		int duration;
-		duration = UserPreferences.instance().getInt(
-				UserFileConstants.SYSTEM_TOOLTIP_DURATION, 15000);
-		ToolTipManager.sharedInstance().setDismissDelay(duration);
-		this.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				setPaneSize();
-			}
-		});
-
-		DefaultSystemContainer systemContainer = new DefaultSystemContainer(
-				resourceManager, this, JOptionPane.getFrameForComponent(this));
-		this.systemContainer = systemContainer;
-		ComponentConfiguration conf;
-		try {
-			conf = ComponentConfigurationParser.getConfiguration();
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			return;
-		}
-		editorManager = new DefaultEditorManager(componentStorage, conf,
-				systemContainer);
-		viewManager = new DefaultViewManager(componentStorage, conf,
-				systemContainer);
-		ComponentIdentifierFactory.setComponentConfiguration(conf);
-		ComponentIdentifierFactory.setContainer(systemContainer);
-		systemContainer.setComponentStorage(componentStorage);
-		systemContainer.setEditorManager(editorManager);
-		systemContainer.setViewManager(viewManager);
-		try {
-			systemContainer.init();
-		} catch (UniformAppletException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		UserPreferences.instance().addPreferencesListener(this,
-				UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
-		UserPreferences.instance().addPreferencesListener(this,
-				UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
-		UserPreferences.instance().addPreferencesListener(this,
-				UserFileConstants.SYSTEM_VIEW_HEIGHT);
-		UserPreferences.instance().addPreferencesListener(this,
-				UserFileConstants.SYSTEM_TOOLTIP_DURATION);
-
-		// FIXME ovo mozda spretnije rijesit
-		IComponentIdentifier<?> stViewIdentifier = ComponentIdentifierFactory
-				.createViewIdentifier(ComponentTypes.VIEW_STATUS_HISTORY);
-		systemContainer.getViewManager().openView(stViewIdentifier);
-		systemContainer.getViewManager().openProjectExplorer();
-
-		ResourceBundle bundle = ResourceBundleProvider
-				.getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-		String text = bundle
-				.getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
-		SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
-		setPaneSize();
-		getGlassPane().setVisible(false);
 	}
 
 	/**
@@ -1001,9 +822,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						for (Caseless projectName : projects) {
 							pe.addProject(projectName);
 						}
-					} catch (UniformAppletException ex) {
-						SystemLog.instance().addErrorMessage(ex);
-					} catch (RuntimeException ex) {
+					} catch (Exception ex) {
 						SystemLog.instance().addErrorMessage(ex);
 					}
 				}
@@ -1011,7 +830,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			boolean superuser;
 			try {
 				superuser = communicator.isSuperuser();
-			} catch (UniformAppletException ex) {
+			} catch (Exception ex) {
 				SystemLog.instance().addErrorMessage(ex);
 				superuser = false;
 			}

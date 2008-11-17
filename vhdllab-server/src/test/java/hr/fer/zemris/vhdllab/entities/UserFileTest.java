@@ -1,7 +1,11 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.UserFileStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -14,11 +18,11 @@ import org.junit.Test;
  */
 public class UserFileTest {
 
-    private UserFile file;
+    private UserFileStub file;
 
     @Before
     public void initEachTest() throws Exception {
-        file = StubFactory.create(UserFile.class, 1);
+        file = new UserFileStub();
     }
 
     /**
@@ -26,12 +30,9 @@ public class UserFileTest {
      */
     @Test
     public void constructor() throws Exception {
-        Caseless userId = StubFactory.getStubValue("userId", 1);
-        Caseless name = StubFactory.getStubValue("name", 1);
-        String data = StubFactory.getStubValue("data", 1);
-        assertEquals("userIds not same.", userId, file.getUserId());
-        assertEquals("names not same.", name, file.getName());
-        assertEquals("data not same.", data, file.getData());
+        assertEquals("userIds not same.", USER_ID, file.getUserId());
+        assertEquals("names not same.", NAME, file.getName());
+        assertEquals("data not same.", DATA, file.getData());
     }
 
     /**

@@ -21,9 +21,10 @@
     <fileSet>
       <directory>vhdllab-server/target/classes</directory>
       <includes>
+        <include>applicationContext.xml</include>
+        <include>remoting-servlet.xml</include>
         <include>web.xml</include>
         <include>parameters.properties</include>
-        <include>launch.jnlp</include>
       </includes>
       <outputDirectory>/WEB-INF/</outputDirectory>
     </fileSet>
@@ -32,6 +33,10 @@
     <file>
       <source>vhdllab-server/src/main/resources/log4j.properties</source>
       <outputDirectory>/WEB-INF/classes/</outputDirectory>
+    </file>
+    <file>
+      <source>vhdllab-server/target/classes/launch.jnlp</source>
+      <outputDirectory>/</outputDirectory>
     </file>
     <file>
       <source>vhdllab-client/target/vhdllab-client-with-deps.jar</source>

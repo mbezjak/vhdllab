@@ -50,21 +50,28 @@
   
   <dependencies>
     <dependency>
-      <groupId>javax.jnlp</groupId>
-      <artifactId>jnlp-api</artifactId>
-      <version>1.5</version>
-      <scope>provided</scope>
-     </dependency>
-    <dependency>
-      <groupId>hr.fer.zemris.vhdllab</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>vhdllab-common</artifactId>
       <version>${version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-    	<groupId>commons-httpclient</groupId>
-    	<artifactId>commons-httpclient</artifactId>
-    	<version>3.1</version>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+      <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>2.5.6</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.jnlp</groupId>
+      <artifactId>jnlp-api</artifactId>
+      <version>1.5</version>
+      <scope>provided</scope>
+     </dependency>
   </dependencies>
 </project>

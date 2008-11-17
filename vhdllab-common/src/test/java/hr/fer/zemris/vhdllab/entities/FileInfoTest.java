@@ -1,9 +1,21 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IFileInfoStub.PROJECT_ID;
+import static hr.fer.zemris.vhdllab.entities.stub.IFileInfoStub.PROJECT_ID_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IFileResourceStub.TYPE;
+import static hr.fer.zemris.vhdllab.entities.stub.IFileResourceStub.TYPE_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.FileInfoStub;
+import hr.fer.zemris.vhdllab.entities.stub.FileResourceStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -13,32 +25,64 @@ import org.junit.Test;
  * A test case for {@link FileInfo}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class FileInfoTest {
 
-    private FileInfo file;
+    private FileInfoStub file;
 
     @Before
     public void initEachTest() throws Exception {
-        file = StubFactory.create(FileInfo.class, 1);
+        file = new FileInfoStub();
     }
 
+    /**
+     * Type is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void constructor() throws Exception {
+        new FileInfo(null, NAME, DATA, PROJECT_ID);
+    }
+    
+    /**
+     * Name is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void constructor2() throws Exception {
+        new FileInfo(TYPE, null, DATA, PROJECT_ID);
+    }
+    
+    /**
+     * Data is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void constructor3() throws Exception {
+        new FileInfo(TYPE, NAME, null, PROJECT_ID);
+    }
+    
+    /**
+     * Project id is null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void constructor4() throws Exception {
+        new FileInfo(TYPE, NAME, DATA, null);
+    }
+    
     /**
      * FileResource is null.
      */
     @Test(expected = NullPointerException.class)
-    public void constructor() throws Exception {
-        Integer projectId = StubFactory.getStubValue("projectId", 1);
-        new FileInfo(null, projectId);
+    public void constructor5() throws Exception {
+        new FileInfo(null, PROJECT_ID);
     }
 
     /**
      * ProjectId is null.
      */
     @Test(expected = NullPointerException.class)
-    public void constructor2() throws Exception {
-        FileResource resource = StubFactory.getStubValue("fileResource", 1);
-        new FileInfo(resource, null);
+    public void constructor6() throws Exception {
+        new FileInfo(new FileResourceStub(), null);
     }
 
     /**
@@ -78,9 +122,11 @@ public class FileInfoTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        FileInfo another = StubFactory.create(FileInfo.class, 2);
-        StubFactory.setProperty(another, "name", 1);
-        StubFactory.setProperty(another, "projectId", 1);
+        FileInfoStub another = new FileInfoStub();
+        another.setId(ID_2);
+        another.setVersion(VERSION_2);
+        another.setData(DATA_2);
+        another.setType(TYPE_2);
         assertEquals("not equal.", file, another);
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());
     }
@@ -90,8 +136,8 @@ public class FileInfoTest {
      */
     @Test
     public void equalsAndHashCode2() throws Exception {
-        FileInfo another = new FileInfo(file);
-        StubFactory.setProperty(another, "projectId", 2);
+        FileInfoStub another = new FileInfoStub(file);
+        another.setProjectId(PROJECT_ID_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -101,8 +147,8 @@ public class FileInfoTest {
      */
     @Test
     public void equalsAndHashCode3() throws Exception {
-        FileInfo another = new FileInfo(file);
-        StubFactory.setProperty(another, "name", 2);
+        FileInfoStub another = new FileInfoStub(file);
+        another.setName(NAME_2);
         assertFalse("equal.", file.equals(another));
         assertNotSame("same hashCode.", file.hashCode(), another.hashCode());
     }
@@ -121,7 +167,7 @@ public class FileInfoTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(file, "projectId", 300);
+        file.setProjectId(null);
         SerializationUtils.clone(file);
     }
 

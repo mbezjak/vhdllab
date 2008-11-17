@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-
 import java.lang.reflect.Field;
 
 import org.apache.commons.lang.SerializationUtils;
@@ -16,6 +14,8 @@ import org.junit.Test;
  * A test case for {@link Caseless}.
  * 
  * @author Miro Bezjak
+ * @version 1.0
+ * @since vhdllab2
  */
 public class CaselessTest {
 
@@ -134,6 +134,36 @@ public class CaselessTest {
         String string = "a string";
         Caseless caseless = new Caseless(string);
         assertEquals("length not same.", string.length(), caseless.length());
+    }
+
+    /**
+     * Put caseless to all upper case.
+     */
+    @Test
+    public void toUpperCase() {
+        String string = "a string";
+        Caseless caseless = new Caseless(string);
+        Caseless uppercase = caseless.toUpperCase();
+        assertEquals("uppercase caseless not same with original.", caseless,
+                uppercase);
+        assertFalse("case not changed.", caseless.toString().equals(
+                uppercase.toString()));
+        assertEquals("case not changed.", "A STRING", uppercase.toString());
+    }
+
+    /**
+     * Put caseless to all lower case.
+     */
+    @Test
+    public void toLowerCase() {
+        String string = "A STRING";
+        Caseless caseless = new Caseless(string);
+        Caseless lowercase = caseless.toLowerCase();
+        assertEquals("lowercase caseless not same with original.", caseless,
+                lowercase);
+        assertFalse("case not changed.", caseless.toString().equals(
+                lowercase.toString()));
+        assertEquals("case not changed.", "a string", lowercase.toString());
     }
 
 }

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.generators;
+/*package hr.fer.zemris.vhdllab.service.generators;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,16 +17,16 @@ import java.util.List;
 
 import org.junit.Test;
 
-/**
+*//**
  * A test case for {@link SourceGenerator}.
  *
  * @author Miro Bezjak
- */
+ *//*
 public class SourceGeneratorTest {
 
-    /**
+    *//**
      * everything ok.
-     */
+     *//*
     @Test
     public void execute() throws Exception {
         Project project = StubFactory.create(Project.class, 400);
@@ -47,3 +47,4 @@ public class SourceGeneratorTest {
     }
 
 }
+*/

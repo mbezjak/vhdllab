@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,7 +11,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public final class ProjectHistory extends ProjectInfoHistory {
+public class ProjectHistory extends ProjectInfoHistory {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,18 +39,6 @@ public final class ProjectHistory extends ProjectInfoHistory {
      */
     public ProjectHistory(ProjectInfo project, History history) {
         super(project, history);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                    .appendSuper(super.toString())
-                    .toString();
     }
 
 }

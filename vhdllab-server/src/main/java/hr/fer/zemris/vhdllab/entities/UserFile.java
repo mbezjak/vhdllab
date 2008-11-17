@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.entities;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,7 +11,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public final class UserFile extends UserFileInfo {
+public class UserFile extends UserFileInfo {
 
     private static final long serialVersionUID = 1L;
 
@@ -59,18 +58,6 @@ public final class UserFile extends UserFileInfo {
      */
     public UserFile(UserFile userFile) {
         super(userFile);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                    .appendSuper(super.toString())
-                    .toString();
     }
 
 }

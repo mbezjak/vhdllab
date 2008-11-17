@@ -14,7 +14,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public final class LibraryFile extends Resource {
+public class LibraryFile extends Resource {
 
     private static final long serialVersionUID = 1L;
 

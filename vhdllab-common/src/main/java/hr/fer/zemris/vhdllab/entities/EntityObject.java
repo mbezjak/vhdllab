@@ -17,7 +17,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @version 1.0
  * @since vhdllab2
  */
-class EntityObject implements Serializable {
+public class EntityObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +33,7 @@ class EntityObject implements Serializable {
     /**
      * Default constructor for persistence provider.
      */
-    EntityObject() {
+    protected EntityObject() {
     }
 
     /**
@@ -67,6 +67,8 @@ class EntityObject implements Serializable {
      */
     protected EntityObject(EntityObject entity) {
         super();
+        this.id = entity.id;
+        this.version = entity.version;
         this.name = entity.name;
     }
 

@@ -1,9 +1,13 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryFileStub;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryFileStub2;
+import hr.fer.zemris.vhdllab.entities.stub.LibraryStub;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,13 +24,12 @@ import org.junit.Test;
  */
 public class LibraryTest {
 
-    private Library library;
+    private LibraryStub library;
 
     @Before
     public void initEachTest() throws Exception {
-        library = StubFactory.create(Library.class, 1);
-        LibraryFile file = StubFactory.create(LibraryFile.class, 1);
-        library.addFile(file);
+        library = new LibraryStub();
+        library.addFile(new LibraryFileStub());
     }
 
     /**
@@ -42,8 +45,7 @@ public class LibraryTest {
      */
     @Test
     public void constructor2() throws Exception {
-        Caseless name = StubFactory.getStubValue("name", 1);
-        Library another = new Library(name);
+        Library another = new Library(NAME);
         assertNotNull("files is null.", another.getFiles());
         assertTrue("files not empty.", another.getFiles().isEmpty());
     }
@@ -81,7 +83,7 @@ public class LibraryTest {
     @Test
     public void getLibraryFiles() throws Exception {
         Set<LibraryFile> files = new HashSet<LibraryFile>(library.getFiles());
-        LibraryFile anotherFile = StubFactory.create(LibraryFile.class, 2);
+        LibraryFile anotherFile = new LibraryFileStub2();
         library.getFiles().add(anotherFile);
         files.add(anotherFile);
         assertTrue("file not added.", library.getFiles().contains(anotherFile));
@@ -104,7 +106,7 @@ public class LibraryTest {
     @Test
     public void addLibraryFile2() throws Exception {
         Set<LibraryFile> files = new HashSet<LibraryFile>(library.getFiles());
-        LibraryFile anotherFile = StubFactory.create(LibraryFile.class, 2);
+        LibraryFile anotherFile = new LibraryFileStub2();
         library.addFile(anotherFile);
         files.add(anotherFile);
         assertTrue("file not added.", library.getFiles().contains(anotherFile));
@@ -160,9 +162,7 @@ public class LibraryTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void removeLibraryFile3() throws Exception {
-        LibraryFile anotherLibraryFile = StubFactory.create(LibraryFile.class,
-                2);
-        library.removeFile(anotherLibraryFile);
+        library.removeFile(new LibraryFileStub2());
     }
 
     /**
@@ -201,7 +201,7 @@ public class LibraryTest {
      */
     @Test(expected = NullPointerException.class)
     public void serialization2() throws Exception {
-        StubFactory.setProperty(library, "files", 300);
+        library.setFiles(null);
         SerializationUtils.clone(library);
     }
 

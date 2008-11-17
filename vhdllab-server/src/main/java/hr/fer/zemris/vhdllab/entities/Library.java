@@ -18,7 +18,7 @@ import org.hibernate.annotations.Cascade;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public final class Library extends LibraryInfo {
+public class Library extends LibraryInfo {
 
     private static final long serialVersionUID = 1L;
 

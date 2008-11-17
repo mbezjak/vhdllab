@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @version 1.0
  * @since vhdllab2
  */
-class Resource extends EntityObject implements DataContainer {
+public class Resource extends EntityObject implements DataContainer {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,7 @@ class Resource extends EntityObject implements DataContainer {
     /**
      * Default constructor for persistence provider.
      */
-    Resource() {
+    protected Resource() {
         super();
     }
 
