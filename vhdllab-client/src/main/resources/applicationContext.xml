@@ -7,52 +7,68 @@
                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
   
+  <context:property-placeholder location="server.properties"/>
   <context:annotation-config />
 
   <bean id="communicator" class="hr.fer.zemris.vhdllab.applets.main.Communicator" />
   
-  <bean id="fileService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/file.service" />
+  <bean id="httpConnectionManager" class="org.apache.commons.httpclient.SimpleHttpConnectionManager" />
+  
+  <bean id="httpClient" class="org.apache.commons.httpclient.HttpClient">
+    <constructor-arg ref="httpConnectionManager"/>
+  </bean>
+  
+  <bean id="httpInvokerBeanParent" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean"
+    abstract="true">
+    <property name="httpInvokerRequestExecutor">
+      <bean class="hr.fer.zemris.vhdllab.applets.main.HttpClientRequestExecutor">
+        <constructor-arg ref="httpClient" />
+      </bean>
+    </property>
+  </bean>
+  
+  <bean id="fileService" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/file.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.FileService" />
   </bean>
   
-  <bean id="projectService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/project.service" />
+  <bean id="projectService" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/project.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.ProjectService" />
   </bean>
   
-  <bean id="libraryFileService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/libraryfile.service" />
+  <bean id="libraryFileService" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/libraryfile.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.LibraryFileService" />
   </bean>
   
-  <bean id="userFileService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/userfile.service" />
+  <bean id="userFileService" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/userfile.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.UserFileService" />
   </bean>
   
-  <bean id="hierarchyExtractor" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/hierarchyextraction.service" />
+  <bean id="hierarchyExtractor" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/hierarchyextraction.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.HierarchyExtractor" />
   </bean>
   
-  <bean id="circuitInterfaceExtractor" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/circuitinterfaceextraction.service" />
+  <bean id="circuitInterfaceExtractor" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/circuitinterfaceextraction.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor" />
   </bean>
   
-  <bean id="vhdlGenerator" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/vhdlgeneration.service" />
+  <bean id="vhdlGenerator" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/vhdlgeneration.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator" />
   </bean>
   
-  <bean id="compiler" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/compiler.service" />
+  <bean id="compiler" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/compiler.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.Compiler" />
   </bean>
   
-  <bean id="simulator" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/vhdllab/remoting/simulator.service" />
+  <bean id="simulator" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/simulator.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.Simulator" />
   </bean>
   

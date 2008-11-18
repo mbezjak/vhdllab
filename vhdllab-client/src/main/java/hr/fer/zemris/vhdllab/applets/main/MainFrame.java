@@ -85,6 +85,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.remoting.RemoteAccessException;
 
 /**
  * Main applet is a container for all other modules. This is where all the GUI
@@ -210,6 +211,10 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 							    SystemContext.instance().setUserId("test");
 								communicator.init(); // also initializes
 								// UserPreferences
+							} catch (RemoteAccessException e) {
+							    if(e.getCause() instanceof SecurityException) {
+							        exit(EXIT_STATUS_ERROR);
+							    }
 							} catch (UniformAppletException e) {
 								e.printStackTrace();
 								throw new IllegalStateException(e);
@@ -504,7 +509,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	}
 
 	private void exit(int status) {
-		//JOptionPane.showConfirmDialog(this, "Sada cu se zatvoriti...");
 		try {
 			if (systemContainer != null) {
 				((DefaultSystemContainer) systemContainer).dispose();

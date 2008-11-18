@@ -333,6 +333,9 @@
 
 
 
+
+
+
   <!-- also add hibernate statistics = true to jpa properties -->
   <!--
     <bean id="hibernateStats"

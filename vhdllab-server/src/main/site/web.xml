@@ -28,7 +28,16 @@
   </filter>
   <filter-mapping>
     <filter-name>entity-manager-fer-request</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/remoting/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>log-request-headers</filter-name>
+    <filter-class>hr.fer.zemris.vhdllab.web.LogRequestHeadersFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>log-request-headers</filter-name>
+    <url-pattern>/remoting/*</url-pattern>
   </filter-mapping>
 
   <!-- Application filters end -->
@@ -53,14 +62,11 @@
 
   <!-- JSPC servlet mappings end -->
   <!-- Security constraints start -->
-  <!--
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>VHDLLAB</web-resource-name>
       <description>Require users to authenticate</description>
-      <url-pattern>/vhdllab.jsp</url-pattern>
-      <url-pattern>/doAjax</url-pattern>
-      <url-pattern>/authentication/ping</url-pattern>
+      <url-pattern>/remoting/*</url-pattern>
       <http-method>POST</http-method>
       <http-method>GET</http-method>
     </web-resource-collection>
@@ -70,12 +76,10 @@
       <role-name>admin</role-name>
     </auth-constraint>
     <user-data-constraint>
-      -->
       <!--
         For now transport guarantee is set to NONE but once server is
         deployed it should be CONFIDENTIAL
       -->
-      <!--
       <transport-guarantee>NONE</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
@@ -93,7 +97,6 @@
         vhdllab)</description>
     <role-name>admin</role-name>
   </security-role>
-  -->
   <!-- Security constraints end -->
 
 </web-app>

@@ -73,5 +73,53 @@
       <version>1.5</version>
       <scope>provided</scope>
      </dependency>
-  </dependencies>
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-resources</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-core</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-binding</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-form</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-support</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-jdk5</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-jdk6</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-sandbox</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.richclient</groupId>-->
+<!--        <artifactId>spring-richclient-docking</artifactId>-->
+<!--        <version>${springRichclient.version}</version>-->
+<!--    </dependency>-->
+</dependencies>
+<!--<properties>-->
+<!--  <springRichclient.version>1.0.0</springRichclient.version>-->
+<!--</properties>-->
 </project>

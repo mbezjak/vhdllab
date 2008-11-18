@@ -103,7 +103,7 @@ public abstract class AbstractLibraryInitializer implements LibraryInitializer {
      * @return content of a specified file
      */
     private String readFile(String name) {
-        InputStream is = this.getClass().getResourceAsStream(name);
+        InputStream is = getClass().getResourceAsStream(name);
         return FileUtil.readFile(is);
     }
 
