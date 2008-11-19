@@ -26,6 +26,9 @@
 	</information>
 
 	<update check="always" policy="${jnlp.update.policy}" />
+    <security>
+      <all-permissions/>
+    </security>
 
 	<resources>
 		<java version="1.6+" href="http://java.sun.com/products/autodl/j2se"

@@ -33,8 +33,48 @@
             </goals>
           </execution>
         </executions>
+      </plugin> 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>keytool-maven-plugin</artifactId>
+        <executions>
+           <execution>
+              <phase>package</phase>
+              <goals>
+                 <goal>clean</goal>
+                 <goal>genkey</goal>
+              </goals>
+           </execution>
+        </executions>
+        <configuration>
+           <keystore>${basedir}/target/${app.name}</keystore>
+           <alias>vhdllab</alias>
+           <dname>cn=www.example.com, ou=FER Java Team</dname>
+           <validity>3650</validity>
+           <keypass>m2m2m2</keypass>
+           <storepass>m2m2m2</storepass>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <keystore>target/keystore</keystore>
+          <alias>vhdllab</alias>
+          <storepass>m2m2m2</storepass>
+          <jarPath>${project.build.directory}/${project.build.finalName}-with-deps.jar</jarPath>
+          <verify>true</verify>
+        </configuration>
       </plugin>
     </plugins>
+    
     <resources>
       <resource>
         <directory>src/main/resources</directory>
