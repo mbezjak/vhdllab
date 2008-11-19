@@ -14,8 +14,8 @@
           <exclude>META-INF/*.txt</exclude>
           <exclude>META-INF/LICENSE*</exclude>
           <exclude>META-INF/NOTICE*</exclude>
-          <exclude>META-INF/*.handlers</exclude>
-          <exclude>META-INF/*.schemas</exclude>
+<!--          <exclude>META-INF/*.handlers</exclude>-->
+<!--          <exclude>META-INF/*.schemas</exclude>-->
         </excludes>
       </unpackOptions>
       <scope>runtime</scope>
