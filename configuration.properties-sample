@@ -16,6 +16,10 @@ app.main.class = hr.fer.zemris.vhdllab.applets.main.MainFrame
 jnlp.update.policy = always
 jnlp.vm.parameter = -client
 
+keystore.location = keystore
+keystore.alias = vhdllab
+keystore.password = changeit
+
 tomcat.manager.username = username
 tomcat.manager.password = password
 

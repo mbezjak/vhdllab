@@ -1,1 +1,0 @@
-For installation instructions see the manual in the 'install' subdirectory.

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- JNLP File for VHDLLab application -->
 
-<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/${app.name}/" href="${jnlp.file}">
+<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/vhdllab/" href="launch.jnlp">
 
 	<information>
 		<title>${app.title}</title>

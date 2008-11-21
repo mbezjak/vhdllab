@@ -49,6 +49,7 @@ public class HttpClientRequestExecutor extends
         case HttpStatus.SC_UNAUTHORIZED:
         case HttpStatus.SC_FORBIDDEN:
             UserCredential uc = showLoginDialog(showRetryMessage);
+            SystemContext.instance().setUserId(uc.getUsername());
             showRetryMessage = true;
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
                     uc.getUsername(), uc.getPassword());

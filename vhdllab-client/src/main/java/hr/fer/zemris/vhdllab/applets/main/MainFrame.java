@@ -208,7 +208,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 						    context.refresh();
 							communicator = (ICommunicator) context.getBean("communicator");
 							try {
-							    SystemContext.instance().setUserId("test");
 								communicator.init(); // also initializes
 								// UserPreferences
 							} catch (RemoteAccessException e) {

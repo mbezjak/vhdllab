@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -9,16 +8,15 @@
   <!-- The Basics -->
   <groupId>hr.fer.zemris.vhdllab</groupId>
   <artifactId>vhdllab</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${application.version}</version>
   <packaging>pom</packaging>
-  <modules>
-    <module>vhdllab-client</module>
-    <module>vhdllab-server</module>
-    <module>vhdllab-common</module>
-  </modules>
+  <!-- modules are listed in each profile -->
+  <properties>
+    <application.version>0.0.1-SNAPSHOT</application.version>
+  </properties>
 
 
-  <!-- More Project Information -->
+  <!-- Project Information -->
   <name>VHDLLab</name>
   <description>
     VHDLLab is a web based IDE for VHDL (programming language). It is
@@ -35,101 +33,155 @@
   </description>
 
 
-  <!-- Build Settings (defined for inheritance) -->
   <build>
+    <defaultGoal>install</defaultGoal>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>enforce-versions</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>[2.0.9,)</version>
+                  </requireMavenVersion>
+                  <requireJavaVersion>
+                    <version>[1.6,)</version>
+                  </requireJavaVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- must only be used by modules! -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>properties-maven-plugin</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <inherited>false</inherited>
+          <executions>
+            <execution>
+              <id>read-properties-for-module</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>read-project-properties</goal>
+              </goals>
+              <configuration>
+                <files>
+                  <file>../configuration.properties</file>
+                </files>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.3</version>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-versions</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>[2.0.9,)</version>
-                </requireMavenVersion>
-                <requireJavaVersion>
-                  <version>[1.6,)</version>
-                </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <finalName>vhdllab</finalName>
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptors>
-            <descriptor>src/assemble/war.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!--
-            Using ant for deploying to tomcat because tomcat-maven-plugin
-            doesn't work when invoked on non-war project (such as this pom
-            project). It ignores such projects.
-            
-            Deploy to tomcat using 'mvn antrun:run' command.
-         -->
-        <artifactId>maven-antrun-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <tasks>
-            <property file="configuration.properties" />
-            <property name="path"     value="/vhdllab"/>
-            <property name="url"      value="http://${app.host}:${http.port}/manager"/>
-            <property name="username" value="${tomcat.manager.username}"/>
-            <property name="password" value="${tomcat.manager.password}"/>
 
-            <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"
-                    classpathref="maven.plugin.classpath"/>
-            <deploy url="${url}" username="${username}" password="${password}"
-                    path="${path}" update="true" war="target/vhdllab.war"/>
-          </tasks>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.</directory>
+              <includes>
+                <include>vhdllab.war</include>
+              </includes>
+            </fileset>
+          </filesets>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>tomcat</groupId>
-            <artifactId>catalina-ant</artifactId>
-            <version>5.5.23</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
-
-    <filters>
-      <!--
-        reference a configuration.properties in
-        VHDLLab meta-project (this project)
-      -->
-      <filter>../configuration.properties</filter>
-    </filters>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-      <resource>
-        <directory>${basedir}/src/main/site</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
   </build>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <!-- this profile incudes all modules -->
+      <modules>
+        <module>vhdllab-client</module>
+        <module>vhdllab-server</module>
+        <module>vhdllab-common</module>
+        <module>vhdllab-war</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+      <!-- this profile incudes all modules -->
+      <modules>
+        <module>vhdllab-client</module>
+        <module>vhdllab-server</module>
+        <module>vhdllab-common</module>
+        <module>vhdllab-war</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <debug>false</debug>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>fast</id>
+      <modules>
+        <!-- vhdllab-client is ommited in this profile -->
+        <module>vhdllab-common</module>
+        <module>vhdllab-server</module>
+        <module>vhdllab-war</module>
+      </modules>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <!-- Defines dependencies that every module has. -->
   <dependencies>
@@ -230,17 +282,17 @@
   <!-- Environment Settings -->
   <repositories>
     <repository>
-      <id>jboss</id>
-      <name>JBoss Maven2 repository</name>
-      <url>http://repository.jboss.com/maven2/</url>
-    </repository>
-    <repository>
       <id>codehaus</id>
       <name>Codehaus Maven2 repository</name>
       <url>http://repository.codehaus.org/</url>
     </repository>
+    <repository>
+      <id>jboss</id> <!-- For hibernate -->
+      <name>JBoss Maven2 repository</name>
+      <url>http://repository.jboss.com/maven2/</url>
+    </repository>
     <repository><!-- For javax.jnlp only -->
-      <id>springRichclientRepository</id>
+      <id>spring-richclient-repository</id>
       <name>Spring rich client repository</name>
       <url>http://spring-rich-c.sourceforge.net/maven2repository</url>
       <snapshots>
@@ -248,4 +300,18 @@
       </snapshots>
     </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository><!-- For properties-maven-plugin -->
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
 </project>

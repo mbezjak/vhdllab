@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>vhdllab</artifactId>
     <groupId>hr.fer.zemris.vhdllab</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${application.version}</version>
   </parent>
   <artifactId>vhdllab-server</artifactId>
 
   <name>VHDLLab Server</name>
-  <description></description>
 
   <dependencies>
     <!-- Compile dependencies -->
@@ -79,7 +77,10 @@
       <version>2.5.6</version>
       <scope>compile</scope>
     </dependency>
-    <!-- Commons Digester and log4j dependencies are satisfied through vhdllab-common -->
+    <!--
+      Commons Digester and log4j dependencies are satisfied through
+      vhdllab-common
+    -->
     <!-- Runtime dependencies -->
     <dependency>
       <groupId>commons-dbcp</groupId>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>vhdllab</artifactId>
+    <groupId>hr.fer.zemris.vhdllab</groupId>
+    <version>${application.version}</version>
+  </parent>
+  <artifactId>vhdllab-war</artifactId>
+  <packaging>war</packaging>
+
+  <name>VHDLLab war</name>
+
+  <build>
+    <finalName>vhdllab</finalName>
+    <filters>
+      <filter>../configuration.properties</filter>
+    </filters>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <configuration>
+            <webResources>
+              <resource>
+                <directory>src/main/webapp</directory>
+                <filtering>true</filtering>
+              </resource>
+            </webResources>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin> <!-- Copy war to parent project -->
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-war-to-parent</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>target</directory>
+                  <includes>
+                    <include>${project.build.finalName}.war</include>
+                  </includes>
+                </resource>
+              </resources>
+              <outputDirectory>..</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!--
+      'dev' and 'prod' profile also include vhdllab-client as a web
+      resource while 'fast' doesn't
+    -->
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <webResources>
+                <resource>
+                  <directory>../vhdllab-client/target</directory>
+                  <filtering>false</filtering>
+                  <includes>
+                    <!-- possible files are .jar, .tar.gz and .zip -->
+                    <include>vhdllab-client-with-deps.*</include>
+                  </includes>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <webResources>
+                <resource>
+                  <directory>../vhdllab-client/target</directory>
+                  <filtering>false</filtering>
+                  <includes>
+                    <!-- possible files are .jar, .tar.gz and .zip -->
+                    <include>vhdllab-client-with-deps.*</include>
+                  </includes>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>fast</id>
+    </profile>
+  </profiles>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>vhdllab-server</artifactId>
+      <version>${version}</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+</project>

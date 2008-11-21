@@ -1,80 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>vhdllab</artifactId>
     <groupId>hr.fer.zemris.vhdllab</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${application.version}</version>
   </parent>
   <artifactId>vhdllab-client</artifactId>
-  
-  <name>VHDLLab-Client</name>
-  <description></description>
+
+  <name>VHDLLab Client</name>
 
   <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/assemble/with-deps.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly-with-deps</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- append to the packaging phase. -->
-            <goals>
-              <goal>single</goal> <!-- goals == mojos -->
-            </goals>
-          </execution>
-        </executions>
-      </plugin> 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>keytool-maven-plugin</artifactId>
-        <executions>
-           <execution>
+    <finalName>${artifactId}</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-shade-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>make-client-uber-jar</id>
               <phase>package</phase>
               <goals>
-                 <goal>clean</goal>
-                 <goal>genkey</goal>
+                <goal>shade</goal>
               </goals>
-           </execution>
-        </executions>
-        <configuration>
-           <keystore>${basedir}/target/${app.name}</keystore>
-           <alias>vhdllab</alias>
-           <dname>cn=www.example.com, ou=FER Java Team</dname>
-           <validity>3650</validity>
-           <keypass>m2m2m2</keypass>
-           <storepass>m2m2m2</storepass>
-        </configuration>
-      </plugin>
+              <configuration>
+                <finalName>${project.build.finalName}-with-deps</finalName>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <archive>
+              <!--
+                MANIFER.MF must be filtered first so look in 'target'
+                instead of 'src'
+              -->
+              <manifestFile>target/classes/META-INF/MANIFEST.MF</manifestFile>
+            </archive>
+          </configuration>
+          <executions>
+            <execution>
+              <id>sign-uber-jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+              <configuration>
+                <keystore>${inner.keystore.location}</keystore>
+                <alias>${inner.keystore.alias}</alias>
+                <storepass>${inner.keystore.password}</storepass>
+                <jarPath>${project.build.directory}/${project.build.finalName}-with-deps.jar</jarPath>
+                <verify>true</verify>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!--
+        Reads ../configuration.properties so they can be used in this
+        file.
+      -->
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <keystore>target/keystore</keystore>
-          <alias>vhdllab</alias>
-          <storepass>m2m2m2</storepass>
-          <jarPath>${project.build.directory}/${project.build.finalName}-with-deps.jar</jarPath>
-          <verify>true</verify>
-        </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
       </plugin>
     </plugins>
-    
+
+    <filters>
+      <filter>../configuration.properties</filter>
+    </filters>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -85,9 +89,87 @@
         <filtering>false</filtering>
       </resource>
     </resources>
-    <finalName>${artifactId}</finalName>
   </build>
-  
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <inner.keystore.location>target/keystore</inner.keystore.location>
+        <inner.keystore.alias>vhdllab</inner.keystore.alias>
+        <inner.keystore.password>vhdllab</inner.keystore.password>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-shade-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>keytool-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-development-keytool</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>clean</goal>
+                  <goal>genkey</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <keystore>${basedir}/target/keystore</keystore>
+              <alias>vhdllab</alias>
+              <dname>cn=vhdllab.development.issuer</dname>
+              <validity>3650</validity> <!-- 10 years -->
+              <keypass>vhdllab</keypass>
+              <storepass>vhdllab</storepass>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-uber-jar</id>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+      <properties>
+        <!--
+          In production keystore is located relative to
+          configuration.properties (where location is defined).
+        -->
+        <inner.keystore.location>../${keystore.location}</inner.keystore.location>
+        <inner.keystore.alias>${keystore.alias}</inner.keystore.alias>
+        <inner.keystore.password>${keystore.password}</inner.keystore.password>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-shade-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-uber-jar</id>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -112,54 +194,54 @@
       <artifactId>jnlp-api</artifactId>
       <version>1.5</version>
       <scope>provided</scope>
-     </dependency>
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-resources</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-core</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-binding</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-form</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-support</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-jdk5</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-jdk6</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-sandbox</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--        <groupId>org.springframework.richclient</groupId>-->
-<!--        <artifactId>spring-richclient-docking</artifactId>-->
-<!--        <version>${springRichclient.version}</version>-->
-<!--    </dependency>-->
-</dependencies>
-<!--<properties>-->
-<!--  <springRichclient.version>1.0.0</springRichclient.version>-->
-<!--</properties>-->
+    </dependency>
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-resources</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-core</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-binding</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-form</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-support</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-jdk5</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-jdk6</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-sandbox</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--        <groupId>org.springframework.richclient</groupId>-->
+    <!--        <artifactId>spring-richclient-docking</artifactId>-->
+    <!--        <version>${springRichclient.version}</version>-->
+    <!--    </dependency>-->
+  </dependencies>
+  <!--<properties>-->
+  <!--  <springRichclient.version>1.0.0</springRichclient.version>-->
+  <!--</properties>-->
 </project>
