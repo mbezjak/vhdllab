@@ -18,6 +18,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
+import hr.fer.zemris.vhdllab.client.core.Environment;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
@@ -84,6 +85,12 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
+import org.apache.commons.cli.PosixParser;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.remoting.RemoteAccessException;
 
@@ -97,7 +104,7 @@ import org.springframework.remoting.RemoteAccessException;
  */
 public final class MainFrame extends JFrame implements IComponentProvider,
 		UserPreferencesListener {
-
+    
 	// {
 	// try {
 	// javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
@@ -1328,7 +1335,6 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 				}
 			});
 			menu.add(menuItem);
-			menu.addSeparator();
 
 			// View Preferences
 			key = LanguageConstants.MENU_TOOLS_VIEW_PREFERENCES;
@@ -1343,7 +1349,10 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 					}
 				}
 			});
-			menu.add(menuItem);
+			if(SystemContext.instance().getEnvironment().equals(Environment.DEVELOPMENT)) {
+			    menu.addSeparator();
+			    menu.add(menuItem);
+			}
 
 			menuBar.add(menu);
 
@@ -1410,7 +1419,9 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 			menu.add(menuItem);
 			// TODO END TEMP SOLUTION
 
-			menuBar.add(menu);
+            if(SystemContext.instance().getEnvironment().equals(Environment.DEVELOPMENT)) {
+                menuBar.add(menu);
+            }
 
 			return menuBar;
 		}
@@ -1803,6 +1814,22 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 //	private SingleInstanceService sis;
 
 	public static void main(String[] args) {
+	    Options options = new Options();
+	    options.addOption(OptionBuilder.withLongOpt("env").hasArg().withValueSeparator().create());
+	    Parser parser = new PosixParser();
+	    try {
+	        CommandLine cmd = parser.parse(options, args);
+	        String env = cmd.getOptionValue("env", "prod");
+	        if(env.equals("dev")) {
+	            SystemContext.instance().setEnvironment(Environment.DEVELOPMENT);
+	        } else {
+	            SystemContext.instance().setEnvironment(Environment.PRODUCTION);
+	        }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            SystemContext.instance().setEnvironment(Environment.PRODUCTION);
+        }
+        
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

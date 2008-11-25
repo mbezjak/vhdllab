@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+import hr.fer.zemris.vhdllab.client.core.Environment;
 import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
@@ -48,7 +49,12 @@ public class HttpClientRequestExecutor extends
         switch (postMethod.getStatusCode()) {
         case HttpStatus.SC_UNAUTHORIZED:
         case HttpStatus.SC_FORBIDDEN:
-            UserCredential uc = showLoginDialog(showRetryMessage);
+            UserCredential uc;
+            if(SystemContext.instance().getEnvironment().equals(Environment.DEVELOPMENT) && !showRetryMessage) {
+                uc = new UserCredential("test", "a");
+            } else {
+                uc = showLoginDialog(showRetryMessage);
+            }
             SystemContext.instance().setUserId(uc.getUsername());
             showRetryMessage = true;
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(

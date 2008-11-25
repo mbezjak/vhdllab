@@ -22,6 +22,7 @@ public class SystemContext {
 
 	private String userId;
 	private Frame frameOwner;
+	private Environment environment;
 	
 	public String getUserId() {
 		return userId;
@@ -35,5 +36,11 @@ public class SystemContext {
 	public void setFrameOwner(Frame owner) {
 		this.frameOwner = owner;
 	}
+    public Environment getEnvironment() {
+        return environment;
+    }
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 	
 }

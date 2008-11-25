@@ -44,13 +44,22 @@
 
   <!-- JSPC servlet mappings start -->
 
+  <servlet>
+    <servlet-name>JnlpDownloadServlet</servlet-name>
+    <servlet-class>jnlp.sample.servlet.JnlpDownloadServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>JnlpDownloadServlet</servlet-name>
+    <url-pattern>*.jnlp</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>remoting</servlet-name>
     <servlet-class>
         org.springframework.web.servlet.DispatcherServlet
     </servlet-class>
-    <load-on-startup>1</load-on-startup>
+    <load-on-startup>2</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>remoting</servlet-name>

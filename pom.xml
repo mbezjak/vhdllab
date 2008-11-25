@@ -60,28 +60,6 @@
           </executions>
         </plugin>
 
-        <!-- must only be used by modules! -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>properties-maven-plugin</artifactId>
-          <version>1.0-SNAPSHOT</version>
-          <inherited>false</inherited>
-          <executions>
-            <execution>
-              <id>read-properties-for-module</id>
-              <phase>initialize</phase>
-              <goals>
-                <goal>read-project-properties</goal>
-              </goals>
-              <configuration>
-                <files>
-                  <file>../configuration.properties</file>
-                </files>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.3</version>
@@ -96,6 +74,13 @@
             <source>1.6</source>
             <target>1.6</target>
             <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
           </configuration>
         </plugin>
       </plugins>

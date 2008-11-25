@@ -1,2 +1,5 @@
 @echo off
-mvn install assembly:assembly antrun:run -Dmaven.test.skip=true
+
+mvn -Pfast
+cd vhdllab-war
+mvn tomcat:exploded

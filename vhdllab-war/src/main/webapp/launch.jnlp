@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- JNLP File for VHDLLab application -->
-
-<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/vhdllab/" href="launch.jnlp">
+<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/vhdllab/"
+        href="$$name" version="${application.version}">
 
 	<information>
 		<title>${app.title}</title>
@@ -18,25 +17,22 @@
 			<desktop/>
 			<menu submenu="${app.title}"/>
 		</shortcut>
-
-		<related-content href=".java.policy">
-			<title>Java policy</title>
-			<description>This is a mandatory java policy file whose contents must be copied in existing .java.policy file in user home directory or if such file does not exists this file must be copied in designated directory. This application will not work without it!</description>
-		</related-content>
 	</information>
 
-	<update check="always" policy="${jnlp.update.policy}" />
+	<update check="always" policy="always" />
     <security>
       <all-permissions/>
     </security>
 
 	<resources>
+	    <property name="jnlp.packEnabled" value="${jnlp.packenabled}"/>
 		<java version="1.6+" href="http://java.sun.com/products/autodl/j2se"
-			java-vm-args="${jnlp.vm.parameter}"/>
+		          java-vm-args="${jnlp.vm.parameter}"/>
 	    <jar href="${app.client.archive}" download="eager" main="true"/>
 	</resources>
 
 	<application-desc main-class="${app.main.class}">
+	   <argument>--env=${env}</argument>
 	</application-desc>
 
 </jnlp>

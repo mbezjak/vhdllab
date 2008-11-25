@@ -53,7 +53,6 @@ public class Communicator implements ICommunicator {
     private Simulator simulator;
 
     private Cache cache;
-    private Caseless userId;
 
     public Communicator() {
         cache = new Cache();
@@ -65,7 +64,6 @@ public class Communicator implements ICommunicator {
      * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#init()
      */
     public void init() throws UniformAppletException {
-        userId = new Caseless(SystemContext.instance().getUserId());
         loadUserPreferences();
         // FIXME TMP SOLUTION
         loadFileIds();
@@ -112,6 +110,7 @@ public class Communicator implements ICommunicator {
      * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#getAllProjects()
      */
     public List<Caseless> getAllProjects() {
+        Caseless userId = new Caseless(SystemContext.instance().getUserId());
         List<ProjectInfo> projects = projectService.findByUser(userId);
 
         List<Caseless> projectNames = new ArrayList<Caseless>();
@@ -276,6 +275,7 @@ public class Communicator implements ICommunicator {
     public void createProject(Caseless projectName) {
         if (projectName == null)
             throw new NullPointerException("Project name can not be null.");
+        Caseless userId = new Caseless(SystemContext.instance().getUserId());
         ProjectInfo savedProject = projectService.save(new ProjectInfo(userId,
                 projectName));
         cache.cacheItem(projectName, savedProject);
@@ -518,6 +518,8 @@ public class Communicator implements ICommunicator {
     }
 
     private void loadUserPreferences() {
+        SystemContext.instance().setUserId("test");
+        Caseless userId = new Caseless(SystemContext.instance().getUserId());
         Properties properties = new Properties();
         List<UserFileInfo> files = userFileService.findByUser(userId);
         for (UserFileInfo f : files) {
