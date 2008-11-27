@@ -19,6 +19,7 @@ jnlp.vm.parameter = -client
 keystore.location = keystore
 keystore.alias = vhdllab
 keystore.password = changeit
+keystore.keypassword = changeit
 
 tomcat.manager.username = username
 tomcat.manager.password = password

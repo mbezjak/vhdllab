@@ -72,6 +72,38 @@
       </plugin>
 
       <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.14</version>
+        <configuration>
+          <webAppConfig>
+            <contextPath>/vhdllab</contextPath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.security.SslSocketConnector">
+              <port>8443</port>
+              <maxIdleTime>60000</maxIdleTime>
+              <keystore>target/keystore</keystore>
+              <password>vhdllab</password>
+              <keyPassword>vhdllab</keyPassword>
+            </connector>
+          </connectors>
+          <userRealms>
+            <userRealm implementation="org.mortbay.jetty.security.HashUserRealm">
+              <name>default</name>
+              <config>src/dev/realm.properties</config>
+            </userRealm>
+          </userRealms>
+          <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+            <filename>target/request.log</filename>
+            <append>false</append>
+            <extended>false</extended>
+            <logTimeZone>GMT</logTimeZone>
+          </requestLog>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
@@ -148,6 +180,7 @@
         <inner.keystore.location>target/keystore</inner.keystore.location>
         <inner.keystore.alias>vhdllab</inner.keystore.alias>
         <inner.keystore.password>vhdllab</inner.keystore.password>
+        <inner.keystore.keypassword>vhdllab</inner.keystore.keypassword>
         <jnlp.packenabled>false</jnlp.packenabled>
       </properties>
       <build>
@@ -187,6 +220,7 @@
                   <keystore>${inner.keystore.location}</keystore>
                   <alias>${inner.keystore.alias}</alias>
                   <storepass>${inner.keystore.password}</storepass>
+                  <keypass>${inner.keystore.keypassword}</keypass>
                   <jarPath>target/target/vhdllab-client-with-deps.jar</jarPath>
                   <verify>true</verify>
                 </configuration>
@@ -208,6 +242,7 @@
         <inner.keystore.location>../${keystore.location}</inner.keystore.location>
         <inner.keystore.alias>${keystore.alias}</inner.keystore.alias>
         <inner.keystore.password>${keystore.password}</inner.keystore.password>
+        <inner.keystore.keypassword>${keystore.keypassword}</inner.keystore.keypassword>
         <jnlp.packenabled>true</jnlp.packenabled>
       </properties>
       <build>
@@ -269,7 +304,7 @@
                     <signjar
                       jar="target/target/vhdllab-client-with-deps.jar"
                       keystore="${inner.keystore.location}" alias="${inner.keystore.alias}"
-                      storepass="${inner.keystore.password}" />
+                      storepass="${inner.keystore.password}" keypass="${inner.keystore.keypassword}" />
 
                     <pack200
                       src="target/target/vhdllab-client-with-deps.jar"

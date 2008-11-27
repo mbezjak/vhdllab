@@ -2,4 +2,4 @@
 
 mvn -Pfast
 cd vhdllab-war
-mvn tomcat:exploded
+mvn jetty:run-exploded -Pdev

@@ -51,7 +51,7 @@ public class HttpClientRequestExecutor extends
         case HttpStatus.SC_FORBIDDEN:
             UserCredential uc;
             if(SystemContext.instance().getEnvironment().equals(Environment.DEVELOPMENT) && !showRetryMessage) {
-                uc = new UserCredential("test", "a");
+                uc = new UserCredential("test", "test");
             } else {
                 uc = showLoginDialog(showRetryMessage);
             }

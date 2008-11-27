@@ -218,12 +218,16 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 								communicator.init(); // also initializes
 								// UserPreferences
 							} catch (RemoteAccessException e) {
+							    e.printStackTrace();
 							    if(e.getCause() instanceof SecurityException) {
 							        exit(EXIT_STATUS_ERROR);
 							    }
 							} catch (UniformAppletException e) {
 								e.printStackTrace();
 								throw new IllegalStateException(e);
+							} catch (RuntimeException e) {
+							    e.printStackTrace();
+							    throw e;
 							}
 							try {
 								/*
