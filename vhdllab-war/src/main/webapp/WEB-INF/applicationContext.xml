@@ -336,44 +336,4 @@
 
 
 
-  <!-- also add hibernate statistics = true to jpa properties -->
-  <!--
-    <bean id="hibernateStats"
-    class="org.hibernate.jmx.StatisticsService">
-  -->
-  <!--       <property name="sessionFactory">-->
-  <!--           <ref bean="sessionFactory"/>-->
-  <!--       </property>-->
-  <!--</bean>-->
-  <!--
-    <bean id="exporter"
-    class="org.springframework.jmx.export.MBeanExporter">
-  -->
-  <!--       <property name="beans">-->
-  <!--           <map>-->
-  <!--           <entry key="bean:name=hibernateStatsMBean">-->
-  <!--                   <ref bean="hibernateStats"></ref>-->
-  <!--           </entry>-->
-  <!--           </map>-->
-  <!--       </property>-->
-  <!--       <property name="assembler">-->
-  <!--
-    <bean
-    class="org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler">
-  -->
-  <!--               <property name="methodMappings">-->
-  <!--                   <props>-->
-  <!--                       <prop key="bean:name=hibernateStatsMBean">-->
-  <!--                   </prop>-->
-  <!--                   </props>-->
-  <!--               </property>-->
-  <!--           </bean>-->
-  <!--       </property>-->
-  <!--  only in 1.2.6-->
-  <!--  <property name="registrationBehavior">-->
-  <!--    <value>2</value>-->
-  <!--  </property>-->
-  <!--</bean>-->
-
-
 </beans>

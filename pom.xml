@@ -12,7 +12,7 @@
   <packaging>pom</packaging>
   <!-- modules are listed in each profile -->
   <properties>
-    <application.version>0.0.1-SNAPSHOT</application.version>
+    <application.version>0.2</application.version>
   </properties>
 
 
