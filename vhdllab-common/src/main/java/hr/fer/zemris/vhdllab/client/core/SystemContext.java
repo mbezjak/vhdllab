@@ -1,6 +1,3 @@
-/**
- * 
- */
 package hr.fer.zemris.vhdllab.client.core;
 
 import java.awt.Frame;

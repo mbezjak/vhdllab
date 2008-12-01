@@ -1,9 +1,11 @@
 package hr.fer.zemris.vhdllab.entities;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entities.stub.FileHistoryStub;
 import hr.fer.zemris.vhdllab.entities.stub.FileInfoStub;
+import hr.fer.zemris.vhdllab.entities.stub.HistoryStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -37,6 +39,17 @@ public class FileHistoryTest {
     @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
         new FileHistory(new FileInfoStub(), null);
+    }
+
+    /**
+     * By default history objects do not copy id and version fields.
+     */
+    @Test
+    public void constructor3() throws Exception {
+        FileHistory another = new FileHistory(new FileInfoStub(),
+                new HistoryStub());
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
     }
 
     /**

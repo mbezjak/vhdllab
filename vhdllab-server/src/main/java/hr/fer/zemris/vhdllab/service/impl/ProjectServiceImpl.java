@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
-import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.service.ProjectService;
@@ -35,8 +34,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectInfo> findByUser(Caseless userId) {
-        List<Project> userProjects = dao.findByUser(userId);
+    public List<ProjectInfo> findByUser() {
+        List<Project> userProjects = dao.findByUser(UserHolder.getUser());
         List<ProjectInfo> infoProjects = new ArrayList<ProjectInfo>(
                 userProjects.size());
         for (Project project : userProjects) {

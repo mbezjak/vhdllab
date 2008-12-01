@@ -1,15 +1,17 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_NOT_CORRECTLY_FORMATTED;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
-import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
-import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID_TOO_LONG;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
+import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
@@ -80,6 +82,8 @@ public class UserFileInfoTest {
         assertEquals("not equal.", file, another);
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());
         assertEquals("userIds not same.", file.getUserId(), another.getUserId());
+        assertEquals("id not copied.", ID, another.getId());
+        assertEquals("version not copied.", VERSION, another.getVersion());
     }
 
     /**

@@ -4,6 +4,7 @@ import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
 import static hr.fer.zemris.vhdllab.entities.stub.IOwnableStub.USER_ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IResourceStub.DATA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entities.stub.UserFileStub;
 
@@ -46,6 +47,8 @@ public class UserFileTest {
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());
         assertEquals("data not same.", file.getData(), another.getData());
         assertEquals("userIds not same.", file.getUserId(), another.getUserId());
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
     }
 
     /**

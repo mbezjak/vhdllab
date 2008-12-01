@@ -21,7 +21,7 @@ public class FileInfoStub extends FileInfo implements IFileInfoStub {
     }
 
     public FileInfoStub(FileInfo file) {
-        super(file);
+        super(file, true);
     }
 
     @Override

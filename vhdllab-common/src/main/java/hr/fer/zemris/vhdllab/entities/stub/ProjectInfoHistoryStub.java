@@ -22,7 +22,7 @@ public class ProjectInfoHistoryStub extends ProjectInfoHistory implements
     }
 
     public ProjectInfoHistoryStub(ProjectInfoHistory history) {
-        super(history);
+        super(history, true);
     }
 
     @Override

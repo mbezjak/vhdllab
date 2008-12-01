@@ -63,7 +63,7 @@ public class FileInfo extends FileResource {
      *             if either parameter is <code>null</code>
      */
     public FileInfo(FileResource file, Integer projectId) {
-        super(file);
+        super(file, true);
         this.projectId = projectId;
         checkProperties();
     }
@@ -76,11 +76,14 @@ public class FileInfo extends FileResource {
      * 
      * @param file
      *            a file to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if <code>file</code> is <code>null</code>
      */
-    public FileInfo(FileInfo file) {
-        super(file);
+    protected FileInfo(FileInfo file, boolean deepCopy) {
+        super(file, deepCopy);
         this.projectId = file.projectId;
     }
 

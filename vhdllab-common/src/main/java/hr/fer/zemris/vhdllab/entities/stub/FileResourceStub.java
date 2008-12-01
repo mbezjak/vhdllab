@@ -21,7 +21,7 @@ public class FileResourceStub extends FileResource implements IFileResourceStub 
     }
 
     public FileResourceStub(FileResource resource) {
-        super(resource);
+        super(resource, true);
     }
 
     @Override

@@ -58,6 +58,8 @@ public class FileTest {
                 .getProject());
         assertFalse("original file's project's files is modified.", project
                 .getFiles().contains(another));
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
     }
 
     /**

@@ -48,7 +48,7 @@ public class ProjectInfo extends EntityObject implements Ownable {
         this.userId = userId;
         checkProperties();
     }
-
+    
     /**
      * Copy constructor.
      * <p>
@@ -61,7 +61,25 @@ public class ProjectInfo extends EntityObject implements Ownable {
      *             if <code>project</code> is <code>null</code>
      */
     public ProjectInfo(ProjectInfo project) {
-        super(project);
+        this(project, true);
+    }
+
+    /**
+     * Copy constructor.
+     * <p>
+     * Note: <code>id</code> and <code>version</code> properties are not copied.
+     * </p>
+     * 
+     * @param project
+     *            a project to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
+     * @throws NullPointerException
+     *             if <code>project</code> is <code>null</code>
+     */
+    protected ProjectInfo(ProjectInfo project, boolean deepCopy) {
+        super(project, deepCopy);
         this.userId = project.userId;
     }
 

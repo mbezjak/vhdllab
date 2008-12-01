@@ -65,7 +65,7 @@ public class Library extends LibraryInfo {
      *             if <code>library</code> is <code>null</code>
      */
     public Library(Library library) {
-        super(library);
+        super(library, false);
         /*
          * Files is not referenced to reduce aliasing problems!
          */

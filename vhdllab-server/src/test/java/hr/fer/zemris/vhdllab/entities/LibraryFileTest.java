@@ -68,6 +68,8 @@ public class LibraryFileTest {
                 .getLibrary());
         assertFalse("original file's library's files is modified.", library
                 .getFiles().contains(another));
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
     }
 
     /**

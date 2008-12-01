@@ -34,7 +34,7 @@ public class FileHistory extends FileInfoHistory {
      *             if either parameter is <code>null</code>
      */
     public FileHistory(FileInfo file, History history) {
-        super(file, history);
+        super(file, history, false);
     }
 
 }

@@ -39,7 +39,7 @@ public class FileResourceTest {
      */
     @Test(expected = NullPointerException.class)
     public void copyConstructor() throws Exception {
-        new FileResource(null);
+        new FileResource(null, true);
     }
 
     /**
@@ -47,7 +47,7 @@ public class FileResourceTest {
      */
     @Test
     public void copyConstructor2() throws Exception {
-        FileResource another = new FileResource(file);
+        FileResource another = new FileResource(file, true);
         assertTrue("same reference.", file != another);
         assertEquals("not equal.", file, another);
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());
@@ -60,7 +60,7 @@ public class FileResourceTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        Resource entity = new Resource(file);
+        Resource entity = new Resource(file, true);
         assertTrue("not same.", entity.equals(file));
         assertTrue("not same.", file.equals(entity));
         assertEquals("hashcode not same.", entity.hashCode(), file.hashCode());

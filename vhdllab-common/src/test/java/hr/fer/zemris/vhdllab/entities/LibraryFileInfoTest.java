@@ -1,8 +1,10 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_NOT_CORRECTLY_FORMATTED;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
 import static hr.fer.zemris.vhdllab.entities.stub.ILibraryFileInfoStub.LIBRARY_ID;
 import static hr.fer.zemris.vhdllab.entities.stub.ILibraryFileInfoStub.LIBRARY_ID_2;
@@ -13,6 +15,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entities.stub.FileResourceStub;
 import hr.fer.zemris.vhdllab.entities.stub.LibraryFileInfoStub;
+import hr.fer.zemris.vhdllab.entities.stub.ResourceStub;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
@@ -62,6 +65,16 @@ public class LibraryFileInfoTest {
     }
 
     /**
+     * By default info objects copy id and version fields.
+     */
+    @Test
+    public void constructor4() throws Exception {
+        LibraryFileInfo another = new LibraryFileInfo(new ResourceStub(), LIBRARY_ID);
+        assertEquals("id not copied.", ID, another.getId());
+        assertEquals("version not copied.", VERSION, another.getVersion());
+    }
+
+    /**
      * LibraryFileInfo is null.
      */
     @Test(expected = NullPointerException.class)
@@ -80,6 +93,8 @@ public class LibraryFileInfoTest {
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());
         assertEquals("libraryIds not same.", file.getLibraryId(), another
                 .getLibraryId());
+        assertEquals("id not copied.", ID, another.getId());
+        assertEquals("version not copied.", VERSION, another.getVersion());
     }
 
     /**

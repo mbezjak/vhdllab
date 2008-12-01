@@ -23,7 +23,7 @@ public class FileInfoHistoryStub extends FileInfoHistory implements
     }
 
     public FileInfoHistoryStub(FileInfoHistory history) {
-        super(history);
+        super(history, true);
     }
 
     @Override

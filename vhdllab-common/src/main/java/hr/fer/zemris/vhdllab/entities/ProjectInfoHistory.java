@@ -36,15 +36,33 @@ public class ProjectInfoHistory extends ProjectInfo {
      *            a project to duplicate
      * @param history
      *            a history to set
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if either parameter is <code>null</code>
      */
-    public ProjectInfoHistory(ProjectInfo project, History history) {
-        super(project);
+    public ProjectInfoHistory(ProjectInfo project, History history, boolean deepCopy) {
+        super(project, deepCopy);
         this.history = history;
         checkProperties();
     }
 
+    /**
+     * Constructs a project info history out of specified <code>project</code> and
+     * <code>history</code>.
+     * 
+     * @param project
+     *            a project to duplicate
+     * @param history
+     *            a history to set
+     * @throws NullPointerException
+     *             if either parameter is <code>null</code>
+     */
+    public ProjectInfoHistory(ProjectInfo project, History history) {
+        this(project, history, true);
+    }
+    
     /**
      * Copy constructor.
      * <p>
@@ -53,11 +71,14 @@ public class ProjectInfoHistory extends ProjectInfo {
      * 
      * @param info
      *            a history info to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if <code>info</code> is <code>null</code>
      */
-    public ProjectInfoHistory(ProjectInfoHistory info) {
-        super(info);
+    protected ProjectInfoHistory(ProjectInfoHistory info, boolean deepCopy) {
+        super(info, deepCopy);
         this.history = info.history;
     }
 

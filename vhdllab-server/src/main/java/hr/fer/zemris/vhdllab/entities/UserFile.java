@@ -57,7 +57,7 @@ public class UserFile extends UserFileInfo {
      *             if <code>userFile</code> is <code>null</code>
      */
     public UserFile(UserFile userFile) {
-        super(userFile);
+        super(userFile, false);
     }
 
 }

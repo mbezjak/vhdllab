@@ -65,10 +65,28 @@ public class UserFileInfo extends Resource implements Ownable {
      *             if <code>userFile</code> is <code>null</code>
      */
     public UserFileInfo(UserFileInfo userFile) {
-        super(userFile);
-        this.userId = userFile.userId;
+        this(userFile, true);
     }
 
+    /**
+     * Copy constructor.
+     * <p>
+     * Note: <code>id</code> and <code>version</code> properties are not copied.
+     * </p>
+     * 
+     * @param userFile
+     *            a user file to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
+     * @throws NullPointerException
+     *             if <code>userFile</code> is <code>null</code>
+     */
+    protected UserFileInfo(UserFileInfo userFile, boolean deepCopy) {
+        super(userFile, deepCopy);
+        this.userId = userFile.userId;
+    }
+    
     /**
      * Ensures that properties are in correct state.
      * 

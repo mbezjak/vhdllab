@@ -1,8 +1,10 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IFileInfoStub.PROJECT_ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IFileInfoStub.PROJECT_ID_2;
@@ -44,7 +46,7 @@ public class FileInfoTest {
     public void constructor() throws Exception {
         new FileInfo(null, NAME, DATA, PROJECT_ID);
     }
-    
+
     /**
      * Name is null.
      */
@@ -52,7 +54,7 @@ public class FileInfoTest {
     public void constructor2() throws Exception {
         new FileInfo(TYPE, null, DATA, PROJECT_ID);
     }
-    
+
     /**
      * Data is null.
      */
@@ -60,7 +62,7 @@ public class FileInfoTest {
     public void constructor3() throws Exception {
         new FileInfo(TYPE, NAME, null, PROJECT_ID);
     }
-    
+
     /**
      * Project id is null.
      */
@@ -68,7 +70,7 @@ public class FileInfoTest {
     public void constructor4() throws Exception {
         new FileInfo(TYPE, NAME, DATA, null);
     }
-    
+
     /**
      * FileResource is null.
      */
@@ -86,11 +88,21 @@ public class FileInfoTest {
     }
 
     /**
+     * By default info objects copy id and version fields.
+     */
+    @Test
+    public void constructor7() throws Exception {
+        FileInfo another = new FileInfo(new FileResourceStub(), PROJECT_ID);
+        assertEquals("id not copied.", ID, another.getId());
+        assertEquals("version not copied.", VERSION, another.getVersion());
+    }
+
+    /**
      * FileInfo is null.
      */
     @Test(expected = NullPointerException.class)
     public void copyConstructor() throws Exception {
-        new FileInfo(null);
+        new FileInfo(null, true);
     }
 
     /**
@@ -98,7 +110,7 @@ public class FileInfoTest {
      */
     @Test
     public void copyConstructor2() throws Exception {
-        FileInfo another = new FileInfo(file);
+        FileInfo another = new FileInfo(file, true);
         assertTrue("same reference.", file != another);
         assertEquals("not equal.", file, another);
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());

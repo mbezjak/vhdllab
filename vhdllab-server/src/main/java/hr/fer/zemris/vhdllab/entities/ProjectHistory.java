@@ -38,7 +38,7 @@ public class ProjectHistory extends ProjectInfoHistory {
      *             if either parameter is <code>null</code>
      */
     public ProjectHistory(ProjectInfo project, History history) {
-        super(project, history);
+        super(project, history, false);
     }
 
 }

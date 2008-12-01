@@ -20,7 +20,7 @@ public class ProjectInfoStub extends ProjectInfo implements IOwnableStub {
     }
 
     public ProjectInfoStub(ProjectInfo project) {
-        super(project);
+        super(project, true);
     }
 
     @Override

@@ -32,7 +32,8 @@ public class UserFileServiceImpl implements UserFileService {
     }
 
     @Override
-    public List<UserFileInfo> findByUser(Caseless userId) {
+    public List<UserFileInfo> findByUser() {
+        Caseless userId = UserHolder.getUser();
         List<UserFile> userFiles = dao.findByUser(userId);
         Library lib = libraryDao
                 .findByName(PreferencesLibraryInitializer.LIBRARY_NAME);

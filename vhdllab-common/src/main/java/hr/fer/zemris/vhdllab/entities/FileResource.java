@@ -58,11 +58,14 @@ public class FileResource extends Resource {
      * 
      * @param file
      *            a file resource to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if <code>file</code> is <code>null</code>
      */
-    protected FileResource(FileResource file) {
-        super(file);
+    protected FileResource(FileResource file, boolean deepCopy) {
+        super(file, deepCopy);
         this.type = file.type;
     }
 

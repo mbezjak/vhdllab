@@ -74,6 +74,8 @@ public class LibraryTest {
         assertNotNull("original file reference is missing.", library.getFiles());
         assertEquals("original files has been modified.", files, library
                 .getFiles());
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
     }
 
     /**

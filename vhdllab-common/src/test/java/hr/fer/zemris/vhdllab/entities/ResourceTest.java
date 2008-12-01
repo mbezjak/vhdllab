@@ -47,7 +47,7 @@ public class ResourceTest {
      */
     @Test(expected = NullPointerException.class)
     public void copyConstructor() throws Exception {
-        new Resource(null);
+        new Resource(null, true);
     }
 
     /**
@@ -55,7 +55,7 @@ public class ResourceTest {
      */
     @Test
     public void copyConstructor2() throws Exception {
-        Resource another = new Resource(res);
+        Resource another = new Resource(res, true);
         assertTrue("same reference.", res != another);
         assertEquals("not equal.", res, another);
         assertEquals("hashCode not same.", res.hashCode(), another.hashCode());
@@ -68,7 +68,7 @@ public class ResourceTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        EntityObject entity = new EntityObject(res);
+        EntityObject entity = new EntityObject(res, true);
         assertTrue("not same.", entity.equals(res));
         assertTrue("not same.", res.equals(entity));
         assertEquals("hashcode not same.", entity.hashCode(), res.hashCode());

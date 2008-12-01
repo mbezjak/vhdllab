@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import javax.persistence.EntityListeners;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -14,7 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-//@EntityListeners(HistoryListener.class)
+@EntityListeners(HistoryListener.class)
 public class File extends FileResource {
 
     private static final long serialVersionUID = 1L;
@@ -67,7 +69,7 @@ public class File extends FileResource {
      *             if <code>file</code> is <code>null</code>
      */
     public File(File file) {
-        super(file);
+        super(file, false);
         project = null;
     }
 

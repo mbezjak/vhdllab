@@ -27,8 +27,9 @@ public class LibraryFileServiceImpl implements LibraryFileService {
     public void saveClientLog(String data) {
         Library errorsLibrary = libraryDao
                 .findByName(ClientLogsLibraryInitializer.LIBRARY_NAME);
-        LibraryFile error = new LibraryFile(
-                new Caseless(new Date().toString()), data);
+        String name = "by user '" + UserHolder.getUser().toString() + "' at "
+                + new Date().toString();
+        LibraryFile error = new LibraryFile(new Caseless(name), data);
         errorsLibrary.addFile(error);
         dao.save(error);
     }

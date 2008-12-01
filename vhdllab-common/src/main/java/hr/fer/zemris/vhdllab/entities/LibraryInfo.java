@@ -48,7 +48,25 @@ public class LibraryInfo extends EntityObject {
      *             if <code>library</code> is <code>null</code>
      */
     public LibraryInfo(LibraryInfo library) {
-        super(library);
+        this(library, true);
     }
 
+    /**
+     * Copy constructor.
+     * <p>
+     * Note: <code>id</code> and <code>version</code> properties are not copied.
+     * </p>
+     * 
+     * @param library
+     *            a project to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
+     * @throws NullPointerException
+     *             if <code>library</code> is <code>null</code>
+     */
+    protected LibraryInfo(LibraryInfo library, boolean deepCopy) {
+        super(library, deepCopy);
+    }
+    
 }

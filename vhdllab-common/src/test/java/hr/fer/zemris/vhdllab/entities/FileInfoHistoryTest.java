@@ -1,7 +1,9 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME_2;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IFileInfoStub.PROJECT_ID_2;
 import static hr.fer.zemris.vhdllab.entities.stub.IFileResourceStub.TYPE_2;
@@ -55,11 +57,22 @@ public class FileInfoHistoryTest {
     }
 
     /**
+     * By default info objects copy id and version fields.
+     */
+    @Test
+    public void constructor3() throws Exception {
+        FileInfoHistory another = new FileInfoHistory(
+                new FileInfoStub(), new HistoryStub());
+        assertEquals("id not copied.", ID, another.getId());
+        assertEquals("version not copied.", VERSION, another.getVersion());
+    }
+
+    /**
      * FileInfoHistory is null.
      */
     @Test(expected = NullPointerException.class)
     public void copyConstructor() throws Exception {
-        new FileInfoHistory(null);
+        new FileInfoHistory(null, true);
     }
 
     /**
@@ -67,7 +80,7 @@ public class FileInfoHistoryTest {
      */
     @Test
     public void copyConstructor2() throws Exception {
-        FileInfoHistory another = new FileInfoHistory(file);
+        FileInfoHistory another = new FileInfoHistory(file, true);
         assertTrue("same reference.", file != another);
         assertEquals("not equal.", file, another);
         assertEquals("hashCode not same.", file.hashCode(), another.hashCode());

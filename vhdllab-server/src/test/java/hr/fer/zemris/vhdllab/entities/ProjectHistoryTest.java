@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.entities;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entities.stub.HistoryStub;
 import hr.fer.zemris.vhdllab.entities.stub.ProjectHistoryStub;
@@ -38,6 +39,17 @@ public class ProjectHistoryTest {
     @Test(expected = NullPointerException.class)
     public void constructor2() throws Exception {
         new ProjectHistory(new ProjectInfoStub(), null);
+    }
+
+    /**
+     * By default history objects do not copy id and version fields.
+     */
+    @Test
+    public void constructor3() throws Exception {
+        ProjectHistory another = new ProjectHistory(new ProjectInfoStub(),
+                new HistoryStub());
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
     }
 
     /**

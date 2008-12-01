@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.ID;
 import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.NAME;
+import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entities.stub.LibraryInfoStub;
@@ -43,6 +45,8 @@ public class LibraryInfoTest {
         assertEquals("not equal.", library, another);
         assertEquals("hashCode not same.", library.hashCode(), another
                 .hashCode());
+        assertEquals("id not copied.", ID, another.getId());
+        assertEquals("version not copied.", VERSION, another.getVersion());
     }
 
     /**
@@ -51,7 +55,7 @@ public class LibraryInfoTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        EntityObject info = new EntityObject(library);
+        EntityObject info = new EntityObject(library, true);
         assertTrue("not same.", info.equals(library));
         assertTrue("not same.", library.equals(info));
         assertEquals("hashcode not same.", info.hashCode(), library.hashCode());

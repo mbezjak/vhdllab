@@ -5,20 +5,20 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import javax.persistence.Query;
 
-import org.springframework.beans.factory.annotation.Configurable;
-
-@Configurable("historyListener")
 public class HistoryListener {
     
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
+    private static EntityManagerFactory entityManagerFactory;
+    
+    public static void setEntityManagerFactory(
+            EntityManagerFactory entityManagerFactory) {
+        HistoryListener.entityManagerFactory = entityManagerFactory;
+    }
 
     private EntityManager newEntityManager() {
         EntityManager em = entityManagerFactory.createEntityManager();

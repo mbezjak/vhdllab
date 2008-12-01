@@ -63,7 +63,7 @@ public class LibraryFile extends Resource {
      *             if <code>file</code> is <code>null</code>
      */
     public LibraryFile(LibraryFile file) {
-        super(file);
+        super(file, false);
         library = null;
     }
 

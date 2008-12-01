@@ -36,15 +36,33 @@ public class FileInfoHistory extends FileInfo {
      *            a file to duplicate
      * @param history
      *            a history to set
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if either parameter is <code>null</code>
      */
-    public FileInfoHistory(FileInfo file, History history) {
-        super(file);
+    public FileInfoHistory(FileInfo file, History history, boolean deepCopy) {
+        super(file, deepCopy);
         this.history = history;
         checkProperties();
     }
 
+    /**
+     * Constructs a file info history out of specified <code>file</code> and
+     * <code>history</code>.
+     * 
+     * @param file
+     *            a file to duplicate
+     * @param history
+     *            a history to set
+     * @throws NullPointerException
+     *             if either parameter is <code>null</code>
+     */
+    public FileInfoHistory(FileInfo file, History history) {
+        this(file, history, true);
+    }
+    
     /**
      * Copy constructor.
      * <p>
@@ -53,11 +71,14 @@ public class FileInfoHistory extends FileInfo {
      * 
      * @param info
      *            a history info to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if <code>info</code> is <code>null</code>
      */
-    public FileInfoHistory(FileInfoHistory info) {
-        super(info);
+    protected FileInfoHistory(FileInfoHistory info, boolean deepCopy) {
+        super(info, deepCopy);
         this.history = info.history;
     }
 

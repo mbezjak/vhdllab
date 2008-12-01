@@ -80,6 +80,10 @@
             <contextPath>/vhdllab</contextPath>
           </webAppConfig>
           <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
             <connector implementation="org.mortbay.jetty.security.SslSocketConnector">
               <port>8443</port>
               <maxIdleTime>60000</maxIdleTime>
@@ -90,13 +94,13 @@
           </connectors>
           <userRealms>
             <userRealm implementation="org.mortbay.jetty.security.HashUserRealm">
-              <name>default</name>
+              <name>Preauth Realm</name>
               <config>src/dev/realm.properties</config>
             </userRealm>
           </userRealms>
           <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
             <filename>target/request.log</filename>
-            <append>false</append>
+            <append>true</append>
             <extended>false</extended>
             <logTimeZone>GMT</logTimeZone>
           </requestLog>
@@ -340,7 +344,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>vhdllab-server</artifactId>
       <version>${version}</version>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

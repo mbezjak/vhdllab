@@ -1823,7 +1823,7 @@ public final class MainFrame extends JFrame implements IComponentProvider,
 	    Parser parser = new PosixParser();
 	    try {
 	        CommandLine cmd = parser.parse(options, args);
-	        String env = cmd.getOptionValue("env", "prod");
+	        String env = cmd.getOptionValue("env", "dev");
 	        if(env.equals("dev")) {
 	            SystemContext.instance().setEnvironment(Environment.DEVELOPMENT);
 	        } else {

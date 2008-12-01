@@ -2,10 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
   xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:security="http://www.springframework.org/schema/security"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
 
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
@@ -55,6 +57,9 @@
   <tx:annotation-driven transaction-manager="transactionManager" />
   <aop:aspectj-autoproxy />
 
+  <!-- Injects entityManagerFactory to HistoryListener so history can be created -->
+  <bean class="hr.fer.zemris.vhdllab.entities.HistoryListenerCreator" />
+
   <!-- DAO classes -->
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"
     autowire="autodetect" />
@@ -80,6 +85,9 @@
   <bean id="circuitInterfaceExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractionService" />
   <bean id="dependencyExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.DependencyExtractionService" />
   <bean id="vhdlGenerationService" class="hr.fer.zemris.vhdllab.service.filetype.VhdlGenerationService" />
+  
+  <!-- Aspects -->
+  <bean class="hr.fer.zemris.vhdllab.service.LogAspect" />
 
   <bean id="compiler" class="hr.fer.zemris.vhdllab.service.ghdl.GhdlCompiler" init-method="configure">
     <property name="properties">
@@ -315,17 +323,61 @@
       </set>
     </property>
   </bean>
+  
+  
+  
+  
+  
+  <security:authentication-manager alias="authenticationManager"/>
+<!--  <security:authentication-provider>-->
+<!--    <security:user-service>-->
+<!--      <security:user password="test" name="test" authorities="ROLE_STUDENT"/>-->
+<!--      <security:user password="admin" name="admin" authorities="ROLE_ADMIN"/>-->
+<!--    </security:user-service>-->
+<!--  </security:authentication-provider>-->
+  <security:http create-session="always" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
+    <security:intercept-url pattern="/remoting/*" access="ROLE_STUDENT,ROLE_ADMIN" requires-channel="https"/>
+<!--    <security:http-basic/>-->
+  </security:http>
 
+    <bean id="preAuthenticatedAuthenticationProvider" class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+        <security:custom-authentication-provider />
+        <property name="preAuthenticatedUserDetailsService" ref="preAuthenticatedUserDetailsService"/>
+    </bean>
 
+    <bean id="preAuthenticatedUserDetailsService"
+            class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService"/>
+            
+    <bean id="j2eePreAuthFilter" class="org.springframework.security.ui.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
+        <security:custom-filter position="PRE_AUTH_FILTER" />
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationDetailsSource" ref="authenticationDetailsSource"/>
+    </bean>
+    
+    <bean id="preAuthenticatedProcessingFilterEntryPoint"
+            class="org.springframework.security.ui.preauth.PreAuthenticatedProcessingFilterEntryPoint"/>
 
+    <bean id="authenticationDetailsSource" class="org.springframework.security.ui.preauth.j2ee.J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource">
+        <property name="mappableRolesRetriever" ref="j2eeMappableRolesRetriever"/>
+        <property name="userRoles2GrantedAuthoritiesMapper" ref="j2eeUserRoles2GrantedAuthoritiesMapper"/>
+    </bean>
 
+    <bean id="j2eeUserRoles2GrantedAuthoritiesMapper" class="org.springframework.security.authoritymapping.SimpleAttributes2GrantedAuthoritiesMapper">
+        <property name="convertAttributeToUpperCase" value="true"/>
+    </bean>
 
+    <bean id="j2eeMappableRolesRetriever" class="org.springframework.security.ui.preauth.j2ee.WebXmlMappableAttributesRetriever">
+        <property name="webXmlInputStream">
+            <bean factory-bean="webXmlResource" factory-method="getInputStream"/>
+        </property>
+    </bean>
 
+    <bean id="webXmlResource" class="org.springframework.web.context.support.ServletContextResource">
+        <constructor-arg ref="servletContext"/>
+        <constructor-arg value="/WEB-INF/web.xml"/>
+    </bean>
 
-
-
-
-
+    <bean id="servletContext" class="org.springframework.web.context.support.ServletContextFactoryBean"/>
 
 
 

@@ -62,14 +62,19 @@ public class EntityObject implements Serializable {
      * 
      * @param entity
      *            an entity to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if <code>entity</code> is <code>null</code>
      */
-    protected EntityObject(EntityObject entity) {
+    protected EntityObject(EntityObject entity, boolean deepCopy) {
         super();
-        this.id = entity.id;
-        this.version = entity.version;
         this.name = entity.name;
+        if(deepCopy) {
+            this.id = entity.id;
+            this.version = entity.version;
+        }
     }
 
     /**

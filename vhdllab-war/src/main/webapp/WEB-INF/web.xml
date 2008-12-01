@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-  version="2.4">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+  version="2.5" metadata-complete="true">
 
   <display-name>VHDLLab</display-name>
-  <description>
-      The VHDLLab application
-    </description>
 
   <!-- Application events listeners start -->
-
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-
   <listener>
     <listener-class>hr.fer.zemris.vhdllab.service.init.LibraryInitializationListener</listener-class>
   </listener>
-
   <!-- Application events listeners end -->
 
   <!-- Application filters start -->
-
   <filter>
-    <filter-name>entity-manager-fer-request</filter-name>
+    <filter-name>entity-manager-per-request</filter-name>
     <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>entity-manager-fer-request</filter-name>
+    <filter-name>entity-manager-per-request</filter-name>
     <url-pattern>/remoting/*</url-pattern>
   </filter-mapping>
 
@@ -40,10 +33,17 @@
     <url-pattern>/remoting/*</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
   <!-- Application filters end -->
 
-  <!-- JSPC servlet mappings start -->
-
+  <!-- Servlet mappings start -->
   <servlet>
     <servlet-name>JnlpDownloadServlet</servlet-name>
     <servlet-class>jnlp.sample.servlet.JnlpDownloadServlet</servlet-class>
@@ -56,56 +56,42 @@
 
   <servlet>
     <servlet-name>remoting</servlet-name>
-    <servlet-class>
-        org.springframework.web.servlet.DispatcherServlet
-    </servlet-class>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>remoting</servlet-name>
     <url-pattern>/remoting/*</url-pattern>
   </servlet-mapping>
+  <!-- Servlet mappings end -->
 
 
-
-
-  <!-- JSPC servlet mappings end -->
   <!-- Security constraints start -->
+  <security-role>
+    <role-name>student</role-name>
+  </security-role>
+  <security-role>
+    <role-name>admin</role-name>
+  </security-role>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>Preauth Realm</realm-name>
+  </login-config>
+
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>VHDLLAB</web-resource-name>
-      <description>Require users to authenticate</description>
+      <web-resource-name>Remoting (service) area</web-resource-name>
       <url-pattern>/remoting/*</url-pattern>
-      <http-method>POST</http-method>
-      <http-method>GET</http-method>
     </web-resource-collection>
     <auth-constraint>
-      <description>Define who can access this url-pattern</description>
       <role-name>student</role-name>
       <role-name>admin</role-name>
     </auth-constraint>
     <user-data-constraint>
-      <!--
-        For now transport guarantee is set to NONE but once server is
-        deployed it should be CONFIDENTIAL
-      -->
-      <transport-guarantee>NONE</transport-guarantee>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
-
-  <login-config>
-    <auth-method>BASIC</auth-method>
-  </login-config>
-
-  <security-role>
-    <description>Student role (can use vhdllab)</description>
-    <role-name>student</role-name>
-  </security-role>
-  <security-role>
-    <description>Administrator role (also can use
-        vhdllab)</description>
-    <role-name>admin</role-name>
-  </security-role>
   <!-- Security constraints end -->
 
 </web-app>

@@ -20,7 +20,7 @@ public class EntityObjectStub extends EntityObject implements IEntityObjectStub 
     }
 
     public EntityObjectStub(EntityObject entity) {
-        super(entity);
+        super(entity, true);
     }
 
     @Override

@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.EntityListeners;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -18,7 +20,7 @@ import org.hibernate.annotations.Cascade;
  * @since vhdllab2
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-//@EntityListeners(HistoryListener.class)
+@EntityListeners(HistoryListener.class)
 public class Project extends ProjectInfo {
 
 	private static final long serialVersionUID = 1L;
@@ -71,7 +73,7 @@ public class Project extends ProjectInfo {
 	 *             if <code>project</code> is <code>null</code>
 	 */
 	public Project(Project project) {
-		super(project);
+		super(project, false);
         /*
          * Files is not referenced to reduce aliasing problems!
          */

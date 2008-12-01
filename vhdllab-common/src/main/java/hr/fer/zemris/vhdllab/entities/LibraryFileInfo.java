@@ -39,7 +39,7 @@ public class LibraryFileInfo extends Resource {
      *             if either parameter is <code>null</code>
      */
     public LibraryFileInfo(Resource file, Integer libraryId) {
-        super(file);
+        super(file, true);
         this.libraryId = libraryId;
         checkProperties();
     }
@@ -56,7 +56,7 @@ public class LibraryFileInfo extends Resource {
      *             if <code>file</code> is <code>null</code>
      */
     public LibraryFileInfo(LibraryFileInfo file) {
-        super(file);
+        super(file, true);
         this.libraryId = file.libraryId;
     }
 

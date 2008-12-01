@@ -83,6 +83,8 @@ public class ProjectTest {
         assertNotNull("original file reference is missing.", project.getFiles());
         assertEquals("original files has been modified.", files, project
                 .getFiles());
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
     }
 
     /**
@@ -191,7 +193,7 @@ public class ProjectTest {
      */
     @Test
     public void equalsAndHashCode() throws Exception {
-        ProjectInfo info = new ProjectInfo(project);
+        ProjectInfo info = new ProjectInfo(project, true);
         assertTrue("not same.", info.equals(project));
         assertTrue("not same.", project.equals(info));
         assertEquals("hashcode not same.", info.hashCode(), project.hashCode());

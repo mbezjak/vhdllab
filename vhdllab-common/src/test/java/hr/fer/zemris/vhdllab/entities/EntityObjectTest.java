@@ -8,6 +8,7 @@ import static hr.fer.zemris.vhdllab.entities.stub.IEntityObjectStub.VERSION_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entities.stub.EntityObjectStub;
 
@@ -60,15 +61,15 @@ public class EntityObjectTest {
      */
     @Test(expected = NullPointerException.class)
     public void copyConstructor() throws Exception {
-        new EntityObject((EntityObject) null);
+        new EntityObject((EntityObject) null, true);
     }
 
     /**
-     * Test copy constructor.
+     * Test copy constructor - copy id and version.
      */
     @Test
     public void copyConstructor2() throws Exception {
-        EntityObject another = new EntityObject(entity);
+        EntityObject another = new EntityObject(entity, true);
         assertTrue("same reference.", entity != another);
         assertEquals("not equal.", entity, another);
         assertEquals("hashCode not same.", entity.hashCode(), another
@@ -78,6 +79,21 @@ public class EntityObjectTest {
         assertEquals("names not same.", entity.getName(), another.getName());
     }
 
+    /**
+     * Test copy constructor - do not copy id and version.
+     */
+    @Test
+    public void copyConstructor3() throws Exception {
+        EntityObject another = new EntityObject(entity, false);
+        assertTrue("same reference.", entity != another);
+        assertEquals("not equal.", entity, another);
+        assertEquals("hashCode not same.", entity.hashCode(), another
+                .hashCode());
+        assertNull("id not null.", another.getId());
+        assertNull("version not null.", another.getVersion());
+        assertEquals("names not same.", entity.getName(), another.getName());
+    }
+    
     /**
      * Test equals with self, null, and non-EntityObject.
      */

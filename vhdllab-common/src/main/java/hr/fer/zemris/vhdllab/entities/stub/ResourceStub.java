@@ -20,7 +20,7 @@ public class ResourceStub extends Resource implements IResourceStub {
     }
     
     public ResourceStub(Resource resource) {
-        super(resource);
+        super(resource, true);
     }
 
     @Override

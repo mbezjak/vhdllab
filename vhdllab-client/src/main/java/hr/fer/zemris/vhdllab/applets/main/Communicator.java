@@ -110,8 +110,7 @@ public class Communicator implements ICommunicator {
      * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#getAllProjects()
      */
     public List<Caseless> getAllProjects() {
-        Caseless userId = new Caseless(SystemContext.instance().getUserId());
-        List<ProjectInfo> projects = projectService.findByUser(userId);
+        List<ProjectInfo> projects = projectService.findByUser();
 
         List<Caseless> projectNames = new ArrayList<Caseless>();
         for (ProjectInfo p : projects) {
@@ -134,7 +133,7 @@ public class Communicator implements ICommunicator {
      * .zemris.vhdllab.entities.Caseless)
      */
     public List<Caseless> getAllProjects(Caseless userId) {
-        List<ProjectInfo> projects = projectService.findByUser(userId);
+        List<ProjectInfo> projects = projectService.findByUser();
 
         List<Caseless> projectNames = new ArrayList<Caseless>();
         for (ProjectInfo p : projects) {
@@ -518,10 +517,8 @@ public class Communicator implements ICommunicator {
     }
 
     private void loadUserPreferences() {
-        SystemContext.instance().setUserId("test");
-        Caseless userId = new Caseless(SystemContext.instance().getUserId());
         Properties properties = new Properties();
-        List<UserFileInfo> files = userFileService.findByUser(userId);
+        List<UserFileInfo> files = userFileService.findByUser();
         for (UserFileInfo f : files) {
             Caseless name = f.getName();
             cache.cacheUserFileItem(name, f);

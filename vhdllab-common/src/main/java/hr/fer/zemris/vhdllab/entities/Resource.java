@@ -55,11 +55,14 @@ public class Resource extends EntityObject implements DataContainer {
      * 
      * @param resource
      *            a resource to duplicate
+     * @param deepCopy
+     *            if <code>id</code> and <code>version</code> properties should
+     *            also be copied
      * @throws NullPointerException
      *             if <code>resource</code> is <code>null</code>
      */
-    protected Resource(Resource resource) {
-        super(resource);
+    protected Resource(Resource resource, boolean deepCopy) {
+        super(resource, deepCopy);
         this.data = resource.data;
     }
 
