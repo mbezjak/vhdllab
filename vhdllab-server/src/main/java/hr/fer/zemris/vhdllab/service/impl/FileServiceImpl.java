@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
+import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.dao.FileDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entities.Caseless;
@@ -8,7 +9,6 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.service.FileService;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
 
 import java.util.ArrayList;
@@ -39,14 +39,11 @@ public class FileServiceImpl implements FileService {
             entity = wrapToEntity(file);
         }
         if (entity.getType().equals(FileType.SOURCE)) {
-            try {
-                extractor.extract(file);
-            } catch (CircuitInterfaceExtractionException e) {
-                if (e.getMessage().equals("Entity block is invalid.")) {
-                    throw new IllegalStateException("Resource "
-                            + entity.getName()
-                            + " must have only one entity with the same name.");
-                }
+            CircuitInterface ci = extractor.extract(file);
+            if(!ci.getName().equalsIgnoreCase(file.getName().toString())) {
+                throw new IllegalStateException("Resource "
+                        + entity.getName()
+                        + " must have only one entity with the same name.");
             }
         }
         dao.save(entity);

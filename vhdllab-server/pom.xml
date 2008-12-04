@@ -95,6 +95,12 @@
       <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>1.5.0</version>
+      <scope>compile</scope>
+    </dependency>
     <!--
       Commons Digester and log4j dependencies are satisfied through
       vhdllab-common
@@ -104,12 +110,6 @@
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
       <version>1.2.2</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <version>1.5.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

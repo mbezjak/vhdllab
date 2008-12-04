@@ -87,7 +87,7 @@
   <bean id="vhdlGenerationService" class="hr.fer.zemris.vhdllab.service.filetype.VhdlGenerationService" />
   
   <!-- Aspects -->
-  <bean class="hr.fer.zemris.vhdllab.service.LogAspect" />
+  <bean class="hr.fer.zemris.vhdllab.service.aspect.LogAspect" />
 
   <bean id="compiler" class="hr.fer.zemris.vhdllab.service.ghdl.GhdlCompiler" init-method="configure">
     <property name="properties">
