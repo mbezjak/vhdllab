@@ -53,7 +53,6 @@
   </bean>
 
   <context:annotation-config />
-  <!--  <context:spring-configured />-->
   <tx:annotation-driven transaction-manager="transactionManager" />
   <aop:aspectj-autoproxy />
 
@@ -81,6 +80,7 @@
   <bean id="projectService" class="hr.fer.zemris.vhdllab.service.impl.ProjectServiceImpl" />
   <bean id="libraryFileService" class="hr.fer.zemris.vhdllab.service.impl.LibraryFileServiceImpl" />
   <bean id="userFileService" class="hr.fer.zemris.vhdllab.service.impl.UserFileServiceImpl" />
+  <bean id="workspaceService" class="hr.fer.zemris.vhdllab.service.impl.WorkspaceServiceImpl" />
   <bean id="hierarchyExtractionService" class="hr.fer.zemris.vhdllab.service.impl.HierarchyExtractionService" />
   <bean id="circuitInterfaceExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractionService" />
   <bean id="dependencyExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.DependencyExtractionService" />
@@ -152,6 +152,16 @@
     </property>
   </bean>
   
+  <bean id="httpWorkspaceService"
+        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+    <property name="service">
+      <ref bean="workspaceService"/>
+    </property>
+    <property name="serviceInterface">
+      <value>hr.fer.zemris.vhdllab.service.WorkspaceService</value>
+    </property>
+  </bean>
+  
   <bean id="httpHierarchyExtracionService"
         class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
     <property name="service">
@@ -219,6 +229,7 @@
         <prop key="/project.service">httpProjectService</prop>
         <prop key="/libraryfile.service">httpLibraryFileService</prop>
         <prop key="/userfile.service">httpUserFileService</prop>
+        <prop key="/workspace.service">httpWorkspaceService</prop>
         <prop key="/hierarchyextraction.service">httpHierarchyExtracionService</prop>
         <prop key="/circuitinterfaceextraction.service">httpCircuitInterfaceExtractionService</prop>
         <prop key="/dependencyextraction.service">httpDependencyExtractionService</prop>

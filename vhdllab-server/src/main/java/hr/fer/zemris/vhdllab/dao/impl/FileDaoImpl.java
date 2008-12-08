@@ -13,8 +13,7 @@ import org.apache.commons.lang.Validate;
  * @version 1.0
  * @since vhdllab2
  */
-public final class FileDaoImpl extends AbstractEntityDao<File> implements
-        FileDao {
+public class FileDaoImpl extends AbstractEntityDao<File> implements FileDao {
 
     /**
      * Default constructor.

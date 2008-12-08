@@ -5,14 +5,18 @@ import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.entities.UserFileInfo;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
+import hr.fer.zemris.vhdllab.platform.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.platform.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.Compiler;
 import hr.fer.zemris.vhdllab.service.FileService;
 import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
@@ -24,40 +28,45 @@ import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class Communicator implements ICommunicator {
+@Component
+public class Communicator extends AbstractEventPublisher<CommunicatorResourceListener> implements ICommunicator {
 
-    @Resource(name = "fileService")
+    @Autowired
     private FileService fileService;
-    @Resource(name = "projectService")
+    @Autowired
     private ProjectService projectService;
-    @Resource(name = "libraryFileService")
+    @Autowired
     private LibraryFileService libraryFileService;
-    @Resource(name = "userFileService")
+    @Autowired
     private UserFileService userFileService;
-    @Resource(name = "hierarchyExtractor")
+    @Autowired
     private HierarchyExtractor hierarchyExtractor;
-    @Resource(name = "circuitInterfaceExtractor")
+    @Autowired
     private CircuitInterfaceExtractor circuitInterfaceExtractor;
-    @Resource(name = "vhdlGenerator")
+    @Autowired
     private VhdlGenerator vhdlGenerator;
-    @Resource(name = "compiler")
+    @Autowired
     private Compiler compiler;
-    @Resource(name = "simulator")
+    @Autowired
     private Simulator simulator;
+    @Autowired
+    private WorkspaceManager workspaceManager;
+    @Autowired
+    private IdentifierToInfoObjectMapper mapper;
 
     private Cache cache;
 
     public Communicator() {
+        super(CommunicatorResourceListener.class);
         cache = new Cache();
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -65,24 +74,6 @@ public class Communicator implements ICommunicator {
      */
     public void init() throws UniformAppletException {
         loadUserPreferences();
-        // FIXME TMP SOLUTION
-        loadFileIds();
-    }
-
-    private void loadFileIds() throws UniformAppletException {
-        /*
-         * this is a fix for loadFileContent method. it breaks when system
-         * container tries to open editors (stored in a session). because
-         * critical methods: getAllProjects and findFilesByProject was still not
-         * called nothing is cached so loadFileContent method assumes that such
-         * file does not exist.
-         */
-        for (Caseless projectName : getAllProjects()) {
-            for (Caseless fileName : findFilesByProject(projectName)) {
-                // this is just extra it has nothing to do with the actual bug
-                loadFileType(projectName, fileName);
-            }
-        }
     }
 
     /*
@@ -103,58 +94,27 @@ public class Communicator implements ICommunicator {
         }
         userFileService.save(files);
     }
-
+    
+    private ProjectIdentifier asIdentifier(Caseless projectName) {
+        return new ProjectIdentifier(projectName);
+    }
+    
+    private FileIdentifier asIdentifier(Caseless projectName, Caseless fileName) {
+        return new FileIdentifier(projectName, fileName);
+    }
+    
     /*
      * (non-Javadoc)
      * 
      * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#getAllProjects()
      */
     public List<Caseless> getAllProjects() {
-        List<ProjectInfo> projects = projectService.findByUser();
-
-        List<Caseless> projectNames = new ArrayList<Caseless>();
+        List<ProjectInfo> projects = workspaceManager.getProjects();
+        List<Caseless> names = new ArrayList<Caseless>(projects.size());
         for (ProjectInfo p : projects) {
-            Caseless projectName = cache.getProjectForIdentifier(p);
-            if (projectName == null) {
-                Caseless name = p.getName();
-                cache.cacheItem(name, p);
-                projectName = cache.getProjectForIdentifier(p);
-            }
-            projectNames.add(projectName);
+            names.add(p.getName());
         }
-        return projectNames;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.ICommunicator#getAllProjects(hr.fer
-     * .zemris.vhdllab.entities.Caseless)
-     */
-    public List<Caseless> getAllProjects(Caseless userId) {
-        List<ProjectInfo> projects = projectService.findByUser();
-
-        List<Caseless> projectNames = new ArrayList<Caseless>();
-        for (ProjectInfo p : projects) {
-            Caseless projectName = cache.getProjectForIdentifier(p);
-            if (projectName == null) {
-                Caseless name = p.getName();
-                cache.cacheItem(name, p);
-                projectName = cache.getProjectForIdentifier(p);
-            }
-            projectNames.add(projectName);
-        }
-        return projectNames;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#isSuperuser()
-     */
-    public boolean isSuperuser() {
-        return false;
+        return names;
     }
 
     /*
@@ -166,26 +126,12 @@ public class Communicator implements ICommunicator {
      */
     public List<Caseless> findFilesByProject(Caseless projectName)
             throws UniformAppletException {
-        if (projectName == null) {
-            throw new NullPointerException("Project name can not be null.");
-        }
-        Integer projectIdentifier = cache.getIdentifierFor(projectName);
-        if (projectIdentifier == null) {
-            throw new UniformAppletException("Project does not exists!");
-        }
-        List<FileInfo> files = fileService.findByProject(projectIdentifier);
-
-        List<Caseless> fileNames = new ArrayList<Caseless>();
+        List<FileInfo> files = workspaceManager.getFilesForProject(mapper.getProject(asIdentifier(projectName)));
+        List<Caseless> names = new ArrayList<Caseless>(files.size());
         for (FileInfo f : files) {
-            FileIdentifier identifier = cache.getFileForIdentifier(f);
-            if (identifier == null) {
-                Caseless name = f.getName();
-                cache.cacheItem(projectName, name, f);
-                identifier = cache.getFileForIdentifier(f);
-            }
-            fileNames.add(identifier.getFileName());
+            names.add(f.getName());
         }
-        return fileNames;
+        return names;
     }
 
     /*
@@ -197,15 +143,15 @@ public class Communicator implements ICommunicator {
      */
     public boolean existsFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
-        Integer projectIdentifier = cache.getIdentifierFor(projectName);
-        if (projectIdentifier == null)
-            throw new UniformAppletException("Project does not exists!");
-        /* return invoker.existsFile(projectIdentifier, fileName); */
-        return cache.containsIdentifierFor(projectName, fileName);
+        List<Caseless> files = findFilesByProject(projectName);
+        boolean found = false;
+        for (Caseless name : files) {
+            if(name.equals(fileName)) {
+                found = true;
+                break;
+            }
+        }
+        return found;
     }
 
     /*
@@ -216,14 +162,15 @@ public class Communicator implements ICommunicator {
      * .zemris.vhdllab.entities.Caseless)
      */
     public boolean existsProject(Caseless projectName) {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        /*
-         * Integer projectIdentifier = cache.getIdentifierFor(projectName);
-         * if(projectIdentifier == null) return false; return
-         * invoker.existsProject(projectIdentifier);
-         */
-        return cache.containsIdentifierFor(projectName);
+        List<Caseless> projects = getAllProjects();
+        boolean found = false;
+        for (Caseless name : projects) {
+            if(name.equals(projectName)) {
+                found = true;
+                break;
+            }
+        }
+        return found;
     }
 
     /*
@@ -235,15 +182,8 @@ public class Communicator implements ICommunicator {
      */
     public void deleteFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null)
-            throw new UniformAppletException("File does not exists!");
-        fileService.delete(cache.getFile(fileIdentifier));
-        cache.removeItem(projectName, fileName);
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
+        fileService.delete(file);
     }
 
     /*
@@ -255,13 +195,8 @@ public class Communicator implements ICommunicator {
      */
     public void deleteProject(Caseless projectName)
             throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        Integer projectIdentifier = cache.getIdentifierFor(projectName);
-        if (projectIdentifier == null)
-            throw new UniformAppletException("File does not exists!");
-        projectService.delete(cache.getProject(projectIdentifier));
-        cache.removeItem(projectName);
+        ProjectInfo project = mapper.getProject(asIdentifier(projectName));
+        projectService.delete(project);
     }
 
     /*
@@ -274,12 +209,12 @@ public class Communicator implements ICommunicator {
     public void createProject(Caseless projectName) {
         if (projectName == null)
             throw new NullPointerException("Project name can not be null.");
-        Caseless userId = new Caseless(SystemContext.instance().getUserId());
+        Caseless userId = ApplicationContextHolder.getContext().getUserId();
         ProjectInfo savedProject = projectService.save(new ProjectInfo(userId,
                 projectName));
-        cache.cacheItem(projectName, savedProject);
+        fireProjectCreated(savedProject);
     }
-
+    
     /*
      * (non-Javadoc)
      * 
@@ -296,12 +231,14 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("File name can not be null.");
         if (type == null)
             throw new NullPointerException("File type can not be null.");
-        Integer projectIdentifier = cache.getIdentifierFor(projectName);
+        Integer projectIdentifier = mapper.getProject(asIdentifier(projectName)).getId();
         if (projectIdentifier == null)
             throw new UniformAppletException("Project does not exists!");
         FileInfo savedFile = fileService.save(new FileInfo(type, fileName,
                 data, projectIdentifier));
-        cache.cacheItem(projectName, fileName, savedFile);
+        ProjectInfo project = mapper.getProject(asIdentifier(projectName));
+        Hierarchy hierarchy = hierarchyExtractor.extract(project);
+        fireFileCreated(project, savedFile, hierarchy);
     }
 
     /*
@@ -320,14 +257,13 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("File name can not be null.");
         if (content == null)
             throw new NullPointerException("File content can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null)
-            throw new UniformAppletException("File does not exists!");
-        FileInfo file = cache.getFile(fileIdentifier);
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
         file.setData(content);
-        FileInfo savedFile = fileService.save(file);
-        cache.cacheFile(savedFile);
-    }
+        fileService.save(file);
+        ProjectInfo project = mapper.getProject(asIdentifier(projectName));
+        Hierarchy hierarchy = hierarchyExtractor.extract(project);
+        fireFileSaved(project, file, hierarchy);
+     }
 
     /*
      * (non-Javadoc)
@@ -342,13 +278,11 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("Project name can not be null.");
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null) {
-            // throw new UniformAppletException("File (" + fileName + "/"
-            // + projectName + ") does not exists!");
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
+        if(file == null) {
             return loadPredefinedFileContent(fileName);
         }
-        return cache.getFile(fileIdentifier).getData();
+        return file.getData();
     }
 
     /*
@@ -377,12 +311,11 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("Project name can not be null.");
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null) {
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
+        if(file == null) {
             return FileType.PREDEFINED;
-            // throw new UniformAppletException("File does not exists!");
         }
-        return cache.getFile(fileIdentifier).getType();
+        return file.getType();
     }
 
     /*
@@ -396,32 +329,7 @@ public class Communicator implements ICommunicator {
             throws UniformAppletException {
         if (projectName == null)
             throw new NullPointerException("Project name can not be null.");
-        Integer projectIdentifier = cache.getIdentifierFor(projectName);
-        if (projectIdentifier == null)
-            throw new UniformAppletException("Project does not exists!");
-
-        Hierarchy h = hierarchyExtractor.extract(cache
-                .getProject(projectIdentifier));
-        for (Caseless fileName : getAllForHierarchy(h)) {
-            Integer id = cache.getIdentifierFor(projectName, fileName);
-            if (id == null) {
-                FileInfo file = fileService.findByName(projectIdentifier,
-                        fileName);
-                if (file != null) {
-                    cache.cacheItem(projectName, fileName, file);
-                }
-            }
-        }
-        return h;
-    }
-
-    private Set<Caseless> getAllForHierarchy(Hierarchy h) {
-        Set<Caseless> names = new HashSet<Caseless>(h.fileCount());
-        for (Caseless f : h.getTopLevelFiles()) {
-            names.add(f);
-            names.addAll(h.getAllDependenciesForFile(f));
-        }
-        return names;
+        return  workspaceManager.getHierarchy(asIdentifier(projectName));
     }
 
     /*
@@ -438,10 +346,8 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("Project name can not be null.");
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null)
-            throw new UniformAppletException("File does not exists!");
-        return vhdlGenerator.generate(cache.getFile(fileIdentifier));
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
+        return vhdlGenerator.generate(file);
     }
 
     /*
@@ -457,10 +363,8 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("Project name can not be null.");
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null)
-            throw new UniformAppletException("File does not exists!");
-        return compiler.compile(cache.getFile(fileIdentifier));
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
+        return compiler.compile(file);
     }
 
     /*
@@ -477,10 +381,8 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("Project name can not be null.");
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null)
-            throw new UniformAppletException("File does not exists!");
-        return simulator.simulate(cache.getFile(fileIdentifier));
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
+        return simulator.simulate(file);
     }
 
     /*
@@ -497,10 +399,8 @@ public class Communicator implements ICommunicator {
             throw new NullPointerException("Project name can not be null.");
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
-        Integer fileIdentifier = cache.getIdentifierFor(projectName, fileName);
-        if (fileIdentifier == null)
-            throw new UniformAppletException("File does not exists!");
-        return circuitInterfaceExtractor.extract(cache.getFile(fileIdentifier));
+        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
+        return circuitInterfaceExtractor.extract(file);
     }
 
     /*
@@ -527,5 +427,23 @@ public class Communicator implements ICommunicator {
         }
         UserPreferences.instance().init(properties);
     }
+    
+    private void fireProjectCreated(ProjectInfo project) {
+        for (CommunicatorResourceListener l : getListeners()) {
+            l.projectCreated(project);
+        }
+    }
 
+    private void fireFileCreated(ProjectInfo project, FileInfo file, Hierarchy hierarchy) {
+        for (CommunicatorResourceListener l : getListeners()) {
+            l.fileCreated(project, file, hierarchy);
+        }
+    }
+
+    private void fireFileSaved(ProjectInfo project, FileInfo file, Hierarchy hierarchy) {
+        for (CommunicatorResourceListener l : getListeners()) {
+            l.fileSaved(project, file, hierarchy);
+        }
+    }
+    
 }

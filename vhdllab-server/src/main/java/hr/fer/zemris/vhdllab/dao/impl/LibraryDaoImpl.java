@@ -15,7 +15,7 @@ import org.apache.commons.lang.Validate;
  * @version 1.0
  * @since vhdllab2
  */
-public final class LibraryDaoImpl extends AbstractEntityDao<Library> implements
+public class LibraryDaoImpl extends AbstractEntityDao<Library> implements
         LibraryDao {
 
     /**

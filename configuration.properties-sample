@@ -12,7 +12,7 @@ http.port = 8080
 https.port = 8443
 jnlp.file = launch.jnlp
 app.client.archive = vhdllab-client-with-deps.jar
-app.main.class = hr.fer.zemris.vhdllab.applets.main.MainFrame
+app.main.class = hr.fer.zemris.vhdllab.platform.Main
 jnlp.update.policy = always
 jnlp.vm.parameter = -client
 

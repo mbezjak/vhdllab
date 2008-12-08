@@ -1,18 +1,14 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.client.core.Environment;
-import hr.fer.zemris.vhdllab.client.core.SystemContext;
-import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
-import hr.fer.zemris.vhdllab.client.dialogs.login.LoginDialog;
-import hr.fer.zemris.vhdllab.client.dialogs.login.UserCredential;
+import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.login.UserCredential;
 
-import java.awt.Frame;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import javax.swing.SwingUtilities;
+import javax.annotation.Resource;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -27,6 +23,8 @@ import org.springframework.remoting.httpinvoker.HttpInvokerClientConfiguration;
 public class HttpClientRequestExecutor extends
         CommonsHttpInvokerRequestExecutor {
 
+    @Resource(name = "loginDialogManager")
+    private DialogManager<UserCredential> dialogManager;
     private boolean showRetryMessage = false;
 
     public HttpClientRequestExecutor(HttpClient httpClient) throws IOException {
@@ -50,14 +48,16 @@ public class HttpClientRequestExecutor extends
         case HttpStatus.SC_UNAUTHORIZED:
         case HttpStatus.SC_FORBIDDEN:
             UserCredential uc;
-            if (SystemContext.instance().getEnvironment().equals(
-                    Environment.DEVELOPMENT)
+            if (ApplicationContextHolder.getContext().isDevelopment()
                     && !showRetryMessage) {
                 uc = new UserCredential("test", "test");
             } else {
-                uc = showLoginDialog(showRetryMessage);
+                uc = dialogManager.showDialog();
             }
-            SystemContext.instance().setUserId(uc.getUsername());
+            if(uc == null) {
+                throw new SecurityException("User refused to provide proper username and password");
+            }
+            ApplicationContextHolder.getContext().setUserId(new Caseless(uc.getUsername()));
             showRetryMessage = true;
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
                     uc.getUsername(), uc.getPassword());
@@ -65,81 +65,6 @@ public class HttpClientRequestExecutor extends
             executePostMethod(config, httpClient, postMethod);
             break;
         }
-    }
-
-    /**
-     * Show a login dialog to a user and requests that a user enters username
-     * and password that is needed to authenticate user. This method also sets
-     * credentials (a private field).
-     * 
-     * @param displayRetryMessage
-     *            a flag indicating if login dialog should show retry message
-     *            (not a default message when it says that authentication is
-     *            required but a message saying that he should try again because
-     *            previous login attempt failed)
-     * @return
-     * @throws SecurityException
-     *             if user refused to provider proper username and password
-     */
-    private UserCredential showLoginDialog(final boolean displayRetryMessage) {
-        final UserCredential[] holder = new UserCredential[1];
-        /*
-         * This method only insures that showLoginDialogImpl method is invoked
-         * by EDT.
-         */
-        if (SwingUtilities.isEventDispatchThread()) {
-            return showLoginDialogImpl(displayRetryMessage);
-        }
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    holder[0] = showLoginDialogImpl(displayRetryMessage);
-                }
-            });
-        } catch (InterruptedException e) {
-            SystemLog.instance().addErrorMessage(e);
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof SecurityException) {
-                throw new SecurityException(cause);
-            }
-            SystemLog.instance().addErrorMessage(e);
-        }
-        return holder[0];
-    }
-
-    /**
-     * An actual implementation of showLoginDialog method. This method must be
-     * invoked by EDT!
-     * 
-     * @param displayRetryMessage
-     *            a flag indicating if login dialog should show retry message
-     *            (not a default message when it says that authentication is
-     *            required but a message saying that he should try again because
-     *            previous login attempt failed)
-     * @return
-     * @throws SecurityException
-     *             if user refused to provider proper username and password
-     */
-    UserCredential showLoginDialogImpl(boolean displayRetryMessage) {
-        Frame owner = SystemContext.instance().getFrameOwner();
-        String message;
-        if (displayRetryMessage) {
-            String name = LoginDialog.BUNDLE_NAME;
-            String key = LoginDialog.RETRY_MESSAGE;
-            message = ResourceBundleProvider.getBundle(name).getString(key);
-        } else {
-            message = null;
-        }
-        LoginDialog dialog = new LoginDialog(owner, message);
-        dialog.setVisible(true); // controls are locked here
-        int option = dialog.getOption();
-        if (option == LoginDialog.OK_OPTION) {
-            return dialog.getCredentials();
-        }
-        throw new SecurityException(
-                "User refused to provide proper username and password");
     }
 
 }

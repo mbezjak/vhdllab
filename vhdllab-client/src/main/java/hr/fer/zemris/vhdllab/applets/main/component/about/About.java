@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.component.about;
 
-import hr.fer.zemris.vhdllab.client.core.SystemContext;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 
 import java.awt.Dimension;
 
@@ -26,7 +26,7 @@ public class About {
 		this.scroll = new JScrollPane(content);
 		this.scroll.setPreferredSize(new Dimension(600, 600));
 		aboutContent = new JOptionPane(scroll, JOptionPane.INFORMATION_MESSAGE);
-		this.dialog = this.aboutContent.createDialog(SystemContext.instance().getFrameOwner(), "About");
+		this.dialog = this.aboutContent.createDialog(ApplicationContextHolder.getContext().getFrame(), "About");
 	}
 	
 	public void setVisible(boolean isVisible) {

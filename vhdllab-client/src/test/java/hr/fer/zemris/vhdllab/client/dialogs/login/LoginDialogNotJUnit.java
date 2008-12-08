@@ -3,6 +3,8 @@
  */
 package hr.fer.zemris.vhdllab.client.dialogs.login;
 
+import hr.fer.zemris.vhdllab.platform.gui.dialog.login.LoginDialog;
+
 import java.awt.Frame;
 
 import javax.swing.SwingUtilities;

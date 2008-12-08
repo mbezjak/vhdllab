@@ -4,19 +4,20 @@ import org.aspectj.lang.annotation.Pointcut;
 
 public class ServicePointcut {
 
-    @Pointcut("remoteServices() || target(hr.fer.zemris.vhdllab.service.filetype.DependencyExtractor)")
+    @Pointcut("remoteServices() || execution(* hr.fer.zemris.vhdllab.service.filetype.DependencyExtractor.*(..))")
             public void services() {
     }
 
-    @Pointcut("target(hr.fer.zemris.vhdllab.service.FileService) || "
-            + "target(hr.fer.zemris.vhdllab.service.ProjectService) ||"
-            + "target(hr.fer.zemris.vhdllab.service.LibraryFileService) ||"
-            + "target(hr.fer.zemris.vhdllab.service.UserFileService) ||"
-            + "target(hr.fer.zemris.vhdllab.service.Compiler) ||"
-            + "target(hr.fer.zemris.vhdllab.service.Simulator) ||"
-            + "target(hr.fer.zemris.vhdllab.service.HierarchyExtractor) ||"
-            + "target(hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor) ||"
-            + "target(hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator)")
+    @Pointcut("execution(* hr.fer.zemris.vhdllab.service.FileService.*(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.ProjectService.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.LibraryFileService.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.UserFileService.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.Compiler.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.Simulator.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.HierarchyExtractor.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator.*(..))")
     public void remoteServices() {
     }
 

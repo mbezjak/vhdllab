@@ -12,7 +12,7 @@
   <packaging>pom</packaging>
   <!-- modules are listed in each profile -->
   <properties>
-    <application.version>0.4</application.version>
+    <application.version>0.6</application.version>
   </properties>
 
 
@@ -183,20 +183,27 @@
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
         <version>3.2.1</version>
-        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.8.0</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.4</version>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.1.1</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <!-- Not using 1.2.15 because of weird dependencies in that version -->
         <version>1.2.14</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

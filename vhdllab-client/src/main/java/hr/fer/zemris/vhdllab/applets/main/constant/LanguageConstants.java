@@ -88,6 +88,10 @@ public class LanguageConstants {
 	public static final String DIALOG_BUTTON_SELECT_ALL = "dialog.button.select.all";
 	public static final String DIALOG_BUTTON_DESELECT_ALL = "dialog.button.deselect.all";
 	
+	public static final String DIALOG_UNKNOWN_EXCEPTION = "dialog.unknown.exception";
+	public static final String DIALOG_CERTIFICATE_EXPIRED = "dialog.certificate.expired";
+	public static final String DIALOG_CANT_CONNECT = "dialog.cant.connect";
+	public static final String DIALOG_ALREADY_OPENED = "dialog.already.opened";
 	public static final String DIALOG_CONFIRM_EXIT = "dialog.confirm.exit";
 	public static final String DIALOG_LOGIN_CANCELED = "dialog.login.cancled";
 

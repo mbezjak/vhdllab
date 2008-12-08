@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hr.fer.zemris.vhdllab.client.dialogs.login;
+package hr.fer.zemris.vhdllab.platform.gui.dialog.login;
 
 /**
  * Represents a user credentials (a username and password). This class is

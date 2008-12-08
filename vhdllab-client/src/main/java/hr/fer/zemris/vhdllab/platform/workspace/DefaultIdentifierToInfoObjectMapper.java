@@ -1,0 +1,91 @@
+package hr.fer.zemris.vhdllab.platform.workspace;
+
+import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
+import hr.fer.zemris.vhdllab.api.workspace.Workspace;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.workspace.model.ProjectIdentifier;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DefaultIdentifierToInfoObjectMapper implements
+        IdentifierToInfoObjectMapper {
+
+    @Autowired
+    private WorkspaceManager workspaceManager;
+
+    private Map<ProjectIdentifier, ProjectInfo> projectIdentifiers;
+    private Map<FileIdentifier, FileInfo> fileIdentifiers;
+
+    void addProject(ProjectInfo project) {
+        ProjectIdentifier identifier = asIdentifier(project);
+        getProjectIdentifiers().put(identifier, project);
+    }
+
+    void addFile(ProjectInfo project, FileInfo file) {
+        FileIdentifier identifier = asIdentifier(project, file);
+        getFileIdentifiers().put(identifier, file);
+    }
+
+    @Override
+    public ProjectInfo getProject(ProjectIdentifier project) {
+        Validate.notNull(project, "Project identifier can't be null");
+        return getProjectIdentifiers().get(project);
+    }
+
+    @Override
+    public FileInfo getFile(FileIdentifier file) {
+        Validate.notNull(file, "File identifier can't be null");
+        return getFileIdentifiers().get(file);
+    }
+
+    @Override
+    public ProjectIdentifier asIdentifier(ProjectInfo project) {
+        Validate.notNull(project, "Project can't be null");
+        return new ProjectIdentifier(project.getName());
+    }
+
+    @Override
+    public FileIdentifier asIdentifier(ProjectInfo project, FileInfo file) {
+        Validate.notNull(project, "Project can't be null");
+        Validate.notNull(file, "File can't be null");
+        return new FileIdentifier(project.getName(), file.getName());
+    }
+
+    private Map<ProjectIdentifier, ProjectInfo> getProjectIdentifiers() {
+        if (projectIdentifiers == null) {
+            initializeIdentifiers();
+        }
+        return projectIdentifiers;
+    }
+
+    private Map<FileIdentifier, FileInfo> getFileIdentifiers() {
+        if (fileIdentifiers == null) {
+            initializeIdentifiers();
+        }
+        return fileIdentifiers;
+    }
+
+    private void initializeIdentifiers() {
+        Workspace workspace = workspaceManager.getWorkspace();
+        int projectCount = workspace.getProjectCount();
+        projectIdentifiers = new HashMap<ProjectIdentifier, ProjectInfo>(
+                projectCount);
+        fileIdentifiers = new HashMap<FileIdentifier, FileInfo>(projectCount);
+        for (ProjectMetadata metadata : workspace) {
+            ProjectInfo project = metadata.getProject();
+            addProject(project);
+            for (FileInfo file : metadata.getFiles()) {
+                addFile(project, file);
+            }
+        }
+    }
+
+}

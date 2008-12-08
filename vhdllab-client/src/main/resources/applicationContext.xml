@@ -8,10 +8,9 @@
                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
   
   <context:property-placeholder location="server.properties"/>
-  <context:annotation-config />
+  <context:component-scan base-package="hr.fer.zemris.vhdllab" />
+  <aop:aspectj-autoproxy />
 
-  <bean id="communicator" class="hr.fer.zemris.vhdllab.applets.main.Communicator" />
-  
   <bean id="httpConnectionManager" class="org.apache.commons.httpclient.SimpleHttpConnectionManager" />
   
   <bean id="httpClient" class="org.apache.commons.httpclient.HttpClient">
@@ -45,6 +44,11 @@
   <bean id="userFileService" parent="httpInvokerBeanParent">
     <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/userfile.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.UserFileService" />
+  </bean>
+  
+  <bean id="workspaceService" parent="httpInvokerBeanParent">
+    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/workspace.service" />
+    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.WorkspaceService" />
   </bean>
   
   <bean id="hierarchyExtractor" parent="httpInvokerBeanParent">

@@ -8,11 +8,11 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplicitSave;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.client.core.SystemContext;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 
 import java.awt.Frame;
 
@@ -33,7 +33,7 @@ public class ExplicitSaveSimulation implements IExplicitSave {
 	@Override
 	public void save(IEditor editor, ISystemContainer container)
 			throws UniformAppletException {
-		Frame owner = SystemContext.instance().getFrameOwner();
+		Frame owner = ApplicationContextHolder.getContext().getFrame();
 		String name = JOptionPane.showInputDialog(owner,
 				"Enter a name under which to save this resource:");
 		if (name == null || name.equals("")) {

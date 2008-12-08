@@ -82,7 +82,25 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
+      <artifactId>spring-aspects</artifactId>
+      <version>2.5.6</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjrt</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>2.5.6</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency><!-- for remoting -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
       <version>2.5.6</version>
       <scope>compile</scope>
     </dependency>

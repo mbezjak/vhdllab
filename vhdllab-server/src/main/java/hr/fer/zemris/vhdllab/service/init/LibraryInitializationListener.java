@@ -17,7 +17,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @version 1.0
  * @since vhdllab2
  */
-public class LibraryInitializationListener implements ServletContextListener {
+public final class LibraryInitializationListener implements ServletContextListener {
 
     /**
      * Initializes libraries needed by vhdllab.

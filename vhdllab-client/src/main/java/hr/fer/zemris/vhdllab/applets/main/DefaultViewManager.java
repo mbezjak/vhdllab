@@ -339,6 +339,9 @@ public class DefaultViewManager implements IViewManager {
 				property = ComponentPlacement.BOTTOM.name();
 			}
 		}
+		if(identifier.equals(ComponentIdentifierFactory.createProjectExplorerIdentifier())) {
+		    return ComponentPlacement.LEFT;
+		}
 		return ComponentPlacement.valueOf(property);
 	}
 

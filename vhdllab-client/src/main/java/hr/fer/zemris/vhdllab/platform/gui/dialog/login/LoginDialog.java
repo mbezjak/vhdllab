@@ -1,7 +1,4 @@
-/**
- * 
- */
-package hr.fer.zemris.vhdllab.client.dialogs.login;
+package hr.fer.zemris.vhdllab.platform.gui.dialog.login;
 
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 
@@ -23,10 +20,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-/**
- * @author Miro Bezjak
- * 
- */
 public class LoginDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -73,7 +66,7 @@ public class LoginDialog extends JDialog {
 	 */
 	private int option = CLOSED_OPTION;
 
-	private UserCredential credentials;
+	UserCredential credentials;
 
 	public LoginDialog(Frame owner) {
 		this(owner, null);
@@ -83,8 +76,9 @@ public class LoginDialog extends JDialog {
 		this(owner, null, message);
 	}
 	
-	public LoginDialog(Frame owner, ResourceBundle bundle, String message) {
+	public LoginDialog(Frame owner, ResourceBundle b, String m) {
 		super(owner, true);
+		ResourceBundle bundle = b;
 		if (bundle == null) {
 			bundle = ResourceBundleProvider.getBundle(BUNDLE_NAME);
 		}
@@ -144,6 +138,7 @@ public class LoginDialog extends JDialog {
 		JPanel actionPanel = new JPanel(new BorderLayout());
 		actionPanel.add(actionBox, BorderLayout.EAST);
 
+		String message = m;
 		if(message == null) {
 			message = bundle.getString(DEFAULT_MESSAGE);
 		}
@@ -176,8 +171,8 @@ public class LoginDialog extends JDialog {
 		return credentials;
 	}
 
-	private void close(int option) {
-		this.option = option;
+	void close(int o) {
+		this.option = o;
 		setVisible(false);
 		dispose();
 	}

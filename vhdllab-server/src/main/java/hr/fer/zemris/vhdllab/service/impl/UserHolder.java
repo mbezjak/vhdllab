@@ -5,7 +5,7 @@ import hr.fer.zemris.vhdllab.entities.Caseless;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.userdetails.UserDetails;
 
-public class UserHolder {
+public abstract class UserHolder {
 
     public static Caseless getUser() {
         Object principal = SecurityContextHolder.getContext()

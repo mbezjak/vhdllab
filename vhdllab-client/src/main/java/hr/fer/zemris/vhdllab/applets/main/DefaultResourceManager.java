@@ -17,17 +17,22 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 /**
  * This is a default implementation of {@link IResourceManager} interface. It
  * uses {@link Communicator} as a resources provider.
  * 
  * @author Miro Bezjak
  */
+@Component
 public class DefaultResourceManager implements IResourceManager {
 
 	/**
 	 * A resource provider.
 	 */
+    @Autowired
 	private ICommunicator communicator;
 
 	/**
@@ -39,18 +44,12 @@ public class DefaultResourceManager implements IResourceManager {
 	 * Constructs a default resource menagement using <code>communicator</code>
 	 * as a resource provider.
 	 * 
-	 * @param communicator
-	 *            a communicator as resource provider
 	 * @throws NullPointerException
 	 *             if <code>communicator</code> is <code>null</code>
 	 */
-	public DefaultResourceManager(ICommunicator communicator) {
+	public DefaultResourceManager() {
 		super();
-		if (communicator == null) {
-			throw new NullPointerException("Communicator cant be null");
-		}
 		this.listeners = new EventListenerList();
-		this.communicator = communicator;
 	}
 
 	/* LISTENERS METHODS */

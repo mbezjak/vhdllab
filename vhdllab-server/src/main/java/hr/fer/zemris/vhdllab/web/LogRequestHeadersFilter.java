@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
 
-public class LogRequestHeadersFilter extends AbstractRequestLoggingFilter {
+public final class LogRequestHeadersFilter extends AbstractRequestLoggingFilter {
 
     @Override
     protected void beforeRequest(HttpServletRequest request, String message) {

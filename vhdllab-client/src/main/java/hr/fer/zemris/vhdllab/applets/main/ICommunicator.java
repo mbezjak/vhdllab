@@ -18,10 +18,6 @@ public interface ICommunicator {
 
     List<Caseless> getAllProjects();
 
-    List<Caseless> getAllProjects(Caseless userId);
-
-    boolean isSuperuser();
-
     List<Caseless> findFilesByProject(Caseless projectName)
             throws UniformAppletException;
 

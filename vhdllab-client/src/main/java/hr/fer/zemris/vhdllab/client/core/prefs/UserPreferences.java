@@ -60,6 +60,8 @@ public final class UserPreferences {
 	 * A private constructor.
 	 */
 	private UserPreferences() {
+	    this.listeners = new HashMap<String, EventListenerList>();
+	    this.bidiListeners = new HashMap<UserPreferencesListener, Collection<String>>();
 	}
 
 	/**
@@ -75,8 +77,8 @@ public final class UserPreferences {
 		}
 		UserPreferences pref = instance();
 		pref.properties = (Properties) p.clone();
-		pref.listeners = new HashMap<String, EventListenerList>();
-		pref.bidiListeners = new HashMap<UserPreferencesListener, Collection<String>>();
+//		pref.listeners = new HashMap<String, EventListenerList>();
+//		pref.bidiListeners = new HashMap<UserPreferencesListener, Collection<String>>();
 	}
 
 	/**
@@ -182,6 +184,9 @@ public final class UserPreferences {
 	public synchronized String get(String name, String def) {
 		if (name == null) {
 			throw new NullPointerException("Property name cant be null");
+		}
+		if(properties == null) {
+		    return def;
 		}
 		return properties.getProperty(name, def);
 	}
