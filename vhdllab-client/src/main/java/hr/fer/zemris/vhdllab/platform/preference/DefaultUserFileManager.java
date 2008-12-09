@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultUserFileManager implements UserFileManager {
+class DefaultUserFileManager implements UserFileManager {
 
     @Autowired
     private UserFileService service;
