@@ -32,7 +32,6 @@ import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
-import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
@@ -46,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 
@@ -200,7 +200,8 @@ public class DefaultSystemContainer implements ISystemContainer,
         resourceManager
                 .addVetoableResourceListener(new ResourceDeletedCloseEditor());
 
-        UserPreferences pref = UserPreferences.instance();
+        Preferences pref = Preferences
+                .userNodeForPackage(DefaultSystemContainer.class);
         String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
         String data = pref.get(name, "");
         List<FileIdentifier> files = SerializationUtil
@@ -235,11 +236,12 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     public void dispose() throws UniformAppletException {
         editorManager.saveAllEditors();
-        UserPreferences pref = UserPreferences.instance();
+        Preferences pref = Preferences
+                .userNodeForPackage(DefaultSystemContainer.class);
         String data = SerializationUtil.serializeEditorInfo(editorManager
                 .getAllOpenedEditors());
         String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
-        pref.set(name, data);
+        pref.put(name, data);
 
         List<String> views = new ArrayList<String>();
         for (IView v : viewManager.getAllOpenedViews()) {
@@ -248,7 +250,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
         data = SerializationUtil.serializeViewInfo(views);
         name = UserFileConstants.SYSTEM_OPENED_VIEWS;
-        pref.set(name, data);
+        pref.put(name, data);
 
         StringBuilder sb = new StringBuilder(2000);
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
@@ -269,7 +271,6 @@ public class DefaultSystemContainer implements ISystemContainer,
 
         SystemLog.instance().removeAllSystemLogListeners();
         resourceManager.removeAllVetoableResourceListeners();
-        UserPreferences.instance().removeAllPreferencesListeners();
 
         resourceManager = null;
         componentProvider = null;
@@ -721,9 +722,10 @@ public class DefaultSystemContainer implements ISystemContainer,
 
         boolean shouldAutoSave = dialog.shouldAlwaysSaveResources();
         if (shouldAutoSave) {
-            UserPreferences.instance().set(
-                    UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES,
-                    String.valueOf(shouldAutoSave));
+            Preferences pref = Preferences
+                    .userNodeForPackage(DefaultSystemContainer.class);
+            pref.put(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES, String
+                    .valueOf(shouldAutoSave));
         }
         int option = dialog.getOption();
         if (option != SaveDialog.OK_OPTION)

@@ -7,6 +7,8 @@ import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.prefs.AbstractPreferences;
@@ -24,10 +26,12 @@ public class DatabasePreferences extends AbstractPreferences {
 
     private static UserFileManager manager;
 
+    private List<String> children;
     private Properties properties;
 
     public DatabasePreferences(AbstractPreferences parent, String name) {
         super(parent, name);
+        this.children = new ArrayList<String>();
     }
 
     public static void setManager(UserFileManager manager) {
@@ -61,7 +65,14 @@ public class DatabasePreferences extends AbstractPreferences {
 
     @Override
     protected AbstractPreferences childSpi(String name) {
+        children.add(name);
         return new DatabasePreferences(this, name);
+    }
+
+    @Override
+    protected String[] childrenNamesSpi() throws BackingStoreException {
+        String[] names = new String[children.size()];
+        return children.toArray(names);
     }
 
     @Override
@@ -122,8 +133,60 @@ public class DatabasePreferences extends AbstractPreferences {
     }
 
     @Override
+    public boolean getBoolean(String key, boolean def) {
+        String value = get(key, String.valueOf(def));
+        if (value.equalsIgnoreCase("true")) {
+            return true;
+        } else if (value.equalsIgnoreCase("false")) {
+            return false;
+        } else {
+            return def;
+        }
+    }
+
+    @Override
+    public double getDouble(String key, double def) {
+        String value = get(key, String.valueOf(def));
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    @Override
+    public float getFloat(String key, float def) {
+        String value = get(key, String.valueOf(def));
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    @Override
+    public int getInt(String key, int def) {
+        String value = get(key, String.valueOf(def));
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    @Override
+    public long getLong(String key, long def) {
+        String value = get(key, String.valueOf(def));
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    @Override
     protected String[] keysSpi() throws BackingStoreException {
-        Set<Object> keySet = properties.keySet();
+        Set<Object> keySet = getProperties().keySet();
         String[] keys = new String[keySet.size()];
         return keySet.toArray(keys);
     }
@@ -131,12 +194,6 @@ public class DatabasePreferences extends AbstractPreferences {
     @Override
     protected void putSpi(String key, String value) {
         getProperties().put(key, value);
-    }
-
-    @Override
-    protected String[] childrenNamesSpi() throws BackingStoreException {
-        throw new UnsupportedOperationException(
-                "This operation is not supported");
     }
 
     @Override

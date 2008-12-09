@@ -5,12 +5,10 @@ import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-import hr.fer.zemris.vhdllab.entities.UserFileInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
@@ -27,7 +25,6 @@ import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,34 +57,6 @@ public class Communicator implements ICommunicator {
 
     public Communicator() {
         cache = new Cache();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#init()
-     */
-    public void init() throws UniformAppletException {
-        loadUserPreferences();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hr.fer.zemris.vhdllab.applets.main.ICommunicator#dispose()
-     */
-    public void dispose() {
-        UserPreferences preferences = UserPreferences.instance();
-        List<UserFileInfo> files = new ArrayList<UserFileInfo>();
-        for (String key : preferences.keys()) {
-            String property = preferences.get(key, null);
-            if (property == null) {
-                continue;
-            }
-            UserFileInfo file = cache.getUserFile(new Caseless(key));
-            files.add(file);
-        }
-        userFileService.save(files);
     }
 
     private ProjectIdentifier asIdentifier(Caseless projectName) {
@@ -388,18 +357,6 @@ public class Communicator implements ICommunicator {
         if (content == null)
             throw new NullPointerException("Content can not be null.");
         libraryFileService.saveClientLog(content);
-    }
-
-    private void loadUserPreferences() {
-        Properties properties = new Properties();
-        List<UserFileInfo> files = userFileService.findByUser();
-        for (UserFileInfo f : files) {
-            Caseless name = f.getName();
-            cache.cacheUserFileItem(name, f);
-            String data = f.getData();
-            properties.setProperty(name.toString(), data);
-        }
-        UserPreferences.instance().init(properties);
     }
 
 }

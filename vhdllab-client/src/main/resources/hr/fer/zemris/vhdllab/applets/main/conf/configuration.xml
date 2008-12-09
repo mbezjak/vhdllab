@@ -88,16 +88,16 @@
 			<singleton>false</singleton>
 		</editor>
 
-<!--		<editor id="editor.preferences">-->
-<!--			<class>-->
-<!--				hr.fer.zemris.vhdllab.applets.editor.preferences.PreferencesEditor-->
-<!--			</class>-->
-<!--			<fileType>preferences.user</fileType>-->
-<!--			<savable>false</savable>-->
-<!--			<readonly>false</readonly>-->
-<!--			<explicitSave value="false"/>-->
-<!--			<singleton>true</singleton>-->
-<!--		</editor>-->
+		<editor id="editor.preferences">
+			<class>
+				hr.fer.zemris.vhdllab.applets.editor.preferences.PreferencesEditor
+			</class>
+			<fileType></fileType>
+			<savable>false</savable>
+			<readonly>false</readonly>
+			<explicitSave value="false"/>
+			<singleton>true</singleton>
+		</editor>
 	</editors>
 
 	<views>

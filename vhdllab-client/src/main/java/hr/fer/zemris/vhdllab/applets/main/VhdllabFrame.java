@@ -21,9 +21,6 @@ import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemError;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent;
-import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
-import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferencesListener;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
@@ -60,6 +57,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -81,7 +81,7 @@ import javax.swing.event.ChangeListener;
 import org.springframework.context.ApplicationContext;
 
 public final class VhdllabFrame extends JFrame implements IComponentProvider,
-        UserPreferencesListener {
+        PreferenceChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -150,9 +150,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         text = bundle.getString(LanguageConstants.STATUSBAR_INIT_GUI);
         SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
         initGUI();
-        int duration;
-        duration = UserPreferences.instance().getInt(
-                UserFileConstants.SYSTEM_TOOLTIP_DURATION, 15000);
+        int duration = 15000;
         ToolTipManager.sharedInstance().setDismissDelay(duration);
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -165,7 +163,8 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         text = bundle.getString(LanguageConstants.STATUSBAR_INIT_SYSTEM);
         SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
 
-        DefaultSystemContainer systemContainer = (DefaultSystemContainer) context.getBean("defaultSystemContainer");
+        DefaultSystemContainer systemContainer = (DefaultSystemContainer) context
+                .getBean("defaultSystemContainer");
         systemContainer.setComponentProvider(this);
         systemContainer.setParentFrame(JOptionPane
                 .getFrameForComponent(VhdllabFrame.this));
@@ -187,14 +186,9 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         systemContainer.setEditorManager(editorManager);
         systemContainer.setViewManager(viewManager);
 
-        UserPreferences.instance().addPreferencesListener(this,
-                UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH);
-        UserPreferences.instance().addPreferencesListener(this,
-                UserFileConstants.SYSTEM_SIDEBAR_WIDTH);
-        UserPreferences.instance().addPreferencesListener(this,
-                UserFileConstants.SYSTEM_VIEW_HEIGHT);
-        UserPreferences.instance().addPreferencesListener(this,
-                UserFileConstants.SYSTEM_TOOLTIP_DURATION);
+        Preferences preferences = Preferences
+                .userNodeForPackage(VhdllabFrame.class);
+        preferences.addPreferenceChangeListener(this);
 
         SystemLog.instance().addSystemLogListener(new SystemLogAdapter() {
             @Override
@@ -1135,17 +1129,10 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         return statusBar;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.client.core.prefs.PreferencesListener#propertyChanged
-     * (hr.fer.zemris.vhdllab.client.core.prefs.PreferencesEvent)
-     */
     @Override
-    public void propertyChanged(PreferencesEvent event) {
-        String name = event.getName();
-        UserPreferences pref = event.getPreferences();
+    public void preferenceChange(PreferenceChangeEvent event) {
+        String name = event.getKey();
+        Preferences pref = event.getNode();
         if (name
                 .equalsIgnoreCase(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH)) {
             double size = pref.getDouble(name, 0.15);
@@ -1174,7 +1161,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         double size;
 
         try {
-            UserPreferences pref = UserPreferences.instance();
+            Preferences pref = Preferences.userNodeForPackage(VhdllabFrame.class);
             size = pref.getDouble(
                     UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, 0.15);
             projectExplorerSplitPane
@@ -1200,22 +1187,22 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
     }
 
     private void storePaneSize() {
-        UserPreferences pref = UserPreferences.instance();
+        Preferences pref = Preferences.userNodeForPackage(VhdllabFrame.class);
         DecimalFormat formatter = new DecimalFormat("0.##");
         double size = projectExplorerSplitPane.getDividerLocation() * 1.0
                 / projectExplorerSplitPane.getWidth();
         String property = formatter.format(size);
-        pref.set(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
+        pref.put(UserFileConstants.SYSTEM_PROJECT_EXPLORER_WIDTH, property);
 
         size = sideBarSplitPane.getDividerLocation() * 1.0
                 / sideBarSplitPane.getWidth();
         property = formatter.format(size);
-        pref.set(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
+        pref.put(UserFileConstants.SYSTEM_SIDEBAR_WIDTH, property);
 
         size = viewSplitPane.getDividerLocation() * 1.0
                 / viewSplitPane.getHeight();
         property = formatter.format(size);
-        pref.set(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
+        pref.put(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
     }
 
     void maximizeComponent(Component component) {
@@ -1357,7 +1344,9 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             }
             double ratio = getDividerRatio(dividerLocation, pane);
             String property = formatter.format(ratio);
-            UserPreferences.instance().set(propertyKey, property);
+            Preferences preferences = Preferences
+                    .userNodeForPackage(VhdllabFrame.class);
+            preferences.put(propertyKey, property);
         }
 
         protected double getDividerRatio(double dividerLocation, JSplitPane pane) {
@@ -1411,8 +1400,9 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         @Override
         public void componentResized(ComponentEvent e) {
             JSplitPane pane = (JSplitPane) e.getSource();
-            double ratio = UserPreferences.instance().getDouble(propertyKey,
-                    def);
+            Preferences preferences = Preferences
+                    .userNodeForPackage(VhdllabFrame.class);
+            double ratio = preferences.getDouble(propertyKey, def);
             int dividerLocation = getDividerLocation(ratio, pane);
             pane.setDividerLocation(dividerLocation);
         }

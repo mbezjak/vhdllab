@@ -12,10 +12,6 @@ import java.util.List;
 
 public interface ICommunicator {
 
-    void init() throws UniformAppletException;
-
-    void dispose();
-
     List<Caseless> getAllProjects();
 
     List<Caseless> findFilesByProject(Caseless projectName)

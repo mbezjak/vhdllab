@@ -285,23 +285,6 @@
       </set>
     </property>
   </bean>
-  <bean id="preferencesLibraryInitializerTarget" class="hr.fer.zemris.vhdllab.service.init.preferences.PreferencesLibraryInitializer">
-    <property name="fileNames">
-      <set>
-        <value>common.localization.language</value>
-        <value>system.always.save.resources</value>
-        <value>system.component.placement.for.view.project.explorer</value>
-        <value>system.default.editor.placement</value>
-        <value>system.default.view.placement</value>
-        <value>system.opened.editors</value>
-        <value>system.opened.views</value>
-        <value>system.project.explorer.width</value>
-        <value>system.sidebar.width</value>
-        <value>system.tooltip.duration</value>
-        <value>system.view.height</value>
-      </set>
-    </property>
-  </bean>
   
   <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
     <property name="entityManagerFactory" ref="entityManagerFactory" />
@@ -321,16 +304,11 @@
     <property name="target" ref="predefinedLibraryInitializerTarget" />
   </bean>
 
-  <bean id="preferencesLibraryInitializer" parent="libraryInitializerProxyBase">
-    <property name="target" ref="preferencesLibraryInitializerTarget" />
-  </bean>
-
   <bean id="groupLibraryInitializer" class="hr.fer.zemris.vhdllab.service.init.GroupLibraryInitializer">
     <property name="initializers">
       <set>
         <ref bean="clientLogsLibraryInitializer"/>
         <ref bean="predefinedLibraryInitializer"/>
-        <ref bean="preferencesLibraryInitializer"/>
       </set>
     </property>
   </bean>
