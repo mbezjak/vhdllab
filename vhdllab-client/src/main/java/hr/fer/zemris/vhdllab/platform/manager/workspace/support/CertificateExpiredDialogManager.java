@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.workspace.support;
+package hr.fer.zemris.vhdllab.platform.manager.workspace.support;
 
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;

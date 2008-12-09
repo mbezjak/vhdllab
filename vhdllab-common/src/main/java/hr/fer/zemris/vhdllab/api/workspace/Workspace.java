@@ -60,6 +60,11 @@ public class Workspace implements Iterable<ProjectMetadata>, Serializable {
         return pm;
     }
 
+    public boolean contains(ProjectInfo project) {
+        Validate.notNull(project, "Project can't be null");
+        return map.containsKey(project);
+    }
+
     @Override
     public Iterator<ProjectMetadata> iterator() {
         return projects.iterator();

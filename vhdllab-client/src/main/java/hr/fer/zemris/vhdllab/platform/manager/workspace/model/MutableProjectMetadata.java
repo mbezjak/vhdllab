@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.workspace.model;
+package hr.fer.zemris.vhdllab.platform.manager.workspace.model;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;

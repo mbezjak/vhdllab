@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.shutdown;
+package hr.fer.zemris.vhdllab.platform.manager.workspace.support;
 
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
@@ -13,17 +13,17 @@ import javax.swing.JOptionPane;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExitApplicationDialogManager implements DialogManager<Boolean> {
+public class CantConnectDialogManager implements DialogManager<Void> {
 
     @Override
-    public Boolean showDialog() {
+    public Void showDialog() {
         String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
-        String key = LanguageConstants.DIALOG_CONFIRM_EXIT;
+        String key = LanguageConstants.DIALOG_CANT_CONNECT;
         ResourceBundle bundle = ResourceBundleProvider.getBundle(name);
         String text = bundle.getString(key);
         Frame owner = ApplicationContextHolder.getContext().getFrame();
-        int option = JOptionPane.showConfirmDialog(owner, text);
-        return Boolean.valueOf(option == JOptionPane.YES_OPTION);
+        JOptionPane.showMessageDialog(owner, text);
+        return null;
     }
 
 }

@@ -1,10 +1,10 @@
-package hr.fer.zemris.vhdllab.platform.workspace;
+package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-import hr.fer.zemris.vhdllab.platform.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.util.List;
 
@@ -15,6 +15,10 @@ public interface WorkspaceManager {
     List<FileInfo> getFilesForProject(ProjectInfo project);
 
     Hierarchy getHierarchy(ProjectIdentifier project);
+
+    boolean exist(ProjectInfo project);
+
+    boolean exist(FileInfo file);
 
     Workspace getWorkspace();
 

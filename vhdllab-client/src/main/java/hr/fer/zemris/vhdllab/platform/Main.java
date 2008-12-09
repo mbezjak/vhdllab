@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform;
 
+import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializer;
 import hr.fer.zemris.vhdllab.platform.support.CommandLineArgumentProcessor;
 import hr.fer.zemris.vhdllab.platform.support.GuiInitializer;
-import hr.fer.zemris.vhdllab.platform.workspace.support.WorkspaceInitializer;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

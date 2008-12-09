@@ -12,16 +12,14 @@ import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.entities.UserFileInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
-import hr.fer.zemris.vhdllab.platform.workspace.IdentifierToInfoObjectMapper;
-import hr.fer.zemris.vhdllab.platform.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.workspace.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.platform.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
+import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.Compiler;
-import hr.fer.zemris.vhdllab.service.FileService;
-import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
 import hr.fer.zemris.vhdllab.service.LibraryFileService;
-import hr.fer.zemris.vhdllab.service.ProjectService;
 import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.UserFileService;
 import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
@@ -35,18 +33,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Communicator extends AbstractEventPublisher<CommunicatorResourceListener> implements ICommunicator {
+public class Communicator implements ICommunicator {
 
-    @Autowired
-    private FileService fileService;
-    @Autowired
-    private ProjectService projectService;
     @Autowired
     private LibraryFileService libraryFileService;
     @Autowired
     private UserFileService userFileService;
-    @Autowired
-    private HierarchyExtractor hierarchyExtractor;
     @Autowired
     private CircuitInterfaceExtractor circuitInterfaceExtractor;
     @Autowired
@@ -59,14 +51,17 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
     private WorkspaceManager workspaceManager;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
+    @Autowired
+    private ProjectManager projectManager;
+    @Autowired
+    private FileManager fileManager;
 
     private Cache cache;
 
     public Communicator() {
-        super(CommunicatorResourceListener.class);
         cache = new Cache();
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -94,15 +89,15 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
         }
         userFileService.save(files);
     }
-    
+
     private ProjectIdentifier asIdentifier(Caseless projectName) {
         return new ProjectIdentifier(projectName);
     }
-    
+
     private FileIdentifier asIdentifier(Caseless projectName, Caseless fileName) {
         return new FileIdentifier(projectName, fileName);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -126,7 +121,8 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
      */
     public List<Caseless> findFilesByProject(Caseless projectName)
             throws UniformAppletException {
-        List<FileInfo> files = workspaceManager.getFilesForProject(mapper.getProject(asIdentifier(projectName)));
+        List<FileInfo> files = workspaceManager.getFilesForProject(mapper
+                .getProject(asIdentifier(projectName)));
         List<Caseless> names = new ArrayList<Caseless>(files.size());
         for (FileInfo f : files) {
             names.add(f.getName());
@@ -143,15 +139,7 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
      */
     public boolean existsFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException {
-        List<Caseless> files = findFilesByProject(projectName);
-        boolean found = false;
-        for (Caseless name : files) {
-            if(name.equals(fileName)) {
-                found = true;
-                break;
-            }
-        }
-        return found;
+        return mapper.getFile(asIdentifier(projectName, fileName)) != null;
     }
 
     /*
@@ -162,15 +150,7 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
      * .zemris.vhdllab.entities.Caseless)
      */
     public boolean existsProject(Caseless projectName) {
-        List<Caseless> projects = getAllProjects();
-        boolean found = false;
-        for (Caseless name : projects) {
-            if(name.equals(projectName)) {
-                found = true;
-                break;
-            }
-        }
-        return found;
+        return mapper.getProject(asIdentifier(projectName)) != null;
     }
 
     /*
@@ -183,7 +163,7 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
     public void deleteFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException {
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
-        fileService.delete(file);
+        fileManager.delete(file);
     }
 
     /*
@@ -196,7 +176,7 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
     public void deleteProject(Caseless projectName)
             throws UniformAppletException {
         ProjectInfo project = mapper.getProject(asIdentifier(projectName));
-        projectService.delete(project);
+        projectManager.delete(project);
     }
 
     /*
@@ -210,11 +190,10 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
         if (projectName == null)
             throw new NullPointerException("Project name can not be null.");
         Caseless userId = ApplicationContextHolder.getContext().getUserId();
-        ProjectInfo savedProject = projectService.save(new ProjectInfo(userId,
-                projectName));
-        fireProjectCreated(savedProject);
+        ProjectInfo project = new ProjectInfo(userId, projectName);
+        projectManager.create(project);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -231,14 +210,12 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
             throw new NullPointerException("File name can not be null.");
         if (type == null)
             throw new NullPointerException("File type can not be null.");
-        Integer projectIdentifier = mapper.getProject(asIdentifier(projectName)).getId();
+        Integer projectIdentifier = mapper
+                .getProject(asIdentifier(projectName)).getId();
         if (projectIdentifier == null)
             throw new UniformAppletException("Project does not exists!");
-        FileInfo savedFile = fileService.save(new FileInfo(type, fileName,
-                data, projectIdentifier));
-        ProjectInfo project = mapper.getProject(asIdentifier(projectName));
-        Hierarchy hierarchy = hierarchyExtractor.extract(project);
-        fireFileCreated(project, savedFile, hierarchy);
+        FileInfo file = new FileInfo(type, fileName, data, projectIdentifier);
+        fileManager.create(file);
     }
 
     /*
@@ -259,11 +236,8 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
             throw new NullPointerException("File content can not be null.");
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
         file.setData(content);
-        fileService.save(file);
-        ProjectInfo project = mapper.getProject(asIdentifier(projectName));
-        Hierarchy hierarchy = hierarchyExtractor.extract(project);
-        fireFileSaved(project, file, hierarchy);
-     }
+        fileManager.save(file);
+    }
 
     /*
      * (non-Javadoc)
@@ -279,7 +253,7 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
-        if(file == null) {
+        if (file == null) {
             return loadPredefinedFileContent(fileName);
         }
         return file.getData();
@@ -312,7 +286,7 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
         if (fileName == null)
             throw new NullPointerException("File name can not be null.");
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
-        if(file == null) {
+        if (file == null) {
             return FileType.PREDEFINED;
         }
         return file.getType();
@@ -329,7 +303,7 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
             throws UniformAppletException {
         if (projectName == null)
             throw new NullPointerException("Project name can not be null.");
-        return  workspaceManager.getHierarchy(asIdentifier(projectName));
+        return workspaceManager.getHierarchy(asIdentifier(projectName));
     }
 
     /*
@@ -427,23 +401,5 @@ public class Communicator extends AbstractEventPublisher<CommunicatorResourceLis
         }
         UserPreferences.instance().init(properties);
     }
-    
-    private void fireProjectCreated(ProjectInfo project) {
-        for (CommunicatorResourceListener l : getListeners()) {
-            l.projectCreated(project);
-        }
-    }
 
-    private void fireFileCreated(ProjectInfo project, FileInfo file, Hierarchy hierarchy) {
-        for (CommunicatorResourceListener l : getListeners()) {
-            l.fileCreated(project, file, hierarchy);
-        }
-    }
-
-    private void fireFileSaved(ProjectInfo project, FileInfo file, Hierarchy hierarchy) {
-        for (CommunicatorResourceListener l : getListeners()) {
-            l.fileSaved(project, file, hierarchy);
-        }
-    }
-    
 }

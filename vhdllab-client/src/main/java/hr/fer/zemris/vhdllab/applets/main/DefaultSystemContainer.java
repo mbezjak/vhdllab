@@ -36,7 +36,7 @@ import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferences;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
-import hr.fer.zemris.vhdllab.platform.workspace.support.WorkspaceInitializationListener;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
 import java.awt.Frame;
@@ -152,7 +152,7 @@ public class DefaultSystemContainer implements ISystemContainer,
     }
 
     @Override
-    public void workspaceInitialized(Workspace workspace) {
+    public void initialize(Workspace workspace) {
         try {
             init();
         } catch (UniformAppletException e) {

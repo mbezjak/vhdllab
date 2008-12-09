@@ -1,11 +1,11 @@
-package hr.fer.zemris.vhdllab.platform.workspace;
+package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
 import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-import hr.fer.zemris.vhdllab.platform.workspace.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.platform.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +21,14 @@ public class DefaultIdentifierToInfoObjectMapper implements
     @Autowired
     private WorkspaceManager workspaceManager;
 
+    private Map<Integer, ProjectInfo> projectIds;
     private Map<ProjectIdentifier, ProjectInfo> projectIdentifiers;
     private Map<FileIdentifier, FileInfo> fileIdentifiers;
 
     void addProject(ProjectInfo project) {
         ProjectIdentifier identifier = asIdentifier(project);
         getProjectIdentifiers().put(identifier, project);
+        getProjectIds().put(project.getId(), project);
     }
 
     void addFile(ProjectInfo project, FileInfo file) {
@@ -38,6 +40,12 @@ public class DefaultIdentifierToInfoObjectMapper implements
     public ProjectInfo getProject(ProjectIdentifier project) {
         Validate.notNull(project, "Project identifier can't be null");
         return getProjectIdentifiers().get(project);
+    }
+
+    @Override
+    public ProjectInfo getProject(Integer projectId) {
+        Validate.notNull(projectId, "Project id can't be null");
+        return getProjectIds().get(projectId);
     }
 
     @Override
@@ -59,6 +67,13 @@ public class DefaultIdentifierToInfoObjectMapper implements
         return new FileIdentifier(project.getName(), file.getName());
     }
 
+    private Map<Integer, ProjectInfo> getProjectIds() {
+        if (projectIds == null) {
+            initializeIdentifiers();
+        }
+        return projectIds;
+    }
+    
     private Map<ProjectIdentifier, ProjectInfo> getProjectIdentifiers() {
         if (projectIdentifiers == null) {
             initializeIdentifiers();
@@ -76,6 +91,7 @@ public class DefaultIdentifierToInfoObjectMapper implements
     private void initializeIdentifiers() {
         Workspace workspace = workspaceManager.getWorkspace();
         int projectCount = workspace.getProjectCount();
+        projectIds = new HashMap<Integer, ProjectInfo>(projectCount);
         projectIdentifiers = new HashMap<ProjectIdentifier, ProjectInfo>(
                 projectCount);
         fileIdentifiers = new HashMap<FileIdentifier, FileInfo>(projectCount);

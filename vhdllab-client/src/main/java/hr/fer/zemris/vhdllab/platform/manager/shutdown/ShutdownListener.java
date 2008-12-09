@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.shutdown;
+package hr.fer.zemris.vhdllab.platform.manager.shutdown;
 
 import hr.fer.zemris.vhdllab.platform.listener.AutoPublished;
 

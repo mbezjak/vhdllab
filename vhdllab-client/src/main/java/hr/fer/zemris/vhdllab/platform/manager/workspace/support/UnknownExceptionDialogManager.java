@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.workspace.support;
+package hr.fer.zemris.vhdllab.platform.manager.workspace.support;
 
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
@@ -13,12 +13,12 @@ import javax.swing.JOptionPane;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CantConnectDialogManager implements DialogManager<Void> {
+public class UnknownExceptionDialogManager implements DialogManager<Void> {
 
     @Override
     public Void showDialog() {
         String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
-        String key = LanguageConstants.DIALOG_CANT_CONNECT;
+        String key = LanguageConstants.DIALOG_UNKNOWN_EXCEPTION;
         ResourceBundle bundle = ResourceBundleProvider.getBundle(name);
         String text = bundle.getString(key);
         Frame owner = ApplicationContextHolder.getContext().getFrame();

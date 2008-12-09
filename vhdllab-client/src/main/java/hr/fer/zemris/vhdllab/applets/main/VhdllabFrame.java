@@ -27,7 +27,7 @@ import hr.fer.zemris.vhdllab.client.core.prefs.UserPreferencesListener;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.shutdown.ShutdownManager;
+import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownManager;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 

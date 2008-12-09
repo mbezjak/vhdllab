@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
+import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
+import hr.fer.zemris.vhdllab.api.workspace.FileSaveReport;
 import hr.fer.zemris.vhdllab.dao.FileDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entities.Caseless;
@@ -8,7 +10,9 @@ import hr.fer.zemris.vhdllab.entities.File;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.Project;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.service.FileService;
+import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
 import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
 
 import java.util.ArrayList;
@@ -26,11 +30,13 @@ public class FileServiceImpl implements FileService {
     private ProjectDao projectDao;
     @Resource(name = "circuitInterfaceExtractionService")
     private CircuitInterfaceExtractor extractor;
+    @Autowired
+    private HierarchyExtractor hierarchyExtractor;
 
     @Override
-    public FileInfo save(FileInfo file) {
+    public FileSaveReport save(FileInfo file) {
         File entity;
-        if(file.getId() == null) {
+        if (file.getId() == null) {
             // creating new file
             entity = new File(file.getType(), file.getName(), file.getData());
             Project project = projectDao.load(file.getProjectId());
@@ -40,14 +46,16 @@ public class FileServiceImpl implements FileService {
         }
         if (entity.getType().equals(FileType.SOURCE)) {
             CircuitInterface ci = extractor.extract(file);
-            if(!ci.getName().equalsIgnoreCase(file.getName().toString())) {
-                throw new IllegalStateException("Resource "
-                        + entity.getName()
+            if (!ci.getName().equalsIgnoreCase(file.getName().toString())) {
+                throw new IllegalStateException("Resource " + entity.getName()
                         + " must have only one entity with the same name.");
             }
         }
         dao.save(entity);
-        return wrapToInfoObject(entity);
+        FileInfo fileInfo = wrapToInfoObject(entity);
+        ProjectInfo projectInfo = wrapToInfoObject(entity.getProject());
+        Hierarchy hierarchy = hierarchyExtractor.extract(projectInfo);
+        return new FileSaveReport(projectInfo, fileInfo, hierarchy);
     }
 
     @Override
@@ -81,4 +89,9 @@ public class FileServiceImpl implements FileService {
         return file == null ? null : new FileInfo(file, file.getProject()
                 .getId());
     }
+
+    private ProjectInfo wrapToInfoObject(Project project) {
+        return project == null ? null : new ProjectInfo(project);
+    }
+
 }

@@ -1,9 +1,9 @@
-package hr.fer.zemris.vhdllab.platform.workspace.support;
+package hr.fer.zemris.vhdllab.platform.manager.workspace.support;
 
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
-import hr.fer.zemris.vhdllab.platform.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 
 import java.security.cert.CertificateExpiredException;
 
@@ -79,14 +79,14 @@ public class WorkspaceInitializer extends
              */
             return;
         }
-        fireWorkspaceInitialized(workspace);
+        fireInitialize(workspace);
         LOG.debug("Workspace initialized with " + workspace.getProjectCount()
                 + " projects");
     }
 
-    private void fireWorkspaceInitialized(Workspace workspace) {
+    private void fireInitialize(Workspace workspace) {
         for (WorkspaceInitializationListener l : getListeners()) {
-            l.workspaceInitialized(workspace);
+            l.initialize(workspace);
         }
     }
 

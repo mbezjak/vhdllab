@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.workspace.support;
+package hr.fer.zemris.vhdllab.platform.manager.shutdown;
 
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
@@ -13,17 +13,17 @@ import javax.swing.JOptionPane;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UnknownExceptionDialogManager implements DialogManager<Void> {
+public class ExitApplicationDialogManager implements DialogManager<Boolean> {
 
     @Override
-    public Void showDialog() {
+    public Boolean showDialog() {
         String name = LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN;
-        String key = LanguageConstants.DIALOG_UNKNOWN_EXCEPTION;
+        String key = LanguageConstants.DIALOG_CONFIRM_EXIT;
         ResourceBundle bundle = ResourceBundleProvider.getBundle(name);
         String text = bundle.getString(key);
         Frame owner = ApplicationContextHolder.getContext().getFrame();
-        JOptionPane.showMessageDialog(owner, text);
-        return null;
+        int option = JOptionPane.showConfirmDialog(owner, text);
+        return Boolean.valueOf(option == JOptionPane.YES_OPTION);
     }
 
 }
