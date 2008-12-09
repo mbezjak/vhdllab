@@ -61,20 +61,11 @@ public class DatabasePreferences extends AbstractPreferences {
 
     @Override
     protected AbstractPreferences childSpi(String name) {
-        LOG.debug("childSpi(String):" + name);
         return new DatabasePreferences(this, name);
     }
 
     @Override
-    protected String[] childrenNamesSpi() throws BackingStoreException {
-        LOG.debug("childrenNamesSpi()");
-        throw new UnsupportedOperationException(
-                "This operation is not supported");
-    }
-
-    @Override
     protected void flushSpi() throws BackingStoreException {
-        LOG.debug("flushSpi()");
         Properties props = getProperties();
         if (!props.isEmpty()) {
             StringWriter writer = new StringWriter();
@@ -112,7 +103,6 @@ public class DatabasePreferences extends AbstractPreferences {
 
     @Override
     protected String getSpi(String key) {
-        LOG.debug("getSpi(String):" + key);
         return getProperties().getProperty(key);
     }
 
@@ -121,14 +111,18 @@ public class DatabasePreferences extends AbstractPreferences {
         String value = super.get(key, null);
         if (value == null) {
             value = def;
-            put(key, value);
+            if (value != null) {
+                put(key, value);
+            }
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(absolutePath() + "#" + key + "=" + value);
         }
         return value;
     }
 
     @Override
     protected String[] keysSpi() throws BackingStoreException {
-        LOG.debug("keysSpi()");
         Set<Object> keySet = properties.keySet();
         String[] keys = new String[keySet.size()];
         return keySet.toArray(keys);
@@ -136,27 +130,29 @@ public class DatabasePreferences extends AbstractPreferences {
 
     @Override
     protected void putSpi(String key, String value) {
-        LOG.debug("putSpi(String, String):" + key + "--" + value);
         getProperties().put(key, value);
     }
 
     @Override
+    protected String[] childrenNamesSpi() throws BackingStoreException {
+        throw new UnsupportedOperationException(
+                "This operation is not supported");
+    }
+
+    @Override
     protected void removeNodeSpi() throws BackingStoreException {
-        LOG.debug("removeNodeSpi()");
         throw new UnsupportedOperationException(
                 "This operation is not supported");
     }
 
     @Override
     protected void removeSpi(String key) {
-        LOG.debug("removeSpi(String):" + key);
         throw new UnsupportedOperationException(
                 "This operation is not supported");
     }
 
     @Override
     protected void syncSpi() throws BackingStoreException {
-        LOG.debug("syncSpi()");
         throw new UnsupportedOperationException(
                 "This operation is not supported");
     }

@@ -24,8 +24,8 @@ public final class ShutdownManager extends
     }
 
     public void shutdownWithConfirmation() {
-        fireShutdownInProgress();
         if (dialogManager.showDialog()) {
+            fireShutdownInProgress();
             System.exit(EXIT_STATUS_OK);
         }
     }
