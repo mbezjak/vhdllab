@@ -102,7 +102,11 @@ public class DatabasePreferences extends AbstractPreferences {
     public void flush() throws BackingStoreException {
         super.flush();
         if (this == userRoot()) {
-            manager.saveFiles();
+            try {
+                manager.saveFiles();
+            } catch (RuntimeException e) {
+                throw new BackingStoreException(e);
+            }
         }
     }
 
