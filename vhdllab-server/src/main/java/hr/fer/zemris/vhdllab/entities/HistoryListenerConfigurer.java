@@ -4,7 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
-public class HistoryListenerCreator {
+public class HistoryListenerConfigurer {
 
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;

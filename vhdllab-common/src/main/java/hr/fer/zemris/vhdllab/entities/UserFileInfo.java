@@ -42,12 +42,11 @@ public class UserFileInfo extends Resource implements Ownable {
      * @throws IllegalArgumentException
      *             if either parameter is too long or <code>name</code> isn't
      *             correctly formatted
-     * @see #isCorrectName()
      * @see #USER_ID_LENGTH
      * @see #NAME_LENGTH
      * @see #DATA_LENGTH
      */
-    protected UserFileInfo(Caseless userId, Caseless name, String data) {
+    public UserFileInfo(Caseless userId, Caseless name, String data) {
         super(name, data);
         this.userId = userId;
         checkProperties();

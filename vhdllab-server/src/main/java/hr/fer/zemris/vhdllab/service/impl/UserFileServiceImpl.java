@@ -27,7 +27,15 @@ public class UserFileServiceImpl implements UserFileService {
     @Override
     public void save(List<UserFileInfo> files) {
         for (UserFileInfo info : files) {
-            dao.save(wrapToEntity(info));
+            UserFile file;
+            if (info.getId() == null) {
+                // creating new user file
+                file = new UserFile(info.getUserId(), info.getName(), info
+                        .getData());
+            } else {
+                file = wrapToEntity(info);
+            }
+            dao.save(file);
         }
     }
 
