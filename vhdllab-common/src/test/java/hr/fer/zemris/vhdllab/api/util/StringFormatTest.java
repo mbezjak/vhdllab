@@ -83,6 +83,7 @@ public class StringFormatTest {
     @Test
     public void entityName4() {
         assertTrue("one letter.", isCorrectEntityName("a"));
+        assertTrue("one letter testbench name.", isCorrectEntityName("a_tb"));
         assertTrue("all letters.", isCorrectEntityName("circuitAND"));
         assertTrue("with underscore.", isCorrectEntityName("circuit_AND"));
         assertTrue("all lowercase.", isCorrectEntityName("circuit_and"));

@@ -1,20 +1,19 @@
 package hr.fer.zemris.vhdllab.platform.manager.file;
 
-import hr.fer.zemris.vhdllab.api.workspace.FileSaveReport;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 
 public abstract class FileAdapter implements FileListener {
 
     @Override
-    public void fileCreated(FileSaveReport report) {
+    public void fileCreated(FileReport report) {
     }
 
     @Override
-    public void fileSaved(FileSaveReport report) {
+    public void fileSaved(FileReport report) {
     }
 
     @Override
-    public void fileDeleted(FileInfo file) {
+    public void fileDeleted(FileReport report) {
     }
 
 }

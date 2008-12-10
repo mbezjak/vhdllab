@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
-import hr.fer.zemris.vhdllab.api.workspace.FileSaveReport;
+import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectListener;
@@ -25,8 +25,13 @@ public class ModifyMapperOnResourceChangeListener extends FileAdapter implements
     }
 
     @Override
-    public void fileCreated(FileSaveReport report) {
-        mapper.addFile(report.getProject(), report.getFile());
+    public void fileCreated(FileReport report) {
+        mapper.addFile(report.getFile());
+    }
+
+    @Override
+    public void fileDeleted(FileReport report) {
+        mapper.removeFile(report.getFile());
     }
 
 }

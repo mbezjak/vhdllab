@@ -32,7 +32,7 @@ public final class StringFormat {
      */
     private static final Set<String> notValidVHDLNames;
 
-    private static final String BASIC_NAME_PATTERN = "\\p{Alpha}(\\p{Alnum}(_\\p{Alnum}{1}?)*)*";
+    private static final String BASIC_NAME_PATTERN = "\\p{Alpha}\\p{Alnum}*(_\\p{Alnum}+)*";
 
     static {
         // initial capacities are only an estimate

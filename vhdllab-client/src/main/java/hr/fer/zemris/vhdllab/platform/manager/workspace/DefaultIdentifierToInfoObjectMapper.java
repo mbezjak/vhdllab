@@ -27,13 +27,24 @@ public class DefaultIdentifierToInfoObjectMapper implements
 
     void addProject(ProjectInfo project) {
         ProjectIdentifier identifier = asIdentifier(project);
-        getProjectIdentifiers().put(identifier, project);
         getProjectIds().put(project.getId(), project);
+        getProjectIdentifiers().put(identifier, project);
     }
 
-    void addFile(ProjectInfo project, FileInfo file) {
+    void addFile(FileInfo file) {
+        ProjectInfo project = getProjectIds().get(file.getProjectId());
         FileIdentifier identifier = asIdentifier(project, file);
         getFileIdentifiers().put(identifier, file);
+    }
+
+    void removeProject(ProjectInfo project) {
+        getProjectIds().remove(project.getId());
+        getProjectIdentifiers().remove(asIdentifier(project));
+    }
+
+    void removeFile(FileInfo file) {
+        ProjectInfo project = getProjectIds().get(file.getProjectId());
+        getFileIdentifiers().remove(asIdentifier(project, file));
     }
 
     @Override
@@ -73,7 +84,7 @@ public class DefaultIdentifierToInfoObjectMapper implements
         }
         return projectIds;
     }
-    
+
     private Map<ProjectIdentifier, ProjectInfo> getProjectIdentifiers() {
         if (projectIdentifiers == null) {
             initializeIdentifiers();
@@ -99,7 +110,7 @@ public class DefaultIdentifierToInfoObjectMapper implements
             ProjectInfo project = metadata.getProject();
             addProject(project);
             for (FileInfo file : metadata.getFiles()) {
-                addFile(project, file);
+                addFile(file);
             }
         }
     }

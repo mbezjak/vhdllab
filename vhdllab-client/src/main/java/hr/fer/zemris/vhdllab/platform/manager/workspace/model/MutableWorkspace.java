@@ -36,9 +36,20 @@ public class MutableWorkspace extends Workspace {
         add(projectMetadata);
     }
 
+    public void removeProject(ProjectInfo project) {
+        Validate.notNull(project, "Project can't be null");
+        ProjectMetadata projectMetadata = getProjectMetadata(project);
+        remove(projectMetadata);
+    }
+
     private void add(ProjectMetadata projectMetadata) {
         projects.add(projectMetadata);
         map.put(projectMetadata.getProject(), projectMetadata);
+    }
+
+    private void remove(ProjectMetadata projectMetadata) {
+        projects.remove(projectMetadata);
+        map.remove(projectMetadata.getProject());
     }
 
     private void readObject(@SuppressWarnings("unused") ObjectInputStream in) {

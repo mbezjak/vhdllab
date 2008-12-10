@@ -30,6 +30,11 @@ public class MutableProjectMetadata extends ProjectMetadata {
         files.add(file);
     }
 
+    public void removeFile(FileInfo file) {
+        Validate.notNull(file, "File can't be null");
+        files.remove(file);
+    }
+
     public void setHierarchy(Hierarchy h) {
         Validate.notNull(h, "Hierarchy can't be null");
         if (!project.getName().equals(h.getProjectName())) {

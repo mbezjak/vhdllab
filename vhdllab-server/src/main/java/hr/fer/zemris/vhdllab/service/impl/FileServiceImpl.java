@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.workspace.FileSaveReport;
+import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.dao.FileDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entities.Caseless;
@@ -34,7 +34,7 @@ public class FileServiceImpl implements FileService {
     private HierarchyExtractor hierarchyExtractor;
 
     @Override
-    public FileSaveReport save(FileInfo file) {
+    public FileReport save(FileInfo file) {
         File entity;
         if (file.getId() == null) {
             // creating new file
@@ -52,15 +52,17 @@ public class FileServiceImpl implements FileService {
             }
         }
         dao.save(entity);
+        Project project = entity.getProject();
         FileInfo fileInfo = wrapToInfoObject(entity);
-        ProjectInfo projectInfo = wrapToInfoObject(entity.getProject());
-        Hierarchy hierarchy = hierarchyExtractor.extract(projectInfo);
-        return new FileSaveReport(projectInfo, fileInfo, hierarchy);
+        return getReport(project, fileInfo);
     }
 
     @Override
-    public void delete(FileInfo file) {
-        dao.delete(wrapToEntity(file));
+    public FileReport delete(FileInfo file) {
+        File entity = wrapToEntity(file);
+        Project project = entity.getProject();
+        dao.delete(entity);
+        return getReport(project, file);
     }
 
     @Override
@@ -77,6 +79,12 @@ public class FileServiceImpl implements FileService {
     @Override
     public FileInfo findByName(Integer projectId, Caseless name) {
         return wrapToInfoObject(dao.findByName(projectId, name));
+    }
+
+    private FileReport getReport(Project project, FileInfo file) {
+        Hierarchy hierarchy = hierarchyExtractor.extract(project);
+        return new FileReport(file, hierarchy);
+
     }
 
     private File wrapToEntity(FileInfo info) {
