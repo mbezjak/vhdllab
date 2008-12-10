@@ -27,8 +27,6 @@ import javax.swing.JComponent;
  * determined by {@link ComponentPlacement} enum parameter.
  * 
  * @author Miro Bezjak
- * @see IEditorStorage
- * @see IViewStorage
  * @see IComponentContainer
  */
 public interface IComponentStorage {

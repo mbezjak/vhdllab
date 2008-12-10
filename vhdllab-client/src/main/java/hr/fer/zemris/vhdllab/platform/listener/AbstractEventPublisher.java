@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.listener;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EventListener;
+import java.util.List;
 
-import javax.swing.event.EventListenerList;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
@@ -16,19 +16,19 @@ public abstract class AbstractEventPublisher<T extends EventListener>
      */
     protected final Logger logger = Logger.getLogger(getClass());
 
-    private final EventListenerList events;
+    private final List<T> listeners;
     private final Class<T> listenerClass;
 
-    public AbstractEventPublisher(Class<T> listenerClass) {
+    protected AbstractEventPublisher(Class<T> listenerClass) {
         Validate.notNull(listenerClass, "Listener class can't be null");
         this.listenerClass = listenerClass;
-        events = new EventListenerList();
+        listeners = new ArrayList<T>();
     }
 
     @Override
     public void addListener(T listener) {
         Validate.notNull(listener, "Listener can't be null");
-        events.add(listenerClass, listener);
+        listeners.add(listener);
         if (logger.isTraceEnabled()) {
             logger.trace("Added " + listenerClass.getSimpleName() + ": "
                     + listener);
@@ -38,7 +38,7 @@ public abstract class AbstractEventPublisher<T extends EventListener>
     @Override
     public void removeListener(T listener) {
         Validate.notNull(listener, "Listener can't be null");
-        events.remove(listenerClass, listener);
+        listeners.remove(listener);
         if (logger.isTraceEnabled()) {
             logger.trace("Removed " + listenerClass.getSimpleName() + ": "
                     + listener);
@@ -47,19 +47,15 @@ public abstract class AbstractEventPublisher<T extends EventListener>
 
     @Override
     public void removeListeners() {
-        for (T l : getListeners()) {
-            removeListener(l);
-        }
+        listeners.removeAll(listeners);
         if (logger.isTraceEnabled()) {
             logger.trace("Removed all listeners");
         }
     }
 
     @Override
-    public T[] getListeners() {
-        T[] listeners = events.getListeners(listenerClass);
-        ArrayUtils.reverse(listeners);
-        return listeners;
+    public List<T> getListeners() {
+        return Collections.unmodifiableList(listeners);
     }
 
 }

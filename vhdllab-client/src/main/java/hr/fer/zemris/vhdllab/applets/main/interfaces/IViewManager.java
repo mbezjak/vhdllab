@@ -1,6 +1,3 @@
-/**
- * 
- */
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;

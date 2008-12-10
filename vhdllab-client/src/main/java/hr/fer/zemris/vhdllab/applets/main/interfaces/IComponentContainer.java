@@ -7,9 +7,6 @@ import javax.swing.JComponent;
 
 /**
  * @author Miro Bezjak
- * @see IEditorStorage
- * @see IViewStorage
- * @see IProjectExplorerStorage
  * @see IComponentStorage
  */
 public interface IComponentContainer {

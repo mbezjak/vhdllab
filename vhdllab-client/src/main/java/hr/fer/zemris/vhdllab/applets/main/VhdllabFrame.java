@@ -50,7 +50,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
-import java.security.AccessControlException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,26 +124,8 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
         communicator = (ICommunicator) context.getBean("communicator");
         ResourceBundleProvider.init();
-        try {
-            componentStorage = new DefaultComponentStorage(componentContainer);
-        } catch (AccessControlException e) {
-            e.printStackTrace();
-            throw new IllegalStateException(e);
-            // TODO ovo treba malo modificirat i rec da se
-            // applet nemoze dignut
-            // ako nije .java.policy na svojem mjestu
-        } catch (Throwable e) {
-            // TODO ovo se treba maknut kad MainApplet vise
-            // nece bit u
-            // development fazi
-            e.printStackTrace();
-            throw new IllegalStateException(e);
-            // StringWriter sw = new StringWriter();
-            // PrintWriter pw = new PrintWriter(sw);
-            // e.printStackTrace(pw);
-            // JOptionPane.showMessageDialog(this,
-            // sw.toString());
-        }
+        componentStorage = new DefaultComponentStorage(componentContainer);
+
         text = bundle.getString(LanguageConstants.STATUSBAR_INIT_DONE);
         SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
         text = bundle.getString(LanguageConstants.STATUSBAR_INIT_GUI);

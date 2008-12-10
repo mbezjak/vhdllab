@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.listener;
 
 import java.util.EventListener;
+import java.util.List;
 
 public interface EventPublisher<T extends EventListener> {
 
@@ -10,6 +11,6 @@ public interface EventPublisher<T extends EventListener> {
 
     void removeListeners();
 
-    T[] getListeners();
+    List<T> getListeners();
 
 }
