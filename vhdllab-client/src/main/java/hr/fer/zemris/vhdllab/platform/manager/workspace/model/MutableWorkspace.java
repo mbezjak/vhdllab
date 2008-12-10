@@ -1,15 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace.model;
 
-import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
@@ -18,21 +15,21 @@ public class MutableWorkspace extends Workspace {
     private static final long serialVersionUID = 1L;
 
     public MutableWorkspace(Workspace workspace) {
-        super();
-        this.projects = new ArrayList<ProjectMetadata>(workspace
-                .getProjectCount());
+        super(createProjects(workspace));
+    }
+
+    private static List<ProjectMetadata> createProjects(Workspace workspace) {
+        List<ProjectMetadata> metadata = new ArrayList<ProjectMetadata>(
+                workspace.getProjectCount());
         for (ProjectMetadata mp : workspace) {
-            projects.add(new MutableProjectMetadata(mp));
+            metadata.add(new MutableProjectMetadata(mp));
         }
-        createMap();
+        return metadata;
     }
 
     public void addProject(ProjectInfo project) {
         Validate.notNull(project, "Project can't be null");
-        Hierarchy hierarchy = new Hierarchy(project.getName(),
-                new HashSet<HierarchyNode>(0));
-        ProjectMetadata projectMetadata = new ProjectMetadata(project,
-                new ArrayList<FileInfo>(), hierarchy);
+        ProjectMetadata projectMetadata = new MutableProjectMetadata(project);
         add(projectMetadata);
     }
 

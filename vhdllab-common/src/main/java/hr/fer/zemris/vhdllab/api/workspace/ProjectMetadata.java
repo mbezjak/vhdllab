@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,13 +33,14 @@ public class ProjectMetadata implements Serializable {
         this.project = metadata.project;
         this.files = metadata.files;
         this.hierarchy = metadata.hierarchy;
+        checkProperties();
     }
 
     private void checkProperties() {
         Validate.notNull(project, "Project can't be null");
         Validate.notNull(files, "Files can't be null");
         Validate.notNull(hierarchy, "Hierarchy can't be null");
-        this.files = Collections.unmodifiableList(files);
+        this.files = new ArrayList<FileInfo>(files);
     }
 
     public ProjectInfo getProject() {
@@ -46,7 +48,7 @@ public class ProjectMetadata implements Serializable {
     }
 
     public List<FileInfo> getFiles() {
-        return files;
+        return Collections.unmodifiableList(files);
     }
 
     public Hierarchy getHierarchy() {

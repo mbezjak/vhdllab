@@ -22,6 +22,7 @@ public class ModifyMapperOnResourceChangeListener extends FileAdapter implements
 
     @Override
     public void projectDeleted(ProjectInfo project) {
+        mapper.removeProject(project);
     }
 
     @Override

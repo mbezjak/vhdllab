@@ -26,9 +26,6 @@ public class Workspace implements Iterable<ProjectMetadata>, Serializable {
         checkProperties();
     }
 
-    protected Workspace() {
-    }
-
     private void checkProperties() {
         Validate.notNull(projects, "Projects can't be null");
         this.projects = new ArrayList<ProjectMetadata>(projects);
