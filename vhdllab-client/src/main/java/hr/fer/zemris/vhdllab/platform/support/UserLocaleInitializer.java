@@ -17,8 +17,8 @@ public final class UserLocaleInitializer {
     private static final String USER_COUNTRY = "user.country";
     private static final String USER_VARIANT = "user.variant";
 
-    private static final String DEFAULT_USER_LANGUAGE = "";
-    private static final String DEFAULT_USER_COUNTRY = "";
+    private static final String DEFAULT_USER_LANGUAGE = "en";
+    private static final String DEFAULT_USER_COUNTRY = "US";
     private static final String DEFAULT_USER_VARIANT = "";
 
     public void initLocale() {

@@ -25,6 +25,7 @@ public final class ShutdownManager extends
 
     public void shutdownWithConfirmation() {
         if (dialogManager.showDialog()) {
+            logger.debug("Shutting down application");
             fireShutdownInProgress();
             System.exit(EXIT_STATUS_OK);
         }
@@ -32,7 +33,12 @@ public final class ShutdownManager extends
 
     private void fireShutdownInProgress() {
         for (ShutdownListener l : getListeners()) {
-            l.shutdownInProgress();
+            try {
+                l.shutdownInProgress();
+            } catch (RuntimeException e) {
+                logger.debug("Error in shutdown listener", e);
+                // suppress any error in shutdown procedure
+            }
         }
     }
 

@@ -20,7 +20,7 @@ public class ConnectExceptionHandler extends
     public boolean handleException(Exception e) {
         if (isOfType(e, ConnectException.class)) {
             dialogManager.showDialog();
-            exitWithError();
+            return exitIfNecessary();
         }
         return false;
     }

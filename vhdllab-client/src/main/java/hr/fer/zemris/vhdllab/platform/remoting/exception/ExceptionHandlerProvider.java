@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.remoting.exception;
 
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.ParametrizedDialogManager;
 
 import java.util.ArrayList;
@@ -36,15 +37,17 @@ public class ExceptionHandlerProvider implements ExceptionHandler {
 
     @Override
     public boolean handleException(Exception e) {
-        boolean handled = false;
-        for (ExceptionHandler h : handlers) {
-            handled = h.handleException(e);
-            if (handled)
-                break;
-        }
-        if (!handled) {
-            LOG.error("Error while executing request to remote server", e);
-            dialogManager.showDialog(e);
+        if (ApplicationContextHolder.getContext().isRunning()) {
+            boolean handled = false;
+            for (ExceptionHandler h : handlers) {
+                handled = h.handleException(e);
+                if (handled)
+                    break;
+            }
+            if (!handled) {
+                LOG.error("Error while executing request to remote server", e);
+                dialogManager.showDialog(e);
+            }
         }
         return true;
     }

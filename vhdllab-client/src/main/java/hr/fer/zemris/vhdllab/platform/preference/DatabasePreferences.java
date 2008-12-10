@@ -55,12 +55,7 @@ public class DatabasePreferences extends AbstractPreferences {
     }
 
     private UserFileInfo getFile() {
-        try {
-            return manager.getFile(absolutePath());
-        } catch (RuntimeException e) {
-            LOG.error("Error while retrieving user file", e);
-            return null;
-        }
+        return manager.getFile(absolutePath());
     }
 
     @Override

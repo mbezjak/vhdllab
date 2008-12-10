@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.platform.remoting.exception.AbstractExceptionHandle
 import java.security.cert.CertificateExpiredException;
 
 import javax.annotation.Resource;
-import javax.net.ssl.SSLHandshakeException;
 
 import org.springframework.stereotype.Component;
 
@@ -19,10 +18,9 @@ public class CertificateExpiredExceptionHandler extends
 
     @Override
     public boolean handleException(Exception e) {
-        if (isOfType(e, SSLHandshakeException.class)
-                && isOfType(e.getCause(), CertificateExpiredException.class)) {
+        if (isOfType(e, CertificateExpiredException.class)) {
             dialogManager.showDialog();
-            exitWithError();
+            return exitIfNecessary();
         }
         return false;
     }

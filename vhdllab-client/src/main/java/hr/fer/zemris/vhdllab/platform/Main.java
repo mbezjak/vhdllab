@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.platform;
 
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializer;
 import hr.fer.zemris.vhdllab.platform.support.CommandLineArgumentProcessor;
 import hr.fer.zemris.vhdllab.platform.support.GuiInitializer;
@@ -30,6 +31,7 @@ public final class Main {
         initializeUserLanguage();
         setupGUI(context);
         initializeWorkspace(context);
+        ApplicationContextHolder.getContext().setApplicationInitialized(true);
     }
 
     private static void processCommandLine(String[] args) {

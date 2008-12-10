@@ -17,7 +17,7 @@ public class SecurityExceptionHandler extends AbstractExceptionHandler {
              * When this happens no dialog is raised. Application simply shuts
              * down.
              */
-            exitWithError();
+            return exitIfNecessary();
         }
         return false;
     }
