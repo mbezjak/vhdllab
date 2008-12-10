@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-class DefaultUserFileManager implements UserFileManager {
+public class DefaultUserFileManager implements UserFileManager {
 
     /**
      * Logger for this class

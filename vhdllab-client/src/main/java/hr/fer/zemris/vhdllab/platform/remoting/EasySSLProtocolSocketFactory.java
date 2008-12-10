@@ -28,7 +28,7 @@
  *
  */
 
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.platform.remoting;
 
 import java.io.IOException;
 import java.net.InetAddress;

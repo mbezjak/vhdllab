@@ -24,7 +24,7 @@
  *
  */
 
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.platform.remoting;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;

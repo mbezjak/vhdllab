@@ -8,9 +8,15 @@ import java.awt.Frame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 public final class GuiInitializer implements Runnable {
+
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger.getLogger(GuiInitializer.class);
 
     private ApplicationContext context;
 
@@ -24,6 +30,7 @@ public final class GuiInitializer implements Runnable {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+        LOG.debug("GUI initialized");
     }
 
     @Override

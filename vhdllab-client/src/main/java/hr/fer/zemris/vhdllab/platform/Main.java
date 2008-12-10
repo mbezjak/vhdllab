@@ -17,6 +17,14 @@ public final class Main {
     private static final Logger LOG = Logger.getLogger(Main.class);
 
     public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        initializeApplication(args);
+        long end = System.currentTimeMillis();
+        LOG.debug("Application finished initialization in " + (end - start)
+                + "ms");
+    }
+
+    private static void initializeApplication(String[] args) {
         processCommandLine(args);
         ApplicationContext context = setupDependencyInjectionContainer();
         initializeUserLanguage();
@@ -42,14 +50,12 @@ public final class Main {
 
     private static void setupGUI(ApplicationContext context) {
         new GuiInitializer(context).initGUI();
-        LOG.debug("GUI initialized");
     }
 
     private static void initializeWorkspace(ApplicationContext context) {
         WorkspaceInitializer initializer = (WorkspaceInitializer) context
                 .getBean("workspaceInitializer");
         initializer.initializeWorkspace();
-        LOG.debug("Application initialized");
     }
 
 }

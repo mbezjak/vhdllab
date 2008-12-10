@@ -6,74 +6,103 @@
                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-  
-  <context:property-placeholder location="server.properties"/>
+
+  <context:property-placeholder location="server.properties" />
   <context:component-scan base-package="hr.fer.zemris.vhdllab" />
   <aop:aspectj-autoproxy />
 
-  <bean id="httpConnectionManager" class="org.apache.commons.httpclient.SimpleHttpConnectionManager" />
-  
-  <bean id="httpClient" class="org.apache.commons.httpclient.HttpClient">
-    <constructor-arg ref="httpConnectionManager"/>
-  </bean>
-  
-  <bean id="httpInvokerBeanParent" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean"
-    abstract="true">
-    <property name="httpInvokerRequestExecutor">
-      <bean class="hr.fer.zemris.vhdllab.applets.main.HttpClientRequestExecutor">
-        <constructor-arg ref="httpClient" />
-      </bean>
+  <bean id="messageSource"
+    class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basenames">
+      <list>
+        <value>dialogs</value>
+      </list>
     </property>
   </bean>
-  
+
+  <bean id="httpConnectionManager"
+    class="org.apache.commons.httpclient.SimpleHttpConnectionManager" />
+
+  <bean id="httpClient" class="org.apache.commons.httpclient.HttpClient">
+    <constructor-arg ref="httpConnectionManager" />
+  </bean>
+
+  <bean id="httpClientRequestExceutor"
+    class="hr.fer.zemris.vhdllab.platform.remoting.HttpClientRequestExecutor">
+    <constructor-arg ref="httpClient" />
+  </bean>
+
+  <bean id="httpInvokerBeanParent"
+    class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean"
+    abstract="true">
+    <property name="httpInvokerRequestExecutor" ref="httpClientRequestExceutor" />
+  </bean>
+
   <bean id="fileService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/file.service" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/file.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.FileService" />
   </bean>
-  
+
   <bean id="projectService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/project.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.ProjectService" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/project.service" />
+    <property name="serviceInterface"
+      value="hr.fer.zemris.vhdllab.service.ProjectService" />
   </bean>
-  
+
   <bean id="libraryFileService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/libraryfile.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.LibraryFileService" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/libraryfile.service" />
+    <property name="serviceInterface"
+      value="hr.fer.zemris.vhdllab.service.LibraryFileService" />
   </bean>
-  
+
   <bean id="userFileService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/userfile.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.UserFileService" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/userfile.service" />
+    <property name="serviceInterface"
+      value="hr.fer.zemris.vhdllab.service.UserFileService" />
   </bean>
-  
+
   <bean id="workspaceService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/workspace.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.WorkspaceService" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/workspace.service" />
+    <property name="serviceInterface"
+      value="hr.fer.zemris.vhdllab.service.WorkspaceService" />
   </bean>
-  
+
   <bean id="hierarchyExtractor" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/hierarchyextraction.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.HierarchyExtractor" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/hierarchyextraction.service" />
+    <property name="serviceInterface"
+      value="hr.fer.zemris.vhdllab.service.HierarchyExtractor" />
   </bean>
-  
+
   <bean id="circuitInterfaceExtractor" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/circuitinterfaceextraction.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/circuitinterfaceextraction.service" />
+    <property name="serviceInterface"
+      value="hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor" />
   </bean>
-  
+
   <bean id="vhdlGenerator" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/vhdlgeneration.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/vhdlgeneration.service" />
+    <property name="serviceInterface"
+      value="hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator" />
   </bean>
-  
+
   <bean id="compiler" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/compiler.service" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/compiler.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.Compiler" />
   </bean>
-  
+
   <bean id="simulator" parent="httpInvokerBeanParent">
-    <property name="serviceUrl" value="https://${host}:${port}/vhdllab/remoting/simulator.service" />
+    <property name="serviceUrl"
+      value="https://${host}:${port}/vhdllab/remoting/simulator.service" />
     <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.Simulator" />
   </bean>
-  
+
 </beans>

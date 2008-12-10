@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.platform.remoting;
 
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
@@ -46,7 +46,6 @@ public class HttpClientRequestExecutor extends
         super.executePostMethod(config, httpClient, postMethod);
         switch (postMethod.getStatusCode()) {
         case HttpStatus.SC_UNAUTHORIZED:
-        case HttpStatus.SC_FORBIDDEN:
             UserCredential uc;
             if (ApplicationContextHolder.getContext().isDevelopment()
                     && !showRetryMessage) {
@@ -54,10 +53,12 @@ public class HttpClientRequestExecutor extends
             } else {
                 uc = dialogManager.showDialog();
             }
-            if(uc == null) {
-                throw new SecurityException("User refused to provide proper username and password");
+            if (uc == null) {
+                throw new SecurityException(
+                        "User refused to provide proper username and password");
             }
-            ApplicationContextHolder.getContext().setUserId(new Caseless(uc.getUsername()));
+            ApplicationContextHolder.getContext().setUserId(
+                    new Caseless(uc.getUsername()));
             showRetryMessage = true;
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
                     uc.getUsername(), uc.getPassword());

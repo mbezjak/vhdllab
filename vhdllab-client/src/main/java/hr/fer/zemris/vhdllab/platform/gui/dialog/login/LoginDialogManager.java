@@ -19,7 +19,7 @@ public class LoginDialogManager implements DialogManager<UserCredential> {
         showRetryMessage = true;
         return uc;
     }
-    
+
     /**
      * @param displayRetryMessage
      *            a flag indicating if login dialog should show retry message
