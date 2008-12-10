@@ -26,7 +26,7 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
     @Override
     public void create(FileInfo file) throws FileAlreadyExistsException {
         checkIfNull(file);
-        if(workspaceManager.exist(file)) {
+        if (workspaceManager.exist(file)) {
             throw new FileAlreadyExistsException(file.toString());
         }
         FileSaveReport report = service.save(file);
