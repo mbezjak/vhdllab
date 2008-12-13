@@ -1,6 +1,3 @@
-/**
- * 
- */
 package hr.fer.zemris.vhdllab.applets.main.componentIdentifier;
 
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
@@ -169,28 +166,6 @@ public class ComponentIdentifierFactory {
 	 */
 	public static IComponentIdentifier<?> createPreferencesIdentifier() {
 		return new EditorIdentifier<Object>(ComponentTypes.EDITOR_PREFERENCES);
-	}
-
-	/**
-	 * Creates a view identifier. Return value does not have an instance
-	 * modifier.
-	 * 
-	 * @param type
-	 *            a view type
-	 * @return a project explorer view identifier
-	 */
-	public static IComponentIdentifier<?> createViewIdentifier(String type) {
-		return new ViewIdentifier<Object>(type);
-	}
-
-	/**
-	 * Creates a project explorer view identifier. Return value does not have an
-	 * instance modifier.
-	 * 
-	 * @return a project explorer view identifier
-	 */
-	public static IComponentIdentifier<?> createProjectExplorerIdentifier() {
-		return new ViewIdentifier<Object>(ComponentTypes.VIEW_PROJECT_EXPLORER);
 	}
 
 }

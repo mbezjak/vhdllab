@@ -14,7 +14,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IExplicitSave;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
@@ -112,24 +111,8 @@ public class DefaultEditorManager implements IEditorManager {
     public IEditor openPreferences() {
         IComponentIdentifier<?> identifier = ComponentIdentifierFactory
                 .createPreferencesIdentifier();
-        return openEditor(identifier, "");
-    }
-
-    public IEditor viewVHDLCode(IEditor editor) {
-        if (editor == null) {
-            throw new NullPointerException("Editor cant be null");
-        }
-        IComponentIdentifier<?> identifier = getIdentifierFor(editor);
-        if (identifier == null) {
-            return null;
-        }
-        if (!(identifier.getInstanceModifier() instanceof FileIdentifier)) {
-            return null;
-        }
-        IComponentIdentifier<FileIdentifier> viewVHDLId = ComponentIdentifierFactory
-                .createViewVHDLIdentifier((FileIdentifier) identifier
-                        .getInstanceModifier());
-        return viewVHDLCode(viewVHDLId);
+        FileContent content = new FileContent("");
+        return openEditor(identifier, content);
     }
 
     /*
@@ -141,6 +124,7 @@ public class DefaultEditorManager implements IEditorManager {
      * hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier
      * )
      */
+    @Override
     public IEditor viewVHDLCode(IComponentIdentifier<FileIdentifier> identifier) {
         if (identifier == null) {
             throw new NullPointerException("Editor identifier cant be null");
@@ -182,20 +166,6 @@ public class DefaultEditorManager implements IEditorManager {
         }
         FileContent content = new FileContent(projectName, fileName, data
                 .getVHDL());
-        return openEditor(identifier, content);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#openEditor
-     * (hr
-     * .fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier
-     * , java.lang.String)
-     */
-    public IEditor openEditor(IComponentIdentifier<?> identifier, String data) {
-        FileContent content = new FileContent(data);
         return openEditor(identifier, content);
     }
 
@@ -321,22 +291,6 @@ public class DefaultEditorManager implements IEditorManager {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#saveEditor
-     * (hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor)
-     */
-    public void saveEditor(IEditor editor) {
-        if (editor == null) {
-            throw new NullPointerException("Editor cant be null");
-        }
-        List<IEditor> editorsToSave = new ArrayList<IEditor>(1);
-        editorsToSave.add(editor);
-        saveEditors(editorsToSave);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#
      * saveEditorExplicitly
      * (hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor)
@@ -347,15 +301,8 @@ public class DefaultEditorManager implements IEditorManager {
         }
         boolean saved = saveEditorImpl(editor, true);
         if (saved) {
-            IComponentIdentifier<?> peIdentifier = ComponentIdentifierFactory
-                    .createProjectExplorerIdentifier();
-            if (container.getViewManager().isViewOpened(peIdentifier)) {
-                IView view = container.getViewManager().getOpenedView(
-                        peIdentifier);
-                IProjectExplorer projectExplorer = view
-                        .asInterface(IProjectExplorer.class);
-                projectExplorer.refreshProject(editor.getProjectName());
-            }
+            container.getProjectExplorer().refreshProject(
+                        editor.getProjectName());
         }
     }
 
@@ -399,15 +346,9 @@ public class DefaultEditorManager implements IEditorManager {
             }
         }
 
-        IComponentIdentifier<?> peIdentifier = ComponentIdentifierFactory
-                .createProjectExplorerIdentifier();
-        if (container.getViewManager().isViewOpened(peIdentifier)) {
-            IView view = container.getViewManager().getOpenedView(peIdentifier);
-            IProjectExplorer projectExplorer = view
-                    .asInterface(IProjectExplorer.class);
-            for (Caseless projectName : projects) {
-                projectExplorer.refreshProject(projectName);
-            }
+        IProjectExplorer projectExplorer = container.getProjectExplorer();
+        for (Caseless projectName : projects) {
+            projectExplorer.refreshProject(projectName);
         }
         if (savedEditors.size() != 0) {
             String text = bundle
@@ -496,17 +437,6 @@ public class DefaultEditorManager implements IEditorManager {
      */
     public void closeEditor(IEditor editor) {
         closeEditor(editor, true);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#
-     * closeEditorWithoutSaving
-     * (hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor)
-     */
-    public void closeEditorWithoutSaving(IEditor editor) {
-        closeEditor(editor, false);
     }
 
     /**
@@ -632,7 +562,7 @@ public class DefaultEditorManager implements IEditorManager {
      *            <code>true</code> if an editor content has been changed;
      *            <code>false</code> otherwise.
      */
-    private void resetEditorTitle(Caseless projectName, Caseless fileName,
+    void resetEditorTitle(Caseless projectName, Caseless fileName,
             boolean modified) {
         IComponentIdentifier<FileIdentifier> id = ComponentIdentifierFactory
                 .createFileEditorIdentifier(projectName, fileName);
@@ -736,29 +666,6 @@ public class DefaultEditorManager implements IEditorManager {
      * (non-Javadoc)
      * 
      * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#
-     * findAllEditorAssociatedWith(java.lang.Object)
-     */
-    public List<IEditor> findAllEditorsAssociatedWith(Object instanceModifier) {
-        if (instanceModifier == null) {
-            throw new NullPointerException("Instance modifier cant be null");
-        }
-        List<IEditor> associatedEditors = new ArrayList<IEditor>();
-        for (IEditor e : getAllOpenedEditors()) {
-            IComponentIdentifier<?> id = getIdentifierFor(e);
-            Object im = id.getInstanceModifier();
-            if (im != null) {
-                if (im.equals(instanceModifier)) {
-                    associatedEditors.add(e);
-                }
-            }
-        }
-        return associatedEditors;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#
      * getAllOpenedEditors()
      */
     public List<IEditor> getAllOpenedEditors() {
@@ -813,7 +720,7 @@ public class DefaultEditorManager implements IEditorManager {
      * (hr.fer
      * .zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier)
      */
-    public String getTitle(IComponentIdentifier<?> identifier) {
+    private String getTitle(IComponentIdentifier<?> identifier) {
         return storage.getTitleFor(identifier);
     }
 
@@ -824,7 +731,7 @@ public class DefaultEditorManager implements IEditorManager {
      * hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager#setTitle
      * (hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor, java.lang.String)
      */
-    public void setTitle(IEditor editor, String title) {
+    private void setTitle(IEditor editor, String title) {
         if (editor == null) {
             throw new NullPointerException("Editor cant be null");
         }
@@ -841,7 +748,7 @@ public class DefaultEditorManager implements IEditorManager {
      * .zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier,
      * java.lang.String)
      */
-    public void setTitle(IComponentIdentifier<?> identifier, String title) {
+    private void setTitle(IComponentIdentifier<?> identifier, String title) {
         storage.setTitle(identifier, title);
     }
 
@@ -925,7 +832,7 @@ public class DefaultEditorManager implements IEditorManager {
         SystemLog.instance().addSystemMessage(text, type);
     }
 
-    private class EditorModifiedListener implements EditorListener {
+    class EditorModifiedListener implements EditorListener {
 
         /*
          * (non-Javadoc)

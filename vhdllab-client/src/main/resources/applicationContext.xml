@@ -11,10 +11,16 @@
   <context:component-scan base-package="hr.fer.zemris.vhdllab" />
   <aop:aspectj-autoproxy />
 
+  <bean id="singleInstanceViewManager"
+    class="hr.fer.zemris.vhdllab.platform.manager.view.impl.SingleInstanceViewManager"
+    abstract="true">
+  </bean>
+
   <bean id="messageSource"
     class="org.springframework.context.support.ResourceBundleMessageSource">
     <property name="basenames">
       <list>
+        <value>components</value>
         <value>dialogs</value>
       </list>
     </property>

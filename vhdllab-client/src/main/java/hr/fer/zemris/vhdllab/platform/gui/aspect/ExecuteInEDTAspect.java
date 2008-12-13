@@ -17,12 +17,17 @@ public class ExecuteInEDTAspect {
      */
     static final Logger LOG = Logger.getLogger(ExecuteInEDTAspect.class);
 
-    @Around("execution(* hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager.*(..))")
+    @Around("execution(* hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager.*(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer.*(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.platform.manager.component.ComponentManager.*(..))")
     public Object executeInEDT(final ProceedingJoinPoint pjp) throws Throwable {
-        final String className = pjp.getSourceLocation().getWithinType().getSimpleName();
+        final String className = pjp.getSourceLocation().getWithinType()
+                .getSimpleName();
         if (SwingUtilities.isEventDispatchThread()) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Executing " + className + " in EDT (current thread)");
+                LOG
+                        .trace("Executing " + className
+                                + " in EDT (current thread)");
             }
             return pjp.proceed();
         }

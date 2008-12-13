@@ -18,6 +18,6 @@ public enum ComponentPlacement {
 	 * specified tabbed pane.
 	 */
 
-	LEFT, RIGHT, BOTTOM, CENTER;
+	LEFT, BOTTOM, CENTER;
 
 }

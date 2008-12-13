@@ -1,6 +1,3 @@
-/**
- * 
- */
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.utilities.FileUtil;

@@ -237,8 +237,6 @@ public class Automat extends AbstractEditor implements IWizard {
 		super.setSystemContainer(container);
 		bundle = ResourceBundleProvider
 				.getBundle("Client_Automat_ApplicationResources");
-//		bundle = ResourceBundle.getBundle("Client_Automat_ApplicationResources",
-//				new Locale("en"));
 	}
 
 	public IWizard getWizard() {

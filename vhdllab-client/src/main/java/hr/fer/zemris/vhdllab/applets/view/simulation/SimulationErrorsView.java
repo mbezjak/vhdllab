@@ -2,12 +2,11 @@ package hr.fer.zemris.vhdllab.applets.view.simulation;
 
 import hr.fer.zemris.vhdllab.api.results.SimulationMessage;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
+import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
@@ -17,8 +16,9 @@ import java.text.SimpleDateFormat;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.springframework.stereotype.Component;
 
 /**
  * Panel koji sadrzi mozebitne greske prilikom kompajliranja VHDL koda.
@@ -27,7 +27,8 @@ import javax.swing.JScrollPane;
  * @version 1.0
  * @since 22.12.2006.
  */
-public class SimulateErrorsPanel extends JPanel implements IView {
+@Component
+public class SimulationErrorsView extends AbstractView {
 
 	/**
 	 * Serial version UID.
@@ -43,9 +44,6 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	/** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
 	private JScrollPane scrollPane;
 
-	/** SystemContainer */
-	private ISystemContainer container;
-
 	private SystemLogListener systemLogListener;
 
 	/**
@@ -54,7 +52,7 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	 * Kreira objekt i dovodi ga u pocetno stanje ciji kontekst sadrzi prazan
 	 * string
 	 */
-	public SimulateErrorsPanel() {
+	public SimulationErrorsView() {
 	}
 
 	/**
@@ -84,7 +82,7 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	}
 
 	@Override
-	public void init() {
+	public void doInit() {
 		model = new DefaultListModel();
 		listContent = new JList(model);
 		// TODO ovo ucitat iz preference-a
@@ -94,7 +92,7 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				scrollPane.setPreferredSize(SimulateErrorsPanel.this.getSize());
+				scrollPane.setPreferredSize(SimulationErrorsView.this.getSize());
 			}
 		});
 
@@ -116,22 +114,8 @@ public class SimulateErrorsPanel extends JPanel implements IView {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#dispose()
 	 */
 	@Override
-	public void dispose() {
+	public void doDispose() {
 		SystemLog.instance().removeSystemLogListener(systemLogListener);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
-	 */
-	public void setSystemContainer(ISystemContainer container) {
-		this.container = container;
-	}
 	
-	@Override
-	public <T> T asInterface(Class<T> clazz) {
-		return null;
-	}
-
 }

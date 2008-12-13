@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
@@ -10,7 +11,6 @@ import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifi
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfigurationParser;
 import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
-import hr.fer.zemris.vhdllab.applets.main.constant.ComponentTypes;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.dialog.SaveDialog;
@@ -22,11 +22,12 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IViewManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
+import hr.fer.zemris.vhdllab.applets.view.history.status.StatusHistoryView;
+import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
@@ -35,13 +36,14 @@ import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
 import java.awt.Frame;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -84,6 +86,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     @Autowired
     private IResourceManager resourceManager;
+    @Autowired ViewManagerFactory viewFactory;
     /**
      * A Component configuration.
      */
@@ -108,10 +111,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      * An editor manager.
      */
     private IEditorManager editorManager;
-    /**
-     * A view manager.
-     */
-    private IViewManager viewManager;
+    private IProjectExplorer projectExplorer;
 
     public void setComponentProvider(IComponentProvider componentProvider) {
         this.componentProvider = componentProvider;
@@ -139,16 +139,6 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     public void setEditorManager(IEditorManager editorManager) {
         this.editorManager = editorManager;
-    }
-
-    /**
-     * Setter for a view manager.
-     * 
-     * @param viewManager
-     *            a view manager
-     */
-    public void setViewManager(IViewManager viewManager) {
-        this.viewManager = viewManager;
     }
 
     @Override
@@ -212,20 +202,18 @@ public class DefaultSystemContainer implements ISystemContainer,
             editorManager.openEditorByResource(identifier);
         }
 
-        name = UserFileConstants.SYSTEM_OPENED_VIEWS;
-        data = pref.get(name, "");
-        List<String> views = SerializationUtil.deserializeViewInfo(data);
-        for (String s : views) {
-            IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-                    .createViewIdentifier(s);
-            viewManager.openView(identifier);
-        }
+        viewFactory.get(new ViewIdentifier(StatusHistoryView.class)).open();
 
-        IComponentIdentifier<?> stViewIdentifier = ComponentIdentifierFactory
-                .createViewIdentifier(ComponentTypes.VIEW_STATUS_HISTORY);
-        getViewManager().openView(stViewIdentifier);
-        getViewManager().openProjectExplorer();
+        projectExplorer = new DefaultProjectExplorer();
+        VhdllabFrame vhdllabFrame = (VhdllabFrame) parentFrame;
+        vhdllabFrame.setProjectExplorer((java.awt.Component) projectExplorer);
+        projectExplorer.setSystemContainer(this);
+        projectExplorer.init();
+        vhdllabFrame.repaint();
+    }
 
+    public IProjectExplorer getProjectExplorer() {
+        return projectExplorer;
     }
 
     /**
@@ -241,15 +229,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         String data = SerializationUtil.serializeEditorInfo(editorManager
                 .getAllOpenedEditors());
         String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
-        pref.put(name, data);
-
-        List<String> views = new ArrayList<String>();
-        for (IView v : viewManager.getAllOpenedViews()) {
-            IComponentIdentifier<?> id = viewManager.getIdentifierFor(v);
-            views.add(id.getComponentType());
-        }
-        data = SerializationUtil.serializeViewInfo(views);
-        name = UserFileConstants.SYSTEM_OPENED_VIEWS;
         pref.put(name, data);
 
         StringBuilder sb = new StringBuilder(2000);
@@ -269,6 +248,8 @@ public class DefaultSystemContainer implements ISystemContainer,
             resourceManager.saveErrorMessage(sb.toString());
         }
 
+        projectExplorer.dispose();
+
         SystemLog.instance().removeAllSystemLogListeners();
         resourceManager.removeAllVetoableResourceListeners();
 
@@ -276,9 +257,9 @@ public class DefaultSystemContainer implements ISystemContainer,
         componentProvider = null;
         componentStorage = null;
         editorManager = null;
-        viewManager = null;
         bundle = null;
         parentFrame = null;
+        projectExplorer = null;
     }
 
     /* ISystemContainer METHODS */
@@ -328,23 +309,6 @@ public class DefaultSystemContainer implements ISystemContainer,
             return false;
         }
         return compile(file.getProjectName(), file.getFileName());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#compile
-     * (hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor)
-     */
-    @Override
-    public boolean compile(IEditor editor) {
-        if (editor == null) {
-            return false;
-        }
-        Caseless projectName = editor.getProjectName();
-        Caseless fileName = editor.getFileName();
-        return compile(projectName, fileName);
     }
 
     /*
@@ -417,23 +381,6 @@ public class DefaultSystemContainer implements ISystemContainer,
             return false;
         }
         return simulate(file.getProjectName(), file.getFileName());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#simulate
-     * (hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor)
-     */
-    @Override
-    public boolean simulate(IEditor editor) {
-        if (editor == null) {
-            return false;
-        }
-        Caseless projectName = editor.getProjectName();
-        Caseless fileName = editor.getFileName();
-        return simulate(projectName, fileName);
     }
 
     /*
@@ -546,15 +493,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     @Override
     public Caseless getSelectedProject() {
-        IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-                .createProjectExplorerIdentifier();
-        if (!viewManager.isViewOpened(identifier)) {
-            return null;
-        } else {
-            IView view = viewManager.getOpenedView(identifier);
-            return view.asInterface(IProjectExplorer.class)
-                    .getSelectedProject();
-        }
+        return projectExplorer.getSelectedProject();
     }
 
     /*
@@ -565,14 +504,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     @Override
     public FileIdentifier getSelectedFile() {
-        IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-                .createProjectExplorerIdentifier();
-        if (!viewManager.isViewOpened(identifier)) {
-            return null;
-        } else {
-            IView view = viewManager.getOpenedView(identifier);
-            return view.asInterface(IProjectExplorer.class).getSelectedFile();
-        }
+        return projectExplorer.getSelectedFile();
     }
 
     /* MANAGER GETTER METHODS */
@@ -586,18 +518,6 @@ public class DefaultSystemContainer implements ISystemContainer,
     @Override
     public IEditorManager getEditorManager() {
         return editorManager;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getViewManager
-     * ()
-     */
-    @Override
-    public IViewManager getViewManager() {
-        return viewManager;
     }
 
     /*
@@ -850,9 +770,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceCompiled(Caseless projectName, Caseless fileName,
                 CompilationResult result) {
-            IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-                    .createViewIdentifier(ComponentTypes.VIEW_COMPILATION_ERRORS);
-            viewManager.openView(identifier);
+            viewFactory.get(new ViewIdentifier(CompilationErrorsView.class)).open();
 
             FileIdentifier resource = new FileIdentifier(projectName, fileName);
             ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
@@ -921,9 +839,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceSimulated(Caseless projectName, Caseless fileName,
                 SimulationResult result) {
-            IComponentIdentifier<?> identifier = ComponentIdentifierFactory
-                    .createViewIdentifier(ComponentTypes.VIEW_SIMULATION_ERRORS);
-            viewManager.openView(identifier);
+            viewFactory.get(new ViewIdentifier(SimulationErrorsView.class)).open();
 
             FileIdentifier resource = new FileIdentifier(projectName, fileName);
             ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(

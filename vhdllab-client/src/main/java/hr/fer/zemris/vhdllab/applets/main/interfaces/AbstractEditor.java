@@ -7,6 +7,8 @@ import hr.fer.zemris.vhdllab.applets.main.event.EditorListener;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 
+import java.awt.Component;
+
 import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 
@@ -242,5 +244,10 @@ public abstract class AbstractEditor extends JPanel implements IEditor {
 	public void dispose() {
 		removeAllEditorListeners();
 	}
+	
+   @Override
+    public Component getComponent() {
+        return this;
+    }
 
 }

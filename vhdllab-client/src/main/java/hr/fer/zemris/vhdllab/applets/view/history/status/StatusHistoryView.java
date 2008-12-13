@@ -1,12 +1,11 @@
-package hr.fer.zemris.vhdllab.applets.view.status.history;
+package hr.fer.zemris.vhdllab.applets.view.history.status;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IView;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
+import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,7 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -27,6 +25,8 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import org.springframework.stereotype.Component;
+
 /**
  * View that holds past messages displayed in status bar.
  * 
@@ -34,7 +34,8 @@ import javax.swing.text.StyledDocument;
  * @version 1.0
  * @since 3.2.2007.
  */
-public class StatusHistoryView extends JPanel implements IView {
+@Component
+public class StatusHistoryView extends AbstractView {
 
 	/** Serial version UID. */
 	private static final long serialVersionUID = -5905330862355651657L;
@@ -50,11 +51,6 @@ public class StatusHistoryView extends JPanel implements IView {
 
 	/** Pane where text will be displayed */
 	private JTextPane textPane;
-
-	/**
-	 * A system container.
-	 */
-	private ISystemContainer container;
 
 	private SystemLogListener systemLogListener;
 
@@ -74,7 +70,7 @@ public class StatusHistoryView extends JPanel implements IView {
 	}
 
 	@Override
-	public void init() {
+	public void doInit() {
 		formatter = new SimpleDateFormat(timeFormat);
 		textPane = new JTextPane();
 		textPane.setEditable(false);
@@ -136,17 +132,13 @@ public class StatusHistoryView extends JPanel implements IView {
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#dispose()
 	 */
 	@Override
-	public void dispose() {
+	public void doDispose() {
 		SystemLog.instance().removeSystemLogListener(systemLogListener);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.view.IView#setProjectContainer(hr.fer.zemris.vhdllab.applets.main.interfaces.ProjectContainer)
-	 */
-	public void setSystemContainer(ISystemContainer container) {
-		this.container = container;
+	
+	@Override
+	public boolean isCloseable() {
+	    return false;
 	}
 
 	/**
@@ -171,9 +163,4 @@ public class StatusHistoryView extends JPanel implements IView {
 		textPane.setCaretPosition(doc.getLength());
 	}
 	
-	@Override
-	public <T> T asInterface(Class<T> clazz) {
-		return null;
-	}
-
 }

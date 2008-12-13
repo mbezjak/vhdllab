@@ -19,7 +19,6 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.Compiler;
 import hr.fer.zemris.vhdllab.service.LibraryFileService;
 import hr.fer.zemris.vhdllab.service.Simulator;
-import hr.fer.zemris.vhdllab.service.UserFileService;
 import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
@@ -34,8 +33,6 @@ public class Communicator implements ICommunicator {
 
     @Autowired
     private LibraryFileService libraryFileService;
-    @Autowired
-    private UserFileService userFileService;
     @Autowired
     private CircuitInterfaceExtractor circuitInterfaceExtractor;
     @Autowired
@@ -52,12 +49,6 @@ public class Communicator implements ICommunicator {
     private ProjectManager projectManager;
     @Autowired
     private FileManager fileManager;
-
-    private Cache cache;
-
-    public Communicator() {
-        cache = new Cache();
-    }
 
     private ProjectIdentifier asIdentifier(Caseless projectName) {
         return new ProjectIdentifier(projectName);

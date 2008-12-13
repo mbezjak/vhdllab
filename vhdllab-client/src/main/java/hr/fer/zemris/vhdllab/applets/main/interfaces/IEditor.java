@@ -5,6 +5,8 @@ import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
 
+import java.awt.Component;
+
 /**
  * Interface that describes communication between MainApplet and instance that
  * implements this interface.
@@ -66,4 +68,7 @@ public interface IEditor {
     void init();
 
     void dispose();
+
+    Component getComponent();
+
 }
