@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.remoting.exception.dialog;
 
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractMessageShowingDialogManager;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.ParametrizedDialogManager;
 
@@ -19,7 +20,12 @@ public class UnknownExceptionDialogManager extends
 
     @Override
     public Void showDialog(Exception e) {
-        String stackTrace = ExceptionUtils.getFullStackTrace(e);
+        String stackTrace;
+        if(ApplicationContextHolder.getContext().isApplicationInitialized()) {
+            stackTrace = e.getMessage();
+        } else {
+            stackTrace = ExceptionUtils.getFullStackTrace(e);
+        }
         String title = getTitle();
         String text = getMessage() + "\n" + stackTrace;
         int messageType = getMessageType();
