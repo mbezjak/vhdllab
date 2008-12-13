@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.client.core.log;
 
-import hr.fer.zemris.vhdllab.utilities.ExceptionsUtil;
-
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 /**
  * Represents a message of the system. This class is immutable and therefor
@@ -39,7 +39,7 @@ public class SystemMessage {
 	 *             if <code>exception</code> is <code>null</code>
 	 */
 	public SystemMessage(Throwable cause) {
-		this(ExceptionsUtil.printStackTrace(cause));
+		this(ExceptionUtils.getFullStackTrace(cause));
 	}
 
 	/**

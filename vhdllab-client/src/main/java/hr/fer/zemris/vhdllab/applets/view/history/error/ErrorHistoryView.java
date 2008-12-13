@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.view.history.errors;
+package hr.fer.zemris.vhdllab.applets.view.history.error;
 
 import hr.fer.zemris.vhdllab.client.core.log.SystemError;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;

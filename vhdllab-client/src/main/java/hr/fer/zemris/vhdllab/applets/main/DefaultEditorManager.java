@@ -774,18 +774,7 @@ public class DefaultEditorManager implements IEditorManager {
      * @return a component placement
      */
     private ComponentPlacement getPlacement(IComponentIdentifier<?> identifier) {
-        String id = identifier.getComponentType();
-        Preferences pref = Preferences
-                .userNodeForPackage(DefaultEditorManager.class);
-        String name = UserFileConstants.SYSTEM_COMPONENT_PLACEMENT_FOR + id;
-        String property = pref.get(name, null);
-        if (property == null) {
-            property = pref.get(
-                    UserFileConstants.SYSTEM_DEFAULT_EDITOR_PLACEMENT,
-                    ComponentPlacement.CENTER.name());
-            pref.put(name, property);
-        }
-        return ComponentPlacement.valueOf(property);
+        return ComponentPlacement.CENTER;
     }
 
     /**

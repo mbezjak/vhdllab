@@ -13,7 +13,7 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
-import hr.fer.zemris.vhdllab.applets.view.history.errors.ErrorHistoryView;
+import hr.fer.zemris.vhdllab.applets.view.history.error.ErrorHistoryView;
 import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
