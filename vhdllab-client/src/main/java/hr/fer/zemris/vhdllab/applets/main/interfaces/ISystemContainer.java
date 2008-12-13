@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
@@ -235,15 +234,6 @@ public interface ISystemContainer {
      * @return a component provider.
      */
     IComponentProvider getComponentProvider();
-
-    /**
-     * Returns a status bar. Return value will never be <code>null</code>. This
-     * is an alias method for <code>getComponentProvider().getStatusBar()</code>
-     * .
-     * 
-     * @return a status bar
-     */
-    IStatusBar getStatusBar();
 
     List<IEditor> showSaveDialog(String title, String message,
             List<IEditor> editorsToBeSaved);

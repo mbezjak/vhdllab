@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
@@ -542,18 +541,6 @@ public class DefaultSystemContainer implements ISystemContainer,
     @Override
     public IComponentProvider getComponentProvider() {
         return componentProvider;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getStatusBar
-     * ()
-     */
-    @Override
-    public IStatusBar getStatusBar() {
-        return componentProvider.getStatusBar();
     }
 
     /* PRIVATE COMMON TASK METHODS */

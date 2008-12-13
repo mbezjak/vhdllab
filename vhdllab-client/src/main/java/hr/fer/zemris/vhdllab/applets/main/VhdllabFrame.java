@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
 import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
@@ -91,7 +90,6 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
     ViewManagerFactory viewFactory;
 
     private Map<ComponentPlacement, JTabbedPane> tabbedContainers;
-    private IStatusBar statusBar;
 
     private JSplitPane projectExplorerSplitPane;
     private JSplitPane viewSplitPane;
@@ -212,7 +210,6 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
         JPanel statusBarPanel = new JPanel(new BorderLayout());
         statusBarPanel.add(statusBar, BorderLayout.CENTER);
         statusBarPanel.setPreferredSize(new Dimension(0, 24));
-        this.statusBar = statusBar;
         return statusBarPanel;
     }
 
@@ -1004,11 +1001,6 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             } catch (RuntimeException e) {
             }
         }
-    }
-
-    @Override
-    public IStatusBar getStatusBar() {
-        return statusBar;
     }
 
     @Override

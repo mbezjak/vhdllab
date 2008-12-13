@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.IStatusBar;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
@@ -80,11 +79,6 @@ public class DummySystemContainer implements ISystemContainer {
 
 	@Override
 	public Caseless getSelectedProject() {
-		return null;
-	}
-
-	@Override
-	public IStatusBar getStatusBar() {
 		return null;
 	}
 
