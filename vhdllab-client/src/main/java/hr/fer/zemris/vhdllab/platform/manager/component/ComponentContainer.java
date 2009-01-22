@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.manager.view;
+package hr.fer.zemris.vhdllab.platform.manager.component;
 
 import java.util.List;
 

@@ -1,14 +1,15 @@
 package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
-import hr.fer.zemris.vhdllab.platform.manager.view.ComponentContainer;
-import hr.fer.zemris.vhdllab.platform.manager.view.ComponentGroup;
+import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
+import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.view.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.view.View;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewMetadata;
 
+import javax.annotation.Resource;
 import javax.swing.JPanel;
 
 import org.apache.commons.lang.Validate;
@@ -24,7 +25,7 @@ public abstract class AbstractComponentManager<T extends View> extends
     // private ConfigurableApplicationContext context;
     @Autowired
     private ViewRegistry registry;
-    @Autowired
+    @Resource(name = "groupBasedComponentContainer")
     protected ComponentContainer container;
     protected final ViewIdentifier identifier;
     protected final ComponentGroup group;

@@ -1019,6 +1019,10 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
                 projectExplorer);
     }
 
+    public void setProjectExplorer(JPanel component, String title) {
+        setProjectExplorer(component);
+    }
+
     public JTabbedPane getEditorPane() {
         return getTabbedPane(ComponentPlacement.CENTER);
     }

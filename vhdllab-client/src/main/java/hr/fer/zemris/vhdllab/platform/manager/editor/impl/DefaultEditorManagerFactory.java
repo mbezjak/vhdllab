@@ -1,11 +1,11 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
-import hr.fer.zemris.vhdllab.platform.manager.view.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractComponentManagerFactory;
 

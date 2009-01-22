@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
-import hr.fer.zemris.vhdllab.platform.manager.view.ComponentContainer;
-import hr.fer.zemris.vhdllab.platform.manager.view.ComponentGroup;
+import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
+import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.view.ComponentManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.swing.JPanel;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +22,7 @@ public abstract class AbstractComponentManagerFactory<T extends ViewManager>
 
     @Autowired
     private ConfigurableApplicationContext context;
-    @Autowired
+    @Resource(name = "groupBasedComponentContainer")
     private ComponentContainer container;
     @Autowired
     private ViewRegistry registry;
