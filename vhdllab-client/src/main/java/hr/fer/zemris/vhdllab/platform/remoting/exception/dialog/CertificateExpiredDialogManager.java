@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.remoting.exception.dialog;
 
-import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractMessageShowingDialogManager;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractMessageDialogManager;
 
 import javax.swing.JOptionPane;
 
@@ -8,14 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CertificateExpiredDialogManager extends
-        AbstractMessageShowingDialogManager {
-
-    private static final String CERTIFICATE_EXPIRED_MESSAGE = "dialog.certificate.expired";
-
-    @Override
-    protected String getMessageCode() {
-        return CERTIFICATE_EXPIRED_MESSAGE;
-    }
+        AbstractMessageDialogManager {
 
     @Override
     protected int getMessageType() {

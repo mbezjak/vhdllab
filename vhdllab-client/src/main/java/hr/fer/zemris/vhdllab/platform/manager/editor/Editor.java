@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
+import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.platform.manager.component.IComponent;
+import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
+import hr.fer.zemris.vhdllab.platform.manager.view.View;
 
-public interface Editor extends IComponent {
-
-    boolean isModified();
+public interface Editor extends View {
 
     void undo();
 
@@ -16,8 +16,18 @@ public interface Editor extends IComponent {
 
     FileInfo getFile();
 
+    boolean setModified(boolean flag);
+
+    boolean isModified();
+
+    boolean isSaveable();
+
     void highlightLine(int line);
 
+    EventPublisher<EditorListener> getEventPublisher();
+
     IWizard getWizard();
+
+    void setSystemContainer(ISystemContainer systemContainer);
 
 }

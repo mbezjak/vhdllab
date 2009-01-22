@@ -1,9 +1,9 @@
-package hr.fer.zemris.vhdllab.platform.manager.component.impl;
+package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
 import hr.fer.zemris.vhdllab.applets.main.VhdllabFrame;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentContainer;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,15 @@ public class DefaultComponentContainer implements ComponentContainer {
         pane.add(title, component);
         int index = pane.indexOfComponent(component);
         pane.setToolTipTextAt(index, tooltip);
+    }
+
+    @Override
+    public void setTitle(String title, JPanel component, ComponentGroup group) {
+        Validate.notNull(title, "Title can't be null");
+        Validate.notNull(component, "Component can't be null");
+        JTabbedPane pane = getTabbedPane(group);
+        int index = pane.indexOfComponent(component);
+        pane.setTitleAt(index, title);
     }
 
     @Override

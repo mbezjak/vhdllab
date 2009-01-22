@@ -29,7 +29,6 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Panel koji sadrzi mozebitne greske prilikom kompajliranja VHDL koda.
@@ -38,7 +37,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 22.12.2006.
  */
-@Component
 public class CompilationErrorsView extends AbstractView {
 
     /**

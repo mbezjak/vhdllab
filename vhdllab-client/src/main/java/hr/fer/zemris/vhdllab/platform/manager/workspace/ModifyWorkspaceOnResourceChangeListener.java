@@ -45,6 +45,7 @@ public class ModifyWorkspaceOnResourceChangeListener implements
                 .getProject(report.getFile().getProjectId());
         MutableProjectMetadata projectMetadata = (MutableProjectMetadata) getWorkspace()
                 .getProjectMetadata(project);
+        projectMetadata.addFile(report.getFile());
         projectMetadata.setHierarchy(report.getHierarchy());
     }
 

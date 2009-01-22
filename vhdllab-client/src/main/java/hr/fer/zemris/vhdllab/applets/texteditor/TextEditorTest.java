@@ -28,8 +28,6 @@ public class TextEditorTest extends JFrame {
  
 		 
 		editor.init();
-		editor.setSavable(true);
-		editor.setReadOnly(true);
 		 
 		
 		JPanel panel =  new JPanel();

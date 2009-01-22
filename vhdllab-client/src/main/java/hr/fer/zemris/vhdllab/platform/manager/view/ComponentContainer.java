@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.manager.component;
+package hr.fer.zemris.vhdllab.platform.manager.view;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ public interface ComponentContainer {
 
     void add(String title, String tooltip, JPanel component,
             ComponentGroup group);
+
+    void setTitle(String title, JPanel component, ComponentGroup group);
 
     void remove(JPanel component, ComponentGroup group);
 

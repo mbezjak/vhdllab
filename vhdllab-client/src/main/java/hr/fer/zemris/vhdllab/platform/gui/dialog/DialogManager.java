@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog;
 
-public interface DialogManager<T> {
+public interface DialogManager {
 
-    T showDialog();
+    <T> T showDialog(Object... args);
 
 }

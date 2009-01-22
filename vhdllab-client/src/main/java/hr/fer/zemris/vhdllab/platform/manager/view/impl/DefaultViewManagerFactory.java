@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.component.impl.AbstractComponentManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManagerFactory;
@@ -21,8 +19,8 @@ public class DefaultViewManagerFactory extends
     }
 
     @Override
-    protected ViewManager newInstance(ComponentIdentifier identifier) {
-        return new SingleInstanceViewManager((ViewIdentifier) identifier);
+    protected ViewManager newInstance(ViewIdentifier identifier) {
+        return new SingleInstanceViewManager(identifier);
     }
 
     @Override
@@ -36,8 +34,8 @@ public class DefaultViewManagerFactory extends
     }
 
     @Override
-    protected boolean requiredIdentifierType(ComponentIdentifier identifier) {
-        return identifier instanceof ViewIdentifier;
+    protected boolean requiredIdentifierType(ViewIdentifier identifier) {
+        return identifier.getClass() == ViewIdentifier.class;
     }
 
 }

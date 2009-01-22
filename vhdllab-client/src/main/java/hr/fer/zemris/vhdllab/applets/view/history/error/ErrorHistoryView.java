@@ -19,14 +19,11 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import org.springframework.stereotype.Component;
-
 /**
  * View that holds past error messages.
  * 
  * @author Miro Bezjak
  */
-@Component
 public class ErrorHistoryView extends AbstractView {
 
     /** Serial version UID. */

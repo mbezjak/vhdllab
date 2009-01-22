@@ -22,7 +22,7 @@ public final class JavawsIntegration {
     private static final Logger LOG = Logger.getLogger(JavawsIntegration.class);
 
     @Resource(name = "alreadyOpenedDialogManager")
-    private DialogManager<?> dialogManager;
+    private DialogManager dialogManager;
     private SingleInstanceService service;
     private SingleInstanceListener listener;
 

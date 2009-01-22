@@ -5,12 +5,13 @@ import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -189,7 +190,8 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 		});
 	}
 
-	public String getData() {
+	@Override
+    public String getData() {
 		return text.getText();
 	}
 
@@ -205,11 +207,18 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 		text.setStyledDocument(doc);
 
 	}
+	
+	@Override
+	protected void doInitWithoutData() {
+	}
 
 	@Override
-	public void setFileContent(FileContent content) {
-		super.setFileContent(content);
-		text.setText(content.getContent());
+	protected void doDispose() {
+	}
+	
+	@Override
+	protected void doInitWithData(FileInfo f) {
+	    text.setText(f.getData());
 	}
 
 	@Override
@@ -248,7 +257,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
 		EntityTable table = new EntityTable();
-		table.setProjectContainer(container);
+		table.setProjectContainer(systemContainer);
 		table.init();
 		int option = JOptionPane.showOptionDialog(parent, table,
 				"New VHDL source", optionType, messageType, null, options,
@@ -258,7 +267,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 				return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if (container.getResourceManager().existsFile(projectName,
+				if (systemContainer.getResourceManager().existsFile(projectName,
 						new Caseless(ci.getName()))) {
 					SystemLog.instance().addSystemMessage(
 							ci.getName() + " already exists!",
@@ -334,14 +343,6 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			JOptionPane.showMessageDialog(this, sw.toString());
-		}
-	}
-
-	@Override
-	public void setReadOnly(boolean flag) {
-		super.setReadOnly(flag);
-		if (flag) {
-			text.setEditable(false);
 		}
 	}
 

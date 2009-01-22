@@ -1,6 +1,3 @@
-/**
- * 
- */
 package hr.fer.zemris.vhdllab.applets.main.event;
 
 import hr.fer.zemris.vhdllab.entities.Caseless;

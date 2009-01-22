@@ -18,9 +18,9 @@ public final class EnforceSingleInstanceListener implements
     private static final Logger LOG = Logger
             .getLogger(EnforceSingleInstanceListener.class);
 
-    private final DialogManager<?> dialogManager;
+    private final DialogManager dialogManager;
 
-    public EnforceSingleInstanceListener(DialogManager<?> dialogManager) {
+    public EnforceSingleInstanceListener(DialogManager dialogManager) {
         this.dialogManager = dialogManager;
     }
 

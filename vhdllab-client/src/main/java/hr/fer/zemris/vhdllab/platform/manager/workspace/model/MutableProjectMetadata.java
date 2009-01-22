@@ -30,7 +30,12 @@ public class MutableProjectMetadata extends ProjectMetadata {
 
     public void addFile(FileInfo file) {
         Validate.notNull(file, "File can't be null");
-        files.add(file);
+        int index = files.indexOf(file);
+        if(index != -1) {
+            files.set(index, file);
+        } else {
+            files.add(file);
+        }
     }
 
     public void removeFile(FileInfo file) {

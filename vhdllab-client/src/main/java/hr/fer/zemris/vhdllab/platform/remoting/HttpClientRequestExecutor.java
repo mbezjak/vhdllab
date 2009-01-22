@@ -24,7 +24,7 @@ public class HttpClientRequestExecutor extends
         CommonsHttpInvokerRequestExecutor {
 
     @Resource(name = "loginDialogManager")
-    private DialogManager<UserCredential> dialogManager;
+    private DialogManager dialogManager;
     private boolean showRetryMessage = false;
 
     public HttpClientRequestExecutor(HttpClient httpClient) throws IOException {

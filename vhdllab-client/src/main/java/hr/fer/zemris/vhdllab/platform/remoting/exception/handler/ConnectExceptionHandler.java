@@ -10,11 +10,10 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConnectExceptionHandler extends
-        AbstractExceptionHandler {
+public class ConnectExceptionHandler extends AbstractExceptionHandler {
 
     @Resource(name = "cantConnectDialogManager")
-    private DialogManager<?> dialogManager;
+    private DialogManager dialogManager;
 
     @Override
     public boolean handleException(Exception e) {

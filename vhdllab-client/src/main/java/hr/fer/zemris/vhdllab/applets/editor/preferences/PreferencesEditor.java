@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
 import java.util.HashMap;
@@ -30,8 +30,7 @@ public class PreferencesEditor extends AbstractEditor implements
     private JTable table;
 
     @Override
-    public void init() {
-        super.init();
+    public void doInitWithoutData() {
         rows = new HashMap<String, Integer>();
         Object[] columns = new Object[] { "key", "value" };
         model = new DefaultTableModel(columns, 0) {
@@ -56,9 +55,10 @@ public class PreferencesEditor extends AbstractEditor implements
                     TableModel source = (TableModel) e.getSource();
                     String key = (String) source.getValueAt(i, 0);
                     String value = (String) source.getValueAt(i, 1);
-                    
+
                     int index = key.indexOf('#');
-                    Preferences pref = Preferences.userRoot().node(key.substring(1, index));
+                    Preferences pref = Preferences.userRoot().node(
+                            key.substring(1, index));
                     pref.put(key.substring(index + 1), value);
                 }
             }
@@ -66,13 +66,12 @@ public class PreferencesEditor extends AbstractEditor implements
     }
 
     @Override
-    public void dispose() {
+    public void doDispose() {
         try {
             removeListener(Preferences.userRoot());
         } catch (BackingStoreException e) {
             e.printStackTrace();
         }
-        super.dispose();
     }
 
     @Override
@@ -86,8 +85,12 @@ public class PreferencesEditor extends AbstractEditor implements
     }
 
     @Override
-    public void setFileContent(FileContent content) {
-        super.setFileContent(content);
+    public boolean isSaveable() {
+        return false;
+    }
+
+    @Override
+    protected void doInitWithData(FileInfo f) {
         try {
             setPreferences(Preferences.userRoot());
         } catch (BackingStoreException e) {
@@ -117,7 +120,7 @@ public class PreferencesEditor extends AbstractEditor implements
         for (String n : node.childrenNames()) {
             Preferences pref = node.node(n);
             pref.removePreferenceChangeListener(this);
-            setPreferences(pref);
+            removeListener(pref);
         }
     }
 
@@ -125,7 +128,7 @@ public class PreferencesEditor extends AbstractEditor implements
     public void preferenceChange(PreferenceChangeEvent event) {
         String name = getPropertyName(event.getNode(), event.getKey());
         Integer integer = rows.get(name);
-        if(integer != null) {
+        if (integer != null) {
             int row = integer.intValue();
             model.setValueAt(event.getNewValue(), row, 1);
         }

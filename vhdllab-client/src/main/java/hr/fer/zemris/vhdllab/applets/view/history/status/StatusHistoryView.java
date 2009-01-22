@@ -25,8 +25,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import org.springframework.stereotype.Component;
-
 /**
  * View that holds past messages displayed in status bar.
  * 
@@ -34,7 +32,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @since 3.2.2007.
  */
-@Component
 public class StatusHistoryView extends AbstractView {
 
 	/** Serial version UID. */
@@ -136,11 +133,6 @@ public class StatusHistoryView extends AbstractView {
 		SystemLog.instance().removeSystemLogListener(systemLogListener);
 	}
 	
-	@Override
-	public boolean isCloseable() {
-	    return false;
-	}
-
 	/**
 	 * Appends a system message to the end of status history.
 	 * 

@@ -1,9 +1,13 @@
 package hr.fer.zemris.vhdllab.platform.manager.view;
 
-import hr.fer.zemris.vhdllab.platform.manager.component.IComponent;
+import javax.swing.JPanel;
 
-public interface View extends IComponent {
+public interface View {
 
-    boolean isCloseable();
+    void init();
+
+    void dispose();
+
+    JPanel getPanel();
 
 }

@@ -1,39 +1,36 @@
-package hr.fer.zemris.vhdllab.platform.manager.component.impl;
+package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentManager;
-import hr.fer.zemris.vhdllab.platform.manager.component.IComponent;
-import hr.fer.zemris.vhdllab.platform.manager.component.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentContainer;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentGroup;
+import hr.fer.zemris.vhdllab.platform.manager.view.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.view.View;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewMetadata;
 
 import javax.swing.JPanel;
 
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.MessageSource;
 
-public abstract class AbstractComponentManager<T extends IComponent> implements
-        ComponentManager {
+public abstract class AbstractComponentManager<T extends View> extends
+        LocalizationSupport implements ViewManager {
 
     private static final String TITLE_PREFIX = "title.for.";
     private static final String TOOLTIP_PREFIX = "title.for.";
 
+    // @Autowired
+    // private ConfigurableApplicationContext context;
     @Autowired
-    private ConfigurableApplicationContext context;
+    private ViewRegistry registry;
     @Autowired
-    private MessageSource messageSource;
-    @Autowired
-    private ComponentRegistry registry;
-    @Autowired
-    private ComponentContainer container;
-    private final ComponentIdentifier identifier;
-    private final ComponentGroup group;
+    protected ComponentContainer container;
+    protected final ViewIdentifier identifier;
+    protected final ComponentGroup group;
     protected T component;
 
-    protected AbstractComponentManager(ComponentIdentifier identifier,
+    protected AbstractComponentManager(ViewIdentifier identifier,
             ComponentGroup group) {
         Validate.notNull(identifier, "Component identifier can't be null");
         Validate.notNull(group, "Component group can't be null");
@@ -45,7 +42,9 @@ public abstract class AbstractComponentManager<T extends IComponent> implements
     @Override
     public void open() {
         if (!isOpened()) {
-            component = (T) context.getBean(identifier.getComponentName());
+            component = (T) newInstance();
+            // context.getBeanFactory().configureBean(component, );
+            component.init();
             configureComponent();
             String title = getTitle();
             String tooltip = getTooltip();
@@ -54,6 +53,19 @@ public abstract class AbstractComponentManager<T extends IComponent> implements
             registry.add(this, panel);
         }
         select();
+    }
+
+    private View newInstance() {
+        Class<? extends View> clazz = getComponent(identifier.getMetadata());
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    protected Class<? extends View> getComponent(ViewMetadata metadata) {
+        return metadata.getViewClass();
     }
 
     protected abstract void configureComponent();
@@ -80,28 +92,29 @@ public abstract class AbstractComponentManager<T extends IComponent> implements
     @Override
     public void close() throws NotOpenedException {
         checkIfOpened();
-        if (isCloseable()) {
+        doClose();
+    }
+
+    protected void doClose() {
+        if (identifier.getMetadata().isCloseable()) {
+            component.dispose();
             JPanel panel = component.getPanel();
             container.remove(panel, group);
             registry.remove(panel);
-            ConfigurableBeanFactory beanFactory = context.getBeanFactory();
-            beanFactory.destroyBean(identifier.getComponentName(), component);
+            // ConfigurableBeanFactory beanFactory = context.getBeanFactory();
+            // beanFactory.destroyBean(identifier.getViewName(), component);
             component = null;
         }
     }
 
-    protected boolean isCloseable() {
-        return true;
-    }
-
     protected void checkIfOpened() {
         if (!isOpened()) {
-            throw new NotOpenedException("Editor " + identifier
+            throw new NotOpenedException("Component " + identifier
                     + " isn't opened");
         }
     }
 
-    private String getTitle() {
+    protected String getTitle() {
         return getMessageWithPrefix(TITLE_PREFIX);
     }
 
@@ -110,8 +123,8 @@ public abstract class AbstractComponentManager<T extends IComponent> implements
     }
 
     private String getMessageWithPrefix(String prefix) {
-        String code = prefix + identifier.getComponentName();
-        return messageSource.getMessage(code, null, null);
+        String code = prefix + identifier.getMetadata().getCode();
+        return getMessage(code, null);
     }
 
 }

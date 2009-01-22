@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.remoting.exception;
 
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.ParametrizedDialogManager;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ExceptionHandlerProvider implements ExceptionHandler {
             .getLogger(ExceptionHandlerProvider.class);
 
     @Resource(name = "unknownExceptionDialogManager")
-    private ParametrizedDialogManager<Exception, ?> dialogManager;
+    private DialogManager dialogManager;
     private final List<ExceptionHandler> handlers;
 
     public ExceptionHandlerProvider() {

@@ -1,23 +1,23 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog.login;
 
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
-
-import java.awt.Frame;
+import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class LoginDialogManager implements DialogManager<UserCredential> {
+public class LoginDialogManager extends LocalizationSupport implements
+        DialogManager {
 
     private boolean showRetryMessage = false;
 
+    @SuppressWarnings("unchecked")
     @Override
-    public UserCredential showDialog() {
+    public <T> T showDialog(Object... args) {
         UserCredential uc = showLoginDialog(showRetryMessage);
         showRetryMessage = true;
-        return uc;
+        return (T) uc;
     }
 
     /**
@@ -28,7 +28,6 @@ public class LoginDialogManager implements DialogManager<UserCredential> {
      *            previous login attempt failed)
      */
     private UserCredential showLoginDialog(boolean displayRetryMessage) {
-        Frame owner = ApplicationContextHolder.getContext().getFrame();
         String message;
         if (displayRetryMessage) {
             String name = LoginDialog.BUNDLE_NAME;
@@ -37,7 +36,7 @@ public class LoginDialogManager implements DialogManager<UserCredential> {
         } else {
             message = null;
         }
-        LoginDialog dialog = new LoginDialog(owner, message);
+        LoginDialog dialog = new LoginDialog(getFrame(), message);
         dialog.setVisible(true); // controls are locked here
         int option = dialog.getOption();
         if (option == LoginDialog.OK_OPTION) {

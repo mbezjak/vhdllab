@@ -19,14 +19,13 @@ public class ExecuteInEDTAspect {
 
     @Around("execution(* hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager.*(..)) || "
             + "execution(* hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer.*(..)) || "
-            + "execution(* hr.fer.zemris.vhdllab.platform.manager.component.ComponentManager.*(..))")
+            + "execution(* hr.fer.zemris.vhdllab.platform.manager.view.ViewManager.*(..))")
     public Object executeInEDT(final ProceedingJoinPoint pjp) throws Throwable {
         final String className = pjp.getSourceLocation().getWithinType()
                 .getSimpleName();
         if (SwingUtilities.isEventDispatchThread()) {
             if (LOG.isTraceEnabled()) {
-                LOG
-                        .trace("Executing " + className
+                LOG.trace("Executing " + className
                                 + " in EDT (current thread)");
             }
             return pjp.proceed();

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.manager.component;
+package hr.fer.zemris.vhdllab.platform.manager.view;
 
 public class NotOpenedException extends RuntimeException {
 

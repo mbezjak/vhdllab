@@ -13,7 +13,10 @@ import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -374,6 +377,21 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
             SystemLog.instance().addErrorMessage(e);
             return;
         }
+    }
+
+    private EditorManagerFactory editorManagerFactory;
+
+    @Override
+    public void setEditorManagerFactory(
+            EditorManagerFactory editorManagerFactory) {
+        this.editorManagerFactory = editorManagerFactory;
+    }
+
+    private IdentifierToInfoObjectMapper mapper;
+
+    @Override
+    public void setMapper(IdentifierToInfoObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
     /*
@@ -819,12 +837,12 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                         if (fileName != null) {
                             name = getProjectName();
                             if (name != null) {
-                                FileIdentifier file = new FileIdentifier(name,
-                                        fileName);
-                                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-                                        .createFileEditorIdentifier(file);
-                                systemContainer.getEditorManager()
-                                        .openEditorByResource(identifier);
+                                hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier identifier = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                                        name, fileName);
+                                FileInfo file = mapper.getFile(identifier);
+                                editorManagerFactory.get(file).open();
+                                // systemContainer.getEditorManager()
+                                // .openEditorByResource(identifier);
                             }
                         }
                     }

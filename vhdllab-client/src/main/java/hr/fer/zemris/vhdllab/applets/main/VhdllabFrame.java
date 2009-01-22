@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
+import hr.fer.zemris.vhdllab.applets.editor.preferences.PreferencesMetadata;
 import hr.fer.zemris.vhdllab.applets.main.component.about.About;
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
@@ -12,9 +13,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
-import hr.fer.zemris.vhdllab.applets.view.history.error.ErrorHistoryView;
-import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
+import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsMetadata;
+import hr.fer.zemris.vhdllab.applets.view.history.error.ErrorHistoryMetadata;
+import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsMetadata;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemError;
@@ -23,6 +24,8 @@ import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManagerFactory;
@@ -51,9 +54,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.PreferenceChangeEvent;
@@ -88,6 +89,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
     private ApplicationContext context;
     private ShutdownManager shutdownManager;
     ViewManagerFactory viewFactory;
+    EditorManagerFactory editorFactory;
 
     private Map<ComponentPlacement, JTabbedPane> tabbedContainers;
 
@@ -113,6 +115,8 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
     public void init() {
         viewFactory = (ViewManagerFactory) context
                 .getBean("defaultViewManagerFactory");
+        editorFactory = (EditorManagerFactory) context
+                .getBean("defaultEditorManagerFactory");
         shutdownManager = (ShutdownManager) context.getBean("shutdownManager");
         initBasicGUI();
         setPaneSize();
@@ -282,20 +286,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem = new JMenuItem(bundle.getString(key));
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        JComponent c = (JComponent) pane.getSelectedComponent();
-                        if (c == null) {
-                            return;
-                        }
-                        ComponentGroup group = componentContainer
-                                .getComponentGroup(c);
-                        if (group.equals(ComponentGroup.EDITOR)) {
-                            systemContainer.getEditorManager()
-                                    .saveEditorExplicitly((IEditor) c);
-                        }
-                    } catch (RuntimeException ex) {
-                        SystemLog.instance().addErrorMessage(ex);
-                    }
+                    editorFactory.getSelected().save(true);
                 }
             });
             menuBar.add(menuItem);
@@ -305,23 +296,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem = new JMenuItem(bundle.getString(key));
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        List<IEditor> editorsToSave = new ArrayList<IEditor>(
-                                pane.getTabCount());
-                        for (int i = 0; i < pane.getTabCount(); i++) {
-                            JComponent c = (JComponent) pane.getComponentAt(i);
-                            ComponentGroup group = componentContainer
-                                    .getComponentGroup(c);
-                            if (group.equals(ComponentGroup.EDITOR)) {
-                                editorsToSave.add((IEditor) c);
-                            }
-
-                        }
-                        systemContainer.getEditorManager().saveEditors(
-                                editorsToSave);
-                    } catch (RuntimeException ex) {
-                        SystemLog.instance().addErrorMessage(ex);
-                    }
+                    editorFactory.getAll().save(true);
                 }
             });
             menuBar.add(menuItem);
@@ -332,23 +307,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem = new JMenuItem(bundle.getString(key));
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        JComponent selectedComponent = (JComponent) pane
-                                .getSelectedComponent();
-                        if (selectedComponent == null) {
-                            return;
-                        }
-                        ComponentGroup group = componentContainer
-                                .getComponentGroup(selectedComponent);
-                        if (group.equals(ComponentGroup.EDITOR)) {
-                            systemContainer.getEditorManager().closeEditor(
-                                    (IEditor) selectedComponent);
-                        } else {
-                            componentStorage.remove(selectedComponent);
-                        }
-                    } catch (RuntimeException ex) {
-                        SystemLog.instance().addErrorMessage(ex);
-                    }
+                    editorFactory.getSelected().close();
                 }
             });
             menuBar.add(menuItem);
@@ -358,36 +317,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem = new JMenuItem(bundle.getString(key));
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        int index = pane.getSelectedIndex();
-                        if (index == -1) {
-                            return;
-                        }
-                        List<IEditor> editorsToClose = new ArrayList<IEditor>(
-                                pane.getTabCount());
-                        List<JComponent> componentsToClose = new ArrayList<JComponent>(
-                                pane.getTabCount());
-                        for (int i = 0; i < pane.getTabCount(); i++) {
-                            if (i == index) {
-                                continue;
-                            }
-                            JComponent c = (JComponent) pane.getComponentAt(i);
-                            ComponentGroup group = componentContainer
-                                    .getComponentGroup(c);
-                            if (group.equals(ComponentGroup.EDITOR)) {
-                                editorsToClose.add((IEditor) c);
-                            } else {
-                                componentsToClose.add(c);
-                            }
-                        }
-                        systemContainer.getEditorManager().closeEditors(
-                                editorsToClose);
-                        for (JComponent c : componentsToClose) {
-                            componentStorage.remove(c);
-                        }
-                    } catch (RuntimeException ex) {
-                        SystemLog.instance().addErrorMessage(ex);
-                    }
+                    editorFactory.getAllButSelected().close();
                 }
             });
             menuBar.add(menuItem);
@@ -397,29 +327,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem = new JMenuItem(bundle.getString(key));
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        List<IEditor> editorsToClose = new ArrayList<IEditor>(
-                                pane.getTabCount());
-                        List<JComponent> componentsToClose = new ArrayList<JComponent>(
-                                pane.getTabCount());
-                        for (int i = 0; i < pane.getTabCount(); i++) {
-                            JComponent c = (JComponent) pane.getComponentAt(i);
-                            ComponentGroup group = componentContainer
-                                    .getComponentGroup(c);
-                            if (group.equals(ComponentGroup.EDITOR)) {
-                                editorsToClose.add((IEditor) c);
-                            } else {
-                                componentsToClose.add(c);
-                            }
-                        }
-                        systemContainer.getEditorManager().closeEditors(
-                                editorsToClose);
-                        for (JComponent c : componentsToClose) {
-                            componentStorage.remove(c);
-                        }
-                    } catch (RuntimeException ex) {
-                        SystemLog.instance().addErrorMessage(ex);
-                    }
+                    editorFactory.getAll().close();
                 }
             });
             menuBar.add(menuItem);
@@ -748,7 +656,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     ViewIdentifier identifier = new ViewIdentifier(
-                            CompilationErrorsView.class);
+                            new CompilationErrorsMetadata());
                     viewFactory.get(identifier).open();
                 }
             });
@@ -761,7 +669,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     ViewIdentifier identifier = new ViewIdentifier(
-                            SimulationErrorsView.class);
+                            new SimulationErrorsMetadata());
                     viewFactory.get(identifier).open();
                 }
             });
@@ -843,11 +751,9 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             setCommonMenuAttributes(menuItem, key);
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        systemContainer.getEditorManager().openPreferences();
-                    } catch (RuntimeException ex) {
-                        SystemLog.instance().addErrorMessage(ex);
-                    }
+                    editorFactory.get(
+                            new EditorIdentifier(new PreferencesMetadata()))
+                            .open();
                 }
             });
             if (ApplicationContextHolder.getContext().isDevelopment()) {
@@ -882,7 +788,7 @@ public final class VhdllabFrame extends JFrame implements IComponentProvider,
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     ViewIdentifier identifier = new ViewIdentifier(
-                            ErrorHistoryView.class);
+                            new ErrorHistoryMetadata());
                     viewFactory.get(identifier).open();
                 }
             });

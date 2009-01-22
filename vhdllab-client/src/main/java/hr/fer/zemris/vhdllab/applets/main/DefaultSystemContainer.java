@@ -24,9 +24,9 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
-import hr.fer.zemris.vhdllab.applets.view.history.status.StatusHistoryView;
-import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
+import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsMetadata;
+import hr.fer.zemris.vhdllab.applets.view.history.status.StatusHistoryMetadata;
+import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsMetadata;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
@@ -35,8 +35,11 @@ import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
@@ -85,7 +88,14 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     @Autowired
     private IResourceManager resourceManager;
-    @Autowired ViewManagerFactory viewFactory;
+    @Autowired
+    private ViewManagerFactory viewFactory;
+    @Autowired
+    private WizardRegistry wizardRegistry;
+    @Autowired
+    private EditorManagerFactory editorManagerFactory;
+    @Autowired
+    private IdentifierToInfoObjectMapper mapper;
     /**
      * A Component configuration.
      */
@@ -201,9 +211,11 @@ public class DefaultSystemContainer implements ISystemContainer,
             editorManager.openEditorByResource(identifier);
         }
 
-        viewFactory.get(new ViewIdentifier(StatusHistoryView.class)).open();
+        viewFactory.get(new ViewIdentifier(new StatusHistoryMetadata())).open();
 
         projectExplorer = new DefaultProjectExplorer();
+        projectExplorer.setEditorManagerFactory(editorManagerFactory);
+        projectExplorer.setMapper(mapper);
         VhdllabFrame vhdllabFrame = (VhdllabFrame) parentFrame;
         vhdllabFrame.setProjectExplorer((java.awt.Component) projectExplorer);
         projectExplorer.setSystemContainer(this);
@@ -450,7 +462,13 @@ public class DefaultSystemContainer implements ISystemContainer,
                     .addSystemMessage(text, MessageType.INFORMATION);
             return false;
         }
-        IWizard wizard = getNewEditorInstanceByFileType(type).getWizard();
+        IWizard wizard;
+        try {
+            wizard = wizardRegistry.get(type).getWizardClass().newInstance();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            wizard = null;
+        }
         FileContent content = initWizard(wizard, projectName);
         if (content == null) {
             // user canceled or no wizard for such editor
@@ -757,7 +775,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceCompiled(Caseless projectName, Caseless fileName,
                 CompilationResult result) {
-            viewFactory.get(new ViewIdentifier(CompilationErrorsView.class)).open();
+            viewFactory.get(new ViewIdentifier(new CompilationErrorsMetadata())).open();
 
             FileIdentifier resource = new FileIdentifier(projectName, fileName);
             ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
@@ -826,7 +844,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceSimulated(Caseless projectName, Caseless fileName,
                 SimulationResult result) {
-            viewFactory.get(new ViewIdentifier(SimulationErrorsView.class)).open();
+            viewFactory.get(new ViewIdentifier(new SimulationErrorsMetadata())).open();
 
             FileIdentifier resource = new FileIdentifier(projectName, fileName);
             ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(

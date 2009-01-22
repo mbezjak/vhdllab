@@ -16,8 +16,8 @@ public final class ShutdownManager extends
      */
     private static final int EXIT_STATUS_OK = 0;
 
-    @Resource(name = "exitApplicationDialogManager")
-    private DialogManager<Boolean> dialogManager;
+    @Resource(name = "confirmExitDialogManager")
+    private DialogManager dialogManager;
 
     public ShutdownManager() {
         super(ShutdownListener.class);

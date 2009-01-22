@@ -1,10 +1,10 @@
-package hr.fer.zemris.vhdllab.platform.manager.component.impl;
+package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentManager;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentContainer;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentGroup;
+import hr.fer.zemris.vhdllab.platform.manager.view.ComponentManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 
-public abstract class AbstractComponentManagerFactory<T extends ComponentManager>
+public abstract class AbstractComponentManagerFactory<T extends ViewManager>
         implements ComponentManagerFactory<T> {
 
     @Autowired
@@ -24,7 +24,7 @@ public abstract class AbstractComponentManagerFactory<T extends ComponentManager
     @Autowired
     private ComponentContainer container;
     @Autowired
-    private ComponentRegistry registry;
+    private ViewRegistry registry;
     private final ComponentGroup group;
 
     public AbstractComponentManagerFactory(ComponentGroup group) {
@@ -33,8 +33,8 @@ public abstract class AbstractComponentManagerFactory<T extends ComponentManager
     }
 
     @Override
-    public T get(ComponentIdentifier identifier) {
-        Validate.notNull(identifier, "Component identifier can't be null");
+    public T get(ViewIdentifier identifier) {
+        Validate.notNull(identifier, "View identifier can't be null");
         if (!requiredIdentifierType(identifier)) {
             throw new IllegalArgumentException(
                     "Identifier type isn't acceptable: "
@@ -58,17 +58,16 @@ public abstract class AbstractComponentManagerFactory<T extends ComponentManager
         return createManager(container.getAllButSelected(group));
     }
 
-    protected abstract boolean requiredIdentifierType(
-            ComponentIdentifier identifier);
+    protected abstract boolean requiredIdentifierType(ViewIdentifier identifier);
 
-    protected abstract T newInstance(ComponentIdentifier identifier);
+    protected abstract T newInstance(ViewIdentifier identifier);
 
     protected abstract T newMulticastInstance(List<T> managers);
 
     protected abstract T newNoSelectionInstance();
 
     @SuppressWarnings("unchecked")
-    protected T configureManager(ComponentManager manager) {
+    protected T configureManager(ViewManager manager) {
         String beanName = StringUtils.uncapitalize(manager.getClass()
                 .getSimpleName());
         context.getBeanFactory().configureBean(manager, beanName);

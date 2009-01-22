@@ -23,13 +23,14 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.view.InitTimingDialog;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.components2.JTestbench;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -133,37 +134,33 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     }
     
     @Override
-    public void dispose() {
-        super.dispose();
+    protected void doDispose() {
     }
 
     @Override
     public String getData() {
         if(this.testbench == null) {
             return "";
-        } else {
-            return this.testbench.toXml();
         }
+        return this.testbench.toXml();
     }
 
     @Override
     public IWizard getWizard() {
         return this;
     }
-
+    
     @Override
-    public void init() {
-        super.init();
+    protected void doInitWithoutData() {
         if(!this.GUICreated) {
             this.createGUI();
         }
     }
-
+    
     @Override
-    public void setFileContent(FileContent content) {
-        super.setFileContent(content);
+    protected void doInitWithData(FileInfo f) {
         setModified(false);
-        this.initTestbench(content.getContent());
+        this.initTestbench(f.getData());
         if(!this.GUICreated) {
             this.createGUI();
         }
@@ -173,7 +170,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     @Override
     public FileContent getInitialFileContent(Component parent,
             Caseless projectName) {
-        RunDialog dialog = new RunDialog(parent, true, container, RunDialog.COMPILATION_TYPE);
+        RunDialog dialog = new RunDialog(parent, true, systemContainer, RunDialog.COMPILATION_TYPE);
         dialog.setChangeProjectButtonText("change");
         dialog.setTitle("Select a file for which to create testbench");
         dialog.setListTitle("Select a file for which to create testbench");
@@ -189,7 +186,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         
         CircuitInterface ci;
         try {
-            ci = container.getResourceManager().getCircuitInterfaceFor(file.getProjectName(), file.getFileName());
+            ci = systemContainer.getResourceManager().getCircuitInterfaceFor(file.getProjectName(), file.getFileName());
         } catch (UniformAppletException e) {
             e.printStackTrace();
             return null;
@@ -205,7 +202,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
             else {
                 // Provjera dal postoje duplikati
                 try {
-                    if(container.getResourceManager().existsFile(projectName, new Caseless(testbench))) {
+                    if(systemContainer.getResourceManager().existsFile(projectName, new Caseless(testbench))) {
                         JOptionPane.showMessageDialog(
                                 null,
                                 "A file with the name you specified already exists.",

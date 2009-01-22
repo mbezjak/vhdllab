@@ -1,18 +1,18 @@
-package hr.fer.zemris.vhdllab.platform.manager.component.impl;
+package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentManager;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
-public abstract class AbstractMulticastComponentManager<T extends ComponentManager>
-        implements ComponentManager {
+public abstract class AbstractMulticastViewManager<T extends ViewManager>
+        implements ViewManager {
 
     protected final List<T> managers;
 
-    public AbstractMulticastComponentManager(List<T> managers) {
+    public AbstractMulticastViewManager(List<T> managers) {
         Validate.notNull(managers, "Editor managers can't be null");
         this.managers = new ArrayList<T>(managers);
         for (T man : this.managers) {

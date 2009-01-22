@@ -14,7 +14,7 @@ public class CertificateExpiredExceptionHandler extends
         AbstractExceptionHandler {
 
     @Resource(name = "certificateExpiredDialogManager")
-    private DialogManager<?> dialogManager;
+    private DialogManager dialogManager;
 
     @Override
     public boolean handleException(Exception e) {
