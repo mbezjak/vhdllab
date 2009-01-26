@@ -1,29 +1,14 @@
 package hr.fer.zemris.vhdllab.platform.i18n;
 
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-
-import java.awt.Frame;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 
-public abstract class LocalizationSupport {
+public abstract class LocalizationSupport extends AbstractLocalizationSource {
 
     protected static final char PART_SEPARATOR = '.';
 
-    @Autowired
-    private MessageSource messageSource;
     private String cached;
-
-    protected String getMessage(String code, Object[] args) {
-        return messageSource.getMessage(code, args, null);
-    }
-
-    protected Frame getFrame() {
-        return ApplicationContextHolder.getContext().getFrame();
-    }
 
     protected final String getMessageCodeFromSimpleClassName() {
         if (cached == null) {

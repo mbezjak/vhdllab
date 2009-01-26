@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog.login;
 
-import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
 
@@ -15,34 +14,9 @@ public class LoginDialogManager extends LocalizationSupport implements
     @SuppressWarnings("unchecked")
     @Override
     public <T> T showDialog(Object... args) {
-        UserCredential uc = showLoginDialog(showRetryMessage);
+        LoginDialog dialog = new LoginDialog(this, showRetryMessage);
         showRetryMessage = true;
-        return (T) uc;
-    }
-
-    /**
-     * @param displayRetryMessage
-     *            a flag indicating if login dialog should show retry message
-     *            (not a default message when it says that authentication is
-     *            required but a message saying that he should try again because
-     *            previous login attempt failed)
-     */
-    private UserCredential showLoginDialog(boolean displayRetryMessage) {
-        String message;
-        if (displayRetryMessage) {
-            String name = LoginDialog.BUNDLE_NAME;
-            String key = LoginDialog.RETRY_MESSAGE;
-            message = ResourceBundleProvider.getBundle(name).getString(key);
-        } else {
-            message = null;
-        }
-        LoginDialog dialog = new LoginDialog(getFrame(), message);
-        dialog.setVisible(true); // controls are locked here
-        int option = dialog.getOption();
-        if (option == LoginDialog.OK_OPTION) {
-            return dialog.getCredentials();
-        }
-        return null;
+        return (T) dialog.getResult();
     }
 
 }

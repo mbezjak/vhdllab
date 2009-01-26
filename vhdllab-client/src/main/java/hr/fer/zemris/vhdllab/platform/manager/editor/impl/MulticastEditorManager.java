@@ -1,15 +1,30 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class MulticastEditorManager implements EditorManager {
+
+    @Autowired
+    private IdentifierToInfoObjectMapper mapper;
+    @Resource(name = "saveDialogManager")
+    private DialogManager saveDialog;
 
     protected final List<EditorManager> managers;
 
@@ -55,14 +70,29 @@ public class MulticastEditorManager implements EditorManager {
 
     @Override
     public boolean save(boolean withDialog) {
-        boolean editorsSaved = true;
-        /*
-         * Should show save dialog!
-         */
+        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>();
+        Map<FileIdentifier, EditorManager> map = new HashMap<FileIdentifier, EditorManager>();
         for (EditorManager em : managers) {
-            editorsSaved &= em.save(withDialog);
+            EditorIdentifier editorIdentifier = em.getIdentifier();
+            if (editorIdentifier.getMetadata().isSaveable()) {
+                FileInfo file = editorIdentifier.getInstanceModifier();
+                ProjectInfo project = mapper.getProject(file.getProjectId());
+                FileIdentifier fileIdentifier = new FileIdentifier(project
+                        .getName(), file.getName());
+                identifiers.add(fileIdentifier);
+                map.put(fileIdentifier, em);
+            }
         }
-        return editorsSaved;
+        List<FileIdentifier> resourcesToSave = saveDialog
+                .showDialog(identifiers);
+        if (resourcesToSave == null || resourcesToSave.isEmpty()) {
+            return false;
+        }
+        for (FileIdentifier i : resourcesToSave) {
+            EditorManager em = map.get(i);
+            em.save(false);
+        }
+        return true;
     }
 
     @Override

@@ -11,13 +11,13 @@
   <context:component-scan base-package="hr.fer.zemris.vhdllab" />
   <aop:aspectj-autoproxy />
 
-  <bean id="singleInstanceViewManager"
-    class="hr.fer.zemris.vhdllab.platform.manager.view.impl.SingleInstanceViewManager"
+  <bean id="multiInstanceEditorManager"
+    class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.MultiInstanceEditorManager"
     abstract="true">
   </bean>
 
-  <bean id="multiInstanceEditorManager"
-    class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.MultiInstanceEditorManager"
+  <bean id="multicastEditorManager"
+    class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.MulticastEditorManager"
     abstract="true">
   </bean>
 

@@ -5,10 +5,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DummySystemContainer implements ISystemContainer {
 	
@@ -65,18 +61,8 @@ public class DummySystemContainer implements ISystemContainer {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#showSaveDialog(java.lang.String, java.lang.String, java.util.List)
-	 */
-	@Override
-	public List<Editor> showSaveDialog(String title, String message,
-			List<Editor> editorsToBeSaved) {
-		return new ArrayList<Editor>();
-	}
-
     @Override
     public IProjectExplorer getProjectExplorer() {
-        // TODO Auto-generated method stub
         return null;
     }
 

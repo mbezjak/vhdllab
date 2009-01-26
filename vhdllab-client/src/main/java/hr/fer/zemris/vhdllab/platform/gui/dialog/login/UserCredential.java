@@ -1,6 +1,3 @@
-/**
- * 
- */
 package hr.fer.zemris.vhdllab.platform.gui.dialog.login;
 
 /**

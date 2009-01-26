@@ -42,7 +42,7 @@ public abstract class AbstractEditor extends AbstractView implements Editor {
 
     @Override
     public void setFile(FileInfo file) {
-        this.file = new FileInfo(file, true);
+        this.file = (file != null ? new FileInfo(file, true) : null);
         doInitWithData(this.file);
         setModified(false);
     }

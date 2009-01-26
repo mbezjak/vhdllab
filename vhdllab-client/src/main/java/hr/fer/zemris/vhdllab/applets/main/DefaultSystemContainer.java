@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
-import hr.fer.zemris.vhdllab.applets.main.dialog.SaveDialog;
 import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
@@ -22,13 +21,11 @@ import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
-import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
@@ -42,10 +39,7 @@ import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 import java.awt.Frame;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 
@@ -420,49 +414,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         FileIdentifier file = showRunDialog(title, listTitle,
                 RunDialog.SIMULATION_TYPE);
         return file;
-    }
-
-    /**
-     * TODO PENDING CHANGE! also to change (by transition): -
-     * saveResourcesWithSaveDialog
-     */
-    @Override
-    public List<Editor> showSaveDialog(String title, String message,
-            List<Editor> editorsToBeSaved) {
-        if (editorsToBeSaved.isEmpty())
-            return Collections.emptyList();
-        String selectAll = getBundleString(LanguageConstants.DIALOG_BUTTON_SELECT_ALL);
-        String deselectAll = getBundleString(LanguageConstants.DIALOG_BUTTON_DESELECT_ALL);
-        String ok = getBundleString(LanguageConstants.DIALOG_BUTTON_OK);
-        String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-        String alwaysSave = getBundleString(LanguageConstants.DIALOG_SAVE_CHECKBOX_ALWAYS_SAVE_RESOURCES);
-
-        SaveDialog dialog = new SaveDialog(getParentFrame(), true);
-        dialog.setTitle(title);
-        dialog.setText(message);
-        dialog.setOKButtonText(ok);
-        dialog.setCancelButtonText(cancel);
-        dialog.setSelectAllButtonText(selectAll);
-        dialog.setDeselectAllButtonText(deselectAll);
-        dialog.setAlwaysSaveCheckBoxText(alwaysSave);
-        for (Editor editor : editorsToBeSaved) {
-            dialog.addItem(true, editor);
-        }
-        dialog.startDialog();
-        // control locked until user clicks on OK, CANCEL or CLOSE button
-
-        boolean shouldAutoSave = dialog.shouldAlwaysSaveResources();
-        if (shouldAutoSave) {
-            Preferences pref = Preferences
-                    .userNodeForPackage(DefaultSystemContainer.class);
-            pref.put(UserFileConstants.SYSTEM_ALWAYS_SAVE_RESOURCES, String
-                    .valueOf(shouldAutoSave));
-        }
-        int option = dialog.getOption();
-        if (option != SaveDialog.OK_OPTION)
-            return null;
-        else
-            return dialog.getSelectedResources();
     }
 
     /**

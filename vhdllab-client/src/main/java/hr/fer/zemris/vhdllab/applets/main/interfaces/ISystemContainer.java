@@ -1,12 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
-
-import java.util.List;
 
 /**
  * A system container is a core of vhdllab and contains important methods about
@@ -33,7 +29,6 @@ public interface ISystemContainer {
      * @return <code>true</code> if a resource has been compiled; false
      *         otherwise
      * @see #compileLastHistoryResult()
-     * @see #compile(FileIdentifier)
      * @see #compile(Caseless, Caseless)
      */
     boolean compileWithDialog();
@@ -48,7 +43,6 @@ public interface ISystemContainer {
      * @return <code>true</code> if resource has been compiled;
      *         <code>false</code> otherwise
      * @see #compileWithDialog()
-     * @see #compile(FileIdentifier)
      * @see #compile(Caseless, Caseless)
      */
     boolean compileLastHistoryResult();
@@ -82,7 +76,6 @@ public interface ISystemContainer {
      * @return <code>true</code> if a resource has been simulated; false
      *         otherwise
      * @see #simulateLastHistoryResult()
-     * @see #simulate(FileIdentifier)
      * @see #simulate(Caseless, Caseless)
      */
     boolean simulateWithDialog();
@@ -97,7 +90,6 @@ public interface ISystemContainer {
      * @return <code>true</code> if resource has been simulated;
      *         <code>false</code> otherwise
      * @see #simulateWithDialog()
-     * @see #simulate(FileIdentifier)
      * @see #simulate(Caseless, Caseless)
      */
     boolean simulateLastHistoryResult();
@@ -153,8 +145,5 @@ public interface ISystemContainer {
      * @return a resource manager
      */
     IResourceManager getResourceManager();
-
-    List<Editor> showSaveDialog(String title, String message,
-            List<Editor> editorsToBeSaved);
 
 }

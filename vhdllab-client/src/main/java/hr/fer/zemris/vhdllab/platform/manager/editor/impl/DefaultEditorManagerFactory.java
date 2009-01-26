@@ -102,7 +102,7 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
         for (JPanel panel : components) {
             managers.add(get(panel));
         }
-        return new MulticastEditorManager(managers);
+        return configureManager(new MulticastEditorManager(managers));
     }
 
 }
