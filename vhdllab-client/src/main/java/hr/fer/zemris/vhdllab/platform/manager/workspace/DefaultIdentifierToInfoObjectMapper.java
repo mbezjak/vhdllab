@@ -3,9 +3,12 @@ package hr.fer.zemris.vhdllab.platform.manager.workspace;
 import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entities.LibraryFileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.service.LibraryFileService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +23,8 @@ public class DefaultIdentifierToInfoObjectMapper implements
 
     @Autowired
     private WorkspaceManager workspaceManager;
+    @Autowired
+    private LibraryFileService predefinedService;
 
     private Map<Integer, ProjectInfo> projectIds;
     private Map<ProjectIdentifier, ProjectInfo> projectIdentifiers;
@@ -62,7 +67,18 @@ public class DefaultIdentifierToInfoObjectMapper implements
     @Override
     public FileInfo getFile(FileIdentifier file) {
         Validate.notNull(file, "File identifier can't be null");
-        return getFileIdentifiers().get(file);
+        if (getFileIdentifiers().containsKey(file)) {
+            return getFileIdentifiers().get(file);
+        }
+        LibraryFileInfo predefined = predefinedService
+                .findPredefinedByName(file.getFileName());
+        if (predefined == null) {
+            return null;
+        }
+        Integer projectId = getProject(
+                new ProjectIdentifier(file.getProjectName())).getId();
+        return new FileInfo(FileType.PREDEFINED, file.getFileName(), predefined
+                .getData(), projectId);
     }
 
     @Override

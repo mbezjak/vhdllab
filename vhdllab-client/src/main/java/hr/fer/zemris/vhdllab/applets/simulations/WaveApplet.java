@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-
-import hr.fer.zemris.vhdllab.applets.main.interfaces.AbstractEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,7 +40,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 
 
 public class WaveApplet extends AbstractEditor implements IWizard {
@@ -208,10 +207,9 @@ public class WaveApplet extends AbstractEditor implements IWizard {
 	public WaveApplet() {
 	}
 
-
+	
 	@Override
-	public void init() {
-		super.init();
+	protected void doInitWithoutData() {
 		// textField.setEditable(false);
 		// textField.setToolTipText("Value");
 		search.setText("search signal");
@@ -447,23 +445,19 @@ public class WaveApplet extends AbstractEditor implements IWizard {
 		cp.add(signalNamesScrollbar, "signalNamesScrollbar");
 		cp.add(signalValuesScrollbar, "valuesScrollbar");
 	}
-
-
-	/**
-	 * Metoda postavlja sadrzaj
-	 */
+	
 	@Override
-	public void setFileContent(FileContent content) {
-		super.setFileContent(content);
-		/* uzima String preko HTTP-a i predaje ga GHDL parseru */
-		results.parseString(content.getContent());
-		scale.setContent(results);
-		signalNames.setContent(results);
-		waves.setContent(results);
-		signalValues.setContent(results);
-		cursorPanel.setContent();
-		helpPanel.setContent(waves.getShapes());
+	protected void doInitWithData(FileInfo f) {
+        /* uzima String preko HTTP-a i predaje ga GHDL parseru */
+	    results.parseString(f.getData());
+        scale.setContent(results);
+        signalNames.setContent(results);
+        waves.setContent(results);
+        signalValues.setContent(results);
+        cursorPanel.setContent();
+        helpPanel.setContent(waves.getShapes());
 	}
+
 
 	/**
 	 * Listener za vertikalni scrollbar koji pomice panel s valnim oblicima i
@@ -1661,11 +1655,14 @@ public class WaveApplet extends AbstractEditor implements IWizard {
 		}
 	};
 
-
-	public String getData() {
-		return content.getContent();
+	@Override
+	protected void doDispose() {
 	}
 
+	@Override
+	protected String getData() {
+	    return null;
+	}
 
 	public IWizard getWizard() {
 		return this;

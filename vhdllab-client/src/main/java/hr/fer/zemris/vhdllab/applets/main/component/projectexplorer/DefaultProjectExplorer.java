@@ -1,22 +1,23 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -64,7 +65,7 @@ import javax.swing.tree.TreeSelectionModel;
  * 
  * @author Boris Ozegovic
  */
-public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
+public class DefaultProjectExplorer extends AbstractView implements IProjectExplorer {
     /*
      * Project explorer je zamisljen kao stablo koje ce u svakom trenutku moci
      * prikazivati tri razlicite hijerarhije: X uses Y, X is used in Y i flat
@@ -379,21 +380,6 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         }
     }
 
-    private EditorManagerFactory editorManagerFactory;
-
-    @Override
-    public void setEditorManagerFactory(
-            EditorManagerFactory editorManagerFactory) {
-        this.editorManagerFactory = editorManagerFactory;
-    }
-
-    private IdentifierToInfoObjectMapper mapper;
-
-    @Override
-    public void setMapper(IdentifierToInfoObjectMapper mapper) {
-        this.mapper = mapper;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -677,12 +663,15 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            FileIdentifier file = new FileIdentifier(name,
-                                    fileName);
-                            IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-                                    .createViewVHDLIdentifier(file);
-                            systemContainer.getEditorManager().viewVHDLCode(
-                                    identifier);
+                            FileInfo f = getMapper().getFile(new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(name, fileName));
+                            VHDLGenerationResult result;
+                            try {
+                                result = getSystemContainer().getResourceManager().generateVHDL(name, fileName);
+                            } catch (UniformAppletException e) {
+                                throw new IllegalStateException(e);
+                            }
+                            ProjectInfo project = getMapper().getProject(f.getProjectId());
+                            getEditorManagerFactory().get(new EditorIdentifier(new ViewVhdlEditorMetadata(), new FileInfo(FileType.SOURCE, fileName, result.getVHDL(), project.getId()))).open();
                         }
                     }
                 } else if (event.getSource().equals(deleteFile)) {
@@ -839,8 +828,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                             if (name != null) {
                                 hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier identifier = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                         name, fileName);
-                                FileInfo file = mapper.getFile(identifier);
-                                editorManagerFactory.get(file).open();
+                                FileInfo file = getMapper().getFile(identifier);
+                                getEditorManagerFactory().get(file).open();
                                 // systemContainer.getEditorManager()
                                 // .openEditorByResource(identifier);
                             }
@@ -950,6 +939,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param container
      *            systemContainer
      */
+    @Override
     public void setSystemContainer(ISystemContainer container) {
         this.systemContainer = container;
     }

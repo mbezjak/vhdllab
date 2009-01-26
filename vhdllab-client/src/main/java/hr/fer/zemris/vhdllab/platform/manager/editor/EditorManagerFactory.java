@@ -1,11 +1,20 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.platform.manager.view.ComponentManagerFactory;
 
-public interface EditorManagerFactory extends
-        ComponentManagerFactory<EditorManager> {
+public interface EditorManagerFactory {
 
     EditorManager get(FileInfo file);
+
+    EditorManager get(EditorIdentifier identifier);
+
+    EditorManager getSelected();
+
+    EditorManager getAll();
+
+    EditorManager getAllAssociatedWithProject(Caseless projectName);
+
+    EditorManager getAllButSelected();
 
 }

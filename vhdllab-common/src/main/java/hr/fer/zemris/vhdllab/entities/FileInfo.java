@@ -82,7 +82,7 @@ public class FileInfo extends FileResource {
      * @throws NullPointerException
      *             if <code>file</code> is <code>null</code>
      */
-    protected FileInfo(FileInfo file, boolean deepCopy) {
+    public FileInfo(FileInfo file, boolean deepCopy) {
         super(file, deepCopy);
         this.projectId = file.projectId;
     }

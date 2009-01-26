@@ -2,16 +2,11 @@ package hr.fer.zemris.vhdllab.applets.view.compilation;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
-import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.BorderLayout;
@@ -111,26 +106,26 @@ public class CompilationErrorsView extends AbstractView {
         Pattern pattern = Pattern.compile("([^:]+):([^:]+):([^:]+):(.+)");
         Matcher matcher = pattern.matcher(error);
         if (matcher.matches()) {
-            FileIdentifier resource = resultTarget.getResource();
-            IEditor editor;
-            if (container.getResourceManager().getFileType(
-                    resource.getProjectName(), resource.getFileName()).equals(
-                    FileType.SOURCE)) {
-                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-                        .createFileEditorIdentifier(resource);
-                editor = container.getEditorManager().getOpenedEditor(
-                        identifier);
-                if (editor == null) {
-                    editor = container.getEditorManager().openEditorByResource(
-                            identifier);
-                }
-            } else {
-                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-                        .createViewVHDLIdentifier(resource);
-                editor = container.getEditorManager().viewVHDLCode(identifier);
-            }
-            int temp = Integer.valueOf(matcher.group(2));
-            editor.highlightLine(temp);
+//            FileIdentifier resource = resultTarget.getResource();
+//            Editor editor;
+//            if (container.getResourceManager().getFileType(
+//                    resource.getProjectName(), resource.getFileName()).equals(
+//                    FileType.SOURCE)) {
+//                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+//                        .createFileEditorIdentifier(resource);
+//                editor = container.getEditorManager().getOpenedEditor(
+//                        identifier);
+//                if (editor == null) {
+//                    editor = container.getEditorManager().openEditorByResource(
+//                            identifier);
+//                }
+//            } else {
+//                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
+//                        .createViewVHDLIdentifier(resource);
+//                editor = container.getEditorManager().viewVHDLCode(identifier);
+//            }
+//            int temp = Integer.valueOf(matcher.group(2));
+//            editor.highlightLine(temp);
         }
     }
 
@@ -140,7 +135,7 @@ public class CompilationErrorsView extends AbstractView {
      * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#init()
      */
     @Override
-    public void doInit() {
+    public void init() {
         model = new DefaultListModel();
         listContent = new JList(model);
         listContent.setFixedCellHeight(15);
@@ -174,16 +169,6 @@ public class CompilationErrorsView extends AbstractView {
             }
         };
         SystemLog.instance().addSystemLogListener(systemLogListener);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#dispose()
-     */
-    @Override
-    public void doDispose() {
-        SystemLog.instance().removeSystemLogListener(systemLogListener);
     }
 
 }

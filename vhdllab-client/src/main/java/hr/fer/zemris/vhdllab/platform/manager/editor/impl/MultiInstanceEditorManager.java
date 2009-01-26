@@ -1,71 +1,64 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
+import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
-import hr.fer.zemris.vhdllab.platform.manager.view.View;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewMetadata;
-import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractComponentManager;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
+import javax.swing.JPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MultiInstanceEditorManager extends
-        AbstractComponentManager<Editor> implements EditorManager {
+public class MultiInstanceEditorManager extends AbstractEditorManager {
 
     private static final String MODIFIED_PREFIX = "*";
-
-    @Autowired
-    private ISystemContainer systemContainer;
 
     @Autowired
     private FileManager manager;
     @Resource(name = "singleSaveDialogManager")
     private DialogManager dialogManager;
-    @Autowired
-    private IdentifierToInfoObjectMapper mapper;
 
     public MultiInstanceEditorManager(EditorIdentifier identifier) {
         super(identifier, ComponentGroup.EDITOR);
     }
-    
-    @Override
-    protected Class<? extends View> getComponent(ViewMetadata metadata) {
-        return ((EditorMetadata) metadata).getEditorClass();
-    }
 
     @Override
     protected void configureComponent() {
-        component.setSystemContainer(systemContainer);
-        component.setFile(getFile());
-        EventPublisher<EditorListener> publisher = component
-                .getEventPublisher();
+        editor.setFile(identifier.getInstanceModifier());
+        EventPublisher<EditorListener> publisher = editor.getEventPublisher();
         publisher.addListener(new EditorModifiedListener());
     }
 
     @Override
-    public void doClose() {
+    public void close() throws NotOpenedException {
+        checkIfOpened();
+        doClose();
+    }
+
+    protected void doClose() {
         save(true);
-        super.doClose();
+        editor.dispose();
+        JPanel panel = editor.getPanel();
+        container.remove(panel, group);
+        registry.remove(panel);
+        // ConfigurableBeanFactory beanFactory = context.getBeanFactory();
+        // beanFactory.destroyBean(identifier.getViewName(), component);
+        editor = null;
     }
 
     @Override
-    public void save(boolean withDialog) {
+    public boolean save(boolean withDialog) {
         checkIfOpened();
-        if (component.isSaveable() && component.isModified()) {
+        boolean editorSaved = true;
+        if (editor.isSavable() && editor.isModified()) {
             boolean shouldContinue = true;
-            FileInfo file = getFile();
+            FileInfo file = editor.getFile();
             if (withDialog) {
                 ProjectInfo project = mapper.getProject(file.getProjectId());
                 shouldContinue = dialogManager.showDialog(file.getName(),
@@ -73,13 +66,12 @@ public class MultiInstanceEditorManager extends
             }
             if (shouldContinue) {
                 manager.save(file);
-                component.setModified(false);
+                editor.setModified(false);
+            } else {
+                editorSaved = false;
             }
         }
-    }
-
-    private FileInfo getFile() {
-        return ((EditorIdentifier) identifier).getInstanceModifier();
+        return editorSaved;
     }
 
     void resetEditorTitle(boolean modified) {
@@ -87,7 +79,7 @@ public class MultiInstanceEditorManager extends
         if (modified) {
             title = MODIFIED_PREFIX + title;
         }
-        container.setTitle(title, component.getPanel(), group);
+        container.setTitle(title, editor.getPanel(), group);
     }
 
     class EditorModifiedListener implements EditorListener {

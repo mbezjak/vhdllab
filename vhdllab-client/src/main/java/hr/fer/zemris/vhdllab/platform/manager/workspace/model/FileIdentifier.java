@@ -46,9 +46,9 @@ public final class FileIdentifier extends ProjectIdentifier {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(getClass())
+        return new ToStringBuilder(this)
                     .appendSuper(super.toString())
-                    .append(fileName)
+                    .append("fileName", fileName)
                     .toString();
     }
 

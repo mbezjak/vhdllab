@@ -8,6 +8,8 @@ import hr.fer.zemris.vhdllab.platform.manager.view.View;
 
 public interface Editor extends View {
 
+    void dispose();
+
     void undo();
 
     void redo();
@@ -20,7 +22,7 @@ public interface Editor extends View {
 
     boolean isModified();
 
-    boolean isSaveable();
+    boolean isSavable();
 
     void highlightLine(int line);
 

@@ -79,7 +79,7 @@ public class SimulationErrorsView extends AbstractView {
 	}
 
 	@Override
-	public void doInit() {
+	public void init() {
 		model = new DefaultListModel();
 		listContent = new JList(model);
 		// TODO ovo ucitat iz preference-a
@@ -105,14 +105,4 @@ public class SimulationErrorsView extends AbstractView {
 		SystemLog.instance().addSystemLogListener(systemLogListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#dispose()
-	 */
-	@Override
-	public void doDispose() {
-		SystemLog.instance().removeSystemLogListener(systemLogListener);
-	}
-	
 }

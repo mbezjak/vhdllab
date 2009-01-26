@@ -51,7 +51,9 @@ public final class Main {
     }
 
     private static void setupGUI(ApplicationContext context) {
-        new GuiInitializer(context).initGUI();
+        GuiInitializer initializer = (GuiInitializer) context
+                .getBean("guiInitializer");
+        initializer.initGUI();
     }
 
     private static void initializeWorkspace(ApplicationContext context) {

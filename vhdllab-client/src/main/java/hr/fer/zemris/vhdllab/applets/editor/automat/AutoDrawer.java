@@ -11,8 +11,8 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
  */
 
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
 import java.awt.BorderLayout;
@@ -124,7 +124,7 @@ public class AutoDrawer extends JPanel{
 	
 	private ResourceBundle bundle=null;
 	private ISystemContainer container=null;
-	private IEditor editor;
+	private Editor editor;
 	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
@@ -132,7 +132,7 @@ public class AutoDrawer extends JPanel{
 	 *
 	 */
 	
-	public AutoDrawer(IEditor editor) {
+	public AutoDrawer(Editor editor) {
 //		super();
 		this.setOpaque(true);
 		createGUI();

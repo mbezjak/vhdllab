@@ -27,6 +27,7 @@
       <list>
         <value>components</value>
         <value>dialogs</value>
+        <value>menu</value>
       </list>
     </property>
   </bean>

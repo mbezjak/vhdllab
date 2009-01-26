@@ -1,6 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
+import hr.fer.zemris.vhdllab.applets.editor.automat.AutomatMetadata;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.TestbenchEditorMetadata;
+import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanelMetadata;
+import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
+import hr.fer.zemris.vhdllab.applets.texteditor.PredefinedEditorMetadata;
 import hr.fer.zemris.vhdllab.applets.texteditor.TextEditorMetadata;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
@@ -20,6 +24,10 @@ public final class WizardRegistry {
         wizards = new HashMap<FileType, EditorMetadata>();
         add(FileType.SOURCE, new TextEditorMetadata());
         add(FileType.TESTBENCH, new TestbenchEditorMetadata());
+        add(FileType.SCHEMA, new SchemaMainPanelMetadata());
+        add(FileType.SIMULATION, new WaveAppletMetadata());
+        add(FileType.AUTOMATON, new AutomatMetadata());
+        add(FileType.PREDEFINED, new PredefinedEditorMetadata());
     }
 
     public void add(FileType type, EditorMetadata metadata) {

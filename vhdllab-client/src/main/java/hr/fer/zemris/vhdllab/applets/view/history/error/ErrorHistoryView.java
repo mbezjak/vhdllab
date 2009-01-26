@@ -56,7 +56,7 @@ public class ErrorHistoryView extends AbstractView {
     }
 
     @Override
-    public void doInit() {
+    public void init() {
         formatter = new SimpleDateFormat(timeFormat);
         textPane = new JTextPane();
         textPane.setEditable(false);
@@ -83,16 +83,6 @@ public class ErrorHistoryView extends AbstractView {
             }
         };
         systemLog.addSystemLogListener(systemLogListener);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#dispose()
-     */
-    @Override
-    public void doDispose() {
-        SystemLog.instance().removeSystemLogListener(systemLogListener);
     }
 
     /**

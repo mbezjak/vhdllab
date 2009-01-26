@@ -2,6 +2,8 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -61,7 +63,7 @@ public class Testpan extends JFrame {
 		FileContent fc=aut.getInitialFileContent(b1, new Caseless("default project"));
 		if (fc!=null){
 			aut.init();
-			aut.setFileContent(fc);
+			aut.setFile(new FileInfo(FileType.AUTOMATON, fc.getFileName(), fc.getContent(), 1));
 			this.getContentPane().add(aut,BorderLayout.CENTER);
 		}
 	

@@ -1,25 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
-
-
-
-
 
 public class DummySystemContainer implements ISystemContainer {
 	
@@ -68,11 +58,6 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public IComponentProvider getComponentProvider() {
-		return null;
-	}
-
-	@Override
 	public FileIdentifier getSelectedFile() {
 		return null;
 	}
@@ -103,20 +88,12 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#getEditorManager()
-	 */
-	@Override
-	public IEditorManager getEditorManager() {
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#showSaveDialog(java.lang.String, java.lang.String, java.util.List)
 	 */
 	@Override
-	public List<IEditor> showSaveDialog(String title, String message,
-			List<IEditor> editorsToBeSaved) {
-		return new ArrayList<IEditor>();
+	public List<Editor> showSaveDialog(String title, String message,
+			List<Editor> editorsToBeSaved) {
+		return new ArrayList<Editor>();
 	}
 
     @Override

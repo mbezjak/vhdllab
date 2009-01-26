@@ -170,7 +170,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     @Override
     public FileContent getInitialFileContent(Component parent,
             Caseless projectName) {
-        RunDialog dialog = new RunDialog(parent, true, systemContainer, RunDialog.COMPILATION_TYPE);
+        RunDialog dialog = new RunDialog(parent, true, getSystemContainer(), RunDialog.COMPILATION_TYPE);
         dialog.setChangeProjectButtonText("change");
         dialog.setTitle("Select a file for which to create testbench");
         dialog.setListTitle("Select a file for which to create testbench");
@@ -186,7 +186,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         
         CircuitInterface ci;
         try {
-            ci = systemContainer.getResourceManager().getCircuitInterfaceFor(file.getProjectName(), file.getFileName());
+            ci = getSystemContainer().getResourceManager().getCircuitInterfaceFor(file.getProjectName(), file.getFileName());
         } catch (UniformAppletException e) {
             e.printStackTrace();
             return null;
@@ -202,7 +202,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
             else {
                 // Provjera dal postoje duplikati
                 try {
-                    if(systemContainer.getResourceManager().existsFile(projectName, new Caseless(testbench))) {
+                    if(getSystemContainer().getResourceManager().existsFile(projectName, new Caseless(testbench))) {
                         JOptionPane.showMessageDialog(
                                 null,
                                 "A file with the name you specified already exists.",

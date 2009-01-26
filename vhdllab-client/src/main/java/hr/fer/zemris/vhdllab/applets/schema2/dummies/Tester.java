@@ -16,6 +16,8 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.DefaultWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanel;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -128,7 +130,8 @@ public class Tester {
 		IWizard wiz = new DefaultWizard();
 		wiz.setSystemContainer(new DummySystemContainer());
 		FileContent fc = wiz.getInitialFileContent(null, new hr.fer.zemris.vhdllab.entities.Caseless("dummyProject"));
-		mpanel.setFileContent(fc);
+		FileInfo file = new FileInfo(FileType.SCHEMA, fc.getFileName(), fc.getContent(), 1);
+		mpanel.setFile(file);
 		
 		// create frame
 		JFrame frame = new JFrame("Schema test");

@@ -85,7 +85,7 @@ public class PreferencesEditor extends AbstractEditor implements
     }
 
     @Override
-    public boolean isSaveable() {
+    public boolean isSavable() {
         return false;
     }
 

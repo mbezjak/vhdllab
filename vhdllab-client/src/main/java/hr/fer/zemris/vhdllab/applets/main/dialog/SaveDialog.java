@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.dialog;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -91,7 +91,7 @@ public class SaveDialog extends JDialog {
 	/** Owner of this dialog (used to enable modal dialog) */
 	private Component owner;
 	
-	private Map<SaveItem, IEditor> presentedEditors;
+	private Map<SaveItem, Editor> presentedEditors;
 	/** Label to be displayed above a list of checkboxes */
 	private JLabel label;
 	/** A list of checkboxes displayed to user */
@@ -428,7 +428,7 @@ public class SaveDialog extends JDialog {
     private void saveDialogImpl(Component owner) {
     	this.owner = owner;
     	
-    	presentedEditors = new HashMap<SaveItem, IEditor>();
+    	presentedEditors = new HashMap<SaveItem, Editor>();
     	// setup label
     	label = new JLabel();
     	int width = DIALOG_WIDTH - 2 * BORDER;
@@ -555,12 +555,12 @@ public class SaveDialog extends JDialog {
      * on a OK button.
      * @return editors to save
      */
-    public List<IEditor> getSelectedResources() {
+    public List<Editor> getSelectedResources() {
     	if(getOption() != SaveDialog.OK_OPTION) {
     		return null;
     	}
     	
-    	List<IEditor> editorsToSave = new ArrayList<IEditor>();
+    	List<Editor> editorsToSave = new ArrayList<Editor>();
     	for(SaveItem item : list.getItems()) {
     		if(item.isSelected()) {
 	    		editorsToSave.add(presentedEditors.get(item));
@@ -585,11 +585,12 @@ public class SaveDialog extends JDialog {
      * @param editor an editor to present to be saved
      * @throws NullPointerException if <code>fileName</code> is <code>null</code>
      */
-    public void addItem(boolean seleted, IEditor editor) {
+    public void addItem(boolean seleted, Editor editor) {
     	if(editor == null) {
     		throw new NullPointerException("Editor can not be null.");
     	}
-    	SaveItem item = new SaveItem(seleted, editor.getProjectName(), editor.getFileName());
+//    	SaveItem item = new SaveItem(seleted, editor.getProjectName(), editor.getFileName());
+    	SaveItem item = new SaveItem(seleted, new Caseless("dummyprojectname"), new Caseless("dummyfilename"));
     	list.addItem(item);
     	presentedEditors.put(item, editor);
     }

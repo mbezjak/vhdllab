@@ -1,15 +1,13 @@
 package hr.fer.zemris.vhdllab.platform.manager.view;
 
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
+
 public interface ViewManager {
 
-    void open();
+    void open(Class<? extends View> viewClass);
 
-    boolean isOpened();
+    void select(Class<? extends View> viewClass);
 
-    void select() throws NotOpenedException;
-
-    boolean isSelected() throws NotOpenedException;
-
-    void close() throws NotOpenedException;
+    IProjectExplorer getProjectExplorer();
 
 }

@@ -1,14 +1,15 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class EditorIdentifier extends ViewIdentifier {
+public class EditorIdentifier {
 
+    private final EditorMetadata metadata;
     private final FileInfo instanceModifier;
 
     public EditorIdentifier(EditorMetadata metadata) {
@@ -16,9 +17,15 @@ public class EditorIdentifier extends ViewIdentifier {
     }
 
     public EditorIdentifier(EditorMetadata metadata, FileInfo instanceModifier) {
-        super(metadata);
+        Validate.notNull(metadata, "Editor metadata can't be null");
+        this.metadata = metadata;
         this.instanceModifier = instanceModifier;
     }
+
+    public EditorMetadata getMetadata() {
+        return metadata;
+    }
+
 
     public FileInfo getInstanceModifier() {
         return instanceModifier;
@@ -27,7 +34,7 @@ public class EditorIdentifier extends ViewIdentifier {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                    .appendSuper(super.hashCode())
+                    .append(metadata)
                     .append(instanceModifier)
                     .toHashCode();
     }
@@ -42,7 +49,7 @@ public class EditorIdentifier extends ViewIdentifier {
             return false;
         EditorIdentifier other = (EditorIdentifier) obj;
         return new EqualsBuilder()
-                    .appendSuper(super.equals(obj))
+                    .append(metadata, other.metadata)
                     .append(instanceModifier, other.instanceModifier)
                     .isEquals();
     }
@@ -50,7 +57,7 @@ public class EditorIdentifier extends ViewIdentifier {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                    .appendSuper(super.toString())
+                    .append("metadata", metadata)
                     .append("instanceModifier", instanceModifier)
                     .toString();
     }

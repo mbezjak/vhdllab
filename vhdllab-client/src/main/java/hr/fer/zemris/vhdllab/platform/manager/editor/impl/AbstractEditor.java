@@ -1,31 +1,19 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.listener.StandaloneEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
+import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
-import javax.swing.JPanel;
-
-public abstract class AbstractEditor extends JPanel implements Editor {
+public abstract class AbstractEditor extends AbstractView implements Editor {
 
     private static final long serialVersionUID = 1L;
 
     private final EventPublisher<EditorListener> publisher;
     private boolean modified;
     private FileInfo file;
-
-    // ONLY TEMPORARY!!!!
-    // --------------------------
-    protected ISystemContainer systemContainer;
-
-    public void setSystemContainer(ISystemContainer systemContainer) {
-        this.systemContainer = systemContainer;
-    }
-
-    // --------------------------
 
     public AbstractEditor() {
         this.publisher = new StandaloneEventPublisher<EditorListener>(
@@ -45,11 +33,6 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     }
 
     @Override
-    public JPanel getPanel() {
-        return this;
-    }
-
-    @Override
     public void undo() {
     }
 
@@ -59,17 +42,17 @@ public abstract class AbstractEditor extends JPanel implements Editor {
 
     @Override
     public void setFile(FileInfo file) {
-        this.file = file;
+        this.file = new FileInfo(file, true);
         doInitWithData(this.file);
         setModified(false);
     }
 
     @Override
     public FileInfo getFile() {
-        if (file != null) {
+        if (file != null && getData() != null) {
             file.setData(getData());
         }
-        return file;
+        return file != null ? new FileInfo(file, true) : null;
     }
 
     @Override
@@ -104,7 +87,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     }
 
     @Override
-    public boolean isSaveable() {
+    public boolean isSavable() {
         return true;
     }
 

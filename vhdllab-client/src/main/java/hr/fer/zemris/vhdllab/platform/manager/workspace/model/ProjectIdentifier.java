@@ -43,8 +43,8 @@ public class ProjectIdentifier {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(getClass())
-                    .append(projectName)
+        return new ToStringBuilder(this)
+                    .append("projectName", projectName)
                     .toString();
     }
 

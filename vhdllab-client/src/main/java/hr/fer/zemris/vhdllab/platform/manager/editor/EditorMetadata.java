@@ -1,11 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewMetadata;
 
-public interface EditorMetadata extends ViewMetadata {
+public interface EditorMetadata {
 
     Class<? extends Editor> getEditorClass();
+
+    String getCode();
 
     Class<? extends IWizard> getWizardClass();
 

@@ -67,7 +67,7 @@ public class StatusHistoryView extends AbstractView {
 	}
 
 	@Override
-	public void doInit() {
+	public void init() {
 		formatter = new SimpleDateFormat(timeFormat);
 		textPane = new JTextPane();
 		textPane.setEditable(false);
@@ -123,16 +123,6 @@ public class StatusHistoryView extends AbstractView {
 		systemLog.addSystemLogListener(systemLogListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#dispose()
-	 */
-	@Override
-	public void doDispose() {
-		SystemLog.instance().removeSystemLogListener(systemLogListener);
-	}
-	
 	/**
 	 * Appends a system message to the end of status history.
 	 * 

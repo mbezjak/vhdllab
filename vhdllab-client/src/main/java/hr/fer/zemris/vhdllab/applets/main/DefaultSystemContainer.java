@@ -3,30 +3,20 @@ package hr.fer.zemris.vhdllab.applets.main;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
-import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.ComponentIdentifierFactory;
-import hr.fer.zemris.vhdllab.applets.main.componentIdentifier.IComponentIdentifier;
-import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfiguration;
-import hr.fer.zemris.vhdllab.applets.main.conf.ComponentConfigurationParser;
-import hr.fer.zemris.vhdllab.applets.main.conf.EditorProperties;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.dialog.SaveDialog;
 import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentProvider;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IComponentStorage;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditor;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IEditorManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsMetadata;
-import hr.fer.zemris.vhdllab.applets.view.history.status.StatusHistoryMetadata;
-import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsMetadata;
+import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
+import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
+import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
@@ -34,12 +24,16 @@ import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
@@ -89,17 +83,13 @@ public class DefaultSystemContainer implements ISystemContainer,
     @Autowired
     private IResourceManager resourceManager;
     @Autowired
-    private ViewManagerFactory viewFactory;
+    ViewManager viewManager;
     @Autowired
     private WizardRegistry wizardRegistry;
     @Autowired
     private EditorManagerFactory editorManagerFactory;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
-    /**
-     * A Component configuration.
-     */
-    private ComponentConfiguration configuration;
     /**
      * A resource bundle of using language in error reporting.
      */
@@ -109,45 +99,12 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     private Frame parentFrame;
     /**
-     * A component provider.
-     */
-    private IComponentProvider componentProvider;
-    /**
-     * A component storage.
-     */
-    private IComponentStorage componentStorage;
-    /**
      * An editor manager.
      */
-    private IEditorManager editorManager;
     private IProjectExplorer projectExplorer;
-
-    public void setComponentProvider(IComponentProvider componentProvider) {
-        this.componentProvider = componentProvider;
-    }
 
     public void setParentFrame(Frame parentFrame) {
         this.parentFrame = parentFrame;
-    }
-
-    /**
-     * Setter for a component storage.
-     * 
-     * @param componentStorage
-     *            a component storage
-     */
-    public void setComponentStorage(IComponentStorage componentStorage) {
-        this.componentStorage = componentStorage;
-    }
-
-    /**
-     * Setter for an editor manager.
-     * 
-     * @param editorManager
-     *            an editor manager
-     */
-    public void setEditorManager(IEditorManager editorManager) {
-        this.editorManager = editorManager;
     }
 
     @Override
@@ -166,7 +123,6 @@ public class DefaultSystemContainer implements ISystemContainer,
      *             if exceptional condition occurs
      */
     public void init() throws UniformAppletException {
-        configuration = ComponentConfigurationParser.getConfiguration();
         bundle = ResourceBundleProvider
                 .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
         resourceManager
@@ -198,29 +154,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         resourceManager.addVetoableResourceListener(new ResourceSavedEcho());
         resourceManager
                 .addVetoableResourceListener(new ResourceDeletedCloseEditor());
-
-        Preferences pref = Preferences
-                .userNodeForPackage(DefaultSystemContainer.class);
-        String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
-        String data = pref.get(name, "");
-        List<FileIdentifier> files = SerializationUtil
-                .deserializeEditorInfo(data);
-        for (FileIdentifier f : files) {
-            IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-                    .createFileEditorIdentifier(f);
-            editorManager.openEditorByResource(identifier);
-        }
-
-        viewFactory.get(new ViewIdentifier(new StatusHistoryMetadata())).open();
-
-        projectExplorer = new DefaultProjectExplorer();
-        projectExplorer.setEditorManagerFactory(editorManagerFactory);
-        projectExplorer.setMapper(mapper);
-        VhdllabFrame vhdllabFrame = (VhdllabFrame) parentFrame;
-        vhdllabFrame.setProjectExplorer((java.awt.Component) projectExplorer);
-        projectExplorer.setSystemContainer(this);
-        projectExplorer.init();
-        vhdllabFrame.repaint();
     }
 
     public IProjectExplorer getProjectExplorer() {
@@ -234,13 +167,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      *             if exceptional condition occurs
      */
     public void dispose() throws UniformAppletException {
-        editorManager.saveAllEditors();
-        Preferences pref = Preferences
-                .userNodeForPackage(DefaultSystemContainer.class);
-        String data = SerializationUtil.serializeEditorInfo(editorManager
-                .getAllOpenedEditors());
-        String name = UserFileConstants.SYSTEM_OPENED_EDITORS;
-        pref.put(name, data);
+        editorManagerFactory.getAll().save(false);
 
         StringBuilder sb = new StringBuilder(2000);
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
@@ -265,9 +192,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         resourceManager.removeAllVetoableResourceListeners();
 
         resourceManager = null;
-        componentProvider = null;
-        componentStorage = null;
-        editorManager = null;
         bundle = null;
         parentFrame = null;
         projectExplorer = null;
@@ -489,19 +413,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
     }
 
-    private IEditor getNewEditorInstanceByFileType(FileType type) {
-        EditorProperties ep = configuration.getEditorPropertiesByFileType(type);
-        String clazz = ep.getClazz();
-        IEditor editor;
-        try {
-            editor = (IEditor) Class.forName(clazz).newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return editor;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -530,35 +441,11 @@ public class DefaultSystemContainer implements ISystemContainer,
      * (non-Javadoc)
      * 
      * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * getEditorManager()
-     */
-    @Override
-    public IEditorManager getEditorManager() {
-        return editorManager;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
      * getResourceManager()
      */
     @Override
     public IResourceManager getResourceManager() {
         return resourceManager;
-    }
-
-    /* COMPONENT PROVIDER METHODS */
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * getComponentProvider()
-     */
-    @Override
-    public IComponentProvider getComponentProvider() {
-        return componentProvider;
     }
 
     /* PRIVATE COMMON TASK METHODS */
@@ -621,8 +508,8 @@ public class DefaultSystemContainer implements ISystemContainer,
      * saveResourcesWithSaveDialog
      */
     @Override
-    public List<IEditor> showSaveDialog(String title, String message,
-            List<IEditor> editorsToBeSaved) {
+    public List<Editor> showSaveDialog(String title, String message,
+            List<Editor> editorsToBeSaved) {
         if (editorsToBeSaved.isEmpty())
             return Collections.emptyList();
         String selectAll = getBundleString(LanguageConstants.DIALOG_BUTTON_SELECT_ALL);
@@ -639,7 +526,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         dialog.setSelectAllButtonText(selectAll);
         dialog.setDeselectAllButtonText(deselectAll);
         dialog.setAlwaysSaveCheckBoxText(alwaysSave);
-        for (IEditor editor : editorsToBeSaved) {
+        for (Editor editor : editorsToBeSaved) {
             dialog.addItem(true, editor);
         }
         dialog.startDialog();
@@ -735,16 +622,20 @@ public class DefaultSystemContainer implements ISystemContainer,
                 // veto compilation
                 throw new ResourceVetoException();
             }
-            List<IEditor> openedEditors = editorManager
-                    .getOpenedEditorsThatHave(projectName);
-            String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-            String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-            boolean shouldContinue = editorManager.saveResourcesWithDialog(
-                    openedEditors, title, message);
-            if (!shouldContinue) {
-                // veto compilation
+            boolean saved = editorManagerFactory.getAllAssociatedWithProject(projectName).save(true);
+            if(!saved) {
                 throw new ResourceVetoException();
             }
+//            List<IEditor> openedEditors = editorManager
+//                    .getOpenedEditorsThatHave(projectName);
+//            String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
+//            String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
+//            boolean shouldContinue = editorManager.saveResourcesWithDialog(
+//                    openedEditors, title, message);
+//            if (!shouldContinue) {
+//                // veto compilation
+//                throw new ResourceVetoException();
+//            }
         }
     }
 
@@ -775,7 +666,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceCompiled(Caseless projectName, Caseless fileName,
                 CompilationResult result) {
-            viewFactory.get(new ViewIdentifier(new CompilationErrorsMetadata())).open();
+            viewManager.select(CompilationErrorsView.class);
 
             FileIdentifier resource = new FileIdentifier(projectName, fileName);
             ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
@@ -803,17 +694,20 @@ public class DefaultSystemContainer implements ISystemContainer,
                 // veto simulation
                 throw new ResourceVetoException();
             }
-            List<IEditor> openedEditors = editorManager
-                    .getOpenedEditorsThatHave(projectName);
-            String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-            String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-            boolean shouldContinue = editorManager.saveResourcesWithDialog(
-                    openedEditors, title, message);
-            if (!shouldContinue) {
-                // veto simulation
+            boolean saved = editorManagerFactory.getAllAssociatedWithProject(projectName).save(true);
+            if(!saved) {
                 throw new ResourceVetoException();
             }
-
+//            List<IEditor> openedEditors = editorManager
+//                    .getOpenedEditorsThatHave(projectName);
+//            String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
+//            String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
+//            boolean shouldContinue = editorManager.saveResourcesWithDialog(
+//                    openedEditors, title, message);
+//            if (!shouldContinue) {
+//                // veto simulation
+//                throw new ResourceVetoException();
+//            }
         }
     }
 
@@ -844,7 +738,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceSimulated(Caseless projectName, Caseless fileName,
                 SimulationResult result) {
-            viewFactory.get(new ViewIdentifier(new SimulationErrorsMetadata())).open();
+            viewManager.select(SimulationErrorsView.class);
 
             FileIdentifier resource = new FileIdentifier(projectName, fileName);
             ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(
@@ -865,12 +759,14 @@ public class DefaultSystemContainer implements ISystemContainer,
                 SimulationResult result) {
             if (result.getWaveform() != null
                     && !result.getWaveform().equals("")) {
-                FileIdentifier file = new FileIdentifier(projectName, fileName);
-                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-                        .createSimulationEditorIdentifier(file);
-                FileContent content = new FileContent(projectName, fileName,
-                        result.getWaveform());
-                editorManager.openEditor(identifier, content);
+                ProjectInfo project = mapper.getProject(new ProjectIdentifier(
+                        projectName));
+                editorManagerFactory
+                        .get(
+                                new EditorIdentifier(new WaveAppletMetadata(),
+                                        new FileInfo(FileType.SIMULATION,
+                                                fileName, result.getWaveform(),
+                                                project.getId()))).open();
             }
         }
     }
@@ -1027,11 +923,9 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceCreated(Caseless projectName, Caseless fileName,
                 FileType type) {
-            FileIdentifier file = new FileIdentifier(projectName, fileName);
-            IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-                    .createFileEditorIdentifier(file);
-
-            editorManager.openEditorByResource(identifier);
+            hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier i = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(projectName, fileName);
+            FileInfo info = mapper.getFile(i);
+            editorManagerFactory.get(info).open();
         }
     }
 
@@ -1062,6 +956,10 @@ public class DefaultSystemContainer implements ISystemContainer,
         public void resourceDeleted(Caseless projectName, Caseless fileName) {
             // TODO napravit ovo. kvagu kolko problema s tim.
         }
+    }
+
+    public void setProjectExplorer(IProjectExplorer projectExplorer) {
+        this.projectExplorer = projectExplorer;
     }
 
 }

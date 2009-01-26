@@ -1,10 +1,23 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
-import hr.fer.zemris.vhdllab.platform.manager.view.NotOpenedException;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
+public interface EditorManager {
 
-public interface EditorManager extends ViewManager {
+    void open();
 
-    void save(boolean withDialog) throws NotOpenedException;
+    boolean isOpened();
+
+    void select() throws NotOpenedException;
+
+    boolean isSelected() throws NotOpenedException;
+
+    void close() throws NotOpenedException;
+
+    boolean save(boolean withDialog) throws NotOpenedException;
+
+    void undo() throws NotOpenedException;
+
+    void redo() throws NotOpenedException;
+
+    EditorIdentifier getIdentifier();
 
 }

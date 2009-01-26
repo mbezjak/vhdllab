@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExpl
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 
 import java.util.List;
 
@@ -211,13 +212,6 @@ public interface ISystemContainer {
     /* MANAGER GETTER METHODS */
 
     /**
-     * Returns an editor manager. Return value will never be <code>null</code>.
-     * 
-     * @return an editor manager
-     */
-    IEditorManager getEditorManager();
-
-    /**
      * Returns a resource manager for manipulating resources. Return value will
      * never be <code>null</code>.
      * 
@@ -225,17 +219,7 @@ public interface ISystemContainer {
      */
     IResourceManager getResourceManager();
 
-    /* COMPONENT PROVIDER METHODS */
-
-    /**
-     * Returns a component provider. Return value will never be
-     * <code>null</code>.
-     * 
-     * @return a component provider.
-     */
-    IComponentProvider getComponentProvider();
-
-    List<IEditor> showSaveDialog(String title, String message,
-            List<IEditor> editorsToBeSaved);
+    List<Editor> showSaveDialog(String title, String message,
+            List<Editor> editorsToBeSaved);
 
 }
