@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.support;
 
-import hr.fer.zemris.vhdllab.applets.main.DefaultSystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.VhdllabFrame;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
@@ -16,6 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
@@ -73,6 +73,7 @@ public final class GuiInitializer implements Runnable {
                 shutdownManager.shutdownWithConfirmation();
             }
         });
+        ToolTipManager.sharedInstance().setDismissDelay(15000); // 15 seconds
 
         viewManager.open(DefaultProjectExplorer.class);
 
@@ -82,11 +83,6 @@ public final class GuiInitializer implements Runnable {
         if (ApplicationContextHolder.getContext().isDevelopment()) {
             viewManager.open(ErrorHistoryView.class);
         }
-
-        // quick fix
-        DefaultSystemContainer systemContainer = (DefaultSystemContainer) context
-                .getBean("defaultSystemContainer");
-        systemContainer.setProjectExplorer(viewManager.getProjectExplorer());
     }
 
 }

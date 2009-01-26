@@ -12,7 +12,6 @@ import hr.fer.zemris.vhdllab.platform.gui.MaximizationManager;
 import hr.fer.zemris.vhdllab.platform.gui.container.EditorTabbedPane;
 import hr.fer.zemris.vhdllab.platform.gui.container.ViewTabbedPane;
 import hr.fer.zemris.vhdllab.platform.gui.menu.MenuGenerator;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -53,47 +52,11 @@ public final class VhdllabFrame extends JFrame implements
 
     private MaximizationManager maximizationManager;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.applet.Applet#init()
-     */
     public void init() {
-        initBasicGUI();
-        setPaneSize();
+        initGUI();
         ResourceBundle bundle = ResourceBundleProvider
                 .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-        String text = bundle.getString(LanguageConstants.STATUSBAR_INIT_START);
-        SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
-        text = bundle.getString(LanguageConstants.STATUSBAR_INIT_COMMUNICATOR);
-        SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
         ResourceBundleProvider.init();
-
-        text = bundle.getString(LanguageConstants.STATUSBAR_INIT_DONE);
-        SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
-        text = bundle.getString(LanguageConstants.STATUSBAR_INIT_GUI);
-        SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
-        initGUI();
-        int duration = 15000;
-        ToolTipManager.sharedInstance().setDismissDelay(duration);
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setPaneSize();
-            }
-        });
-        text = bundle.getString(LanguageConstants.STATUSBAR_INIT_DONE);
-        SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
-        text = bundle.getString(LanguageConstants.STATUSBAR_INIT_SYSTEM);
-        SystemLog.instance().addSystemMessage(text, MessageType.INFORMATION);
-        ViewManager viewManager = (ViewManager) context
-                .getBean("defaultViewManager");
-
-        DefaultSystemContainer systemContainer = (DefaultSystemContainer) context
-                .getBean("defaultSystemContainer");
-        systemContainer.setProjectExplorer(viewManager.getProjectExplorer());
-        systemContainer.setParentFrame(JOptionPane
-                .getFrameForComponent(VhdllabFrame.this));
 
         Preferences preferences = Preferences
                 .userNodeForPackage(VhdllabFrame.class);
@@ -108,20 +71,10 @@ public final class VhdllabFrame extends JFrame implements
             }
         });
 
-        text = bundle.getString(LanguageConstants.STATUSBAR_INIT_DONE);
-        SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
-        text = bundle.getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
+        String text = bundle
+                .getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
         SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
         setPaneSize();
-    }
-
-    void initGUI() {
-        MenuGenerator menuGenerator = (MenuGenerator) context
-                .getBean("menuGenerator");
-        this.setJMenuBar(menuGenerator.generateMainMenu());
-
-        editorPane.setComponentPopupMenu(menuGenerator
-                .generateEditorPopupMenu());
     }
 
     private JPanel setupStatusBar() {
@@ -132,11 +85,15 @@ public final class VhdllabFrame extends JFrame implements
         return statusBarPanel;
     }
 
-    private void initBasicGUI() {
+    private void initGUI() {
+        MenuGenerator menuGenerator = (MenuGenerator) context
+                .getBean("menuGenerator");
         maximizationManager = new MaximizationManager();
 
         projectExplorerPane = new JPanel(new BorderLayout());
         editorPane = new EditorTabbedPane(maximizationManager);
+        editorPane.setComponentPopupMenu(menuGenerator
+                .generateEditorPopupMenu());
         viewPane = new ViewTabbedPane(maximizationManager);
 
         horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -146,6 +103,13 @@ public final class VhdllabFrame extends JFrame implements
         add(maximizationManager.getCenterPanel(verticalSplitPane),
                 BorderLayout.CENTER);
         add(setupStatusBar(), BorderLayout.SOUTH);
+        setJMenuBar(menuGenerator.generateMainMenu());
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                setPaneSize();
+            }
+        });
     }
 
     @Override
@@ -169,7 +133,7 @@ public final class VhdllabFrame extends JFrame implements
         }
     }
 
-    void setPaneSize() {
+    private void setPaneSize() {
         validate();
         double size;
 

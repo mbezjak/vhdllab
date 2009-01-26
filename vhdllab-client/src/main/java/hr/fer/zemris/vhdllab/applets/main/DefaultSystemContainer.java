@@ -27,6 +27,7 @@ import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
@@ -50,61 +51,24 @@ import javax.swing.JOptionPane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * This is a default implementation of {@link ISystemContainer} interface.
- * <p>
- * To use this implementation you need to setup it up properly. This is how:
- * </p>
- * <blockquote><code>
- * DefaultSystemContainer container = new DefaultSystemContainer(myResourceManager, myComponentProvider, parentFrame);<br/>
- * container.setComponentStorage(myComponentStorage);<br/>
- * container.setEditorManager(myEditorManager);<br/>
- * container.setViewManager(myViewManager);<br/>
- * container.setViewStrage(myViewStorage);<br/>
- * container.init();<br/>
- * </code></blockquote>
- * <p>
- * To dispose of this system container simply invoke {@link #dispose()} method.
- * </p>
- * <p>
- * Note that this implementation requires that a GUI it setup before system
- * container initialization.
- * </p>
- * 
- * @author Miro Bezjak
- */
 @Component
 public class DefaultSystemContainer implements ISystemContainer,
         WorkspaceInitializationListener {
 
-    /**
-     * A resource manager.
-     */
     @Autowired
     private IResourceManager resourceManager;
     @Autowired
-    ViewManager viewManager;
+    private ViewManager viewManager;
     @Autowired
     private WizardRegistry wizardRegistry;
     @Autowired
     private EditorManagerFactory editorManagerFactory;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
-    /**
-     * A resource bundle of using language in error reporting.
-     */
     private ResourceBundle bundle;
-    /**
-     * A parent frame for enabling modal dialogs.
-     */
-    private Frame parentFrame;
-    /**
-     * An editor manager.
-     */
-    private IProjectExplorer projectExplorer;
-
-    public void setParentFrame(Frame parentFrame) {
-        this.parentFrame = parentFrame;
+    
+    private Frame getParentFrame() {
+        return ApplicationContextHolder.getContext().getFrame();
     }
 
     @Override
@@ -157,7 +121,7 @@ public class DefaultSystemContainer implements ISystemContainer,
     }
 
     public IProjectExplorer getProjectExplorer() {
-        return projectExplorer;
+        return viewManager.getProjectExplorer();
     }
 
     /**
@@ -186,15 +150,11 @@ public class DefaultSystemContainer implements ISystemContainer,
             resourceManager.saveErrorMessage(sb.toString());
         }
 
-        projectExplorer.dispose();
-
         SystemLog.instance().removeAllSystemLogListeners();
         resourceManager.removeAllVetoableResourceListeners();
 
         resourceManager = null;
         bundle = null;
-        parentFrame = null;
-        projectExplorer = null;
     }
 
     /* ISystemContainer METHODS */
@@ -421,7 +381,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     @Override
     public Caseless getSelectedProject() {
-        return projectExplorer.getSelectedProject();
+        return getProjectExplorer().getSelectedProject();
     }
 
     /*
@@ -432,7 +392,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      */
     @Override
     public FileIdentifier getSelectedFile() {
-        return projectExplorer.getSelectedFile();
+        return getProjectExplorer().getSelectedFile();
     }
 
     /* MANAGER GETTER METHODS */
@@ -468,7 +428,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
         // Initialization of a wizard
         wizard.setSystemContainer(this);
-        FileContent content = wizard.getInitialFileContent(parentFrame,
+        FileContent content = wizard.getInitialFileContent(getParentFrame(),
                 projectName);
         // end of initialization
         return content;
@@ -518,7 +478,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
         String alwaysSave = getBundleString(LanguageConstants.DIALOG_SAVE_CHECKBOX_ALWAYS_SAVE_RESOURCES);
 
-        SaveDialog dialog = new SaveDialog(parentFrame, true);
+        SaveDialog dialog = new SaveDialog(getParentFrame(), true);
         dialog.setTitle(title);
         dialog.setText(message);
         dialog.setOKButtonText(ok);
@@ -565,7 +525,7 @@ public class DefaultSystemContainer implements ISystemContainer,
                     currentProjectLabel, new Caseless[] { projectName });
         }
 
-        RunDialog dialog = new RunDialog(parentFrame, true, this, dialogType);
+        RunDialog dialog = new RunDialog(getParentFrame(), true, this, dialogType);
         dialog.setTitle(title);
         dialog.setCurrentProjectTitle(currentProjectTitle);
         dialog.setChangeProjectButtonText(changeCurrentProjectButton);
@@ -593,7 +553,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         // String projectName = (String) JOptionPane.showInputDialog(this,
         // message, title, JOptionPane.OK_CANCEL_OPTION, null, options,
         // options[0]);
-        String projectName = JOptionPane.showInputDialog(parentFrame, message,
+        String projectName = JOptionPane.showInputDialog(getParentFrame(), message,
                 title, JOptionPane.OK_CANCEL_OPTION);
         /*
          * try { if(projectName != null &&
@@ -956,10 +916,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         public void resourceDeleted(Caseless projectName, Caseless fileName) {
             // TODO napravit ovo. kvagu kolko problema s tim.
         }
-    }
-
-    public void setProjectExplorer(IProjectExplorer projectExplorer) {
-        this.projectExplorer = projectExplorer;
     }
 
 }
