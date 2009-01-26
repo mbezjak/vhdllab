@@ -23,16 +23,6 @@ public abstract class VetoableResourceAdapter implements
 		VetoableResourceListener {
 
 	@Override
-	public void beforeProjectCreation(Caseless projectName)
-			throws ResourceVetoException {
-	}
-
-	@Override
-	public void beforeProjectDeletion(Caseless projectName)
-			throws ResourceVetoException {
-	}
-
-	@Override
 	public void beforeResourceCompilation(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException {
 	}
@@ -43,21 +33,12 @@ public abstract class VetoableResourceAdapter implements
 	}
 
 	@Override
-	public void beforeResourceDeletion(Caseless projectName, Caseless fileName)
-			throws ResourceVetoException {
-	}
-
-	@Override
 	public void beforeResourceSimulation(Caseless projectName, Caseless fileName)
 			throws ResourceVetoException {
 	}
 
 	@Override
 	public void projectCreated(Caseless projectName) {
-	}
-
-	@Override
-	public void projectDeleted(Caseless projectName) {
 	}
 
 	@Override

@@ -171,11 +171,8 @@ public interface ISystemContainer {
      * Opens a dialog for creating new project. This method will return
      * <code>true</code> if specified project was successfully created or
      * <code>false</code> otherwise.
-     * 
-     * @return <code>true</code> if specified project was successfully created;
-     *         <code>false</code> otherwise
      */
-    boolean createNewProjectInstance();
+    void createNewProjectInstance();
 
     /**
      * Opens a dialog for creating new resource. This method will return

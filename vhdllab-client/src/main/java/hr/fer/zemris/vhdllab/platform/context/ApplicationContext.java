@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.platform.context;
 
 import hr.fer.zemris.vhdllab.entities.Caseless;
 
-import java.awt.Frame;
+import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
@@ -16,7 +16,7 @@ public final class ApplicationContext {
 
     private Caseless userId;
     private Environment environment;
-    private Frame frame;
+    private JFrame frame;
     private boolean applicationInitialized = false;
     private ApplicationState state = ApplicationState.RUNNING;
 
@@ -41,11 +41,11 @@ public final class ApplicationContext {
         return getEnvironment().equals(Environment.DEVELOPMENT);
     }
 
-    public Frame getFrame() {
+    public JFrame getFrame() {
         return frame;
     }
 
-    public void setFrame(Frame frame) {
+    public void setFrame(JFrame frame) {
         this.frame = frame;
     }
 

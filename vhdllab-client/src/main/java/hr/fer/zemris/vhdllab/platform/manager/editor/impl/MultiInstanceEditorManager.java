@@ -8,19 +8,14 @@ import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 
 import javax.annotation.Resource;
 import javax.swing.JPanel;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class MultiInstanceEditorManager extends AbstractEditorManager {
 
     private static final String MODIFIED_PREFIX = "*";
 
-    @Autowired
-    private FileManager manager;
     @Resource(name = "singleSaveDialogManager")
     private DialogManager dialogManager;
 
@@ -65,7 +60,7 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
                         project.getName());
             }
             if (shouldContinue) {
-                manager.save(file);
+                fileManager.save(file);
                 editor.setModified(false);
             } else {
                 editorSaved = false;

@@ -10,13 +10,14 @@ import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 
-import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,8 @@ public final class GuiInitializer implements Runnable {
     }
 
     private void initFrame() {
-        Frame frame = new VhdllabFrame(context);
+        JFrame frame = new VhdllabFrame(context);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         ApplicationContextHolder.getContext().setFrame(frame);
         frame.addWindowListener(new WindowAdapter() {
             @Override

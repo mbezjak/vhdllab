@@ -2,10 +2,9 @@ package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
+import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
-import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
-import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
@@ -17,6 +16,8 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
+import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.Component;
@@ -65,7 +66,8 @@ import javax.swing.tree.TreeSelectionModel;
  * 
  * @author Boris Ozegovic
  */
-public class DefaultProjectExplorer extends AbstractView implements IProjectExplorer {
+public class DefaultProjectExplorer extends AbstractView implements
+        IProjectExplorer {
     /*
      * Project explorer je zamisljen kao stablo koje ce u svakom trenutku moci
      * prikazivati tri razlicite hijerarhije: X uses Y, X is used in Y i flat
@@ -342,20 +344,19 @@ public class DefaultProjectExplorer extends AbstractView implements IProjectExpl
                 tree.requestFocusInWindow();
             }
         });
-        resourceListener = new VetoableResourceAdapter() {
+        getProjectManager().addListener(new ProjectAdapter() {
             @Override
-            public void resourceCreated(Caseless projectName,
-                    Caseless fileName, FileType type) {
-                addFile(projectName, fileName);
+            public void projectCreated(ProjectInfo project) {
+                addProject(project.getName());
             }
-
+        });
+        getFileManager().addListener(new FileAdapter() {
             @Override
-            public void projectCreated(Caseless projectName) {
-                addProject(projectName);
+            public void fileCreated(FileReport report) {
+                addFile(report.getHierarchy().getProjectName(), report
+                        .getFile().getName());
             }
-        };
-        systemContainer.getResourceManager().addVetoableResourceListener(
-                resourceListener);
+        });
         loadWorkspace();
     }
 
@@ -378,18 +379,6 @@ public class DefaultProjectExplorer extends AbstractView implements IProjectExpl
             SystemLog.instance().addErrorMessage(e);
             return;
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IProjectExplorer#dispose()
-     */
-    @Override
-    public void dispose() {
-        systemContainer.getResourceManager().removeVetoableResourceListener(
-                resourceListener);
     }
 
     /**
@@ -663,15 +652,26 @@ public class DefaultProjectExplorer extends AbstractView implements IProjectExpl
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            FileInfo f = getMapper().getFile(new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(name, fileName));
+                            FileInfo f = getMapper()
+                                    .getFile(
+                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                                                    name, fileName));
                             VHDLGenerationResult result;
                             try {
-                                result = getSystemContainer().getResourceManager().generateVHDL(name, fileName);
+                                result = getSystemContainer()
+                                        .getResourceManager().generateVHDL(
+                                                name, fileName);
                             } catch (UniformAppletException e) {
                                 throw new IllegalStateException(e);
                             }
-                            ProjectInfo project = getMapper().getProject(f.getProjectId());
-                            getEditorManagerFactory().get(new EditorIdentifier(new ViewVhdlEditorMetadata(), new FileInfo(FileType.SOURCE, fileName, result.getVHDL(), project.getId()))).open();
+                            ProjectInfo project = getMapper().getProject(
+                                    f.getProjectId());
+                            getEditorManagerFactory().get(
+                                    new EditorIdentifier(
+                                            new ViewVhdlEditorMetadata(),
+                                            new FileInfo(FileType.SOURCE,
+                                                    fileName, result.getVHDL(),
+                                                    project.getId()))).open();
                         }
                     }
                 } else if (event.getSource().equals(deleteFile)) {
@@ -887,7 +887,6 @@ public class DefaultProjectExplorer extends AbstractView implements IProjectExpl
             cp.requestFocusInWindow();
         }
     };
-    private VetoableResourceListener resourceListener;
 
     /**
      * Metoda provjerava koji projekt je trenutno selektiran i cini ga aktivnim

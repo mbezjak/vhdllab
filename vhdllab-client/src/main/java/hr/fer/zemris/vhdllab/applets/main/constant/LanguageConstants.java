@@ -1,12 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main.constant;
 
-/**
- * Constants for helping to deal with resource bundles are declared here.
- * This constants contain only keys (not actual values) in resource bundles
- * which should be used to load values through resource bundle's get method.
- * In addition to keys this class may contain constants for language, country
- * and name of application resources to be used.
- */
 public class LanguageConstants {
 
 	/**

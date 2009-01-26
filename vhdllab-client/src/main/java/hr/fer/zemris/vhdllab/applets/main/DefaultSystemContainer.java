@@ -32,6 +32,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
+import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
@@ -65,8 +66,10 @@ public class DefaultSystemContainer implements ISystemContainer,
     private EditorManagerFactory editorManagerFactory;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
+    @Autowired
+    private ProjectManager projectManager;
     private ResourceBundle bundle;
-    
+
     private Frame getParentFrame() {
         return ApplicationContextHolder.getContext().getFrame();
     }
@@ -101,10 +104,12 @@ public class DefaultSystemContainer implements ISystemContainer,
                 .addVetoableResourceListener(new AfterSimulationOpenView());
         resourceManager
                 .addVetoableResourceListener(new AfterSimulationOpenEditor());
-        resourceManager
-                .addVetoableResourceListener(new BeforeProjectCreationCheckExistence());
-        resourceManager
-                .addVetoableResourceListener(new BeforeProjectCreationCheckCorrectName());
+        // resourceManager
+        // .addVetoableResourceListener(new
+        // BeforeProjectCreationCheckExistence());
+        // resourceManager
+        // .addVetoableResourceListener(new
+        // BeforeProjectCreationCheckCorrectName());
         resourceManager
                 .addVetoableResourceListener(new AfterProjectCreationEcho());
         resourceManager
@@ -151,7 +156,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
 
         SystemLog.instance().removeAllSystemLogListeners();
-        resourceManager.removeAllVetoableResourceListeners();
 
         resourceManager = null;
         bundle = null;
@@ -312,20 +316,13 @@ public class DefaultSystemContainer implements ISystemContainer,
      * createNewProjectInstance()
      */
     @Override
-    public boolean createNewProjectInstance() {
+    public void createNewProjectInstance() {
         String projectName = showCreateProjectDialog();
         if (projectName == null) {
-            return false;
+            return;
         }
-        try {
-            return resourceManager.createNewProject(new Caseless(projectName));
-        } catch (UniformAppletException e) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_PROJECT);
-            text = PlaceholderUtil.replacePlaceholders(text,
-                    new String[] { projectName });
-            SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-            return false;
-        }
+        projectManager.create(new ProjectInfo(ApplicationContextHolder
+                .getContext().getUserId(), new Caseless(projectName)));
     }
 
     /*
@@ -525,7 +522,8 @@ public class DefaultSystemContainer implements ISystemContainer,
                     currentProjectLabel, new Caseless[] { projectName });
         }
 
-        RunDialog dialog = new RunDialog(getParentFrame(), true, this, dialogType);
+        RunDialog dialog = new RunDialog(getParentFrame(), true, this,
+                dialogType);
         dialog.setTitle(title);
         dialog.setCurrentProjectTitle(currentProjectTitle);
         dialog.setChangeProjectButtonText(changeCurrentProjectButton);
@@ -553,8 +551,8 @@ public class DefaultSystemContainer implements ISystemContainer,
         // String projectName = (String) JOptionPane.showInputDialog(this,
         // message, title, JOptionPane.OK_CANCEL_OPTION, null, options,
         // options[0]);
-        String projectName = JOptionPane.showInputDialog(getParentFrame(), message,
-                title, JOptionPane.OK_CANCEL_OPTION);
+        String projectName = JOptionPane.showInputDialog(getParentFrame(),
+                message, title, JOptionPane.OK_CANCEL_OPTION);
         /*
          * try { if(projectName != null &&
          * communicator.existsProject(projectName)) { return null; } } catch
@@ -582,20 +580,23 @@ public class DefaultSystemContainer implements ISystemContainer,
                 // veto compilation
                 throw new ResourceVetoException();
             }
-            boolean saved = editorManagerFactory.getAllAssociatedWithProject(projectName).save(true);
-            if(!saved) {
+            boolean saved = editorManagerFactory.getAllAssociatedWithProject(
+                    projectName).save(true);
+            if (!saved) {
                 throw new ResourceVetoException();
             }
-//            List<IEditor> openedEditors = editorManager
-//                    .getOpenedEditorsThatHave(projectName);
-//            String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-//            String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-//            boolean shouldContinue = editorManager.saveResourcesWithDialog(
-//                    openedEditors, title, message);
-//            if (!shouldContinue) {
-//                // veto compilation
-//                throw new ResourceVetoException();
-//            }
+            // List<IEditor> openedEditors = editorManager
+            // .getOpenedEditorsThatHave(projectName);
+            // String title =
+            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
+            // String message =
+            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
+            // boolean shouldContinue = editorManager.saveResourcesWithDialog(
+            // openedEditors, title, message);
+            // if (!shouldContinue) {
+            // // veto compilation
+            // throw new ResourceVetoException();
+            // }
         }
     }
 
@@ -654,20 +655,23 @@ public class DefaultSystemContainer implements ISystemContainer,
                 // veto simulation
                 throw new ResourceVetoException();
             }
-            boolean saved = editorManagerFactory.getAllAssociatedWithProject(projectName).save(true);
-            if(!saved) {
+            boolean saved = editorManagerFactory.getAllAssociatedWithProject(
+                    projectName).save(true);
+            if (!saved) {
                 throw new ResourceVetoException();
             }
-//            List<IEditor> openedEditors = editorManager
-//                    .getOpenedEditorsThatHave(projectName);
-//            String title = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-//            String message = getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-//            boolean shouldContinue = editorManager.saveResourcesWithDialog(
-//                    openedEditors, title, message);
-//            if (!shouldContinue) {
-//                // veto simulation
-//                throw new ResourceVetoException();
-//            }
+            // List<IEditor> openedEditors = editorManager
+            // .getOpenedEditorsThatHave(projectName);
+            // String title =
+            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
+            // String message =
+            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
+            // boolean shouldContinue = editorManager.saveResourcesWithDialog(
+            // openedEditors, title, message);
+            // if (!shouldContinue) {
+            // // veto simulation
+            // throw new ResourceVetoException();
+            // }
         }
     }
 
@@ -731,61 +735,54 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
     }
 
-    /**
-     * Check existence of project before creating it.
-     * 
-     * @author Miro Bezjak
-     */
-    private class BeforeProjectCreationCheckExistence extends
-            VetoableResourceAdapter {
-        @Override
-        public void beforeProjectCreation(Caseless projectName)
-                throws ResourceVetoException {
-            boolean exists;
-            try {
-                exists = resourceManager.existsProject(projectName);
-            } catch (UniformAppletException e) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { projectName });
-                SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-                // veto project creation
-                throw new ResourceVetoException();
-            }
-            if (exists) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { projectName });
-                SystemLog.instance().addSystemMessage(text,
-                        MessageType.INFORMATION);
-                // veto project creation
-                throw new ResourceVetoException();
-            }
-
-        }
-    }
-
-    /**
-     * Check if a project has a correct name.
-     * 
-     * @author Miro Bezjak
-     */
-    private class BeforeProjectCreationCheckCorrectName extends
-            VetoableResourceAdapter {
-        @Override
-        public void beforeProjectCreation(Caseless projectName)
-                throws ResourceVetoException {
-            if (!resourceManager.isCorrectProjectName(projectName)) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { projectName });
-                SystemLog.instance().addSystemMessage(text,
-                        MessageType.INFORMATION);
-                // veto project creation
-                throw new ResourceVetoException();
-            }
-        }
-    }
+    // private class BeforeProjectCreationCheckExistence extends
+    // VetoableResourceAdapter {
+    // @Override
+    // public void beforeProjectCreation(Caseless projectName)
+    // throws ResourceVetoException {
+    // boolean exists;
+    // try {
+    // exists = resourceManager.existsProject(projectName);
+    // } catch (UniformAppletException e) {
+    // String text =
+    // getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
+    // text = PlaceholderUtil.replacePlaceholders(text,
+    // new Caseless[] { projectName });
+    // SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
+    // // veto project creation
+    // throw new ResourceVetoException();
+    // }
+    // if (exists) {
+    // String text =
+    // getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
+    // text = PlaceholderUtil.replacePlaceholders(text,
+    // new Caseless[] { projectName });
+    // SystemLog.instance().addSystemMessage(text,
+    // MessageType.INFORMATION);
+    // // veto project creation
+    // throw new ResourceVetoException();
+    // }
+    //
+    // }
+    // }
+    //
+    // private class BeforeProjectCreationCheckCorrectName extends
+    // VetoableResourceAdapter {
+    // @Override
+    // public void beforeProjectCreation(Caseless projectName)
+    // throws ResourceVetoException {
+    // if (!resourceManager.isCorrectProjectName(projectName)) {
+    // String text =
+    // getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
+    // text = PlaceholderUtil.replacePlaceholders(text,
+    // new Caseless[] { projectName });
+    // SystemLog.instance().addSystemMessage(text,
+    // MessageType.INFORMATION);
+    // // veto project creation
+    // throw new ResourceVetoException();
+    // }
+    // }
+    // }
 
     /**
      * Echo that project was created.
@@ -883,7 +880,8 @@ public class DefaultSystemContainer implements ISystemContainer,
         @Override
         public void resourceCreated(Caseless projectName, Caseless fileName,
                 FileType type) {
-            hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier i = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(projectName, fileName);
+            hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier i = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                    projectName, fileName);
             FileInfo info = mapper.getFile(i);
             editorManagerFactory.get(info).open();
         }

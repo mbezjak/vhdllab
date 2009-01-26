@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.client.core.bundle;
 
-import hr.fer.zemris.vhdllab.i18n.CachedResourceBundles;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;

@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface IProjectExplorer extends View {
     
-    void dispose();
-	
 	void addFile(Caseless projectName, Caseless fileName);
 	void addProject(Caseless projectName);
 	Caseless getSelectedProject();

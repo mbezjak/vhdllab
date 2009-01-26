@@ -34,7 +34,7 @@ public class DatabasePreferences extends AbstractPreferences {
         this.children = new ArrayList<String>();
     }
 
-    public static void setManager(UserFileManager manager) {
+    static void setManager(UserFileManager manager) {
         DatabasePreferences.manager = manager;
     }
 

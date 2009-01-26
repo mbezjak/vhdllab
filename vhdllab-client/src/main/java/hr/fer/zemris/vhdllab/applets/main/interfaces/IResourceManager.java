@@ -44,37 +44,7 @@ public interface IResourceManager {
      */
     void removeVetoableResourceListener(VetoableResourceListener l);
 
-    /**
-     * Removes all vetoable resource listener.
-     */
-    void removeAllVetoableResourceListeners();
-
-    /**
-     * Returns an array of all the vetoable resource listeners registered on
-     * this resource manager.
-     * 
-     * @return all of this resource manager's
-     *         <code>VetoableResourceListener</code>s or an empty array if no
-     *         vetoable resource listeners are currently registered
-     */
-    VetoableResourceListener[] getVetoableResourceListeners();
-
     /* RESOURCE MANIPULATION METHODS */
-
-    /**
-     * Creates a new project.
-     * 
-     * @param projectName
-     *            a name of a project to create
-     * @return <code>true</code> if specified project was successfully created;
-     *         <code>false</code> otherwise
-     * @throws NullPointerException
-     *             if <code>projectName</code> is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    boolean createNewProject(Caseless projectName) throws UniformAppletException;
 
     /**
      * Creates a new resource.
@@ -147,22 +117,6 @@ public interface IResourceManager {
             throws UniformAppletException;
 
     /**
-     * Returns <code>true</code> if a project with <code>projectName</code>
-     * already exists or <code>false</code> otherwise.
-     * 
-     * @param projectName
-     *            a project name to check
-     * @return <code>true</code> if a project with <code>projectName</code>
-     *         already exists; <code>false</code> otherwise
-     * @throws NullPointerException
-     *             if <code>projectName</code> is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    boolean existsProject(Caseless projectName) throws UniformAppletException;
-
-    /**
      * Returns all projects for a user. Return value will never be
      * <code>null</code> although it can be empty list.
      * 
@@ -172,21 +126,6 @@ public interface IResourceManager {
      *             responding)
      */
     List<Caseless> getAllProjects() throws UniformAppletException;
-
-    /**
-     * Returns all files in specified project. Return value will never be
-     * <code>null</code> although it can be empty list.
-     * 
-     * @param projectName
-     *            a name of a project to extract files from
-     * @return all files in specified project
-     * @throws NullPointerException
-     *             if <code>projectName</code> is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    List<Caseless> getFilesFor(Caseless projectName) throws UniformAppletException;
 
     /**
      * Returns all circuits in a specified project. Return value will never be
@@ -256,58 +195,6 @@ public interface IResourceManager {
      *             responding)
      */
     VHDLGenerationResult generateVHDL(Caseless projectName, Caseless fileName)
-            throws UniformAppletException;
-
-    /**
-     * Returns a content of a specified file. Return value will never be
-     * <code>null</code>.
-     * 
-     * @param projectName
-     *            a project name that contains a file
-     * @param fileName
-     *            a name of a file whose content to return
-     * @return a content of a specified file
-     * @throws NullPointerException
-     *             if either parameter is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    String getFileContent(Caseless projectName, Caseless fileName)
-            throws UniformAppletException;
-
-    /**
-     * Return a content of a specified predefined file. Return value will never
-     * be null.
-     * 
-     * @param fileName
-     *            a name of predefined file
-     * @return a content of a specified predefined file
-     * @throws NullPointerException
-     *             if <code>fileName</code> is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    String getPredefinedFileContent(Caseless fileName)
-            throws UniformAppletException;
-
-    /**
-     * Saves a file content.
-     * 
-     * @param projectName
-     *            a project name that contains a file
-     * @param fileName
-     *            a name of a file to save
-     * @param content
-     *            a file content to save
-     * @throws NullPointerException
-     *             if either parameter is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    void saveFile(Caseless projectName, Caseless fileName, String content)
             throws UniformAppletException;
 
     /**
@@ -411,21 +298,6 @@ public interface IResourceManager {
     boolean isCircuit(Caseless projectName, Caseless fileName);
 
     /**
-     * Returns <code>true</code> if specified file is a predefined file (i.e.
-     * part of a library) or <code>false</code> otherwise. If either
-     * <code>projectName</code> or <code>fileName</code> is <code>null</code>
-     * then this method will return <code>false</code>.
-     * 
-     * @param projectName
-     *            project name that contains a file
-     * @param fileName
-     *            a name of a file
-     * @return <code>true</code> if specified file is a predefined file (i.e.
-     *         part of a library); <code>false</code> otherwise
-     */
-    boolean isPredefined(Caseless projectName, Caseless fileName);
-
-    /**
      * Returns <code>true</code> if specified file is a testbench (i.e. a
      * component in vhdl with no ports, input nor output) or <code>false</code>
      * otherwise. If either <code>projectName</code> or <code>fileName</code> is
@@ -445,22 +317,6 @@ public interface IResourceManager {
      *         <code>false</code> otherwise
      */
     boolean isTestbench(Caseless projectName, Caseless fileName);
-
-    /**
-     * Returns <code>true</code> if specified file is a simulation (i.e. a
-     * simulation result of a vhdl simulator) or <code>false</code> otherwise.
-     * If either <code>projectName</code> or <code>fileName</code> is
-     * <code>null</code> then this method will return <code>false</code>.
-     * 
-     * @param projectName
-     *            project name that contains a file
-     * @param fileName
-     *            a name of a file
-     * @return <code>true</code> if specified file is a simulation (i.e. a
-     *         simulation result of a vhdl simulator); <code>false</code>
-     *         otherwise
-     */
-    boolean isSimulation(Caseless projectName, Caseless fileName);
 
     /**
      * Returns <code>true</code> if specified file is a compilable (i.e. is a
@@ -497,41 +353,6 @@ public interface IResourceManager {
     boolean isSimulatable(Caseless projectName, Caseless fileName);
 
     /**
-     * Returns <code>true</code> if specified file can generate vhdl code or
-     * <code>false</code> otherwise. If either <code>projectName</code> or
-     * <code>fileName</code> is <code>null</code> then this method will return
-     * <code>false</code>.
-     * 
-     * @param projectName
-     *            project name that contains a file
-     * @param fileName
-     *            a name of a file
-     * @return <code>true</code> if specified file can generate vhdl code;
-     *         <code>false</code> otherwise
-     */
-    boolean canGenerateVHDLCode(Caseless projectName, Caseless fileName);
-
-    /**
-     * Ignore case and check if <code>name</code> is a correct entity name.
-     * Correct entity name is a string with the following format:
-     * <ul>
-     * <li>it must contain only alpha (only letters of English alphabet),
-     * numeric (digits 0 to 9) or underscore (_) characters
-     * <li>it must not start with a non-alpha character
-     * <li>it must not end with an underscore character
-     * <li>it must not contain a tandem of underscore characters
-     * <li>it must not be a reserved word (check at
-     * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
-     * </ul>
-     * 
-     * @param name
-     *            a string that will be checked.
-     * @return <code>true</code> if <code>name</code> is a correct name;
-     *         <code>false</code> otherwise.
-     */
-    boolean isCorrectEntityName(Caseless name);
-
-    /**
      * Ignore case and check if <code>name</code> is a correct file name.
      * Correct file name is a string with the following format:
      * <ul>
@@ -550,25 +371,5 @@ public interface IResourceManager {
      *         <code>false</code> otherwise.
      */
     boolean isCorrectFileName(Caseless name);
-
-    /**
-     * Ignore case and check if <code>name</code> is a correct project name.
-     * Correct project name is a string with the following format:
-     * <ul>
-     * <li>it must contain only alpha (only letters of English alphabet),
-     * numeric (digits 0 to 9) or underscore (_) characters
-     * <li>it must not start with a non-alpha character
-     * <li>it must not end with an underscore character
-     * <li>it must not contain a tandem of underscore characters
-     * <li>it must not be a reserved word (check at
-     * hr.fer.zemris.vhdllab.utilities.NotValidVHDLNames.txt)
-     * </ul>
-     * 
-     * @param name
-     *            a string that will be checked.
-     * @return <code>true</code> if <code>name</code> is a correct name;
-     *         <code>false</code> otherwise.
-     */
-    boolean isCorrectProjectName(Caseless name);
 
 }

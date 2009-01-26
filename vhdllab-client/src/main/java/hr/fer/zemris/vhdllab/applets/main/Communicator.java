@@ -9,7 +9,6 @@ import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
@@ -106,17 +105,6 @@ public class Communicator implements ICommunicator {
      * (non-Javadoc)
      * 
      * @see
-     * hr.fer.zemris.vhdllab.applets.main.ICommunicator#existsProject(hr.fer
-     * .zemris.vhdllab.entities.Caseless)
-     */
-    public boolean existsProject(Caseless projectName) {
-        return mapper.getProject(asIdentifier(projectName)) != null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
      * hr.fer.zemris.vhdllab.applets.main.ICommunicator#deleteFile(hr.fer.zemris
      * .vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
      */
@@ -143,93 +131,16 @@ public class Communicator implements ICommunicator {
      * (non-Javadoc)
      * 
      * @see
-     * hr.fer.zemris.vhdllab.applets.main.ICommunicator#createProject(hr.fer
-     * .zemris.vhdllab.entities.Caseless)
-     */
-    public void createProject(Caseless projectName) {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        Caseless userId = ApplicationContextHolder.getContext().getUserId();
-        ProjectInfo project = new ProjectInfo(userId, projectName);
-        projectManager.create(project);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
      * hr.fer.zemris.vhdllab.applets.main.ICommunicator#createFile(hr.fer.zemris
      * .vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless,
      * hr.fer.zemris.vhdllab.entities.FileType, java.lang.String)
      */
     public void createFile(Caseless projectName, Caseless fileName,
             FileType type, String data) throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
-        if (type == null)
-            throw new NullPointerException("File type can not be null.");
         Integer projectIdentifier = mapper
                 .getProject(asIdentifier(projectName)).getId();
-        if (projectIdentifier == null)
-            throw new UniformAppletException("Project does not exists!");
         FileInfo file = new FileInfo(type, fileName, data, projectIdentifier);
         fileManager.create(file);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.ICommunicator#saveFile(hr.fer.zemris
-     * .vhdllab.entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless,
-     * java.lang.String)
-     */
-    public void saveFile(Caseless projectName, Caseless fileName, String content)
-            throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
-        if (content == null)
-            throw new NullPointerException("File content can not be null.");
-        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
-        file.setData(content);
-        fileManager.save(file);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.ICommunicator#loadFileContent(hr.fer
-     * .zemris.vhdllab.entities.Caseless,
-     * hr.fer.zemris.vhdllab.entities.Caseless)
-     */
-    public String loadFileContent(Caseless projectName, Caseless fileName) {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
-        FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
-        if (file == null) {
-            return loadPredefinedFileContent(fileName);
-        }
-        return file.getData();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.ICommunicator#loadPredefinedFileContent
-     * (hr.fer.zemris.vhdllab.entities.Caseless)
-     */
-    public String loadPredefinedFileContent(Caseless fileName) {
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
-        return libraryFileService.findPredefinedByName(fileName).getData();
     }
 
     /*
@@ -261,8 +172,6 @@ public class Communicator implements ICommunicator {
      */
     public Hierarchy extractHierarchy(Caseless projectName)
             throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
         return workspaceManager.getHierarchy(asIdentifier(projectName));
     }
 
@@ -276,10 +185,6 @@ public class Communicator implements ICommunicator {
      */
     public VHDLGenerationResult generateVHDL(Caseless projectName,
             Caseless fileName) throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
         return vhdlGenerator.generate(file);
     }
@@ -293,10 +198,6 @@ public class Communicator implements ICommunicator {
      */
     public CompilationResult compile(Caseless projectName, Caseless fileName)
             throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
         return compiler.compile(file);
     }
@@ -311,10 +212,6 @@ public class Communicator implements ICommunicator {
      */
     public SimulationResult runSimulation(Caseless projectName,
             Caseless fileName) throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
         return simulator.simulate(file);
     }
@@ -329,10 +226,6 @@ public class Communicator implements ICommunicator {
      */
     public CircuitInterface getCircuitInterfaceFor(Caseless projectName,
             Caseless fileName) throws UniformAppletException {
-        if (projectName == null)
-            throw new NullPointerException("Project name can not be null.");
-        if (fileName == null)
-            throw new NullPointerException("File name can not be null.");
         FileInfo file = mapper.getFile(asIdentifier(projectName, fileName));
         return circuitInterfaceExtractor.extract(file);
     }
@@ -345,8 +238,6 @@ public class Communicator implements ICommunicator {
      * .lang.String)
      */
     public void saveErrorMessage(String content) {
-        if (content == null)
-            throw new NullPointerException("Content can not be null.");
         libraryFileService.saveClientLog(content);
     }
 

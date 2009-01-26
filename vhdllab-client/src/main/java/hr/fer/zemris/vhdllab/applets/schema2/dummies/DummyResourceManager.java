@@ -11,10 +11,6 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +25,6 @@ public class DummyResourceManager implements IResourceManager {
 	public CompilationResult compile(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		return null;
-	}
-
-	@Override
-	public boolean createNewProject(Caseless projectName)
-			throws UniformAppletException {
-		return false;
 	}
 
 	@Override
@@ -56,12 +46,6 @@ public class DummyResourceManager implements IResourceManager {
 
 	@Override
 	public boolean existsFile(Caseless projectName, Caseless fileName)
-			throws UniformAppletException {
-		return false;
-	}
-
-	@Override
-	public boolean existsProject(Caseless projectName)
 			throws UniformAppletException {
 		return false;
 	}
@@ -101,42 +85,6 @@ public class DummyResourceManager implements IResourceManager {
 	}
 
 	@Override
-	public List<Caseless> getFilesFor(Caseless projectName)
-			throws UniformAppletException {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManagement#getPredefinedFileContent(java.lang.String)
-	 */
-	@Override
-	public String getPredefinedFileContent(Caseless fileName)
-			throws UniformAppletException {
-		if (!fileName.equals("predefined.xml")) throw new RuntimeException("Dummy only supports 'predefined.xml'.");
-		
-		InputStream stream = this.getClass().getResourceAsStream(fileName.toString());
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		StringBuilder sb = new StringBuilder("");
-		String s;
-		
-		try {
-			while ((s = reader.readLine()) != null) {
-				sb.append(s);
-				sb.append('\n');
-			}
-		} catch (IOException e) {
-			return "";
-		}
-		
-		return sb.toString();
-	}
-
-	@Override
-	public VetoableResourceListener[] getVetoableResourceListeners() {
-		return null;
-	}
-
-	@Override
 	public boolean isCircuit(Caseless projectName, Caseless fileName) {
 		return false;
 	}
@@ -147,33 +95,13 @@ public class DummyResourceManager implements IResourceManager {
 	}
 
 	@Override
-	public boolean isCorrectEntityName(Caseless name) {
-		return false;
-	}
-
-	@Override
-	public boolean isCorrectProjectName(Caseless name) {
-		return false;
-	}
-
-	@Override
 	public boolean isSimulatable(Caseless projectName, Caseless fileName) {
-		return false;
-	}
-
-	@Override
-	public boolean isSimulation(Caseless projectName, Caseless fileName) {
 		return false;
 	}
 
 	@Override
 	public boolean isTestbench(Caseless projectName, Caseless fileName) {
 		return false;
-	}
-
-	@Override
-	public void removeAllVetoableResourceListeners() {
-		
 	}
 
 	@Override
@@ -194,27 +122,7 @@ public class DummyResourceManager implements IResourceManager {
 	}
 
 	@Override
-	public String getFileContent(Caseless projectName, Caseless fileName)
-			throws UniformAppletException {
-		return null;
-	}
-
-	@Override
-	public void saveFile(Caseless projectName, Caseless fileName, String content)
-			throws UniformAppletException {
-		
-	}
-
-	@Override
 	public boolean isCorrectFileName(Caseless name) {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#canGenerateVHDLCode(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public boolean canGenerateVHDLCode(Caseless projectName, Caseless fileName) {
 		return false;
 	}
 
@@ -225,11 +133,5 @@ public class DummyResourceManager implements IResourceManager {
 	public void saveErrorMessage(String content) throws UniformAppletException {
 		
 	}
-
-    @Override
-    public boolean isPredefined(Caseless projectName, Caseless fileName) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
 }

@@ -7,27 +7,7 @@ import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.EventListener;
 
-/**
- * The listener interface for resource management.
- * <p>
- * Note that only before action events have a veto ability and they have no
- * rollback (they will simply cancel that action).
- * </p>
- * 
- * @author Miro Bezjak
- */
 public interface VetoableResourceListener extends EventListener {
-
-	/**
-	 * Indicates that a project is about to be created. If someone vetoes this
-	 * method will not rollback but will simply cancel this action.
-	 * 
-	 * @param projectName
-	 *            a name of a project to be created
-	 * @throws ResourceVetoException
-	 *             thrown to indicate a veto for this action
-	 */
-	void beforeProjectCreation(Caseless projectName) throws ResourceVetoException;
 
 	/**
 	 * Indicates that a project has been created.
@@ -36,25 +16,6 @@ public interface VetoableResourceListener extends EventListener {
 	 *            a name of a created project
 	 */
 	void projectCreated(Caseless projectName);
-
-	/**
-	 * Indicates that a project is about to be deleted. If someone vetoes this
-	 * method will not rollback but will simply cancel this action.
-	 * 
-	 * @param projectName
-	 *            a name of a project to be deleted
-	 * @throws ResourceVetoException
-	 *             thrown to indicate a veto for this action
-	 */
-	void beforeProjectDeletion(Caseless projectName) throws ResourceVetoException;
-
-	/**
-	 * Indicates that a project has been deleted.
-	 * 
-	 * @param projectName
-	 *            a name of a deleted project
-	 */
-	void projectDeleted(Caseless projectName);
 
 	/**
 	 * Indicates that a resource is about to be created. If someone vetoes this
@@ -83,20 +44,6 @@ public interface VetoableResourceListener extends EventListener {
 	 *            a file type
 	 */
 	void resourceCreated(Caseless projectName, Caseless fileName, FileType type);
-
-	/**
-	 * Indicates that a resource is about to be deleted. If someone vetoes this
-	 * method will not rollback but will simply cancel this action.
-	 * 
-	 * @param projectName
-	 *            a name of a project containing a file
-	 * @param fileName
-	 *            a name of a file to be deleted
-	 * @throws ResourceVetoException
-	 *             thrown to indicate a veto for this action
-	 */
-	void beforeResourceDeletion(Caseless projectName, Caseless fileName)
-			throws ResourceVetoException;
 
 	/**
 	 * Indicates that a resource has been deleted.

@@ -5,7 +5,8 @@ import java.util.prefs.PreferencesFactory;
 
 public class DatabaseBackedPreferencesFactory implements PreferencesFactory {
 
-    private static final Preferences userRoot = new DatabasePreferences(null, "");
+    private static final Preferences USER_ROOT = new DatabasePreferences(null,
+            "");
 
     @Override
     public Preferences systemRoot() {
@@ -15,7 +16,7 @@ public class DatabaseBackedPreferencesFactory implements PreferencesFactory {
 
     @Override
     public Preferences userRoot() {
-        return userRoot;
+        return USER_ROOT;
     }
 
 }

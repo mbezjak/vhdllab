@@ -9,6 +9,8 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
+import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
@@ -23,8 +25,6 @@ public abstract class AbstractEditorManager extends LocalizationSupport
     private static final String TITLE_PREFIX = "title.for.";
     private static final String TOOLTIP_PREFIX = "title.for.";
 
-    // @Autowired
-    // private ConfigurableApplicationContext context;
     @Autowired
     protected EditorRegistry registry;
     @Resource(name = "groupBasedComponentContainer")
@@ -39,6 +39,10 @@ public abstract class AbstractEditorManager extends LocalizationSupport
     private EditorManagerFactory editorManagerFactory;
     @Autowired
     protected IdentifierToInfoObjectMapper mapper;
+    @Autowired
+    private ProjectManager projectManager;
+    @Autowired
+    protected FileManager fileManager;
 
     protected AbstractEditorManager(EditorIdentifier identifier,
             ComponentGroup group) {
@@ -55,6 +59,8 @@ public abstract class AbstractEditorManager extends LocalizationSupport
             editor.setSystemContainer(systemContainer);
             editor.setEditorManagerFactory(editorManagerFactory);
             editor.setMapper(mapper);
+            editor.setProjectManager(projectManager);
+            editor.setFileManager(fileManager);
             editor.init();
             configureComponent();
             String title = getTitle();

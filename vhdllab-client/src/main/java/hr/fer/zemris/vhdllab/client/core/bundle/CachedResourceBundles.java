@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.i18n;
+package hr.fer.zemris.vhdllab.client.core.bundle;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;

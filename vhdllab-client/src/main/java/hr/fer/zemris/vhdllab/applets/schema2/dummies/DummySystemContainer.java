@@ -53,8 +53,7 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public boolean createNewProjectInstance() {
-		return false;
+	public void createNewProjectInstance() {
 	}
 
 	@Override

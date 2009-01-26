@@ -12,7 +12,7 @@ public class DatabasePreferencesConfigurer {
     private UserFileManager manager;
 
     @PostConstruct
-    public void initPreferencesFactory() {
+    public void initDatabasePreferences() {
         DatabasePreferences.setManager(manager);
     }
 }

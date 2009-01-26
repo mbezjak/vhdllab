@@ -20,24 +20,13 @@ public interface ICommunicator {
     boolean existsFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
-    boolean existsProject(Caseless projectName);
-
     void deleteFile(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     void deleteProject(Caseless projectName) throws UniformAppletException;
 
-    void createProject(Caseless projectName);
-
     void createFile(Caseless projectName, Caseless fileName, FileType type,
             String data) throws UniformAppletException;
-
-    void saveFile(Caseless projectName, Caseless fileName, String content)
-            throws UniformAppletException;
-
-    String loadFileContent(Caseless projectName, Caseless fileName);
-
-    String loadPredefinedFileContent(Caseless fileName);
 
     FileType loadFileType(Caseless projectName, Caseless fileName);
 

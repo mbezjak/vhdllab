@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ToolTipManager;
-import javax.swing.WindowConstants;
 
+import org.apache.commons.lang.Validate;
 import org.springframework.context.ApplicationContext;
 
 public final class VhdllabFrame extends JFrame implements
@@ -56,7 +56,6 @@ public final class VhdllabFrame extends JFrame implements
         initGUI();
         ResourceBundle bundle = ResourceBundleProvider
                 .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-        ResourceBundleProvider.init();
 
         Preferences preferences = Preferences
                 .userNodeForPackage(VhdllabFrame.class);
@@ -171,6 +170,8 @@ public final class VhdllabFrame extends JFrame implements
     }
 
     public void setProjectExplorer(JPanel component, String title) {
+        Validate.notNull(component, "Project explorer component can't be null");
+        Validate.notNull(title, "Project explorer's title can't be null");
         component.setBorder(BorderFactory.createTitledBorder(title));
         projectExplorerPane.add(component, BorderLayout.CENTER);
         repaint();
@@ -186,17 +187,17 @@ public final class VhdllabFrame extends JFrame implements
 
     public VhdllabFrame(ApplicationContext context) {
         this.context = context;
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("VHDLLab");
         setPreferredSize(new Dimension(900, 700));
-        setVisible(true);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setSize(new Dimension(900, 700));
 
         URL resource = getClass().getClassLoader().getResource(
                 "icons/vhdllab_main_16.png");
         setIconImage(new ImageIcon(resource).getImage());
         init();
         pack();
+        setVisible(true);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
 }
