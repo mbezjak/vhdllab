@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.view.history.status;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
@@ -48,8 +47,6 @@ public class StatusHistoryView extends AbstractView {
 
 	/** Pane where text will be displayed */
 	private JTextPane textPane;
-
-	private SystemLogListener systemLogListener;
 
 	/**
 	 * Constructor.
@@ -114,13 +111,12 @@ public class StatusHistoryView extends AbstractView {
 		for(SystemMessage message : systemLog.getSystemMessages()) {
 			addMessage(message);
 		}
-		systemLogListener = new SystemLogAdapter() {
-			@Override
-			public void systemMessageAdded(SystemMessage message) {
-				addMessage(message);
-			}
-		};
-		systemLog.addSystemLogListener(systemLogListener);
+		systemLog.addSystemLogListener(new SystemLogAdapter() {
+            @Override
+            public void systemMessageAdded(SystemMessage message) {
+                addMessage(message);
+            }
+        });
 	}
 
 	/**

@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.BorderLayout;
@@ -40,8 +39,6 @@ public class SimulationErrorsView extends AbstractView {
 
 	/** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
 	private JScrollPane scrollPane;
-
-	private SystemLogListener systemLogListener;
 
 	/**
 	 * Constructor
@@ -96,13 +93,12 @@ public class SimulationErrorsView extends AbstractView {
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
 		
-		systemLogListener = new SystemLogAdapter() {
-			@Override
-			public void simulationTargetAdded(ResultTarget<SimulationResult> result) {
-				setContent(result);
-			}
-		};
-		SystemLog.instance().addSystemLogListener(systemLogListener);
+		SystemLog.instance().addSystemLogListener(new SystemLogAdapter() {
+            @Override
+            public void simulationTargetAdded(ResultTarget<SimulationResult> result) {
+                setContent(result);
+            }
+        });
 	}
 
 }

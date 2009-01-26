@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
@@ -28,11 +27,6 @@ public class DummySystemContainer implements ISystemContainer {
 	}
 
 	@Override
-	public boolean compile(FileIdentifier file) {
-		return false;
-	}
-
-	@Override
 	public boolean compile(Caseless projectName, Caseless fileName) {
 		return false;
 	}
@@ -54,21 +48,6 @@ public class DummySystemContainer implements ISystemContainer {
 
 	@Override
 	public void createNewProjectInstance() {
-	}
-
-	@Override
-	public FileIdentifier getSelectedFile() {
-		return null;
-	}
-
-	@Override
-	public Caseless getSelectedProject() {
-		return null;
-	}
-
-	@Override
-	public boolean simulate(FileIdentifier file) {
-		return false;
 	}
 
 	@Override

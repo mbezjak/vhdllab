@@ -2,11 +2,9 @@ package hr.fer.zemris.vhdllab.applets.view.compilation;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.BorderLayout;
@@ -22,8 +20,6 @@ import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Panel koji sadrzi mozebitne greske prilikom kompajliranja VHDL koda.
@@ -48,13 +44,7 @@ public class CompilationErrorsView extends AbstractView {
     /** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
     private JScrollPane scrollPane;
 
-    /** SystemContainer */
-    @Autowired
-    private ISystemContainer container;
-
     private ResultTarget<CompilationResult> resultTarget;
-
-    private SystemLogListener systemLogListener;
 
     /**
      * Constructor
@@ -161,14 +151,13 @@ public class CompilationErrorsView extends AbstractView {
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);
 
-        systemLogListener = new SystemLogAdapter() {
+        SystemLog.instance().addSystemLogListener(new SystemLogAdapter() {
             @Override
             public void compilationTargetAdded(
                     ResultTarget<CompilationResult> result) {
                 setContent(result);
             }
-        };
-        SystemLog.instance().addSystemLogListener(systemLogListener);
+        });
     }
 
 }

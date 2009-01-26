@@ -54,27 +54,6 @@ public interface ISystemContainer {
     boolean compileLastHistoryResult();
 
     /**
-     * Compiles specified resource. If <code>file</code> is <code>null</code>
-     * this method will not throw an exception and will simply return
-     * <code>false</code>.
-     * <p>
-     * Note that some resource is not compilable (simulation for example)
-     * therefor this method will not compile such resource. To check if a
-     * resource is compilable invoke
-     * {@link IResourceManager#isCompilable(Caseless, Caseless)} method.
-     * </p>
-     * 
-     * @param file
-     *            a resource to compile
-     * @return <code>true</code> if resource has been compiled;
-     *         <code>false</code> otherwise
-     * @see #compileWithDialog()
-     * @see #compileLastHistoryResult()
-     * @see #compile(Caseless, Caseless)
-     */
-    boolean compile(FileIdentifier file);
-
-    /**
      * Compiles a specified resource. If any error occurs this method will
      * simply return <code>false</code>.
      * <p>
@@ -90,7 +69,6 @@ public interface ISystemContainer {
      *         <code>false</code> otherwise
      * @see #compileWithDialog()
      * @see #compileLastHistoryResult()
-     * @see #compile(FileIdentifier)
      */
     boolean compile(Caseless projectName, Caseless fileName);
 
@@ -125,27 +103,6 @@ public interface ISystemContainer {
     boolean simulateLastHistoryResult();
 
     /**
-     * Simulates specified resource. If <code>file</code> is <code>null</code>
-     * this method will not throw an exception and will simply return
-     * <code>false</code>.
-     * <p>
-     * Note that some resource is not simulatable (vhdl source for example)
-     * therefor this method will not simulate such resource. To check if a
-     * resource is simulatable invoke
-     * {@link IResourceManager#isSimulatable(Caseless, Caseless)} method.
-     * </p>
-     * 
-     * @param file
-     *            a resource to simulate
-     * @return <code>true</code> if resource has been simulated;
-     *         <code>false</code> otherwise
-     * @see #simulateWithDialog()
-     * @see #simulateLastHistoryResult()
-     * @see #simulate(Caseless, Caseless)
-     */
-    boolean simulate(FileIdentifier file);
-
-    /**
      * Simulates a specified resource. If any error occurs this method will
      * simply return <code>false</code>.
      * <p>
@@ -161,7 +118,6 @@ public interface ISystemContainer {
      *         <code>false</code> otherwise
      * @see #simulateWithDialog()
      * @see #simulateLastHistoryResult()
-     * @see #simulate(FileIdentifier)
      */
     boolean simulate(Caseless projectName, Caseless fileName);
 
@@ -187,24 +143,6 @@ public interface ISystemContainer {
      *             if <code>type</code> is <code>null</code>
      */
     boolean createNewFileInstance(FileType type);
-
-    /**
-     * Returns a currently selected project in a project explorer or
-     * <code>null</code> if no project is selected.
-     * 
-     * @return a currently selected project in a project explorer or
-     *         <code>null</code> if no project is selected
-     */
-    Caseless getSelectedProject();
-
-    /**
-     * Returns a currently selected file in a project explorer or
-     * <code>null</code> if no file is selected.
-     * 
-     * @return a currently selected file in a project explorer or
-     *         <code>null</code> if no file is selected
-     */
-    FileIdentifier getSelectedFile();
 
     /* MANAGER GETTER METHODS */
 

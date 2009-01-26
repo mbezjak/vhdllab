@@ -371,7 +371,7 @@ public class RunDialog extends JDialog {
 		height = allProjects.size() * MENU_ITEM_HEIGHT;
 		popupMenu.setPreferredSize(new Dimension(width, height));
 
-		currentProject = container.getSelectedProject();
+		currentProject = container.getProjectExplorer().getSelectedProject();
 		if (currentProject == null && !allProjects.isEmpty()) {
 			currentProject = allProjects.get(allProjects.size() - 1);
 		}

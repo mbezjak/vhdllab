@@ -89,7 +89,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      * @throws UniformAppletException
      *             if exceptional condition occurs
      */
-    public void init() throws UniformAppletException {
+    private void init() throws UniformAppletException {
         bundle = ResourceBundleProvider
                 .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
         resourceManager
@@ -135,7 +135,7 @@ public class DefaultSystemContainer implements ISystemContainer,
      * @throws UniformAppletException
      *             if exceptional condition occurs
      */
-    public void dispose() throws UniformAppletException {
+    private void dispose() throws UniformAppletException {
         editorManagerFactory.getAll().save(false);
 
         StringBuilder sb = new StringBuilder(2000);
@@ -195,15 +195,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#compile
-     * (hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier)
-     */
-    @Override
-    public boolean compile(FileIdentifier file) {
+    private boolean compile(FileIdentifier file) {
         if (file == null) {
             return false;
         }
@@ -267,15 +259,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#simulate
-     * (hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier)
-     */
-    @Override
-    public boolean simulate(FileIdentifier file) {
+    private boolean simulate(FileIdentifier file) {
         if (file == null) {
             return false;
         }
@@ -336,7 +320,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         if (type == null) {
             throw new NullPointerException("File type cant be null");
         }
-        Caseless projectName = getSelectedProject();
+        Caseless projectName = getProjectExplorer().getSelectedProject();
         if (projectName == null) {
             String text = getBundleString(LanguageConstants.STATUSBAR_NO_SELECTED_PROJECT);
             SystemLog.instance()
@@ -368,28 +352,6 @@ public class DefaultSystemContainer implements ISystemContainer,
             SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
             return false;
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * getSelectedProject()
-     */
-    @Override
-    public Caseless getSelectedProject() {
-        return getProjectExplorer().getSelectedProject();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * getSelectedFile()
-     */
-    @Override
-    public FileIdentifier getSelectedFile() {
-        return getProjectExplorer().getSelectedFile();
     }
 
     /* MANAGER GETTER METHODS */
@@ -512,7 +474,7 @@ public class DefaultSystemContainer implements ISystemContainer,
         String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
         String currentProjectTitle = getBundleString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_TITLE);
         String changeCurrentProjectButton = getBundleString(LanguageConstants.DIALOG_RUN_CHANGE_CURRENT_PROJECT_BUTTON);
-        Caseless projectName = getSelectedProject();
+        Caseless projectName = getProjectExplorer().getSelectedProject();
         String currentProjectLabel;
         if (projectName == null) {
             currentProjectLabel = getBundleString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);

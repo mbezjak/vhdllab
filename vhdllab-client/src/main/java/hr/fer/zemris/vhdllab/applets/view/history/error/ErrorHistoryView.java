@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.view.history.error;
 import hr.fer.zemris.vhdllab.client.core.log.SystemError;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
 import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
@@ -37,8 +36,6 @@ public class ErrorHistoryView extends AbstractView {
 
     /** Pane where text will be displayed */
     private JTextPane textPane;
-
-    private SystemLogListener systemLogListener;
 
     /**
      * Constructor.
@@ -76,13 +73,12 @@ public class ErrorHistoryView extends AbstractView {
         for (SystemMessage message : systemLog.getErrorMessages()) {
             addMessage(message);
         }
-        systemLogListener = new SystemLogAdapter() {
+        systemLog.addSystemLogListener(new SystemLogAdapter() {
             @Override
             public void errorMessageAdded(SystemError message) {
                 addMessage(message);
             }
-        };
-        systemLog.addSystemLogListener(systemLogListener);
+        });
     }
 
     /**

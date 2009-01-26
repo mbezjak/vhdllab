@@ -314,7 +314,7 @@ public class EntityTable extends JPanel implements IEntityWizard{
 			else test.add((String) model.getValueAt(i, 0));
 		}
 		try {
-			if(container.getResourceManager().existsFile(container.getSelectedProject(), new Caseless(imeSklop.getText()))
+			if(container.getResourceManager().existsFile(container.getProjectExplorer().getSelectedProject(), new Caseless(imeSklop.getText()))
 					|| !StringFormat.isCorrectFileName(imeSklop.getText()))
 				return false;
 		} catch (UniformAppletException e) {
