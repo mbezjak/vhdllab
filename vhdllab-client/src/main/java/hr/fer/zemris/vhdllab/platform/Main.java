@@ -8,6 +8,8 @@ import hr.fer.zemris.vhdllab.platform.support.CommandLineArgumentProcessor;
 import hr.fer.zemris.vhdllab.platform.support.GuiInitializer;
 import hr.fer.zemris.vhdllab.platform.support.UserLocaleInitializer;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -19,15 +21,29 @@ public final class Main {
      */
     private static Logger logger;
 
-    public static void main(String[] args) {
-        long start = System.currentTimeMillis();
-        initializeApplication(args);
-        long end = System.currentTimeMillis();
-        logger.debug("Application finished initialization in " + (end - start)
-                + "ms");
+    public static void main(final String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                /*
+                 * Application is initialized in EDT because of swing components
+                 * used throughout the platform.
+                 */
+                try {
+                    initializeApplication(args);
+                } catch (Exception e) {
+                    /*
+                     * Application is either fully instantiated or not at all!
+                     */
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+        });
     }
 
-    private static void initializeApplication(String[] args) {
+    static void initializeApplication(String[] args) {
+        long start = System.currentTimeMillis();
         initializeLogging();
         processCommandLine(args);
         ApplicationContext context = setupDependencyInjectionContainer();
@@ -35,6 +51,9 @@ public final class Main {
         setupGUI(context);
         initializeWorkspace(context);
         ApplicationContextHolder.getContext().setApplicationInitialized(true);
+        long end = System.currentTimeMillis();
+        logger.debug("Application finished initialization in " + (end - start)
+                + "ms");
     }
 
     private static void initializeLogging() {

@@ -13,7 +13,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -24,7 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class GuiInitializer implements Runnable {
+public final class GuiInitializer {
 
     /**
      * Logger for this class
@@ -39,18 +38,9 @@ public final class GuiInitializer implements Runnable {
     private ViewManager viewManager;
 
     public void initGUI() {
-        try {
-            SwingUtilities.invokeAndWait(this);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        LOG.debug("GUI initialized");
-    }
-
-    @Override
-    public void run() {
         initLookAndFeel();
         initFrame();
+        LOG.debug("GUI initialized");
     }
 
     private void initLookAndFeel() {
