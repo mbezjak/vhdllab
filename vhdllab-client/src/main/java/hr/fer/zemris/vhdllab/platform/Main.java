@@ -1,6 +1,8 @@
 package hr.fer.zemris.vhdllab.platform;
 
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.log.StdErrConsumer;
+import hr.fer.zemris.vhdllab.platform.log.StdOutConsumer;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializer;
 import hr.fer.zemris.vhdllab.platform.support.CommandLineArgumentProcessor;
 import hr.fer.zemris.vhdllab.platform.support.GuiInitializer;
@@ -15,23 +17,37 @@ public final class Main {
     /**
      * Logger for this class
      */
-    private static final Logger LOG = Logger.getLogger(Main.class);
+    private static Logger logger;
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
         initializeApplication(args);
         long end = System.currentTimeMillis();
-        LOG.debug("Application finished initialization in " + (end - start)
+        logger.debug("Application finished initialization in " + (end - start)
                 + "ms");
     }
 
     private static void initializeApplication(String[] args) {
+        initializeLogging();
         processCommandLine(args);
         ApplicationContext context = setupDependencyInjectionContainer();
         initializeUserLanguage();
         setupGUI(context);
         initializeWorkspace(context);
         ApplicationContextHolder.getContext().setApplicationInitialized(true);
+    }
+
+    private static void initializeLogging() {
+        StdOutConsumer.instance().substituteStream();
+        StdErrConsumer.instance().substituteStream();
+        /*
+         * Its important to initialize log4j after standard streams are replaced
+         * because log4j doesn't directly invoke methods from System.out (or
+         * System.err). Instead it wraps them around QuietWriter. Because we
+         * want ConsoleAppender to act exactly the way System.out does, log4j
+         * needs to be initialized after substituting standard streams!
+         */
+        logger = Logger.getLogger(Main.class);
     }
 
     private static void processCommandLine(String[] args) {
@@ -42,7 +58,7 @@ public final class Main {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
                 "applicationContext.xml");
         context.registerShutdownHook();
-        LOG.debug("Spring container initialized");
+        logger.debug("Spring container initialized");
         return context;
     }
 
@@ -59,7 +75,7 @@ public final class Main {
     private static void initializeWorkspace(ApplicationContext context) {
         WorkspaceInitializer initializer = (WorkspaceInitializer) context
                 .getBean("workspaceInitializer");
-        initializer.initializeWorkspace();
+        initializer.initWorkspace();
     }
 
 }

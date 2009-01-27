@@ -43,8 +43,10 @@ public final class CommandLineArgumentProcessor {
     @SuppressWarnings("static-access")
     private Options createOptions() {
         Options options = new Options();
-        options.addOption(OptionBuilder.withLongOpt(ENV_OPTION).hasArg()
-                .withValueSeparator().create());
+        options.addOption(OptionBuilder.withLongOpt(ENV_OPTION)
+                                        .hasArg()
+                                        .withValueSeparator()
+                                        .create());
         return options;
     }
 

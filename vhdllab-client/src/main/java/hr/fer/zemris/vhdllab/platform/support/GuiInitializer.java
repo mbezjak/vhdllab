@@ -3,12 +3,11 @@ package hr.fer.zemris.vhdllab.platform.support;
 import hr.fer.zemris.vhdllab.applets.main.VhdllabFrame;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
-import hr.fer.zemris.vhdllab.applets.view.history.error.ErrorHistoryView;
-import hr.fer.zemris.vhdllab.applets.view.history.status.StatusHistoryView;
 import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
+import hr.fer.zemris.vhdllab.view.history.LogHistoryView;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -78,13 +77,9 @@ public final class GuiInitializer implements Runnable {
         ToolTipManager.sharedInstance().setDismissDelay(15000); // 15 seconds
 
         viewManager.open(DefaultProjectExplorer.class);
-
-        viewManager.open(StatusHistoryView.class);
+        viewManager.open(LogHistoryView.class);
         viewManager.open(CompilationErrorsView.class);
         viewManager.open(SimulationErrorsView.class);
-        if (ApplicationContextHolder.getContext().isDevelopment()) {
-            viewManager.open(ErrorHistoryView.class);
-        }
     }
 
 }

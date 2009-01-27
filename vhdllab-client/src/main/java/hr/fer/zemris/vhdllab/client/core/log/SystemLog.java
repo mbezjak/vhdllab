@@ -376,6 +376,7 @@ public final class SystemLog {
      *            an added system message
      */
     private void fireSystemMessageAdded(SystemMessage message) {
+        LOG.info(message.getContent());
         for (SystemLogListener l : getSystemLogListeners()) {
             l.systemMessageAdded(message);
         }
@@ -388,7 +389,7 @@ public final class SystemLog {
      *            an added error message
      */
     private void fireErrorMessageAdded(SystemError message) {
-        LOG.debug("Exception occurred", message.getCause());
+        LOG.error("Exception occurred", message.getCause());
         for (SystemLogListener l : getSystemLogListeners()) {
             l.errorMessageAdded(message);
         }

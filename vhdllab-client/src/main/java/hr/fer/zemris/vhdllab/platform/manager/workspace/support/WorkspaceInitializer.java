@@ -18,7 +18,7 @@ public class WorkspaceInitializer extends
         super(WorkspaceInitializationListener.class);
     }
 
-    public void initializeWorkspace() {
+    public void initWorkspace() {
         Workspace workspace = workspaceManager.getWorkspace();
         fireInitialize(workspace);
         logger.debug("Workspace initialized with "
