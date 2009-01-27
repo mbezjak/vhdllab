@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileType;
 
 /**
@@ -17,101 +16,7 @@ import hr.fer.zemris.vhdllab.entities.FileType;
  */
 public interface ISystemContainer {
 
-    /* COMPILE RESOURCE METHODS */
-    
     IProjectExplorer getProjectExplorer();
-
-    /**
-     * Shows a dialog to a user so he can select a resource that he wants
-     * compiled. A user can cancel a dialog and in that case this method will
-     * return <code>false</code>.
-     * 
-     * @return <code>true</code> if a resource has been compiled; false
-     *         otherwise
-     * @see #compileLastHistoryResult()
-     * @see #compile(Caseless, Caseless)
-     */
-    boolean compileWithDialog();
-
-    /**
-     * Compiles a last recently compiled resource. This method will return
-     * <code>true</code> if resource has been compiled or <code>false</code>
-     * otherwise. If no resource has been compiled then a dialog will present to
-     * a user to select a resource to compile (like in
-     * {@link #compileWithDialog()} method).
-     * 
-     * @return <code>true</code> if resource has been compiled;
-     *         <code>false</code> otherwise
-     * @see #compileWithDialog()
-     * @see #compile(Caseless, Caseless)
-     */
-    boolean compileLastHistoryResult();
-
-    /**
-     * Compiles a specified resource. If any error occurs this method will
-     * simply return <code>false</code>.
-     * <p>
-     * If either parameter is <code>null</code> this method will not throw an
-     * exception and will simply return <code>false</code>.
-     * </p>
-     * 
-     * @param projectName
-     *            a resource's project name
-     * @param fileName
-     *            a resource's file name
-     * @return <code>true</code> if resource has been compiled;
-     *         <code>false</code> otherwise
-     * @see #compileWithDialog()
-     * @see #compileLastHistoryResult()
-     */
-    boolean compile(Caseless projectName, Caseless fileName);
-
-    /* SIMULATE RESOURCE METHODS */
-
-    /**
-     * Shows a dialog to a user so he can select a resource that he wants
-     * simulated. A user can cancel a dialog and in that case this method will
-     * return <code>false</code>.
-     * 
-     * @return <code>true</code> if a resource has been simulated; false
-     *         otherwise
-     * @see #simulateLastHistoryResult()
-     * @see #simulate(Caseless, Caseless)
-     */
-    boolean simulateWithDialog();
-
-    /**
-     * Simulates a last recently simulated resource. This method will return
-     * <code>true</code> if resource has been simulated or <code>false</code>
-     * otherwise. If no resource has been simulated then a dialog will present
-     * to a user to select a resource to simulate (like in
-     * {@link #simulateWithDialog()} method).
-     * 
-     * @return <code>true</code> if resource has been simulated;
-     *         <code>false</code> otherwise
-     * @see #simulateWithDialog()
-     * @see #simulate(Caseless, Caseless)
-     */
-    boolean simulateLastHistoryResult();
-
-    /**
-     * Simulates a specified resource. If any error occurs this method will
-     * simply return <code>false</code>.
-     * <p>
-     * If either parameter is <code>null</code> this method will not throw an
-     * exception and will simply return <code>false</code>.
-     * </p>
-     * 
-     * @param projectName
-     *            a resource's project name
-     * @param fileName
-     *            a resource's file name
-     * @return <code>true</code> if resource has been simulated;
-     *         <code>false</code> otherwise
-     * @see #simulateWithDialog()
-     * @see #simulateLastHistoryResult()
-     */
-    boolean simulate(Caseless projectName, Caseless fileName);
 
     /* RESOURCE MANIPULATION METHODS */
 
@@ -145,5 +50,9 @@ public interface ISystemContainer {
      * @return a resource manager
      */
     IResourceManager getResourceManager();
+
+    hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showCompilationRunDialog();
+
+    hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showSimulationRunDialog();
 
 }

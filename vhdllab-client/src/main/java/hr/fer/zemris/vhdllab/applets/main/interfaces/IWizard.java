@@ -23,7 +23,6 @@ import java.awt.Component;
  * interface.
  * 
  * @author Miro Bezjak
- * @see IEditor
  */
 public interface IWizard {
 

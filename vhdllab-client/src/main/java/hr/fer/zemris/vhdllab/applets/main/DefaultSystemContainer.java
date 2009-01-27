@@ -13,32 +13,25 @@ import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
-import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
-import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
-import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
-import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
 import java.awt.Frame;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
@@ -62,6 +55,10 @@ public class DefaultSystemContainer implements ISystemContainer,
     private IdentifierToInfoObjectMapper mapper;
     @Autowired
     private ProjectManager projectManager;
+    @Autowired
+    private CompilationManager compilationManager;
+    @Autowired
+    private SimulationManager simulationManager;
     private ResourceBundle bundle;
 
     private Frame getParentFrame() {
@@ -90,14 +87,8 @@ public class DefaultSystemContainer implements ISystemContainer,
                 .addVetoableResourceListener(new BeforeCompilationCheckCompilableAndSaveEditors());
         resourceManager.addVetoableResourceListener(new AfterCompilationEcho());
         resourceManager
-                .addVetoableResourceListener(new AfterCompilationOpenView());
-        resourceManager
                 .addVetoableResourceListener(new BeforeSimulationCheckSimulatableAndSaveEditors());
         resourceManager.addVetoableResourceListener(new AfterSimulationEcho());
-        resourceManager
-                .addVetoableResourceListener(new AfterSimulationOpenView());
-        resourceManager
-                .addVetoableResourceListener(new AfterSimulationOpenEditor());
         // resourceManager
         // .addVetoableResourceListener(new
         // BeforeProjectCreationCheckExistence());
@@ -130,169 +121,13 @@ public class DefaultSystemContainer implements ISystemContainer,
      *             if exceptional condition occurs
      */
     private void dispose() throws UniformAppletException {
+        // TODO kada se sustav gasi ovo se mora pozvat. samo ne s false
+        // zastavicom nego sa true
         editorManagerFactory.getAll().save(false);
-
-        StringBuilder sb = new StringBuilder(2000);
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-        for (SystemMessage m : SystemLog.instance().getSystemMessages()) {
-            sb.append(formatter.format(m.getDate())).append("\t\t").append(
-                    m.getContent()).append("\n");
-        }
-        if (sb.length() != 0) {
-            sb.append("---------------------------------\n\n\n");
-        }
-        for (SystemMessage m : SystemLog.instance().getErrorMessages()) {
-            sb.append(formatter.format(m.getDate())).append("\t\t").append(
-                    m.getContent()).append("\n\n");
-        }
-        if (sb.length() != 0) {
-            resourceManager.saveErrorMessage(sb.toString());
-        }
-
-        SystemLog.instance().removeAllSystemLogListeners();
-
-        resourceManager = null;
-        bundle = null;
-    }
-
-    /* ISystemContainer METHODS */
-
-    /* COMPILE RESOURCE METHODS */
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * compileWithDialog()
-     */
-    @Override
-    public boolean compileWithDialog() {
-        FileIdentifier file = showCompilationRunDialog();
-        return compile(file);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * compileLastHistoryResult()
-     */
-    @Override
-    public boolean compileLastHistoryResult() {
-        SystemLog log = SystemLog.instance();
-        if (log.compilationHistoryIsEmpty()) {
-            return compileWithDialog();
-        } else {
-            ResultTarget<CompilationResult> resultTarget = log
-                    .getLastCompilationResultTarget();
-            return compile(resultTarget.getResource());
-        }
-    }
-
-    private boolean compile(FileIdentifier file) {
-        if (file == null) {
-            return false;
-        }
-        return compile(file.getProjectName(), file.getFileName());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#compile
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public boolean compile(Caseless projectName, Caseless fileName) {
-        if (projectName == null || fileName == null) {
-            return false;
-        }
-        CompilationResult result;
-        try {
-            result = resourceManager.compile(projectName, fileName);
-        } catch (UniformAppletException e) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_CANT_COMPILE);
-            text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
-                    fileName, projectName });
-            SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-            return false;
-        }
-        return result != null;
-    }
-
-    /* SIMULATE RESOURCE METHODS */
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * simulateWithDialog()
-     */
-    @Override
-    public boolean simulateWithDialog() {
-        FileIdentifier file = showSimulationRunDialog();
-        return simulate(file);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * simulateLastHistoryResult()
-     */
-    @Override
-    public boolean simulateLastHistoryResult() {
-        SystemLog log = SystemLog.instance();
-        if (log.simulationHistoryIsEmpty()) {
-            return simulateWithDialog();
-        } else {
-            ResultTarget<SimulationResult> resultTarget = log
-                    .getLastSimulationResultTarget();
-            return simulate(resultTarget.getResource());
-        }
-    }
-
-    private boolean simulate(FileIdentifier file) {
-        if (file == null) {
-            return false;
-        }
-        return simulate(file.getProjectName(), file.getFileName());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#simulate
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public boolean simulate(Caseless projectName, Caseless fileName) {
-        if (projectName == null || fileName == null) {
-            return false;
-        }
-        SimulationResult result;
-        try {
-            result = resourceManager.simulate(projectName, fileName);
-        } catch (UniformAppletException e) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_CANT_SIMULATE);
-            text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
-                    fileName, projectName });
-            SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-            return false;
-        }
-        return result != null;
     }
 
     /* RESOURCE MANIPULATION METHODS */
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * createNewProjectInstance()
-     */
     @Override
     public void createNewProjectInstance() {
         String projectName = showCreateProjectDialog();
@@ -303,12 +138,6 @@ public class DefaultSystemContainer implements ISystemContainer,
                 .getContext().getUserId(), new Caseless(projectName)));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * createNewFileInstance(java.lang.String)
-     */
     @Override
     public boolean createNewFileInstance(FileType type) {
         if (type == null) {
@@ -348,14 +177,6 @@ public class DefaultSystemContainer implements ISystemContainer,
         }
     }
 
-    /* MANAGER GETTER METHODS */
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer#
-     * getResourceManager()
-     */
     @Override
     public IResourceManager getResourceManager() {
         return resourceManager;
@@ -400,20 +221,22 @@ public class DefaultSystemContainer implements ISystemContainer,
 
     /* SHOW DIALOGS METHODS */
 
-    private FileIdentifier showCompilationRunDialog() {
+    public hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showCompilationRunDialog() {
         String title = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_TITLE);
         String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
         FileIdentifier file = showRunDialog(title, listTitle,
                 RunDialog.COMPILATION_TYPE);
-        return file;
+        return new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                file.getProjectName(), file.getFileName());
     }
 
-    private FileIdentifier showSimulationRunDialog() {
+    public hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showSimulationRunDialog() {
         String title = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_TITLE);
         String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
         FileIdentifier file = showRunDialog(title, listTitle,
                 RunDialog.SIMULATION_TYPE);
-        return file;
+        return new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                file.getProjectName(), file.getFileName());
     }
 
     /**
@@ -461,11 +284,9 @@ public class DefaultSystemContainer implements ISystemContainer,
         String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
         Object[] options = new Object[] { ok, cancel };
 
-        // String projectName = (String) JOptionPane.showInputDialog(this,
-        // message, title, JOptionPane.OK_CANCEL_OPTION, null, options,
-        // options[0]);
-        String projectName = JOptionPane.showInputDialog(getParentFrame(),
-                message, title, JOptionPane.OK_CANCEL_OPTION);
+        String projectName = (String) JOptionPane.showInputDialog(
+                getParentFrame(), message, title, JOptionPane.OK_CANCEL_OPTION,
+                null, options, options[0]);
         /*
          * try { if(projectName != null &&
          * communicator.existsProject(projectName)) { return null; } } catch
@@ -531,25 +352,6 @@ public class DefaultSystemContainer implements ISystemContainer,
     }
 
     /**
-     * First open view for displaying compilation result and then log this
-     * compilation is system log.
-     * 
-     * @author Miro Bezjak
-     */
-    private class AfterCompilationOpenView extends VetoableResourceAdapter {
-        @Override
-        public void resourceCompiled(Caseless projectName, Caseless fileName,
-                CompilationResult result) {
-            viewManager.select(CompilationErrorsView.class);
-
-            FileIdentifier resource = new FileIdentifier(projectName, fileName);
-            ResultTarget<CompilationResult> resultTarget = new ResultTarget<CompilationResult>(
-                    resource, result);
-            SystemLog.instance().addCompilationResultTarget(resultTarget);
-        }
-    }
-
-    /**
      * Check if if resource is simulatable. Also save opened editors.
      * 
      * @author Miro Bezjak
@@ -602,49 +404,6 @@ public class DefaultSystemContainer implements ISystemContainer,
                     fileName, projectName });
             SystemLog.instance()
                     .addSystemMessage(text, MessageType.INFORMATION);
-        }
-    }
-
-    /**
-     * First open view for displaying simulation result and then log this
-     * simulation is system log.
-     * 
-     * @author Miro Bezjak
-     */
-    private class AfterSimulationOpenView extends VetoableResourceAdapter {
-        @Override
-        public void resourceSimulated(Caseless projectName, Caseless fileName,
-                SimulationResult result) {
-            viewManager.select(SimulationErrorsView.class);
-
-            FileIdentifier resource = new FileIdentifier(projectName, fileName);
-            ResultTarget<SimulationResult> resultTarget = new ResultTarget<SimulationResult>(
-                    resource, result);
-            SystemLog.instance().addSimulationResultTarget(resultTarget);
-        }
-    }
-
-    /**
-     * Opens a simulations editor to present a simulation result if simulation
-     * is successful.
-     * 
-     * @author Miro Bezjak
-     */
-    private class AfterSimulationOpenEditor extends VetoableResourceAdapter {
-        @Override
-        public void resourceSimulated(Caseless projectName, Caseless fileName,
-                SimulationResult result) {
-            if (result.getWaveform() != null
-                    && !result.getWaveform().equals("")) {
-                ProjectInfo project = mapper.getProject(new ProjectIdentifier(
-                        projectName));
-                editorManagerFactory
-                        .get(
-                                new EditorIdentifier(new WaveAppletMetadata(),
-                                        new FileInfo(FileType.SIMULATION,
-                                                fileName, result.getWaveform(),
-                                                project.getId()))).open();
-            }
         }
     }
 

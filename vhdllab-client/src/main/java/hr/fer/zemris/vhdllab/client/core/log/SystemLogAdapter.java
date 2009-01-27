@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.client.core.log;
 
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 
 /**
  * An abstract adapter class for system log listener. The methods in this class
@@ -20,15 +18,7 @@ import hr.fer.zemris.vhdllab.api.results.SimulationResult;
  */
 public abstract class SystemLogAdapter implements SystemLogListener {
 	@Override
-	public void compilationTargetAdded(ResultTarget<CompilationResult> result) {
-	}
-
-	@Override
 	public void errorMessageAdded(SystemError message) {
-	}
-
-	@Override
-	public void simulationTargetAdded(ResultTarget<SimulationResult> result) {
 	}
 
 	@Override

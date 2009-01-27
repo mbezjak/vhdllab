@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.schema2.dummies;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
@@ -19,12 +17,6 @@ public class DummyResourceManager implements IResourceManager {
 	@Override
 	public void addVetoableResourceListener(VetoableResourceListener l) {
 		
-	}
-
-	@Override
-	public CompilationResult compile(Caseless projectName, Caseless fileName)
-			throws UniformAppletException {
-		return null;
 	}
 
 	@Override
@@ -110,12 +102,6 @@ public class DummyResourceManager implements IResourceManager {
 	}
 
 	@Override
-	public SimulationResult simulate(Caseless projectName, Caseless fileName)
-			throws UniformAppletException {
-		return null;
-	}
-
-	@Override
 	public VHDLGenerationResult generateVHDL(Caseless projectName, Caseless fileName)
 			throws UniformAppletException {
 		return null;
@@ -124,14 +110,6 @@ public class DummyResourceManager implements IResourceManager {
 	@Override
 	public boolean isCorrectFileName(Caseless name) {
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#saveErrorMessage(java.lang.String)
-	 */
-	@Override
-	public void saveErrorMessage(String content) throws UniformAppletException {
-		
 	}
 
 }

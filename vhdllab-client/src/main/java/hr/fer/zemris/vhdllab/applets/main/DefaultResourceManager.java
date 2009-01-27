@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.util.StringFormat;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
@@ -281,20 +279,6 @@ public class DefaultResourceManager implements IResourceManager {
     /*
      * (non-Javadoc)
      * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#
-     * saveErrorMessage(java.lang.String)
-     */
-    @Override
-    public void saveErrorMessage(String content) throws UniformAppletException {
-        if (content == null) {
-            throw new NullPointerException("Content cant be null");
-        }
-        communicator.saveErrorMessage(content);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
      * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getFileType
      * (java.lang.String, java.lang.String)
@@ -327,51 +311,6 @@ public class DefaultResourceManager implements IResourceManager {
             throw new NullPointerException("Project name cant be null");
         }
         return communicator.extractHierarchy(projectName);
-    }
-
-    /* COMPILATION METHOD */
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#compile
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public CompilationResult compile(Caseless projectName, Caseless fileName)
-            throws UniformAppletException {
-        try {
-            fireBeforeResourceCompilation(projectName, fileName);
-        } catch (ResourceVetoException e) {
-            return null;
-        }
-        CompilationResult result = communicator.compile(projectName, fileName);
-        fireResourceCompiled(projectName, fileName, result);
-        return result;
-    }
-
-    /* SIMULATION METHOD */
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#simulate
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public SimulationResult simulate(Caseless projectName, Caseless fileName)
-            throws UniformAppletException {
-        try {
-            fireBeforeResourceSimulation(projectName, fileName);
-        } catch (ResourceVetoException e) {
-            return null;
-        }
-        SimulationResult result = communicator.runSimulation(projectName,
-                fileName);
-        fireResourceSimulated(projectName, fileName, result);
-        return result;
     }
 
     /* IS-SOMETHING METHODS */
@@ -538,74 +477,6 @@ public class DefaultResourceManager implements IResourceManager {
     private void fireResourceDeleted(Caseless projectName, Caseless fileName) {
         for (VetoableResourceListener l : getVetoableResourceListeners()) {
             l.resourceDeleted(projectName, fileName);
-        }
-    }
-
-    /**
-     * Fires beforeResourceCompilation event.
-     * 
-     * @param projectName
-     *            a name of a project
-     * @param fileName
-     *            a name of a file
-     * @throws ResourceVetoException
-     *             a veto
-     */
-    private void fireBeforeResourceCompilation(Caseless projectName,
-            Caseless fileName) throws ResourceVetoException {
-        for (VetoableResourceListener l : getVetoableResourceListeners()) {
-            l.beforeResourceCompilation(projectName, fileName);
-        }
-    }
-
-    /**
-     * Fires resourceCompiled event.
-     * 
-     * @param projectName
-     *            a name of a project
-     * @param fileName
-     *            a name of a file
-     * @param result
-     *            a compilation result
-     */
-    private void fireResourceCompiled(Caseless projectName, Caseless fileName,
-            CompilationResult result) {
-        for (VetoableResourceListener l : getVetoableResourceListeners()) {
-            l.resourceCompiled(projectName, fileName, result);
-        }
-    }
-
-    /**
-     * Fires beforeResourceSimulation event.
-     * 
-     * @param projectName
-     *            a name of a project
-     * @param fileName
-     *            a name of a file
-     * @throws ResourceVetoException
-     *             a veto
-     */
-    private void fireBeforeResourceSimulation(Caseless projectName,
-            Caseless fileName) throws ResourceVetoException {
-        for (VetoableResourceListener l : getVetoableResourceListeners()) {
-            l.beforeResourceSimulation(projectName, fileName);
-        }
-    }
-
-    /**
-     * Fires resourceSimulated event.
-     * 
-     * @param projectName
-     *            a name of a project
-     * @param fileName
-     *            a name of a file
-     * @param result
-     *            a compilation result
-     */
-    private void fireResourceSimulated(Caseless projectName, Caseless fileName,
-            SimulationResult result) {
-        for (VetoableResourceListener l : getVetoableResourceListeners()) {
-            l.resourceSimulated(projectName, fileName, result);
         }
     }
 

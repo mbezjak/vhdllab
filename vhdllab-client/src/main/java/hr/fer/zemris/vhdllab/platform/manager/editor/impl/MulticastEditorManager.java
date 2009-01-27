@@ -41,6 +41,8 @@ public class MulticastEditorManager implements EditorManager {
 
     @Override
     public void open() {
+        throw new UnsupportedOperationException(
+                "This method isn't supported by " + getClass().getSimpleName());
     }
 
     @Override
@@ -70,6 +72,10 @@ public class MulticastEditorManager implements EditorManager {
 
     @Override
     public boolean save(boolean withDialog) {
+        if (managers.size() == 1) {
+            return managers.get(0).save(withDialog);
+        }
+
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>();
         Map<FileIdentifier, EditorManager> map = new HashMap<FileIdentifier, EditorManager>();
         for (EditorManager em : managers) {

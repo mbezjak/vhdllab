@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.client.core.log;
 
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
-
 import java.util.EventListener;
 
 /**
@@ -30,21 +27,5 @@ public interface SystemLogListener extends EventListener {
 	 *            an error message added
 	 */
 	void errorMessageAdded(SystemError message);
-
-	/**
-	 * Indicates that a compilation result target was added to the system log.
-	 * 
-	 * @param result
-	 *            a compilation result target
-	 */
-	void compilationTargetAdded(ResultTarget<CompilationResult> result);
-
-	/**
-	 * Indicates that a simulation result target was added to the system log.
-	 * 
-	 * @param result
-	 *            a simulation result target
-	 */
-	void simulationTargetAdded(ResultTarget<SimulationResult> result);
 
 }

@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.Caseless;
@@ -36,15 +34,7 @@ public interface ICommunicator {
     VHDLGenerationResult generateVHDL(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
-    CompilationResult compile(Caseless projectName, Caseless fileName)
-            throws UniformAppletException;
-
-    SimulationResult runSimulation(Caseless projectName, Caseless fileName)
-            throws UniformAppletException;
-
     CircuitInterface getCircuitInterfaceFor(Caseless projectName,
             Caseless fileName) throws UniformAppletException;
-
-    void saveErrorMessage(String content);
 
 }

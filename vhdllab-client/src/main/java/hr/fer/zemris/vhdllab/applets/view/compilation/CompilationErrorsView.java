@@ -2,9 +2,7 @@ package hr.fer.zemris.vhdllab.applets.view.compilation;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationListener;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.BorderLayout;
@@ -14,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,8 +43,6 @@ public class CompilationErrorsView extends AbstractView {
     /** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
     private JScrollPane scrollPane;
 
-    private ResultTarget<CompilationResult> resultTarget;
-
     /**
      * Constructor
      * 
@@ -61,12 +58,10 @@ public class CompilationErrorsView extends AbstractView {
      * @param resultTarget
      *            rezultat koji ce ciniti kontekst panela s greskama
      */
-    public void setContent(ResultTarget<CompilationResult> resultTarget) {
-        this.resultTarget = resultTarget;
-        CompilationResult result = resultTarget.getResult();
+    public void setContent(CompilationResult result) {
         if (result.isSuccessful()) {
             Format formatter = new SimpleDateFormat("HH:mm:ss");
-            String time = formatter.format(resultTarget.getDate());
+            String time = formatter.format(new Date());
             model.addElement(time + "  Compilation finished successfully.");
             return;
         }
@@ -96,26 +91,28 @@ public class CompilationErrorsView extends AbstractView {
         Pattern pattern = Pattern.compile("([^:]+):([^:]+):([^:]+):(.+)");
         Matcher matcher = pattern.matcher(error);
         if (matcher.matches()) {
-//            FileIdentifier resource = resultTarget.getResource();
-//            Editor editor;
-//            if (container.getResourceManager().getFileType(
-//                    resource.getProjectName(), resource.getFileName()).equals(
-//                    FileType.SOURCE)) {
-//                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-//                        .createFileEditorIdentifier(resource);
-//                editor = container.getEditorManager().getOpenedEditor(
-//                        identifier);
-//                if (editor == null) {
-//                    editor = container.getEditorManager().openEditorByResource(
-//                            identifier);
-//                }
-//            } else {
-//                IComponentIdentifier<FileIdentifier> identifier = ComponentIdentifierFactory
-//                        .createViewVHDLIdentifier(resource);
-//                editor = container.getEditorManager().viewVHDLCode(identifier);
-//            }
-//            int temp = Integer.valueOf(matcher.group(2));
-//            editor.highlightLine(temp);
+            // FileIdentifier resource = resultTarget.getResource();
+            // Editor editor;
+            // if (container.getResourceManager().getFileType(
+            // resource.getProjectName(), resource.getFileName()).equals(
+            // FileType.SOURCE)) {
+            // IComponentIdentifier<FileIdentifier> identifier =
+            // ComponentIdentifierFactory
+            // .createFileEditorIdentifier(resource);
+            // editor = container.getEditorManager().getOpenedEditor(
+            // identifier);
+            // if (editor == null) {
+            // editor = container.getEditorManager().openEditorByResource(
+            // identifier);
+            // }
+            // } else {
+            // IComponentIdentifier<FileIdentifier> identifier =
+            // ComponentIdentifierFactory
+            // .createViewVHDLIdentifier(resource);
+            // editor = container.getEditorManager().viewVHDLCode(identifier);
+            // }
+            // int temp = Integer.valueOf(matcher.group(2));
+            // editor.highlightLine(temp);
         }
     }
 
@@ -142,7 +139,8 @@ public class CompilationErrorsView extends AbstractView {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                scrollPane.setPreferredSize(CompilationErrorsView.this.getSize());
+                scrollPane.setPreferredSize(CompilationErrorsView.this
+                        .getSize());
             }
         });
 
@@ -151,11 +149,11 @@ public class CompilationErrorsView extends AbstractView {
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);
 
-        SystemLog.instance().addSystemLogListener(new SystemLogAdapter() {
+        getCompilationManager().addListener(new CompilationListener() {
             @Override
-            public void compilationTargetAdded(
-                    ResultTarget<CompilationResult> result) {
+            public void compiled(CompilationResult result) {
                 setContent(result);
+                getViewManager().select(CompilationErrorsView.class);
             }
         });
     }

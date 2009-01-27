@@ -630,7 +630,13 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            systemContainer.compile(name, fileName);
+                            getCompilationManager()
+                                    .compile(
+                                            getMapper()
+                                                    .getFile(
+                                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                                                                    name,
+                                                                    fileName)));
                         }
                     }
                 } else if (event.getSource().equals(simulate)) {
@@ -638,7 +644,13 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            systemContainer.simulate(name, fileName);
+                            getSimulationManager()
+                            .simulate(
+                                    getMapper()
+                                            .getFile(
+                                                    new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                                                            name,
+                                                            fileName)));
                         }
                     }
                 } else if (event.getSource().equals(setActive)) {

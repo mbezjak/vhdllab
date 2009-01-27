@@ -2,9 +2,7 @@ package hr.fer.zemris.vhdllab.applets.view.simulation;
 
 import hr.fer.zemris.vhdllab.api.results.SimulationMessage;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
-import hr.fer.zemris.vhdllab.client.core.log.ResultTarget;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationListener;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
 import java.awt.BorderLayout;
@@ -12,6 +10,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -55,12 +54,11 @@ public class SimulationErrorsView extends AbstractView {
 	 * @param resultTarget
 	 *            rezultat koji ce ciniti kontekst panela s greskama
 	 */
-	public void setContent(ResultTarget<SimulationResult> resultTarget) {
-		SimulationResult result = resultTarget.getResult();
+	public void setContent(SimulationResult result) {
 		if (result.isSuccessful()) {
 			// TODO ovo ucitat iz bundle-a
 			Format formatter = new SimpleDateFormat("HH:mm:ss");
-			String time = formatter.format(resultTarget.getDate());
+			String time = formatter.format(new Date());
 			model.addElement(time + "  Simulation finished successfully.");
 			return;
 		}
@@ -93,10 +91,11 @@ public class SimulationErrorsView extends AbstractView {
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
 		
-		SystemLog.instance().addSystemLogListener(new SystemLogAdapter() {
+		getSimulationManager().addListener(new SimulationListener() {
             @Override
-            public void simulationTargetAdded(ResultTarget<SimulationResult> result) {
+            public void simulated(SimulationResult result) {
                 setContent(result);
+                getViewManager().select(SimulationErrorsView.class);
             }
         });
 	}

@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
@@ -198,19 +196,6 @@ public interface IResourceManager {
             throws UniformAppletException;
 
     /**
-     * Saves an error message.
-     * 
-     * @param content
-     *            an error message content to save
-     * @throws NullPointerException
-     *             if <code>content</code> is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    void saveErrorMessage(String content) throws UniformAppletException;
-
-    /**
      * Returns a file type of a specified file. Return value can be
      * <code>null</code> and in that case it indicates an error has occurred.
      * 
@@ -238,46 +223,6 @@ public interface IResourceManager {
      *             responding)
      */
     Hierarchy extractHierarchy(Caseless projectName)
-            throws UniformAppletException;
-
-    /* COMPILATION METHOD */
-
-    /**
-     * Compiles a specified resource. Return value can be <code>null</code> if
-     * someone vetoed compilation.
-     * 
-     * @param projectName
-     *            a resource's project name
-     * @param fileName
-     *            a resource's file name
-     * @return a compilation result
-     * @throws NullPointerException
-     *             if either parameter is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    CompilationResult compile(Caseless projectName, Caseless fileName)
-            throws UniformAppletException;
-
-    /* SIMULATION METHOD */
-
-    /**
-     * Simulates a specified resource. Return value can be <code>null</code> if
-     * someone vetoed simulation.
-     * 
-     * @param projectName
-     *            a resource's project name
-     * @param fileName
-     *            a resource's file name
-     * @return a simulation result
-     * @throws NullPointerException
-     *             if either parameter is <code>null</code>
-     * @throws UniformAppletException
-     *             if exceptional condition occurs (for example server is not
-     *             responding)
-     */
-    SimulationResult simulate(Caseless projectName, Caseless fileName)
             throws UniformAppletException;
 
     /* IS-SOMETHING METHODS */
