@@ -21,11 +21,9 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
-import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
@@ -55,10 +53,6 @@ public class DefaultSystemContainer implements ISystemContainer,
     private IdentifierToInfoObjectMapper mapper;
     @Autowired
     private ProjectManager projectManager;
-    @Autowired
-    private CompilationManager compilationManager;
-    @Autowired
-    private SimulationManager simulationManager;
     private ResourceBundle bundle;
 
     private Frame getParentFrame() {
