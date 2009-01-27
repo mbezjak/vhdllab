@@ -11,9 +11,9 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
  */
 
 
+import hr.fer.zemris.vhdllab.api.util.StringFormat;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
-import hr.fer.zemris.vhdllab.utilities.StringUtil;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -939,7 +939,7 @@ public class AutoDrawer extends JPanel{
 						boolean z2=true;
 						if(zastavica){
 							for(Stanje st:stanja) if(st.equals(stanjeZaDodati))z2=false;
-							if(!isCorrectEntityName("st_"+stanjeZaDodati.ime))z2=false;
+							if(!StringFormat.isCorrectEntityName("st_"+stanjeZaDodati.ime))z2=false;
 						}
 						if(z2&&(!listaSignala.contains("st_"+stanjeZaDodati.ime.toLowerCase())))zastavica=false;
 						else{
@@ -1167,7 +1167,7 @@ public class AutoDrawer extends JPanel{
 				if(selected.equals(options[1])) return string;
 				else {
 					String st=name.getText();
-					if((listaSignala.contains(st.toLowerCase())||!isCorrectEntityName(st))&&!st.equalsIgnoreCase(string)){
+					if((listaSignala.contains(st.toLowerCase())||!StringFormat.isCorrectEntityName(st))&&!st.equalsIgnoreCase(string)){
 						String[] options2={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
 								bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
 						JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_SIGNALEXISTS),
@@ -1213,26 +1213,6 @@ public class AutoDrawer extends JPanel{
 		}
 	}
 	
-	public static boolean isCorrectEntityName(String s) {
-		if( s == null ) throw new NullPointerException("String can not be null.");
-		char[] chars = s.toCharArray();
-		if( chars.length == 0 ) return false;
-		if( !StringUtil.isAlpha(chars[0]) ) return false;
-		if( StringUtil.isUnderscore(chars[s.length()-1]) ) return false;
-		for(int i = 0; i < chars.length; i++) {      
-			if( StringUtil.isAlpha(chars[i]) ||
-				StringUtil.isNumeric(chars[i]) ) continue;
-			if( StringUtil.isUnderscore(chars[i]) ) {
-				if( (i + 1) < chars.length 
-					&& StringUtil.isUnderscore(chars[i+1]) )
-					return false;
-				continue;
-			}
-			return false;
-		}  
-		return true;
-	}
-
 	/*public void setMinXY(int minX,int minY) {
 		this.minX = minX;
 		this.minY=minY;
