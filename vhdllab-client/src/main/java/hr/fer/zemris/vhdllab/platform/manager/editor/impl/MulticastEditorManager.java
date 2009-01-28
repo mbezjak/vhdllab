@@ -64,9 +64,16 @@ public class MulticastEditorManager implements EditorManager {
 
     @Override
     public void close() {
-        save(true);
+        close(true);
+    }
+
+    @Override
+    public void close(boolean saveFirst) throws NotOpenedException {
+        if(saveFirst) {
+            save(true);
+        }
         for (EditorManager man : managers) {
-            man.close();
+            man.close(saveFirst);
         }
     }
 

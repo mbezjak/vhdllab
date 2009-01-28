@@ -8,7 +8,10 @@ import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,8 @@ public class DefaultResourceManager implements IResourceManager {
      */
     @Autowired
     private ICommunicator communicator;
+    @Autowired
+    private IdentifierToInfoObjectMapper mapper;
 
     /**
      * Vetoable resource listeners.
@@ -139,8 +144,9 @@ public class DefaultResourceManager implements IResourceManager {
         if (isPredefined(projectName, fileName)) {
             return;
         }
+        FileInfo file = mapper.getFile(new FileIdentifier(projectName, fileName));
         communicator.deleteFile(projectName, fileName);
-        fireResourceDeleted(projectName, fileName);
+        fireResourceDeleted(projectName, file);
     }
 
     /*
@@ -474,9 +480,9 @@ public class DefaultResourceManager implements IResourceManager {
      * @param fileName
      *            a name of a file
      */
-    private void fireResourceDeleted(Caseless projectName, Caseless fileName) {
+    private void fireResourceDeleted(Caseless projectName, FileInfo file) {
         for (VetoableResourceListener l : getVetoableResourceListeners()) {
-            l.resourceDeleted(projectName, fileName);
+            l.resourceDeleted(projectName, file);
         }
     }
 

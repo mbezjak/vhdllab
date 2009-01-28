@@ -551,7 +551,8 @@ public class SchemaMainPanel extends AbstractEditor {
 			}
 
 			@Override
-			public void resourceDeleted(hr.fer.zemris.vhdllab.entities.Caseless projectName, hr.fer.zemris.vhdllab.entities.Caseless fileName) {
+			public void resourceDeleted(hr.fer.zemris.vhdllab.entities.Caseless projectName, FileInfo file) {
+			    hr.fer.zemris.vhdllab.entities.Caseless fileName = file.getName();
 				// don't bother with non-circuits
 				if (!getSystemContainer().getResourceManager().isCircuit(projectName, fileName)) return;
 				

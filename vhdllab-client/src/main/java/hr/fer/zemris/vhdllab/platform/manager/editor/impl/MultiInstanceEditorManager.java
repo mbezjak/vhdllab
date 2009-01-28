@@ -32,12 +32,19 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
 
     @Override
     public void close() throws NotOpenedException {
+        close(true);
+    }
+    
+    @Override
+    public void close(boolean saveFirst) throws NotOpenedException {
         checkIfOpened();
-        doClose();
+        doClose(saveFirst);
     }
 
-    protected void doClose() {
-        save(true);
+    protected void doClose(boolean saveFirst) {
+        if(saveFirst) {
+            save(true);
+        }
         editor.dispose();
         JPanel panel = editor.getPanel();
         container.remove(panel, group);

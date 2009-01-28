@@ -49,6 +49,10 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
     @Override
     public EditorManager get(EditorIdentifier identifier) {
         Validate.notNull(identifier, "View identifier can't be null");
+        EditorManager manager = registry.get(identifier);
+        if(manager != null) {
+            return manager;
+        }
         return configureManager(new MultiInstanceEditorManager(identifier));
     }
 

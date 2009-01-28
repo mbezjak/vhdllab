@@ -8,6 +8,7 @@ import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
@@ -74,7 +75,11 @@ public class DefaultSimulationManager extends
                     .getName(), waveform, project.getId());
             EditorIdentifier identifier = new EditorIdentifier(
                     new WaveAppletMetadata(), simulationFile);
-            editorManagerFactory.get(identifier).open();
+            EditorManager simulationEditor = editorManagerFactory.get(identifier);
+            if(simulationEditor.isOpened()) {
+                simulationEditor.close();
+            }
+            simulationEditor.open();
         }
     }
 

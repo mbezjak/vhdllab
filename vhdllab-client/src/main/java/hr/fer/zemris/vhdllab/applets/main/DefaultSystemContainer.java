@@ -21,6 +21,7 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
@@ -575,10 +576,12 @@ public class DefaultSystemContainer implements ISystemContainer,
      * @author Miro Bezjak
      */
     private class ResourceDeletedCloseEditor extends VetoableResourceAdapter {
-
         @Override
-        public void resourceDeleted(Caseless projectName, Caseless fileName) {
-            // TODO napravit ovo. kvagu kolko problema s tim.
+        public void resourceDeleted(Caseless projectName, FileInfo file) {
+            EditorManager em = editorManagerFactory.get(file);
+            if (em.isOpened()) {
+                em.close(false);
+            }
         }
     }
 

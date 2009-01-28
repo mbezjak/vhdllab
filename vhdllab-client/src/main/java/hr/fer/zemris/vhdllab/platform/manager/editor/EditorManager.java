@@ -11,6 +11,8 @@ public interface EditorManager {
     boolean isSelected() throws NotOpenedException;
 
     void close() throws NotOpenedException;
+    
+    void close(boolean saveFirst) throws NotOpenedException;
 
     boolean save(boolean withDialog) throws NotOpenedException;
 

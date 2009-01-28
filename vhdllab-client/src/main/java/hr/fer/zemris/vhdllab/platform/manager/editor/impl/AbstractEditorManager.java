@@ -79,7 +79,7 @@ public abstract class AbstractEditorManager extends LocalizationSupport
             String tooltip = getTooltip();
             JPanel panel = editor.getPanel();
             container.add(title, tooltip, panel, group);
-            registry.add(this, panel);
+            registry.add(this, panel, identifier);
         }
         select();
     }

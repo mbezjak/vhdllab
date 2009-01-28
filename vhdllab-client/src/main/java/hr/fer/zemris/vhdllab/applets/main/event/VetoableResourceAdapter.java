@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main.event;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 
 /**
@@ -20,47 +21,48 @@ import hr.fer.zemris.vhdllab.entities.FileType;
  * @author Miro Bezjak
  */
 public abstract class VetoableResourceAdapter implements
-		VetoableResourceListener {
+        VetoableResourceListener {
 
-	@Override
-	public void beforeResourceCompilation(Caseless projectName, Caseless fileName)
-			throws ResourceVetoException {
-	}
+    @Override
+    public void beforeResourceCompilation(Caseless projectName,
+            Caseless fileName) throws ResourceVetoException {
+    }
 
-	@Override
-	public void beforeResourceCreation(Caseless projectName, Caseless fileName,
-			FileType type) throws ResourceVetoException {
-	}
+    @Override
+    public void beforeResourceCreation(Caseless projectName, Caseless fileName,
+            FileType type) throws ResourceVetoException {
+    }
 
-	@Override
-	public void beforeResourceSimulation(Caseless projectName, Caseless fileName)
-			throws ResourceVetoException {
-	}
+    @Override
+    public void beforeResourceSimulation(Caseless projectName, Caseless fileName)
+            throws ResourceVetoException {
+    }
 
-	@Override
-	public void projectCreated(Caseless projectName) {
-	}
+    @Override
+    public void projectCreated(Caseless projectName) {
+    }
 
-	@Override
-	public void resourceCompiled(Caseless projectName, Caseless fileName,
-			CompilationResult result) {
-	}
+    @Override
+    public void resourceCompiled(Caseless projectName, Caseless fileName,
+            CompilationResult result) {
+    }
 
-	@Override
-	public void resourceCreated(Caseless projectName, Caseless fileName, FileType type) {
-	}
+    @Override
+    public void resourceCreated(Caseless projectName, Caseless fileName,
+            FileType type) {
+    }
 
-	@Override
-	public void resourceDeleted(Caseless projectName, Caseless fileName) {
-	}
-	
-	@Override
-	public void resourceSaved(Caseless projectName, Caseless fileName) {
-	}
+    @Override
+    public void resourceDeleted(Caseless projectName, FileInfo file) {
+    }
 
-	@Override
-	public void resourceSimulated(Caseless projectName, Caseless fileName,
-			SimulationResult result) {
-	}
+    @Override
+    public void resourceSaved(Caseless projectName, Caseless fileName) {
+    }
+
+    @Override
+    public void resourceSimulated(Caseless projectName, Caseless fileName,
+            SimulationResult result) {
+    }
 
 }

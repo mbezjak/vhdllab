@@ -27,6 +27,10 @@ public class NoSelectionEditorManager implements EditorManager {
     @Override
     public void close() throws NotOpenedException {
     }
+    
+    @Override
+    public void close(boolean saveFirst) throws NotOpenedException {
+    }
 
     @Override
     public boolean save(boolean withDialog) throws NotOpenedException {

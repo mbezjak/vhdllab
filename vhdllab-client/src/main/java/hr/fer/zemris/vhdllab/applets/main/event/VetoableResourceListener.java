@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.applets.main.event;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 
 import java.util.EventListener;
@@ -53,7 +54,7 @@ public interface VetoableResourceListener extends EventListener {
 	 * @param fileName
 	 *            a name of a deleted file
 	 */
-	void resourceDeleted(Caseless projectName, Caseless fileName);
+	void resourceDeleted(Caseless projectName, FileInfo file);
 	
 	/**
 	 * Indicates that a resource has been saved.
