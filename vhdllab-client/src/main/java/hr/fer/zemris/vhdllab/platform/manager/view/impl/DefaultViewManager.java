@@ -1,18 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.manager.view.impl;
 
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
-import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationManager;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
-import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
+import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.view.View;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,19 +29,7 @@ public class DefaultViewManager extends LocalizationSupport implements
     @Resource(name = "groupBasedComponentContainer")
     private ComponentContainer container;
     @Autowired
-    private ISystemContainer systemContainer;
-    @Autowired
-    private EditorManagerFactory editorManagerFactory;
-    @Autowired
-    private IdentifierToInfoObjectMapper mapper;
-    @Autowired
-    private ProjectManager projectManager;
-    @Autowired
-    private FileManager fileManager;
-    @Autowired
-    private CompilationManager compilationManager;
-    @Autowired
-    private SimulationManager simulationManager;
+    private PlatformContainer platformContainer;
     private final Map<Class<? extends View>, JPanel> openedViews;
     private IProjectExplorer projectExplorer;
 
@@ -64,14 +46,7 @@ public class DefaultViewManager extends LocalizationSupport implements
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        instance.setSystemContainer(systemContainer);
-        instance.setEditorManagerFactory(editorManagerFactory);
-        instance.setViewManager(this);
-        instance.setMapper(mapper);
-        instance.setProjectManager(projectManager);
-        instance.setFileManager(fileManager);
-        instance.setCompilationManager(compilationManager);
-        instance.setSimulationManager(simulationManager);
+        instance.setContainer(platformContainer);
         instance.init();
         String title = getTitle(viewClass);
         String tooltip = getTooltip(viewClass);

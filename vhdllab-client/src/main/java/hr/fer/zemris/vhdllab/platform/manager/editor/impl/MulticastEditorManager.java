@@ -89,11 +89,13 @@ public class MulticastEditorManager implements EditorManager {
             EditorIdentifier editorIdentifier = em.getIdentifier();
             if (editorIdentifier.getMetadata().isSaveable()) {
                 FileInfo file = editorIdentifier.getInstanceModifier();
-                ProjectInfo project = mapper.getProject(file.getProjectId());
-                FileIdentifier fileIdentifier = new FileIdentifier(project
-                        .getName(), file.getName());
-                identifiers.add(fileIdentifier);
-                map.put(fileIdentifier, em);
+                if(file != null) {
+                    ProjectInfo project = mapper.getProject(file.getProjectId());
+                    FileIdentifier fileIdentifier = new FileIdentifier(project
+                            .getName(), file.getName());
+                    identifiers.add(fileIdentifier);
+                    map.put(fileIdentifier, em);
+                }
             }
         }
         List<FileIdentifier> resourcesToSave = saveDialog

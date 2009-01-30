@@ -59,7 +59,7 @@ public class Testpan extends JFrame {
 		aut = new Automat();
 		//FileContent fc=new FileContent("ljd","skadh",xmlAut);
 		//aut.setFileContent(fc);
-		aut.setSystemContainer(null);
+		aut.setContainer(null);
 		FileContent fc=aut.getInitialFileContent(b1, new Caseless("default project"));
 		if (fc!=null){
 			aut.init();

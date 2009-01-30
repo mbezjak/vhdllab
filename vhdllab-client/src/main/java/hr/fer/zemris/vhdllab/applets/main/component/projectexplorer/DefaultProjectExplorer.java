@@ -185,6 +185,7 @@ public class DefaultProjectExplorer extends AbstractView implements
 
     @Override
     public void init() {
+        setSystemContainer(container.getSystemContainer());
         // create set of expanded treepaths
         expandedNodes = new HashSet<TreePath>();
         allProjects = new ArrayList<Caseless>();
@@ -344,13 +345,13 @@ public class DefaultProjectExplorer extends AbstractView implements
                 tree.requestFocusInWindow();
             }
         });
-        getProjectManager().addListener(new ProjectAdapter() {
+        container.getProjectManager().addListener(new ProjectAdapter() {
             @Override
             public void projectCreated(ProjectInfo project) {
                 addProject(project.getName());
             }
         });
-        getFileManager().addListener(new FileAdapter() {
+        container.getFileManager().addListener(new FileAdapter() {
             @Override
             public void fileCreated(FileReport report) {
                 addFile(report.getHierarchy().getProjectName(), report
@@ -630,9 +631,9 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            getCompilationManager()
+                            container.getCompilationManager()
                                     .compile(
-                                            getMapper()
+                                            container.getMapper()
                                                     .getFile(
                                                             new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                                     name,
@@ -644,9 +645,9 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            getSimulationManager()
+                            container.getSimulationManager()
                             .simulate(
-                                    getMapper()
+                                    container.getMapper()
                                             .getFile(
                                                     new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                             name,
@@ -664,21 +665,21 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            FileInfo f = getMapper()
+                            FileInfo f = container.getMapper()
                                     .getFile(
                                             new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                     name, fileName));
                             VHDLGenerationResult result;
                             try {
-                                result = getSystemContainer()
+                                result = container.getSystemContainer()
                                         .getResourceManager().generateVHDL(
                                                 name, fileName);
                             } catch (UniformAppletException e) {
                                 throw new IllegalStateException(e);
                             }
-                            ProjectInfo project = getMapper().getProject(
+                            ProjectInfo project = container.getMapper().getProject(
                                     f.getProjectId());
-                            getEditorManagerFactory().get(
+                            container.getEditorManagerFactory().get(
                                     new EditorIdentifier(
                                             new ViewVhdlEditorMetadata(),
                                             new FileInfo(FileType.SOURCE,
@@ -840,8 +841,8 @@ public class DefaultProjectExplorer extends AbstractView implements
                             if (name != null) {
                                 hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier identifier = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                         name, fileName);
-                                FileInfo file = getMapper().getFile(identifier);
-                                getEditorManagerFactory().get(file).open();
+                                FileInfo file = container.getMapper().getFile(identifier);
+                                container.getEditorManagerFactory().get(file).open();
                                 // systemContainer.getEditorManager()
                                 // .openEditorByResource(identifier);
                             }
@@ -950,8 +951,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * @param container
      *            systemContainer
      */
-    @Override
-    public void setSystemContainer(ISystemContainer container) {
+    private void setSystemContainer(ISystemContainer container) {
         this.systemContainer = container;
     }
 

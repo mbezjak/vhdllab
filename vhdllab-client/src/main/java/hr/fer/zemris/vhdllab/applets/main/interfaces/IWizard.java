@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 
 import java.awt.Component;
 
@@ -35,7 +36,7 @@ public interface IWizard {
 	 *            a project container
 	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer
 	 */
-	void setSystemContainer(ISystemContainer container);
+	void setContainer(PlatformContainer container);
 
 	/**
 	 * Returns an initial <code>FileContent</code> where initial means file

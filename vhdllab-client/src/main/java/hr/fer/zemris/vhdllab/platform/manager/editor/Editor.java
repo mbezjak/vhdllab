@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
@@ -29,7 +28,5 @@ public interface Editor extends View {
     EventPublisher<EditorListener> getEventPublisher();
 
     IWizard getWizard();
-
-    void setSystemContainer(ISystemContainer systemContainer);
 
 }

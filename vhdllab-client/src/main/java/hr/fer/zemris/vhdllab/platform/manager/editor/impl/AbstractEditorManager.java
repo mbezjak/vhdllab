@@ -1,20 +1,13 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
-import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationManager;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
-import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 
 import javax.annotation.Resource;
 import javax.swing.JPanel;
@@ -37,21 +30,7 @@ public abstract class AbstractEditorManager extends LocalizationSupport
     protected Editor editor;
 
     @Autowired
-    private ISystemContainer systemContainer;
-    @Autowired
-    private EditorManagerFactory editorManagerFactory;
-    @Autowired
-    private ViewManager viewManager;
-    @Autowired
-    protected IdentifierToInfoObjectMapper mapper;
-    @Autowired
-    private ProjectManager projectManager;
-    @Autowired
-    protected FileManager fileManager;
-    @Autowired
-    private CompilationManager compilationManager;
-    @Autowired
-    private SimulationManager simulationManager;
+    private PlatformContainer platformContainer;
 
     protected AbstractEditorManager(EditorIdentifier identifier,
             ComponentGroup group) {
@@ -65,14 +44,7 @@ public abstract class AbstractEditorManager extends LocalizationSupport
     public void open() {
         if (!isOpened()) {
             editor = newInstance();
-            editor.setSystemContainer(systemContainer);
-            editor.setEditorManagerFactory(editorManagerFactory);
-            editor.setViewManager(viewManager);
-            editor.setMapper(mapper);
-            editor.setProjectManager(projectManager);
-            editor.setFileManager(fileManager);
-            editor.setCompilationManager(compilationManager);
-            editor.setSimulationManager(simulationManager);
+            editor.setContainer(platformContainer);
             editor.init();
             configureComponent();
             String title = getTitle();

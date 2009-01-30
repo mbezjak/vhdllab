@@ -149,11 +149,11 @@ public class CompilationErrorsView extends AbstractView {
         this.setLayout(new BorderLayout());
         this.add(scrollPane, BorderLayout.CENTER);
 
-        getCompilationManager().addListener(new CompilationListener() {
+        container.getCompilationManager().addListener(new CompilationListener() {
             @Override
             public void compiled(CompilationResult result) {
                 setContent(result);
-                getViewManager().select(CompilationErrorsView.class);
+                getContainer().getViewManager().select(CompilationErrorsView.class);
             }
         });
     }

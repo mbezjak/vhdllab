@@ -25,6 +25,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
+import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
@@ -42,6 +43,8 @@ import org.springframework.stereotype.Component;
 public class DefaultSystemContainer implements ISystemContainer,
         WorkspaceInitializationListener {
 
+    @Autowired
+    private PlatformContainer platformContainer;
     @Autowired
     private IResourceManager resourceManager;
     @Autowired
@@ -196,7 +199,7 @@ public class DefaultSystemContainer implements ISystemContainer,
             throw new NullPointerException("Wizard cant be null");
         }
         // Initialization of a wizard
-        wizard.setSystemContainer(this);
+        wizard.setContainer(platformContainer);
         FileContent content = wizard.getInitialFileContent(getParentFrame(),
                 projectName);
         // end of initialization
@@ -275,18 +278,9 @@ public class DefaultSystemContainer implements ISystemContainer,
     private String showCreateProjectDialog() {
         String title = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
         String message = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
-        String ok = getBundleString(LanguageConstants.DIALOG_BUTTON_OK);
-        String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-        Object[] options = new Object[] { ok, cancel };
 
-        String projectName = (String) JOptionPane.showInputDialog(
-                getParentFrame(), message, title, JOptionPane.OK_CANCEL_OPTION,
-                null, options, options[0]);
-        /*
-         * try { if(projectName != null &&
-         * communicator.existsProject(projectName)) { return null; } } catch
-         * (UniformAppletException e) { }
-         */
+        String projectName = JOptionPane.showInputDialog(
+                getParentFrame(), message, title, JOptionPane.PLAIN_MESSAGE);
         return projectName;
     }
 

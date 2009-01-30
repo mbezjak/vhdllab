@@ -91,11 +91,11 @@ public class SimulationErrorsView extends AbstractView {
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
 		
-		getSimulationManager().addListener(new SimulationListener() {
+		container.getSimulationManager().addListener(new SimulationListener() {
             @Override
             public void simulated(SimulationResult result) {
                 setContent(result);
-                getViewManager().select(SimulationErrorsView.class);
+                getContainer().getViewManager().select(SimulationErrorsView.class);
             }
         });
 	}

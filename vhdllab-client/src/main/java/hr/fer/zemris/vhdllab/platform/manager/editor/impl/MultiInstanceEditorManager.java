@@ -8,9 +8,13 @@ import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
 import javax.swing.JPanel;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class MultiInstanceEditorManager extends AbstractEditorManager {
 
@@ -18,6 +22,10 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
 
     @Resource(name = "singleSaveDialogManager")
     private DialogManager dialogManager;
+    @Autowired
+    private IdentifierToInfoObjectMapper mapper;
+    @Autowired
+    private FileManager fileManager;
 
     public MultiInstanceEditorManager(EditorIdentifier identifier) {
         super(identifier, ComponentGroup.EDITOR);

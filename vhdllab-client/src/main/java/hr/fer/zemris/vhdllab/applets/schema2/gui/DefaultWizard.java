@@ -12,11 +12,11 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaEntity;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
+import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 
 import java.awt.Component;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class DefaultWizard implements IWizard {
 	
 	
 	/* private fields */
-	private ISystemContainer container;
+	private PlatformContainer container;
 	
 	
 	public DefaultWizard() {
@@ -44,7 +44,7 @@ public class DefaultWizard implements IWizard {
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
 		EntityTable table = new EntityTable();
-		table.setProjectContainer(container);
+		table.setProjectContainer(container.getSystemContainer());
 		table.init();
 		
 		int option = 0;
@@ -63,7 +63,7 @@ public class DefaultWizard implements IWizard {
 			if(projectName == null) return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if(container.getResourceManager().existsFile(projectName, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()))) {
+				if(container.getSystemContainer().getResourceManager().existsFile(projectName, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()))) {
 					SystemLog.instance().addSystemMessage(ci.getName() + " already exists!", MessageType.INFORMATION);
 				}
 			} catch (UniformAppletException e) {
@@ -118,7 +118,7 @@ public class DefaultWizard implements IWizard {
 		} else return null;
 	}
 
-	public void setSystemContainer(ISystemContainer container) {
+	public void setContainer(PlatformContainer container) {
 		this.container = container;
 	}
 

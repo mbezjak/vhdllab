@@ -257,7 +257,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
 		EntityTable table = new EntityTable();
-		table.setProjectContainer(getSystemContainer());
+		table.setProjectContainer(container.getSystemContainer());
 		table.init();
 		int option = JOptionPane.showOptionDialog(parent, table,
 				"New VHDL source", optionType, messageType, null, options,
@@ -267,7 +267,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 				return null;
 			CircuitInterface ci = table.getCircuitInterface();
 			try {
-				if (getSystemContainer().getResourceManager().existsFile(projectName,
+				if (container.getSystemContainer().getResourceManager().existsFile(projectName,
 						new Caseless(ci.getName()))) {
 					SystemLog.instance().addSystemMessage(
 							ci.getName() + " already exists!",

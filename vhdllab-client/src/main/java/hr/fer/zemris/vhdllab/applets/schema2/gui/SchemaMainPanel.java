@@ -175,12 +175,12 @@ public class SchemaMainPanel extends AbstractEditor {
 	    if(getFile() == null) return null;
 		System.out.println("Initializing user prototypes.");
 
-		ProjectInfo project = getMapper().getProject(getFile().getProjectId());
+		ProjectInfo project = container.getMapper().getProject(getFile().getProjectId());
 		hr.fer.zemris.vhdllab.entities.Caseless projectname = project.getName();
 		hr.fer.zemris.vhdllab.entities.Caseless thisname = getFile().getName();
 		List<hr.fer.zemris.vhdllab.entities.Caseless> circuitnames = null;
 		try {
-			circuitnames = getSystemContainer().getResourceManager().getAllCircuits(projectname);
+			circuitnames = container.getSystemContainer().getResourceManager().getAllCircuits(projectname);
 		} catch (Exception e) {
 			return new ArrayList<CircuitInterface>();
 //			throw new SchemaException("Could not fetch circuits in project '"
@@ -189,7 +189,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
 		Hierarchy hierarchy;
 		try {
-			hierarchy = getSystemContainer().getResourceManager().extractHierarchy(projectname);
+			hierarchy = container.getSystemContainer().getResourceManager().extractHierarchy(projectname);
 		} catch (UniformAppletException e1) {
 			return new ArrayList<CircuitInterface>();
 //			throw new SchemaException("Cannot extract hierarchy for project '"
@@ -208,7 +208,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			// get circuit interface for the component
 			CircuitInterface circint;
 			try {
-				circint = getSystemContainer().getResourceManager()
+				circint = container.getSystemContainer().getResourceManager()
 						.getCircuitInterfaceFor(projectname, name);
 			} catch (UniformAppletException e) {
 				continue;
@@ -358,7 +358,7 @@ public class SchemaMainPanel extends AbstractEditor {
 	
 	@Override
 	protected void doDispose() {
-        getSystemContainer().getResourceManager().removeVetoableResourceListener(appletListener);
+	    container.getSystemContainer().getResourceManager().removeVetoableResourceListener(appletListener);
 	}
 
 	@Override
@@ -428,7 +428,7 @@ public class SchemaMainPanel extends AbstractEditor {
 	public boolean shouldBeAdded(hr.fer.zemris.vhdllab.entities.Caseless projectname, hr.fer.zemris.vhdllab.entities.Caseless filename) {
 		Hierarchy hierarchy;
 		try {
-			hierarchy = getSystemContainer().getResourceManager().extractHierarchy(projectname);
+			hierarchy = container.getSystemContainer().getResourceManager().extractHierarchy(projectname);
 		} catch (UniformAppletException e) {
 			e.printStackTrace();
 			return false;
@@ -480,7 +480,7 @@ public class SchemaMainPanel extends AbstractEditor {
 				if (fileName.equals(SchemaMainPanel.this.getFile().getName())) return;
 				
 				// don't add a non circuit
-				if (!getSystemContainer().getResourceManager().isCircuit(projectName, fileName)) return;
+				if (!container.getSystemContainer().getResourceManager().isCircuit(projectName, fileName)) return;
 				
 				// shouldn't be added to prototypes
 				if (!shouldBeAdded(projectName, fileName)) {
@@ -503,7 +503,7 @@ public class SchemaMainPanel extends AbstractEditor {
 				// must be added to prototype collection
 				CircuitInterface ci;
 				try {
-					ci = getSystemContainer().getResourceManager().getCircuitInterfaceFor(projectName, fileName);
+					ci = container.getSystemContainer().getResourceManager().getCircuitInterfaceFor(projectName, fileName);
 				} catch (UniformAppletException e) {
 					e.printStackTrace();
 					return;
@@ -531,7 +531,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			@Override
 			public void resourceCreated(hr.fer.zemris.vhdllab.entities.Caseless projectName, hr.fer.zemris.vhdllab.entities.Caseless fileName, FileType type) {
 				// don't add a non-circuit
-				if (!getSystemContainer().getResourceManager().isCircuit(projectName, fileName)) return;
+				if (!container.getSystemContainer().getResourceManager().isCircuit(projectName, fileName)) return;
 				
 				// check hierarchy to see if this should be added
 				if (!shouldBeAdded(projectName, fileName)) return;
@@ -539,7 +539,7 @@ public class SchemaMainPanel extends AbstractEditor {
 				// we must add - fetch circuit interface
 				CircuitInterface ci;
 				try {
-					ci = getSystemContainer().getResourceManager().getCircuitInterfaceFor(projectName, fileName);
+					ci = container.getSystemContainer().getResourceManager().getCircuitInterfaceFor(projectName, fileName);
 				} catch (UniformAppletException e) {
 					e.printStackTrace();
 					return;
@@ -554,7 +554,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			public void resourceDeleted(hr.fer.zemris.vhdllab.entities.Caseless projectName, FileInfo file) {
 			    hr.fer.zemris.vhdllab.entities.Caseless fileName = file.getName();
 				// don't bother with non-circuits
-				if (!getSystemContainer().getResourceManager().isCircuit(projectName, fileName)) return;
+				if (!container.getSystemContainer().getResourceManager().isCircuit(projectName, fileName)) return;
 				
 				// check if it was used in editor at all
 				Caseless cfn = new Caseless(fileName.toString());
@@ -600,7 +600,7 @@ public class SchemaMainPanel extends AbstractEditor {
 			
 			
 		};
-		getSystemContainer().getResourceManager().addVetoableResourceListener(appletListener);
+		container.getSystemContainer().getResourceManager().addVetoableResourceListener(appletListener);
 	}
 
 }

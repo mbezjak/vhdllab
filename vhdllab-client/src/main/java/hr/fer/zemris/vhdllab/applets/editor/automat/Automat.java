@@ -64,7 +64,7 @@ public class Automat extends AbstractEditor implements IWizard {
         adrw = new AutoDrawer(this);
 
         if (bundle != null)
-            adrw.setResourceBundle(getSystemContainer(), bundle);
+            adrw.setResourceBundle(container.getSystemContainer(), bundle);
 
         Icon ic = new ImageIcon(getClass().getResource("AddMode1.png"));
         final JToggleButton dodajNoviSignal = new JToggleButton(ic);
@@ -223,7 +223,7 @@ public class Automat extends AbstractEditor implements IWizard {
         if (adrw != null)
             adrw.setData(f.getData());
     }
-    
+
     @Override
     protected void doDispose() {
     }
@@ -239,7 +239,10 @@ public class Automat extends AbstractEditor implements IWizard {
 
     public FileContent getInitialFileContent(Component parent,
             Caseless projectName) {
-        AUTPodatci pod = new AUTPodatci(parent, getSystemContainer(), bundle);
+        bundle = ResourceBundleProvider
+                .getBundle("Client_Automat_ApplicationResources");
+        AUTPodatci pod = new AUTPodatci(parent, container.getSystemContainer(),
+                bundle);
         // TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
         String gen = null;
         if (pod.ime != null) {
