@@ -174,7 +174,8 @@ public final class VhdllabFrame extends JFrame implements
         Validate.notNull(title, "Project explorer's title can't be null");
         component.setBorder(BorderFactory.createTitledBorder(title));
         projectExplorerPane.add(component, BorderLayout.CENTER);
-        repaint();
+        projectExplorerPane.revalidate();
+        projectExplorerPane.repaint();
     }
 
     public JTabbedPane getEditorPane() {

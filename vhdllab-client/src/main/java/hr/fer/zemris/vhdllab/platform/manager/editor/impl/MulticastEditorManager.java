@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.save.SaveDialog;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import javax.annotation.Resource;
 
@@ -74,7 +76,7 @@ public class MulticastEditorManager implements EditorManager {
         if (saveFirst) {
             shouldSave = save(true);
         }
-        if(shouldSave) {
+        if (shouldSave) {
             for (EditorManager man : managers) {
                 man.close(false);
             }
@@ -110,9 +112,15 @@ public class MulticastEditorManager implements EditorManager {
                 }
             }
         }
-        if(!identifiers.isEmpty()) {
-            List<FileIdentifier> resourcesToSave = saveDialog.showDialog(
-                    identifiers, context);
+        if (!identifiers.isEmpty()) {
+            Preferences preferences = Preferences
+                    .userNodeForPackage(SaveDialog.class);
+            List<FileIdentifier> resourcesToSave;
+            if (preferences.getBoolean(SaveDialog.SHOULD_AUTO_SAVE, false)) {
+                resourcesToSave = identifiers;
+            } else {
+                resourcesToSave = saveDialog.showDialog(identifiers, context);
+            }
             if (resourcesToSave == null || resourcesToSave.isEmpty()) {
                 return false;
             }
@@ -135,7 +143,7 @@ public class MulticastEditorManager implements EditorManager {
         throw new UnsupportedOperationException(
                 "This method isn't supported by " + getClass().getSimpleName());
     }
-    
+
     @Override
     public boolean isModified() throws NotOpenedException {
         throw new UnsupportedOperationException(

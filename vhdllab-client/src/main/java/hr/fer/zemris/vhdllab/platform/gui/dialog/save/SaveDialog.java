@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -30,6 +31,8 @@ import org.apache.commons.lang.Validate;
 public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
 
     private static final long serialVersionUID = 1L;
+
+    public static final String SHOULD_AUTO_SAVE = "should.auto.save";
 
     private static final String ALWAYS_SAVE_MESSAGE = "dialog.multi.save.always_save_resources";
     private static final String SELECT_ALL_MESSAGE = "dialog.multi.save.select_all";
@@ -137,6 +140,16 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
 
         JCheckBox alwaysSave = new JCheckBox(source
                 .getMessage(ALWAYS_SAVE_MESSAGE));
+        alwaysSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JCheckBox checkBox = (JCheckBox) e.getSource();
+                Preferences preferences = Preferences
+                        .userNodeForPackage(SaveDialog.class);
+                preferences.putBoolean(SHOULD_AUTO_SAVE, checkBox
+                        .isSelected());
+            }
+        });
         alwaysSave.setSelected(false);
         JPanel alwaysSavePanel = new JPanel(new BorderLayout());
         alwaysSavePanel.add(alwaysSave, BorderLayout.WEST);

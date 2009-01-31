@@ -64,7 +64,8 @@ public final class Main {
          * because log4j doesn't directly invoke methods from System.out (or
          * System.err). Instead it wraps them around QuietWriter. Because we
          * want ConsoleAppender to act exactly the way System.out does, log4j
-         * needs to be initialized after substituting standard streams!
+         * needs to be initialized after substituting standard streams (in order
+         * to wrap correct stdout and stderr stream)!
          */
         logger = Logger.getLogger(Main.class);
     }
