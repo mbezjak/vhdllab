@@ -45,7 +45,9 @@ public final class GuiInitializer {
 
     private void initLookAndFeel() {
         try {
-            if (!System.getProperty("os.name").equals("Linux")) {
+            if (System.getProperty("os.name").equals("Linux")) {
+                UIManager.put("swing.boldMetal", Boolean.FALSE);
+            } else {
                 UIManager.setLookAndFeel(UIManager
                         .getSystemLookAndFeelClassName());
             }
