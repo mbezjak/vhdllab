@@ -16,7 +16,7 @@ public class ViewTabbedPane extends JTabbedPane {
     private static final long serialVersionUID = 1L;
 
     public ViewTabbedPane(MaximizationManager manager) {
-        super(TOP, SCROLL_TAB_LAYOUT);
+        super(TOP, WRAP_TAB_LAYOUT);
         Validate.notNull(manager, "Maximization manager can't be null");
         addMouseListener(new MaximizeOnDoubleClickMouseListener(manager));
         addContainerListener(new MinimizeWhenNoMoreTabsContainerListener(

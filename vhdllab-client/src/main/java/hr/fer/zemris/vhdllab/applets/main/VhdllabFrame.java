@@ -189,8 +189,9 @@ public final class VhdllabFrame extends JFrame implements
     public VhdllabFrame(ApplicationContext context) {
         this.context = context;
         setTitle("VHDLLab");
-        setPreferredSize(new Dimension(900, 700));
-        setSize(new Dimension(900, 700));
+        Dimension dimension = new Dimension(900, 700);
+        setPreferredSize(dimension);
+        setSize(dimension);
 
         URL resource = getClass().getClassLoader().getResource(
                 "icons/vhdllab_main_16.png");
