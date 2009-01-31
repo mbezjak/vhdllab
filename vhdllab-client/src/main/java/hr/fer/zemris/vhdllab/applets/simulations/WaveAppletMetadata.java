@@ -14,4 +14,14 @@ public class WaveAppletMetadata extends AbstractEditorMetadata {
         return null;
     }
 
+    @Override
+    public boolean isSaveable() {
+        return false;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
+
 }

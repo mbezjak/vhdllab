@@ -49,8 +49,9 @@ public abstract class AbstractEditor extends AbstractView implements Editor {
 
     @Override
     public FileInfo getFile() {
-        if (file != null && getData() != null) {
-            file.setData(getData());
+        String data = getData();
+        if (file != null && data != null) {
+            file.setData(data);
         }
         return file != null ? new FileInfo(file, true) : null;
     }
@@ -69,6 +70,10 @@ public abstract class AbstractEditor extends AbstractView implements Editor {
     public boolean isModified() {
         return modified;
     }
+    
+    @Override
+    public void setEditable(boolean flag) {
+    }
 
     /**
      * Fires a modified event in all editor listeners.
@@ -84,11 +89,6 @@ public abstract class AbstractEditor extends AbstractView implements Editor {
         for (EditorListener l : publisher.getListeners()) {
             l.modified(f, flag);
         }
-    }
-
-    @Override
-    public boolean isSavable() {
-        return true;
     }
 
     @Override

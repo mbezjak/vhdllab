@@ -16,8 +16,9 @@ public abstract class AbstractEditorMetadata implements EditorMetadata {
 
     public AbstractEditorMetadata(Class<? extends Editor> editorClass) {
         Validate.notNull(editorClass, "Editor class can't be null");
-        this.code = StringUtils.uncapitalize(editorClass.getSimpleName());
         this.editorClass = editorClass;
+        this.code = StringUtils.uncapitalize(getClass().getSimpleName()
+                .replace("Metadata", ""));
     }
 
     @Override
@@ -28,11 +29,6 @@ public abstract class AbstractEditorMetadata implements EditorMetadata {
     @Override
     public String getCode() {
         return code;
-    }
-
-    @Override
-    public boolean isSaveable() {
-        return true;
     }
 
     @Override

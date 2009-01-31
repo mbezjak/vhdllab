@@ -85,11 +85,6 @@ public class PreferencesEditor extends AbstractEditor implements
     }
 
     @Override
-    public boolean isSavable() {
-        return false;
-    }
-
-    @Override
     protected void doInitWithData(FileInfo f) {
         try {
             setPreferences(Preferences.userRoot());

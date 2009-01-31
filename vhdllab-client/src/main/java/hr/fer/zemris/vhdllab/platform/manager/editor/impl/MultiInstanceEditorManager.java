@@ -8,12 +8,13 @@ import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
 import javax.swing.JPanel;
 
+import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MultiInstanceEditorManager extends AbstractEditorManager {
@@ -23,8 +24,6 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
     @Resource(name = "singleSaveDialogManager")
     private DialogManager dialogManager;
     @Autowired
-    private IdentifierToInfoObjectMapper mapper;
-    @Autowired
     private FileManager fileManager;
 
     public MultiInstanceEditorManager(EditorIdentifier identifier) {
@@ -33,6 +32,7 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
 
     @Override
     protected void configureComponent() {
+        editor.setEditable(identifier.getMetadata().isEditable());
         editor.setFile(identifier.getInstanceModifier());
         EventPublisher<EditorListener> publisher = editor.getEventPublisher();
         publisher.addListener(new EditorModifiedListener());
@@ -42,46 +42,44 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
     public void close() throws NotOpenedException {
         close(true);
     }
-    
+
     @Override
     public void close(boolean saveFirst) throws NotOpenedException {
         checkIfOpened();
-        doClose(saveFirst);
-    }
-
-    protected void doClose(boolean saveFirst) {
-        if(saveFirst) {
+        if (saveFirst) {
             save(true);
         }
         editor.dispose();
         JPanel panel = editor.getPanel();
         container.remove(panel, group);
         registry.remove(panel);
-        // ConfigurableBeanFactory beanFactory = context.getBeanFactory();
-        // beanFactory.destroyBean(identifier.getViewName(), component);
         editor = null;
     }
 
     @Override
     public boolean save(boolean withDialog) {
+        return save(withDialog, SaveContext.NORMAL);
+    }
+
+    @Override
+    public boolean save(boolean withDialog, SaveContext context)
+            throws NotOpenedException {
         checkIfOpened();
-        boolean editorSaved = true;
-        if (editor.isSavable() && editor.isModified()) {
-            boolean shouldContinue = true;
+        Validate.notNull(context, "Save context can't be null");
+        if (identifier.getMetadata().isSaveable() && isModified()) {
             FileInfo file = editor.getFile();
             if (withDialog) {
                 ProjectInfo project = mapper.getProject(file.getProjectId());
-                shouldContinue = dialogManager.showDialog(file.getName(),
-                        project.getName());
+                boolean shouldContinue = dialogManager.showDialog(file
+                        .getName(), project.getName());
+                if (!shouldContinue) {
+                    return false;
+                }
             }
-            if (shouldContinue) {
-                fileManager.save(file);
-                editor.setModified(false);
-            } else {
-                editorSaved = false;
-            }
+            fileManager.save(file);
+            editor.setModified(false);
         }
-        return editorSaved;
+        return true;
     }
 
     void resetEditorTitle(boolean modified) {

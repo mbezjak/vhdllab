@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.platform.gui.dialog.save;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
+import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.awt.BorderLayout;
@@ -24,9 +25,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.commons.lang.Validate;
+
 public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String ALWAYS_SAVE_MESSAGE = "dialog.multi.save.always_save_resources";
+    private static final String SELECT_ALL_MESSAGE = "dialog.multi.save.select_all";
+    private static final String DESELECT_ALL_MESSAGE = "dialog.multi.save.deselect_all";
+    private static final String OK_MESSAGE = "dialog.multi.save.ok";
+    private static final String CANCEL_MESSAGE = "dialog.cancel";
+    private static final String SAVE_RESOURCES_TITLE = "dialog.multi.save.resources.title";
+    private static final String SAVE_RESOURCES_MESSAGE = "dialog.multi.save.resources.message";
+    private static final String COMPILE_AFTER_SAVE_TITLE = "dialog.multi.save.compile_after_save.title";
+    private static final String COMPILE_AFTER_SAVE_MESSAGE = "dialog.multi.save.compile_after_save.message";
+    private static final String SIMULATE_AFTER_SAVE_TITLE = "dialog.multi.save.simulate_after_save.title";
+    private static final String SIMULATE_AFTER_SAVE_MESSAGE = "dialog.multi.save.simulate_after_save.message";
 
     /** Size of a border */
     private static final int BORDER_SIZE = 10;
@@ -43,10 +58,11 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
 
     CheckBoxList list;
 
-    public SaveDialog(LocalizationSource source) {
+    public SaveDialog(LocalizationSource source, SaveContext context) {
         super(source);
+        Validate.notNull(context, "Save variant can't be null");
         // setup label
-        JLabel label = new JLabel();
+        JLabel label = new JLabel(getMainMessage(source, context));
         int width = DIALOG_WIDTH - 2 * BORDER_SIZE;
         int height = LABEL_HEIGHT - 2 * BORDER_SIZE;
         label.setPreferredSize(new Dimension(width, height));
@@ -63,7 +79,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
                 BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
 
         // setup select all and deselect all buttons
-        JButton selectAll = new JButton("Select All");
+        JButton selectAll = new JButton(source.getMessage(SELECT_ALL_MESSAGE));
         selectAll.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         selectAll.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -71,7 +87,8 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
             }
         });
 
-        JButton deselectAll = new JButton("Deselect All");
+        JButton deselectAll = new JButton(source
+                .getMessage(DESELECT_ALL_MESSAGE));
         deselectAll
                 .setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         deselectAll.addActionListener(new ActionListener() {
@@ -89,7 +106,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
                 0));
 
         // setup ok and cancel buttons
-        JButton ok = new JButton("OK");
+        JButton ok = new JButton(source.getMessage(OK_MESSAGE));
         ok.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -97,7 +114,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
             }
         });
 
-        JButton cancel = new JButton("Cancel");
+        JButton cancel = new JButton(source.getMessage(CANCEL_MESSAGE));
         cancel.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -118,7 +135,8 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
         JPanel actionPanel = new JPanel(new BorderLayout());
         actionPanel.add(actionBox, BorderLayout.EAST);
 
-        JCheckBox alwaysSave = new JCheckBox("Always save resources");
+        JCheckBox alwaysSave = new JCheckBox(source
+                .getMessage(ALWAYS_SAVE_MESSAGE));
         alwaysSave.setSelected(false);
         JPanel alwaysSavePanel = new JPanel(new BorderLayout());
         alwaysSavePanel.add(alwaysSave, BorderLayout.WEST);
@@ -136,9 +154,32 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
         this.getContentPane().add(messagePanel, BorderLayout.CENTER);
         this.getRootPane().setDefaultButton(ok);
         this.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
-        label.setText("Select Resources to save:");
-        if (getTitle() == null) {
-            setTitle("Save Resources");
+        this.setTitle(getTitle(source, context));
+    }
+
+    private String getTitle(LocalizationSource source, SaveContext context) {
+        switch (context) {
+        case NORMAL:
+            return source.getMessage(SAVE_RESOURCES_TITLE);
+        case COMPILE_AFTER_SAVE:
+            return source.getMessage(COMPILE_AFTER_SAVE_TITLE);
+        case SIMULATE_AFTER_SAVE:
+            return source.getMessage(SIMULATE_AFTER_SAVE_TITLE);
+        default:
+            throw new IllegalStateException("Unknown save context: " + context);
+        }
+    }
+
+    private String getMainMessage(LocalizationSource source, SaveContext context) {
+        switch (context) {
+        case NORMAL:
+            return source.getMessage(SAVE_RESOURCES_MESSAGE);
+        case COMPILE_AFTER_SAVE:
+            return source.getMessage(COMPILE_AFTER_SAVE_MESSAGE);
+        case SIMULATE_AFTER_SAVE:
+            return source.getMessage(SIMULATE_AFTER_SAVE_MESSAGE);
+        default:
+            throw new IllegalStateException("Unknown save context: " + context);
         }
     }
 

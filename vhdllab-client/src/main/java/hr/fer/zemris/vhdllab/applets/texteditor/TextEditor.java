@@ -210,6 +210,12 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 	
 	@Override
 	protected void doInitWithoutData() {
+        this.run();
+	}
+	
+	@Override
+	public void setEditable(boolean flag) {
+	    text.setEditable(flag);
 	}
 
 	@Override
@@ -516,12 +522,6 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 	public void dispose() {
 		scanner.stopScanner();
 		super.dispose();
-	}
-
-	@Override
-	public void init() {
-		super.init();
-		this.run();
 	}
 
 }

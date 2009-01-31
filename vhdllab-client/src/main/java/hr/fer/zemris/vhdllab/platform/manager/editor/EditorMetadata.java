@@ -12,4 +12,6 @@ public interface EditorMetadata {
 
     boolean isSaveable();
 
+    boolean isEditable();
+
 }

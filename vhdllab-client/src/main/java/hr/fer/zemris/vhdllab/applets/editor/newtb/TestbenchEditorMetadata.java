@@ -14,4 +14,14 @@ public class TestbenchEditorMetadata extends AbstractEditorMetadata {
         return TestbenchEditor.class;
     }
 
+    @Override
+    public boolean isSaveable() {
+        return true;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return true;
+    }
+
 }

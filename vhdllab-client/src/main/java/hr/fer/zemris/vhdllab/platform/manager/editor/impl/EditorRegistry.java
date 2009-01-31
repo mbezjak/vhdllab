@@ -33,7 +33,8 @@ public final class EditorRegistry {
 
     public void remove(JPanel panel) {
         Validate.notNull(panel, "Panel can't be null");
-        views.remove(panel);
+        EditorManager em = views.remove(panel);
+        editors.remove(em.getIdentifier());
     }
 
     public EditorManager get(JPanel panel) {

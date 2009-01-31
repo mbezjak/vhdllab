@@ -21,7 +21,7 @@ public interface Editor extends View {
 
     boolean isModified();
 
-    boolean isSavable();
+    void setEditable(boolean flag);
 
     void highlightLine(int line);
 

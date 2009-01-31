@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 
 public class NoSelectionEditorManager implements EditorManager {
 
@@ -27,7 +28,7 @@ public class NoSelectionEditorManager implements EditorManager {
     @Override
     public void close() throws NotOpenedException {
     }
-    
+
     @Override
     public void close(boolean saveFirst) throws NotOpenedException {
     }
@@ -38,11 +39,22 @@ public class NoSelectionEditorManager implements EditorManager {
     }
 
     @Override
+    public boolean save(boolean withDialog, SaveContext context)
+            throws NotOpenedException {
+        return false;
+    }
+
+    @Override
     public void undo() throws NotOpenedException {
     }
 
     @Override
     public void redo() throws NotOpenedException {
+    }
+
+    @Override
+    public boolean isModified() throws NotOpenedException {
+        return false;
     }
 
     @Override

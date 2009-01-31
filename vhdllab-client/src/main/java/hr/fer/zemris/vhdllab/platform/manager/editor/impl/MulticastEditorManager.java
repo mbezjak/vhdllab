@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
@@ -69,28 +70,39 @@ public class MulticastEditorManager implements EditorManager {
 
     @Override
     public void close(boolean saveFirst) throws NotOpenedException {
-        if(saveFirst) {
-            save(true);
+        boolean shouldSave = true;
+        if (saveFirst) {
+            shouldSave = save(true);
         }
-        for (EditorManager man : managers) {
-            man.close(saveFirst);
+        if(shouldSave) {
+            for (EditorManager man : managers) {
+                man.close(false);
+            }
         }
     }
 
     @Override
     public boolean save(boolean withDialog) {
+        return save(withDialog, SaveContext.NORMAL);
+    }
+
+    @Override
+    public boolean save(boolean withDialog, SaveContext context)
+            throws NotOpenedException {
+        Validate.notNull(context, "Save context can't be null");
         if (managers.size() == 1) {
-            return managers.get(0).save(withDialog);
+            return managers.get(0).save(withDialog, context);
         }
 
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>();
         Map<FileIdentifier, EditorManager> map = new HashMap<FileIdentifier, EditorManager>();
         for (EditorManager em : managers) {
             EditorIdentifier editorIdentifier = em.getIdentifier();
-            if (editorIdentifier.getMetadata().isSaveable()) {
+            if (editorIdentifier.getMetadata().isSaveable() && em.isModified()) {
                 FileInfo file = editorIdentifier.getInstanceModifier();
-                if(file != null) {
-                    ProjectInfo project = mapper.getProject(file.getProjectId());
+                if (file != null) {
+                    ProjectInfo project = mapper
+                            .getProject(file.getProjectId());
                     FileIdentifier fileIdentifier = new FileIdentifier(project
                             .getName(), file.getName());
                     identifiers.add(fileIdentifier);
@@ -98,14 +110,16 @@ public class MulticastEditorManager implements EditorManager {
                 }
             }
         }
-        List<FileIdentifier> resourcesToSave = saveDialog
-                .showDialog(identifiers);
-        if (resourcesToSave == null || resourcesToSave.isEmpty()) {
-            return false;
-        }
-        for (FileIdentifier i : resourcesToSave) {
-            EditorManager em = map.get(i);
-            em.save(false);
+        if(!identifiers.isEmpty()) {
+            List<FileIdentifier> resourcesToSave = saveDialog.showDialog(
+                    identifiers, context);
+            if (resourcesToSave == null || resourcesToSave.isEmpty()) {
+                return false;
+            }
+            for (FileIdentifier i : resourcesToSave) {
+                EditorManager em = map.get(i);
+                em.save(false);
+            }
         }
         return true;
     }
@@ -118,6 +132,12 @@ public class MulticastEditorManager implements EditorManager {
 
     @Override
     public void redo() throws NotOpenedException {
+        throw new UnsupportedOperationException(
+                "This method isn't supported by " + getClass().getSimpleName());
+    }
+    
+    @Override
+    public boolean isModified() throws NotOpenedException {
         throw new UnsupportedOperationException(
                 "This method isn't supported by " + getClass().getSimpleName());
     }

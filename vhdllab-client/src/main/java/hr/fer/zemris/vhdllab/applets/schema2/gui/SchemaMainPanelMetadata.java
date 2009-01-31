@@ -14,4 +14,14 @@ public class SchemaMainPanelMetadata extends AbstractEditorMetadata {
         return DefaultWizard.class;
     }
 
+    @Override
+    public boolean isSaveable() {
+        return true;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return true;
+    }
+
 }

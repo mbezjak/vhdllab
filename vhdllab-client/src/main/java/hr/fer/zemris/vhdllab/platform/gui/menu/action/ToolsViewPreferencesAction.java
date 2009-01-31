@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.gui.menu.action;
 
-import hr.fer.zemris.vhdllab.applets.editor.preferences.PreferencesMetadata;
+import hr.fer.zemris.vhdllab.applets.editor.preferences.PreferencesEditorMetadata;
 import hr.fer.zemris.vhdllab.platform.gui.menu.AbstractMenuAction;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
@@ -21,7 +21,7 @@ public class ToolsViewPreferencesAction extends AbstractMenuAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         editorManagerFactory.get(
-                new EditorIdentifier(new PreferencesMetadata())).open();
+                new EditorIdentifier(new PreferencesEditorMetadata())).open();
     }
 
 }

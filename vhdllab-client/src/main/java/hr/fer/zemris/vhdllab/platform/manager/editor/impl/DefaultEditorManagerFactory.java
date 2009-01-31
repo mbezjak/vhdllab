@@ -50,7 +50,7 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
     public EditorManager get(EditorIdentifier identifier) {
         Validate.notNull(identifier, "View identifier can't be null");
         EditorManager manager = registry.get(identifier);
-        if(manager != null) {
+        if (manager != null) {
             return manager;
         }
         return configureManager(new MultiInstanceEditorManager(identifier));
@@ -75,7 +75,7 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
             FileInfo file = get(panel).getIdentifier().getInstanceModifier();
             ProjectInfo project = mapper.getProject(file.getProjectId());
             if (project.getName().equals(projectName)) {
-                editors.add(panel);
+                editorsWithSpecifiedProjectName.add(panel);
             }
         }
         return createManager(editorsWithSpecifiedProjectName);

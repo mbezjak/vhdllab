@@ -1,13 +1,17 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
+import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
 import javax.swing.JPanel;
@@ -19,10 +23,14 @@ public abstract class AbstractEditorManager extends LocalizationSupport
         implements EditorManager {
 
     private static final String TITLE_PREFIX = "title.for.";
-    private static final String TOOLTIP_PREFIX = "title.for.";
+    private static final String TOOLTIP_PREFIX = "tooltip.for.";
+    private static final String EDITABLE_EDITOR_MESSAGE = "tooltip.editor.editable";
+    private static final String READONLY_EDITOR_MESSAGE = "tooltip.editor.readonly";
 
     @Autowired
     protected EditorRegistry registry;
+    @Autowired
+    protected IdentifierToInfoObjectMapper mapper;
     @Resource(name = "groupBasedComponentContainer")
     protected ComponentContainer container;
     protected final EditorIdentifier identifier;
@@ -100,6 +108,12 @@ public abstract class AbstractEditorManager extends LocalizationSupport
     }
 
     @Override
+    public boolean isModified() throws NotOpenedException {
+        checkIfOpened();
+        return editor.isModified();
+    }
+
+    @Override
     public EditorIdentifier getIdentifier() {
         return identifier;
     }
@@ -120,8 +134,21 @@ public abstract class AbstractEditorManager extends LocalizationSupport
     }
 
     private String getMessageWithPrefix(String prefix) {
-        String code = prefix + identifier.getMetadata().getCode();
-        return getMessage(code, null);
+        Object[] args = new Object[3];
+        EditorMetadata metadata = identifier.getMetadata();
+        FileInfo file = identifier.getInstanceModifier();
+        if (file != null) {
+            ProjectInfo project = mapper.getProject(file.getProjectId());
+            args[0] = file.getName();
+            args[1] = project.getName();
+        }
+        if (metadata.isEditable()) {
+            args[2] = getMessage(EDITABLE_EDITOR_MESSAGE);
+        } else {
+            args[2] = getMessage(READONLY_EDITOR_MESSAGE);
+        }
+        String code = prefix + metadata.getCode();
+        return getMessage(code, args);
     }
 
 }
