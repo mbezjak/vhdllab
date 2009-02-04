@@ -51,13 +51,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class TestbenchEditor extends AbstractEditor implements IWizard {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private Testbench testbench = null;
     private JTestbench jTestbench = null;
-    private boolean GUICreated = false; 
-    
+    private boolean GUICreated = false;
+
     private void initTestbench(String xml) {
         try {
             this.testbench = TestbenchParser.parseXml(xml);
@@ -65,86 +65,90 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
             e.printStackTrace();
         }
     }
-    
+
     private void createGUI() {
         this.GUICreated = true;
-        
+
         this.jTestbench = new JTestbench(this.testbench);
-        
+
         JPanel topPanel = new JPanel(new BorderLayout());
         JPanel topLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel topRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
+
         JButton zoomInButton = new JButton("Zoom in");
         JButton zoomOutButton = new JButton("Zoom out");
         JButton optimalZoom = new JButton("Optimal zoom");
-        final JComboBox radixSelector = new JComboBox(new String[] {"Binary", "Decimal", "Hexadecimal"});
-        radixSelector.setSelectedItem(this.jTestbench.getTestbenchRadix().toString());
+        final JComboBox radixSelector = new JComboBox(new String[] { "Binary",
+                "Decimal", "Hexadecimal" });
+        radixSelector.setSelectedItem(this.jTestbench.getTestbenchRadix()
+                .toString());
         topLeftPanel.add(zoomInButton);
         topLeftPanel.add(zoomOutButton);
         topLeftPanel.add(optimalZoom);
         topLeftPanel.add(radixSelector);
-        
+
         JButton helpButton = new JButton("Help");
         topRightPanel.add(helpButton);
-        
+
         topPanel.add(topLeftPanel, BorderLayout.WEST);
         topPanel.add(topRightPanel, BorderLayout.EAST);
-        
+
         this.setLayout(new BorderLayout());
         this.add(topPanel, BorderLayout.NORTH);
         this.add(this.jTestbench, BorderLayout.CENTER);
-        
+
         jTestbench.setChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 setModified(true);
             }
         });
-        
+
         zoomInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 jTestbench.ZoomIn();
             }
         });
-        
+
         zoomOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jTestbench.ZoomOut();
             }
         });
-        
+
         optimalZoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jTestbench.OptimalZoom();
             }
         });
-        
+
         helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HelpManager.openHelpDialog(HelpManager.getHelpCode(TestbenchEditor.class));
+                HelpManager.openHelpDialog(HelpManager
+                        .getHelpCode(TestbenchEditor.class));
             }
         });
-        
+
         radixSelector.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jTestbench.setTestbenchRadix(Radix.valueOf(radixSelector.getSelectedItem().toString()));
+                jTestbench.setTestbenchRadix(Radix.valueOf(radixSelector
+                        .getSelectedItem().toString()));
             }
         });
     }
-    
+
     @Override
     protected void doDispose() {
     }
 
     @Override
     public String getData() {
-        if(this.testbench == null) {
+        if (this.testbench == null) {
             return "";
         }
         return this.testbench.toXml();
@@ -154,19 +158,19 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     public IWizard getWizard() {
         return this;
     }
-    
+
     @Override
     protected void doInitWithoutData() {
-        if(!this.GUICreated) {
+        if (!this.GUICreated) {
             this.createGUI();
         }
     }
-    
+
     @Override
     protected void doInitWithData(FileInfo f) {
         setModified(false);
         this.initTestbench(f.getData());
-        if(!this.GUICreated) {
+        if (!this.GUICreated) {
             this.createGUI();
         }
         this.jTestbench.setModel(this.testbench);
@@ -175,54 +179,56 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     @Override
     public FileContent getInitialFileContent(Component parent,
             Caseless projectName) {
-        ProjectInfo project = getContainer().getMapper().getProject(new ProjectIdentifier(projectName));
-        List<FileInfo> files = getContainer().getWorkspaceManager().getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
+        ProjectInfo project = getContainer().getMapper().getProject(
+                new ProjectIdentifier(projectName));
+        List<FileInfo> files = getContainer().getWorkspaceManager()
+                .getFilesForProject(project);
+        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
+                .size());
         for (FileInfo file : files) {
-            if(getContainer().getSystemContainer().getResourceManager().isCompilable(projectName, file.getName())) {
-                identifiers.add(new FileIdentifier(projectName, file.getName()));
+            if (file.getType().isCompilable()) {
+                identifiers
+                        .add(new FileIdentifier(projectName, file.getName()));
             }
         }
         RunDialog dialog = new RunDialog(getContainer(), RunContext.TESTBENCH);
         dialog.setRunFiles(identifiers);
         dialog.startDialog();
         FileIdentifier file = dialog.getResult();
-        if(file == null) {
+        if (file == null) {
             return null;
         }
-        if(!projectName.equals(file.getProjectName())) {
-            SystemLog.instance().addSystemMessage("Cant create testbench for file outside of '"+projectName+"'", MessageType.INFORMATION);
+        if (!projectName.equals(file.getProjectName())) {
+            SystemLog.instance().addSystemMessage(
+                    "Cant create testbench for file outside of '" + projectName
+                            + "'", MessageType.INFORMATION);
             return null;
         }
         // Ovo gore ostaviti
         // Ovo dolje zamijeniti
-        
-        CircuitInterface ci;
-        try {
-            ci = container.getSystemContainer().getResourceManager().getCircuitInterfaceFor(file.getProjectName(), file.getFileName());
-        } catch (UniformAppletException e) {
-            e.printStackTrace();
-            return null;
-        }
-        
+
+        CircuitInterface ci = container.getCircuitInterfaceExtractor().extract(
+                container.getMapper().getFile(file));
+
         String testbench = file.getFileName() + "_tb";
-        
-        while(true) {
-            testbench = JOptionPane.showInputDialog(parent, "Enter a name of a testbench", testbench);
-            if(testbench == null) {
+
+        while (true) {
+            testbench = JOptionPane.showInputDialog(parent,
+                    "Enter a name of a testbench", testbench);
+            if (testbench == null) {
                 return null;
-            }
-            else {
+            } else {
                 // Provjera dal postoje duplikati
                 try {
-                    if(container.getSystemContainer().getResourceManager().existsFile(projectName, new Caseless(testbench))) {
-                        JOptionPane.showMessageDialog(
-                                null,
-                                "A file with the name you specified already exists.",
-                                "Error saving testbench",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                    else {
+                    if (container.getSystemContainer().getResourceManager()
+                            .existsFile(projectName, new Caseless(testbench))) {
+                        JOptionPane
+                                .showMessageDialog(
+                                        null,
+                                        "A file with the name you specified already exists.",
+                                        "Error saving testbench",
+                                        JOptionPane.ERROR_MESSAGE);
+                    } else {
                         break;
                     }
                 } catch (UniformAppletException e) {
@@ -230,51 +236,52 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
                 }
             }
         }
-        
-        while(true) {
-            InitTimingDialog initTimingDialog = new InitTimingDialog(parent, true, ci, testbench, projectName.toString());
+
+        while (true) {
+            InitTimingDialog initTimingDialog = new InitTimingDialog(parent,
+                    true, ci, testbench, projectName.toString());
             initTimingDialog.startDialog();
-            if(initTimingDialog.getOption() != InitTimingDialog.OK_OPTION) return null;
-            
+            if (initTimingDialog.getOption() != InitTimingDialog.OK_OPTION)
+                return null;
+
             Testbench tb = null;
-            
+
             try {
-                tb = this.getInitialTestbench(initTimingDialog, file.getFileName().toString());
+                tb = this.getInitialTestbench(initTimingDialog, file
+                        .getFileName().toString());
                 this.addSignals(tb, ci);
-                return new FileContent(projectName, new Caseless(testbench), tb.toXml());
-            }
-            catch(UniformTestbenchException ex) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        ex.getMessage(),
-                        "Error creating testbench",
-                        JOptionPane.ERROR_MESSAGE);
+                return new FileContent(projectName, new Caseless(testbench), tb
+                        .toXml());
+            } catch (UniformTestbenchException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(),
+                        "Error creating testbench", JOptionPane.ERROR_MESSAGE);
                 continue;
-                //return null;
-            }
-            catch (Exception ex) {
+                // return null;
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
             }
         }
     }
-    
-    private void addSignals(Testbench tb, CircuitInterface ci) {    
+
+    private void addSignals(Testbench tb, CircuitInterface ci) {
         Signal s = null;
-        for(Port p : ci.getPorts()) {
+        for (Port p : ci.getPorts()) {
             try {
-                if(p.getDirection().equals(PortDirection.IN)) {
-                    if(p.getType().getRange().isScalar()) {
+                if (p.getDirection().equals(PortDirection.IN)) {
+                    if (p.getType().getRange().isScalar()) {
                         s = new ScalarSignal(p.getName());
-                    }
-                    else {
-                        short d = (short) (1 + Math.abs(p.getType().getRange().getFrom() - p.getType().getRange().getTo()));
-                        s = new VectorSignal(p.getName(), d, VectorDirection.valueOf(p.getType().getRange().getDirection().toString().toLowerCase()));
+                    } else {
+                        short d = (short) (1 + Math.abs(p.getType().getRange()
+                                .getFrom()
+                                - p.getType().getRange().getTo()));
+                        s = new VectorSignal(p.getName(), d, VectorDirection
+                                .valueOf(p.getType().getRange().getDirection()
+                                        .toString().toLowerCase()));
                     }
                 }
                 tb.addSignal((EditableSignal) s);
-            }
-            catch(UniformSignalException e) {
+            } catch (UniformSignalException e) {
                 e.printStackTrace();
             } catch (UniformTestbenchException e) {
                 e.printStackTrace();
@@ -282,39 +289,50 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         }
     }
 
-    public Testbench getInitialTestbench(InitTimingDialog initTimingDialog, String sourceName) throws UniformTestbenchException {
-        
+    public Testbench getInitialTestbench(InitTimingDialog initTimingDialog,
+            String sourceName) throws UniformTestbenchException {
+
         Testbench tb = null;
-        TimeScale timeScale = TimeScale.valueOf(initTimingDialog.getTimeScale());
-        
-        if(Math.log(TimeScale.getMultiplier(timeScale)) + Math.log(initTimingDialog.getInitialLengthOfTestbench()) >= Math.log(Long.MAX_VALUE)) {
-            throw new UniformTestbenchException("Testbench length is too large. Change the time scale.");
+        TimeScale timeScale = TimeScale
+                .valueOf(initTimingDialog.getTimeScale());
+
+        if (Math.log(TimeScale.getMultiplier(timeScale))
+                + Math.log(initTimingDialog.getInitialLengthOfTestbench()) >= Math
+                .log(Long.MAX_VALUE)) {
+            throw new UniformTestbenchException(
+                    "Testbench length is too large. Change the time scale.");
         }
-        
-        long testBenchLength = TimeScale.getMultiplier(timeScale) * initTimingDialog.getInitialLengthOfTestbench();
-        
-        if(initTimingDialog.isCombinatorial()) {
+
+        long testBenchLength = TimeScale.getMultiplier(timeScale)
+                * initTimingDialog.getInitialLengthOfTestbench();
+
+        if (initTimingDialog.isCombinatorial()) {
             CombinatorialTestbench.Properties p = new CombinatorialTestbench.Properties();
-            p.assignInputsTime = TimeScale.getMultiplier(timeScale) * initTimingDialog.getAssignInputs();
-            p.checkOutputsTime = TimeScale.getMultiplier(timeScale) * initTimingDialog.getCheckOutputs();
-            tb = new CombinatorialTestbench(sourceName, testBenchLength, timeScale, p);
-        }
-        else {
+            p.assignInputsTime = TimeScale.getMultiplier(timeScale)
+                    * initTimingDialog.getAssignInputs();
+            p.checkOutputsTime = TimeScale.getMultiplier(timeScale)
+                    * initTimingDialog.getCheckOutputs();
+            tb = new CombinatorialTestbench(sourceName, testBenchLength,
+                    timeScale, p);
+        } else {
             SingleClockTestbench.Properties p = new SingleClockTestbench.Properties();
-            if(initTimingDialog.isRisingEdgeSelected()) {
+            if (initTimingDialog.isRisingEdgeSelected()) {
                 p.changeStateEdge = ChangeStateEdge.rising;
-            }
-            else {
+            } else {
                 p.changeStateEdge = ChangeStateEdge.falling;
             }
             p.clockSignalName = initTimingDialog.getClockSignal();
-            p.clockTimeHigh = TimeScale.getMultiplier(timeScale) * initTimingDialog.getClockTimeHigh();
-            p.clockTimeLow = TimeScale.getMultiplier(timeScale) * initTimingDialog.getClockTimeLow();
-            p.inputSetupTime = TimeScale.getMultiplier(timeScale) * initTimingDialog.getInputSetupTime();
-            
-            tb = new SingleClockTestbench(sourceName, testBenchLength, timeScale, p);
+            p.clockTimeHigh = TimeScale.getMultiplier(timeScale)
+                    * initTimingDialog.getClockTimeHigh();
+            p.clockTimeLow = TimeScale.getMultiplier(timeScale)
+                    * initTimingDialog.getClockTimeLow();
+            p.inputSetupTime = TimeScale.getMultiplier(timeScale)
+                    * initTimingDialog.getInputSetupTime();
+
+            tb = new SingleClockTestbench(sourceName, testBenchLength,
+                    timeScale, p);
         }
-        
+
         return tb;
     }
 }

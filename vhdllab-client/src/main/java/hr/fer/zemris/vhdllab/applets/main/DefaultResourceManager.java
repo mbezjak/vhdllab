@@ -1,9 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
-import hr.fer.zemris.vhdllab.api.util.StringFormat;
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
@@ -186,18 +183,6 @@ public class DefaultResourceManager implements IResourceManager {
 
     /* DATA EXTRACTION METHODS */
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getAllProjects
-     * ()
-     */
-    @Override
-    public List<Caseless> getAllProjects() throws UniformAppletException {
-        return communicator.getAllProjects();
-    }
-
     private List<Caseless> getFilesFor(Caseless projectName)
             throws UniformAppletException {
         if (projectName == null) {
@@ -219,78 +204,14 @@ public class DefaultResourceManager implements IResourceManager {
         List<Caseless> fileNames = getFilesFor(projectName);
         List<Caseless> circuits = new ArrayList<Caseless>();
         for (Caseless name : fileNames) {
-            if (isCircuit(projectName, name)) {
+            if (getFileType(projectName, name).isCircuit()) {
                 circuits.add(name);
             }
         }
         return circuits;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#
-     * getAllTestbenches(java.lang.String)
-     */
-    @Override
-    public List<Caseless> getAllTestbenches(Caseless projectName)
-            throws UniformAppletException {
-        List<Caseless> fileNames = getFilesFor(projectName);
-        List<Caseless> testbenches = new ArrayList<Caseless>();
-        for (Caseless name : fileNames) {
-            if (isTestbench(projectName, name)) {
-                testbenches.add(name);
-            }
-        }
-        return testbenches;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#
-     * getCircuitInterfaceFor(java.lang.String, java.lang.String)
-     */
-    @Override
-    public CircuitInterface getCircuitInterfaceFor(Caseless projectName,
-            Caseless fileName) throws UniformAppletException {
-        if (projectName == null) {
-            throw new NullPointerException("Project name cant be null");
-        }
-        if (fileName == null) {
-            throw new NullPointerException("File name cant be null");
-        }
-        return communicator.getCircuitInterfaceFor(projectName, fileName);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#generateVHDL
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public VHDLGenerationResult generateVHDL(Caseless projectName,
-            Caseless fileName) throws UniformAppletException {
-        if (projectName == null) {
-            throw new NullPointerException("Project name cant be null");
-        }
-        if (fileName == null) {
-            throw new NullPointerException("File name cant be null");
-        }
-        return communicator.generateVHDL(projectName, fileName);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#getFileType
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public FileType getFileType(Caseless projectName, Caseless fileName) {
+    private FileType getFileType(Caseless projectName, Caseless fileName) {
         if (projectName == null) {
             throw new NullPointerException("Project name cant be null");
         }
@@ -321,25 +242,6 @@ public class DefaultResourceManager implements IResourceManager {
 
     /* IS-SOMETHING METHODS */
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCircuit
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public boolean isCircuit(Caseless projectName, Caseless fileName) {
-        if (projectName == null || fileName == null) {
-            return false;
-        }
-        FileType type = getFileType(projectName, fileName);
-        if (type == null) {
-            return false;
-        }
-        return FileType.isCircuit(type);
-    }
-
     private boolean isPredefined(Caseless projectName, Caseless fileName) {
         if (projectName == null || fileName == null) {
             return false;
@@ -349,87 +251,6 @@ public class DefaultResourceManager implements IResourceManager {
             return false;
         }
         return type.equals(FileType.PREDEFINED);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isTestbench
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public boolean isTestbench(Caseless projectName, Caseless fileName) {
-        if (projectName == null || fileName == null) {
-            return false;
-        }
-        FileType type = getFileType(projectName, fileName);
-        if (type == null) {
-            return false;
-        }
-        if (type.equals(FileType.TESTBENCH)) {
-            return true;
-        }
-
-        CircuitInterface ci;
-        try {
-            ci = getCircuitInterfaceFor(projectName, fileName);
-        } catch (UniformAppletException e) {
-            return false;
-        }
-        if (ci.getPorts().isEmpty()) {
-            return true;
-        }
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isCompilable
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public boolean isCompilable(Caseless projectName, Caseless fileName) {
-        if (projectName == null || fileName == null) {
-            return false;
-        }
-        FileType type = getFileType(projectName, fileName);
-        if (type == null) {
-            return false;
-        }
-        return FileType.isCircuit(type) && !type.equals(FileType.PREDEFINED);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#isSimulatable
-     * (java.lang.String, java.lang.String)
-     */
-    @Override
-    public boolean isSimulatable(Caseless projectName, Caseless fileName) {
-        if (projectName == null || fileName == null) {
-            return false;
-        }
-        FileType type = getFileType(projectName, fileName);
-        if (type == null) {
-            return false;
-        }
-        return type.equals(FileType.TESTBENCH);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @seehr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager#
-     * isCorrectFileName(java.lang.String)
-     */
-    @Override
-    public boolean isCorrectFileName(Caseless name) {
-        return StringFormat.isCorrectFileName(name.toString());
     }
 
     /* FIRE EVENTS METHODS */

@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.InvalidCommandOperationException;
+
 
 
 /**
@@ -41,8 +43,9 @@ public interface ISchemaCore {
 	 */
 	ICommandResponse executeCommand(ICommand command);
 
-	
-	/**
+	ICommandResponse undoCommand(ICommand comm) throws InvalidCommandOperationException;
+
+    /**
 	 * Resetira citavu jezgru schematica
 	 * u inicijalno stanje.
 	 *

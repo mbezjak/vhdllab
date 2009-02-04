@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.api.util.StringFormat;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
@@ -61,8 +62,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
     private WizardRegistry wizardRegistry;
     @Autowired
     private EditorManagerFactory editorManagerFactory;
-    @Autowired
-    private IdentifierToInfoObjectMapper mapper;
+    @Autowired IdentifierToInfoObjectMapper mapper;
     @Autowired
     private ProjectManager projectManager;
     private ResourceBundle bundle;
@@ -236,7 +236,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         List<FileInfo> files = workspaceManager.getFilesForProject(project);
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
         for (FileInfo file : files) {
-            if(resourceManager.isCompilable(projectName, file.getName())) {
+            if(file.getType().isCompilable()) {
                 identifiers.add(new FileIdentifier(projectName, file.getName()));
             }
         }
@@ -252,7 +252,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         List<FileInfo> files = workspaceManager.getFilesForProject(project);
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
         for (FileInfo file : files) {
-            if(resourceManager.isSimulatable(projectName, file.getName())) {
+            if(file.getType().isSimulatable()) {
                 identifiers.add(new FileIdentifier(projectName, file.getName()));
             }
         }
@@ -293,7 +293,8 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         @Override
         public void beforeResourceCompilation(Caseless projectName,
                 Caseless fileName) throws ResourceVetoException {
-            if (!resourceManager.isCompilable(projectName, fileName)) {
+            FileInfo file = mapper.getFile(new FileIdentifier(projectName, fileName));
+            if (!file.getType().isCompilable()) {
                 String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
                 text = PlaceholderUtil.replacePlaceholders(text,
                         new Caseless[] { fileName, projectName });
@@ -349,7 +350,8 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         @Override
         public void beforeResourceSimulation(Caseless projectName,
                 Caseless fileName) throws ResourceVetoException {
-            if (!resourceManager.isSimulatable(projectName, fileName)) {
+            FileInfo file = mapper.getFile(new FileIdentifier(projectName, fileName));
+            if (!file.getType().isSimulatable()) {
                 String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
                 text = PlaceholderUtil.replacePlaceholders(text,
                         new Caseless[] { fileName, projectName });
@@ -363,18 +365,6 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
             if (!saved) {
                 throw new ResourceVetoException();
             }
-            // List<IEditor> openedEditors = editorManager
-            // .getOpenedEditorsThatHave(projectName);
-            // String title =
-            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_TITLE);
-            // String message =
-            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_SIMULATION_MESSAGE);
-            // boolean shouldContinue = editorManager.saveResourcesWithDialog(
-            // openedEditors, title, message);
-            // if (!shouldContinue) {
-            // // veto simulation
-            // throw new ResourceVetoException();
-            // }
         }
     }
 
@@ -502,7 +492,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         @Override
         public void beforeResourceCreation(Caseless projectName,
                 Caseless fileName, FileType type) throws ResourceVetoException {
-            if (!resourceManager.isCorrectFileName(fileName)) {
+            if (!StringFormat.isCorrectFileName(fileName.toString())) {
                 String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
                 text = PlaceholderUtil.replacePlaceholders(text,
                         new Caseless[] { fileName });

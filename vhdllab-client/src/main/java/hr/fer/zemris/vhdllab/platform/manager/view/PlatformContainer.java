@@ -9,6 +9,8 @@ import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +36,10 @@ public class PlatformContainer extends AbstractLocalizationSource {
     private SimulationManager simulationManager;
     @Autowired
     private WorkspaceManager workspaceManager;
+    @Autowired
+    private VhdlGenerator vhdlGenerator;
+    @Autowired
+    private CircuitInterfaceExtractor circuitInterfaceExtractor;
 
     public ISystemContainer getSystemContainer() {
         return systemContainer;
@@ -71,8 +77,12 @@ public class PlatformContainer extends AbstractLocalizationSource {
         return workspaceManager;
     }
 
-    public void setWorkspaceManager(WorkspaceManager workspaceManager) {
-        this.workspaceManager = workspaceManager;
+    public VhdlGenerator getVhdlGenerator() {
+        return vhdlGenerator;
+    }
+
+    public CircuitInterfaceExtractor getCircuitInterfaceExtractor() {
+        return circuitInterfaceExtractor;
     }
 
 }

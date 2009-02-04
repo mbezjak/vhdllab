@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.DuplicateKeyException;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.InvalidCommandOperationException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.SchemaException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommandResponse;
@@ -42,6 +43,11 @@ public class SchemaCore implements ISchemaCore {
 
 	public ICommandResponse executeCommand(ICommand command) {
 		return command.performCommand(info);
+	}
+	
+	@Override
+	public ICommandResponse undoCommand(ICommand comm) throws InvalidCommandOperationException {
+	    return comm.undoCommand(info);
 	}
 
 	public void reset() {

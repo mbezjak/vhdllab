@@ -127,6 +127,7 @@ public class RebuildPrototypeCollection implements ICommand {
 				try {
 					info.getPrototyper().addPrototype(new UserComponent(ci));
 				} catch (DuplicateKeyException e) {
+				    e.printStackTrace();
 					return new CommandResponse(new SchemaError(EErrorTypes.DUPLICATE_PROTOTYPE,
 							"Prototype '" + ci.getName() + "' already exists."));
 				}

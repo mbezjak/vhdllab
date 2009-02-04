@@ -11,18 +11,39 @@ public enum FileType {
     SOURCE, TESTBENCH, SCHEMA, AUTOMATON, SIMULATION, PREDEFINED;
 
     /**
-     * Returns boolean indicating if specified type is a VHDL circuit.
+     * Returns boolean indicating if type is a VHDL circuit.
      * 
-     * @param type
-     *            a type
-     * @return boolean indicating if specified type is a VHDL circuit
+     * @return boolean indicating if type is a VHDL circuit
      */
-    public static boolean isCircuit(FileType type) {
-        switch (type) {
+    public boolean isCircuit() {
+        switch (this) {
         case SOURCE:
         case SCHEMA:
         case AUTOMATON:
         case PREDEFINED:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Returns boolean indicating if type can be compiled.
+     * 
+     * @return boolean indicating if type can be compiled
+     */
+    public boolean isCompilable() {
+        return isCircuit() && !this.equals(PREDEFINED);
+    }
+
+    /**
+     * Returns boolean indicating if type can be simulated.
+     * 
+     * @return boolean indicating if type can be simulated
+     */
+    public boolean isSimulatable() {
+        switch (this) {
+        case TESTBENCH:
             return true;
         default:
             return false;

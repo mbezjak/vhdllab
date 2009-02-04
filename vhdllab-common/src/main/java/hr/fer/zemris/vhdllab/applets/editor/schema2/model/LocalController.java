@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.CommandExecutorException;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.InvalidCommandOperationException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommand;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ICommandResponse;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IQuery;
@@ -192,7 +193,7 @@ public class LocalController implements ISchemaController {
 		ICommand comm = redolist.getLast();
 		redolist.removeLast();
 
-		ICommandResponse response = core.executeCommand(comm);
+        ICommandResponse response = core.executeCommand(comm);
 		if (!response.isSuccessful()) {
 			undolist.clear();
 			redolist.clear();
@@ -211,7 +212,12 @@ public class LocalController implements ISchemaController {
 		ICommand comm = undolist.getLast();
 		undolist.removeLast();
 
-		ICommandResponse response = core.executeCommand(comm);
+        ICommandResponse response;
+        try {
+            response = core.undoCommand(comm);
+        } catch (InvalidCommandOperationException e) {
+            throw new CommandExecutorException(e);
+        }
 		if (!response.isSuccessful()) {
 			undolist.clear();
 			redolist.clear();

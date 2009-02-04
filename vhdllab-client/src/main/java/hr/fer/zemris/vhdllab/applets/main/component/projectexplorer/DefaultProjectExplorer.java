@@ -4,11 +4,8 @@ import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
-import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
-import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
@@ -37,7 +34,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -365,20 +361,9 @@ public class DefaultProjectExplorer extends AbstractView implements
         for (Caseless p : getAllProjects()) {
             removeProject(p);
         }
-        try {
-            for (Caseless projectName : systemContainer.getResourceManager()
-                    .getAllProjects()) {
-                addProject(projectName);
-            }
-        } catch (UniformAppletException e) {
-            e.printStackTrace();
-            ResourceBundle bundle = ResourceBundleProvider
-                    .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-            String text = bundle
-                    .getString(LanguageConstants.STATUSBAR_CANT_LOAD_WORKSPACE);
-            SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-            SystemLog.instance().addErrorMessage(e);
-            return;
+        for (ProjectInfo project : getContainer().getWorkspaceManager()
+                .getProjects()) {
+            addProject(project.getName());
         }
     }
 
@@ -447,13 +432,9 @@ public class DefaultProjectExplorer extends AbstractView implements
                     .getUserObject();
 
             // provjeri kojeg je tipa
-            try {
-                type = systemContainer.getResourceManager().getFileType(
-                        new Caseless(nodeProjectName),
-                        new Caseless(node.toString()));
-            } catch (RuntimeException e) {
-                SystemLog.instance().addErrorMessage(e);
-            }
+            type = getContainer().getMapper().getFile(
+                    new FileIdentifier(new Caseless(nodeProjectName),
+                            new Caseless(node.toString()))).getType();
 
             if (FileType.SOURCE.equals(type)) {
                 setIcon(vhdl);
@@ -631,9 +612,11 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            container.getCompilationManager()
+                            container
+                                    .getCompilationManager()
                                     .compile(
-                                            container.getMapper()
+                                            container
+                                                    .getMapper()
                                                     .getFile(
                                                             new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                                     name,
@@ -645,13 +628,15 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            container.getSimulationManager()
-                            .simulate(
-                                    container.getMapper()
-                                            .getFile(
-                                                    new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
-                                                            name,
-                                                            fileName)));
+                            container
+                                    .getSimulationManager()
+                                    .simulate(
+                                            container
+                                                    .getMapper()
+                                                    .getFile(
+                                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                                                                    name,
+                                                                    fileName)));
                         }
                     }
                 } else if (event.getSource().equals(setActive)) {
@@ -665,20 +650,17 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            FileInfo f = container.getMapper()
+                            FileInfo f = container
+                                    .getMapper()
                                     .getFile(
                                             new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                     name, fileName));
-                            VHDLGenerationResult result;
-                            try {
-                                result = container.getSystemContainer()
-                                        .getResourceManager().generateVHDL(
-                                                name, fileName);
-                            } catch (UniformAppletException e) {
-                                throw new IllegalStateException(e);
-                            }
-                            ProjectInfo project = container.getMapper().getProject(
-                                    f.getProjectId());
+                            FileInfo file = container.getMapper().getFile(
+                                    new FileIdentifier(name, fileName));
+                            VHDLGenerationResult result = container
+                                    .getVhdlGenerator().generate(file);
+                            ProjectInfo project = container.getMapper()
+                                    .getProject(f.getProjectId());
                             container.getEditorManagerFactory().get(
                                     new EditorIdentifier(
                                             new ViewVhdlEditorMetadata(),
@@ -841,8 +823,10 @@ public class DefaultProjectExplorer extends AbstractView implements
                             if (name != null) {
                                 hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier identifier = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                         name, fileName);
-                                FileInfo file = container.getMapper().getFile(identifier);
-                                container.getEditorManagerFactory().get(file).open();
+                                FileInfo file = container.getMapper().getFile(
+                                        identifier);
+                                container.getEditorManagerFactory().get(file)
+                                        .open();
                                 // systemContainer.getEditorManager()
                                 // .openEditorByResource(identifier);
                             }
@@ -966,8 +950,9 @@ public class DefaultProjectExplorer extends AbstractView implements
     public void addFile(Caseless projectName, Caseless fileName) {
         /* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
         this.filesByProjects.get(projectName).add(fileName);
-        if (systemContainer.getResourceManager().isTestbench(projectName,
-                fileName)) {
+        FileInfo file = container.getMapper().getFile(
+                new FileIdentifier(projectName, fileName));
+        if (file.getType().equals(FileType.TESTBENCH)) {
             this.refreshProject(projectName);
         } else {
             addFileInProject(projectName, fileName);
