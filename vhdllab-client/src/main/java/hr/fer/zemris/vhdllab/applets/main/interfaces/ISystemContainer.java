@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.interfaces;
 
-import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 /**
  * A system container is a core of vhdllab and contains important methods about
@@ -15,8 +15,6 @@ import hr.fer.zemris.vhdllab.entities.FileType;
  * @author Miro Bezjak
  */
 public interface ISystemContainer {
-
-    IProjectExplorer getProjectExplorer();
 
     /* RESOURCE MANIPULATION METHODS */
 
@@ -51,8 +49,8 @@ public interface ISystemContainer {
      */
     IResourceManager getResourceManager();
 
-    hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showCompilationRunDialog();
+    FileIdentifier showCompilationRunDialog();
 
-    hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showSimulationRunDialog();
+    FileIdentifier showSimulationRunDialog();
 
 }

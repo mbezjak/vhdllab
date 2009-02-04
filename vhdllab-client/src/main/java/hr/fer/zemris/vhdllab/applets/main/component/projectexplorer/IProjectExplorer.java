@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.platform.manager.view.View;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.util.List;
 

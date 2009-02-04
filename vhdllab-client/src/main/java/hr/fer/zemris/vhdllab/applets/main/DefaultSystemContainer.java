@@ -116,7 +116,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
                 .addVetoableResourceListener(new ResourceDeletedCloseEditor());
     }
 
-    public IProjectExplorer getProjectExplorer() {
+    private IProjectExplorer getProjectExplorer() {
         return viewManager.getProjectExplorer();
     }
 

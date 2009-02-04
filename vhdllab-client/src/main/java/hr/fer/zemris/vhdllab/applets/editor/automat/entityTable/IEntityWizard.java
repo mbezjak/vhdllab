@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
+import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 /**
  * Interface for table wizard used to create CircuitInterface for new circuits
  * WARNING Source of this interface might still be changed, but existing methods
@@ -14,7 +14,7 @@ public interface IEntityWizard {
 	 * Sets up systemContainer the same way as in IEditor
 	 * @param container
 	 */
-	public void setProjectContainer(ISystemContainer container);
+	public void setPlatformContainer(PlatformContainer container);
 	
 	/**
 	 * Sets the initial data for the table. If data==null initially table ind circuit

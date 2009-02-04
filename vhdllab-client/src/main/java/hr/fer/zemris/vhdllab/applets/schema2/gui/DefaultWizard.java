@@ -44,7 +44,7 @@ public class DefaultWizard implements IWizard {
 		int optionType = JOptionPane.OK_CANCEL_OPTION;
 		int messageType = JOptionPane.PLAIN_MESSAGE;
 		EntityTable table = new EntityTable();
-		table.setProjectContainer(container.getSystemContainer());
+		table.setPlatformContainer(container);
 		table.init();
 		
 		int option = 0;

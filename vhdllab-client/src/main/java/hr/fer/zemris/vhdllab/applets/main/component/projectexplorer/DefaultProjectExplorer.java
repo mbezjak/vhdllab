@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
@@ -19,6 +18,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.awt.Component;
 import java.awt.Container;
