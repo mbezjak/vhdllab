@@ -45,7 +45,7 @@ public class DefaultSimulationManager extends
         EditorManager em = editorManagerFactory
                 .getAllAssociatedWithProject(project.getName());
         boolean shouldSimulate = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
-        if(shouldSimulate) {
+        if (shouldSimulate) {
             SimulationResult result = simulator.simulate(file);
             lastSimulatedFile = file;
             fireSimulated(result);
@@ -65,7 +65,9 @@ public class DefaultSimulationManager extends
     @Override
     public void simulateWithDialog() {
         FileIdentifier identifier = systemContainer.showSimulationRunDialog();
-        simulate(mapper.getFile(identifier));
+        if (identifier != null) {
+            simulate(mapper.getFile(identifier));
+        }
     }
 
     private void fireSimulated(SimulationResult result) {
@@ -82,8 +84,9 @@ public class DefaultSimulationManager extends
                     .getName(), waveform, project.getId());
             EditorIdentifier identifier = new EditorIdentifier(
                     new WaveAppletMetadata(), simulationFile);
-            EditorManager simulationEditor = editorManagerFactory.get(identifier);
-            if(simulationEditor.isOpened()) {
+            EditorManager simulationEditor = editorManagerFactory
+                    .get(identifier);
+            if (simulationEditor.isOpened()) {
                 simulationEditor.close();
             }
             simulationEditor.open();

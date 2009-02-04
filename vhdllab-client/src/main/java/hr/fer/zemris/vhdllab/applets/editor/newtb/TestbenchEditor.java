@@ -22,21 +22,26 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.VectorSignal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.InitTimingDialog;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.components2.JTestbench;
 import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -170,13 +175,21 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     @Override
     public FileContent getInitialFileContent(Component parent,
             Caseless projectName) {
-        RunDialog dialog = new RunDialog(parent, true, container.getSystemContainer(), RunDialog.COMPILATION_TYPE);
-        dialog.setChangeProjectButtonText("change");
-        dialog.setTitle("Select a file for which to create testbench");
-        dialog.setListTitle("Select a file for which to create testbench");
+        ProjectInfo project = getContainer().getMapper().getProject(new ProjectIdentifier(projectName));
+        List<FileInfo> files = getContainer().getWorkspaceManager().getFilesForProject(project);
+        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
+        for (FileInfo file : files) {
+            if(getContainer().getSystemContainer().getResourceManager().isCompilable(projectName, file.getName())) {
+                identifiers.add(new FileIdentifier(projectName, file.getName()));
+            }
+        }
+        RunDialog dialog = new RunDialog(getContainer(), RunContext.TESTBENCH);
+        dialog.setRunFiles(identifiers);
         dialog.startDialog();
-        if(dialog.getOption() != RunDialog.OK_OPTION) return null;
-        FileIdentifier file = dialog.getSelectedFile();
+        FileIdentifier file = dialog.getResult();
+        if(file == null) {
+            return null;
+        }
         if(!projectName.equals(file.getProjectName())) {
             SystemLog.instance().addSystemMessage("Cant create testbench for file outside of '"+projectName+"'", MessageType.INFORMATION);
             return null;
@@ -221,7 +234,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         while(true) {
             InitTimingDialog initTimingDialog = new InitTimingDialog(parent, true, ci, testbench, projectName.toString());
             initTimingDialog.startDialog();
-            if(initTimingDialog.getOption() != RunDialog.OK_OPTION) return null;
+            if(initTimingDialog.getOption() != InitTimingDialog.OK_OPTION) return null;
             
             Testbench tb = null;
             

@@ -47,7 +47,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
     private static final String SIMULATE_AFTER_SAVE_MESSAGE = "dialog.multi.save.simulate_after_save.message";
 
     /** Size of a border */
-    private static final int BORDER_SIZE = 10;
+    private static final int BORDER = 10;
     /** Width of this dialog */
     private static final int DIALOG_WIDTH = 350;
     /** Height of this dialog */
@@ -66,20 +66,20 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
         Validate.notNull(context, "Save variant can't be null");
         // setup label
         JLabel label = new JLabel(getMainMessage(source, context));
-        int width = DIALOG_WIDTH - 2 * BORDER_SIZE;
-        int height = LABEL_HEIGHT - 2 * BORDER_SIZE;
+        int width = DIALOG_WIDTH - 2 * BORDER;
+        int height = LABEL_HEIGHT - 2 * BORDER;
         label.setPreferredSize(new Dimension(width, height));
-        label.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE,
-                BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
+        label.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER,
+                BORDER));
 
         // setup check box list
         list = new CheckBoxList();
-        width = DIALOG_WIDTH - 2 * BORDER_SIZE;
+        width = DIALOG_WIDTH - 2 * BORDER;
         height = 0; // because list is a center component and it doesnt need
         // height
         list.setPreferredSize(new Dimension(width, height));
-        list.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE,
-                BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
+        list.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, BORDER,
+                BORDER));
 
         // setup select all and deselect all buttons
         JButton selectAll = new JButton(source.getMessage(SELECT_ALL_MESSAGE));
@@ -102,11 +102,10 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
 
         Box selectBox = Box.createHorizontalBox();
         selectBox.add(selectAll);
-        selectBox.add(Box.createRigidArea(new Dimension(BORDER_SIZE,
-                BUTTON_HEIGHT)));
+        selectBox
+                .add(Box.createRigidArea(new Dimension(BORDER, BUTTON_HEIGHT)));
         selectBox.add(deselectAll);
-        selectBox.setBorder(BorderFactory.createEmptyBorder(0, 0, BORDER_SIZE,
-                0));
+        selectBox.setBorder(BorderFactory.createEmptyBorder(0, 0, BORDER, 0));
 
         // setup ok and cancel buttons
         JButton ok = new JButton(source.getMessage(OK_MESSAGE));
@@ -127,11 +126,11 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
 
         Box actionBox = Box.createHorizontalBox();
         actionBox.add(ok);
-        actionBox.add(Box.createRigidArea(new Dimension(BORDER_SIZE,
-                BUTTON_HEIGHT)));
+        actionBox
+                .add(Box.createRigidArea(new Dimension(BORDER, BUTTON_HEIGHT)));
         actionBox.add(cancel);
-        actionBox.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, 0,
-                BORDER_SIZE, 0));
+        actionBox.setBorder(BorderFactory.createEmptyBorder(BORDER, 0, BORDER,
+                0));
 
         JPanel selectPanel = new JPanel(new BorderLayout());
         selectPanel.add(selectBox, BorderLayout.EAST);
@@ -146,8 +145,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
                 JCheckBox checkBox = (JCheckBox) e.getSource();
                 Preferences preferences = Preferences
                         .userNodeForPackage(SaveDialog.class);
-                preferences.putBoolean(SHOULD_AUTO_SAVE, checkBox
-                        .isSelected());
+                preferences.putBoolean(SHOULD_AUTO_SAVE, checkBox.isSelected());
             }
         });
         alwaysSave.setSelected(false);

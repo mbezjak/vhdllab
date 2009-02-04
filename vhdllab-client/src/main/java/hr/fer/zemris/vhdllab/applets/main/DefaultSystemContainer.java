@@ -5,14 +5,12 @@ import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
-import hr.fer.zemris.vhdllab.applets.main.dialog.RunDialog;
 import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.applets.main.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
@@ -21,6 +19,9 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
+import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
+import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
@@ -28,10 +29,15 @@ import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
 import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
 import java.awt.Frame;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
@@ -40,11 +46,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultSystemContainer implements ISystemContainer,
-        WorkspaceInitializationListener {
+public class DefaultSystemContainer extends AbstractLocalizationSource
+        implements ISystemContainer, WorkspaceInitializationListener {
 
     @Autowired
     private PlatformContainer platformContainer;
+    @Autowired
+    private WorkspaceManager workspaceManager;
     @Autowired
     private IResourceManager resourceManager;
     @Autowired
@@ -220,55 +228,46 @@ public class DefaultSystemContainer implements ISystemContainer,
     /* SHOW DIALOGS METHODS */
 
     public hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showCompilationRunDialog() {
-        String title = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_TITLE);
-        String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_COMPILATION_LIST_TITLE);
-        FileIdentifier file = showRunDialog(title, listTitle,
-                RunDialog.COMPILATION_TYPE);
-        return new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
-                file.getProjectName(), file.getFileName());
+        Caseless projectName = getProjectExplorer().getSelectedProject();
+        if (projectName == null) {
+            return null;
+        }
+        ProjectInfo project = mapper.getProject(new ProjectIdentifier(projectName));
+        List<FileInfo> files = workspaceManager.getFilesForProject(project);
+        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
+        for (FileInfo file : files) {
+            if(resourceManager.isCompilable(projectName, file.getName())) {
+                identifiers.add(new FileIdentifier(projectName, file.getName()));
+            }
+        }
+        return showRunDialog(RunContext.SIMULATION, identifiers);
     }
 
     public hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showSimulationRunDialog() {
-        String title = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_TITLE);
-        String listTitle = getBundleString(LanguageConstants.DIALOG_RUN_SIMULATION_LIST_TITLE);
-        FileIdentifier file = showRunDialog(title, listTitle,
-                RunDialog.SIMULATION_TYPE);
-        return new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
-                file.getProjectName(), file.getFileName());
+        Caseless projectName = getProjectExplorer().getSelectedProject();
+        if (projectName == null) {
+            return null;
+        }
+        ProjectInfo project = mapper.getProject(new ProjectIdentifier(projectName));
+        List<FileInfo> files = workspaceManager.getFilesForProject(project);
+        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
+        for (FileInfo file : files) {
+            if(resourceManager.isSimulatable(projectName, file.getName())) {
+                identifiers.add(new FileIdentifier(projectName, file.getName()));
+            }
+        }
+        return showRunDialog(RunContext.SIMULATION, identifiers);
     }
 
-    /**
-     * TODO PENDING CHANGE! also to change (by transition): - compileWithDialog
-     */
-    private FileIdentifier showRunDialog(String title, String listTitle,
-            int dialogType) {
-        String ok = getBundleString(LanguageConstants.DIALOG_BUTTON_OK);
-        String cancel = getBundleString(LanguageConstants.DIALOG_BUTTON_CANCEL);
-        String currentProjectTitle = getBundleString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_TITLE);
-        String changeCurrentProjectButton = getBundleString(LanguageConstants.DIALOG_RUN_CHANGE_CURRENT_PROJECT_BUTTON);
-        Caseless projectName = getProjectExplorer().getSelectedProject();
-        String currentProjectLabel;
-        if (projectName == null) {
-            currentProjectLabel = getBundleString(LanguageConstants.DIALOG_RUN_ACTIVE_PROJECT_LABEL_NO_ACTIVE_PROJECT);
-        } else {
-            currentProjectLabel = getBundleString(LanguageConstants.DIALOG_RUN_CURRENT_PROJECT_LABEL);
-            currentProjectLabel = PlaceholderUtil.replacePlaceholders(
-                    currentProjectLabel, new Caseless[] { projectName });
+    private hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showRunDialog(
+            RunContext context, List<FileIdentifier> files) {
+        if(files.isEmpty()) {
+            return null;
         }
-
-        RunDialog dialog = new RunDialog(getParentFrame(), true, this,
-                dialogType);
-        dialog.setTitle(title);
-        dialog.setCurrentProjectTitle(currentProjectTitle);
-        dialog.setChangeProjectButtonText(changeCurrentProjectButton);
-        dialog.setCurrentProjectText(currentProjectLabel);
-        dialog.setListTitle(listTitle);
-        dialog.setOKButtonText(ok);
-        dialog.setCancelButtonText(cancel);
+        RunDialog dialog = new RunDialog(this, context);
+        dialog.setRunFiles(files);
         dialog.startDialog();
-        // control locked until user clicks on OK, CANCEL or CLOSE button
-
-        return dialog.getSelectedFile();
+        return dialog.getResult();
     }
 
     /**
@@ -279,8 +278,8 @@ public class DefaultSystemContainer implements ISystemContainer,
         String title = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
         String message = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
 
-        String projectName = JOptionPane.showInputDialog(
-                getParentFrame(), message, title, JOptionPane.PLAIN_MESSAGE);
+        String projectName = JOptionPane.showInputDialog(getParentFrame(),
+                message, title, JOptionPane.PLAIN_MESSAGE);
         return projectName;
     }
 

@@ -43,7 +43,7 @@ public class DefaultCompilationManager extends
         EditorManager em = editorManagerFactory
                 .getAllAssociatedWithProject(project.getName());
         boolean shouldCompile = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
-        if(shouldCompile) {
+        if (shouldCompile) {
             CompilationResult result = compiler.compile(file);
             lastCompiledFile = file;
             fireCompiled(result);
@@ -62,7 +62,9 @@ public class DefaultCompilationManager extends
     @Override
     public void compileWithDialog() {
         FileIdentifier identifier = systemContainer.showCompilationRunDialog();
-        compile(mapper.getFile(identifier));
+        if (identifier != null) {
+            compile(mapper.getFile(identifier));
+        }
     }
 
     private void fireCompiled(CompilationResult result) {

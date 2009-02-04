@@ -23,14 +23,18 @@ public class AbstractDialog<T> extends JDialog {
         return result;
     }
 
+    protected void setResult(T result) {
+        this.result = result;
+    }
+
     public void startDialog() {
         pack();
-        this.setLocationRelativeTo(source.getFrame());
-        this.setVisible(true);
+        setLocationRelativeTo(source.getFrame());
+        setVisible(true);
     }
 
     public void closeDialog(T resultOfExecution) {
-        this.result = resultOfExecution;
+        setResult(resultOfExecution);
         setVisible(false);
     }
 
