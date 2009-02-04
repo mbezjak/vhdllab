@@ -5,9 +5,11 @@ import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entities.LibraryFileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.service.FileService;
 import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
+import hr.fer.zemris.vhdllab.service.LibraryFileService;
 import hr.fer.zemris.vhdllab.service.filetype.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.filetype.DependencyExtractor;
 
@@ -23,11 +25,13 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class HierarchyExtractionService implements HierarchyExtractor {
-    
+
     @Autowired
     private FileService fileService;
     @Resource(name = "dependencyExtractionService")
     private DependencyExtractor dependencyExtractor;
+    @Autowired
+    private LibraryFileService libraryFileService;
 
     @Override
     public Hierarchy extract(ProjectInfo project) {
@@ -75,12 +79,17 @@ public class HierarchyExtractionService implements HierarchyExtractor {
                 parent.addDependency(depNode);
             } else {
                 FileType type;
-                FileInfo dep = fileService.findByName(file.getProjectId(), name);
+                FileInfo dep = fileService
+                        .findByName(file.getProjectId(), name);
                 if (dep != null) {
                     type = dep.getType();
                 } else {
-                    // else its a predefined file
-                    type = FileType.PREDEFINED;
+                    LibraryFileInfo predefinedFile = libraryFileService
+                            .findPredefinedByName(file.getName());
+                    if (predefinedFile != null) {
+                        type = FileType.PREDEFINED;
+                    } else
+                        continue;
                 }
                 HierarchyNode depNode = new HierarchyNode(name, type, parent);
                 resolvedNodes.put(name, depNode);

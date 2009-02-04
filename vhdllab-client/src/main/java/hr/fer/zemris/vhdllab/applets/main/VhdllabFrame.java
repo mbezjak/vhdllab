@@ -1,9 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
-import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
-import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
-import hr.fer.zemris.vhdllab.client.core.log.MessageType;
 import hr.fer.zemris.vhdllab.client.core.log.SystemError;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
@@ -19,7 +16,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ResourceBundle;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
@@ -54,9 +50,6 @@ public final class VhdllabFrame extends JFrame implements
 
     public void init() {
         initGUI();
-        ResourceBundle bundle = ResourceBundleProvider
-                .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-
         Preferences preferences = Preferences
                 .userNodeForPackage(VhdllabFrame.class);
         preferences.addPreferenceChangeListener(this);
@@ -70,9 +63,6 @@ public final class VhdllabFrame extends JFrame implements
             }
         });
 
-        String text = bundle
-                .getString(LanguageConstants.STATUSBAR_INIT_LOAD_COMPLETE);
-        SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
         setPaneSize();
     }
 

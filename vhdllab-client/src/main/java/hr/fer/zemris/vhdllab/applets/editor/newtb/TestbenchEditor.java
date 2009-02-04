@@ -219,7 +219,9 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
                 return null;
             }
             // Provjera dal postoje duplikati
-            if (container.getWorkspaceManager().exist(fileInfo)) {
+            FileInfo info = getContainer().getMapper().getFile(
+                    new FileIdentifier(projectName, new Caseless(testbench)));
+            if (info != null) {
                 JOptionPane.showMessageDialog(null,
                         "A file with the name you specified already exists.",
                         "Error saving testbench", JOptionPane.ERROR_MESSAGE);

@@ -432,9 +432,9 @@ public class DefaultProjectExplorer extends AbstractView implements
                     .getUserObject();
 
             // provjeri kojeg je tipa
-            type = getContainer().getMapper().getFile(
-                    new FileIdentifier(new Caseless(nodeProjectName),
-                            new Caseless(node.toString()))).getType();
+            FileIdentifier fileIdentifier = new FileIdentifier(new Caseless(
+                    nodeProjectName), new Caseless(node.toString()));
+            type = getContainer().getMapper().getFile(fileIdentifier).getType();
 
             if (FileType.SOURCE.equals(type)) {
                 setIcon(vhdl);
@@ -947,7 +947,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * @param fileName
      *            ime datoteke
      */
-    public void addFile(Caseless projectName, Caseless fileName) {
+    private void addFile(Caseless projectName, Caseless fileName) {
         /* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
         this.filesByProjects.get(projectName).add(fileName);
         FileInfo file = container.getMapper().getFile(
@@ -965,7 +965,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * @param projectName
      *            ime projekta
      */
-    public void addProject(Caseless projectName) {
+    private void addProject(Caseless projectName) {
         PeNode projectNode = null;
 
         /* dodaje novi projekt u kolekciju svih projekata koje prikazuje PE */
@@ -1027,7 +1027,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * @param projectName
      *            ime projekta koji se refresha
      */
-    public void refreshProject(Caseless projectName) {
+    private void refreshProject(Caseless projectName) {
         /*
          * Interakcijom s korinsikom u stablo se mogu dodavati, brisati
          * elementi. Ti elementi, s druge strane, imaju razlicitu hijerarhiju
@@ -1297,13 +1297,6 @@ public class DefaultProjectExplorer extends AbstractView implements
     }
 
     /**
-     * Metoda zatvara projekt
-     */
-    public void closeProject(Caseless projectName) {
-        ;
-    }
-
-    /**
      * Metoda vraca aktivni projekt
      * 
      * @return projectName aktivni projekt
@@ -1317,7 +1310,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * 
      * @return listu projekata
      */
-    public List<Caseless> getAllProjects() {
+    private List<Caseless> getAllProjects() {
         return this.allProjects;
     }
 
@@ -1328,7 +1321,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      *            ime projekta
      * @return lista datoteka koju posjeduje taj projekt
      */
-    public List<Caseless> getFilesByProject(Caseless projectName) {
+    private List<Caseless> getFilesByProject(Caseless projectName) {
         return this.filesByProjects.get(projectName);
     }
 
@@ -1341,7 +1334,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * @param fileName
      *            ime datoteke koja se uklanja
      */
-    public void removeFile(Caseless projectName, Caseless fileName) {
+    private void removeFile(Caseless projectName, Caseless fileName) {
 
         // PeNode projectNode = null;
         // PeNode fileNode = null;
@@ -1387,7 +1380,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * @param projectName
      *            ime projekta
      */
-    public void removeProject(Caseless projectName) {
+    private void removeProject(Caseless projectName) {
         this.allProjects.remove(projectName);
         for (int i = 0; i < root.getChildCount(); i++) {
             if (((PeNode) (root.getChildAt(i))).getUserObject().equals(
@@ -1432,8 +1425,8 @@ public class DefaultProjectExplorer extends AbstractView implements
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            FileInfo file = container.getMapper().getFile(new FileIdentifier(name,
-                    new Caseless(node.toString())));
+            FileInfo file = container.getMapper().getFile(
+                    new FileIdentifier(name, new Caseless(node.toString())));
             container.getFileManager().delete(file);
         }
 

@@ -1,12 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
-import hr.fer.zemris.vhdllab.api.util.StringFormat;
-import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
-import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
@@ -19,36 +14,36 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
+import hr.fer.zemris.vhdllab.platform.manager.file.FileAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
+import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
-import hr.fer.zemris.vhdllab.utilities.PlaceholderUtil;
 
-import java.awt.Frame;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultSystemContainer extends AbstractLocalizationSource
-        implements ISystemContainer, WorkspaceInitializationListener {
+        implements ISystemContainer {
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger
+            .getLogger(DefaultSystemContainer.class);
 
     @Autowired
     private PlatformContainer platformContainer;
@@ -61,30 +56,14 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
     @Autowired
     private WizardRegistry wizardRegistry;
     @Autowired
-    private EditorManagerFactory editorManagerFactory;
+    EditorManagerFactory editorManagerFactory;
     @Autowired
     IdentifierToInfoObjectMapper mapper;
     @Autowired
     private ProjectManager projectManager;
-    private ResourceBundle bundle;
 
-    private Frame getParentFrame() {
-        return ApplicationContextHolder.getContext().getFrame();
-    }
-
-    @Override
-    public void initialize(Workspace workspace) {
-        init();
-    }
-
-    /**
-     * Initializes a system container.
-     * 
-     */
-    private void init() {
-        bundle = ResourceBundleProvider
-                .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-    }
+    ResourceBundle bundle = ResourceBundleProvider
+            .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
 
     private IProjectExplorer getProjectExplorer() {
         return viewManager.getProjectExplorer();
@@ -94,12 +73,20 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
 
     @Override
     public void createNewProjectInstance() {
-        String projectName = showCreateProjectDialog();
+        String projectName = JOptionPane.showInputDialog(getFrame(),
+                "Type a name of a project you want to create",
+                "Create project", JOptionPane.PLAIN_MESSAGE);
         if (projectName == null) {
             return;
         }
-        projectManager.create(new ProjectInfo(ApplicationContextHolder
-                .getContext().getUserId(), new Caseless(projectName)));
+        try {
+            projectManager.create(new ProjectInfo(ApplicationContextHolder
+                    .getContext().getUserId(), new Caseless(projectName)));
+        } catch (IllegalArgumentException e) {
+            LOG.info(projectName + " isn't a valid project name");
+        } catch (ProjectAlreadyExistsException e) {
+            LOG.info("Project " + projectName + " already exists");
+        }
     }
 
     @Override
@@ -131,8 +118,15 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         String data = content.getContent();
         ProjectInfo project = mapper.getProject(new ProjectIdentifier(
                 projectName));
-        FileInfo fileInfo = new FileInfo(type, fileName, data, project.getId());
-        fileManager.create(fileInfo);
+        try {
+            fileManager.create(new FileInfo(type, fileName, data, project
+                    .getId()));
+        } catch (IllegalArgumentException e) {
+            LOG.info(fileName + " isn't a valid file name");
+        } catch (FileAlreadyExistsException e) {
+            LOG.info(fileName + " already exists in " + projectName);
+
+        }
         return true;
     }
 
@@ -156,7 +150,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         }
         // Initialization of a wizard
         wizard.setContainer(platformContainer);
-        FileContent content = wizard.getInitialFileContent(getParentFrame(),
+        FileContent content = wizard.getInitialFileContent(getFrame(),
                 projectName);
         // end of initialization
         return content;
@@ -173,300 +167,6 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         return bundle.getString(key);
     }
 
-    /* SHOW DIALOGS METHODS */
-
-    public hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showCompilationRunDialog() {
-        Caseless projectName = getProjectExplorer().getSelectedProject();
-        if (projectName == null) {
-            return null;
-        }
-        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
-                projectName));
-        List<FileInfo> files = workspaceManager.getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
-                .size());
-        for (FileInfo file : files) {
-            if (file.getType().isCompilable()) {
-                identifiers
-                        .add(new FileIdentifier(projectName, file.getName()));
-            }
-        }
-        return showRunDialog(RunContext.SIMULATION, identifiers);
-    }
-
-    public hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showSimulationRunDialog() {
-        Caseless projectName = getProjectExplorer().getSelectedProject();
-        if (projectName == null) {
-            return null;
-        }
-        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
-                projectName));
-        List<FileInfo> files = workspaceManager.getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
-                .size());
-        for (FileInfo file : files) {
-            if (file.getType().isSimulatable()) {
-                identifiers
-                        .add(new FileIdentifier(projectName, file.getName()));
-            }
-        }
-        return showRunDialog(RunContext.SIMULATION, identifiers);
-    }
-
-    private hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showRunDialog(
-            RunContext context, List<FileIdentifier> files) {
-        if (files.isEmpty()) {
-            return null;
-        }
-        RunDialog dialog = new RunDialog(this, context);
-        dialog.setRunFiles(files);
-        dialog.startDialog();
-        return dialog.getResult();
-    }
-
-    /**
-     * TODO PENDING CHANGE! also to change (by transition): -
-     * createNewProjectInstance
-     */
-    private String showCreateProjectDialog() {
-        String title = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_TITLE);
-        String message = getBundleString(LanguageConstants.DIALOG_CREATE_NEW_PROJECT_MESSAGE);
-
-        String projectName = JOptionPane.showInputDialog(getParentFrame(),
-                message, title, JOptionPane.PLAIN_MESSAGE);
-        return projectName;
-    }
-
-    /**
-     * Check if if resource is compilable. Also save opened editors.
-     * 
-     * @author Miro Bezjak
-     */
-    private class BeforeCompilationCheckCompilableAndSaveEditors extends
-            VetoableResourceAdapter {
-        @Override
-        public void beforeResourceCompilation(Caseless projectName,
-                Caseless fileName) throws ResourceVetoException {
-            FileInfo file = mapper.getFile(new FileIdentifier(projectName,
-                    fileName));
-            if (!file.getType().isCompilable()) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { fileName, projectName });
-                SystemLog.instance().addSystemMessage(text,
-                        MessageType.INFORMATION);
-                // veto compilation
-                throw new ResourceVetoException();
-            }
-            boolean saved = editorManagerFactory.getAllAssociatedWithProject(
-                    projectName).save(true);
-            if (!saved) {
-                throw new ResourceVetoException();
-            }
-            // List<IEditor> openedEditors = editorManager
-            // .getOpenedEditorsThatHave(projectName);
-            // String title =
-            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_TITLE);
-            // String message =
-            // getBundleString(LanguageConstants.DIALOG_SAVE_RESOURCES_FOR_COMPILATION_MESSAGE);
-            // boolean shouldContinue = editorManager.saveResourcesWithDialog(
-            // openedEditors, title, message);
-            // if (!shouldContinue) {
-            // // veto compilation
-            // throw new ResourceVetoException();
-            // }
-        }
-    }
-
-    /**
-     * Echoes that a resource has been compiled.
-     * 
-     * @author Miro Bezjak
-     */
-    private class AfterCompilationEcho extends VetoableResourceAdapter {
-        @Override
-        public void resourceCompiled(Caseless projectName, Caseless fileName,
-                CompilationResult result) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_COMPILED);
-            text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
-                    fileName, projectName });
-            SystemLog.instance()
-                    .addSystemMessage(text, MessageType.INFORMATION);
-        }
-    }
-
-    /**
-     * Check if if resource is simulatable. Also save opened editors.
-     * 
-     * @author Miro Bezjak
-     */
-    private class BeforeSimulationCheckSimulatableAndSaveEditors extends
-            VetoableResourceAdapter {
-        @Override
-        public void beforeResourceSimulation(Caseless projectName,
-                Caseless fileName) throws ResourceVetoException {
-            FileInfo file = mapper.getFile(new FileIdentifier(projectName,
-                    fileName));
-            if (!file.getType().isSimulatable()) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { fileName, projectName });
-                SystemLog.instance().addSystemMessage(text,
-                        MessageType.INFORMATION);
-                // veto simulation
-                throw new ResourceVetoException();
-            }
-            boolean saved = editorManagerFactory.getAllAssociatedWithProject(
-                    projectName).save(true);
-            if (!saved) {
-                throw new ResourceVetoException();
-            }
-        }
-    }
-
-    /**
-     * Echoes that a resource has been simulated.
-     * 
-     * @author Miro Bezjak
-     */
-    private class AfterSimulationEcho extends VetoableResourceAdapter {
-        @Override
-        public void resourceSimulated(Caseless projectName, Caseless fileName,
-                SimulationResult result) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_SIMULATED);
-            text = PlaceholderUtil.replacePlaceholders(text, new Caseless[] {
-                    fileName, projectName });
-            SystemLog.instance()
-                    .addSystemMessage(text, MessageType.INFORMATION);
-        }
-    }
-
-    // private class BeforeProjectCreationCheckExistence extends
-    // VetoableResourceAdapter {
-    // @Override
-    // public void beforeProjectCreation(Caseless projectName)
-    // throws ResourceVetoException {
-    // boolean exists;
-    // try {
-    // exists = resourceManager.existsProject(projectName);
-    // } catch (UniformAppletException e) {
-    // String text =
-    // getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_PROJECT_EXISTENCE);
-    // text = PlaceholderUtil.replacePlaceholders(text,
-    // new Caseless[] { projectName });
-    // SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-    // // veto project creation
-    // throw new ResourceVetoException();
-    // }
-    // if (exists) {
-    // String text =
-    // getBundleString(LanguageConstants.STATUSBAR_EXISTS_PROJECT);
-    // text = PlaceholderUtil.replacePlaceholders(text,
-    // new Caseless[] { projectName });
-    // SystemLog.instance().addSystemMessage(text,
-    // MessageType.INFORMATION);
-    // // veto project creation
-    // throw new ResourceVetoException();
-    // }
-    //
-    // }
-    // }
-    //
-    // private class BeforeProjectCreationCheckCorrectName extends
-    // VetoableResourceAdapter {
-    // @Override
-    // public void beforeProjectCreation(Caseless projectName)
-    // throws ResourceVetoException {
-    // if (!resourceManager.isCorrectProjectName(projectName)) {
-    // String text =
-    // getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_PROJECT_NAME);
-    // text = PlaceholderUtil.replacePlaceholders(text,
-    // new Caseless[] { projectName });
-    // SystemLog.instance().addSystemMessage(text,
-    // MessageType.INFORMATION);
-    // // veto project creation
-    // throw new ResourceVetoException();
-    // }
-    // }
-    // }
-
-    /**
-     * Echo that project was created.
-     * 
-     * @author Miro Bezjak
-     */
-    private class AfterProjectCreationEcho extends VetoableResourceAdapter {
-        @Override
-        public void projectCreated(Caseless projectName) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_PROJECT_CREATED);
-            text = PlaceholderUtil.replacePlaceholders(text,
-                    new Caseless[] { projectName });
-            SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
-        }
-    }
-
-    /**
-     * Check existence of resource before creating it.
-     * 
-     * @author Miro Bezjak
-     */
-    private class BeforeResourceCreationCheckExistence extends
-            VetoableResourceAdapter {
-        @Override
-        public void beforeResourceCreation(Caseless projectName,
-                Caseless fileName, FileType type) throws ResourceVetoException {
-            FileInfo file = mapper.getFile(new FileIdentifier(projectName,
-                    fileName));
-            if (workspaceManager.exist(file)) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_FILE);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { fileName, projectName });
-                SystemLog.instance().addSystemMessage(text,
-                        MessageType.INFORMATION);
-                // veto resource creation
-                throw new ResourceVetoException();
-            }
-        }
-    }
-
-    /**
-     * Check if a resource has a correct name.
-     * 
-     * @author Miro Bezjak
-     */
-    private class BeforeResourceCreationCheckCorrectName extends
-            VetoableResourceAdapter {
-        @Override
-        public void beforeResourceCreation(Caseless projectName,
-                Caseless fileName, FileType type) throws ResourceVetoException {
-            if (!StringFormat.isCorrectFileName(fileName.toString())) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_NOT_CORRECT_FILE_NAME);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { fileName });
-                SystemLog.instance().addSystemMessage(text,
-                        MessageType.INFORMATION);
-                // veto project creation
-                throw new ResourceVetoException();
-            }
-        }
-    }
-
-    /**
-     * Echo that resource was created.
-     * 
-     * @author Miro Bezjak
-     */
-    private class AfterResourceCreationEcho extends VetoableResourceAdapter {
-        @Override
-        public void resourceCreated(Caseless projectName, Caseless fileName,
-                FileType type) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_FILE_CREATED);
-            text = PlaceholderUtil.replacePlaceholders(text,
-                    new Caseless[] { fileName });
-            SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
-        }
-    }
-
     /**
      * Opens an editor for specified resource.
      * 
@@ -481,22 +181,6 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
                     projectName, fileName);
             FileInfo info = mapper.getFile(i);
             editorManagerFactory.get(info).open();
-        }
-    }
-
-    /**
-     * Echoes that a resource has been saved.
-     * 
-     * @author Miro Bezjak
-     */
-    private class ResourceSavedEcho extends VetoableResourceAdapter {
-        @Override
-        public void resourceSaved(Caseless projectName, Caseless fileName) {
-            String text = bundle
-                    .getString(LanguageConstants.STATUSBAR_FILE_SAVED);
-            text = PlaceholderUtil.replacePlaceholders(text,
-                    new Caseless[] { fileName });
-            SystemLog.instance().addSystemMessage(text, MessageType.SUCCESSFUL);
         }
     }
 

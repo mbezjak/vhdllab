@@ -67,7 +67,7 @@ public class DefaultWizard implements IWizard {
                     new FileIdentifier(projectName,
                             new hr.fer.zemris.vhdllab.entities.Caseless(ci
                                     .getName())));
-            if (container.getWorkspaceManager().exist(file)) {
+            if (file != null) {
                 SystemLog.instance().addSystemMessage(
                         ci.getName() + " already exists!",
                         MessageType.INFORMATION);

@@ -35,13 +35,13 @@ public class NoSelectionEditorManager implements EditorManager {
 
     @Override
     public boolean save(boolean withDialog) throws NotOpenedException {
-        return false;
+        return true;
     }
 
     @Override
     public boolean save(boolean withDialog, SaveContext context)
             throws NotOpenedException {
-        return false;
+        return true;
     }
 
     @Override
