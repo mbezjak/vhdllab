@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
@@ -239,10 +238,9 @@ public class Automat extends AbstractEditor implements IWizard {
 
     public FileContent getInitialFileContent(Component parent,
             Caseless projectName) {
-        bundle = ResourceBundleProvider
+        bundle = ResourceBundle
                 .getBundle("Client_Automat_ApplicationResources");
-        AUTPodatci pod = new AUTPodatci(parent, container,
-                bundle);
+        AUTPodatci pod = new AUTPodatci(parent, container, bundle);
         // TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
         String gen = null;
         if (pod.ime != null) {
@@ -257,7 +255,7 @@ public class Automat extends AbstractEditor implements IWizard {
 
     @Override
     protected void doInitWithoutData() {
-        bundle = ResourceBundleProvider
+        bundle = ResourceBundle
                 .getBundle("Client_Automat_ApplicationResources");
         createGUI();
     }

@@ -8,8 +8,6 @@ import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
-import hr.fer.zemris.vhdllab.client.core.bundle.CachedResourceBundles;
-import hr.fer.zemris.vhdllab.client.core.bundle.ResourceBundleProvider;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
@@ -334,13 +332,9 @@ public class EntityTable extends JPanel implements IEntityWizard {
     }
 
     public void setPlatformContainer(PlatformContainer container) {
-        if (container != null)
-            bundle = ResourceBundleProvider
-                    .getBundle("Client_EntityTable_ApplicationResources");
-        else
-            bundle = CachedResourceBundles.getBundle(
-                    "Client_EntityTable_ApplicationResources", "en");
         this.container = container;
+        bundle = ResourceBundle
+                .getBundle("Client_EntityTable_ApplicationResources");
     }
 
     /**
