@@ -13,8 +13,6 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.client.core.log.MessageType;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
@@ -26,7 +24,13 @@ import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
+
 public class DefaultWizard implements IWizard {
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger.getLogger(DefaultWizard.class);
 
     /* static fields */
     private static final int MARGIN_OFFSET = Constants.GRID_SIZE * 2;
@@ -68,9 +72,7 @@ public class DefaultWizard implements IWizard {
                             new hr.fer.zemris.vhdllab.entities.Caseless(ci
                                     .getName())));
             if (file != null) {
-                SystemLog.instance().addSystemMessage(
-                        ci.getName() + " already exists!",
-                        MessageType.INFORMATION);
+                LOG.info(ci.getName() + " already exists!");
             }
 
             ISchemaInfo info = new SchemaInfo();
@@ -85,9 +87,7 @@ public class DefaultWizard implements IWizard {
                         SchemaEntity.KEY_NAME).getConstraint()
                         .setPossibleValues(allowed);
             } catch (Exception e) {
-                e.printStackTrace();
-                SystemLog.instance().addSystemMessage("Internal error!",
-                        MessageType.INFORMATION);
+                LOG.error("Unexpected error", e);
                 return null;
             }
 
@@ -105,9 +105,7 @@ public class DefaultWizard implements IWizard {
                         ry += inout.getHeight() + MARGIN_OFFSET;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    SystemLog.instance().addSystemMessage("Internal error!",
-                            MessageType.INFORMATION);
+                    LOG.error("Unexpected error", e);
                     return null;
                 }
             }
@@ -118,9 +116,7 @@ public class DefaultWizard implements IWizard {
             try {
                 ss.serializeSchema(writer, info);
             } catch (IOException e) {
-                e.printStackTrace();
-                SystemLog.instance().addSystemMessage("Internal error!",
-                        MessageType.INFORMATION);
+                LOG.error("Unexpected error", e);
                 return null;
             }
             return new FileContent(projectName,

@@ -23,8 +23,6 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.view.InitTimingDialog;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.components2.JTestbench;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.client.core.log.MessageType;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
@@ -195,12 +193,6 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         dialog.startDialog();
         FileIdentifier file = dialog.getResult();
         if (file == null) {
-            return null;
-        }
-        if (!projectName.equals(file.getProjectName())) {
-            SystemLog.instance().addSystemMessage(
-                    "Cant create testbench for file outside of '" + projectName
-                            + "'", MessageType.INFORMATION);
             return null;
         }
         // Ovo gore ostaviti

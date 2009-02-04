@@ -6,8 +6,6 @@ import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
-import hr.fer.zemris.vhdllab.client.core.log.MessageType;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
@@ -56,7 +54,13 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import org.apache.log4j.Logger;
+
 public class TextEditor extends AbstractEditor implements IWizard, Runnable {
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger.getLogger(TextEditor.class);
 
 	private static final long serialVersionUID = 1L;
 	JTextPane text;
@@ -277,9 +281,7 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
                             new hr.fer.zemris.vhdllab.entities.Caseless(ci
                                     .getName())));
             if (file != null) {
-                SystemLog.instance().addSystemMessage(
-                        ci.getName() + " already exists!",
-                        MessageType.INFORMATION);
+                LOG.info(ci.getName() + " already exists!");
             }
 
             StringBuilder sb = new StringBuilder(
@@ -522,6 +524,11 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 }
 
 class InitScanner implements Runnable {
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger.getLogger(InitScanner.class);
+
 	EditorScanner scanner = new EditorScanner();
 
 	public void stopScanner() {

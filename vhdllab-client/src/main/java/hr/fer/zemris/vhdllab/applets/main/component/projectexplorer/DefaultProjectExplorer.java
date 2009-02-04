@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
@@ -56,6 +55,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.log4j.Logger;
+
 /**
  * Klasa predstavlja 'project explorer'. Project explorer sadrzi popis
  * projekata, te hijerarhiju datoteka koje se koriste u projektu.
@@ -64,6 +65,11 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class DefaultProjectExplorer extends AbstractView implements
         IProjectExplorer {
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger.getLogger(DefaultProjectExplorer.class);
+
     /*
      * Project explorer je zamisljen kao stablo koje ce u svakom trenutku moci
      * prikazivati tri razlicite hijerarhije: X uses Y, X is used in Y i flat
@@ -773,7 +779,7 @@ public class DefaultProjectExplorer extends AbstractView implements
                     cp.validate();
                 }
             } catch (RuntimeException e) {
-                SystemLog.instance().addErrorMessage(e);
+                LOG.error("Unexpected error", e);
             }
             TreePath treePath = tree.getSelectionPath();
             // tree.setExpandedState(treePath, true);
@@ -834,7 +840,7 @@ public class DefaultProjectExplorer extends AbstractView implements
                     }
                 }
             } catch (RuntimeException e) {
-                SystemLog.instance().addErrorMessage(e);
+                LOG.error("Unexpected error", e);
             }
 
         }

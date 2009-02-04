@@ -1,9 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.main;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
-import hr.fer.zemris.vhdllab.client.core.log.SystemError;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.platform.gui.MaximizationManager;
 import hr.fer.zemris.vhdllab.platform.gui.container.EditorTabbedPane;
@@ -30,6 +27,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.ToolTipManager;
 
 import org.apache.commons.lang.Validate;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.spi.ThrowableInformation;
 import org.springframework.context.ApplicationContext;
 
 public final class VhdllabFrame extends JFrame implements
@@ -54,12 +55,28 @@ public final class VhdllabFrame extends JFrame implements
                 .userNodeForPackage(VhdllabFrame.class);
         preferences.addPreferenceChangeListener(this);
 
-        SystemLog.instance().addSystemLogListener(new SystemLogAdapter() {
+        Logger.getRootLogger().addAppender(new AppenderSkeleton() {
+
             @Override
-            public void errorMessageAdded(SystemError message) {
-                JOptionPane.showMessageDialog(VhdllabFrame.this,
-                        "Error occurred: " + message.getCause().getMessage(),
-                        "Error occurred", JOptionPane.ERROR_MESSAGE);
+            public boolean requiresLayout() {
+                return false;
+            }
+
+            @Override
+            public void close() {
+            }
+
+            @Override
+            protected void append(LoggingEvent event) {
+                ThrowableInformation throwableInformation = event
+                        .getThrowableInformation();
+                if (throwableInformation != null) {
+                    JOptionPane.showMessageDialog(VhdllabFrame.this,
+                            "Error occurred: "
+                                    + throwableInformation.getThrowable()
+                                            .getMessage(), "Error occurred",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
