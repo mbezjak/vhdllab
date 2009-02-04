@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
+import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
@@ -25,9 +26,6 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.RemovePrototy
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
-import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
-import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceListener;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
@@ -35,9 +33,9 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.CPToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.TabbedCTAddToolbar;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
+import hr.fer.zemris.vhdllab.platform.manager.file.FileListener;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.awt.BorderLayout;
@@ -98,7 +96,7 @@ public class SchemaMainPanel extends AbstractEditor {
     private TabbedCTAddToolbar componentToAddToolbar;
 
     /* IEditor private fields */
-    private VetoableResourceListener appletListener;
+    private FileListener appletListener;
 
     /**
      * Right panel divider width
@@ -183,23 +181,16 @@ public class SchemaMainPanel extends AbstractEditor {
                 file.getProjectId());
         hr.fer.zemris.vhdllab.entities.Caseless projectname = project.getName();
         hr.fer.zemris.vhdllab.entities.Caseless thisname = file.getName();
-        List<hr.fer.zemris.vhdllab.entities.Caseless> circuitnames = null;
-        try {
-            circuitnames = container.getSystemContainer().getResourceManager()
-                    .getAllCircuits(projectname);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<CircuitInterface>();
+        List<hr.fer.zemris.vhdllab.entities.Caseless> circuitnames = new ArrayList<hr.fer.zemris.vhdllab.entities.Caseless>();
+        for (FileInfo info : container.getWorkspaceManager()
+                .getFilesForProject(project)) {
+            if (info.getType().isCircuit()) {
+                circuitnames.add(info.getName());
+            }
         }
 
-        Hierarchy hierarchy;
-        try {
-            hierarchy = container.getSystemContainer().getResourceManager()
-                    .extractHierarchy(projectname);
-        } catch (UniformAppletException e1) {
-            e1.printStackTrace();
-            return new ArrayList<CircuitInterface>();
-        }
+        Hierarchy hierarchy = container.getWorkspaceManager().getHierarchy(
+                project);
 
         List<CircuitInterface> usercircuits = new ArrayList<CircuitInterface>();
         for (hr.fer.zemris.vhdllab.entities.Caseless name : circuitnames) {
@@ -363,8 +354,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
     @Override
     protected void doDispose() {
-        container.getSystemContainer().getResourceManager()
-                .removeVetoableResourceListener(appletListener);
+        container.getFileManager().removeListener(appletListener);
     }
 
     @Override
@@ -458,17 +448,9 @@ public class SchemaMainPanel extends AbstractEditor {
         return false;
     }
 
-    public boolean shouldBeAdded(
-            hr.fer.zemris.vhdllab.entities.Caseless projectname,
-            hr.fer.zemris.vhdllab.entities.Caseless filename) {
-        Hierarchy hierarchy;
-        try {
-            hierarchy = container.getSystemContainer().getResourceManager()
-                    .extractHierarchy(projectname);
-        } catch (UniformAppletException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean shouldBeAdded(FileReport report) {
+        hr.fer.zemris.vhdllab.entities.Caseless filename = report.getFile().getName();
+        Hierarchy hierarchy = report.getHierarchy();
 
         hr.fer.zemris.vhdllab.entities.Caseless thisname = getFile().getName();
         System.out.println("This = " + thisname + "; other = " + filename);
@@ -477,10 +459,9 @@ public class SchemaMainPanel extends AbstractEditor {
                         .contains(thisname)) {
             System.out.println("Other should NOT be added to this.");
             return false;
-        } else {
-            System.out.println("Other should be added to this.");
-            return true;
         }
+        System.out.println("Other should be added to this.");
+        return true;
     }
 
     @Override
@@ -500,30 +481,14 @@ public class SchemaMainPanel extends AbstractEditor {
 
         initPrototypes();
 
-        appletListener = new VetoableResourceAdapter() {
+        appletListener = new FileListener() {
+            
             @Override
-            public void resourceSaved(
-                    hr.fer.zemris.vhdllab.entities.Caseless projectName,
-                    hr.fer.zemris.vhdllab.entities.Caseless fileName) {
-                FileInfo file = container.getMapper().getFile(
-                        new FileIdentifier(projectName, fileName));
-                // if
-                // (fileName.equals(SchemaMainPanel.this.content.getFileName()))
-                // return;
-                //				
-                // boolean oldmodifiedstatus =
-                // SchemaMainPanel.this.isModified();
-                //				
-                // List<CircuitInterface> usercis = getUserPrototypeList();
-                // controller.send(new RebuildPrototypeCollection(null,
-                // usercis));
-                // controller.send(new
-                // InvalidateObsoleteUserComponents(usercis));
-                //				
-                // SchemaMainPanel.this.setModified(oldmodifiedstatus);
+            public void fileSaved(FileReport report) {
+                FileInfo file = report.getFile();
 
                 // don't do anything if this editor was saved
-                if (fileName.equals(SchemaMainPanel.this.getFile().getName()))
+                if (file.getName().equals(SchemaMainPanel.this.getFile().getName()))
                     return;
 
                 // don't add a non circuit
@@ -531,14 +496,14 @@ public class SchemaMainPanel extends AbstractEditor {
                     return;
 
                 // shouldn't be added to prototypes
-                if (!shouldBeAdded(projectName, fileName)) {
+                if (!shouldBeAdded(report)) {
                     // then remove it, if it's used in schema
-                    Caseless cfn = new Caseless(fileName.toString());
+                    Caseless cfn = new Caseless(file.getName().toString());
                     if (isProtoInEditor(cfn)) {
                         boolean oldmodifiedstatus = SchemaMainPanel.this
                                 .isModified();
                         controller.send(new RemovePrototype(cfn));
-                        if (isPlacedInEditor(fileName)) {
+                        if (isPlacedInEditor(file.getName())) {
                             controller
                                     .send(new InvalidateObsoleteUserComponents(
                                             controller.getSchemaInfo()
@@ -556,11 +521,11 @@ public class SchemaMainPanel extends AbstractEditor {
                         .extract(file);
 
                 boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
-                boolean isplaced = isPlacedInEditor(fileName);
+                boolean isplaced = isPlacedInEditor(file.getName());
                 controller.send(new AddUpdatePredefinedPrototype(ci));
                 if (isplaced) {
                     // now check if circuit interface has changed
-                    if (hasCircuitInterfaceChanged(fileName, ci)) {
+                    if (hasCircuitInterfaceChanged(file.getName(), ci)) {
                         // only perform invalidation if circuit interface has
                         // changed
                         controller.send(new InvalidateObsoleteUserComponents(
@@ -574,20 +539,16 @@ public class SchemaMainPanel extends AbstractEditor {
                     SchemaMainPanel.this.setModified(oldmodifiedstatus);
                 }
             }
-
+            
             @Override
-            public void resourceCreated(
-                    hr.fer.zemris.vhdllab.entities.Caseless projectName,
-                    hr.fer.zemris.vhdllab.entities.Caseless fileName,
-                    FileType type) {
+            public void fileCreated(FileReport report) {
+                FileInfo file = report.getFile();
                 // don't add a non-circuit
-                FileInfo file = container.getMapper().getFile(
-                        new FileIdentifier(projectName, fileName));
                 if (!file.getType().isCircuit())
                     return;
 
                 // check hierarchy to see if this should be added
-                if (!shouldBeAdded(projectName, fileName))
+                if (!shouldBeAdded(report))
                     return;
 
                 // we must add - fetch circuit interface
@@ -598,11 +559,10 @@ public class SchemaMainPanel extends AbstractEditor {
                 controller.send(new AddUpdatePredefinedPrototype(ci));
                 SchemaMainPanel.this.setModified(oldmodifiedstatus);
             }
-
+            
             @Override
-            public void resourceDeleted(
-                    hr.fer.zemris.vhdllab.entities.Caseless projectName,
-                    FileInfo file) {
+            public void fileDeleted(FileReport report) {
+                FileInfo file = report.getFile();
                 hr.fer.zemris.vhdllab.entities.Caseless fileName = file
                         .getName();
                 // don't bother with non-circuits
@@ -654,8 +614,7 @@ public class SchemaMainPanel extends AbstractEditor {
             // }
 
         };
-        container.getSystemContainer().getResourceManager()
-                .addVetoableResourceListener(appletListener);
+        container.getFileManager().addListener(appletListener);
     }
 
 }

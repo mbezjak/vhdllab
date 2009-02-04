@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.platform.manager.file;
 
 import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.service.FileService;
@@ -43,8 +44,10 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
     @Override
     public void delete(FileInfo file) {
         checkIfNull(file);
-        FileReport report = service.delete(file);
-        fireFileDeleted(report);
+        if(!file.getType().equals(FileType.PREDEFINED)) {
+            FileReport report = service.delete(file);
+            fireFileDeleted(report);
+        }
     }
 
     private void fireFileCreated(FileReport report) {

@@ -8,7 +8,6 @@ import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExpl
 import hr.fer.zemris.vhdllab.applets.main.constant.LanguageConstants;
 import hr.fer.zemris.vhdllab.applets.main.event.ResourceVetoException;
 import hr.fer.zemris.vhdllab.applets.main.event.VetoableResourceAdapter;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IResourceManager;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
@@ -26,6 +25,7 @@ import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
+import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
@@ -53,16 +53,17 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
     @Autowired
     private PlatformContainer platformContainer;
     @Autowired
-    private WorkspaceManager workspaceManager;
+    WorkspaceManager workspaceManager;
     @Autowired
-    private IResourceManager resourceManager;
+    private FileManager fileManager;
     @Autowired
     private ViewManager viewManager;
     @Autowired
     private WizardRegistry wizardRegistry;
     @Autowired
     private EditorManagerFactory editorManagerFactory;
-    @Autowired IdentifierToInfoObjectMapper mapper;
+    @Autowired
+    IdentifierToInfoObjectMapper mapper;
     @Autowired
     private ProjectManager projectManager;
     private ResourceBundle bundle;
@@ -73,47 +74,16 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
 
     @Override
     public void initialize(Workspace workspace) {
-        try {
-            init();
-        } catch (UniformAppletException e) {
-            throw new IllegalStateException(e);
-        }
+        init();
     }
 
     /**
      * Initializes a system container.
      * 
-     * @throws UniformAppletException
-     *             if exceptional condition occurs
      */
-    private void init() throws UniformAppletException {
+    private void init() {
         bundle = ResourceBundleProvider
                 .getBundle(LanguageConstants.APPLICATION_RESOURCES_NAME_MAIN);
-        resourceManager
-                .addVetoableResourceListener(new BeforeCompilationCheckCompilableAndSaveEditors());
-        resourceManager.addVetoableResourceListener(new AfterCompilationEcho());
-        resourceManager
-                .addVetoableResourceListener(new BeforeSimulationCheckSimulatableAndSaveEditors());
-        resourceManager.addVetoableResourceListener(new AfterSimulationEcho());
-        // resourceManager
-        // .addVetoableResourceListener(new
-        // BeforeProjectCreationCheckExistence());
-        // resourceManager
-        // .addVetoableResourceListener(new
-        // BeforeProjectCreationCheckCorrectName());
-        resourceManager
-                .addVetoableResourceListener(new AfterProjectCreationEcho());
-        resourceManager
-                .addVetoableResourceListener(new BeforeResourceCreationCheckExistence());
-        resourceManager
-                .addVetoableResourceListener(new BeforeResourceCreationCheckCorrectName());
-        resourceManager
-                .addVetoableResourceListener(new AfterResourceCreationEcho());
-        resourceManager
-                .addVetoableResourceListener(new AfterResourceCreationOpenEditor());
-        resourceManager.addVetoableResourceListener(new ResourceSavedEcho());
-        resourceManager
-                .addVetoableResourceListener(new ResourceDeletedCloseEditor());
     }
 
     private IProjectExplorer getProjectExplorer() {
@@ -123,12 +93,8 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
     /**
      * Disposes any resources used by system container.
      * 
-     * @throws UniformAppletException
-     *             if exceptional condition occurs
      */
-    private void dispose() throws UniformAppletException {
-        // TODO kada se sustav gasi ovo se mora pozvat. samo ne s false
-        // zastavicom nego sa true
+    private void dispose() {
         editorManagerFactory.getAll().save(false);
     }
 
@@ -171,21 +137,11 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         projectName = content.getProjectName();
         Caseless fileName = content.getFileName();
         String data = content.getContent();
-        try {
-            return resourceManager.createNewResource(projectName, fileName,
-                    type, data);
-        } catch (UniformAppletException e) {
-            String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CREATE_FILE);
-            text = PlaceholderUtil.replacePlaceholders(text,
-                    new Caseless[] { fileName });
-            SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-            return false;
-        }
-    }
-
-    @Override
-    public IResourceManager getResourceManager() {
-        return resourceManager;
+        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
+                projectName));
+        FileInfo fileInfo = new FileInfo(type, fileName, data, project.getId());
+        fileManager.create(fileInfo);
+        return true;
     }
 
     /* PRIVATE COMMON TASK METHODS */
@@ -221,7 +177,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
      *            a key to find value
      * @return a string from a bundle for specified key
      */
-    private String getBundleString(String key) {
+    String getBundleString(String key) {
         return bundle.getString(key);
     }
 
@@ -232,12 +188,15 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         if (projectName == null) {
             return null;
         }
-        ProjectInfo project = mapper.getProject(new ProjectIdentifier(projectName));
+        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
+                projectName));
         List<FileInfo> files = workspaceManager.getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
+        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
+                .size());
         for (FileInfo file : files) {
-            if(file.getType().isCompilable()) {
-                identifiers.add(new FileIdentifier(projectName, file.getName()));
+            if (file.getType().isCompilable()) {
+                identifiers
+                        .add(new FileIdentifier(projectName, file.getName()));
             }
         }
         return showRunDialog(RunContext.SIMULATION, identifiers);
@@ -248,12 +207,15 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         if (projectName == null) {
             return null;
         }
-        ProjectInfo project = mapper.getProject(new ProjectIdentifier(projectName));
+        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
+                projectName));
         List<FileInfo> files = workspaceManager.getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files.size());
+        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
+                .size());
         for (FileInfo file : files) {
-            if(file.getType().isSimulatable()) {
-                identifiers.add(new FileIdentifier(projectName, file.getName()));
+            if (file.getType().isSimulatable()) {
+                identifiers
+                        .add(new FileIdentifier(projectName, file.getName()));
             }
         }
         return showRunDialog(RunContext.SIMULATION, identifiers);
@@ -261,7 +223,7 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
 
     private hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier showRunDialog(
             RunContext context, List<FileIdentifier> files) {
-        if(files.isEmpty()) {
+        if (files.isEmpty()) {
             return null;
         }
         RunDialog dialog = new RunDialog(this, context);
@@ -293,7 +255,8 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         @Override
         public void beforeResourceCompilation(Caseless projectName,
                 Caseless fileName) throws ResourceVetoException {
-            FileInfo file = mapper.getFile(new FileIdentifier(projectName, fileName));
+            FileInfo file = mapper.getFile(new FileIdentifier(projectName,
+                    fileName));
             if (!file.getType().isCompilable()) {
                 String text = getBundleString(LanguageConstants.STATUSBAR_NOT_COMPILABLE);
                 text = PlaceholderUtil.replacePlaceholders(text,
@@ -350,7 +313,8 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         @Override
         public void beforeResourceSimulation(Caseless projectName,
                 Caseless fileName) throws ResourceVetoException {
-            FileInfo file = mapper.getFile(new FileIdentifier(projectName, fileName));
+            FileInfo file = mapper.getFile(new FileIdentifier(projectName,
+                    fileName));
             if (!file.getType().isSimulatable()) {
                 String text = getBundleString(LanguageConstants.STATUSBAR_NOT_SIMULATABLE);
                 text = PlaceholderUtil.replacePlaceholders(text,
@@ -459,18 +423,9 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         @Override
         public void beforeResourceCreation(Caseless projectName,
                 Caseless fileName, FileType type) throws ResourceVetoException {
-            boolean exists;
-            try {
-                exists = resourceManager.existsFile(projectName, fileName);
-            } catch (UniformAppletException e) {
-                String text = getBundleString(LanguageConstants.STATUSBAR_CANT_CHECK_FILE_EXISTENCE);
-                text = PlaceholderUtil.replacePlaceholders(text,
-                        new Caseless[] { fileName });
-                SystemLog.instance().addSystemMessage(text, MessageType.ERROR);
-                // veto resource creation
-                throw new ResourceVetoException();
-            }
-            if (exists) {
+            FileInfo file = mapper.getFile(new FileIdentifier(projectName,
+                    fileName));
+            if (workspaceManager.exist(file)) {
                 String text = getBundleString(LanguageConstants.STATUSBAR_EXISTS_FILE);
                 text = PlaceholderUtil.replacePlaceholders(text,
                         new Caseless[] { fileName, projectName });

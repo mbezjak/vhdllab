@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.workspace.FileReport;
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
 import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
@@ -16,6 +15,7 @@ import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -1075,13 +1075,9 @@ public class DefaultProjectExplorer extends AbstractView implements
             PeNode projectNode) {
 
         // dohvaca sve root cvorove tog projekta
-        try {
-            hierarchy = systemContainer.getResourceManager().extractHierarchy(
-                    projectName);
-        } catch (UniformAppletException e) {
-            SystemLog.instance().addErrorMessage(e);
-            return;
-        }
+        ProjectInfo project = container.getMapper().getProject(
+                new ProjectIdentifier(projectName));
+        hierarchy = container.getWorkspaceManager().getHierarchy(project);
         PeNode rootNode = null;
         for (Caseless string : hierarchy.getTopLevelFiles()) {
             if (getNode(projectNode, string) == null) {
@@ -1119,13 +1115,9 @@ public class DefaultProjectExplorer extends AbstractView implements
 
         PeNode rootNode = null;
 
-        try {
-            hierarchy = systemContainer.getResourceManager().extractHierarchy(
-                    projectName);
-        } catch (UniformAppletException e) {
-            SystemLog.instance().addErrorMessage(e);
-            return;
-        }
+        ProjectInfo project = container.getMapper().getProject(
+                new ProjectIdentifier(projectName));
+        hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
         // dohvaca sve root cvorove tog projekta i nakon sto dohvati rootove
         // one rootove koji su leafovi stavlja odmah u stablo, a ostalima
@@ -1216,13 +1208,9 @@ public class DefaultProjectExplorer extends AbstractView implements
         Set<String> nodesInTree = new HashSet<String>();
         PeNode rootNode = null;
 
-        try {
-            hierarchy = systemContainer.getResourceManager().extractHierarchy(
-                    projectName);
-        } catch (UniformAppletException e) {
-            SystemLog.instance().addErrorMessage(e);
-            return;
-        }
+        ProjectInfo project = container.getMapper().getProject(
+                new ProjectIdentifier(projectName));
+        hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
         for (Caseless string : hierarchy.getTopLevelFiles()) {
             rootNode = new PeNode(string.toString());
@@ -1444,13 +1432,9 @@ public class DefaultProjectExplorer extends AbstractView implements
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            try {
-                this.systemContainer.getResourceManager().deleteFile(name,
-                        new Caseless(node.toString()));
-            } catch (UniformAppletException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            FileInfo file = container.getMapper().getFile(new FileIdentifier(name,
+                    new Caseless(node.toString())));
+            container.getFileManager().delete(file);
         }
 
         /* mice tu datoteku iz mape<projekt, lista datoteka> */
@@ -1490,14 +1474,10 @@ public class DefaultProjectExplorer extends AbstractView implements
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            try {
-                this.systemContainer.getResourceManager().deleteProject(
-                        new Caseless(node.toString()));
-                this.allProjects.remove(node.toString());
-            } catch (UniformAppletException e) {
-                SystemLog.instance().addErrorMessage(e);
-                return;
-            }
+            ProjectInfo project = container.getMapper().getProject(
+                    new ProjectIdentifier(new Caseless(node.toString())));
+            container.getProjectManager().delete(project);
+            this.allProjects.remove(node.toString());
         }
 
         /* brise projekt iz liste projekata u tom PE-u */

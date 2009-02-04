@@ -41,14 +41,6 @@ public interface ISystemContainer {
 
     /* MANAGER GETTER METHODS */
 
-    /**
-     * Returns a resource manager for manipulating resources. Return value will
-     * never be <code>null</code>.
-     * 
-     * @return a resource manager
-     */
-    IResourceManager getResourceManager();
-
     FileIdentifier showCompilationRunDialog();
 
     FileIdentifier showSimulationRunDialog();

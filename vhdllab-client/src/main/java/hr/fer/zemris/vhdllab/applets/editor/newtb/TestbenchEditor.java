@@ -21,7 +21,6 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.VectorSignal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.InitTimingDialog;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.components2.JTestbench;
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
@@ -207,8 +206,9 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
         // Ovo gore ostaviti
         // Ovo dolje zamijeniti
 
+        FileInfo fileInfo = container.getMapper().getFile(file);
         CircuitInterface ci = container.getCircuitInterfaceExtractor().extract(
-                container.getMapper().getFile(file));
+                fileInfo);
 
         String testbench = file.getFileName() + "_tb";
 
@@ -217,23 +217,14 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
                     "Enter a name of a testbench", testbench);
             if (testbench == null) {
                 return null;
+            }
+            // Provjera dal postoje duplikati
+            if (container.getWorkspaceManager().exist(fileInfo)) {
+                JOptionPane.showMessageDialog(null,
+                        "A file with the name you specified already exists.",
+                        "Error saving testbench", JOptionPane.ERROR_MESSAGE);
             } else {
-                // Provjera dal postoje duplikati
-                try {
-                    if (container.getSystemContainer().getResourceManager()
-                            .existsFile(projectName, new Caseless(testbench))) {
-                        JOptionPane
-                                .showMessageDialog(
-                                        null,
-                                        "A file with the name you specified already exists.",
-                                        "Error saving testbench",
-                                        JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        break;
-                    }
-                } catch (UniformAppletException e) {
-                    e.printStackTrace();
-                }
+                break;
             }
         }
 

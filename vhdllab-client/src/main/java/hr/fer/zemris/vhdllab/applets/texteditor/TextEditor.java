@@ -4,7 +4,6 @@ import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.applets.main.UniformAppletException;
 import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.client.core.log.MessageType;
@@ -12,6 +11,7 @@ import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -272,22 +272,17 @@ public class TextEditor extends AbstractEditor implements IWizard, Runnable {
 			if (projectName == null)
 				return null;
 			CircuitInterface ci = table.getCircuitInterface();
-			try {
-				if (container.getSystemContainer().getResourceManager().existsFile(projectName,
-						new Caseless(ci.getName()))) {
-					SystemLog.instance().addSystemMessage(
-							ci.getName() + " already exists!",
-							MessageType.INFORMATION);
-				}
-			} catch (UniformAppletException e) {
-				e.printStackTrace();
-				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
-				e.printStackTrace(pw);
-				JOptionPane.showMessageDialog(parent, sw.toString());
-				return null;
-			}
-			StringBuilder sb = new StringBuilder(
+            FileInfo file = container.getMapper().getFile(
+                    new FileIdentifier(projectName,
+                            new hr.fer.zemris.vhdllab.entities.Caseless(ci
+                                    .getName())));
+            if (container.getWorkspaceManager().exist(file)) {
+                SystemLog.instance().addSystemMessage(
+                        ci.getName() + " already exists!",
+                        MessageType.INFORMATION);
+            }
+
+            StringBuilder sb = new StringBuilder(
 					100 + ci.getPorts().size() * 20);
 			sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
 			sb.append("-- note: entity name and resource name must match\n");
