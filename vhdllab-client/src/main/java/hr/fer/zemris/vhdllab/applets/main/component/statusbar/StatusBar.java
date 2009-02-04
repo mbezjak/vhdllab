@@ -1,10 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main.component.statusbar;
 
-import hr.fer.zemris.vhdllab.client.core.log.SystemLog;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogAdapter;
-import hr.fer.zemris.vhdllab.client.core.log.SystemLogListener;
-import hr.fer.zemris.vhdllab.client.core.log.SystemMessage;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -21,8 +16,9 @@ import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import org.apache.log4j.Logger;
+
 /**
- * 
  * @author Miro Bezjak
  */
 public class StatusBar extends JPanel {
@@ -61,18 +57,11 @@ public class StatusBar extends JPanel {
         });
         timer.start();
 
-        SystemLogListener systemLogListener = new SystemLogAdapter() {
-            @Override
-            public void systemMessageAdded(SystemMessage message) {
-                setMessage(message);
-            }
-        };
-        SystemLog.instance().addSystemLogListener(systemLogListener);
-        // later remove the listener
+        Logger.getRootLogger().addAppender(new StatusBarAppender(this));
     }
 
-    void setMessage(SystemMessage message) {
-        statusText.setText(message.getContent());
+    public void setMessage(String message) {
+        statusText.setText(message);
     }
 
 }

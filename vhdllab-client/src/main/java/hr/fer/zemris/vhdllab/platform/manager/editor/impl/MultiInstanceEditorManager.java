@@ -3,23 +3,56 @@ package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
+import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
+import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
 import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
+import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
 import javax.swing.JPanel;
 
 import org.apache.commons.lang.Validate;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class MultiInstanceEditorManager extends AbstractEditorManager {
+public class MultiInstanceEditorManager extends LocalizationSupport implements
+        EditorManager {
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger
+            .getLogger(MultiInstanceEditorManager.class);
 
+    private static final String EDITOR_OPENED_MESSAGE = "notification.editor.opened";
+    private static final String EDITOR_CLOSED_MESSAGE = "notification.editor.closed";
     private static final String MODIFIED_PREFIX = "*";
+    private static final String TITLE_PREFIX = "title.for.";
+    private static final String TOOLTIP_PREFIX = "tooltip.for.";
+    private static final String EDITABLE_EDITOR_MESSAGE = "tooltip.editor.editable";
+    private static final String READONLY_EDITOR_MESSAGE = "tooltip.editor.readonly";
+
+    @Autowired
+    private EditorRegistry registry;
+    @Autowired
+    private IdentifierToInfoObjectMapper mapper;
+    @Resource(name = "groupBasedComponentContainer")
+    private ComponentContainer container;
+    private final EditorIdentifier identifier;
+    private final ComponentGroup group;
+    private Editor editor;
+
+    @Autowired
+    private PlatformContainer platformContainer;
 
     @Resource(name = "singleSaveDialogManager")
     private DialogManager dialogManager;
@@ -27,15 +60,85 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
     private FileManager fileManager;
 
     public MultiInstanceEditorManager(EditorIdentifier identifier) {
-        super(identifier, ComponentGroup.EDITOR);
+        Validate.notNull(identifier, "Editor identifier can't be null");
+        this.identifier = identifier;
+        this.group = ComponentGroup.EDITOR;
     }
 
     @Override
-    protected void configureComponent() {
+    public void open() {
+        if (!isOpened()) {
+            editor = newInstance();
+            editor.setContainer(platformContainer);
+            editor.init();
+            configureComponent();
+            String title = getTitle();
+            String tooltip = getTooltip();
+            JPanel panel = editor.getPanel();
+            container.add(title, tooltip, panel, group);
+            registry.add(this, panel, identifier);
+            LOG.info(getMessage(EDITOR_OPENED_MESSAGE, new Object[] { title }));
+        }
+        select();
+    }
+
+    private Editor newInstance() {
+        Class<? extends Editor> clazz = identifier.getMetadata()
+                .getEditorClass();
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void configureComponent() {
         editor.setEditable(identifier.getMetadata().isEditable());
         editor.setFile(identifier.getInstanceModifier());
         EventPublisher<EditorListener> publisher = editor.getEventPublisher();
         publisher.addListener(new EditorModifiedListener());
+    }
+
+    @Override
+    public boolean isOpened() {
+        return editor != null;
+    }
+
+    @Override
+    public void select() throws NotOpenedException {
+        checkIfOpened();
+        if (isSelected())
+            return;
+        container.setSelected(editor.getPanel(), group);
+    }
+
+    @Override
+    public boolean isSelected() throws NotOpenedException {
+        checkIfOpened();
+        return container.isSelected(editor.getPanel(), group);
+    }
+
+    @Override
+    public void undo() throws NotOpenedException {
+        checkIfOpened();
+        editor.undo();
+    }
+
+    @Override
+    public void redo() throws NotOpenedException {
+        checkIfOpened();
+        editor.redo();
+    }
+
+    @Override
+    public boolean isModified() throws NotOpenedException {
+        checkIfOpened();
+        return editor.isModified();
+    }
+
+    @Override
+    public EditorIdentifier getIdentifier() {
+        return identifier;
     }
 
     @Override
@@ -54,6 +157,7 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
         container.remove(panel, group);
         registry.remove(panel);
         editor = null;
+        LOG.info(getMessage(EDITOR_CLOSED_MESSAGE, new Object[] { getTitle() }));
     }
 
     @Override
@@ -80,6 +184,39 @@ public class MultiInstanceEditorManager extends AbstractEditorManager {
             editor.setModified(false);
         }
         return true;
+    }
+
+    private void checkIfOpened() {
+        if (!isOpened()) {
+            throw new NotOpenedException("Component " + identifier
+                    + " isn't opened");
+        }
+    }
+
+    private String getTitle() {
+        return getMessageWithPrefix(TITLE_PREFIX);
+    }
+
+    private String getTooltip() {
+        return getMessageWithPrefix(TOOLTIP_PREFIX);
+    }
+
+    private String getMessageWithPrefix(String prefix) {
+        Object[] args = new Object[3];
+        EditorMetadata metadata = identifier.getMetadata();
+        FileInfo file = identifier.getInstanceModifier();
+        if (file != null) {
+            ProjectInfo project = mapper.getProject(file.getProjectId());
+            args[0] = file.getName();
+            args[1] = project.getName();
+        }
+        if (metadata.isEditable()) {
+            args[2] = getMessage(EDITABLE_EDITOR_MESSAGE);
+        } else {
+            args[2] = getMessage(READONLY_EDITOR_MESSAGE);
+        }
+        String code = prefix + metadata.getCode();
+        return getMessage(code, args);
     }
 
     void resetEditorTitle(boolean modified) {
