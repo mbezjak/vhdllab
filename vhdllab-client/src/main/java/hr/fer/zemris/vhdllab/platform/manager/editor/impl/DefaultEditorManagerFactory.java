@@ -106,7 +106,16 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
         for (JPanel panel : components) {
             managers.add(get(panel));
         }
-        return configureManager(new MulticastEditorManager(managers));
+        EditorManager editorManager;
+        if (managers.isEmpty()) {
+            editorManager = new NoSelectionEditorManager();
+        } else if (managers.size() == 1) {
+            editorManager = managers.get(0);
+        } else {
+            editorManager = configureManager(new MulticastEditorManager(
+                    managers));
+        }
+        return editorManager;
     }
 
 }

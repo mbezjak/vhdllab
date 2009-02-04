@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.save.SaveDialog;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import javax.annotation.Resource;
 
@@ -50,7 +48,7 @@ public class MulticastEditorManager implements EditorManager {
 
     @Override
     public boolean isOpened() {
-        return !managers.isEmpty();
+        return true;
     }
 
     @Override
@@ -92,9 +90,6 @@ public class MulticastEditorManager implements EditorManager {
     public boolean save(boolean withDialog, SaveContext context)
             throws NotOpenedException {
         Validate.notNull(context, "Save context can't be null");
-        if (managers.size() == 1) {
-            return managers.get(0).save(withDialog, context);
-        }
 
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>();
         Map<FileIdentifier, EditorManager> map = new HashMap<FileIdentifier, EditorManager>();
@@ -113,14 +108,8 @@ public class MulticastEditorManager implements EditorManager {
             }
         }
         if (!identifiers.isEmpty()) {
-            Preferences preferences = Preferences
-                    .userNodeForPackage(SaveDialog.class);
-            List<FileIdentifier> resourcesToSave;
-            if (preferences.getBoolean(SaveDialog.SHOULD_AUTO_SAVE, false)) {
-                resourcesToSave = identifiers;
-            } else {
-                resourcesToSave = saveDialog.showDialog(identifiers, context);
-            }
+            List<FileIdentifier> resourcesToSave = saveDialog.showDialog(
+                    identifiers, context);
             if (resourcesToSave == null || resourcesToSave.isEmpty()) {
                 return false;
             }

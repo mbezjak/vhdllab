@@ -6,6 +6,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import org.springframework.stereotype.Component;
 
@@ -16,9 +17,16 @@ public class SaveDialogManager extends LocalizationSupport implements
     @SuppressWarnings("unchecked")
     @Override
     public <T> T showDialog(Object... args) {
+        List<FileIdentifier> identifiers = (List<FileIdentifier>) args[0];
         SaveContext context = (SaveContext) args[1];
+        Preferences preferences = Preferences
+                .userNodeForPackage(SaveDialog.class);
+        if (preferences.getBoolean(SaveDialog.SHOULD_AUTO_SAVE, false)) {
+            return (T) identifiers;
+        }
+
         SaveDialog dialog = new SaveDialog(this, context);
-        dialog.setSaveFiles((List<FileIdentifier>) args[0]);
+        dialog.setSaveFiles(identifiers);
         dialog.startDialog();
         return (T) dialog.getResult();
     }

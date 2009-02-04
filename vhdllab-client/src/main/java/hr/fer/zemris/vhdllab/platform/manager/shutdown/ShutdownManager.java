@@ -26,18 +26,30 @@ public final class ShutdownManager extends
     public void shutdownWithConfirmation() {
         if (dialogManager.showDialog()) {
             logger.debug("Shutting down application");
-            fireShutdownInProgress();
-            System.exit(EXIT_STATUS_OK);
+            ShutdownEvent event = new ShutdownEvent();
+            fireShutdownInProgress(event);
+            if (!event.isCancelShutdown()) {
+                System.exit(EXIT_STATUS_OK);
+            }
         }
     }
 
-    private void fireShutdownInProgress() {
-        for (ShutdownListener l : getListeners()) {
-            try {
-                l.shutdownInProgress();
-            } catch (RuntimeException e) {
-                logger.debug("Error in shutdown listener", e);
-                // suppress any error in shutdown procedure
+    private void fireShutdownInProgress(ShutdownEvent event) {
+        int minLevel = ShutdownListener.MIN_SHUTDOWN_LEVEL;
+        int maxLevel = ShutdownListener.MAX_SHUTDOWN_LEVEL;
+        for (int shutdownLevel = minLevel; shutdownLevel <= maxLevel; shutdownLevel++) {
+            for (ShutdownListener l : getListeners()) {
+                if (l.getShutdownLevel() == shutdownLevel) {
+                    try {
+                        l.shutdownInProgress(event);
+                    } catch (RuntimeException e) {
+                        logger.debug("Error in shutdown listener", e);
+                        // suppress any error in shutdown procedure
+                    }
+                    if (event.isCancelShutdown()) {
+                        return;
+                    }
+                }
             }
         }
     }

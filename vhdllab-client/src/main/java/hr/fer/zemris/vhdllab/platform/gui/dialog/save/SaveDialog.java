@@ -45,6 +45,8 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
     private static final String COMPILE_AFTER_SAVE_MESSAGE = "dialog.multi.save.compile_after_save.message";
     private static final String SIMULATE_AFTER_SAVE_TITLE = "dialog.multi.save.simulate_after_save.title";
     private static final String SIMULATE_AFTER_SAVE_MESSAGE = "dialog.multi.save.simulate_after_save.message";
+    private static final String SHUTDOWN_AFTER_SAVE_TITLE = "dialog.multi.save.shutdown_after_save.title";
+    private static final String SHUTDOWN_AFTER_SAVE_MESSAGE = "dialog.multi.save.shutdown_after_save.message";
 
     /** Size of a border */
     private static final int BORDER = 10;
@@ -176,6 +178,8 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
             return source.getMessage(COMPILE_AFTER_SAVE_TITLE);
         case SIMULATE_AFTER_SAVE:
             return source.getMessage(SIMULATE_AFTER_SAVE_TITLE);
+        case SHUTDOWN_AFTER_SAVE:
+            return source.getMessage(SHUTDOWN_AFTER_SAVE_TITLE);
         default:
             throw new IllegalStateException("Unknown save context: " + context);
         }
@@ -189,6 +193,8 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
             return source.getMessage(COMPILE_AFTER_SAVE_MESSAGE);
         case SIMULATE_AFTER_SAVE:
             return source.getMessage(SIMULATE_AFTER_SAVE_MESSAGE);
+        case SHUTDOWN_AFTER_SAVE:
+            return source.getMessage(SHUTDOWN_AFTER_SAVE_MESSAGE);
         default:
             throw new IllegalStateException("Unknown save context: " + context);
         }

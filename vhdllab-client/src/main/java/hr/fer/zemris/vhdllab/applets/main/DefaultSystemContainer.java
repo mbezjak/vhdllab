@@ -90,14 +90,6 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         return viewManager.getProjectExplorer();
     }
 
-    /**
-     * Disposes any resources used by system container.
-     * 
-     */
-    private void dispose() {
-        editorManagerFactory.getAll().save(false);
-    }
-
     /* RESOURCE MANIPULATION METHODS */
 
     @Override
