@@ -1,8 +1,7 @@
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.platform.gui;
 
 import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.platform.gui.MaximizationManager;
 import hr.fer.zemris.vhdllab.platform.gui.container.EditorTabbedPane;
 import hr.fer.zemris.vhdllab.platform.gui.container.ViewTabbedPane;
 import hr.fer.zemris.vhdllab.platform.gui.menu.MenuGenerator;
@@ -54,6 +53,16 @@ public final class VhdllabFrame extends JFrame implements
         Preferences preferences = Preferences
                 .userNodeForPackage(VhdllabFrame.class);
         preferences.addPreferenceChangeListener(this);
+
+        Thread
+                .setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        JOptionPane.showMessageDialog(VhdllabFrame.this,
+                                "Error occurred: " + e.getMessage(),
+                                "Error occurred", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
 
         Logger.getRootLogger().addAppender(new AppenderSkeleton() {
 

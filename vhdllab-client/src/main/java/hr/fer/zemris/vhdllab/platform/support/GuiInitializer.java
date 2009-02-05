@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.support;
 
-import hr.fer.zemris.vhdllab.applets.main.VhdllabFrame;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.DefaultProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView;
 import hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.gui.VhdllabFrame;
 import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownManager;
 import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.view.history.LogHistoryView;
