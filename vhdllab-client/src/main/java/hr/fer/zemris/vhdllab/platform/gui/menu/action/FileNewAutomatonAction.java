@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.gui.menu.action;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.platform.gui.menu.AbstractMenuAction;
+import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 
 import java.awt.event.ActionEvent;
 
@@ -15,7 +15,7 @@ public class FileNewAutomatonAction extends AbstractMenuAction {
     private static final long serialVersionUID = 1L;
 
     @Autowired
-    protected ISystemContainer systemContainer;
+    protected WizardManager systemContainer;
 
     @Override
     public void actionPerformed(ActionEvent e) {

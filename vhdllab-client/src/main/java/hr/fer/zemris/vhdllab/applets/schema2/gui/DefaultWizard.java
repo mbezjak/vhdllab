@@ -11,11 +11,13 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InOutSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaEntity;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.awt.Component;
 import java.io.IOException;
@@ -26,7 +28,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
-public class DefaultWizard implements IWizard {
+public class DefaultWizard implements Wizard {
     /**
      * Logger for this class
      */
@@ -41,7 +43,7 @@ public class DefaultWizard implements IWizard {
     public DefaultWizard() {
     }
 
-    public FileContent getInitialFileContent(Component parent,
+    public FileInfo getInitialFileContent(Component parent,
             hr.fer.zemris.vhdllab.entities.Caseless projectName) {
         String[] options = new String[] { "OK", "Cancel" };
         int optionType = JOptionPane.OK_CANCEL_OPTION;
@@ -119,9 +121,8 @@ public class DefaultWizard implements IWizard {
                 LOG.error("Unexpected error", e);
                 return null;
             }
-            return new FileContent(projectName,
-                    new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()),
-                    writer.toString());
+            ProjectInfo project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+            return new FileInfo(FileType.SCHEMA, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()), writer.toString(), project.getId());
         } else
             return null;
     }

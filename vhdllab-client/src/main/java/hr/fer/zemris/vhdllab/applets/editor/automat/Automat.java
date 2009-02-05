@@ -1,10 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -33,7 +35,7 @@ import javax.swing.KeyStroke;
  * @author ddelac
  * 
  */
-public class Automat extends AbstractEditor implements IWizard {
+public class Automat extends AbstractEditor implements Wizard {
 
     /**
 	 * 
@@ -232,11 +234,7 @@ public class Automat extends AbstractEditor implements IWizard {
         return adrw.getData();
     }
 
-    public IWizard getWizard() {
-        return this;
-    }
-
-    public FileContent getInitialFileContent(Component parent,
+    public FileInfo getInitialFileContent(Component parent,
             Caseless projectName) {
         bundle = ResourceBundle
                 .getBundle("Client_Automat_ApplicationResources");
@@ -250,7 +248,8 @@ public class Automat extends AbstractEditor implements IWizard {
                     stanja);
         } else
             return null;
-        return new FileContent(projectName, new Caseless(pod.ime), gen);
+        ProjectInfo project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+        return new FileInfo(FileType.AUTOMATON, new Caseless(pod.ime), gen, project.getId());
     }
 
     @Override

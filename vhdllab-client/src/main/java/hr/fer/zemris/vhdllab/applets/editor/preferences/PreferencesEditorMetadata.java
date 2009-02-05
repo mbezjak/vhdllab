@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditorMetadata;
 
 public class PreferencesEditorMetadata extends AbstractEditorMetadata {
@@ -10,7 +10,7 @@ public class PreferencesEditorMetadata extends AbstractEditorMetadata {
     }
 
     @Override
-    public Class<? extends IWizard> getWizardClass() {
+    public Class<? extends Wizard> getWizardClass() {
         return null;
     }
 

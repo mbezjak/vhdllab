@@ -26,7 +26,6 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands.RemovePrototy
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUIController;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
@@ -49,7 +48,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -80,9 +78,6 @@ public class SchemaMainPanel extends AbstractEditor {
 
     /* static fields */
     private static final long serialVersionUID = -6643347269051956602L;
-
-    /* private fields */
-    private SoftReference<DefaultWizard> wizardSoftRef;
 
     /* model private fields */
     private ISchemaCore core;
@@ -391,17 +386,6 @@ public class SchemaMainPanel extends AbstractEditor {
         }
 
         return writer.toString();
-    }
-
-    public IWizard getWizard() {
-        DefaultWizard dw = null;
-        if (wizardSoftRef != null)
-            dw = wizardSoftRef.get();
-        if (dw == null) {
-            dw = new DefaultWizard();
-            wizardSoftRef = new SoftReference<DefaultWizard>(dw);
-        }
-        return dw;
     }
 
     public boolean isProtoInEditor(Caseless cmpname) {

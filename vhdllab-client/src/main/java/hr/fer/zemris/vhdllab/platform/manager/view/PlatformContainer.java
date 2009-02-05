@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.platform.manager.view;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class PlatformContainer extends AbstractLocalizationSource {
 
     @Autowired
-    private ISystemContainer systemContainer;
+    private WizardManager systemContainer;
     @Autowired
     private EditorManagerFactory editorManagerFactory;
     @Autowired
@@ -41,7 +41,7 @@ public class PlatformContainer extends AbstractLocalizationSource {
     @Autowired
     private CircuitInterfaceExtractor circuitInterfaceExtractor;
 
-    public ISystemContainer getSystemContainer() {
+    public WizardManager getSystemContainer() {
         return systemContainer;
     }
 

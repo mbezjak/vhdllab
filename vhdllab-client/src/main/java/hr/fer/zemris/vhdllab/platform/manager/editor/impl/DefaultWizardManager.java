@@ -1,15 +1,13 @@
-package hr.fer.zemris.vhdllab.applets.main;
+package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
-import hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
+import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAlreadyExistsException;
@@ -26,13 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultSystemContainer extends AbstractLocalizationSource
-        implements ISystemContainer {
+public class DefaultWizardManager extends AbstractLocalizationSource
+        implements WizardManager {
     /**
      * Logger for this class
      */
     private static final Logger LOG = Logger
-            .getLogger(DefaultSystemContainer.class);
+            .getLogger(DefaultWizardManager.class);
 
     @Autowired
     private PlatformContainer platformContainer;
@@ -77,21 +75,20 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
                     .info("Select a project from Project Explorer before creating a new file");
             return false;
         }
-        IWizard wizard;
+        Wizard wizard;
         try {
             wizard = wizardRegistry.get(type).getWizardClass().newInstance();
         } catch (Exception ex) {
             ex.printStackTrace();
             wizard = null;
         }
-        FileContent content = initWizard(wizard, projectName);
-        if (content == null) {
+        FileInfo file = initWizard(wizard, projectName);
+        if (file == null) {
             // user canceled or no wizard for such editor
             return false;
         }
-        projectName = content.getProjectName();
-        Caseless fileName = content.getFileName();
-        String data = content.getContent();
+        Caseless fileName = file.getName();
+        String data = file.getData();
         ProjectInfo project = mapper.getProject(new ProjectIdentifier(
                 projectName));
         try {
@@ -106,16 +103,15 @@ public class DefaultSystemContainer extends AbstractLocalizationSource
         return true;
     }
 
-    private FileContent initWizard(IWizard wizard, Caseless projectName) {
+    private FileInfo initWizard(Wizard wizard, Caseless projectName) {
         if (wizard == null) {
             throw new NullPointerException("Wizard cant be null");
         }
         // Initialization of a wizard
         wizard.setContainer(platformContainer);
-        FileContent content = wizard.getInitialFileContent(getFrame(),
-                projectName);
+        FileInfo file = wizard.getInitialFileContent(getFrame(), projectName);
         // end of initialization
-        return content;
+        return file;
     }
 
 }

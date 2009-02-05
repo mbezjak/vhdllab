@@ -1,7 +1,7 @@
-package hr.fer.zemris.vhdllab.applets.main.interfaces;
+package hr.fer.zemris.vhdllab.platform.manager.editor;
 
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 
 import java.awt.Component;
@@ -25,7 +25,7 @@ import java.awt.Component;
  * 
  * @author Miro Bezjak
  */
-public interface IWizard {
+public interface Wizard {
 
 	/**
 	 * Sets a project container so that this wizard may communicate with other
@@ -34,7 +34,7 @@ public interface IWizard {
 	 * 
 	 * @param container
 	 *            a project container
-	 * @see hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer
+	 * @see hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager
 	 */
 	void setContainer(PlatformContainer container);
 
@@ -52,7 +52,7 @@ public interface IWizard {
 	 * <p>
 	 * This method should only display a wizard! Not actual editors to display
 	 * returning file content (do not invoke method
-	 * {@link ISystemContainer#openEditor(Caseless, Caseless, boolean, boolean)}).
+	 * {@link WizardManager#openEditor(Caseless, Caseless, boolean, boolean)}).
 	 * <p>
 	 * Returned value may be <code>null</code>. In that case it indicates
 	 * either editor does not have a wizard or user clicked on a
@@ -67,6 +67,6 @@ public interface IWizard {
 	 *            should created file be placed
 	 * @return an initial <code>FileContent</code>
 	 */
-	FileContent getInitialFileContent(Component parent, Caseless projectName);
+	FileInfo getInitialFileContent(Component parent, Caseless projectName);
 
 }

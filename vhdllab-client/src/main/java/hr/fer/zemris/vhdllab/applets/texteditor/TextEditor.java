@@ -4,12 +4,14 @@ import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -56,7 +58,7 @@ import javax.swing.undo.UndoManager;
 
 import org.apache.log4j.Logger;
 
-public class TextEditor extends AbstractEditor implements IWizard {
+public class TextEditor extends AbstractEditor implements Wizard {
     /**
      * Logger for this class
      */
@@ -199,7 +201,7 @@ public class TextEditor extends AbstractEditor implements IWizard {
         return text.getText();
     }
 
-    public IWizard getWizard() {
+    public Wizard getWizard() {
         return this;
     }
 
@@ -255,7 +257,7 @@ public class TextEditor extends AbstractEditor implements IWizard {
         }
     }
 
-    public FileContent getInitialFileContent(Component parent,
+    public FileInfo getInitialFileContent(Component parent,
             Caseless projectName) {
         String[] options = new String[] { "OK", "Cancel" };
         int optionType = JOptionPane.OK_CANCEL_OPTION;
@@ -305,8 +307,8 @@ public class TextEditor extends AbstractEditor implements IWizard {
         sb.append("ARCHITECTURE arch OF ").append(ci.getName()).append(
                 " IS \n\nBEGIN\n\nEND arch;");
 
-        return new FileContent(projectName, new Caseless(ci.getName()), sb
-                .toString());
+        ProjectInfo project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+        return new FileInfo(FileType.SOURCE, new Caseless(ci.getName()), sb.toString(), project.getId());
     }
 
     @Override

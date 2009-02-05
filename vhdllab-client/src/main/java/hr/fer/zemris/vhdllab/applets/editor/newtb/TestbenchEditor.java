@@ -21,13 +21,13 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.VectorSignal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.InitTimingDialog;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.components2.JTestbench;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
@@ -47,7 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class TestbenchEditor extends AbstractEditor implements IWizard {
+public class TestbenchEditor extends AbstractEditor implements Wizard {
 
     private static final long serialVersionUID = 1L;
 
@@ -169,7 +169,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     }
 
     @Override
-    public FileContent getInitialFileContent(Component parent,
+    public FileInfo getInitialFileContent(Component parent,
             Caseless projectName) {
         ProjectInfo project = getContainer().getMapper().getProject(
                 new ProjectIdentifier(projectName));
@@ -230,8 +230,7 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
                 tb = this.getInitialTestbench(initTimingDialog, file
                         .getFileName().toString());
                 this.addSignals(tb, ci);
-                return new FileContent(projectName, new Caseless(testbench), tb
-                        .toXml());
+                return new FileInfo(FileType.TESTBENCH, new Caseless(testbench), tb.toXml(), project.getId());
             } catch (UniformTestbenchException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(),
                         "Error creating testbench", JOptionPane.ERROR_MESSAGE);

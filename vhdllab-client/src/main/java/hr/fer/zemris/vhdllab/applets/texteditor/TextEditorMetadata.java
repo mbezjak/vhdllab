@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditorMetadata;
 
 public class TextEditorMetadata extends AbstractEditorMetadata {
@@ -10,7 +10,7 @@ public class TextEditorMetadata extends AbstractEditorMetadata {
     }
 
     @Override
-    public Class<? extends IWizard> getWizardClass() {
+    public Class<? extends Wizard> getWizardClass() {
         return TextEditor.class;
     }
 

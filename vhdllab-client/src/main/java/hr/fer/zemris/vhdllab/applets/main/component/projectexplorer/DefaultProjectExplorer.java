@@ -3,13 +3,13 @@ package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.workspace.FileReport;
-import hr.fer.zemris.vhdllab.applets.main.interfaces.ISystemContainer;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
@@ -149,7 +149,7 @@ public class DefaultProjectExplorer extends AbstractView implements
     private Hierarchy hierarchy;
 
     /** ProjectContainer */
-    private ISystemContainer systemContainer;
+    private WizardManager systemContainer;
     private VHDLCellRenderer renderer;
 
     private TreePath workingTreePath;
@@ -941,7 +941,7 @@ public class DefaultProjectExplorer extends AbstractView implements
      * @param container
      *            systemContainer
      */
-    private void setSystemContainer(ISystemContainer container) {
+    private void setSystemContainer(WizardManager container) {
         this.systemContainer = container;
     }
 

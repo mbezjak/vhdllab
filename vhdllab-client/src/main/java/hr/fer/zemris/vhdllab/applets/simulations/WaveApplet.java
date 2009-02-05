@@ -1,9 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
-import hr.fer.zemris.vhdllab.applets.main.model.FileContent;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
@@ -42,7 +41,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-public class WaveApplet extends AbstractEditor implements IWizard {
+public class WaveApplet extends AbstractEditor implements Wizard {
 
 	/** Ovaj container */
 	private JPanel cp = this;
@@ -1664,11 +1663,11 @@ public class WaveApplet extends AbstractEditor implements IWizard {
 	    return null;
 	}
 
-	public IWizard getWizard() {
+	public Wizard getWizard() {
 		return this;
 	}
 
-	public FileContent getInitialFileContent(Component parent, Caseless projectName) {
+	public FileInfo getInitialFileContent(Component parent, Caseless projectName) {
 		return null;
 	}
 

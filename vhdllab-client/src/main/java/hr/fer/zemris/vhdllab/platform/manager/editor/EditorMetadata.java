@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 
 public interface EditorMetadata {
 
@@ -8,7 +7,7 @@ public interface EditorMetadata {
 
     String getCode();
 
-    Class<? extends IWizard> getWizardClass();
+    Class<? extends Wizard> getWizardClass();
 
     boolean isSaveable();
 
