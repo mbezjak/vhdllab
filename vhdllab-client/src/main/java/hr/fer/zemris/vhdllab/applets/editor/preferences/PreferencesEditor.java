@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.preferences;
 
-import hr.fer.zemris.vhdllab.applets.main.interfaces.IWizard;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
@@ -76,11 +75,6 @@ public class PreferencesEditor extends AbstractEditor implements
 
     @Override
     public String getData() {
-        return null;
-    }
-
-    @Override
-    public IWizard getWizard() {
         return null;
     }
 

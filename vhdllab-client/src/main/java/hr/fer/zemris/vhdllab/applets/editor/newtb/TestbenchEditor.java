@@ -152,11 +152,6 @@ public class TestbenchEditor extends AbstractEditor implements IWizard {
     }
 
     @Override
-    public IWizard getWizard() {
-        return this;
-    }
-
-    @Override
     protected void doInitWithoutData() {
         if (!this.GUICreated) {
             this.createGUI();
