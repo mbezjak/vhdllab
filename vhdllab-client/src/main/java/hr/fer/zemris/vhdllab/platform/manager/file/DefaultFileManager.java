@@ -6,6 +6,8 @@ import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.service.FileService;
@@ -30,6 +32,8 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
     private WorkspaceManager workspaceManager;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
+    @Autowired
+    private EditorManagerFactory editorManagerFactory;
     @Resource(name = "standaloneLocalizationSource")
     private LocalizationSource localizationSource;
 
@@ -45,6 +49,7 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
         }
         FileReport report = service.save(file);
         fireFileCreated(report);
+        openEditor(report.getFile());
         ProjectInfo project = mapper
                 .getProject(report.getFile().getProjectId());
         log(report, project, FILE_CREATED_MESSAGE);
@@ -64,6 +69,7 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
     public void delete(FileInfo file) {
         checkIfNull(file);
         if (!file.getType().equals(FileType.PREDEFINED)) {
+            closeEditor(file);
             ProjectInfo project = mapper.getProject(file.getProjectId());
             FileReport report = service.delete(file);
             fireFileDeleted(report);
@@ -86,6 +92,17 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
     private void fireFileDeleted(FileReport report) {
         for (FileListener l : getListeners()) {
             l.fileDeleted(report);
+        }
+    }
+
+    private void openEditor(FileInfo file) {
+        editorManagerFactory.get(file).open();
+    }
+
+    private void closeEditor(FileInfo file) {
+        EditorManager em = editorManagerFactory.get(file);
+        if (em.isOpened()) {
+            em.close(false);
         }
     }
 

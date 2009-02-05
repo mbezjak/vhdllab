@@ -354,7 +354,7 @@ public class EntityTable extends JPanel implements IEntityWizard {
                 new FileIdentifier(container.getViewManager()
                         .getProjectExplorer().getSelectedProject(),
                         new Caseless(imeSklop.getText())));
-        if (container.getWorkspaceManager().exist(file)
+        if (file != null
                 || !StringFormat.isCorrectFileName(imeSklop.getText()))
             return false;
         return true;
