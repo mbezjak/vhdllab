@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.ToolTipManager;
 
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.AppenderSkeleton;
@@ -140,11 +139,6 @@ public final class VhdllabFrame extends JFrame implements
             double size = pref.getDouble(name, 0.75);
             verticalSplitPane.setDividerLocation((int) (verticalSplitPane
                     .getHeight() * size));
-        } else if (name
-                .equalsIgnoreCase(UserFileConstants.SYSTEM_TOOLTIP_DURATION)) {
-            int duration = pref.getInt(
-                    UserFileConstants.SYSTEM_TOOLTIP_DURATION, 15000);
-            ToolTipManager.sharedInstance().setDismissDelay(duration);
         }
     }
 
