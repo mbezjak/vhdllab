@@ -10,7 +10,7 @@ import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.awt.BorderLayout;
@@ -350,12 +350,12 @@ public class EntityTable extends JPanel implements IEntityWizard {
             else
                 test.add((String) model.getValueAt(i, 0));
         }
-        FileInfo file = container.getMapper().getFile(
-                new FileIdentifier(container.getViewManager()
-                        .getProjectExplorer().getSelectedProject(),
-                        new Caseless(imeSklop.getText())));
-        if (file != null
-                || !StringFormat.isCorrectFileName(imeSklop.getText()))
+        FileInfo file = container.getMapper()
+                .getFile(
+                        new FileIdentifier(container.getProjectExplorer()
+                                .getSelectedProject(), new Caseless(imeSklop
+                                .getText())));
+        if (file != null || !StringFormat.isCorrectFileName(imeSklop.getText()))
             return false;
         return true;
     }

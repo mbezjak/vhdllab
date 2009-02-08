@@ -13,7 +13,7 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.api.util.StringFormat;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
-import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

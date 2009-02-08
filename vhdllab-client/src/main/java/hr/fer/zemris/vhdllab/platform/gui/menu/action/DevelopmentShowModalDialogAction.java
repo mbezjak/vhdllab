@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.gui.menu.action;
 
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.gui.menu.AbstractMenuAction;
 
 import java.awt.Frame;
@@ -9,6 +8,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+import org.springframework.richclient.application.Application;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,7 +24,7 @@ public class DevelopmentShowModalDialogAction extends AbstractMenuAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            Frame owner = ApplicationContextHolder.getContext().getFrame();
+            Frame owner = Application.instance().getActiveWindow().getControl();
             JOptionPane.showMessageDialog(owner, "is it modal?");
         } catch (Exception ex) {
             LOG.error("Forced error", ex);

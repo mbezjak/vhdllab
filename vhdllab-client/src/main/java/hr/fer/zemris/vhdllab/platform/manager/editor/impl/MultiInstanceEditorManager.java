@@ -5,17 +5,16 @@ import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
-import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
@@ -45,10 +44,9 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
     private EditorRegistry registry;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
-    @Resource(name = "groupBasedComponentContainer")
-    private ComponentContainer container;
+    @Autowired
+    private EditorContainer container;
     private final EditorIdentifier identifier;
-    private final ComponentGroup group;
     private Editor editor;
 
     @Autowired
@@ -62,7 +60,6 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
     public MultiInstanceEditorManager(EditorIdentifier identifier) {
         Validate.notNull(identifier, "Editor identifier can't be null");
         this.identifier = identifier;
-        this.group = ComponentGroup.EDITOR;
     }
 
     @Override
@@ -75,8 +72,8 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
             String title = getTitle();
             String tooltip = getTooltip();
             JPanel panel = editor.getPanel();
-            container.add(title, tooltip, panel, group);
-            registry.add(this, panel, identifier);
+            container.add(editor);
+            registry.add(this, editor, identifier);
             LOG.info(getMessage(EDITOR_OPENED_MESSAGE, new Object[] { title }));
         }
         select();
@@ -109,13 +106,13 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
         checkIfOpened();
         if (isSelected())
             return;
-        container.setSelected(editor.getPanel(), group);
+        container.setSelected(editor);
     }
 
     @Override
     public boolean isSelected() throws NotOpenedException {
         checkIfOpened();
-        return container.isSelected(editor.getPanel(), group);
+        return container.isSelected(editor);
     }
 
     @Override
@@ -154,8 +151,8 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
         }
         editor.dispose();
         JPanel panel = editor.getPanel();
-        container.remove(panel, group);
-        registry.remove(panel);
+        container.remove(editor);
+        registry.remove(editor);
         editor = null;
         LOG.info(getMessage(EDITOR_CLOSED_MESSAGE, new Object[] { getTitle() }));
     }
@@ -224,7 +221,7 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
         if (modified) {
             title = MODIFIED_PREFIX + title;
         }
-        container.setTitle(title, editor.getPanel(), group);
+//        container.setTitle(title, editor.getPanel());
     }
 
     class EditorModifiedListener implements EditorListener {

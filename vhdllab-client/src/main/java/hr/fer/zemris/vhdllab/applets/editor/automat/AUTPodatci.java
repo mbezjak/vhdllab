@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityParser;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.ReturnData;
-import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

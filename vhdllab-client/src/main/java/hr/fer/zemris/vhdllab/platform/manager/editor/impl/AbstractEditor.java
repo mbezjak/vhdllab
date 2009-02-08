@@ -1,24 +1,44 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
+import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.listener.StandaloneEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
-import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
-public abstract class AbstractEditor extends AbstractView implements Editor {
+import javax.swing.JPanel;
+
+public abstract class AbstractEditor extends JPanel implements Editor {
 
     private static final long serialVersionUID = 1L;
 
     private final EventPublisher<EditorListener> publisher;
     private boolean modified;
     private FileInfo file;
+    protected PlatformContainer container;
 
     public AbstractEditor() {
         this.publisher = new StandaloneEventPublisher<EditorListener>(
                 EditorListener.class);
         modified = false;
+    }
+
+    @Override
+    public PlatformContainer getContainer() {
+        return container;
+    }
+
+    @Override
+    public void setContainer(PlatformContainer container) {
+        this.container = container;
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 
     @Override
@@ -57,6 +77,21 @@ public abstract class AbstractEditor extends AbstractView implements Editor {
     }
 
     @Override
+    public Caseless getFileName() {
+        return (file != null ? file.getName() : null);
+    }
+
+    @Override
+    public Caseless getProjectName() {
+        if (file != null) {
+            ProjectInfo project = container.getMapper().getProject(
+                    file.getProjectId());
+            return project.getName();
+        }
+        return null;
+    }
+
+    @Override
     public boolean setModified(boolean flag) {
         if (flag != modified) {
             modified = flag;
@@ -70,7 +105,7 @@ public abstract class AbstractEditor extends AbstractView implements Editor {
     public boolean isModified() {
         return modified;
     }
-    
+
     @Override
     public void setEditable(boolean flag) {
     }

@@ -3,11 +3,8 @@ package hr.fer.zemris.vhdllab.applets.view.compilation;
 import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationListener;
-import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
-import java.awt.BorderLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.Format;
@@ -17,8 +14,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.richclient.application.support.AbstractView;
 
 /**
  * Panel koji sadrzi mozebitne greske prilikom kompajliranja VHDL koda.
@@ -28,37 +29,14 @@ import javax.swing.JScrollPane;
  * @since 22.12.2006.
  */
 public class CompilationErrorsView extends AbstractView {
-
-    /**
-     * Serial version UID.
-     */
-    private static final long serialVersionUID = -7361269803493786758L;
+    
+    @Autowired
+    private PlatformContainer container;
 
     /** DefaultListModel */
     private DefaultListModel model;
 
-    /** JList komponenta u koju ce se potrpati sve greske */
-    private JList listContent;
-
-    /** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
-    private JScrollPane scrollPane;
-
-    /**
-     * Constructor
-     * 
-     * Kreira objekt i dovodi ga u pocetno stanje ciji kontekst sadrzi prazan
-     * string
-     */
-    public CompilationErrorsView() {
-    }
-
-    /**
-     * Glavna metoda koja uzima neki rezultat dobiven od strane servera.
-     * 
-     * @param resultTarget
-     *            rezultat koji ce ciniti kontekst panela s greskama
-     */
-    public void setContent(CompilationResult result) {
+    void setContent(CompilationResult result) {
         if (result.isSuccessful()) {
             Format formatter = new SimpleDateFormat("HH:mm:ss");
             String time = formatter.format(new Date());
@@ -87,7 +65,7 @@ public class CompilationErrorsView extends AbstractView {
      * @param error
      *            Linija koju je generira VHDL simulator
      */
-    public void highlightError(String error) {
+    void highlightError(String error) {
         Pattern pattern = Pattern.compile("([^:]+):([^:]+):([^:]+):(.+)");
         Matcher matcher = pattern.matcher(error);
         if (matcher.matches()) {
@@ -115,16 +93,11 @@ public class CompilationErrorsView extends AbstractView {
             // editor.highlightLine(temp);
         }
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hr.fer.zemris.vhdllab.applets.main.interfaces.IView#init()
-     */
+    
     @Override
-    public void init() {
+    protected JComponent createControl() {
         model = new DefaultListModel();
-        listContent = new JList(model);
+        final JList listContent = new JList(model);
         listContent.setFixedCellHeight(15);
         listContent.addMouseListener(new MouseAdapter() {
             @Override
@@ -136,26 +109,16 @@ public class CompilationErrorsView extends AbstractView {
                 }
             }
         });
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                scrollPane.setPreferredSize(CompilationErrorsView.this
-                        .getSize());
-            }
-        });
-
-        scrollPane = new JScrollPane(listContent);
-
-        this.setLayout(new BorderLayout());
-        this.add(scrollPane, BorderLayout.CENTER);
 
         container.getCompilationManager().addListener(new CompilationListener() {
+            @SuppressWarnings("synthetic-access")
             @Override
             public void compiled(CompilationResult result) {
                 setContent(result);
-                getContainer().getViewManager().select(CompilationErrorsView.class);
+                getActiveWindow().getPage().setActiveComponent(CompilationErrorsView.this);
             }
         });
+        return new JScrollPane(listContent);
     }
 
 }

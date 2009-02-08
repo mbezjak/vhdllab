@@ -37,8 +37,8 @@ public class DefaultUserFileManager implements UserFileManager {
 
     @Override
     public void saveFiles() {
-        LOG.debug("Saving " + files.size() + " user files");
-        service.save(new ArrayList<UserFileInfo>(files.values()));
+        LOG.debug("Saving " + getFiles().size() + " user files");
+        service.save(new ArrayList<UserFileInfo>(getFiles().values()));
     }
 
     private Map<String, UserFileInfo> getFiles() {

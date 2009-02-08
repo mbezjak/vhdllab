@@ -1,20 +1,19 @@
 package hr.fer.zemris.vhdllab.platform.log;
 
-import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownEvent;
-import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownListener;
+import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownAdapter;
 import hr.fer.zemris.vhdllab.service.LibraryFileService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SaveStandardStreamsOnShutdownListener implements ShutdownListener {
+public class SaveStandardStreamsOnShutdownListener extends ShutdownAdapter {
 
     @Autowired
     private LibraryFileService libraryFileService;
 
     @Override
-    public void shutdownInProgress(ShutdownEvent event) {
+    public void shutdownWithoutGUI() {
         String stdOut = StdOutConsumer.instance().toString();
         String stdErr = StdErrConsumer.instance().toString();
         StringBuilder sb = new StringBuilder(stdOut.length() + stdErr.length()
@@ -25,11 +24,6 @@ public class SaveStandardStreamsOnShutdownListener implements ShutdownListener {
         sb.append("Standard error:\n").append(separator);
         sb.append(stdErr).append("\n").append(separator);
         libraryFileService.saveClientLog(sb.toString());
-    }
-
-    @Override
-    public int getShutdownLevel() {
-        return MAX_SHUTDOWN_LEVEL;
     }
 
 }

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.simulation;
 
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
@@ -14,7 +15,6 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
@@ -47,7 +47,7 @@ public class DefaultSimulationManager extends
     @Autowired
     private WorkspaceManager workspaceManager;
     @Autowired
-    private ViewManager viewManager;
+    private IProjectExplorer projectExplorer;
 
     private FileInfo lastSimulatedFile;
 
@@ -117,8 +117,7 @@ public class DefaultSimulationManager extends
     }
 
     private FileIdentifier showSimulationRunDialog() {
-        Caseless projectName = viewManager.getProjectExplorer()
-                .getSelectedProject();
+        Caseless projectName = projectExplorer.getSelectedProject();
         if (projectName == null) {
             return null;
         }

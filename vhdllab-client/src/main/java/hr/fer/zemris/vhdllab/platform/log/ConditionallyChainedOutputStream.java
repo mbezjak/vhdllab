@@ -19,7 +19,7 @@ public class ConditionallyChainedOutputStream extends ByteArrayOutputStream {
 
     @Override
     public synchronized void write(int b) {
-        if (shouldChainConditionally()) {
+        if (shouldChain()) {
             printStream.write(b);
         }
         super.write(b);
@@ -27,13 +27,13 @@ public class ConditionallyChainedOutputStream extends ByteArrayOutputStream {
 
     @Override
     public synchronized void write(byte[] b, int off, int len) {
-        if (shouldChainConditionally()) {
+        if (shouldChain()) {
             printStream.write(b, off, len);
         }
         super.write(b, off, len);
     }
 
-    private boolean shouldChainConditionally() {
+    private boolean shouldChain() {
         return ApplicationContextHolder.getContext().isDevelopment();
     }
 

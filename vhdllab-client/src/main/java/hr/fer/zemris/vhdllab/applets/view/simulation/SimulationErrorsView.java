@@ -2,19 +2,20 @@ package hr.fer.zemris.vhdllab.applets.view.simulation;
 
 import hr.fer.zemris.vhdllab.api.results.SimulationMessage;
 import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationListener;
-import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 
-import java.awt.BorderLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.richclient.application.support.AbstractView;
 
 /**
  * Panel koji sadrzi mozebitne greske prilikom kompajliranja VHDL koda.
@@ -25,79 +26,47 @@ import javax.swing.JScrollPane;
  */
 public class SimulationErrorsView extends AbstractView {
 
-	/**
-	 * Serial version UID.
-	 */
-	private static final long serialVersionUID = -7361269803493786758L;
+    @Autowired
+    private PlatformContainer container;
 
-	/** DefaultListModel */
-	private DefaultListModel model;
+    /** DefaultListModel */
+    private DefaultListModel model;
 
-	/** JList komponenta u koju ce se potrpati sve greske */
-	private JList listContent;
+    void setContent(SimulationResult result) {
+        if (result.isSuccessful()) {
+            // TODO ovo ucitat iz bundle-a
+            Format formatter = new SimpleDateFormat("HH:mm:ss");
+            String time = formatter.format(new Date());
+            model.addElement(time + "  Simulation finished successfully.");
+            return;
+        }
 
-	/** Panel sadrzi JScrollPane komponentu cime je omoguceno scrollanje */
-	private JScrollPane scrollPane;
+        model.clear();
+        for (SimulationMessage msg : result.getMessages()) {
+            StringBuilder sb = new StringBuilder(
+                    msg.getMessageText().length() + 20);
+            sb.append(msg.getEntityName()).append(":").append(
+                    msg.getMessageText());
+            model.addElement(sb.toString());
+        }
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * Kreira objekt i dovodi ga u pocetno stanje ciji kontekst sadrzi prazan
-	 * string
-	 */
-	public SimulationErrorsView() {
-	}
+    @Override
+    protected JComponent createControl() {
+        model = new DefaultListModel();
+        JList listContent = new JList(model);
+        listContent.setFixedCellHeight(15);
 
-	/**
-	 * Glavna metoda koja uzima neki rezultat dobiven od strane servera.
-	 * 
-	 * @param resultTarget
-	 *            rezultat koji ce ciniti kontekst panela s greskama
-	 */
-	public void setContent(SimulationResult result) {
-		if (result.isSuccessful()) {
-			// TODO ovo ucitat iz bundle-a
-			Format formatter = new SimpleDateFormat("HH:mm:ss");
-			String time = formatter.format(new Date());
-			model.addElement(time + "  Simulation finished successfully.");
-			return;
-		}
-
-		model.clear();
-		for (SimulationMessage msg : result.getMessages()) {
-			StringBuilder sb = new StringBuilder(
-					msg.getMessageText().length() + 20);
-			sb.append(msg.getEntityName()).append(":").append(
-					msg.getMessageText());
-			model.addElement(sb.toString());
-		}
-	}
-
-	@Override
-	public void init() {
-		model = new DefaultListModel();
-		listContent = new JList(model);
-		// TODO ovo ucitat iz preference-a
-		listContent.setFixedCellHeight(15);
-		scrollPane = new JScrollPane(listContent);
-
-		this.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				scrollPane.setPreferredSize(SimulationErrorsView.this.getSize());
-			}
-		});
-
-		this.setLayout(new BorderLayout());
-		this.add(scrollPane, BorderLayout.CENTER);
-		
-		container.getSimulationManager().addListener(new SimulationListener() {
+        container.getSimulationManager().addListener(new SimulationListener() {
+            @SuppressWarnings("synthetic-access")
             @Override
             public void simulated(SimulationResult result) {
                 setContent(result);
-                getContainer().getViewManager().select(SimulationErrorsView.class);
+                getActiveWindow().getPage().setActiveComponent(
+                        SimulationErrorsView.this);
             }
         });
-	}
+        return new JScrollPane(listContent);
+    }
 
 }

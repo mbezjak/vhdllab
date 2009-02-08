@@ -3,8 +3,8 @@ package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentContainer;
-import hr.fer.zemris.vhdllab.platform.manager.component.ComponentGroup;
+import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
@@ -13,9 +13,6 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMa
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Resource;
-import javax.swing.JPanel;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -28,15 +25,14 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
 
     @Autowired
     private ConfigurableApplicationContext context;
-    @Resource(name = "groupBasedComponentContainer")
-    private ComponentContainer container;
+    @Autowired
+    private EditorContainer container;
     @Autowired
     private EditorRegistry registry;
     @Autowired
     private WizardRegistry wizardRegistry;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
-    private final ComponentGroup group = ComponentGroup.EDITOR;
 
     @Override
     public EditorManager get(FileInfo file) {
@@ -58,24 +54,24 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
 
     @Override
     public EditorManager getSelected() {
-        return get(container.getSelected(group));
+        return get(container.getSelected());
     }
 
     @Override
     public EditorManager getAll() {
-        return createManager(container.getAll(group));
+        return createManager(container.getAll());
     }
 
     @Override
     public EditorManager getAllAssociatedWithProject(Caseless projectName) {
         Validate.notNull(projectName, "Project name can't be null");
-        List<JPanel> editors = container.getAll(group);
-        List<JPanel> editorsWithSpecifiedProjectName = new ArrayList<JPanel>();
-        for (JPanel panel : editors) {
-            FileInfo file = get(panel).getIdentifier().getInstanceModifier();
+        List<Editor> editors = container.getAll();
+        List<Editor> editorsWithSpecifiedProjectName = new ArrayList<Editor>();
+        for (Editor editor : editors) {
+            FileInfo file = get(editor).getIdentifier().getInstanceModifier();
             ProjectInfo project = mapper.getProject(file.getProjectId());
             if (project.getName().equals(projectName)) {
-                editorsWithSpecifiedProjectName.add(panel);
+                editorsWithSpecifiedProjectName.add(editor);
             }
         }
         return createManager(editorsWithSpecifiedProjectName);
@@ -83,7 +79,7 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
 
     @Override
     public EditorManager getAllButSelected() {
-        return createManager(container.getAllButSelected(group));
+        return createManager(container.getAllButSelected());
     }
 
     private EditorManager configureManager(EditorManager manager) {
@@ -93,18 +89,18 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
         return manager;
     }
 
-    private EditorManager get(JPanel panel) {
-        if (panel == null) {
+    private EditorManager get(Editor editor) {
+        if (editor == null) {
             return new NoSelectionEditorManager();
         }
-        return registry.get(panel);
+        return registry.get(editor);
     }
 
-    private EditorManager createManager(List<JPanel> components) {
+    private EditorManager createManager(List<Editor> components) {
         List<EditorManager> managers = new ArrayList<EditorManager>(components
                 .size());
-        for (JPanel panel : components) {
-            managers.add(get(panel));
+        for (Editor editor : components) {
+            managers.add(get(editor));
         }
         EditorManager editorManager;
         if (managers.isEmpty()) {

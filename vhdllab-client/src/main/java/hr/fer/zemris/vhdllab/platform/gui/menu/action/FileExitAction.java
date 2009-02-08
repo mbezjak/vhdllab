@@ -18,7 +18,7 @@ public class FileExitAction extends AbstractMenuAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        shutdownManager.shutdownWithConfirmation();
+        shutdownManager.shutdownWithoutGUI();
     }
 
 }

@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.compilation;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
@@ -11,7 +12,6 @@ import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
@@ -45,7 +45,7 @@ public class DefaultCompilationManager extends
     @Autowired
     private WorkspaceManager workspaceManager;
     @Autowired
-    private ViewManager viewManager;
+    private IProjectExplorer projectExplorer;
 
     private FileInfo lastCompiledFile;
 
@@ -97,8 +97,7 @@ public class DefaultCompilationManager extends
     }
 
     private FileIdentifier showCompilationRunDialog() {
-        Caseless projectName = viewManager.getProjectExplorer()
-                .getSelectedProject();
+        Caseless projectName = projectExplorer.getSelectedProject();
         if (projectName == null) {
             return null;
         }

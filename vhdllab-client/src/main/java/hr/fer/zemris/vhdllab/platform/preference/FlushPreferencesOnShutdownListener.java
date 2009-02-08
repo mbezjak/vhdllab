@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.preference;
 
-import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownEvent;
-import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownListener;
+import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownAdapter;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -10,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FlushPreferencesOnShutdownListener implements ShutdownListener {
+public class FlushPreferencesOnShutdownListener extends ShutdownAdapter {
 
     /**
      * Logger for this class
@@ -19,17 +18,12 @@ public class FlushPreferencesOnShutdownListener implements ShutdownListener {
             .getLogger(FlushPreferencesOnShutdownListener.class);
 
     @Override
-    public void shutdownInProgress(ShutdownEvent event) {
+    public void shutdownWithoutGUI() {
         try {
             Preferences.userRoot().flush();
         } catch (BackingStoreException e) {
             LOG.error("Error while flushing preferences", e);
         }
-    }
-
-    @Override
-    public int getShutdownLevel() {
-        return MAX_SHUTDOWN_LEVEL;
     }
 
 }

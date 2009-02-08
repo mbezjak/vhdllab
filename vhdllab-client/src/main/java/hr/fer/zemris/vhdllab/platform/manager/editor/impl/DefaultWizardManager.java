@@ -1,19 +1,19 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
+import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
-import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
-import hr.fer.zemris.vhdllab.platform.manager.view.ViewManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultWizardManager extends AbstractLocalizationSource
-        implements WizardManager {
+public class DefaultWizardManager extends AbstractLocalizationSource implements
+        WizardManager {
     /**
      * Logger for this class
      */
@@ -37,7 +37,7 @@ public class DefaultWizardManager extends AbstractLocalizationSource
     @Autowired
     private FileManager fileManager;
     @Autowired
-    private ViewManager viewManager;
+    private IProjectExplorer projectExplorer;
     @Autowired
     private WizardRegistry wizardRegistry;
     @Autowired
@@ -68,8 +68,7 @@ public class DefaultWizardManager extends AbstractLocalizationSource
         if (type == null) {
             throw new NullPointerException("File type cant be null");
         }
-        Caseless projectName = viewManager.getProjectExplorer()
-                .getSelectedProject();
+        Caseless projectName = projectExplorer.getSelectedProject();
         if (projectName == null) {
             LOG
                     .info("Select a project from Project Explorer before creating a new file");

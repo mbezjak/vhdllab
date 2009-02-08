@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.platform.manager.view.PlatformContainer;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 /**
  * Interface for table wizard used to create CircuitInterface for new circuits
  * WARNING Source of this interface might still be changed, but existing methods

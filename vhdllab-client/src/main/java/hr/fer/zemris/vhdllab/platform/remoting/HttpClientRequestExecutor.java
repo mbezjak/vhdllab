@@ -2,13 +2,9 @@ package hr.fer.zemris.vhdllab.platform.remoting;
 
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.login.UserCredential;
 
 import java.io.IOException;
 import java.util.Properties;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -19,12 +15,12 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.remoting.httpinvoker.CommonsHttpInvokerRequestExecutor;
 import org.springframework.remoting.httpinvoker.HttpInvokerClientConfiguration;
+import org.springframework.richclient.application.Application;
+import org.springframework.richclient.command.CommandManager;
 
 public class HttpClientRequestExecutor extends
         CommonsHttpInvokerRequestExecutor {
 
-    @Resource(name = "loginDialogManager")
-    private DialogManager dialogManager;
     private boolean showRetryMessage = false;
 
     public HttpClientRequestExecutor(HttpClient httpClient) throws IOException {
@@ -46,22 +42,25 @@ public class HttpClientRequestExecutor extends
         super.executePostMethod(config, httpClient, postMethod);
         switch (postMethod.getStatusCode()) {
         case HttpStatus.SC_UNAUTHORIZED:
-            UserCredential uc;
+            UsernamePasswordCredentials credentials;
             if (ApplicationContextHolder.getContext().isDevelopment()
                     && !showRetryMessage) {
-                uc = new UserCredential("test", "test");
+                credentials = new UsernamePasswordCredentials("test", "test");
+                showRetryMessage = true;
             } else {
-                uc = dialogManager.showDialog();
+                CommandManager manager = Application.instance()
+                        .getActiveWindow().getCommandManager();
+                LoginCommand command = (LoginCommand) manager
+                        .getCommand("loginCommand");
+                command.execute();
+                credentials = command.getCredentials();
             }
-            if (uc == null) {
-                throw new SecurityException(
-                        "User refused to provide proper username and password");
+            if (credentials == null) {
+                System.exit(1);
             }
             ApplicationContextHolder.getContext().setUserId(
-                    new Caseless(uc.getUsername()));
+                    new Caseless(credentials.getUserName()));
             showRetryMessage = true;
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-                    uc.getUsername(), uc.getPassword());
             getHttpClient().getState().setCredentials(scope, credentials);
             executePostMethod(config, httpClient, postMethod);
             break;

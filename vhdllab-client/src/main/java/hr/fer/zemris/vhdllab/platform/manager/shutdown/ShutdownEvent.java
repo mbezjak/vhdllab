@@ -2,14 +2,14 @@ package hr.fer.zemris.vhdllab.platform.manager.shutdown;
 
 public class ShutdownEvent {
 
-    private boolean cancelShutdown = false;
+    private boolean shutdownCanceled = false;
 
     public void cancelShutdown() {
-        cancelShutdown = true;
+        shutdownCanceled = true;
     }
 
-    public boolean isCancelShutdown() {
-        return cancelShutdown;
+    public boolean isShutdownCanceled() {
+        return shutdownCanceled;
     }
 
 }

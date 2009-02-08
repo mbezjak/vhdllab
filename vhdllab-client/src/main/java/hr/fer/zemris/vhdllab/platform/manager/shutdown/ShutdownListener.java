@@ -7,12 +7,8 @@ import java.util.EventListener;
 @AutoPublished(publisher = ShutdownManager.class)
 public interface ShutdownListener extends EventListener {
 
-    public int MIN_SHUTDOWN_LEVEL = 0;
+    void shutdownWithGUI(ShutdownEvent event);
 
-    public int MAX_SHUTDOWN_LEVEL = 1;
-
-    void shutdownInProgress(ShutdownEvent event);
-
-    int getShutdownLevel();
+    void shutdownWithoutGUI();
 
 }

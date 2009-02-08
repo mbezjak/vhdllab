@@ -9,10 +9,10 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAdapter;
-import hr.fer.zemris.vhdllab.platform.manager.view.impl.AbstractView;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
@@ -63,12 +63,12 @@ import org.apache.log4j.Logger;
  * 
  * @author Boris Ozegovic
  */
-public class DefaultProjectExplorer extends AbstractView implements
-        IProjectExplorer {
+public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     /**
      * Logger for this class
      */
-    private static final Logger LOG = Logger.getLogger(DefaultProjectExplorer.class);
+    private static final Logger LOG = Logger
+            .getLogger(DefaultProjectExplorer.class);
 
     /*
      * Project explorer je zamisljen kao stablo koje ce u svakom trenutku moci
@@ -185,7 +185,6 @@ public class DefaultProjectExplorer extends AbstractView implements
     public DefaultProjectExplorer() {
     }
 
-    @Override
     public void init() {
         setSystemContainer(container.getSystemContainer());
         // create set of expanded treepaths
@@ -367,7 +366,7 @@ public class DefaultProjectExplorer extends AbstractView implements
         for (Caseless p : getAllProjects()) {
             removeProject(p);
         }
-        for (ProjectInfo project : getContainer().getWorkspaceManager()
+        for (ProjectInfo project : container.getWorkspaceManager()
                 .getProjects()) {
             addProject(project.getName());
         }
@@ -440,7 +439,7 @@ public class DefaultProjectExplorer extends AbstractView implements
             // provjeri kojeg je tipa
             FileIdentifier fileIdentifier = new FileIdentifier(new Caseless(
                     nodeProjectName), new Caseless(node.toString()));
-            type = getContainer().getMapper().getFile(fileIdentifier).getType();
+            type = container.getMapper().getFile(fileIdentifier).getType();
 
             if (FileType.SOURCE.equals(type)) {
                 setIcon(vhdl);
@@ -618,15 +617,12 @@ public class DefaultProjectExplorer extends AbstractView implements
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            container
-                                    .getCompilationManager()
-                                    .compile(
-                                            container
-                                                    .getMapper()
-                                                    .getFile(
-                                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
-                                                                    name,
-                                                                    fileName)));
+                            container.getCompilationManager()
+                                    .compile(container
+                                            .getMapper()
+                                            .getFile(
+                                                    new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                                                            name, fileName)));
                         }
                     }
                 } else if (event.getSource().equals(simulate)) {
@@ -1485,8 +1481,13 @@ public class DefaultProjectExplorer extends AbstractView implements
     }
 
     public FileIdentifier getSelectedFile() {
-        // TODO Auto-generated method stub
         return null;
+    }
+
+    PlatformContainer container;
+
+    public void setContainer(PlatformContainer container) {
+        this.container = container;
     }
 
 }

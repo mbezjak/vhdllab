@@ -105,6 +105,26 @@
           </filesets>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.0-beta-2</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <format>{0,date,yyyyMMdd}</format>
+          <items>
+            <item>timestamp</item>
+          </items>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -283,8 +303,8 @@
       <name>JBoss Maven2 repository</name>
       <url>http://repository.jboss.com/maven2/</url>
     </repository>
-    <repository><!-- For javax.jnlp only -->
-      <id>spring-richclient-repository</id>
+    <repository>
+      <id>springRichClientRepository</id>
       <name>Spring rich client repository</name>
       <url>http://spring-rich-c.sourceforge.net/maven2repository</url>
       <snapshots>
