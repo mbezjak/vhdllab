@@ -12,6 +12,8 @@ public interface EditorContainer {
 
     void setSelected(Editor editor);
 
+    void setSelected(int index);
+
     boolean isSelected(Editor editor);
 
     List<Editor> getAll();

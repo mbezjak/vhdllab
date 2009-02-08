@@ -48,6 +48,11 @@ public class DefaultEditorContainer extends
     }
 
     @Override
+    public void setSelected(int index) {
+        setSelected(editors.get(index));
+    }
+
+    @Override
     public boolean isSelected(Editor editor) {
         return getSelected() == editor;
     }
