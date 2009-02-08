@@ -31,8 +31,6 @@ public class SimplisticEclipseBasedApplicationPage extends
     private JPanel editorsPane;
     private JTabbedPane viewsTabbedPane;
 
-    private final Icon viewIcon = getIconSource().getIcon("view.icon");
-
     @Override
     protected JComponent createControl() {
         projectExplorerPane = new JPanel(new BorderLayout());
@@ -97,6 +95,7 @@ public class SimplisticEclipseBasedApplicationPage extends
             try {
                 addingView = true;
                 views.add(pageComponent);
+                Icon viewIcon = getIconSource().getIcon("view.icon");
                 viewsTabbedPane.addTab(pageComponent.getDisplayName(),
                         viewIcon, pageComponent.getContext().getPane()
                                 .getControl(), pageComponent.getCaption());

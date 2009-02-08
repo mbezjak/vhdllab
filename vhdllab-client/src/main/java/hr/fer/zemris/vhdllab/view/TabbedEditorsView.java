@@ -19,7 +19,6 @@ import org.springframework.richclient.application.support.AbstractView;
 public class TabbedEditorsView extends AbstractView implements
         EditorContainerListener {
 
-    private final Icon editorIcon = getIconSource().getIcon("editor.icon");
     JTabbedPane tabbedPane;
 
     @Autowired
@@ -50,6 +49,7 @@ public class TabbedEditorsView extends AbstractView implements
                 editor.getProjectName() };
         title = MessageFormat.format(title, args);
         tooltip = MessageFormat.format(tooltip, args);
+        Icon editorIcon = getIconSource().getIcon("editor.icon");
         tabbedPane.addTab(title, editorIcon, editor.getPanel(), tooltip);
     }
 

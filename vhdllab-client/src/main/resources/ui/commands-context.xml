@@ -11,34 +11,8 @@
     will have different target executors in each view.
   -->
   <bean id="windowCommandManager"
-    class="org.springframework.richclient.application.support.ApplicationWindowCommandManager">
-    <property name="sharedCommandIds">
-      <list>
-        <value>newCommand</value>
-        <value>saveCommand</value>
-        <value>saveAsCommand</value>
-        <value>printCommand</value>
-        <value>propertiesCommand</value>
-        <value>undoCommand</value>
-        <value>redoCommand</value>
-        <value>cutCommand</value>
-        <value>copyCommand</value>
-        <value>pasteCommand</value>
-        <value>deleteCommand</value>
-        <value>selectAllCommand</value>
-        <value>newWindowCommand</value>
-        <value>helpContentsCommand</value>
-      </list>
-    </property>
-  </bean>
+    class="org.springframework.richclient.application.support.ApplicationWindowCommandManager" />
 
-  <!--
-    Bean: menuBar Type: magic Usage: required Description: This
-    specifies the makeup of the main menu bar for the application. The
-    CommandGroupFactoryBean is a factory that generates command groups.
-    The "members" property is used to specify the top level menus in the
-    menu bar.
-  -->
   <bean id="menuBar"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
@@ -52,12 +26,6 @@
     </property>
   </bean>
 
-  <!--
-    Bean: fileMenu Type: user named Usage: optional Description: This
-    specifies the content of the file menu. Note the references to
-    shared (predefined) commands by name, directly including a bean (the
-    ExitCommand), and including a sub-menu (newMenu).
-  -->
   <bean id="fileMenu"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
