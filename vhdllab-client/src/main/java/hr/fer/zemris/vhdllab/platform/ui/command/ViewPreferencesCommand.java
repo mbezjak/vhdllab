@@ -1,25 +1,25 @@
-package hr.fer.zemris.vhdllab.platform.gui.menu.action;
+package hr.fer.zemris.vhdllab.platform.ui.command;
 
 import hr.fer.zemris.vhdllab.applets.editor.preferences.PreferencesEditorMetadata;
-import hr.fer.zemris.vhdllab.platform.gui.menu.AbstractMenuAction;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 
-import java.awt.event.ActionEvent;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.richclient.command.ActionCommand;
 
-@Component
-public class ToolsViewPreferencesAction extends AbstractMenuAction {
+public class ViewPreferencesCommand extends ActionCommand {
 
-    private static final long serialVersionUID = 1L;
+    public static final String ID = "viewPreferencesCommand";
 
     @Autowired
-    protected EditorManagerFactory editorManagerFactory;
+    private EditorManagerFactory editorManagerFactory;
+
+    public ViewPreferencesCommand() {
+        super(ID);
+    }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    protected void doExecuteCommand() {
         editorManagerFactory.get(
                 new EditorIdentifier(new PreferencesEditorMetadata())).open();
     }

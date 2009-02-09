@@ -49,7 +49,11 @@ public class DefaultEditorContainer extends
 
     @Override
     public void setSelected(int index) {
-        setSelected(editors.get(index));
+        if(index == -1) {
+            setSelected(null);
+        } else {
+            setSelected(editors.get(index));
+        }
     }
 
     @Override

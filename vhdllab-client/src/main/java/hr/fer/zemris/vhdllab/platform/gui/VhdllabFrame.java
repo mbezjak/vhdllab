@@ -4,7 +4,6 @@ import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.platform.gui.container.EditorTabbedPane;
 import hr.fer.zemris.vhdllab.platform.gui.container.ViewTabbedPane;
-import hr.fer.zemris.vhdllab.platform.gui.menu.MenuGenerator;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -19,24 +18,17 @@ import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
-import org.apache.log4j.spi.ThrowableInformation;
 import org.springframework.context.ApplicationContext;
 
 public final class VhdllabFrame extends JFrame implements
         PreferenceChangeListener {
 
     private static final long serialVersionUID = 1L;
-
-    private ApplicationContext context;
 
     private JPanel projectExplorerPane;
     private JTabbedPane editorPane;
@@ -53,41 +45,6 @@ public final class VhdllabFrame extends JFrame implements
                 .userNodeForPackage(VhdllabFrame.class);
         preferences.addPreferenceChangeListener(this);
 
-        Thread
-                .setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(Thread t, Throwable e) {
-                        JOptionPane.showMessageDialog(VhdllabFrame.this,
-                                "Error occurred: " + e.getMessage(),
-                                "Error occurred", JOptionPane.ERROR_MESSAGE);
-                    }
-                });
-
-        Logger.getRootLogger().addAppender(new AppenderSkeleton() {
-
-            @Override
-            public boolean requiresLayout() {
-                return false;
-            }
-
-            @Override
-            public void close() {
-            }
-
-            @Override
-            protected void append(LoggingEvent event) {
-                ThrowableInformation throwableInformation = event
-                        .getThrowableInformation();
-                if (throwableInformation != null) {
-                    JOptionPane.showMessageDialog(VhdllabFrame.this,
-                            "Error occurred: "
-                                    + throwableInformation.getThrowable()
-                                            .getMessage(), "Error occurred",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
         setPaneSize();
     }
 
@@ -100,14 +57,14 @@ public final class VhdllabFrame extends JFrame implements
     }
 
     private void initGUI() {
-        MenuGenerator menuGenerator = (MenuGenerator) context
-                .getBean("menuGenerator");
+//        MenuGenerator menuGenerator = (MenuGenerator) context
+//                .getBean("menuGenerator");
         maximizationManager = new MaximizationManager();
 
         projectExplorerPane = new JPanel(new BorderLayout());
         editorPane = new EditorTabbedPane(maximizationManager);
-        editorPane.setComponentPopupMenu(menuGenerator
-                .generateEditorPopupMenu());
+//        editorPane.setComponentPopupMenu(menuGenerator
+//                .generateEditorPopupMenu());
         viewPane = new ViewTabbedPane(maximizationManager);
 
         horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -117,7 +74,7 @@ public final class VhdllabFrame extends JFrame implements
         add(maximizationManager.getCenterPanel(verticalSplitPane),
                 BorderLayout.CENTER);
         add(setupStatusBar(), BorderLayout.SOUTH);
-        setJMenuBar(menuGenerator.generateMainMenu());
+//        setJMenuBar(menuGenerator.generateMainMenu());
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -197,7 +154,6 @@ public final class VhdllabFrame extends JFrame implements
     }
 
     public VhdllabFrame(ApplicationContext context) {
-        this.context = context;
         setTitle("VHDLLab");
         Dimension dimension = new Dimension(900, 700);
         setPreferredSize(dimension);

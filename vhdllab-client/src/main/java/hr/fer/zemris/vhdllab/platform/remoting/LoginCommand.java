@@ -11,7 +11,7 @@ import org.springframework.richclient.dialog.TitledPageApplicationDialog;
 public class LoginCommand extends ApplicationWindowAwareCommand {
 
     private UsernamePasswordCredentials credentials;
-    
+
     public LoginCommand() {
         super("loginCommand");
     }
@@ -47,7 +47,7 @@ public class LoginCommand extends ApplicationWindowAwareCommand {
                 super.onCancel(); // Close the dialog
                 System.exit(2);
             }
-            
+
             @Override
             protected ActionCommand getCallingCommand() {
                 return LoginCommand.this;

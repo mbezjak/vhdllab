@@ -16,7 +16,8 @@ public class OSBasedUIManagerConfigurer extends UIManagerConfigurer {
             try {
                 installJGoodiesLooks();
             } catch (UnsupportedLookAndFeelException e) {
-                // then leave cross platform look and feel (default)
+                UIManager.setLookAndFeel(UIManager
+                        .getCrossPlatformLookAndFeelClassName());
                 UIManager.put("swing.boldMetal", Boolean.FALSE);
             }
         } else {

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-  <!--
-    Bean: windowCommandManager Type: magic Usage: required Description:
-    This specifies the component that will manage the commands
-    associated with a window. You can specify the ids of commands that
-    are "shared" among views. This indicates to the manager that they
-    will have different target executors in each view.
-  -->
+  <context:annotation-config />
+
   <bean id="windowCommandManager"
     class="org.springframework.richclient.application.support.ApplicationWindowCommandManager" />
 
@@ -19,7 +15,7 @@
       <list>
         <ref bean="fileMenu" />
         <ref bean="editMenu" />
-        <ref bean="windowMenu" />
+        <ref bean="toolsMenu" />
         <ref bean="helpMenu" />
         <ref bean="developmentMenu" />
       </list>
@@ -30,14 +26,14 @@
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <value>newCommand</value>
+        <ref bean="newMenu" />
         <value>separator</value>
-        <value>saveCommand</value>
-        <value>saveAsCommand</value>
+        <ref bean="saveCommand"/>
+        <ref bean="saveAllCommand"/>
         <value>separator</value>
-        <value>printCommand</value>
-        <value>separator</value>
-        <value>propertiesCommand</value>
+        <ref bean="closeCommand"/>
+        <ref bean="closeOtherCommand"/>
+        <ref bean="closeAllCommand"/>
         <value>separator</value>
         <bean
           class="org.springframework.richclient.command.support.ExitCommand" />
@@ -45,55 +41,58 @@
     </property>
   </bean>
 
-  <!--
-    Bean: editMenu Type: user named Usage: optional Description: This
-    specifies the content of the "Edit" menu.
-  -->
+  <bean id="newMenu"
+    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewProjectCommand" />
+        <value>separator</value>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewSourceCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewTestbenchCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewSchemaCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewAutomatonCommand" />
+      </list>
+    </property>
+  </bean>
+
   <bean id="editMenu"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <value>undoCommand</value>
-        <value>redoCommand</value>
-        <value>separator</value>
-        <value>cutCommand</value>
-        <value>copyCommand</value>
-        <value>pasteCommand</value>
-        <value>deleteCommand</value>
-        <value>separator</value>
-        <value>selectAllCommand</value>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.UndoCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.RedoCommand" />
+<!--        <value>separator</value>-->
+<!--        <value>cutCommand</value>-->
+<!--        <value>copyCommand</value>-->
+<!--        <value>pasteCommand</value>-->
+<!--        <value>deleteCommand</value>-->
+<!--        <value>separator</value>-->
+<!--        <value>selectAllCommand</value>-->
       </list>
     </property>
   </bean>
 
-  <!--
-    Bean: windowMenu Type: user named Usage: optional Description: This
-    specifies the content of the "Window" menu.
-  -->
-  <bean id="windowMenu"
+  <bean id="toolsMenu"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <bean
-          class="org.springframework.richclient.command.support.NewWindowCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.CompileWithDialogCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.CompileLastCommand" />
         <value>separator</value>
-        <bean
-          class="org.springframework.richclient.command.support.ShowViewMenu" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.SimulateWithDialogCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.SimulateLastCommand" />
       </list>
     </property>
   </bean>
 
-  <!--
-    Bean: helpMenu Type: user named Usage: optional Description: This
-    specifies the content of the "Help" menu.
-  -->
   <bean id="helpMenu"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <value>helpContentsCommand</value>
-        <value>separator</value>
-        <ref bean="aboutCommand" />
+<!--        <value>helpContentsCommand</value>-->
+<!--        <value>separator</value>-->
+<!--        <ref bean="aboutCommand" />-->
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.AboutCommand" />
       </list>
     </property>
   </bean>
@@ -102,22 +101,25 @@
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <ref bean="createErrorCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.ViewPreferencesCommand" />
+        <value>separator</value>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateNewLoggedErrorCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateUncaughtExceptionCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateUncaughtErrorCommand" />
+        <value>separator</value>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentShowModalDialogCommand" />
       </list>
     </property>
   </bean>
 
-  <bean id="createErrorCommand" class="hr.fer.zemris.vhdllab.platform.CreateErrorCommand" />
+  <bean id="saveCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.SaveCommand" />
+  <bean id="saveAllCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.SaveAllCommand" />
+  <bean id="closeCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.CloseCommand" />
+  <bean id="closeOtherCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.CloseOtherCommand" />
+  <bean id="closeAllCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.CloseAllCommand" />
 
-
-  <!--
-    Bean: aboutCommand Type: user named Usage: optional Description:
-    This creates a command to handle the "about" menu item. It uses a
-    platform class to generate an about box from the configured
-    application data in the application context.
-  -->
-  <bean id="aboutCommand"
-    class="org.springframework.richclient.command.support.AboutCommand" />
+<!--  <bean id="aboutCommand"-->
+<!--    class="org.springframework.richclient.command.support.AboutCommand" />-->
 
   <bean id="loginCommand" class="hr.fer.zemris.vhdllab.platform.remoting.LoginCommand" />
 
