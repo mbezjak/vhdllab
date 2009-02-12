@@ -165,9 +165,9 @@ public abstract class AbstractEditor extends JPanel implements Editor {
         beanName = beanName.replace("Metadata", "");
         String editableMessage;
         if (metadata.isEditable()) {
-            editableMessage = container.getMessage("tooltip.editor.editable");
+            editableMessage = container.getMessage("editor.editable.caption");
         } else {
-            editableMessage = container.getMessage("tooltip.editor.readonly");
+            editableMessage = container.getMessage("editor.readonly.caption");
         }
         Object[] args = new Object[] { getFileName(), getProjectName(),
                 editableMessage };

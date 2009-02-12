@@ -26,10 +26,8 @@
     <property name="basenames">
       <list>
         <value>ui.messages</value>
-        <value>components</value>
         <value>dialogs</value>
         <value>notifications</value>
-        <value>menu</value>
 
         <!-- Rich client messages -->
         <value>org.springframework.richclient.application.messages
