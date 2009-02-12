@@ -37,6 +37,11 @@ public class DefaultEditorContainer extends
     }
 
     @Override
+    public int indexOf(Editor editor) {
+        return editors.indexOf(editor);
+    }
+
+    @Override
     public Editor getSelected() {
         return selected;
     }
@@ -49,7 +54,7 @@ public class DefaultEditorContainer extends
 
     @Override
     public void setSelected(int index) {
-        if(index == -1) {
+        if (index == -1) {
             setSelected(null);
         } else {
             setSelected(editors.get(index));

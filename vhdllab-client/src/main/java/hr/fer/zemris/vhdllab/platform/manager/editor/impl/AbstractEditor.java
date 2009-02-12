@@ -7,9 +7,12 @@ import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.listener.StandaloneEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
 import javax.swing.JPanel;
+
+import org.apache.commons.lang.StringUtils;
 
 public abstract class AbstractEditor extends JPanel implements Editor {
 
@@ -19,6 +22,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     private boolean modified;
     private FileInfo file;
     protected PlatformContainer container;
+    private EditorMetadata metadata;
 
     public AbstractEditor() {
         this.publisher = new StandaloneEventPublisher<EditorListener>(
@@ -133,6 +137,41 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     @Override
     public EventPublisher<EditorListener> getEventPublisher() {
         return publisher;
+    }
+
+    @Override
+    public void setMetadata(EditorMetadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Override
+    public EditorMetadata getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public String getTitle() {
+        String beanName = StringUtils.uncapitalize(metadata.getClass()
+                .getSimpleName());
+        beanName = beanName.replace("Metadata", "");
+        Object[] args = new Object[] { getFileName(), getProjectName() };
+        return container.getMessage(beanName + ".title", args);
+    }
+
+    @Override
+    public String getCaption() {
+        String beanName = StringUtils.uncapitalize(metadata.getClass()
+                .getSimpleName());
+        beanName = beanName.replace("Metadata", "");
+        String editableMessage;
+        if (metadata.isEditable()) {
+            editableMessage = container.getMessage("tooltip.editor.editable");
+        } else {
+            editableMessage = container.getMessage("tooltip.editor.readonly");
+        }
+        Object[] args = new Object[] { getFileName(), getProjectName(),
+                editableMessage };
+        return container.getMessage(beanName + ".caption", args);
     }
 
     protected abstract void doInitWithoutData();

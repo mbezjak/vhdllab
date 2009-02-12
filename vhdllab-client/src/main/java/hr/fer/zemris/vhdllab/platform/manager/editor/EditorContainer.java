@@ -8,6 +8,8 @@ public interface EditorContainer {
 
     void remove(Editor editor);
 
+    int indexOf(Editor editor);
+
     Editor getSelected();
 
     void setSelected(Editor editor);

@@ -40,4 +40,12 @@ public interface Editor {
 
     Caseless getProjectName();
 
+    void setMetadata(EditorMetadata metadata);
+
+    EditorMetadata getMetadata();
+
+    String getTitle();
+
+    String getCaption();
+
 }

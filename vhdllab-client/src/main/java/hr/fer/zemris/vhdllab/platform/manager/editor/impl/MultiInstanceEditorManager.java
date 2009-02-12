@@ -4,13 +4,10 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
-import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
-import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
@@ -18,7 +15,6 @@ import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import javax.annotation.Resource;
-import javax.swing.JPanel;
 
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
@@ -34,11 +30,6 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
 
     private static final String EDITOR_OPENED_MESSAGE = "notification.editor.opened";
     private static final String EDITOR_CLOSED_MESSAGE = "notification.editor.closed";
-    private static final String MODIFIED_PREFIX = "*";
-    private static final String TITLE_PREFIX = "title.for.";
-    private static final String TOOLTIP_PREFIX = "tooltip.for.";
-    private static final String EDITABLE_EDITOR_MESSAGE = "tooltip.editor.editable";
-    private static final String READONLY_EDITOR_MESSAGE = "tooltip.editor.readonly";
 
     @Autowired
     private EditorRegistry registry;
@@ -67,14 +58,13 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
         if (!isOpened()) {
             editor = newInstance();
             editor.setContainer(platformContainer);
+            editor.setMetadata(identifier.getMetadata());
             editor.init();
             configureComponent();
-            String title = getTitle();
-            String tooltip = getTooltip();
-            JPanel panel = editor.getPanel();
             container.add(editor);
             registry.add(this, editor, identifier);
-            LOG.info(getMessage(EDITOR_OPENED_MESSAGE, new Object[] { title }));
+            LOG.info(getMessage(EDITOR_OPENED_MESSAGE, new Object[] { editor
+                    .getTitle() }));
         }
         select();
     }
@@ -92,8 +82,6 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
     private void configureComponent() {
         editor.setEditable(identifier.getMetadata().isEditable());
         editor.setFile(identifier.getInstanceModifier());
-        EventPublisher<EditorListener> publisher = editor.getEventPublisher();
-        publisher.addListener(new EditorModifiedListener());
     }
 
     @Override
@@ -149,12 +137,12 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
         if (saveFirst) {
             save(true);
         }
-        editor.dispose();
-        JPanel panel = editor.getPanel();
+        String title = editor.getTitle();
         container.remove(editor);
         registry.remove(editor);
+        editor.dispose();
         editor = null;
-        LOG.info(getMessage(EDITOR_CLOSED_MESSAGE, new Object[] { getTitle() }));
+        LOG.info(getMessage(EDITOR_CLOSED_MESSAGE, new Object[] { title }));
     }
 
     @Override
@@ -187,47 +175,6 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
         if (!isOpened()) {
             throw new NotOpenedException("Component " + identifier
                     + " isn't opened");
-        }
-    }
-
-    private String getTitle() {
-        return getMessageWithPrefix(TITLE_PREFIX);
-    }
-
-    private String getTooltip() {
-        return getMessageWithPrefix(TOOLTIP_PREFIX);
-    }
-
-    private String getMessageWithPrefix(String prefix) {
-        Object[] args = new Object[3];
-        EditorMetadata metadata = identifier.getMetadata();
-        FileInfo file = identifier.getInstanceModifier();
-        if (file != null) {
-            ProjectInfo project = mapper.getProject(file.getProjectId());
-            args[0] = file.getName();
-            args[1] = project.getName();
-        }
-        if (metadata.isEditable()) {
-            args[2] = getMessage(EDITABLE_EDITOR_MESSAGE);
-        } else {
-            args[2] = getMessage(READONLY_EDITOR_MESSAGE);
-        }
-        String code = prefix + metadata.getCode();
-        return getMessage(code, args);
-    }
-
-    void resetEditorTitle(boolean modified) {
-        String title = getTitle();
-        if (modified) {
-            title = MODIFIED_PREFIX + title;
-        }
-//        container.setTitle(title, editor.getPanel());
-    }
-
-    class EditorModifiedListener implements EditorListener {
-        @Override
-        public void modified(FileInfo file, boolean flag) {
-            resetEditorTitle(flag);
         }
     }
 
