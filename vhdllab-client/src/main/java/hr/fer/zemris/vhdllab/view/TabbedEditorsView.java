@@ -5,6 +5,8 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorContainerListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
+import hr.fer.zemris.vhdllab.platform.ui.command.RedoCommand;
+import hr.fer.zemris.vhdllab.platform.ui.command.UndoCommand;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -18,9 +20,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.command.CommandGroup;
 import org.springframework.richclient.command.CommandManager;
+import org.springframework.richclient.command.support.GlobalCommandIds;
 
 public class TabbedEditorsView extends AbstractView implements
         EditorContainerListener {
@@ -32,6 +36,12 @@ public class TabbedEditorsView extends AbstractView implements
     EditorContainer container;
 
     private Map<FileInfo, Editor> editors = new HashMap<FileInfo, Editor>();
+
+    @Override
+    protected void registerLocalCommandExecutors(PageComponentContext context) {
+        context.register(GlobalCommandIds.UNDO, new UndoCommand());
+        context.register(GlobalCommandIds.REDO, new RedoCommand());
+    }
 
     @Override
     protected JComponent createControl() {

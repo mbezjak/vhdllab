@@ -5,19 +5,14 @@ import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAlreadyExistsException;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
-
-import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,26 +37,6 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
     private WizardRegistry wizardRegistry;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
-    @Autowired
-    private ProjectManager projectManager;
-
-    @Override
-    public void createNewProjectInstance() {
-        String projectName = JOptionPane.showInputDialog(getFrame(),
-                "Type a name of a project you want to create",
-                "Create project", JOptionPane.PLAIN_MESSAGE);
-        if (projectName == null) {
-            return;
-        }
-        try {
-            projectManager.create(new ProjectInfo(ApplicationContextHolder
-                    .getContext().getUserId(), new Caseless(projectName)));
-        } catch (IllegalArgumentException e) {
-            LOG.info(projectName + " isn't a valid project name");
-        } catch (ProjectAlreadyExistsException e) {
-            LOG.info("Project " + projectName + " already exists");
-        }
-    }
 
     @Override
     public boolean createNewFileInstance(FileType type) {

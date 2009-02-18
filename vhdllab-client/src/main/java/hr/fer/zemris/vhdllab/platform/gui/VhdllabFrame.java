@@ -1,34 +1,24 @@
 package hr.fer.zemris.vhdllab.platform.gui;
 
-import hr.fer.zemris.vhdllab.applets.main.component.statusbar.StatusBar;
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
 import hr.fer.zemris.vhdllab.platform.gui.container.EditorTabbedPane;
 import hr.fer.zemris.vhdllab.platform.gui.container.ViewTabbedPane;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
-import org.apache.commons.lang.Validate;
-import org.springframework.context.ApplicationContext;
-
 public final class VhdllabFrame extends JFrame implements
         PreferenceChangeListener {
-
-    private static final long serialVersionUID = 1L;
 
     private JPanel projectExplorerPane;
     private JTabbedPane editorPane;
@@ -48,23 +38,11 @@ public final class VhdllabFrame extends JFrame implements
         setPaneSize();
     }
 
-    private JPanel setupStatusBar() {
-        StatusBar statusBar = new StatusBar();
-        JPanel statusBarPanel = new JPanel(new BorderLayout());
-        statusBarPanel.add(statusBar, BorderLayout.CENTER);
-        statusBarPanel.setPreferredSize(new Dimension(0, 24));
-        return statusBarPanel;
-    }
-
     private void initGUI() {
-//        MenuGenerator menuGenerator = (MenuGenerator) context
-//                .getBean("menuGenerator");
         maximizationManager = new MaximizationManager();
 
         projectExplorerPane = new JPanel(new BorderLayout());
         editorPane = new EditorTabbedPane(maximizationManager);
-//        editorPane.setComponentPopupMenu(menuGenerator
-//                .generateEditorPopupMenu());
         viewPane = new ViewTabbedPane(maximizationManager);
 
         horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -73,8 +51,6 @@ public final class VhdllabFrame extends JFrame implements
                 horizontalSplitPane, viewPane);
         add(maximizationManager.getCenterPanel(verticalSplitPane),
                 BorderLayout.CENTER);
-        add(setupStatusBar(), BorderLayout.SOUTH);
-//        setJMenuBar(menuGenerator.generateMainMenu());
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -134,38 +110,6 @@ public final class VhdllabFrame extends JFrame implements
                 / verticalSplitPane.getHeight();
         property = formatter.format(size);
         pref.put(UserFileConstants.SYSTEM_VIEW_HEIGHT, property);
-    }
-
-    public void setProjectExplorer(JPanel component, String title) {
-        Validate.notNull(component, "Project explorer component can't be null");
-        Validate.notNull(title, "Project explorer's title can't be null");
-        component.setBorder(BorderFactory.createTitledBorder(title));
-        projectExplorerPane.add(component, BorderLayout.CENTER);
-        projectExplorerPane.revalidate();
-        projectExplorerPane.repaint();
-    }
-
-    public JTabbedPane getEditorPane() {
-        return editorPane;
-    }
-
-    public JTabbedPane getViewPane() {
-        return viewPane;
-    }
-
-    public VhdllabFrame(ApplicationContext context) {
-        setTitle("VHDLLab");
-        Dimension dimension = new Dimension(900, 700);
-        setPreferredSize(dimension);
-        setSize(dimension);
-
-        URL resource = getClass().getClassLoader().getResource(
-                "icons/vhdllab_main_16.png");
-        setIconImage(new ImageIcon(resource).getImage());
-        init();
-        pack();
-        setVisible(true);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
 }

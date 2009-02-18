@@ -7,7 +7,26 @@
   <context:annotation-config />
 
   <bean id="windowCommandManager"
-    class="org.springframework.richclient.application.support.ApplicationWindowCommandManager" />
+    class="org.springframework.richclient.application.support.ApplicationWindowCommandManager">
+    <property name="sharedCommandIds">
+      <list>
+        <value>newCommand</value>
+        <value>saveCommand</value>
+        <value>saveAsCommand</value>
+        <value>printCommand</value>
+        <value>propertiesCommand</value>
+        <value>undoCommand</value>
+        <value>redoCommand</value>
+        <value>cutCommand</value>
+        <value>copyCommand</value>
+        <value>pasteCommand</value>
+        <value>deleteCommand</value>
+        <value>selectAllCommand</value>
+        <value>newWindowCommand</value>
+        <value>helpContentsCommand</value>
+      </list>
+    </property>
+  </bean>
 
   <bean id="menuBar"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
@@ -45,7 +64,7 @@
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewProjectCommand" />
+        <value>newProjectCommand</value>
         <value>separator</value>
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewSourceCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewTestbenchCommand" />
@@ -54,13 +73,18 @@
       </list>
     </property>
   </bean>
+  <bean id="newProjectCommand" class="org.springframework.richclient.command.TargetableActionCommand">
+    <property name="commandExecutor" ref="newProjectWizard" />
+  </bean>
 
   <bean id="editMenu"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.UndoCommand" />
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.RedoCommand" />
+        <value>undoCommand</value>
+        <value>redoCommand</value>
+<!--        <bean id="undoCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.UndoCommand" />-->
+<!--        <bean id="redoCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.RedoCommand" />-->
 <!--        <value>separator</value>-->
 <!--        <value>cutCommand</value>-->
 <!--        <value>copyCommand</value>-->

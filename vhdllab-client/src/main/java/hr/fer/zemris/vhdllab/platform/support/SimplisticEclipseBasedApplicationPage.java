@@ -17,6 +17,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggingEvent;
 import org.springframework.richclient.application.PageComponent;
 import org.springframework.richclient.application.PageLayoutBuilder;
 import org.springframework.richclient.application.support.AbstractApplicationPage;
@@ -71,9 +75,32 @@ public class SimplisticEclipseBasedApplicationPage extends
 
         this.getPageDescriptor().buildInitialLayout(this);
 
+        if (viewsTabbedPane.getTabCount() > 0) {
+            viewsTabbedPane.setSelectedIndex(0);
+        }
+
+        Logger.getRootLogger().addAppender(new AppenderSkeleton() {
+            @Override
+            public boolean requiresLayout() {
+                return false;
+            }
+
+            @Override
+            public void close() {
+            }
+
+            @SuppressWarnings("synthetic-access")
+            @Override
+            protected void append(LoggingEvent event) {
+                if (event.getLevel().equals(Level.INFO)) {
+                    getActiveWindow().getStatusBar().setMessage(
+                            event.getMessage().toString());
+                }
+            }
+        });
         return control;
     }
-
+    
     @Override
     public void addView(String viewDescriptorId) {
         showView(viewDescriptorId);

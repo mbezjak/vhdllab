@@ -53,49 +53,27 @@
     <property name="applicationPageFactoryId">
       <idref bean="applicationPageFactory" />
     </property>
+    <property name="rulesSourceId">
+      <idref bean="rulesSource" />
+    </property>
   </bean>
+
+  <bean id="rulesSource"
+    class="hr.fer.zemris.vhdllab.platform.ui.ObjectValidationRulesSource" />
 
   <bean id="applicationPageFactory"
     class="hr.fer.zemris.vhdllab.platform.support.SimplisticEclipseBasedApplicationPageFactory" />
 
-  <!--
-    Bean: applicationEventMulticaster Type: magic Usage: platform
-    required Description: This defines the object responsible for
-    dispatching application events to all interested components. Unless
-    you really know what you're doing, you should just include this as
-    is.
-  -->
   <bean id="applicationEventMulticaster"
     class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
 
-  <!--
-    Bean: applicationObjectConfigurer Usage: platform required (because
-    it is a bean post processor) Description: This defines the object
-    responsible for configuring other objects constructed via the
-    platform. This is a critical part of the I18N support.
-  -->
   <bean id="applicationObjectConfigurer" depends-on="serviceLocator"
     class="org.springframework.richclient.application.config.DefaultApplicationObjectConfigurer">
   </bean>
 
-  <!--
-    Bean: lookAndFeelConfigurer Usage: platform optional Description:
-    The platform doesn't specifically make direct use of this object
-    (other than instantiating it). It is expected that the object will
-    register itself into the UI Manager when it is instantiated in the
-    context. Take a look at the JGoodiesLooksConfigurer class for an
-    example of this.
-  -->
   <bean id="lookAndFeelConfigurer"
     class="hr.fer.zemris.vhdllab.platform.support.OSBasedUIManagerConfigurer" />
 
-  <!--
-    Bean: imageResourcesFactory Usage: platform required (if you are
-    using the DefaultImageSource, see below) Description: This specifies
-    the component that is responsible for providing image resources
-    locations. This factory uses the specified properties files to map
-    image resource keys to image locations.
-  -->
   <bean id="imageResourcesFactory"
     class="org.springframework.context.support.ResourceMapFactoryBean">
     <property name="locations">
@@ -109,14 +87,6 @@
     </property>
   </bean>
 
-  <!--
-    Bean: imageSource Usage: platform required Description: This
-    specifies the component that is responsible for providing images to
-    the platform. It makes use of a resource factory that converts the
-    image keys to resource locations. The DefaultImageSource also
-    provides a "broken image" image for any requested image that can't
-    be found or fails to load.
-  -->
   <bean id="imageSource"
     class="org.springframework.richclient.image.DefaultImageSource">
     <constructor-arg index="0" ref="imageResourcesFactory" />
@@ -124,16 +94,6 @@
       value="/org/springframework/richclient/images/alert/error_obj.gif" />
   </bean>
 
-  <!--
-    Bean: formComponentInterceptorFactory Usage: platform optional
-    Description: This specifies the list of interceptors to attach to
-    controls constructed by the platform. This allows for a declarative
-    model for specifying "additional" functionality to be added to
-    various components. The configuration below adds interceptors to
-    overlay validation error images and background color changes,
-    provide popup menus in text fields, and autocompletion (as you type)
-    for comboboxes.
-  -->
   <bean id="formComponentInterceptorFactory"
     class="org.springframework.richclient.form.builder.support.ChainedInterceptorFactory">
     <property name="interceptorFactories">
@@ -207,8 +167,10 @@
           class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
           <property name="throwableClassList">
             <list>
-              <value>java.net.ConnectException</value>
-              <value>java.security.cert.CertificateExpiredException</value>
+              <value>java.net.ConnectException
+              </value>
+              <value>java.security.cert.CertificateExpiredException
+              </value>
               <value>java.lang.Error</value>
             </list>
           </property>
@@ -217,8 +179,10 @@
               class="org.springframework.richclient.exceptionhandling.delegation.DefaultExceptionPurger">
               <property name="includeThrowableClassList">
                 <list>
-                  <value>java.net.ConnectException</value>
-                  <value>java.security.cert.CertificateExpiredException</value>
+                  <value>java.net.ConnectException
+                  </value>
+                  <value>java.security.cert.CertificateExpiredException
+                  </value>
                 </list>
               </property>
             </bean>

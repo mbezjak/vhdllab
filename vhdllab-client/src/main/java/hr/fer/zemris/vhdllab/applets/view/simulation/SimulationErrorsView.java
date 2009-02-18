@@ -38,16 +38,15 @@ public class SimulationErrorsView extends AbstractView {
             Format formatter = new SimpleDateFormat("HH:mm:ss");
             String time = formatter.format(new Date());
             model.addElement(time + "  Simulation finished successfully.");
-            return;
-        }
-
-        model.clear();
-        for (SimulationMessage msg : result.getMessages()) {
-            StringBuilder sb = new StringBuilder(
-                    msg.getMessageText().length() + 20);
-            sb.append(msg.getEntityName()).append(":").append(
-                    msg.getMessageText());
-            model.addElement(sb.toString());
+        } else {
+            model.clear();
+            for (SimulationMessage msg : result.getMessages()) {
+                StringBuilder sb = new StringBuilder(msg.getMessageText()
+                        .length() + 20);
+                sb.append(msg.getEntityName()).append(":").append(
+                        msg.getMessageText());
+                model.addElement(sb.toString());
+            }
         }
     }
 

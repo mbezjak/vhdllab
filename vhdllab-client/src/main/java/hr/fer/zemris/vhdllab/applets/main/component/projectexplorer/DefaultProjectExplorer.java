@@ -56,6 +56,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
+import org.springframework.richclient.application.Application;
+import org.springframework.richclient.command.ActionCommandExecutor;
+import org.springframework.richclient.command.CommandManager;
 
 /**
  * Klasa predstavlja 'project explorer'. Project explorer sadrzi popis
@@ -603,7 +606,11 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 
             try {
                 if (event.getSource().equals(addProject)) {
-                    systemContainer.createNewProjectInstance();
+                    CommandManager cm = Application.instance()
+                            .getActiveWindow().getCommandManager();
+                    ActionCommandExecutor executor = (ActionCommandExecutor) cm
+                            .getCommand("newProjectCommand");
+                    executor.execute();
                 } else if (event.getSource().equals(addVHDL)) {
                     systemContainer.createNewFileInstance(FileType.SOURCE);
                 } else if (event.getSource().equals(addTb)) {
@@ -617,12 +624,15 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            container.getCompilationManager()
-                                    .compile(container
-                                            .getMapper()
-                                            .getFile(
-                                                    new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
-                                                            name, fileName)));
+                            container
+                                    .getCompilationManager()
+                                    .compile(
+                                            container
+                                                    .getMapper()
+                                                    .getFile(
+                                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
+                                                                    name,
+                                                                    fileName)));
                         }
                     }
                 } else if (event.getSource().equals(simulate)) {
