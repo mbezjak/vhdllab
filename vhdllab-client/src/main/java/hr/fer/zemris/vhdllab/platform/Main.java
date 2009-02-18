@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform;
 
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.log.StdErrConsumer;
 import hr.fer.zemris.vhdllab.platform.log.StdOutConsumer;
 import hr.fer.zemris.vhdllab.platform.support.CommandLineArgumentProcessor;
@@ -27,7 +26,6 @@ public final class Main {
          * Only after command line is processed should logging be used!
          */
         continueStartupInRichClientApplicationLoader();
-        ApplicationContextHolder.getContext().setApplicationInitialized(true);
         long end = System.currentTimeMillis();
         logger.debug("Application finished initialization in " + (end - start)
                 + "ms");

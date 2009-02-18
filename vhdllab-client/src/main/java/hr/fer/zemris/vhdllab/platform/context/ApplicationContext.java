@@ -14,8 +14,6 @@ public final class ApplicationContext {
 
     private Caseless userId;
     private Environment environment;
-    private boolean applicationInitialized = false;
-    private ApplicationState state = ApplicationState.RUNNING;
 
     public Caseless getUserId() {
         return userId;
@@ -36,27 +34,6 @@ public final class ApplicationContext {
 
     public boolean isDevelopment() {
         return getEnvironment().equals(Environment.DEVELOPMENT);
-    }
-
-    public void setApplicationInitialized(boolean applicationInitialized) {
-        this.applicationInitialized = applicationInitialized;
-    }
-
-    public boolean isApplicationInitialized() {
-        return applicationInitialized;
-    }
-
-    public ApplicationState getState() {
-        return state;
-    }
-
-    public void setState(ApplicationState state) {
-        this.state = state;
-        LOG.debug("Application state set to " + this.state);
-    }
-
-    public boolean isRunning() {
-        return state.equals(ApplicationState.RUNNING);
     }
 
 }
