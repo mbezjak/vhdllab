@@ -83,7 +83,6 @@ public class TextEditor extends AbstractEditor implements Wizard {
         text = new JTextPane();
         text.setCaretPosition(0);
         text.setLocation(25, 50);
-        // text.setPreferredSize(new Dimension(300,300));
 
         text.addCaretListener(new CaretListener() {
             public void caretUpdate(CaretEvent e) {

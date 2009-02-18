@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.gui;
 
 import hr.fer.zemris.vhdllab.constants.UserFileConstants;
-import hr.fer.zemris.vhdllab.platform.gui.container.EditorTabbedPane;
 import hr.fer.zemris.vhdllab.platform.gui.container.ViewTabbedPane;
 
 import java.awt.BorderLayout;
@@ -20,14 +19,8 @@ import javax.swing.JTabbedPane;
 public final class VhdllabFrame extends JFrame implements
         PreferenceChangeListener {
 
-    private JPanel projectExplorerPane;
-    private JTabbedPane editorPane;
-    private JTabbedPane viewPane;
-
     private JSplitPane horizontalSplitPane;
     private JSplitPane verticalSplitPane;
-
-    private MaximizationManager maximizationManager;
 
     public void init() {
         initGUI();
@@ -39,11 +32,11 @@ public final class VhdllabFrame extends JFrame implements
     }
 
     private void initGUI() {
-        maximizationManager = new MaximizationManager();
+        MaximizationManager maximizationManager = new MaximizationManager();
 
-        projectExplorerPane = new JPanel(new BorderLayout());
-        editorPane = new EditorTabbedPane(maximizationManager);
-        viewPane = new ViewTabbedPane(maximizationManager);
+        JPanel projectExplorerPane = new JPanel(new BorderLayout());
+        JTabbedPane editorPane = new JTabbedPane();//new EditorTabbedPane(maximizationManager);
+        JTabbedPane viewPane = new ViewTabbedPane(maximizationManager);
 
         horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 projectExplorerPane, editorPane);

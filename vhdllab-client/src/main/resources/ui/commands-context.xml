@@ -125,8 +125,6 @@
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.ViewPreferencesCommand" />
-        <value>separator</value>
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateNewLoggedErrorCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateUncaughtExceptionCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateUncaughtErrorCommand" />
