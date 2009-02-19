@@ -412,10 +412,6 @@ public class TextEditor extends AbstractEditor implements Wizard {
         inputMap.put(key, DefaultEditorKit.insertTabAction);
     }
 
-    protected void initDocument() {
-
-    }
-
     // The following two methods allow us to find an
     // action provided by the editor kit by its name.
     private static void createActionTable(JTextComponent textComponent) {
