@@ -42,12 +42,7 @@ public enum FileType {
      * @return boolean indicating if type can be simulated
      */
     public boolean isSimulatable() {
-        switch (this) {
-        case TESTBENCH:
-            return true;
-        default:
-            return false;
-        }
+        return this.equals(TESTBENCH);
     }
 
 }
