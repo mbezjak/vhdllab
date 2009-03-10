@@ -56,10 +56,28 @@
     <property name="rulesSourceId">
       <idref bean="rulesSource" />
     </property>
+    <property name="binderSelectionStrategyId">
+      <idref bean="binderSelectionStrategy" />
+    </property>
   </bean>
 
   <bean id="rulesSource"
-    class="hr.fer.zemris.vhdllab.platform.ui.ObjectValidationRulesSource" />
+    class="hr.fer.zemris.vhdllab.platform.ui.rule.ObjectValidationRulesSource" />
+
+  <bean id="binderSelectionStrategy"
+    class="org.springframework.richclient.form.binding.swing.SwingBinderSelectionStrategy">
+    <property name="bindersForPropertyTypes">
+      <map>
+        <entry>
+          <key>
+            <value type="java.lang.Class">hr.fer.zemris.vhdllab.entities.ProjectInfo</value>
+          </key>
+          <ref bean="projectListBinder"/>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
 
   <bean id="applicationPageFactory"
     class="hr.fer.zemris.vhdllab.platform.support.SimplisticEclipseBasedApplicationPageFactory" />

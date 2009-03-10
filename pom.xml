@@ -12,7 +12,7 @@
   <packaging>pom</packaging>
   <!-- modules are listed in each profile -->
   <properties>
-    <application.version>0.30</application.version>
+    <application.version>0.31</application.version>
   </properties>
 
 
@@ -167,7 +167,7 @@
     <profile>
       <id>fast</id>
       <modules>
-        <!-- vhdllab-client is ommited in this profile -->
+        <!-- vhdllab-client is omitted in this profile -->
         <module>vhdllab-common</module>
         <module>vhdllab-server</module>
         <module>vhdllab-war</module>

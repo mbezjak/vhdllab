@@ -1,12 +1,14 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.project;
 
+import hr.fer.zemris.vhdllab.platform.ui.wizard.Focusable;
+
 import javax.swing.JComponent;
 
 import org.springframework.binding.form.FormModel;
 import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.builder.TableFormBuilder;
 
-public class ProjectForm extends AbstractForm {
+public class ProjectForm extends AbstractForm implements Focusable {
 
     private JComponent nameField;
 
@@ -21,6 +23,7 @@ public class ProjectForm extends AbstractForm {
         return builder.getForm();
     }
 
+    @Override
     public void requestFocusInWindow() {
         nameField.requestFocusInWindow();
     }

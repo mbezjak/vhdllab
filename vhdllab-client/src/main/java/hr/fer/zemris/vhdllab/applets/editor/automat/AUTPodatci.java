@@ -69,8 +69,6 @@ public class AUTPodatci {
 		
 		//TODO pozivanje entityTable-a kad bude gotov...
 		EntityTable interfac=new EntityTable();
-		interfac.setPlatformContainer(container);
-		interfac.init();
 
 		String[] pom={"Moore","Mealy"};
 		JComboBox tip=new JComboBox(pom);

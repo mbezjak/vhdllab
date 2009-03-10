@@ -93,14 +93,17 @@ public class SimplisticEclipseBasedApplicationPage extends
             @Override
             protected void append(LoggingEvent event) {
                 if (event.getLevel().equals(Level.INFO)) {
-                    getActiveWindow().getStatusBar().setMessage(
-                            event.getMessage().toString());
+                    Object message = event.getMessage();
+                    if (message != null) {
+                        getActiveWindow().getStatusBar().setMessage(
+                                message.toString());
+                    }
                 }
             }
         });
         return control;
     }
-    
+
     @Override
     public void addView(String viewDescriptorId) {
         showView(viewDescriptorId);

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.ui;
+package hr.fer.zemris.vhdllab.platform.ui.rule;
 
 import hr.fer.zemris.vhdllab.api.util.StringFormat;
 

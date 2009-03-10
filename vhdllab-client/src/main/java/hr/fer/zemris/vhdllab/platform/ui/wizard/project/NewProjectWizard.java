@@ -1,54 +1,30 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.project;
 
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
+import hr.fer.zemris.vhdllab.platform.util.BeanUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.richclient.command.ActionCommandExecutor;
-import org.springframework.richclient.form.FormModelHelper;
-import org.springframework.richclient.wizard.AbstractWizard;
-import org.springframework.richclient.wizard.FormBackedWizardPage;
-import org.springframework.richclient.wizard.WizardDialog;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NewProjectWizard extends AbstractWizard implements
-        ActionCommandExecutor {
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class NewProjectWizard extends AbstractResourceCreatingWizard {
 
     @Autowired
     private ProjectManager projectManager;
 
-    ProjectForm form;
-
     public NewProjectWizard() {
-        super("newProjectWizard");
+        super(BeanUtil.getBeanName(NewProjectWizard.class));
     }
 
     @Override
-    public void addPages() {
-        addPage(new FormBackedWizardPage(form));
-    }
-
-    @Override
-    protected boolean onFinish() {
-        form.commit();
-        ProjectFormObject p = (ProjectFormObject) form.getFormObject();
+    protected void onWizardFinished(Object formObject) {
+        ProjectFormObject p = (ProjectFormObject) formObject;
         projectManager.create(ProjectFormObject.asProjectInfo(p
                 .getProjectName()));
-        return true;
-    }
-
-    @Override
-    public void execute() {
-        form = new ProjectForm(FormModelHelper
-                .createFormModel(new ProjectFormObject()));
-        WizardDialog dialog = new WizardDialog(this) {
-            @Override
-            protected void onAboutToShow() {
-                super.onAboutToShow();
-                form.requestFocusInWindow();
-            }
-        };
-        dialog.showDialog();
     }
 
 }

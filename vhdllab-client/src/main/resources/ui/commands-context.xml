@@ -64,18 +64,18 @@
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <value>newProjectCommand</value>
+        <idref bean="newProjectCommand"/>
         <value>separator</value>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewSourceCommand" />
+        <idref bean="newSourceCommand"/>
+<!--        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewSourceCommand" />-->
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewTestbenchCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewSchemaCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewAutomatonCommand" />
       </list>
     </property>
   </bean>
-  <bean id="newProjectCommand" class="org.springframework.richclient.command.TargetableActionCommand">
-    <property name="commandExecutor" ref="newProjectWizard" />
-  </bean>
+  <bean id="newProjectCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.project.NewProjectCommand"/>
+  <bean id="newSourceCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.file.NewSourceCommand"/>
 
   <bean id="editMenu"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">

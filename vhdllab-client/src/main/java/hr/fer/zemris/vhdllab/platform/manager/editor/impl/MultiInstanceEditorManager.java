@@ -159,7 +159,7 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
             FileInfo file = editor.getFile();
             if (withDialog) {
                 ProjectInfo project = mapper.getProject(file.getProjectId());
-                boolean shouldContinue = dialogManager.showDialog(file
+                Boolean shouldContinue = dialogManager.showDialog(file
                         .getName(), project.getName());
                 if (!shouldContinue) {
                     return false;

@@ -612,7 +612,11 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                             .getCommand("newProjectCommand");
                     executor.execute();
                 } else if (event.getSource().equals(addVHDL)) {
-                    systemContainer.createNewFileInstance(FileType.SOURCE);
+                    CommandManager cm = Application.instance()
+                            .getActiveWindow().getCommandManager();
+                    ActionCommandExecutor executor = (ActionCommandExecutor) cm
+                            .getCommand("newSourceCommand");
+                    executor.execute();
                 } else if (event.getSource().equals(addTb)) {
                     systemContainer.createNewFileInstance(FileType.TESTBENCH);
                 } else if (event.getSource().equals(addSchema)) {

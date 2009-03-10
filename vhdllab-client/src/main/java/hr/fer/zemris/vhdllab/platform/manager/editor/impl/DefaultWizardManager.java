@@ -43,7 +43,8 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
         if (type == null) {
             throw new NullPointerException("File type cant be null");
         }
-        Caseless projectName = projectExplorer.getSelectedProject();
+//        Caseless projectName = projectExplorer.getSelectedProject();
+        Caseless projectName = new Caseless("a2");
         if (projectName == null) {
             LOG
                     .info("Select a project from Project Explorer before creating a new file");
