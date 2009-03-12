@@ -1,2 +1,0 @@
-Entity tests and validation tests are located in vhdllab-server project
-under the same package!

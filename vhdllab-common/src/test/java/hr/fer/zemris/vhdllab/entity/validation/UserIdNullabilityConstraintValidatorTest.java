@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.entity.validation;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.entity.ProjectInfo;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
 
 import org.hibernate.validator.Validator;
@@ -52,4 +53,12 @@ public class UserIdNullabilityConstraintValidatorTest {
                 validator.isValid(project));
     }
 
+    /**
+     * Always valid for ProjectInfo object.
+     */
+    @Test
+    public void isValidFileInfo() {
+        assertTrue(validator.isValid(new ProjectInfo()));
+    }
+    
 }

@@ -33,6 +33,10 @@ public class File extends FileInfo {
         super();
     }
 
+    public File(String name, FileType type, String data) {
+        super(name, type, data);
+    }
+
     public File(File clone) {
         super(clone);
         setProject(null);

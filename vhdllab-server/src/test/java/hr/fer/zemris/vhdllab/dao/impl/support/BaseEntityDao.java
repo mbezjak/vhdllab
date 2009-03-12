@@ -10,10 +10,10 @@ import hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDao;
  * @version 1.0
  * @since vhdllab2
  */
-public class BaseEntityDaoImpl extends AbstractEntityDao<BaseEntityTable>
+public class BaseEntityDao extends AbstractEntityDao<BaseEntityTable>
         implements EntityDao<BaseEntityTable> {
 
-    public BaseEntityDaoImpl() {
+    public BaseEntityDao() {
         super(BaseEntityTable.class);
     }
 

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entity.ClientLog;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileInfo;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
@@ -78,6 +79,14 @@ public class FileTypeNullabilityConstraintValidatorTest {
         ClientLog log = new ClientLog();
         log.setType(FileType.SOURCE);
         assertFalse("valid when file type not null.", validator.isValid(log));
+    }
+
+    /**
+     * Always valid for FileInfo object.
+     */
+    @Test
+    public void isValidFileInfo() {
+        assertTrue(validator.isValid(new FileInfo()));
     }
 
 }

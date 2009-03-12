@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.dao.impl;
 
 import hr.fer.zemris.vhdllab.dao.ClientLogDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
+import hr.fer.zemris.vhdllab.dao.impl.support.AbstractDaoSupport;
 import hr.fer.zemris.vhdllab.entity.ClientLog;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;

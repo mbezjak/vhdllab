@@ -1,16 +1,20 @@
-package hr.fer.zemris.vhdllab.dao.impl;
+package hr.fer.zemris.vhdllab.dao.impl.support;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.sql.DataSource;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jpa.AbstractJpaTests;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Every dao test case should extend this class in order to avoid doing
@@ -26,6 +30,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:META-INF/dao-context.xml" })
 public abstract class AbstractDaoSupport extends AbstractJpaTests {
+
+    protected EntityManager entityManager;
 
     // injecting entity manager factory
     @PersistenceUnit
@@ -50,6 +56,11 @@ public abstract class AbstractDaoSupport extends AbstractJpaTests {
         super.setDataSource(dataSource);
     }
 
+    @Before
+    public void initEntityManager() {
+        createEntityManager();
+    }
+
     /**
      * Clean database tables after each test.
      */
@@ -60,14 +71,33 @@ public abstract class AbstractDaoSupport extends AbstractJpaTests {
         getJdbcTemplate().execute("delete from file_history");
         getJdbcTemplate().execute("delete from project_history");
         getJdbcTemplate().execute("delete from client_logs");
+        getJdbcTemplate().execute("delete from BaseEntityTable");
+        getJdbcTemplate().execute("delete from NamedEntityTable");
+        getJdbcTemplate().execute("delete from FileInfoTable");
+        getJdbcTemplate().execute("delete from ProjectInfoTable");
+        getJdbcTemplate().execute("delete from HistoryTable");
+        closeEntityManager();
     }
 
-    protected String createQuery(String table, String columns, String values) {
-        StringBuilder query = new StringBuilder(150);
-        query.append("insert into ").append(table);
-        query.append(" (").append(columns).append(") values (");
-        query.append(values).append(")");
-        return query.toString();
+    protected void createEntityManager() {
+        entityManager = entityManagerFactory.createEntityManager();
+        TransactionSynchronizationManager.bindResource(entityManagerFactory,
+                new EntityManagerHolder(entityManager));
+    }
+
+    protected void closeEntityManager() {
+        entityManager.close();
+        TransactionSynchronizationManager.unbindResource(entityManagerFactory);
+        entityManager = null;
+    }
+
+    protected String createInsertStatement(String table, String columns,
+            String values) {
+        StringBuilder statement = new StringBuilder(150);
+        statement.append("insert into ").append(table);
+        statement.append(" (").append(columns).append(") values (");
+        statement.append(values).append(")");
+        return statement.toString();
     }
 
 }

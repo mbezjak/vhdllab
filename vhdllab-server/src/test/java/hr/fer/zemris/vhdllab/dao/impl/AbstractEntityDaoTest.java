@@ -2,7 +2,8 @@ package hr.fer.zemris.vhdllab.dao.impl;
 
 import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
 import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME_2;
-import hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDaoImpl;
+import hr.fer.zemris.vhdllab.dao.impl.support.AbstractDaoSupport;
+import hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDao;
 import hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityTable;
 
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public class AbstractEntityDaoTest extends AbstractDaoSupport {
          * It doesn't matter which entity will be used so we take the simplest
          * one but also one that will be useful in find* tests.
          */
-        dao = new NamedEntityDaoImpl();
+        dao = new NamedEntityDao();
         dao.setEntityManagerFactory(entityManagerFactory);
     }
 
@@ -121,7 +122,7 @@ public class AbstractEntityDaoTest extends AbstractDaoSupport {
     }
 
     private void setupBasicEntity(final NamedEntityTable file) {
-        String query = createQuery("NamedEntityTable", "id, version, name",
+        String query = createInsertStatement("NamedEntityTable", "id, version, name",
                 "null, 0, ?");
         getJdbcTemplate().execute(query, new PreparedStatementCallback() {
             @Override

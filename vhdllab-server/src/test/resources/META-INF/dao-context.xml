@@ -22,10 +22,8 @@
     <property name="jpaVendorAdapter">
       <bean
         class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <!--
-          Same as normal HSQL dialect but string columns are case
-          insensitive.
-        -->
+        <!--        Same as normal HSQL dialect but string columns are case-->
+        <!--        insensitive.-->
         <property name="databasePlatform"
           value="hr.fer.zemris.vhdllab.dao.impl.support.CaseInsensitiveHSQLDialect" />
         <property name="showSql" value="false" />
@@ -48,7 +46,10 @@
   <tx:annotation-driven transaction-manager="transactionManager" />
   <aop:aspectj-autoproxy />
 
-  <!-- Injects entityManagerFactory to HistoryListener so history can be created -->
+  <!--
+    Injects entityManagerFactory to HistoryListener so history can be
+    created
+  -->
   <bean class="hr.fer.zemris.vhdllab.entities.HistoryListenerConfigurer" />
 
   <!-- DAO classes -->
@@ -61,17 +62,23 @@
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
     autowire="autodetect" />
 
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.support.BaseEntityDaoImpl"
-    autowire="autodetect" />
-
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDaoImpl"
-    autowire="autodetect" />
-
   <!--
-    Emulates OpenEntityManagerInViewFilter that production ready
-    application will have installed.
+    Support DAO classes - used to test entity hierarchy (common
+    properties in real entities)
   -->
-  <bean
-    class="hr.fer.zemris.vhdllab.dao.impl.support.OpenEntityManagerInViewListener" />
+  <bean id="baseEntityDao" class="hr.fer.zemris.vhdllab.dao.impl.support.BaseEntityDao"
+    autowire="autodetect" />
+
+  <bean id="namedEntityDao" class="hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDao"
+    autowire="autodetect" />
+
+  <bean id="fileInfoDao" class="hr.fer.zemris.vhdllab.dao.impl.support.FileInfoDao"
+    autowire="autodetect" />
+
+  <bean id="projectInfoDao" class="hr.fer.zemris.vhdllab.dao.impl.support.ProjectInfoDao"
+    autowire="autodetect" />
+
+  <bean id="historyDao" class="hr.fer.zemris.vhdllab.dao.impl.support.HistoryDao"
+    autowire="autodetect" />
 
 </beans>

@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.entity;
 
 import static hr.fer.zemris.vhdllab.entity.stub.FileInfoStub.DATA;
 import static hr.fer.zemris.vhdllab.entity.stub.FileInfoStub.TYPE;
+import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -35,6 +36,14 @@ public class FileInfoTest extends ValueObjectTestSupport {
         assertNotNull("type is null.", another.getData());
         another.setData(null);
         assertNull("type not cleared.", another.getData());
+    }
+
+    @Test
+    public void constructor() {
+        FileInfo another = new FileInfo(NAME, TYPE, DATA);
+        assertEquals("name not same.", NAME, another.getName());
+        assertEquals("type not same.", TYPE, another.getType());
+        assertEquals("data not same.", DATA, another.getData());
     }
 
     @Test

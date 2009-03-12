@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.entity.validation;
 
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.entity.ProjectInfo;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
 
 import org.hibernate.validator.Validator;
@@ -20,6 +21,8 @@ public class UserIdNullabilityConstraintValidator implements
             String userId = project.getUserId();
             return type.equals(ProjectType.USER) ? userId != null
                     : userId == null;
+        } else if (value instanceof ProjectInfo) {
+            return true;
         }
         return false;
     }

@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.entity.validation;
 
 import hr.fer.zemris.vhdllab.entity.ClientLog;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileInfo;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
 
@@ -24,6 +25,8 @@ public class FileTypeNullabilityConstraintValidator implements
                     : fileType != null;
         } else if (value instanceof ClientLog) {
             return ((ClientLog) value).getType() == null;
+        } else if (value instanceof FileInfo) {
+            return true;
         }
         return false;
     }

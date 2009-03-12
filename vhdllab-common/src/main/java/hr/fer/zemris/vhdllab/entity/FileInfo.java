@@ -29,6 +29,12 @@ public class FileInfo extends NamedEntity {
         super();
     }
 
+    public FileInfo(String name, FileType type, String data) {
+        super(name);
+        setType(type);
+        setData(data);
+    }
+
     public FileInfo(FileInfo clone) {
         super(clone);
         setType(clone.type);
