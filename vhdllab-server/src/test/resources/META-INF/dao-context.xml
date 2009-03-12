@@ -61,6 +61,12 @@
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
     autowire="autodetect" />
 
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.support.BaseEntityDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDaoImpl"
+    autowire="autodetect" />
+
   <!--
     Emulates OpenEntityManagerInViewFilter that production ready
     application will have installed.

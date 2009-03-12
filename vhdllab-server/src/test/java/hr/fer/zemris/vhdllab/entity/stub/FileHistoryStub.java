@@ -8,7 +8,7 @@ public class FileHistoryStub extends FileHistory {
     private static final long serialVersionUID = 1L;
 
     public static final Integer PROJECT_ID = 258;
-    public static final Integer PROJECT_ID_DIFFERENT = 852;
+    public static final Integer PROJECT_ID_2 = 852;
 
     public FileHistoryStub() {
         BeanUtils.copyProperties(this, new FileInfoStub());

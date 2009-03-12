@@ -5,10 +5,5 @@ import hr.fer.zemris.vhdllab.entity.ClientLog;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface ClientLogDao {
-
-    void persist(ClientLog log);
-
-    ClientLog load(Integer id);
-
+public interface ClientLogDao extends EntityDao<ClientLog> {
 }

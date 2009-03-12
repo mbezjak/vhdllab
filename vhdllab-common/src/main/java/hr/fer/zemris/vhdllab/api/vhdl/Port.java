@@ -48,7 +48,6 @@ public final class Port implements Serializable {
      *             if either parameter is <code>null</code>
      * @throws IllegalArgumentException
      *             if name is not correct port name
-     * @see StringFormat#isCorrectPortName(String)
      */
     public Port(String name, PortDirection direction, Type type) {
         if (name == null) {

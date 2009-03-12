@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.entity;
 
-import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME_DIFFERENT;
+import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -77,7 +77,7 @@ public class FileTest extends ValueObjectTestSupport {
         another.setProject(entity.getProject());
         assertEqualsAndHashCode(entity, another);
 
-        another.setName(NAME_DIFFERENT);
+        another.setName(NAME_2);
         assertNotEqualsAndHashCode(entity, another);
 
         another = new File(entity);

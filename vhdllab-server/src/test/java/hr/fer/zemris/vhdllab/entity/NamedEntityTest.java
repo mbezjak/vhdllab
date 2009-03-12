@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.entity;
 
 import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
-import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME_DIFFERENT;
+import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME_2;
 import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME_UPPERCASE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -51,7 +51,7 @@ public class NamedEntityTest extends ValueObjectTestSupport {
         NamedEntity another = new NamedEntity(entity);
         assertEqualsAndHashCode(entity, another);
 
-        another.setName(NAME_DIFFERENT);
+        another.setName(NAME_2);
         assertNotEqualsAndHashCode(entity, another);
 
         another.setName(NAME_UPPERCASE);

@@ -2,9 +2,9 @@ package hr.fer.zemris.vhdllab.entity;
 
 import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
 import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.TYPE;
-import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.TYPE_DIFFERENT;
+import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.TYPE_2;
 import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.USER_ID;
-import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.USER_ID_DIFFERENT;
+import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.USER_ID_2;
 import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.USER_ID_UPPERCASE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -72,14 +72,14 @@ public class ProjectInfoTest extends ValueObjectTestSupport {
         ProjectInfo another = new ProjectInfo(entity);
         assertEqualsAndHashCode(entity, another);
 
-        another.setUserId(USER_ID_DIFFERENT);
+        another.setUserId(USER_ID_2);
         assertNotEqualsAndHashCode(entity, another);
 
         another.setUserId(USER_ID_UPPERCASE);
         assertEqualsAndHashCode(entity, another);
 
         another = new ProjectInfo(entity);
-        another.setType(TYPE_DIFFERENT);
+        another.setType(TYPE_2);
         assertNotEqualsAndHashCode(entity, another);
     }
 

@@ -3,9 +3,9 @@ package hr.fer.zemris.vhdllab.entity;
 import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.CREATED_ON;
 import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.DELETED_ON;
 import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.INSERT_VERSION;
-import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.INSERT_VERSION_DIFFERENT;
+import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.INSERT_VERSION_2;
 import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.UPDATE_VERSION;
-import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.UPDATE_VERSION_DIFFERENT;
+import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.UPDATE_VERSION_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -91,11 +91,11 @@ public class HistoryTest extends ValueObjectTestSupport {
         History another = new History(entity);
         assertEqualsAndHashCode(entity, another);
 
-        another.setInsertVersion(INSERT_VERSION_DIFFERENT);
+        another.setInsertVersion(INSERT_VERSION_2);
         assertNotEqualsAndHashCode(entity, another);
 
         another = new History(entity);
-        another.setUpdateVersion(UPDATE_VERSION_DIFFERENT);
+        another.setUpdateVersion(UPDATE_VERSION_2);
         assertNotEqualsAndHashCode(entity, another);
     }
 

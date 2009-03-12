@@ -11,6 +11,8 @@
     <class>hr.fer.zemris.vhdllab.entity.FileHistory</class>
     <class>hr.fer.zemris.vhdllab.entity.ProjectHistory</class>
     <class>hr.fer.zemris.vhdllab.entity.ClientLog</class>
+    <class>hr.fer.zemris.vhdllab.dao.impl.support.BaseEntityTable</class>
+    <class>hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityTable</class>
     <exclude-unlisted-classes />
   </persistence-unit>
 </persistence>

@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.entity;
 
 import static hr.fer.zemris.vhdllab.entity.stub.FileHistoryStub.PROJECT_ID;
-import static hr.fer.zemris.vhdllab.entity.stub.FileHistoryStub.PROJECT_ID_DIFFERENT;
+import static hr.fer.zemris.vhdllab.entity.stub.FileHistoryStub.PROJECT_ID_2;
 import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -86,7 +86,7 @@ public class FileHistoryTest extends ValueObjectTestSupport {
         FileHistory another = new FileHistory(entity);
         assertEqualsAndHashCode(entity, another);
 
-        another.setProjectId(PROJECT_ID_DIFFERENT);
+        another.setProjectId(PROJECT_ID_2);
         assertNotEqualsAndHashCode(entity, another);
 
         another = new FileHistory(entity);
