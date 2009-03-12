@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.dao;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.Project;
+import hr.fer.zemris.vhdllab.entity.Project;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public interface ProjectDao extends EntityDao<Project> {
      * @return specified project or <code>null</code> if such project doesn't
      *         exist
      */
-    Project findByName(Caseless userId, Caseless name);
+    Project findByName(String userId, String name);
 
     /**
      * Finds all projects whose owner is specified user. Return value will never
@@ -45,6 +44,22 @@ public interface ProjectDao extends EntityDao<Project> {
      *            owner of projects
      * @return list of user's projects
      */
-    List<Project> findByUser(Caseless userId);
+    List<Project> findByUser(String userId);
+
+    /**
+     * Returns a predefined project.
+     * 
+     * @return a predefined project
+     */
+    Project getPredefinedProject();
+
+    /**
+     * Returns a preferences project belonging to specified user.
+     * 
+     * @param userId
+     *            owner of preferences project
+     * @return a preferences project belonging to specified user
+     */
+    Project getPreferencesProject(String userId);
 
 }

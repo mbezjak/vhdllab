@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.api.vhdl;
 
-import hr.fer.zemris.vhdllab.api.util.StringFormat;
+import hr.fer.zemris.vhdllab.entity.validation.NameFormatConstraintValidator;
 
 import java.io.Serializable;
 
@@ -60,10 +60,10 @@ public final class Port implements Serializable {
         if (type == null) {
             throw new NullPointerException("Port type cant be null");
         }
-        if (!StringFormat.isCorrectPortName(name)) {
+        this.name = name;
+        if (!new NameFormatConstraintValidator().isValid(this)) {
             throw new IllegalArgumentException("Name is not correct port name");
         }
-        this.name = name;
         this.direction = direction;
         this.type = type;
     }

@@ -40,12 +40,21 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
     /*
      * (non-Javadoc)
      * 
-     * @see hr.fer.zemris.vhdllab.dao.EntityDao#save(java.lang.Object)
+     * @see hr.fer.zemris.vhdllab.dao.EntityDao#persist(java.lang.Object)
      */
-    @Override
-    public void save(T entity) {
+    public void persist(T entity) {
         Validate.notNull(entity, "Entity can't be null");
         getJpaTemplate().persist(entity);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see hr.fer.zemris.vhdllab.dao.EntityDao#merge(java.lang.Object)
+     */
+    public T merge(T entity) {
+        Validate.notNull(entity, "Entity can't be null");
+        return getJpaTemplate().merge(entity);
     }
 
     /*
@@ -85,12 +94,12 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
     @SuppressWarnings("unchecked")
     protected final T findUniqueResult(String queryString, Object... values) {
         List<T> list = getJpaTemplate().find(queryString, values);
-        if (!list.isEmpty() && list.size() != 1) {
+        if (list.size() > 1) {
             throw new IllegalStateException(
                     "Found more matches for unique result for class "
                             + clazz.getCanonicalName());
         }
-        return list.size() == 1 ? list.get(0) : null;
+        return !list.isEmpty() ? list.get(0) : null;
     }
 
 }

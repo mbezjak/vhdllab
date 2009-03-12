@@ -1,8 +1,7 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
 import hr.fer.zemris.vhdllab.dao.FileDao;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entity.File;
 
 import org.apache.commons.lang.Validate;
 
@@ -39,14 +38,11 @@ public class FileDaoImpl extends AbstractEntityDao<File> implements FileDao {
         super.delete(entity);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see hr.fer.zemris.vhdllab.dao.FileDAO#findByName(java.lang.Integer,
-     * hr.fer.zemris.vhdllab.entities.Caseless)
+    /* (non-Javadoc)
+     * @see hr.fer.zemris.vhdllab.dao.FileDao#findByName(java.lang.Integer, java.lang.String)
      */
     @Override
-    public File findByName(Integer projectId, Caseless name) {
+    public File findByName(Integer projectId, String name) {
         Validate.notNull(projectId, "Project identifier can't be null");
         Validate.notNull(name, "Name can't be null");
         String query = "select f from File as f where f.project.id = ?1 and f.name = ?2 order by f.id";

@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.api.hierarchy;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.util.Caseless;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -87,14 +87,14 @@ public final class HierarchyNode implements Serializable {
      * @throws IllegalStateException
      *             if node is no longed mutable
      */
-    public HierarchyNode(Caseless fileName, FileType fileType, HierarchyNode parent) {
+    public HierarchyNode(String fileName, FileType fileType, HierarchyNode parent) {
         if (fileName == null) {
             throw new NullPointerException("File name cant be null");
         }
         if (fileType == null) {
             throw new NullPointerException("File type cant be null");
         }
-        this.fileName = fileName;
+        this.fileName = new Caseless(fileName);
         this.fileType = fileType;
         this.dependencies = new HashSet<Caseless>();
         this.parent = parent;
@@ -132,7 +132,7 @@ public final class HierarchyNode implements Serializable {
         if (canFormCyclicDependency(this, node)) {
             throw new IllegalArgumentException(node + "already uses " + this);
         }
-        dependencies.add(node.getFileName());
+        dependencies.add(new Caseless(node.getFileName()));
         node.parent = this;
     }
 
@@ -145,7 +145,7 @@ public final class HierarchyNode implements Serializable {
      * @return <code>true</code> if a node contains specified dependency of
      *         <code>false</code> otherwise
      */
-    private boolean contains(Caseless name) {
+    private boolean contains(String name) {
         for (Caseless dep : dependencies) {
             if (dep.equals(name)) {
                 return true;
@@ -188,8 +188,8 @@ public final class HierarchyNode implements Serializable {
      *
      * @return a name of a file that a node represents
      */
-    public Caseless getFileName() {
-        return fileName;
+    public String getFileName() {
+        return fileName.toString();
     }
 
     /**
@@ -223,7 +223,7 @@ public final class HierarchyNode implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + fileName.hashCode();
+        result = prime * result + fileName.toLowerCase().hashCode();
         return result;
     }
 

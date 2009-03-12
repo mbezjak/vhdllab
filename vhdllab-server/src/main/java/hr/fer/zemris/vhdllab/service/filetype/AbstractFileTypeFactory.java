@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.service.filetype;
 
-import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entity.FileType;
 
 import java.util.Locale;
 

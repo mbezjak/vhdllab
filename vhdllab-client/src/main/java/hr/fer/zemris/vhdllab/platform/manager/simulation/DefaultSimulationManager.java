@@ -5,8 +5,8 @@ import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExpl
 import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;

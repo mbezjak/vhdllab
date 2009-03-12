@@ -2,8 +2,8 @@ package hr.fer.zemris.vhdllab.platform.ui.rule;
 
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 
 import org.apache.commons.lang.Validate;

@@ -2,8 +2,8 @@ package hr.fer.zemris.vhdllab.platform.manager.file;
 
 import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.FileType;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;

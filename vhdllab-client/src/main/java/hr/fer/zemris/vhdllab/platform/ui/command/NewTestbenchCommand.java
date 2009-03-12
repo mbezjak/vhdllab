@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.command;
 
-import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 
 import org.springframework.beans.factory.annotation.Autowired;

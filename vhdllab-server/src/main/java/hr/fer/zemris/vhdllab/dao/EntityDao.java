@@ -5,9 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Defines common methods for manipulating entities. An entity is any object
  * that can be persisted by its data access object (DAO).
- * <p>
- * An implementation of this interface must be stateless!
- * </p>
  * 
  * @param <T>
  *            type of an entity
@@ -19,15 +16,26 @@ import org.springframework.transaction.annotation.Transactional;
 public interface EntityDao<T> {
 
     /**
-     * Saves or updates an existing entity. All constraints are defined in
-     * entity itself through <code>javax.persistence</code> annotations.
+     * Persists a new entity. All constraints are defined in entity itself
+     * through hibernate-validator annotations.
      * 
      * @param entity
-     *            an entity that will be saved or updated
+     *            an entity that should be persisted
      * @throws NullPointerException
      *             if <code>entity</code> is <code>null</code>
      */
-    void save(T entity);
+    void persist(T entity);
+
+    /**
+     * Updates an existing entity. All constraints are defined in entity itself
+     * through hibernate-validator annotations.
+     * 
+     * @param entity
+     *            an entity that should be updated
+     * @throws NullPointerException
+     *             if <code>entity</code> is <code>null</code>
+     */
+    T merge(T entity);
 
     /**
      * Retrieves an entity with specified identifier. <code>null</code> value

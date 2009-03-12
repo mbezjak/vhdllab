@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.Project;
+import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.entity.ProjectType;
 
 import java.util.List;
 
@@ -28,31 +28,58 @@ public class ProjectDaoImpl extends AbstractEntityDao<Project> implements
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * hr.fer.zemris.vhdllab.dao.ProjectDAO#findByName(hr.fer.zemris.vhdllab
-     * .entities.Caseless, hr.fer.zemris.vhdllab.entities.Caseless)
+     * @see hr.fer.zemris.vhdllab.dao.ProjectDao#findByName(java.lang.String,
+     * java.lang.String)
      */
     @Override
-    public Project findByName(Caseless userId, Caseless name) {
+    public Project findByName(String userId, String name) {
         Validate.notNull(userId, "User identifier can't be null");
         Validate.notNull(name, "Name can't be null");
-        String query = "select p from Project as p where p.userId = ?1 and p.name = ?2 order by p.id";
-        return findUniqueResult(query, userId, name);
+        return findProject(userId, ProjectType.USER, name);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see hr.fer.zemris.vhdllab.dao.ProjectDao#findByUser(java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Project> findByUser(String userId) {
+        Validate.notNull(userId, "User identifier can't be null");
+        String query = "select p from Project as p where p.userId = ?1 and p.type = ?2 order by p.id";
+        return getJpaTemplate().find(query, userId, ProjectType.USER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see hr.fer.zemris.vhdllab.dao.ProjectDao#getPredefinedProject()
+     */
+    @Override
+    public Project getPredefinedProject() {
+        return findProjectByType(null, ProjectType.PREDEFINED);
     }
 
     /*
      * (non-Javadoc)
      * 
      * @see
-     * hr.fer.zemris.vhdllab.dao.ProjectDAO#findByUser(hr.fer.zemris.vhdllab
-     * .entities.Caseless)
+     * hr.fer.zemris.vhdllab.dao.ProjectDao#getPreferencesProject(java.lang.
+     * String)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public List<Project> findByUser(Caseless userId) {
-        Validate.notNull(userId, "User identifier can't be null");
-        String query = "select p from Project as p where p.userId = ?1 order by p.id";
-        return getJpaTemplate().find(query, userId);
+    public Project getPreferencesProject(String userId) {
+        return findProjectByType(userId, ProjectType.PREFERENCES);
+    }
+
+    private Project findProjectByType(String userId, ProjectType type) {
+        return findProject(userId, type, type.toString());
+    }
+
+    private Project findProject(String userId, ProjectType type, String name) {
+        String query = "select p from Project as p where p.userId = ?1 and p.type = ?2 and p.name = ?3 order by p.id";
+        return findUniqueResult(query, userId, type, name);
     }
 
 }

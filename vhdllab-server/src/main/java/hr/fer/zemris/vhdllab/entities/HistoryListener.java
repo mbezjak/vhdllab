@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.entities;
 
+import hr.fer.zemris.vhdllab.entity.History;
+
 import java.util.Date;
 
 import javax.persistence.EntityManager;

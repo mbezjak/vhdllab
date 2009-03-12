@@ -58,23 +58,7 @@
   <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
     autowire="autodetect" />
 
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.LibraryDaoImpl"
-    autowire="autodetect" />
-
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.LibraryFileDaoImpl"
-    autowire="autodetect" />
-
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.UserFileDaoImpl"
-    autowire="autodetect" />
-
-  <!--
-    Support DAO classes - used to test entity hierarchy (common
-    properties in real entities)
-  -->
-  <bean id="entityObjectDao" class="hr.fer.zemris.vhdllab.dao.impl.support.EntityObjectDao"
-    autowire="autodetect" />
-
-  <bean id="resourceDao" class="hr.fer.zemris.vhdllab.dao.impl.support.ResourceDao"
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
     autowire="autodetect" />
 
   <!--

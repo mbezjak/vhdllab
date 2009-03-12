@@ -55,16 +55,11 @@ public abstract class AbstractDaoSupport extends AbstractJpaTests {
      */
     @After
     public void cleanupAfterTest() {
-        getJdbcTemplate().execute("delete from file_history");
         getJdbcTemplate().execute("delete from files");
-        getJdbcTemplate().execute("delete from project_history");
         getJdbcTemplate().execute("delete from projects");
-        getJdbcTemplate().execute("delete from library_files");
-        getJdbcTemplate().execute("delete from libraries");
-        getJdbcTemplate().execute("delete from user_files");
-        // support entity tables
-        getJdbcTemplate().execute("delete from EntityObjectTable");
-        getJdbcTemplate().execute("delete from ResourceTable");
+        getJdbcTemplate().execute("delete from file_history");
+        getJdbcTemplate().execute("delete from project_history");
+        getJdbcTemplate().execute("delete from client_logs");
     }
 
     protected String createQuery(String table, String columns, String values) {

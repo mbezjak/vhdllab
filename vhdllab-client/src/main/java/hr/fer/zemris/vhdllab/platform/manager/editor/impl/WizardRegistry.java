@@ -6,7 +6,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.SchemaMainPanelMetadata;
 import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
 import hr.fer.zemris.vhdllab.applets.texteditor.PredefinedEditorMetadata;
 import hr.fer.zemris.vhdllab.applets.texteditor.TextEditorMetadata;
-import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
 
 import java.util.HashMap;

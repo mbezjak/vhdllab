@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileType;
+import static org.junit.Assert.assertTrue;
+import hr.fer.zemris.vhdllab.entity.FileType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,14 +20,14 @@ import org.junit.Test;
 
 /**
  * A test case for {@link HierarchyNode}.
- *
+ * 
  * @author Miro Bezjak
  */
 public class HierarchyNodeTest {
 
-    private final static Caseless NAME = new Caseless("file.name");
+    private final static String NAME = "file.name";
     private final static FileType TYPE = FileType.SOURCE;
-    private final static Caseless NEW_NAME = new Caseless("new" + NAME);
+    private final static String NEW_NAME = "new" + NAME;
 
     private HierarchyNode root;
 
@@ -183,9 +183,9 @@ public class HierarchyNodeTest {
      */
     @Test
     public void getDependencies2() throws Exception {
-        Caseless name = new Caseless("A fIlE NaMe.");
+        String name = "A fIlE NaMe.";
         new HierarchyNode(name, TYPE, root);
-        Caseless returnedName = root.getDependencies().iterator().next();
+        String returnedName = root.getDependencies().iterator().next().toString();
         assertEquals("names not equal.", name, returnedName);
     }
 
@@ -223,6 +223,19 @@ public class HierarchyNodeTest {
 
         assertFalse("hierarchy nodes are equal.", root.equals(newRoot));
         assertFalse("hierarchy nodes are equal.", root.hashCode() == newRoot
+                .hashCode());
+    }
+
+    /**
+     * Name is of different case
+     */
+    @Test
+    public void hashCodeAndEquals3() throws Exception {
+        HierarchyNode newRoot = new HierarchyNode(NAME.toUpperCase(), root
+                .getFileType(), null);
+
+        assertTrue("hierarchy nodes not equal.", root.equals(newRoot));
+        assertTrue("hierarchy nodes not equal.", root.hashCode() == newRoot
                 .hashCode());
     }
 

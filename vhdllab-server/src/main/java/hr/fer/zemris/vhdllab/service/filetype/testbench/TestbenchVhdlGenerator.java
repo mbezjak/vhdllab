@@ -13,7 +13,7 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.SignalChange;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.FileType;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.FileService;
 import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerationException;

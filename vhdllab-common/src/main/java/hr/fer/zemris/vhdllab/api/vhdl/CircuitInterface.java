@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.api.vhdl;
 
-import hr.fer.zemris.vhdllab.api.util.StringFormat;
+import hr.fer.zemris.vhdllab.entity.validation.NameFormatConstraintValidator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,7 +47,6 @@ public final class CircuitInterface implements Serializable, Iterable<Port> {
      * @throws IllegalArgumentException
      *             if name is not correct entity name or if port list contains
      *             duplicate ports
-     * @see StringFormat#isCorrectEntityName(String)
      */
     public CircuitInterface(String name, List<Port> ports) {
         if (name == null) {
@@ -56,11 +55,11 @@ public final class CircuitInterface implements Serializable, Iterable<Port> {
         if (ports == null) {
             throw new NullPointerException("Ports cant be null");
         }
-        if (!StringFormat.isCorrectEntityName(name)) {
-            throw new IllegalArgumentException(
-                    "Name is not correct entity name");
-        }
         this.name = name;
+        if (!new NameFormatConstraintValidator().isValid(this)) {
+            throw new IllegalArgumentException(
+            "Name is not correct entity name");
+        }
         this.ports = new LinkedHashMap<String, Port>(ports.size());
         for (Port p : ports) {
             Port previousPort = this.ports.put(p.getName().toLowerCase(), p);

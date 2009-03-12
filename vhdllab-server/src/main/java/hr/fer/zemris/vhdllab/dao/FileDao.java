@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.dao;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.File;
+import hr.fer.zemris.vhdllab.entity.File;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +31,6 @@ public interface FileDao extends EntityDao<File> {
      *             if any parameter is <code>null</code>
      * @return specified file or <code>null</code> if such entity doesn't exist
      */
-    File findByName(Integer projectId, Caseless name);
+    File findByName(Integer projectId, String name);
 
 }
