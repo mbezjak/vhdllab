@@ -13,6 +13,7 @@ import java.util.Locale;
  * @version 1.0
  * @since vhdllab2
  */
+@Deprecated
 public final class Caseless implements Serializable, Comparable<Caseless> {
 
     private static final long serialVersionUID = 1L;

@@ -1,19 +1,19 @@
 package hr.fer.zemris.vhdllab.service.init;
 
 /**
- * Executes a group of {@link LibraryInitializer}s set by
- * {@link #setInitializers(LibraryInitializer[])}.
+ * Executes a group of {@link ProjectInitializer}s set by
+ * {@link #setInitializers(ProjectInitializer[])}.
  * 
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
  */
-public class GroupLibraryInitializer implements LibraryInitializer {
+public class GroupLibraryInitializer implements ProjectInitializer {
 
     /**
      * Initializers that will be executed.
      */
-    private LibraryInitializer[] initializers;
+    private ProjectInitializer[] initializers;
 
     /**
      * Sets initializers to execute
@@ -21,7 +21,7 @@ public class GroupLibraryInitializer implements LibraryInitializer {
      * @param initializers
      *            initializers to execute
      */
-    public void setInitializers(LibraryInitializer[] initializers) {
+    public void setInitializers(ProjectInitializer[] initializers) {
         this.initializers = initializers;
     }
 
@@ -31,9 +31,9 @@ public class GroupLibraryInitializer implements LibraryInitializer {
      * @see hr.fer.zemris.vhdllab.service.init.LibraryInitializer#initLibrary()
      */
     @Override
-    public void initLibrary() {
-        for (LibraryInitializer initializer : initializers) {
-            initializer.initLibrary();
+    public void initProject() {
+        for (ProjectInitializer initializer : initializers) {
+            initializer.initProject();
         }
     }
 

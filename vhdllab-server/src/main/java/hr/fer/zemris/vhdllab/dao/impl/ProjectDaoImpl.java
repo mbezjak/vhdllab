@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.dao.impl;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
+import hr.fer.zemris.vhdllab.util.ProjectUtils;
 
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class ProjectDaoImpl extends AbstractEntityDao<Project> implements
     }
 
     private Project findProjectByType(String userId, ProjectType type) {
-        return findProject(userId, type, type.toString());
+        return findProject(userId, type, ProjectUtils.createProjectName(type));
     }
 
     private Project findProject(String userId, ProjectType type, String name) {

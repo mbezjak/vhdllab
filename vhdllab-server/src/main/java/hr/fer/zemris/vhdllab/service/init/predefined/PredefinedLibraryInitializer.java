@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.service.init.predefined;
 
 import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.service.init.AbstractLibraryInitializer;
+import hr.fer.zemris.vhdllab.service.init.AbstractProjectInitializer;
 
 /**
  * Initializes predefined files library.
@@ -10,7 +10,7 @@ import hr.fer.zemris.vhdllab.service.init.AbstractLibraryInitializer;
  * @version 1.0
  * @since vhdllab2
  */
-public class PredefinedLibraryInitializer extends AbstractLibraryInitializer {
+public class PredefinedLibraryInitializer extends AbstractProjectInitializer {
 
     /**
      * A name of a predefined library.
@@ -23,8 +23,8 @@ public class PredefinedLibraryInitializer extends AbstractLibraryInitializer {
      * @see hr.fer.zemris.vhdllab.service.init.LibraryInitializer#initLibrary()
      */
     @Override
-    public void initLibrary() {
-        initLibrary(LIBRARY_NAME);
+    public void initProject() {
+        initProject(LIBRARY_NAME);
     }
 
 }

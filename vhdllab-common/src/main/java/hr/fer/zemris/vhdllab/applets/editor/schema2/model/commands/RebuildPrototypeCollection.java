@@ -26,7 +26,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.UserComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedConf;
-import hr.fer.zemris.vhdllab.utilities.FileUtil;
+import hr.fer.zemris.vhdllab.util.IOUtils;
 
 import java.io.InputStream;
 import java.util.List;
@@ -91,7 +91,7 @@ public class RebuildPrototypeCollection implements ICommand {
 			
 			// add new predefined
 			PredefinedComponentsParser predefparser = 
-				new PredefinedComponentsParser(FileUtil.readFile(predefinedcircuits));
+				new PredefinedComponentsParser(IOUtils.toString(predefinedcircuits));
 			PredefinedConf predefconf = predefparser.getConfiguration();
 	
 			prototyper.clearPrototypes();
