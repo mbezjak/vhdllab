@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard;
 
-import hr.fer.zemris.vhdllab.platform.util.BeanUtil;
+import hr.fer.zemris.vhdllab.util.BeanUtils;
 
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.BeansException;
@@ -40,7 +40,7 @@ public abstract class AbstractResourceCreatingCommand extends ActionCommand
     protected abstract Class<? extends Wizard> getWizardClass();
 
     private Wizard getWizard(Form form) {
-        String wizardBeanName = BeanUtil.getBeanName(getWizardClass());
+        String wizardBeanName = BeanUtils.getBeanName(getWizardClass());
         AbstractResourceCreatingWizard wizard = (AbstractResourceCreatingWizard) context
                 .getBean(wizardBeanName);
         wizard.setForm(form);

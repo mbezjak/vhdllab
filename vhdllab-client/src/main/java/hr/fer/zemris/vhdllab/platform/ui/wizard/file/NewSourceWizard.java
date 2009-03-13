@@ -1,12 +1,11 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
 import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entity.FileInfo;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
-import hr.fer.zemris.vhdllab.platform.util.BeanUtil;
+import hr.fer.zemris.vhdllab.util.BeanUtils;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
     private CircuitInterfaceWizardPage circuitInterfacePage;
 
     public NewSourceWizard() {
-        super(BeanUtil.getBeanName(NewSourceWizard.class));
+        super(BeanUtils.getBeanName(NewSourceWizard.class));
     }
 
     @Override
