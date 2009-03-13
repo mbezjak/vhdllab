@@ -318,19 +318,6 @@ public class VcdParser
         return maximumSignalNameLength;
     }
 
-
-    /**
-     * Test metoda
-     */
-	public static void main(String[] args)
-	{
-		VcdParser parser = new VcdParser("adder2.vcd");
-		parser.parse();
-        parser.resultToString();
-        System.out.println(parser.getResultInString());
-	}
-
-
     /**
      * Metoda transformira mapu sa imenima signala i njihovim vrijednostima, te
      * listu sa svim tockama u kojima se dogada promjena vrijednosti signala u
