@@ -86,9 +86,11 @@ public abstract class AbstractDaoSupport extends AbstractJpaTests {
     }
 
     protected void closeEntityManager() {
-        entityManager.close();
-        TransactionSynchronizationManager.unbindResource(entityManagerFactory);
-        entityManager = null;
+        if(entityManager != null) {
+            entityManager.close();
+            TransactionSynchronizationManager.unbindResource(entityManagerFactory);
+            entityManager = null;
+        }
     }
 
     protected String createInsertStatement(String table, String columns,

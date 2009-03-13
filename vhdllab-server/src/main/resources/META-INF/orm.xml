@@ -9,13 +9,13 @@
 
   <entity class="File">
     <entity-listeners>
-      <entity-listener class="" />
+      <entity-listener class="hr.fer.zemris.vhdllab.entity.HistoryListener" />
     </entity-listeners>
   </entity>
 
   <entity class="Project">
     <entity-listeners>
-      <entity-listener class="" />
+      <entity-listener class="hr.fer.zemris.vhdllab.entity.HistoryListener" />
     </entity-listeners>
   </entity>
 

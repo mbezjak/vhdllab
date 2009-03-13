@@ -50,7 +50,7 @@
     Injects entityManagerFactory to HistoryListener so history can be
     created
   -->
-  <bean class="hr.fer.zemris.vhdllab.entities.HistoryListenerConfigurer" />
+  <bean class="hr.fer.zemris.vhdllab.entity.HistoryListenerConfigurer" />
 
   <!-- DAO classes -->
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"

@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.orm.hibernate3.HibernateSystemException;
 
 /**
@@ -108,13 +109,35 @@ public class BaseEntityDaoTest extends AbstractDaoSupport {
     }
 
     /**
-     * Id cant be updated.
+     * Id can't be updated.
      */
     @Test(expected = HibernateSystemException.class)
     public void mergeIdCantBeUpdated() {
         dao.persist(entity);
         entity.setId(1000);
         dao.merge(entity);
+    }
+
+    /**
+     * Detached entity passed to persist.
+     */
+    @Test(expected = InvalidDataAccessApiUsageException.class)
+    public void detachedEntity() {
+        dao.persist(entity);
+        closeEntityManager();
+        createEntityManager();
+        dao.persist(entity);
+    }
+
+    /**
+     * Detached entity passed to persist.
+     */
+    @Test
+    public void detachedEntityUsingMerge() {
+        dao.persist(entity);
+        closeEntityManager();
+        createEntityManager();
+        dao.merge(entity); // no exception
     }
 
 }

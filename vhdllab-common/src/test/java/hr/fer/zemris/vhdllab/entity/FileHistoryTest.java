@@ -62,6 +62,8 @@ public class FileHistoryTest extends ValueObjectTestSupport {
         assertEquals("name not same.", NAME, another.getName());
         assertEquals("project id not same.", PROJECT_ID, another.getProjectId());
         assertEquals("history not same.", history, another.getHistory());
+        assertNull("id must not be copied.", another.getId());
+        assertNull("version must not be copied.", another.getVersion());
     }
 
     @Test

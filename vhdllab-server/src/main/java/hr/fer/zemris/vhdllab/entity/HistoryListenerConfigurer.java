@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.entities;
+package hr.fer.zemris.vhdllab.entity;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;

@@ -31,6 +31,8 @@ public class ProjectHistory extends ProjectInfo {
     public ProjectHistory(ProjectInfo project, History history) {
         super(project);
         setHistory(history);
+        setId(null);
+        setVersion(null);
     }
 
     public ProjectHistory(ProjectHistory project) {

@@ -1,6 +1,4 @@
-package hr.fer.zemris.vhdllab.entities;
-
-import hr.fer.zemris.vhdllab.entity.History;
+package hr.fer.zemris.vhdllab.entity;
 
 import java.util.Date;
 
@@ -16,7 +14,7 @@ import javax.persistence.Query;
 public class HistoryListener {
     
     private static EntityManagerFactory entityManagerFactory;
-    
+
     public static void setEntityManagerFactory(
             EntityManagerFactory entityManagerFactory) {
         HistoryListener.entityManagerFactory = entityManagerFactory;
@@ -85,7 +83,28 @@ public class HistoryListener {
             } else {
                 h = new History(fileHistory.getHistory().getInsertVersion()+1, 0);
             }
-            history = new FileHistory(new FileInfo(f, projectHistory.getId()), h);
+            history = new FileHistory(f, projectHistory.getId(), h);
+        } else {
+            history = null;
+        }
+        if (history != null) {
+            em.persist(history);
+        }
+
+        closeEntityManager(em);
+    }
+
+    @PostUpdate
+    public void updateHistory(Object o) {
+        EntityManager em = newEntityManager();
+
+        Object history;
+        if (o instanceof File) {
+            File f = (File) o;
+            ProjectHistory projectHistory = getLastProjectHistory(em, f.getProject());
+            FileHistory fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
+            History h = new History(fileHistory.getHistory().getInsertVersion(), fileHistory.getHistory().getUpdateVersion()+1);
+            history = new FileHistory(f, fileHistory.getProjectId(), h);
         } else {
             history = null;
         }
@@ -96,31 +115,10 @@ public class HistoryListener {
         closeEntityManager(em);
     }
     
-    @PostUpdate
-    public void updateHistory(Object o) {
-        EntityManager em = newEntityManager();
-        
-        Object history;
-        if (o instanceof File) {
-            File f = (File) o;
-            ProjectHistory projectHistory = getLastProjectHistory(em, f.getProject());
-            FileHistory fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
-            History h = new History(fileHistory.getHistory().getInsertVersion(), fileHistory.getHistory().getUpdateVersion()+1);
-            history = new FileHistory(new FileInfo(f, fileHistory.getProjectId()), h);
-        } else {
-            history = null;
-        }
-        if (history != null) {
-            em.persist(history);
-        }
-        
-        closeEntityManager(em);
-    }
-    
     @PostRemove
     public void removeHistory(Object o) {
         EntityManager em = newEntityManager();
-        
+
         if (o instanceof Project) {
             Project project = (Project) o;
             ProjectHistory projectHistory = getLastProjectHistory(em, project);
@@ -133,13 +131,13 @@ public class HistoryListener {
             fileHistory.getHistory().setDeletedOn(new Date());
             em.persist(fileHistory);
         }
-        
+
         closeEntityManager(em);
     }
     
     private ProjectHistory getLastProjectHistory(EntityManager em, Project project) {
-        Caseless userId = project.getUserId();
-        Caseless name = project.getName();
+        String userId = project.getUserId();
+        String name = project.getName();
         StringBuilder sb = new StringBuilder(1000);
         sb.append("select h from ProjectHistory as h");
         sb.append("    where h.userId = :userId");
@@ -151,14 +149,13 @@ public class HistoryListener {
         sb.append("             select max(uh.history.updateVersion) from ProjectHistory as uh");
         sb.append("                 where uh.userId = :userId and uh.name = :name");
         sb.append("                     and uh.history.insertVersion = h.history.insertVersion)");
-        sb.append("");
         Query query = em.createQuery(sb.toString());
         query.setParameter("userId", userId);
         query.setParameter("name", name);
         return (ProjectHistory) query.getSingleResult();
     }
 
-    private FileHistory getLastFileHistory(EntityManager em, Integer projectId, Caseless name) {
+    private FileHistory getLastFileHistory(EntityManager em, Integer projectId, String name) {
         StringBuilder sb = new StringBuilder(1000);
         sb.append("select h from FileHistory as h");
         sb.append("    where h.projectId = :projectId");
@@ -170,7 +167,6 @@ public class HistoryListener {
         sb.append("             select max(uh.history.updateVersion) from FileHistory as uh");
         sb.append("                 where uh.projectId = :projectId and uh.name = :name");
         sb.append("                     and uh.history.insertVersion = h.history.insertVersion)");
-        sb.append("");
         Query query = em.createQuery(sb.toString());
         query.setParameter("projectId", projectId);
         query.setParameter("name", name);

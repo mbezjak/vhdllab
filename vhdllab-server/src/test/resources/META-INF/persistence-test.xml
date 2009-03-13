@@ -6,6 +6,7 @@
   version="1.0">
 
   <persistence-unit name="vhdllab" transaction-type="RESOURCE_LOCAL">
+    <mapping-file>META-INF/orm.xml</mapping-file>
     <class>hr.fer.zemris.vhdllab.entity.File</class>
     <class>hr.fer.zemris.vhdllab.entity.Project</class>
     <class>hr.fer.zemris.vhdllab.entity.FileHistory</class>

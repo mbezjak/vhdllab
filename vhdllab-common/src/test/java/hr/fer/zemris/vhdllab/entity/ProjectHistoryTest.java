@@ -40,6 +40,8 @@ public class ProjectHistoryTest extends ValueObjectTestSupport {
                 history);
         assertEquals("userId not same.", USER_ID, another.getUserId());
         assertEquals("history not same.", history, another.getHistory());
+        assertNull("id must not be copied.", another.getId());
+        assertNull("version must not be copied.", another.getVersion());
     }
 
     @Test

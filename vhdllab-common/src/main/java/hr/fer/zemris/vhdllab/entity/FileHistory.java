@@ -40,6 +40,8 @@ public class FileHistory extends FileInfo {
         super(file);
         setProjectId(projectId);
         setHistory(history);
+        setId(null);
+        setVersion(null);
     }
 
     public FileHistory(FileHistory file) {
