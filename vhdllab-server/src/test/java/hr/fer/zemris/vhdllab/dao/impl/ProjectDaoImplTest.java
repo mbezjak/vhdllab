@@ -6,12 +6,15 @@ import hr.fer.zemris.vhdllab.dao.impl.support.AbstractDaoSupport;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.entity.ProjectType;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.persistence.Query;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -263,6 +266,30 @@ public class ProjectDaoImplTest extends AbstractDaoSupport {
                 .findByUser(project2.getUserId()));
         assertEquals("user id is not case insensitive.", collection2, dao
                 .findByUser(project2.getUserId().toUpperCase()));
+    }
+
+    /**
+     * Preferences project doesn't exist.
+     */
+    @Test
+    public void getPreferencesProject() {
+        Query query = entityManager
+                .createQuery("select p from Project p where p.type = ?1");
+        query.setParameter(1, ProjectType.PREFERENCES);
+        assertTrue(query.getResultList().isEmpty());
+
+        Project preferencesProject = dao.getPreferencesProject(USER_ID);
+        assertNotNull(preferencesProject);
+        assertFalse(preferencesProject.isNew());
+        assertEquals(USER_ID, preferencesProject.getUserId());
+        assertEquals(ProjectType.PREFERENCES, preferencesProject.getType());
+
+        assertFalse(query.getResultList().isEmpty());
+        Project newlyLoadedPreferencesProject = dao
+                .getPreferencesProject(USER_ID);
+        assertEquals(preferencesProject, newlyLoadedPreferencesProject);
+        assertEquals(preferencesProject.getId(), newlyLoadedPreferencesProject
+                .getId());
     }
 
     private void setupProject(final Project project) {

@@ -117,16 +117,6 @@ public class NameFormatConstraintValidatorTest {
     }
 
     @Test
-    public void isValidProjectTypePredefined() {
-        Project project = new Project();
-        project.setType(ProjectType.PREDEFINED);
-        project.setName("_incorrect_name_format");
-        assertTrue(
-                "project type predefined must always have correct name format.",
-                validator.isValid(project));
-    }
-
-    @Test
     public void isValidProjectTypePreferences() {
         Project project = new Project();
         project.setType(ProjectType.PREFERENCES);
@@ -155,28 +145,6 @@ public class NameFormatConstraintValidatorTest {
         file.setName("_incorrect_file_name");
         file.setProject(project);
         assertFalse("valid with project type=user and name incorrect.",
-                validator.isValid(file));
-    }
-
-    @Test
-    public void isValidProjectTypePredefinedFileNameCorrect() {
-        Project project = new Project();
-        project.setType(ProjectType.PREDEFINED);
-        File file = new File();
-        file.setName("correct_file_name");
-        file.setProject(project);
-        assertTrue("not valid with project type=predefined and name correct.",
-                validator.isValid(file));
-    }
-
-    @Test
-    public void isValidProjectTypePredefinedFileNameInCorrect() {
-        Project project = new Project();
-        project.setType(ProjectType.PREDEFINED);
-        File file = new File();
-        file.setName("_incorrect_file_name");
-        file.setProject(project);
-        assertFalse("valid with project type=predefined and name incorrect.",
                 validator.isValid(file));
     }
 

@@ -156,7 +156,7 @@ public class NameFormatConstraintValidator implements
             return true;
         } else if (value instanceof File) {
             File file = (File) value;
-            if (!file.getProject().getType().equals(ProjectType.PREFERENCES)) {
+            if (file.getProject().getType().equals(ProjectType.USER)) {
                 return isCorrectName(file.getName());
             }
             return true;

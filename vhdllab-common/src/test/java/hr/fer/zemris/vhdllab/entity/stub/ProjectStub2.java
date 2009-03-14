@@ -12,7 +12,7 @@ public class ProjectStub2 extends Project {
         setVersion(987);
         setName("project name");
         setUserId("project user id");
-        setType(ProjectType.PREDEFINED);
+        setType(ProjectType.PREFERENCES);
     }
 
 }

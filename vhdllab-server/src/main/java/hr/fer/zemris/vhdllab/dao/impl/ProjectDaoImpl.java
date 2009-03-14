@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.dao.impl;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
-import hr.fer.zemris.vhdllab.util.ProjectUtils;
 
 import java.util.List;
 
@@ -55,27 +54,21 @@ public class ProjectDaoImpl extends AbstractEntityDao<Project> implements
     /*
      * (non-Javadoc)
      * 
-     * @see hr.fer.zemris.vhdllab.dao.ProjectDao#getPredefinedProject()
-     */
-    @Override
-    public Project getPredefinedProject() {
-        return findProjectByType(null, ProjectType.PREDEFINED);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
      * hr.fer.zemris.vhdllab.dao.ProjectDao#getPreferencesProject(java.lang.
      * String)
      */
     @Override
     public Project getPreferencesProject(String userId) {
-        return findProjectByType(userId, ProjectType.PREFERENCES);
-    }
-
-    private Project findProjectByType(String userId, ProjectType type) {
-        return findProject(userId, type, ProjectUtils.createProjectName(type));
+        ProjectType type = ProjectType.PREFERENCES;
+        String projectName = type.toString().toLowerCase();
+        Project preferencesProject = findProject(userId, type, projectName);
+        if (preferencesProject == null) {
+            preferencesProject = new Project(userId, projectName);
+            preferencesProject.setType(type);
+            persist(preferencesProject);
+        }
+        return preferencesProject;
     }
 
     private Project findProject(String userId, ProjectType type, String name) {

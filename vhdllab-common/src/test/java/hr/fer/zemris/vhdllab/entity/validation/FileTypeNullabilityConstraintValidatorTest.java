@@ -34,17 +34,6 @@ public class FileTypeNullabilityConstraintValidatorTest {
     }
 
     @Test
-    public void isValidFileTypeSetAndProjectTypePredefined() {
-        Project project = new Project();
-        project.setType(ProjectType.PREDEFINED);
-        File file = new File();
-        file.setType(FileType.SOURCE);
-        file.setProject(project);
-        assertTrue("not valid when file type set and project type=predefined.",
-                validator.isValid(file));
-    }
-
-    @Test
     public void isValidFileTypeSetAndProjectTypePreferences() {
         Project project = new Project();
         project.setType(ProjectType.PREFERENCES);

@@ -47,14 +47,8 @@ public interface ProjectDao extends EntityDao<Project> {
     List<Project> findByUser(String userId);
 
     /**
-     * Returns a predefined project.
-     * 
-     * @return a predefined project
-     */
-    Project getPredefinedProject();
-
-    /**
-     * Returns a preferences project belonging to specified user.
+     * Returns a preferences project belonging to specified user. In case
+     * specified preferences project does not exist it will be created.
      * 
      * @param userId
      *            owner of preferences project

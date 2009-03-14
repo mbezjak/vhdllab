@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.entity;
 
 import static org.apache.commons.lang.StringUtils.lowerCase;
-import hr.fer.zemris.vhdllab.entity.validation.UserIdNullabilityConstraint;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -15,11 +14,11 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 @MappedSuperclass
-@UserIdNullabilityConstraint
 public class ProjectInfo extends NamedEntity {
 
     private static final long serialVersionUID = -3795038948065257739L;
 
+    @NotNull
     @Length(max = 255)
     @Column(name = "user_id", updatable = false)
     private String userId;

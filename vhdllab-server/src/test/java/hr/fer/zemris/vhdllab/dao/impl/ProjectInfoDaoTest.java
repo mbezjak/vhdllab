@@ -43,6 +43,17 @@ public class ProjectInfoDaoTest extends AbstractDaoSupport {
     }
 
     /**
+     * UserId can't be null.
+     */
+    @Test(expected = DataIntegrityViolationException.class)
+    public void userIdIsNull() {
+        entity.setName("name");
+        entity.setType(ProjectType.USER);
+        entity.setUserId(null);
+        dao.persist(entity);
+    }
+    
+    /**
      * UserId is too long.
      */
     @Test(expected = InvalidStateException.class)
@@ -62,7 +73,7 @@ public class ProjectInfoDaoTest extends AbstractDaoSupport {
         entity.setUserId("userId");
         entity.setType(ProjectType.USER);
         dao.persist(entity);
-        ProjectType newType = ProjectType.PREDEFINED;
+        ProjectType newType = ProjectType.PREFERENCES;
         String newUserId = "newUserId";
         entity.setType(newType);
         entity.setUserId(newUserId);
