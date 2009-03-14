@@ -37,6 +37,11 @@ public final class CircuitInterface implements Serializable {
     private List<Port> ports;
 
     public CircuitInterface() {
+        this(null);
+    }
+
+    public CircuitInterface(String name) {
+        setName(name);
         ports = new ArrayList<Port>();
     }
 
