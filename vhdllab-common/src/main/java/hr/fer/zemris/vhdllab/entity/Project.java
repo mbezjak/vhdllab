@@ -21,7 +21,6 @@ import org.hibernate.validator.Size;
 @Table(name = "projects", uniqueConstraints = { @UniqueConstraint(columnNames = {
         "user_id", "name" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-// @EntityListeners(HistoryListener.class)
 public class Project extends ProjectInfo {
 
     private static final long serialVersionUID = 7535295608182412183L;

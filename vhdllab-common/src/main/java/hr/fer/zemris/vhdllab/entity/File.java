@@ -18,7 +18,6 @@ import org.hibernate.validator.NotNull;
 @Table(name = "files", uniqueConstraints = { @UniqueConstraint(columnNames = {
         "project_id", "name" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-// @EntityListeners(HistoryListener.class)
 public class File extends FileInfo {
 
     private static final long serialVersionUID = -2001411661196642883L;
