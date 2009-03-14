@@ -13,7 +13,7 @@ import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.FileService;
 import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
 
 import java.util.ArrayList;
 import java.util.List;

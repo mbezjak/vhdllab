@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 
+import org.hibernate.validator.InvalidStateException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,12 @@ public class FileDaoImplTest extends AbstractDaoSupport {
 
         file = new File(NAME, TYPE, DATA);
         project.addFile(file);
+    }
+
+    @Test(expected = InvalidStateException.class)
+    public void illegalName() {
+        file.setName("_illegal_name");
+        dao.persist(file);
     }
 
     /**
@@ -172,7 +179,8 @@ public class FileDaoImplTest extends AbstractDaoSupport {
      */
     @Test
     public void findByNameNonExistingProjectId() {
-        assertNull("file already exists.", dao.findByName(Integer.MAX_VALUE, NAME));
+        assertNull("file already exists.", dao.findByName(Integer.MAX_VALUE,
+                NAME));
     }
 
     /**

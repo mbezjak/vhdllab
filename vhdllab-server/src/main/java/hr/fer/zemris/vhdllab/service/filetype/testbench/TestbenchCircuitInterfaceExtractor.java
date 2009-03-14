@@ -3,8 +3,8 @@ package hr.fer.zemris.vhdllab.service.filetype.testbench;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractionException;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractionException;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
 
 import java.util.Collections;
 import java.util.List;

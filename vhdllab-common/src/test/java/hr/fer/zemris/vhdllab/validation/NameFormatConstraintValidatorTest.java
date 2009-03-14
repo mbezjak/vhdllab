@@ -1,12 +1,15 @@
-package hr.fer.zemris.vhdllab.entity.validation;
+package hr.fer.zemris.vhdllab.validation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import hr.fer.zemris.vhdllab.entity.ClientLog;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.NamedEntity;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
 
+import org.hibernate.validator.ClassValidator;
+import org.hibernate.validator.InvalidValue;
 import org.hibernate.validator.Validator;
 import org.junit.Test;
 
@@ -160,28 +163,66 @@ public class NameFormatConstraintValidatorTest {
                 validator.isValid(file));
     }
 
+    /**
+     * All other NamedEntity classes must always have correct name format.
+     */
     @Test
-    public void isValidClientLog() {
-        assertTrue("client log must always have correct name format.",
-                validator.isValid(new ClientLog("user identifier")));
+    public void isValidNamedEntity() {
+        assertTrue(validator.isValid(new NamedEntity("_illegal_name")));
     }
 
     @Test
-    public void isValidNamedObject() {
-        assertTrue("named object not valid with correct name format.",
-                validator.isValid(new NamedObject("correct_name_format")));
+    public void isValidClassAnnotatedNamedObject() {
+        ClassValidator<ClassAnnotatedNamedObject> classValidator = new ClassValidator<ClassAnnotatedNamedObject>(
+                ClassAnnotatedNamedObject.class);
+        InvalidValue[] values = classValidator
+                .getInvalidValues(new ClassAnnotatedNamedObject(
+                        "correct_name_format"));
+        assertEquals(1, values.length);
     }
 
     @Test
-    public void isValidNamedObjectNameIncorrect() {
-        assertFalse("named object valid with incorrect name format.", validator
-                .isValid(new NamedObject("_incorrect_name_format")));
+    public void isValidFieldAnnotatedNamedObject() {
+        ClassValidator<FieldAnnotatedNamedObject> classValidator = new ClassValidator<FieldAnnotatedNamedObject>(
+                FieldAnnotatedNamedObject.class);
+        InvalidValue[] values = classValidator
+                .getInvalidValues(new FieldAnnotatedNamedObject(
+                        "correct_name_format"));
+        assertEquals(0, values.length);
     }
 
-    public class NamedObject {
+    @Test
+    public void isValidFieldAnnotatedNamedObjectNameIncorrect() {
+        ClassValidator<FieldAnnotatedNamedObject> classValidator = new ClassValidator<FieldAnnotatedNamedObject>(
+                FieldAnnotatedNamedObject.class);
+        InvalidValue[] values = classValidator
+                .getInvalidValues(new FieldAnnotatedNamedObject(
+                        "_incorrect_name_format"));
+        assertEquals(1, values.length);
+    }
+
+    @NameFormatConstraint
+    public class ClassAnnotatedNamedObject {
         private String name;
 
-        public NamedObject(String name) {
+        public ClassAnnotatedNamedObject(String name) {
+            setName(name);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public class FieldAnnotatedNamedObject {
+        @NameFormatConstraint
+        private String name;
+
+        public FieldAnnotatedNamedObject(String name) {
             setName(name);
         }
 

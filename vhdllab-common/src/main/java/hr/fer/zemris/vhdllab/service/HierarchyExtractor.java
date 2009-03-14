@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.service;
 
 import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
 
 public interface HierarchyExtractor {
 
-    Hierarchy extract(ProjectInfo project);
+    Hierarchy extract(Project project);
 
 }

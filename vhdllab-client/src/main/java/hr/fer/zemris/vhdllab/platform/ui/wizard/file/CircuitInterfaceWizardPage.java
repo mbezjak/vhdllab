@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.NumberBox;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -66,7 +66,7 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
             @Override
             protected Class[] createColumnClasses() {
                 return new Class[] { String.class, PortDirection.class,
-                        TypeName.class, Integer.class, Integer.class };
+                        PortType.class, Integer.class, Integer.class };
             }
 
         };
@@ -83,7 +83,7 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
         final JComboBox inComboBox = new JComboBox(new EnumComboBoxModel(
                 PortDirection.class));
         JComboBox tipComboBox = new JComboBox(new EnumComboBoxModel(
-                TypeName.class));
+                PortType.class));
         JTextField imeSignala = new JTextField("");
 
         NumberBox brojevi = new NumberBox("0");

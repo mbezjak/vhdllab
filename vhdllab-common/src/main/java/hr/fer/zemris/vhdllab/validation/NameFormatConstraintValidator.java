@@ -1,22 +1,18 @@
-package hr.fer.zemris.vhdllab.entity.validation;
+package hr.fer.zemris.vhdllab.validation;
 
-import hr.fer.zemris.vhdllab.entity.ClientLog;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.NamedEntity;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.hibernate.validator.Validator;
 
 public class NameFormatConstraintValidator implements
         Validator<NameFormatConstraint> {
-
-    private static final String NAME_PROPERTY = "name";
 
     private static final String NAME_PATTERN = "\\p{Alpha}\\p{Alnum}*(_\\p{Alnum}+)*";
     private static final Pattern PATTERN = Pattern.compile(NAME_PATTERN);
@@ -160,19 +156,12 @@ public class NameFormatConstraintValidator implements
                 return isCorrectName(file.getName());
             }
             return true;
-        } else if (value instanceof ClientLog) {
+        } else if (value instanceof NamedEntity) {
             return true;
+        } else if (value instanceof String) {
+            return isCorrectName((String) value);
         }
-
-        try {
-            return isCorrectName(BeanUtils.getProperty(value, NAME_PROPERTY));
-        } catch (IllegalAccessException e) {
-            return false;
-        } catch (InvocationTargetException e) {
-            return false;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
+        return false;
     }
 
     private boolean isCorrectName(String name) {

@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.entity;
 
 import static org.apache.commons.lang.StringUtils.lowerCase;
-import hr.fer.zemris.vhdllab.entity.validation.NameFormatConstraint;
+import hr.fer.zemris.vhdllab.validation.NameFormatConstraint;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.hibernate.validator.InvalidStateException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,12 @@ public class ProjectDaoImplTest extends AbstractDaoSupport {
         project = new Project(USER_ID, NAME);
         file = new File("file_name", FileType.SOURCE, "file data");
         project.addFile(file);
+    }
+
+    @Test(expected = InvalidStateException.class)
+    public void illegalName() {
+        project.setName("_illegal_name");
+        dao.persist(project);
     }
 
     /**

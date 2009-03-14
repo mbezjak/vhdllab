@@ -2,10 +2,8 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EErrorTypes;
@@ -26,6 +24,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.UserComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedConf;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 import hr.fer.zemris.vhdllab.util.IOUtils;
 
 import java.io.InputStream;
@@ -108,13 +108,13 @@ public class RebuildPrototypeCollection implements ICommand {
 		prototyper.clearPrototypes(EComponentType.IN_OUT);
 		
 		// add InOutSchemaComponents to list - this is unique for this implementation
-		addInOutComponent(new Port("input_v", PortDirection.IN, new Type(TypeName.STD_LOGIC_VECTOR,
+		addInOutComponent(new Port("input_v", PortDirection.IN, new Type(PortType.STD_LOGIC_VECTOR,
 				new Range(0, VectorDirection.TO, 3))), prototyper);
-		addInOutComponent(new Port("output_v", PortDirection.OUT, new Type(TypeName.STD_LOGIC_VECTOR,
+		addInOutComponent(new Port("output_v", PortDirection.OUT, new Type(PortType.STD_LOGIC_VECTOR,
                 new Range(0, VectorDirection.TO, 3))), prototyper);
-		addInOutComponent(new Port("input_s", PortDirection.IN, new Type(TypeName.STD_LOGIC,
+		addInOutComponent(new Port("input_s", PortDirection.IN, new Type(PortType.STD_LOGIC,
 			Range.SCALAR)), prototyper);
-		addInOutComponent(new Port("output_s", PortDirection.OUT, new Type(TypeName.STD_LOGIC,
+		addInOutComponent(new Port("output_s", PortDirection.OUT, new Type(PortType.STD_LOGIC,
 	            Range.SCALAR)), prototyper);
 		
 		// now create user components

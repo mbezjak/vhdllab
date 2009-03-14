@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.events;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IParameter;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IParameterEvent;
@@ -11,6 +10,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaWire;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.ChangeTuple;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,7 +96,7 @@ public class FirstPortResizer implements IParameterEvent {
 		range[0] = tp.getRange().getFrom() + (portnum - oldnum) * ((tp.getRange().getDirection().isTO()) ? (0) : (1));
 		range[1] = tp.getRange().getTo() + (portnum - oldnum) * ((tp.getRange().getDirection().isTO()) ? (1) : (0));
 		port = new Port(port.getName(), port.getDirection(),
-				new Type(TypeName.STD_LOGIC_VECTOR, new Range(range[0], tp.getRange().getDirection(), range[1])));
+				new Type(PortType.STD_LOGIC_VECTOR, new Range(range[0], tp.getRange().getDirection(), range[1])));
 		component.setPort(0, port);
 		
 		return true;

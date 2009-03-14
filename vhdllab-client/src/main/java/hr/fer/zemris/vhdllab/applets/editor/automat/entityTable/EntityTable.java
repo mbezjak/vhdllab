@@ -3,11 +3,11 @@ package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 import hr.fer.zemris.vhdllab.api.util.StringFormat;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -208,18 +208,18 @@ public class EntityTable extends JPanel {
                 d = PortDirection.OUT;
             Type tip = null;
             if (pomData[i][2].equalsIgnoreCase("Std_Logic"))
-                tip = new Type(TypeName.STD_LOGIC, Range.SCALAR);
+                tip = new Type(PortType.STD_LOGIC, Range.SCALAR);
             else {
                 if (Integer.parseInt(pomData[i][3]) > Integer
                         .parseInt(pomData[i][4])) {
                     int[] inte = { Integer.parseInt(pomData[i][3]),
                             Integer.parseInt(pomData[i][4]) };
-                    tip = new Type(TypeName.STD_LOGIC_VECTOR, new Range(
+                    tip = new Type(PortType.STD_LOGIC_VECTOR, new Range(
                             inte[0], VectorDirection.DOWNTO, inte[1]));
                 } else {
                     int[] inte = { Integer.parseInt(pomData[i][3]),
                             Integer.parseInt(pomData[i][4]) };
-                    tip = new Type(TypeName.STD_LOGIC_VECTOR, new Range(
+                    tip = new Type(PortType.STD_LOGIC_VECTOR, new Range(
                             inte[0], VectorDirection.TO, inte[1]));
                 }
             }

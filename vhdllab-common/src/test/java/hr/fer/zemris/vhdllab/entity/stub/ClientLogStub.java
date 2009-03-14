@@ -9,6 +9,7 @@ public class ClientLogStub extends ClientLog {
 
     public ClientLogStub() {
         BeanUtils.copyProperties(this, new FileInfoStub());
+        setType(null);
     }
 
 }

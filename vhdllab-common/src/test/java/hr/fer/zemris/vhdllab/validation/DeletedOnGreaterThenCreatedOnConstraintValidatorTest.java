@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.entity.validation;
+package hr.fer.zemris.vhdllab.validation;
 
 import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.CREATED_ON;
 import static hr.fer.zemris.vhdllab.entity.stub.HistoryStub.DELETED_ON;

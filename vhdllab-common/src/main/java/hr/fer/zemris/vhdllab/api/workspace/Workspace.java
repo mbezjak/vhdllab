@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.api.workspace;
 
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +20,9 @@ public class Workspace implements Iterable<ProjectMetadata>, Serializable {
     private static final long serialVersionUID = 1L;
 
     protected List<ProjectMetadata> projects;
-    protected Map<ProjectInfo, ProjectMetadata> map;
+    protected Map<Project, ProjectMetadata> map;
+    private Project preferencesProject;
+    private List<File> predefinedFiles;
 
     public Workspace(List<ProjectMetadata> projects) {
         this.projects = projects;
@@ -33,7 +36,7 @@ public class Workspace implements Iterable<ProjectMetadata>, Serializable {
     }
 
     protected void createMap() {
-        map = new HashMap<ProjectInfo, ProjectMetadata>(projects.size());
+        map = new HashMap<Project, ProjectMetadata>(projects.size());
         for (ProjectMetadata pm : projects) {
             map.put(pm.getProject(), pm);
         }
@@ -47,7 +50,7 @@ public class Workspace implements Iterable<ProjectMetadata>, Serializable {
         return Collections.unmodifiableList(projects);
     }
 
-    public ProjectMetadata getProjectMetadata(ProjectInfo project) {
+    public ProjectMetadata getProjectMetadata(Project project) {
         Validate.notNull(project, "Project can't be null");
         ProjectMetadata pm = map.get(project);
         if (pm == null) {
@@ -57,7 +60,7 @@ public class Workspace implements Iterable<ProjectMetadata>, Serializable {
         return pm;
     }
 
-    public boolean contains(ProjectInfo project) {
+    public boolean contains(Project project) {
         Validate.notNull(project, "Project can't be null");
         return map.containsKey(project);
     }

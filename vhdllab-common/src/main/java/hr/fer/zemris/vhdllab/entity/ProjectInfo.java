@@ -66,6 +66,7 @@ public class ProjectInfo extends NamedEntity {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
+                    .appendSuper(super.hashCode())
                     .append(lowerCase(userId))
                     .append(type)
                     .toHashCode();

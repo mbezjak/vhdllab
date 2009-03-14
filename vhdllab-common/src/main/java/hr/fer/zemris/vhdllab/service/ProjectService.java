@@ -1,15 +1,17 @@
 package hr.fer.zemris.vhdllab.service;
 
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-
-import java.util.List;
+import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
+import hr.fer.zemris.vhdllab.api.workspace.Workspace;
+import hr.fer.zemris.vhdllab.entity.Project;
 
 public interface ProjectService {
 
-    ProjectInfo save(ProjectInfo project);
+    Project save(Project project);
 
-    void delete(ProjectInfo project);
+    void delete(Project project);
 
-    List<ProjectInfo> findByUser();
+    ProjectMetadata getProjectMetadata(Project project);
+
+    Workspace getWorkspace();
 
 }

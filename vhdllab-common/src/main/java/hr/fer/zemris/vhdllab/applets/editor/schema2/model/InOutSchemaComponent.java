@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
@@ -34,6 +33,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

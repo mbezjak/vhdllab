@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.entity.FileInfo;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 import hr.fer.zemris.vhdllab.util.BeanUtils;
 
 import java.util.List;
@@ -55,11 +55,11 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
         sb.append("-- note: entity name and resource name must match\n");
         sb.append("ENTITY ").append(file.getFileName()).append(" IS PORT (\n");
         for (CircuitInterfaceObject p : ports) {
-            TypeName type = p.getTypeName();
+            PortType type = p.getTypeName();
             sb.append("\t").append(p.getName()).append(" : ").append(
                     p.getPortDirection().toString()).append(" ").append(
                     type.toString());
-            if (type.equals(TypeName.STD_LOGIC_VECTOR)) {
+            if (type.equals(PortType.STD_LOGIC_VECTOR)) {
                 sb.append(" (").append(p.getFrom()).append(" ")
                         .append(p.getFrom() >= p.getTo() ? "DOWNTO" : "TO")
                         .append(" ").append(p.getTo()).append(")");

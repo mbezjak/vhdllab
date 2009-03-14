@@ -15,7 +15,7 @@ import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.FileService;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerationException;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 

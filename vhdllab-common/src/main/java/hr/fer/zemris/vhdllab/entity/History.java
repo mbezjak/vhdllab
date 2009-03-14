@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.entity;
 
-import hr.fer.zemris.vhdllab.entity.validation.DeletedOnGreaterThenCreatedOnConstraint;
+import hr.fer.zemris.vhdllab.validation.DeletedOnGreaterThenCreatedOnConstraint;
 
 import java.io.Serializable;
 import java.util.Date;

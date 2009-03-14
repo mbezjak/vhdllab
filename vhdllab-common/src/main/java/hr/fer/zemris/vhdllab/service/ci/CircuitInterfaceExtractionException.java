@@ -1,8 +1,8 @@
-package hr.fer.zemris.vhdllab.service.filetype;
+package hr.fer.zemris.vhdllab.service.ci;
 
 public class CircuitInterfaceExtractionException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6206862371948158173L;
 
     public CircuitInterfaceExtractionException() {
         super();

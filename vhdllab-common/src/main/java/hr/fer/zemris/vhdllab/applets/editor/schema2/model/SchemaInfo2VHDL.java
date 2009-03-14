@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.api.results.VHDLGenerationMessage;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.NotImplementedException;
@@ -18,6 +17,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IVHDLSegmentProvi
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 
 import java.util.ArrayList;
 import java.util.HashMap;

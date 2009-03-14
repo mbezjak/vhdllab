@@ -3,14 +3,14 @@ package hr.fer.zemris.vhdllab.service.filetype.source;
 import hr.fer.zemris.vhdllab.api.util.StringFormat;
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractionException;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractionException;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +127,7 @@ public class SourceCircuitInterfaceExtractor implements
     private Type parseType(String source) {
         String s = source.trim();
         if (s.equals("STD_LOGIC")) {
-            return new Type(TypeName.STD_LOGIC, Range.SCALAR);
+            return new Type(PortType.STD_LOGIC, Range.SCALAR);
         }
         if (!s.startsWith("STD_LOGIC_VECTOR")) {
             throwException();
@@ -176,7 +176,7 @@ public class SourceCircuitInterfaceExtractor implements
             throwException();
         }
         try {
-            return new Type(TypeName.STD_LOGIC_VECTOR, new Range(from,
+            return new Type(PortType.STD_LOGIC_VECTOR, new Range(from,
                     vectorDirection, to));
         } catch (IllegalArgumentException e) {
             throwException();

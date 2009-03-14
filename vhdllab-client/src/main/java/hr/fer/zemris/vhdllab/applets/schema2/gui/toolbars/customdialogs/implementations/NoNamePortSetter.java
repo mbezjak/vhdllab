@@ -1,13 +1,13 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.implementations;
 
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.generic.ParamPort;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.ParameterSetterPanel;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -93,9 +93,9 @@ public class NoNamePortSetter extends ParameterSetterPanel<ParamPort> {
 			VectorDirection vecdir = null;
 			if (vectorDirectionCombo.getSelectedIndex() == 0) vecdir = VectorDirection.DOWNTO;
 			else vecdir = VectorDirection.TO;
-			tp = new Type(TypeName.STD_LOGIC_VECTOR, new Range(range[0], vecdir, range[1]));
+			tp = new Type(PortType.STD_LOGIC_VECTOR, new Range(range[0], vecdir, range[1]));
 		} else {
-			tp = new Type(TypeName.STD_LOGIC, Range.SCALAR);
+			tp = new Type(PortType.STD_LOGIC, Range.SCALAR);
 		}
 		PortDirection dir = (inRadio.isSelected()) ? (PortDirection.IN) : (PortDirection.OUT);
 		return new ParamPort(new Port(cachedname, dir, tp));

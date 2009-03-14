@@ -2,7 +2,6 @@ package hr.fer.zemris.vhdllab.applets.editor.newtb;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.ChangeStateEdge;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.Radix;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.TimeScale;
@@ -31,6 +30,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

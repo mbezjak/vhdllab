@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.entity.validation;
+package hr.fer.zemris.vhdllab.validation;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 import org.hibernate.validator.ValidatorClass;
 
 @Documented
-@ValidatorClass(NameFormatConstraintValidator.class)
+@ValidatorClass(DeletedOnGreaterThenCreatedOnConstraintValidator.class)
 @Target( { TYPE })
 @Retention(RUNTIME)
-public @interface NameFormatConstraint {
-    String message() default "{validator.nameFormatConstraint}";
+public @interface DeletedOnGreaterThenCreatedOnConstraint {
+    String message() default "{validator.deletedOnGreaterThenCreatedOnConstraint}";
 }

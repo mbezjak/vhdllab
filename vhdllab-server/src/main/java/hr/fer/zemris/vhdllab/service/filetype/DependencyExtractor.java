@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.service.filetype;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entity.FileInfo;
 
 import java.util.Set;
 

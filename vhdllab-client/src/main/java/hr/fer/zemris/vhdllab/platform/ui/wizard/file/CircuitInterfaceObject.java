@@ -1,19 +1,19 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 public class CircuitInterfaceObject {
 
     private String name;
     private PortDirection portDirection;
-    private TypeName typeName;
+    private PortType typeName;
     private Integer from;
     private Integer to;
 
     public CircuitInterfaceObject() {
         setPortDirection(PortDirection.IN);
-        setTypeName(TypeName.STD_LOGIC);
+        setTypeName(PortType.STD_LOGIC);
     }
 
     public String getName() {
@@ -32,11 +32,11 @@ public class CircuitInterfaceObject {
         this.portDirection = portDirection;
     }
 
-    public TypeName getTypeName() {
+    public PortType getTypeName() {
         return typeName;
     }
 
-    public void setTypeName(TypeName typeName) {
+    public void setTypeName(PortType typeName) {
         this.typeName = typeName;
     }
 

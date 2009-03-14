@@ -2,10 +2,8 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.TypeName;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
@@ -38,6 +36,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -320,7 +320,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				
 				VectorDirection vecdir = toVecDir(pw.getVectorAscension());
 				
-				tp = new Type(TypeName.valueOf(PortWrapper.STD_LOGIC_VECTOR.toUpperCase()), new Range(range[0], vecdir, range[1]));
+				tp = new Type(PortType.valueOf(PortWrapper.STD_LOGIC_VECTOR.toUpperCase()), new Range(range[0], vecdir, range[1]));
 				if (pw.getDirection().equals(PortWrapper.DIRECTION_IN)) dir = PortDirection.IN;
 				else if (pw.getDirection().equals(PortWrapper.DIRECTION_OUT)) dir = PortDirection.OUT;
 				else throw new NotImplementedException("Direction '" + pw.getDirection() + "' unknown.");
@@ -347,7 +347,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				pos += increment;
 				
 			} else if (pw.getType().equals(PortWrapper.STD_LOGIC)) {
-				tp = new Type(TypeName.valueOf(PortWrapper.STD_LOGIC.toUpperCase()), Range.SCALAR);
+				tp = new Type(PortType.valueOf(PortWrapper.STD_LOGIC.toUpperCase()), Range.SCALAR);
 				if (pw.getDirection().equals(PortWrapper.DIRECTION_IN)) dir = PortDirection.IN;
 				else if (pw.getDirection().equals(PortWrapper.DIRECTION_OUT)) dir = PortDirection.OUT;
 				else throw new NotImplementedException("Direction '" + pw.getDirection() + "' unknown.");

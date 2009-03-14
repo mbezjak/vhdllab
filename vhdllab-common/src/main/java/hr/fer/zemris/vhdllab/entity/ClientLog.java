@@ -18,6 +18,7 @@ public class ClientLog extends FileInfo {
 
     public ClientLog(String userId) {
         setName(constructName(userId));
+        setType(null);
     }
 
     private String constructName(String userId) {

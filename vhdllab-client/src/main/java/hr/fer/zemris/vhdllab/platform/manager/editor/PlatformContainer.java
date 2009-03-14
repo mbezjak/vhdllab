@@ -8,7 +8,7 @@ import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
 import org.springframework.beans.factory.annotation.Autowired;

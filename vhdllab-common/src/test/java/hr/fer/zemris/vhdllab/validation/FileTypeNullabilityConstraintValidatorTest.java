@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.entity.validation;
+package hr.fer.zemris.vhdllab.validation;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

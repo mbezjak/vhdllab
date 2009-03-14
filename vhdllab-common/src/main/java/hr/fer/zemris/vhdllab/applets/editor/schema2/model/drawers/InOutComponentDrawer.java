@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model.drawers;
 
 import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.PortDirection;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.NotImplementedException;
@@ -12,6 +11,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.DrawingProperties;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InOutSchemaComponent;
+import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 
 import java.awt.Color;
 import java.awt.Font;

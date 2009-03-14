@@ -66,10 +66,4 @@ public class NamedEntityDaoTest extends AbstractDaoSupport {
         assertFalse(newName.equals(loaded.getName()));
     }
 
-    @Test(expected = InvalidStateException.class)
-    public void illegalName() {
-        entity.setName("_illegal_name");
-        dao.persist(entity);
-    }
-
 }

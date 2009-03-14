@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.entity;
 
-import hr.fer.zemris.vhdllab.entity.validation.FileTypeNullabilityConstraint;
+import hr.fer.zemris.vhdllab.validation.FileTypeNullabilityConstraint;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;

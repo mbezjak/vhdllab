@@ -2,8 +2,8 @@ package hr.fer.zemris.vhdllab.service.filetype.simulation;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractionException;
-import hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractionException;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.filetype.DependencyExtractionException;
 
 public class SimulationCircuitInterfaceExtractor implements
