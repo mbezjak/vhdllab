@@ -2,8 +2,8 @@ package hr.fer.zemris.vhdllab.service.filetype.automaton;
 
 import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.filetype.source.SourceCircuitInterfaceExtractor;
 
 import java.io.IOException;

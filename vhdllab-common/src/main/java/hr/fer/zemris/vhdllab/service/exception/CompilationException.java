@@ -1,8 +1,8 @@
-package hr.fer.zemris.vhdllab.service;
+package hr.fer.zemris.vhdllab.service.exception;
 
 public class CompilationException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2557355857702130080L;
 
     public CompilationException() {
         super();

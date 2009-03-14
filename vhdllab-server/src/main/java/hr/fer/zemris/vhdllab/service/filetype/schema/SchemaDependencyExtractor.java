@@ -6,7 +6,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.filetype.DependencyExtractionException;
+import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.filetype.DependencyExtractor;
 
 import java.io.StringReader;

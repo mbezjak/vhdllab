@@ -5,7 +5,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerationException;
+import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
 import java.io.StringReader;

@@ -1,8 +1,8 @@
-package hr.fer.zemris.vhdllab.service.filetype;
+package hr.fer.zemris.vhdllab.service.exception;
 
 public class VhdlGenerationException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7645646979943880022L;
 
     public VhdlGenerationException() {
         super();

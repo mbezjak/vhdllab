@@ -4,8 +4,8 @@ import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 
 import java.io.StringReader;
 

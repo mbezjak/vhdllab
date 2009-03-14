@@ -1,8 +1,8 @@
-package hr.fer.zemris.vhdllab.service;
+package hr.fer.zemris.vhdllab.service.exception;
 
 public class SimulationException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7644629772648287958L;
 
     public SimulationException() {
         super();

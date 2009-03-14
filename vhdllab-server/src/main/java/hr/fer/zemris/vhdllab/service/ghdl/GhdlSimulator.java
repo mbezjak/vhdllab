@@ -19,8 +19,8 @@ import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
 import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
-import hr.fer.zemris.vhdllab.service.SimulationException;
 import hr.fer.zemris.vhdllab.service.Simulator;
+import hr.fer.zemris.vhdllab.service.exception.SimulationException;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 import hr.fer.zemris.vhdllab.service.impl.UserHolder;
 

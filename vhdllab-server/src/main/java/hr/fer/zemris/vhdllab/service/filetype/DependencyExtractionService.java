@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.service.filetype;
 
 import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 
 import java.util.Set;
 

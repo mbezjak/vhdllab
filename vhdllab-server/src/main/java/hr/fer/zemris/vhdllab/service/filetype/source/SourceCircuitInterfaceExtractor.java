@@ -7,10 +7,10 @@ import hr.fer.zemris.vhdllab.api.vhdl.Range;
 import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 import hr.fer.zemris.vhdllab.service.ci.PortType;
+import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 
 import java.util.ArrayList;
 import java.util.List;

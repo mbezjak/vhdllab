@@ -14,9 +14,9 @@ import hr.fer.zemris.vhdllab.entities.FileInfo;
 import hr.fer.zemris.vhdllab.entities.LibraryFile;
 import hr.fer.zemris.vhdllab.entities.Project;
 import hr.fer.zemris.vhdllab.entities.ProjectInfo;
-import hr.fer.zemris.vhdllab.service.CompilationException;
 import hr.fer.zemris.vhdllab.service.Compiler;
 import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
+import hr.fer.zemris.vhdllab.service.exception.CompilationException;
 import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
 import java.io.BufferedReader;

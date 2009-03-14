@@ -10,7 +10,7 @@ import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.FileService;
 import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
 import hr.fer.zemris.vhdllab.service.LibraryFileService;
-import hr.fer.zemris.vhdllab.service.filetype.DependencyExtractionException;
+import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.filetype.DependencyExtractor;
 
 import java.util.Collections;

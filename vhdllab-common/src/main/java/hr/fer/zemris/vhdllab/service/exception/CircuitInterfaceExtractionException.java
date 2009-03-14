@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.ci;
+package hr.fer.zemris.vhdllab.service.exception;
 
 public class CircuitInterfaceExtractionException extends RuntimeException {
 

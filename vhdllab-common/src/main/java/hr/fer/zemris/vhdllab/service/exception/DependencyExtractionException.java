@@ -1,8 +1,8 @@
-package hr.fer.zemris.vhdllab.service.filetype;
+package hr.fer.zemris.vhdllab.service.exception;
 
 public class DependencyExtractionException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 826672293510578867L;
 
     public DependencyExtractionException() {
         super();

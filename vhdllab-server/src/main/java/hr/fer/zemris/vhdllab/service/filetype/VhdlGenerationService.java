@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.service.filetype;
 
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
 
 public class VhdlGenerationService extends AbstractFileTypeFactory implements
         VhdlGenerator {
