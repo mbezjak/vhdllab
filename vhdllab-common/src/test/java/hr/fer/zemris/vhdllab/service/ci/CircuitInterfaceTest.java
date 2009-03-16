@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.service.ci;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
 
 import java.util.ArrayList;
@@ -12,12 +13,12 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CircuitIntefaceTest extends ValueObjectTestSupport {
+public class CircuitInterfaceTest extends ValueObjectTestSupport {
 
     private CircuitInterface ci;
 
     @Before
-    public void initEntity() {
+    public void initObject() {
         ci = new CircuitInterface();
     }
 
@@ -26,6 +27,7 @@ public class CircuitIntefaceTest extends ValueObjectTestSupport {
         ci = new CircuitInterface();
         assertNull(ci.getName());
         assertNotNull(ci.getPorts());
+        assertTrue(ci.getPorts().isEmpty());
 
         ci.setName("ci_name");
         assertEquals("ci_name", ci.getName());
@@ -38,6 +40,15 @@ public class CircuitIntefaceTest extends ValueObjectTestSupport {
         ci = new CircuitInterface("ci_name");
         assertEquals("ci_name", ci.getName());
         assertNotNull(ci.getPorts());
+        assertTrue(ci.getPorts().isEmpty());
+    }
+
+    @Test
+    public void constructorStringPort() {
+        ci = new CircuitInterface("ci_name", new Port());
+        assertEquals("ci_name", ci.getName());
+        assertNotNull(ci.getPorts());
+        assertEquals(1, ci.getPorts().size());
     }
 
     @Test

@@ -35,6 +35,16 @@ public class Port implements Serializable {
     @Min(value = -1)
     private Integer to;
 
+    public Port() {
+    }
+
+    public Port(Port clone) {
+        setName(clone.name);
+        setDirection(clone.direction);
+        setFrom(clone.from);
+        setTo(clone.to);
+    }
+
     public String getName() {
         return name;
     }

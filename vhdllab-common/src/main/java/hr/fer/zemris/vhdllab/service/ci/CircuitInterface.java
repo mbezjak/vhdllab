@@ -23,7 +23,7 @@ import org.hibernate.validator.Valid;
  * @version 1.0
  * @since vhdllab2
  */
-public final class CircuitInterface implements Serializable {
+public class CircuitInterface implements Serializable {
 
     private static final long serialVersionUID = -7941833394453145492L;
 
@@ -37,12 +37,19 @@ public final class CircuitInterface implements Serializable {
     private List<Port> ports;
 
     public CircuitInterface() {
-        this(null);
+        this(null, null);
     }
 
     public CircuitInterface(String name) {
+        this(name, null);
+    }
+
+    public CircuitInterface(String name, Port port) {
         setName(name);
         ports = new ArrayList<Port>();
+        if(port != null) {
+            add(port);
+        }
     }
 
     public String getName() {

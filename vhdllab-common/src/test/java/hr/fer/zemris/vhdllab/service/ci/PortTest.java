@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,8 +14,12 @@ public class PortTest extends ValueObjectTestSupport {
     private Port port;
 
     @Before
-    public void initEntity() {
+    public void initObject() {
         port = new Port();
+        port.setName("port_name");
+        port.setDirection(PortDirection.IN);
+        port.setFrom(4);
+        port.setTo(0);
     }
 
     @Test
@@ -46,6 +49,15 @@ public class PortTest extends ValueObjectTestSupport {
         assertEquals(Integer.valueOf(5), port.getTo());
         port.setTo(null);
         assertNull(port.getTo());
+    }
+
+    @Test
+    public void copyConstructor() {
+        Port another = new Port(port);
+        assertEquals(port.getName(), another.getName());
+        assertEquals(port.getDirection(), another.getDirection());
+        assertEquals(port.getFrom(), another.getFrom());
+        assertEquals(port.getTo(), another.getTo());
     }
 
     @Test
@@ -102,13 +114,9 @@ public class PortTest extends ValueObjectTestSupport {
 
     @Test
     public void hashCodeAndEquals() throws Exception {
-        port.setName("port_name");
-        port.setDirection(PortDirection.IN);
-        port.setFrom(4);
-        port.setTo(0);
         basicEqualsTest(port);
 
-        Port another = (Port) BeanUtils.cloneBean(port);
+        Port another = new Port(port);
         assertEqualsAndHashCode(port, another);
 
         another.setName("another_name");
@@ -117,15 +125,15 @@ public class PortTest extends ValueObjectTestSupport {
         another.setName("PORT_name");
         assertEqualsAndHashCode(port, another);
 
-        another = (Port) BeanUtils.cloneBean(port);
+        another = new Port(port);
         another.setDirection(PortDirection.OUT);
         assertNotEqualsAndHashCode(port, another);
 
-        another = (Port) BeanUtils.cloneBean(port);
+        another = new Port(port);
         another.setFrom(13);
         assertNotEqualsAndHashCode(port, another);
 
-        another = (Port) BeanUtils.cloneBean(port);
+        another = new Port(port);
         another.setTo(15);
         assertNotEqualsAndHashCode(port, another);
     }
