@@ -94,7 +94,7 @@ public class Port implements Serializable {
         if (!isVector()) {
             return false;
         }
-        return to < from;
+        return from < to;
     }
 
     @Override
