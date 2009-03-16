@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.util.Iterator;
 import java.util.List;

@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 public class PortWrapper {
 	
@@ -46,17 +45,16 @@ public class PortWrapper {
 	
 	public PortWrapper(Port port, String orient) {
 		name = port.getName();
-		direction = (port.getDirection().isIN()) ? (DIRECTION_IN) : (DIRECTION_OUT);
+		direction = port.isIN() ? (DIRECTION_IN) : (DIRECTION_OUT);
 		orientation = orient;
 		
-		Type tp = port.getType();
-		if (tp.getRange().isScalar()) {
+		if (port.isScalar()) {
 			type = STD_LOGIC;
 		} else {
 			type = STD_LOGIC_VECTOR;
-			lowerBound = String.valueOf(tp.getRange().getFrom());
-			upperBound = String.valueOf(tp.getRange().getTo());
-			vectorAscension = (tp.getRange().getDirection().isTO()) ? (ASCEND) : (DESCEND);
+			lowerBound = String.valueOf(port.getFrom());
+			upperBound = String.valueOf(port.getTo());
+			vectorAscension = port.isTO() ? (ASCEND) : (DESCEND);
 		}
 	}
 

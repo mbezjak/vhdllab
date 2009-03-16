@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.misc;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EOrientation;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.util.ArrayList;
 import java.util.List;
