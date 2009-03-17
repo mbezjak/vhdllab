@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EOrientation;
@@ -33,6 +30,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 
 import java.lang.reflect.Constructor;
@@ -65,15 +64,15 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		public String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals) {
 			Caseless cmpname = getName();
 			StringBuilder sb = new StringBuilder();
-			Type tp = portrel.port.getType();
+			Port port = portrel.port;
 			renamed = renamedSignals;
 			
-			if (tp.getRange().isScalar()) {
+			if (port.isScalar()) {
 				Caseless mappedto = schemaports.get(0).getMapping();
 				if (!Caseless.isNullOrEmpty(mappedto)) {
 					mappedto = rename(mappedto);
 					if (!mappedto.equals(cmpname)) {
-						PortDirection dir = portrel.port.getDirection();
+						PortDirection dir = port.getDirection();
 						if (dir.equals(PortDirection.IN)) {
 							sb.append(rename(mappedto)).append(" <= ");
 							sb.append(getName()).append(";\n"); // TODO vidi portrel.port.getName()
@@ -87,10 +86,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 					}
 				}
 			} else {
-				PortDirection dir = portrel.port.getDirection();
-				if (dir.equals(PortDirection.IN)) {
-					int i = tp.getRange().getFrom();
-					boolean downto = tp.getRange().getDirection().isDOWNTO();
+				if (port.isIN()) {
+					int i = port.getFrom();
+					boolean downto = port.isDOWNTO();
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
@@ -104,9 +102,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 						}
 						if (downto) i--; else i++;
 					}
-				} else if (dir.equals(PortDirection.OUT)) {
-					int i = tp.getRange().getFrom();
-					boolean downto = tp.getRange().getDirection().isDOWNTO();
+				} else if (port.isOUT()) {
+					int i = port.getFrom();
+					boolean downto = port.isDOWNTO();
 					for (SchemaPort schport : schemaports) {
 						Caseless mappedto = schport.getMapping();
 						if (!Caseless.isNullOrEmpty(mappedto)) {
@@ -121,7 +119,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 						if (downto) i--; else i++;
 					}
 				} else {
-					throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
+					throw new NotImplementedException("Direction '" + port.getDirection() + "' not implemented.");
 				}
 				
 			}
@@ -166,7 +164,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	public InOutSchemaComponent(Port modelledPort) {
 		parameters = new SchemaParameterCollection();
 		portrel = new PortRelation(modelledPort, 
-				(modelledPort.getDirection().isIN()) ? (EOrientation.EAST) : (EOrientation.WEST));
+				(modelledPort.isIN()) ? (EOrientation.EAST) : (EOrientation.WEST));
 		schemaports = new ArrayList<SchemaPort>();
 		width = WIDTH;
 		
@@ -181,14 +179,14 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 
 	private void setComponentTypeName() {
-		if (portrel.port.getType().getRange().isScalar()) {
-			if (portrel.port.getDirection().equals(PortDirection.IN)) {
+		if (portrel.port.isScalar()) {
+			if (portrel.port.isIN()) {
 				cmptypename = new Caseless(STD_LOGIC_IN);
 			} else {
 				cmptypename = new Caseless(STD_LOGIC_OUT);
 			}
 		} else {
-			if (portrel.port.getDirection().equals(PortDirection.IN)) {
+			if (portrel.port.isIN()) {
 				cmptypename = new Caseless(STD_LOGIC_VECTOR_IN);
 			} else {
 				cmptypename = new Caseless(STD_LOGIC_VECTOR_OUT);
@@ -200,22 +198,21 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		schemaports.clear();
 		portrel.relatedTo.clear();
 		
-		Type tp = portrel.port.getType();
-		PortDirection dir = portrel.port.getDirection();
-		if (dir.equals(PortDirection.IN)) {
-			if (tp.getRange().isScalar()) {
+		Port port = portrel.port;
+		if (port.isIN()) {
+			if (port.isScalar()) {
 				buildInStdLogic();
 			} else {
 				buildStdLogicVector(width);
 			}
-		} else if (dir.equals(PortDirection.OUT)) {
-			if (tp.getRange().isScalar()) {
+		} else if (port.isOUT()) {
+			if (port.isScalar()) {
 				buildOutStdLogic();
 			} else {
 				buildStdLogicVector(0);
 			}
 		} else {
-			throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
+			throw new NotImplementedException("Direction '" + port.getDirection() + "' not implemented.");
 		}
 	}
 	
@@ -242,16 +239,16 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 	
 	private void buildStdLogicVector(int xpos) {
-		Type tp = portrel.port.getType();
-		int from = tp.getRange().getFrom(), to = tp.getRange().getTo();
+		Port port = portrel.port;
+		int from = port.getFrom(), to = port.getTo();
 		
 		int j;
 		SchemaPort schport = null;
-		if (tp.getRange().getDirection().isTO()) {
+		if (port.isTO()) {
 			j = 1;
 			for (int i = from; i <= to; i++, j++) {
 				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j,
-						new Caseless(portrel.port.getName() + "(" + i + ")"));
+						new Caseless(port.getName() + "(" + i + ")"));
 				
 				schport.setPortindex(0);
 				portrel.relatedTo.add(schport);
@@ -261,7 +258,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 			j = 1;
 			for (int i = to; i <= from; i++, j++) {
 				schport = new SchemaPort(xpos, EDGE_OFFSET + HEIGHT_PER_PORT * j,
-						new Caseless(portrel.port.getName() + "(" + i + ")"));
+						new Caseless(port.getName() + "(" + i + ")"));
 				
 				schport.setPortindex(0);
 				portrel.relatedTo.add(schport);
@@ -417,12 +414,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	}
 
 	public CircuitInterface getCircuitInterface() {
-		Port port = new Port(portrel.port.getName(),
-				portrel.port.getDirection(), portrel.port.getType());
-		List<Port> ports = new ArrayList<Port>(1);
-		ports.add(port);
-		
-		return new CircuitInterface(getName().toString(), ports);
+	    return new CircuitInterface(getName().toString(), new Port(portrel.port));
 	}
 
 	public String getCodeFileName() {
@@ -546,8 +538,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	public void setName(Caseless name) {
 		try {
 			parameters.setValue(ISchemaComponent.KEY_NAME, name);
-			portrel.port = new Port(name.toString(),
-					portrel.port.getDirection(), portrel.port.getType());
+			portrel.port.setName(name.toString());
 		} catch (InvalidParameterValueException e) {
 			throw new RuntimeException("Name could not be set - invalid value.", e);
 		} catch (ParameterNotFoundException e) {

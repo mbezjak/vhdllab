@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.events;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.UnknownKeyException;
@@ -14,6 +13,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InOutSchemaComponent;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,7 +104,8 @@ public class NameAndPortNameChanger implements IParameterEvent {
 		
 		/* now rename port and rebuild schemaports */
 		Port p = inoutcmp.getPort();
-		inoutcmp.setPort(new Port(updatedname.toString(), p.getDirection(), p.getType()));
+		p.setName(updatedname.toString());
+		inoutcmp.setPort(p);
 		inoutcmp.rebuildSchemaPorts();
 		
 		/* set back old signal mappings */

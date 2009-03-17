@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EOrientation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EParamTypes;
@@ -21,6 +18,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.WireSegment;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -430,10 +428,9 @@ public class SchemaSerializer {
 		appendLine(writer);
 		writer.append("<or>").append(orient.toString()).append("</or>");
 		appendLine(writer);
-		Type pt = port.getType();
-		writer.append("<tp>").append(pt.getTypeName().toString()).append("</tp>");
+		writer.append("<tp>").append(port.isScalar() ? "STD_LOGIC" : "STD_LOGIC_VECTOR").append("</tp>");
 		appendLine(writer);
-		if (pt.getRange().isScalar()) {
+		if (port.isScalar()) {
 			writer.append("<va></va>");
 			appendLine(writer);
 			writer.append("<lo></lo>");
@@ -441,11 +438,11 @@ public class SchemaSerializer {
 			writer.append("<hi></hi>");
 			appendLine(writer);
 		} else {
-			writer.append("<va>").append(fromVecDir(pt.getRange().getDirection().toString())).append("</va>");
+			writer.append("<va>").append(fromVecDir(port)).append("</va>");
 			appendLine(writer);
-			writer.append("<lo>").append(Integer.toString(pt.getRange().getFrom())).append("</lo>");
+			writer.append("<lo>").append(Integer.toString(port.getFrom())).append("</lo>");
 			appendLine(writer);
-			writer.append("<hi>").append(Integer.toString(pt.getRange().getTo())).append("</hi>");
+			writer.append("<hi>").append(Integer.toString(port.getTo())).append("</hi>");
 			appendLine(writer);
 		}
 		
@@ -453,10 +450,8 @@ public class SchemaSerializer {
 		appendLine(writer);
 	}
 
-	private String fromVecDir(String vectorDirection) {
-		if (vectorDirection.equals(VectorDirection.TO.toString())) return PortWrapper.ASCEND;
-		else if (vectorDirection.equals(VectorDirection.DOWNTO.toString())) return PortWrapper.DESCEND;
-		else throw new IllegalStateException("Vector direction '" + vectorDirection + "' is unknown.");
+	private String fromVecDir(Port port) {
+	    return port.isTO() ? PortWrapper.ASCEND : PortWrapper.DESCEND;
 	}
 	
 	

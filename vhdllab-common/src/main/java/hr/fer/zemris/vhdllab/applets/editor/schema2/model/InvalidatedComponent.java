@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EOrientation;
@@ -27,6 +25,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -180,11 +180,11 @@ public class InvalidatedComponent implements ISchemaComponent {
 	}
 
 	public CircuitInterface getCircuitInterface() {
-		List<Port> ciports = new ArrayList<Port>();
+		CircuitInterface ci = new CircuitInterface(INVALIDATED_COMPONENT.toString());
 		for (PortRelation pr : ports) {
-			ciports.add(new Port(pr.port.getName(), pr.port.getDirection(), pr.port.getType()));
+		    ci.add(new Port(pr.port));
 		}
-		return new CircuitInterface(INVALIDATED_COMPONENT.toString(), ciports);
+		return ci;
 	}
 
 	public String getCodeFileName() {

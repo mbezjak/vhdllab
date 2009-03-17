@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.DuplicateKeyException;
@@ -18,6 +17,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.CommandResponse;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InvalidatedComponent;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 
 import java.util.HashSet;
 import java.util.List;

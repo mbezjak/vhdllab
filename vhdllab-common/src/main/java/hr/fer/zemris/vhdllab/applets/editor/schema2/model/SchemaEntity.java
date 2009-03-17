@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.ParameterNotFoundException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IParameter;
@@ -13,6 +11,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.CaselessParameter;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.TextParameter;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +67,10 @@ public class SchemaEntity implements ISchemaEntity {
 
 	public CircuitInterface getCircuitInterface(ISchemaInfo info) {
 		try {
-			return new CircuitInterface(
-					((Caseless)(parameters.getParameter(KEY_NAME).getValue())).toString(),
-					getPorts(info));
+			CircuitInterface ci = new CircuitInterface(
+					((Caseless)(parameters.getParameter(KEY_NAME).getValue())).toString());
+			ci.addAll(getPorts(info));
+            return ci;
 		} catch (ParameterNotFoundException e) {
 			throw new IllegalStateException("No name parameter within entity.", e);
 		}
@@ -99,12 +100,9 @@ public class SchemaEntity implements ISchemaEntity {
 		
 		for (ISchemaComponent cmp : inouts) {
 			Port tocopy = cmp.getPort(0);
-			ports.add(new Port(cmp.getName().toString(), tocopy.getDirection(), tocopy.getType()));
-//			ports.add(new DefaultPort(
-//					tocopy.getName(),
-//					(tocopy.getDirection().equals(Direction.IN)) ? (Direction.OUT) : (Direction.IN),
-//					tocopy.getType()
-//					));
+			Port copiedPort = new Port(tocopy);
+			copiedPort.setName(cmp.getName().toString());
+			ports.add(copiedPort);
 		}
 		
 		return ports;

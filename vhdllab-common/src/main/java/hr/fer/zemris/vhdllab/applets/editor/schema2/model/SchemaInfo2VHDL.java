@@ -3,9 +3,6 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 import hr.fer.zemris.vhdllab.api.results.MessageType;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationMessage;
 import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
@@ -17,7 +14,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IVHDLSegmentProvi
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
-import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,13 +108,12 @@ public class SchemaInfo2VHDL {
 					if (Caseless.isNullOrEmpty(mappedto)) continue;
 					
 					Port origin = plc.comp.getPort(p.getPortindex());
-					PortDirection dir = origin.getDirection();
 					WireMapping wm = wiremap.get(mappedto);
 					
-					if (dir.isIN()) {
+					if (origin.isIN()) {
 						wm.ioins++;
 						if (wm.ioins == 1) wm.inSingleName = getPortWithIndexName(plc, origin, p);
-					} else if (dir.isOUT()) {
+					} else if (origin.isOUT()) {
 						wm.ioouts++;
 						if (wm.ioouts == 1) wm.outSingleName = getPortWithIndexName(plc, origin, p);
 					} else {
@@ -130,12 +127,11 @@ public class SchemaInfo2VHDL {
 					if (Caseless.isNullOrEmpty(mappedto)) continue;
 					
 					Port origin = plc.comp.getPort(p.getPortindex());
-					PortDirection dir = origin.getDirection();
 					WireMapping wm = wiremap.get(mappedto);
 					
-					if (dir.isIN()) {
+					if (origin.isIN()) {
 						wm.normins++;
-					} else if (dir.isOUT()) {
+					} else if (origin.isOUT()) {
 						wm.normouts++;
 					} else {
 						throw new NotImplementedException("Only IN and OUT directions implemented.");
@@ -158,26 +154,26 @@ public class SchemaInfo2VHDL {
 		}
 	}
 
-	private Caseless getPortWithIndexName(PlacedComponent plc, Port origin, SchemaPort schport) {
-		Type tp = origin.getType();
-		
-		if (tp.getRange().isScalar()) {
-			return new Caseless(origin.getName());
-		} else {
-			List<SchemaPort> schemaports = plc.comp.getRelatedTo(schport.getPortindex());
-			int schindex = 0;
-			for (SchemaPort sp : schemaports) {
-				if (sp.equals(schport)) break;
-				schindex++;
-			}
-			if (tp.getRange().getDirection().isTO()) {
-				schindex += tp.getRange().getFrom();
-			} else {
-				schindex = tp.getRange().getTo() - schindex;
-			}
-			return new Caseless(origin.getName() + "(" + schindex + ")");
-		}
-	}
+	private Caseless getPortWithIndexName(PlacedComponent plc, Port origin,
+            SchemaPort schport) {
+        if (origin.isScalar()) {
+            return new Caseless(origin.getName());
+        }
+        List<SchemaPort> schemaports = plc.comp.getRelatedTo(schport
+                .getPortindex());
+        int schindex = 0;
+        for (SchemaPort sp : schemaports) {
+            if (sp.equals(schport))
+                break;
+            schindex++;
+        }
+        if (origin.isTO()) {
+            schindex += origin.getFrom();
+        } else {
+            schindex = origin.getTo() - schindex;
+        }
+        return new Caseless(origin.getName() + "(" + schindex + ")");
+    }
 
 	private VHDLGenerationResult isValid() {
 		for (PlacedComponent plc : info.getComponents()) {
@@ -200,7 +196,7 @@ public class SchemaInfo2VHDL {
 				Caseless mapping = sp.getMapping();
 				if (Caseless.isNullOrEmpty(mapping)) {
 					Port p = plc.comp.getPort(sp.getPortindex());
-					if (p.getDirection().isIN()) {
+					if (p.isIN()) {
 						errors.add(new VHDLGenerationMessage(MessageType.ERROR,
 								"Component '" + plc.comp.getName() + "' has a port '" +
 								p.getName() + "' with direction IN that is not connected to a signal.",
@@ -221,37 +217,7 @@ public class SchemaInfo2VHDL {
 	}
 
 	private void appendEntityBlock() {
-		Port p;
-		Type pt;
-		int b1, b2;
-		
-		List<Port> ports = circint.getPorts();
-		
-		sb.append("ENTITY ").append(circint.getName()).append(" IS\n");		
-		
-		if (!ports.isEmpty()) {
-			sb.append("\tPORT(\n");
-			
-			for (int i = 0; i < ports.size(); i++) {
-				p = ports.get(i);
-				sb.append("\t\t").append(p.getName()).append(": ").append(p.getDirection()).append(' ');
-				pt = p.getType();
-				if (pt.getRange().isScalar()) {
-					sb.append(pt.getTypeName());
-				}
-				if (pt.getRange().isVector()) {
-					sb.append(pt.getTypeName()).append('(');
-					b1 = pt.getRange().getFrom(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeFrom()) : (pt.getRangeTo());
-					b2 = pt.getRange().getTo(); //(pt.hasVectorDirectionTO()) ? (pt.getRangeTo()) : (pt.getRangeFrom());
-					sb.append(b1).append(' ').append(pt.getRange().getDirection()).append(' ').append(b2).append(")");
-				}
-				if (i != (ports.size() - 1)) sb.append(';');
-				sb.append('\n');
-			}
-			sb.append("\t);\n");
-		}
-		
-		sb.append("END ENTITY ").append(circint.getName()).append(";\n\n\n\n");
+		sb.append(circint.toString()).append("\n\n\n");
 	}
 	
 	private void appendArchitecturalBlock(String archName) {

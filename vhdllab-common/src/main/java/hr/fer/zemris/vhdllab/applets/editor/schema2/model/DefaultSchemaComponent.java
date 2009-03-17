@@ -1,10 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EOrientation;
@@ -36,8 +31,9 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWr
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.SchemaPortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -79,14 +75,14 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			// bind to helper signals
 			int i = 0;
 			for (PortRelation portrel : portrelations) {
-				Type tp = portrel.port.getType();
-				PortDirection dir = portrel.port.getDirection();
+				Port port = portrel.port;
+				PortDirection dir = port.getDirection();
 				String signame = signames.get(i);
-				if (tp.getRange().isVector()) {
-					if (dir.isIN()) {
+				if (port.isVector()) {
+					if (port.isIN()) {
 						// assign signal to temporary vector
-						int vecpos = tp.getRange().getFrom();
-						boolean downto = tp.getRange().getDirection().isDOWNTO();
+						int vecpos = port.getFrom();
+						boolean downto = port.isDOWNTO();
 						for (SchemaPort related : portrel.relatedTo) {
 							Caseless mappedto = related.getMapping();
 							if (!Caseless.isNullOrEmpty(mappedto)) {
@@ -97,10 +93,10 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 							if (downto) vecpos--;
 							else vecpos++;
 						}
-					} else if (dir.isOUT()) {
+					} else if (port.isOUT()) {
 						// assign temporary vector to signal
-						int vecpos = tp.getRange().getFrom();
-						boolean downto = tp.getRange().getDirection().isDOWNTO();
+						int vecpos = port.getFrom();
+						boolean downto = port.isDOWNTO();
 						for (SchemaPort related : portrel.relatedTo) {
 							Caseless mappedto = related.getMapping();
 							if (!Caseless.isNullOrEmpty(mappedto)) {
@@ -144,10 +140,10 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				i = 0;
 				for (PortRelation portrel : portrelations) {
 					if (first) first = false; else sb.append(", ");
-					sb.append(portrel.port.getName()).append(" => ");
+					Port port = portrel.port;
+                    sb.append(port.getName()).append(" => ");
 					
-					Type tp = portrel.port.getType();
-					if (tp.getRange().isScalar()) {
+					if (port.isScalar()) {
 						Caseless mappedto = portrel.relatedTo.get(0).getMapping();
 						sb.append((!Caseless.isNullOrEmpty(mappedto)) ? (rename(mappedto)) : ("open"));
 					} else {
@@ -179,14 +175,14 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			String hlpsigname = null;
 			Set<Caseless> wirenames = info.getWires().getWireNames();
 			for (PortRelation portrel : portrelations) {
-				Type tp = portrel.port.getType();
-				if (tp.getRange().isVector()) {
+				Port port = portrel.port;
+				if (port.isVector()) {
 					hlpsigname = AutoRenamer.generateHelpSignalName(getName(), wirenames, i).toString();
 					sb.append("SIGNAL ").append(hlpsigname).append(": std_logic_vector(");
-					if (tp.getRange().getDirection().isTO()) {
-						sb.append(tp.getRange().getFrom()).append(" TO ").append(tp.getRange().getTo());
+					if (port.isTO()) {
+						sb.append(port.getFrom()).append(" TO ").append(port.getTo());
 					} else {
-						sb.append(tp.getRange().getFrom()).append(" DOWNTO ").append(tp.getRange().getTo());
+						sb.append(port.getFrom()).append(" DOWNTO ").append(port.getTo());
 					}
 					sb.append(");\n");
 				} else hlpsigname = null;
@@ -306,7 +302,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		if (portwrappers == null) return;
 		
 		SchemaPort schport;
-		Type tp;
 		PortDirection dir;
 		Port port;
 		PortRelation pr;
@@ -318,41 +313,37 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 				range[0] = Integer.parseInt(pw.getLowerBound());
 				range[1] = Integer.parseInt(pw.getUpperBound());
 				
-				VectorDirection vecdir = toVecDir(pw.getVectorAscension());
-				
-				tp = new Type(PortType.valueOf(PortWrapper.STD_LOGIC_VECTOR.toUpperCase()), new Range(range[0], vecdir, range[1]));
 				if (pw.getDirection().equals(PortWrapper.DIRECTION_IN)) dir = PortDirection.IN;
 				else if (pw.getDirection().equals(PortWrapper.DIRECTION_OUT)) dir = PortDirection.OUT;
 				else throw new NotImplementedException("Direction '" + pw.getDirection() + "' unknown.");
 				
-				port = new Port(pw.getName(), dir, tp);
+				port = new Port(pw.getName(), dir, range[0], range[1]);
 				pr = new PortRelation(port, EOrientation.parse(pw.getOrientation()));
 				portrelations.add(pr);
 				
 				int increment;
 				if (pw.getOrientation().equals(PortWrapper.ORIENTATION_NORTH)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.NORTH, toBeMoved, nc, pos, portindex);
+					increment = createSchPortsFor(port, pr, EOrientation.NORTH, toBeMoved, nc, pos, portindex);
 					nc += increment;
 				} else if (pw.getOrientation().equals(PortWrapper.ORIENTATION_SOUTH)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.SOUTH, toBeMoved, sc, pos, portindex);
+					increment = createSchPortsFor(port, pr, EOrientation.SOUTH, toBeMoved, sc, pos, portindex);
 					sc += increment;
 				} else if (pw.getOrientation().equals(PortWrapper.ORIENTATION_WEST)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.WEST, toBeMoved, wc, pos, portindex);
+					increment = createSchPortsFor(port, pr, EOrientation.WEST, toBeMoved, wc, pos, portindex);
 					wc += increment;
 				} else if (pw.getOrientation().equals(PortWrapper.ORIENTATION_EAST)) {
-					increment = createSchPortsFor(tp, pr, EOrientation.EAST, toBeMoved, ec, pos, portindex);
+					increment = createSchPortsFor(port, pr, EOrientation.EAST, toBeMoved, ec, pos, portindex);
 					ec += increment;
 				} else throw new NotImplementedException("Orientation '" + pw.getOrientation() + "' unknown.");
 				
 				pos += increment;
 				
 			} else if (pw.getType().equals(PortWrapper.STD_LOGIC)) {
-				tp = new Type(PortType.valueOf(PortWrapper.STD_LOGIC.toUpperCase()), Range.SCALAR);
 				if (pw.getDirection().equals(PortWrapper.DIRECTION_IN)) dir = PortDirection.IN;
 				else if (pw.getDirection().equals(PortWrapper.DIRECTION_OUT)) dir = PortDirection.OUT;
 				else throw new NotImplementedException("Direction '" + pw.getDirection() + "' unknown.");
 				
-				port = new Port(pw.getName(), dir, tp);
+				port = new Port(pw.getName(), dir);
 				pr = new PortRelation(port, EOrientation.parse(pw.getOrientation()));
 				portrelations.add(pr);
 				
@@ -463,13 +454,13 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 	}
 	
-	private final int createSchPortsFor(Type tp, PortRelation pr, EOrientation ori, IntList toBeMoved,
+	private final int createSchPortsFor(Port port, PortRelation pr, EOrientation ori, IntList toBeMoved,
 			int stor, int stpos, int portindex)
 	{
-		int from = tp.getRange().getFrom(), to = tp.getRange().getTo();
+		int from = port.getFrom(), to = port.getTo();
 		
 		SchemaPort schport = null;
-		if (tp.getRange().getDirection().isTO()) {
+		if (port.isTO()) {
 			for (int i = from; i <= to; i++) {
 				if (ori == EOrientation.NORTH || ori == EOrientation.SOUTH) {
 					schport = new SchemaPort(EDGE_OFFSET + stor * WIDTH_PER_PORT, 0,
@@ -506,12 +497,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 		
 		return Math.abs(to - from) + 1;
-	}
-
-	private final VectorDirection toVecDir(String ascend) {
-		if (ascend.equals(PortWrapper.ASCEND)) return VectorDirection.TO;
-		else if (ascend.equals(PortWrapper.DESCEND)) return VectorDirection.DOWNTO;
-		else throw new NotImplementedException("Ascension '" + ascend + "' unknown.");
 	}
 
 	
@@ -573,8 +558,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		SchemaPort nsp;
 		for (PortRelation portrel : this.portrelations) {
 			npr = new PortRelation(
-					new Port(portrel.port.getName(),
-					portrel.port.getDirection(), portrel.port.getType()),
+					new Port(portrel.port),
 					portrel.orientation
 					);
 			for (SchemaPort sp : portrel.relatedTo) {
@@ -599,11 +583,11 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	public CircuitInterface getCircuitInterface() {
-		List<Port> ports = new ArrayList<Port>();
-		for (PortRelation pr : portrelations) {
-			ports.add(new Port(pr.port.getName(), pr.port.getDirection(), pr.port.getType()));
-		}
-		return new CircuitInterface(componentName.toString(), ports);
+        CircuitInterface ci = new CircuitInterface(componentName.toString());
+        for (PortRelation pr : portrelations) {
+            ci.add(new Port(pr.port));
+        }
+        return ci;
 	}
 
 	public EOrientation getComponentOrientation() {

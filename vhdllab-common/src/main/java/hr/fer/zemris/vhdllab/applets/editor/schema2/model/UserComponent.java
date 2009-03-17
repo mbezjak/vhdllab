@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IParameter;
@@ -12,6 +10,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.drawers.DefaultCompone
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.util.List;
 
@@ -87,8 +87,7 @@ public class UserComponent extends DefaultSchemaComponent {
 		SchemaPort nsp;
 		for (PortRelation portrel : this.portrelations) {
 			npr = new PortRelation(
-					new Port(portrel.port.getName(),
-					portrel.port.getDirection(), portrel.port.getType()),
+					new Port(portrel.port),
 					portrel.orientation
 					);
 			for (SchemaPort sp : portrel.relatedTo) {
@@ -126,9 +125,9 @@ public class UserComponent extends DefaultSchemaComponent {
 		List<Port> ports = cint.getPorts();
 		for (Port p : ports) {
 			PortWrapper wrapper = new PortWrapper(p, null);
-			if (p.getDirection().isIN()) {
+			if (p.isIN()) {
 				wrapper.setOrientation(PortWrapper.ORIENTATION_WEST);
-			} else if (p.getDirection().isOUT()) {
+			} else if (p.isOUT()) {
 				wrapper.setOrientation(PortWrapper.ORIENTATION_EAST);
 			} else {
 				throw new IllegalArgumentException("Direction '" + p.getDirection() + "' not implemented.");

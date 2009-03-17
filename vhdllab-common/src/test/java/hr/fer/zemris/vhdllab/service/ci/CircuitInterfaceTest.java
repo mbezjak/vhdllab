@@ -83,8 +83,7 @@ public class CircuitInterfaceTest extends ValueObjectTestSupport {
         String portName = "port_name";
         assertNull(ci.getPort(portName));
 
-        Port port = new Port();
-        port.setName(portName);
+        Port port = new Port(portName, PortDirection.IN);
         ci.add(port);
         assertEquals(port, ci.getPort(portName));
         assertEquals(port, ci.getPort(portName.toUpperCase()));
@@ -115,18 +114,14 @@ public class CircuitInterfaceTest extends ValueObjectTestSupport {
         toStringPrint(ci);
         assertEquals("ENTITY ci_name IS PORT(\n);\nEND ci_name;", ci.toString());
 
-        Port port = new Port();
-        port.setName("a");
-        port.setDirection(PortDirection.IN);
+        Port port = new Port("a", PortDirection.IN);
         ci.add(port);
         toStringPrint(ci);
         assertEquals(
                 "ENTITY ci_name IS PORT(\n\ta: IN STD_LOGIC\n);\nEND ci_name;",
                 ci.toString());
 
-        port = new Port();
-        port.setName("f");
-        port.setDirection(PortDirection.OUT);
+        port = new Port("f", PortDirection.OUT);
         ci.add(port);
         toStringPrint(ci);
         assertEquals(

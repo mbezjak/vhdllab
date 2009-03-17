@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model.drawers;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IComponentDrawer;
@@ -11,7 +9,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.DrawingProperties;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.XYLocation;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InOutSchemaComponent;
-import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -91,17 +89,15 @@ public class InOutComponentDrawer implements IComponentDrawer {
 			throw new IllegalStateException(
 					"In-out component must have at least one port.", e);
 		}
-		PortDirection dir = port.getDirection();
-		Type tp = port.getType();
 		boolean downto;
-		if(tp.getRange().isVector()) {
-		    downto = tp.getRange().getDirection().isDOWNTO();
+		if(port.isVector()) {
+		    downto = port.isDOWNTO();
 		} else {
 		    downto = false; // FFS! hate when this happens
 		}
-		int rangeoffset = (tp.getRange().isScalar()) ? (0) : (tp.getRange().getFrom());
+		int rangeoffset = (port.isScalar()) ? (0) : (port.getFrom());
 
-		if (dir.equals(PortDirection.IN)) {
+		if (port.isIN()) {
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
 			graphics.fillRect(0, EMPTY_EDGE_OFFSET + PER_PORT_SIZE / 2, w - 2
@@ -131,7 +127,7 @@ public class InOutComponentDrawer implements IComponentDrawer {
 
 				i++;
 			}
-		} else if (dir.equals(PortDirection.OUT)) {
+		} else if (port.isOUT()) {
 			Color c = graphics.getColor();
 			graphics.setColor(Color.WHITE);
 			graphics.fillRect(PIN_LENGTH,
@@ -164,7 +160,7 @@ public class InOutComponentDrawer implements IComponentDrawer {
 				i++;
 			}
 		} else {
-			throw new NotImplementedException("Direction '" + dir.toString() + "' not implemented.");
+			throw new NotImplementedException("Direction '" + port.getDirection() + "' not implemented.");
 		}
 
 		// draw component name

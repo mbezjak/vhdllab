@@ -15,11 +15,7 @@ public class PortTest extends ValueObjectTestSupport {
 
     @Before
     public void initObject() {
-        port = new Port();
-        port.setName("port_name");
-        port.setDirection(PortDirection.IN);
-        port.setFrom(4);
-        port.setTo(0);
+        port = new Port("port_name", PortDirection.IN, 4, 0);
     }
 
     @Test
@@ -49,6 +45,24 @@ public class PortTest extends ValueObjectTestSupport {
         assertEquals(Integer.valueOf(5), port.getTo());
         port.setTo(null);
         assertNull(port.getTo());
+    }
+
+    @Test
+    public void constructorScalar() {
+        Port another = new Port("port_name", PortDirection.IN);
+        assertEquals("port_name", another.getName());
+        assertEquals(PortDirection.IN, another.getDirection());
+        assertNull(another.getFrom());
+        assertNull(another.getTo());
+    }
+
+    @Test
+    public void constructorVector() {
+        Port another = new Port("port_name", PortDirection.IN, 2, 3);
+        assertEquals("port_name", another.getName());
+        assertEquals(PortDirection.IN, another.getDirection());
+        assertEquals(Integer.valueOf(2), another.getFrom());
+        assertEquals(Integer.valueOf(3), another.getTo());
     }
 
     @Test

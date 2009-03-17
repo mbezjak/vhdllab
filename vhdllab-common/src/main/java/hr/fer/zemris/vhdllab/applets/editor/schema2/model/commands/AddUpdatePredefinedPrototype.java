@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model.commands;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.InvalidCommandOperationException;
@@ -12,6 +11,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.ChangeTuple;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.CommandResponse;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.UserComponent;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 
 
 /**

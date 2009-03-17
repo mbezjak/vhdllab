@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.OverlapException;
@@ -24,6 +23,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.WireWrap
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ComponentWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.ParameterWrapper;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.lang.reflect.Constructor;
 import java.util.List;

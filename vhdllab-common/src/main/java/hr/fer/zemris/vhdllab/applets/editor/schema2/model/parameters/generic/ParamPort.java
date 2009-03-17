@@ -1,12 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.generic;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.IGenericValue;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.PortFactory;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PortWrapper;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 
 
@@ -38,15 +35,7 @@ public class ParamPort implements IGenericValue {
 	}
 	
 	public IGenericValue copyCtor() {
-		Type thtp = port.getType();
-		Range range = Range.SCALAR;
-		if (thtp.getRange().isVector()) {
-		    range = new Range(thtp.getRange().getFrom(), thtp.getRange().getDirection() ,thtp.getRange().getTo());
-		}
-		Type tp = new Type(thtp.getTypeName(), range);
-		Port dp = new Port(port.getName(), port.getDirection(), tp);
-		
-		return new ParamPort(dp);
+		return new ParamPort(new Port(port));
 	}
 	
 	public void deserialize(String code) {
@@ -58,23 +47,20 @@ public class ParamPort implements IGenericValue {
 		
 		sb.append(port.getName()).append(DELIMITER);
 		sb.append(port.getDirection().toString()).append(DELIMITER);
-		Type pt = port.getType();
-		sb.append(pt.getTypeName()).append(DELIMITER);
-		if (pt.getRange().isScalar()) {
+		sb.append(port.isScalar() ? "STD_LOGIC" : "STD_LOGIC_VECTOR").append(DELIMITER);
+		if (port.isScalar()) {
 			sb.append(DELIMITER).append(DELIMITER);
 		} else {
-			sb.append(fromVecDir(pt.getRange().getDirection().toString())).append(DELIMITER);
-			sb.append(Integer.toString(pt.getRange().getFrom())).append(DELIMITER);
-			sb.append(Integer.toString(pt.getRange().getTo()));
+			sb.append(fromVecDir(port)).append(DELIMITER);
+			sb.append(Integer.toString(port.getFrom())).append(DELIMITER);
+			sb.append(Integer.toString(port.getTo()));
 		}
 		
 		return sb.toString();
 	}
 	
-	private String fromVecDir(String vectorDirection) {
-		if (vectorDirection.equals(VectorDirection.TO.toString())) return PortWrapper.ASCEND;
-		else if (vectorDirection.equals(VectorDirection.DOWNTO.toString())) return PortWrapper.DESCEND;
-		else throw new IllegalStateException("Vector direction '" + vectorDirection + "' is unknown.");
+	private String fromVecDir(Port p) {
+	    return p.isTO() ? PortWrapper.ASCEND : PortWrapper.DESCEND;
 	}
 	
 	private PortWrapper createPortWrapper(String code) {

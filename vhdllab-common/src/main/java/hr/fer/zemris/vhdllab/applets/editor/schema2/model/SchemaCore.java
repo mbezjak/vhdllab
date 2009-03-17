@@ -1,9 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.DuplicateKeyException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.InvalidCommandOperationException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.SchemaException;
@@ -15,8 +11,8 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaPrototypeC
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.PredefinedComponentsParser;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedConf;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 /**
  * 
@@ -74,14 +70,10 @@ public class SchemaCore implements ISchemaCore {
 		}
 		
 		// add InOutSchemaComponents to list - this is unique for this implementation
-		addInOutComponent(new Port("input_v", PortDirection.IN, new Type(PortType.STD_LOGIC_VECTOR,
-				new Range(0, VectorDirection.TO, 3))));
-		addInOutComponent(new Port("output_v", PortDirection.OUT, new Type(PortType.STD_LOGIC_VECTOR,
-                new Range(0, VectorDirection.TO, 3))));
-		addInOutComponent(new Port("input_s", PortDirection.IN, new Type(PortType.STD_LOGIC,
-				Range.SCALAR)));
-		addInOutComponent(new Port("output_s", PortDirection.OUT, new Type(PortType.STD_LOGIC,
-                Range.SCALAR)));
+		addInOutComponent(new Port("input_v", PortDirection.IN, 0, 3));
+		addInOutComponent(new Port("output_v", PortDirection.OUT, 0, 3));
+		addInOutComponent(new Port("input_s", PortDirection.IN));
+		addInOutComponent(new Port("output_s", PortDirection.OUT));
 	}
 	
 	private void addInOutComponent(Port p) {

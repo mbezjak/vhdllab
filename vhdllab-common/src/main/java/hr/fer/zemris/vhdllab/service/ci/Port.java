@@ -38,6 +38,17 @@ public class Port implements Serializable {
     public Port() {
     }
 
+    public Port(String name, PortDirection direction) {
+        setName(name);
+        setDirection(direction);
+    }
+
+    public Port(String name, PortDirection direction, int from, int to) {
+        this(name, direction);
+        setFrom(from);
+        setTo(to);
+    }
+
     public Port(Port clone) {
         setName(clone.name);
         setDirection(clone.direction);
