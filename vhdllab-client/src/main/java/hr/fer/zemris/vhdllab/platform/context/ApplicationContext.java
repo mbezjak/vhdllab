@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.context;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-
 import org.apache.log4j.Logger;
 
 public final class ApplicationContext {
@@ -12,14 +10,14 @@ public final class ApplicationContext {
     private static final Logger LOG = Logger
             .getLogger(ApplicationContext.class);
 
-    private Caseless userId;
+    private String userId;
     private Environment environment;
 
-    public Caseless getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Caseless userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

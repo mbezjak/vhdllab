@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.log;
 
 import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownAdapter;
-import hr.fer.zemris.vhdllab.service.LibraryFileService;
+import hr.fer.zemris.vhdllab.service.ClientLogService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class SaveStandardStreamsOnShutdownListener extends ShutdownAdapter {
 
     @Autowired
-    private LibraryFileService libraryFileService;
+    private ClientLogService clientLogService;
 
     @Override
     public void shutdownWithoutGUI() {
@@ -23,7 +23,7 @@ public class SaveStandardStreamsOnShutdownListener extends ShutdownAdapter {
         sb.append(stdOut).append("\n").append(separator).append("\n\n");
         sb.append("Standard error:\n").append(separator);
         sb.append(stdErr).append("\n").append(separator);
-        libraryFileService.saveClientLog(sb.toString());
+        clientLogService.save(sb.toString());
     }
 
 }

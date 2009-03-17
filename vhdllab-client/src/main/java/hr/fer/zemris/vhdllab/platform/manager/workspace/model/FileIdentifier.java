@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace.model;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -9,9 +7,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 public final class FileIdentifier extends ProjectIdentifier {
 
-    private final Caseless fileName;
+    private final String fileName;
 
-    public FileIdentifier(Caseless projectName, Caseless fileName) {
+    public FileIdentifier(String projectName, String fileName) {
         super(projectName);
         Validate.notNull(fileName, "File name can't be null");
         this.fileName = fileName;
@@ -25,7 +23,7 @@ public final class FileIdentifier extends ProjectIdentifier {
     public int hashCode() {
         return new HashCodeBuilder()
                     .appendSuper(super.hashCode())
-                    .append(fileName)
+                    .append(fileName.toLowerCase())
                     .toHashCode();
     }
 
@@ -40,7 +38,7 @@ public final class FileIdentifier extends ProjectIdentifier {
         FileIdentifier other = (FileIdentifier) obj;
         return new EqualsBuilder()
                     .appendSuper(super.equals(obj))
-                    .append(fileName, other.fileName)
+                    .append(fileName.toLowerCase(), other.fileName.toLowerCase())
                     .isEquals();
     }
 

@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace.model;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -9,9 +7,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class ProjectIdentifier {
 
-    private final Caseless projectName;
+    private final String projectName;
 
-    public ProjectIdentifier(Caseless projectName) {
+    public ProjectIdentifier(String projectName) {
         Validate.notNull(projectName, "ProjectName can't be null");
         this.projectName = projectName;
     }
@@ -23,7 +21,7 @@ public class ProjectIdentifier {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                    .append(projectName)
+                    .append(projectName.toLowerCase())
                     .toHashCode();
     }
 
@@ -37,7 +35,7 @@ public class ProjectIdentifier {
             return false;
         ProjectIdentifier other = (ProjectIdentifier) obj;
         return new EqualsBuilder()
-                    .append(projectName, other.projectName)
+                    .append(projectName.toLowerCase(), other.projectName.toLowerCase())
                     .isEquals();
     }
 

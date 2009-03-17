@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog.save;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
@@ -232,9 +231,9 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
     private class SaveItem {
 
         /** Name of a project displayed next to file name in checkbox */
-        private Caseless projectName;
+        private String projectName;
         /** Name of a file displayed in checkbox */
-        private Caseless fileName;
+        private String fileName;
         /** Indicating if checkbox is selected */
         private boolean selected;
 
@@ -248,8 +247,8 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
          * @param fileName
          *            a name of a file
          */
-        public SaveItem(boolean selected, Caseless projectName,
-                Caseless fileName) {
+        public SaveItem(boolean selected, String projectName,
+                String fileName) {
             this.selected = selected;
             this.projectName = projectName;
             this.fileName = fileName;
@@ -279,7 +278,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
          * 
          * @return file name
          */
-        public Caseless getFileName() {
+        public String getFileName() {
             return fileName;
         }
 
@@ -288,7 +287,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
          * 
          * @return project name
          */
-        public Caseless getProjectName() {
+        public String getProjectName() {
             return projectName;
         }
 

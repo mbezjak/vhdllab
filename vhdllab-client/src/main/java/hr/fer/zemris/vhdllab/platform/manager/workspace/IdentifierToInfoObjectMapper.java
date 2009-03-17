@@ -1,20 +1,20 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 public interface IdentifierToInfoObjectMapper {
 
-    ProjectInfo getProject(ProjectIdentifier project);
+    Project getProject(ProjectIdentifier project);
 
-    ProjectInfo getProject(Integer projectId);
+    Project getProject(Integer projectId);
 
-    FileInfo getFile(FileIdentifier file);
+    File getFile(FileIdentifier file);
 
-    ProjectIdentifier asIdentifier(ProjectInfo project);
+    ProjectIdentifier asIdentifier(Project project);
 
-    FileIdentifier asIdentifier(ProjectInfo project, FileInfo file);
+    FileIdentifier asIdentifier(Project project, File file);
 
 }

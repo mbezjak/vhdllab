@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileInfo;
+import hr.fer.zemris.vhdllab.entity.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.listener.StandaloneEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
@@ -20,7 +20,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
 
     private final EventPublisher<EditorListener> publisher;
     private boolean modified;
-    private FileInfo file;
+    private File file;
     protected PlatformContainer container;
     private EditorMetadata metadata;
 
@@ -65,14 +65,14 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     }
 
     @Override
-    public void setFile(FileInfo file) {
+    public void setFile(File file) {
         this.file = (file != null ? new FileInfo(file, true) : null);
         doInitWithData(this.file);
         setModified(false);
     }
 
     @Override
-    public FileInfo getFile() {
+    public File getFile() {
         String data = getData();
         if (file != null && data != null) {
             file.setData(data);

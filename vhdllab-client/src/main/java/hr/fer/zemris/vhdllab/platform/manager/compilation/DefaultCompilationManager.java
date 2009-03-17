@@ -2,9 +2,9 @@ package hr.fer.zemris.vhdllab.platform.manager.compilation;
 
 import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileInfo;
+import hr.fer.zemris.vhdllab.entity.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
@@ -16,7 +16,6 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMa
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
-import hr.fer.zemris.vhdllab.service.Compiler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +46,14 @@ public class DefaultCompilationManager extends
     @Autowired
     private IProjectExplorer projectExplorer;
 
-    private FileInfo lastCompiledFile;
+    private File lastCompiledFile;
 
     public DefaultCompilationManager() {
         super(CompilationListener.class);
     }
 
     @Override
-    public void compile(FileInfo file) {
+    public void compile(File file) {
         Validate.notNull(file, "File can't be null");
         if (!file.getType().isCompilable()) {
             logger.info(file.getName() + " isn't compilable");

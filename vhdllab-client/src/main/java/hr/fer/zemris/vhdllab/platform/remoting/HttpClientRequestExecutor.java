@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.remoting;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 
 import java.io.IOException;
@@ -59,7 +58,7 @@ public class HttpClientRequestExecutor extends
                 System.exit(1);
             }
             ApplicationContextHolder.getContext().setUserId(
-                    new Caseless(credentials.getUserName()));
+                    credentials.getUserName());
             showRetryMessage = true;
             getHttpClient().getState().setCredentials(scope, credentials);
             executePostMethod(config, httpClient, postMethod);

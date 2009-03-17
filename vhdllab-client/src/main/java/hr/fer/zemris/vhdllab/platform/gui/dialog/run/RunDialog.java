@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog.run;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
@@ -169,19 +168,19 @@ public class RunDialog extends AbstractDialog<FileIdentifier> {
 
     private class RunItem {
 
-        private Caseless projectName;
-        private Caseless fileName;
+        private String projectName;
+        private String fileName;
 
         public RunItem(FileIdentifier identifier) {
             this.projectName = identifier.getProjectName();
             this.fileName = identifier.getFileName();
         }
 
-        public Caseless getFileName() {
+        public String getFileName() {
             return fileName;
         }
 
-        public Caseless getProjectName() {
+        public String getProjectName() {
             return projectName;
         }
 
