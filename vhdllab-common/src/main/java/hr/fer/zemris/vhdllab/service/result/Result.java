@@ -30,9 +30,16 @@ public final class Result implements Serializable {
         this(data, Collections.EMPTY_LIST);
     }
 
+    public Result(List<String> messages) {
+        this(null, messages);
+    }
+
     public Result(String data, List<String> messages) {
-        Validate.notNull(data, "Data can't be null");
         Validate.notNull(messages, "Messages can't be null");
+        if (messages.isEmpty()) {
+            Validate.notNull(data,
+                    "Data can't be null if there are no messages");
+        }
         this.data = data;
         this.messages = Collections.unmodifiableList(new ArrayList<String>(
                 messages));
@@ -52,10 +59,8 @@ public final class Result implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                    .append("dataLength", data.length())
-                    .append("messages", messages, false)
-                    .toString();
+        return new ToStringBuilder(this).append("dataLength", data.length())
+                .append("messages", messages, false).toString();
     }
 
 }

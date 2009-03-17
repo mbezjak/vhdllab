@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.model;
 
-import hr.fer.zemris.vhdllab.api.results.MessageType;
-import hr.fer.zemris.vhdllab.api.results.VHDLGenerationMessage;
-import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EComponentType;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.NotImplementedException;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponent;
@@ -16,6 +13,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.SchemaPort;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
+import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,10 +57,10 @@ public class SchemaInfo2VHDL {
 	 * @param info
 	 * @return
 	 */
-	public VHDLGenerationResult generateVHDL(ISchemaInfo schemaInfo) {		
+	public Result generateVHDL(ISchemaInfo schemaInfo) {		
 		info = schemaInfo;
 
-		VHDLGenerationResult validres = isValid();
+		Result validres = isValid();
 		if (validres != null) return validres;
 		
 		sb = new StringBuilder();
@@ -75,7 +73,7 @@ public class SchemaInfo2VHDL {
 		appendEntityBlock();
 		appendArchitecturalBlock("structural");
 		
-		return new VHDLGenerationResult(true, new ArrayList<VHDLGenerationMessage>(0), sb.toString());
+		return new Result(sb.toString());
 	}
 	
 	private void findRedundantSignals() {
@@ -175,37 +173,33 @@ public class SchemaInfo2VHDL {
         return new Caseless(origin.getName() + "(" + schindex + ")");
     }
 
-	private VHDLGenerationResult isValid() {
+	private Result isValid() {
 		for (PlacedComponent plc : info.getComponents()) {
 			// find invalidated components
 			if (plc.comp.isInvalidated()) {
-				List<VHDLGenerationMessage> errors = new ArrayList<VHDLGenerationMessage>();
-				errors.add(new VHDLGenerationMessage(MessageType.ERROR,
-						"Component '" + plc.comp.getName() + "' is invalidated and must be replaced.",
-						info.getEntity().getName().toString()));
-				return new VHDLGenerationResult(0, false, errors, null);
+				List<String> errors = new ArrayList<String>();
+				errors.add("Component '" + plc.comp.getName() + "' is invalidated and must be replaced.");
+				return new Result(errors);
 			}
 			
 			// check if inout
 			if (plc.comp.getComponentType().equals(EComponentType.IN_OUT)) continue;
 			
 			// find empty ports with IN direction
-			List<VHDLGenerationMessage> errors = new ArrayList<VHDLGenerationMessage>();
+			List<String> errors = new ArrayList<String>();
 			for (int i = 0, sz = plc.comp.schemaPortCount(); i < sz; i++) {
 				SchemaPort sp = plc.comp.getSchemaPort(i);
 				Caseless mapping = sp.getMapping();
 				if (Caseless.isNullOrEmpty(mapping)) {
 					Port p = plc.comp.getPort(sp.getPortindex());
 					if (p.isIN()) {
-						errors.add(new VHDLGenerationMessage(MessageType.ERROR,
-								"Component '" + plc.comp.getName() + "' has a port '" +
-								p.getName() + "' with direction IN that is not connected to a signal.",
-								info.getEntity().getName().toString()));
+						errors.add("Component '" + plc.comp.getName() + "' has a port '" +
+								p.getName() + "' with direction IN that is not connected to a signal.");
 					}
 				}
 			}
 			if (!errors.isEmpty()) {
-				return new VHDLGenerationResult(0, false, errors, null);
+				return new Result(errors);
 			}
 		}
 		

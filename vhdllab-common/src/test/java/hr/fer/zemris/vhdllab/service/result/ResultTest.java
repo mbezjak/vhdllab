@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -21,13 +22,8 @@ public class ResultTest extends ValueObjectTestSupport {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructorNullData() {
-        new Result(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void constructorNullMessages() {
-        new Result("data", null);
+        new Result((List<String>) null);
     }
 
     @Test
@@ -35,6 +31,14 @@ public class ResultTest extends ValueObjectTestSupport {
         result = new Result("important data");
         assertEquals("important data", result.getData());
         assertTrue(result.getMessages().isEmpty());
+    }
+
+    @Test
+    public void constructorMessages() {
+        List<String> messages = new ArrayList<String>(1);
+        messages.add("message");
+        result = new Result(messages);
+        assertEquals(1, result.getMessages().size());
     }
 
     @Test
@@ -49,6 +53,12 @@ public class ResultTest extends ValueObjectTestSupport {
         assertEquals(1, result.getMessages().size());
     }
 
+    @SuppressWarnings("unchecked")
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorDataMessages2() {
+        new Result(null, Collections.EMPTY_LIST);
+    }
+    
     @Test(expected = UnsupportedOperationException.class)
     public void getMessages() {
         result.getMessages().add("message");
