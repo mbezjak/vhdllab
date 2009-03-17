@@ -1,15 +1,17 @@
 package hr.fer.zemris.vhdllab.service;
 
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.service.exception.CompilationException;
 import hr.fer.zemris.vhdllab.service.exception.SimulationException;
+import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
+import hr.fer.zemris.vhdllab.service.result.Result;
+
+import java.util.List;
 
 public interface Simulator {
 
-    CompilationResult compile(File file) throws CompilationException;
+    List<CompilationMessage> compile(File file) throws CompilationException;
 
-    SimulationResult simulate(File file) throws SimulationException;
+    Result simulate(File file) throws SimulationException;
 
 }
