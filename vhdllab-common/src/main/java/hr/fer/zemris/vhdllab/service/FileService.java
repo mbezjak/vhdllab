@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.service;
 
-import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 public interface FileService {
 

@@ -2,20 +2,18 @@ package hr.fer.zemris.vhdllab.api.workspace;
 
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 
-public class Workspace implements Iterable<ProjectMetadata>, Serializable {
+public class Workspace implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,20 +61,6 @@ public class Workspace implements Iterable<ProjectMetadata>, Serializable {
     public boolean contains(Project project) {
         Validate.notNull(project, "Project can't be null");
         return map.containsKey(project);
-    }
-
-    @Override
-    public Iterator<ProjectMetadata> iterator() {
-        return projects.iterator();
-    }
-
-    /**
-     * Ensures that properties are in correct state after deserialization.
-     */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-        in.defaultReadObject();
-        checkProperties();
     }
 
 }
