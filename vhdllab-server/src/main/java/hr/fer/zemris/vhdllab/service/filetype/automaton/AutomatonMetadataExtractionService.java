@@ -1,20 +1,27 @@
 package hr.fer.zemris.vhdllab.service.filetype.automaton;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
-import hr.fer.zemris.vhdllab.service.filetype.source.SourceCircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
+import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
+import hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 import org.xml.sax.SAXException;
 
-public class AutomatonCircuitInterfaceExtractor implements
-        CircuitInterfaceExtractor {
+public class AutomatonMetadataExtractionService implements
+        MetadataExtractionService {
 
     @Override
-    public CircuitInterface extract(File file)
+    public CircuitInterface extractCircuitInterface(File file)
             throws CircuitInterfaceExtractionException {
         AUTParser aut = new AUTParser();
         try {
@@ -34,7 +41,7 @@ public class AutomatonCircuitInterfaceExtractor implements
                 .append(" IS\nBEGIN\nEND Behavioral;");
 
         String VHDL = buffer.toString();
-        SourceCircuitInterfaceExtractor sourceExtractor = new SourceCircuitInterfaceExtractor();
+        SourceMetadataExtractionService sourceExtractor = new SourceMetadataExtractionService();
         return sourceExtractor.extractCircuitInterface(VHDL);
     }
 
@@ -62,6 +69,45 @@ public class AutomatonCircuitInterfaceExtractor implements
         buffer.deleteCharAt(buffer.length() - 1);
         buffer.append(");\nEND ").append(podatci.ime).append(";\n");
         return buffer;
+    }
+
+    @Override
+    public Set<String> extractDependencies(File file)
+            throws DependencyExtractionException {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Result generateVhdl(File file) throws VhdlGenerationException {
+        AUTParser aut = new AUTParser();
+
+        try {
+            aut.AUTParse(file.getData());
+        } catch (Exception e) {
+            throw new VhdlGenerationException(e.getMessage());
+        }
+
+        LinkedList<Stanje> stanja = aut.stanja;
+        HashSet<Prijelaz> prijelazi = aut.prijelazi;
+        AUTPodatci podatci = aut.podatci;
+
+        String parsedVHDL;
+        if (provjera(stanja, podatci)) {
+            IAutomatVHDLGenerator inter = null;
+            if (podatci.tip.toUpperCase().equals("MOORE"))
+                inter = new MooreParser(stanja, podatci, prijelazi);
+            else
+                inter = new MealyParser(stanja, podatci, prijelazi);
+            parsedVHDL = inter.getData();
+        } else
+            throw new VhdlGenerationException("nemoguce generirati VHDL");
+        return new Result(parsedVHDL);
+    }
+
+    private boolean provjera(LinkedList<Stanje> stanja, AUTPodatci podatci) {
+        if (stanja.size() == 0 || podatci.pocetnoStanje.equals(""))
+            return false;
+        return true;
     }
 
 }

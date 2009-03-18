@@ -1,23 +1,25 @@
 package hr.fer.zemris.vhdllab.service.filetype.source;
 
-import hr.fer.zemris.vhdllab.api.util.StringFormat;
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.VectorDirection;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
+import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
+import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
+import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
-public class SourceCircuitInterfaceExtractor implements
-        CircuitInterfaceExtractor {
+public class SourceMetadataExtractionService implements
+        MetadataExtractionService {
+
     /*
      * Notice: this class was written only to satisfy a test class so code is a
      * disaster. In future, this class should be implemented using lexical and
@@ -31,14 +33,17 @@ public class SourceCircuitInterfaceExtractor implements
     private final static String IS = "IS";
     private final static String PORT = "PORT";
     private final static String WHITESPACE = " ";
+    private final static String DOT = ".";
     private final static String COLON = ":";
     private final static String SEMICOLON = ";";
     private final static String COMMA = ",";
     private final static String LEFT_BRACKET = "(";
     private final static String RIGHT_BRACKET = ")";
+    private static final String WORK = "WORK";
+    private static final String COMPONENT = "COMPONENT";
 
     @Override
-    public CircuitInterface extract(FileInfo file)
+    public CircuitInterface extractCircuitInterface(File file)
             throws CircuitInterfaceExtractionException {
         return extractCircuitInterface(file.getData());
     }
@@ -47,7 +52,7 @@ public class SourceCircuitInterfaceExtractor implements
         String cleanedSource = source;
         cleanedSource = VhdlUtil.decomment(cleanedSource);
         cleanedSource = VhdlUtil.removeWhiteSpaces(cleanedSource);
-        return extract(cleanedSource);
+        return extractCi(cleanedSource);
     }
 
     private int next(String source, String keyword, int offset) {
@@ -113,21 +118,21 @@ public class SourceCircuitInterfaceExtractor implements
             throwException();
         }
         end += WHITESPACE.length();
-        Type type = parseType(source.substring(end));
+        Port type = new Port();
+        parseType(source.substring(end), type);
         for (String n : portNames.split(COMMA)) {
             n = n.trim();
-            if (!StringFormat.isCorrectPortName(n)) {
-                throwException();
-            }
-            Port port = new Port(n, portDirection, type);
+            Port port = new Port(type);
+            port.setDirection(portDirection);
+            port.setName(n);
             ports.add(port);
         }
     }
 
-    private Type parseType(String source) {
+    private void parseType(String source, Port p) {
         String s = source.trim();
         if (s.equals("STD_LOGIC")) {
-            return new Type(PortType.STD_LOGIC, Range.SCALAR);
+            return;
         }
         if (!s.startsWith("STD_LOGIC_VECTOR")) {
             throwException();
@@ -175,16 +180,11 @@ public class SourceCircuitInterfaceExtractor implements
         if (end != s.length()) {
             throwException();
         }
-        try {
-            return new Type(PortType.STD_LOGIC_VECTOR, new Range(from,
-                    vectorDirection, to));
-        } catch (IllegalArgumentException e) {
-            throwException();
-            return null;
-        }
+        p.setFrom(from);
+        p.setTo(to);
     }
 
-    private CircuitInterface extract(String original) {
+    private CircuitInterface extractCi(String original) {
         List<Port> ports = new ArrayList<Port>();
         String source = original.toUpperCase(Locale.ENGLISH);
         int pos = source.indexOf(ENTITY);
@@ -196,9 +196,6 @@ public class SourceCircuitInterfaceExtractor implements
         int start = pos;
         int end = source.indexOf(WHITESPACE, start);
         String entityName = original.substring(start, end);
-        if (!StringFormat.isCorrectEntityName(entityName)) {
-            throwException("Illegal entity name");
-        }
         pos = end + WHITESPACE.length();
         pos = next(source, IS, pos);
         pos = next(source, WHITESPACE, pos);
@@ -223,7 +220,9 @@ public class SourceCircuitInterfaceExtractor implements
         pos = maybeNext(source, WHITESPACE, pos);
         pos = next(source, SEMICOLON, pos);
         try {
-            return new CircuitInterface(entityName, ports);
+            CircuitInterface ci = new CircuitInterface(entityName);
+            ci.addAll(ports);
+            return ci;
         } catch (IllegalArgumentException e) {
             throwException();
             return null;
@@ -265,6 +264,85 @@ public class SourceCircuitInterfaceExtractor implements
 
     private void throwException(String message) {
         throw new CircuitInterfaceExtractionException(message);
+    }
+
+    @Override
+    public Set<String> extractDependencies(File file)
+            throws DependencyExtractionException {
+        String source = file.getData();
+        source = VhdlUtil.decomment(source);
+        source = VhdlUtil.removeWhiteSpaces(source);
+        return extract(source);
+    }
+
+    private Set<String> extract(String original) {
+        Set<String> dependencies = new HashSet<String>();
+        String source = original.toUpperCase(Locale.ENGLISH);
+
+        int pos = 0;
+        while (true) {
+            pos = source.indexOf(ENTITY, pos);
+            if (pos == -1) {
+                break;
+            }
+            pos += ENTITY.length();
+            if (!source.startsWith(WHITESPACE, pos)) {
+                continue;
+            }
+            pos += WHITESPACE.length();
+            if (!source.startsWith(WORK, pos)) {
+                continue;
+            }
+            pos += WORK.length();
+            pos = maybeNext(source, WHITESPACE, pos);
+            if (!source.startsWith(DOT, pos)) {
+                continue;
+            }
+            pos += DOT.length();
+            pos = maybeNext(source, WHITESPACE, pos);
+            int start = pos;
+            pos = source.indexOf(WHITESPACE, start);
+            if (pos == -1) {
+                pos = start;
+                continue;
+            }
+            String component = original.substring(start, pos).toLowerCase();
+            if (!dependencies.contains(component)) {
+                dependencies.add(component);
+            }
+        }
+
+        pos = 0;
+        while (true) {
+            pos = source.indexOf(COMPONENT, pos);
+            if (pos == -1) {
+                break;
+            }
+            pos += COMPONENT.length();
+            if (!source.startsWith(WHITESPACE, pos)) {
+                continue;
+            }
+            pos += WHITESPACE.length();
+            if (source.startsWith(SEMICOLON, pos)) {
+                continue;
+            }
+            int start = pos;
+            pos = source.indexOf(WHITESPACE, start);
+            if (pos == -1) {
+                pos = start;
+                continue;
+            }
+            String component = original.substring(start, pos).toLowerCase();
+            if (!dependencies.contains(component)) {
+                dependencies.add(component);
+            }
+        }
+        return dependencies;
+    }
+
+    @Override
+    public Result generateVhdl(File file) throws VhdlGenerationException {
+        return new Result(file.getData());
     }
 
 }

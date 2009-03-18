@@ -47,7 +47,7 @@ public class ParamPort implements IGenericValue {
 		
 		sb.append(port.getName()).append(DELIMITER);
 		sb.append(port.getDirection().toString()).append(DELIMITER);
-		sb.append(port.isScalar() ? "STD_LOGIC" : "STD_LOGIC_VECTOR").append(DELIMITER);
+		sb.append(port.getTypeName()).append(DELIMITER);
 		if (port.isScalar()) {
 			sb.append(DELIMITER).append(DELIMITER);
 		} else {

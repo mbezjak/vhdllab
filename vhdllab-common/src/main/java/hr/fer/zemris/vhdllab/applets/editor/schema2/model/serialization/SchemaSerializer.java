@@ -428,7 +428,7 @@ public class SchemaSerializer {
 		appendLine(writer);
 		writer.append("<or>").append(orient.toString()).append("</or>");
 		appendLine(writer);
-		writer.append("<tp>").append(port.isScalar() ? "STD_LOGIC" : "STD_LOGIC_VECTOR").append("</tp>");
+		writer.append("<tp>").append(port.getTypeName()).append("</tp>");
 		appendLine(writer);
 		if (port.isScalar()) {
 			writer.append("<va></va>");

@@ -127,6 +127,21 @@ public class PortTest extends ValueObjectTestSupport {
     }
 
     @Test
+    public void getTypeNameAndGetDirecion() {
+        port.setFrom(null);
+        port.setTo(null);
+        assertEquals(Port.TYPE_STD_LOGIC, port.getTypeName());
+
+        port.setFrom(1);
+        port.setTo(4);
+        assertEquals(Port.TYPE_STD_LOGIC_VECTOR, port.getTypeName());
+        assertEquals(Port.DIRECTION_TO, port.getDirectionName());
+
+        port.setFrom(6);
+        assertEquals(Port.DIRECTION_DOWNTO, port.getDirectionName());
+    }
+
+    @Test
     public void hashCodeAndEquals() throws Exception {
         basicEqualsTest(port);
 

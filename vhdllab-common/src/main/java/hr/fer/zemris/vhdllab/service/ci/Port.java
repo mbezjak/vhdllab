@@ -24,6 +24,11 @@ public class Port implements Serializable {
 
     private static final long serialVersionUID = -3505930700727412550L;
 
+    public static final String TYPE_STD_LOGIC = "STD_LOGIC";
+    public static final String TYPE_STD_LOGIC_VECTOR = "STD_LOGIC_VECTOR";
+    public static final String DIRECTION_DOWNTO = "DOWNTO";
+    public static final String DIRECTION_TO = "TO";
+
     @NotNull
     @Length(max = 255)
     @NameFormatConstraint
@@ -118,6 +123,14 @@ public class Port implements Serializable {
         return from < to;
     }
 
+    public String getTypeName() {
+        return isScalar() ? TYPE_STD_LOGIC : TYPE_STD_LOGIC_VECTOR;
+    }
+
+    public String getDirectionName() {
+        return isDOWNTO() ? DIRECTION_DOWNTO : DIRECTION_TO;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
@@ -149,19 +162,10 @@ public class Port implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder(100);
         sb.append(name).append(": ");
-        sb.append(direction).append(" ");
-        if (isScalar()) {
-            sb.append("STD_LOGIC");
-        } else {
-            sb.append("STD_LOGIC_VECTOR");
-        }
+        sb.append(direction).append(" ").append(getTypeName());
         if (isVector()) {
-            sb.append("(").append(from);
-            if (isDOWNTO()) {
-                sb.append(" DOWNTO ");
-            } else {
-                sb.append(" TO ");
-            }
+            sb.append("(").append(from).append(" ");
+            sb.append(getDirectionName()).append(" ");
             sb.append(to).append(")");
         }
         return sb.toString();

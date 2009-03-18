@@ -28,21 +28,6 @@ public class PortWrapper {
 	public PortWrapper() {
 	}
 	
-//	public PortWrapper(Port port) {
-//		name = port.getName();
-//		orientation = ORIENTATION_NORTH;
-//		direction = (port.getDirection().isIN()) ? (DIRECTION_IN) : (DIRECTION_OUT);
-//		Type tp = port.getType();
-//		if (tp.isScalar()) {
-//			type = STD_LOGIC;
-//		} else {
-//			type = STD_LOGIC_VECTOR;
-//			lowerBound = String.valueOf(tp.getRangeFrom());
-//			upperBound = String.valueOf(tp.getRangeTo());
-//			vectorAscension = (tp.hasVectorDirectionTO()) ? (ASCEND) : (DESCEND);
-//		}
-//	}
-	
 	public PortWrapper(Port port, String orient) {
 		name = port.getName();
 		direction = port.isIN() ? (DIRECTION_IN) : (DIRECTION_OUT);
