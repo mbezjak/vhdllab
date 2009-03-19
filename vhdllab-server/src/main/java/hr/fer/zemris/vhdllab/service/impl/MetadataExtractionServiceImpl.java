@@ -12,10 +12,14 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.hibernate.validator.ClassValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 public class MetadataExtractionServiceImpl implements MetadataExtractionService {
+
+    private static final ClassValidator<CircuitInterface> CIRCUIT_INTERFACE_VALIDATOR =
+                            new ClassValidator<CircuitInterface>(CircuitInterface.class);
 
     @Autowired
     private ApplicationContext context;
@@ -28,6 +32,7 @@ public class MetadataExtractionServiceImpl implements MetadataExtractionService 
         if (ci == null) {
             throw new IllegalStateException("Circuit interface is null");
         }
+        CIRCUIT_INTERFACE_VALIDATOR.assertValid(ci);
         return null;
     }
 
