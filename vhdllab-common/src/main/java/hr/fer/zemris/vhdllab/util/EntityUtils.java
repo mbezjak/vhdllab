@@ -3,7 +3,9 @@ package hr.fer.zemris.vhdllab.util;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class EntityUtils {
@@ -16,8 +18,8 @@ public abstract class EntityUtils {
         return lightweight;
     }
 
-    public static Set<Project> cloneProjects(Set<Project> projects) {
-        Set<Project> lightweight = new HashSet<Project>(projects.size());
+    public static List<Project> cloneProjects(List<Project> projects) {
+        List<Project> lightweight = new ArrayList<Project>(projects.size());
         for (Project project : projects) {
             lightweight.add(new Project(project));
         }
@@ -44,7 +46,7 @@ public abstract class EntityUtils {
         return files;
     }
 
-    public static Set<Project> setNullFiles(Set<Project> projects) {
+    public static List<Project> setNullFiles(List<Project> projects) {
         for (Project project : projects) {
             project.setFiles(null);
         }

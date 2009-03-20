@@ -11,6 +11,8 @@ import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
@@ -18,14 +20,14 @@ import org.junit.Test;
 
 public class WorkspaceTest extends ValueObjectTestSupport {
 
-    private HashSet<Project> projects;
+    private List<Project> projects;
     private Hierarchy hierarchy;
     private Project predefinedProject;
-    private HashSet<File> preferencesFiles;
+    private Set<File> preferencesFiles;
 
     @Before
     public void initObject() {
-        projects = new HashSet<Project>(2);
+        projects = new ArrayList<Project>(2);
         Project firstProject = new Project("userId", "project1");
         projects.add(firstProject);
         projects.add(new Project("userId", "project2"));
@@ -41,11 +43,6 @@ public class WorkspaceTest extends ValueObjectTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void constructorNullProjects() {
         new Workspace(null, hierarchy, predefinedProject, preferencesFiles);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void constructorNullHierarchy() {
-        new Workspace(projects, null, predefinedProject, preferencesFiles);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -92,13 +92,13 @@ public class PredefinedFilesDaoImpl implements PredefinedFilesDao,
     }
 
     @Override
-    public List<File> getPredefinedFiles() {
+    public Set<File> getPredefinedFiles() {
         return createPredefinedFilesList();
     }
 
-    private List<File> createPredefinedFilesList() {
+    private Set<File> createPredefinedFilesList() {
         Collection<File> values = files.values();
-        List<File> list = new ArrayList<File>(values.size());
+        Set<File> list = new HashSet<File>(values.size());
         for (File f : values) {
             list.add(new File(f)); // to reduce aliasing problems
         }

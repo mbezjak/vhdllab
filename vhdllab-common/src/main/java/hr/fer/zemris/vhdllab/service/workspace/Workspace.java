@@ -5,21 +5,21 @@ import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.util.EntityUtils;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 
 public final class Workspace {
 
-    private final Set<Project> projects;
+    private final List<Project> projects;
     private final Hierarchy activeProjectHierarchy;
     private final Project predefinedProject;
     private final Set<File> preferencesFiles;
 
-    public Workspace(Set<Project> projects, Hierarchy activeProjectHierarchy,
+    public Workspace(List<Project> projects, Hierarchy activeProjectHierarchy,
             Project predefinedProject, Set<File> preferencesFiles) {
         Validate.notNull(projects, "Projects can't be null");
-        Validate.notNull(activeProjectHierarchy, "Hierarchy can't be null");
         Validate.notNull(predefinedProject, "Predefined project can't be null");
         Validate.notNull(preferencesFiles, "Preferences files can't be null");
         this.projects = EntityUtils.setNullFiles(EntityUtils
@@ -35,7 +35,7 @@ public final class Workspace {
         return projects.size();
     }
 
-    public Set<Project> getProjects() {
+    public List<Project> getProjects() {
         return projects;
     }
 

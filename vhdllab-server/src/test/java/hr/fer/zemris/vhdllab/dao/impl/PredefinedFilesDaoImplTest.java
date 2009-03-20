@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
@@ -20,6 +19,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,11 +38,11 @@ public class PredefinedFilesDaoImplTest {
 
     @Test
     public void getPredefinedFiles() {
-        List<File> files = dao.getPredefinedFiles();
+        Set<File> files = dao.getPredefinedFiles();
         assertNotNull(files);
         assertEquals(2, files.size());
 
-        File file = files.get(0);
+        File file = (File) CollectionUtils.get(files, 0);
         assertNull(file.getId());
         assertNull(file.getVersion());
         assertNull(file.getProject());
