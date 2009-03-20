@@ -6,19 +6,19 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
+import hr.fer.zemris.vhdllab.service.impl.AbstractMetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SchemaMetadataExtractionService implements
-        MetadataExtractionService {
+public class SchemaMetadataExtractionService extends
+        AbstractMetadataExtractionService {
 
     @Override
     public CircuitInterface extractCircuitInterface(File file)

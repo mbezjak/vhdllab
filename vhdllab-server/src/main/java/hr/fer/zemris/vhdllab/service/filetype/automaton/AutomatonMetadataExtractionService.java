@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.service.filetype.automaton;
 
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
 import hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.impl.AbstractMetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.IOException;
@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.xml.sax.SAXException;
 
-public class AutomatonMetadataExtractionService implements
-        MetadataExtractionService {
+public class AutomatonMetadataExtractionService extends
+        AbstractMetadataExtractionService {
 
     @Override
     public CircuitInterface extractCircuitInterface(File file)

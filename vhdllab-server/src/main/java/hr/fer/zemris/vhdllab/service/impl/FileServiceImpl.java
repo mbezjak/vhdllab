@@ -1,105 +1,68 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
-import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.dao.FileDao;
-import hr.fer.zemris.vhdllab.dao.ProjectDao;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.File;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.Project;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.dao.PredefinedFilesDao;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.FileService;
-import hr.fer.zemris.vhdllab.service.HierarchyExtractor;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
+import hr.fer.zemris.vhdllab.service.ProjectService;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class FileServiceImpl implements FileService {
 
     @Autowired
-    private FileDao dao;
+    private FileDao fileDao;
     @Autowired
-    private ProjectDao projectDao;
-    @Resource(name = "circuitInterfaceExtractionService")
-    private CircuitInterfaceExtractor extractor;
+    private PredefinedFilesDao predefinedFilesDao;
     @Autowired
-    private HierarchyExtractor hierarchyExtractor;
+    private ProjectService projectService;
 
     @Override
-    public FileReport save(FileInfo file) {
-        File entity;
-        if (file.getId() == null) {
-            // creating new file
-            entity = new File(file.getType(), file.getName(), file.getData());
-            Project project = projectDao.load(file.getProjectId());
-            project.addFile(entity);
-        } else {
-            entity = wrapToEntity(file);
-        }
-        if (entity.getType().equals(FileType.SOURCE)) {
-            CircuitInterface ci = extractor.extract(file);
+    public FileReport save(File file) {
+        if (file.getType().equals(FileType.SOURCE)) {
+            CircuitInterface ci = new SourceMetadataExtractionService()
+                    .extractCircuitInterface(file);
             if (!ci.getName().equalsIgnoreCase(file.getName().toString())) {
-                throw new IllegalStateException("Resource " + entity.getName()
+                throw new IllegalStateException("Resource " + file.getName()
                         + " must have only one entity with the same name.");
             }
         }
-        dao.save(entity);
-        Project project = entity.getProject();
-        FileInfo fileInfo = wrapToInfoObject(entity);
-        return getReport(project, fileInfo);
-    }
 
-    @Override
-    public FileReport delete(FileInfo file) {
-        File entity = wrapToEntity(file);
-        Project project = entity.getProject();
-        dao.delete(entity);
-        return getReport(project, file);
-    }
-
-    @Override
-    public List<FileInfo> findByProject(Integer projectId) {
-        Project project = projectDao.load(projectId);
-        List<FileInfo> infoFiles = new ArrayList<FileInfo>(project.getFiles()
-                .size());
-        for (File file : project.getFiles()) {
-            infoFiles.add(wrapToInfoObject(file));
+        File saved;
+        if (file.isNew()) {
+            fileDao.persist(file);
+            saved = file;
+        } else {
+            saved = fileDao.merge(file);
         }
-        return infoFiles;
+        return getReport(saved);
     }
 
     @Override
-    public FileInfo findByName(Integer projectId, Caseless name) {
-        return wrapToInfoObject(dao.findByName(projectId, name));
+    public FileReport delete(Integer fileId) {
+        File file = fileDao.load(fileId);
+        fileDao.delete(file);
+        return getReport(file);
     }
 
-    private FileReport getReport(Project project, FileInfo file) {
-        Hierarchy hierarchy = hierarchyExtractor.extract(project);
-        return new FileReport(file, hierarchy);
-
+    @Override
+    public File findByName(Integer projectId, String name) {
+        File file = fileDao.findByName(projectId, name);
+        if (file == null) {
+            file = predefinedFilesDao.findByName(name);
+        }
+        return new File(file);
     }
 
-    private File wrapToEntity(FileInfo info) {
-        File entity = dao.load(info.getId());
-        entity.setData(info.getData());
-        return entity;
-    }
-
-    private FileInfo wrapToInfoObject(File file) {
-        return file == null ? null : new FileInfo(file, file.getProject()
+    private FileReport getReport(File file) {
+        Hierarchy hierarchy = projectService.extractHierarchy(file.getProject()
                 .getId());
-    }
-
-    private ProjectInfo wrapToInfoObject(Project project) {
-        return project == null ? null : new ProjectInfo(project);
+        return new FileReport(file, hierarchy);
     }
 
 }

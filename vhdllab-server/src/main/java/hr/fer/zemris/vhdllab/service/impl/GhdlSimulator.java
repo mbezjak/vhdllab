@@ -13,7 +13,6 @@ import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.exception.CompilationException;
 import hr.fer.zemris.vhdllab.service.exception.SimulationException;
 import hr.fer.zemris.vhdllab.service.exception.SimulatorTimeoutException;
-import hr.fer.zemris.vhdllab.service.ghdl.GhdlCompiler;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
@@ -59,7 +58,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     /**
      * Logger for this class
      */
-    private static final Logger LOG = Logger.getLogger(GhdlCompiler.class);
+    private static final Logger LOG = Logger.getLogger(GhdlSimulator.class);
 
     private static final int PROCESS_TIMEOUT = 2000;
 
@@ -138,27 +137,26 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         return listToCompilationMessages(context.compilationLines);
     }
 
-    private class SimulationContext {
-        /*
-         * Since this is a private class used by simulator exclusively there is
-         * no need for getters and setters.
-         */
-        public boolean compileOnly;
-        public java.io.File tempDirectory;
-        public File targetFile;
-        public List<String> dependencies;
-        public CommandLine compilerCommandLine;
-        public CommandLine simulatorCommandLine;
-        public List<String> compilationLines;
-        public List<String> simulationLines;
+    @Override
+    public Result simulate(Integer fileId) throws SimulationException {
+        SimulationContext context = createContext(fileId);
 
-        public void clean() {
-            tempDirectory = null;
-            targetFile = null;
-            dependencies = null;
-            compilerCommandLine = null;
-            compilationLines = null;
+        String waveform;
+        try {
+            doCompile(context);
+            prepairSimulationCommandLine(context);
+            context.simulationLines = executeProcess(
+                    context.simulatorCommandLine, context.tempDirectory);
+            waveform = extractWaveform(context);
+        } catch (IOException e) {
+            throw new CompilationException(e);
+        } finally {
+            if (!leaveSimulationResults) {
+                FileUtils.deleteQuietly(context.tempDirectory);
+            }
         }
+
+        return new Result(waveform, context.simulationLines);
     }
 
     @SuppressWarnings("synthetic-access")
@@ -166,6 +164,29 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         SimulationContext context = new SimulationContext();
         context.targetFile = loadFile(fileId);
         return context;
+    }
+
+    protected void doCompile(SimulationContext context) throws IOException {
+        try {
+            context.tempDirectory = createTempDirectory(context.targetFile
+                    .getId());
+
+            context.dependencies = orderFileNames(context.targetFile);
+
+            copyFiles(context.dependencies, context.targetFile.getProject()
+                    .getId(), context.tempDirectory);
+
+            context.compilerCommandLine = prepairCompilerCommandLine(
+                    compilerParameters, context.dependencies);
+
+            context.compilationLines = executeProcess(
+                    context.compilerCommandLine, context.tempDirectory);
+        } finally {
+            if (context.compileOnly) {
+                FileUtils.deleteQuietly(context.tempDirectory);
+                context.clean();
+            }
+        }
     }
 
     private List<String> orderFileNames(File file) {
@@ -219,14 +240,45 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         }
     }
 
-    private CommandLine prepairCommandLine(String[] arguments,
+    private CommandLine createCommandLine() {
+        return new CommandLine(executable);
+    }
+
+    private CommandLine prepairCompilerCommandLine(String[] arguments,
             List<String> dependencies) {
-        CommandLine cl = new CommandLine(executable);
+        CommandLine cl = createCommandLine();
         cl.addArguments(arguments);
         for (String name : dependencies) {
             cl.addArgument(name + ".vhdl");
         }
         return cl;
+    }
+
+    private void prepairSimulationCommandLine(SimulationContext context) {
+        CommandLine cl = createCommandLine();
+        cl.addArguments(simulatorParameters);
+        cl.addArgument(context.targetFile.getName());
+        cl.addArgument("--vcd=simout.vcd");
+        cl.addArgument("--stop-delta=1000");
+
+        Testbench tb = null;
+        try {
+            tb = TestbenchParser.parseXml(context.targetFile.getData());
+        } catch (UniformTestbenchParserException e) {
+            throw new SimulationException(e);
+        }
+        long simulationLength = tb.getSimulationLength();
+        if (simulationLength <= 0) {
+            simulationLength = 100;
+        } else {
+            simulationLength = simulationLength
+                    / TimeScale.getMultiplier(tb.getTimeScale());
+            simulationLength = (long) (simulationLength * 1.1);
+        }
+        cl.addArgument("--stop-time=" + simulationLength
+                + tb.getTimeScale().toString().toLowerCase());
+
+        context.simulatorCommandLine = cl;
     }
 
     private List<String> executeProcess(CommandLine cl,
@@ -255,29 +307,6 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
             throw new UnhandledException(e);
         }
         return Arrays.asList(StringUtil.splitToNewLines(errors));
-    }
-
-    protected void doCompile(SimulationContext context) throws IOException {
-        try {
-            context.tempDirectory = createTempDirectory(context.targetFile
-                    .getId());
-
-            context.dependencies = orderFileNames(context.targetFile);
-
-            copyFiles(context.dependencies, context.targetFile.getProject()
-                    .getId(), context.tempDirectory);
-
-            context.compilerCommandLine = prepairCommandLine(
-                    compilerParameters, context.dependencies);
-
-            context.compilationLines = executeProcess(
-                    context.compilerCommandLine, context.tempDirectory);
-        } finally {
-            if (context.compileOnly) {
-                FileUtils.deleteQuietly(context.tempDirectory);
-                context.clean();
-            }
-        }
     }
 
     private List<CompilationMessage> listToCompilationMessages(
@@ -323,28 +352,6 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         return res;
     }
 
-    @Override
-    public Result simulate(Integer fileId) throws SimulationException {
-        SimulationContext context = createContext(fileId);
-
-        String waveform;
-        try {
-            doCompile(context);
-            prepairSimulationCommandLine(context);
-            context.simulationLines = executeProcess(
-                    context.simulatorCommandLine, context.tempDirectory);
-            waveform = extractWaveform(context);
-        } catch (IOException e) {
-            throw new CompilationException(e);
-        } finally {
-            if (!leaveSimulationResults) {
-                FileUtils.deleteQuietly(context.tempDirectory);
-            }
-        }
-
-        return new Result(waveform, context.simulationLines);
-    }
-
     private String extractWaveform(SimulationContext context)
             throws IOException {
         String vcd = FileUtils.readFileToString(new java.io.File(
@@ -354,31 +361,27 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         return parser.getResultInString();
     }
 
-    private void prepairSimulationCommandLine(SimulationContext context) {
-        CommandLine cl = new CommandLine(executable);
-        cl.addArguments(simulatorParameters);
-        cl.addArgument(context.targetFile.getName());
-        cl.addArgument("--vcd=simout.vcd");
-        cl.addArgument("--stop-delta=1000");
+    private class SimulationContext {
+        /*
+         * Since this is a private class used by simulator exclusively there is
+         * no need for getters and setters.
+         */
+        public boolean compileOnly;
+        public java.io.File tempDirectory;
+        public File targetFile;
+        public List<String> dependencies;
+        public CommandLine compilerCommandLine;
+        public CommandLine simulatorCommandLine;
+        public List<String> compilationLines;
+        public List<String> simulationLines;
 
-        Testbench tb = null;
-        try {
-            tb = TestbenchParser.parseXml(context.targetFile.getData());
-        } catch (UniformTestbenchParserException e) {
-            throw new SimulationException(e);
+        public void clean() {
+            tempDirectory = null;
+            targetFile = null;
+            dependencies = null;
+            compilerCommandLine = null;
+            compilationLines = null;
         }
-        long simulationLength = tb.getSimulationLength();
-        if (simulationLength <= 0) {
-            simulationLength = 100;
-        } else {
-            simulationLength = simulationLength
-                    / TimeScale.getMultiplier(tb.getTimeScale());
-            simulationLength = (long) (simulationLength * 1.1);
-        }
-        cl.addArgument("--stop-time=" + simulationLength
-                + tb.getTimeScale().toString().toLowerCase());
-
-        context.simulatorCommandLine = cl;
     }
 
 }

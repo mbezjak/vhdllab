@@ -19,7 +19,7 @@ public abstract class AbstractMetadataExtractionService extends ServiceSupport
         return extractCircuitInterface(loadFile(fileId));
     }
 
-    protected abstract CircuitInterface extractCircuitInterface(File file)
+    public abstract CircuitInterface extractCircuitInterface(File file)
             throws CircuitInterfaceExtractionException;
 
     @Override
@@ -28,7 +28,7 @@ public abstract class AbstractMetadataExtractionService extends ServiceSupport
         return extractDependencies(loadFile(fileId));
     }
 
-    protected abstract Set<String> extractDependencies(File file)
+    public abstract Set<String> extractDependencies(File file)
             throws DependencyExtractionException;
 
     @Override
@@ -36,7 +36,7 @@ public abstract class AbstractMetadataExtractionService extends ServiceSupport
         return generateVhdl(loadFile(fileId));
     }
 
-    protected abstract Result generateVhdl(File file)
+    public abstract Result generateVhdl(File file)
             throws VhdlGenerationException;
 
 }
