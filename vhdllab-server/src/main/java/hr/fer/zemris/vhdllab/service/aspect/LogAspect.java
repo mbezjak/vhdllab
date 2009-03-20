@@ -7,6 +7,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 
 @Aspect
@@ -15,8 +16,16 @@ public class LogAspect {
 
     private static final Logger LOG = Logger.getLogger(LogAspect.class);
 
-    @Around("hr.fer.zemris.vhdllab.service.aspect.ServicePointcut.services()")
-    public Object afterExecution(ProceedingJoinPoint pjp) throws Throwable {
+    @Pointcut("execution(* hr.fer.zemris.vhdllab.service.FileService.*(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.ProjectService.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.ClientLogService.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.Simulator.*(..)) ||"
+            + "execution(* hr.fer.zemris.vhdllab.service.MetadataExtractionService.*(..))")
+    public void services() {
+    }
+
+    @Around("services()")
+    public Object logExecution(ProceedingJoinPoint pjp) throws Throwable {
         long start = 0;
         String callSignature = null;
         if (LOG.isTraceEnabled()) {
@@ -26,7 +35,7 @@ public class LogAspect {
             LOG.trace("Entering " + callSignature);
             start = System.currentTimeMillis();
         }
-        Object returnedValue = pjp.proceed();
+        Object returnValue = pjp.proceed();
         if (LOG.isTraceEnabled()) {
             long end = System.currentTimeMillis();
             StringBuilder sb = new StringBuilder(1000);
@@ -34,10 +43,10 @@ public class LogAspect {
             sb.append(" finished execution in ").append(end - start);
             sb.append(" ms for argument: ").append(
                     Arrays.toString(pjp.getArgs()));
-            sb.append(" and returned: ").append(returnedValue);
+            sb.append(" and returned: ").append(returnValue);
             LOG.trace(sb.toString());
         }
-        return returnedValue;
+        return returnValue;
     }
 
 }

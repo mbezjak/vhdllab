@@ -7,6 +7,8 @@ public interface FileService {
 
     FileReport save(File file);
 
-    FileReport delete(File file);
+    FileReport delete(Integer fileId);
+
+    File findByName(Integer projectId, String name);
 
 }

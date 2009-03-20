@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.entity.stub;
 
 import hr.fer.zemris.vhdllab.entity.FileInfo;
 import hr.fer.zemris.vhdllab.entity.FileType;
-import hr.fer.zemris.vhdllab.util.BeanUtils;
+import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 public class FileInfoStub extends FileInfo {
 
@@ -12,7 +12,7 @@ public class FileInfoStub extends FileInfo {
     public static final String DATA = "a data of a file";
 
     public FileInfoStub() {
-        BeanUtils.copyProperties(this, new NamedEntityStub());
+        BeanUtil.copyProperties(this, new NamedEntityStub());
         setType(TYPE);
         setData(DATA);
     }

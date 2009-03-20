@@ -8,9 +8,9 @@ public interface ProjectService {
 
     Project persist(Project project);
 
-    void delete(Project project);
+    void delete(Integer projectId);
 
-    Hierarchy extractHierarchy(Project project);
+    Hierarchy extractHierarchy(Integer projectId);
 
     Workspace getWorkspace();
 

@@ -73,6 +73,19 @@ public class HierarchyTest extends ValueObjectTestSupport {
         assertEquals("another_name", hierarchy.getProject().getName());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void getNodeNullArgument() {
+        hierarchy.getNode(null);
+    }
+
+    @Test
+    public void getNode() {
+        assertEquals(root, hierarchy.getNode(root.getFile()));
+        assertEquals(left, hierarchy.getNode(left.getFile()));
+        assertEquals(right, hierarchy.getNode(right.getFile()));
+        assertEquals(rightDep, hierarchy.getNode(rightDep.getFile()));
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void getAllNodes() {
         hierarchy.getAllNodes().add(new HierarchyNode(new File(), null));

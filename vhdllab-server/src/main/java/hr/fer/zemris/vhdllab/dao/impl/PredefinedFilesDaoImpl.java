@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.dao.impl;
 import hr.fer.zemris.vhdllab.dao.PredefinedFilesDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.util.IOUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -32,7 +33,6 @@ public class PredefinedFilesDaoImpl implements PredefinedFilesDao,
     private static final Logger LOG = Logger
             .getLogger(PredefinedFilesDaoImpl.class);
 
-    private static final String DEFAULT_ENCODING = "UTF-8";
     private static final String DEFAULT_LOCATION = "/WEB-INF/predefined";
     private java.io.File location;
     private ServletContext servletContext;
@@ -73,7 +73,7 @@ public class PredefinedFilesDaoImpl implements PredefinedFilesDao,
                 String contents;
                 try {
                     contents = FileUtils.readFileToString(predefined,
-                            DEFAULT_ENCODING);
+                            IOUtil.DEFAULT_ENCODING);
                 } catch (IOException e) {
                     throw new UnhandledException(e);
                 }

@@ -37,10 +37,6 @@ public abstract class EntityUtils {
         return clone;
     }
 
-    public static boolean isLightweight(File file) {
-        return file.getProject() == null && file.getData() == null;
-    }
-
     public static Set<File> setProject(Set<File> files, Project project) {
         for (File file : files) {
             file.setProject(project);

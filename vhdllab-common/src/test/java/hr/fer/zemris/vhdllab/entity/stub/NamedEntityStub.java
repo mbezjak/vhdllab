@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.entity.stub;
 
 import hr.fer.zemris.vhdllab.entity.NamedEntity;
-import hr.fer.zemris.vhdllab.util.BeanUtils;
+import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 public class NamedEntityStub extends NamedEntity {
 
@@ -12,7 +12,7 @@ public class NamedEntityStub extends NamedEntity {
     public static final String NAME_2 = "another entity name";
 
     public NamedEntityStub() {
-        BeanUtils.copyProperties(this, new BaseEntityStub());
+        BeanUtil.copyProperties(this, new BaseEntityStub());
         setName(NAME);
     }
 

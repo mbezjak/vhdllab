@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.Testbench;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.TestbenchParser;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.SignalChange;
-import hr.fer.zemris.vhdllab.dao.FileDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
@@ -26,13 +25,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class TestbenchMetadataExtractionService implements
         MetadataExtractionService {
 
-    @Autowired
-    private FileDao fileDao;
     @Resource(name = "metadataExtractionService")
     private MetadataExtractionService extractionService;
 
@@ -65,8 +60,7 @@ public class TestbenchMetadataExtractionService implements
 
         String name = tbInfo.getSourceName();
 
-        File source = fileDao.findByName(file.getProject().getId(), name);
-        CircuitInterface ci = extractionService.extractCircuitInterface(source);
+        CircuitInterface ci = extractionService.extractCircuitInterface(file);
         String vhdl = null;
         try {
             vhdl = generirajVHDL(file.getName(), name, ci, tbInfo);
@@ -97,8 +91,6 @@ public class TestbenchMetadataExtractionService implements
      */
     private String generirajVHDL(String testBenchFileName,
             String testedFileName, CircuitInterface ci, Testbench tbInfo) {
-        if (ci == null)
-            throw new NullPointerException("Circuit interface can not be null.");
         if (testedFileName == null)
             throw new NullPointerException("Tested filename can not be null.");
         if (testBenchFileName == null)

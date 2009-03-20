@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.UnhandledException;
 import org.apache.commons.lang.Validate;
 
-public abstract class BeanUtils {
+public abstract class BeanUtil {
 
     public static String getBeanName(Class<?> clazz) {
         Validate.notNull(clazz, "Bean class can't be null");

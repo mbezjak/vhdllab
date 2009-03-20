@@ -22,7 +22,7 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.predefined.beans.PredefinedC
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.util.IOUtils;
+import hr.fer.zemris.vhdllab.util.IOUtil;
 
 import java.io.InputStream;
 import java.util.List;
@@ -87,7 +87,7 @@ public class RebuildPrototypeCollection implements ICommand {
 			
 			// add new predefined
 			PredefinedComponentsParser predefparser = 
-				new PredefinedComponentsParser(IOUtils.toString(predefinedcircuits));
+				new PredefinedComponentsParser(IOUtil.toString(predefinedcircuits));
 			PredefinedConf predefconf = predefparser.getConfiguration();
 	
 			prototyper.clearPrototypes();

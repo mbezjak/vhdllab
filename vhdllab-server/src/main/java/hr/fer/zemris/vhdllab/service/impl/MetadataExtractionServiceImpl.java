@@ -11,12 +11,12 @@ import hr.fer.zemris.vhdllab.service.result.Result;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.lang.Validate;
 import org.hibernate.validator.ClassValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-public class MetadataExtractionServiceImpl implements MetadataExtractionService {
+public class MetadataExtractionServiceImpl extends
+        AbstractMetadataExtractionService implements MetadataExtractionService {
 
     private static final ClassValidator<CircuitInterface> CIRCUIT_INTERFACE_VALIDATOR =
                             new ClassValidator<CircuitInterface>(CircuitInterface.class);
@@ -27,8 +27,8 @@ public class MetadataExtractionServiceImpl implements MetadataExtractionService 
     @Override
     public CircuitInterface extractCircuitInterface(File file)
             throws CircuitInterfaceExtractionException {
-        Validate.notNull(file, "File can't be null");
-        CircuitInterface ci = getBean(file).extractCircuitInterface(file);
+        CircuitInterface ci = getBean(file).extractCircuitInterface(
+                file.getId());
         if (ci == null) {
             throw new IllegalStateException("Circuit interface is null");
         }
@@ -39,8 +39,8 @@ public class MetadataExtractionServiceImpl implements MetadataExtractionService 
     @Override
     public Set<String> extractDependencies(File file)
             throws DependencyExtractionException {
-        Validate.notNull(file, "File can't be null");
-        Set<String> dependencies = getBean(file).extractDependencies(file);
+        Set<String> dependencies = getBean(file).extractDependencies(
+                file.getId());
         if (dependencies == null) {
             throw new IllegalStateException("Dependencies is null");
         }
@@ -49,8 +49,7 @@ public class MetadataExtractionServiceImpl implements MetadataExtractionService 
 
     @Override
     public Result generateVhdl(File file) throws VhdlGenerationException {
-        Validate.notNull(file, "File can't be null");
-        Result result = getBean(file).generateVhdl(file);
+        Result result = getBean(file).generateVhdl(file.getId());
         if (result == null) {
             throw new IllegalStateException("Result is null");
         }

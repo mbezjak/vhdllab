@@ -1,67 +1,11 @@
-package hr.fer.zemris.vhdllab.service.ghdl;
+package hr.fer.zemris.vhdllab.service.impl;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-/**
- * Klasa cita linije VCD-datoteke i sprema ih polje stringova
- * @author Boris Ozegovic
- */
-class VcdFileReader
-{
-    /** Ime datoteke koju treba parsirati */
-	private String fileName;
-
-
-    /** Constructor
-     * 
-     * @param fileName VCD file
-     */
-	VcdFileReader (String fileName)
-	{
-		this.fileName = fileName;
-	}
-
-
-	/** 
-     * Metoda koja cita VCD-datoteku
-     * 
-     * @return Polje stringova; string predstavlja pojedinu liniju datoteke
-     */
-	public String[] toArrayString ()
-	{
-		String string;
-		List<String> list = new ArrayList<String>();
-
-		try
-		{
-			BufferedReader in = new BufferedReader(new FileReader (fileName));
-			while ((string = in.readLine()) != null) 
-            {
-				list.add(string);
-            }
-            in.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			System.out.println ("File open error");
-		}
-		catch (IOException e)
-		{
-			System.out.println ("File input/output error");
-		}
-		return list.toArray(new String[list.size()]);
-	}
-}
-
 
 /**
  * Klasa parsira VCD-datoteku koju generira GHDL (GHDL je GNU VHDL simulator)
@@ -79,6 +23,7 @@ class VcdFileReader
  * ASCII vrijednosti signala mora biti praznina.
  *
  * @author Boris Ozegovic
+ * @author Miro Bezjak
  */
 public class VcdParser
 {
@@ -126,13 +71,10 @@ public class VcdParser
 
     /** 
      * Constructor
-     * 
-     * @param fileName ime datoteke
      */
-	public VcdParser (String fileName)
+	public VcdParser (String[] lines)
 	{
-		VcdFileReader reader = new VcdFileReader(fileName);
-		vcdLines = reader.toArrayString();
+		vcdLines = lines;
 	}
     
 

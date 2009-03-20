@@ -40,6 +40,11 @@ public final class Hierarchy implements Serializable {
         return project;
     }
 
+    public HierarchyNode getNode(File file) {
+        Validate.notNull(file);
+        return nodes.get(file);
+    }
+
     public Collection<HierarchyNode> getAllNodes() {
         return nodes.values();
     }

@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import org.apache.commons.lang.UnhandledException;
 
-public abstract class IOUtils {
+public abstract class IOUtil {
 
     public static final String DEFAULT_ENCODING = "UTF-8";
 

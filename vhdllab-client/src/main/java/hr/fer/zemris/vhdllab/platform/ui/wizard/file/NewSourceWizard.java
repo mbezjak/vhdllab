@@ -5,7 +5,7 @@ import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
 import hr.fer.zemris.vhdllab.service.ci.PortType;
-import hr.fer.zemris.vhdllab.util.BeanUtils;
+import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
     private CircuitInterfaceWizardPage circuitInterfacePage;
 
     public NewSourceWizard() {
-        super(BeanUtils.getBeanName(NewSourceWizard.class));
+        super(BeanUtil.getBeanName(NewSourceWizard.class));
     }
 
     @Override

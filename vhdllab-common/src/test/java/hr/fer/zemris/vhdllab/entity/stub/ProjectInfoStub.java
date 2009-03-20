@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.entity.stub;
 
 import hr.fer.zemris.vhdllab.entity.ProjectInfo;
 import hr.fer.zemris.vhdllab.entity.ProjectType;
-import hr.fer.zemris.vhdllab.util.BeanUtils;
+import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 public class ProjectInfoStub extends ProjectInfo {
 
@@ -15,7 +15,7 @@ public class ProjectInfoStub extends ProjectInfo {
     public static final ProjectType TYPE_2 = ProjectType.PREFERENCES;
 
     public ProjectInfoStub() {
-        BeanUtils.copyProperties(this, new NamedEntityStub());
+        BeanUtil.copyProperties(this, new NamedEntityStub());
         setUserId(USER_ID);
         setType(TYPE);
     }

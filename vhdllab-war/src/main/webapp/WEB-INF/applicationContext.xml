@@ -92,18 +92,18 @@
   <bean id="compiler" class="hr.fer.zemris.vhdllab.service.ghdl.GhdlCompiler" init-method="configure">
     <property name="properties">
       <props>
-        <prop key="compiler.executable">/usr/bin/ghdl</prop>
+        <prop key="executable">/usr/bin/ghdl</prop>
         <prop key="compiler.parameters">-a</prop>
-        <prop key="compiler.tmpDir">/home/lord/tmp/vhdllab/compilations</prop>
+        <prop key="tmpDir">/home/lord/tmp/vhdllab/compilations</prop>
       </props>
     </property>
   </bean>
   <bean id="simulator" class="hr.fer.zemris.vhdllab.service.ghdl.GhdlSimulator" init-method="configure">
     <property name="properties">
       <props>
-        <prop key="simulator.executable">/usr/bin/ghdl</prop>
+        <prop key="executable">/usr/bin/ghdl</prop>
         <prop key="simulator.parameters">--elab-run</prop>
-        <prop key="simulator.tmpDir">/home/lord/tmp/vhdllab/simulations</prop>
+        <prop key="tmpDir">/home/lord/tmp/vhdllab/simulations</prop>
         <prop key="compiler.parameters">-a</prop>
       </props>
     </property>
