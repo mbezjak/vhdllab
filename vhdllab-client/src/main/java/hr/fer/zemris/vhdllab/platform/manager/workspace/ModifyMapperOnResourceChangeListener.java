@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
-import hr.fer.zemris.vhdllab.api.workspace.FileReport;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileListener;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectListener;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,12 +16,12 @@ public class ModifyMapperOnResourceChangeListener implements ProjectListener,
     private DefaultIdentifierToInfoObjectMapper mapper;
 
     @Override
-    public void projectCreated(ProjectInfo project) {
+    public void projectCreated(Project project) {
         mapper.addProject(project);
     }
 
     @Override
-    public void projectDeleted(ProjectInfo project) {
+    public void projectDeleted(Project project) {
         mapper.removeProject(project);
     }
 

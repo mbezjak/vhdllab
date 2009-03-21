@@ -1,16 +1,16 @@
 package hr.fer.zemris.vhdllab.platform.manager.file;
 
-import hr.fer.zemris.vhdllab.api.workspace.FileReport;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.service.FileService;
+import hr.fer.zemris.vhdllab.service.WorkspaceService;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 import javax.annotation.Resource;
 
@@ -27,7 +27,7 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
     private static final String FILE_DELETED_MESSAGE = "notification.file.deleted";
 
     @Autowired
-    private FileService service;
+    private WorkspaceService service;
     @Autowired
     private WorkspaceManager workspaceManager;
     @Autowired
@@ -42,7 +42,7 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
     }
 
     @Override
-    public void create(FileInfo file) throws FileAlreadyExistsException {
+    public void create(File file) throws FileAlreadyExistsException {
         checkIfNull(file);
         if (workspaceManager.exist(file)) {
             throw new FileAlreadyExistsException(file.toString());
@@ -50,27 +50,27 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
         FileReport report = service.save(file);
         fireFileCreated(report);
         openEditor(report.getFile());
-        ProjectInfo project = mapper
+        Project project = mapper
                 .getProject(report.getFile().getProjectId());
         log(report, project, FILE_CREATED_MESSAGE);
     }
 
     @Override
-    public void save(FileInfo file) {
+    public void save(File file) {
         checkIfNull(file);
         FileReport report = service.save(file);
         fireFileSaved(report);
-        ProjectInfo project = mapper
+        Project project = mapper
                 .getProject(report.getFile().getProjectId());
         log(report, project, FILE_SAVED_MESSAGE);
     }
 
     @Override
-    public void delete(FileInfo file) {
+    public void delete(File file) {
         checkIfNull(file);
         if (!file.getType().equals(FileType.PREDEFINED)) {
             closeEditor(file);
-            ProjectInfo project = mapper.getProject(file.getProjectId());
+            Project project = mapper.getProject(file.getProjectId());
             FileReport report = service.delete(file);
             fireFileDeleted(report);
             log(report, project, FILE_DELETED_MESSAGE);
@@ -95,23 +95,23 @@ public class DefaultFileManager extends AbstractEventPublisher<FileListener>
         }
     }
 
-    private void openEditor(FileInfo file) {
+    private void openEditor(File file) {
         editorManagerFactory.get(file).open();
     }
 
-    private void closeEditor(FileInfo file) {
+    private void closeEditor(File file) {
         EditorManager em = editorManagerFactory.get(file);
         if (em.isOpened()) {
             em.close(false);
         }
     }
 
-    private void log(FileReport report, ProjectInfo project, String code) {
+    private void log(FileReport report, Project project, String code) {
         logger.info(localizationSource.getMessage(code, new Object[] {
                 report.getFile().getName(), project.getName() }));
     }
 
-    private void checkIfNull(FileInfo file) {
+    private void checkIfNull(File file) {
         Validate.notNull(file, "File can't be null");
     }
 

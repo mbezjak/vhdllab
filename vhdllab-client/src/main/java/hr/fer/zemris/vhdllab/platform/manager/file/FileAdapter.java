@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.manager.file;
 
-import hr.fer.zemris.vhdllab.api.workspace.FileReport;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 public abstract class FileAdapter implements FileListener {
 

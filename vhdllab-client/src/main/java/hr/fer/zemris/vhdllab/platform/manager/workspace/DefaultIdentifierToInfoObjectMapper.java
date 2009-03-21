@@ -1,14 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
-import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.LibraryFileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
-import hr.fer.zemris.vhdllab.service.LibraryFileService;
+import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,46 +24,46 @@ public class DefaultIdentifierToInfoObjectMapper implements
     @Autowired
     private LibraryFileService predefinedService;
 
-    private Map<Integer, ProjectInfo> projectIds;
-    private Map<ProjectIdentifier, ProjectInfo> projectIdentifiers;
-    private Map<FileIdentifier, FileInfo> fileIdentifiers;
+    private Map<Integer, Project> projectIds;
+    private Map<ProjectIdentifier, Project> projectIdentifiers;
+    private Map<FileIdentifier, File> fileIdentifiers;
 
-    void addProject(ProjectInfo project) {
+    void addProject(Project project) {
         ProjectIdentifier identifier = asIdentifier(project);
         getProjectIds().put(project.getId(), project);
         getProjectIdentifiers().put(identifier, project);
     }
 
-    void addFile(FileInfo file) {
-        ProjectInfo project = getProjectIds().get(file.getProjectId());
+    void addFile(File file) {
+        Project project = getProjectIds().get(file.getProjectId());
         FileIdentifier identifier = asIdentifier(project, file);
         getFileIdentifiers().put(identifier, file);
     }
 
-    void removeProject(ProjectInfo project) {
+    void removeProject(Project project) {
         getProjectIds().remove(project.getId());
         getProjectIdentifiers().remove(asIdentifier(project));
     }
 
-    void removeFile(FileInfo file) {
-        ProjectInfo project = getProjectIds().get(file.getProjectId());
+    void removeFile(File file) {
+        Project project = getProjectIds().get(file.getProjectId());
         getFileIdentifiers().remove(asIdentifier(project, file));
     }
 
     @Override
-    public ProjectInfo getProject(ProjectIdentifier project) {
+    public Project getProject(ProjectIdentifier project) {
         Validate.notNull(project, "Project identifier can't be null");
         return getProjectIdentifiers().get(project);
     }
 
     @Override
-    public ProjectInfo getProject(Integer projectId) {
+    public Project getProject(Integer projectId) {
         Validate.notNull(projectId, "Project id can't be null");
         return getProjectIds().get(projectId);
     }
 
     @Override
-    public FileInfo getFile(FileIdentifier file) {
+    public File getFile(FileIdentifier file) {
         Validate.notNull(file, "File identifier can't be null");
         if (getFileIdentifiers().containsKey(file)) {
             return getFileIdentifiers().get(file);
@@ -77,38 +75,38 @@ public class DefaultIdentifierToInfoObjectMapper implements
         }
         Integer projectId = getProject(
                 new ProjectIdentifier(file.getProjectName())).getId();
-        return new FileInfo(FileType.PREDEFINED, file.getFileName(), predefined
+        return new File(FileType.PREDEFINED, file.getFileName(), predefined
                 .getData(), projectId);
     }
 
     @Override
-    public ProjectIdentifier asIdentifier(ProjectInfo project) {
+    public ProjectIdentifier asIdentifier(Project project) {
         Validate.notNull(project, "Project can't be null");
         return new ProjectIdentifier(project.getName());
     }
 
     @Override
-    public FileIdentifier asIdentifier(ProjectInfo project, FileInfo file) {
+    public FileIdentifier asIdentifier(Project project, File file) {
         Validate.notNull(project, "Project can't be null");
         Validate.notNull(file, "File can't be null");
         return new FileIdentifier(project.getName(), file.getName());
     }
 
-    private Map<Integer, ProjectInfo> getProjectIds() {
+    private Map<Integer, Project> getProjectIds() {
         if (projectIds == null) {
             initializeIdentifiers();
         }
         return projectIds;
     }
 
-    private Map<ProjectIdentifier, ProjectInfo> getProjectIdentifiers() {
+    private Map<ProjectIdentifier, Project> getProjectIdentifiers() {
         if (projectIdentifiers == null) {
             initializeIdentifiers();
         }
         return projectIdentifiers;
     }
 
-    private Map<FileIdentifier, FileInfo> getFileIdentifiers() {
+    private Map<FileIdentifier, File> getFileIdentifiers() {
         if (fileIdentifiers == null) {
             initializeIdentifiers();
         }
@@ -118,14 +116,14 @@ public class DefaultIdentifierToInfoObjectMapper implements
     private void initializeIdentifiers() {
         Workspace workspace = workspaceManager.getWorkspace();
         int projectCount = workspace.getProjectCount();
-        projectIds = new HashMap<Integer, ProjectInfo>(projectCount);
-        projectIdentifiers = new HashMap<ProjectIdentifier, ProjectInfo>(
+        projectIds = new HashMap<Integer, Project>(projectCount);
+        projectIdentifiers = new HashMap<ProjectIdentifier, Project>(
                 projectCount);
-        fileIdentifiers = new HashMap<FileIdentifier, FileInfo>(projectCount);
+        fileIdentifiers = new HashMap<FileIdentifier, File>(projectCount);
         for (ProjectMetadata metadata : workspace) {
-            ProjectInfo project = metadata.getProject();
+            Project project = metadata.getProject();
             addProject(project);
-            for (FileInfo file : metadata.getFiles()) {
+            for (File file : metadata.getFiles()) {
                 addFile(file);
             }
         }

@@ -1,23 +1,23 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
-import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 
 import java.util.List;
 
 public interface WorkspaceManager {
 
-    List<ProjectInfo> getProjects();
+    List<Project> getProjects();
 
-    List<FileInfo> getFilesForProject(ProjectInfo project);
+    List<File> getFilesForProject(Project project);
 
-    Hierarchy getHierarchy(ProjectInfo project);
+    Hierarchy getHierarchy(Project project);
 
-    boolean exist(ProjectInfo project);
+    boolean exist(Project project);
 
-    boolean exist(FileInfo file);
+    boolean exist(File file);
 
     Workspace getWorkspace();
 

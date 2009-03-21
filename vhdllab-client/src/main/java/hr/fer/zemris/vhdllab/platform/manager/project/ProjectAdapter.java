@@ -1,15 +1,15 @@
 package hr.fer.zemris.vhdllab.platform.manager.project;
 
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
 
 public abstract class ProjectAdapter implements ProjectListener {
 
     @Override
-    public void projectCreated(ProjectInfo project) {
+    public void projectCreated(Project project) {
     }
 
     @Override
-    public void projectDeleted(ProjectInfo project) {
+    public void projectDeleted(Project project) {
     }
 
 }
