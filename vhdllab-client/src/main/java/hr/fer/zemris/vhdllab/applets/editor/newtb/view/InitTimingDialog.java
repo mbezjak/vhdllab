@@ -1,10 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.editor.newtb.view;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.help.HelpManager;
-import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -282,9 +280,8 @@ public class InitTimingDialog extends JDialog {
 			List<String> signals = new ArrayList<String>();
 			
 			for (Port port : ports){
-				if (port.getDirection().equals(PortDirection.IN)
-						&& port.getType().getTypeName().equals(PortType.STD_LOGIC))
-					signals.add(port.getName());
+				if (port.isIN() && port.isScalar())
+                    signals.add(port.getName());
 			}
 			
 			clockSignal = new JComboBox(signals.toArray());

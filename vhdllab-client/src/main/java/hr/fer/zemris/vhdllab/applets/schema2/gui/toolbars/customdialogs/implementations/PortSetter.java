@@ -1,13 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.implementations;
 
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.parameters.generic.ParamPort;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.customdialogs.ParameterSetterPanel;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -65,37 +61,32 @@ public class PortSetter extends ParameterSetterPanel<ParamPort> {
 	public void setToValue(ParamPort value) {
 		Port p = value.getPort();
 		nameField.setText(p.getName());
-		if (p.getDirection().isIN()) inRadio.setSelected(true);
+		if (p.isIN()) inRadio.setSelected(true);
 		else outRadio.setSelected(true);
-		Type tp = p.getType();
-		if (tp.getRange().isScalar()) {
+		if (p.isScalar()) {
 			std_logicRadio.setSelected(true);
 			selectStdLogic();
 		} else {
 			std_logic_vectorRadio.setSelected(true);
 			selectStdLogicVector();
-			if (tp.getRange().getDirection().isTO()) vectorDirectionCombo.setSelectedIndex(1);
+			if (p.isTO()) vectorDirectionCombo.setSelectedIndex(1);
 			else vectorDirectionCombo.setSelectedIndex(0);
-			rangeFromField.setText(String.valueOf(tp.getRange().getFrom()));
-			rangeToField.setText(String.valueOf(tp.getRange().getTo()));
+			rangeFromField.setText(String.valueOf(p.getFrom()));
+			rangeToField.setText(String.valueOf(p.getTo()));
 		}
 	}
 
 	@Override
 	public ParamPort getNewValue() {
-		Type tp;
+	    PortDirection dir = (inRadio.isSelected()) ? (PortDirection.IN) : (PortDirection.OUT);
+        Port p = new Port(nameField.getText(), dir);
 		if (std_logic_vectorRadio.isSelected()) {
 			int[] range = new int[] {Integer.parseInt(rangeFromField.getText()),
 					Integer.parseInt(rangeToField.getText())};
-			VectorDirection vecdir = null;
-			if (vectorDirectionCombo.getSelectedIndex() == 0) vecdir = VectorDirection.DOWNTO;
-			else vecdir = VectorDirection.TO;
-			tp = new Type(PortType.STD_LOGIC_VECTOR, new Range(range[0], vecdir, range[1]));
-		} else {
-			tp = new Type(PortType.STD_LOGIC, Range.SCALAR);
+            p.setFrom(range[0]);
+            p.setTo(range[1]);
 		}
-		PortDirection dir = (inRadio.isSelected()) ? (PortDirection.IN) : (PortDirection.OUT);
-		return new ParamPort(new Port(nameField.getText(), dir, tp));
+		return new ParamPort(p);
 	}
 	
 	@Override
