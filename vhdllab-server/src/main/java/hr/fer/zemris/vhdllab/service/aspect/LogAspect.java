@@ -16,10 +16,9 @@ public class LogAspect {
 
     private static final Logger LOG = Logger.getLogger(LogAspect.class);
 
-    @Pointcut("execution(* hr.fer.zemris.vhdllab.service.FileService.*(..)) || "
-            + "execution(* hr.fer.zemris.vhdllab.service.ProjectService.*(..)) ||"
-            + "execution(* hr.fer.zemris.vhdllab.service.ClientLogService.*(..)) ||"
-            + "execution(* hr.fer.zemris.vhdllab.service.Simulator.*(..)) ||"
+    @Pointcut("execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.*(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.ClientLogService.*(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.Simulator.*(..)) || "
             + "execution(* hr.fer.zemris.vhdllab.service.MetadataExtractionService.*(..))")
     public void services() {
     }

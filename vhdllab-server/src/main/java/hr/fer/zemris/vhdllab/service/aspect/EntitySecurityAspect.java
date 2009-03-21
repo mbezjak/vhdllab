@@ -20,28 +20,26 @@ public class EntitySecurityAspect extends ServiceSupport {
     /**
      * Logger for this class
      */
-    private static final Logger LOG = Logger.getLogger(EntitySecurityAspect.class);
+    private static final Logger LOG = Logger
+            .getLogger(EntitySecurityAspect.class);
 
-    @Before(argNames = "id",
-            value = "execution(* hr.fer.zemris.vhdllab.service.ProjectService.delete(..)) || "
-            + "execution(* hr.fer.zemris.vhdllab.service.ProjectService.extractHierarchy(..)) || "
-            + "execution(* hr.fer.zemris.vhdllab.service.FileService.findByName(..))")
+    @Before("(execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.deleteProject(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.extractHierarchy(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.findByName(..))) && args(id,..)")
     public void projectSecurity(JoinPoint jp, Integer id) throws Throwable {
         Project project = loadProject(id);
         checkSecurity(jp, project.getUserId(), id);
     }
 
-    @Before(argNames = "id",
-            value = "execution(* hr.fer.zemris.vhdllab.service.FileService.delete(..)) || "
-            + "execution(* hr.fer.zemris.vhdllab.service.Simulator.*(..)) ||"
-            + "execution(* hr.fer.zemris.vhdllab.service.MetadataExtractionService.*(..))")
+    @Before("(execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.deleteFile(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.Simulator.*(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.MetadataExtractionService.*(..))) && args(id,..)")
     public void fileSecurity(JoinPoint jp, Integer id) throws Throwable {
         File file = loadFile(id);
         checkSecurity(jp, file.getProject().getUserId(), id);
     }
-    
-    @Before(argNames = "file",
-            value = "execution(* hr.fer.zemris.vhdllab.service.FileService.save(..))")
+
+    @Before("execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.save(..)) && args(file,..)")
     public void saveFileSecurity(JoinPoint jp, File file) throws Throwable {
         Project project = loadProject(file.getProject().getId());
         checkSecurity(jp, project.getUserId(), project.getId());
