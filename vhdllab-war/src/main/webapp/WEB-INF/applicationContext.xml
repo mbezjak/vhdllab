@@ -66,91 +66,33 @@
   <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
     autowire="autodetect" />
 
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.LibraryDaoImpl"
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
     autowire="autodetect" />
 
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.LibraryFileDaoImpl"
-    autowire="autodetect" />
-
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.UserFileDaoImpl"
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.PredefinedFilesDaoImpl"
     autowire="autodetect" />
 
   <!-- Service classes -->
-  <bean id="fileService" class="hr.fer.zemris.vhdllab.service.impl.FileServiceImpl" />
-  <bean id="projectService" class="hr.fer.zemris.vhdllab.service.impl.ProjectServiceImpl" />
-  <bean id="libraryFileService" class="hr.fer.zemris.vhdllab.service.impl.LibraryFileServiceImpl" />
-  <bean id="userFileService" class="hr.fer.zemris.vhdllab.service.impl.UserFileServiceImpl" />
   <bean id="workspaceService" class="hr.fer.zemris.vhdllab.service.impl.WorkspaceServiceImpl" />
-  <bean id="hierarchyExtractionService" class="hr.fer.zemris.vhdllab.service.impl.HierarchyExtractionService" />
-  <bean id="circuitInterfaceExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractionService" />
-  <bean id="dependencyExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.DependencyExtractionService" />
-  <bean id="vhdlGenerationService" class="hr.fer.zemris.vhdllab.service.filetype.VhdlGenerationService" />
-  
-  <!-- Aspects -->
-  <bean class="hr.fer.zemris.vhdllab.service.aspect.LogAspect" />
-
-  <bean id="compiler" class="hr.fer.zemris.vhdllab.service.ghdl.GhdlCompiler" init-method="configure">
+  <bean id="clientLogService" class="hr.fer.zemris.vhdllab.service.impl.ClientLogServiceImpl" />
+  <bean id="metadataExtractionService" class="hr.fer.zemris.vhdllab.service.impl.MetadataExtractionServiceImpl" />
+  <bean id="simulator" class="hr.fer.zemris.vhdllab.service.impl.GhdlSimulator" init-method="configure">
     <property name="properties">
       <props>
         <prop key="executable">/usr/bin/ghdl</prop>
         <prop key="compiler.parameters">-a</prop>
-        <prop key="tmpDir">/home/lord/tmp/vhdllab/compilations</prop>
-      </props>
-    </property>
-  </bean>
-  <bean id="simulator" class="hr.fer.zemris.vhdllab.service.ghdl.GhdlSimulator" init-method="configure">
-    <property name="properties">
-      <props>
-        <prop key="executable">/usr/bin/ghdl</prop>
         <prop key="simulator.parameters">--elab-run</prop>
         <prop key="tmpDir">/home/lord/tmp/vhdllab/simulations</prop>
-        <prop key="compiler.parameters">-a</prop>
       </props>
     </property>
   </bean>
+
   
+  <!-- Aspects -->
+  <bean class="hr.fer.zemris.vhdllab.service.aspect.EntitySecurityAspect" />
+  <bean class="hr.fer.zemris.vhdllab.service.aspect.LogAspect" />
+
   
-  
-  
-  <bean id="httpFileService"
-        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service">
-      <ref bean="fileService"/>
-    </property>
-    <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.FileService</value>
-    </property>
-  </bean>
-  
-  <bean id="httpProjectService"
-        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service">
-      <ref bean="projectService"/>
-    </property>
-    <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.ProjectService</value>
-    </property>
-  </bean>
-  
-  <bean id="httpLibraryFileService"
-        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service">
-      <ref bean="libraryFileService"/>
-    </property>
-    <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.LibraryFileService</value>
-    </property>
-  </bean>
-  
-  <bean id="httpUserFileService"
-        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service">
-      <ref bean="userFileService"/>
-    </property>
-    <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.UserFileService</value>
-    </property>
-  </bean>
   
   <bean id="httpWorkspaceService"
         class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
@@ -162,53 +104,23 @@
     </property>
   </bean>
   
-  <bean id="httpHierarchyExtracionService"
+  <bean id="httpClientLogService"
         class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
     <property name="service">
-      <ref bean="hierarchyExtractionService"/>
+      <ref bean="clientLogService"/>
     </property>
     <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.HierarchyExtractor</value>
+      <value>hr.fer.zemris.vhdllab.service.ClientLogService</value>
     </property>
   </bean>
   
-  <bean id="httpCircuitInterfaceExtractionService"
+  <bean id="httpMetadataExtractionService"
         class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
     <property name="service">
-      <ref bean="circuitInterfaceExtractionService"/>
+      <ref bean="metadataExtractionService"/>
     </property>
     <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor</value>
-    </property>
-  </bean>
-  
-  <bean id="httpDependencyExtractionService"
-        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service">
-      <ref bean="dependencyExtractionService"/>
-    </property>
-    <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.filetype.DependencyExtractor</value>
-    </property>
-  </bean>
-  
-  <bean id="httpVhdlGenerationService"
-        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service">
-      <ref bean="vhdlGenerationService"/>
-    </property>
-    <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator</value>
-    </property>
-  </bean>
-  
-  <bean id="httpCompiler"
-        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service">
-      <ref bean="compiler"/>
-    </property>
-    <property name="serviceInterface">
-      <value>hr.fer.zemris.vhdllab.service.Compiler</value>
+      <value>hr.fer.zemris.vhdllab.service.MetadataExtractionService</value>
     </property>
   </bean>
   
@@ -225,16 +137,9 @@
   <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
-        <prop key="/file.service">httpFileService</prop>
-        <prop key="/project.service">httpProjectService</prop>
-        <prop key="/libraryfile.service">httpLibraryFileService</prop>
-        <prop key="/userfile.service">httpUserFileService</prop>
         <prop key="/workspace.service">httpWorkspaceService</prop>
-        <prop key="/hierarchyextraction.service">httpHierarchyExtracionService</prop>
-        <prop key="/circuitinterfaceextraction.service">httpCircuitInterfaceExtractionService</prop>
-        <prop key="/dependencyextraction.service">httpDependencyExtractionService</prop>
-        <prop key="/vhdlgeneration.service">httpVhdlGenerationService</prop>
-        <prop key="/compiler.service">httpCompiler</prop>
+        <prop key="/clientlog.service">httpClientLogService</prop>
+        <prop key="/metadataextraction.service">httpMetadataExtractionService</prop>
         <prop key="/simulator.service">httpSimulator</prop>
       </props>
     </property>
@@ -245,29 +150,10 @@
   
   
   
-  <bean id="sourceDependencyExtractor" class="hr.fer.zemris.vhdllab.service.filetype.source.SourceDependencyExtractor" />
-  <bean id="sourceCircuitInterfaceExtractor" class="hr.fer.zemris.vhdllab.service.filetype.source.SourceCircuitInterfaceExtractor" />
-  <bean id="sourceVhdlGenerator" class="hr.fer.zemris.vhdllab.service.filetype.source.SourceVhdlGenerator" />
-  
-  <bean id="schemaDependencyExtractor" class="hr.fer.zemris.vhdllab.service.filetype.schema.SchemaDependencyExtractor" />
-  <bean id="schemaCircuitInterfaceExtractor" class="hr.fer.zemris.vhdllab.service.filetype.schema.SchemaCircuitInterfaceExtractor" />
-  <bean id="schemaVhdlGenerator" class="hr.fer.zemris.vhdllab.service.filetype.schema.SchemaVhdlGenerator" />
-  
-  <bean id="automatonDependencyExtractor" class="hr.fer.zemris.vhdllab.service.filetype.automaton.AutomatonDependencyExtractor" />
-  <bean id="automatonCircuitInterfaceExtractor" class="hr.fer.zemris.vhdllab.service.filetype.automaton.AutomatonCircuitInterfaceExtractor" />
-  <bean id="automatonVhdlGenerator" class="hr.fer.zemris.vhdllab.service.filetype.automaton.AutomatonVhdlGenerator" />
-  
-  <bean id="testbenchDependencyExtractor" class="hr.fer.zemris.vhdllab.service.filetype.testbench.TestbenchDependencyExtractor" />
-  <bean id="testbenchCircuitInterfaceExtractor" class="hr.fer.zemris.vhdllab.service.filetype.testbench.TestbenchCircuitInterfaceExtractor" />
-  <bean id="testbenchVhdlGenerator" class="hr.fer.zemris.vhdllab.service.filetype.testbench.TestbenchVhdlGenerator" />
-  
-  <bean id="simulationDependencyExtractor" class="hr.fer.zemris.vhdllab.service.filetype.simulation.SimulationDependencyExtractor" />
-  <bean id="simulationCircuitInterfaceExtractor" class="hr.fer.zemris.vhdllab.service.filetype.simulation.SimulationCircuitInterfaceExtractor" />
-  <bean id="simulationVhdlGenerator" class="hr.fer.zemris.vhdllab.service.filetype.simulation.SimulationVhdlGenerator" />
-  
-  <bean id="predefinedDependencyExtractor" class="hr.fer.zemris.vhdllab.service.filetype.predefined.PredefinedDependencyExtractor" />
-  <bean id="predefinedCircuitInterfaceExtractor" class="hr.fer.zemris.vhdllab.service.filetype.predefined.PredefinedCircuitInterfaceExtractor" />
-  <bean id="predefinedVhdlGenerator" class="hr.fer.zemris.vhdllab.service.filetype.predefined.PredefinedVhdlGenerator" />
+  <bean id="sourceMetadataExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractionService" />
+  <bean id="schemaMetadataExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.schema.SchemaMetadataExtractionService" />
+  <bean id="automatonMetadataExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.automaton.AutomatonMetadataExtractionService" />
+  <bean id="testbenchMetadataExtractionService" class="hr.fer.zemris.vhdllab.service.filetype.testbench.TestbenchMetadataExtractionService" />
   
  
   

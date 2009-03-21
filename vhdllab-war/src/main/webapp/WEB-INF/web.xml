@@ -9,9 +9,6 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-  <listener>
-    <listener-class>hr.fer.zemris.vhdllab.service.init.LibraryInitializationListener</listener-class>
-  </listener>
   <!-- Application events listeners end -->
 
   <!-- Application filters start -->

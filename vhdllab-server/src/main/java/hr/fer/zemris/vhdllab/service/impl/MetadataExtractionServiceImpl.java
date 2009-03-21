@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 public class MetadataExtractionServiceImpl extends
-        AbstractMetadataExtractionService implements MetadataExtractionService {
+        AbstractMetadataExtractionService {
 
     private static final ClassValidator<CircuitInterface> CIRCUIT_INTERFACE_VALIDATOR =
                             new ClassValidator<CircuitInterface>(CircuitInterface.class);
