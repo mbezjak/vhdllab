@@ -39,6 +39,13 @@ public class EntitySecurityAspect extends ServiceSupport {
         File file = loadFile(id);
         checkSecurity(jp, file.getProject().getUserId(), id);
     }
+    
+    @Before(argNames = "file",
+            value = "execution(* hr.fer.zemris.vhdllab.service.FileService.save(..))")
+    public void saveFileSecurity(JoinPoint jp, File file) throws Throwable {
+        Project project = loadProject(file.getProject().getId());
+        checkSecurity(jp, project.getUserId(), project.getId());
+    }
 
     private void checkSecurity(JoinPoint jp, String entityUser, Integer id) {
         String loggedInUser = SecurityUtils.getUser();

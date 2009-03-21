@@ -24,7 +24,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public FileReport save(File file) {
-        if (file.getType().equals(FileType.SOURCE)) {
+        if (FileType.SOURCE.equals(file.getType())) {
             CircuitInterface ci = new SourceMetadataExtractionService()
                     .extractCircuitInterface(file);
             if (!ci.getName().equalsIgnoreCase(file.getName().toString())) {
