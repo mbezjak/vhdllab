@@ -128,4 +128,15 @@ public class ProjectServiceImpl implements ProjectService {
                 preferencesProject.getFiles());
     }
 
+    public void savePreferences(List<File> files) {
+        Validate.notNull(files, "Files can't be null");
+        Project project = projectDao.getPreferencesProject(SecurityUtils.getUser());
+        Set<File> allFiles = EntityUtils.cloneFiles(project.getFiles());
+        for (File file : files) {
+            if(!allFiles.contains(file)) {
+                project.addFile(file);
+            }
+        }
+        projectDao.persist(project);
+    }
 }

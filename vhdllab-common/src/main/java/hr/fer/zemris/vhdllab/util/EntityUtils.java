@@ -11,19 +11,19 @@ import java.util.Set;
 public abstract class EntityUtils {
 
     public static Set<File> cloneFiles(Set<File> files) {
-        Set<File> lightweight = new HashSet<File>(files.size());
+        Set<File> clonedFiles = new HashSet<File>(files.size());
         for (File file : files) {
-            lightweight.add(new File(file));
+            clonedFiles.add(new File(file));
         }
-        return lightweight;
+        return clonedFiles;
     }
 
     public static List<Project> cloneProjects(List<Project> projects) {
-        List<Project> lightweight = new ArrayList<Project>(projects.size());
+        List<Project> clonedProjects = new ArrayList<Project>(projects.size());
         for (Project project : projects) {
-            lightweight.add(new Project(project));
+            clonedProjects.add(new Project(project));
         }
-        return lightweight;
+        return clonedProjects;
     }
 
     public static File lightweightClone(File file) {
