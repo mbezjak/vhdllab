@@ -54,65 +54,22 @@
     <property name="httpInvokerRequestExecutor" ref="httpClientRequestExceutor" />
   </bean>
 
-  <bean id="fileService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/file.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.FileService" />
-  </bean>
-
-  <bean id="projectService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/project.service" />
-    <property name="serviceInterface"
-      value="hr.fer.zemris.vhdllab.service.ProjectService" />
-  </bean>
-
-  <bean id="libraryFileService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/libraryfile.service" />
-    <property name="serviceInterface"
-      value="hr.fer.zemris.vhdllab.service.LibraryFileService" />
-  </bean>
-
-  <bean id="userFileService" parent="httpInvokerBeanParent">
-    <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/userfile.service" />
-    <property name="serviceInterface"
-      value="hr.fer.zemris.vhdllab.service.UserFileService" />
-  </bean>
-
   <bean id="workspaceService" parent="httpInvokerBeanParent">
     <property name="serviceUrl"
       value="https://${host}:${port}/vhdllab/remoting/workspace.service" />
-    <property name="serviceInterface"
-      value="hr.fer.zemris.vhdllab.service.WorkspaceService" />
+    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.FileService" />
   </bean>
 
-  <bean id="hierarchyExtractor" parent="httpInvokerBeanParent">
+  <bean id="clientLogService" parent="httpInvokerBeanParent">
     <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/hierarchyextraction.service" />
-    <property name="serviceInterface"
-      value="hr.fer.zemris.vhdllab.service.HierarchyExtractor" />
+      value="https://${host}:${port}/vhdllab/remoting/clientlog.service" />
+    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.ClientLogService" />
   </bean>
 
-  <bean id="circuitInterfaceExtractor" parent="httpInvokerBeanParent">
+  <bean id="metadataExtractionService" parent="httpInvokerBeanParent">
     <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/circuitinterfaceextraction.service" />
-    <property name="serviceInterface"
-      value="hr.fer.zemris.vhdllab.service.filetype.CircuitInterfaceExtractor" />
-  </bean>
-
-  <bean id="vhdlGenerator" parent="httpInvokerBeanParent">
-    <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/vhdlgeneration.service" />
-    <property name="serviceInterface"
-      value="hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator" />
-  </bean>
-
-  <bean id="compiler" parent="httpInvokerBeanParent">
-    <property name="serviceUrl"
-      value="https://${host}:${port}/vhdllab/remoting/compiler.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.Compiler" />
+      value="https://${host}:${port}/vhdllab/remoting/metadataextraction.service" />
+    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.MetadataExtractionService" />
   </bean>
 
   <bean id="simulator" parent="httpInvokerBeanParent">
