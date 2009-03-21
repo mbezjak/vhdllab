@@ -6,10 +6,9 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.Testbench;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.TestbenchParser;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
-import hr.fer.zemris.vhdllab.service.FileService;
 import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
-import hr.fer.zemris.vhdllab.service.ProjectService;
 import hr.fer.zemris.vhdllab.service.Simulator;
+import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.exception.CompilationException;
 import hr.fer.zemris.vhdllab.service.exception.SimulationException;
 import hr.fer.zemris.vhdllab.service.exception.SimulatorTimeoutException;
@@ -81,9 +80,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     }
 
     @Autowired
-    private ProjectService projectService;
-    @Autowired
-    private FileService fileService;
+    private WorkspaceService workspaceService;
     @Resource(name = "metadataExtractionService")
     private MetadataExtractionService metadataExtractionService;
 
@@ -190,7 +187,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     }
 
     private List<String> orderFileNames(File file) {
-        Hierarchy hierarchy = projectService.extractHierarchy(file.getProject()
+        Hierarchy hierarchy = workspaceService.extractHierarchy(file.getProject()
                 .getId());
         List<File> ordered = new ArrayList<File>();
         orderFileNames(ordered, hierarchy, hierarchy.getNode(file));
@@ -227,7 +224,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     private void copyFiles(List<String> dependencies, Integer projectId,
             java.io.File tempDirectory) throws IOException {
         for (String dep : dependencies) {
-            File depFile = fileService.findByName(projectId, dep);
+            File depFile = workspaceService.findByName(projectId, dep);
             String data = depFile.getData();
             if (!depFile.getType().equals(FileType.PREDEFINED)) {
                 data = metadataExtractionService.generateVhdl(depFile.getId())

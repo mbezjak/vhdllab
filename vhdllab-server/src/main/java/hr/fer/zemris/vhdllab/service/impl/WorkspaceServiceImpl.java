@@ -1,16 +1,20 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
+import hr.fer.zemris.vhdllab.dao.FileDao;
 import hr.fer.zemris.vhdllab.dao.PredefinedFilesDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.service.FileService;
 import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
-import hr.fer.zemris.vhdllab.service.ProjectService;
+import hr.fer.zemris.vhdllab.service.WorkspaceService;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
+import hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 import hr.fer.zemris.vhdllab.util.EntityUtils;
 
@@ -26,21 +30,63 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ProjectServiceImpl implements ProjectService {
+public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Autowired
-    private FileService fileService;
-    @Autowired
     private ProjectDao projectDao;
+    @Autowired
+    private FileDao fileDao;
     @Autowired
     private PredefinedFilesDao predefinedFilesDao;
     @Resource(name = "metadataExtractionService")
     private MetadataExtractionService extractionService;
 
     @Override
-    public Project persist(Project project) {
-        Validate.notNull(project, "Project can't be null");
-        Validate.isTrue(!project.isNew(), "Project must be new");
+    public FileReport save(File file) {
+        if (FileType.SOURCE.equals(file.getType())) {
+            CircuitInterface ci = new SourceMetadataExtractionService()
+                    .extractCircuitInterface(file);
+            if (!ci.getName().equalsIgnoreCase(file.getName().toString())) {
+                throw new IllegalStateException("Resource " + file.getName()
+                        + " must have only one entity with the same name.");
+            }
+        }
+
+        File saved;
+        if (file.isNew()) {
+            fileDao.persist(file);
+            saved = file;
+        } else {
+            saved = fileDao.merge(file);
+        }
+        return getReport(saved);
+    }
+
+    @Override
+    public FileReport deleteFile(Integer fileId) {
+        File file = fileDao.load(fileId);
+        fileDao.delete(file);
+        return getReport(file);
+    }
+
+    @Override
+    public File findByName(Integer projectId, String name) {
+        File file = fileDao.findByName(projectId, name);
+        if (file == null) {
+            file = predefinedFilesDao.findByName(name);
+        }
+        return new File(file);
+    }
+
+    private FileReport getReport(File file) {
+        Hierarchy hierarchy = extractHierarchy(file.getProject().getId());
+        return new FileReport(file, hierarchy);
+    }
+
+    @Override
+    public Project persist(String name) {
+        Validate.notNull(name, "Project can't be null");
+        Project project = new Project(SecurityUtils.getUser(), name);
         projectDao.persist(project);
         Project persisted = new Project(project);
         persisted.setFiles(null);
@@ -48,7 +94,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void delete(Integer projectId) {
+    public void deleteProject(Integer projectId) {
         Project project = projectDao.load(projectId);
         projectDao.delete(project);
     }
@@ -93,7 +139,7 @@ public class ProjectServiceImpl implements ProjectService {
             dependencies = Collections.emptySet();
         }
         for (String name : dependencies) {
-            File dep = fileService.findByName(file.getProject().getId(), name);
+            File dep = findByName(file.getProject().getId(), name);
             if (dep == null)
                 continue;
             HierarchyNode parent = resolvedNodes.get(file);
@@ -130,10 +176,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     public void savePreferences(List<File> files) {
         Validate.notNull(files, "Files can't be null");
-        Project project = projectDao.getPreferencesProject(SecurityUtils.getUser());
+        Project project = projectDao.getPreferencesProject(SecurityUtils
+                .getUser());
         Set<File> allFiles = EntityUtils.cloneFiles(project.getFiles());
         for (File file : files) {
-            if(!allFiles.contains(file)) {
+            if (!allFiles.contains(file)) {
                 project.addFile(file);
             }
         }

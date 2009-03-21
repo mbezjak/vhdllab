@@ -3,15 +3,22 @@ package hr.fer.zemris.vhdllab.service;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
 import java.util.List;
 
-public interface ProjectService {
+public interface WorkspaceService {
 
-    Project persist(Project project);
+    FileReport save(File file);
 
-    void delete(Integer projectId);
+    FileReport deleteFile(Integer fileId);
+
+    File findByName(Integer projectId, String name);
+
+    Project persist(String name);
+
+    void deleteProject(Integer projectId);
 
     Hierarchy extractHierarchy(Integer projectId);
 
