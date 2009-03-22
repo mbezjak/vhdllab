@@ -1,16 +1,13 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
 import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileListener;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectListener;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ModifyMapperOnResourceChangeListener implements ProjectListener,
-        FileListener {
+public class ModifyMapperOnResourceChangeListener implements WorkspaceListener {
 
     @Autowired
     private DefaultIdentifierToInfoObjectMapper mapper;

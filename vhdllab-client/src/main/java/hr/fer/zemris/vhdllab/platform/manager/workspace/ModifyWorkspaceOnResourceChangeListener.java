@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
 import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileListener;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectListener;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.MutableProjectMetadata;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.MutableWorkspace;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ModifyWorkspaceOnResourceChangeListener implements
-        ProjectListener, FileListener {
+        WorkspaceListener {
 
     @Autowired
     private WorkspaceManager workspaceManager;
@@ -31,8 +29,7 @@ public class ModifyWorkspaceOnResourceChangeListener implements
 
     @Override
     public void fileCreated(FileReport report) {
-        Project project = mapper
-                .getProject(report.getFile().getProjectId());
+        Project project = mapper.getProject(report.getFile().getProjectId());
         MutableProjectMetadata projectMetadata = (MutableProjectMetadata) getWorkspace()
                 .getProjectMetadata(project);
         projectMetadata.addFile(report.getFile());
@@ -41,8 +38,7 @@ public class ModifyWorkspaceOnResourceChangeListener implements
 
     @Override
     public void fileSaved(FileReport report) {
-        Project project = mapper
-                .getProject(report.getFile().getProjectId());
+        Project project = mapper.getProject(report.getFile().getProjectId());
         MutableProjectMetadata projectMetadata = (MutableProjectMetadata) getWorkspace()
                 .getProjectMetadata(project);
         projectMetadata.addFile(report.getFile());
@@ -51,8 +47,7 @@ public class ModifyWorkspaceOnResourceChangeListener implements
 
     @Override
     public void fileDeleted(FileReport report) {
-        Project project = mapper
-                .getProject(report.getFile().getProjectId());
+        Project project = mapper.getProject(report.getFile().getProjectId());
         MutableProjectMetadata projectMetadata = (MutableProjectMetadata) getWorkspace()
                 .getProjectMetadata(project);
         projectMetadata.removeFile(report.getFile());

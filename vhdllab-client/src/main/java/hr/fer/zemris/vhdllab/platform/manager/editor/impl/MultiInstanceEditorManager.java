@@ -11,8 +11,8 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 
 import javax.annotation.Resource;
 
@@ -46,7 +46,7 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
     @Resource(name = "singleSaveDialogManager")
     private DialogManager dialogManager;
     @Autowired
-    private FileManager fileManager;
+    private WorkspaceManager workspaceManager;
 
     public MultiInstanceEditorManager(EditorIdentifier identifier) {
         Validate.notNull(identifier, "Editor identifier can't be null");
@@ -165,7 +165,7 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
                     return false;
                 }
             }
-            fileManager.save(file);
+            workspaceManager.save(file);
             editor.setModified(false);
         }
         return true;

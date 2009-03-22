@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.manager.file;
+package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
 public class FileAlreadyExistsException extends RuntimeException {
 

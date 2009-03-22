@@ -31,7 +31,8 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.Tabbed
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileListener;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceAdapter;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceListener;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
@@ -91,7 +92,7 @@ public class SchemaMainPanel extends AbstractEditor {
     private TabbedCTAddToolbar componentToAddToolbar;
 
     /* IEditor private fields */
-    private FileListener appletListener;
+    private WorkspaceListener appletListener;
 
     /**
      * Right panel divider width
@@ -465,7 +466,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
         initPrototypes();
 
-        appletListener = new FileListener() {
+        appletListener = new WorkspaceAdapter() {
             
             @Override
             public void fileSaved(FileReport report) {

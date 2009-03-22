@@ -8,8 +8,7 @@ import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAdapter;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
@@ -349,13 +348,13 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 tree.requestFocusInWindow();
             }
         });
-        container.getProjectManager().addListener(new ProjectAdapter() {
+        container.getProjectManager().addListener(new WorkspaceAdapter() {
             @Override
             public void projectCreated(Project project) {
                 addProject(project.getName());
             }
         });
-        container.getFileManager().addListener(new FileAdapter() {
+        container.getFileManager().addListener(new WorkspaceAdapter() {
             @Override
             public void fileCreated(FileReport report) {
                 addFile(report.getHierarchy().getProjectName(), report

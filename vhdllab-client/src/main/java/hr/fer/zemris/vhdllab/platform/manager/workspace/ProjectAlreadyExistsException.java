@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.manager.project;
+package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
 public class ProjectAlreadyExistsException extends RuntimeException {
 

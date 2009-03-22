@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class NewSourceWizard extends AbstractResourceCreatingWizard {
 
     @Autowired
-    private FileManager fileManager;
+    private WorkspaceManager workspaceManager;
     private CircuitInterfaceWizardPage circuitInterfacePage;
 
     public NewSourceWizard() {
@@ -41,7 +41,7 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
         String data = createData(file, ports);
         File f = new File(type, new Caseless(file.getFileName()), data,
                 file.getProject().getId());
-        fileManager.create(f);
+        workspaceManager.create(f);
     }
 
     private FileType getFileType() {

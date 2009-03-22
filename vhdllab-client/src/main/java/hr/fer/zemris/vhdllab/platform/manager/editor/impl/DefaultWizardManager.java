@@ -9,9 +9,9 @@ import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileAlreadyExistsException;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.FileAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import org.apache.log4j.Logger;
@@ -30,7 +30,7 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
     @Autowired
     private PlatformContainer platformContainer;
     @Autowired
-    private FileManager fileManager;
+    private WorkspaceManager workspaceManager;
     @Autowired
     private IProjectExplorer projectExplorer;
     @Autowired
@@ -67,7 +67,7 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
         Project project = mapper.getProject(new ProjectIdentifier(
                 projectName));
         try {
-            fileManager.create(new File(type, fileName, data, project
+            workspaceManager.create(new File(type, fileName, data, project
                     .getId()));
         } catch (IllegalArgumentException e) {
             LOG.info(fileName + " isn't a valid file name");

@@ -3,13 +3,9 @@ package hr.fer.zemris.vhdllab.platform.manager.editor;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationManager;
-import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterfaceExtractor;
-import hr.fer.zemris.vhdllab.service.filetype.VhdlGenerator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,10 +21,6 @@ public class PlatformContainer extends AbstractLocalizationSource {
     private IProjectExplorer projectExplorer;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
-    @Autowired
-    private ProjectManager projectManager;
-    @Autowired
-    private FileManager fileManager;
     @Autowired
     private CompilationManager compilationManager;
     @Autowired
@@ -54,14 +46,6 @@ public class PlatformContainer extends AbstractLocalizationSource {
 
     public IdentifierToInfoObjectMapper getMapper() {
         return mapper;
-    }
-
-    public ProjectManager getProjectManager() {
-        return projectManager;
-    }
-
-    public FileManager getFileManager() {
-        return fileManager;
     }
 
     public CompilationManager getCompilationManager() {

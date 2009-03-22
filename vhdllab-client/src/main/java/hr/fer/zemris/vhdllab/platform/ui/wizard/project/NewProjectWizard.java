@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.project;
 
-import hr.fer.zemris.vhdllab.platform.manager.project.ProjectManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
 
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class NewProjectWizard extends AbstractResourceCreatingWizard {
 
     @Autowired
-    private ProjectManager projectManager;
+    private WorkspaceManager workspaceManager;
 
     public NewProjectWizard() {
         super(BeanUtil.getBeanName(NewProjectWizard.class));
@@ -23,7 +23,7 @@ public class NewProjectWizard extends AbstractResourceCreatingWizard {
     @Override
     protected void onWizardFinished(Object formObject) {
         ProjectFormObject p = (ProjectFormObject) formObject;
-        projectManager.create(ProjectFormObject.asProjectInfo(p
+        workspaceManager.create(ProjectFormObject.asProjectInfo(p
                 .getProjectName()));
     }
 
