@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.schema;
+package hr.fer.zemris.vhdllab.service.extractor.schema;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
@@ -6,11 +6,11 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
+import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.StringReader;

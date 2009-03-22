@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.automaton;
+package hr.fer.zemris.vhdllab.service.extractor.automaton;
 
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;

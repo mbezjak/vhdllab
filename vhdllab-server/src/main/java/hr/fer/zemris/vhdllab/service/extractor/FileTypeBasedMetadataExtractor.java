@@ -1,7 +1,6 @@
-package hr.fer.zemris.vhdllab.service.impl;
+package hr.fer.zemris.vhdllab.service.extractor;
 
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;

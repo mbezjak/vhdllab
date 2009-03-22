@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.testbench;
+package hr.fer.zemris.vhdllab.service.extractor.testbench;
 
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.TimeScale;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformTestbenchParserException;
@@ -8,12 +8,12 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.SignalChange;
 import hr.fer.zemris.vhdllab.dao.FileDao;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
+import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;

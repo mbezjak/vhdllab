@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.automaton;
+package hr.fer.zemris.vhdllab.service.extractor.automaton;
 
 import java.util.HashSet;
 import java.util.TreeSet;

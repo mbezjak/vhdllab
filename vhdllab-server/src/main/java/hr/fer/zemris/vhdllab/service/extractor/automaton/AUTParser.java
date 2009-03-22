@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.automaton;
+package hr.fer.zemris.vhdllab.service.extractor.automaton;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;

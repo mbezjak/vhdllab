@@ -150,11 +150,11 @@
   
   
   
-  <bean id="fileTypeBasedMetadataExtractor" class="hr.fer.zemris.vhdllab.service.impl.FileTypeBasedMetadataExtractor" />
-  <bean id="sourceMetadataExtractor" class="hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractor" />
-  <bean id="schemaMetadataExtractor" class="hr.fer.zemris.vhdllab.service.filetype.schema.SchemaMetadataExtractor" />
-  <bean id="automatonMetadataExtractor" class="hr.fer.zemris.vhdllab.service.filetype.automaton.AutomatonMetadataExtractor" />
-  <bean id="testbenchMetadataExtractor" class="hr.fer.zemris.vhdllab.service.filetype.testbench.TestbenchMetadataExtractor" />
+  <bean id="fileTypeBasedMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.FileTypeBasedMetadataExtractor" />
+  <bean id="sourceMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.source.SourceMetadataExtractor" />
+  <bean id="schemaMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.schema.SchemaMetadataExtractor" />
+  <bean id="automatonMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.automaton.AutomatonMetadataExtractor" />
+  <bean id="testbenchMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.testbench.TestbenchMetadataExtractor" />
   
  
   

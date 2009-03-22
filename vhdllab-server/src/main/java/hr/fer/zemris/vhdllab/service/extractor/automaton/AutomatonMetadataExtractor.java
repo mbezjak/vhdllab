@@ -1,12 +1,12 @@
-package hr.fer.zemris.vhdllab.service.filetype.automaton;
+package hr.fer.zemris.vhdllab.service.extractor.automaton;
 
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
-import hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractor;
+import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
+import hr.fer.zemris.vhdllab.service.extractor.source.SourceMetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.IOException;

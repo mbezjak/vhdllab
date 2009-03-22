@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.automaton;
+package hr.fer.zemris.vhdllab.service.extractor.automaton;
 
 public interface IAutomatVHDLGenerator {
 	public String getData();

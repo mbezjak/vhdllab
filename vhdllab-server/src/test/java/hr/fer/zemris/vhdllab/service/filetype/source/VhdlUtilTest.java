@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.service.filetype.source;
 
 import static org.junit.Assert.assertEquals;
-import hr.fer.zemris.vhdllab.service.filetype.source.VhdlUtil;
+import hr.fer.zemris.vhdllab.service.extractor.source.VhdlUtil;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service;
+package hr.fer.zemris.vhdllab.service.extractor;
 
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;

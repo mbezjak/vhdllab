@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.source;
+package hr.fer.zemris.vhdllab.service.extractor.source;
 
 /**
  * Helper class for manipulating VHDL source code.

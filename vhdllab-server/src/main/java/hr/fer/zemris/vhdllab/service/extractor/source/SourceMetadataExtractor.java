@@ -1,14 +1,14 @@
-package hr.fer.zemris.vhdllab.service.filetype.source;
+package hr.fer.zemris.vhdllab.service.extractor.source;
 
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.VectorDirection;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
+import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;

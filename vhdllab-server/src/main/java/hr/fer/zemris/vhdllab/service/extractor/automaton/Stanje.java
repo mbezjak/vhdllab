@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.service.filetype.automaton;
+package hr.fer.zemris.vhdllab.service.extractor.automaton;
 
 import java.awt.Color;
 

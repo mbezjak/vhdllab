@@ -1,13 +1,10 @@
-package hr.fer.zemris.vhdllab.service.filetype.automaton;
-
+package hr.fer.zemris.vhdllab.service.extractor.automaton;
+//TODO sredi me!!!-autoDrawer srediti za izlaz elseprijelaza!!!!
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.TreeSet;
 
-//TODO ako je samo std_logic da ne pise a(0) OK
+public class MealyParser implements IAutomatVHDLGenerator {
 
-public class MooreParser implements IAutomatVHDLGenerator {
-	
 	private LinkedList<Stanje> stanja;
 	private HashSet<Prijelaz> prijelazi;
 	private AUTPodatci podatci;
@@ -17,7 +14,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 	
 	private String data="";
 	
-	public MooreParser(LinkedList<Stanje> stanja, AUTPodatci podatci, HashSet<Prijelaz> prijelazi) {
+	public MealyParser(LinkedList<Stanje> stanja, AUTPodatci podatci, HashSet<Prijelaz> prijelazi) {
 		this.stanja=stanja;
 		this.podatci=podatci;
 		this.prijelazi=prijelazi;
@@ -34,7 +31,6 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		buffer=createType(buffer);
 		buffer.append("\nBEGIN\n");
 		buffer=createBlok1(buffer);
-		buffer=createBlok2(buffer);
 		buffer=createBlok3(buffer);
 		buffer.append("\nEND Behavioral;");
 		data=buffer.toString();
@@ -49,37 +45,35 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		else if(podatci.clock.equalsIgnoreCase("rising_edge"))buffer.append("rising_edge(clock)");
 		else buffer.append("clock=").append(podatci.clock);
 		buffer.append(" THEN\n\t\t")
-		.append("state_present <= state_next;\n\tEND IF;\n")
+		.append("state_present <= state_next;");
+		
+		buffer = spojiIzlaze(buffer);
+		
+		buffer.append("\n\tEND IF;\n")
 		.append("END PROCESS;\n");
 		return buffer;
 	}
 
-	private StringBuffer createBlok2(StringBuffer buffer) {
-		buffer.append("PROCESS(state_present)\nBEGIN\n\t")
-		.append("CASE state_present IS");
-		for(Stanje st:stanja){
-			buffer.append("\n\tWHEN ST_" ).append(st.ime).append(" =>");
-			buffer=generirajIzlaze(st,buffer);
+	private StringBuffer spojiIzlaze(StringBuffer buffer) {
+		for(Signal s:izlazniSignali){
+			buffer.append("\n\t\t").append(s.getImeSignala()).append("<=").append(s.getImeSignala()).append("_next;");
 		}
-		buffer.append("\n\tWHEN OTHERS => "); 
-		buffer=generirajIzlaze(null,buffer);
-		buffer.append("\n\tEND CASE;\nEND PROCESS;\n");
 		return buffer;
 	}
 
-	private StringBuffer generirajIzlaze(Stanje st, StringBuffer buffer) {
+	private StringBuffer generirajIzlaze(String st, StringBuffer buffer) {
 		String izlaz="";
-		if(st==null){
+		if(st==null||st.equals("0")){
 			StringBuffer b1=new StringBuffer();
 			for(int i=0;i<podatci.sirinaIzlaza;i++)b1.append("0");
 			izlaz=b1.toString();
-		}else izlaz=st.izlaz;
+		}else izlaz=st;
 		
 		buffer.append("\n\t\t");
 		int pozicija=0;
 		for(Signal sig:izlazniSignali){
 			String navodnici=(sig.getTip()==Signal.STD_LOGIC_VECTOR?"\"":"'");
-			buffer.append(sig.getImeSignala()).append(" <= ").append(navodnici)
+			buffer.append(sig.getImeSignala()).append("_next <= ").append(navodnici)
 			.append(izlaz.substring(pozicija,pozicija+sig.getSirinaSignala()))
 			.append(navodnici).append(";\n\t\t");
 			pozicija+=sig.getSirinaSignala();
@@ -102,9 +96,17 @@ public class MooreParser implements IAutomatVHDLGenerator {
 					buffer.append(test?"IF ":"ELSIF ");
 					test=false;
 					buffer=generirajPrijelaz(buffer,pr);
+					
+					buffer.deleteCharAt(buffer.length()-1);
+					buffer.deleteCharAt(buffer.length()-1);
+					buffer.deleteCharAt(buffer.length()-1);
+					buffer.deleteCharAt(buffer.length()-1);
+					buffer.deleteCharAt(buffer.length()-1);
+					buffer.deleteCharAt(buffer.length()-1);
 			}
 			if(!test)buffer.append("ELSE ");
 			buffer.append("state_next<=ST_").append(st.els).append(";");
+			buffer=generirajIzlaze(st.eIz,buffer);
 			if(!test)buffer.append("\n\t\tEND IF;");
 		}
 		buffer.append("\n\t\tWHEN OTHERS => state_next <= state_present;\n\tEND CASE;\nEND PROCESS;\n");
@@ -112,31 +114,29 @@ public class MooreParser implements IAutomatVHDLGenerator {
 	}
 
 	private StringBuffer generirajPrijelaz(StringBuffer buffer, Prijelaz pr) {
-		buffer=createCondition(buffer,pr.pobudaIzlaz);
-		buffer.append(" THEN state_next<=ST_").append(pr.u).append(";\n\t\t");
+		buffer=createCondition(buffer,pr);
 		return buffer;
 	}
 
-	private StringBuffer createCondition(StringBuffer buffer, TreeSet<String> pobudaIzlaz) {
-		for(String pom:pobudaIzlaz){
-			buffer.append("(");
+	private StringBuffer createCondition(StringBuffer buffer, Prijelaz pr) {
+		for(String pomocni:pr.pobudaIzlaz){
+			String[] pom=pomocni.split("/");
 			int broj=0;
 			for(Signal sig:ulazniSignali){
-				buffer=createCplxCondition(buffer,sig,pom.substring(broj,broj+sig.getSirinaSignala()));
+				buffer=createCplxCondition(buffer,sig,pom[0].substring(broj,broj+sig.getSirinaSignala()));
 				broj+=sig.getSirinaSignala();
 			}
 			buffer.deleteCharAt(buffer.length()-1);
 			buffer.deleteCharAt(buffer.length()-1);
 			buffer.deleteCharAt(buffer.length()-1);
 			buffer.deleteCharAt(buffer.length()-1);
-			buffer.append(")").append(" OR ");
+			buffer.append(" THEN state_next<=ST_").append(pr.u).append(";");
+			buffer=generirajIzlaze(pom[1],buffer);
+			buffer.append("\n\t\tELSIF ");
 		}
-		buffer.deleteCharAt(buffer.length()-1);
-		buffer.deleteCharAt(buffer.length()-1);
-		buffer.deleteCharAt(buffer.length()-1);
 		return buffer;
 	}
-
+	
 	private StringBuffer createCplxCondition(StringBuffer buffer, Signal sig, String pom) {
 		String navodnici=(sig.getTip()==Signal.STD_LOGIC?"'":"\"");
 		StringBuffer pombuf=buffer;
@@ -149,39 +149,11 @@ public class MooreParser implements IAutomatVHDLGenerator {
 				buffer.append("=").append(navodnici).append(pom.charAt(i))
 				.append(navodnici).append(" AND ");
 			}
-		
-		/*if(!pom.matches(".*[-].*")) {
-			pombuf.append(sig.getImeSignala()).append("=").append(navodnici).append(pom)
-				.append(navodnici).append(" AND ");
-		} else{
-			int state=0;
-			int start=0;
-			for(int i=0;i<pom.length();i++){
-				if(state==0) if(pom.charAt(i)=='0'||pom.charAt(i)=='1'){
-					start=i;
-					state=1;
-				}
-				if(state==1)
-					if(pom.charAt(i)=='-'){
-						buffer.append(sig.getImeSignala());
-						buffer.append("(").append(start).append(" TO ").append(i-1).append(")");
-						buffer.append("=").append(navodnici).append(pom.substring(start,i))
-					    .append(navodnici).append(" AND ");
-						state=0;
-					}
-			}
-			if (state==1){
-				buffer.append(sig.getImeSignala());
-				buffer.append("(").append(start).append(" TO ").append(pom.length()-1).append(")");
-				buffer.append("=").append(navodnici).append(pom.substring(start,pom.length()))
-				.append(navodnici).append(" AND ");
-			}
-		}
-		*/
 		return pombuf;
 	}
 
 	private StringBuffer createType(StringBuffer buffer) {
+		//COMMENTED CODE FOR STATE TYPE!!!
 		//buffer.append("TYPE stateType IS (");
 		//for(Stanje st:stanja)buffer.append("ST_").append(st.ime).append(", ");
 		//buffer.deleteCharAt(buffer.length()-1);
@@ -206,11 +178,20 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		buffer.append("\n");
 		buffer.append("\n  SIGNAL state_present, state_next: ").append(stateType).append(";");
 		
+		for(Signal s:izlazniSignali){
+			buffer.append("\n  SIGNAL ").append(s.getImeSignala()).append("_next:");
+			if(s.getTip()==Signal.STD_LOGIC){
+				buffer.append(" std_logic;");
+			}else{
+				buffer.append(" std_logic_vector(").append(s.getFrom())
+				.append(s.getSmijer()==Signal.C_TO?" TO ":" DOWNTO ").append(s.getTo()).append(");");
+			}
+		}
 		buffer.append("\n");
 		
 		return buffer;
 	}
-	
+
 	private String decToBinString(int tip, int indexOf, int size) {
 		String s = "";
 		
@@ -243,7 +224,6 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		Signal s = new Signal(from,to,"signal",tip);
 		return s;
 	}
-
 
 	private StringBuffer addEntity(StringBuffer buffer) {
 		buffer.append("ENTITY ").append(podatci.ime).append(" IS PORT(\n")
@@ -290,6 +270,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 		}
 	}
 
+	
 	public String getData() {
 		return data;
 	}
