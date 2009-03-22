@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.preference;
 
-import hr.fer.zemris.vhdllab.entities.UserFileInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 
 public interface UserFileManager {
 
-    UserFileInfo getFile(String name);
+    File getFile(String name);
 
-    void setFile(UserFileInfo file);
+    void setFile(File file);
 
     void saveFiles();
 

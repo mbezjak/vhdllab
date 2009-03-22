@@ -1,8 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.preference;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.UserFileInfo;
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.entity.File;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,7 +39,7 @@ public class DatabasePreferences extends AbstractPreferences {
     private Properties getProperties() {
         if (properties == null) {
             properties = new Properties();
-            UserFileInfo file = getFile();
+            File file = getFile();
             if (file != null) {
                 try {
                     properties.load(new StringReader(file.getData()));
@@ -54,7 +52,7 @@ public class DatabasePreferences extends AbstractPreferences {
         return properties;
     }
 
-    private UserFileInfo getFile() {
+    private File getFile() {
         return manager.getFile(absolutePath());
     }
 
@@ -81,13 +79,10 @@ public class DatabasePreferences extends AbstractPreferences {
                 // Should never happen!
                 throw new IllegalStateException(e);
             }
-            UserFileInfo file = getFile();
+            File file = getFile();
             String data = writer.toString();
             if (file == null) {
-                Caseless userId = ApplicationContextHolder.getContext()
-                        .getUserId();
-                file = new UserFileInfo(userId, new Caseless(absolutePath()),
-                        data);
+                file = new File(absolutePath(), null, data);
             } else {
                 file.setData(data);
             }

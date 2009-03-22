@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.preference;
 
-import hr.fer.zemris.vhdllab.entities.UserFileInfo;
-import hr.fer.zemris.vhdllab.service.UserFileService;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.service.WorkspaceService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,31 +22,31 @@ public class DefaultUserFileManager implements UserFileManager {
             .getLogger(DefaultUserFileManager.class);
 
     @Autowired
-    private UserFileService service;
-    private Map<String, UserFileInfo> files;
+    private WorkspaceService service;
+    private Map<String, File> files;
 
     @Override
-    public UserFileInfo getFile(String name) {
+    public File getFile(String name) {
         return getFiles().get(name);
     }
 
     @Override
-    public void setFile(UserFileInfo file) {
-        getFiles().put(file.getName().toString(), file);
+    public void setFile(File file) {
+        getFiles().put(file.getName(), file);
     }
 
     @Override
     public void saveFiles() {
         LOG.debug("Saving " + getFiles().size() + " user files");
-        service.save(new ArrayList<UserFileInfo>(getFiles().values()));
+        service.savePreferences(new ArrayList<File>(getFiles().values()));
     }
 
-    private Map<String, UserFileInfo> getFiles() {
+    private Map<String, File> getFiles() {
         if (files == null) {
-            List<UserFileInfo> allFiles = service.findByUser();
+            List<File> allFiles = service.findByUser();
             LOG.debug("Loaded " + allFiles.size() + " user files");
-            files = new HashMap<String, UserFileInfo>(allFiles.size());
-            for (UserFileInfo f : allFiles) {
+            files = new HashMap<String, File>(allFiles.size());
+            for (File f : allFiles) {
                 files.put(f.getName().toString(), f);
             }
         }
