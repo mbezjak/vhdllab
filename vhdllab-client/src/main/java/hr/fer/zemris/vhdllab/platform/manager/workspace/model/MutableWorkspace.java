@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace.model;
 
-import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
 import hr.fer.zemris.vhdllab.api.workspace.Workspace;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
 
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -27,13 +27,13 @@ public class MutableWorkspace extends Workspace {
         return metadata;
     }
 
-    public void addProject(ProjectInfo project) {
+    public void addProject(Project project) {
         Validate.notNull(project, "Project can't be null");
         ProjectMetadata projectMetadata = new MutableProjectMetadata(project);
         add(projectMetadata);
     }
 
-    public void removeProject(ProjectInfo project) {
+    public void removeProject(Project project) {
         Validate.notNull(project, "Project can't be null");
         ProjectMetadata projectMetadata = getProjectMetadata(project);
         remove(projectMetadata);

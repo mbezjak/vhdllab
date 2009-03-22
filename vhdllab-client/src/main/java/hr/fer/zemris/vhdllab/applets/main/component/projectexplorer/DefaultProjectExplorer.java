@@ -1,13 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
-import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.results.VHDLGenerationResult;
-import hr.fer.zemris.vhdllab.api.workspace.FileReport;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
@@ -15,6 +12,9 @@ import hr.fer.zemris.vhdllab.platform.manager.file.FileAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.project.ProjectAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.service.result.Result;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -351,7 +351,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         });
         container.getProjectManager().addListener(new ProjectAdapter() {
             @Override
-            public void projectCreated(ProjectInfo project) {
+            public void projectCreated(Project project) {
                 addProject(project.getName());
             }
         });
@@ -369,7 +369,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         for (Caseless p : getAllProjects()) {
             removeProject(p);
         }
-        for (ProjectInfo project : container.getWorkspaceManager()
+        for (Project project : container.getWorkspaceManager()
                 .getProjects()) {
             addProject(project.getName());
         }
@@ -666,21 +666,21 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            FileInfo f = container
+                            File f = container
                                     .getMapper()
                                     .getFile(
                                             new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                     name, fileName));
-                            FileInfo file = container.getMapper().getFile(
+                            File file = container.getMapper().getFile(
                                     new FileIdentifier(name, fileName));
-                            VHDLGenerationResult result = container
+                            Result result = container
                                     .getVhdlGenerator().generate(file);
-                            ProjectInfo project = container.getMapper()
+                            Project project = container.getMapper()
                                     .getProject(f.getProjectId());
                             container.getEditorManagerFactory().get(
                                     new EditorIdentifier(
                                             new ViewVhdlEditorMetadata(),
-                                            new FileInfo(FileType.SOURCE,
+                                            new File(FileType.SOURCE,
                                                     fileName, result.getVHDL(),
                                                     project.getId()))).open();
                         }
@@ -839,7 +839,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                             if (name != null) {
                                 hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier identifier = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                         name, fileName);
-                                FileInfo file = container.getMapper().getFile(
+                                File file = container.getMapper().getFile(
                                         identifier);
                                 container.getEditorManagerFactory().get(file)
                                         .open();
@@ -966,7 +966,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     private void addFile(Caseless projectName, Caseless fileName) {
         /* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
         this.filesByProjects.get(projectName).add(fileName);
-        FileInfo file = container.getMapper().getFile(
+        File file = container.getMapper().getFile(
                 new FileIdentifier(projectName, fileName));
         if (file.getType().equals(FileType.TESTBENCH)) {
             this.refreshProject(projectName);
@@ -1091,7 +1091,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
             PeNode projectNode) {
 
         // dohvaca sve root cvorove tog projekta
-        ProjectInfo project = container.getMapper().getProject(
+        Project project = container.getMapper().getProject(
                 new ProjectIdentifier(projectName));
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
         PeNode rootNode = null;
@@ -1131,7 +1131,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 
         PeNode rootNode = null;
 
-        ProjectInfo project = container.getMapper().getProject(
+        Project project = container.getMapper().getProject(
                 new ProjectIdentifier(projectName));
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
@@ -1224,7 +1224,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         Set<String> nodesInTree = new HashSet<String>();
         PeNode rootNode = null;
 
-        ProjectInfo project = container.getMapper().getProject(
+        Project project = container.getMapper().getProject(
                 new ProjectIdentifier(projectName));
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
@@ -1441,7 +1441,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            FileInfo file = container.getMapper().getFile(
+            File file = container.getMapper().getFile(
                     new FileIdentifier(name, new Caseless(node.toString())));
             container.getFileManager().delete(file);
         }
@@ -1483,7 +1483,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            ProjectInfo project = container.getMapper().getProject(
+            Project project = container.getMapper().getProject(
                     new ProjectIdentifier(new Caseless(node.toString())));
             container.getProjectManager().delete(project);
             this.allProjects.remove(node.toString());

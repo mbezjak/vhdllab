@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.project;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 
 public class ProjectFormObject {
@@ -16,9 +16,9 @@ public class ProjectFormObject {
         this.projectName = name;
     }
 
-    public static ProjectInfo asProjectInfo(String name) {
+    public static Project asProjectInfo(String name) {
         Caseless userId = ApplicationContextHolder.getContext().getUserId();
-        return new ProjectInfo(userId, new Caseless(name));
+        return new Project(userId, new Caseless(name));
     }
 
 }

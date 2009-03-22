@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.entity.FileInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
         List<CircuitInterfaceObject> ports = circuitInterfacePage.getPorts();
         FileType type = getFileType();
         String data = createData(file, ports);
-        FileInfo f = new FileInfo(type, new Caseless(file.getFileName()), data,
+        File f = new File(type, new Caseless(file.getFileName()), data,
                 file.getProject().getId());
         fileManager.create(f);
     }

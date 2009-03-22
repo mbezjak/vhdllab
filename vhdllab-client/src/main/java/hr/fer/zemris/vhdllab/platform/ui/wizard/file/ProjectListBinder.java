@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ProjectListBinder extends AbstractBinder {
     private WorkspaceManager workspaceManager;
 
     protected ProjectListBinder() {
-        super(ProjectInfo.class, new String[] {});
+        super(Project.class, new String[] {});
     }
 
     @SuppressWarnings("unchecked")
@@ -39,11 +39,11 @@ public class ProjectListBinder extends AbstractBinder {
             String formPropertyPath, Map context) {
         ComboBoxBinding binding = new ComboBoxBinding((JComboBox) control,
                 formModel, formPropertyPath);
-        List<ProjectInfo> projects = workspaceManager.getProjects();
-        List<ProjectInfo> improvedToStringProjects = new ArrayList<ProjectInfo>(
+        List<Project> projects = workspaceManager.getProjects();
+        List<Project> improvedToStringProjects = new ArrayList<Project>(
                 projects.size());
-        for (ProjectInfo p : projects) {
-            improvedToStringProjects.add(new ProjectInfo(p) {
+        for (Project p : projects) {
+            improvedToStringProjects.add(new Project(p) {
                 private static final long serialVersionUID = 1L;
 
                 @Override

@@ -1,17 +1,17 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
 
 public class FileFormObject {
 
-    private ProjectInfo project;
+    private Project project;
     private String fileName;
 
-    public ProjectInfo getProject() {
+    public Project getProject() {
         return project;
     }
 
-    public void setProject(ProjectInfo project) {
+    public void setProject(Project project) {
         this.project = project;
     }
 

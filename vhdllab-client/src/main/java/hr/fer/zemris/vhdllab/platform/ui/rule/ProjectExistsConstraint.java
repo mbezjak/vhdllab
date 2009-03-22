@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.rule;
 
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.project.ProjectFormObject;
 
@@ -21,7 +21,7 @@ public class ProjectExistsConstraint extends AbstractConstraint {
     @Override
     public boolean test(Object argument) {
         if (argument instanceof String) {
-            ProjectInfo project = ProjectFormObject
+            Project project = ProjectFormObject
                     .asProjectInfo((String) argument);
             return !workspaceManager.exist(project);
         }

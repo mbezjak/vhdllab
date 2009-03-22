@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace.model;
 
-import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.hierarchy.HierarchyNode;
-import hr.fer.zemris.vhdllab.api.workspace.ProjectMetadata;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
+import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
 
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -16,19 +16,20 @@ public class MutableProjectMetadata extends ProjectMetadata {
 
     private static final long serialVersionUID = 1L;
 
-    public MutableProjectMetadata(ProjectInfo project) {
-        super(project, new ArrayList<FileInfo>(), emptyHierarchy(project));
+    public MutableProjectMetadata(Project project) {
+        super(project, new ArrayList<File>(), emptyHierarchy(project));
     }
 
     public MutableProjectMetadata(ProjectMetadata project) {
         super(project);
     }
 
-    private static Hierarchy emptyHierarchy(ProjectInfo project) {
+    private static Hierarchy emptyHierarchy(Project project) {
         return new Hierarchy(project.getName(), new HashSet<HierarchyNode>(0));
     }
 
-    public void addFile(FileInfo file) {
+    @Override
+    public void addFile(File file) {
         Validate.notNull(file, "File can't be null");
         int index = files.indexOf(file);
         if(index != -1) {
@@ -38,7 +39,8 @@ public class MutableProjectMetadata extends ProjectMetadata {
         }
     }
 
-    public void removeFile(FileInfo file) {
+    @Override
+    public void removeFile(File file) {
         Validate.notNull(file, "File can't be null");
         files.remove(file);
     }
