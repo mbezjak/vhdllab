@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace;
 
-import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
+import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
 import java.util.HashMap;
 import java.util.Map;

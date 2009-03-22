@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace.model;
 
-import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
+import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
-public class MutableWorkspace extends Workspace {
+public class MutableWorkspace {
 
     private static final long serialVersionUID = 1L;
 

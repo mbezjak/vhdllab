@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.workspace.support;
 
-import hr.fer.zemris.vhdllab.api.workspace.Workspace;
 import hr.fer.zemris.vhdllab.platform.listener.AutoPublished;
+import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
 import java.util.EventListener;
 
