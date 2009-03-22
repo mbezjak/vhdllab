@@ -8,13 +8,12 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.SignalChange;
 import hr.fer.zemris.vhdllab.dao.FileDao;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
-import hr.fer.zemris.vhdllab.service.impl.AbstractMetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;
@@ -29,13 +28,12 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class TestbenchMetadataExtractionService extends
-        AbstractMetadataExtractionService {
+public class TestbenchMetadataExtractor implements MetadataExtractor {
 
     @Autowired
     private FileDao fileDao;
-    @Resource(name = "metadataExtractionService")
-    private MetadataExtractionService extractionService;
+    @Resource(name = "fileTypeBasedMetadataExtractor")
+    private MetadataExtractor metadataExtractor;
 
     @Override
     public CircuitInterface extractCircuitInterface(File file)
@@ -67,8 +65,7 @@ public class TestbenchMetadataExtractionService extends
         String name = tbInfo.getSourceName();
         File source = fileDao.findByName(file.getProject().getId(), name);
 
-        CircuitInterface ci = extractionService.extractCircuitInterface(source
-                .getId());
+        CircuitInterface ci = metadataExtractor.extractCircuitInterface(source);
         String vhdl = null;
         try {
             vhdl = generirajVHDL(file.getName(), name, ci, tbInfo);

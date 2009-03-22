@@ -6,11 +6,10 @@ import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
-import hr.fer.zemris.vhdllab.service.filetype.source.SourceMetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
@@ -38,14 +37,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private FileDao fileDao;
     @Autowired
     private PredefinedFilesDao predefinedFilesDao;
-    @Resource(name = "metadataExtractionService")
-    private MetadataExtractionService extractionService;
+    @Resource(name = "fileTypeBasedMetadataExtractor")
+    private MetadataExtractor metadataExtractor;
 
     @Override
     public FileReport save(File file) {
         if (FileType.SOURCE.equals(file.getType())) {
-            CircuitInterface ci = new SourceMetadataExtractionService()
-                    .extractCircuitInterface(file);
+            CircuitInterface ci = metadataExtractor.extractCircuitInterface(file);
             if (!ci.getName().equalsIgnoreCase(file.getName().toString())) {
                 throw new IllegalStateException("Resource " + file.getName()
                         + " must have only one entity with the same name.");
@@ -131,7 +129,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
          */
         Set<String> dependencies;
         try {
-            dependencies = extractionService.extractDependencies(file.getId());
+            dependencies = metadataExtractor.extractDependencies(file);
         } catch (DependencyExtractionException e) {
             dependencies = Collections.emptySet();
         }

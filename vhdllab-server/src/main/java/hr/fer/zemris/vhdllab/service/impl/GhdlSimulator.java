@@ -6,7 +6,7 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.Testbench;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.TestbenchParser;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
-import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
+import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.exception.CompilationException;
@@ -81,8 +81,8 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
 
     @Autowired
     private WorkspaceService workspaceService;
-    @Resource(name = "metadataExtractionService")
-    private MetadataExtractionService metadataExtractionService;
+    @Resource(name = "fileTypeBasedMetadataExtractor")
+    private MetadataExtractor metadataExtractor;
 
     public void configure() {
         executable = properties.getProperty(EXECUTABLE_PROPERTY);
@@ -187,8 +187,8 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     }
 
     private List<String> orderFileNames(File file) {
-        Hierarchy hierarchy = workspaceService.extractHierarchy(file.getProject()
-                .getId());
+        Hierarchy hierarchy = workspaceService.extractHierarchy(file
+                .getProject().getId());
         List<File> ordered = new ArrayList<File>();
         orderFileNames(ordered, hierarchy, hierarchy.getNode(file));
         List<String> names = new ArrayList<String>(ordered.size());
@@ -227,8 +227,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
             File depFile = workspaceService.findByName(projectId, dep);
             String data = depFile.getData();
             if (!depFile.getType().equals(FileType.PREDEFINED)) {
-                data = metadataExtractionService.generateVhdl(depFile.getId())
-                        .getData();
+                data = metadataExtractor.generateVhdl(depFile).getData();
             }
             java.io.File fileOnDisk = new java.io.File(tempDirectory, dep
                     + ".vhdl");

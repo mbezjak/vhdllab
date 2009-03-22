@@ -2,13 +2,13 @@ package hr.fer.zemris.vhdllab.service.filetype.source;
 
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.VectorDirection;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.service.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
-import hr.fer.zemris.vhdllab.service.impl.AbstractMetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;
@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class SourceMetadataExtractionService extends
-        AbstractMetadataExtractionService {
+public class SourceMetadataExtractor implements MetadataExtractor {
 
     /*
      * Notice: this class was written only to satisfy a test class so code is a
