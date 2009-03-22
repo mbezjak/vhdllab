@@ -11,7 +11,6 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.model.MutableWorkspace;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
-import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
 
 import java.util.ArrayList;
 import java.util.List;

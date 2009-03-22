@@ -22,7 +22,7 @@ public class WorkspaceTest extends ValueObjectTestSupport {
 
     private List<Project> projects;
     private Hierarchy hierarchy;
-    private Project predefinedProject;
+    private Set<File> predefinedFiles;
     private Set<File> preferencesFiles;
 
     @Before
@@ -33,8 +33,8 @@ public class WorkspaceTest extends ValueObjectTestSupport {
         projects.add(new Project("userId", "project2"));
 
         hierarchy = new Hierarchy(firstProject, new ArrayList<HierarchyNode>());
-        predefinedProject = new Project(null, "predefined");
-        predefinedProject.addFile(new File("predefined", null, "data"));
+        predefinedFiles = new HashSet<File>(1);
+        predefinedFiles.add(new File("predefined", null, "data"));
         preferencesFiles = new HashSet<File>(2);
         preferencesFiles.add(new File("preferences1", null, "data"));
         preferencesFiles.add(new File("preferences2", null, "data2"));
@@ -42,7 +42,7 @@ public class WorkspaceTest extends ValueObjectTestSupport {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorNullProjects() {
-        new Workspace(null, hierarchy, predefinedProject, preferencesFiles);
+        new Workspace(null, hierarchy, predefinedFiles, preferencesFiles);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -52,13 +52,13 @@ public class WorkspaceTest extends ValueObjectTestSupport {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorNullPreferencesFiles() {
-        new Workspace(projects, hierarchy, predefinedProject, null);
+        new Workspace(projects, hierarchy, predefinedFiles, null);
     }
 
     @Test
     public void constructor() {
         Workspace workspace = new Workspace(projects, hierarchy,
-                predefinedProject, preferencesFiles);
+                predefinedFiles, preferencesFiles);
         assertEquals(projects, workspace.getProjects());
         assertNotSame(projects, workspace.getProjects());
         assertEquals(projects.size(), workspace.getProjectCount());
@@ -70,17 +70,14 @@ public class WorkspaceTest extends ValueObjectTestSupport {
 
         assertEquals(hierarchy, workspace.getActiveProjectHierarchy());
 
-        predefinedProject.setName("new_name");
-        assertEquals("predefined", workspace.getPredefinedProject().getName());
-        assertEquals(predefinedProject.getFiles().size(), workspace
-                .getPredefinedProject().getFiles().size());
-        File file = (File) CollectionUtils.get(workspace.getPredefinedProject()
-                .getFiles(), 0);
+        assertEquals(predefinedFiles.size(), workspace.getPredefinedFiles()
+                .size());
+        File file = (File) CollectionUtils.get(workspace.getPredefinedFiles(),
+                0);
         assertNull(file.getProject());
-        file = (File) CollectionUtils.get(predefinedProject.getFiles(), 0);
+        file = (File) CollectionUtils.get(predefinedFiles, 0);
         file.setName("new_name");
-        file = (File) CollectionUtils.get(workspace.getPredefinedProject()
-                .getFiles(), 0);
+        file = (File) CollectionUtils.get(workspace.getPredefinedFiles(), 0);
         assertEquals("predefined", file.getName());
 
         file = (File) CollectionUtils.get(preferencesFiles, 0);

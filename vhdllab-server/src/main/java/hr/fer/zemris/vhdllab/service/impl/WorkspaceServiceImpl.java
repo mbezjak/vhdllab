@@ -88,9 +88,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Validate.notNull(name, "Project can't be null");
         Project project = new Project(SecurityUtils.getUser(), name);
         projectDao.persist(project);
-        Project persisted = new Project(project);
-        persisted.setFiles(null);
-        return persisted;
+        return EntityUtils.lightweightClone(project);
     }
 
     @Override
@@ -166,11 +164,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             hierarchy = extractHierarchy(last.getId());
         }
 
-        Project predefinedProject = new Project(user, "predefined");
-        predefinedProject.setFiles(predefinedFilesDao.getPredefinedFiles());
-
+        Set<File> predefinedFiles = predefinedFilesDao.getPredefinedFiles();
         Project preferencesProject = projectDao.getPreferencesProject(user);
-        return new Workspace(projects, hierarchy, predefinedProject,
+
+        return new Workspace(projects, hierarchy, predefinedFiles,
                 preferencesProject.getFiles());
     }
 

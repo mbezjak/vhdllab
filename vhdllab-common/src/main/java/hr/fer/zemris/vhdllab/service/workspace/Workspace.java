@@ -14,20 +14,18 @@ public final class Workspace {
 
     private final List<Project> projects;
     private final Hierarchy activeProjectHierarchy;
-    private final Project predefinedProject;
+    private final Set<File> predefinedFiles;
     private final Set<File> preferencesFiles;
 
     public Workspace(List<Project> projects, Hierarchy activeProjectHierarchy,
-            Project predefinedProject, Set<File> preferencesFiles) {
+            Set<File> predefinedFiles, Set<File> preferencesFiles) {
         Validate.notNull(projects, "Projects can't be null");
-        Validate.notNull(predefinedProject, "Predefined project can't be null");
+        Validate.notNull(predefinedFiles, "Predefined files can't be null");
         Validate.notNull(preferencesFiles, "Preferences files can't be null");
         this.projects = EntityUtils.setNullFiles(EntityUtils
                 .cloneProjects(projects));
         this.activeProjectHierarchy = activeProjectHierarchy;
-        this.predefinedProject = new Project(predefinedProject);
-        this.predefinedProject.setFiles(EntityUtils
-                .cloneFiles(predefinedProject.getFiles()));
+        this.predefinedFiles = EntityUtils.cloneFiles(predefinedFiles);
         this.preferencesFiles = EntityUtils.cloneFiles(preferencesFiles);
     }
 
@@ -43,8 +41,8 @@ public final class Workspace {
         return activeProjectHierarchy;
     }
 
-    public Project getPredefinedProject() {
-        return predefinedProject;
+    public Set<File> getPredefinedFiles() {
+        return predefinedFiles;
     }
 
     public Set<File> getPreferencesFiles() {

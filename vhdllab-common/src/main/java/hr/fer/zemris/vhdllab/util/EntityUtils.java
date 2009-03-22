@@ -39,13 +39,6 @@ public abstract class EntityUtils {
         return clone;
     }
 
-    public static Set<File> setProject(Set<File> files, Project project) {
-        for (File file : files) {
-            file.setProject(project);
-        }
-        return files;
-    }
-
     public static List<Project> setNullFiles(List<Project> projects) {
         for (Project project : projects) {
             project.setFiles(null);
