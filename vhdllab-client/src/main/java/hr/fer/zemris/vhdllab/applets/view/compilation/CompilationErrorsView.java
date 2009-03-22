@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.view.compilation;
 
-import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationAdapter;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 
 import java.awt.event.MouseAdapter;
@@ -46,8 +46,7 @@ public class CompilationErrorsView extends AbstractView {
 
         model.clear();
         for (CompilationMessage msg : messages) {
-            StringBuilder sb = new StringBuilder(
-                    msg.getText().length() + 20);
+            StringBuilder sb = new StringBuilder(msg.getText().length() + 20);
             sb.append(msg.getEntityName()).append(":").append(msg.getRow())
                     .append(":").append(msg.getColumn()).append(":").append(
                             msg.getText());
@@ -110,16 +109,15 @@ public class CompilationErrorsView extends AbstractView {
             }
         });
 
-        container.getCompilationManager().addListener(
-                new CompilationListener() {
-                    @SuppressWarnings("synthetic-access")
-                    @Override
-                    public void compiled(List<CompilationMessage> messages) {
-                        setContent(messages);
-                        getActiveWindow().getPage().setActiveComponent(
-                                CompilationErrorsView.this);
-                    }
-                });
+        container.getSimulationManager().addListener(new SimulationAdapter() {
+            @SuppressWarnings("synthetic-access")
+            @Override
+            public void compiled(List<CompilationMessage> messages) {
+                setContent(messages);
+                getActiveWindow().getPage().setActiveComponent(
+                        CompilationErrorsView.this);
+            }
+        });
         return new JScrollPane(listContent);
     }
 

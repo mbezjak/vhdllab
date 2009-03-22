@@ -348,13 +348,13 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 tree.requestFocusInWindow();
             }
         });
-        container.getProjectManager().addListener(new WorkspaceAdapter() {
+        container.getWorkspaceManager().addListener(new WorkspaceAdapter() {
             @Override
             public void projectCreated(Project project) {
                 addProject(project.getName());
             }
         });
-        container.getFileManager().addListener(new WorkspaceAdapter() {
+        container.getWorkspaceManager().addListener(new WorkspaceAdapter() {
             @Override
             public void fileCreated(FileReport report) {
                 addFile(report.getHierarchy().getProjectName(), report
@@ -368,8 +368,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         for (Caseless p : getAllProjects()) {
             removeProject(p);
         }
-        for (Project project : container.getWorkspaceManager()
-                .getProjects()) {
+        for (Project project : container.getWorkspaceManager().getProjects()) {
             addProject(project.getName());
         }
     }
@@ -628,7 +627,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                         name = getProjectName();
                         if (name != null) {
                             container
-                                    .getCompilationManager()
+                                    .getSimulationManager()
                                     .compile(
                                             container
                                                     .getMapper()
@@ -673,15 +672,16 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                             File file = container.getMapper().getFile(
                                     new FileIdentifier(name, fileName));
                             Result result = container
-                                    .getVhdlGenerator().generate(file);
-                            Project project = container.getMapper()
-                                    .getProject(f.getProjectId());
+                                    .getMetadataExtractionService()
+                                    .generateVhdl(file.getId());
+                            Project project = container.getMapper().getProject(
+                                    f.getProjectId());
                             container.getEditorManagerFactory().get(
                                     new EditorIdentifier(
                                             new ViewVhdlEditorMetadata(),
-                                            new File(FileType.SOURCE,
-                                                    fileName, result.getVHDL(),
-                                                    project.getId()))).open();
+                                            new File(FileType.SOURCE, fileName,
+                                                    result.getVHDL(), project
+                                                            .getId()))).open();
                         }
                     }
                 } else if (event.getSource().equals(deleteFile)) {

@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.command;
 
-import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationManager;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.richclient.command.ActionCommand;
@@ -10,7 +10,7 @@ public class CompileLastCommand extends ActionCommand {
     public static final String ID = "compileLastCommand";
 
     @Autowired
-    private CompilationManager compilationManager;
+    private SimulationManager simulationManager;
 
     public CompileLastCommand() {
         super(ID);
@@ -18,7 +18,7 @@ public class CompileLastCommand extends ActionCommand {
 
     @Override
     protected void doExecuteCommand() {
-        compilationManager.compileLast();
+        simulationManager.compileLast();
     }
 
 }

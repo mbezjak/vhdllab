@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.view.simulation;
 
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
-import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationListener;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationAdapter;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.text.Format;
@@ -51,7 +51,7 @@ public class SimulationErrorsView extends AbstractView {
         JList listContent = new JList(model);
         listContent.setFixedCellHeight(15);
 
-        container.getSimulationManager().addListener(new SimulationListener() {
+        container.getSimulationManager().addListener(new SimulationAdapter() {
             @SuppressWarnings("synthetic-access")
             @Override
             public void simulated(Result result) {

@@ -5,6 +5,12 @@ import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 
 public interface SimulationManager extends EventPublisher<SimulationListener> {
 
+    void compileWithDialog();
+
+    void compileLast();
+
+    void compile(File file);
+
     void simulateWithDialog();
 
     void simulateLast();
