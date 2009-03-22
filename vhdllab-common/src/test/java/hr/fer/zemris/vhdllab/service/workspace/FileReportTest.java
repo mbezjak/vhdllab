@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,6 +53,13 @@ public class FileReportTest extends ValueObjectTestSupport {
         File file = report.getFile();
         file.setName("name");
         assertEquals("name", report.getFile().getName());
+    }
+
+    @Test
+    public void afterSerialization() {
+        assertNull(report.getFile().getProject());
+        FileReport clone = (FileReport) SerializationUtils.clone(report);
+        assertNotNull(clone.getFile().getProject());
     }
 
     @Test

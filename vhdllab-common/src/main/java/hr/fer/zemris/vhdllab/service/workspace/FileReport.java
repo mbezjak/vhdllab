@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.service.workspace;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.commons.lang.Validate;
@@ -10,16 +11,6 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 public final class FileReport implements Serializable {
 
-    /*
-     * Please note that although this class implements java.io.Serializable it
-     * does not implement readObject method as specified by Joshua Bloch,
-     * "Effective Java: Programming Language Guide",
-     * "Item 56: Write readObject methods defensively", page 166.
-     * 
-     * The reason for this is that this class is used to transfer data from
-     * server to client (reverse is not true). So by altering byte stream
-     * attacker can only hurt himself!
-     */
     private static final long serialVersionUID = 2737580103123482939L;
 
     private final File file;
@@ -43,6 +34,12 @@ public final class FileReport implements Serializable {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        in.defaultReadObject();
+        file.setProject(hierarchy.getProject());
     }
 
 }

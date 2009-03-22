@@ -52,12 +52,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             }
         }
 
-        File saved;
+        File saved = new File(file);
         if (file.isNew()) {
-            fileDao.persist(file);
-            saved = file;
+            fileDao.persist(saved);
         } else {
-            saved = fileDao.merge(file);
+            saved = fileDao.merge(saved);
         }
         return getReport(saved);
     }
@@ -178,7 +177,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Set<File> allFiles = EntityUtils.cloneFiles(project.getFiles());
         for (File file : files) {
             if (!allFiles.contains(file)) {
-                project.addFile(file);
+                project.addFile(new File(file));
             }
         }
         projectDao.persist(project);
