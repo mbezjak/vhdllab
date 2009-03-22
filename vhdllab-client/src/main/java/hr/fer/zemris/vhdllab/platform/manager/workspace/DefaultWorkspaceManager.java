@@ -55,8 +55,7 @@ public class DefaultWorkspaceManager extends
         FileReport report = workspaceService.save(file);
         fireFileCreated(report);
         openEditor(report.getFile());
-        Project project = mapper.getProject(report.getFile().getProjectId());
-        log(report, project, FILE_CREATED_MESSAGE);
+        log(report, FILE_CREATED_MESSAGE);
     }
 
     @Override
@@ -64,8 +63,7 @@ public class DefaultWorkspaceManager extends
         checkIfNull(file);
         FileReport report = workspaceService.save(file);
         fireFileSaved(report);
-        Project project = mapper.getProject(report.getFile().getProjectId());
-        log(report, project, FILE_SAVED_MESSAGE);
+        log(report, FILE_SAVED_MESSAGE);
     }
 
     @Override
@@ -73,10 +71,9 @@ public class DefaultWorkspaceManager extends
         checkIfNull(file);
         if (!file.getType().equals(FileType.PREDEFINED)) {
             closeEditor(file);
-            Project project = mapper.getProject(file.getProjectId());
             FileReport report = workspaceService.deleteFile(file.getId());
             fireFileDeleted(report);
-            log(report, project, FILE_DELETED_MESSAGE);
+            log(report, FILE_DELETED_MESSAGE);
         }
     }
 
@@ -109,18 +106,20 @@ public class DefaultWorkspaceManager extends
         }
     }
 
-    private void log(FileReport report, Project project, String code) {
+    private void log(FileReport report, String code) {
+        File file = report.getFile();
+        String fileName = file.getName();
+        String projectName = file.getProject().getName();
         logger.info(localizationSource.getMessage(code, new Object[] {
-                report.getFile().getName(), project.getName() }));
+                fileName, projectName }));
     }
 
     private void checkIfNull(File file) {
         Validate.notNull(file, "File can't be null");
     }
-    
+
     @Override
-    public void create(Project project)
-            throws ProjectAlreadyExistsException {
+    public void create(Project project) throws ProjectAlreadyExistsException {
         checkIfNull(project);
         if (exist(project)) {
             throw new ProjectAlreadyExistsException(project.toString());
