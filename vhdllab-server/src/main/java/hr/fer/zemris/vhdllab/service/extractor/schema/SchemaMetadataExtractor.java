@@ -10,14 +10,14 @@ import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
-import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
+import hr.fer.zemris.vhdllab.service.extractor.AbstractMetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SchemaMetadataExtractor implements MetadataExtractor {
+public class SchemaMetadataExtractor extends AbstractMetadataExtractor {
 
     @Override
     public CircuitInterface extractCircuitInterface(File file)

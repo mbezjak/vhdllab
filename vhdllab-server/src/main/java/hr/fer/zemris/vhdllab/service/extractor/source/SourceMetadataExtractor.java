@@ -8,7 +8,7 @@ import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
-import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
+import hr.fer.zemris.vhdllab.service.extractor.AbstractMetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class SourceMetadataExtractor implements MetadataExtractor {
+public class SourceMetadataExtractor extends AbstractMetadataExtractor {
 
     /*
      * Notice: this class was written only to satisfy a test class so code is a

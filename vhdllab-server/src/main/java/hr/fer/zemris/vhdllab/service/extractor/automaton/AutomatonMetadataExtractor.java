@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.service.extractor.automaton;
 
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.VhdlGenerationException;
-import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
-import hr.fer.zemris.vhdllab.service.extractor.source.SourceMetadataExtractor;
+import hr.fer.zemris.vhdllab.service.extractor.AbstractMetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 import org.xml.sax.SAXException;
 
-public class AutomatonMetadataExtractor implements MetadataExtractor {
+public class AutomatonMetadataExtractor extends AbstractMetadataExtractor {
 
     @Override
     public CircuitInterface extractCircuitInterface(File file)
@@ -40,8 +40,9 @@ public class AutomatonMetadataExtractor implements MetadataExtractor {
                 .append(" IS\nBEGIN\nEND Behavioral;");
 
         String VHDL = buffer.toString();
-        SourceMetadataExtractor sourceExtractor = new SourceMetadataExtractor();
-        return sourceExtractor.extractCircuitInterface(VHDL);
+        File source = new File(file.getName(), FileType.SOURCE, VHDL);
+        return getFileTypeBasedMetadataExtractor().extractCircuitInterface(
+                source);
     }
 
     private StringBuffer addEntity(StringBuffer buffer, AUTPodatci podatci) {
