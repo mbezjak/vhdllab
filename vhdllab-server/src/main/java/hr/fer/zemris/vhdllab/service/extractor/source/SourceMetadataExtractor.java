@@ -29,15 +29,15 @@ public class SourceMetadataExtractor implements MetadataExtractor {
     private static final String ENTITY = "ENTITY";
     private static final String GENERIC = "GENERIC";
     private static final String END = "END";
-    private final static String IS = "IS";
-    private final static String PORT = "PORT";
-    private final static String WHITESPACE = " ";
-    private final static String DOT = ".";
-    private final static String COLON = ":";
-    private final static String SEMICOLON = ";";
-    private final static String COMMA = ",";
-    private final static String LEFT_BRACKET = "(";
-    private final static String RIGHT_BRACKET = ")";
+    private static final String IS = "IS";
+    private static final String PORT = "PORT";
+    private static final String WHITESPACE = " ";
+    private static final String DOT = ".";
+    private static final String COLON = ":";
+    private static final String SEMICOLON = ";";
+    private static final String COMMA = ",";
+    private static final String LEFT_BRACKET = "(";
+    private static final String RIGHT_BRACKET = ")";
     private static final String WORK = "WORK";
     private static final String COMPONENT = "COMPONENT";
 
