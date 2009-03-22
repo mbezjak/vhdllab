@@ -200,8 +200,8 @@ public class SchemaMainPanel extends AbstractEditor {
             // get circuit interface for the component
             File f = container.getMapper().getFile(
                     new FileIdentifier(projectname, name));
-            CircuitInterface circint = container.getCircuitInterfaceExtractor()
-                    .extract(f);
+            CircuitInterface circint = container.getMetadataExtractionService()
+                    .extractCircuitInterface(f.getId());
 
             usercircuits.add(circint);
         }
@@ -350,7 +350,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
     @Override
     protected void doDispose() {
-        container.getFileManager().removeListener(appletListener);
+        container.getWorkspaceManager().removeListener(appletListener);
     }
 
     @Override
@@ -502,8 +502,8 @@ public class SchemaMainPanel extends AbstractEditor {
                 }
 
                 // must be added to prototype collection
-                CircuitInterface ci = container.getCircuitInterfaceExtractor()
-                        .extract(file);
+                CircuitInterface ci = container.getMetadataExtractionService()
+                        .extractCircuitInterface(file.getId());
 
                 boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
                 boolean isplaced = isPlacedInEditor(file.getName());
@@ -537,8 +537,8 @@ public class SchemaMainPanel extends AbstractEditor {
                     return;
 
                 // we must add - fetch circuit interface
-                CircuitInterface ci = container.getCircuitInterfaceExtractor()
-                        .extract(file);
+                CircuitInterface ci = container.getMetadataExtractionService()
+                        .extractCircuitInterface(file.getId());
 
                 boolean oldmodifiedstatus = SchemaMainPanel.this.isModified();
                 controller.send(new AddUpdatePredefinedPrototype(ci));
@@ -599,7 +599,7 @@ public class SchemaMainPanel extends AbstractEditor {
             // }
 
         };
-        container.getFileManager().addListener(appletListener);
+        container.getWorkspaceManager().addListener(appletListener);
     }
 
 }
