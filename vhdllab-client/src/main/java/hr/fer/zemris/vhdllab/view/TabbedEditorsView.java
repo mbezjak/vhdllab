@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.view;
 
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorContainerListener;
@@ -35,7 +35,7 @@ public class TabbedEditorsView extends AbstractView implements
     @Autowired
     EditorContainer container;
 
-    private Map<FileInfo, Editor> editors = new HashMap<FileInfo, Editor>();
+    private Map<File, Editor> editors = new HashMap<File, Editor>();
 
     @Override
     protected void registerLocalCommandExecutors(PageComponentContext context) {
@@ -95,7 +95,7 @@ public class TabbedEditorsView extends AbstractView implements
         }
     }
 
-    void resetEditorTitle(FileInfo file, boolean modified) {
+    void resetEditorTitle(File file, boolean modified) {
         int index = container.indexOf(editors.get(file));
         String title = tabbedPane.getTitleAt(index);
         if (modified) {
@@ -108,7 +108,7 @@ public class TabbedEditorsView extends AbstractView implements
 
     class EditorModifiedListener implements EditorListener {
         @Override
-        public void modified(FileInfo file, boolean flag) {
+        public void modified(File file, boolean flag) {
             resetEditorTitle(file, flag);
         }
     }

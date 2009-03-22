@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaComponentCollection;
@@ -11,13 +9,15 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InOutSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaEntity;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.awt.Component;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class DefaultWizard implements Wizard {
     public DefaultWizard() {
     }
 
-    public FileInfo getInitialFileContent(Component parent,
+    public File getInitialFileContent(Component parent,
             hr.fer.zemris.vhdllab.entities.Caseless projectName) {
         String[] options = new String[] { "OK", "Cancel" };
         int optionType = JOptionPane.OK_CANCEL_OPTION;
@@ -67,7 +67,7 @@ public class DefaultWizard implements Wizard {
             if (projectName == null)
                 return null;
             CircuitInterface ci = table.getCircuitInterface();
-            FileInfo file = container.getMapper().getFile(
+            File file = container.getMapper().getFile(
                     new FileIdentifier(projectName,
                             new hr.fer.zemris.vhdllab.entities.Caseless(ci
                                     .getName())));
@@ -96,7 +96,7 @@ public class DefaultWizard implements Wizard {
             for (Port p : ci.getPorts()) {
                 InOutSchemaComponent inout = new InOutSchemaComponent(p);
                 try {
-                    if (p.getDirection().isIN()) {
+                    if (p.isIN()) {
                         components.addComponent(MARGIN_OFFSET, ly, inout);
                         ly += inout.getHeight() + MARGIN_OFFSET;
                     } else { // else isOUT
@@ -119,8 +119,8 @@ public class DefaultWizard implements Wizard {
                 LOG.error("Unexpected error", e);
                 return null;
             }
-            ProjectInfo project = container.getMapper().getProject(new ProjectIdentifier(projectName));
-            return new FileInfo(FileType.SCHEMA, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()), writer.toString(), project.getId());
+            Project project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+            return new File(FileType.SCHEMA, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()), writer.toString(), project.getId());
         } else
             return null;
     }

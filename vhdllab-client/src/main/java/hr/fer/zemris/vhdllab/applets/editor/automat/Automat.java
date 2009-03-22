@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
@@ -220,7 +220,7 @@ public class Automat extends AbstractEditor implements Wizard {
     // *************************************************************************
 
     @Override
-    protected void doInitWithData(FileInfo f) {
+    protected void doInitWithData(File f) {
         if (adrw != null)
             adrw.setData(f.getData());
     }
@@ -234,7 +234,7 @@ public class Automat extends AbstractEditor implements Wizard {
         return adrw.getData();
     }
 
-    public FileInfo getInitialFileContent(Component parent,
+    public File getInitialFileContent(Component parent,
             Caseless projectName) {
         bundle = ResourceBundle
                 .getBundle("Client_Automat_ApplicationResources");
@@ -248,8 +248,8 @@ public class Automat extends AbstractEditor implements Wizard {
                     stanja);
         } else
             return null;
-        ProjectInfo project = container.getMapper().getProject(new ProjectIdentifier(projectName));
-        return new FileInfo(FileType.AUTOMATON, new Caseless(pod.ime), gen, project.getId());
+        Project project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+        return new File(FileType.AUTOMATON, new Caseless(pod.ime), gen, project.getId());
     }
 
     @Override

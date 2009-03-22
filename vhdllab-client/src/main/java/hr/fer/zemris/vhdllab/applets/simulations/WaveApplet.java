@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
@@ -446,7 +446,7 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	}
 	
 	@Override
-	protected void doInitWithData(FileInfo f) {
+	protected void doInitWithData(File f) {
         /* uzima String preko HTTP-a i predaje ga GHDL parseru */
 	    results.parseString(f.getData());
         scale.setContent(results);
@@ -1667,7 +1667,7 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 		return this;
 	}
 
-	public FileInfo getInitialFileContent(Component parent, Caseless projectName) {
+	public File getInitialFileContent(Component parent, Caseless projectName) {
 		return null;
 	}
 

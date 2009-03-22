@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 
 import java.util.EventListener;
 
@@ -17,6 +17,6 @@ public interface EditorListener extends EventListener {
      *            <code>false</code> otherwise (i.e. an editor has just been
      *            saved)
      */
-    void modified(FileInfo file, boolean flag);
+    void modified(File file, boolean flag);
 
 }

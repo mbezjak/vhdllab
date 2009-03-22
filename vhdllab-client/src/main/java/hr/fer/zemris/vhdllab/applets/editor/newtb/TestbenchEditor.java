@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.newtb;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.ChangeStateEdge;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.Radix;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.TimeScale;
@@ -20,17 +18,18 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.VectorSignal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.InitTimingDialog;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.components2.JTestbench;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
-import hr.fer.zemris.vhdllab.service.ci.PortDirection;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -159,7 +158,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
     }
 
     @Override
-    protected void doInitWithData(FileInfo f) {
+    protected void doInitWithData(File f) {
         setModified(false);
         this.initTestbench(f.getData());
         if (!this.GUICreated) {
@@ -169,15 +168,15 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
     }
 
     @Override
-    public FileInfo getInitialFileContent(Component parent,
+    public File getInitialFileContent(Component parent,
             Caseless projectName) {
-        ProjectInfo project = getContainer().getMapper().getProject(
+        Project project = getContainer().getMapper().getProject(
                 new ProjectIdentifier(projectName));
-        List<FileInfo> files = getContainer().getWorkspaceManager()
+        List<File> files = getContainer().getWorkspaceManager()
                 .getFilesForProject(project);
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
                 .size());
-        for (FileInfo file : files) {
+        for (File file : files) {
             if (file.getType().isCompilable()) {
                 identifiers
                         .add(new FileIdentifier(projectName, file.getName()));
@@ -193,7 +192,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
         // Ovo gore ostaviti
         // Ovo dolje zamijeniti
 
-        FileInfo fileInfo = container.getMapper().getFile(file);
+        File fileInfo = container.getMapper().getFile(file);
         CircuitInterface ci = container.getCircuitInterfaceExtractor().extract(
                 fileInfo);
 
@@ -206,7 +205,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
                 return null;
             }
             // Provjera dal postoje duplikati
-            FileInfo info = getContainer().getMapper().getFile(
+            File info = getContainer().getMapper().getFile(
                     new FileIdentifier(projectName, new Caseless(testbench)));
             if (info != null) {
                 JOptionPane.showMessageDialog(null,
@@ -230,7 +229,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
                 tb = this.getInitialTestbench(initTimingDialog, file
                         .getFileName().toString());
                 this.addSignals(tb, ci);
-                return new FileInfo(FileType.TESTBENCH, new Caseless(testbench), tb.toXml(), project.getId());
+                return new File(FileType.TESTBENCH, new Caseless(testbench), tb.toXml(), project.getId());
             } catch (UniformTestbenchException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(),
                         "Error creating testbench", JOptionPane.ERROR_MESSAGE);
@@ -247,16 +246,14 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
         Signal s = null;
         for (Port p : ci.getPorts()) {
             try {
-                if (p.getDirection().equals(PortDirection.IN)) {
-                    if (p.getType().getRange().isScalar()) {
+                if (p.isIN()) {
+                    if (p.isScalar()) {
                         s = new ScalarSignal(p.getName());
                     } else {
-                        short d = (short) (1 + Math.abs(p.getType().getRange()
-                                .getFrom()
-                                - p.getType().getRange().getTo()));
+                        short d = (short) (1 + Math.abs(p.getFrom()
+                                - p.getTo()));
                         s = new VectorSignal(p.getName(), d, VectorDirection
-                                .valueOf(p.getType().getRange().getDirection()
-                                        .toString().toLowerCase()));
+                                .valueOf(p.getDirectionName().toLowerCase()));
                     }
                 }
                 tb.addSignal((EditableSignal) s);

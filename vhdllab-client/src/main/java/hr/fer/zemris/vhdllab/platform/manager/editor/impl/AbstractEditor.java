@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.FileInfo;
 import hr.fer.zemris.vhdllab.entity.ProjectInfo;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.listener.StandaloneEventPublisher;
@@ -66,7 +66,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
 
     @Override
     public void setFile(File file) {
-        this.file = (file != null ? new FileInfo(file, true) : null);
+        this.file = (file != null ? new File(file) : null);
         doInitWithData(this.file);
         setModified(false);
     }
@@ -77,7 +77,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
         if (file != null && data != null) {
             file.setData(data);
         }
-        return file != null ? new FileInfo(file, true) : null;
+        return file != null ? new File(file) : null;
     }
 
     @Override
@@ -124,7 +124,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
      *            <code>false</code> otherwise (i.e. an editor has just been
      *            saved)
      */
-    private void fireModified(FileInfo f, boolean flag) {
+    private void fireModified(File f, boolean flag) {
         for (EditorListener l : publisher.getListeners()) {
             l.modified(f, flag);
         }
@@ -176,7 +176,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
 
     protected abstract void doInitWithoutData();
 
-    protected abstract void doInitWithData(FileInfo f);
+    protected abstract void doInitWithData(File f);
 
     protected abstract void doDispose();
 

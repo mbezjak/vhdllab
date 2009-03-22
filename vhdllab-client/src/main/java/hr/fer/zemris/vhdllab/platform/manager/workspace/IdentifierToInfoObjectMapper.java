@@ -13,8 +13,4 @@ public interface IdentifierToInfoObjectMapper {
 
     File getFile(FileIdentifier file);
 
-    ProjectIdentifier asIdentifier(Project project);
-
-    FileIdentifier asIdentifier(Project project, File file);
-
 }

@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.manager.simulation;
 
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 
 public interface SimulationManager extends EventPublisher<SimulationListener> {
@@ -9,6 +9,6 @@ public interface SimulationManager extends EventPublisher<SimulationListener> {
 
     void simulateLast();
 
-    void simulate(FileInfo file);
+    void simulate(File file);
 
 }

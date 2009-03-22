@@ -79,14 +79,12 @@ public class DefaultIdentifierToInfoObjectMapper implements
                 .getData(), projectId);
     }
 
-    @Override
-    public ProjectIdentifier asIdentifier(Project project) {
+    private ProjectIdentifier asIdentifier(Project project) {
         Validate.notNull(project, "Project can't be null");
         return new ProjectIdentifier(project.getName());
     }
 
-    @Override
-    public FileIdentifier asIdentifier(Project project, File file) {
+    private FileIdentifier asIdentifier(Project project, File file) {
         Validate.notNull(project, "Project can't be null");
         Validate.notNull(file, "File can't be null");
         return new FileIdentifier(project.getName(), file.getName());

@@ -1,15 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.view.compilation;
 
-import hr.fer.zemris.vhdllab.api.results.CompilationMessage;
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
 import hr.fer.zemris.vhdllab.platform.manager.compilation.CompilationListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
+import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,15 +29,15 @@ import org.springframework.richclient.application.support.AbstractView;
  * @since 22.12.2006.
  */
 public class CompilationErrorsView extends AbstractView {
-    
+
     @Autowired
     private PlatformContainer container;
 
     /** DefaultListModel */
     private DefaultListModel model;
 
-    void setContent(CompilationResult result) {
-        if (result.isSuccessful()) {
+    void setContent(List<CompilationMessage> messages) {
+        if (messages.isEmpty()) {
             Format formatter = new SimpleDateFormat("HH:mm:ss");
             String time = formatter.format(new Date());
             model.addElement(time + "  Compilation finished successfully.");
@@ -45,12 +45,12 @@ public class CompilationErrorsView extends AbstractView {
         }
 
         model.clear();
-        for (CompilationMessage msg : result.getMessages()) {
+        for (CompilationMessage msg : messages) {
             StringBuilder sb = new StringBuilder(
-                    msg.getMessageText().length() + 20);
+                    msg.getText().length() + 20);
             sb.append(msg.getEntityName()).append(":").append(msg.getRow())
                     .append(":").append(msg.getColumn()).append(":").append(
-                            msg.getMessageText());
+                            msg.getText());
             model.addElement(sb.toString());
         }
     }
@@ -93,7 +93,7 @@ public class CompilationErrorsView extends AbstractView {
             // editor.highlightLine(temp);
         }
     }
-    
+
     @Override
     protected JComponent createControl() {
         model = new DefaultListModel();
@@ -110,14 +110,16 @@ public class CompilationErrorsView extends AbstractView {
             }
         });
 
-        container.getCompilationManager().addListener(new CompilationListener() {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void compiled(CompilationResult result) {
-                setContent(result);
-                getActiveWindow().getPage().setActiveComponent(CompilationErrorsView.this);
-            }
-        });
+        container.getCompilationManager().addListener(
+                new CompilationListener() {
+                    @SuppressWarnings("synthetic-access")
+                    @Override
+                    public void compiled(List<CompilationMessage> messages) {
+                        setContent(messages);
+                        getActiveWindow().getPage().setActiveComponent(
+                                CompilationErrorsView.this);
+                    }
+                });
         return new JScrollPane(listContent);
     }
 

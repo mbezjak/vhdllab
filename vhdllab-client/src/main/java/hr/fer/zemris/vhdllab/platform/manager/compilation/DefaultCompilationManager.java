@@ -1,10 +1,9 @@
 package hr.fer.zemris.vhdllab.platform.manager.compilation;
 
-import hr.fer.zemris.vhdllab.api.results.CompilationResult;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.FileInfo;
-import hr.fer.zemris.vhdllab.entity.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
@@ -16,6 +15,7 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMa
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,14 +59,14 @@ public class DefaultCompilationManager extends
             logger.info(file.getName() + " isn't compilable");
             return;
         }
-        ProjectInfo project = mapper.getProject(file.getProjectId());
+        Project project = mapper.getProject(file.getProjectId());
         EditorManager em = editorManagerFactory
                 .getAllAssociatedWithProject(project.getName());
         boolean shouldCompile = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
         if (shouldCompile) {
-            CompilationResult result = compiler.compile(file);
+            List<CompilationMessage> messages = compiler.compile(file);
             lastCompiledFile = file;
-            fireCompiled(result);
+            fireCompiled(messages);
             logger.info(localizationSource.getMessage(COMPILED_MESSAGE,
                     new Object[] { file.getName(), project.getName() }));
         }
@@ -89,9 +89,9 @@ public class DefaultCompilationManager extends
         }
     }
 
-    private void fireCompiled(CompilationResult result) {
+    private void fireCompiled(List<CompilationMessage> messages) {
         for (CompilationListener l : getListeners()) {
-            l.compiled(result);
+            l.compiled(messages);
         }
     }
 
@@ -100,12 +100,12 @@ public class DefaultCompilationManager extends
         if (projectName == null) {
             return null;
         }
-        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
+        Project project = mapper.getProject(new ProjectIdentifier(
                 projectName));
-        List<FileInfo> files = workspaceManager.getFilesForProject(project);
+        List<File> files = workspaceManager.getFilesForProject(project);
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
                 .size());
-        for (FileInfo file : files) {
+        for (File file : files) {
             if (file.getType().isCompilable()) {
                 identifiers
                         .add(new FileIdentifier(projectName, file.getName()));

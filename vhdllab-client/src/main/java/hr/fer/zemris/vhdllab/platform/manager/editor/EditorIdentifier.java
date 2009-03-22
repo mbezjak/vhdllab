@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
-import hr.fer.zemris.vhdllab.entities.FileInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -10,13 +10,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class EditorIdentifier {
 
     private final EditorMetadata metadata;
-    private final FileInfo instanceModifier;
+    private final File instanceModifier;
 
     public EditorIdentifier(EditorMetadata metadata) {
         this(metadata, null);
     }
 
-    public EditorIdentifier(EditorMetadata metadata, FileInfo instanceModifier) {
+    public EditorIdentifier(EditorMetadata metadata, File instanceModifier) {
         Validate.notNull(metadata, "Editor metadata can't be null");
         this.metadata = metadata;
         this.instanceModifier = instanceModifier;
@@ -27,7 +27,7 @@ public class EditorIdentifier {
     }
 
 
-    public FileInfo getInstanceModifier() {
+    public File getInstanceModifier() {
         return instanceModifier;
     }
 

@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
@@ -96,9 +96,9 @@ public class MulticastEditorManager implements EditorManager {
         for (EditorManager em : managers) {
             EditorIdentifier editorIdentifier = em.getIdentifier();
             if (editorIdentifier.getMetadata().isSaveable() && em.isModified()) {
-                FileInfo file = editorIdentifier.getInstanceModifier();
+                File file = editorIdentifier.getInstanceModifier();
                 if (file != null) {
-                    ProjectInfo project = mapper
+                    Project project = mapper
                             .getProject(file.getProjectId());
                     FileIdentifier fileIdentifier = new FileIdentifier(project
                             .getName(), file.getName());

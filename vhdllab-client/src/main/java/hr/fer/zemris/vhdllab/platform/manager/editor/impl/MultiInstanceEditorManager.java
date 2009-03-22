@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
@@ -156,9 +156,9 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
         checkIfOpened();
         Validate.notNull(context, "Save context can't be null");
         if (identifier.getMetadata().isSaveable() && isModified()) {
-            FileInfo file = editor.getFile();
+            File file = editor.getFile();
             if (withDialog) {
-                ProjectInfo project = mapper.getProject(file.getProjectId());
+                Project project = mapper.getProject(file.getProjectId());
                 Boolean shouldContinue = dialogManager.showDialog(file
                         .getName(), project.getName());
                 if (!shouldContinue) {

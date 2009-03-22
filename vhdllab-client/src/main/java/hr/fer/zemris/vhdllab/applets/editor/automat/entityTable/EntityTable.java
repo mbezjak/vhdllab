@@ -1,13 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat.entityTable;
 
-import hr.fer.zemris.vhdllab.api.util.StringFormat;
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Range;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
-import hr.fer.zemris.vhdllab.api.vhdl.VectorDirection;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -176,11 +171,10 @@ public class EntityTable extends JPanel {
                 obj[i][1] = "in";
             else
                 obj[i][1] = "out";
-            Type tip = p.getType();
-            obj[i][2] = tip.getTypeName();
-            if (tip.getRange().isVector()) {
-                obj[i][3] = tip.getRange().getFrom();
-                obj[i][4] = tip.getRange().getTo();
+            obj[i][2] = p.getTypeName();
+            if (p.isVector()) {
+                obj[i][3] = p.getFrom();
+                obj[i][4] = p.getTo();
             } else {
                 obj[i][3] = 0;
                 obj[i][4] = 0;
@@ -206,26 +200,17 @@ public class EntityTable extends JPanel {
                 d = PortDirection.IN;
             else
                 d = PortDirection.OUT;
-            Type tip = null;
-            if (pomData[i][2].equalsIgnoreCase("Std_Logic"))
-                tip = new Type(PortType.STD_LOGIC, Range.SCALAR);
-            else {
-                if (Integer.parseInt(pomData[i][3]) > Integer
-                        .parseInt(pomData[i][4])) {
-                    int[] inte = { Integer.parseInt(pomData[i][3]),
-                            Integer.parseInt(pomData[i][4]) };
-                    tip = new Type(PortType.STD_LOGIC_VECTOR, new Range(
-                            inte[0], VectorDirection.DOWNTO, inte[1]));
-                } else {
-                    int[] inte = { Integer.parseInt(pomData[i][3]),
-                            Integer.parseInt(pomData[i][4]) };
-                    tip = new Type(PortType.STD_LOGIC_VECTOR, new Range(
-                            inte[0], VectorDirection.TO, inte[1]));
-                }
+            Port p = new Port(pomData[i][0], d);
+            if (!pomData[i][2].equalsIgnoreCase("Std_Logic")) {
+                int[] inte = new int[] { Integer.parseInt(pomData[i][3]),
+                    Integer.parseInt(pomData[i][4]) };
+                p.setFrom(inte[0]);
+                p.setTo(inte[1]);
             }
-            lista.add(new Port(pomData[i][0], d, tip));
+            lista.add(p);
         }
-        CircuitInterface inter = new CircuitInterface(data.getName(), lista);
+        CircuitInterface inter = new CircuitInterface(data.getName());
+        inter.addAll(lista);
         return inter;
     }
 

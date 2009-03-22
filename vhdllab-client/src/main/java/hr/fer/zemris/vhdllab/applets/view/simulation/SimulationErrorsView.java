@@ -1,9 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.view.simulation;
 
-import hr.fer.zemris.vhdllab.api.results.SimulationMessage;
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationListener;
+import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -32,7 +31,7 @@ public class SimulationErrorsView extends AbstractView {
     /** DefaultListModel */
     private DefaultListModel model;
 
-    void setContent(SimulationResult result) {
+    void setContent(Result result) {
         if (result.isSuccessful()) {
             // TODO ovo ucitat iz bundle-a
             Format formatter = new SimpleDateFormat("HH:mm:ss");
@@ -40,12 +39,8 @@ public class SimulationErrorsView extends AbstractView {
             model.addElement(time + "  Simulation finished successfully.");
         } else {
             model.clear();
-            for (SimulationMessage msg : result.getMessages()) {
-                StringBuilder sb = new StringBuilder(msg.getMessageText()
-                        .length() + 20);
-                sb.append(msg.getEntityName()).append(":").append(
-                        msg.getMessageText());
-                model.addElement(sb.toString());
+            for (String msg : result.getMessages()) {
+                model.addElement(msg);
             }
         }
     }
@@ -59,7 +54,7 @@ public class SimulationErrorsView extends AbstractView {
         container.getSimulationManager().addListener(new SimulationListener() {
             @SuppressWarnings("synthetic-access")
             @Override
-            public void simulated(SimulationResult result) {
+            public void simulated(Result result) {
                 setContent(result);
                 getActiveWindow().getPage().setActiveComponent(
                         SimulationErrorsView.this);

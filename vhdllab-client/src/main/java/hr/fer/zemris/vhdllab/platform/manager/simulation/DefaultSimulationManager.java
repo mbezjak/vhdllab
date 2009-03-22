@@ -1,12 +1,11 @@
 package hr.fer.zemris.vhdllab.platform.manager.simulation;
 
-import hr.fer.zemris.vhdllab.api.results.SimulationResult;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
@@ -20,12 +19,14 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.Simulator;
+import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,25 +50,25 @@ public class DefaultSimulationManager extends
     @Autowired
     private IProjectExplorer projectExplorer;
 
-    private FileInfo lastSimulatedFile;
+    private File lastSimulatedFile;
 
     public DefaultSimulationManager() {
         super(SimulationListener.class);
     }
 
     @Override
-    public void simulate(FileInfo file) {
+    public void simulate(File file) {
         Validate.notNull(file, "File can't be null");
         if (!file.getType().isSimulatable()) {
             logger.info(file.getName() + " isn't simulatable");
             return;
         }
-        ProjectInfo project = mapper.getProject(file.getProjectId());
+        Project project = mapper.getProject(file.getProjectId());
         EditorManager em = editorManagerFactory
                 .getAllAssociatedWithProject(project.getName());
         boolean shouldSimulate = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
         if (shouldSimulate) {
-            SimulationResult result = simulator.simulate(file);
+            Result result = simulator.simulate(file);
             lastSimulatedFile = file;
             fireSimulated(result);
             openSimulationEditor(file, result);
@@ -93,18 +94,18 @@ public class DefaultSimulationManager extends
         }
     }
 
-    private void fireSimulated(SimulationResult result) {
+    private void fireSimulated(Result result) {
         for (SimulationListener l : getListeners()) {
             l.simulated(result);
         }
     }
 
-    private void openSimulationEditor(FileInfo file, SimulationResult result) {
-        String waveform = result.getWaveform();
-        if (waveform != null && !waveform.equals("")) {
-            ProjectInfo project = mapper.getProject(file.getProjectId());
-            FileInfo simulationFile = new FileInfo(FileType.SIMULATION, file
-                    .getName(), waveform, project.getId());
+    private void openSimulationEditor(File file, Result result) {
+        String waveform = result.getData();
+        if (!StringUtils.isBlank(waveform)) {
+            Project project = mapper.getProject(file.getProjectId());
+            File simulationFile = new File(file.getName(), FileType.SIMULATION, waveform);
+            simulationFile.setProject(project);
             EditorIdentifier identifier = new EditorIdentifier(
                     new WaveAppletMetadata(), simulationFile);
             EditorManager simulationEditor = editorManagerFactory
@@ -121,12 +122,12 @@ public class DefaultSimulationManager extends
         if (projectName == null) {
             return null;
         }
-        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
+        Project project = mapper.getProject(new ProjectIdentifier(
                 projectName));
-        List<FileInfo> files = workspaceManager.getFilesForProject(project);
+        List<File> files = workspaceManager.getFilesForProject(project);
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
                 .size());
-        for (FileInfo file : files) {
+        for (File file : files) {
             if (file.getType().isSimulatable()) {
                 identifiers
                         .add(new FileIdentifier(projectName, file.getName()));

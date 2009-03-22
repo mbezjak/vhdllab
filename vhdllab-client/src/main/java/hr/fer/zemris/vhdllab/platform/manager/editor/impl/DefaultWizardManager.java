@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
@@ -57,17 +57,17 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
             ex.printStackTrace();
             wizard = null;
         }
-        FileInfo file = initWizard(wizard, projectName);
+        File file = initWizard(wizard, projectName);
         if (file == null) {
             // user canceled or no wizard for such editor
             return false;
         }
         Caseless fileName = file.getName();
         String data = file.getData();
-        ProjectInfo project = mapper.getProject(new ProjectIdentifier(
+        Project project = mapper.getProject(new ProjectIdentifier(
                 projectName));
         try {
-            fileManager.create(new FileInfo(type, fileName, data, project
+            fileManager.create(new File(type, fileName, data, project
                     .getId()));
         } catch (IllegalArgumentException e) {
             LOG.info(fileName + " isn't a valid file name");
@@ -78,13 +78,13 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
         return true;
     }
 
-    private FileInfo initWizard(Wizard wizard, Caseless projectName) {
+    private File initWizard(Wizard wizard, Caseless projectName) {
         if (wizard == null) {
             throw new NullPointerException("Wizard cant be null");
         }
         // Initialization of a wizard
         wizard.setContainer(platformContainer);
-        FileInfo file = wizard.getInitialFileContent(getFrame(), projectName);
+        File file = wizard.getInitialFileContent(getFrame(), projectName);
         // end of initialization
         return file;
     }

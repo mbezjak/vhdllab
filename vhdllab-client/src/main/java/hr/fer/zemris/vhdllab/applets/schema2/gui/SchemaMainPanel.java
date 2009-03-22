@@ -1,8 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.schema2.gui;
 
-import hr.fer.zemris.vhdllab.api.hierarchy.Hierarchy;
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.workspace.FileReport;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.Constants;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.ECanvasState;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.enums.EPropertyChange;
@@ -31,11 +28,14 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUICon
 import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.SchemaCanvas;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.CPToolbar;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.selectcomponent.TabbedCTAddToolbar;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.file.FileListener;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -167,17 +167,17 @@ public class SchemaMainPanel extends AbstractEditor {
     }
 
     private List<CircuitInterface> getUserPrototypeList() {
-        FileInfo file = getFile();
+        File file = getFile();
         if (file == null)
             return null;
         System.out.println("Initializing user prototypes.");
 
-        ProjectInfo project = container.getMapper().getProject(
+        Project project = container.getMapper().getProject(
                 file.getProjectId());
         hr.fer.zemris.vhdllab.entities.Caseless projectname = project.getName();
         hr.fer.zemris.vhdllab.entities.Caseless thisname = file.getName();
         List<hr.fer.zemris.vhdllab.entities.Caseless> circuitnames = new ArrayList<hr.fer.zemris.vhdllab.entities.Caseless>();
-        for (FileInfo info : container.getWorkspaceManager()
+        for (File info : container.getWorkspaceManager()
                 .getFilesForProject(project)) {
             if (info.getType().isCircuit()) {
                 circuitnames.add(info.getName());
@@ -197,7 +197,7 @@ public class SchemaMainPanel extends AbstractEditor {
                 continue;
 
             // get circuit interface for the component
-            FileInfo f = container.getMapper().getFile(
+            File f = container.getMapper().getFile(
                     new FileIdentifier(projectname, name));
             CircuitInterface circint = container.getCircuitInterfaceExtractor()
                     .extract(f);
@@ -454,7 +454,7 @@ public class SchemaMainPanel extends AbstractEditor {
     }
 
     @Override
-    protected void doInitWithData(FileInfo f) {
+    protected void doInitWithData(File f) {
         resetSchema();
         if (f != null) {
             SchemaDeserializer sd = new SchemaDeserializer();
@@ -469,7 +469,7 @@ public class SchemaMainPanel extends AbstractEditor {
             
             @Override
             public void fileSaved(FileReport report) {
-                FileInfo file = report.getFile();
+                File file = report.getFile();
 
                 // don't do anything if this editor was saved
                 if (file.getName().equals(SchemaMainPanel.this.getFile().getName()))
@@ -526,7 +526,7 @@ public class SchemaMainPanel extends AbstractEditor {
             
             @Override
             public void fileCreated(FileReport report) {
-                FileInfo file = report.getFile();
+                File file = report.getFile();
                 // don't add a non-circuit
                 if (!file.getType().isCircuit())
                     return;
@@ -546,7 +546,7 @@ public class SchemaMainPanel extends AbstractEditor {
             
             @Override
             public void fileDeleted(FileReport report) {
-                FileInfo file = report.getFile();
+                File file = report.getFile();
                 hr.fer.zemris.vhdllab.entities.Caseless fileName = file
                         .getName();
                 // don't bother with non-circuits

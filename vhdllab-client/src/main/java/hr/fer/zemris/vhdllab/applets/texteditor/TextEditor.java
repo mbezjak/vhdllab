@@ -1,17 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
-import hr.fer.zemris.vhdllab.api.vhdl.CircuitInterface;
-import hr.fer.zemris.vhdllab.api.vhdl.Port;
-import hr.fer.zemris.vhdllab.api.vhdl.Type;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.entities.Caseless;
-import hr.fer.zemris.vhdllab.entities.FileInfo;
-import hr.fer.zemris.vhdllab.entities.ProjectInfo;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -219,7 +217,7 @@ public class TextEditor extends AbstractEditor implements Wizard {
     }
 
     @Override
-    protected void doInitWithData(FileInfo f) {
+    protected void doInitWithData(File f) {
         text.setText(f.getData());
         undo.discardAllEdits();
         undoAction.updateUndoState();
@@ -256,7 +254,7 @@ public class TextEditor extends AbstractEditor implements Wizard {
         }
     }
 
-    public FileInfo getInitialFileContent(Component parent,
+    public File getInitialFileContent(Component parent,
             Caseless projectName) {
         String[] options = new String[] { "OK", "Cancel" };
         int optionType = JOptionPane.OK_CANCEL_OPTION;
@@ -271,7 +269,7 @@ public class TextEditor extends AbstractEditor implements Wizard {
         if (projectName == null)
             return null;
         CircuitInterface ci = table.getCircuitInterface();
-        FileInfo file = container.getMapper().getFile(
+        File file = container.getMapper().getFile(
                 new FileIdentifier(projectName,
                         new hr.fer.zemris.vhdllab.entities.Caseless(ci
                                 .getName())));
@@ -282,30 +280,12 @@ public class TextEditor extends AbstractEditor implements Wizard {
         StringBuilder sb = new StringBuilder(100 + ci.getPorts().size() * 20);
         sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
         sb.append("-- note: entity name and resource name must match\n");
-        sb.append("ENTITY ").append(ci.getName()).append(" IS PORT (\n");
-        for (Port p : ci.getPorts()) {
-            Type type = p.getType();
-            sb.append("\t").append(p.getName()).append(" : ").append(
-                    p.getDirection().toString()).append(" ").append(
-                    type.getTypeName());
-            if (type.getRange().isVector()) {
-                sb.append(" (").append(type.getRange().getFrom()).append(" ")
-                        .append(type.getRange().getDirection()).append(" ")
-                        .append(type.getRange().getTo()).append(")");
-            }
-            sb.append(";\n");
-        }
-        if (ci.getPorts().size() == 0) {
-            sb.replace(sb.length() - 8, sb.length(), "\n");
-        } else {
-            sb.replace(sb.length() - 2, sb.length() - 1, ");");
-        }
-        sb.append("end ").append(ci.getName()).append(";\n\n");
+        sb.append(ci.toString()).append("\n\n");
         sb.append("ARCHITECTURE arch OF ").append(ci.getName()).append(
                 " IS \n\nBEGIN\n\nEND arch;");
 
-        ProjectInfo project = container.getMapper().getProject(new ProjectIdentifier(projectName));
-        return new FileInfo(FileType.SOURCE, new Caseless(ci.getName()), sb.toString(), project.getId());
+        Project project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+        return new File(FileType.SOURCE, new Caseless(ci.getName()), sb.toString(), project.getId());
     }
 
     @Override
