@@ -2,7 +2,7 @@ package hr.fer.zemris.vhdllab.platform.preference;
 
 import hr.fer.zemris.vhdllab.entity.File;
 
-public interface UserFileManager {
+public interface PreferencesManager {
 
     File getFile(String name);
 

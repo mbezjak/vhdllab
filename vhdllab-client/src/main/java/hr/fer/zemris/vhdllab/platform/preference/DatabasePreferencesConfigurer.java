@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class DatabasePreferencesConfigurer {
 
     @Autowired
-    private UserFileManager manager;
+    private PreferencesManager manager;
 
     @PostConstruct
     public void initDatabasePreferences() {

@@ -22,7 +22,7 @@ public class DatabasePreferences extends AbstractPreferences {
     private static final Logger LOG = Logger
             .getLogger(DatabasePreferences.class);
 
-    private static UserFileManager manager;
+    private static PreferencesManager manager;
 
     private List<String> children;
     private Properties properties;
@@ -32,7 +32,7 @@ public class DatabasePreferences extends AbstractPreferences {
         this.children = new ArrayList<String>();
     }
 
-    static void setManager(UserFileManager manager) {
+    static void setManager(PreferencesManager manager) {
         DatabasePreferences.manager = manager;
     }
 
