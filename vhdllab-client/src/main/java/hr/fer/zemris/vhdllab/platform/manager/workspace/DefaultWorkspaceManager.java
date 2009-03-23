@@ -12,18 +12,23 @@ import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultWorkspaceManager extends
-        AbstractEventPublisher<WorkspaceListener> implements WorkspaceManager {
+        AbstractEventPublisher<WorkspaceListener> implements WorkspaceManager, IdentifierToInfoObjectMapper {
 
     private static final String FILE_CREATED_MESSAGE = "notification.file.created";
     private static final String FILE_SAVED_MESSAGE = "notification.file.saved";
@@ -44,6 +49,107 @@ public class DefaultWorkspaceManager extends
         super(WorkspaceListener.class);
     }
 
+    private Map<Integer, Project> projectIds;
+    private Map<String, Project> projectIdentifiers;
+    private Map<String, File> fileIdentifiers;
+
+    @Override
+    public Project getProject(String name) {
+        Validate.notNull(name, "Project name can't be null");
+        return getProjectIdentifiers().get(name);
+    }
+
+    @Override
+    public Project getProject(Integer projectId) {
+        Validate.notNull(projectId, "Project id can't be null");
+        return getProjectIds().get(projectId);
+    }
+
+    @Override
+    public File getFile(String projectName, final String fileName) {
+        Validate.notNull(projectName, "Project name can't be null");
+        Validate.notNull(fileName, "File name can't be null");
+        String key = makeKey(projectName, fileName);
+        if (getFileIdentifiers().containsKey(key)) {
+            return getFileIdentifiers().get(key);
+        }
+        Set<File> predefinedFiles = getWorkspace().getPredefinedFiles();
+        File found = (File) CollectionUtils.find(predefinedFiles, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                File predefined = (File) object;
+                return predefined.getName().equalsIgnoreCase(fileName);
+            }
+        });
+        found = new File(found);
+        found.setProject(getProject(projectName));
+        return found;
+    }
+    
+    private String makeKey(String projectName, String fileName) {
+        return projectName + "-" + fileName;
+    }
+
+    private Map<Integer, Project> getProjectIds() {
+        if (projectIds == null) {
+            initializeIdentifiers();
+        }
+        return projectIds;
+    }
+
+    private Map<String, Project> getProjectIdentifiers() {
+        if (projectIdentifiers == null) {
+            initializeIdentifiers();
+        }
+        return projectIdentifiers;
+    }
+
+    private Map<String, File> getFileIdentifiers() {
+        if (fileIdentifiers == null) {
+            initializeIdentifiers();
+        }
+        return fileIdentifiers;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initializeIdentifiers() {
+        int projectCount = getWorkspace().getProjectCount();
+        projectIds = new HashMap<Integer, Project>(projectCount);
+        projectIdentifiers = new CaseInsensitiveMap(projectCount);
+        fileIdentifiers = new CaseInsensitiveMap();
+        for (Project project : getWorkspace().getProjects()) {
+            addProject(project);
+            for (File file : getWorkspace().getFiles(project)) {
+                addFile(file);
+            }
+        }
+    }
+
+    private void addProject(Project project) {
+        getProjectIds().put(project.getId(), project);
+        getProjectIdentifiers().put(project.getName(), project);
+    }
+
+    private void addFile(File file) {
+        Project project = file.getProject();
+        getFileIdentifiers().put(makeKey(project.getName(), file.getName()), file);
+    }
+
+    private void removeProject(Project project) {
+        getProjectIds().remove(project.getId());
+        getProjectIdentifiers().remove(project.getName());
+    }
+
+    private void removeFile(File file) {
+        Project project = file.getProject();
+        getFileIdentifiers().remove(makeKey(project.getName(), file.getName()));
+    }
+
+
+    // *************************************************************************
+    // Implementation of Workspace Manager
+    // *************************************************************************
+
     @Override
     public void create(File file) throws FileAlreadyExistsException {
         checkIfNull(file);
@@ -52,6 +158,7 @@ public class DefaultWorkspaceManager extends
         }
         FileReport report = workspaceService.save(file);
         getWorkspace().addFile(report.getFile(), report.getHierarchy());
+        addFile(report.getFile());
         fireFileCreated(report);
         openEditor(report.getFile());
         log(report, FILE_CREATED_MESSAGE);
@@ -62,6 +169,7 @@ public class DefaultWorkspaceManager extends
         checkIfNull(file);
         FileReport report = workspaceService.save(file);
         getWorkspace().addFile(report.getFile(), report.getHierarchy());
+        addFile(report.getFile());
         fireFileSaved(report);
         log(report, FILE_SAVED_MESSAGE);
     }
@@ -73,6 +181,7 @@ public class DefaultWorkspaceManager extends
             closeEditor(file);
             FileReport report = workspaceService.deleteFile(file.getId());
             getWorkspace().removeFile(report.getFile(), report.getHierarchy());
+            removeFile(file);
             fireFileDeleted(report);
             log(report, FILE_DELETED_MESSAGE);
         }
@@ -127,6 +236,7 @@ public class DefaultWorkspaceManager extends
         }
         Project created = workspaceService.persist(project.getName());
         getWorkspace().addProject(project);
+        addProject(created);
         fireProjectCreated(created);
         log(project, PROJECT_CREATED_MESSAGE);
     }
@@ -136,6 +246,7 @@ public class DefaultWorkspaceManager extends
         checkIfNull(project);
         workspaceService.deleteProject(project.getId());
         getWorkspace().removeProject(project);
+        removeProject(project);
         fireProjectDeleted(project);
         log(project, PROJECT_DELETED_MESSAGE);
     }

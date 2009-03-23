@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -248,7 +247,7 @@ public class Automat extends AbstractEditor implements Wizard {
                     stanja);
         } else
             return null;
-        Project project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+        Project project = container.getMapper().getProject(projectName);
         return new File(FileType.AUTOMATON, new Caseless(pod.ime), gen, project.getId());
     }
 

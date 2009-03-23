@@ -12,7 +12,6 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.FileAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +63,8 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
         }
         Caseless fileName = file.getName();
         String data = file.getData();
-        Project project = mapper.getProject(new ProjectIdentifier(
-                projectName));
+        Project project = mapper.getProject(
+                projectName);
         try {
             workspaceManager.create(new File(type, fileName, data, project
                     .getId()));

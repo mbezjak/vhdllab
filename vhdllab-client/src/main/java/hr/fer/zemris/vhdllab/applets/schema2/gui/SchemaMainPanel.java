@@ -33,7 +33,6 @@ import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceAdapter;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceListener;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
@@ -199,7 +198,7 @@ public class SchemaMainPanel extends AbstractEditor {
 
             // get circuit interface for the component
             File f = container.getMapper().getFile(
-                    new FileIdentifier(projectname, name));
+                    projectname, name);
             CircuitInterface circint = container.getMetadataExtractionService()
                     .extractCircuitInterface(f.getId());
 

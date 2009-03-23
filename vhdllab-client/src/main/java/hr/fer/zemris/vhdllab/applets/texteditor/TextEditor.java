@@ -7,8 +7,6 @@ import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 
 import java.awt.BorderLayout;
@@ -270,9 +268,9 @@ public class TextEditor extends AbstractEditor implements Wizard {
             return null;
         CircuitInterface ci = table.getCircuitInterface();
         File file = container.getMapper().getFile(
-                new FileIdentifier(projectName,
+                projectName,
                         new hr.fer.zemris.vhdllab.entities.Caseless(ci
-                                .getName())));
+                                .getName()));
         if (file != null) {
             LOG.info(ci.getName() + " already exists!");
         }
@@ -284,7 +282,7 @@ public class TextEditor extends AbstractEditor implements Wizard {
         sb.append("ARCHITECTURE arch OF ").append(ci.getName()).append(
                 " IS \n\nBEGIN\n\nEND arch;");
 
-        Project project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+        Project project = container.getMapper().getProject(projectName);
         return new File(FileType.SOURCE, new Caseless(ci.getName()), sb.toString(), project.getId());
     }
 

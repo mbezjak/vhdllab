@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
-import hr.fer.zemris.vhdllab.entities.Caseless;
+import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import javax.swing.JComponent;
 
@@ -24,7 +24,7 @@ public class ProjectExplorerView extends AbstractView implements
     }
 
     @Override
-    public FileIdentifier getSelectedFile() {
+    public File getSelectedFile() {
         return projectExplorer.getSelectedFile();
     }
 

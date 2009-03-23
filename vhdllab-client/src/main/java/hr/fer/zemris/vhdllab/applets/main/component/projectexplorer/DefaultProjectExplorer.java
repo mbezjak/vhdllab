@@ -9,8 +9,6 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceAdapter;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.result.Result;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
@@ -438,9 +436,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     .getUserObject();
 
             // provjeri kojeg je tipa
-            FileIdentifier fileIdentifier = new FileIdentifier(new Caseless(
-                    nodeProjectName), new Caseless(node.toString()));
-            type = container.getMapper().getFile(fileIdentifier).getType();
+            type = container.getMapper().getFile(new Caseless(
+                    nodeProjectName), new Caseless(node.toString())).getType();
 
             if (FileType.SOURCE.equals(type)) {
                 setIcon(vhdl);
@@ -632,9 +629,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                                             container
                                                     .getMapper()
                                                     .getFile(
-                                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                                     name,
-                                                                    fileName)));
+                                                                    fileName));
                         }
                     }
                 } else if (event.getSource().equals(simulate)) {
@@ -648,9 +644,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                                             container
                                                     .getMapper()
                                                     .getFile(
-                                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
                                                                     name,
-                                                                    fileName)));
+                                                                    fileName));
                         }
                     }
                 } else if (event.getSource().equals(setActive)) {
@@ -667,10 +662,9 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                             File f = container
                                     .getMapper()
                                     .getFile(
-                                            new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
-                                                    name, fileName));
-                            File file = container.getMapper().getFile(
-                                    new FileIdentifier(name, fileName));
+                                            
+                                                    name, fileName);
+                            File file = container.getMapper().getFile(name, fileName);
                             Result result = container
                                     .getMetadataExtractionService()
                                     .generateVhdl(file.getId());
@@ -836,10 +830,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                         if (fileName != null) {
                             name = getProjectName();
                             if (name != null) {
-                                hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier identifier = new hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier(
-                                        name, fileName);
                                 File file = container.getMapper().getFile(
-                                        identifier);
+                                        name, fileName);
                                 container.getEditorManagerFactory().get(file)
                                         .open();
                                 // systemContainer.getEditorManager()
@@ -965,8 +957,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     private void addFile(Caseless projectName, Caseless fileName) {
         /* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
         this.filesByProjects.get(projectName).add(fileName);
-        File file = container.getMapper().getFile(
-                new FileIdentifier(projectName, fileName));
+        File file = container.getMapper().getFile(projectName, fileName);
         if (file.getType().equals(FileType.TESTBENCH)) {
             this.refreshProject(projectName);
         } else {
@@ -1091,7 +1082,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 
         // dohvaca sve root cvorove tog projekta
         Project project = container.getMapper().getProject(
-                new ProjectIdentifier(projectName));
+                projectName);
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
         PeNode rootNode = null;
         for (Caseless string : hierarchy.getTopLevelFiles()) {
@@ -1131,7 +1122,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         PeNode rootNode = null;
 
         Project project = container.getMapper().getProject(
-                new ProjectIdentifier(projectName));
+                projectName);
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
         // dohvaca sve root cvorove tog projekta i nakon sto dohvati rootove
@@ -1223,8 +1214,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         Set<String> nodesInTree = new HashSet<String>();
         PeNode rootNode = null;
 
-        Project project = container.getMapper().getProject(
-                new ProjectIdentifier(projectName));
+        Project project = container.getMapper().getProject(projectName);
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
         for (Caseless string : hierarchy.getTopLevelFiles()) {
@@ -1440,9 +1430,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            File file = container.getMapper().getFile(
-                    new FileIdentifier(name, new Caseless(node.toString())));
-            container.getFileManager().delete(file);
+            File file = container.getMapper().getFile(name, new Caseless(node.toString()));
+            container.getWorkspaceManager().delete(file);
         }
 
         /* mice tu datoteku iz mape<projekt, lista datoteka> */
@@ -1483,8 +1472,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
             }
             this.treeModel.removeNodeFromParent(node);
             Project project = container.getMapper().getProject(
-                    new ProjectIdentifier(new Caseless(node.toString())));
-            container.getProjectManager().delete(project);
+                    new Caseless(node.toString()));
+            container.getWorkspaceManager().deleteProject(project);
             this.allProjects.remove(node.toString());
         }
 
@@ -1493,7 +1482,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         this.refreshProject(projectName);
     }
 
-    public FileIdentifier getSelectedFile() {
+    public File getSelectedFile() {
         return null;
     }
 

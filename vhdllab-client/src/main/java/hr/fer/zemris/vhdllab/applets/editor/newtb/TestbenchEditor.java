@@ -26,8 +26,6 @@ import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 
@@ -38,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -171,32 +170,31 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
     public File getInitialFileContent(Component parent,
             Caseless projectName) {
         Project project = getContainer().getMapper().getProject(
-                new ProjectIdentifier(projectName));
-        List<File> files = getContainer().getWorkspaceManager()
+                projectName);
+        Set<File> files = getContainer().getWorkspaceManager()
                 .getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
+        List<File> identifiers = new ArrayList<File>(files
                 .size());
         for (File file : files) {
             if (file.getType().isCompilable()) {
                 identifiers
-                        .add(new FileIdentifier(projectName, file.getName()));
+                        .add(file);
             }
         }
         RunDialog dialog = new RunDialog(getContainer(), RunContext.TESTBENCH);
         dialog.setRunFiles(identifiers);
         dialog.startDialog();
-        FileIdentifier file = dialog.getResult();
+        File file = dialog.getResult();
         if (file == null) {
             return null;
         }
         // Ovo gore ostaviti
         // Ovo dolje zamijeniti
 
-        File fileInfo = container.getMapper().getFile(file);
         CircuitInterface ci = container.getMetadataExtractionService()
-                .extractCircuitInterface(fileInfo.getId());
+                .extractCircuitInterface(file.getId());
 
-        String testbench = file.getFileName() + "_tb";
+        String testbench = file.getName() + "_tb";
 
         while (true) {
             testbench = JOptionPane.showInputDialog(parent,
@@ -205,9 +203,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
                 return null;
             }
             // Provjera dal postoje duplikati
-            File info = getContainer().getMapper().getFile(
-                    new FileIdentifier(projectName, new Caseless(testbench)));
-            if (info != null) {
+            if (getContainer().getWorkspaceManager().exist(file)) {
                 JOptionPane.showMessageDialog(null,
                         "A file with the name you specified already exists.",
                         "Error saving testbench", JOptionPane.ERROR_MESSAGE);
@@ -227,9 +223,11 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
 
             try {
                 tb = this.getInitialTestbench(initTimingDialog, file
-                        .getFileName().toString());
+                        .getName().toString());
                 this.addSignals(tb, ci);
-                return new File(FileType.TESTBENCH, new Caseless(testbench), tb.toXml(), project.getId());
+                File newFile = new File(testbench, FileType.TESTBENCH, tb.toXml());
+                newFile.setProject(file.getProject());
+                return newFile;
             } catch (UniformTestbenchException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(),
                         "Error creating testbench", JOptionPane.ERROR_MESSAGE);

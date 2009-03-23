@@ -16,14 +16,13 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -90,9 +89,9 @@ public class DefaultSimulationManager extends
 
     @Override
     public void compileWithDialog() {
-        FileIdentifier identifier = showCompilationRunDialog();
+        File identifier = showCompilationRunDialog();
         if (identifier != null) {
-            compile(mapper.getFile(identifier));
+            compile(identifier);
         }
     }
 
@@ -102,19 +101,19 @@ public class DefaultSimulationManager extends
         }
     }
 
-    private FileIdentifier showCompilationRunDialog() {
+    private File showCompilationRunDialog() {
         Caseless projectName = projectExplorer.getSelectedProject();
         if (projectName == null) {
             return null;
         }
-        Project project = mapper.getProject(new ProjectIdentifier(projectName));
-        List<File> files = workspaceManager.getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
+        Project project = mapper.getProject(projectName);
+        Set<File> files = workspaceManager.getFilesForProject(project);
+        List<File> identifiers = new ArrayList<File>(files
                 .size());
         for (File file : files) {
             if (file.getType().isCompilable()) {
                 identifiers
-                        .add(new FileIdentifier(projectName, file.getName()));
+                        .add(file);
             }
         }
         if (files.isEmpty()) {
@@ -159,9 +158,9 @@ public class DefaultSimulationManager extends
 
     @Override
     public void simulateWithDialog() {
-        FileIdentifier identifier = showSimulationRunDialog();
+        File identifier = showSimulationRunDialog();
         if (identifier != null) {
-            simulate(mapper.getFile(identifier));
+            simulate(identifier);
         }
     }
 
@@ -189,19 +188,19 @@ public class DefaultSimulationManager extends
         }
     }
 
-    private FileIdentifier showSimulationRunDialog() {
+    private File showSimulationRunDialog() {
         Caseless projectName = projectExplorer.getSelectedProject();
         if (projectName == null) {
             return null;
         }
-        Project project = mapper.getProject(new ProjectIdentifier(projectName));
-        List<File> files = workspaceManager.getFilesForProject(project);
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
+        Project project = mapper.getProject(projectName);
+        Set<File> files = workspaceManager.getFilesForProject(project);
+        List<File> identifiers = new ArrayList<File>(files
                 .size());
         for (File file : files) {
             if (file.getType().isSimulatable()) {
                 identifiers
-                        .add(new FileIdentifier(projectName, file.getName()));
+                        .add(file);
             }
         }
         if (files.isEmpty()) {

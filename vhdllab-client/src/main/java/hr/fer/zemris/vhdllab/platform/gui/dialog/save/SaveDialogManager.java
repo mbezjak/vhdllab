@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog.save;
 
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -17,7 +17,7 @@ public class SaveDialogManager extends LocalizationSupport implements
     @SuppressWarnings("unchecked")
     @Override
     public <T> T showDialog(Object... args) {
-        List<FileIdentifier> identifiers = (List<FileIdentifier>) args[0];
+        List<File> identifiers = (List<File>) args[0];
         SaveContext context = (SaveContext) args[1];
         Preferences preferences = Preferences
                 .userNodeForPackage(SaveDialog.class);

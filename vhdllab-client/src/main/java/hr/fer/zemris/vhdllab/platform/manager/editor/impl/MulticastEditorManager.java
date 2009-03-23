@@ -1,14 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,29 +89,25 @@ public class MulticastEditorManager implements EditorManager {
             throws NotOpenedException {
         Validate.notNull(context, "Save context can't be null");
 
-        List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>();
-        Map<FileIdentifier, EditorManager> map = new HashMap<FileIdentifier, EditorManager>();
+        List<File> identifiers = new ArrayList<File>();
+        Map<File, EditorManager> map = new HashMap<File, EditorManager>();
         for (EditorManager em : managers) {
             EditorIdentifier editorIdentifier = em.getIdentifier();
             if (editorIdentifier.getMetadata().isSaveable() && em.isModified()) {
                 File file = editorIdentifier.getInstanceModifier();
                 if (file != null) {
-                    Project project = mapper
-                            .getProject(file.getProjectId());
-                    FileIdentifier fileIdentifier = new FileIdentifier(project
-                            .getName(), file.getName());
-                    identifiers.add(fileIdentifier);
-                    map.put(fileIdentifier, em);
+                    identifiers.add(file);
+                    map.put(file, em);
                 }
             }
         }
         if (!identifiers.isEmpty()) {
-            List<FileIdentifier> resourcesToSave = saveDialog.showDialog(
+            List<File> resourcesToSave = saveDialog.showDialog(
                     identifiers, context);
             if (resourcesToSave == null || resourcesToSave.isEmpty()) {
                 return false;
             }
-            for (FileIdentifier i : resourcesToSave) {
+            for (File i : resourcesToSave) {
                 EditorManager em = map.get(i);
                 em.save(false);
             }

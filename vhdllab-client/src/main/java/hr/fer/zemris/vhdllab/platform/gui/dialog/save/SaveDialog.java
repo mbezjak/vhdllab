@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog.save;
 
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -27,7 +27,7 @@ import javax.swing.JScrollPane;
 
 import org.apache.commons.lang.Validate;
 
-public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
+public class SaveDialog extends AbstractDialog<List<File>> {
 
     private static final long serialVersionUID = 1L;
 
@@ -113,7 +113,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
         ok.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                closeDialog(new ArrayList<FileIdentifier>());
+                closeDialog(new ArrayList<File>());
             }
         });
 
@@ -200,25 +200,23 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
     }
 
     @Override
-    public void closeDialog(List<FileIdentifier> resourcesToSave) {
+    public void closeDialog(List<File> resourcesToSave) {
         if (resourcesToSave == null) {
             super.closeDialog(null);
         } else {
             for (SaveItem item : list.getItems()) {
                 if (item.isSelected()) {
-                    resourcesToSave.add(new FileIdentifier(item
-                            .getProjectName(), item.getFileName()));
+                    resourcesToSave.add(item.getFile());
                 }
             }
             super.closeDialog(resourcesToSave);
         }
     }
 
-    public void setSaveFiles(List<FileIdentifier> identifiers) {
-        for (FileIdentifier i : identifiers) {
+    public void setSaveFiles(List<File> identifiers) {
+        for (File i : identifiers) {
             list
-                    .addItem(new SaveItem(true, i.getProjectName(), i
-                            .getFileName()));
+                    .addItem(new SaveItem(true, i));
         }
     }
 
@@ -230,28 +228,13 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
      */
     private class SaveItem {
 
-        /** Name of a project displayed next to file name in checkbox */
-        private String projectName;
-        /** Name of a file displayed in checkbox */
-        private String fileName;
+        private File file;
         /** Indicating if checkbox is selected */
         private boolean selected;
 
-        /**
-         * Constructor.
-         * 
-         * @param selected
-         *            whether checkbox should be selected or not
-         * @param projectName
-         *            a name of a project
-         * @param fileName
-         *            a name of a file
-         */
-        public SaveItem(boolean selected, String projectName,
-                String fileName) {
+        public SaveItem(boolean selected, File file) {
             this.selected = selected;
-            this.projectName = projectName;
-            this.fileName = fileName;
+            this.file = file;
         }
 
         /**
@@ -273,22 +256,8 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
             this.selected = selected;
         }
 
-        /**
-         * Getter for file name.
-         * 
-         * @return file name
-         */
-        public String getFileName() {
-            return fileName;
-        }
-
-        /**
-         * Getter for project name.
-         * 
-         * @return project name
-         */
-        public String getProjectName() {
-            return projectName;
+        public File getFile() {
+            return file;
         }
 
         /**
@@ -297,7 +266,7 @@ public class SaveDialog extends AbstractDialog<List<FileIdentifier>> {
          * @return created text
          */
         public String getText() {
-            return fileName + " [" + projectName + "]";
+            return file.getName() + " [" + file.getProject().getName() + "]";
         }
 
     }

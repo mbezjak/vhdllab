@@ -14,8 +14,6 @@ import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.ProjectIdentifier;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 
@@ -68,9 +66,9 @@ public class DefaultWizard implements Wizard {
                 return null;
             CircuitInterface ci = table.getCircuitInterface();
             File file = container.getMapper().getFile(
-                    new FileIdentifier(projectName,
+                    projectName,
                             new hr.fer.zemris.vhdllab.entities.Caseless(ci
-                                    .getName())));
+                                    .getName()));
             if (file != null) {
                 LOG.info(ci.getName() + " already exists!");
             }
@@ -119,7 +117,7 @@ public class DefaultWizard implements Wizard {
                 LOG.error("Unexpected error", e);
                 return null;
             }
-            Project project = container.getMapper().getProject(new ProjectIdentifier(projectName));
+            Project project = container.getMapper().getProject(projectName);
             return new File(FileType.SCHEMA, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()), writer.toString(), project.getId());
         } else
             return null;

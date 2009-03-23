@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.gui.dialog.run;
 
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.AbstractDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.FileIdentifier;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
-public class RunDialog extends AbstractDialog<FileIdentifier> {
+public class RunDialog extends AbstractDialog<File> {
 
     private static final long serialVersionUID = 1L;
 
@@ -64,7 +64,7 @@ public class RunDialog extends AbstractDialog<FileIdentifier> {
                     int selectedIndex = fileList.getSelectedIndex();
                     if (selectedIndex != -1) {
                         RunItem item = (RunItem) listModel.get(selectedIndex);
-                        setResult(item.asIdentifier());
+                        setResult(item.getFile());
                     }
                 } else if (e.getClickCount() == 2) {
                     setVisible(false);
@@ -160,37 +160,27 @@ public class RunDialog extends AbstractDialog<FileIdentifier> {
         }
     }
 
-    public void setRunFiles(List<FileIdentifier> files) {
-        for (FileIdentifier identifier : files) {
-            listModel.addElement(new RunItem(identifier));
+    public void setRunFiles(List<File> files) {
+        for (File f : files) {
+            listModel.addElement(new RunItem(f));
         }
     }
 
     private class RunItem {
 
-        private String projectName;
-        private String fileName;
+        private File file;
 
-        public RunItem(FileIdentifier identifier) {
-            this.projectName = identifier.getProjectName();
-            this.fileName = identifier.getFileName();
+        public RunItem(File file) {
+            this.file = file;
         }
 
-        public String getFileName() {
-            return fileName;
-        }
-
-        public String getProjectName() {
-            return projectName;
-        }
-
-        public FileIdentifier asIdentifier() {
-            return new FileIdentifier(projectName, fileName);
+        public File getFile() {
+            return file;
         }
 
         @Override
         public String toString() {
-            return fileName + " [" + projectName + "]";
+            return file.getName() + " [" + file.getProject().getName() + "]";
         }
 
     }
