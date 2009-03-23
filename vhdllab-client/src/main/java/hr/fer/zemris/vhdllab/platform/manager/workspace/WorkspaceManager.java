@@ -7,6 +7,7 @@ import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
 import java.util.List;
+import java.util.Set;
 
 public interface WorkspaceManager extends EventPublisher<WorkspaceListener> {
 
@@ -22,7 +23,7 @@ public interface WorkspaceManager extends EventPublisher<WorkspaceListener> {
 
     List<Project> getProjects();
 
-    List<File> getFilesForProject(Project project);
+    Set<File> getFilesForProject(Project project);
 
     Hierarchy getHierarchy(Project project);
 

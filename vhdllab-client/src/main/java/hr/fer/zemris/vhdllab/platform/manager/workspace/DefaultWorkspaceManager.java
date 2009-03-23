@@ -7,13 +7,13 @@ import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.model.MutableWorkspace;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
+import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -34,13 +34,11 @@ public class DefaultWorkspaceManager extends
     @Autowired
     private WorkspaceService workspaceService;
     @Autowired
-    private IdentifierToInfoObjectMapper mapper;
-    @Autowired
     private EditorManagerFactory editorManagerFactory;
     @Resource(name = "standaloneLocalizationSource")
     private LocalizationSource localizationSource;
 
-    private MutableWorkspace workspace;
+    private Workspace workspace;
 
     public DefaultWorkspaceManager() {
         super(WorkspaceListener.class);
@@ -53,6 +51,7 @@ public class DefaultWorkspaceManager extends
             throw new FileAlreadyExistsException(file.toString());
         }
         FileReport report = workspaceService.save(file);
+        getWorkspace().addFile(report.getFile(), report.getHierarchy());
         fireFileCreated(report);
         openEditor(report.getFile());
         log(report, FILE_CREATED_MESSAGE);
@@ -62,6 +61,7 @@ public class DefaultWorkspaceManager extends
     public void save(File file) {
         checkIfNull(file);
         FileReport report = workspaceService.save(file);
+        getWorkspace().addFile(report.getFile(), report.getHierarchy());
         fireFileSaved(report);
         log(report, FILE_SAVED_MESSAGE);
     }
@@ -72,6 +72,7 @@ public class DefaultWorkspaceManager extends
         if (!file.getType().equals(FileType.PREDEFINED)) {
             closeEditor(file);
             FileReport report = workspaceService.deleteFile(file.getId());
+            getWorkspace().removeFile(report.getFile(), report.getHierarchy());
             fireFileDeleted(report);
             log(report, FILE_DELETED_MESSAGE);
         }
@@ -125,6 +126,7 @@ public class DefaultWorkspaceManager extends
             throw new ProjectAlreadyExistsException(project.toString());
         }
         Project created = workspaceService.persist(project.getName());
+        getWorkspace().addProject(project);
         fireProjectCreated(created);
         log(project, PROJECT_CREATED_MESSAGE);
     }
@@ -133,6 +135,7 @@ public class DefaultWorkspaceManager extends
     public void delete(Project project) {
         checkIfNull(project);
         workspaceService.deleteProject(project.getId());
+        getWorkspace().removeProject(project);
         fireProjectDeleted(project);
         log(project, PROJECT_DELETED_MESSAGE);
     }
@@ -160,42 +163,33 @@ public class DefaultWorkspaceManager extends
 
     @Override
     public List<Project> getProjects() {
-        List<ProjectMetadata> projectMetadata = getWorkspace()
-                .getProjectMetadata();
-        List<Project> projects = new ArrayList<Project>(projectMetadata.size());
-        for (ProjectMetadata pm : projectMetadata) {
-            projects.add(pm.getProject());
-        }
-        return projects;
+        return getWorkspace().getProjects();
     }
 
     @Override
-    public List<File> getFilesForProject(Project project) {
-        Validate.notNull(project, "Project can't be null");
-        return getWorkspace().getProjectMetadata(project).getFiles();
+    public Set<File> getFilesForProject(Project project) {
+        return getWorkspace().getFiles(project);
     }
 
     @Override
     public Hierarchy getHierarchy(Project project) {
-        return getWorkspace().getProjectMetadata(project).getHierarchy();
+        return getWorkspace().getHierarchy(project);
     }
 
     @Override
     public boolean exist(Project project) {
-        return getWorkspace().contains(project);
+        return getProjects().contains(project);
     }
 
     @Override
     public boolean exist(File file) {
-        Project project = mapper.getProject(file.getProjectId());
-        ProjectMetadata metadata = getWorkspace().getProjectMetadata(project);
-        return metadata.getFiles().contains(file);
+        return getFilesForProject(file.getProject()).contains(file);
     }
 
     @Override
-    public MutableWorkspace getWorkspace() {
+    public Workspace getWorkspace() {
         if (workspace == null) {
-            workspace = new MutableWorkspace(workspaceService.getWorkspace());
+            workspace = workspaceService.getWorkspace();
         }
         return workspace;
     }

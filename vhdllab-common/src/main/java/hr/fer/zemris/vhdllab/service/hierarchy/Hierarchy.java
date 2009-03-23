@@ -45,6 +45,10 @@ public final class Hierarchy implements Serializable {
         return nodes.get(file);
     }
 
+    public int getFileCount() {
+        return nodes.size();
+    }
+
     public Collection<HierarchyNode> getAllNodes() {
         return nodes.values();
     }

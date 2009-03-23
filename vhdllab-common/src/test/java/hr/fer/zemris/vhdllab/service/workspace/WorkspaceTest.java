@@ -1,8 +1,9 @@
 package hr.fer.zemris.vhdllab.service.workspace;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
@@ -10,8 +11,10 @@ import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -20,55 +23,64 @@ import org.junit.Test;
 
 public class WorkspaceTest extends ValueObjectTestSupport {
 
-    private List<Project> projects;
-    private Hierarchy hierarchy;
+    private Project firstProject;
+    private Project secondProject;
+    private Project thirdProject;
+    private Map<Project, ProjectMetadata> projectMetadata;
     private Set<File> predefinedFiles;
     private Set<File> preferencesFiles;
+    private Workspace workspace;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void initObject() {
-        projects = new ArrayList<Project>(2);
-        Project firstProject = new Project("userId", "project1");
-        projects.add(firstProject);
-        projects.add(new Project("userId", "project2"));
+        projectMetadata = new HashMap<Project, ProjectMetadata>(3);
+        firstProject = new Project("userId", "project1");
+        Hierarchy hierarchy = new Hierarchy(firstProject,
+                new ArrayList<HierarchyNode>());
+        projectMetadata.put(firstProject, new ProjectMetadata(hierarchy,
+                Collections.EMPTY_SET));
 
-        hierarchy = new Hierarchy(firstProject, new ArrayList<HierarchyNode>());
+        secondProject = new Project("userId", "project2");
+        hierarchy = new Hierarchy(secondProject, new ArrayList<HierarchyNode>());
+        projectMetadata.put(secondProject, new ProjectMetadata(hierarchy,
+                Collections.EMPTY_SET));
+
+        thirdProject = new Project("userId", "project3");
+        projectMetadata.put(thirdProject, null);
+
         predefinedFiles = new HashSet<File>(1);
         predefinedFiles.add(new File("predefined", null, "data"));
         preferencesFiles = new HashSet<File>(2);
         preferencesFiles.add(new File("preferences1", null, "data"));
         preferencesFiles.add(new File("preferences2", null, "data2"));
+        workspace = new Workspace(projectMetadata, predefinedFiles,
+                preferencesFiles);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructorNullProjects() {
-        new Workspace(null, hierarchy, predefinedFiles, preferencesFiles);
+    public void constructorNullProjectMetadata() {
+        new Workspace(null, predefinedFiles, preferencesFiles);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorNullPredefinedProject() {
-        new Workspace(projects, hierarchy, null, preferencesFiles);
+        new Workspace(projectMetadata, null, preferencesFiles);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorNullPreferencesFiles() {
-        new Workspace(projects, hierarchy, predefinedFiles, null);
+        new Workspace(projectMetadata, predefinedFiles, null);
     }
 
     @Test
     public void constructor() {
-        Workspace workspace = new Workspace(projects, hierarchy,
-                predefinedFiles, preferencesFiles);
-        assertEquals(projects, workspace.getProjects());
-        assertNotSame(projects, workspace.getProjects());
-        assertEquals(projects.size(), workspace.getProjectCount());
-        Project project = (Project) CollectionUtils.get(
-                workspace.getProjects(), 0);
-        assertNull(project.getFiles());
-        projects.add(new Project());
-        assertEquals(2, workspace.getProjectCount());
-
-        assertEquals(hierarchy, workspace.getActiveProjectHierarchy());
+        workspace = new Workspace(projectMetadata, predefinedFiles,
+                preferencesFiles);
+        assertEquals(3, workspace.getProjectCount());
+        for (Project project : workspace.getProjects()) {
+            assertNull(project.getFiles());
+        }
 
         assertEquals(predefinedFiles.size(), workspace.getPredefinedFiles()
                 .size());
@@ -85,6 +97,150 @@ public class WorkspaceTest extends ValueObjectTestSupport {
         file = (File) CollectionUtils.get(workspace.getPreferencesFiles(), 0);
         assertEquals("preferences1", file.getName());
         assertNull(file.getProject());
+    }
+
+    @Test
+    public void getProjects() {
+        assertEquals(3, workspace.getProjectCount());
+        assertEquals(3, workspace.getProjects().size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addProject() {
+        workspace.addProject(null);
+    }
+
+    @Test
+    public void addProject2() {
+        Project project = new Project();
+        workspace.addProject(project);
+        assertEquals(4, workspace.getProjectCount());
+        assertEquals(4, workspace.getProjects().size());
+        assertNotNull(workspace.getFiles(project));
+        assertNotNull(workspace.getHierarchy(project));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void removeProject() {
+        workspace.removeProject(null);
+    }
+
+    @Test
+    public void removeProject2() {
+        workspace.removeProject(new Project());
+        assertEquals(3, workspace.getProjectCount());
+        assertEquals(3, workspace.getProjects().size());
+
+        workspace.removeProject(firstProject);
+        assertEquals(2, workspace.getProjectCount());
+        assertEquals(2, workspace.getProjects().size());
+
+        workspace.removeProject(secondProject);
+        assertEquals(1, workspace.getProjectCount());
+        assertEquals(1, workspace.getProjects().size());
+
+        workspace.removeProject(thirdProject);
+        assertEquals(0, workspace.getProjectCount());
+        assertEquals(0, workspace.getProjects().size());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = IllegalArgumentException.class)
+    public void addFile() {
+        workspace.addFile(null, new Hierarchy(new Project(),
+                Collections.EMPTY_LIST));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addFile2() {
+        File file = new File();
+        file.setProject(firstProject);
+        workspace.addFile(file, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = IllegalArgumentException.class)
+    public void addFile3() {
+        Project project = new Project();
+        File file = new File();
+        file.setProject(project);
+        workspace.addFile(file, new Hierarchy(project, Collections.EMPTY_LIST));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void addFile4() {
+        assertTrue(workspace.getFiles(firstProject).isEmpty());
+        File file = new File();
+        file.setProject(firstProject);
+        Hierarchy hierarchy = new Hierarchy(firstProject,
+                Collections.EMPTY_LIST);
+        workspace.addFile(file, hierarchy);
+        assertEquals(1, workspace.getFiles(firstProject).size());
+        assertEquals(hierarchy, workspace.getHierarchy(firstProject));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(expected = IllegalArgumentException.class)
+    public void removeFile() {
+        workspace.removeFile(null, new Hierarchy(new Project(),
+                Collections.EMPTY_LIST));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeFile2() {
+        File file = new File();
+        file.setProject(firstProject);
+        workspace.removeFile(file, null);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test(expected = IllegalArgumentException.class)
+    public void removeFile3() {
+        Project project = new Project();
+        File file = new File();
+        file.setProject(project);
+        workspace.removeFile(file, new Hierarchy(project, Collections.EMPTY_LIST));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void removeFile4() {
+        assertTrue(workspace.getFiles(firstProject).isEmpty());
+        File file = new File();
+        file.setProject(firstProject);
+        Hierarchy hierarchy = new Hierarchy(firstProject,
+                Collections.EMPTY_LIST);
+        workspace.addFile(file, hierarchy);
+        assertEquals(1, workspace.getFiles(firstProject).size());
+
+        workspace.removeFile(file, hierarchy);
+        assertTrue(workspace.getFiles(firstProject).isEmpty());
+        assertEquals(hierarchy, workspace.getHierarchy(firstProject));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void getHierarchy() {
+        workspace.getHierarchy(null);
+    }
+
+    @Test
+    public void getHierarchy2() {
+        assertNull(workspace.getHierarchy(new Project()));
+        assertNotNull(workspace.getHierarchy(firstProject));
+        assertNull(workspace.getHierarchy(thirdProject));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getFiles() {
+        workspace.getFiles(null);
+    }
+
+    @Test
+    public void getFiles2() {
+        assertNull(workspace.getFiles(new Project()));
+        assertNotNull(workspace.getFiles(firstProject));
+        assertNull(workspace.getFiles(thirdProject));
     }
 
 }

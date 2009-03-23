@@ -86,6 +86,11 @@ public class HierarchyTest extends ValueObjectTestSupport {
         assertEquals(rightDep, hierarchy.getNode(rightDep.getFile()));
     }
 
+    @Test
+    public void getFileCount() {
+        assertEquals(4, hierarchy.getFileCount());
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void getAllNodes() {
         hierarchy.getAllNodes().add(new HierarchyNode(new File(), null));

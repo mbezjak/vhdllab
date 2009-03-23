@@ -4,6 +4,7 @@ import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,11 +40,10 @@ public abstract class EntityUtils {
         return clone;
     }
 
-    public static List<Project> setNullFiles(List<Project> projects) {
+    public static void setNullFiles(Collection<Project> projects) {
         for (Project project : projects) {
             project.setFiles(null);
         }
-        return projects;
     }
 
 }

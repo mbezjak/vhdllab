@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.BackingStoreException;
 
+import org.apache.commons.lang.UnhandledException;
 import org.apache.log4j.Logger;
 
 public class DatabasePreferences extends AbstractPreferences {
@@ -76,8 +77,7 @@ public class DatabasePreferences extends AbstractPreferences {
             try {
                 props.store(writer, null);
             } catch (IOException e) {
-                // Should never happen!
-                throw new IllegalStateException(e);
+                throw new UnhandledException(e);
             }
             File file = getFile();
             String data = writer.toString();

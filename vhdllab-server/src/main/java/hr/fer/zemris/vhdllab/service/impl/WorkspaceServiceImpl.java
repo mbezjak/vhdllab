@@ -14,6 +14,7 @@ import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
+import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 import hr.fer.zemris.vhdllab.util.EntityUtils;
 
@@ -43,7 +44,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Override
     public FileReport save(File file) {
         if (FileType.SOURCE.equals(file.getType())) {
-            CircuitInterface ci = metadataExtractor.extractCircuitInterface(file);
+            CircuitInterface ci = metadataExtractor
+                    .extractCircuitInterface(file);
             if (!ci.getName().equalsIgnoreCase(file.getName().toString())) {
                 throw new IllegalStateException("Resource " + file.getName()
                         + " must have only one entity with the same name.");
@@ -153,18 +155,23 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public Workspace getWorkspace() {
         String user = SecurityUtils.getUser();
         List<Project> projects = projectDao.findByUser(user);
-        EntityUtils.setNullFiles(projects);
 
-        Hierarchy hierarchy = null;
+        Map<Project, ProjectMetadata> projectMetadata = new HashMap<Project, ProjectMetadata>(
+                projects.size());
+        for (Project project : projects) {
+            projectMetadata.put(project, null);
+        }
         if (!projects.isEmpty()) {
             Project last = projects.get(projects.size() - 1);
-            hierarchy = extractHierarchy(last.getId());
+            Hierarchy hierarchy = extractHierarchy(last.getId());
+            projectMetadata.put(last, new ProjectMetadata(hierarchy, last
+                    .getFiles()));
         }
 
         Set<File> predefinedFiles = predefinedFilesDao.getPredefinedFiles();
         Project preferencesProject = projectDao.getPreferencesProject(user);
 
-        return new Workspace(projects, hierarchy, predefinedFiles,
+        return new Workspace(projectMetadata, predefinedFiles,
                 preferencesProject.getFiles());
     }
 
