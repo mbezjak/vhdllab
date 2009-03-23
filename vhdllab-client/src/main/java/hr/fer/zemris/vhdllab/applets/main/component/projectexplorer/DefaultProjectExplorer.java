@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
@@ -10,6 +9,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceAdapter;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
+import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.result.Result;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 
@@ -143,7 +143,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     private JPanel toolbarPanel;
 
     /** Aktivni projekt */
-    private Caseless projectName;
+    private String projectName;
 
     /** Aktivna hijerarhija */
     private Hierarchy hierarchy;
@@ -164,10 +164,10 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     // pitaj miru zakaj se projectContainer.getAllProject blesira i o cemu ona
     // ovisi?!
     // do tada interna kolekcija projekata
-    private List<Caseless> allProjects;
+    private List<String> allProjects;
 
     /* mapa datoteka po projektu. */
-    private Map<Caseless, List<Caseless>> filesByProjects;
+    private Map<String, List<String>> filesByProjects;
 
     private Icon normal = new ImageIcon(getClass().getClassLoader()
             .getResource("icons/hierarchy_xusesy_32.png"));
@@ -189,8 +189,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         setSystemContainer(container.getSystemContainer());
         // create set of expanded treepaths
         expandedNodes = new HashSet<TreePath>();
-        allProjects = new ArrayList<Caseless>();
-        filesByProjects = new HashMap<Caseless, List<Caseless>>();
+        allProjects = new ArrayList<String>();
+        filesByProjects = new HashMap<String, List<String>>();
 
         newSubMenu = new JMenu("New");
         addProject = new JMenuItem("Add project");
@@ -355,7 +355,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         container.getWorkspaceManager().addListener(new WorkspaceAdapter() {
             @Override
             public void fileCreated(FileReport report) {
-                addFile(report.getHierarchy().getProjectName(), report
+                addFile(report.getHierarchy().getProject().getName(), report
                         .getFile().getName());
             }
         });
@@ -363,7 +363,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     }
 
     private void loadWorkspace() {
-        for (Caseless p : getAllProjects()) {
+        for (String p : getAllProjects()) {
             removeProject(p);
         }
         for (Project project : container.getWorkspaceManager().getProjects()) {
@@ -436,8 +436,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     .getUserObject();
 
             // provjeri kojeg je tipa
-            type = container.getMapper().getFile(new Caseless(
-                    nodeProjectName), new Caseless(node.toString())).getType();
+            type = container.getMapper().getFile(nodeProjectName,
+                    node.toString()).getType();
 
             if (FileType.SOURCE.equals(type)) {
                 setIcon(vhdl);
@@ -486,7 +486,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 }
                 // List<String> projects = projectContainer.getAllProjects();
 
-                List<Caseless> projects = allProjects;
+                List<String> projects = allProjects;
                 expandedNodes.clear();
 
                 currentHierarchy = X_USES_Y;
@@ -499,8 +499,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 treeModel.reload();
                 // nakon toga dohvati sve projekte is project containera i
                 // kreiraj podstablo za taj projekt
-                for (Caseless project : projects) {
-                    PeNode tempNode = new PeNode(project.toString());
+                for (String project : projects) {
+                    PeNode tempNode = new PeNode(project);
                     treeModelNormal.insertNodeInto(tempNode, topNormal,
                             topNormal.getChildCount());
                     // topInverse.add(tempNode);
@@ -520,7 +520,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     return;
                 }
                 // List<String> projects = projectContainer.getAllProjects();
-                List<Caseless> projects = allProjects;
+                List<String> projects = allProjects;
                 expandedNodes.clear();
 
                 currentHierarchy = X_USED_IN_Y;
@@ -534,8 +534,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 // nakon toga dohvati sve projekte is project containera i
                 // kreiraj
                 // podstablo za taj projekt
-                for (Caseless project : projects) {
-                    PeNode tempNode = new PeNode(project.toString());
+                for (String project : projects) {
+                    PeNode tempNode = new PeNode(project);
                     treeModelInverse.insertNodeInto(tempNode, topInverse,
                             topInverse.getChildCount());
                     // topInverse.add(tempNode);
@@ -556,7 +556,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     return;
                 }
                 // List<String> projects = projectContainer.getAllProjects();
-                List<Caseless> projects = allProjects;
+                List<String> projects = allProjects;
                 expandedNodes.clear();
 
                 currentHierarchy = FLAT;
@@ -570,8 +570,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 // nakon toga dohvati sve projekte is project containera i
                 // kreiraj
                 // podstablo za taj projekt
-                for (Caseless project : projects) {
-                    PeNode tempNode = new PeNode(project.toString());
+                for (String project : projects) {
+                    PeNode tempNode = new PeNode(project);
                     treeModelFlat.insertNodeInto(tempNode, topFlat, topFlat
                             .getChildCount());
                     // topInverse.add(tempNode);
@@ -596,8 +596,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     private ActionListener popupListener = new ActionListener() {
         public void actionPerformed(ActionEvent event) {
 
-            Caseless fileName = null;
-            Caseless name = null;
+            String fileName = null;
+            String name = null;
 
             try {
                 if (event.getSource().equals(addProject)) {
@@ -623,14 +623,9 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            container
-                                    .getSimulationManager()
-                                    .compile(
-                                            container
-                                                    .getMapper()
-                                                    .getFile(
-                                                                    name,
-                                                                    fileName));
+                            container.getSimulationManager().compile(
+                                    container.getMapper().getFile(name,
+                                            fileName));
                         }
                     }
                 } else if (event.getSource().equals(simulate)) {
@@ -638,14 +633,9 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            container
-                                    .getSimulationManager()
-                                    .simulate(
-                                            container
-                                                    .getMapper()
-                                                    .getFile(
-                                                                    name,
-                                                                    fileName));
+                            container.getSimulationManager().simulate(
+                                    container.getMapper().getFile(name,
+                                            fileName));
                         }
                     }
                 } else if (event.getSource().equals(setActive)) {
@@ -659,23 +649,23 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (fileName != null) {
                         name = getProjectName();
                         if (name != null) {
-                            File f = container
-                                    .getMapper()
-                                    .getFile(
-                                            
-                                                    name, fileName);
-                            File file = container.getMapper().getFile(name, fileName);
+                            File f = container.getMapper().getFile(name,
+                                    fileName);
+                            File file = container.getMapper().getFile(name,
+                                    fileName);
                             Result result = container
                                     .getMetadataExtractionService()
                                     .generateVhdl(file.getId());
-                            Project project = container.getMapper().getProject(
-                                    f.getProjectId());
-                            container.getEditorManagerFactory().get(
-                                    new EditorIdentifier(
-                                            new ViewVhdlEditorMetadata(),
-                                            new File(FileType.SOURCE, fileName,
-                                                    result.getVHDL(), project
-                                                            .getId()))).open();
+                            Project project = f.getProject();
+                            File file2 = new File(fileName, FileType.SOURCE,
+                                    result.getData());
+                            file2.setProject(project);
+                            container
+                                    .getEditorManagerFactory()
+                                    .get(
+                                            new EditorIdentifier(
+                                                    new ViewVhdlEditorMetadata(),
+                                                    file2)).open();
                         }
                     }
                 } else if (event.getSource().equals(deleteFile)) {
@@ -686,7 +676,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (currentHierarchy.equals(X_USES_Y)) {
                         return;
                     }
-                    List<Caseless> projects = allProjects;
+                    List<String> projects = allProjects;
                     expandedNodes.clear();
                     currentHierarchy = X_USES_Y;
                     tree = treeNormal;
@@ -699,7 +689,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     // nakon toga dohvati sve projekte is project containera i
                     // kreiraj
                     // podstablo za taj projekt
-                    for (Caseless project : projects) {
+                    for (String project : projects) {
                         PeNode tempNode = new PeNode(project.toString());
                         treeModelNormal.insertNodeInto(tempNode, topNormal,
                                 topNormal.getChildCount());
@@ -718,7 +708,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (currentHierarchy.equals(X_USED_IN_Y)) {
                         return;
                     }
-                    List<Caseless> projects = allProjects;
+                    List<String> projects = allProjects;
                     expandedNodes.clear();
                     currentHierarchy = X_USED_IN_Y;
                     tree = treeInverse;
@@ -731,8 +721,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     // nakon toga dohvati sve projekte is project containera i
                     // kreiraj
                     // podstablo za taj projekt
-                    for (Caseless project : projects) {
-                        PeNode tempNode = new PeNode(project.toString());
+                    for (String project : projects) {
+                        PeNode tempNode = new PeNode(project);
                         treeModelInverse.insertNodeInto(tempNode, topInverse,
                                 topInverse.getChildCount());
                         // topInverse.add(tempNode);
@@ -751,7 +741,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     if (currentHierarchy.equals(FLAT)) {
                         return;
                     }
-                    List<Caseless> projects = allProjects;
+                    List<String> projects = allProjects;
                     expandedNodes.clear();
                     currentHierarchy = FLAT;
                     tree = treeFlat;
@@ -764,8 +754,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     // nakon toga dohvati sve projekte is project containera i
                     // kreiraj
                     // podstablo za taj projekt
-                    for (Caseless project : projects) {
-                        PeNode tempNode = new PeNode(project.toString());
+                    for (String project : projects) {
+                        PeNode tempNode = new PeNode(project);
                         treeModelFlat.insertNodeInto(tempNode, topFlat, topFlat
                                 .getChildCount());
                         // topInverse.add(tempNode);
@@ -799,8 +789,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         @Override
         public void mousePressed(MouseEvent event) {
 
-            Caseless fileName = null;
-            Caseless name = null;
+            String fileName = null;
+            String name = null;
             // TreePath selPath = tree.getPathForLocation(event.getX(),
             // event.getY());
             TreePath selPath;
@@ -830,8 +820,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                         if (fileName != null) {
                             name = getProjectName();
                             if (name != null) {
-                                File file = container.getMapper().getFile(
-                                        name, fileName);
+                                File file = container.getMapper().getFile(name,
+                                        fileName);
                                 container.getEditorManagerFactory().get(file)
                                         .open();
                                 // systemContainer.getEditorManager()
@@ -873,7 +863,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                         .getY());
                 tree.setSelectionPath(selPath);
                 workingTreePath = selPath;
-                Caseless name = getProjectName();
+                String name = getProjectName();
                 if (name != null) {
                     projectName = name;
                 }
@@ -897,7 +887,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * 
      * @return String ime selektiranog projekta, null nema selekcije
      */
-    private Caseless getProjectName() {
+    private String getProjectName() {
         TreePath treePath = null;
         Object[] objectPath = null;
 
@@ -910,7 +900,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 return projectName;
             }
             // uzmi ime projekta i ucini ga aktivnim
-            projectName = new Caseless(((PeNode) (objectPath[1])).toString());
+            projectName = ((PeNode) (objectPath[1])).toString();
         }
 
         return projectName;
@@ -921,13 +911,13 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * 
      * @return String ime selektirane datoteke
      */
-    private Caseless getFileName() {
-        Caseless fileName = null;
+    private String getFileName() {
+        String fileName = null;
         PeNode selectedNode = null;
 
         selectedNode = ((PeNode) tree.getLastSelectedPathComponent());
         if (selectedNode != null) {
-            fileName = new Caseless(selectedNode.toString());
+            fileName = selectedNode.toString();
         }
         // TODO ovo ne valjda ali je privremeno rijesenje
         if (fileName != null && fileName.equals(getProjectName())) {
@@ -954,7 +944,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param fileName
      *            ime datoteke
      */
-    private void addFile(Caseless projectName, Caseless fileName) {
+    private void addFile(String projectName, String fileName) {
         /* dodaje novu datoteku u mapu<projekt, kolekcija datoteka> */
         this.filesByProjects.get(projectName).add(fileName);
         File file = container.getMapper().getFile(projectName, fileName);
@@ -971,7 +961,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param projectName
      *            ime projekta
      */
-    private void addProject(Caseless projectName) {
+    private void addProject(String projectName) {
         PeNode projectNode = null;
 
         /* dodaje novi projekt u kolekciju svih projekata koje prikazuje PE */
@@ -980,7 +970,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         /*
          * dodaje novi projekt i stvara listu datoteka u mapi<projekt, datoteke>
          */
-        this.filesByProjects.put(projectName, new ArrayList<Caseless>());
+        this.filesByProjects.put(projectName, new ArrayList<String>());
 
         // dodaj novi cvor, tj. projekt u stablo
         if (getNode(root, projectName) == null) {
@@ -1008,13 +998,14 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     /**
      * Metoda dodaje novu datoteku u projekt bez refreshanja samog projekta
      */
-    private void addFileInProject(Caseless projectName, Caseless fileName) {
+    private void addFileInProject(String projectName, String fileName) {
         PeNode projectNode = null;
 
         // nadi cvor ciji je objekt jednak imenu projekta iz argumenata
         for (int i = 0; i < root.getChildCount(); i++) {
             projectNode = (PeNode) (root.getChildAt(i));
-            if (projectNode.getUserObject().equals(projectName.toString())) {
+            if (projectName.equalsIgnoreCase((String) projectNode
+                    .getUserObject())) {
                 PeNode fileNode = new PeNode(fileName.toString());
                 treeModel.insertNodeInto(fileNode, projectNode, projectNode
                         .getChildCount());
@@ -1033,7 +1024,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param projectName
      *            ime projekta koji se refresha
      */
-    private void refreshProject(Caseless projectName) {
+    private void refreshProject(String projectName) {
         /*
          * Interakcijom s korinsikom u stablo se mogu dodavati, brisati
          * elementi. Ti elementi, s druge strane, imaju razlicitu hijerarhiju
@@ -1077,15 +1068,14 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      *            ime projekta za kojeg se radi hijerarhija stabla
      * @param projectNode
      */
-    private void buildXusesYForOneProject(Caseless projectName,
-            PeNode projectNode) {
+    private void buildXusesYForOneProject(String projectName, PeNode projectNode) {
 
         // dohvaca sve root cvorove tog projekta
-        Project project = container.getMapper().getProject(
-                projectName);
+        Project project = container.getMapper().getProject(projectName);
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
         PeNode rootNode = null;
-        for (Caseless string : hierarchy.getTopLevelFiles()) {
+        for (HierarchyNode node : hierarchy.getTopLevelNodes()) {
+            String string = node.getFile().getName();
             if (getNode(projectNode, string) == null) {
                 rootNode = new PeNode(string.toString());
                 // projectNode.add(rootNode);
@@ -1095,7 +1085,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
             } else {
                 rootNode = getNode(projectNode, string);
             }
-            addChildren(rootNode, hierarchy);
+            addChildren(rootNode, hierarchy, node);
         }
     }
 
@@ -1111,7 +1101,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param projectNode
      *            cvor projekta
      */
-    private void buildXusedInYForOneProject(Caseless projectName,
+    private void buildXusedInYForOneProject(String projectName,
             PeNode projectNode) {
 
         // kolekcija sadrzi sve leafove koji se vec nalaze u podstablu
@@ -1121,17 +1111,17 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
 
         PeNode rootNode = null;
 
-        Project project = container.getMapper().getProject(
-                projectName);
+        Project project = container.getMapper().getProject(projectName);
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
         // dohvaca sve root cvorove tog projekta i nakon sto dohvati rootove
         // one rootove koji su leafovi stavlja odmah u stablo, a ostalima
         // rekurzivno
         // trazi kraj
-        for (Caseless string : hierarchy.getTopLevelFiles()) {
+        for (HierarchyNode node : hierarchy.getTopLevelNodes()) {
+            String string = node.getFile().getName();
             nodesUsesLeaf.clear();
-            Set<Caseless> children = hierarchy.getDependenciesForFile(string);
+            Set<HierarchyNode> children = hierarchy.getDependenciesFor(node);
             if (children.isEmpty()) {
                 rootNode = new PeNode(string.toString());
                 treeModel.insertNodeInto(rootNode, projectNode, projectNode
@@ -1163,16 +1153,16 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param projectNode
      *            cvor projekta
      */
-    private void traverseNonLeaf(Caseless parent, Set<Caseless> children,
+    private void traverseNonLeaf(String parent, Set<HierarchyNode> children,
             LinkedList<String> nodesUsesLeaf, Map<String, PeNode> leafsInTree,
             Hierarchy hierarchy, PeNode projectNode) {
 
         PeNode currentTop = null;
         PeNode node = null;
 
-        for (Caseless child : children) {
-            Set<Caseless> childChildren = hierarchy
-                    .getDependenciesForFile(child);
+        for (HierarchyNode n : children) {
+            String child = n.getFile().getName();
+            Set<HierarchyNode> childChildren = hierarchy.getDependenciesFor(n);
             // ako dijete nema djece
             if (childChildren.isEmpty()) {
                 // ako kraj postoji vec u stablu
@@ -1209,7 +1199,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param projectName
      *            ime projekta za kojeg se radi hijerarhija stabla
      */
-    private void buildFlatForOneProject(Caseless projectName, PeNode projectNode) {
+    private void buildFlatForOneProject(String projectName, PeNode projectNode) {
 
         Set<String> nodesInTree = new HashSet<String>();
         PeNode rootNode = null;
@@ -1217,11 +1207,12 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         Project project = container.getMapper().getProject(projectName);
         hierarchy = container.getWorkspaceManager().getHierarchy(project);
 
-        for (Caseless string : hierarchy.getTopLevelFiles()) {
+        for (HierarchyNode node : hierarchy.getTopLevelNodes()) {
+            String string = node.getFile().getName();
             rootNode = new PeNode(string.toString());
             this.treeModel.insertNodeInto(rootNode, projectNode, projectNode
                     .getChildCount());
-            this.traverseTree(string, nodesInTree, hierarchy, projectNode);
+            this.traverseTree(node, nodesInTree, hierarchy, projectNode);
         }
     }
 
@@ -1229,25 +1220,26 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * Metoda prolazi kroz sve cvorove stabla i stavlja ih u projectNode Za flat
      * hijerarhiju
      * 
-     * @param parent
+     * @param node
      *            roditelj
      * @param nodesInTree
      *            cvorovi koji su vec stavljeni u stablo
      * @param projectNode
      *            cvor projekta
      */
-    private void traverseTree(Caseless parent, Set<String> nodesInTree,
+    private void traverseTree(HierarchyNode node, Set<String> nodesInTree,
             Hierarchy hierarchy, PeNode projectNode) {
 
-        Set<Caseless> children = hierarchy.getDependenciesForFile(parent);
-        for (Caseless child : children) {
+        Set<HierarchyNode> children = hierarchy.getDependenciesFor(node);
+        for (HierarchyNode n : children) {
+            String child = n.getFile().getName();
             if (!nodesInTree.contains(child)) {
                 PeNode tempNode = new PeNode(child.toString());
                 this.treeModel.insertNodeInto(tempNode, projectNode,
                         projectNode.getChildCount());
                 nodesInTree.add(child.toString());
             }
-            this.traverseTree(child, nodesInTree, hierarchy, projectNode);
+            this.traverseTree(n, nodesInTree, hierarchy, projectNode);
         }
     }
 
@@ -1256,22 +1248,24 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * 
      * @param parent
      *            cvor koji predstavlja roditelja
+     * @param node
      */
-    private PeNode addChildren(PeNode parent, Hierarchy hierarchy) {
+    private PeNode addChildren(PeNode parent, Hierarchy hierarchy,
+            HierarchyNode node) {
 
-        Set<Caseless> children = hierarchy.getDependenciesForFile(new Caseless(
-                parent.toString()));
-        for (Caseless child : children) {
+        Set<HierarchyNode> children = hierarchy.getDependenciesFor(node);
+        for (HierarchyNode n : children) {
+            String child = n.getFile().getName();
             if (getNode(parent, child) == null) {
                 this.treeModel.insertNodeInto(addChildren(new PeNode(child
-                        .toString()), hierarchy), parent, parent
+                        .toString()), hierarchy, n), parent, parent
                         .getChildCount());
                 // parent.add(addChildren(new PeNode(child),
                 // hierarchy));
             } else {
                 // parent.add(addChildren(getNode(parent, child), hierarchy));
                 this.treeModel.insertNodeInto(addChildren(
-                        getNode(parent, child), hierarchy), parent, parent
+                        getNode(parent, child), hierarchy, n), parent, parent
                         .getChildCount());
 
             }
@@ -1315,7 +1309,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * 
      * @return listu projekata
      */
-    private List<Caseless> getAllProjects() {
+    private List<String> getAllProjects() {
         return this.allProjects;
     }
 
@@ -1326,7 +1320,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      *            ime projekta
      * @return lista datoteka koju posjeduje taj projekt
      */
-    private List<Caseless> getFilesByProject(Caseless projectName) {
+    private List<String> getFilesByProject(String projectName) {
         return this.filesByProjects.get(projectName);
     }
 
@@ -1339,7 +1333,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param fileName
      *            ime datoteke koja se uklanja
      */
-    private void removeFile(Caseless projectName, Caseless fileName) {
+    private void removeFile(String projectName, String fileName) {
 
         // PeNode projectNode = null;
         // PeNode fileNode = null;
@@ -1385,7 +1379,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * @param projectName
      *            ime projekta
      */
-    private void removeProject(Caseless projectName) {
+    private void removeProject(String projectName) {
         this.allProjects.remove(projectName);
         for (int i = 0; i < root.getChildCount(); i++) {
             if (((PeNode) (root.getChildAt(i))).getUserObject().equals(
@@ -1418,7 +1412,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
         PeNode node = null;
 
         TreePath treePath = tree.getSelectionPath();
-        Caseless name = getProjectName();
+        String name = getProjectName();
         if (treePath == null) {
             // ako nema selekcije
             return;
@@ -1430,7 +1424,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            File file = container.getMapper().getFile(name, new Caseless(node.toString()));
+            File file = container.getMapper().getFile(name, node.toString());
             container.getWorkspaceManager().delete(file);
         }
 
@@ -1471,9 +1465,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                 return;
             }
             this.treeModel.removeNodeFromParent(node);
-            Project project = container.getMapper().getProject(
-                    new Caseless(node.toString()));
-            container.getWorkspaceManager().deleteProject(project);
+            Project project = container.getMapper().getProject(node.toString());
+            container.getWorkspaceManager().delete(project);
             this.allProjects.remove(node.toString());
         }
 
