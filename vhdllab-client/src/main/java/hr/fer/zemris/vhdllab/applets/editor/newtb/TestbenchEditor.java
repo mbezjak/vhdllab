@@ -193,8 +193,8 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
         // Ovo dolje zamijeniti
 
         File fileInfo = container.getMapper().getFile(file);
-        CircuitInterface ci = container.getCircuitInterfaceExtractor().extract(
-                fileInfo);
+        CircuitInterface ci = container.getMetadataExtractionService()
+                .extractCircuitInterface(fileInfo.getId());
 
         String testbench = file.getFileName() + "_tb";
 

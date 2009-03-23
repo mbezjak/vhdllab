@@ -58,7 +58,7 @@ public class DefaultSimulationManager extends
     public DefaultSimulationManager() {
         super(SimulationListener.class);
     }
-    
+
     @Override
     public void compile(File file) {
         Validate.notNull(file, "File can't be null");
@@ -107,8 +107,7 @@ public class DefaultSimulationManager extends
         if (projectName == null) {
             return null;
         }
-        Project project = mapper.getProject(new ProjectIdentifier(
-                projectName));
+        Project project = mapper.getProject(new ProjectIdentifier(projectName));
         List<File> files = workspaceManager.getFilesForProject(project);
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
                 .size());
@@ -176,7 +175,8 @@ public class DefaultSimulationManager extends
         String waveform = result.getData();
         if (!StringUtils.isBlank(waveform)) {
             Project project = mapper.getProject(file.getProjectId());
-            File simulationFile = new File(file.getName(), FileType.SIMULATION, waveform);
+            File simulationFile = new File(file.getName(), FileType.SIMULATION,
+                    waveform);
             simulationFile.setProject(project);
             EditorIdentifier identifier = new EditorIdentifier(
                     new WaveAppletMetadata(), simulationFile);
@@ -194,8 +194,7 @@ public class DefaultSimulationManager extends
         if (projectName == null) {
             return null;
         }
-        Project project = mapper.getProject(new ProjectIdentifier(
-                projectName));
+        Project project = mapper.getProject(new ProjectIdentifier(projectName));
         List<File> files = workspaceManager.getFilesForProject(project);
         List<FileIdentifier> identifiers = new ArrayList<FileIdentifier>(files
                 .size());
