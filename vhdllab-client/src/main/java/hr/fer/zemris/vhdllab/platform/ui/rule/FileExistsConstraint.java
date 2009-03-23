@@ -23,7 +23,10 @@ public class FileExistsConstraint extends AbstractPropertyConstraint {
     @Override
     protected boolean test(PropertyAccessStrategy access) {
         Project project = (Project) access.getPropertyValue("project");
-        String fileName = (String) access.getPropertyValue("fileName");
+        if(project == null) {
+            return false;
+        }
+        String fileName = (String) access.getPropertyValue("name");
         // File type and data is irrelevant
         File file = new File(fileName, FileType.SOURCE, "");
         file.setProject(project);

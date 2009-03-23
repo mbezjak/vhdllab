@@ -57,7 +57,7 @@
   <bean id="workspaceService" parent="httpInvokerBeanParent">
     <property name="serviceUrl"
       value="https://${host}:${port}/vhdllab/remoting/workspace.service" />
-    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.FileService" />
+    <property name="serviceInterface" value="hr.fer.zemris.vhdllab.service.WorkspaceService" />
   </bean>
 
   <bean id="clientLogService" parent="httpInvokerBeanParent">

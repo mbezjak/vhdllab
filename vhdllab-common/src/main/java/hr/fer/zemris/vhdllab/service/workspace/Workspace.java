@@ -5,6 +5,7 @@ import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.util.EntityUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 
-public final class Workspace {
+public final class Workspace implements Serializable {
+
+    private static final long serialVersionUID = -2455644044788201509L;
 
     private final Map<Project, ProjectMetadata> projectMetadata;
     private transient List<Project> projects;

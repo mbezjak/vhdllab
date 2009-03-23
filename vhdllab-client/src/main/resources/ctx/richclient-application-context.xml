@@ -70,7 +70,7 @@
       <map>
         <entry>
           <key>
-            <value type="java.lang.Class">hr.fer.zemris.vhdllab.entities.ProjectInfo</value>
+            <value type="java.lang.Class">hr.fer.zemris.vhdllab.entity.Project</value>
           </key>
           <ref bean="projectListBinder"/>
         </entry>
