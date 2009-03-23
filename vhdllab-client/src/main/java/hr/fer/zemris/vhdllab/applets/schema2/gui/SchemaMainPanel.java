@@ -172,8 +172,7 @@ public class SchemaMainPanel extends AbstractEditor {
             return null;
         System.out.println("Initializing user prototypes.");
 
-        Project project = container.getMapper().getProject(
-                file.getProjectId());
+        Project project = file.getProject();
         hr.fer.zemris.vhdllab.entities.Caseless projectname = project.getName();
         hr.fer.zemris.vhdllab.entities.Caseless thisname = file.getName();
         List<hr.fer.zemris.vhdllab.entities.Caseless> circuitnames = new ArrayList<hr.fer.zemris.vhdllab.entities.Caseless>();

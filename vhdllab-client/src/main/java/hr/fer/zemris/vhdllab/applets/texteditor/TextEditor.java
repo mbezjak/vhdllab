@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
@@ -252,8 +251,8 @@ public class TextEditor extends AbstractEditor implements Wizard {
         }
     }
 
-    public File getInitialFileContent(Component parent,
-            Caseless projectName) {
+    @Override
+    public File getInitialFileContent(Component parent, Project project) {
         String[] options = new String[] { "OK", "Cancel" };
         int optionType = JOptionPane.OK_CANCEL_OPTION;
         int messageType = JOptionPane.PLAIN_MESSAGE;
@@ -264,13 +263,9 @@ public class TextEditor extends AbstractEditor implements Wizard {
         if (option != JOptionPane.OK_OPTION) {
             return null;
         }
-        if (projectName == null)
-            return null;
         CircuitInterface ci = table.getCircuitInterface();
-        File file = container.getMapper().getFile(
-                projectName,
-                        new hr.fer.zemris.vhdllab.entities.Caseless(ci
-                                .getName()));
+        File file = container.getMapper().getFile(project.getName(),
+                ci.getName());
         if (file != null) {
             LOG.info(ci.getName() + " already exists!");
         }
@@ -282,8 +277,9 @@ public class TextEditor extends AbstractEditor implements Wizard {
         sb.append("ARCHITECTURE arch OF ").append(ci.getName()).append(
                 " IS \n\nBEGIN\n\nEND arch;");
 
-        Project project = container.getMapper().getProject(projectName);
-        return new File(FileType.SOURCE, new Caseless(ci.getName()), sb.toString(), project.getId());
+        File f = new File(ci.getName(), FileType.SOURCE, sb.toString());
+        f.setProject(project);
+        return f;
     }
 
     @Override
@@ -428,8 +424,8 @@ public class TextEditor extends AbstractEditor implements Wizard {
         protected void updateUndoState() {
             if (undo.canUndo()) {
                 setEnabled(true);
-//                putValue(Action.NAME,
-//                        undo.getUndoPresentationName().split(" ")[0]);
+                // putValue(Action.NAME,
+                // undo.getUndoPresentationName().split(" ")[0]);
             } else {
                 setEnabled(false);
                 putValue(Action.NAME, "Undo");

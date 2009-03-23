@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
@@ -63,14 +62,13 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
     }
 
     @Override
-    public EditorManager getAllAssociatedWithProject(Caseless projectName) {
-        Validate.notNull(projectName, "Project name can't be null");
+    public EditorManager getAllAssociatedWithProject(Project project) {
+        Validate.notNull(project, "Project can't be null");
         List<Editor> editors = container.getAll();
         List<Editor> editorsWithSpecifiedProjectName = new ArrayList<Editor>();
         for (Editor editor : editors) {
             File file = get(editor).getIdentifier().getInstanceModifier();
-            Project project = mapper.getProject(file.getProjectId());
-            if (project.getName().equals(projectName)) {
+            if (file.getProject().equals(project)) {
                 editorsWithSpecifiedProjectName.add(editor);
             }
         }

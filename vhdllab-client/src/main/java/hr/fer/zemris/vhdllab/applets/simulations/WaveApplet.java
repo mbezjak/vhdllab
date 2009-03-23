@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
@@ -1667,7 +1667,8 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 		return this;
 	}
 
-	public File getInitialFileContent(Component parent, Caseless projectName) {
+	@Override
+	public File getInitialFileContent(Component parent, Project project) {
 		return null;
 	}
 

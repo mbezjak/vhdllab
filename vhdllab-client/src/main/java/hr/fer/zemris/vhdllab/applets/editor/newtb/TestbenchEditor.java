@@ -18,7 +18,6 @@ import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.Signal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals.VectorSignal;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.InitTimingDialog;
 import hr.fer.zemris.vhdllab.applets.editor.newtb.view.components2.JTestbench;
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
@@ -168,9 +167,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
 
     @Override
     public File getInitialFileContent(Component parent,
-            Caseless projectName) {
-        Project project = getContainer().getMapper().getProject(
-                projectName);
+            Project project) {
         Set<File> files = getContainer().getWorkspaceManager()
                 .getFilesForProject(project);
         List<File> identifiers = new ArrayList<File>(files
@@ -214,7 +211,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
 
         while (true) {
             InitTimingDialog initTimingDialog = new InitTimingDialog(parent,
-                    true, ci, testbench, projectName.toString());
+                    true, ci, testbench, project.getName());
             initTimingDialog.startDialog();
             if (initTimingDialog.getOption() != InitTimingDialog.OK_OPTION)
                 return null;

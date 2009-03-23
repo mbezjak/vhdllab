@@ -44,7 +44,7 @@ public class EntityTable extends JPanel {
         JTextField imeSignala = new JTextField("");
 
         NumberBox brojevi = new NumberBox("0");
-        
+
         String[] data1 = { bundle.getString("table.column0"),
                 bundle.getString("table.column1"),
                 bundle.getString("table.column2"),
@@ -203,7 +203,7 @@ public class EntityTable extends JPanel {
             Port p = new Port(pomData[i][0], d);
             if (!pomData[i][2].equalsIgnoreCase("Std_Logic")) {
                 int[] inte = new int[] { Integer.parseInt(pomData[i][3]),
-                    Integer.parseInt(pomData[i][4]) };
+                        Integer.parseInt(pomData[i][4]) };
                 p.setFrom(inte[0]);
                 p.setTo(inte[1]);
             }
@@ -220,9 +220,7 @@ public class EntityTable extends JPanel {
     public boolean isDataCorrect() {
         Set<String> test = new HashSet<String>();
         for (int i = 0; i < model.getRowCount() - 1; i++) {
-            if (test.contains(model.getValueAt(i, 0))
-                    || !StringFormat.isCorrectPortName((String) model
-                            .getValueAt(i, 0)))
+            if (test.contains(model.getValueAt(i, 0)))
                 return false;
             else
                 test.add((String) model.getValueAt(i, 0));

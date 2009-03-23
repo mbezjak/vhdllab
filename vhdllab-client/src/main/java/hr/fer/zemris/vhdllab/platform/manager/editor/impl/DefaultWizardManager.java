@@ -1,10 +1,10 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.i18n.AbstractLocalizationSource;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
@@ -42,9 +42,10 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
         if (type == null) {
             throw new NullPointerException("File type cant be null");
         }
-//        Caseless projectName = projectExplorer.getSelectedProject();
-        Caseless projectName = new Caseless("a2");
-        if (projectName == null) {
+        // Project project = projectExplorer.getSelectedProject();
+        Project project = new Project(ApplicationContextHolder.getContext()
+                .getUserId(), "a2");
+        if (project == null) {
             LOG
                     .info("Select a project from Project Explorer before creating a new file");
             return false;
@@ -56,18 +57,15 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
             ex.printStackTrace();
             wizard = null;
         }
-        File file = initWizard(wizard, projectName);
+        File file = initWizard(wizard, project);
         if (file == null) {
             // user canceled or no wizard for such editor
             return false;
         }
-        Caseless fileName = file.getName();
-        String data = file.getData();
-        Project project = mapper.getProject(
-                projectName);
+        String fileName = file.getName();
+        String projectName = file.getProject().getName();
         try {
-            workspaceManager.create(new File(type, fileName, data, project
-                    .getId()));
+            workspaceManager.create(file);
         } catch (IllegalArgumentException e) {
             LOG.info(fileName + " isn't a valid file name");
         } catch (FileAlreadyExistsException e) {
@@ -77,13 +75,13 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
         return true;
     }
 
-    private File initWizard(Wizard wizard, Caseless projectName) {
+    private File initWizard(Wizard wizard, Project project) {
         if (wizard == null) {
             throw new NullPointerException("Wizard cant be null");
         }
         // Initialization of a wizard
         wizard.setContainer(platformContainer);
-        File file = wizard.getInitialFileContent(getFrame(), projectName);
+        File file = wizard.getInitialFileContent(getFrame(), project);
         // end of initialization
         return file;
     }

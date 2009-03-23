@@ -41,8 +41,9 @@ public class DefaultWizard implements Wizard {
     public DefaultWizard() {
     }
 
+    @Override
     public File getInitialFileContent(Component parent,
-            hr.fer.zemris.vhdllab.entities.Caseless projectName) {
+            Project project) {
         String[] options = new String[] { "OK", "Cancel" };
         int optionType = JOptionPane.OK_CANCEL_OPTION;
         int messageType = JOptionPane.PLAIN_MESSAGE;
@@ -62,13 +63,8 @@ public class DefaultWizard implements Wizard {
         } while (flag);
 
         if (option == JOptionPane.OK_OPTION) {
-            if (projectName == null)
-                return null;
             CircuitInterface ci = table.getCircuitInterface();
-            File file = container.getMapper().getFile(
-                    projectName,
-                            new hr.fer.zemris.vhdllab.entities.Caseless(ci
-                                    .getName()));
+            File file = container.getMapper().getFile(project.getName(), ci.getName());
             if (file != null) {
                 LOG.info(ci.getName() + " already exists!");
             }
@@ -117,8 +113,9 @@ public class DefaultWizard implements Wizard {
                 LOG.error("Unexpected error", e);
                 return null;
             }
-            Project project = container.getMapper().getProject(projectName);
-            return new File(FileType.SCHEMA, new hr.fer.zemris.vhdllab.entities.Caseless(ci.getName()), writer.toString(), project.getId());
+            File f = new File(ci.getName(), FileType.SCHEMA, writer.toString());
+            f.setProject(project);
+            return f;
         } else
             return null;
     }

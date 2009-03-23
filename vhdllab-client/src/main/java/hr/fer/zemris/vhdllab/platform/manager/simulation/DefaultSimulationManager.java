@@ -66,7 +66,7 @@ public class DefaultSimulationManager extends
         }
         Project project = file.getProject();
         EditorManager em = editorManagerFactory
-                .getAllAssociatedWithProject(project.getName());
+                .getAllAssociatedWithProject(project);
         boolean shouldCompile = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
         if (shouldCompile) {
             List<CompilationMessage> messages = simulator.compile(file.getId());
@@ -106,12 +106,10 @@ public class DefaultSimulationManager extends
             return null;
         }
         Set<File> files = workspaceManager.getFilesForProject(project);
-        List<File> identifiers = new ArrayList<File>(files
-                .size());
+        List<File> identifiers = new ArrayList<File>(files.size());
         for (File file : files) {
             if (file.getType().isCompilable()) {
-                identifiers
-                        .add(file);
+                identifiers.add(file);
             }
         }
         if (files.isEmpty()) {
@@ -133,7 +131,7 @@ public class DefaultSimulationManager extends
         }
         Project project = file.getProject();
         EditorManager em = editorManagerFactory
-                .getAllAssociatedWithProject(project.getName());
+                .getAllAssociatedWithProject(project);
         boolean shouldSimulate = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
         if (shouldSimulate) {
             Result result = simulator.simulate(file.getId());
@@ -191,12 +189,10 @@ public class DefaultSimulationManager extends
             return null;
         }
         Set<File> files = workspaceManager.getFilesForProject(project);
-        List<File> identifiers = new ArrayList<File>(files
-                .size());
+        List<File> identifiers = new ArrayList<File>(files.size());
         for (File file : files) {
             if (file.getType().isSimulatable()) {
-                identifiers
-                        .add(file);
+                identifiers.add(file);
             }
         }
         if (files.isEmpty()) {

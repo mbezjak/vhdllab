@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.platform.manager.editor;
 
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 
 import java.awt.Component;
 
@@ -66,6 +67,6 @@ public interface Wizard {
 	 *            should created file be placed
 	 * @return an initial <code>FileContent</code>
 	 */
-	File getInitialFileContent(Component parent, Caseless projectName);
+	File getInitialFileContent(Component parent, Project project);
 
 }

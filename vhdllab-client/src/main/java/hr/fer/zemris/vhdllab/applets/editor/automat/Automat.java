@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
@@ -233,8 +232,9 @@ public class Automat extends AbstractEditor implements Wizard {
         return adrw.getData();
     }
 
+    @Override
     public File getInitialFileContent(Component parent,
-            Caseless projectName) {
+            Project project) {
         bundle = ResourceBundle
                 .getBundle("Client_Automat_ApplicationResources");
         AUTPodatci pod = new AUTPodatci(parent, container, bundle);
@@ -247,8 +247,9 @@ public class Automat extends AbstractEditor implements Wizard {
                     stanja);
         } else
             return null;
-        Project project = container.getMapper().getProject(projectName);
-        return new File(FileType.AUTOMATON, new Caseless(pod.ime), gen, project.getId());
+        File f = new File(pod.ime, FileType.AUTOMATON, gen);
+        f.setProject(project);
+        return f;
     }
 
     @Override

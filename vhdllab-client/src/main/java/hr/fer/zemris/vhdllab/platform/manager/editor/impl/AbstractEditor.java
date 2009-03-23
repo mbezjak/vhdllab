@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 import hr.fer.zemris.vhdllab.platform.listener.StandaloneEventPublisher;
@@ -80,12 +79,12 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     }
 
     @Override
-    public Caseless getFileName() {
+    public String getFileName() {
         return (file != null ? file.getName() : null);
     }
 
     @Override
-    public Caseless getProjectName() {
+    public String getProjectName() {
         if (file != null) {
             return file.getProject().getName();
         }

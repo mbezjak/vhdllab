@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 
@@ -36,9 +35,9 @@ public interface Editor {
 
     EventPublisher<EditorListener> getEventPublisher();
 
-    Caseless getFileName();
+    String getFileName();
 
-    Caseless getProjectName();
+    String getProjectName();
 
     void setMetadata(EditorMetadata metadata);
 
