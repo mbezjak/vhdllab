@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.NumberBox;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
-import hr.fer.zemris.vhdllab.service.ci.PortType;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -51,61 +51,57 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
     @SuppressWarnings("unchecked")
     @Override
     protected JComponent createControl() {
-        List<CircuitInterfaceObject> list = new ArrayList<CircuitInterfaceObject>();
-        list.add(new CircuitInterfaceObject());
-        model = new BeanTableModel(CircuitInterfaceObject.class, list,
-                getMessageSource()) {
+        List<Port> list = new ArrayList<Port>();
+        Port p = new Port();
+        p.setDirection(PortDirection.IN);
+        list.add(p);
+        model = new BeanTableModel(Port.class, list, getMessageSource()) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected String[] createColumnPropertyNames() {
-                return new String[] { "name", "portDirection", "typeName",
-                        "from", "to" };
+                return new String[] { "name", "direction", "from", "to" };
             }
 
             @Override
             protected Class[] createColumnClasses() {
                 return new Class[] { String.class, PortDirection.class,
-                        PortType.class, Integer.class, Integer.class };
+                        Integer.class, Integer.class };
             }
 
         };
         model.setRowNumbers(false);
         table = new JTable(model);
         table.setCellSelectionEnabled(true);
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                removeAction.setEnabled(!table.getSelectionModel().isSelectionEmpty());
-            }
-        });
+        table.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e) {
+                        removeAction.setEnabled(!table.getSelectionModel()
+                                .isSelectionEmpty());
+                    }
+                });
 
         final JComboBox inComboBox = new JComboBox(new EnumComboBoxModel(
                 PortDirection.class));
-        JComboBox tipComboBox = new JComboBox(new EnumComboBoxModel(
-                PortType.class));
         JTextField imeSignala = new JTextField("");
 
         NumberBox brojevi = new NumberBox("0");
 
         new ComboBoxAutoCompletion(inComboBox);
-        new ComboBoxAutoCompletion(tipComboBox);
 
         table.getColumnModel().getColumn(0).setCellEditor(
                 new DefaultCellEditor(imeSignala));
-        table.getColumnModel().getColumn(2).setPreferredWidth(70);
+        table.getColumnModel().getColumn(0).setPreferredWidth(70);
         table.getColumnModel().getColumn(1).setCellEditor(
                 new ComboBoxCellEditor(inComboBox));
         table.getColumnModel().getColumn(1).setPreferredWidth(70);
         table.getColumnModel().getColumn(2).setCellEditor(
-                new ComboBoxCellEditor(tipComboBox));
-        table.getColumnModel().getColumn(2).setPreferredWidth(140);
-        table.getColumnModel().getColumn(3).setCellEditor(
                 new DefaultCellEditor(brojevi));
-        table.getColumnModel().getColumn(3).setPreferredWidth(65);
-        table.getColumnModel().getColumn(4)
+        table.getColumnModel().getColumn(2).setPreferredWidth(65);
+        table.getColumnModel().getColumn(3)
                 .setCellEditor(new NumberEditorExt());
-        table.getColumnModel().getColumn(4).setPreferredWidth(65);
+        table.getColumnModel().getColumn(3).setPreferredWidth(65);
         table.setPreferredScrollableViewportSize(new Dimension(300, 200));
 
         table.addKeyListener(new EditComboBoxKeyHandler());
@@ -116,9 +112,9 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
         control.add(scrollPane, BorderLayout.CENTER);
         return control;
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<CircuitInterfaceObject> getPorts() {
+    public List<Port> getPorts() {
         return model.getRows();
     }
 
@@ -126,7 +122,9 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
         addAction = new ActionCommand(PAGE_ID + ".addRow") {
             @Override
             protected void doExecuteCommand() {
-                model.addRow(new CircuitInterfaceObject());
+                Port port = new Port();
+                port.setDirection(PortDirection.IN);
+                model.addRow(port);
             }
         };
         removeAction = new ActionCommand(PAGE_ID + ".removeRow") {
@@ -135,6 +133,7 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
                 this.setEnabled(false); // remove action is initially disabled
                 super.onButtonAttached(button);
             }
+
             @Override
             protected void doExecuteCommand() {
                 int selectedRow = table.getSelectedRow();

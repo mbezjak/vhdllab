@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
 import javax.swing.JComponent;
@@ -29,7 +29,7 @@ public class ProjectExplorerView extends AbstractView implements
     }
 
     @Override
-    public Caseless getSelectedProject() {
+    public Project getSelectedProject() {
         return projectExplorer.getSelectedProject();
     }
 

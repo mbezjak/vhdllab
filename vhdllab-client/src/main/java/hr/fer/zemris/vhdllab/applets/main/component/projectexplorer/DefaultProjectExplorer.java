@@ -1306,8 +1306,8 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
      * 
      * @return projectName aktivni projekt
      */
-    public Caseless getSelectedProject() {
-        return this.projectName;
+    public Project getSelectedProject() {
+        return container.getMapper().getProject(this.projectName);
     }
 
     /**

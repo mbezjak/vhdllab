@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.ui.rule;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
@@ -26,8 +25,8 @@ public class FileExistsConstraint extends AbstractPropertyConstraint {
         Project project = (Project) access.getPropertyValue("project");
         String fileName = (String) access.getPropertyValue("fileName");
         // File type and data is irrelevant
-        File file = new File(FileType.SOURCE, new Caseless(fileName),
-                "", project.getId());
+        File file = new File(fileName, FileType.SOURCE, "");
+        file.setProject(project);
         return !workspaceManager.exist(file);
     }
 }

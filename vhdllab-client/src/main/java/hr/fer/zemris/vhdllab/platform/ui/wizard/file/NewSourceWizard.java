@@ -1,10 +1,11 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
+import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
+import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 import java.util.List;
@@ -35,47 +36,26 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
 
     @Override
     protected void onWizardFinished(Object formObject) {
-        FileFormObject file = (FileFormObject) formObject;
-        List<CircuitInterfaceObject> ports = circuitInterfacePage.getPorts();
-        FileType type = getFileType();
-        String data = createData(file, ports);
-        File f = new File(type, new Caseless(file.getFileName()), data,
-                file.getProject().getId());
-        workspaceManager.create(f);
+        File file = (File) formObject;
+        List<Port> ports = circuitInterfacePage.getPorts();
+        file.setType(getFileType());
+        file.setData(createData(file, ports));
+        workspaceManager.create(file);
     }
 
     private FileType getFileType() {
         return FileType.SOURCE;
     }
 
-    protected String createData(FileFormObject file,
-            List<CircuitInterfaceObject> ports) {
+    protected String createData(File file, List<Port> ports) {
+        CircuitInterface ci = new CircuitInterface(file.getName());
+        ci.addAll(ports);
         StringBuilder sb = new StringBuilder(100 + ports.size() * 20);
         sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
         sb.append("-- note: entity name and resource name must match\n");
-        sb.append("ENTITY ").append(file.getFileName()).append(" IS PORT (\n");
-        for (CircuitInterfaceObject p : ports) {
-            PortType type = p.getTypeName();
-            sb.append("\t").append(p.getName()).append(" : ").append(
-                    p.getPortDirection().toString()).append(" ").append(
-                    type.toString());
-            if (type.equals(PortType.STD_LOGIC_VECTOR)) {
-                sb.append(" (").append(p.getFrom()).append(" ")
-                        .append(p.getFrom() >= p.getTo() ? "DOWNTO" : "TO")
-                        .append(" ").append(p.getTo()).append(")");
-            }
-            sb.append(";\n");
-        }
-        if (ports.size() == 0) {
-            sb.replace(sb.length() - 8, sb.length(), "\n");
-        } else {
-            sb.replace(sb.length() - 2, sb.length() - 1, ");");
-        }
-        sb.append("end ").append(file.getFileName()).append(";\n\n");
-        sb.append("ARCHITECTURE arch OF ").append(file.getFileName()).append(
-                " IS \n\nBEGIN\n\nEND arch;");
-
+        sb.append(ci.toString()).append("\n\n");
+        sb.append("ARCHITECTURE arch OF ").append(file.getName());
+        sb.append(" IS \n\nBEGIN\n\nEND arch;");
         return sb.toString();
     }
-
 }

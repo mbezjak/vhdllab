@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.simulation;
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.Caseless;
 import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
 import hr.fer.zemris.vhdllab.entity.File;
@@ -65,7 +64,7 @@ public class DefaultSimulationManager extends
             logger.info(file.getName() + " isn't compilable");
             return;
         }
-        Project project = mapper.getProject(file.getProjectId());
+        Project project = file.getProject();
         EditorManager em = editorManagerFactory
                 .getAllAssociatedWithProject(project.getName());
         boolean shouldCompile = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
@@ -102,11 +101,10 @@ public class DefaultSimulationManager extends
     }
 
     private File showCompilationRunDialog() {
-        Caseless projectName = projectExplorer.getSelectedProject();
-        if (projectName == null) {
+        Project project = projectExplorer.getSelectedProject();
+        if (project == null) {
             return null;
         }
-        Project project = mapper.getProject(projectName);
         Set<File> files = workspaceManager.getFilesForProject(project);
         List<File> identifiers = new ArrayList<File>(files
                 .size());
@@ -133,7 +131,7 @@ public class DefaultSimulationManager extends
             logger.info(file.getName() + " isn't simulatable");
             return;
         }
-        Project project = mapper.getProject(file.getProjectId());
+        Project project = file.getProject();
         EditorManager em = editorManagerFactory
                 .getAllAssociatedWithProject(project.getName());
         boolean shouldSimulate = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
@@ -173,10 +171,9 @@ public class DefaultSimulationManager extends
     private void openSimulationEditor(File file, Result result) {
         String waveform = result.getData();
         if (!StringUtils.isBlank(waveform)) {
-            Project project = mapper.getProject(file.getProjectId());
             File simulationFile = new File(file.getName(), FileType.SIMULATION,
                     waveform);
-            simulationFile.setProject(project);
+            simulationFile.setProject(file.getProject());
             EditorIdentifier identifier = new EditorIdentifier(
                     new WaveAppletMetadata(), simulationFile);
             EditorManager simulationEditor = editorManagerFactory
@@ -189,11 +186,10 @@ public class DefaultSimulationManager extends
     }
 
     private File showSimulationRunDialog() {
-        Caseless projectName = projectExplorer.getSelectedProject();
-        if (projectName == null) {
+        Project project = projectExplorer.getSelectedProject();
+        if (project == null) {
             return null;
         }
-        Project project = mapper.getProject(projectName);
         Set<File> files = workspaceManager.getFilesForProject(project);
         List<File> identifiers = new ArrayList<File>(files
                 .size());

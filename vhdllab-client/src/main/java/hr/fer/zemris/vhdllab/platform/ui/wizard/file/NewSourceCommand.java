@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingCommand;
 
 import org.springframework.richclient.form.Form;
@@ -10,8 +11,7 @@ public class NewSourceCommand extends AbstractResourceCreatingCommand {
 
     @Override
     protected Form createForm() {
-        return new FileForm(FormModelHelper
-                .createFormModel(new FileFormObject()));
+        return new FileForm(FormModelHelper.createFormModel(new File()));
     }
 
     @Override

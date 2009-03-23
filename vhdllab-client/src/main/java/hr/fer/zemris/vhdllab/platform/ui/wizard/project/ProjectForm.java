@@ -19,7 +19,7 @@ public class ProjectForm extends AbstractForm implements Focusable {
     @Override
     protected JComponent createFormControl() {
         TableFormBuilder builder = new TableFormBuilder(getBindingFactory());
-        nameField = builder.add("projectName")[1];
+        nameField = builder.add("name")[1];
         return builder.getForm();
     }
 

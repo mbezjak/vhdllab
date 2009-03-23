@@ -1,13 +1,14 @@
 package hr.fer.zemris.vhdllab.platform.ui.rule;
 
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.ui.wizard.project.ProjectFormObject;
 
 import org.apache.commons.lang.Validate;
-import org.springframework.core.closure.support.AbstractConstraint;
+import org.springframework.binding.PropertyAccessStrategy;
+import org.springframework.rules.constraint.property.AbstractPropertyConstraint;
 
-public class ProjectExistsConstraint extends AbstractConstraint {
+public class ProjectExistsConstraint extends AbstractPropertyConstraint {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,12 +20,9 @@ public class ProjectExistsConstraint extends AbstractConstraint {
     }
 
     @Override
-    public boolean test(Object argument) {
-        if (argument instanceof String) {
-            Project project = ProjectFormObject
-                    .asProjectInfo((String) argument);
-            return !workspaceManager.exist(project);
-        }
-        return false;
+    public boolean test(PropertyAccessStrategy access) {
+        Project project = (Project) access.getDomainObject();
+        project.setUserId(ApplicationContextHolder.getContext().getUserId());
+        return !workspaceManager.exist(project);
     }
 }

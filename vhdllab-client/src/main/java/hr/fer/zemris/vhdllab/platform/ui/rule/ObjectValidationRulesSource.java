@@ -1,8 +1,8 @@
 package hr.fer.zemris.vhdllab.platform.ui.rule;
 
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.ui.wizard.file.FileFormObject;
-import hr.fer.zemris.vhdllab.platform.ui.wizard.project.ProjectFormObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.closure.Constraint;
@@ -21,30 +21,24 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
     }
 
     private Rules createProjectRules() {
-        return new Rules(ProjectFormObject.class) {
+        return new Rules(Project.class) {
             @Override
             protected void initRules() {
-                add("projectName", new Constraint[] {
-                        getCommonNameConstraint(),
-                        new ProjectExistsConstraint(workspaceManager) });
+                add("name", new Constraint[] { new ProjectExistsConstraint(
+                        workspaceManager) });
             }
         };
     }
 
     private Rules createFileRules() {
-        return new Rules(FileFormObject.class) {
+        return new Rules(File.class) {
             @Override
             protected void initRules() {
                 add("project", required());
-                add("fileName", new Constraint[] { getCommonNameConstraint(),
-                        new FileExistsConstraint(workspaceManager) });
+                add("name", new Constraint[] { new FileExistsConstraint(
+                        workspaceManager) });
             }
         };
-    }
-
-    Constraint getCommonNameConstraint() {
-        return all(new Constraint[] { required(), maxLength(255),
-                NameFormatConstraint.instance() });
     }
 
 }

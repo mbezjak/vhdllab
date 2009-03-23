@@ -23,7 +23,7 @@ public class FileForm extends AbstractForm implements Focusable {
         TableFormBuilder builder = new TableFormBuilder(getBindingFactory());
         comboBox = (JComboBox) builder.add("project")[1];
         builder.row();
-        nameField = builder.add("fileName")[1];
+        nameField = builder.add("name")[1];
         return builder.getForm();
     }
 
