@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
-import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
-import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME_2;
 import hr.fer.zemris.vhdllab.dao.impl.support.AbstractDaoSupport;
 import hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDao;
 import hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityTable;
@@ -113,12 +111,12 @@ public class AbstractEntityDaoTest extends AbstractDaoSupport {
     public void findUniqueResult() {
         setupBasicEntities();
         String query = "select e from NamedEntityTable e where e.name = ?1";
-        assertNotNull("file not found.", dao.findUniqueResult(query, NAME));
+        assertNotNull("file not found.", dao.findUniqueResult(query, "name"));
     }
 
     private void setupBasicEntities() {
-        setupBasicEntity(new NamedEntityTable(NAME));
-        setupBasicEntity(new NamedEntityTable(NAME_2));
+        setupBasicEntity(new NamedEntityTable("name"));
+        setupBasicEntity(new NamedEntityTable("name2"));
     }
 
     private void setupBasicEntity(final NamedEntityTable file) {
