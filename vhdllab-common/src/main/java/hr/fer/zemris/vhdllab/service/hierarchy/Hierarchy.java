@@ -49,6 +49,14 @@ public final class Hierarchy implements Serializable {
         return nodes.size();
     }
 
+    public boolean fileHasDependency(File file, File dependency) {
+        Validate.notNull(file, "File can't be null");
+        Validate.notNull(dependency, "Dependency can't be null");
+        HierarchyNode fileNode = getNode(file);
+        Validate.notNull(fileNode, "File isn't in hierarchy: " + file);
+        return fileNode.containsDependency(dependency);
+    }
+
     public Collection<HierarchyNode> getAllNodes() {
         return nodes.values();
     }

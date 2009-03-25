@@ -88,6 +88,11 @@ public final class HierarchyNode implements Serializable {
         return Collections.unmodifiableSet(dependencies);
     }
 
+    public boolean containsDependency(File dependency) {
+        Validate.notNull(dependency, "Dependency can't be null");
+        return dependencies.contains(dependency);
+    }
+
     HierarchyNode getParent() {
         return parent;
     }

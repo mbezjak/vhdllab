@@ -185,6 +185,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 project.addFile(new File(file));
             }
         }
-        projectDao.persist(project);
+        projectDao.merge(project);
     }
 }

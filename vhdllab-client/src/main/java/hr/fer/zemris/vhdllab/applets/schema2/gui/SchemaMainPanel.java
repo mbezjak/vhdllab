@@ -167,19 +167,17 @@ public class SchemaMainPanel extends AbstractEditor {
     }
 
     private List<CircuitInterface> getUserPrototypeList() {
-        File file = getFile();
-        if (file == null)
+        File thisfile = getFile();
+        if (thisfile == null)
             return null;
         System.out.println("Initializing user prototypes.");
 
-        Project project = file.getProject();
-        hr.fer.zemris.vhdllab.entities.Caseless projectname = project.getName();
-        hr.fer.zemris.vhdllab.entities.Caseless thisname = file.getName();
-        List<hr.fer.zemris.vhdllab.entities.Caseless> circuitnames = new ArrayList<hr.fer.zemris.vhdllab.entities.Caseless>();
-        for (File info : container.getWorkspaceManager()
-                .getFilesForProject(project)) {
+        Project project = thisfile.getProject();
+        List<File> circuitnames = new ArrayList<File>();
+        for (File info : container.getWorkspaceManager().getFilesForProject(
+                project)) {
             if (info.getType().isCircuit()) {
-                circuitnames.add(info.getName());
+                circuitnames.add(info);
             }
         }
 
@@ -187,19 +185,16 @@ public class SchemaMainPanel extends AbstractEditor {
                 project);
 
         List<CircuitInterface> usercircuits = new ArrayList<CircuitInterface>();
-        for (hr.fer.zemris.vhdllab.entities.Caseless name : circuitnames) {
+        for (File circuit : circuitnames) {
             // do not put prototypes for the modelled component or for
             // components that depend on this component
-            if (thisname.equals(name)
-                    || hierarchy.getDependenciesForFile(name)
-                            .contains(thisname))
+            if (thisfile.equals(circuit)
+                    || hierarchy.fileHasDependency(circuit, thisfile))
                 continue;
 
             // get circuit interface for the component
-            File f = container.getMapper().getFile(
-                    projectname, name);
             CircuitInterface circint = container.getMetadataExtractionService()
-                    .extractCircuitInterface(f.getId());
+                    .extractCircuitInterface(circuit.getId());
 
             usercircuits.add(circint);
         }
@@ -402,13 +397,12 @@ public class SchemaMainPanel extends AbstractEditor {
         return isused;
     }
 
-    public boolean isPlacedInEditor(
-            hr.fer.zemris.vhdllab.entities.Caseless fileName) {
+    public boolean isPlacedInEditor(String fileName) {
         boolean isplaced = false;
 
         for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
             CircuitInterface plcci = plc.comp.getCircuitInterface();
-            if (plcci.getName().equalsIgnoreCase(fileName.toString())) {
+            if (plcci.isName(fileName)) {
                 isplaced = true;
                 break;
             }
@@ -417,12 +411,11 @@ public class SchemaMainPanel extends AbstractEditor {
         return isplaced;
     }
 
-    private boolean hasCircuitInterfaceChanged(
-            hr.fer.zemris.vhdllab.entities.Caseless fileName,
+    private boolean hasCircuitInterfaceChanged(String fileName,
             CircuitInterface ci) {
         for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
             CircuitInterface plcci = plc.comp.getCircuitInterface();
-            if (plcci.getName().equalsIgnoreCase(fileName.toString())) {
+            if (plcci.isName(fileName)) {
                 if (!ci.equals(plcci))
                     return true;
             }
@@ -432,14 +425,13 @@ public class SchemaMainPanel extends AbstractEditor {
     }
 
     public boolean shouldBeAdded(FileReport report) {
-        hr.fer.zemris.vhdllab.entities.Caseless filename = report.getFile().getName();
         Hierarchy hierarchy = report.getHierarchy();
 
-        hr.fer.zemris.vhdllab.entities.Caseless thisname = getFile().getName();
-        System.out.println("This = " + thisname + "; other = " + filename);
-        if (thisname.equals(filename)
-                || hierarchy.getDependenciesForFile(filename)
-                        .contains(thisname)) {
+        File thisfile = getFile();
+        System.out.println("This = " + thisfile.getName() + "; other = "
+                + report.getFile().getName());
+        if (thisfile.equals(report.getFile())
+                || hierarchy.fileHasDependency(report.getFile(), thisfile)) {
             System.out.println("Other should NOT be added to this.");
             return false;
         }
@@ -465,13 +457,14 @@ public class SchemaMainPanel extends AbstractEditor {
         initPrototypes();
 
         appletListener = new WorkspaceAdapter() {
-            
+
             @Override
             public void fileSaved(FileReport report) {
                 File file = report.getFile();
 
                 // don't do anything if this editor was saved
-                if (file.getName().equals(SchemaMainPanel.this.getFile().getName()))
+                if (file.getName().equals(
+                        SchemaMainPanel.this.getFile().getName()))
                     return;
 
                 // don't add a non circuit
@@ -522,7 +515,7 @@ public class SchemaMainPanel extends AbstractEditor {
                     SchemaMainPanel.this.setModified(oldmodifiedstatus);
                 }
             }
-            
+
             @Override
             public void fileCreated(FileReport report) {
                 File file = report.getFile();
@@ -542,18 +535,17 @@ public class SchemaMainPanel extends AbstractEditor {
                 controller.send(new AddUpdatePredefinedPrototype(ci));
                 SchemaMainPanel.this.setModified(oldmodifiedstatus);
             }
-            
+
             @Override
             public void fileDeleted(FileReport report) {
                 File file = report.getFile();
-                hr.fer.zemris.vhdllab.entities.Caseless fileName = file
-                        .getName();
+                String fileName = file.getName();
                 // don't bother with non-circuits
                 if (!file.getType().isCircuit())
                     return;
 
                 // check if it was used in editor at all
-                Caseless cfn = new Caseless(fileName.toString());
+                Caseless cfn = new Caseless(fileName);
                 if (!isProtoInEditor(cfn))
                     return;
 

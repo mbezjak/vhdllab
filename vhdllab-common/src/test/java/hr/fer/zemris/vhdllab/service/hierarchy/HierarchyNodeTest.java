@@ -125,6 +125,21 @@ public class HierarchyNodeTest extends ValueObjectTestSupport {
         root.getDependencies().add(new File());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void containsDependency() {
+        root.containsDependency(null);
+    }
+
+    @Test
+    public void containsDependency2() {
+        File file = new File("a_file_name", null, null);
+        HierarchyNode node = new HierarchyNode(file, null);
+        root.addDependency(node);
+
+        assertTrue(root.containsDependency(file));
+        assertFalse(root.containsDependency(new File()));
+    }
+
     @Test
     public void hashCodeAndEquals() throws Exception {
         basicEqualsTest(root);

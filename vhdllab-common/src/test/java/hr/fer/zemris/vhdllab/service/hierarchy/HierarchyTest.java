@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
@@ -89,6 +90,31 @@ public class HierarchyTest extends ValueObjectTestSupport {
     @Test
     public void getFileCount() {
         assertEquals(4, hierarchy.getFileCount());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fileHasDependency() {
+        hierarchy.fileHasDependency(null, left.getFile());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fileHasDependency2() {
+        hierarchy.fileHasDependency(left.getFile(), null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fileHasDependency3() {
+        hierarchy.fileHasDependency(new File(), left.getFile());
+    }
+
+    @Test
+    public void fileHasDependency4() {
+        assertTrue(hierarchy.fileHasDependency(root.getFile(), left.getFile()));
+        assertTrue(hierarchy.fileHasDependency(root.getFile(), right.getFile()));
+        assertTrue(hierarchy.fileHasDependency(right.getFile(), rightDep
+                .getFile()));
+
+        assertFalse(hierarchy.fileHasDependency(root.getFile(), new File()));
     }
 
     @Test(expected = UnsupportedOperationException.class)

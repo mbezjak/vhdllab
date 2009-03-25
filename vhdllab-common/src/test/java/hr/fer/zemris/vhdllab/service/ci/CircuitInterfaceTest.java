@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.service.ci;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -49,6 +50,15 @@ public class CircuitInterfaceTest extends ValueObjectTestSupport {
         assertEquals("ci_name", ci.getName());
         assertNotNull(ci.getPorts());
         assertEquals(1, ci.getPorts().size());
+    }
+
+    @Test
+    public void isName() {
+        assertTrue(ci.isName(null));
+        ci.setName("name");
+        assertFalse(ci.isName(null));
+        assertTrue(ci.isName("name"));
+        assertTrue(ci.isName("NAME"));
     }
 
     @Test

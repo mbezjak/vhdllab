@@ -60,6 +60,10 @@ public class CircuitInterface implements Serializable {
         this.name = name;
     }
 
+    public boolean isName(String circuitName) {
+        return StringUtils.equalsIgnoreCase(this.name, circuitName);
+    }
+
     public void addAll(List<Port> collection) {
         ports.addAll(collection);
     }
