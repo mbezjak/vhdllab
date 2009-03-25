@@ -14,33 +14,27 @@
   <name>VHDLLab Common</name>
 
   <dependencies>
+    <!-- Hibernate dependencies with provided scope -->
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>3.1.0.GA</version>
+      <artifactId>hibernate-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.4.0.GA</version>
+      <artifactId>hibernate-validator</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.2</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- Apache dependencies with compile scope -->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -49,6 +43,24 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-digester</groupId>
+      <artifactId>commons-digester</artifactId>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
     </dependency>
   </dependencies>
 </project>

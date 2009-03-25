@@ -15,164 +15,131 @@
 
   <repositories>
     <repository><!-- for commons-exec -->
-        <id>apache.snapshots</id>
-        <url>http://repository.apache.org/snapshots/</url>
-        <releases>
-           <enabled>false</enabled>
-        </releases>
-        <snapshots>
-          <enabled>true</enabled>
-        </snapshots>        
-     </repository>
+      <id>apache.snapshots</id>
+      <url>http://repository.apache.org/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <dependencies>
-    <!-- Compile dependencies -->
+    <!-- VHDLLab dependencies -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>vhdllab-common</artifactId>
       <version>${version}</version>
       <scope>compile</scope>
     </dependency>
+
+    <!-- Hibernate dependencies -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>3.1.0.GA</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>3.3.1.GA</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>3.4.0.GA</version>
-      <scope>compile</scope>
     </dependency>
+    <!--
+        Although Hibernate JMX is not required by VHDLLab if its not
+        included following exception is thrown:
+        java.lang.NoClassDefFoundError: Could not initialize class org.hibernate.ejb.Ejb3Configuration
+
+        Not sure if its a bug in maven or problem with
+        hibernate-entitymanager's pom.xml (because project type is set
+        to pom but jar is created)
+    -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-jmx</artifactId>
-      <version>3.3.1.GA</version>
-      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-ehcache</artifactId>
-      <version>3.3.1.GA</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-exec</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aspects</artifactId>
-      <version>2.5.6</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.aspectj</groupId>
-          <artifactId>aspectjrt</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-      <version>2.5.6</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>2.5.6</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-      <version>2.5.6</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>2.5.6</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-      <version>2.0.4</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-support</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>1.5.0</version>
-      <scope>compile</scope>
+    </dependency>
+
+    <!-- Springframework dependencies -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
     </dependency>
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
       <version>1.1.1</version>
-      <scope>compile</scope>
     </dependency>
+
+    <!-- Apache dependencies with compile scope -->
     <!--
-      Commons Digester and log4j dependencies are satisfied through
+      Note: vhdllab-server also uses Apache dependencies from
       vhdllab-common
     -->
-    <!-- Runtime dependencies -->
     <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-      <version>1.2.2</version>
-      <scope>runtime</scope>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-exec</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
+
+    <!-- JNLP Download Servlet -->
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.6</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency><!-- JNLP Download Servlet -->
       <groupId>org.codehaus.mojo.webstart</groupId>
       <artifactId>webstart-jnlp-servlet</artifactId>
       <version>1.0-6.0-02_ea_b02</version>
       <scope>runtime</scope>
     </dependency>
-    <!-- Provided dependencies -->
+
+    <!-- Servlet API with provided scope -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
+
     <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>2.5.6</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>hsqldb</groupId>

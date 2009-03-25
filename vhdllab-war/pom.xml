@@ -340,11 +340,11 @@
   </profiles>
 
   <dependencies>
+    <!-- VHDLLab dependencies -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>vhdllab-server</artifactId>
       <version>${version}</version>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>
