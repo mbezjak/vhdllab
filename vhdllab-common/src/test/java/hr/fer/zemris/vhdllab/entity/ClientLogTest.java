@@ -17,7 +17,7 @@ public class ClientLogTest extends ValueObjectTestSupport {
     }
 
     @Test
-    public void testToString() {
+    public void testToString() throws Exception {
         toStringPrint(new ClientLogStub());
     }
 

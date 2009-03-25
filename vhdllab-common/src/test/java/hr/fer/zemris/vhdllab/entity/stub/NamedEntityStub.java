@@ -1,7 +1,8 @@
 package hr.fer.zemris.vhdllab.entity.stub;
 
 import hr.fer.zemris.vhdllab.entity.NamedEntity;
-import hr.fer.zemris.vhdllab.util.BeanUtil;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 public class NamedEntityStub extends NamedEntity {
 
@@ -11,8 +12,8 @@ public class NamedEntityStub extends NamedEntity {
     public static final String NAME_UPPERCASE = NAME.toUpperCase();
     public static final String NAME_2 = "another entity name";
 
-    public NamedEntityStub() {
-        BeanUtil.copyProperties(this, new BaseEntityStub());
+    public NamedEntityStub() throws Exception {
+        BeanUtils.copyProperties(this, new BaseEntityStub());
         setName(NAME);
     }
 

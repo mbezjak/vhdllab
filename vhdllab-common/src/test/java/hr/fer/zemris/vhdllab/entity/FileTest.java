@@ -20,7 +20,7 @@ public class FileTest extends ValueObjectTestSupport {
     private File entity;
 
     @Before
-    public void initEntity() {
+    public void initEntity() throws Exception {
         Project project = new ProjectStub();
         entity = (File) CollectionUtils.get(project.getFiles(), 0);
     }

@@ -22,7 +22,7 @@ public class FileHistoryTest extends ValueObjectTestSupport {
     private FileHistory entity;
 
     @Before
-    public void initEntity() {
+    public void initEntity() throws Exception {
         entity = new FileHistoryStub();
     }
 
@@ -44,7 +44,7 @@ public class FileHistoryTest extends ValueObjectTestSupport {
     }
 
     @Test
-    public void constructorFileHistory() {
+    public void constructorFileHistory() throws Exception {
         History history = new HistoryStub();
         File file = (File) CollectionUtils.get(new ProjectStub().getFiles(), 0);
         FileHistory another = new FileHistory(file, history);
@@ -55,7 +55,7 @@ public class FileHistoryTest extends ValueObjectTestSupport {
     }
 
     @Test
-    public void constructorFileInfoProjectIdHistory() {
+    public void constructorFileInfoProjectIdHistory() throws Exception {
         History history = new HistoryStub();
         FileHistory another = new FileHistory(new FileInfoStub(), PROJECT_ID,
                 history);

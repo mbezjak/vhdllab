@@ -20,7 +20,7 @@ public class ProjectInfoTest extends ValueObjectTestSupport {
     private ProjectInfo entity;
 
     @Before
-    public void initEntity() {
+    public void initEntity() throws Exception {
         entity = new ProjectInfoStub();
     }
 

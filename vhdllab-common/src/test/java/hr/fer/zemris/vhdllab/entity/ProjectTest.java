@@ -24,7 +24,7 @@ public class ProjectTest extends ValueObjectTestSupport {
     private Project entity;
 
     @Before
-    public void initEntity() {
+    public void initEntity() throws Exception {
         entity = new ProjectStub();
     }
 
@@ -66,7 +66,7 @@ public class ProjectTest extends ValueObjectTestSupport {
     }
 
     @Test
-    public void setFiles() {
+    public void setFiles() throws Exception {
         entity = new Project();
         assertTrue("files not empty.", entity.getFiles().isEmpty());
         entity.getFiles().add(new FileStub());

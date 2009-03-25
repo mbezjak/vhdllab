@@ -17,7 +17,7 @@ public class NamedEntityTest extends ValueObjectTestSupport {
     private NamedEntity entity;
 
     @Before
-    public void initEntity() {
+    public void initEntity() throws Exception {
         entity = new NamedEntityStub();
     }
 

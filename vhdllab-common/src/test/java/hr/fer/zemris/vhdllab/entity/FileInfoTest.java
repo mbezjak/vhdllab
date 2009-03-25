@@ -17,7 +17,7 @@ public class FileInfoTest extends ValueObjectTestSupport {
     private FileInfo entity;
 
     @Before
-    public void initEntity() {
+    public void initEntity() throws Exception {
         entity = new FileInfoStub();
     }
 

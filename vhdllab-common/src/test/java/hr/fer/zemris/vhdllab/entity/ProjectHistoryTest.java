@@ -18,7 +18,7 @@ public class ProjectHistoryTest extends ValueObjectTestSupport {
     private ProjectHistory entity;
 
     @Before
-    public void initEntity() {
+    public void initEntity() throws Exception {
         entity = new ProjectHistoryStub();
     }
 
@@ -34,7 +34,7 @@ public class ProjectHistoryTest extends ValueObjectTestSupport {
     }
 
     @Test
-    public void constructorProjectInfoHistory() {
+    public void constructorProjectInfoHistory() throws Exception {
         History history = new HistoryStub();
         ProjectHistory another = new ProjectHistory(new ProjectInfoStub(),
                 history);

@@ -1,7 +1,8 @@
 package hr.fer.zemris.vhdllab.entity.stub;
 
 import hr.fer.zemris.vhdllab.entity.FileHistory;
-import hr.fer.zemris.vhdllab.util.BeanUtil;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 public class FileHistoryStub extends FileHistory {
 
@@ -10,8 +11,8 @@ public class FileHistoryStub extends FileHistory {
     public static final Integer PROJECT_ID = 258;
     public static final Integer PROJECT_ID_2 = 852;
 
-    public FileHistoryStub() {
-        BeanUtil.copyProperties(this, new FileInfoStub());
+    public FileHistoryStub() throws Exception {
+        BeanUtils.copyProperties(this, new FileInfoStub());
         setProjectId(PROJECT_ID);
         setHistory(new HistoryStub());
     }
