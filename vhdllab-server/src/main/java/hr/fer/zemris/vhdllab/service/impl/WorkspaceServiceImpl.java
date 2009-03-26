@@ -21,6 +21,7 @@ import hr.fer.zemris.vhdllab.util.EntityUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,8 +74,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         File file = fileDao.findByName(projectId, name);
         if (file == null) {
             file = predefinedFilesDao.findByName(name);
+            file.setProject(projectDao.load(projectId));
         }
-        return new File(file);
+        return new File(file, EntityUtils.lightweightClone(file.getProject()));
     }
 
     private FileReport getReport(File file) {
@@ -156,17 +158,20 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         String user = SecurityUtils.getUser();
         List<Project> projects = projectDao.findByUser(user);
 
-        Map<Project, ProjectMetadata> projectMetadata = new HashMap<Project, ProjectMetadata>(
+        Map<Project, ProjectMetadata> projectMetadata = new LinkedHashMap<Project, ProjectMetadata>(
                 projects.size());
         for (Project project : projects) {
-            projectMetadata.put(project, null);
-        }
-        if (!projects.isEmpty()) {
-            Project last = projects.get(projects.size() - 1);
-            Hierarchy hierarchy = extractHierarchy(last.getId());
-            projectMetadata.put(last, new ProjectMetadata(hierarchy, last
+            // projectMetadata.put(project, null);
+            Hierarchy hierarchy = extractHierarchy(project.getId());
+            projectMetadata.put(project, new ProjectMetadata(hierarchy, project
                     .getFiles()));
         }
+        // if (!projects.isEmpty()) {
+        // Project last = projects.get(projects.size() - 1);
+        // Hierarchy hierarchy = extractHierarchy(last.getId());
+        // projectMetadata.put(last, new ProjectMetadata(hierarchy, last
+        // .getFiles()));
+        // }
 
         Set<File> predefinedFiles = predefinedFilesDao.getPredefinedFiles();
         Project preferencesProject = projectDao.getPreferencesProject(user);

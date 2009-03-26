@@ -52,8 +52,7 @@ public class ProjectMetadata implements Serializable {
 
     public void addFile(File file) {
         Validate.notNull(file, "File can't be null");
-        File fileToAdd = new File(file);
-        fileToAdd.setProject(hierarchy.getProject());
+        File fileToAdd = new File(file, hierarchy.getProject());
         files.remove(fileToAdd);
         files.add(fileToAdd);
     }

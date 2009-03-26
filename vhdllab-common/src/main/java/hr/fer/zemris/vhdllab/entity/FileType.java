@@ -45,4 +45,15 @@ public enum FileType {
         return this.equals(TESTBENCH);
     }
 
+    public boolean canViewVhdl() {
+        switch (this) {
+        case SCHEMA:
+        case AUTOMATON:
+        case TESTBENCH:
+            return true;
+        default:
+            return false;
+        }
+    }
+
 }

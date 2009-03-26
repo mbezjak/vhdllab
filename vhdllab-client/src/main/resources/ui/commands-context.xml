@@ -10,7 +10,7 @@
     class="org.springframework.richclient.application.support.ApplicationWindowCommandManager">
     <property name="sharedCommandIds">
       <list>
-        <value>newCommand</value>
+        <value>newMenu</value>
         <value>saveCommand</value>
         <value>saveAsCommand</value>
         <value>printCommand</value>

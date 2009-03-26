@@ -155,6 +155,7 @@
   <bean id="schemaMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.schema.SchemaMetadataExtractor" />
   <bean id="automatonMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.automaton.AutomatonMetadataExtractor" />
   <bean id="testbenchMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.testbench.TestbenchMetadataExtractor" />
+  <bean id="predefinedMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.predefined.PredefinedMetadataExtractor" />
   
  
   

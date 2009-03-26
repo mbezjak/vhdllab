@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.simulation;
 
-import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
@@ -13,11 +12,11 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
+import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,15 +39,13 @@ public class DefaultSimulationManager extends
     @Autowired
     private Simulator simulator;
     @Autowired
-    private IdentifierToInfoObjectMapper mapper;
-    @Autowired
     private EditorManagerFactory editorManagerFactory;
     @Resource(name = "standaloneLocalizationSource")
     private LocalizationSource localizationSource;
     @Autowired
     private WorkspaceManager workspaceManager;
     @Autowired
-    private IProjectExplorer projectExplorer;
+    private ProjectExplorer projectExplorer;
 
     private File lastCompiledFile;
     private File lastSimulatedFile;

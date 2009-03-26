@@ -85,6 +85,10 @@ public class HierarchyTest extends ValueObjectTestSupport {
         assertEquals(left, hierarchy.getNode(left.getFile()));
         assertEquals(right, hierarchy.getNode(right.getFile()));
         assertEquals(rightDep, hierarchy.getNode(rightDep.getFile()));
+
+        File clone = new File(root.getFile(), new Project("userId",
+                "a_project_name"));
+        assertEquals(root, hierarchy.getNode(clone));
     }
 
     @Test

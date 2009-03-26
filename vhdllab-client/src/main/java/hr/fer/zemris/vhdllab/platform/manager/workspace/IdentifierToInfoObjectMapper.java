@@ -11,4 +11,6 @@ public interface IdentifierToInfoObjectMapper {
 
     File getFile(String projectName, String fileName);
 
+    File getFile(File file);
+
 }

@@ -28,7 +28,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultWorkspaceManager extends
-        AbstractEventPublisher<WorkspaceListener> implements WorkspaceManager, IdentifierToInfoObjectMapper {
+        AbstractEventPublisher<WorkspaceListener> implements WorkspaceManager,
+        IdentifierToInfoObjectMapper {
 
     private static final String FILE_CREATED_MESSAGE = "notification.file.created";
     private static final String FILE_SAVED_MESSAGE = "notification.file.saved";
@@ -52,6 +53,7 @@ public class DefaultWorkspaceManager extends
     private Map<Integer, Project> projectIds;
     private Map<String, Project> projectIdentifiers;
     private Map<String, File> fileIdentifiers;
+    private Map<Integer, File> fileIds;
 
     @Override
     public Project getProject(String name) {
@@ -74,18 +76,33 @@ public class DefaultWorkspaceManager extends
             return getFileIdentifiers().get(key);
         }
         Set<File> predefinedFiles = getWorkspace().getPredefinedFiles();
-        File found = (File) CollectionUtils.find(predefinedFiles, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                File predefined = (File) object;
-                return predefined.getName().equalsIgnoreCase(fileName);
-            }
-        });
-        found = new File(found);
-        found.setProject(getProject(projectName));
-        return found;
+        File found = (File) CollectionUtils.find(predefinedFiles,
+                new Predicate() {
+                    @Override
+                    public boolean evaluate(Object object) {
+                        File predefined = (File) object;
+                        return predefined.getName().equalsIgnoreCase(fileName);
+                    }
+                });
+        return new File(found, getProject(projectName));
     }
-    
+
+    @Override
+    public File getFile(File file) {
+        Validate.notNull(file, "File can't be null");
+        if (!file.isNew()) {
+            return getFileIds().get(file.getId());
+        }
+        File clone = new File(file);
+        Set<File> predefinedFiles = workspace.getPredefinedFiles();
+        for (File predefined : predefinedFiles) {
+            if (predefined.equals(clone)) {
+                return new File(predefined);
+            }
+        }
+        throw new IllegalStateException("No such file: " + file.toString());
+    }
+
     private String makeKey(String projectName, String fileName) {
         return projectName + "-" + fileName;
     }
@@ -111,12 +128,20 @@ public class DefaultWorkspaceManager extends
         return fileIdentifiers;
     }
 
+    private Map<Integer, File> getFileIds() {
+        if (fileIds == null) {
+            initializeIdentifiers();
+        }
+        return fileIds;
+    }
+
     @SuppressWarnings("unchecked")
     private void initializeIdentifiers() {
         int projectCount = getWorkspace().getProjectCount();
         projectIds = new HashMap<Integer, Project>(projectCount);
         projectIdentifiers = new CaseInsensitiveMap(projectCount);
         fileIdentifiers = new CaseInsensitiveMap();
+        fileIds = new HashMap<Integer, File>();
         for (Project project : getWorkspace().getProjects()) {
             addProject(project);
             for (File file : getWorkspace().getFiles(project)) {
@@ -132,7 +157,9 @@ public class DefaultWorkspaceManager extends
 
     private void addFile(File file) {
         Project project = file.getProject();
-        getFileIdentifiers().put(makeKey(project.getName(), file.getName()), file);
+        getFileIdentifiers().put(makeKey(project.getName(), file.getName()),
+                file);
+        getFileIds().put(file.getId(), file);
     }
 
     private void removeProject(Project project) {
@@ -143,8 +170,8 @@ public class DefaultWorkspaceManager extends
     private void removeFile(File file) {
         Project project = file.getProject();
         getFileIdentifiers().remove(makeKey(project.getName(), file.getName()));
+        getFileIds().remove(file.getId());
     }
-
 
     // *************************************************************************
     // Implementation of Workspace Manager

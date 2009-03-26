@@ -12,6 +12,7 @@ import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.result.Result;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
+import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorer;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -52,34 +53,11 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.log4j.Logger;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.command.ActionCommandExecutor;
 import org.springframework.richclient.command.CommandManager;
 
-/**
- * Klasa predstavlja 'project explorer'. Project explorer sadrzi popis
- * projekata, te hijerarhiju datoteka koje se koriste u projektu.
- * 
- * @author Boris Ozegovic
- */
-public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
-    /**
-     * Logger for this class
-     */
-    private static final Logger LOG = Logger
-            .getLogger(DefaultProjectExplorer.class);
-
-    /*
-     * Project explorer je zamisljen kao stablo koje ce u svakom trenutku moci
-     * prikazivati tri razlicite hijerarhije: X uses Y, X is used in Y i flat
-     * hijerarhiju. Zbog te je cinjenice klasa sastavljena od stabla, modela
-     * stabla i root vrha (koji nije vidljiv) koji pak u svakom trenutku
-     * prikazuju stablo, model i root hijerarhije koja je odabrana Prilikom
-     * svake interakcije stabla s korisnikom, stablo se refresha i dohvaca
-     * hijerarhiju datoteka za odredeni projekt (iz projectContainera) jer se
-     * svakom interakcijom moze promijeniti hijerarhija datoteka.
-     */
+public class DefaultProjectExplorer extends JPanel implements ProjectExplorer {
 
     private Container cp = this;
     private static final String X_USES_Y = "xusesY";
@@ -159,11 +137,6 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
     /** This collection contains paths to collapse nodes */
     private Collection<TreePath> expandedNodes;
 
-    private static final long serialVersionUID = 4932799790563214089L;
-
-    // pitaj miru zakaj se projectContainer.getAllProject blesira i o cemu ona
-    // ovisi?!
-    // do tada interna kolekcija projekata
     private List<String> allProjects;
 
     /* mapa datoteka po projektu. */
@@ -772,7 +745,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     cp.validate();
                 }
             } catch (RuntimeException e) {
-                LOG.error("Unexpected error", e);
+                e.printStackTrace();
             }
             TreePath treePath = tree.getSelectionPath();
             // tree.setExpandedState(treePath, true);
@@ -831,7 +804,7 @@ public class DefaultProjectExplorer extends JPanel implements IProjectExplorer {
                     }
                 }
             } catch (RuntimeException e) {
-                LOG.error("Unexpected error", e);
+                e.printStackTrace();
             }
 
         }

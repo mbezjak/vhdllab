@@ -37,8 +37,16 @@ public class File extends FileInfo {
     }
 
     public File(File clone) {
+        this(clone, false);
+    }
+
+    public File(File clone, boolean setProjectReference) {
+        this(clone, setProjectReference ? clone.getProject() : null);
+    }
+
+    public File(File clone, Project project) {
         super(clone);
-        setProject(null);
+        setProject(project);
     }
 
     public Project getProject() {

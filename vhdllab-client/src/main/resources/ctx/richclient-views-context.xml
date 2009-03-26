@@ -46,7 +46,7 @@
   </bean>
 
   <bean id="projectExplorerViewPrototype"
-    class="hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.ProjectExplorerView"
+    class="hr.fer.zemris.vhdllab.view.explorer.ProjectExplorerView"
     scope="prototype" />
 
   <bean id="compilationErrorsView"

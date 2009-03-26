@@ -42,7 +42,7 @@ public final class Hierarchy implements Serializable {
 
     public HierarchyNode getNode(File file) {
         Validate.notNull(file);
-        return nodes.get(file);
+        return nodes.get(new File(file));
     }
 
     public int getFileCount() {
@@ -111,9 +111,7 @@ public final class Hierarchy implements Serializable {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                    .append(project)
-                    .toHashCode();
+        return new HashCodeBuilder().append(project).toHashCode();
     }
 
     @Override
@@ -125,9 +123,7 @@ public final class Hierarchy implements Serializable {
         if (!(obj instanceof Hierarchy))
             return false;
         Hierarchy other = (Hierarchy) obj;
-        return new EqualsBuilder()
-                    .append(project, other.project)
-                    .isEquals();
+        return new EqualsBuilder().append(project, other.project).isEquals();
     }
 
     @Override

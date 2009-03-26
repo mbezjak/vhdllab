@@ -90,7 +90,7 @@ public final class HierarchyNode implements Serializable {
 
     public boolean containsDependency(File dependency) {
         Validate.notNull(dependency, "Dependency can't be null");
-        return dependencies.contains(dependency);
+        return dependencies.contains(new File(dependency));
     }
 
     HierarchyNode getParent() {

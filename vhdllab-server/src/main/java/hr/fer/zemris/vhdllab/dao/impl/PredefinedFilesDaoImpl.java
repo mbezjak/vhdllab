@@ -93,10 +93,10 @@ public class PredefinedFilesDaoImpl implements PredefinedFilesDao,
 
     @Override
     public Set<File> getPredefinedFiles() {
-        return createPredefinedFilesList();
+        return createPredefinedFilesSet();
     }
 
-    private Set<File> createPredefinedFilesList() {
+    private Set<File> createPredefinedFilesSet() {
         Collection<File> values = files.values();
         Set<File> list = new HashSet<File>(values.size());
         for (File f : values) {

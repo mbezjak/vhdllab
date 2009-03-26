@@ -3,13 +3,14 @@ package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
+import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorer;
 
 import javax.swing.JComponent;
 
 import org.springframework.richclient.application.support.AbstractView;
 
 public class ProjectExplorerView extends AbstractView implements
-        IProjectExplorer {
+        ProjectExplorer {
 
     private DefaultProjectExplorer projectExplorer;
 

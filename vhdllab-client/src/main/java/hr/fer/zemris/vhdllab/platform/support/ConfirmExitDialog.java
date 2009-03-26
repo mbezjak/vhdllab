@@ -25,6 +25,11 @@ public class ConfirmExitDialog extends ConfirmationDialog {
     }
 
     @Override
+    protected String getCancelCommandId() {
+        return DEFAULT_CANCEL_COMMAND_ID;
+    }
+
+    @Override
     protected void onInitialized() {
         super.onInitialized();
         setConfirmationMessage(getMessage("confirmExitDialog.message"));

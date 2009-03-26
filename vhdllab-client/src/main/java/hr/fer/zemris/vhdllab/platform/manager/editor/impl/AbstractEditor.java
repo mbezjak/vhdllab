@@ -64,7 +64,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
 
     @Override
     public void setFile(File file) {
-        this.file = (file != null ? new File(file) : null);
+        this.file = (file != null ? new File(file, true) : null);
         doInitWithData(this.file);
         setModified(false);
     }
@@ -75,7 +75,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
         if (file != null && data != null) {
             file.setData(data);
         }
-        return file != null ? new File(file) : null;
+        return file != null ? new File(file, true) : null;
     }
 
     @Override

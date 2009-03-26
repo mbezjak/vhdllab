@@ -1,9 +1,9 @@
-package hr.fer.zemris.vhdllab.applets.main.component.projectexplorer;
+package hr.fer.zemris.vhdllab.view.explorer;
 
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 
-public interface IProjectExplorer {
+public interface ProjectExplorer {
 
     Project getSelectedProject();
 

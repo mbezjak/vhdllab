@@ -19,7 +19,7 @@ Google group: <a href="http://groups.google.com/group/vhdllab">groups.google.com
 Developers:
 </center>
 <p>
-<table>
+<table border="1">
 <tr>
 <td><a href="mailto:marko.cupic@fer.hr?subject=About%20VHDLLab">Čupić, Marko</a></td>
 <td>Project lead</td>
@@ -28,9 +28,18 @@ Developers:
 <td><a href="mailto:miro.bezjak@fer.hr?subject=About%20VHDLLab">Bezjak, Miro</a></td>
 <td>
 VHDLLab Server<br/>
-VHDLLab Client - platform, views (log history, <br/>
-&nbsp;&nbsp;compilation, simulation), text editor<br/>
-VHDLLab build system
+VHDLLab build system<br/>
+<table border="0">
+<tr>
+<td rowspan="6">VHDLLab Client</td>
+<td>Platform</td>
+</tr>
+<tr><td>Project Explorer</td></tr>
+<tr><td>Log History</td></tr>
+<tr><td>Compilation Results</td></tr>
+<tr><td>Simulation Results</td></tr>
+<tr><td>Text Editor</td></tr>
+</table>
 </td>
 </tr>
 <tr>

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
 
 import org.junit.Before;
@@ -138,6 +139,9 @@ public class HierarchyNodeTest extends ValueObjectTestSupport {
 
         assertTrue(root.containsDependency(file));
         assertFalse(root.containsDependency(new File()));
+
+        File clone = new File(file, new Project("userId", "a_project_name"));
+        assertTrue(root.containsDependency(clone));
     }
 
     @Test

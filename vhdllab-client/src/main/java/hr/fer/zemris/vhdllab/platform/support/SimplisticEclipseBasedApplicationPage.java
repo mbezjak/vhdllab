@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.support;
 
-import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.view.TabbedEditorsView;
+import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorerView;
 
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
@@ -111,7 +111,7 @@ public class SimplisticEclipseBasedApplicationPage extends
 
     @Override
     protected void doAddPageComponent(PageComponent pageComponent) {
-        if (pageComponent instanceof IProjectExplorer) {
+        if (pageComponent instanceof ProjectExplorerView) {
             projectExplorerPane.add(pageComponent.getContext().getPane()
                     .getControl(), BorderLayout.CENTER);
             projectExplorerPane.revalidate();
@@ -137,7 +137,7 @@ public class SimplisticEclipseBasedApplicationPage extends
 
     @Override
     protected void doRemovePageComponent(PageComponent pageComponent) {
-        if (pageComponent instanceof IProjectExplorer) {
+        if (pageComponent instanceof ProjectExplorerView) {
             projectExplorerPane.removeAll();
             projectExplorerPane.revalidate();
             projectExplorerPane.repaint();
@@ -153,7 +153,7 @@ public class SimplisticEclipseBasedApplicationPage extends
 
     @Override
     protected boolean giveFocusTo(PageComponent pageComponent) {
-        if (pageComponent instanceof IProjectExplorer) {
+        if (pageComponent instanceof ProjectExplorerView) {
             projectExplorerPane.requestFocusInWindow();
         } else if (pageComponent instanceof TabbedEditorsView) {
             editorsPane.requestFocusInWindow();

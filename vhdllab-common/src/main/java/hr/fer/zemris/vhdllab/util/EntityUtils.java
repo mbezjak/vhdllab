@@ -29,7 +29,6 @@ public abstract class EntityUtils {
 
     public static File lightweightClone(File file) {
         File clone = new File(file);
-        clone.setProject(null);
         clone.setData(null);
         return clone;
     }

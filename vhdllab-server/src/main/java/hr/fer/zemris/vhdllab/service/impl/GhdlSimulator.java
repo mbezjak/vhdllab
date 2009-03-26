@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.UnhandledException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -181,7 +183,6 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         } finally {
             if (context.compileOnly) {
                 FileUtils.deleteQuietly(context.tempDirectory);
-                context.clean();
             }
         }
     }
@@ -302,6 +303,9 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         } catch (UnsupportedEncodingException e) {
             throw new UnhandledException(e);
         }
+        if(StringUtils.isBlank(errors)) {
+            return Collections.emptyList();
+        }
         return Arrays.asList(StringUtil.splitToNewLines(errors));
     }
 
@@ -370,14 +374,6 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         public CommandLine simulatorCommandLine;
         public List<String> compilationLines;
         public List<String> simulationLines;
-
-        public void clean() {
-            tempDirectory = null;
-            targetFile = null;
-            dependencies = null;
-            compilerCommandLine = null;
-            compilationLines = null;
-        }
     }
 
 }

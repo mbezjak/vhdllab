@@ -37,7 +37,7 @@ public class Port implements Serializable {
     private PortDirection direction;
     @Min(value = 0)
     private Integer from;
-    @Min(value = -1)
+    @Min(value = 0)
     private Integer to;
 
     public Port() {

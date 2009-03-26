@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
-import hr.fer.zemris.vhdllab.applets.main.component.projectexplorer.IProjectExplorer;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
@@ -12,6 +11,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.WizardManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.FileAlreadyExistsException;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorer;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
     @Autowired
     private WorkspaceManager workspaceManager;
     @Autowired
-    private IProjectExplorer projectExplorer;
+    private ProjectExplorer projectExplorer;
     @Autowired
     private WizardRegistry wizardRegistry;
     @Autowired
@@ -42,6 +42,7 @@ public class DefaultWizardManager extends AbstractLocalizationSource implements
         if (type == null) {
             throw new NullPointerException("File type cant be null");
         }
+        // FIXME !!!
         // Project project = projectExplorer.getSelectedProject();
         Project project = new Project(ApplicationContextHolder.getContext()
                 .getUserId(), "a2");
