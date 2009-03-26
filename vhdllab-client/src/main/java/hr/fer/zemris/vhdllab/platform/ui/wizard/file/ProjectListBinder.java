@@ -24,7 +24,7 @@ public class ProjectListBinder extends AbstractBinder {
     private WorkspaceManager workspaceManager;
 
     protected ProjectListBinder() {
-        super(Project.class, new String[] {});
+        super(Project.class, new String[0]);
     }
 
     @SuppressWarnings("unchecked")

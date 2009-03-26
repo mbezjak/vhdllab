@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.project;
 
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
@@ -23,7 +24,9 @@ public class NewProjectWizard extends AbstractResourceCreatingWizard {
 
     @Override
     protected void onWizardFinished(Object formObject) {
-        workspaceManager.create((Project) formObject);
+        Project project = (Project) formObject;
+        project.setUserId(ApplicationContextHolder.getContext().getUserId());
+        workspaceManager.create(project);
     }
 
 }

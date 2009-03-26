@@ -8,11 +8,13 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceListener;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
 import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
+import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
 
@@ -52,7 +54,7 @@ import org.springframework.richclient.dialog.ConfirmationDialog;
 import org.springframework.richclient.tree.FocusableTreeCellRenderer;
 
 public class ProjectExplorerView extends AbstractView implements
-        WorkspaceInitializationListener {
+        WorkspaceInitializationListener, WorkspaceListener {
 
     private static final String PREFERENCES_HIERARCHY_MODE = "project.explorere.hierarchy.mode";
     public static final int HIERARCHY_X_USES_Y = 0;
@@ -159,7 +161,43 @@ public class ProjectExplorerView extends AbstractView implements
                 addFiles(hierarchy, null, projectNode);
             }
         }
-        model.reload();
+    }
+
+    @Override
+    public void projectCreated(Project project) {
+        addProject(project);
+    }
+
+    @Override
+    public void projectDeleted(Project project) {
+        for (int i = 0; i < root.getChildCount(); i++) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) root
+                    .getChildAt(i);
+            if (project.equals(node.getUserObject())) {
+                root.remove(i);
+                model.nodesWereRemoved(root, new int[] { i },
+                        new Object[] { node });
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void fileCreated(FileReport report) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void fileSaved(FileReport report) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void fileDeleted(FileReport report) {
+        // TODO Auto-generated method stub
+
     }
 
     protected void refereshProjectExplorer() {
@@ -225,7 +263,10 @@ public class ProjectExplorerView extends AbstractView implements
     }
 
     private MutableTreeNode addProject(Project project) {
-        return insertNode(root, project);
+        MutableTreeNode projectNode = insertNode(root, project);
+        tree.requestFocusInWindow();
+        tree.setSelectionPath(new TreePath(new Object[] { root, projectNode }));
+        return projectNode;
     }
 
     private MutableTreeNode insertNode(MutableTreeNode parentNode,

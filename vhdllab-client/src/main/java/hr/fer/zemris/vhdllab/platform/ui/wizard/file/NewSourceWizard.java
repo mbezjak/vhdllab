@@ -2,6 +2,7 @@ package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
@@ -40,6 +41,7 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
         List<Port> ports = circuitInterfacePage.getPorts();
         file.setType(getFileType());
         file.setData(createData(file, ports));
+        file.setProject(new Project(file.getProject()));
         workspaceManager.create(file);
     }
 

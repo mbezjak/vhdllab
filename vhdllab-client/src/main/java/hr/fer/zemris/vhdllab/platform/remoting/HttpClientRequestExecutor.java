@@ -44,7 +44,8 @@ public class HttpClientRequestExecutor extends
             UsernamePasswordCredentials credentials;
             if (ApplicationContextHolder.getContext().isDevelopment()
                     && !showRetryMessage) {
-                credentials = new UsernamePasswordCredentials("test", "test");
+//                credentials = new UsernamePasswordCredentials("test", "test");
+                credentials = new UsernamePasswordCredentials("admin", "admin");
                 showRetryMessage = true;
             } else {
                 CommandManager manager = Application.instance()
