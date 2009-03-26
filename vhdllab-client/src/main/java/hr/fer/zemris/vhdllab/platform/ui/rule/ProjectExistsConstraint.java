@@ -21,8 +21,9 @@ public class ProjectExistsConstraint extends AbstractPropertyConstraint {
 
     @Override
     public boolean test(PropertyAccessStrategy access) {
-        Project project = (Project) access.getDomainObject();
-        project.setUserId(ApplicationContextHolder.getContext().getUserId());
+        String userId = ApplicationContextHolder.getContext().getUserId();
+        String name = (String) access.getPropertyValue("name");
+        Project project = new Project(userId, name);
         return !workspaceManager.exist(project);
     }
 }

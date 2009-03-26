@@ -18,4 +18,5 @@ public class NewProjectCommand extends AbstractResourceCreatingCommand {
     protected Class<? extends Wizard> getWizardClass() {
         return NewProjectWizard.class;
     }
+
 }

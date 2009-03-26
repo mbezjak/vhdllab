@@ -26,12 +26,18 @@
     <property name="basenames">
       <list>
         <value>ui.messages</value>
+        <value>ui.validation</value>
         <value>dialogs</value>
         <value>notifications</value>
 
+        <!-- Custom hibernate validator messages (for validators in vhdllab-common) -->
+        <value>ValidatorMessages</value>
+
+        <!-- Default hibernate validator messages -->
+        <value>org.hibernate.validator.resources.DefaultValidatorMessages</value>
+
         <!-- Rich client messages -->
-        <value>org.springframework.richclient.application.messages
-        </value>
+        <value>org.springframework.richclient.application.messages</value>
       </list>
     </property>
   </bean>
