@@ -225,7 +225,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     private void copyFiles(List<String> dependencies, Integer projectId,
             java.io.File tempDirectory) throws IOException {
         for (String dep : dependencies) {
-            File depFile = workspaceService.findByName(projectId, dep);
+            File depFile = findProjectOrPredefinedFile(projectId, dep);
             String data = depFile.getData();
             if (!depFile.getType().equals(FileType.PREDEFINED)) {
                 data = metadataExtractor.generateVhdl(depFile).getData();
@@ -303,7 +303,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         } catch (UnsupportedEncodingException e) {
             throw new UnhandledException(e);
         }
-        if(StringUtils.isBlank(errors)) {
+        if (StringUtils.isBlank(errors)) {
             return Collections.emptyList();
         }
         return Arrays.asList(StringUtil.splitToNewLines(errors));

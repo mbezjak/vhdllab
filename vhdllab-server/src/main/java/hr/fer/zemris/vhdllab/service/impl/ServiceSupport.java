@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.FileDao;
+import hr.fer.zemris.vhdllab.dao.PredefinedFilesDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
@@ -13,6 +14,8 @@ public abstract class ServiceSupport {
     private FileDao fileDao;
     @Autowired
     private ProjectDao projectDao;
+    @Autowired
+    private PredefinedFilesDao predefinedFilesDao;
 
     protected File loadFile(Integer id) {
         return fileDao.load(id);
@@ -20,6 +23,15 @@ public abstract class ServiceSupport {
 
     protected Project loadProject(Integer id) {
         return projectDao.load(id);
+    }
+
+    protected File findProjectOrPredefinedFile(Integer projectId, String name) {
+        File file = fileDao.findByName(projectId, name);
+        if (file == null) {
+            file = predefinedFilesDao.findByName(name);
+            file.setProject(loadProject(projectId));
+        }
+        return file;
     }
 
 }

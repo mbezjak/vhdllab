@@ -31,7 +31,8 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class WorkspaceServiceImpl implements WorkspaceService {
+public class WorkspaceServiceImpl extends ServiceSupport implements
+        WorkspaceService {
 
     @Autowired
     private ProjectDao projectDao;
@@ -71,11 +72,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     @Override
     public File findByName(Integer projectId, String name) {
-        File file = fileDao.findByName(projectId, name);
-        if (file == null) {
-            file = predefinedFilesDao.findByName(name);
-            file.setProject(projectDao.load(projectId));
-        }
+        File file = findProjectOrPredefinedFile(projectId, name);
         return new File(file, EntityUtils.lightweightClone(file.getProject()));
     }
 
@@ -138,7 +135,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             dependencies = Collections.emptySet();
         }
         for (String name : dependencies) {
-            File dep = findByName(file.getProject().getId(), name);
+            File dep = findProjectOrPredefinedFile(file.getProject().getId(),
+                    name);
             if (dep == null)
                 continue;
             HierarchyNode parent = resolvedNodes.get(file);
