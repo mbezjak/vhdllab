@@ -125,6 +125,10 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
     </dependency>
+    <dependency><!-- for exception hierarchy (DataAccessException) -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+    </dependency>
 
     <!-- Spring RichClient dependencies -->
     <dependency>

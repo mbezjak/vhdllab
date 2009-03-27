@@ -53,5 +53,5 @@ public class ClientLogDaoTest extends AbstractDaoSupport {
         entity.setData("new data");
         dao.persist(entity);
     }
-    
+
 }
