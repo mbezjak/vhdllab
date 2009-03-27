@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.preference;
 
-import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -40,7 +40,7 @@ public class DatabasePreferences extends AbstractPreferences {
     private Properties getProperties() {
         if (properties == null) {
             properties = new Properties();
-            File file = getFile();
+            PreferencesFile file = getFile();
             if (file != null) {
                 try {
                     properties.load(new StringReader(file.getData()));
@@ -53,7 +53,7 @@ public class DatabasePreferences extends AbstractPreferences {
         return properties;
     }
 
-    private File getFile() {
+    private PreferencesFile getFile() {
         return manager.getFile(absolutePath());
     }
 
@@ -79,10 +79,10 @@ public class DatabasePreferences extends AbstractPreferences {
             } catch (IOException e) {
                 throw new UnhandledException(e);
             }
-            File file = getFile();
+            PreferencesFile file = getFile();
             String data = writer.toString();
             if (file == null) {
-                file = new File(absolutePath(), null, data);
+                file = new PreferencesFile(absolutePath(), data);
             } else {
                 file.setData(data);
             }

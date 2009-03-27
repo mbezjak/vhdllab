@@ -1,9 +1,12 @@
 package hr.fer.zemris.vhdllab.service.aspect;
 
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.impl.ServiceSupport;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
+
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
@@ -43,6 +46,14 @@ public class EntitySecurityAspect extends ServiceSupport {
     public void saveFileSecurity(JoinPoint jp, File file) throws Throwable {
         Project project = loadProject(file.getProject().getId());
         checkSecurity(jp, project.getUserId(), project.getId());
+    }
+
+    @Before("execution(* hr.fer.zemris.vhdllab.service.PreferencesFileService.save(..)) && args(files,..)")
+    public void savePreferencesFileSecurity(JoinPoint jp,
+            List<PreferencesFile> files) throws Throwable {
+        for (PreferencesFile file : files) {
+            checkSecurity(jp, file.getUserId(), file.getId());
+        }
     }
 
     private void checkSecurity(JoinPoint jp, String entityUser, Integer id) {

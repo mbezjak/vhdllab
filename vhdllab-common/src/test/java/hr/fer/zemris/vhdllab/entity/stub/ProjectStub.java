@@ -9,7 +9,7 @@ public class ProjectStub extends Project {
     private static final long serialVersionUID = 1L;
 
     public ProjectStub() throws Exception {
-        BeanUtils.copyProperties(this, new ProjectInfoStub());
+        BeanUtils.copyProperties(this, new OwnedEntityStub());
         addFile(new FileStub());
     }
 

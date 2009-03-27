@@ -73,8 +73,8 @@ public abstract class AbstractDaoSupport extends AbstractJpaTests {
         getJdbcTemplate().execute("delete from client_logs");
         getJdbcTemplate().execute("delete from BaseEntityTable");
         getJdbcTemplate().execute("delete from NamedEntityTable");
+        getJdbcTemplate().execute("delete from OwnedEntityTable");
         getJdbcTemplate().execute("delete from FileInfoTable");
-        getJdbcTemplate().execute("delete from ProjectInfoTable");
         getJdbcTemplate().execute("delete from HistoryTable");
         closeEntityManager();
     }

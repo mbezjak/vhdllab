@@ -6,15 +6,9 @@ import hr.fer.zemris.vhdllab.dao.impl.support.AbstractDaoSupport;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.entity.ProjectType;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.persistence.Query;
 
 import org.hibernate.validator.InvalidStateException;
 import org.junit.Before;
@@ -206,109 +200,15 @@ public class ProjectDaoImplTest extends AbstractDaoSupport {
                         NAME_OPPOSITE_CASE));
     }
 
-    /**
-     * user id is null
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void findByUserNullUserId() {
-        dao.findByUser(null);
-    }
-
-    /**
-     * non-existing user id
-     */
-    @Test
-    public void findByUserNonExistingUserId() {
-        assertEquals(Collections.emptyList(), dao.findByUser(USER_ID_2));
-    }
-
-    /**
-     * everything ok. one project in collection
-     */
-    @Test
-    public void findByUser() {
-        setupProject(project);
-        List<Project> projects = new ArrayList<Project>(1);
-        projects.add(project);
-        assertEquals("projects not equal.", projects, dao.findByUser(project
-                .getUserId()));
-        assertEquals("user id is not case insensitive.", projects, dao
-                .findByUser(USER_ID_OPPOSITE_CASE));
-    }
-
-    /**
-     * everything ok. two projects in collection
-     */
-    @Test
-    public void findByUser2() {
-        Project project2 = new Project(USER_ID, NAME_2);
-        setupProject(project);
-        setupProject(project2);
-        List<Project> projects = new ArrayList<Project>(2);
-        projects.add(project);
-        projects.add(project2);
-        assertEquals("collections not equal.", projects, dao.findByUser(project
-                .getUserId()));
-        assertEquals("user id is not case insensitive.", projects, dao
-                .findByUser(USER_ID_OPPOSITE_CASE));
-    }
-
-    /**
-     * everything ok. two collections
-     */
-    @Test
-    public void findByUser3() {
-        Project project2 = new Project(USER_ID_2, NAME_2);
-        setupProject(project);
-        setupProject(project2);
-        List<Project> collection1 = new ArrayList<Project>(1);
-        List<Project> collection2 = new ArrayList<Project>(1);
-        collection1.add(project);
-        collection2.add(project2);
-        assertEquals("collections not equal.", collection1, dao
-                .findByUser(project.getUserId()));
-        assertEquals("user id is not case insensitive.", collection1, dao
-                .findByUser(USER_ID_OPPOSITE_CASE));
-        assertEquals("collections not equal.", collection2, dao
-                .findByUser(project2.getUserId()));
-        assertEquals("user id is not case insensitive.", collection2, dao
-                .findByUser(project2.getUserId().toUpperCase()));
-    }
-
-    /**
-     * Preferences project doesn't exist.
-     */
-    @Test
-    public void getPreferencesProject() {
-        Query query = entityManager
-                .createQuery("select p from Project p where p.type = ?1");
-        query.setParameter(1, ProjectType.PREFERENCES);
-        assertTrue(query.getResultList().isEmpty());
-
-        Project preferencesProject = dao.getPreferencesProject(USER_ID);
-        assertNotNull(preferencesProject);
-        assertFalse(preferencesProject.isNew());
-        assertEquals(USER_ID, preferencesProject.getUserId());
-        assertEquals(ProjectType.PREFERENCES, preferencesProject.getType());
-
-        assertFalse(query.getResultList().isEmpty());
-        Project newlyLoadedPreferencesProject = dao
-                .getPreferencesProject(USER_ID);
-        assertEquals(preferencesProject, newlyLoadedPreferencesProject);
-        assertEquals(preferencesProject.getId(), newlyLoadedPreferencesProject
-                .getId());
-    }
-
     private void setupProject(final Project project) {
         String query = createInsertStatement("projects",
-                "id, version, name, user_id, type", "null, 0, ?, ?, ?");
+                "id, version, name, user_id", "null, 0, ?, ?");
         getJdbcTemplate().execute(query, new PreparedStatementCallback() {
             @Override
             public Object doInPreparedStatement(PreparedStatement ps)
                     throws SQLException, DataAccessException {
                 ps.setString(1, project.getName());
                 ps.setString(2, project.getUserId());
-                ps.setString(3, project.getType().toString());
                 return ps.execute();
             }
         });

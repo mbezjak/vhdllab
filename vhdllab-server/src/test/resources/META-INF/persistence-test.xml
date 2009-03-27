@@ -7,15 +7,16 @@
 
   <persistence-unit name="vhdllab" transaction-type="RESOURCE_LOCAL">
     <mapping-file>META-INF/orm.xml</mapping-file>
-    <class>hr.fer.zemris.vhdllab.entity.File</class>
     <class>hr.fer.zemris.vhdllab.entity.Project</class>
-    <class>hr.fer.zemris.vhdllab.entity.FileHistory</class>
+    <class>hr.fer.zemris.vhdllab.entity.File</class>
+    <class>hr.fer.zemris.vhdllab.entity.PreferencesFile</class>
     <class>hr.fer.zemris.vhdllab.entity.ProjectHistory</class>
+    <class>hr.fer.zemris.vhdllab.entity.FileHistory</class>
     <class>hr.fer.zemris.vhdllab.entity.ClientLog</class>
     <class>hr.fer.zemris.vhdllab.dao.impl.support.BaseEntityTable</class>
     <class>hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityTable</class>
+    <class>hr.fer.zemris.vhdllab.dao.impl.support.OwnedEntityTable</class>
     <class>hr.fer.zemris.vhdllab.dao.impl.support.FileInfoTable</class>
-    <class>hr.fer.zemris.vhdllab.dao.impl.support.ProjectInfoTable</class>
     <class>hr.fer.zemris.vhdllab.dao.impl.support.HistoryTable</class>
     <exclude-unlisted-classes />
   </persistence-unit>

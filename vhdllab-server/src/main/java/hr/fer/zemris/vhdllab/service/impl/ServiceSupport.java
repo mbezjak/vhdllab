@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.FileDao;
-import hr.fer.zemris.vhdllab.dao.PredefinedFilesDao;
+import hr.fer.zemris.vhdllab.dao.PredefinedFileDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
@@ -15,7 +15,7 @@ public abstract class ServiceSupport {
     @Autowired
     private ProjectDao projectDao;
     @Autowired
-    private PredefinedFilesDao predefinedFilesDao;
+    private PredefinedFileDao predefinedFilesDao;
 
     protected File loadFile(Integer id) {
         return fileDao.load(id);

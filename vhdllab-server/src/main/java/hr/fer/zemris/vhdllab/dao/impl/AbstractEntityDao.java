@@ -22,7 +22,7 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
     /**
      * Class of an entity.
      */
-    private final Class<T> clazz;
+    protected final Class<T> clazz;
 
     /**
      * Constructor.

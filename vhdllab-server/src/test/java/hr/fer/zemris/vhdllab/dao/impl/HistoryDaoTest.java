@@ -127,7 +127,7 @@ public class HistoryDaoTest extends AbstractDaoSupport {
      * Insert version, update version and created on can't be updated.
      */
     @Test
-    public void userIdAndTypeNotUpdateable() {
+    public void userIdTypeAndCreatedOnNotUpdateable() {
         dao.persist(entity);
         Integer newInsertVersion = 12;
         Integer newUpdateVersion = 32;

@@ -24,8 +24,8 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
         return new Rules(Project.class) {
             @Override
             protected void initRules() {
-                add("name", new Constraint[] { new NameFormatConstraint(),
-                        new ProjectExistsConstraint(workspaceManager) });
+                add("name", new Constraint[] { new ProjectExistsConstraint(
+                        workspaceManager) });
             }
         };
     }
@@ -34,8 +34,8 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
         return new Rules(File.class) {
             @Override
             protected void initRules() {
-                add("name", new Constraint[] { new NameFormatConstraint(),
-                        new FileExistsConstraint(workspaceManager) });
+                add("name", new Constraint[] { new FileExistsConstraint(
+                        workspaceManager) });
             }
         };
     }

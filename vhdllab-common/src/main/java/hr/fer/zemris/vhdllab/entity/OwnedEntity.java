@@ -3,48 +3,40 @@ package hr.fer.zemris.vhdllab.entity;
 import static org.apache.commons.lang.StringUtils.lowerCase;
 
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
+import org.hibernate.validator.NotEmpty;
 
 @MappedSuperclass
-public class ProjectInfo extends NamedEntity {
+public class OwnedEntity extends NamedEntity {
 
-    private static final long serialVersionUID = -3795038948065257739L;
+    private static final long serialVersionUID = 1276623438439954593L;
 
-    @NotNull
+    @NotEmpty
     @Length(max = 255)
     @Column(name = "user_id", updatable = false)
     private String userId;
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(updatable = false)
-    private ProjectType type;
 
-    public ProjectInfo() {
-        this(null, null);
+    public OwnedEntity() {
+        super();
     }
 
-    public ProjectInfo(String userId) {
-        this(userId, null);
+    public OwnedEntity(String name) {
+        this(null, name);
     }
 
-    public ProjectInfo(String userId, String name) {
+    public OwnedEntity(String userId, String name) {
         super(name);
         setUserId(userId);
-        setType(ProjectType.USER);
     }
 
-    public ProjectInfo(ProjectInfo clone) {
+    public OwnedEntity(OwnedEntity clone) {
         super(clone);
         setUserId(clone.userId);
-        setType(clone.type);
     }
 
     public String getUserId() {
@@ -55,20 +47,11 @@ public class ProjectInfo extends NamedEntity {
         this.userId = userId;
     }
 
-    public ProjectType getType() {
-        return type;
-    }
-
-    public void setType(ProjectType type) {
-        this.type = type;
-    }
-
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
                     .appendSuper(super.hashCode())
                     .append(lowerCase(userId))
-                    .append(type)
                     .toHashCode();
     }
 
@@ -78,13 +61,12 @@ public class ProjectInfo extends NamedEntity {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ProjectInfo))
+        if (!(obj instanceof OwnedEntity))
             return false;
-        ProjectInfo other = (ProjectInfo) obj;
+        OwnedEntity other = (OwnedEntity) obj;
         return new EqualsBuilder()
                     .appendSuper(super.equals(obj))
                     .append(lowerCase(userId), lowerCase(other.userId))
-                    .append(type, other.type)
                     .isEquals();
     }
 
@@ -93,7 +75,6 @@ public class ProjectInfo extends NamedEntity {
         return new ToStringBuilder(this)
                     .appendSuper(super.toString())
                     .append("userId", userId)
-                    .append("type", type)
                     .toString();
     }
 

@@ -6,8 +6,6 @@ import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
-import java.util.List;
-
 public interface WorkspaceService {
 
     FileReport save(File file);
@@ -23,7 +21,5 @@ public interface WorkspaceService {
     Hierarchy extractHierarchy(Integer projectId);
 
     Workspace getWorkspace();
-
-    void savePreferences(List<File> files);
 
 }

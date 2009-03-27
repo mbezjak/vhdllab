@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.util;
 
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 import hr.fer.zemris.vhdllab.entity.Project;
 
 import java.util.ArrayList;
@@ -10,6 +11,15 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class EntityUtils {
+
+    public static List<PreferencesFile> cloneFiles(List<PreferencesFile> files) {
+        List<PreferencesFile> clonedFiles = new ArrayList<PreferencesFile>(
+                files.size());
+        for (PreferencesFile file : files) {
+            clonedFiles.add(new PreferencesFile(file));
+        }
+        return clonedFiles;
+    }
 
     public static Set<File> cloneFiles(Set<File> files) {
         Set<File> clonedFiles = new HashSet<File>(files.size());

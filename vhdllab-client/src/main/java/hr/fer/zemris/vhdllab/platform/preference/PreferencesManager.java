@@ -1,12 +1,12 @@
 package hr.fer.zemris.vhdllab.platform.preference;
 
-import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 
 public interface PreferencesManager {
 
-    File getFile(String name);
+    PreferencesFile getFile(String name);
 
-    void setFile(File file);
+    void setFile(PreferencesFile file);
 
     void saveFiles();
 

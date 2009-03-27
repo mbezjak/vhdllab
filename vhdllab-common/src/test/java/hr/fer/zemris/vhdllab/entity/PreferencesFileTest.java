@@ -1,70 +1,60 @@
 package hr.fer.zemris.vhdllab.entity;
 
+import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
 import static hr.fer.zemris.vhdllab.entity.stub.OwnedEntityStub.USER_ID;
 import static hr.fer.zemris.vhdllab.entity.stub.PreferencesFileStub.DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import hr.fer.zemris.vhdllab.entity.stub.ClientLogStub;
+import hr.fer.zemris.vhdllab.entity.stub.PreferencesFileStub;
 import hr.fer.zemris.vhdllab.test.ValueObjectTestSupport;
-
-import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class ClientLogTest extends ValueObjectTestSupport {
+public class PreferencesFileTest extends ValueObjectTestSupport {
 
-    private ClientLog entity;
+    private PreferencesFile entity;
 
     @Before
     public void initEntity() throws Exception {
-        entity = new ClientLogStub();
+        entity = new PreferencesFileStub();
     }
 
     @Test
     public void basics() {
-        ClientLog another = new ClientLog();
+        PreferencesFile another = new PreferencesFile();
         assertNull("data is set.", another.getData());
 
         another.setData(DATA);
         assertNotNull("data is null.", another.getData());
         another.setData(null);
         assertNull("data not cleared.", another.getData());
-
-        another.setCreatedOn(new Date());
-        assertNotNull("created on is null.", another.getCreatedOn());
-        another.setCreatedOn(null);
-        assertNull("created on not cleared.", another.getCreatedOn());
     }
 
     @Test
-    public void constructorData() {
-        ClientLog another = new ClientLog(DATA);
-        assertEquals("data not same.", DATA, another.getData());
+    public void constructorNameData() {
+        PreferencesFile another = new PreferencesFile(NAME, DATA);
+        assertEquals("name not same.", NAME, another.getName());
         assertNull(another.getUserId());
-        assertNotNull(another.getName());
-        assertNotNull(another.getCreatedOn());
+        assertEquals("data not same.", DATA, another.getData());
     }
 
     @Test
-    public void constructorUserIdData() {
-        ClientLog another = new ClientLog(USER_ID, DATA);
-        assertEquals("data not same.", DATA, another.getData());
+    public void constructorUserIdNameData() {
+        PreferencesFile another = new PreferencesFile(USER_ID, NAME, DATA);
+        assertEquals("name not same.", NAME, another.getName());
         assertEquals("userId not same.", USER_ID, another.getUserId());
-        assertNotNull(another.getName());
-        assertNotNull(another.getCreatedOn());
+        assertEquals("data not same.", DATA, another.getData());
     }
 
     @Test
     public void copyConstructor() {
-        ClientLog another = new ClientLog(entity);
+        PreferencesFile another = new PreferencesFile(entity);
         assertEquals("name not same.", entity.getName(), another.getName());
         assertEquals("UserId not same.", entity.getUserId(), another
                 .getUserId());
         assertEquals("data not same.", entity.getData(), another.getData());
-        assertEquals("created on not same.", entity.getCreatedOn(), another
-                .getCreatedOn());
     }
 
     @Test

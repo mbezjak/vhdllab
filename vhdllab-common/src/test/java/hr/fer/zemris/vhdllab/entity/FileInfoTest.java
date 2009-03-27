@@ -33,9 +33,9 @@ public class FileInfoTest extends ValueObjectTestSupport {
         assertNull("type not cleared.", another.getType());
 
         another.setData(DATA);
-        assertNotNull("type is null.", another.getData());
+        assertNotNull("data is null.", another.getData());
         another.setData(null);
-        assertNull("type not cleared.", another.getData());
+        assertNull("data not cleared.", another.getData());
     }
 
     @Test

@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
-import hr.fer.zemris.vhdllab.dao.PredefinedFilesDao;
+import hr.fer.zemris.vhdllab.dao.PredefinedFileDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.util.IOUtil;
@@ -24,14 +24,14 @@ import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.ServletContextAware;
 
-public class PredefinedFilesDaoImpl implements PredefinedFilesDao,
+public class PredefinedFileDaoImpl implements PredefinedFileDao,
         ServletContextAware {
 
     /**
      * Logger for this class
      */
     private static final Logger LOG = Logger
-            .getLogger(PredefinedFilesDaoImpl.class);
+            .getLogger(PredefinedFileDaoImpl.class);
 
     private static final String DEFAULT_LOCATION = "/WEB-INF/predefined";
     private java.io.File location;

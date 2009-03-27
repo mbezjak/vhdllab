@@ -41,6 +41,15 @@ public class NamedEntityDaoTest extends AbstractDaoSupport {
     }
 
     /**
+     * Name can't be empty.
+     */
+    @Test(expected = InvalidStateException.class)
+    public void nameIsEmpty() {
+        entity.setName("");
+        dao.persist(entity);
+    }
+
+    /**
      * Name is too long.
      */
     @Test(expected = InvalidStateException.class)
@@ -64,6 +73,19 @@ public class NamedEntityDaoTest extends AbstractDaoSupport {
         NamedEntityTable loaded = (NamedEntityTable) entityManager.createQuery(
                 "select e from NamedEntityTable e").getSingleResult();
         assertFalse(newName.equals(loaded.getName()));
+    }
+
+    /**
+     * Name is not bound to name format constraint.
+     */
+    @Test
+    public void nameNotWellFormed() {
+        String name = "_illegal_name";
+        entity.setName(name);
+        dao.persist(entity); // no exception
+        NamedEntityTable loaded = (NamedEntityTable) entityManager.createQuery(
+                "select e from NamedEntityTable e").getSingleResult();
+        assertTrue(name.equals(loaded.getName()));
     }
 
 }

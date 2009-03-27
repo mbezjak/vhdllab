@@ -66,14 +66,18 @@
   <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
     autowire="autodetect" />
 
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.PreferencesFileDaoImpl"
+    autowire="autodetect" />
+
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
     autowire="autodetect" />
 
-  <bean class="hr.fer.zemris.vhdllab.dao.impl.PredefinedFilesDaoImpl"
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.PredefinedFileDaoImpl"
     autowire="autodetect" />
 
   <!-- Service classes -->
   <bean id="workspaceService" class="hr.fer.zemris.vhdllab.service.impl.WorkspaceServiceImpl" />
+  <bean id="preferencesFileService" class="hr.fer.zemris.vhdllab.service.impl.PreferencesFileServiceImpl" />
   <bean id="clientLogService" class="hr.fer.zemris.vhdllab.service.impl.ClientLogServiceImpl" />
   <bean id="metadataExtractionService" class="hr.fer.zemris.vhdllab.service.impl.MetadataExtractionServiceImpl" />
   <bean id="simulator" class="hr.fer.zemris.vhdllab.service.impl.GhdlSimulator" init-method="configure">
@@ -101,6 +105,16 @@
     </property>
     <property name="serviceInterface">
       <value>hr.fer.zemris.vhdllab.service.WorkspaceService</value>
+    </property>
+  </bean>
+  
+  <bean id="httpPreferencesFileService"
+        class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+    <property name="service">
+      <ref bean="preferencesFileService"/>
+    </property>
+    <property name="serviceInterface">
+      <value>hr.fer.zemris.vhdllab.service.PreferencesFileService</value>
     </property>
   </bean>
   
@@ -138,6 +152,7 @@
     <property name="mappings">
       <props>
         <prop key="/workspace.service">httpWorkspaceService</prop>
+        <prop key="/preferencesfile.service">httpPreferencesFileService</prop>
         <prop key="/clientlog.service">httpClientLogService</prop>
         <prop key="/metadataextraction.service">httpMetadataExtractionService</prop>
         <prop key="/simulator.service">httpSimulator</prop>

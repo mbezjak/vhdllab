@@ -1,10 +1,12 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
 import hr.fer.zemris.vhdllab.dao.FileDao;
-import hr.fer.zemris.vhdllab.dao.PredefinedFilesDao;
+import hr.fer.zemris.vhdllab.dao.PredefinedFileDao;
+import hr.fer.zemris.vhdllab.dao.PreferencesFileDao;
 import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
@@ -39,7 +41,9 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
     @Autowired
     private FileDao fileDao;
     @Autowired
-    private PredefinedFilesDao predefinedFilesDao;
+    private PreferencesFileDao preferencesFileDao;
+    @Autowired
+    private PredefinedFileDao predefinedFilesDao;
     @Resource(name = "fileTypeBasedMetadataExtractor")
     private MetadataExtractor metadataExtractor;
 
@@ -172,22 +176,10 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
         // }
 
         Set<File> predefinedFiles = predefinedFilesDao.getPredefinedFiles();
-        Project preferencesProject = projectDao.getPreferencesProject(user);
+        List<PreferencesFile> preferencesFiles = preferencesFileDao
+                .findByUser(user);
 
-        return new Workspace(projectMetadata, predefinedFiles,
-                preferencesProject.getFiles());
+        return new Workspace(projectMetadata, predefinedFiles, preferencesFiles);
     }
 
-    public void savePreferences(List<File> files) {
-        Validate.notNull(files, "Files can't be null");
-        Project project = projectDao.getPreferencesProject(SecurityUtils
-                .getUser());
-        Set<File> allFiles = EntityUtils.cloneFiles(project.getFiles());
-        for (File file : files) {
-            if (!allFiles.contains(file)) {
-                project.addFile(new File(file));
-            }
-        }
-        projectDao.merge(project);
-    }
 }

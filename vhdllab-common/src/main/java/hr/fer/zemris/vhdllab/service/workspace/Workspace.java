@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.service.workspace;
 
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.util.EntityUtils;
@@ -20,10 +21,10 @@ public final class Workspace implements Serializable {
     private final Map<Project, ProjectMetadata> projectMetadata;
     private transient List<Project> projects;
     private final Set<File> predefinedFiles;
-    private final Set<File> preferencesFiles;
+    private final List<PreferencesFile> preferencesFiles;
 
     public Workspace(Map<Project, ProjectMetadata> projectMetadata,
-            Set<File> predefinedFiles, Set<File> preferencesFiles) {
+            Set<File> predefinedFiles, List<PreferencesFile> preferencesFiles) {
         Validate.notNull(projectMetadata, "Project metadata can't be null");
         Validate.notNull(predefinedFiles, "Predefined files can't be null");
         Validate.notNull(preferencesFiles, "Preferences files can't be null");
@@ -103,7 +104,7 @@ public final class Workspace implements Serializable {
         return predefinedFiles;
     }
 
-    public Set<File> getPreferencesFiles() {
+    public List<PreferencesFile> getPreferencesFiles() {
         return preferencesFiles;
     }
 

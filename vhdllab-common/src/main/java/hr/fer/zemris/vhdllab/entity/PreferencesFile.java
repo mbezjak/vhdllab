@@ -1,50 +1,44 @@
 package hr.fer.zemris.vhdllab.entity;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
-@MappedSuperclass
-public class FileInfo extends NamedEntity {
+@Entity
+@Table(name = "preferences_files", uniqueConstraints = { @UniqueConstraint(columnNames = {
+        "user_id", "name" }) })
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class PreferencesFile extends OwnedEntity {
 
-    private static final long serialVersionUID = -7202306767258225281L;
+    private static final long serialVersionUID = 2916992978945246032L;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(updatable = false)
-    private FileType type;
     @NotNull
     @Length(max = 16000000) // ~ 16MB
     private String data;
 
-    public FileInfo() {
+    public PreferencesFile() {
         super();
     }
 
-    public FileInfo(String name, FileType type, String data) {
-        super(name);
-        setType(type);
+    public PreferencesFile(String name, String data) {
+        this(null, name, data);
+    }
+
+    public PreferencesFile(String userId, String name, String data) {
+        super(userId, name);
         setData(data);
     }
 
-    public FileInfo(FileInfo clone) {
+    public PreferencesFile(PreferencesFile clone) {
         super(clone);
-        setType(clone.type);
         setData(clone.data);
-    }
-
-    public FileType getType() {
-        return type;
-    }
-
-    public void setType(FileType type) {
-        this.type = type;
     }
 
     public String getData() {
@@ -59,7 +53,6 @@ public class FileInfo extends NamedEntity {
     public String toString() {
         return new ToStringBuilder(this)
                     .appendSuper(super.toString())
-                    .append("type", type)
                     .append("dataLength", StringUtils.length(data))
                     .toString();
     }

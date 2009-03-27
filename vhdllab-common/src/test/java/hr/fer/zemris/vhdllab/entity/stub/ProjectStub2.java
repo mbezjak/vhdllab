@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.entity.stub;
 
 import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.entity.ProjectType;
 
 public class ProjectStub2 extends Project {
 
@@ -12,7 +11,6 @@ public class ProjectStub2 extends Project {
         setVersion(987);
         setName("project name");
         setUserId("project user id");
-        setType(ProjectType.PREFERENCES);
     }
 
 }

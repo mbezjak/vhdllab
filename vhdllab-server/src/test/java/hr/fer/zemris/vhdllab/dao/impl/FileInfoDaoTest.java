@@ -33,11 +33,23 @@ public class FileInfoDaoTest extends AbstractDaoSupport {
     }
 
     /**
+     * Type can't be null.
+     */
+    @Test(expected = DataIntegrityViolationException.class)
+    public void typeIsNull() {
+        entity.setName("name");
+        entity.setData("data");
+        entity.setType(null);
+        dao.persist(entity);
+    }
+    
+    /**
      * Data can't be null.
      */
     @Test(expected = DataIntegrityViolationException.class)
     public void dataIsNull() {
         entity.setName("name");
+        entity.setType(FileType.SOURCE);
         entity.setData(null);
         dao.persist(entity);
     }
@@ -48,6 +60,7 @@ public class FileInfoDaoTest extends AbstractDaoSupport {
     @Test(expected = InvalidStateException.class)
     public void dataTooLong() {
         entity.setName("name");
+        entity.setType(FileType.SOURCE);
         entity.setData(RandomStringUtils.randomAlphabetic(16000001));
         dao.persist(entity);
     }

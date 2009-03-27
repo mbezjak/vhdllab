@@ -59,6 +59,9 @@
   <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
     autowire="autodetect" />
 
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.PreferencesFileDaoImpl"
+    autowire="autodetect" />
+
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
     autowire="autodetect" />
 
@@ -72,10 +75,10 @@
   <bean id="namedEntityDao" class="hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDao"
     autowire="autodetect" />
 
-  <bean id="fileInfoDao" class="hr.fer.zemris.vhdllab.dao.impl.support.FileInfoDao"
+  <bean id="ownedEntityTableDao" class="hr.fer.zemris.vhdllab.dao.impl.support.OwnedEntityTableDao"
     autowire="autodetect" />
 
-  <bean id="projectInfoDao" class="hr.fer.zemris.vhdllab.dao.impl.support.ProjectInfoDao"
+  <bean id="fileInfoDao" class="hr.fer.zemris.vhdllab.dao.impl.support.FileInfoDao"
     autowire="autodetect" />
 
   <bean id="historyDao" class="hr.fer.zemris.vhdllab.dao.impl.support.HistoryDao"

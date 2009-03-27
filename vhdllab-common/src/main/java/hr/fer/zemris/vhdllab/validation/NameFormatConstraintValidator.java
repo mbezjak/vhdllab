@@ -1,10 +1,5 @@
 package hr.fer.zemris.vhdllab.validation;
 
-import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.NamedEntity;
-import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.entity.ProjectType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -144,21 +139,7 @@ public class NameFormatConstraintValidator implements
 
     @Override
     public boolean isValid(Object value) {
-        if (value instanceof Project) {
-            Project project = (Project) value;
-            if (project.getType().equals(ProjectType.USER)) {
-                return isCorrectName(project.getName());
-            }
-            return true;
-        } else if (value instanceof File) {
-            File file = (File) value;
-            if (file.getProject().getType().equals(ProjectType.USER)) {
-                return isCorrectName(file.getName());
-            }
-            return true;
-        } else if (value instanceof NamedEntity) {
-            return true;
-        } else if (value instanceof String) {
+        if (value instanceof String) {
             return isCorrectName((String) value);
         }
         return false;

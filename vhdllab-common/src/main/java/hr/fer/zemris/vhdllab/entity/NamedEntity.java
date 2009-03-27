@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.entity;
 
 import static org.apache.commons.lang.StringUtils.lowerCase;
-import hr.fer.zemris.vhdllab.validation.NameFormatConstraint;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -10,15 +9,14 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
+import org.hibernate.validator.NotEmpty;
 
 @MappedSuperclass
-@NameFormatConstraint
 public class NamedEntity extends BaseEntity {
 
     private static final long serialVersionUID = -2369439762588805135L;
 
-    @NotNull
+    @NotEmpty
     @Length(max = 255)
     @Column(updatable = false)
     private String name;

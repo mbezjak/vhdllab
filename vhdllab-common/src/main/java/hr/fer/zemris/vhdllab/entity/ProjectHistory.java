@@ -16,7 +16,7 @@ import org.hibernate.validator.NotNull;
 @Table(name = "project_history", uniqueConstraints = { @UniqueConstraint(columnNames = {
         "user_id", "name", "insert_version", "update_version" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ProjectHistory extends ProjectInfo {
+public class ProjectHistory extends OwnedEntity {
 
     private static final long serialVersionUID = 7347617814219101311L;
 
@@ -28,8 +28,8 @@ public class ProjectHistory extends ProjectInfo {
         super();
     }
 
-    public ProjectHistory(ProjectInfo project, History history) {
-        super(project);
+    public ProjectHistory(OwnedEntity entity, History history) {
+        super(entity);
         setHistory(history);
         setId(null);
         setVersion(null);

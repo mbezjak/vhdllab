@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.entity;
 
+import hr.fer.zemris.vhdllab.validation.NameFormatConstraint;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -47,6 +49,12 @@ public class File extends FileInfo {
     public File(File clone, Project project) {
         super(clone);
         setProject(project);
+    }
+
+    @NameFormatConstraint
+    @Override
+    public String getName() {
+        return super.getName();
     }
 
     public Project getProject() {

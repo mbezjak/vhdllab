@@ -27,11 +27,11 @@ public class PredefinedFilesDaoImplTest {
 
     private static final String TEST_LOCATION = "src/test/resources/predefined";
 
-    private PredefinedFilesDaoImpl dao;
+    private PredefinedFileDaoImpl dao;
 
     @Before
     public void initClass() {
-        dao = new PredefinedFilesDaoImpl();
+        dao = new PredefinedFileDaoImpl();
         dao.setLocation(new java.io.File(TEST_LOCATION));
         dao.initFiles();
     }
@@ -63,7 +63,7 @@ public class PredefinedFilesDaoImplTest {
 
     @Test
     public void getPredefinedFilesWithServletContext() {
-        dao = new PredefinedFilesDaoImpl();
+        dao = new PredefinedFileDaoImpl();
         dao.setServletContext(new ServletContextMock());
         dao.initFiles();
 

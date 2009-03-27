@@ -9,8 +9,8 @@ public class ClientLogStub extends ClientLog {
     private static final long serialVersionUID = 1L;
 
     public ClientLogStub() throws Exception {
-        BeanUtils.copyProperties(this, new FileInfoStub());
-        setType(null);
+        super("user", "data");
+        BeanUtils.copyProperties(this, new OwnedEntityStub());
     }
 
 }

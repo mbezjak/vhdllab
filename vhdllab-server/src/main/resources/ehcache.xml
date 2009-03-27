@@ -83,6 +83,15 @@
         timeToLiveSeconds="1200"
         />
 
+    <!-- cache for PreferencesFile -->
+    <cache name="hr.fer.zemris.vhdllab.entity.PreferencesFile"
+        maxElementsInMemory="100"
+        eternal="false"
+        overflowToDisk="true"
+        timeToIdleSeconds="180"
+        timeToLiveSeconds="360"
+        />
+
     <!-- cache for ProjectHistory -->
     <cache name="hr.fer.zemris.vhdllab.entity.ProjectHistory"
         maxElementsInMemory="50"

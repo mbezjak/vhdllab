@@ -99,7 +99,7 @@ public class AbstractEntityDaoTest extends AbstractDaoSupport {
      */
     @Test(expected = IllegalStateException.class)
     public void findUniqueResultMoreThenOne() {
-        setupBasicEntities();
+        setupNamedEntities();
         String query = "select e from NamedEntityTable e";
         dao.findUniqueResult(query);
     }
@@ -109,24 +109,24 @@ public class AbstractEntityDaoTest extends AbstractDaoSupport {
      */
     @Test
     public void findUniqueResult() {
-        setupBasicEntities();
+        setupNamedEntities();
         String query = "select e from NamedEntityTable e where e.name = ?1";
         assertNotNull("file not found.", dao.findUniqueResult(query, "name"));
     }
 
-    private void setupBasicEntities() {
-        setupBasicEntity(new NamedEntityTable("name"));
-        setupBasicEntity(new NamedEntityTable("name2"));
+    private void setupNamedEntities() {
+        setupNamedEntity("name");
+        setupNamedEntity("name2");
     }
 
-    private void setupBasicEntity(final NamedEntityTable file) {
-        String query = createInsertStatement("NamedEntityTable", "id, version, name",
-                "null, 0, ?");
+    private void setupNamedEntity(final String name) {
+        String query = createInsertStatement("NamedEntityTable",
+                "id, version, name", "null, 0, ?");
         getJdbcTemplate().execute(query, new PreparedStatementCallback() {
             @Override
             public Object doInPreparedStatement(PreparedStatement ps)
                     throws SQLException, DataAccessException {
-                ps.setString(1, file.getName().toString());
+                ps.setString(1, name);
                 return ps.execute();
             }
         });

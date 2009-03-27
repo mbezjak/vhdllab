@@ -20,8 +20,4 @@ public class NamedEntityTable extends NamedEntity {
         super();
     }
 
-    public NamedEntityTable(String name) {
-        super(name);
-    }
-
 }

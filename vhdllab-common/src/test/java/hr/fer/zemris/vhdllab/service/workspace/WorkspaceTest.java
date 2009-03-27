@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +30,7 @@ public class WorkspaceTest extends ValueObjectTestSupport {
     private Project thirdProject;
     private Map<Project, ProjectMetadata> projectMetadata;
     private Set<File> predefinedFiles;
-    private Set<File> preferencesFiles;
+    private List<PreferencesFile> preferencesFiles;
     private Workspace workspace;
 
     @SuppressWarnings("unchecked")
@@ -51,9 +53,9 @@ public class WorkspaceTest extends ValueObjectTestSupport {
 
         predefinedFiles = new HashSet<File>(1);
         predefinedFiles.add(new File("predefined", null, "data"));
-        preferencesFiles = new HashSet<File>(2);
-        preferencesFiles.add(new File("preferences1", null, "data"));
-        preferencesFiles.add(new File("preferences2", null, "data2"));
+        preferencesFiles = new ArrayList<PreferencesFile>(2);
+        preferencesFiles.add(new PreferencesFile("preferences1", "data"));
+        preferencesFiles.add(new PreferencesFile("preferences2", "data2"));
         workspace = new Workspace(projectMetadata, predefinedFiles,
                 preferencesFiles);
     }
@@ -92,11 +94,10 @@ public class WorkspaceTest extends ValueObjectTestSupport {
         file = (File) CollectionUtils.get(workspace.getPredefinedFiles(), 0);
         assertEquals("predefined", file.getName());
 
-        file = (File) CollectionUtils.get(preferencesFiles, 0);
-        file.setName("new_name");
-        file = (File) CollectionUtils.get(workspace.getPreferencesFiles(), 0);
-        assertEquals("preferences1", file.getName());
-        assertNull(file.getProject());
+        PreferencesFile preferencesFile = preferencesFiles.get(0);
+        preferencesFile.setName("new_name");
+        preferencesFile = workspace.getPreferencesFiles().get(0);
+        assertEquals("preferences1", preferencesFile.getName());
     }
 
     @Test
@@ -186,23 +187,24 @@ public class WorkspaceTest extends ValueObjectTestSupport {
         workspace.removeFile(null, new Hierarchy(new Project(),
                 Collections.EMPTY_LIST));
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void removeFile2() {
         File file = new File();
         file.setProject(firstProject);
         workspace.removeFile(file, null);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test(expected = IllegalArgumentException.class)
     public void removeFile3() {
         Project project = new Project();
         File file = new File();
         file.setProject(project);
-        workspace.removeFile(file, new Hierarchy(project, Collections.EMPTY_LIST));
+        workspace.removeFile(file, new Hierarchy(project,
+                Collections.EMPTY_LIST));
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void removeFile4() {
@@ -218,7 +220,7 @@ public class WorkspaceTest extends ValueObjectTestSupport {
         assertTrue(workspace.getFiles(firstProject).isEmpty());
         assertEquals(hierarchy, workspace.getHierarchy(firstProject));
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void getHierarchy() {
         workspace.getHierarchy(null);

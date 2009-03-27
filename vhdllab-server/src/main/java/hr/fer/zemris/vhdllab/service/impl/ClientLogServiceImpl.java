@@ -16,8 +16,7 @@ public class ClientLogServiceImpl implements ClientLogService {
     @Override
     public void save(String data) {
         Validate.notNull(data, "Data can't be null");
-        ClientLog log = new ClientLog(SecurityUtils.getUser());
-        log.setData(data);
+        ClientLog log = new ClientLog(SecurityUtils.getUser(), data);
         dao.persist(log);
     }
 

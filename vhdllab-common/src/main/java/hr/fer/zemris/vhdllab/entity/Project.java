@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.entity;
 
+import hr.fer.zemris.vhdllab.validation.NameFormatConstraint;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +23,7 @@ import org.hibernate.validator.Size;
 @Table(name = "projects", uniqueConstraints = { @UniqueConstraint(columnNames = {
         "user_id", "name" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Project extends ProjectInfo {
+public class Project extends OwnedEntity {
 
     private static final long serialVersionUID = 7535295608182412183L;
 
@@ -35,8 +37,8 @@ public class Project extends ProjectInfo {
         this(null, null);
     }
 
-    public Project(String userId) {
-        this(userId, null);
+    public Project(String name) {
+        this(null, name);
     }
 
     public Project(String userId, String name) {
@@ -47,6 +49,12 @@ public class Project extends ProjectInfo {
     public Project(Project clone) {
         super(clone);
         initFiles();
+    }
+
+    @NameFormatConstraint
+    @Override
+    public String getName() {
+        return super.getName();
     }
 
     public Set<File> getFiles() {

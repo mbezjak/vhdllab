@@ -1,13 +1,14 @@
 package hr.fer.zemris.vhdllab.platform.preference;
 
-import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.PreferencesFile;
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.service.WorkspaceService;
+import hr.fer.zemris.vhdllab.service.PreferencesFileService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,34 +24,37 @@ public class DefaultPreferencesManager implements PreferencesManager {
             .getLogger(DefaultPreferencesManager.class);
 
     @Autowired
-    private WorkspaceService service;
+    private PreferencesFileService preferencesFileService;
     @Autowired
     private WorkspaceManager manager;
-    private Map<String, File> files;
+    private Map<String, PreferencesFile> files;
 
     @Override
-    public File getFile(String name) {
+    public PreferencesFile getFile(String name) {
         return getFiles().get(name);
     }
 
     @Override
-    public void setFile(File file) {
+    public void setFile(PreferencesFile file) {
+        file.setUserId(ApplicationContextHolder.getContext().getUserId());
         getFiles().put(file.getName(), file);
     }
 
     @Override
     public void saveFiles() {
         LOG.debug("Saving " + getFiles().size() + " user files");
-        service.savePreferences(new ArrayList<File>(getFiles().values()));
+        preferencesFileService.save(new ArrayList<PreferencesFile>(getFiles()
+                .values()));
     }
 
-    private Map<String, File> getFiles() {
+    private Map<String, PreferencesFile> getFiles() {
         if (files == null) {
-            Set<File> allFiles = manager.getWorkspace().getPreferencesFiles();
-            LOG.debug("Loaded " + allFiles.size() + " user files");
-            files = new HashMap<String, File>(allFiles.size());
-            for (File f : allFiles) {
-                files.put(f.getName().toString(), f);
+            List<PreferencesFile> allFiles = manager.getWorkspace()
+                    .getPreferencesFiles();
+            LOG.debug("Loaded " + allFiles.size() + " preferences files");
+            files = new HashMap<String, PreferencesFile>(allFiles.size());
+            for (PreferencesFile f : allFiles) {
+                files.put(f.getName(), f);
             }
         }
         return files;

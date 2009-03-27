@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.entity;
 
 import static hr.fer.zemris.vhdllab.entity.stub.NamedEntityStub.NAME;
-import static hr.fer.zemris.vhdllab.entity.stub.ProjectInfoStub.USER_ID;
+import static hr.fer.zemris.vhdllab.entity.stub.OwnedEntityStub.USER_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -39,11 +39,10 @@ public class ProjectTest extends ValueObjectTestSupport {
     }
 
     @Test
-    public void constructorUserId() {
-        Project another = new Project(USER_ID);
-        assertEquals("userId not same.", USER_ID, another.getUserId());
-        assertNull("name not null", another.getName());
-        assertEquals("type not same.", ProjectType.USER, another.getType());
+    public void constructorName() {
+        Project another = new Project(NAME);
+        assertEquals("name not same.", NAME, another.getName());
+        assertNull("userId not null", another.getUserId());
         assertTrue("files not empty.", another.getFiles().isEmpty());
     }
 
@@ -52,7 +51,6 @@ public class ProjectTest extends ValueObjectTestSupport {
         Project another = new Project(USER_ID, NAME);
         assertEquals("userId not same.", USER_ID, another.getUserId());
         assertEquals("name not same.", NAME, another.getName());
-        assertEquals("type not same.", ProjectType.USER, another.getType());
         assertTrue("files not empty.", another.getFiles().isEmpty());
     }
 
@@ -61,7 +59,6 @@ public class ProjectTest extends ValueObjectTestSupport {
         Project another = new Project(entity);
         assertEquals("userId not same.", entity.getUserId(), another
                 .getUserId());
-        assertEquals("userId not same.", entity.getType(), another.getType());
         assertTrue("files not empty.", another.getFiles().isEmpty());
     }
 
