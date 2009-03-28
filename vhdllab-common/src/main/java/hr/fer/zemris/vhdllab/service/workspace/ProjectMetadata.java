@@ -12,13 +12,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 public class ProjectMetadata implements Serializable {
 
     private static final long serialVersionUID = 6024599240022056727L;
 
-    private final Set<File> files;
+    private Set<File> files;
     private Hierarchy hierarchy;
 
     @SuppressWarnings("unchecked")
@@ -64,7 +63,16 @@ public class ProjectMetadata implements Serializable {
 
     @Override
     public String toString() {
-        return ReflectionToStringBuilder.toString(this);
+        StringBuilder sb = new StringBuilder(200);
+        sb.append("files [");
+        if (!files.isEmpty()) {
+            sb.append("\n");
+            for (File f : files) {
+                sb.append(f).append("\n");
+            }
+        }
+        sb.append("]\n").append(hierarchy);
+        return sb.toString();
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException,
@@ -74,6 +82,7 @@ public class ProjectMetadata implements Serializable {
         for (File f : files) {
             f.setProject(project);
         }
+        files = new HashSet<File>(files);
     }
 
 }

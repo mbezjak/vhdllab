@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
 
-import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.NumberBox;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
 
@@ -35,27 +34,24 @@ import org.springframework.richclient.list.ComboBoxAutoCompletion;
 import org.springframework.richclient.table.BeanTableModel;
 import org.springframework.richclient.wizard.AbstractWizardPage;
 
-public class CircuitInterfaceWizardPage extends AbstractWizardPage {
+public class PortWizardPage extends AbstractWizardPage {
 
-    private static final String PAGE_ID = "circuitInterface";
+    private static final String PAGE_ID = "newPorts";
 
-    JTable table;
-    BeanTableModel model;
-    ActionCommand addAction;
-    ActionCommand removeAction;
+    protected JTable table;
+    protected BeanTableModel model;
+    protected ActionCommand addAction;
+    protected ActionCommand removeAction;
 
-    public CircuitInterfaceWizardPage() {
+    public PortWizardPage() {
         super(PAGE_ID);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected JComponent createControl() {
-        List<Port> list = new ArrayList<Port>();
-        Port p = new Port();
-        p.setDirection(PortDirection.IN);
-        list.add(p);
-        model = new BeanTableModel(Port.class, list, getMessageSource()) {
+        model = new BeanTableModel(Port.class, new ArrayList<Port>(),
+                getMessageSource()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -70,7 +66,8 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
             }
 
         };
-        model.setRowNumbers(false);
+        // model.setRowNumbers(false);
+        new PortValidationReporter(model, this);
         table = new JTable(model);
         table.setCellSelectionEnabled(true);
         table.getSelectionModel().addListSelectionListener(
@@ -84,24 +81,23 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
 
         final JComboBox inComboBox = new JComboBox(new EnumComboBoxModel(
                 PortDirection.class));
-        JTextField imeSignala = new JTextField("");
-
-        NumberBox brojevi = new NumberBox("0");
+        JTextField portName = new JTextField();
 
         new ComboBoxAutoCompletion(inComboBox);
 
-        table.getColumnModel().getColumn(0).setCellEditor(
-                new DefaultCellEditor(imeSignala));
-        table.getColumnModel().getColumn(0).setPreferredWidth(70);
+        table.getColumnModel().getColumn(0).setPreferredWidth(7);
         table.getColumnModel().getColumn(1).setCellEditor(
-                new ComboBoxCellEditor(inComboBox));
-        table.getColumnModel().getColumn(1).setPreferredWidth(70);
+                new DefaultCellEditor(portName));
+        table.getColumnModel().getColumn(1).setPreferredWidth(120);
         table.getColumnModel().getColumn(2).setCellEditor(
-                new DefaultCellEditor(brojevi));
-        table.getColumnModel().getColumn(2).setPreferredWidth(65);
+                new ComboBoxCellEditor(inComboBox));
+        // table.getColumnModel().getColumn(2).setPreferredWidth(70);
         table.getColumnModel().getColumn(3)
                 .setCellEditor(new NumberEditorExt());
-        table.getColumnModel().getColumn(3).setPreferredWidth(65);
+        // table.getColumnModel().getColumn(3).setPreferredWidth(65);
+        table.getColumnModel().getColumn(4)
+                .setCellEditor(new NumberEditorExt());
+        // table.getColumnModel().getColumn(4).setPreferredWidth(65);
         table.setPreferredScrollableViewportSize(new Dimension(300, 200));
 
         table.addKeyListener(new EditComboBoxKeyHandler());
@@ -162,7 +158,7 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
         return control;
     }
 
-    class EditComboBoxKeyHandler extends KeyAdapter {
+    protected class EditComboBoxKeyHandler extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -178,7 +174,7 @@ public class CircuitInterfaceWizardPage extends AbstractWizardPage {
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                 int lastRowIndex = model.getRowCount() - 1;
                 if (table.getSelectionModel().isSelectedIndex(lastRowIndex)) {
-                    String name = (String) model.getValueAt(lastRowIndex, 0);
+                    String name = (String) model.getValueAt(lastRowIndex, 1);
                     if (!StringUtils.isEmpty(name)) {
                         addAction.execute();
                     }

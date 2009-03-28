@@ -122,7 +122,7 @@ public class CircuitInterfaceTest extends ValueObjectTestSupport {
     public void testToString() {
         ci.setName("ci_name");
         toStringPrint(ci);
-        assertEquals("ENTITY ci_name IS PORT(\n);\nEND ci_name;", ci.toString());
+        assertEquals("ENTITY ci_name IS\nEND ci_name;", ci.toString());
 
         Port port = new Port("a", PortDirection.IN);
         ci.add(port);

@@ -112,15 +112,17 @@ public class CircuitInterface implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(10 + ports.size() * 50);
-        sb.append("ENTITY ").append(name).append(" IS PORT(\n");
-        for (Port p : getPorts()) {
-            sb.append("\t").append(p).append(";\n");
-        }
+        sb.append("ENTITY ").append(name).append(" IS");
         if (!ports.isEmpty()) {
+            sb.append(" PORT(\n");
+            for (Port p : ports) {
+                sb.append("\t").append(p).append(";\n");
+            }
             // remove last semi-colon
             sb.delete(sb.length() - 2, sb.length() - 1);
+            sb.append(");");
         }
-        sb.append(");\nEND ").append(name).append(";");
+        sb.append("\nEND ").append(name).append(";");
         return sb.toString();
     }
 

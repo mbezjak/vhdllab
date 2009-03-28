@@ -141,15 +141,16 @@ public class ProjectExplorerView extends AbstractView implements
 
     @Override
     protected void registerLocalCommandExecutors(PageComponentContext context) {
-        context.register(deleteCommand.getId(), deleteCommand);
         CommandManager commandManager = getActiveWindow().getCommandManager();
         commandManager.registerCommand(openCommand);
         commandManager.registerCommand(compileCommand);
         commandManager.registerCommand(simulateCommand);
         commandManager.registerCommand(viewVhdlCommand);
+        commandManager.registerCommand(deleteCommand);
         commandManager.registerCommand(hierarchyXUsesYCommand);
         commandManager.registerCommand(hierarchyXUsedByYCommand);
         commandManager.registerCommand(hierarchyFlatCommand);
+        context.register(deleteCommand.getId(), deleteCommand);
     }
 
     @Override

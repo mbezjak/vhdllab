@@ -57,21 +57,26 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
                         + " must have only one entity with the same name.");
             }
         }
-
+        
+        Project project = loadProject(file.getProject().getId());
         File saved = new File(file);
         if (file.isNew()) {
+            project.addFile(saved);
             fileDao.persist(saved);
         } else {
+            saved.setProject(project);
             saved = fileDao.merge(saved);
         }
-        return getReport(saved);
+        return getReport(saved, saved.getProject());
     }
 
     @Override
     public FileReport deleteFile(Integer fileId) {
-        File file = fileDao.load(fileId);
+        File file = loadFile(fileId);
+        // project reference will be removed during delete method
+        Project project = file.getProject();
         fileDao.delete(file);
-        return getReport(file);
+        return getReport(file, project);
     }
 
     @Override
@@ -80,8 +85,8 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
         return new File(file, EntityUtils.lightweightClone(file.getProject()));
     }
 
-    private FileReport getReport(File file) {
-        Hierarchy hierarchy = extractHierarchy(file.getProject().getId());
+    private FileReport getReport(File file, Project project) {
+        Hierarchy hierarchy = extractHierarchy(project.getId());
         return new FileReport(file, hierarchy);
     }
 
@@ -95,13 +100,13 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
 
     @Override
     public void deleteProject(Integer projectId) {
-        Project project = projectDao.load(projectId);
+        Project project = loadProject(projectId);
         projectDao.delete(project);
     }
 
     @Override
     public Hierarchy extractHierarchy(Integer projectId) {
-        Project project = projectDao.load(projectId);
+        Project project = loadProject(projectId);
         Set<File> files = project.getFiles();
         Map<File, HierarchyNode> resolvedNodes = new HashMap<File, HierarchyNode>(
                 files.size());

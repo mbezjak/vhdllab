@@ -22,7 +22,7 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
 
     @Autowired
     private WorkspaceManager workspaceManager;
-    private CircuitInterfaceWizardPage circuitInterfacePage;
+    private PortWizardPage portPage;
 
     public NewSourceWizard() {
         super(BeanUtil.getBeanName(NewSourceWizard.class));
@@ -31,14 +31,14 @@ public class NewSourceWizard extends AbstractResourceCreatingWizard {
     @Override
     public void addPages() {
         super.addPages();
-        circuitInterfacePage = new CircuitInterfaceWizardPage();
-        addPage(circuitInterfacePage);
+        portPage = new PortWizardPage();
+        addPage(portPage);
     }
 
     @Override
     protected void onWizardFinished(Object formObject) {
         File file = (File) formObject;
-        List<Port> ports = circuitInterfacePage.getPorts();
+        List<Port> ports = portPage.getPorts();
         file.setType(getFileType());
         file.setData(createData(file, ports));
         file.setProject(new Project(file.getProject()));

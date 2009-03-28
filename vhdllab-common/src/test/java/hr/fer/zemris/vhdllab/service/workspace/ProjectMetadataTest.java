@@ -172,6 +172,15 @@ public class ProjectMetadataTest extends ValueObjectTestSupport {
         for (File f : metadata.getFiles()) {
             assertEquals(hierarchy.getProject(), f.getProject());
         }
+        File file = (File) CollectionUtils.get(files, 0);
+        assertTrue(
+                "change in hashCode of a file (added project reference) isn't reflected to the set containing it.",
+                metadata.getFiles().contains(file));
+    }
+
+    @Test
+    public void testToString() {
+        toStringPrint(metadata);
     }
 
 }

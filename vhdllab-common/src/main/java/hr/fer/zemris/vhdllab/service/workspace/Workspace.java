@@ -108,4 +108,31 @@ public final class Workspace implements Serializable {
         return preferencesFiles;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(2000);
+        sb.append("Project metadata:{\n");
+        for (int i = 0; i < getProjectCount(); i++) {
+            Project project = getProjects().get(i);
+            ProjectMetadata metadata = getMetadata(project);
+            sb.append("*** ").append(i).append(" = ").append(project);
+            sb.append(" {\n");
+            if(metadata != null) {
+                sb.append(metadata);
+            } else {
+                sb.append("metadata=null\n");
+            }
+            sb.append("}\n");
+        }
+        sb.append("}//end metadata\nPredefined files:{");
+        for (File predefined : getPredefinedFiles()) {
+            sb.append(predefined.getName()).append(",");
+        }
+        sb.append("}\nPreferences files:{");
+        for (PreferencesFile preferences : getPreferencesFiles()) {
+            sb.append(preferences.getName()).append(",");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }

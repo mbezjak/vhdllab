@@ -245,4 +245,9 @@ public class WorkspaceTest extends ValueObjectTestSupport {
         assertNull(workspace.getFiles(thirdProject));
     }
 
+    @Test
+    public void testToString() {
+        toStringPrint(workspace);
+    }
+
 }
