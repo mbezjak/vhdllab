@@ -22,7 +22,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractButton;
@@ -32,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -43,6 +46,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.log4j.lf5.viewer.categoryexplorer.TreeModelAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.richclient.application.PageComponentContext;
 import org.springframework.richclient.application.support.AbstractView;
@@ -106,6 +110,17 @@ public class ProjectExplorerView extends AbstractView implements
 
         root = new DefaultMutableTreeNode("vhdllab-root");
         model = new DefaultTreeModel(root);
+        model.addTreeModelListener(new TreeModelAdapter() {
+            @Override
+            public void treeNodesInserted(TreeModelEvent e) {
+                Object[] children = e.getChildren();
+                if(children.length > 0) {
+                    Object child = children[children.length - 1];
+                    TreePath path = e.getTreePath().pathByAddingChild(child);
+                    tree.setSelectionPath(path);
+                }
+            }
+        });
         tree = new JTree(model);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
@@ -162,6 +177,7 @@ public class ProjectExplorerView extends AbstractView implements
                 addFiles(hierarchy, null, projectNode);
             }
         }
+        model.reload();
     }
 
     @Override
@@ -183,22 +199,62 @@ public class ProjectExplorerView extends AbstractView implements
         }
     }
 
+    private void updateHierarchy(DefaultMutableTreeNode parentNode,
+            Hierarchy hierarchy, HierarchyNode hierarchyNode) {
+        List<DefaultMutableTreeNode> allNodes = new ArrayList<DefaultMutableTreeNode>(
+                parentNode.getChildCount());
+        for (int i = 0; i < parentNode.getChildCount(); i++) {
+            DefaultMutableTreeNode c = (DefaultMutableTreeNode) parentNode
+                    .getChildAt(i);
+            HierarchyNode hn = hierarchy.getNode((File) c.getUserObject());
+            if (hn == null) {
+                parentNode.remove(c);
+                model.nodesWereRemoved(parentNode, new int[] { i },
+                        new Object[] { c });
+                i--; // to stay at the same index
+            } else {
+                allNodes.add(c);
+            }
+        }
+
+        Iterator<HierarchyNode> iterator = getHierarchyIterator(hierarchy,
+                hierarchyNode);
+        int i = 0;
+        while (iterator.hasNext()) {
+            HierarchyNode next = iterator.next();
+            File file = next.getFile();
+            DefaultMutableTreeNode nextParentNode;
+            if (parentNode.getChildCount() <= i) {
+                nextParentNode = (DefaultMutableTreeNode) insertNode(
+                        parentNode, file);
+            } else {
+                nextParentNode = allNodes.get(i);
+                if (file.equals(nextParentNode.getUserObject())) {
+                    i++;
+                } else {
+                    nextParentNode = (DefaultMutableTreeNode) insertNode(
+                            parentNode, file);
+                }
+            }
+            updateHierarchy(nextParentNode, hierarchy, next);
+        }
+    }
+
     @Override
     public void fileCreated(FileReport report) {
-        // TODO Auto-generated method stub
-
+        Hierarchy hierarchy = report.getHierarchy();
+        DefaultMutableTreeNode treeNode = getNodeFor(hierarchy.getProject());
+        updateHierarchy(treeNode, hierarchy, null);
     }
 
     @Override
     public void fileSaved(FileReport report) {
-        // TODO Auto-generated method stub
-
+        fileCreated(report);
     }
 
     @Override
     public void fileDeleted(FileReport report) {
-        // TODO Auto-generated method stub
-
+        fileCreated(report);
     }
 
     protected void refereshProjectExplorer() {
@@ -288,6 +344,17 @@ public class ProjectExplorerView extends AbstractView implements
         File loadedFile = mapper.getFile(hierarchyFile);
         loadedFile.setProject(getProjectForSelectedFile());
         return loadedFile;
+    }
+
+    private DefaultMutableTreeNode getNodeFor(Project project) {
+        for (int i = 0; i < root.getChildCount(); i++) {
+            DefaultMutableTreeNode projectNode = (DefaultMutableTreeNode) root
+                    .getChildAt(i);
+            if (project.equals(projectNode.getUserObject())) {
+                return projectNode;
+            }
+        }
+        return null;
     }
 
     private Project getProjectForSelectedFile() {

@@ -139,7 +139,7 @@ public class DefaultWorkspaceManager extends
     private void initializeIdentifiers() {
         int projectCount = getWorkspace().getProjectCount();
         projectIds = new HashMap<Integer, Project>(projectCount);
-        projectIdentifiers = new CaseInsensitiveMap(projectCount);
+        projectIdentifiers = new CaseInsensitiveMap();
         fileIdentifiers = new CaseInsensitiveMap();
         fileIds = new HashMap<Integer, File>();
         for (Project project : getWorkspace().getProjects()) {
@@ -236,6 +236,12 @@ public class DefaultWorkspaceManager extends
         editorManagerFactory.get(file).open();
     }
 
+    private void closeEditor(Project project) {
+        EditorManager em = editorManagerFactory
+                .getAllAssociatedWithProject(project);
+        em.close(false);
+    }
+
     private void closeEditor(File file) {
         EditorManager em = editorManagerFactory.get(file);
         if (em.isOpened()) {
@@ -262,7 +268,7 @@ public class DefaultWorkspaceManager extends
             throw new ProjectAlreadyExistsException(project.toString());
         }
         Project created = workspaceService.persist(project.getName());
-        getWorkspace().addProject(project);
+        getWorkspace().addProject(created);
         addProject(created);
         fireProjectCreated(created);
         log(project, PROJECT_CREATED_MESSAGE);
@@ -271,6 +277,7 @@ public class DefaultWorkspaceManager extends
     @Override
     public void delete(Project project) {
         checkIfNull(project);
+        closeEditor(project);
         workspaceService.deleteProject(project.getId());
         getWorkspace().removeProject(project);
         removeProject(project);

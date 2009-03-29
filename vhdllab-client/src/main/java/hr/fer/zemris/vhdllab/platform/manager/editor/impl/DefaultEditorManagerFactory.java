@@ -8,7 +8,6 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +29,6 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
     private EditorRegistry registry;
     @Autowired
     private WizardRegistry wizardRegistry;
-    @Autowired
-    private IdentifierToInfoObjectMapper mapper;
 
     @Override
     public EditorManager get(File file) {
@@ -65,14 +62,14 @@ public class DefaultEditorManagerFactory implements EditorManagerFactory {
     public EditorManager getAllAssociatedWithProject(Project project) {
         Validate.notNull(project, "Project can't be null");
         List<Editor> editors = container.getAll();
-        List<Editor> editorsWithSpecifiedProjectName = new ArrayList<Editor>();
+        List<Editor> editorsWithSpecifiedProject = new ArrayList<Editor>();
         for (Editor editor : editors) {
             File file = get(editor).getIdentifier().getInstanceModifier();
             if (file.getProject().equals(project)) {
-                editorsWithSpecifiedProjectName.add(editor);
+                editorsWithSpecifiedProject.add(editor);
             }
         }
-        return createManager(editorsWithSpecifiedProjectName);
+        return createManager(editorsWithSpecifiedProject);
     }
 
     @Override

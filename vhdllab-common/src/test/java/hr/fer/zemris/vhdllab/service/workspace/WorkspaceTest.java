@@ -113,12 +113,25 @@ public class WorkspaceTest extends ValueObjectTestSupport {
 
     @Test
     public void addProject2() {
-        Project project = new Project();
+        Project project = new Project("user", "name");
         workspace.addProject(project);
         assertEquals(4, workspace.getProjectCount());
         assertEquals(4, workspace.getProjects().size());
         assertNotNull(workspace.getFiles(project));
         assertNotNull(workspace.getHierarchy(project));
+
+        project.setId(34);
+        workspace.addProject(project);
+        assertEquals(4, workspace.getProjectCount());
+        assertEquals(4, workspace.getProjects().size());
+        assertNotNull(workspace.getFiles(project));
+        assertNotNull(workspace.getHierarchy(project));
+        assertEquals(Integer.valueOf(34), workspace.getHierarchy(project)
+                .getProject().getId());
+        int index = workspace.getProjects().indexOf(project);
+        Project fromListProject = (Project) CollectionUtils.get(workspace
+                .getProjects(), index);
+        assertEquals(Integer.valueOf(34), fromListProject.getId());
     }
 
     @Test(expected = IllegalArgumentException.class)

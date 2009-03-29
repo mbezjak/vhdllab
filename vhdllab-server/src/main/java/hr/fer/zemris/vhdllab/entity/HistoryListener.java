@@ -11,7 +11,14 @@ import javax.persistence.PostUpdate;
 import javax.persistence.PreRemove;
 import javax.persistence.Query;
 
+import org.apache.log4j.Logger;
+
 public class HistoryListener {
+
+    /**
+     * Logger for this class
+     */
+    private static final Logger LOG = Logger.getLogger(HistoryListener.class);
     
     private static EntityManagerFactory entityManagerFactory;
 
@@ -30,7 +37,7 @@ public class HistoryListener {
         em.getTransaction().commit();
         em.close();
     }
-    
+
     @PreRemove
     public void preFileRemove(Object o) {
         if(o instanceof File) {
@@ -50,89 +57,101 @@ public class HistoryListener {
 
     @PostPersist
     public void createHistory(Object o) {
-        EntityManager em = newEntityManager();
+        try {
+            EntityManager em = newEntityManager();
 
-        Object history;
-        if (o instanceof Project) {
-            Project project = (Project) o;
-            ProjectHistory projectHistory;
-            try {
-                projectHistory = getLastProjectHistory(em, project);
-            } catch (NoResultException e) {
-                projectHistory = null;
-            }
-            History h;
-            if(projectHistory == null) {
-                h = new History();
+            Object history;
+            if (o instanceof Project) {
+                Project project = (Project) o;
+                ProjectHistory projectHistory;
+                try {
+                    projectHistory = getLastProjectHistory(em, project);
+                } catch (NoResultException e) {
+                    projectHistory = null;
+                }
+                History h;
+                if(projectHistory == null) {
+                    h = new History();
+                } else {
+                    h = new History(projectHistory.getHistory().getInsertVersion()+1, 0);
+                }
+                history = new ProjectHistory(project, h);
+            } else if(o instanceof File) {
+                File f = (File) o;
+                ProjectHistory projectHistory = getLastProjectHistory(em, f.getProject());
+                FileHistory fileHistory;
+                try {
+                    fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
+                } catch (Exception e) {
+                    fileHistory = null;
+                }
+                History h;
+                if(fileHistory == null) {
+                    h = new History();
+                } else {
+                    h = new History(fileHistory.getHistory().getInsertVersion()+1, 0);
+                }
+                history = new FileHistory(f, projectHistory.getId(), h);
             } else {
-                h = new History(projectHistory.getHistory().getInsertVersion()+1, 0);
+                history = null;
             }
-            history = new ProjectHistory(project, h);
-        } else if(o instanceof File) {
-            File f = (File) o;
-            ProjectHistory projectHistory = getLastProjectHistory(em, f.getProject());
-            FileHistory fileHistory;
-            try {
-                fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
-            } catch (Exception e) {
-                fileHistory = null;
+            if (history != null) {
+                em.persist(history);
             }
-            History h;
-            if(fileHistory == null) {
-                h = new History();
-            } else {
-                h = new History(fileHistory.getHistory().getInsertVersion()+1, 0);
-            }
-            history = new FileHistory(f, projectHistory.getId(), h);
-        } else {
-            history = null;
-        }
-        if (history != null) {
-            em.persist(history);
-        }
 
-        closeEntityManager(em);
+            closeEntityManager(em);
+        } catch (Exception e) {
+            LOG.error("Exception in history creation.", e);
+        }
     }
 
     @PostUpdate
     public void updateHistory(Object o) {
-        EntityManager em = newEntityManager();
+        try {
+            EntityManager em = newEntityManager();
 
-        Object history;
-        if (o instanceof File) {
-            File f = (File) o;
-            ProjectHistory projectHistory = getLastProjectHistory(em, f.getProject());
-            FileHistory fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
-            History h = new History(fileHistory.getHistory().getInsertVersion(), fileHistory.getHistory().getUpdateVersion()+1);
-            history = new FileHistory(f, fileHistory.getProjectId(), h);
-        } else {
-            history = null;
-        }
-        if (history != null) {
-            em.persist(history);
-        }
+            Object history;
+            if (o instanceof File) {
+                File f = (File) o;
+                ProjectHistory projectHistory = getLastProjectHistory(em, f.getProject());
+                FileHistory fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
+                History h = new History(fileHistory.getHistory().getInsertVersion(), fileHistory.getHistory().getUpdateVersion()+1);
+                history = new FileHistory(f, fileHistory.getProjectId(), h);
+            } else {
+                history = null;
+            }
+            if (history != null) {
+                em.persist(history);
+            }
 
-        closeEntityManager(em);
+            closeEntityManager(em);
+        } catch (Exception e) {
+            LOG.error("Exception in history creation.", e);
+        }
     }
     
     @PostRemove
     public void removeHistory(Object o) {
-        EntityManager em = newEntityManager();
+        try {
+            EntityManager em = newEntityManager();
 
-        if (o instanceof Project) {
-            Project project = (Project) o;
-            ProjectHistory projectHistory = getLastProjectHistory(em, project);
-            projectHistory.getHistory().setDeletedOn(new Date());
-            em.persist(projectHistory);
-        } else if(o instanceof File) {
-            File f = (File) o;
-            ProjectHistory projectHistory = getLastProjectHistory(em, f.getPostRemoveProjectReference());
-            FileHistory fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
-            fileHistory.getHistory().setDeletedOn(new Date());
-            em.persist(fileHistory);
+            if (o instanceof Project) {
+                Project project = (Project) o;
+                ProjectHistory projectHistory = getLastProjectHistory(em, project);
+                projectHistory.getHistory().setDeletedOn(new Date());
+                em.persist(projectHistory);
+            } else if(o instanceof File) {
+                File f = (File) o;
+                ProjectHistory projectHistory = getLastProjectHistory(em, f.getPostRemoveProjectReference());
+                FileHistory fileHistory = getLastFileHistory(em, projectHistory.getId(), f.getName());
+                fileHistory.getHistory().setDeletedOn(new Date());
+                em.persist(fileHistory);
+            }
+
+            closeEntityManager(em);
+        } catch (Exception e) {
+            LOG.error("Exception in history creation.", e);
         }
-
-        closeEntityManager(em);
     }
     
     private ProjectHistory getLastProjectHistory(EntityManager em, Project project) {

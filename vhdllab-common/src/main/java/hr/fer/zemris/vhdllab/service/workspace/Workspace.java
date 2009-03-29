@@ -49,7 +49,13 @@ public final class Workspace implements Serializable {
         Validate.notNull(project, "Project can't be null");
         projectMetadata.put(project, new ProjectMetadata(project));
         if (projects != null) {
-            projects.add(project);
+            int index = projects.indexOf(project);
+            if(index == -1) {
+                projects.add(project);
+                index = projects.size();
+            } else {
+                projects.set(index, project);
+            }
         }
     }
 
