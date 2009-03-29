@@ -27,11 +27,14 @@ public class LogAspect {
     public Object logExecution(ProceedingJoinPoint pjp) throws Throwable {
         long start = 0;
         String callSignature = null;
+        String arguments = null;
         if (LOG.isTraceEnabled()) {
             Signature signature = pjp.getSignature();
             callSignature = signature.getDeclaringType().getSimpleName() + "."
                     + signature.getName();
-            LOG.trace("Entering " + callSignature);
+            arguments = Arrays.toString(pjp.getArgs());
+            LOG.trace("Entering " + callSignature + " with arguments: "
+                    + arguments);
             start = System.currentTimeMillis();
         }
         Object returnValue = pjp.proceed();
@@ -40,8 +43,7 @@ public class LogAspect {
             StringBuilder sb = new StringBuilder(1000);
             sb.append(callSignature);
             sb.append(" finished execution in ").append(end - start);
-            sb.append(" ms for argument: ").append(
-                    Arrays.toString(pjp.getArgs()));
+            sb.append(" ms for arguments: ").append(arguments);
             sb.append(" and returned: ").append(returnValue);
             LOG.trace(sb.toString());
         }
