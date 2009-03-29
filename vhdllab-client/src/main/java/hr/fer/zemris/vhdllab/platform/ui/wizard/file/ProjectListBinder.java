@@ -48,7 +48,7 @@ public class ProjectListBinder extends AbstractBinder {
 
                 @Override
                 public String toString() {
-                    return getName().toString();
+                    return getName();
                 }
             });
         }

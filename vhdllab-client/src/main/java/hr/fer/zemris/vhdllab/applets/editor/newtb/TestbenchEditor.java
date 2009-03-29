@@ -220,7 +220,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
 
             try {
                 tb = this.getInitialTestbench(initTimingDialog, file
-                        .getName().toString());
+                        .getName());
                 this.addSignals(tb, ci);
                 File newFile = new File(testbench, FileType.TESTBENCH, tb.toXml());
                 newFile.setProject(file.getProject());

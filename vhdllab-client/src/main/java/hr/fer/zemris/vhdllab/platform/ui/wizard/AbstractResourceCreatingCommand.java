@@ -41,7 +41,7 @@ public abstract class AbstractResourceCreatingCommand extends ActionCommand
 
     private Wizard getWizard(Form form) {
         String wizardBeanName = BeanUtil.getBeanName(getWizardClass());
-        AbstractResourceCreatingWizard wizard = (AbstractResourceCreatingWizard) context
+        FormBackedWizard wizard = (FormBackedWizard) context
                 .getBean(wizardBeanName);
         wizard.setForm(form);
         return wizard;

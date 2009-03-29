@@ -474,7 +474,7 @@ public class SchemaMainPanel extends AbstractEditor {
                 // shouldn't be added to prototypes
                 if (!shouldBeAdded(report)) {
                     // then remove it, if it's used in schema
-                    Caseless cfn = new Caseless(file.getName().toString());
+                    Caseless cfn = new Caseless(file.getName());
                     if (isProtoInEditor(cfn)) {
                         boolean oldmodifiedstatus = SchemaMainPanel.this
                                 .isModified();

@@ -91,13 +91,10 @@ public class PortWizardPage extends AbstractWizardPage {
         table.getColumnModel().getColumn(1).setPreferredWidth(120);
         table.getColumnModel().getColumn(2).setCellEditor(
                 new ComboBoxCellEditor(inComboBox));
-        // table.getColumnModel().getColumn(2).setPreferredWidth(70);
         table.getColumnModel().getColumn(3)
                 .setCellEditor(new NumberEditorExt());
-        // table.getColumnModel().getColumn(3).setPreferredWidth(65);
         table.getColumnModel().getColumn(4)
                 .setCellEditor(new NumberEditorExt());
-        // table.getColumnModel().getColumn(4).setPreferredWidth(65);
         table.setPreferredScrollableViewportSize(new Dimension(300, 200));
 
         table.addKeyListener(new EditComboBoxKeyHandler());

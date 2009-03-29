@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.platform.ui.wizard.project;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractResourceCreatingWizard;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.FormBackedWizard;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class NewProjectWizard extends AbstractResourceCreatingWizard {
+public class NewProjectWizard extends FormBackedWizard {
 
     @Autowired
     private WorkspaceManager workspaceManager;

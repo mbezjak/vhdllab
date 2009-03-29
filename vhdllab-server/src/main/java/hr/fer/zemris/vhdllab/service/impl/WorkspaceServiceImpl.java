@@ -52,7 +52,7 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
         if (FileType.SOURCE.equals(file.getType())) {
             CircuitInterface ci = metadataExtractor
                     .extractCircuitInterface(file);
-            if (!ci.getName().equalsIgnoreCase(file.getName().toString())) {
+            if (!ci.getName().equalsIgnoreCase(file.getName())) {
                 throw new IllegalStateException("Resource " + file.getName()
                         + " must have only one entity with the same name.");
             }

@@ -22,7 +22,7 @@ public class ProjectForm extends AbstractForm implements Focusable {
         nameField = builder.add("name")[1];
         return builder.getForm();
     }
-
+    
     @Override
     public void requestFocusInWindow() {
         nameField.requestFocusInWindow();

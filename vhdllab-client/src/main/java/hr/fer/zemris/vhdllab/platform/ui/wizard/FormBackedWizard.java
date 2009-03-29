@@ -5,11 +5,11 @@ import org.springframework.richclient.form.Form;
 import org.springframework.richclient.wizard.AbstractWizard;
 import org.springframework.richclient.wizard.FormBackedWizardPage;
 
-public abstract class AbstractResourceCreatingWizard extends AbstractWizard {
+public abstract class FormBackedWizard extends AbstractWizard {
 
     private Form form;
 
-    public AbstractResourceCreatingWizard(String wizardId) {
+    public FormBackedWizard(String wizardId) {
         super(wizardId);
     }
 
@@ -29,7 +29,7 @@ public abstract class AbstractResourceCreatingWizard extends AbstractWizard {
         onWizardFinished(form.getFormObject());
         return true;
     }
-    
+
     protected abstract void onWizardFinished(Object formObject);
 
 }
