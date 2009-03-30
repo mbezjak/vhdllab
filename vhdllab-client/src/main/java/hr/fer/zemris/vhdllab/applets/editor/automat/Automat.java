@@ -43,7 +43,7 @@ public class Automat extends AbstractEditor implements Wizard {
     /**
      * AutoDrawer je JPanel na koji se crta automat
      */
-    private AutoDrawer adrw = null;
+    protected AutoDrawer adrw = null;
 
     private ResourceBundle bundle = null;
 

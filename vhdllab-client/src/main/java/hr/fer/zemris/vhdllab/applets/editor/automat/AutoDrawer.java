@@ -32,7 +32,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -66,23 +65,23 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * buffer u kojem se crta slika sklopa
 	 */
-	private BufferedImage img = null;
+	protected BufferedImage img = null;
 	/**
 	 * zastavica koja govori dali je pritisnut neki element
 	 */
-	private boolean pressed=false;
+	protected boolean pressed=false;
 	/**
 	 * kolekcija koja sadrzi sva stanja automata
 	 */
-	private LinkedList<Stanje> stanja=null;
+	protected LinkedList<Stanje> stanja=null;
 	/**
 	 * kolekcija koja sadrzi sve prijelaze automata
 	 */
-	private HashSet<Prijelaz> prijelazi=null;
+	protected HashSet<Prijelaz> prijelazi=null;
 	/**
 	 * varijabla sa osnovnovnim podatcima o samom automatu
 	 */
-	private AUTPodatci podatci=null;
+	protected AUTPodatci podatci=null;
 	/**
 	 * legenda u kutu
 	 */
@@ -90,19 +89,19 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * selektirano stanje...
 	 */
-	private Stanje selektiran=null;
+	protected Stanje selektiran=null;
 	/**
 	 * stanje koje se dodaje
 	 */
-	private Stanje stanjeZaDodati=null;
+	protected Stanje stanjeZaDodati=null;
 	/**
 	 * prijelaz koji se dodaje
 	 */
-	private Prijelaz prijelazZaDodati=null;
+	protected Prijelaz prijelazZaDodati=null;
 	/**
 	 * radijus krugova za stanja DEFAULT=20
 	 */
-	private int radijus=20;
+	protected int radijus=20;
 	/**
 	 * Stanja rada definirat ce dali se dodaje signal, dodaje prijelaz ili editira slika.
 	 * stanjeRada=1 mjenjanje postojecih objekata
@@ -112,7 +111,7 @@ public class AutoDrawer extends JPanel{
 	 * stanjeRada=5 brisanje postojecih objekata
 	 * stanjeRada=6 zadavanje pocetnog stanja
 	 */
-	private int stanjeRada=1;
+	protected int stanjeRada=1;
 	
 	private boolean isOK=false;
 	
@@ -120,15 +119,14 @@ public class AutoDrawer extends JPanel{
 	 * Minimalne dimenzije do kojih se smije smanjivat editor.
 	 */
 	
-	private HashSet<String> listaSignala=null;
+	protected HashSet<String> listaSignala=null;
 	
-	private ResourceBundle bundle=null;
+	protected ResourceBundle bundle=null;
 	private PlatformContainer container=null;
-	private Editor editor;
+	protected Editor editor;
 	
 	/**
 	 * konstruktor klase AutoDrawer, ne prima nikakve podatke, poziva createGUI() metodu
-	 * @throws FileNotFoundException 
 	 *
 	 */
 	
@@ -192,7 +190,6 @@ public class AutoDrawer extends JPanel{
 	/**
 	 * Metoda setData propisan suceljem IEditor. Dobiva podatke sklopa i na osnovi njih inicijalizira kolekcije 
 	 * stanja, prijelazi i podatci.
-	 * @throws FileNotFoundException 
 	 */
 	public void setData(String data) {
 		if(!data.equals("")){
@@ -240,7 +237,7 @@ public class AutoDrawer extends JPanel{
 	 *@param eventx ako je stanjeRada==4 daje x kordinatu misa
 	 *@param eventy ako je stanjeRada==4 daje y koordinatu misa
 	 */
-	private void nacrtajSklop(int eventx,int eventy){
+	protected void nacrtajSklop(int eventx,int eventy){
 		if(dataSet()){
 		checkOKness();
 //		resizeComponent();
@@ -333,21 +330,13 @@ public class AutoDrawer extends JPanel{
 		
 	}
 	
-	private void resizeComponent() {
+	protected void resizeComponent() {
 		int maxX=0;
 		int maxY=0;
 		for(Stanje st:stanja){
 			if(st.ox+2*radijus+10>maxX)maxX=st.ox+2*radijus+10;
 			if(st.oy+2*radijus+10>maxY)maxY=st.oy+2*radijus+10;
 		}
-		
-		Dimension d = this.getPreferredSize();
-//		System.out.println("#############");
-//		System.out.println(d.getHeight());
-//		System.out.println(d.getWidth());
-//		System.out.println("XXXXXXXXXXXXX");
-//		System.out.println(maxX);
-//		System.out.println(maxY);
 		
 		this.setPreferredSize(new Dimension(maxX,maxY));
 		
@@ -637,7 +626,7 @@ public class AutoDrawer extends JPanel{
 	 * @param pr Prijelaz koji provjeravamo
 	 * @return true ili false
 	 */
-	private boolean jelSelektiran(MouseEvent e,Prijelaz pr){
+	protected boolean jelSelektiran(MouseEvent e,Prijelaz pr){
 		Stanje ka=null,iz=null;
 		for(Stanje st:stanja){
 			if(st.ime.equals(pr.iz))iz=st;
@@ -696,7 +685,7 @@ public class AutoDrawer extends JPanel{
 	 * @param st Stanje za koje provjeravamo
 	 * @return true ili false
 	 */
-	private boolean jelSelektiran(MouseEvent e,Stanje st){
+	protected boolean jelSelektiran(MouseEvent e,Stanje st){
 		int x1=e.getX();
 		int y1=e.getY();
 		return (Math.sqrt(Math.pow(x1-st.ox-radijus,2)+Math.pow(y1-st.oy-radijus,2)))<radijus;
@@ -791,7 +780,7 @@ public class AutoDrawer extends JPanel{
 						pr2.pobudaIzlaz.add(str);
 					} else pr2.porukaNeDodaj(AutoDrawer.this,bundle);
 				}
-			};
+			}
 		});
 		String ok_option=bundle.getString(LanguageConstants.DIALOG_BUTTON_OK);
 		String cancel_option=bundle.getString(LanguageConstants.DIALOG_BUTTON_CANCEL);
@@ -828,7 +817,7 @@ public class AutoDrawer extends JPanel{
 	 * @param x
 	 * @param y
 	 */
-	private void pomjeriSliku(int x, int y) {
+	protected void pomjeriSliku(int x, int y) {
 ////TODO		//if(x+radijus>AutoDrawer.this.getWidth())AutoDrawer.this.setPreferredSize(new Dimension(x+radijus,AutoDrawer.this.getHeight()));
 //		//if(y+radijus>AutoDrawer.this.getHeight())AutoDrawer.this.setPreferredSize(new Dimension(AutoDrawer.this.getWidth(),y+radijus));
 //
@@ -899,7 +888,7 @@ public class AutoDrawer extends JPanel{
 	}
 	
 	
-	private class Mouse implements MouseListener{
+	protected class Mouse implements MouseListener{
 
 		/**
 		 * Funkcija propisana suceljem, ne radi nista...
@@ -1164,28 +1153,26 @@ public class AutoDrawer extends JPanel{
 				dialog.setVisible(true);
 				Object selected=optionPane.getValue();
 				
-				if(selected.equals(options[1])) return string;
-				else {
-					String st=name.getText();
-					if((listaSignala.contains(st.toLowerCase())||!new NameFormatConstraintValidator().isValid(st))&&!st.equalsIgnoreCase(string)){
-						String[] options2={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
-								bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
-						JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_SIGNALEXISTS),
-								JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options2,options[0]);
-						JDialog dialog2=pane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_WARNING));
-						dialog2.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-						dialog2.setVisible(true);
-						Object reza=pane.getValue();
-						if(reza.equals(options[1])){
-							return string;
-						}else return editSignal(string);
-					}else {
-						listaSignala.remove(string);
-						listaSignala.add(st);
-						return st;
+			if(selected.equals(options[1])) return string;
+				String st=name.getText();
+				if((listaSignala.contains(st.toLowerCase())||!new NameFormatConstraintValidator().isValid(st))&&!st.equalsIgnoreCase(string)){
+					String[] options2={bundle.getString(LanguageConstants.DIALOG_BUTTON_YES),
+							bundle.getString(LanguageConstants.DIALOG_BUTTON_NO)};
+					JOptionPane pane= new JOptionPane(bundle.getString(LanguageConstants.DIALOG_MESSAGE_SIGNALEXISTS),
+							JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options2,options[0]);
+					JDialog dialog2=pane.createDialog(AutoDrawer.this,bundle.getString(LanguageConstants.DIALOG_TITLE_WARNING));
+					dialog2.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+					dialog2.setVisible(true);
+					Object reza=pane.getValue();
+					if(reza.equals(options[1])){
+						return string;
 					}
+					return editSignal(string);
 				}
-			};
+				listaSignala.remove(string);
+				listaSignala.add(st);
+				return st;
+			}
 		});
 		
 		JPanel panel=new JPanel();
