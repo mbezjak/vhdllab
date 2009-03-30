@@ -192,23 +192,17 @@ public class AutoDrawer extends JPanel{
 	 * stanja, prijelazi i podatci.
 	 */
 	public void setData(String data) {
-		if(!data.equals("")){
-			AUTParser aut=new AUTParser();
-			try {
-				aut.AUTParse(data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (SAXException e) {
-				e.printStackTrace();
-			}
-			stanja=aut.stanja;
-			prijelazi=aut.prijelazi;
-			podatci=aut.podatci;
-		}else{
-			stanja=new LinkedList<Stanje>();
-			prijelazi=new HashSet<Prijelaz>();
-			podatci=new AUTPodatci(AutoDrawer.this,container,bundle);
+		AUTParser aut=new AUTParser();
+		try {
+			aut.AUTParse(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
 		}
+		stanja=aut.stanja;
+		prijelazi=aut.prijelazi;
+		podatci=aut.podatci;
 		if(podatci.ime!=null)
 			parseLegend();
 	}
@@ -843,7 +837,7 @@ public class AutoDrawer extends JPanel{
 	 * @author ddelac
 	 *
 	 */
-	private class Mouse2 implements MouseMotionListener{
+	protected class Mouse2 implements MouseMotionListener{
 		
 		/**
 		 * Funkcija propisana suceljem, obavlja dio drag&drop funkcionalnosti

@@ -151,35 +151,6 @@ public class AUTPodatci {
 		sirina=CONST_SIR;
 		visina=CONST_VIS;
 	}
-/*bit ce da netreba :) 
-	/**
-	 * provjerava formatiranost interfacea
-	 * @param text
-	 * @return
-	 
-	
-	//TODO sredi mozda netreba
-	private boolean vrijedi(String text) {
-		boolean test=true;
-		String[] str=text.split("\n");
-		for(int i=0;i<str.length;i++){
-			String[] strPom=str[i].split(":");
-			if(strPom[0]!=""){
-				if(!strPom[0].toLowerCase().matches("[a-z]+"))test=false;
-			}else test=false;
-			if(strPom.length>1){
-				String[] strPom2=strPom[1].trim().split(" ");
-				if(strPom2[0]!=""){
-					if(!(strPom2[0].trim().toLowerCase().equals("in")||strPom2[0].trim().toLowerCase().equals("out"))) 
-						test=false;
-					}else test=false;
-				if(strPom2.length>1){	
-					if(!strPom2[1].matches("[0-9]+"))test=false;
-				}else test=false;
-				}else test=false;
-			}
-		return test;
-	}*/
 
 	private boolean dataOK(String[][] data, EntityTable eTable) {
 		boolean markerIn=false;
