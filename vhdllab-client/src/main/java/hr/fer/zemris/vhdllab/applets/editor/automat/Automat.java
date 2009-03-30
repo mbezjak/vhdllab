@@ -237,7 +237,7 @@ public class Automat extends AbstractEditor implements Wizard {
             Project project) {
         bundle = ResourceBundle
                 .getBundle("Client_Automat_ApplicationResources");
-        AUTPodatci pod = new AUTPodatci(parent, container, bundle);
+        AUTPodatci pod = new AUTPodatci(parent, bundle);
         // TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
         String gen = null;
         if (pod.ime != null) {

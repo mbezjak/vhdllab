@@ -88,7 +88,7 @@ public class Prijelaz {
 		Object selected=optionPane.getValue();
 		
 		if(selected.equals(options[1])) return null;
-		else return new StringBuffer().append(pobuda.getText()).append("/").append(izlaz.getText()).toString();
+		return new StringBuffer().append(pobuda.getText()).append("/").append(izlaz.getText()).toString();
 	}
 	private String editMoore(Component obj, AUTPodatci podatci, ResourceBundle bundle) {
 		JTextField pobuda=new CustomTextField("",podatci.sirinaUlaza);
@@ -108,7 +108,7 @@ public class Prijelaz {
 		Object selected=optionPane.getValue();
 		
 		if(selected.equals(options[1])) return null;
-		else return new StringBuffer().append(pobuda.getText()).toString();
+		return new StringBuffer().append(pobuda.getText()).toString();
 	}
 	public void dodajPodatak(String pobuda, String izlaz){
 		String pomocni=pobuda;

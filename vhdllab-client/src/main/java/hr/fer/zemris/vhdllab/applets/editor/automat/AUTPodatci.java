@@ -3,7 +3,6 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityParser;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.ReturnData;
-import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -61,7 +60,7 @@ public class AUTPodatci {
 	}
 
 	//TODO dovrsiti lokalizaciju...
-	public AUTPodatci(Component drawer,PlatformContainer container, ResourceBundle bu) {
+	public AUTPodatci(Component drawer,ResourceBundle bu) {
 		super();
 		JLabel label2=new JLabel(bu.getString(LanguageConstants.DIALOG_INPUT_TYPE));
 		JLabel label3=new JLabel(bu.getString(LanguageConstants.DIALOG_INPUT_RSET));
@@ -70,15 +69,9 @@ public class AUTPodatci {
 		//TODO pozivanje entityTable-a kad bude gotov...
 		EntityTable interfac=new EntityTable();
 
-		String[] pom={"Moore","Mealy"};
-		JComboBox tip=new JComboBox(pom);
-		tip.setSelectedIndex(0);
-		String[] pom1={"0","1"};
-		JComboBox reset=new JComboBox(pom1);
-		reset.setSelectedIndex(0);
-		String[] pom2={"falling_edge","rising_edge","0","1"};
-		JComboBox clock=new JComboBox(pom2);
-		clock.setSelectedIndex(0);
+		JComboBox tip=new JComboBox(new String[] {"Moore","Mealy"});
+		JComboBox reset=new JComboBox(new String[] {"0","1"});
+		JComboBox clock=new JComboBox(new String[] {"falling_edge","rising_edge","0","1"});
 			
 		JPanel panel1=new JPanel();
 		panel1.setLayout(new GridLayout(3,2));
