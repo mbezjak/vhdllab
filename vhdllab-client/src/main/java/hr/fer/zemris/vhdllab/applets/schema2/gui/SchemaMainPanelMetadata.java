@@ -11,7 +11,7 @@ public class SchemaMainPanelMetadata extends AbstractEditorMetadata {
 
     @Override
     public Class<? extends Wizard> getWizardClass() {
-        return DefaultWizard.class;
+        return null;
     }
 
     @Override

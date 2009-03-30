@@ -1,12 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
-import hr.fer.zemris.vhdllab.applets.editor.automat.entityTable.EntityTable;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
-import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -253,33 +250,7 @@ public class TextEditor extends AbstractEditor implements Wizard {
 
     @Override
     public File getInitialFileContent(Component parent, Project project) {
-        String[] options = new String[] { "OK", "Cancel" };
-        int optionType = JOptionPane.OK_CANCEL_OPTION;
-        int messageType = JOptionPane.PLAIN_MESSAGE;
-        EntityTable table = new EntityTable();
-        int option = JOptionPane.showOptionDialog(parent, table,
-                "New VHDL source", optionType, messageType, null, options,
-                options[0]);
-        if (option != JOptionPane.OK_OPTION) {
-            return null;
-        }
-        CircuitInterface ci = table.getCircuitInterface();
-        File file = container.getMapper().getFile(project.getName(),
-                ci.getName());
-        if (file != null) {
-            LOG.info(ci.getName() + " already exists!");
-        }
-
-        StringBuilder sb = new StringBuilder(100 + ci.getPorts().size() * 20);
-        sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
-        sb.append("-- note: entity name and resource name must match\n");
-        sb.append(ci.toString()).append("\n\n");
-        sb.append("ARCHITECTURE arch OF ").append(ci.getName()).append(
-                " IS \n\nBEGIN\n\nEND arch;");
-
-        File f = new File(ci.getName(), FileType.SOURCE, sb.toString());
-        f.setProject(project);
-        return f;
+        return null;
     }
 
     @Override
