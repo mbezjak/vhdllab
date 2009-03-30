@@ -24,6 +24,7 @@ import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.lang.UnhandledException;
 import org.apache.log4j.Logger;
 
 public class DefaultWizard implements Wizard {
@@ -110,8 +111,7 @@ public class DefaultWizard implements Wizard {
             try {
                 ss.serializeSchema(writer, info);
             } catch (IOException e) {
-                LOG.error("Unexpected error", e);
-                return null;
+                throw new UnhandledException(e);
             }
             File f = new File(ci.getName(), FileType.SCHEMA, writer.toString());
             f.setProject(project);

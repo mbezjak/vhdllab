@@ -24,6 +24,10 @@ public final class CompilationMessage implements Serializable {
     private final String entityName;
     private final String text;
 
+    public CompilationMessage(String text) {
+        this(null, 0, 0, text);
+    }
+
     public CompilationMessage(String entityName, int row, int column,
             String text) {
         Validate.notNull(text, "Text can't be null");

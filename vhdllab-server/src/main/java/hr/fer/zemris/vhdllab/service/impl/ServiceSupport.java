@@ -29,7 +29,9 @@ public abstract class ServiceSupport {
         File file = fileDao.findByName(projectId, name);
         if (file == null) {
             file = predefinedFilesDao.findByName(name);
-            file.setProject(loadProject(projectId));
+            if(file != null) {
+                file.setProject(loadProject(projectId));
+            }
         }
         return file;
     }

@@ -9,6 +9,7 @@ import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.exception.CompilationException;
+import hr.fer.zemris.vhdllab.service.exception.NoAvailableProcessException;
 import hr.fer.zemris.vhdllab.service.exception.SimulationException;
 import hr.fer.zemris.vhdllab.service.exception.SimulatorTimeoutException;
 import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
@@ -29,6 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -62,6 +65,9 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     private static final Logger LOG = Logger.getLogger(GhdlSimulator.class);
 
     private static final int PROCESS_TIMEOUT = 2000;
+    private static final int MAX_SIMULTANEOUS_PROCESSES = 20;
+    private static final int ACQUIRE_TIMEOUT = 1;
+    private static final TimeUnit ACQUIRE_TIME_UNIT = TimeUnit.SECONDS;
 
     private static final String EXECUTABLE_PROPERTY = "executable";
     private static final String COMPILER_PARAMETERS = "compiler.parameters";
@@ -74,6 +80,9 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     private java.io.File tmpRootDir;
 
     private boolean leaveSimulationResults = true;
+
+    private final Semaphore semaphore = new Semaphore(
+            MAX_SIMULTANEOUS_PROCESSES);
 
     private Properties properties;
 
@@ -124,6 +133,35 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     @Override
     public List<CompilationMessage> compile(Integer fileId)
             throws CompilationException {
+        try {
+            if (!semaphore.tryAcquire(ACQUIRE_TIMEOUT, ACQUIRE_TIME_UNIT)) {
+                throw new NoAvailableProcessException(
+                        MAX_SIMULTANEOUS_PROCESSES);
+            }
+        } catch (InterruptedException e) {
+            throw new NoAvailableProcessException(e);
+        }
+        List<CompilationMessage> result = compileImpl(fileId);
+        semaphore.release();
+        return result;
+    }
+
+    @Override
+    public Result simulate(Integer fileId) throws SimulationException {
+        try {
+            if (!semaphore.tryAcquire(ACQUIRE_TIMEOUT, ACQUIRE_TIME_UNIT)) {
+                throw new NoAvailableProcessException(
+                        MAX_SIMULTANEOUS_PROCESSES);
+            }
+        } catch (InterruptedException e) {
+            throw new NoAvailableProcessException(e);
+        }
+        Result result = simulateImpl(fileId);
+        semaphore.release();
+        return result;
+    }
+
+    private List<CompilationMessage> compileImpl(Integer fileId) {
         SimulationContext context = createContext(fileId);
         context.compileOnly = true;
 
@@ -136,8 +174,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         return listToCompilationMessages(context.compilationLines);
     }
 
-    @Override
-    public Result simulate(Integer fileId) throws SimulationException {
+    private Result simulateImpl(Integer fileId) {
         SimulationContext context = createContext(fileId);
 
         String waveform;
@@ -165,7 +202,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         return context;
     }
 
-    protected void doCompile(SimulationContext context) throws IOException {
+    private void doCompile(SimulationContext context) throws IOException {
         try {
             context.tempDirectory = createTempDirectory(context.targetFile
                     .getId());
@@ -294,8 +331,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         executor.execute(cl);
 
         if (watchdog.killedProcess()) {
-            throw new SimulatorTimeoutException(
-                    "Process exceeded max runtime: " + PROCESS_TIMEOUT);
+            throw new SimulatorTimeoutException(PROCESS_TIMEOUT);
         }
         String errors;
         try {
@@ -321,7 +357,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
                                 .parseInt(line[1]), Integer.parseInt(line[2]),
                                 line[3]));
             } else {
-                list.add(new CompilationMessage(null, 1, 1, line[1]));
+                list.add(new CompilationMessage(line[1]));
             }
         }
         return list;

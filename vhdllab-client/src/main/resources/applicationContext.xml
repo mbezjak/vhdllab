@@ -45,6 +45,15 @@
   <bean id="httpConnectionManager"
     class="org.apache.commons.httpclient.SimpleHttpConnectionManager" />
 
+<!--  <bean id="httpConnectionManager"-->
+<!--    class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager" />-->
+<!---->
+<!--  <bean id="httpConnectionParams"-->
+<!--    class="org.apache.commons.httpclient.params.HttpConnectionManagerParams" factory-bean="httpConnectionManager" factory-method="getParams">-->
+<!--    <property name="defaultMaxConnectionsPerHost" value="100"/>-->
+<!--    <property name="maxTotalConnections" value="100"/>-->
+<!--  </bean>-->
+
   <bean id="httpClient" class="org.apache.commons.httpclient.HttpClient">
     <constructor-arg ref="httpConnectionManager" />
   </bean>

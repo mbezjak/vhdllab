@@ -2,22 +2,14 @@ package hr.fer.zemris.vhdllab.service.exception;
 
 public class SimulatorTimeoutException extends RuntimeException {
 
-    private static final long serialVersionUID = -5200477103000002244L;
+    private static final long serialVersionUID = -733783747400691581L;
 
-    public SimulatorTimeoutException() {
-        super();
+    public SimulatorTimeoutException(int timeout) {
+        super(createMessage(timeout));
     }
 
-    public SimulatorTimeoutException(String message) {
-        super(message);
-    }
-
-    public SimulatorTimeoutException(Throwable cause) {
-        super(cause);
-    }
-
-    public SimulatorTimeoutException(String message, Throwable cause) {
-        super(message, cause);
+    private static String createMessage(int timeout) {
+        return "Timeout: " + timeout;
     }
 
 }

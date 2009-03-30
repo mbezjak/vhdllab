@@ -82,6 +82,9 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
     @Override
     public File findByName(Integer projectId, String name) {
         File file = findProjectOrPredefinedFile(projectId, name);
+        if(file == null) {
+            return null;
+        }
         return new File(file, EntityUtils.lightweightClone(file.getProject()));
     }
 

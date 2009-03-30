@@ -22,9 +22,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractButton;
@@ -114,7 +114,7 @@ public class ProjectExplorerView extends AbstractView implements
             @Override
             public void treeNodesInserted(TreeModelEvent e) {
                 Object[] children = e.getChildren();
-                if(children.length > 0) {
+                if (children.length > 0) {
                     Object child = children[children.length - 1];
                     TreePath path = e.getTreePath().pathByAddingChild(child);
                     tree.setSelectionPath(path);
@@ -201,43 +201,40 @@ public class ProjectExplorerView extends AbstractView implements
 
     private void updateHierarchy(DefaultMutableTreeNode parentNode,
             Hierarchy hierarchy, HierarchyNode hierarchyNode) {
-        List<DefaultMutableTreeNode> allNodes = new ArrayList<DefaultMutableTreeNode>(
+        Map<Object, DefaultMutableTreeNode> map = new HashMap<Object, DefaultMutableTreeNode>(
                 parentNode.getChildCount());
         for (int i = 0; i < parentNode.getChildCount(); i++) {
             DefaultMutableTreeNode c = (DefaultMutableTreeNode) parentNode
                     .getChildAt(i);
-            HierarchyNode hn = hierarchy.getNode((File) c.getUserObject());
-            if (hn == null) {
-                parentNode.remove(c);
-                model.nodesWereRemoved(parentNode, new int[] { i },
-                        new Object[] { c });
-                i--; // to stay at the same index
-            } else {
-                allNodes.add(c);
-            }
+            map.put(c.getUserObject(), c);
         }
 
         Iterator<HierarchyNode> iterator = getHierarchyIterator(hierarchy,
                 hierarchyNode);
-        int i = 0;
         while (iterator.hasNext()) {
             HierarchyNode next = iterator.next();
             File file = next.getFile();
             DefaultMutableTreeNode nextParentNode;
-            if (parentNode.getChildCount() <= i) {
+            if (map.containsKey(file)) {
+                nextParentNode = map.remove(file);
+            } else {
                 nextParentNode = (DefaultMutableTreeNode) insertNode(
                         parentNode, file);
-            } else {
-                nextParentNode = allNodes.get(i);
-                if (file.equals(nextParentNode.getUserObject())) {
-                    i++;
-                } else {
-                    nextParentNode = (DefaultMutableTreeNode) insertNode(
-                            parentNode, file);
-                }
             }
             updateHierarchy(nextParentNode, hierarchy, next);
         }
+
+        int[] childIndices = new int[map.size()];
+        Object[] removedChildren = new Object[map.size()];
+        int i = 0;
+        for (DefaultMutableTreeNode n : map.values()) {
+            int index = parentNode.getIndex(n);
+            childIndices[i] = index;
+            removedChildren[i] = n;
+            i++;
+            parentNode.remove(n);
+        }
+        model.nodesWereRemoved(parentNode, childIndices, removedChildren);
     }
 
     @Override

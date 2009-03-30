@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.ui.wizard.file;
+package hr.fer.zemris.vhdllab.platform.ui.wizard.source;
 
 import hr.fer.zemris.vhdllab.service.ci.Port;
 

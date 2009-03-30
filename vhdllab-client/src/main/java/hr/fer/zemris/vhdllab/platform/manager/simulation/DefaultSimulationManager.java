@@ -14,11 +14,14 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.service.Simulator;
+import hr.fer.zemris.vhdllab.service.exception.NoAvailableProcessException;
+import hr.fer.zemris.vhdllab.service.exception.SimulatorTimeoutException;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
 import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -66,7 +69,22 @@ public class DefaultSimulationManager extends
                 .getAllAssociatedWithProject(project);
         boolean shouldCompile = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
         if (shouldCompile) {
-            List<CompilationMessage> messages = simulator.compile(file.getId());
+            List<CompilationMessage> messages;
+            try {
+                messages = simulator.compile(file.getId());
+            } catch (SimulatorTimeoutException e) {
+                String message = localizationSource.getMessage(
+                        "simulator.compile.timout", new Object[] { file
+                                .getName() });
+                messages = Collections.singletonList(new CompilationMessage(
+                        message));
+            } catch (NoAvailableProcessException e) {
+                String message = localizationSource.getMessage(
+                        "simulator.compile.no.processes", new Object[] { file
+                                .getName() });
+                messages = Collections.singletonList(new CompilationMessage(
+                        message));
+            }
             lastCompiledFile = file;
             fireCompiled(messages);
             logger.info(localizationSource.getMessage(COMPILED_MESSAGE,
@@ -131,7 +149,20 @@ public class DefaultSimulationManager extends
                 .getAllAssociatedWithProject(project);
         boolean shouldSimulate = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
         if (shouldSimulate) {
-            Result result = simulator.simulate(file.getId());
+            Result result;
+            try {
+                result = simulator.simulate(file.getId());
+            } catch (SimulatorTimeoutException e) {
+                String message = localizationSource.getMessage(
+                        "simulator.simulate.timout", new Object[] { file
+                                .getName() });
+                result = new Result(Collections.singletonList(message));
+            } catch (NoAvailableProcessException e) {
+                String message = localizationSource.getMessage(
+                        "simulator.simulate.no.processes", new Object[] { file
+                                .getName() });
+                result = new Result(Collections.singletonList(message));
+            }
             lastSimulatedFile = file;
             fireSimulated(result);
             openSimulationEditor(file, result);
