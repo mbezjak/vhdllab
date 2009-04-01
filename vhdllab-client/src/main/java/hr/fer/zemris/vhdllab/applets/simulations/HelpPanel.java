@@ -38,6 +38,7 @@ class HelpPanel extends JPanel
      *
      * @param g Graphics objekt
      */
+    @Override
     public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);

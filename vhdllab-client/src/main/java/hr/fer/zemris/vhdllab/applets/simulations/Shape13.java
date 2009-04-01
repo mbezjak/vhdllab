@@ -60,7 +60,6 @@ class Shape13 implements Shape
      */
     public void putLabel(Graphics g, String s, int x1, int y1, int x2)
 	{
-		;
 	}
 
 

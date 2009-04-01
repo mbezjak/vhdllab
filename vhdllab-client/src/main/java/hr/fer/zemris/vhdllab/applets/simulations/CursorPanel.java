@@ -103,6 +103,7 @@ class CursorPanel extends JPanel
     /**
      * Vraca preferiranu velicinu
      */
+    @Override
     public Dimension getPreferredSize ()
     {
         return new Dimension(panelEndPoint, 30);
@@ -275,6 +276,7 @@ class CursorPanel extends JPanel
     }
     
     
+    @Override
     public void paintComponent (Graphics g) 
 	{
         super.paintComponent(g);

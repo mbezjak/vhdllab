@@ -111,6 +111,7 @@ class SignalNamesPanel extends JPanel
     /**
      * Getter koji vraca preferirane dimenzije
      */
+    @Override
     public Dimension getPreferredSize() 
     { 
         return new Dimension(panelWidth + 4, 
@@ -122,6 +123,7 @@ class SignalNamesPanel extends JPanel
      * Getter koji vraca preferirane dimenzije ako je ime najvece duljine manje
      * od 650 piksela, inace vraca 650 piksela
      */
+    @Override
     public Dimension getMaximumSize()
     {
         if (panelWidth < PANEL_MAX_WIDTH)
@@ -140,7 +142,7 @@ class SignalNamesPanel extends JPanel
     /**
      * Postavlja novu vrijednosti maksimalne velicine imena signala
      *
-     * @param maximumSignalNameLength nova vrijednost
+     * @param panelWidth nova vrijednost
      */
     public void setPanelWidth (int panelWidth)
     {
@@ -393,6 +395,7 @@ class SignalNamesPanel extends JPanel
      *
      * @param g Graphics objekt
      */
+    @Override
     public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);

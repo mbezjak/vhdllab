@@ -388,6 +388,7 @@ class Scale extends JPanel
     /**
      * Preferirane dimenzije
      */
+    @Override
     public Dimension getPreferredSize ()
     { 
         return new Dimension(scaleEndPointInPixels, SCALE_HEIGHT); 
@@ -420,6 +421,7 @@ class Scale extends JPanel
     /**
      * Crtanje komponente
      */
+    @Override
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);

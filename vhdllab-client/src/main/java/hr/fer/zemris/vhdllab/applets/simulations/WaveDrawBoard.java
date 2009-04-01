@@ -94,7 +94,7 @@ class WaveDrawBoard extends JPanel
      * @param scale skala
 	 * @param WAVE_SPRING_SIZE visina pretinca u kojem se nalaze valovi
 	 * @param verticalScrollbar vertikalni scrollbar
-	 * @param themecolor trenutna tema
+	 * @param themeColor trenutna tema
      */
     public WaveDrawBoard (Scale scale, int WAVE_SPRING_SIZE, 
 			JScrollBar verticalScrollbar, ThemeColor themeColor)
@@ -131,6 +131,7 @@ class WaveDrawBoard extends JPanel
      * Getter koji vraca prefereiranu dimenziju.
      */
 
+    @Override
     public Dimension getPreferredSize() 
     { 
         return new Dimension(waveEndPointInPixels, 
@@ -363,7 +364,8 @@ class WaveDrawBoard extends JPanel
      *
      * @param g Graphics objekt
      */
-	public void paintComponent (Graphics g) 
+	@Override
+    public void paintComponent (Graphics g) 
 	{
 		super.paintComponent(g);
         setBackground(themeColor.getWaves());

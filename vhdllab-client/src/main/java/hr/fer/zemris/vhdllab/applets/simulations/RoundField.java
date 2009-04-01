@@ -26,6 +26,7 @@ public class RoundField extends JTextField
         setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
     }
 
+    @Override
     protected void paintComponent (Graphics g) 
     {
         int width = getWidth();

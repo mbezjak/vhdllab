@@ -196,7 +196,7 @@ class WaveForm
      * Metoda za samo iscrtavanje
      *
      * @param g Graphics
-     * @param sring vrijednost signala
+     * @param string vrijednost signala
      * @param previousGroup prijasnja grupa
      * @param presentGroup sadasnja grupa
      * @param x1 vrijednost od koje pocinje crtanje
