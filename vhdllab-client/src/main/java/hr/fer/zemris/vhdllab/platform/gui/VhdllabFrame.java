@@ -66,7 +66,7 @@ public final class VhdllabFrame extends JFrame implements
 //        }
     }
 
-    private void setPaneSize() {
+    protected void setPaneSize() {
 //        validate();
 //        double size;
 //

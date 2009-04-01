@@ -37,7 +37,7 @@ import java.util.List;
 
 public class InvalidatedComponent implements ISchemaComponent {
 	
-	private class PortIterator implements Iterator<Port> {
+    protected class PortIterator implements Iterator<Port> {
 		private Iterator<PortRelation> prit = ports.iterator();
 		public boolean hasNext() {
 			return prit.hasNext();

@@ -6,7 +6,6 @@ public class Hex {
 	/**
 	 * Same as parseBinary method, just for hex. Accepts both lowercase and uppercase
 	 * @param g
-	 * @return
 	 * @throws NumberFormatException
 	 */
 	public static int parseHex(String g) throws NumberFormatException {

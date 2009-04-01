@@ -139,7 +139,6 @@ public interface ISchemaComponent {
 	 * Informacija o ovome je tipicno pohranjena
 	 * unutar kolekcije parametara.
 	 * 
-	 * @return
 	 */
 	EOrientation getComponentOrientation();
 	
@@ -149,7 +148,6 @@ public interface ISchemaComponent {
 	 * da li komponenta modelira ulaz i izlaz,
 	 * ili je komponenta standardna.
 	 * 
-	 * @return
 	 */
 	EComponentType getComponentType();
 	
@@ -236,7 +234,6 @@ public interface ISchemaComponent {
 	/**
 	 * Vraca broj portova na komponenti.
 	 * 
-	 * @return
 	 */
 	int schemaPortCount();
 	
@@ -244,7 +241,6 @@ public interface ISchemaComponent {
 	 * Dohvaca port pod zadanim indeksom.
 	 * 
 	 * @param index
-	 * @return
 	 * @throws IndexOutOfBoundsException
 	 */
 	Port getPort(int index);
@@ -253,7 +249,6 @@ public interface ISchemaComponent {
 	 * Dohvaca orijentaciju porta pod zadanim indeksom.
 	 * 
 	 * @param index
-	 * @return
 	 * @throws IndexOutOfBoundsException
 	 */
 	EOrientation getPortOrientation(int index);
@@ -271,7 +266,6 @@ public interface ISchemaComponent {
 	/**
 	 * Vraca broj portova na komponenti.
 	 * 
-	 * @return
 	 */
 	int portCount();
 	
@@ -326,7 +320,6 @@ public interface ISchemaComponent {
 	 * u svom sucelju sadrzi GENERIC blok, i samim
 	 * time generic parametre.
 	 * 
-	 * @return
 	 */
 	boolean isGeneric();
 	
@@ -345,7 +338,6 @@ public interface ISchemaComponent {
 	 * 
 	 * @param portIndex
 	 * @throws IndexOutOfBoundsException
-	 * @return
 	 */
 	List<SchemaPort> getRelatedTo(int portIndex);
 	
@@ -362,7 +354,6 @@ public interface ISchemaComponent {
 	 * Sluzi za iteriranje kroz fizicke portove
 	 * komponente u shemi (pinove).
 	 * 
-	 * @return
 	 */
 	Iterator<SchemaPort> schemaPortIterator();
 	
@@ -378,7 +369,6 @@ public interface ISchemaComponent {
 	 * neke od komponenti u shemi promijenilo (a uzrok promjene
 	 * je izvan sheme).
 	 * 
-	 * @return
 	 */
 	boolean isInvalidated();
 	

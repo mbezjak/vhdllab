@@ -25,7 +25,6 @@ public interface ISchemaController {
 	 * izvodenja komande.
 	 * 
 	 * @param command
-	 * @return
 	 */
 	ICommandResponse send(ICommand command);
 	
@@ -37,7 +36,6 @@ public interface ISchemaController {
 	 * i cacheiranog upita.
 	 * 
 	 * @param query
-	 * @return
 	 */
 	IQueryResult send(IQuery query);
 	

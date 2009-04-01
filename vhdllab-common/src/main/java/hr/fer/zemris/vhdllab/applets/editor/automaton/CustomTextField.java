@@ -30,7 +30,8 @@ public class CustomTextField extends JTextField {
         useAste=b;
 	}
 
-	protected Document createDefaultModel() {
+	@Override
+    protected Document createDefaultModel() {
 	      return new Document10();
 	}
 	
@@ -41,14 +42,15 @@ public class CustomTextField extends JTextField {
 		return str;	
 	}
 		
-	private class Document10 extends PlainDocument {
+	protected class Document10 extends PlainDocument {
 		
 	      /**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 		private int curSize=0;
-		public void insertString(int offs, String str, AttributeSet a) 
+		@Override
+        public void insertString(int offs, String str, AttributeSet a) 
 		          throws BadLocationException {
 	          if (str == null) {
 	        	  return;

@@ -404,7 +404,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	
 	
 	//#############NESTED CLASSES##############
-	private class Mouse1 implements MouseListener{
+	protected class Mouse1 implements MouseListener{
 		
 		public void mouseClicked(MouseEvent e) {
 			if(e.getButton()==MouseEvent.BUTTON1){
@@ -593,7 +593,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 
 	}
 	
-	private class Mose2 implements MouseMotionListener{
+	protected class Mose2 implements MouseMotionListener{
 
 		public void mouseDragged(MouseEvent e) {
 			if(state.equals(ECanvasState.ADD_WIRE_STATE)&&preLoc!=null){
@@ -700,7 +700,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		return point;
 	}
 	
-	private int alignToGrid(int x){
+	protected int alignToGrid(int x){
 		if(isGridOn)
 			return Math.round((float)x/Constants.GRID_SIZE)*Constants.GRID_SIZE;
 		else

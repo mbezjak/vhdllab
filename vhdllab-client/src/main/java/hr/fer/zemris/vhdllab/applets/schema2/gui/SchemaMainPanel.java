@@ -61,16 +61,7 @@ import javax.swing.KeyStroke;
 
 public class SchemaMainPanel extends AbstractEditor {
 
-    // {
-    // try {
-    // // javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
-    // // .getSystemLookAndFeelClassName());
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
-
-    private class ModificationListener implements PropertyChangeListener {
+    protected class ModificationListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
             setModified(true);
         }
@@ -411,7 +402,7 @@ public class SchemaMainPanel extends AbstractEditor {
         return isplaced;
     }
 
-    private boolean hasCircuitInterfaceChanged(String fileName,
+    protected boolean hasCircuitInterfaceChanged(String fileName,
             CircuitInterface ci) {
         for (PlacedComponent plc : controller.getSchemaInfo().getComponents()) {
             CircuitInterface plcci = plc.comp.getCircuitInterface();

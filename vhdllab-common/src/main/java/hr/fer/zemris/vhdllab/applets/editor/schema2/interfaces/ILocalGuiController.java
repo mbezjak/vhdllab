@@ -97,7 +97,6 @@ public interface ILocalGuiController {
 	 * 0-komponenta
 	 * 1-zica
 	 * 2-nista nije selektirano
-	 * @return
 	 */
 	public int getSelectedType();
 	

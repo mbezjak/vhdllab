@@ -94,13 +94,13 @@ public class PortSetter extends ParameterSetterPanel<ParamPort> {
 		return ParamPort.class;
 	}
 	
-	private void selectStdLogic() {
+	protected void selectStdLogic() {
 		rangeFromField.setEnabled(false);
 		rangeToField.setEnabled(false);
 		vectorDirectionCombo.setEnabled(false);
 	}
 	
-	private void selectStdLogicVector() {
+	protected void selectStdLogicVector() {
 		rangeFromField.setEnabled(true);
 		rangeToField.setEnabled(true);
 		vectorDirectionCombo.setEnabled(true);

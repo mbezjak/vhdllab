@@ -12,7 +12,6 @@ public interface IQueryResult {
 	 * bio uspjesan. Neuspjesan upit nece biti
 	 * cacheiran.
 	 * 
-	 * @return
 	 */
 	public boolean isSuccessful();
 	
@@ -23,7 +22,6 @@ public interface IQueryResult {
 	 * razno-razne informacije.
 	 * 
 	 * @param key
-	 * @return
 	 */
 	public Object get(String key);
 	

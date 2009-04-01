@@ -92,7 +92,7 @@ public class PulsePanel extends ScalarPatternPanel {
 	{
 		return "pulseHigh.png";
 	}
-	private void initMid()
+	protected void initMid()
 	{
 		mid.removeAll();
 		mid.setLayout(new BorderLayout());

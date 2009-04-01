@@ -37,7 +37,6 @@ public interface IParameterEvent {
 	 * a implementirana je kao staticki read-only
 	 * objekt.
 	 * 
-	 * @return
 	 */
 	List<ChangeTuple> getChanges();
 	
@@ -67,7 +66,6 @@ public interface IParameterEvent {
 	 * Odgovara da li su promjene koje izvrsi ovaj event
 	 * funkcija ISKLJUCIVO vrijednosti parametra koji je specificiran.
 	 * 
-	 * @return
 	 */
 	boolean isUndoable();
 }

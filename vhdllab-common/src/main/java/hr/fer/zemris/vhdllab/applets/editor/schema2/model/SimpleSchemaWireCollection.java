@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 
 public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 	
-	private class WireIterator implements Iterator<ISchemaWire> {
+    protected class WireIterator implements Iterator<ISchemaWire> {
 		private Iterator<Entry<Caseless, ISchemaWire>> pit = wires.entrySet().iterator();
 		public boolean hasNext() {
 			return pit.hasNext();

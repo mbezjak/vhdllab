@@ -33,14 +33,12 @@ public interface IParameter {
 	 * Stvara kopiju ovog parametra.
 	 * Koristi se kod kopiranja komponenti.
 	 * 
-	 * @return
 	 */
 	IParameter copyCtor();
 	
 	/**
 	 * Dohvaca ime parametra.
 	 * 
-	 * @return
 	 */
 	String getName();
 	
@@ -61,7 +59,6 @@ public interface IParameter {
 	 * Sam obavlja cast ako je
 	 * tog tipa i vraca vrijednost.
 	 * 
-	 * @return
 	 * @throws ClassCastException
 	 * Ako vrijednost nije tog navedenog
 	 * tipa, nece se parsirati ili convertati
@@ -73,7 +70,6 @@ public interface IParameter {
 	 * Sam obavlja cast ako je
 	 * tog tipa i vraca vrijednost.
 	 * 
-	 * @return
 	 * @throws ClassCastException
 	 * Ako vrijednost nije tog navedenog
 	 * tipa, nece se parsirati ili convertati
@@ -85,7 +81,6 @@ public interface IParameter {
 	 * Sam obavlja cast ako je
 	 * tog tipa i vraca vrijednost.
 	 * 
-	 * @return
 	 * @throws ClassCastException
 	 * Ako vrijednost nije tog navedenog
 	 * tipa, nece se parsirati ili convertati
@@ -97,7 +92,6 @@ public interface IParameter {
 	 * Sam obavlja cast ako je
 	 * tog tipa i vraca vrijednost.
 	 * 
-	 * @return
  	 * @throws ClassCastException
 	 * Ako vrijednost nije tog navedenog
 	 * tipa, nece se parsirati ili convertati
@@ -109,7 +103,6 @@ public interface IParameter {
 	 * Sam obavlja cast ako je
 	 * tog tipa i vraca vrijednost.
 	 * 
-	 * @return
 	 * @throws ClassCastException
 	 * Ako vrijednost nije tog navedenog
 	 * tipa, nece se parsirati ili convertati
@@ -189,7 +182,6 @@ public interface IParameter {
 	 * GENERIC MAP dijelu instanciranja komponente
 	 * kojoj on pripada.
 	 *  
-	 * @return
 	 */
 	boolean isGeneric();
 	
@@ -198,7 +190,6 @@ public interface IParameter {
 	 * dijelu instanciranja komponente u VHDL
 	 * kodu.
 	 * 
-	 * @return
 	 */
 	String getVHDLGenericEntry();
 	
@@ -220,7 +211,6 @@ public interface IParameter {
 	/**
 	 * Vraca event pridruzen ovom parametru.
 	 * 
-	 * @return
 	 */
 	IParameterEvent getParameterEvent();
 	
@@ -241,7 +231,6 @@ public interface IParameter {
 	 * Vraca puno ime klase pohranjenog objekta.
 	 * Koristi se kod serijalizacije.
 	 * 
-	 * @return
 	 */
 	String getValueClassName();
 }

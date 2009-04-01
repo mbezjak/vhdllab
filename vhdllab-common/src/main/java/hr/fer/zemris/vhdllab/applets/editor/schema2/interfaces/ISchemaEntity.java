@@ -25,7 +25,6 @@ public interface ISchemaEntity {
 	 * Vraca sucelje sklopa koji se modelira
 	 * u schematicu - broj i vrstu portova.
 	 * 
-	 * @return
 	 */
 	CircuitInterface getCircuitInterface(ISchemaInfo info);
 	
@@ -37,7 +36,6 @@ public interface ISchemaEntity {
 	 * izgraden generic blok pri generiranju
 	 * strukturnog VHDLa.
 	 * 
-	 * @return
 	 */
 	IParameterCollection getParameters();
 	
@@ -52,14 +50,12 @@ public interface ISchemaEntity {
 	/**
 	 * Vraca vrijednost uvijek prisutnog parametra pod kljucem KEY_NAME,
 	 * koji oznacava ime entity-a.
-	 * @return
 	 */
 	Caseless getName();
 	
 	/**
 	 * Dohvaca portove sucelja modelirane komponente.
 	 * 
-	 * @return
 	 */
 	public List<Port> getPorts(ISchemaInfo info);
 	

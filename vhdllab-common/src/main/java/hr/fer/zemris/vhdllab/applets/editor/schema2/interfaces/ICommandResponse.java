@@ -47,7 +47,6 @@ public interface ICommandResponse {
 	 * trebaju vratiti posiljatelju
 	 * ICommand objekta.
 	 * 
-	 * @return
 	 */
 	InfoMap getInfoMap();
 	

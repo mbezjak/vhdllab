@@ -118,7 +118,6 @@ public interface IParameterCollection extends Iterable<IParameter> {
 	/**
 	 * Vraca listu svih imena parametara.
 	 * 
-	 * @return
 	 */
 	Set<String> getParameterNames();
 	

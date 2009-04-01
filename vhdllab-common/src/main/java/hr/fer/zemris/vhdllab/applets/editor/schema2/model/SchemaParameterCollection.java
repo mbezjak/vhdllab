@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 
 public class SchemaParameterCollection implements IParameterCollection {
 	
-	private class ParameterIterator implements Iterator<IParameter> {
+    protected class ParameterIterator implements Iterator<IParameter> {
 		private Iterator<Entry<String, IParameter>> pit = parameters.entrySet().iterator();
 		public boolean hasNext() {
 			return pit.hasNext();

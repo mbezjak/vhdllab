@@ -49,7 +49,7 @@ public class SetParameterCommand implements ICommand {
 		entity, wire, component
 	}
 	
-	private static class PPWrapper {
+	protected static class PPWrapper {
 		public IParameterCollection params;
 		public IParameter par;
 	}

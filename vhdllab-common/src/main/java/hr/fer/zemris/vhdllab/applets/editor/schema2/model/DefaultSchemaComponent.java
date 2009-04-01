@@ -51,7 +51,7 @@ import java.util.Set;
 
 public class DefaultSchemaComponent implements ISchemaComponent {
 	
-	private class PortIterator implements Iterator<Port> {
+    protected class PortIterator implements Iterator<Port> {
 		private Iterator<PortRelation> prit = portrelations.iterator();
 		public boolean hasNext() {
 			return prit.hasNext();
@@ -64,7 +64,7 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 		}
 	}
 	
-	private class DefaultVHDLSegmentProvider implements IVHDLSegmentProvider {
+	protected class DefaultVHDLSegmentProvider implements IVHDLSegmentProvider {
 		
 		private Map<Caseless, Caseless> renamed;
 		
@@ -76,7 +76,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 			int i = 0;
 			for (PortRelation portrel : portrelations) {
 				Port port = portrel.port;
-				PortDirection dir = port.getDirection();
 				String signame = signames.get(i);
 				if (port.isVector()) {
 					if (port.isIN()) {
@@ -241,8 +240,6 @@ public class DefaultSchemaComponent implements ISchemaComponent {
 	}
 
 	/**
-	 * @param name
-	 *            Jedinstveno ime ove instance komponente.
 	 * @param predefComp
 	 *            Wrapper za predefinirane komponente.
 	 */

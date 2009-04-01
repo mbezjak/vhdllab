@@ -120,7 +120,6 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 * Dohvaca sve komponente zadanog tipa.
 	 * 
 	 * @param componentType
-	 * @return
 	 */
 	Set<ISchemaComponent> fetchComponents(EComponentType componentType);
 	
@@ -235,7 +234,6 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 * Vraca redni broj komponente koja je dodana u shemu.
 	 * Sucelje ne specificira vremensku slozenost ove operacije.
 	 * @param name
-	 * @return
 	 * @throws UnknownKeyException
 	 */
 	int getComponentIndex(Caseless name) throws UnknownKeyException;
@@ -262,7 +260,6 @@ public interface ISchemaComponentCollection extends Iterable<PlacedComponent> {
 	 * preko kojeg je moguce iterirati po
 	 * komponentama.
 	 * 
-	 * @return
 	 */
 	Set<Caseless> getComponentNames();
 	

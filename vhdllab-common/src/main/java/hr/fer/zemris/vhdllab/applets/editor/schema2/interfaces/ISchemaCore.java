@@ -21,7 +21,6 @@ public interface ISchemaCore {
 	 * objekata metodi <code>send</code>, koja se
 	 * nalazi u ISchemaController-u.
 	 * 
-	 * @return
 	 */
 	ISchemaInfo getSchemaInfo();
 	

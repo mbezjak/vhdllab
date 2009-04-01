@@ -58,7 +58,7 @@ import java.util.NoSuchElementException;
  */
 public class InOutSchemaComponent implements ISchemaComponent {
 	
-	private class InOutVHDLSegmentProvider implements IVHDLSegmentProvider {
+    protected class InOutVHDLSegmentProvider implements IVHDLSegmentProvider {
 		private Map<Caseless, Caseless> renamed;
 		
 		public String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals) {

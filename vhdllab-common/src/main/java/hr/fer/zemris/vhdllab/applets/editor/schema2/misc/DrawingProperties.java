@@ -53,7 +53,6 @@ public class DrawingProperties {
 	
 	/**
 	 * Da li se ispisuju imena portova ako se radi o komponenti.
-	 * @return
 	 */
 	public boolean isDrawingPortNames() {
 		return drawingPortNames;
@@ -69,7 +68,6 @@ public class DrawingProperties {
 
 	/**
 	 * Da li se iscrtava ime komponente.
-	 * @return
 	 */
 	public boolean isDrawingComponentNames() {
 		return drawingComponentNames;
@@ -85,7 +83,6 @@ public class DrawingProperties {
 	
 	/**
 	 * Da li se iscrtava ime zice.
-	 * @return
 	 */
 	public boolean isDrawingWireNames() {
 		return drawingWireNames;

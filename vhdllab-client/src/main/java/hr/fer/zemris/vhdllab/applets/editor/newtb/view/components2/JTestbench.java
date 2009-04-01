@@ -487,7 +487,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
         return trueTime;
     }
     
-    private void resetSignal() {
+    protected void resetSignal() {
         if(model == null) {
             return;
         }
@@ -526,7 +526,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
         this.selectedSignal = null;
     }
     
-    private void applyPattern() {   
+    protected void applyPattern() {   
         if(model == null) {
             return;
         }
@@ -691,7 +691,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
         return beginSignalIndex;
     }
 
-    private void setBeginSignalIndex(int beginSignalIndex) {
+    protected void setBeginSignalIndex(int beginSignalIndex) {
         if(model == null) {
             return;
         }

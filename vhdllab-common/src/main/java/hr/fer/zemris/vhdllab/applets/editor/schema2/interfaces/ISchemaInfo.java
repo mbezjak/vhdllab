@@ -22,7 +22,6 @@ public interface ISchemaInfo {
 	/**
 	 * Vraca objekt koji sadrzi sve komponente.
 	 * 
-	 * @return
 	 */
 	ISchemaComponentCollection getComponents();
 	
@@ -38,7 +37,6 @@ public interface ISchemaInfo {
 	/**
 	 * Vraca objekt koji sadrzi sve zice (signale).
 	 * 
-	 * @return
 	 */
 	ISchemaWireCollection getWires();
 	
@@ -56,14 +54,12 @@ public interface ISchemaInfo {
 	 * modeliranog objekta, i jos neke dodatne
 	 * podatke, npr. parametre generic bloka.
 	 * 
-	 * @return
 	 */
 	ISchemaEntity getEntity();
 	
 	/**
 	 * Vraca listu prototipova u shemi.
 	 * 
-	 * @return
 	 */
 	Map<Caseless, ISchemaComponent> getPrototypes();
 	
@@ -71,14 +67,12 @@ public interface ISchemaInfo {
 	 * Vraca objekt s kojim je moguce instancirati
 	 * nove komponente.
 	 * 
-	 * @return
 	 */
 	ISchemaPrototypeCollection getPrototyper();
 	
 	/**
 	 * Vraca identifikator koji dosad nije koristen u schemi.
 	 * 
-	 * @return
 	 */
 	Caseless getFreeIdentifier();
 	
@@ -100,7 +94,6 @@ public interface ISchemaInfo {
 	 * Provjerava da li je identifikator koristen u schemi.
 	 * 
 	 * @param id
-	 * @return
 	 */
 	boolean isFreeIdentifier(Caseless identifier);
 	

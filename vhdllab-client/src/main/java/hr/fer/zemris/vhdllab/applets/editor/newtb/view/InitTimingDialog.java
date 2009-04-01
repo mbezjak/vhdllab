@@ -505,7 +505,7 @@ public class InitTimingDialog extends JDialog {
 	}
 	
 	/** checks if the Form is filled in correctly */
-	private boolean isFormOK(){
+	protected boolean isFormOK(){
 		boolean a,b,c;
 		
 		boolean e, f;
@@ -561,7 +561,7 @@ public class InitTimingDialog extends JDialog {
 		}else return false;
 	}
 	
-	private void setClockTimingInformationEnable(boolean b){
+	protected void setClockTimingInformationEnable(boolean b){
 		clockTimingInformation.setEnabled(b);
 		clockTimingInformationHeader.setEnabled(b);
 		risingEdgeButton.setEnabled(b);
@@ -628,7 +628,7 @@ public class InitTimingDialog extends JDialog {
 	}
 	
 	/** changes current timeScale to given string */
-	private void changeCurrentTimeScaleTo(String s) {
+	protected void changeCurrentTimeScaleTo(String s) {
 		timeScale = s;
 		
 		clockTimeHighScale.setText(s);
@@ -667,7 +667,7 @@ public class InitTimingDialog extends JDialog {
 	/**
 	 * Closes this dialog and releases all screen resources user by this window.
 	 */
-	private void close() {
+	protected void close() {
 		this.setVisible(false);
 		this.dispose();
 	}

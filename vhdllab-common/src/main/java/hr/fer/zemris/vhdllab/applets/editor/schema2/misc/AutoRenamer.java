@@ -36,7 +36,6 @@ public class AutoRenamer {
 	 * @param componentName
 	 * @param wirenames
 	 * @param index
-	 * @return
 	 */
 	public static Caseless generateHelpSignalName(Caseless componentName, Set<Caseless> wirenames, int index) {
 		componentName = new Caseless("sig_" + componentName.toString() + "_" + index);

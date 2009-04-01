@@ -36,13 +36,11 @@ public interface IQuery {
 	 * upit NECE biti izveden ponovno, vec ce se vratiti rezultat iz
 	 * cachea upita.
 	 * 
-	 * @return
 	 */
 	boolean isCacheable();
 	
 	/**
 	 * Vraca ime upita.
-	 * @return
 	 */
 	String getQueryName();
 	
@@ -51,7 +49,6 @@ public interface IQuery {
 	 * Ako se desi promjena ovog tipa, upit ce biti izbrisan iz cachea.
 	 * Ne smije biti mijenjana!!
 	 * 
-	 * @return
 	 */
 	List<EPropertyChange> getPropertyDependency();
 	
@@ -61,7 +58,6 @@ public interface IQuery {
 	 * 
 	 * @param info
 	 * Objekt koji IQuery NECE promijeniti.
-	 * @return
 	 */
 	IQueryResult performQuery(ISchemaInfo info);
 	
