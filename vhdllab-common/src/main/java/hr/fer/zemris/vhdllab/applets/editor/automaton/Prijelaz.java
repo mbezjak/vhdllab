@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.editor.automat;
+package hr.fer.zemris.vhdllab.applets.editor.automaton;
 
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -162,10 +162,9 @@ public class Prijelaz {
 	
 	/**
 	 * poruka za ne dodavanje
-	 * @param drawer
 	 */
-	public void porukaNeDodaj(AutoDrawer drawer,ResourceBundle bundle) {
-		JOptionPane.showMessageDialog(drawer,bundle.getString(LanguageConstants.DIALOG_MESSAGE_TRANSITIONEXISTS));
+	public void porukaNeDodaj(Component parent,ResourceBundle bundle) {
+		JOptionPane.showMessageDialog(parent,bundle.getString(LanguageConstants.DIALOG_MESSAGE_TRANSITIONEXISTS));
 		
 	}
 

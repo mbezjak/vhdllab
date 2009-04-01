@@ -47,7 +47,7 @@ public class Testpan extends JFrame {
 //					e1.printStackTrace();
 //				}
 //				System.out.println(parser.getParsedVHDL());
-			};
+			}
 		});
 		this.add(b1,BorderLayout.NORTH);
 		

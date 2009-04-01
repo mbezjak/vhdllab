@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
+import hr.fer.zemris.vhdllab.applets.editor.automaton.LanguageConstants;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;

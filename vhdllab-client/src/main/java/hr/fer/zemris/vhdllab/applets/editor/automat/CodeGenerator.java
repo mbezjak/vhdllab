@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
+import hr.fer.zemris.vhdllab.applets.editor.automaton.AUTPodatci;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Prijelaz;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Stanje;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 

@@ -1,5 +1,9 @@
 package hr.fer.zemris.vhdllab.service.extractor.automaton;
 
+import hr.fer.zemris.vhdllab.applets.editor.automaton.AUTParser;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.AUTPodatci;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Prijelaz;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Stanje;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;

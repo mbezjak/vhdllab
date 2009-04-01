@@ -11,6 +11,11 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
  */
 
 
+import hr.fer.zemris.vhdllab.applets.editor.automaton.AUTParser;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.AUTPodatci;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.LanguageConstants;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Prijelaz;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Stanje;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
 import hr.fer.zemris.vhdllab.validation.NameFormatConstraintValidator;
 

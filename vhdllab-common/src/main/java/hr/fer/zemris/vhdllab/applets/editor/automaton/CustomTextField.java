@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.editor.automat;
+package hr.fer.zemris.vhdllab.applets.editor.automaton;
 
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;

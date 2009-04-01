@@ -1,9 +1,9 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.automaton;
 
-import hr.fer.zemris.vhdllab.applets.editor.automat.AUTPodatci;
 import hr.fer.zemris.vhdllab.applets.editor.automat.CodeGenerator;
-import hr.fer.zemris.vhdllab.applets.editor.automat.Prijelaz;
-import hr.fer.zemris.vhdllab.applets.editor.automat.Stanje;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.AUTPodatci;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Prijelaz;
+import hr.fer.zemris.vhdllab.applets.editor.automaton.Stanje;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractNewFileWizard;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;

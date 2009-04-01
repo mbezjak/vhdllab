@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.applets.editor.automat;
+package hr.fer.zemris.vhdllab.applets.editor.automaton;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
