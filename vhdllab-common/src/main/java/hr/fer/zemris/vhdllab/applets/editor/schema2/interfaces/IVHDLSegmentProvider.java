@@ -31,7 +31,6 @@ public interface IVHDLSegmentProvider {
 	 * @param info
 	 * Info sluzi kako bi se u slucaju koristenja
 	 * pomocnih signala razrijesili konflikti imena.
-	 * @return
 	 */
 	String getSignalDefinitions(ISchemaInfo info);
 	
@@ -48,7 +47,6 @@ public interface IVHDLSegmentProvider {
 	 * se nalazi u navedenoj mapi, onda ta implementacija
 	 * mora zamijeniti to ime vrijednoscu iz mape pod
 	 * tim kljucem. 
-	 * @return
 	 */
 	String getInstantiation(ISchemaInfo info, Map<Caseless, Caseless> renamedSignals);
 }

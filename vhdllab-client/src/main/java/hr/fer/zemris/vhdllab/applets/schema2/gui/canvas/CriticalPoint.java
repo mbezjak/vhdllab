@@ -20,7 +20,7 @@ public class CriticalPoint {
 	
 	private int type = 0;
 	
-	private Caseless name = null;;
+	private Caseless name = null;
 	private Caseless portName = null;
 	
 	public CriticalPoint(int x, int y) {

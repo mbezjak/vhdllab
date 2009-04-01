@@ -85,7 +85,6 @@ public interface ISchemaWire {
 	 * Vraca objekt za
 	 * iscrtavanje komponente.
 	 * 
-	 * @return
 	 * @see IWireDrawer
 	 */
 	IWireDrawer getDrawer();

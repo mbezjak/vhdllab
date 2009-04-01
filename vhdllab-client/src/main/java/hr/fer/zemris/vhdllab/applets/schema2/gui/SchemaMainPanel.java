@@ -72,12 +72,12 @@ public class SchemaMainPanel extends AbstractEditor {
 
     /* model private fields */
     private ISchemaCore core;
-    private ISchemaController controller;
+    protected ISchemaController controller;
 
     /* GUI private fields */
     private SchemaCanvas canvas;
     private CanvasToolbar canTool;
-    private ILocalGuiController localGUIController;
+    protected ILocalGuiController localGUIController;
     private CPToolbar componentPropertyToolbar;
     private TabbedCTAddToolbar componentToAddToolbar;
 
@@ -87,16 +87,16 @@ public class SchemaMainPanel extends AbstractEditor {
     /**
      * Right panel divider width
      */
-    private double rightPanelWidth;
+    protected double rightPanelWidth;
 
     /**
      * Glavni split pane koji dijeli canvas od toolbara
      */
-    private JSplitPane verticalSplitPane;
+    protected JSplitPane verticalSplitPane;
     /**
      * desni split pane koji dijeli property toolbar i componentToAdd toolbar
      */
-    private JSplitPane horizontalSplitPane;
+    protected JSplitPane horizontalSplitPane;
 
     protected double rightPanelDividerPosition;
 

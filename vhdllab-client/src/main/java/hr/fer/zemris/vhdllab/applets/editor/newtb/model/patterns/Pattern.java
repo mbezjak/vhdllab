@@ -34,7 +34,6 @@ public abstract class Pattern {
 	/**
 	 * Method which just calls getChanges(0, long end), but is here to provide simplicity
 	 * @param end
-	 * @return
 	 * @throws UniformSignalChangeException
 	 * @throws UniformPatternException
 	 */
@@ -78,7 +77,8 @@ public abstract class Pattern {
 		return ret;
 	}
 	
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "Cycles: " + cycles;
 	}

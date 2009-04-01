@@ -44,7 +44,6 @@ public interface ISchemaPrototypeCollection {
 	 * Vraca mapu prototipova koji se nalaze
 	 * u kolekciji.
 	 * 
-	 * @return
 	 */
 	Map<Caseless, ISchemaComponent> getPrototypes();
 	
@@ -75,7 +74,6 @@ public interface ISchemaPrototypeCollection {
 	/**
 	 * Vraca true ako postoji prototip tog imena.
 	 * @param prototypename
-	 * @return
 	 */
 	boolean containsPrototype(Caseless prototypename);
 	

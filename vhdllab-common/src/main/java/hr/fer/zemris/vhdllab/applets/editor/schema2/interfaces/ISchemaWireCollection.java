@@ -115,7 +115,6 @@ public interface ISchemaWireCollection extends Iterable<ISchemaWire> {
 	 * 
 	 * @param wire
 	 * Zica jedinstvenog imena.
-	 * @return
 	 * @throws DuplicateKeyException
 	 * Ako postoji zica tog imena u kolekciji.
 	 * @throws OverlapException
@@ -158,7 +157,6 @@ public interface ISchemaWireCollection extends Iterable<ISchemaWire> {
 	 * preko kojeg je moguce iterirati
 	 * po zicama.
 	 * 
-	 * @return
 	 */
 	Set<Caseless> getWireNames();
 	
