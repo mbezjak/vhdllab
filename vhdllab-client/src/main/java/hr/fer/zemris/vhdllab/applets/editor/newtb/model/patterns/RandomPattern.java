@@ -56,7 +56,8 @@ public class RandomPattern extends Pattern {
 		return ret;
 	}
 	
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return super.toString() +
 			"Random seed: " + randomSeed + "\n " + 

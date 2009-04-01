@@ -76,6 +76,7 @@ public class JHelpManager extends JPanel implements TreeSelectionListener {
             }
         }
 
+        @Override
         public String toString() {
             return topicName;
         }

@@ -33,7 +33,7 @@ public abstract class Pattern {
 	protected abstract List<SignalChange> getChanges(long start, long end) throws UniformSignalChangeException, UniformPatternException;
 	/**
 	 * Method which just calls getChanges(0, long end), but is here to provide simplicity
-	 * @param end
+	 * @param offset
 	 * @throws UniformSignalChangeException
 	 * @throws UniformPatternException
 	 */

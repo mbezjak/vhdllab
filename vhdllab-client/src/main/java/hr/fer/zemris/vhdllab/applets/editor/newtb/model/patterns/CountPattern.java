@@ -128,7 +128,7 @@ public class CountPattern extends VectorPattern{
 			throws UniformSignalChangeException, UniformPatternException {
 		if(A.compareTo(B) > 0)
 			return generateDown(start,end);
-		else return generateUp(start,end);
+		return generateUp(start,end);
 	}
 	@Override
 	public String toString() {

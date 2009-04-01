@@ -42,9 +42,8 @@ public class HelpManager {
 		String r = getHelpCodeMap().get(c);
 		if(r == null) {
 			return "";
-		} else {
-			return r;
 		}
+		return r;
 	}
 
 	public static void openHelpDialog(String helpCode)
