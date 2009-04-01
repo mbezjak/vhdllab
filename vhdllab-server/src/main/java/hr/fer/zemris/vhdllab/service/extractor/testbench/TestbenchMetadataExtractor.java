@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
+
 public class TestbenchMetadataExtractor extends AbstractMetadataExtractor {
 
     @Override
@@ -32,11 +34,17 @@ public class TestbenchMetadataExtractor extends AbstractMetadataExtractor {
     }
 
     @Override
-    public Set<String> extractDependencies(File file)
+    protected CircuitInterface doExtractCircuitInterface(String data)
+            throws CircuitInterfaceExtractionException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    protected Set<String> doExtractDependencies(String data)
             throws DependencyExtractionException {
         Testbench tb;
         try {
-            tb = TestbenchParser.parseXml(file.getData());
+            tb = TestbenchParser.parseXml(data);
         } catch (UniformTestbenchParserException e) {
             throw new DependencyExtractionException(e);
         }
@@ -53,10 +61,9 @@ public class TestbenchMetadataExtractor extends AbstractMetadataExtractor {
         }
 
         String name = tbInfo.getSourceName();
-        File source = getFileDao().findByName(file.getProject().getId(), name);
+        File source = fileDao.findByName(file.getProject().getId(), name);
 
-        CircuitInterface ci = getFileTypeBasedMetadataExtractor()
-                .extractCircuitInterface(source);
+        CircuitInterface ci = metadataExtractor.extractCircuitInterface(source);
         String vhdl = null;
         try {
             vhdl = generirajVHDL(file.getName(), name, ci, tbInfo);
@@ -64,6 +71,11 @@ public class TestbenchMetadataExtractor extends AbstractMetadataExtractor {
             throw new VhdlGenerationException(e);
         }
         return new Result(vhdl);
+    }
+
+    @Override
+    protected Result doGenerateVhdl(String data) throws VhdlGenerationException {
+        throw new NotImplementedException();
     }
 
     /**

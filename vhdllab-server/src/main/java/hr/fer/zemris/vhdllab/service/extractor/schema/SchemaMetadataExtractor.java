@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.misc.PlacedComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo2VHDL;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaDeserializer;
-import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
@@ -20,21 +19,19 @@ import java.util.Set;
 public class SchemaMetadataExtractor extends AbstractMetadataExtractor {
 
     @Override
-    public CircuitInterface extractCircuitInterface(File file)
+    protected CircuitInterface doExtractCircuitInterface(String data)
             throws CircuitInterfaceExtractionException {
         SchemaDeserializer sd = new SchemaDeserializer();
-        ISchemaInfo info = sd
-                .deserializeSchema(new StringReader(file.getData()));
+        ISchemaInfo info = sd.deserializeSchema(new StringReader(data));
         return info.getEntity().getCircuitInterface(info);
     }
 
     @Override
-    public Set<String> extractDependencies(File file)
+    protected Set<String> doExtractDependencies(String data)
             throws DependencyExtractionException {
         Set<String> retlist = new HashSet<String>();
         SchemaDeserializer sd = new SchemaDeserializer();
-        ISchemaInfo info = sd
-                .deserializeSchema(new StringReader(file.getData()));
+        ISchemaInfo info = sd.deserializeSchema(new StringReader(data));
         ISchemaComponentCollection components = info.getComponents();
 
         for (PlacedComponent placed : components) {
@@ -47,10 +44,9 @@ public class SchemaMetadataExtractor extends AbstractMetadataExtractor {
     }
 
     @Override
-    public Result generateVhdl(File file) throws VhdlGenerationException {
+    protected Result doGenerateVhdl(String data) throws VhdlGenerationException {
         SchemaDeserializer sd = new SchemaDeserializer();
-        ISchemaInfo info = sd
-                .deserializeSchema(new StringReader(file.getData()));
+        ISchemaInfo info = sd.deserializeSchema(new StringReader(data));
         SchemaInfo2VHDL vhdlgen = new SchemaInfo2VHDL();
         return vhdlgen.generateVHDL(info);
     }

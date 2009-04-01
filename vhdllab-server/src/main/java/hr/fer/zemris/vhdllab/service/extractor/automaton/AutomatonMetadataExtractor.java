@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.xml.sax.SAXException;
 
 public class AutomatonMetadataExtractor extends AbstractMetadataExtractor {
@@ -41,8 +42,7 @@ public class AutomatonMetadataExtractor extends AbstractMetadataExtractor {
 
         String VHDL = buffer.toString();
         File source = new File(file.getName(), FileType.SOURCE, VHDL);
-        return getFileTypeBasedMetadataExtractor().extractCircuitInterface(
-                source);
+        return metadataExtractor.extractCircuitInterface(source);
     }
 
     private StringBuffer addEntity(StringBuffer buffer, AUTPodatci podatci) {
@@ -72,17 +72,23 @@ public class AutomatonMetadataExtractor extends AbstractMetadataExtractor {
     }
 
     @Override
-    public Set<String> extractDependencies(File file)
+    protected CircuitInterface doExtractCircuitInterface(String data)
+            throws CircuitInterfaceExtractionException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    protected Set<String> doExtractDependencies(String data)
             throws DependencyExtractionException {
         return Collections.emptySet();
     }
 
     @Override
-    public Result generateVhdl(File file) throws VhdlGenerationException {
+    protected Result doGenerateVhdl(String data) throws VhdlGenerationException {
         AUTParser aut = new AUTParser();
 
         try {
-            aut.AUTParse(file.getData());
+            aut.AUTParse(data);
         } catch (Exception e) {
             throw new VhdlGenerationException(e.getMessage());
         }

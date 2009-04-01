@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.service.extractor.source;
 
 import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.VectorDirection;
-import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
@@ -42,13 +41,9 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
     private static final String COMPONENT = "COMPONENT";
 
     @Override
-    public CircuitInterface extractCircuitInterface(File file)
+    protected CircuitInterface doExtractCircuitInterface(String data)
             throws CircuitInterfaceExtractionException {
-        return extractCircuitInterface(file.getData());
-    }
-
-    public CircuitInterface extractCircuitInterface(String source) {
-        String cleanedSource = source;
+        String cleanedSource = data;
         cleanedSource = VhdlUtil.decomment(cleanedSource);
         cleanedSource = VhdlUtil.removeWhiteSpaces(cleanedSource);
         return extractCi(cleanedSource);
@@ -266,9 +261,9 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
     }
 
     @Override
-    public Set<String> extractDependencies(File file)
+    protected Set<String> doExtractDependencies(String data)
             throws DependencyExtractionException {
-        String source = file.getData();
+        String source = data;
         source = VhdlUtil.decomment(source);
         source = VhdlUtil.removeWhiteSpaces(source);
         return extract(source);
@@ -340,8 +335,8 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
     }
 
     @Override
-    public Result generateVhdl(File file) throws VhdlGenerationException {
-        return new Result(file.getData());
+    protected Result doGenerateVhdl(String data) throws VhdlGenerationException {
+        return new Result(data);
     }
 
 }

@@ -1,9 +1,5 @@
 package hr.fer.zemris.vhdllab.service.impl;
 
-import hr.fer.zemris.vhdllab.dao.FileDao;
-import hr.fer.zemris.vhdllab.dao.PredefinedFileDao;
-import hr.fer.zemris.vhdllab.dao.PreferencesFileDao;
-import hr.fer.zemris.vhdllab.dao.ProjectDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.PreferencesFile;
@@ -11,7 +7,6 @@ import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
-import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
@@ -28,24 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkspaceServiceImpl extends ServiceSupport implements
         WorkspaceService {
-
-    @Autowired
-    private ProjectDao projectDao;
-    @Autowired
-    private FileDao fileDao;
-    @Autowired
-    private PreferencesFileDao preferencesFileDao;
-    @Autowired
-    private PredefinedFileDao predefinedFilesDao;
-    @Resource(name = "fileTypeBasedMetadataExtractor")
-    private MetadataExtractor metadataExtractor;
 
     @Override
     public FileReport createFile(Integer projectId, String name, FileType type,

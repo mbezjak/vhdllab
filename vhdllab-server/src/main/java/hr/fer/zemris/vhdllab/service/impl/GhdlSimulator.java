@@ -12,7 +12,6 @@ import hr.fer.zemris.vhdllab.service.exception.CompilationException;
 import hr.fer.zemris.vhdllab.service.exception.NoAvailableProcessException;
 import hr.fer.zemris.vhdllab.service.exception.SimulationException;
 import hr.fer.zemris.vhdllab.service.exception.SimulatorTimeoutException;
-import hr.fer.zemris.vhdllab.service.extractor.MetadataExtractor;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
@@ -32,8 +31,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -92,8 +89,6 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
 
     @Autowired
     private WorkspaceService workspaceService;
-    @Resource(name = "fileTypeBasedMetadataExtractor")
-    private MetadataExtractor metadataExtractor;
 
     public void configure() {
         executable = properties.getProperty(EXECUTABLE_PROPERTY);
