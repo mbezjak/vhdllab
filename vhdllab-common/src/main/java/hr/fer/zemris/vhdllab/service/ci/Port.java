@@ -10,6 +10,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.Min;
+import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -29,7 +30,7 @@ public class Port implements Serializable {
     public static final String DIRECTION_DOWNTO = "DOWNTO";
     public static final String DIRECTION_TO = "TO";
 
-    @NotNull
+    @NotEmpty
     @Length(max = 255)
     @NameFormatConstraint
     private String name;

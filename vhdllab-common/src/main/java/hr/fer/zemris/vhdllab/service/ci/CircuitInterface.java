@@ -12,6 +12,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Size;
 import org.hibernate.validator.Valid;
@@ -27,7 +28,7 @@ public class CircuitInterface implements Serializable {
 
     private static final long serialVersionUID = -7941833394453145492L;
 
-    @NotNull
+    @NotEmpty
     @Length(max = 255)
     @NameFormatConstraint
     private String name;

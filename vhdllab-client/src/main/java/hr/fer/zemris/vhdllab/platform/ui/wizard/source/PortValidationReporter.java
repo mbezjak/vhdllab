@@ -26,28 +26,46 @@ public class PortValidationReporter extends ApplicationServicesAccessor
 
     private final BeanTableModel model;
     private final WizardPage page;
+    private final int minimumPortCount;
+    private final int maximumPortCount;
     private final ClassValidator<Port> validator;
 
-    public PortValidationReporter(BeanTableModel model, WizardPage page) {
+    public PortValidationReporter(BeanTableModel model, WizardPage page,
+            int minimumPortCount, int maximumPortCount) {
         Validate.notNull(model, "Bean table model can't be null");
         Validate.notNull(page, "Wizard page can't be null");
         this.model = model;
         this.page = page;
+        this.minimumPortCount = minimumPortCount;
+        this.maximumPortCount = maximumPortCount;
         this.validator = new ClassValidator<Port>(Port.class,
                 new HibernateRulesMessageInterpolator());
         model.addTableModelListener(this);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void tableChanged(TableModelEvent e) {
-        reportValidationError(null, -1);
-        String duplicate = checkForDuplicates(model.getRows());
+        validate();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void validate() {
+        setErrorMessage(null);
+        List rows = model.getRows();
+        if (rows.size() < minimumPortCount) {
+            setErrorMessage(getMessage("minimum.port.count",
+                    new Integer[] { minimumPortCount }));
+            return;
+        } else if (rows.size() > maximumPortCount) {
+            setErrorMessage(getMessage("maximum.port.count",
+                    new Integer[] { maximumPortCount }));
+            return;
+        }
+
+        String duplicate = checkForDuplicates(rows);
         if (duplicate != null) {
-            String message = getMessage("duplicate.port.name",
-                    new String[] { duplicate });
-            page.setMessage(new DefaultMessage(message, Severity.ERROR));
-            page.setEnabled(false);
+            setErrorMessage(getMessage("duplicate.port.name",
+                    new String[] { duplicate }));
         } else {
             for (int i = 0; i < model.getRowCount(); i++) {
                 Port port = (Port) model.getRow(i);
@@ -78,20 +96,25 @@ public class PortValidationReporter extends ApplicationServicesAccessor
     }
 
     private void reportValidationError(InvalidValue invalidValue, int row) {
-        Message message = null;
-        if (invalidValue != null) {
-            StringBuilder sb = new StringBuilder(50);
-            String simpleName = invalidValue.getBean().getClass()
-                    .getSimpleName().toLowerCase();
-            String propertyName = invalidValue.getPropertyName();
-            String columnNameKey = simpleName + "." + propertyName;
-            sb.append(getMessage("row")).append(" ").append(row + 1);
-            sb.append(": ").append(getMessage(columnNameKey)).append(" ");
-            sb.append(invalidValue.getMessage());
+        StringBuilder sb = new StringBuilder(50);
+        String simpleName = invalidValue.getBean().getClass().getSimpleName()
+                .toLowerCase();
+        String propertyName = invalidValue.getPropertyName();
+        String columnNameKey = simpleName + "." + propertyName;
+        sb.append(getMessage("row")).append(" ").append(row + 1);
+        sb.append(": ").append(getMessage(columnNameKey)).append(" ");
+        sb.append(invalidValue.getMessage());
 
-            message = new DefaultMessage(sb.toString(), Severity.ERROR);
+        setErrorMessage(sb.toString());
+    }
+
+    private void setErrorMessage(String text) {
+        Message message = null;
+        if (text != null) {
+            message = new DefaultMessage(text, Severity.ERROR);
         }
         page.setMessage(message);
         page.setEnabled(message == null);
     }
+
 }

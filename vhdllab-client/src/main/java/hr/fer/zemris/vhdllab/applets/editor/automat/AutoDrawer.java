@@ -12,7 +12,6 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 
 import hr.fer.zemris.vhdllab.platform.manager.editor.Editor;
-import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.validation.NameFormatConstraintValidator;
 
 import java.awt.BorderLayout;
@@ -122,7 +121,6 @@ public class AutoDrawer extends JPanel{
 	protected HashSet<String> listaSignala=null;
 	
 	protected ResourceBundle bundle=null;
-	private PlatformContainer container=null;
 	protected Editor editor;
 	
 	/**
@@ -1100,9 +1098,8 @@ public class AutoDrawer extends JPanel{
 		return podatci;
 	}
 
-	public void setResourceBundle(PlatformContainer container,ResourceBundle bundle) {
+	public void setResourceBundle(ResourceBundle bundle) {
 		this.bundle=bundle;
-		this.container=container;
 	}
 
 	public void dataChange() {

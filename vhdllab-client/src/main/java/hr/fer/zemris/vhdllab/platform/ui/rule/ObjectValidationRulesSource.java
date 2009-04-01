@@ -3,6 +3,7 @@ package hr.fer.zemris.vhdllab.platform.ui.rule;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.AutomatonInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.closure.Constraint;
@@ -18,6 +19,7 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
         super();
         addRules(createProjectRules());
         addRules(createFileRules());
+        addRules(createAutomatonInfoRules());
     }
 
     private Rules createProjectRules() {
@@ -36,6 +38,17 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
             protected void initRules() {
                 add("name", new Constraint[] { new FileExistsConstraint(
                         workspaceManager) });
+            }
+        };
+    }
+
+    private Rules createAutomatonInfoRules() {
+        return new Rules(AutomatonInfo.class) {
+            @Override
+            protected void initRules() {
+                add("automatonType", required());
+                add("resetValue", required());
+                add("clockValue", required());
             }
         };
     }

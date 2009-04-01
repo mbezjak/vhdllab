@@ -183,7 +183,8 @@ public class DefaultWorkspaceManager extends
         if (exist(file)) {
             throw new FileAlreadyExistsException(file.toString());
         }
-        FileReport report = workspaceService.save(file);
+        FileReport report = workspaceService.createFile(file.getProject()
+                .getId(), file.getName(), file.getType(), file.getData());
         getWorkspace().addFile(report.getFile(), report.getHierarchy());
         addFile(report.getFile());
         fireFileCreated(report);
@@ -194,7 +195,7 @@ public class DefaultWorkspaceManager extends
     @Override
     public void save(File file) {
         checkIfNull(file);
-        FileReport report = workspaceService.save(file);
+        FileReport report = workspaceService.saveFile(file.getId(), file.getData());
         getWorkspace().addFile(report.getFile(), report.getHierarchy());
         addFile(report.getFile());
         fireFileSaved(report);

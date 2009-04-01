@@ -130,7 +130,9 @@ public class DevelopmentFloodWithCompliationRequestsCommand extends
         File file = new File("development_file_name", FileType.SOURCE,
                 createData());
         file.setProject(project);
-        return workspaceService.save(file).getFile();
+        return workspaceService.createFile(project.getId(),
+                "development_file_name", FileType.SOURCE, createData())
+                .getFile();
     }
 
     private String createData() {

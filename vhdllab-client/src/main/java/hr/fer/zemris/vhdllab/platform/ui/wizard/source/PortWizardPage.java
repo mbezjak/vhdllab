@@ -36,6 +36,8 @@ import org.springframework.richclient.wizard.AbstractWizardPage;
 
 public class PortWizardPage extends AbstractWizardPage {
 
+    private static final int DEFAULT_MINIMUM_PORT_COUNT = 0;
+    private static final int DEFAULT_MAXIMUM_PORT_COUNT = 30;
     private static final String PAGE_ID = "newPorts";
 
     protected JTable table;
@@ -43,8 +45,28 @@ public class PortWizardPage extends AbstractWizardPage {
     protected ActionCommand addAction;
     protected ActionCommand removeAction;
 
+    private int minimumPortCount = DEFAULT_MINIMUM_PORT_COUNT;
+    private int maximumPortCount = DEFAULT_MAXIMUM_PORT_COUNT;
+    private PortValidationReporter reporter;
+
     public PortWizardPage() {
         super(PAGE_ID);
+    }
+
+    public int getMinimumPortCount() {
+        return minimumPortCount;
+    }
+
+    public void setMinimumPortCount(int minimumPortCount) {
+        this.minimumPortCount = minimumPortCount;
+    }
+
+    public int getMaximumPortCount() {
+        return maximumPortCount;
+    }
+
+    public void setMaximumPortCount(int maximumPortCount) {
+        this.maximumPortCount = maximumPortCount;
     }
 
     @SuppressWarnings("unchecked")
@@ -66,8 +88,8 @@ public class PortWizardPage extends AbstractWizardPage {
             }
 
         };
-        // model.setRowNumbers(false);
-        new PortValidationReporter(model, this);
+        reporter = new PortValidationReporter(model, this, minimumPortCount,
+                maximumPortCount);
         table = new JTable(model);
         table.setCellSelectionEnabled(true);
         table.getSelectionModel().addListSelectionListener(
@@ -104,6 +126,12 @@ public class PortWizardPage extends AbstractWizardPage {
         control.add(createButtons(), BorderLayout.NORTH);
         control.add(scrollPane, BorderLayout.CENTER);
         return control;
+    }
+
+    @Override
+    public void onAboutToShow() {
+        super.onAboutToShow();
+        reporter.validate();
     }
 
     @SuppressWarnings("unchecked")

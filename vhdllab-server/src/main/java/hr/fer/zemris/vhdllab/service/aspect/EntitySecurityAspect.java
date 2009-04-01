@@ -27,6 +27,7 @@ public class EntitySecurityAspect extends ServiceSupport {
             .getLogger(EntitySecurityAspect.class);
 
     @Before("(execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.deleteProject(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.createFile(..)) || "
             + "execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.extractHierarchy(..)) || "
             + "execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.findByName(..))) && args(id,..)")
     public void projectSecurity(JoinPoint jp, Integer id) throws Throwable {
@@ -35,17 +36,12 @@ public class EntitySecurityAspect extends ServiceSupport {
     }
 
     @Before("(execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.deleteFile(..)) || "
+            + "execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.saveFile(..)) || "
             + "execution(* hr.fer.zemris.vhdllab.service.Simulator.*(..)) || "
             + "execution(* hr.fer.zemris.vhdllab.service.MetadataExtractionService.*(..))) && args(id,..)")
     public void fileSecurity(JoinPoint jp, Integer id) throws Throwable {
         File file = loadFile(id);
         checkSecurity(jp, file.getProject().getUserId(), id);
-    }
-
-    @Before("execution(* hr.fer.zemris.vhdllab.service.WorkspaceService.save(..)) && args(file,..)")
-    public void saveFileSecurity(JoinPoint jp, File file) throws Throwable {
-        Project project = loadProject(file.getProject().getId());
-        checkSecurity(jp, project.getUserId(), project.getId());
     }
 
     @Before("execution(* hr.fer.zemris.vhdllab.service.PreferencesFileService.save(..)) && args(files,..)")

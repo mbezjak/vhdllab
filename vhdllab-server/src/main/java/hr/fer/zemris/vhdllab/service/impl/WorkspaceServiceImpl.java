@@ -48,7 +48,24 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
     private MetadataExtractor metadataExtractor;
 
     @Override
-    public FileReport save(File file) {
+    public FileReport createFile(Integer projectId, String name, FileType type,
+            String data) {
+        File file = new File(name, type, data);
+        loadProject(projectId).addFile(file);
+        fileDao.persist(file);
+        return getReport(file, file.getProject());
+    }
+
+    @Override
+    public FileReport saveFile(Integer fileId, String data) {
+        File file = loadFile(fileId);
+        file.setData(data);
+        checkCircuitInterfaceName(file);
+        File saved = fileDao.merge(file);
+        return getReport(saved, saved.getProject());
+    }
+
+    private void checkCircuitInterfaceName(File file) {
         if (FileType.SOURCE.equals(file.getType())) {
             CircuitInterface ci = metadataExtractor
                     .extractCircuitInterface(file);
@@ -57,17 +74,6 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
                         + " must have only one entity with the same name.");
             }
         }
-        
-        Project project = loadProject(file.getProject().getId());
-        File saved = new File(file);
-        if (file.isNew()) {
-            project.addFile(saved);
-            fileDao.persist(saved);
-        } else {
-            saved.setProject(project);
-            saved = fileDao.merge(saved);
-        }
-        return getReport(saved, saved.getProject());
     }
 
     @Override
@@ -82,7 +88,7 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
     @Override
     public File findByName(Integer projectId, String name) {
         File file = findProjectOrPredefinedFile(projectId, name);
-        if(file == null) {
+        if (file == null) {
             return null;
         }
         return new File(file, EntityUtils.lightweightClone(file.getProject()));

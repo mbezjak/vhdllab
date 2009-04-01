@@ -13,7 +13,7 @@ public abstract class AbstractNewFileWizard extends FormBackedWizard {
 
     @Autowired
     private WorkspaceManager workspaceManager;
-    private PortWizardPage portPage;
+    protected PortWizardPage portPage;
 
     public AbstractNewFileWizard(String wizardId) {
         super(wizardId);
@@ -22,6 +22,10 @@ public abstract class AbstractNewFileWizard extends FormBackedWizard {
     @Override
     public void addPages() {
         super.addPages();
+        addPortWizardPage();
+    }
+
+    protected void addPortWizardPage() {
         portPage = new PortWizardPage();
         addPage(portPage);
     }

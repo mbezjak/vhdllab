@@ -69,13 +69,14 @@
         <idref bean="newSourceCommand"/>
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewTestbenchCommand" />
         <idref bean="newSchemaCommand"/>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewAutomatonCommand" />
+        <idref bean="newAutomatonCommand"/>
       </list>
     </property>
   </bean>
   <bean id="newProjectCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.project.NewProjectCommand"/>
   <bean id="newSourceCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.source.NewSourceCommand"/>
   <bean id="newSchemaCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.schema.NewSchemaCommand"/>
+  <bean id="newAutomatonCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.NewAutomatonCommand"/>
 
   <bean id="editMenu"
     class="org.springframework.richclient.command.CommandGroupFactoryBean">

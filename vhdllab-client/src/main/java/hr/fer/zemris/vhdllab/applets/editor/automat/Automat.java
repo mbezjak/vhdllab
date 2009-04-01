@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
@@ -13,8 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -63,7 +60,7 @@ public class Automat extends AbstractEditor implements Wizard {
         adrw = new AutoDrawer(this);
 
         if (bundle != null)
-            adrw.setResourceBundle(container, bundle);
+            adrw.setResourceBundle(bundle);
 
         Icon ic = new ImageIcon(getClass().getResource("AddMode1.png"));
         final JToggleButton dodajNoviSignal = new JToggleButton(ic);
@@ -235,21 +232,7 @@ public class Automat extends AbstractEditor implements Wizard {
     @Override
     public File getInitialFileContent(Component parent,
             Project project) {
-        bundle = ResourceBundle
-                .getBundle("Client_Automat_ApplicationResources");
-        AUTPodatci pod = new AUTPodatci(parent, bundle);
-        // TODO OSTAVI TO: projectName = pContainer.getSelectedProject();
-        String gen = null;
-        if (pod.ime != null) {
-            LinkedList<Stanje> stanja = new LinkedList<Stanje>();
-            HashSet<Prijelaz> prijelazi = new HashSet<Prijelaz>();
-            gen = new CodeGenerator().generateInternalCode(pod, prijelazi,
-                    stanja);
-        } else
-            return null;
-        File f = new File(pod.ime, FileType.AUTOMATON, gen);
-        f.setProject(project);
-        return f;
+        return null;
     }
 
     @Override
