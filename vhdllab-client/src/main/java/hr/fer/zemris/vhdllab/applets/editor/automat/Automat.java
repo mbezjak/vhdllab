@@ -2,12 +2,9 @@ package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import hr.fer.zemris.vhdllab.applets.editor.automaton.LanguageConstants;
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -31,7 +28,7 @@ import javax.swing.KeyStroke;
  * @author ddelac
  * 
  */
-public class Automat extends AbstractEditor implements Wizard {
+public class Automat extends AbstractEditor {
 
     /**
 	 * 
@@ -228,12 +225,6 @@ public class Automat extends AbstractEditor implements Wizard {
     @Override
     public String getData() {
         return adrw.getData();
-    }
-
-    @Override
-    public File getInitialFileContent(Component parent,
-            Project project) {
-        return null;
     }
 
     @Override

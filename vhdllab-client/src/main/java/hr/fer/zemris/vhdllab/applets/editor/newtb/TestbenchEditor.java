@@ -23,7 +23,6 @@ import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
@@ -44,12 +43,12 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class TestbenchEditor extends AbstractEditor implements Wizard {
+public class TestbenchEditor extends AbstractEditor {
 
     private static final long serialVersionUID = 1L;
 
     private Testbench testbench = null;
-    private JTestbench jTestbench = null;
+    protected JTestbench jTestbench = null;
     private boolean GUICreated = false;
 
     private void initTestbench(String xml) {
@@ -165,8 +164,7 @@ public class TestbenchEditor extends AbstractEditor implements Wizard {
         this.jTestbench.setModel(this.testbench);
     }
 
-    @Override
-    public File getInitialFileContent(Component parent,
+    private File getInitialFileContent(Component parent,
             Project project) {
         Set<File> files = getContainer().getWorkspaceManager()
                 .getFilesForProject(project);

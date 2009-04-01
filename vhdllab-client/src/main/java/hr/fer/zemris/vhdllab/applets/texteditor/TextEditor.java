@@ -1,13 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,13 +45,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-import org.apache.log4j.Logger;
-
-public class TextEditor extends AbstractEditor implements Wizard {
-    /**
-     * Logger for this class
-     */
-    private static final Logger LOG = Logger.getLogger(TextEditor.class);
+public class TextEditor extends AbstractEditor {
 
     private static final long serialVersionUID = 1L;
     JTextPane text;
@@ -192,10 +183,6 @@ public class TextEditor extends AbstractEditor implements Wizard {
         return text.getText();
     }
 
-    public Wizard getWizard() {
-        return this;
-    }
-
     @Override
     protected void doInitWithoutData() {
         initGUI();
@@ -246,11 +233,6 @@ public class TextEditor extends AbstractEditor implements Wizard {
             undoAction.updateUndoState();
             redoAction.updateRedoState();
         }
-    }
-
-    @Override
-    public File getInitialFileContent(Component parent, Project project) {
-        return null;
     }
 
     @Override

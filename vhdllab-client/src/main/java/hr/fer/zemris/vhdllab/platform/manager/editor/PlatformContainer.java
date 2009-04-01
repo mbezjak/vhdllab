@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 public class PlatformContainer extends AbstractLocalizationSource {
 
     @Autowired
-    private WizardManager systemContainer;
-    @Autowired
     private EditorManagerFactory editorManagerFactory;
     @Autowired
     private ProjectExplorer projectExplorer;
@@ -27,10 +25,6 @@ public class PlatformContainer extends AbstractLocalizationSource {
     private WorkspaceManager workspaceManager;
     @Autowired
     private MetadataExtractionService metadataExtractionService;
-
-    public WizardManager getSystemContainer() {
-        return systemContainer;
-    }
 
     public EditorManagerFactory getEditorManagerFactory() {
         return editorManagerFactory;

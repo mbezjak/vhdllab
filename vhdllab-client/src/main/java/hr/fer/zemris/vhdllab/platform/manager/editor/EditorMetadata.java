@@ -6,8 +6,6 @@ public interface EditorMetadata {
 
     String getCode();
 
-    Class<? extends Wizard> getWizardClass();
-
     boolean isSaveable();
 
     boolean isEditable();

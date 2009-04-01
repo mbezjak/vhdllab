@@ -1,23 +1,23 @@
 package hr.fer.zemris.vhdllab.applets.simulations;
 
 import hr.fer.zemris.vhdllab.entity.File;
-import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.platform.manager.editor.Wizard;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -40,76 +40,74 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-
-public class WaveApplet extends AbstractEditor implements Wizard {
-
-	/** Ovaj container */
-	private JPanel cp = this;
+public class WaveApplet extends AbstractEditor {
+    /** Ovaj container */
+	protected JPanel cp = this;
 
 	/** Panel koji sadrzi imena signala */
-	private SignalNamesPanel signalNames;
+	protected SignalNamesPanel signalNames;
 
 	/** Panel koji sadrzi trenutne vrijednosti u ovisnosti o polozaju kursora */
-	private SignalValuesPanel signalValues;
+	protected SignalValuesPanel signalValues;
 
 	/** Panel na kojem se crtaju valni oblici */
-	private WaveDrawBoard waves;
+	protected WaveDrawBoard waves;
 
 	/** Panel koji sadrzi skalu */
-	private Scale scale;
+	protected Scale scale;
 
 	/**
 	 * Vertikalni scrollbar koji pomice panel s imenima signala i panel s valnim
 	 * oblicima
 	 */
-	private JScrollBar verticalScrollbar;
+	protected JScrollBar verticalScrollbar;
 
 	/** Horizontalni scrollbar pomice panel s valnim oblicima i skalu */
-	private JScrollBar horizontalScrollbar;
+	protected JScrollBar horizontalScrollbar;
 
 	/** Scrollbar koji pomice panel s imenima signala */
-	private JScrollBar signalNamesScrollbar;
+	protected JScrollBar signalNamesScrollbar;
 
 	/** Scrollbar koji pomice panel s trenutnim vrijednostima ovisno o kursoru */
-	private JScrollBar signalValuesScrollbar;
+	protected JScrollBar signalValuesScrollbar;
 
 	// /** Textfield koji sadrzi tocnu vrijednost na kojoj se nalazi kursor misa
 	// */
 	// private JTextField textField = new RoundField(10);
 
 	/** Search signal */
-	private JTextField search = new RoundField(10);
+	protected JTextField search = new RoundField(10);
 
 	/** Vremenska razlika izmedu kursora i mouse kursora */
-	private JTextField interval = new RoundField(10);
+	protected JTextField interval = new RoundField(10);
 
 	/** Panel po kojem se pomice znacka kursora */
-	private CursorPanel cursorPanel;
+	protected CursorPanel cursorPanel;
 
 	/** Popup meni koji sadrzi ikone za pozicioniranje na bridove signala */
-	private JPopupMenu popup = new JPopupMenu();
+	protected JPopupMenu popup = new JPopupMenu();
 
 	/** Help popup */
-	private JPopupMenu popupHelp = new JPopupMenu();
+	protected JPopupMenu popupHelp = new JPopupMenu();
 
 	/** Trenutna vrijednost na dvoklik misa */
-	private JPopupMenu showValue = new JPopupMenu();
+	protected JPopupMenu showValue = new JPopupMenu();
 
 	/** Trenutna vrijednost ide u ovaj textField */
 	/*
 	 * Bitno je ovdje ne staviti fiksnu duljinu jer ce paneli gledati tu
 	 * duljinu, a ne broj znakova u textFieldu
 	 */
-	private JTextField currentValue = new JTextField();
+	protected JTextField currentValue = new JTextField();
 
 	/** Sadrzi rezultate simulacije. */
-	private GhdlResults results;
+	protected GhdlResults results;
 
 	/** Help panel */
 	private HelpPanel helpPanel;
 
 	/** Options popup */
-	private JPopupMenu optionsPopup = new JPopupMenu();
+	protected JPopupMenu optionsPopup = new JPopupMenu();
 
 	/** Divider koji razdvaja panel s imenima signala i trenutnim vrijednostima */
 	private JPanel divider1 = new JPanel();
@@ -118,7 +116,7 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	private JPanel divider2 = new JPanel();
 
 	/** Sve boje koje se koriste */
-	private ThemeColor themeColor = new ThemeColor();
+	protected ThemeColor themeColor = new ThemeColor();
 
 	/* ikone */
 	private Icon navigate = new ImageIcon(getClass().getResource("navigate.png"));
@@ -143,33 +141,33 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	private JButton navigateSignals = new JButton(navigate);
 
 	/** Sljedeci rastuci brid */
-	private JButton rightUp = new JButton(rightUpIcon);
+	protected JButton rightUp = new JButton(rightUpIcon);
 
 	/** Sljedeci padajuci brid */
-	private JButton rightDown = new JButton(rightDownIcon);
+	protected JButton rightDown = new JButton(rightDownIcon);
 
 	/** Prethodni rastuci brid */
-	private JButton leftUp = new JButton(leftUpIcon);
+	protected JButton leftUp = new JButton(leftUpIcon);
 
 	/** Prethodni padajuci brid */
-	private JButton leftDown = new JButton(leftDownIcon);
+	protected JButton leftDown = new JButton(leftDownIcon);
 
 	/* Go to aktivni kursor */
-	private JButton gotoButton = new JButton(gotoIcon);
+	protected JButton gotoButton = new JButton(gotoIcon);
 
 	/* Go to pasivni kursor */
 	private JButton gotoPasiveButton = new JButton(gotoPasiveIcon);
 
-	private JButton zoomInTwoButton = new JButton(zoomInTwoIcon);
+	protected JButton zoomInTwoButton = new JButton(zoomInTwoIcon);
 
-	private JButton zoomOutTwoButton = new JButton(zoomOutTwoIcon);
+	protected JButton zoomOutTwoButton = new JButton(zoomOutTwoIcon);
 
-	private JButton zoomInTenButton = new JButton(zoomInTenIcon);
+	protected JButton zoomInTenButton = new JButton(zoomInTenIcon);
 
-	private JButton zoomOutTenButton = new JButton(zoomOutTenIcon);
+	protected JButton zoomOutTenButton = new JButton(zoomOutTenIcon);
 
 	/** Vraca defaultni poredak signala */
-	private JButton defaultButton = new JButton(defaultIcon);
+	protected JButton defaultButton = new JButton(defaultIcon);
 
 	private JButton upButton = new JButton(upIcon);
 
@@ -181,24 +179,24 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 
 	private JButton okButton = new JButton("Ok");
 
-	private JButton defaultTheme = new JButton("DefaultTheme");
+	protected JButton defaultTheme = new JButton("DefaultTheme");
 
 	private JButton secondTheme = new JButton("SecondTheme");
 
 	/* liste */
 	private DefaultListModel shapes = new DefaultListModel();
 
-	private JList listShapes = new JList(shapes);
+	protected JList listShapes = new JList(shapes);
 
 	private DefaultListModel components = new DefaultListModel();
 
-	private JList listComponents = new JList(components);
+	protected JList listComponents = new JList(components);
 
 	/* color chooser */
-	private JColorChooser colorChooser = new JColorChooser();
+	protected JColorChooser colorChooser = new JColorChooser();
 
 	/* prethodno pritisnuta tipka. Potrebna za kombinaciju dviju tipki */
-	private char previousKey = 'A';
+	protected char previousKey = 'A';
 
 	/** SerialVersionUID */
 	private static final long serialVersionUID = 1L;
@@ -1204,29 +1202,10 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	 * Mouse listener koji osluskuje klik misa iznad panela s kursorima i na
 	 * temelju podrucja klika mijenja aktivni kursor
 	 */
-	private MouseListener mouseCursorListener = new MouseListener() {
+	private MouseListener mouseCursorListener = new MouseAdapter() {
 
-		public void mousePressed(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseReleased(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseEntered(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseExited(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseClicked(MouseEvent event) {
+		@Override
+        public void mouseClicked(MouseEvent event) {
 			double value = event.getX() + horizontalScrollbar.getValue();
 			/* provjerava je li kliknut cursor */
 			if (value >= cursorPanel.getFirstCursorStartPoint() - 5
@@ -1253,19 +1232,12 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	 * Mouse listener koji pomice divider1 i mijenja sirinu panela s imenima
 	 * signala
 	 */
-	private MouseMotionListener firstDividerListener = new MouseMotionListener() {
-		/**
-		 * Metoda koja upravlja eventom
-		 */
-		public void mouseMoved(MouseEvent event) {
-			;
-		}
-
-
+	private MouseMotionListener firstDividerListener = new MouseMotionAdapter() {
 		/**
 		 * Mijenja sirinu panela s imenima signala
 		 */
-		public void mouseDragged(MouseEvent event) {
+		@Override
+        public void mouseDragged(MouseEvent event) {
 			if (signalNames.getPanelWidth() <= 5 && event.getX() < 0) {
 				return;
 			}
@@ -1284,19 +1256,13 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	 * Mouse listener koji pomice divider2 i mijenja sirinu panela s trenutnim
 	 * vrijednostima
 	 */
-	private MouseMotionListener secondDividerListener = new MouseMotionListener() {
-		/**
-		 * Metoda koja upravlja eventom
-		 */
-		public void mouseMoved(MouseEvent event) {
-			;
-		}
-
+	private MouseMotionListener secondDividerListener = new MouseMotionAdapter() {
 
 		/**
 		 * Mijenja sirinu panela s imenima signala
 		 */
-		public void mouseDragged(MouseEvent event) {
+		@Override
+        public void mouseDragged(MouseEvent event) {
 			if (signalValues.getPanelWidth() <= 5 && event.getX() < 0) {
 				return;
 			}
@@ -1316,29 +1282,10 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	 * panela s trenutnim vrijednostima te na temelju trenutne vrijednosti po
 	 * X-osi mijenja background iznad trenutno oznacenog signala
 	 */
-	private MouseListener mouseClickListener = new MouseListener() {
+	private MouseListener mouseClickListener = new MouseAdapter() {
 
-		public void mousePressed(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseReleased(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseEntered(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseExited(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseClicked(MouseEvent event) {
+		@Override
+        public void mouseClicked(MouseEvent event) {
 			int mouseButton = event.getButton();
 			int value = event.getY() + verticalScrollbar.getValue();
 			int index = 0;
@@ -1395,29 +1342,10 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	 * na temelju trenutne vrijednosti po X-osi mijenja background iznad
 	 * trenutno oznacenog signala
 	 */
-	private MouseListener mouseWaveListener = new MouseListener() {
+	private MouseListener mouseWaveListener = new MouseAdapter() {
 
-		public void mousePressed(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseReleased(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseEntered(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseExited(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseClicked(MouseEvent event) {
+		@Override
+        public void mouseClicked(MouseEvent event) {
 			int mouseButton = event.getButton();
 
 			/*
@@ -1525,28 +1453,10 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	/**
 	 * Listener koji resetira search polje kada se klikne na njega
 	 */
-	private MouseListener searchClickListener = new MouseListener() {
-		public void mousePressed(MouseEvent event) {
-			;
-		}
+	private MouseListener searchClickListener = new MouseAdapter() {
 
-
-		public void mouseReleased(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseEntered(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseExited(MouseEvent event) {
-			;
-		}
-
-
-		public void mouseClicked(MouseEvent event) {
+		@Override
+        public void mouseClicked(MouseEvent event) {
 			search.setText("");
 		}
 	};
@@ -1554,8 +1464,9 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	/**
 	 * Key listener
 	 */
-	private KeyListener keyListener = new KeyListener() {
-		public void keyTyped(KeyEvent event) {
+	private KeyListener keyListener = new KeyAdapter() {
+		@Override
+        public void keyTyped(KeyEvent event) {
 			char key = event.getKeyChar();
 			switch (key) {
 			case '+' :
@@ -1616,7 +1527,8 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 		}
 
 
-		public void keyPressed(KeyEvent event) {
+		@Override
+        public void keyPressed(KeyEvent event) {
 			int key = event.getKeyCode();
 			switch (key) {
 			case KeyEvent.VK_UP :
@@ -1648,10 +1560,6 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 			}
 		}
 
-
-		public void keyReleased(KeyEvent event) {
-			;
-		}
 	};
 
 	@Override
@@ -1661,15 +1569,6 @@ public class WaveApplet extends AbstractEditor implements Wizard {
 	@Override
 	protected String getData() {
 	    return null;
-	}
-
-	public Wizard getWizard() {
-		return this;
-	}
-
-	@Override
-	public File getInitialFileContent(Component parent, Project project) {
-		return null;
 	}
 
 }
