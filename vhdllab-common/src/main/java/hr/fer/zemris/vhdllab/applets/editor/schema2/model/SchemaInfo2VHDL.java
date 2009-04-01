@@ -53,9 +53,6 @@ public class SchemaInfo2VHDL {
 	
 	/**
 	 * Generira VHDL kod.
-	 * 
-	 * @param info
-	 * @return
 	 */
 	public Result generateVHDL(ISchemaInfo schemaInfo) {		
 		info = schemaInfo;

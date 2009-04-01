@@ -157,11 +157,11 @@ public class DeleteSegmentAndDivideCommand implements ICommand {
 
 	
 	/* private fields */
-	private Caseless wirename;
-	private WireSegment segment;
-	private Set<Caseless> divided;
+	protected Caseless wirename;
+	protected WireSegment segment;
+	protected Set<Caseless> divided;
 	private Set<UnplugWrapper> unplugged;
-	private Map<Caseless, IntList> renamedmappings;
+	protected Map<Caseless, IntList> renamedmappings;
 	private EActionState actionstate;
 	
 

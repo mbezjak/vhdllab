@@ -150,7 +150,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 	
 	
 	/* private fields */
-	private PortRelation portrel;
+	protected PortRelation portrel;
 	private List<SchemaPort> schemaports;
 	private IParameterCollection parameters;
 	private IComponentDrawer drawer;

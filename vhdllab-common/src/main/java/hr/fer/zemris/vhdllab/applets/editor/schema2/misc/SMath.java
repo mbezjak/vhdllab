@@ -21,7 +21,6 @@ public class SMath {
 	 * @param dist
 	 * @param ports
 	 * Lista portova. Vraca se ERROR za null.
-	 * @return
 	 */
 	public static int calcClosestPort(int x, int y, int dist, List<SchemaPort> ports) {
 		if (ports == null) return ERROR;
@@ -50,12 +49,9 @@ public class SMath {
 	 * dist. Ako je udaljen vise od dist
 	 * ili ne postoji, vraca se ERROR.
 	 * 
-	 * @param x
-	 * @param y
 	 * @param dist
 	 * @param ports
 	 * Lista portova. Vraca se ERROR za null.
-	 * @return
 	 */
 	public static int calcClosestPort(XYLocation location, int dist, List<SchemaPort> ports) {
 		return calcClosestPort(location.x, location.y, dist, ports);
@@ -102,7 +98,6 @@ public class SMath {
 	 * @param x
 	 * @param y
 	 * @param componentCoord
-	 * @return
 	 */
 	public static XYLocation toCompCoord(int x, int y, XYLocation componentCoord) {
 		return new XYLocation(x - componentCoord.x, y - componentCoord.y);
@@ -116,7 +111,6 @@ public class SMath {
 	 * 
 	 * @param location
 	 * @param componentCoord
-	 * @return
 	 */
 	public static XYLocation toCompCoord(XYLocation location, XYLocation componentCoord) {
 		return new XYLocation(location.x - componentCoord.x,

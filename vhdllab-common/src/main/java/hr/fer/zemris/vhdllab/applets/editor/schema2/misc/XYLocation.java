@@ -53,7 +53,6 @@ public final class XYLocation implements Comparable<XYLocation> {
 	 * @param ypos
 	 * @param wdt
 	 * @param hgt
-	 * @return
 	 */
 	public final boolean in(int xpos, int ypos, int wdt, int hgt) {
 		return (x >= xpos && x <= (xpos + wdt) && y >= ypos && y <= (ypos + hgt));

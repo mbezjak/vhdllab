@@ -9,13 +9,13 @@ import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 public class GroupBox extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private String title;
+	protected String title;
 	
 	private Component innerPane;
 	
@@ -49,7 +49,8 @@ public class GroupBox extends JPanel {
 			super();
 		}
 		
-		public void paint(Graphics g){
+		@Override
+        public void paint(Graphics g){
 			g.setColor(Color.BLACK);
 			g.drawLine(5,0,5,getSize().height);
 		}
@@ -65,11 +66,13 @@ public class GroupBox extends JPanel {
 			super();
 		}
 		
-		public void setFont(Font font){
+		@Override
+        public void setFont(Font font){
 			this.font=font;
 		}
 	
-		public void paint(Graphics graph){
+		@Override
+        public void paint(Graphics graph){
 			//cast so that we can use getFontRenderContext()
 			Graphics2D g=(Graphics2D)graph;
 			
@@ -93,7 +96,8 @@ public class GroupBox extends JPanel {
 			super();
 		}
 	
-		public void paint(Graphics g){
+		@Override
+        public void paint(Graphics g){
 			g.setColor(Color.BLACK);
 			g.drawLine(5,5,getSize().width-5,5);
 			g.drawLine(5,5,5,0);

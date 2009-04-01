@@ -54,38 +54,38 @@ public class JDrawArea extends JComponent {
 	private static final int signalPad = 5;
 	private static final int vectorPad = 8;
 
-	private int screenWidth;
+	protected int screenWidth;
 
 	private int newReference = timeLineHeight;
 
 	private long testBenchLength;
-	private long testBenchLengthScaled;
-	private long begin;
-	private long beginScaled;
-	private long length;
-	private long lengthScaled;
+	protected long testBenchLengthScaled;
+	protected long begin;
+	protected long beginScaled;
+	protected long length;
+	protected long lengthScaled;
 
-	private long multiplier = 1;
+	protected long multiplier = 1;
 	private long inputSetupTime = -1;
 	private long checkOutputsTime = -1;
 	private ChangeStateEdge changeStateEdge;
 	private Radix radix;
 
-	private boolean isClockTestbench;
+	protected boolean isClockTestbench;
 	private long clockUpTime = 0;
 	private long periodLength;
 
-	private boolean markerCaught = false;
+	protected boolean markerCaught = false;
 
-	private int beginIndex;
+	protected int beginIndex;
 	
 	private List<Signal> signalList;
 	private ClockSignal clockSignal;
-	private Marker marker;
+	protected Marker marker;
 	private List<VectorSignal> expanded = new ArrayList<VectorSignal>();
 	private HashMap<VectorSignal, Rectangle> vExpandList = new HashMap<VectorSignal, Rectangle>();
-	private HashMap<Integer, Signal> indexSignalMap = new HashMap<Integer, Signal>();
-	private Scale scale;
+	protected HashMap<Integer, Signal> indexSignalMap = new HashMap<Integer, Signal>();
+	protected Scale scale;
 
 	public JDrawArea(Testbench testbench) {
 
@@ -742,9 +742,9 @@ public class JDrawArea extends JComponent {
 	private class Marker {
 
 		private Polygon polygon;
-		private int position;
-		private long markedTime;
-		private boolean showing;
+		protected int position;
+		protected long markedTime;
+		protected boolean showing;
 
 		public Marker(long markedTime) {
 			this.markedTime = markedTime;

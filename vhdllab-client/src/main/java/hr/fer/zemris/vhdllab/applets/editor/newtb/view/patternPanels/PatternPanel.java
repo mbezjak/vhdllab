@@ -108,7 +108,6 @@ public abstract class PatternPanel extends JPanel {
 	 * @param cycles
 	 * @param dim
 	 * @param periodLength
-	 * @return
 	 * @throws NumberFormatException
 	 * @throws UniformSignalChangeException
 	 * @throws UniformPatternException

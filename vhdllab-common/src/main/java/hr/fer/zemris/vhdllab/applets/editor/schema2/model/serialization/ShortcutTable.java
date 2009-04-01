@@ -44,7 +44,6 @@ public class ShortcutTable {
 	/**
 	 * 
 	 * @param key
-	 * @return
 	 */
 	public String get(String key) {
 		return shortcutmap.get(key);

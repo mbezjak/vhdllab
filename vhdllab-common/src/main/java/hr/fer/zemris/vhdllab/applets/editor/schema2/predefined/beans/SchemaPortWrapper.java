@@ -52,7 +52,6 @@ public final class SchemaPortWrapper {
 	/**
 	 * Dobavlja ime porta.
 	 * 
-	 * @return
 	 */
 	public final String getName() {
 		return name;

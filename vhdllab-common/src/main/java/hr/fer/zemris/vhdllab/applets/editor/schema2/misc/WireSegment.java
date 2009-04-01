@@ -153,7 +153,6 @@ public final class WireSegment {
 	/**
 	 * Odreduje da li je zica okomita.
 	 * 
-	 * @return
 	 */
 	public final boolean isVertical() {
 		return (loc1.x == loc2.x);
@@ -163,7 +162,6 @@ public final class WireSegment {
 	 * Odreduje da li je zadana tocka na tom segmentu.
 	 * @param x
 	 * @param y
-	 * @return
 	 */
 	public final boolean hasPoint(int x, int y) {
 		if (loc1.x == loc2.x) {
@@ -201,7 +199,6 @@ public final class WireSegment {
 	 * 
 	 * @param xlkp
 	 * @param ylkp
-	 * @return
 	 */
 	public final int calcDist(int xlkp, int ylkp) {
 		if (this.isVertical()) {

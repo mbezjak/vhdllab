@@ -67,7 +67,7 @@ public class InitTimingDialog extends JDialog {
 	 * <li>{@link #CLOSED_OPTION}</li>
 	 * </ul>
 	 */
-	private int option = -1;
+	protected int option = -1;
 	/**
 	 * Return value from class method if user closes window without selecting
 	 * anything, more than likely this should be treated as
@@ -159,7 +159,7 @@ public class InitTimingDialog extends JDialog {
 	 * is hidden if the NumberFields are filled in correctly
 	 */
 	private JLabel errorMessage1 = new JLabel("Field(s) marked with * have to be filled with positive integer");
-	private JLabel errorMessage2 = new JLabel("Input Setup Time field has to be a non negative integer smaller than Clock Time Low if Rising edge is selected");
+	protected JLabel errorMessage2 = new JLabel("Input Setup Time field has to be a non negative integer smaller than Clock Time Low if Rising edge is selected");
 	private JLabel errorMessage3 = new JLabel("The sum of Checked Outputs and Assign Inputs has to be less than Initial Length of Testbench ");
 
 	
@@ -170,7 +170,7 @@ public class InitTimingDialog extends JDialog {
 	private JPanel image = new JPanel(new BorderLayout());
 	
 	/** a ImageComponent */
-	private ImpulsImageComponent impulsImage = new ImpulsImageComponent(this);
+	protected ImpulsImageComponent impulsImage = new ImpulsImageComponent(this);
 	
 	/** a key listener which checks for irregularities in NumberFields */
 	private KeyListener keyListener = new KeyListener(){
@@ -558,7 +558,8 @@ public class InitTimingDialog extends JDialog {
 				|| isCombinatorial() && d && e && f){
 			ok.setEnabled(true);
 			return true;
-		}else return false;
+		}
+		return false;
 	}
 	
 	protected void setClockTimingInformationEnable(boolean b){

@@ -21,7 +21,7 @@ public class CanvasToolbar extends JToolBar implements PropertyChangeListener,Ac
 	 */
 	private static final long serialVersionUID = 8135365480214217897L;
 
-	private ILocalGuiController localController = null;
+	protected ILocalGuiController localController = null;
 	private JToggleButton addWireState=null;
 	private JToggleButton selactState=null;
 	private JToggleButton deleteState=null;

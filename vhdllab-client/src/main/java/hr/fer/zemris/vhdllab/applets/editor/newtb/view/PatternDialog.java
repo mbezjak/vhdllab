@@ -147,7 +147,6 @@ public class PatternDialog extends JDialog implements ActionListener {
      * Called when used this dialog externally
      * @param signalDimension Dimension of vector
      * @param periodLength Length of period
-     * @return
      */
     public static Pattern getResultVector(int signalDimension, long periodLength) {
         PatternDialog d = new PatternDialog(signalDimension, periodLength, true);
@@ -157,7 +156,6 @@ public class PatternDialog extends JDialog implements ActionListener {
     /**
      * Same as getResultVector(), just without dimension becaouse it is one.
      * @param periodLength Length of period
-     * @return
      */
     public static Pattern getResultScalar(long periodLength) {
         PatternDialog d = new PatternDialog(1, periodLength, false);

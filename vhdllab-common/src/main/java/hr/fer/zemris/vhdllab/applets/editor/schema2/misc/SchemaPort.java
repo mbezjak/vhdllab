@@ -66,7 +66,6 @@ public final class SchemaPort {
 	 * lijevog kuta komponente.
 	 * Ne vraca kopiju, vec referencu na pravu vrijednost!
 	 * 
-	 * @return
 	 */
 	public final XYLocation getOffset() {
 		return loc;
@@ -102,7 +101,6 @@ public final class SchemaPort {
 	/**
 	 * Dobavlja ime porta.
 	 * 
-	 * @return
 	 */
 	public final Caseless getName() {
 		return name;
@@ -123,7 +121,7 @@ public final class SchemaPort {
 	 * @return
 	 * Null ili prazan string ako nije spojen ni na sto,
 	 * ime signala inace.
-	 * @see Caseless.isNullOrEmpty()
+	 * @see {@link Caseless#isNullOrEmpty(Caseless)}
 	 */
 	public final Caseless getMapping() {
 		return mappedto;

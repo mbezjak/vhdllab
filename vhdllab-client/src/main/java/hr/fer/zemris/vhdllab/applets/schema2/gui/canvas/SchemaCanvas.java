@@ -70,47 +70,47 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	/**
 	 * Image used to create double-buffer effect.
 	 */
-	private BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+	protected BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
 	
 	/**
 	 * Collection containing all components in design.
 	 */
-	private ISchemaComponentCollection components = new SimpleSchemaComponentCollection();
+	protected ISchemaComponentCollection components = new SimpleSchemaComponentCollection();
 	
 	/**
 	 * Collection containing all wires in design.
 	 */
-	private ISchemaWireCollection wires = new SimpleSchemaWireCollection();
+	protected ISchemaWireCollection wires = new SimpleSchemaWireCollection();
 
 	/**
 	 * controller na razini schema-editora
 	 */
-	private ISchemaController controller;
+	protected ISchemaController controller;
 	
 	/**
 	 * controller na razini GUI-a
 	 */
-	private ILocalGuiController localController;
+	protected ILocalGuiController localController;
 	
 	/**
 	 * Stanje u kojem se canvas nalazi.
 	 */
-	private ECanvasState state;
+	protected ECanvasState state;
 	
 	/**
 	 * komponenta koja se iscrtava kao komponenta za dodati
 	 */
-	private ISchemaComponent addComponentComponent = null;
+	protected ISchemaComponent addComponentComponent = null;
 
 	/**
 	 * Lokacija komponente za dodati
 	 */
-	private int addComponentX = 0, addComponentY = 0;
+	protected int addComponentX = 0, addComponentY = 0;
 	
 	/**
 	 * Sadr�ani svi podatci o zici za dodati...
 	 */
-	private IWirePreLocator preLoc = null;
+	protected IWirePreLocator preLoc = null;
 	
 	/**
 	 * trenutni critical point nad kojim je mis
@@ -125,17 +125,17 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	/**
 	 * critical point sa kojeg je zica krenula
 	 */
-	private CriticalPoint wireBeginning = null;
+	protected CriticalPoint wireBeginning = null;
 	
 	/**
 	 * critical point gdije je zica zavrsila
 	 */
-	private CriticalPoint wireEnding = null;
+	protected CriticalPoint wireEnding = null;
 	
 	private DrawingProperties drawProperties = null;
 	
 	private Timer timer = null;
-	private Caseless componentToMove = null;
+	protected Caseless componentToMove = null;
 	
 	private boolean isGridOn =true;
 	
@@ -208,7 +208,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	 * and wires collections.
 	 *
 	 */
-	@SuppressWarnings("unchecked")
 	private void drawComponents() {
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -703,8 +702,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	protected int alignToGrid(int x){
 		if(isGridOn)
 			return Math.round((float)x/Constants.GRID_SIZE)*Constants.GRID_SIZE;
-		else
-			return x;
+		return x;
 	}
 
 }

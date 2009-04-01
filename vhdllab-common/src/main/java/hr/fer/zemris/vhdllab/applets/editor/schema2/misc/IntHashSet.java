@@ -56,7 +56,7 @@ public class IntHashSet implements IntCollection, IntSet {
 	}; // TODO
 	
 	
-	private int[] space;
+	protected int[] space;
 	private float loadfactor, loadstate;
 	private int size;
 	
@@ -126,7 +126,7 @@ public class IntHashSet implements IntCollection, IntSet {
 		while (space[hval] != EMPTY_CELL && space[hval] != key) hval = (hval + 1) % space.length;
 		
 		if (space[hval] == EMPTY_CELL) return false;
-		else return true;
+		return true;
 	}
 	
 	/* (non-Javadoc)

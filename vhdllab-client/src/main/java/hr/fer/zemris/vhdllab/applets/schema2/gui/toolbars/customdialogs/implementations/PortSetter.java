@@ -36,9 +36,9 @@ public class PortSetter extends ParameterSetterPanel<ParamPort> {
 	private JRadioButton std_logicRadio;
 	private JRadioButton outRadio;
 	private JRadioButton inRadio;
-	private JTextField rangeToField;
-	private JComboBox vectorDirectionCombo;
-	private JTextField rangeFromField;
+	protected JTextField rangeToField;
+	protected JComboBox vectorDirectionCombo;
+	protected JTextField rangeFromField;
 	private ButtonGroup direction_group = new ButtonGroup();
 	private JTextField nameField;
 	private ButtonGroup type_group = new ButtonGroup();
