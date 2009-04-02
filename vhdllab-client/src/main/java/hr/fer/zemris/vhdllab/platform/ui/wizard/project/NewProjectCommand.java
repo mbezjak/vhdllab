@@ -11,4 +11,9 @@ public class NewProjectCommand extends AbstractShowWizardDialogCommand {
         return NewProjectWizard.class;
     }
 
+    @Override
+    protected void updateEnabledCommandState() {
+        setEnabled(true);
+    }
+
 }
