@@ -6,7 +6,6 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +15,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class MulticastEditorManager implements EditorManager {
 
-    @Autowired
-    private IdentifierToInfoObjectMapper mapper;
     @Resource(name = "saveDialogManager")
     private DialogManager saveDialog;
 

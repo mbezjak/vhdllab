@@ -11,7 +11,6 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 
 import javax.annotation.Resource;
@@ -33,8 +32,6 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
 
     @Autowired
     private EditorRegistry registry;
-    @Autowired
-    private IdentifierToInfoObjectMapper mapper;
     @Autowired
     private EditorContainer container;
     private final EditorIdentifier identifier;

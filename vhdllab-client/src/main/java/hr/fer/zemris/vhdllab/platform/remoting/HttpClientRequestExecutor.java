@@ -33,6 +33,7 @@ public class HttpClientRequestExecutor extends
         Protocol.registerProtocol("https", easyhttps);
     }
 
+    @SuppressWarnings("null")
     @Override
     protected void executePostMethod(HttpInvokerClientConfiguration config,
             HttpClient httpClient, PostMethod postMethod) throws IOException {
