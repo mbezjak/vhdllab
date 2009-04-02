@@ -1,9 +1,14 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.automaton;
 
+import org.hibernate.validator.NotNull;
+
 public class AutomatonInfo {
 
+    @NotNull
     private String automatonType;
+    @NotNull
     private String resetValue;
+    @NotNull
     private String clockValue;
 
     public String getAutomatonType() {

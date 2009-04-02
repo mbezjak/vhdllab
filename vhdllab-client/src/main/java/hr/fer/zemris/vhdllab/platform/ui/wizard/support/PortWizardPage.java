@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.ui.wizard.source;
+package hr.fer.zemris.vhdllab.platform.ui.wizard.support;
 
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
@@ -131,6 +131,10 @@ public class PortWizardPage extends AbstractWizardPage {
     @Override
     public void onAboutToShow() {
         super.onAboutToShow();
+        validate();
+    }
+    
+    private void validate() {
         reporter.validate();
     }
 

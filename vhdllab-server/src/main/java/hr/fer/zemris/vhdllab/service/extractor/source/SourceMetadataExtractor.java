@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.service.extractor.source;
 
-import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.VectorDirection;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
 import hr.fer.zemris.vhdllab.service.ci.PortDirection;
@@ -152,14 +151,8 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
         if (end == -1) {
             throwException();
         }
-        String direction = s.substring(start, end);
+        // vector direction here that we omit
         end += WHITESPACE.length();
-        VectorDirection vectorDirection = null;
-        try {
-            vectorDirection = VectorDirection.valueOf(direction);
-        } catch (IllegalArgumentException e) {
-            throwException();
-        }
         start = end;
         end = s.indexOf(RIGHT_BRACKET, start);
         String toString = s.substring(start, end).trim();

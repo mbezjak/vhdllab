@@ -4,11 +4,13 @@ import hr.fer.zemris.vhdllab.applets.editor.automat.CodeGenerator;
 import hr.fer.zemris.vhdllab.applets.editor.automaton.AUTPodatci;
 import hr.fer.zemris.vhdllab.applets.editor.automaton.Prijelaz;
 import hr.fer.zemris.vhdllab.applets.editor.automaton.Stanje;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractNewFileWizard;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileForm;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.support.PortWizardPage;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
-import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,28 +20,32 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.richclient.form.FormModelHelper;
-import org.springframework.richclient.wizard.FormBackedWizardPage;
 import org.springframework.stereotype.Component;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NewAutomatonWizard extends AbstractNewFileWizard {
 
+    private FileForm fileForm;
     private AutomatonInfoForm automatonForm;
+    private PortWizardPage portWizardPage;
 
-    public NewAutomatonWizard() {
-        super(BeanUtil.getBeanName(NewAutomatonWizard.class));
+    @Override
+    public void addPages() {
+        fileForm = new FileForm();
+        addForm(fileForm);
+
+        automatonForm = new AutomatonInfoForm();
+        addForm(automatonForm);
+
+        portWizardPage = new PortWizardPage();
+        portWizardPage.setMinimumPortCount(1);
+        addPage(portWizardPage);
     }
 
     @Override
-    protected void addPortWizardPage() {
-        automatonForm = new AutomatonInfoForm(FormModelHelper
-                .createFormModel(new AutomatonInfo()));
-        addPage(new FormBackedWizardPage(automatonForm));
-
-        super.addPortWizardPage();
-        portPage.setMinimumPortCount(1);
+    protected File getFile() {
+        return getFile(fileForm);
     }
 
     @Override
@@ -48,16 +54,10 @@ public class NewAutomatonWizard extends AbstractNewFileWizard {
     }
 
     @Override
-    protected void onWizardFinished(Object formObject) {
-        automatonForm.commit();
-        super.onWizardFinished(formObject);
-    }
-
-    @Override
-    protected String createData(CircuitInterface ci) {
+    protected String createData() {
+        CircuitInterface ci = getCircuitInterface(fileForm, portWizardPage);
         AutomatonInfo automatonInfo = (AutomatonInfo) automatonForm
                 .getFormObject();
-
         String ime = ci.getName();
         String tip = automatonInfo.getAutomatonType();
         String interfac = createInterface(ci);

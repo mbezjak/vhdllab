@@ -67,7 +67,7 @@
         <idref bean="newProjectCommand"/>
         <value>separator</value>
         <idref bean="newSourceCommand"/>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.NewTestbenchCommand" />
+        <idref bean="newTestbenchCommand"/>
         <idref bean="newSchemaCommand"/>
         <idref bean="newAutomatonCommand"/>
       </list>
@@ -75,6 +75,7 @@
   </bean>
   <bean id="newProjectCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.project.NewProjectCommand"/>
   <bean id="newSourceCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.source.NewSourceCommand"/>
+  <bean id="newTestbenchCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.NewTestbenchCommand"/>
   <bean id="newSchemaCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.schema.NewSchemaCommand"/>
   <bean id="newAutomatonCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.NewAutomatonCommand"/>
 

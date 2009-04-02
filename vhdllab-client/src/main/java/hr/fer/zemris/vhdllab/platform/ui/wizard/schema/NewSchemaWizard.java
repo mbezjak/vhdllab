@@ -8,11 +8,13 @@ import hr.fer.zemris.vhdllab.applets.editor.schema2.model.InOutSchemaComponent;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaEntity;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.SchemaInfo;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.model.serialization.SchemaSerializer;
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractNewFileWizard;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileForm;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.support.PortWizardPage;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.ci.Port;
-import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -29,8 +31,21 @@ public class NewSchemaWizard extends AbstractNewFileWizard {
 
     private static final int MARGIN_OFFSET = Constants.GRID_SIZE * 2;
 
-    public NewSchemaWizard() {
-        super(BeanUtil.getBeanName(NewSchemaWizard.class));
+    private FileForm fileForm;
+    private PortWizardPage portWizardPage;
+
+    @Override
+    public void addPages() {
+        fileForm = new FileForm();
+        addForm(fileForm);
+
+        portWizardPage = new PortWizardPage();
+        addPage(portWizardPage);
+    }
+
+    @Override
+    protected File getFile() {
+        return getFile(fileForm);
     }
 
     @Override
@@ -39,7 +54,8 @@ public class NewSchemaWizard extends AbstractNewFileWizard {
     }
 
     @Override
-    protected String createData(CircuitInterface ci) {
+    protected String createData() {
+        CircuitInterface ci = getCircuitInterface(fileForm, portWizardPage);
         try {
             return createSchema(ci);
         } catch (Exception e) {

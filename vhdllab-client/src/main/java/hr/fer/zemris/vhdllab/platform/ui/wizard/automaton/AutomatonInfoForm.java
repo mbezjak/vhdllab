@@ -1,31 +1,31 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.automaton;
 
-import javax.swing.JComponent;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractMultiValidationForm;
 
-import org.springframework.binding.form.FormModel;
-import org.springframework.richclient.form.AbstractForm;
+import org.springframework.richclient.form.binding.Binding;
 import org.springframework.richclient.form.binding.swing.SwingBindingFactory;
 import org.springframework.richclient.form.builder.TableFormBuilder;
 
-public class AutomatonInfoForm extends AbstractForm {
+public class AutomatonInfoForm extends AbstractMultiValidationForm {
 
-    public AutomatonInfoForm(FormModel formModel) {
-        super(formModel, "newAutomatonInfo");
+    public AutomatonInfoForm() {
+        super(new AutomatonInfo(), "newAutomatonInfo");
     }
 
     @Override
-    protected JComponent createFormControl() {
-        TableFormBuilder builder = new TableFormBuilder(getBindingFactory());
+    protected void doBuildForm(TableFormBuilder builder) {
+        focusOnBeginning(builder
+                .add(combobox("automatonType", "Moore", "Mealy"))[1]);
+        builder.row();
+        builder.add(combobox("resetValue", "0", "1"));
+        builder.row();
+        builder.add(combobox("clockValue", "falling_edge", "rising_edge", "0",
+                "1"));
+    }
+
+    private Binding combobox(String formProperty, String... selectableItems) {
         SwingBindingFactory factory = (SwingBindingFactory) getBindingFactory();
-        builder.add(factory.createBoundComboBox("automatonType", new String[] {
-                "Moore", "Mealy" }));
-        builder.row();
-        builder.add(factory.createBoundComboBox("resetValue", new String[] {
-                "0", "1" }));
-        builder.row();
-        builder.add(factory.createBoundComboBox("clockValue", new String[] {
-                "falling_edge", "rising_edge", "0", "1" }));
-        return builder.getForm();
+        return factory.createBoundComboBox(formProperty, selectableItems);
     }
 
 }

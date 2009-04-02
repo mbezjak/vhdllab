@@ -149,7 +149,7 @@ public class ProjectExplorerView extends AbstractView implements
     private AbstractButton createHierarchyButton(ActionCommand command) {
         AbstractButton button = command.createButton();
         button.setText(null);
-        String iconKey = BeanUtil.getBeanName(command.getClass()) + ".bigicon";
+        String iconKey = BeanUtil.beanName(command.getClass()) + ".bigicon";
         button.setIcon(getIconSource().getIcon(iconKey));
         return button;
     }
@@ -393,7 +393,7 @@ public class ProjectExplorerView extends AbstractView implements
 
     public class OpenCommand extends ActionCommand {
         public OpenCommand() {
-            super(BeanUtil.getBeanName(OpenCommand.class));
+            super(BeanUtil.beanName(OpenCommand.class));
             setEnabled(false);
         }
 
@@ -406,7 +406,7 @@ public class ProjectExplorerView extends AbstractView implements
 
     public class CompileCommand extends ActionCommand {
         public CompileCommand() {
-            super(BeanUtil.getBeanName(CompileCommand.class));
+            super(BeanUtil.beanName(CompileCommand.class));
             setEnabled(false);
         }
 
@@ -419,7 +419,7 @@ public class ProjectExplorerView extends AbstractView implements
 
     public class SimulateCommand extends ActionCommand {
         public SimulateCommand() {
-            super(BeanUtil.getBeanName(SimulateCommand.class));
+            super(BeanUtil.beanName(SimulateCommand.class));
             setEnabled(false);
         }
 
@@ -432,7 +432,7 @@ public class ProjectExplorerView extends AbstractView implements
 
     public class ViewVhdlCommand extends ActionCommand {
         public ViewVhdlCommand() {
-            super(BeanUtil.getBeanName(ViewVhdlCommand.class));
+            super(BeanUtil.beanName(ViewVhdlCommand.class));
             setEnabled(false);
         }
 
@@ -513,7 +513,7 @@ public class ProjectExplorerView extends AbstractView implements
 
     public class HierarchyXUsesYCommand extends ActionCommand {
         public HierarchyXUsesYCommand() {
-            super(BeanUtil.getBeanName(HierarchyXUsesYCommand.class));
+            super(BeanUtil.beanName(HierarchyXUsesYCommand.class));
         }
 
         @Override
@@ -524,7 +524,7 @@ public class ProjectExplorerView extends AbstractView implements
 
     public class HierarchyXUsedByYCommand extends ActionCommand {
         public HierarchyXUsedByYCommand() {
-            super(BeanUtil.getBeanName(HierarchyXUsedByYCommand.class));
+            super(BeanUtil.beanName(HierarchyXUsedByYCommand.class));
         }
 
         @Override
@@ -535,7 +535,7 @@ public class ProjectExplorerView extends AbstractView implements
 
     public class HierarchyFlatCommand extends ActionCommand {
         public HierarchyFlatCommand() {
-            super(BeanUtil.getBeanName(HierarchyFlatCommand.class));
+            super(BeanUtil.beanName(HierarchyFlatCommand.class));
         }
 
         @Override

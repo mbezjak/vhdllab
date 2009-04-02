@@ -69,6 +69,7 @@ public class DevelopmentFloodWithCompliationRequestsCommand extends
         long start = System.currentTimeMillis();
         for (int i = 0; i < floodCount; i++) {
             Thread thread = new Thread(new Runnable() {
+                @SuppressWarnings("synthetic-access")
                 @Override
                 public void run() {
                     try {

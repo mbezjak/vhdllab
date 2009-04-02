@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.ui.wizard.source;
+package hr.fer.zemris.vhdllab.platform.ui.wizard.support;
 
 import hr.fer.zemris.vhdllab.service.ci.Port;
 
@@ -41,6 +41,7 @@ public class PortValidationReporter extends ApplicationServicesAccessor
         this.validator = new ClassValidator<Port>(Port.class,
                 new HibernateRulesMessageInterpolator());
         model.addTableModelListener(this);
+        validate();
     }
 
     @Override

@@ -1,18 +1,11 @@
 package hr.fer.zemris.vhdllab.platform.gui;
 
-import hr.fer.zemris.vhdllab.platform.gui.container.ViewTabbedPane;
-
-import java.awt.BorderLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 
 public final class VhdllabFrame extends JFrame implements
         PreferenceChangeListener {
@@ -32,22 +25,22 @@ public final class VhdllabFrame extends JFrame implements
     private void initGUI() {
         MaximizationManager maximizationManager = new MaximizationManager();
 
-        JPanel projectExplorerPane = new JPanel(new BorderLayout());
-        JTabbedPane editorPane = new JTabbedPane();//new EditorTabbedPane(maximizationManager);
-        JTabbedPane viewPane = new ViewTabbedPane(maximizationManager);
+//        JPanel projectExplorerPane = new JPanel(new BorderLayout());
+//        JTabbedPane editorPane = new JTabbedPane();//new EditorTabbedPane(maximizationManager);
+//        JTabbedPane viewPane = new ViewTabbedPane(maximizationManager);
 
-        horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                projectExplorerPane, editorPane);
-        verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                horizontalSplitPane, viewPane);
-        add(maximizationManager.getCenterPanel(verticalSplitPane),
-                BorderLayout.CENTER);
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setPaneSize();
-            }
-        });
+//        horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+//                projectExplorerPane, editorPane);
+//        verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+//                horizontalSplitPane, viewPane);
+//        add(maximizationManager.getCenterPanel(verticalSplitPane),
+//                BorderLayout.CENTER);
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                setPaneSize();
+//            }
+//        });
     }
 
     @Override

@@ -1,31 +1,19 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.project;
 
-import hr.fer.zemris.vhdllab.platform.ui.wizard.Focusable;
+import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractMultiValidationForm;
 
-import javax.swing.JComponent;
-
-import org.springframework.binding.form.FormModel;
-import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.builder.TableFormBuilder;
 
-public class ProjectForm extends AbstractForm implements Focusable {
+public class ProjectForm extends AbstractMultiValidationForm {
 
-    private JComponent nameField;
-
-    public ProjectForm(FormModel formModel) {
-        super(formModel, "newProject");
+    public ProjectForm() {
+        super(new Project(), "newProject");
     }
 
     @Override
-    protected JComponent createFormControl() {
-        TableFormBuilder builder = new TableFormBuilder(getBindingFactory());
-        nameField = builder.add("name")[1];
-        return builder.getForm();
-    }
-    
-    @Override
-    public void requestFocusInWindow() {
-        nameField.requestFocusInWindow();
+    protected void doBuildForm(TableFormBuilder builder) {
+        focusOnBeginning(builder.add("name")[1]);
     }
 
 }

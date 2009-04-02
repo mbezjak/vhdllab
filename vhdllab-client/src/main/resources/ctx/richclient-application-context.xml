@@ -74,6 +74,12 @@
           </key>
           <ref bean="projectListBinder"/>
         </entry>
+        <entry>
+          <key>
+            <value type="java.lang.Class">hr.fer.zemris.vhdllab.entity.File</value>
+          </key>
+          <ref bean="fileListBinder"/>
+        </entry>
       </map>
     </property>
   </bean>

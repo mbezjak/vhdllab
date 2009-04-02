@@ -12,7 +12,9 @@ import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,7 +198,8 @@ public class DefaultWorkspaceManager extends
     @Override
     public void save(File file) {
         checkIfNull(file);
-        FileReport report = workspaceService.saveFile(file.getId(), file.getData());
+        FileReport report = workspaceService.saveFile(file.getId(), file
+                .getData());
         getWorkspace().addFile(report.getFile(), report.getHierarchy());
         addFile(report.getFile());
         fireFileSaved(report);
@@ -313,8 +317,30 @@ public class DefaultWorkspaceManager extends
     }
 
     @Override
+    public List<Project> getProjects(Predicate filter, Transformer transformer) {
+        List<Project> projects = new ArrayList<Project>(getProjects());
+        CollectionUtils.filter(projects, filter);
+        CollectionUtils.transform(projects, transformer);
+        return projects;
+    }
+
+    @Override
     public Set<File> getFilesForProject(Project project) {
         return getWorkspace().getFiles(project);
+    }
+
+    @Override
+    public Set<File> getFilesForProject(Project project, Predicate filter,
+            Transformer transformer) {
+        Set<File> files = new HashSet<File>(getFilesForProject(project));
+        CollectionUtils.filter(files, filter);
+        CollectionUtils.transform(files, transformer);
+        return files;
+    }
+
+    @Override
+    public boolean isEmpty(Project project, Predicate filter) {
+        return getFilesForProject(project, filter, null).isEmpty();
     }
 
     @Override

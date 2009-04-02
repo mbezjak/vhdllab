@@ -5,7 +5,7 @@ import org.apache.commons.lang.Validate;
 
 public abstract class BeanUtil {
 
-    public static String getBeanName(Class<?> clazz) {
+    public static String beanName(Class<?> clazz) {
         Validate.notNull(clazz, "Bean class can't be null");
         return StringUtils.uncapitalize(clazz.getSimpleName());
     }

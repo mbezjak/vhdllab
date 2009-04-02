@@ -3,7 +3,7 @@ package hr.fer.zemris.vhdllab.platform.ui.rule;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
-import hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.AutomatonInfo;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.TestbenchFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.closure.Constraint;
@@ -19,7 +19,7 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
         super();
         addRules(createProjectRules());
         addRules(createFileRules());
-        addRules(createAutomatonInfoRules());
+        addRules(createTestbenchFileRules());
     }
 
     private Rules createProjectRules() {
@@ -42,13 +42,13 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
         };
     }
 
-    private Rules createAutomatonInfoRules() {
-        return new Rules(AutomatonInfo.class) {
+    private Rules createTestbenchFileRules() {
+        return new Rules(TestbenchFile.class) {
             @Override
             protected void initRules() {
-                add("automatonType", required());
-                add("resetValue", required());
-                add("clockValue", required());
+                add("testbenchName",
+                        new Constraint[] { new TestbenchFileExistsConstraint(
+                                workspaceManager) });
             }
         };
     }

@@ -9,6 +9,9 @@ import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
+
 public interface WorkspaceManager extends EventPublisher<WorkspaceListener> {
 
     void create(File file) throws FileAlreadyExistsException;
@@ -23,7 +26,14 @@ public interface WorkspaceManager extends EventPublisher<WorkspaceListener> {
 
     List<Project> getProjects();
 
+    List<Project> getProjects(Predicate filter, Transformer transformer);
+
     Set<File> getFilesForProject(Project project);
+
+    Set<File> getFilesForProject(Project project, Predicate filter,
+            Transformer transformer);
+
+    boolean isEmpty(Project project, Predicate filter);
 
     Hierarchy getHierarchy(Project project);
 
