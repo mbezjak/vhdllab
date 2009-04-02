@@ -63,7 +63,8 @@ public class TimeCellEditor extends AbstractCellEditor implements
 		customEditor = new JPanel(new BorderLayout());
 		numberFiled = new JTextField();
 		metricField.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@SuppressWarnings("synthetic-access")
+            public void actionPerformed(ActionEvent e) {
 				fireEditingStopped();
 			}
 		});

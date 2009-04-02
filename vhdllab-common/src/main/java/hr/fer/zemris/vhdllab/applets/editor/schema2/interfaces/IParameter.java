@@ -114,15 +114,15 @@ public interface IParameter {
 	/**
 	 * Postavlja vrijednost parametra.
 	 * 
-	 * @throws
+	 * @param value
+	 * Vrijednost na koju parametar
+	 * treba postaviti.
+	 * @throws InvalidParameterValueException 
 	 * Navedenu iznimku u slucaju da proslijedena
 	 * vrijednost nije tipa kojeg je sam parametar.
 	 * Npr. nedozvoljeno je proslijediti String,
 	 * ako getType() vraca EParameterTypes.INTEGER.
 	 * 
-	 * @param value
-	 * Vrijednost na koju parametar
-	 * treba postaviti.
 	 */
 	void setValue(Object value) throws InvalidParameterValueException;
 	
@@ -146,7 +146,10 @@ public interface IParameter {
 	 * parametra proslijedivanjem stringa.
 	 * 
 	 * 
-	 * @throws
+	 * @param stringValue
+	 * String vrijednost parametra koja se
+	 * sama isparsira ako je to moguce.
+	 * @throws InvalidParameterValueException
 	 * Navedenu iznimku ako isParsable() vraca false,
 	 * ili ako nije moguce isparsirati tu vrijednost
 	 * (npr. 0.14e12dcvszdfs nije moguce isparsirati
@@ -154,9 +157,6 @@ public interface IParameter {
 	 * je vrijednost moguce isparsirati ali IParameterConstraint
 	 * ne dozvoljava navedenu vrijednost. 
 	 * 
-	 * @param stringValue
-	 * String vrijednost parametra koja se
-	 * sama isparsira ako je to moguce.
 	 */
 	void setAsString(String stringValue) throws InvalidParameterValueException;
 	

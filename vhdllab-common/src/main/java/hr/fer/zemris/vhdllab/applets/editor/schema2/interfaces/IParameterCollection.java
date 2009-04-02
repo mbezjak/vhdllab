@@ -32,10 +32,10 @@ public interface IParameterCollection extends Iterable<IParameter> {
 	 * moguce dohvatiti i vrijednost
 	 * i tip parametra.
 	 * 
-	 * @throws
-	 * Navedenu iznimku ako parametar ne postoji.
 	 * @param key
 	 * Kljuc za dohvat.
+	 * @throws ParameterNotFoundException
+	 * Navedenu iznimku ako parametar ne postoji.
 	 * @return
 	 * IParametar ako isti postoji.
 	 */
@@ -73,10 +73,10 @@ public interface IParameterCollection extends Iterable<IParameter> {
 	 * getParameter() od dobivenog parametra, pa
 	 * je ona u biti pokrata.
 	 * 
-	 * @throws
-	 * Navedenu iznimku ako parametar ne postoji.
 	 * @param key
 	 * Kljuc za dohvat.
+	 * @throws ParameterNotFoundException
+	 * Navedenu iznimku ako parametar ne postoji.
 	 * @return
 	 * IParametar ako isti postoji.
 	 * 

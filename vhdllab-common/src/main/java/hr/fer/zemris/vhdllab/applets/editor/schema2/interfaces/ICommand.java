@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces;
 
 
-import hr.fer.zemris.vhdllab.applets.editor.schema2.constants.CCommandNames;
 import hr.fer.zemris.vhdllab.applets.editor.schema2.exceptions.InvalidCommandOperationException;
 
 
@@ -23,7 +22,6 @@ public interface ICommand {
 	 * Vraca jedinstveno ime klase komandi.
 	 * Pritom, programer je odgovoran da to ime zaista
 	 * bude jedinstveno.
-	 * @see CCommandNames
 	 */
 	String getCommandName();
 	

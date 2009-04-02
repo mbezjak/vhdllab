@@ -46,7 +46,7 @@ public class CommandResponse implements ICommandResponse {
 	/**
 	 * Postavlja se odredeni error.
 	 * 
-	 * @param error
+	 * @param responseError
 	 * Ako se za error specificira null,
 	 * isCommandSuccessful() ce biti true.
 	 * Ako se specificira neki error,

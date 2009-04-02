@@ -54,8 +54,6 @@ public class InstantiateComponentCommand implements ICommand {
 	 * 
 	 * @param componentTypeName
 	 * Ime tipa komponente.
-	 * @param instanceName
-	 * Ime instance novokreirane komponente.
 	 * @param x
 	 * Ovo je x pozicija na canvasu.
 	 * @param y

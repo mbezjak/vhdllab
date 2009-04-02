@@ -35,7 +35,6 @@ public class SchemaEntity implements ISchemaEntity {
 	 * Koristi se kod deserijalizacije. Ovaj konstruktor NECE
 	 * dodati defaultne parametre (npr. Name).
 	 * 
-	 * @param wrapper
 	 */
 	public SchemaEntity() {
 		parameters = new SchemaParameterCollection();

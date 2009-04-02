@@ -53,7 +53,6 @@ public enum ETimeMetrics {
 	/**
 	 * Vraca omjer ove metrike i metrike koja je parametar.
 	 * 
-	 * @param second
 	 * @return Omjer metrika, npr.:
 	 *         ETimeMetrics.mili.getRatio(ETimeMetrics.micro) == 1000 je izraz
 	 *         koji se evaluira u true.

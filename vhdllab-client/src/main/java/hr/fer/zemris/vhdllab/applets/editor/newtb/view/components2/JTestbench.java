@@ -81,7 +81,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
     private JMenuItem applyPatternMenuItem = null;
     private JMenuItem resetSignalMenuItem = null;
     private BoundedRangeModel horScrollModel = null;
-    private BoundedRangeModel verScrollModel = null;
+    protected BoundedRangeModel verScrollModel = null;
     
     private int beginSignalIndex;
     private int nOfSignalComponents;
@@ -514,7 +514,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
         this.selectedSignal = null;
     }
     
-    private void setValue() {
+    protected void setValue() {
         if(model == null) {
             return;
         }
@@ -594,7 +594,7 @@ public class JTestbench extends JPanel implements TestbenchListener {
         this.selectedSignal = null;
     }
     
-    private void showPopup(Point point) {
+    protected void showPopup(Point point) {
         if(model == null) {
             return;
         }

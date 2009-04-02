@@ -77,7 +77,7 @@ public class PatternDialog extends JDialog implements ActionListener {
      * After each combo box change, updates layout - shows corresponding panel.
      * @param p
      */
-    private void updatePanel(PatternPanel p)
+    protected void updatePanel(PatternPanel p)
     {   
         CardLayout cl = (CardLayout)(card.getLayout());
         cl.show(card, p.toString());

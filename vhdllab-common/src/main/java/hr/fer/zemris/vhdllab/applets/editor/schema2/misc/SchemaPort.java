@@ -121,7 +121,7 @@ public final class SchemaPort {
 	 * @return
 	 * Null ili prazan string ako nije spojen ni na sto,
 	 * ime signala inace.
-	 * @see {@link Caseless#isNullOrEmpty(Caseless)}
+	 * @see Caseless#isNullOrEmpty(Caseless)
 	 */
 	public final Caseless getMapping() {
 		return mappedto;
