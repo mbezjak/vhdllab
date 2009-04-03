@@ -7,11 +7,11 @@ import javax.swing.JOptionPane;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.command.ActionCommand;
 
-public class DevelopmentShowModalDialogCommand extends ActionCommand {
+public class DevShowModalDialogCommand extends ActionCommand {
 
     public static final String ID = "showModalDialogCommand";
 
-    public DevelopmentShowModalDialogCommand() {
+    public DevShowModalDialogCommand() {
         super(ID);
     }
 

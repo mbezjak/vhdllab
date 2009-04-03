@@ -124,13 +124,13 @@
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateNewLoggedErrorCommand" />
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateUncaughtExceptionCommand" />
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentCreateUncaughtErrorCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevCreateNewLoggedErrorCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevCreateUncaughtExceptionCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevCreateUncaughtErrorCommand" />
         <value>separator</value>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentShowModalDialogCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevShowModalDialogCommand" />
         <value>separator</value>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevelopmentFloodWithCompliationRequestsCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevFloodWithCompliationRequestsCommand" />
       </list>
     </property>
   </bean>

@@ -3,14 +3,14 @@ package hr.fer.zemris.vhdllab.platform.ui.command;
 import org.apache.log4j.Logger;
 import org.springframework.richclient.command.ActionCommand;
 
-public class DevelopmentCreateNewLoggedErrorCommand extends ActionCommand {
+public class DevCreateNewLoggedErrorCommand extends ActionCommand {
 
     private static final Logger LOG = Logger
-            .getLogger(DevelopmentCreateNewLoggedErrorCommand.class);
+            .getLogger(DevCreateNewLoggedErrorCommand.class);
 
     public static final String ID = "createNewLoggedErrorCommand";
 
-    public DevelopmentCreateNewLoggedErrorCommand() {
+    public DevCreateNewLoggedErrorCommand() {
         super(ID);
     }
 

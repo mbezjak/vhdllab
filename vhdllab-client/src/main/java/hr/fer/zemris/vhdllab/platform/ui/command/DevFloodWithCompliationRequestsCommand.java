@@ -24,7 +24,7 @@ import org.apache.commons.lang.UnhandledException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.richclient.command.ActionCommand;
 
-public class DevelopmentFloodWithCompliationRequestsCommand extends
+public class DevFloodWithCompliationRequestsCommand extends
         ActionCommand {
 
     public static final String ID = "floodWithCompliationRequestsCommand";
@@ -36,7 +36,7 @@ public class DevelopmentFloodWithCompliationRequestsCommand extends
     @Resource(name = "standaloneLocalizationSource")
     protected LocalizationSource localizationSource;
 
-    public DevelopmentFloodWithCompliationRequestsCommand() {
+    public DevFloodWithCompliationRequestsCommand() {
         super(ID);
         setDisplaysInputDialog(true);
     }
