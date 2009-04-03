@@ -8,13 +8,13 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
 import hr.fer.zemris.vhdllab.platform.ui.command.RedoCommand;
 import hr.fer.zemris.vhdllab.platform.ui.command.UndoCommand;
 
+import java.awt.Component;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -25,15 +25,16 @@ import org.springframework.richclient.application.support.AbstractView;
 import org.springframework.richclient.command.CommandGroup;
 import org.springframework.richclient.command.CommandManager;
 import org.springframework.richclient.command.support.GlobalCommandIds;
+import org.springframework.richclient.core.Guarded;
 
 public class TabbedEditorsView extends AbstractView implements
         EditorContainerListener {
 
-    boolean addingTab;
-    JTabbedPane tabbedPane;
+    protected boolean addingTab;
+    protected JTabbedPane tabbedPane;
 
     @Autowired
-    EditorContainer container;
+    protected EditorContainer container;
 
     private Map<File, Editor> editors = new HashMap<File, Editor>();
 
@@ -50,10 +51,10 @@ public class TabbedEditorsView extends AbstractView implements
                 "editorsMenu", new Object[] { "saveCommand", "saveAllCommand",
                         "separator", "closeCommand", "closeOtherCommand",
                         "closeAllCommand" });
-        JPopupMenu popupMenu = commandGroup.createPopupMenu();
+
         tabbedPane = new JTabbedPane(JTabbedPane.TOP,
                 JTabbedPane.WRAP_TAB_LAYOUT);
-        tabbedPane.setComponentPopupMenu(popupMenu);
+        tabbedPane.setComponentPopupMenu(commandGroup.createPopupMenu());
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -79,6 +80,7 @@ public class TabbedEditorsView extends AbstractView implements
         Icon editorIcon = getIconSource().getIcon("editor.icon");
         tabbedPane.addTab(title, editorIcon, editor.getPanel(), tooltip);
         editor.getEventPublisher().addListener(new EditorModifiedListener());
+        updateEditorCommandEnabledState();
         addingTab = false;
     }
 
@@ -86,16 +88,51 @@ public class TabbedEditorsView extends AbstractView implements
     public void editorRemoved(Editor editor) {
         tabbedPane.remove(editor.getPanel());
         editors.remove(editor.getFile());
+        updateEditorCommandEnabledState();
     }
 
     @Override
     public void editorSelected(Editor editor) {
         if (editor != null) {
             tabbedPane.setSelectedComponent(editor.getPanel());
+            updateEditorCommandEnabledState();
         }
     }
 
-    void resetEditorTitle(File file, boolean modified) {
+    private void updateEditorCommandEnabledState() {
+        updateState("closeCommand", tabbedPane.getSelectedComponent() != null);
+        updateState("closeAllCommand", tabbedPane.getTabCount() > 0);
+        updateState("closeOtherCommand", tabbedPane.getTabCount() > 1);
+
+        Component selectedComponent = tabbedPane.getSelectedComponent();
+        boolean saveEnabled = false;
+        boolean saveAllEnabled = false;
+        if (selectedComponent != null) {
+            for (Editor editor : editors.values()) {
+                if (editor.isModified()) {
+                    saveEnabled = editor.getPanel() == selectedComponent;
+                    saveAllEnabled = true;
+                }
+            }
+        }
+        updateState("saveCommand", saveEnabled);
+        updateState("saveAllCommand", saveAllEnabled);
+    }
+
+    private void updateState(String commandId, boolean enabled) {
+        CommandManager commandManager = getActiveWindow().getCommandManager();
+        Object command = commandManager.getCommand(commandId);
+        if (command instanceof Guarded) {
+            ((Guarded) command).setEnabled(enabled);
+        }
+    }
+
+    protected void onEditorModified(File file, boolean modified) {
+        resetEditorTitle(file, modified);
+        updateEditorCommandEnabledState();
+    }
+
+    private void resetEditorTitle(File file, boolean modified) {
         int index = container.indexOf(editors.get(file));
         String title = tabbedPane.getTitleAt(index);
         if (modified) {
@@ -106,10 +143,10 @@ public class TabbedEditorsView extends AbstractView implements
         tabbedPane.setTitleAt(index, title);
     }
 
-    class EditorModifiedListener implements EditorListener {
+    protected class EditorModifiedListener implements EditorListener {
         @Override
         public void modified(File file, boolean flag) {
-            resetEditorTitle(file, flag);
+            onEditorModified(file, flag);
         }
     }
 

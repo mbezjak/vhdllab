@@ -14,6 +14,7 @@ public class CloseAllCommand extends ActionCommand {
 
     public CloseAllCommand() {
         super(ID);
+        setEnabled(false);
     }
 
     @Override

@@ -14,6 +14,7 @@ public class SaveCommand extends ActionCommand {
 
     public SaveCommand() {
         super(ID);
+        setEnabled(false);
     }
 
     @Override

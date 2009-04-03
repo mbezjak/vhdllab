@@ -100,7 +100,7 @@ public class NameAndPortNameChanger implements IParameterEvent {
 		InOutSchemaComponent inoutcmp = (InOutSchemaComponent)cmp;
 		
 		/* first cache old signal mappings */
-		List<SchemaPort> oldschemaports = new ArrayList(inoutcmp.getRelatedTo(0));
+		List<SchemaPort> oldschemaports = new ArrayList<SchemaPort>(inoutcmp.getRelatedTo(0));
 		
 		/* now rename port and rebuild schemaports */
 		Port p = inoutcmp.getPort();

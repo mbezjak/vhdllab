@@ -14,6 +14,7 @@ public class CloseOtherCommand extends ActionCommand {
 
     public CloseOtherCommand() {
         super(ID);
+        setEnabled(false);
     }
 
     @Override
