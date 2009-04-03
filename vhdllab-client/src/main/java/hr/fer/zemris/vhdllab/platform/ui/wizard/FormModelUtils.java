@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.util;
+package hr.fer.zemris.vhdllab.platform.ui.wizard;
 
 import org.springframework.binding.form.ValidatingFormModel;
 import org.springframework.binding.validation.support.CompositeRichValidator;

@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard;
 
-import hr.fer.zemris.vhdllab.platform.util.FormModelUtils;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
