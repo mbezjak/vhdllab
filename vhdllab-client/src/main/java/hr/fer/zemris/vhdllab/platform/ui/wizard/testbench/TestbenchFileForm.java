@@ -2,12 +2,10 @@ package hr.fer.zemris.vhdllab.platform.ui.wizard.testbench;
 
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractMultiValidationForm;
-import hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.FileListBinder.FileSelectionComponent;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileSelectionComponent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.JComboBox;
 
 import org.springframework.richclient.form.builder.TableFormBuilder;
 
@@ -17,6 +15,10 @@ public class TestbenchFileForm extends AbstractMultiValidationForm {
 
     public TestbenchFileForm() {
         super(new TestbenchFile(), "newTestbenchFile");
+    }
+
+    public FileSelectionComponent getFileComponent() {
+        return fileComponent;
     }
 
     @Override
@@ -31,8 +33,7 @@ public class TestbenchFileForm extends AbstractMultiValidationForm {
 
     @Override
     public void onAboutToShow() {
-        JComboBox combobox = fileComponent.getProjectsCombobox();
-        combobox.setSelectedIndex(combobox.getItemCount() - 1);
+        fileComponent.selectLastProject();
     }
 
     private void installSuggestionTestbenchName() {

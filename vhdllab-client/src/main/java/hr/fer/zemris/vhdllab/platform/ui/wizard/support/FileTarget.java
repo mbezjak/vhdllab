@@ -1,4 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.ui.wizard.testbench;
+package hr.fer.zemris.vhdllab.platform.ui.wizard.support;
 
 import hr.fer.zemris.vhdllab.entity.File;
 

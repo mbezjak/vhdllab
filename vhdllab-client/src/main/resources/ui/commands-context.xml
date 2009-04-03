@@ -102,10 +102,10 @@
     class="org.springframework.richclient.command.CommandGroupFactoryBean">
     <property name="members">
       <list>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.CompileWithDialogCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.CompileWithDialogCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.CompileLastCommand" />
         <value>separator</value>
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.SimulateWithDialogCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulateWithDialogCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.command.SimulateLastCommand" />
       </list>
     </property>

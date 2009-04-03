@@ -1,13 +1,11 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.testbench;
 
-import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.collection.CompilableFilesFilter;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.collection.NotEmptyProjectFilter;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializer;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractShowWizardDialogCommand;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.support.WorkspaceHasCompilableFileCommandGuard;
 
-import java.util.List;
-
-import org.apache.commons.collections.Predicate;
 import org.springframework.richclient.wizard.Wizard;
 
 public class NewTestbenchCommand extends AbstractShowWizardDialogCommand {
@@ -18,11 +16,9 @@ public class NewTestbenchCommand extends AbstractShowWizardDialogCommand {
     }
 
     @Override
-    protected void updateEnabledCommandState() {
-        Predicate filter = new NotEmptyProjectFilter(manager,
-                CompilableFilesFilter.getInstance());
-        List<Project> projects = manager.getProjects(filter, null);
-        setEnabled(!projects.isEmpty());
+    protected void installCommandGuard(WorkspaceManager wm,
+            WorkspaceInitializer wi, SimulationManager sm) {
+        new WorkspaceHasCompilableFileCommandGuard(wm, wi, this);
     }
 
 }

@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.testbench;
 
+import hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileTarget;
 import hr.fer.zemris.vhdllab.validation.NameFormatConstraint;
 
 import org.hibernate.validator.Length;

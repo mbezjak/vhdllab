@@ -29,17 +29,8 @@ Developers:
 <td>
 VHDLLab Server<br/>
 VHDLLab build system<br/>
-<table border="0">
-<tr>
-<td rowspan="6">VHDLLab Client</td>
-<td>Platform</td>
-</tr>
-<tr><td>Project Explorer</td></tr>
-<tr><td>Log History</td></tr>
-<tr><td>Compilation Results</td></tr>
-<tr><td>Simulation Results</td></tr>
-<tr><td>Text Editor</td></tr>
-</table>
+VHDLLab Client - all, except for Automaton,<br/>
+Schematic, Simulation and Testbench editor
 </td>
 </tr>
 <tr>

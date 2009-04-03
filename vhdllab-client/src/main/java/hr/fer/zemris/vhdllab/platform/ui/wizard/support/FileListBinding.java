@@ -1,6 +1,4 @@
-package hr.fer.zemris.vhdllab.platform.ui.wizard.testbench;
-
-import hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.FileListBinder.FileSelectionComponent;
+package hr.fer.zemris.vhdllab.platform.ui.wizard.support;
 
 import javax.swing.JComponent;
 import javax.swing.JList;

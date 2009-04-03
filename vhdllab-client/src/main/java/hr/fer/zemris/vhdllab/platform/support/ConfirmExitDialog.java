@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfirmExitDialog extends ConfirmationDialog {
 
-    protected static final String DEFAULT_YES_COMMAND_ID = "quitCommand";
+    protected static final String QUIT_COMMAND_ID = "quitCommand";
 
     private boolean exitConfirmed;
 
@@ -21,7 +21,7 @@ public class ConfirmExitDialog extends ConfirmationDialog {
 
     @Override
     protected String getFinishCommandId() {
-        return DEFAULT_YES_COMMAND_ID;
+        return QUIT_COMMAND_ID;
     }
 
     @Override

@@ -35,14 +35,14 @@ public class NewTestbenchWizard extends AbstractNewFileWizard {
     @Autowired
     private MetadataExtractionService metadataExtractionService;
 
-    private Form testbenchFileForm;
+    protected Form testbenchFileForm;
 
     @Override
     public void addPages() {
         testbenchFileForm = new TestbenchFileForm();
         addForm(testbenchFileForm);
     }
-
+    
     @Override
     protected File getFile() {
         TestbenchFile testbenchFile = (TestbenchFile) testbenchFileForm

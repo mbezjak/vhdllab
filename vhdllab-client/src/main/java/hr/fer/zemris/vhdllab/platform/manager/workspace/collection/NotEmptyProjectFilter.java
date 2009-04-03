@@ -8,16 +8,16 @@ import org.apache.commons.collections.Predicate;
 public class NotEmptyProjectFilter implements Predicate {
 
     private WorkspaceManager manager;
-    private final Predicate filter;
+    private final Predicate fileFilter;
 
-    public NotEmptyProjectFilter(WorkspaceManager manager, Predicate filter) {
+    public NotEmptyProjectFilter(WorkspaceManager manager, Predicate fileFilter) {
         this.manager = manager;
-        this.filter = filter;
+        this.fileFilter = fileFilter;
     }
 
     @Override
     public boolean evaluate(Object object) {
-        return !manager.isEmpty((Project) object, filter);
+        return !manager.isEmpty((Project) object, fileFilter);
     }
 
 }
