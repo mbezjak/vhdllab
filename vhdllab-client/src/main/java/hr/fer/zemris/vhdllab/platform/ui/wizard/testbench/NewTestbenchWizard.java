@@ -62,8 +62,13 @@ public class NewTestbenchWizard extends AbstractNewFileWizard {
     protected String createData() {
         TestbenchFile testbenchFile = (TestbenchFile) testbenchFileForm
                 .getFormObject();
-        return oldCode(testbenchFile.getTestbenchName(), testbenchFile
+        String string = oldCode(testbenchFile.getTestbenchName(), testbenchFile
                 .getTargetFile());
+        if (string == null) {
+            performCancel();
+            throw new IllegalStateException("Dialog canceled");
+        }
+        return string;
     }
 
     private String oldCode(String testbench, File targetFile) {
