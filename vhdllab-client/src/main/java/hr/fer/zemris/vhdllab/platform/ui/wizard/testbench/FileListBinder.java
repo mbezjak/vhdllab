@@ -60,11 +60,12 @@ public class FileListBinder extends AbstractBinder {
 
         private static final long serialVersionUID = 1L;
 
+        private JComboBox projectsCombobox;
         private final JList list;
         protected DefaultListModel model;
 
         public FileSelectionComponent() {
-            JComboBox projectsCombobox = new JComboBox(projectList());
+            projectsCombobox = new JComboBox(projectList());
             new ComboBoxAutoCompletion(projectsCombobox);
             model = new DefaultListModel();
             list = new JList(model);
@@ -87,6 +88,14 @@ public class FileListBinder extends AbstractBinder {
             add(new JScrollPane(list), BorderLayout.CENTER);
         }
 
+        public JComboBox getProjectsCombobox() {
+            return projectsCombobox;
+        }
+
+        public JList getList() {
+            return list;
+        }
+
         protected void updateList(Object selectedProject) {
             model.clear();
             Predicate filter = CompilableFilesFilter.getInstance();
@@ -97,6 +106,7 @@ public class FileListBinder extends AbstractBinder {
             for (File f : files) {
                 model.addElement(f);
             }
+            list.clearSelection();
         }
 
         private Object[] projectList() {
@@ -105,10 +115,6 @@ public class FileListBinder extends AbstractBinder {
             Transformer transformer = NameInToStringProjectTransformer
                     .getInstance();
             return workspaceManager.getProjects(filter, transformer).toArray();
-        }
-
-        public JList getList() {
-            return list;
         }
 
     }

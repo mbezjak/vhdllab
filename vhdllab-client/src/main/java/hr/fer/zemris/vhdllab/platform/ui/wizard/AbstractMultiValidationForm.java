@@ -10,7 +10,8 @@ import javax.swing.JComponent;
 import org.springframework.richclient.form.AbstractForm;
 import org.springframework.richclient.form.builder.TableFormBuilder;
 
-public abstract class AbstractMultiValidationForm extends AbstractForm {
+public abstract class AbstractMultiValidationForm extends AbstractForm
+        implements AboutToShowHook {
 
     protected JComponent componentToGiveFocusTo;
 
@@ -37,6 +38,10 @@ public abstract class AbstractMultiValidationForm extends AbstractForm {
 
     protected void focusOnBeginning(JComponent c) {
         componentToGiveFocusTo = c;
+    }
+
+    @Override
+    public void onAboutToShow() {
     }
 
     protected abstract void doBuildForm(TableFormBuilder builder);

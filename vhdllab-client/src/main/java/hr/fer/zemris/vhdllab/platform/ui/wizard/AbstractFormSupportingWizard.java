@@ -14,6 +14,7 @@ import java.util.List;
 import org.springframework.richclient.form.Form;
 import org.springframework.richclient.wizard.AbstractWizard;
 import org.springframework.richclient.wizard.WizardPage;
+import org.springframework.util.Assert;
 
 public abstract class AbstractFormSupportingWizard extends AbstractWizard {
 
@@ -26,14 +27,18 @@ public abstract class AbstractFormSupportingWizard extends AbstractWizard {
     }
 
     @Override
-    public WizardPage addForm(Form formPage) {
-        formPages.add(formPage);
-        return super.addForm(formPage);
+    public String getId() {
+        return this.id;
     }
 
     @Override
-    public String getId() {
-        return this.id;
+    public WizardPage addForm(Form formPage) {
+        Assert.notNull(formPage, "The form page cannot be null");
+        formPages.add(formPage);
+        WizardPage wizardPage = new AboutToShowForwardingFormBackedWizardPage(
+                formPage);
+        addPage(wizardPage);
+        return wizardPage;
     }
 
     @Override
