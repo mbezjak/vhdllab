@@ -29,7 +29,7 @@
   </bean>
 
   <bean id="menuBar"
-    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    class="hr.fer.zemris.vhdllab.platform.support.SelectiveCommandGroupFactoryBean">
     <property name="members">
       <list>
         <ref bean="fileMenu" />
