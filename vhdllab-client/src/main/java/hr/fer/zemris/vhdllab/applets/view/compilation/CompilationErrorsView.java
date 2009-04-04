@@ -2,9 +2,9 @@ package hr.fer.zemris.vhdllab.applets.view.compilation;
 
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationAdapter;
+import hr.fer.zemris.vhdllab.platform.ui.MouseClickAdapter;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -98,14 +98,11 @@ public class CompilationErrorsView extends AbstractView {
         model = new DefaultListModel();
         final JList listContent = new JList(model);
         listContent.setFixedCellHeight(15);
-        listContent.addMouseListener(new MouseAdapter() {
+        listContent.addMouseListener(new MouseClickAdapter() {
             @Override
-            public void mouseClicked(MouseEvent event) {
-                if (event.getClickCount() == 2) {
-                    String selectedValue = (String) listContent
-                            .getSelectedValue();
-                    highlightError(selectedValue);
-                }
+            protected void onDoubleClick(MouseEvent e) {
+                String selectedValue = (String) listContent.getSelectedValue();
+                highlightError(selectedValue);
             }
         });
 

@@ -11,6 +11,7 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMa
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceListener;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializationListener;
+import hr.fer.zemris.vhdllab.platform.ui.MouseClickAdapter;
 import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
@@ -20,7 +21,6 @@ import hr.fer.zemris.vhdllab.util.BeanUtil;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -564,33 +564,42 @@ public class ProjectExplorerView extends AbstractView implements
         }
     }
 
-    protected class OpenFileOrShowPopupMenuListener extends MouseAdapter {
+    protected class OpenFileOrShowPopupMenuListener extends MouseClickAdapter {
+
         @SuppressWarnings("synthetic-access")
         @Override
         public void mouseClicked(MouseEvent e) {
             getActiveWindow().getPage().setActiveComponent(
                     ProjectExplorerView.this);
-            if (e.getButton() == MouseEvent.BUTTON3) {
-                TreePath path = tree.getClosestPathForLocation(e.getX(), e
-                        .getY());
-                tree.setSelectionPath(path);
-                popupMenu.show(tree, e.getX(), e.getY());
-            } else if (e.getButton() == MouseEvent.BUTTON1
-                    && e.getClickCount() == 2) {
-                if (openCommand.isEnabled()) {
-                    openCommand.execute();
+            super.mouseClicked(e);
+        }
+
+        @Override
+        protected void onDoubleClick(MouseEvent e) {
+            if (openCommand.isEnabled()) {
+                openCommand.execute();
+            } else {
+                TreePath path = setSelectionPath(e);
+                if (tree.isExpanded(path)) {
+                    tree.collapsePath(path);
                 } else {
-                    TreePath path = tree.getClosestPathForLocation(e.getX(), e
-                            .getY());
-                    tree.setSelectionPath(path);
-                    if (tree.isExpanded(path)) {
-                        tree.collapsePath(path);
-                    } else {
-                        tree.expandPath(path);
-                    }
+                    tree.expandPath(path);
                 }
             }
         }
+
+        @Override
+        protected void onRightMouseClick(MouseEvent e) {
+            setSelectionPath(e);
+            popupMenu.show(tree, e.getX(), e.getY());
+        }
+
+        private TreePath setSelectionPath(MouseEvent e) {
+            TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
+            tree.setSelectionPath(path);
+            return path;
+        }
+
     }
 
     protected class WorkspaceCellRenderer extends FocusableTreeCellRenderer {

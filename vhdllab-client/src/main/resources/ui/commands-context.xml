@@ -103,10 +103,10 @@
     <property name="members">
       <list>
         <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.CompileWithDialogCommand" />
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.CompileLastCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.CompileLastCommand" />
         <value>separator</value>
         <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulateWithDialogCommand" />
-        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.SimulateLastCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulateLastCommand" />
       </list>
     </property>
   </bean>

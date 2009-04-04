@@ -6,10 +6,10 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.collection.NotEmptyProje
 import hr.fer.zemris.vhdllab.platform.manager.workspace.collection.SimulatableFilesFilter;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializer;
 import hr.fer.zemris.vhdllab.platform.ui.GuardedActionCommand;
+import hr.fer.zemris.vhdllab.platform.ui.MouseClickAdapter;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileSelectionComponent;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.support.WorkspaceHasSimulatableFileCommandGuard;
 
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
@@ -67,14 +67,11 @@ public class SimulateWithDialogCommand extends GuardedActionCommand {
             new ListSingleSelectionGuard(valueModel, this);
             fc.selectLastProject();
 
-            fc.getList().addMouseListener(new MouseAdapter() {
+            fc.getList().addMouseListener(new MouseClickAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 2
-                            && e.getButton() == MouseEvent.BUTTON1) {
-                        if (isEnabled()) {
-                            getFinishCommand().execute();
-                        }
+                protected void onDoubleClick(MouseEvent e) {
+                    if (isEnabled()) {
+                        getFinishCommand().execute();
                     }
                 }
             });

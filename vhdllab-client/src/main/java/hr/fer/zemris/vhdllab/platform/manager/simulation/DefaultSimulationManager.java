@@ -93,12 +93,13 @@ public class DefaultSimulationManager extends
     }
 
     @Override
+    public File getLastCompiledFile() {
+        return lastCompiledFile;
+    }
+
+    @Override
     public void compileLast() {
-        if (lastCompiledFile == null) {
-            compileWithDialog();
-        } else {
-            compile(lastCompiledFile);
-        }
+        compile(getLastCompiledFile());
     }
 
     @Override
@@ -172,12 +173,13 @@ public class DefaultSimulationManager extends
     }
 
     @Override
+    public File getLastSimulatedFile() {
+        return lastSimulatedFile;
+    }
+
+    @Override
     public void simulateLast() {
-        if (lastSimulatedFile == null) {
-            simulateWithDialog();
-        } else {
-            simulate(lastSimulatedFile);
-        }
+        simulate(getLastSimulatedFile());
     }
 
     @Override
