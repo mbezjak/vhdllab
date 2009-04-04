@@ -5,7 +5,6 @@ import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.IdentifierToInfoObjectMapper;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
-import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,8 +14,6 @@ public class PlatformContainer extends AbstractLocalizationSource {
 
     @Autowired
     private EditorManagerFactory editorManagerFactory;
-    @Autowired
-    private ProjectExplorer projectExplorer;
     @Autowired
     private IdentifierToInfoObjectMapper mapper;
     @Autowired
@@ -30,9 +27,6 @@ public class PlatformContainer extends AbstractLocalizationSource {
         return editorManagerFactory;
     }
 
-    public ProjectExplorer getProjectExplorer() {
-        return projectExplorer;
-    }
 
     public IdentifierToInfoObjectMapper getMapper() {
         return mapper;
