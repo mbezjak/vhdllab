@@ -17,7 +17,4 @@ public interface SimulationManager extends EventPublisher<SimulationListener> {
 
     void simulateLast();
 
-    void compileWithDialog();
-
-    void simulateWithDialog();
 }

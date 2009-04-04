@@ -4,26 +4,20 @@ import hr.fer.zemris.vhdllab.applets.simulations.WaveAppletMetadata;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunContext;
-import hr.fer.zemris.vhdllab.platform.gui.dialog.run.RunDialog;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSource;
 import hr.fer.zemris.vhdllab.platform.listener.AbstractEventPublisher;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
-import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.exception.NoAvailableProcessException;
 import hr.fer.zemris.vhdllab.service.exception.SimulatorTimeoutException;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
-import hr.fer.zemris.vhdllab.view.explorer.ProjectExplorer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -45,10 +39,6 @@ public class DefaultSimulationManager extends
     private EditorManagerFactory editorManagerFactory;
     @Resource(name = "standaloneLocalizationSource")
     private LocalizationSource localizationSource;
-    @Autowired
-    private WorkspaceManager workspaceManager;
-    @Autowired
-    private ProjectExplorer projectExplorer;
 
     private File lastCompiledFile;
     private File lastSimulatedFile;
@@ -102,40 +92,10 @@ public class DefaultSimulationManager extends
         compile(getLastCompiledFile());
     }
 
-    @Override
-    public void compileWithDialog() {
-        File identifier = showCompilationRunDialog();
-        if (identifier != null) {
-            compile(identifier);
-        }
-    }
-
     private void fireCompiled(List<CompilationMessage> messages) {
         for (SimulationListener l : getListeners()) {
             l.compiled(messages);
         }
-    }
-
-    private File showCompilationRunDialog() {
-        Project project = projectExplorer.getSelectedProject();
-        if (project == null) {
-            return null;
-        }
-        Set<File> files = workspaceManager.getFilesForProject(project);
-        List<File> identifiers = new ArrayList<File>(files.size());
-        for (File file : files) {
-            if (file.getType().isCompilable()) {
-                identifiers.add(file);
-            }
-        }
-        if (files.isEmpty()) {
-            return null;
-        }
-        RunDialog dialog = new RunDialog(localizationSource,
-                RunContext.COMPILATION);
-        dialog.setRunFiles(identifiers);
-        dialog.startDialog();
-        return dialog.getResult();
     }
 
     @Override
@@ -182,14 +142,6 @@ public class DefaultSimulationManager extends
         simulate(getLastSimulatedFile());
     }
 
-    @Override
-    public void simulateWithDialog() {
-        File identifier = showSimulationRunDialog();
-        if (identifier != null) {
-            simulate(identifier);
-        }
-    }
-
     private void fireSimulated(Result result) {
         for (SimulationListener l : getListeners()) {
             l.simulated(result);
@@ -211,28 +163,6 @@ public class DefaultSimulationManager extends
             }
             simulationEditor.open();
         }
-    }
-
-    private File showSimulationRunDialog() {
-        Project project = projectExplorer.getSelectedProject();
-        if (project == null) {
-            return null;
-        }
-        Set<File> files = workspaceManager.getFilesForProject(project);
-        List<File> identifiers = new ArrayList<File>(files.size());
-        for (File file : files) {
-            if (file.getType().isSimulatable()) {
-                identifiers.add(file);
-            }
-        }
-        if (files.isEmpty()) {
-            return null;
-        }
-        RunDialog dialog = new RunDialog(localizationSource,
-                RunContext.SIMULATION);
-        dialog.setRunFiles(identifiers);
-        dialog.startDialog();
-        return dialog.getResult();
     }
 
 }
