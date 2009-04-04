@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.log;
 
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.context.Environment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -34,7 +34,7 @@ public class ConditionallyChainedOutputStream extends ByteArrayOutputStream {
     }
 
     private boolean shouldChain() {
-        return ApplicationContextHolder.getContext().isDevelopment();
+        return Environment.isDevelopment();
     }
 
 }

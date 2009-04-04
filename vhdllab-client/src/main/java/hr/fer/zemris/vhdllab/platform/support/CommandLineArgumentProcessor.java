@@ -1,7 +1,5 @@
 package hr.fer.zemris.vhdllab.platform.support;
 
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContext;
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.context.Environment;
 
 import org.apache.commons.cli.CommandLine;
@@ -24,12 +22,11 @@ public final class CommandLineArgumentProcessor {
         } catch (ParseException e) {
             throw new IllegalStateException(e);
         }
-        ApplicationContext context = ApplicationContextHolder.getContext();
         String env = cmd.getOptionValue(ENV_OPTION, ENV_DEV);
         if (env.equals(ENV_DEV)) {
-            context.setEnvironment(Environment.DEVELOPMENT);
+            Environment.setCurrentEnvironment(Environment.DEVELOPMENT);
         } else if (env.equals(ENV_PROD)) {
-            context.setEnvironment(Environment.PRODUCTION);
+            Environment.setCurrentEnvironment(Environment.PRODUCTION);
         } else {
             throw new IllegalStateException("Illegal environment is set. Only "
                     + ENV_DEV + " and " + ENV_PROD + " are permitted!");

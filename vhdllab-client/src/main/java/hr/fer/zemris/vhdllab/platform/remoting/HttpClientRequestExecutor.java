@@ -1,6 +1,7 @@
 package hr.fer.zemris.vhdllab.platform.remoting;
 
 import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.context.Environment;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -43,8 +44,7 @@ public class HttpClientRequestExecutor extends
         switch (postMethod.getStatusCode()) {
         case HttpStatus.SC_UNAUTHORIZED:
             UsernamePasswordCredentials credentials;
-            if (ApplicationContextHolder.getContext().isDevelopment()
-                    && !showRetryMessage) {
+            if (Environment.isDevelopment() && !showRetryMessage) {
 //                credentials = new UsernamePasswordCredentials("test", "test");
                 credentials = new UsernamePasswordCredentials("admin", "admin");
                 showRetryMessage = true;

@@ -1,6 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.support;
 
-import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
+import hr.fer.zemris.vhdllab.platform.context.Environment;
 
 import org.springframework.richclient.command.CommandGroup;
 import org.springframework.richclient.command.CommandGroupFactoryBean;
@@ -12,8 +12,7 @@ public class SelectiveCommandGroupFactoryBean extends CommandGroupFactoryBean {
         Object[] members = getMembers();
         for (int i = 0; i < members.length; i++) {
             Object o = members[i];
-            if (isDevelopmentMenu(o)
-                    && !ApplicationContextHolder.getContext().isDevelopment()) {
+            if (isDevelopmentMenu(o) && !Environment.isDevelopment()) {
                 /*
                  * Development menu is only initialized in a development
                  * environment!
