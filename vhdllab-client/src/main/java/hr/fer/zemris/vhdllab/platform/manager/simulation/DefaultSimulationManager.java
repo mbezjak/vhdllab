@@ -151,7 +151,7 @@ public class DefaultSimulationManager extends
     private void openSimulationEditor(File file, Result result) {
         String waveform = result.getData();
         if (!StringUtils.isBlank(waveform)) {
-            File simulationFile = new File(file.getName(), FileType.SIMULATION,
+            File simulationFile = new File(file.getName() + ":sim", FileType.SIMULATION,
                     waveform);
             simulationFile.setProject(file.getProject());
             EditorIdentifier identifier = new EditorIdentifier(

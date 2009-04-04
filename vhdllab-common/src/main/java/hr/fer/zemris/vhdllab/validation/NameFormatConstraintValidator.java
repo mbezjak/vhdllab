@@ -113,6 +113,15 @@ public class NameFormatConstraintValidator implements
         add("xnor");
         add("xor");
 
+        // names of predefined files
+        add("VL_AND");
+        add("VL_NAND");
+        add("VL_NOR");
+        add("VL_NOT");
+        add("VL_OR");
+        add("VL_XNOR");
+        add("VL_XOR");
+
         // other illegal names
         add("switch");
         add("std_logic");

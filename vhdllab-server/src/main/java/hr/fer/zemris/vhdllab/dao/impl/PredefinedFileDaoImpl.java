@@ -34,6 +34,7 @@ public class PredefinedFileDaoImpl implements PredefinedFileDao,
             .getLogger(PredefinedFileDaoImpl.class);
 
     private static final String DEFAULT_LOCATION = "/WEB-INF/predefined";
+    private static final String README_FILE_NAME = "README.txt";
     private java.io.File location;
     private ServletContext servletContext;
 
@@ -69,7 +70,7 @@ public class PredefinedFileDaoImpl implements PredefinedFileDao,
     @PostConstruct
     public void initFiles() {
         for (java.io.File predefined : getLocation().listFiles()) {
-            if (predefined.isFile()) {
+            if (predefined.isFile() && !isReadme(predefined)) {
                 String contents;
                 try {
                     contents = FileUtils.readFileToString(predefined,
@@ -89,6 +90,10 @@ public class PredefinedFileDaoImpl implements PredefinedFileDao,
             LOG.debug("Initialized with " + files.size()
                             + " predefined files.");
         }
+    }
+
+    private boolean isReadme(java.io.File file) {
+        return file.getName().equals(README_FILE_NAME);
     }
 
     @Override

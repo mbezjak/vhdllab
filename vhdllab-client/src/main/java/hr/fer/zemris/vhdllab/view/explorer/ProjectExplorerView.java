@@ -441,7 +441,7 @@ public class ProjectExplorerView extends AbstractView implements
             File file = getSelectedFile();
             String vhdl = metadataExtractionService.generateVhdl(file.getId())
                     .getData();
-            File viewVhdlFile = new File(file.getName(), FileType.SOURCE, vhdl);
+            File viewVhdlFile = new File(file.getName() + ":vhdl", FileType.SOURCE, vhdl);
             viewVhdlFile.setProject(file.getProject());
             editorManagerFactory.get(
                     new EditorIdentifier(new ViewVhdlEditorMetadata(),
@@ -606,6 +606,7 @@ public class ProjectExplorerView extends AbstractView implements
 
         private static final long serialVersionUID = 1L;
 
+        private static final String CLOSED_PROJECT_ICON = "closedProject.icon";
         private static final String PROJECT_ICON = "project.icon";
         private static final String SOURCE_ICON = "source.icon";
         private static final String SCHEMA_ICON = "schema.icon";

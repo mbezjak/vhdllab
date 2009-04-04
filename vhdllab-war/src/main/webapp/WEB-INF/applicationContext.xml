@@ -84,8 +84,8 @@
     <property name="properties">
       <props>
         <prop key="executable">/usr/bin/ghdl</prop>
-        <prop key="compiler.parameters">-a</prop>
-        <prop key="simulator.parameters">--elab-run</prop>
+        <prop key="compiler.parameters">-a -Wc,-m32 -Wa,--gstabs -Wa,--32</prop>
+        <prop key="simulator.parameters">--elab-run -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,-m32</prop>
         <prop key="tmpDir">/home/lord/tmp/vhdllab/simulations</prop>
       </props>
     </property>
