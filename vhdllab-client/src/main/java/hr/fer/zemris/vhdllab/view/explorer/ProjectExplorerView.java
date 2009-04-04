@@ -554,8 +554,8 @@ public class ProjectExplorerView extends AbstractView implements
                     && getSelectedFileType().isSimulatable());
             viewVhdlCommand.setEnabled(lastSelectedNodeIsFile()
                     && getSelectedFileType().canViewVhdl());
-            deleteCommand
-                    .setEnabled(!(lastSelectedNodeIsFile() && getSelectedFileType()
+            deleteCommand.setEnabled(lastSelectedNodeIsProject()
+                    || (lastSelectedNodeIsFile() && !getSelectedFileType()
                             .equals(FileType.PREDEFINED)));
         }
 
