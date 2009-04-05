@@ -41,6 +41,7 @@ import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.UnhandledException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -67,13 +68,15 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     private static final TimeUnit ACQUIRE_TIME_UNIT = TimeUnit.SECONDS;
 
     private static final String EXECUTABLE_PROPERTY = "executable";
-    private static final String COMPILER_PARAMETERS = "compiler.parameters";
-    private static final String SIMULATOR_PARAMETERS = "simulator.parameters";
+    private static final String RUN_SIMULATION_PROPERTY = "run.simulation.executable";
+    private static final String COMPILATION_PARAMETERS = "compilation.parameters";
+    private static final String ELABORATION_PARAMETERS = "elaboration.parameters";
     private static final String TMPDIR_PROPERTY = "tmpDir";
 
     private String executable;
+    private String runSimulationExecutable;
     private String[] compilerParameters;
-    private String[] simulatorParameters;
+    private String[] elaborationParameters;
     private java.io.File tmpRootDir;
 
     private boolean leaveSimulationResults = true;
@@ -99,13 +102,17 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
             throw new IllegalArgumentException(
                     "Specified GHDL executable doesn't exist: " + executable);
         }
-        String allParameters = properties.getProperty(SIMULATOR_PARAMETERS);
+        runSimulationExecutable = properties
+                .getProperty(RUN_SIMULATION_PROPERTY);
+
+        String allParameters = properties.getProperty(ELABORATION_PARAMETERS);
         if (allParameters == null) {
             throw new IllegalArgumentException(
-                    "GHDL simulator parameters not defined!");
+                    "GHDL elaboration parameters not defined!");
         }
-        simulatorParameters = allParameters.split(" ");
-        allParameters = properties.getProperty(COMPILER_PARAMETERS);
+        elaborationParameters = allParameters.split(" ");
+
+        allParameters = properties.getProperty(COMPILATION_PARAMETERS);
         if (allParameters == null) {
             throw new IllegalArgumentException(
                     "GHDL compiler parameters not defined!");
@@ -175,9 +182,11 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         String waveform;
         try {
             doCompile(context);
+            prepairElaborationCommandLine(context);
+            executeProcess(context.commandLine, context.tempDirectory);
             prepairSimulationCommandLine(context);
-            context.simulationLines = executeProcess(
-                    context.simulatorCommandLine, context.tempDirectory);
+            context.simulationLines = executeProcess(context.commandLine,
+                    context.tempDirectory);
             waveform = extractWaveform(context);
         } catch (IOException e) {
             throw new CompilationException(e);
@@ -207,11 +216,11 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
             copyFiles(context.dependencies, context.targetFile.getProject()
                     .getId(), context.tempDirectory);
 
-            context.compilerCommandLine = prepairCompilerCommandLine(
+            context.commandLine = prepairCompilerCommandLine(
                     compilerParameters, context.dependencies);
 
-            context.compilationLines = executeProcess(
-                    context.compilerCommandLine, context.tempDirectory);
+            context.compilationLines = executeProcess(context.commandLine,
+                    context.tempDirectory);
         } finally {
             if (context.compileOnly) {
                 FileUtils.deleteQuietly(context.tempDirectory);
@@ -269,13 +278,13 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         }
     }
 
-    private CommandLine createCommandLine() {
-        return new CommandLine(executable);
+    private CommandLine createCommandLine(String executableCommand) {
+        return new CommandLine(executableCommand);
     }
 
     private CommandLine prepairCompilerCommandLine(String[] arguments,
             List<String> dependencies) {
-        CommandLine cl = createCommandLine();
+        CommandLine cl = createCommandLine(executable);
         cl.addArguments(arguments);
         for (String name : dependencies) {
             cl.addArgument(name + ".vhdl");
@@ -283,10 +292,22 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         return cl;
     }
 
-    private void prepairSimulationCommandLine(SimulationContext context) {
-        CommandLine cl = createCommandLine();
-        cl.addArguments(simulatorParameters);
+    private void prepairElaborationCommandLine(SimulationContext context) {
+        CommandLine cl = createCommandLine(executable);
+        cl.addArguments(elaborationParameters);
         cl.addArgument(context.targetFile.getName());
+        context.commandLine = cl;
+    }
+
+    private void prepairSimulationCommandLine(SimulationContext context) {
+        CommandLine cl;
+        if (SystemUtils.IS_OS_UNIX) {
+            cl = createCommandLine(runSimulationExecutable);
+        } else { // else windows
+            cl = createCommandLine(executable);
+            cl.addArgument("-r");
+            cl.addArgument(context.targetFile.getName());
+        }
         cl.addArgument("--vcd=simout.vcd");
         cl.addArgument("--stop-delta=1000");
 
@@ -307,7 +328,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         cl.addArgument("--stop-time=" + simulationLength
                 + tb.getTimeScale().toString().toLowerCase());
 
-        context.simulatorCommandLine = cl;
+        context.commandLine = cl;
     }
 
     private List<String> executeProcess(CommandLine cl,
@@ -323,6 +344,13 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         executor.setWorkingDirectory(tempDirectory);
         executor.setWatchdog(watchdog);
         executor.setStreamHandler(handler);
+        /*
+         * It seems that when ExecuteWatchdog terminates process by invoking
+         * destroy method, process terminates with exit code 143. And since we
+         * manually ask watchdog if he killed the process, exit code 143 is
+         * marked as successful (just so our code can be executed).
+         */
+        executor.setExitValues(new int[] { 0, 143 });
         executor.execute(cl);
 
         if (watchdog.killedProcess()) {
@@ -401,8 +429,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         public java.io.File tempDirectory;
         public File targetFile;
         public List<String> dependencies;
-        public CommandLine compilerCommandLine;
-        public CommandLine simulatorCommandLine;
+        public CommandLine commandLine;
         public List<String> compilationLines;
         public List<String> simulationLines;
     }
