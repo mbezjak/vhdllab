@@ -606,7 +606,6 @@ public class ProjectExplorerView extends AbstractView implements
 
         private static final long serialVersionUID = 1L;
 
-        private static final String CLOSED_PROJECT_ICON = "closedProject.icon";
         private static final String PROJECT_ICON = "project.icon";
         private static final String SOURCE_ICON = "source.icon";
         private static final String SCHEMA_ICON = "schema.icon";
