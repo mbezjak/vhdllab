@@ -16,13 +16,20 @@ app.main.class = hr.fer.zemris.vhdllab.platform.Main
 jnlp.update.policy = always
 jnlp.vm.parameter = -client
 
-keystore.location = keystore
+# Since keystore is used both for SSL and for signing vhdllab-client
+# application it is imperative you use different keystore then one provided in
+# vhdllab-war/src/dev/devel-keystore. That keystore is very weak an should be
+# used only during development process.
+#
+# Note: keystore location is relative to vhdllab-war directory. If you prefer
+# you can use absolute path.
+keystore.location = src/dev/devel-keystore
+# expired-keystore is used to test how vhdllab-client handles situations when
+# keystore has expired on server
+#keystore.location = src/dev/expired-keystore
 keystore.alias = vhdllab
-keystore.password = changeit
-keystore.keypassword = changeit
-
-tomcat.manager.username = username
-tomcat.manager.password = password
+keystore.password = vhdllab
+keystore.keypassword = vhdllab
 
 # TODO: clean upper properties!!
 
@@ -45,35 +52,6 @@ simulator.parameters = --elab-run
 ###############################################################################
 ### application name                                                        ###
 app.name = vhdllab
-
-
-###############################################################################
-### Main debug properties                                                   ###
-### - this are main debug properties. If they are set to true then they     ###
-### will alter certain aspects of client or server application (depending   ###
-### on which property is set to true). For example: if either one is set to ###
-### true they will be compiled without debug information or if client.debug ###
-### is set to true it will enable more features that is nice to have when   ###
-### developing client application.                                          ###
-### NOTE: 'client.debug' and 'server.debug' are global properties and once  ###
-### set there is no need to modify any code in either client or server      ###
-### application (i.e. ant build script will modify anything else for you    ###
-### automatically)                                                          ###
-###############################################################################
-client.debug = true
-#client.debug = false
-server.debug = true
-#server.debug = false
-
-### Additional debug property                                               ###
-### Debug level for javac when debugging is enabled                         ###
-debug.level = lines,vars,source
-
-
-###############################################################################
-### Client application properties                                           ###
-###############################################################################
-app.client.libs = vhdllab-web-onClient.jar commons-logging.jar commons-collections.jar commons-beanutils.jar commons-digester.jar commons-codec.jar commons-httpclient.jar log4j.jar
 
 
 ###############################################################################

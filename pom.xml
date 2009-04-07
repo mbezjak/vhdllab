@@ -14,7 +14,6 @@
   <properties>
     <application.version>1.0.0</application.version>
     <spring.version>2.5.6</spring.version>
-    <spring.richclient.version>1.0.0</spring.richclient.version>
   </properties>
 
 
@@ -136,9 +135,8 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <!-- this profile incudes all modules -->
+      <!-- vhdllab-client is omitted in this profile -->
       <modules>
-        <module>vhdllab-client</module>
         <module>vhdllab-server</module>
         <module>vhdllab-common</module>
         <module>vhdllab-war</module>
@@ -147,7 +145,7 @@
 
     <profile>
       <id>prod</id>
-      <!-- this profile incudes all modules -->
+      <!-- this profile include all modules -->
       <modules>
         <module>vhdllab-client</module>
         <module>vhdllab-server</module>

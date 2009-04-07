@@ -19,16 +19,18 @@
     <filters>
       <filter>../configuration.properties</filter>
     </filters>
+
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>tomcat-maven-plugin</artifactId>
+          <artifactId>maven-war-plugin</artifactId>
           <configuration>
-            <warFile>${project.build.directory}/${project.build.finalName}.war</warFile>
-            <update>true</update>
-            <username>${tomcat.manager.username}</username>
-            <password>${tomcat.manager.password}</password>
+            <webResources>
+              <resource>
+                <directory>src/main/webapp</directory>
+                <filtering>true</filtering>
+              </resource>
+            </webResources>
           </configuration>
         </plugin>
       </plugins>
@@ -36,45 +38,9 @@
 
     <plugins>
       <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <webResources>
-            <resource>
-              <directory>src/main/webapp</directory>
-              <filtering>true</filtering>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
-
-      <!--
-        Reads ../configuration.properties so they can be used in this
-        file.
-      -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>1.0-alpha-1</version>
-        <executions>
-          <execution>
-            <id>read-properties-for-project</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>read-project-properties</goal>
-            </goals>
-            <configuration>
-              <files>
-                <file>../configuration.properties</file>
-              </files>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.14</version>
+        <version>6.1.16</version>
         <configuration>
           <webAppConfig>
             <contextPath>/vhdllab</contextPath>
@@ -87,7 +53,7 @@
             <connector implementation="org.mortbay.jetty.security.SslSocketConnector">
               <port>8443</port>
               <maxIdleTime>60000</maxIdleTime>
-              <keystore>target/keystore</keystore>
+              <keystore>src/dev/devel-keystore</keystore>
               <password>vhdllab</password>
               <keyPassword>vhdllab</keyPassword>
             </connector>
@@ -106,171 +72,25 @@
           </requestLog>
         </configuration>
       </plugin>
-
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-vhdllab-client-to-target</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>../vhdllab-client</directory>
-                  <includes>
-                    <include>target/vhdllab-client-with-deps.jar</include>
-                  </includes>
-                </resource>
-              </resources>
-              <outputDirectory>target</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-vhdllab-client-jars-to-vhdllab-war</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>target/target</directory>
-                  <includes>
-                    <include>vhdllab-client-with-deps.*</include>
-                  </includes>
-                </resource>
-              </resources>
-              <outputDirectory>target/vhdllab</outputDirectory>
-            </configuration>
-          </execution>
-          <execution> <!-- Copy war to parent project -->
-            <id>copy-war-to-parent</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>target</directory>
-                  <includes>
-                    <include>${project.build.finalName}.war</include>
-                  </includes>
-                </resource>
-              </resources>
-              <outputDirectory>..</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
   <profiles>
     <!--
-      'dev' and 'prod' profile also include vhdllab-client jar as a web
-      resource while 'fast' doesn't
+      'prod' profile also include vhdllab-client jar as a web resource
+      while 'dev' doesn't.
     -->
     <profile>
       <id>dev</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <properties>
-        <env>dev</env>
-        <inner.keystore.location>target/keystore</inner.keystore.location>
-        <inner.keystore.alias>vhdllab</inner.keystore.alias>
-        <inner.keystore.password>vhdllab</inner.keystore.password>
-        <inner.keystore.keypassword>vhdllab</inner.keystore.keypassword>
-        <jnlp.packenabled>false</jnlp.packenabled>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>keytool-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>make-development-keytool</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>clean</goal>
-                  <goal>genkey</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <keystore>${basedir}/target/keystore</keystore>
-              <alias>vhdllab</alias>
-              <dname>cn=vhdllab.development.issuer</dname>
-              <validity>3650</validity> <!-- 10 years -->
-              <keypass>vhdllab</keypass>
-              <storepass>vhdllab</storepass>
-            </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>sign-jar</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <configuration>
-                  <keystore>${inner.keystore.location}</keystore>
-                  <alias>${inner.keystore.alias}</alias>
-                  <storepass>${inner.keystore.password}</storepass>
-                  <keypass>${inner.keystore.keypassword}</keypass>
-                  <jarPath>target/target/vhdllab-client-with-deps.jar</jarPath>
-                  <verify>true</verify>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
 
     <profile>
       <id>prod</id>
-      <properties>
-        <env>prod</env>
-        <!--
-          In production keystore is located relative to
-          configuration.properties (where location is defined).
-        -->
-        <inner.keystore.location>../${keystore.location}</inner.keystore.location>
-        <inner.keystore.alias>${keystore.alias}</inner.keystore.alias>
-        <inner.keystore.password>${keystore.password}</inner.keystore.password>
-        <inner.keystore.keypassword>${keystore.keypassword}</inner.keystore.keypassword>
-        <jnlp.packenabled>true</jnlp.packenabled>
-      </properties>
       <build>
         <plugins>
-          <plugin>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-versions</id>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <requireFilesExist>
-                      <files>
-                        <file>${inner.keystore.location}</file>
-                      </files>
-                    </requireFilesExist>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
@@ -285,8 +105,14 @@
                     <taskdef name="pack200"
                       classname="com.sun.tools.apache.ant.pack200.Pack200Task" />
 
+                    <property file="../configuration.properties" />
+
                     <!-- pack200 segment size is 500k bytes -->
                     <property name="segmentlimit" value="500000" />
+
+                    <copy
+                      file="../vhdllab-client/target/vhdllab-client-with-deps.jar"
+                      toDir="target/signing" overwrite="true" />
 
                     <!--
                       Note: for this repacking destfile must be
@@ -297,23 +123,28 @@
                       prevent up to date from Pack.
                     -->
                     <pack200
-                      src="target/target/vhdllab-client-with-deps.jar"
-                      destfile="target/target/vhdllab-client-with-deps.changed.jar"
+                      src="target/signing/vhdllab-client-with-deps.jar"
+                      destfile="target/signing/vhdllab-client-with-deps.changed.jar"
                       repack="true" segmentlimit="${segmentlimit}" />
 
                     <move
-                      file="target/target/vhdllab-client-with-deps.changed.jar"
-                      tofile="target/target/vhdllab-client-with-deps.jar" />
+                      file="target/signing/vhdllab-client-with-deps.changed.jar"
+                      tofile="target/signing/vhdllab-client-with-deps.jar" />
 
                     <signjar
-                      jar="target/target/vhdllab-client-with-deps.jar"
-                      keystore="${inner.keystore.location}" alias="${inner.keystore.alias}"
-                      storepass="${inner.keystore.password}" keypass="${inner.keystore.keypassword}" />
+                      jar="target/signing/vhdllab-client-with-deps.jar"
+                      keystore="${keystore.location}" alias="${keystore.alias}"
+                      storepass="${keystore.password}" keypass="${keystore.keypassword}" />
 
                     <pack200
-                      src="target/target/vhdllab-client-with-deps.jar"
-                      destfile="target/target/vhdllab-client-with-deps.jar.pack.gz"
+                      src="target/signing/vhdllab-client-with-deps.jar"
+                      destfile="target/signing/vhdllab-client-with-deps.jar.pack.gz"
                       gzipoutput="true" segmentlimit="${segmentlimit}" />
+
+                    <!-- target/vhdllab is staging area when creating war -->
+                    <copy toDir="target/vhdllab" overwrite="true">
+                      <fileset dir="target/signing" />
+                    </copy>
                   </tasks>
                 </configuration>
               </execution>
@@ -326,16 +157,33 @@
               </dependency>
             </dependencies>
           </plugin>
+
+
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution> <!-- Copy war to parent project -->
+                <id>copy-war-to-parent</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory>target</directory>
+                      <includes>
+                        <include>${project.build.finalName}.war</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                  <outputDirectory>..</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <id>fast</id>
-      <properties>
-        <env>dev</env>
-        <jnlp.packenabled>false</jnlp.packenabled>
-      </properties>
     </profile>
   </profiles>
 
@@ -347,4 +195,5 @@
       <version>${version}</version>
     </dependency>
   </dependencies>
+
 </project>

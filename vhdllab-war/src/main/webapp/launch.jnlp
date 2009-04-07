@@ -25,14 +25,14 @@
     </security>
 
 	<resources>
-	    <property name="jnlp.packEnabled" value="${jnlp.packenabled}"/>
+	    <property name="jnlp.packEnabled" value="true"/>
 		<java version="1.6+" href="http://java.sun.com/products/autodl/j2se"
 		          java-vm-args="${jnlp.vm.parameter}"/>
 	    <jar href="${app.client.archive}" download="eager" main="true"/>
 	</resources>
 
 	<application-desc main-class="${app.main.class}">
-	   <argument>--env=${env}</argument>
+	   <argument>--env=prod</argument>
 	</application-desc>
 
 </jnlp>
