@@ -85,11 +85,27 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/log4j/dev</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
+      </build>
     </profile>
 
     <profile>
       <id>prod</id>
       <build>
+        <resources>
+          <resource>
+            <directory>src/log4j/prod</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
+
+
         <plugins>
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
