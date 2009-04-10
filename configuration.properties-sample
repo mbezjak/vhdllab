@@ -34,20 +34,6 @@ keystore.keypassword = vhdllab
 # TODO: clean upper properties!!
 
 ###############################################################################
-### Application configuration properties                                    ###
-###############################################################################
-compiler.executable = /usr/bin/ghdl
-compiler.tmpDir = /home/lord/tmp/vhdllab/compilations
-simulator.executable = /usr/bin/ghdl
-simulator.tmpDir = /home/lord/tmp/vhdllab/simulations
-# parameters for 32bit OS
-compiler.parameters = -a
-simulator.parameters = --elab-run
-# parameters for 64bit OS
-#compiler.parameters = -a -Wc,-m32 -Wa,--gstabs -Wa,--32
-#simulator.parameters = --elab-run -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,-m32
-
-###############################################################################
 ### General properties                                                      ###
 ###############################################################################
 ### application name                                                        ###
@@ -69,4 +55,3 @@ hibernate.cache.use_second_level_cache = true
 hibernate.cache.use_query_cache = true
 hibernate.show_sql = false
 hibernate.hbm2ddl.auto = update
-
