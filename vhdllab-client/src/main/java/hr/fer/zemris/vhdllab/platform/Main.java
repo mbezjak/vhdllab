@@ -14,7 +14,7 @@ public final class Main {
      */
     private static Logger logger;
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) {
         initializeApplication(args);
     }
 
