@@ -1,21 +1,10 @@
-app.name = vhdllab
-app.title = VHDLLab
-app.vendor = FER Java team, University of Zagreb, Croatia
-app.homepage =
-app.splash = splash_no_letters.png
-app.icon = icons/vhdllab_main_32.png
-
 app.host = localhost
-app.communication.protocol = https
-app.communication.port = 8443
-http.port = 8080
-https.port = 8443
-jnlp.file = launch.jnlp
-app.client.archive = vhdllab-client-with-deps.jar
-app.main.class = hr.fer.zemris.vhdllab.platform.Main
-jnlp.update.policy = always
-jnlp.vm.parameter = -client
+http.port=8080
+https.port=8443
 
+###############################################################################
+### Keystore parameters                                                     ###
+###############################################################################
 # Since keystore is used both for SSL and for signing vhdllab-client
 # application it is imperative you use different keystore then one provided in
 # vhdllab-war/src/dev/devel-keystore. That keystore is very weak an should be
@@ -23,35 +12,17 @@ jnlp.vm.parameter = -client
 #
 # Note: keystore location is relative to vhdllab-war directory. If you prefer
 # you can use absolute path.
-keystore.location = src/dev/devel-keystore
+keystore.location=src/dev/devel-keystore
 # expired-keystore is used to test how vhdllab-client handles situations when
 # keystore has expired on server
 #keystore.location = src/dev/expired-keystore
-keystore.alias = vhdllab
-keystore.password = vhdllab
-keystore.keypassword = vhdllab
-
-# TODO: clean upper properties!!
+keystore.alias=vhdllab
+keystore.password=vhdllab
+keystore.keypassword=vhdllab
 
 ###############################################################################
-### General properties                                                      ###
+### Database parameters                                                     ###
 ###############################################################################
-### application name                                                        ###
-app.name = vhdllab
-
-
-###############################################################################
-### Persistence provider parameters                                         ###
-###############################################################################
-hibernate.connection.url = jdbc:mysql://localhost:3306/vhdllab
-hibernate.connection.username = username
-hibernate.connection.password = password
-hibernate.connection.pool_size = 20
-hibernate.dialect = org.hibernate.dialect.MySQLDialect
-hibernate.connection.driver_class = com.mysql.jdbc.Driver
-hibernate.connection.provider_class = org.hibernate.connection.DBCPConnectionProvider
-hibernate.cache.provider_class = org.hibernate.cache.EhCacheProvider
-hibernate.cache.use_second_level_cache = true
-hibernate.cache.use_query_cache = true
-hibernate.show_sql = false
-hibernate.hbm2ddl.auto = update
+database.connection.url=jdbc:mysql://localhost:3306/vhdllab
+database.connection.username=username
+database.connection.password=password

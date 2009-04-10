@@ -1,2 +1,2 @@
-SplashScreen-Image: images/${app.splash}
-Main-Class: ${app.main.class}
+SplashScreen-Image: images/splash_no_letters.png
+Main-Class: hr.fer.zemris.vhdllab.platform.Main

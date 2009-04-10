@@ -7,7 +7,7 @@
                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-  <context:property-placeholder location="server.properties" />
+  <context:property-placeholder location="server.properties"/>
   <context:component-scan base-package="hr.fer.zemris.vhdllab.platform" />
   <aop:aspectj-autoproxy />
 
@@ -68,7 +68,7 @@
     abstract="true">
     <property name="httpInvokerRequestExecutor" ref="httpClientRequestExceutor" />
   </bean>
-
+  
   <bean id="workspaceService" parent="httpInvokerBeanParent">
     <property name="serviceUrl"
       value="https://${host}:${port}/vhdllab/remoting/workspace.service" />

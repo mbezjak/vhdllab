@@ -30,6 +30,7 @@
                 <directory>src/main/webapp</directory>
                 <includes>
                   <include>launch.jnlp</include>
+                  <include>WEB-INF/database.properties</include>
                 </includes>
                 <filtering>true</filtering>
               </resource>

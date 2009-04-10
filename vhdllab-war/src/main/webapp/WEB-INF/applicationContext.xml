@@ -8,13 +8,15 @@
                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
                 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+  
+  <context:property-placeholder location="/WEB-INF/database.properties"/>
 
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-    <property name="url" value="jdbc:mysql://localhost:3306/vhdllab2" />
-    <property name="username" value="test" />
-    <property name="password" value="a" />
+    <property name="url" value="${datasource.url}" />
+    <property name="username" value="${datasource.username}" />
+    <property name="password" value="${datasource.password}" />
 
     <property name="initialSize" value="2" />
     <property name="maxActive" value="20" />
@@ -39,8 +41,7 @@
     </property>
     <property name="jpaProperties">
       <props>
-        <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider
-        </prop>
+        <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
         <prop key="hibernate.cache.use_second_level_cache">true</prop>
         <prop key="hibernate.cache.use_query_cache">true</prop>
         <prop key="hibernate.hbm2ddl.auto">update</prop>
