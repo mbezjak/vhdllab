@@ -23,7 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PredefinedFilesDaoImplTest {
+public class PredefinedFileDaoImplTest {
 
     private static final String TEST_LOCATION = "src/test/resources/predefined";
 
@@ -124,7 +124,7 @@ public class PredefinedFilesDaoImplTest {
 
         @Override
         public String getRealPath(String path) {
-            return null;
+            return new java.io.File(TEST_LOCATION).getPath();
         }
 
         @Override
@@ -134,7 +134,7 @@ public class PredefinedFilesDaoImplTest {
 
         @Override
         public URL getResource(String path) throws MalformedURLException {
-            return new java.io.File(TEST_LOCATION).toURI().toURL();
+            return null;
         }
 
         @Override

@@ -3,12 +3,10 @@ package hr.fer.zemris.vhdllab.dao.impl;
 import hr.fer.zemris.vhdllab.dao.PredefinedFileDao;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.service.util.WebUtils;
 import hr.fer.zemris.vhdllab.util.IOUtil;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,14 +44,7 @@ public class PredefinedFileDaoImpl implements PredefinedFileDao,
 
     public java.io.File getLocation() {
         if (location == null) {
-            try {
-                URL url = servletContext.getResource(DEFAULT_LOCATION);
-                location = new java.io.File(url.toURI());
-            } catch (MalformedURLException e) {
-                throw new UnhandledException(e);
-            } catch (URISyntaxException e) {
-                throw new UnhandledException(e);
-            }
+            location = WebUtils.getLocation(servletContext, DEFAULT_LOCATION);
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Using predefined files location: "

@@ -17,14 +17,13 @@ import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
+import hr.fer.zemris.vhdllab.service.util.WebUtils;
 import hr.fer.zemris.vhdllab.util.IOUtil;
 import hr.fer.zemris.vhdllab.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,13 +177,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator,
     }
 
     private java.io.File asFile(String path) {
-        try {
-            return new java.io.File(servletContext.getResource(path).toURI());
-        } catch (MalformedURLException e) {
-            throw new UnhandledException(e);
-        } catch (URISyntaxException e) {
-            throw new UnhandledException(e);
-        }
+        return WebUtils.getLocation(servletContext, path);
     }
 
     private String getBasedOnOS(String linuxProperty, String windowsProperty) {
