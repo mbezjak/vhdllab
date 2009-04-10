@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.dao.impl;
 
+import static org.junit.Assume.assumeTrue;
 import hr.fer.zemris.vhdllab.dao.EntityDao;
 import hr.fer.zemris.vhdllab.dao.impl.support.AbstractDaoSupport;
 import hr.fer.zemris.vhdllab.dao.impl.support.FileInfoDao;
@@ -42,7 +43,7 @@ public class FileInfoDaoTest extends AbstractDaoSupport {
         entity.setType(null);
         dao.persist(entity);
     }
-    
+
     /**
      * Data can't be null.
      */
@@ -59,6 +60,8 @@ public class FileInfoDaoTest extends AbstractDaoSupport {
      */
     @Test(expected = InvalidStateException.class)
     public void dataTooLong() {
+        // assume there is enough memory for this test
+        assumeTrue(Runtime.getRuntime().freeMemory() > 17 * 1000 * 1000);
         entity.setName("name");
         entity.setType(FileType.SOURCE);
         entity.setData(RandomStringUtils.randomAlphabetic(16000001));
