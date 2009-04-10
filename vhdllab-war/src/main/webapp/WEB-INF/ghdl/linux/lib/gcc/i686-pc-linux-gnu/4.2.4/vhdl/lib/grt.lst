@@ -1,0 +1,7 @@
+@/libgrt.a
+-ldl
+-lm
+-Wl,--version-script=@/grt.ver
+-Wl,--export-dynamic
+-L./
+-lz

@@ -1,0 +1,5 @@
+v 3
+file . "../../../src/std/textio_body.v93" "20080701001555.000" "20080701021556.451":
+  package body textio at 19( 824) + 0 on 12;
+file . "../../../src/std/textio.v93" "20080701001555.000" "20080701021556.398":
+  package textio at 20( 895) + 0 on 11 body;

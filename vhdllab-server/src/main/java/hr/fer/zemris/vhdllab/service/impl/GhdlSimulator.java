@@ -23,14 +23,19 @@ import hr.fer.zemris.vhdllab.util.StringUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -43,9 +48,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.UnhandledException;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * A wrapper for GHDL (http://ghdl.free.fr/).
@@ -55,7 +60,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version 1.0
  * @since vhdllab2
  */
-public class GhdlSimulator extends ServiceSupport implements Simulator {
+public class GhdlSimulator extends ServiceSupport implements Simulator,
+        ServletContextAware {
 
     /**
      * Logger for this class
@@ -67,69 +73,138 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     private static final int ACQUIRE_TIMEOUT = 1;
     private static final TimeUnit ACQUIRE_TIME_UNIT = TimeUnit.SECONDS;
 
-    private static final String EXECUTABLE_PROPERTY = "executable";
-    private static final String RUN_SIMULATION_PROPERTY = "run.simulation.executable";
-    private static final String COMPILATION_PARAMETERS = "compilation.parameters";
-    private static final String ELABORATION_PARAMETERS = "elaboration.parameters";
-    private static final String TMPDIR_PROPERTY = "tmpDir";
+    private static final String GHDL_BASE_DIR = "/WEB-INF/ghdl/";
+    private static final String DEFAULT_TMP_ROOT_DIR = GHDL_BASE_DIR + "tmp";
 
-    private String executable;
-    private String runSimulationExecutable;
-    private String[] compilerParameters;
-    private String[] elaborationParameters;
+    /*
+     * Linux properties:
+     */
+    private static final String LINUX_BASE_DIR = GHDL_BASE_DIR + "linux/";
+    private static final String LINUX_EXECUTABLE = LINUX_BASE_DIR + "bin/ghdl";
+    private static final String LINUX_GHDL1_PATH = LINUX_BASE_DIR
+            + "libexec/gcc/i686-pc-linux-gnu/4.2.4/ghdl1";
+    private static final String LINUX_PREFIX_PATH = LINUX_BASE_DIR
+            + "lib/gcc/i686-pc-linux-gnu/4.2.4/vhdl/lib/";
+    private static final String LINUX_COMMON_PARAMETERS = "-Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,-m32 --GHDL1={0} --PREFIX={1}";
+    private static final String LINUX_COMPILATION_PARAMETERS = "-a "
+            + LINUX_COMMON_PARAMETERS;
+    private static final String LINUX_ELABORATION_PARAMETERS = "-e "
+            + LINUX_COMMON_PARAMETERS + " -o run_simulation";
+
+    /*
+     * Windows properties:
+     */
+    private static final String WINDOWS_EXECUTABLE = GHDL_BASE_DIR
+            + "windows/bin/ghdl.exe";
+    private static final String WINDOWS_COMPILATION_PARAMETERS = "-a";
+
+    private ServletContext servletContext;
+
     private java.io.File tmpRootDir;
+    private java.io.File executable;
+    private String[] compilationParameters;
+    private String[] elaborationParameters;
 
     private boolean leaveSimulationResults = true;
 
     private final Semaphore semaphore = new Semaphore(
             MAX_SIMULTANEOUS_PROCESSES);
 
-    private Properties properties;
-
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-
     @Autowired
     private WorkspaceService workspaceService;
 
-    public void configure() {
-        executable = properties.getProperty(EXECUTABLE_PROPERTY);
+    @PostConstruct
+    public void setUnixFilePermissions() throws IOException {
+        if (SystemUtils.IS_OS_UNIX) {
+            String executablePath = getExecutable().getPath();
+            String ghdl1 = asFile(LINUX_GHDL1_PATH).getPath();
+            String chmodCommand = "chmod u+x " + executablePath + " " + ghdl1;
+            LOG.debug("Executing: " + chmodCommand);
+            Runtime.getRuntime().exec(chmodCommand);
+        }
+    }
+
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+    public java.io.File getTmpRootDir() {
+        if (tmpRootDir == null) {
+            tmpRootDir = asFile(DEFAULT_TMP_ROOT_DIR);
+        }
+        return tmpRootDir;
+    }
+
+    public void setTmpRootDir(java.io.File tmpRootDir) {
+        this.tmpRootDir = tmpRootDir;
+    }
+
+    public java.io.File getExecutable() {
         if (executable == null) {
-            throw new IllegalArgumentException("GHDL executable not defined!");
+            executable = asFile(getBasedOnOS(LINUX_EXECUTABLE,
+                    WINDOWS_EXECUTABLE));
         }
-        if (!new java.io.File(executable).exists()) {
-            throw new IllegalArgumentException(
-                    "Specified GHDL executable doesn't exist: " + executable);
-        }
-        runSimulationExecutable = properties
-                .getProperty(RUN_SIMULATION_PROPERTY);
+        return executable;
+    }
 
-        String allParameters = properties.getProperty(ELABORATION_PARAMETERS);
-        if (allParameters == null) {
-            throw new IllegalArgumentException(
-                    "GHDL elaboration parameters not defined!");
-        }
-        elaborationParameters = allParameters.split(" ");
+    public void setExecutable(java.io.File executable) {
+        this.executable = executable;
+    }
 
-        allParameters = properties.getProperty(COMPILATION_PARAMETERS);
-        if (allParameters == null) {
-            throw new IllegalArgumentException(
-                    "GHDL compiler parameters not defined!");
+    public String[] getCompilationParameters() {
+        if (compilationParameters == null) {
+            compilationParameters = getBasedOnOS(
+                    createLinuxParameters(LINUX_COMPILATION_PARAMETERS),
+                    WINDOWS_COMPILATION_PARAMETERS).split(" ");
         }
-        compilerParameters = allParameters.split(" ");
-        String dir = properties.getProperty(TMPDIR_PROPERTY);
-        if (dir == null) {
-            throw new IllegalArgumentException(
-                    "No temporary root simulation directory defined!");
+        return compilationParameters;
+    }
+
+    public void setCompilationParameters(String[] compilationParameters) {
+        this.compilationParameters = compilationParameters;
+    }
+
+    public String[] getElaborationParameters() {
+        if (elaborationParameters == null) {
+            elaborationParameters = createLinuxParameters(
+                    LINUX_ELABORATION_PARAMETERS).split(" ");
         }
-        tmpRootDir = new java.io.File(dir);
-        if (!tmpRootDir.exists()) {
-            if (LOG.isEnabledFor(Level.WARN)) {
-                LOG.warn(tmpRootDir + " doesn't exist and will be created!");
-            }
-            tmpRootDir.mkdirs();
+        return elaborationParameters;
+    }
+
+    public void setElaborationParameters(String[] elaborationParameters) {
+        this.elaborationParameters = elaborationParameters;
+    }
+
+    private java.io.File asFile(String path) {
+        try {
+            return new java.io.File(servletContext.getResource(path).toURI());
+        } catch (MalformedURLException e) {
+            throw new UnhandledException(e);
+        } catch (URISyntaxException e) {
+            throw new UnhandledException(e);
         }
+    }
+
+    private String getBasedOnOS(String linuxProperty, String windowsProperty) {
+        if (SystemUtils.IS_OS_UNIX) {
+            return linuxProperty;
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            return windowsProperty;
+        } else {
+            throw new IllegalStateException("GHDL is unsupported on: "
+                    + SystemUtils.OS_NAME);
+        }
+    }
+
+    private String createLinuxParameters(String parameters) {
+        String ghdl1 = asFile(LINUX_GHDL1_PATH).getPath();
+        /*
+         * prefix must end with / character otherwise process wont execute!
+         */
+        String prefix = asFile(LINUX_PREFIX_PATH).getPath() + "/";
+        return MessageFormat.format(parameters, ghdl1, prefix);
     }
 
     @Override
@@ -173,7 +248,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
             throw new CompilationException(e);
         }
 
-        return listToCompilationMessages(context.compilationLines);
+        return listToCompilationMessages(context.result);
     }
 
     private Result simulateImpl(Integer fileId) {
@@ -182,10 +257,12 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         String waveform;
         try {
             doCompile(context);
-            prepairElaborationCommandLine(context);
-            executeProcess(context.commandLine, context.tempDirectory);
+            if (SystemUtils.IS_OS_UNIX) {
+                prepairElaborationCommandLine(context);
+                executeProcess(context.commandLine, context.tempDirectory);
+            }
             prepairSimulationCommandLine(context);
-            context.simulationLines = executeProcess(context.commandLine,
+            context.result = executeProcess(context.commandLine,
                     context.tempDirectory);
             waveform = extractWaveform(context);
         } catch (IOException e) {
@@ -196,7 +273,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
             }
         }
 
-        return new Result(waveform, context.simulationLines);
+        return new Result(waveform, context.result);
     }
 
     @SuppressWarnings("synthetic-access")
@@ -217,9 +294,9 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
                     .getId(), context.tempDirectory);
 
             context.commandLine = prepairCompilerCommandLine(
-                    compilerParameters, context.dependencies);
+                    getCompilationParameters(), context.dependencies);
 
-            context.compilationLines = executeProcess(context.commandLine,
+            context.result = executeProcess(context.commandLine,
                     context.tempDirectory);
         } finally {
             if (context.compileOnly) {
@@ -255,11 +332,12 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         String suffix = "_by_user-" + SecurityUtils.getUser() + "__file_id-"
                 + fileId;
         java.io.File tempFile = java.io.File.createTempFile("ghd", suffix,
-                tmpRootDir);
-        java.io.File tempDir = new java.io.File(tmpRootDir, "DIR"
+                getTmpRootDir());
+        java.io.File tempDir = new java.io.File(getTmpRootDir(), "DIR"
                 + tempFile.getName());
         FileUtils.forceMkdir(tempDir);
         FileUtils.deleteQuietly(tempFile);
+        LOG.debug("Created temp directory: " + tempDir.getPath());
         return tempDir;
     }
 
@@ -278,13 +356,13 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         }
     }
 
-    private CommandLine createCommandLine(String executableCommand) {
+    private CommandLine createCommandLine(java.io.File executableCommand) {
         return new CommandLine(executableCommand);
     }
 
     private CommandLine prepairCompilerCommandLine(String[] arguments,
             List<String> dependencies) {
-        CommandLine cl = createCommandLine(executable);
+        CommandLine cl = createCommandLine(getExecutable());
         cl.addArguments(arguments);
         for (String name : dependencies) {
             cl.addArgument(name + ".vhdl");
@@ -293,8 +371,8 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     }
 
     private void prepairElaborationCommandLine(SimulationContext context) {
-        CommandLine cl = createCommandLine(executable);
-        cl.addArguments(elaborationParameters);
+        CommandLine cl = createCommandLine(getExecutable());
+        cl.addArguments(getElaborationParameters());
         cl.addArgument(context.targetFile.getName());
         context.commandLine = cl;
     }
@@ -302,9 +380,10 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     private void prepairSimulationCommandLine(SimulationContext context) {
         CommandLine cl;
         if (SystemUtils.IS_OS_UNIX) {
-            cl = createCommandLine(runSimulationExecutable);
+            cl = createCommandLine(new java.io.File(context.tempDirectory,
+                    "run_simulation"));
         } else { // else windows
-            cl = createCommandLine(executable);
+            cl = createCommandLine(getExecutable());
             cl.addArgument("-r");
             cl.addArgument(context.targetFile.getName());
         }
@@ -351,21 +430,26 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
          * marked as successful (just so our code can be executed).
          */
         executor.setExitValues(new int[] { 0, 143 });
-        executor.execute(cl);
+        try {
+            executor.execute(cl);
+        } catch (ExecuteException e) {
+            LOG.warn("Process output dump:\n" + bos.toString());
+            throw e;
+        }
 
         if (watchdog.killedProcess()) {
             throw new SimulatorTimeoutException(PROCESS_TIMEOUT);
         }
-        String errors;
+        String output;
         try {
-            errors = bos.toString(IOUtil.DEFAULT_ENCODING);
+            output = bos.toString(IOUtil.DEFAULT_ENCODING);
         } catch (UnsupportedEncodingException e) {
             throw new UnhandledException(e);
         }
-        if (StringUtils.isBlank(errors)) {
+        if (StringUtils.isBlank(output)) {
             return Collections.emptyList();
         }
-        return Arrays.asList(StringUtil.splitToNewLines(errors));
+        return Arrays.asList(StringUtil.splitToNewLines(output));
     }
 
     private List<CompilationMessage> listToCompilationMessages(
@@ -430,8 +514,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         public File targetFile;
         public List<String> dependencies;
         public CommandLine commandLine;
-        public List<String> compilationLines;
-        public List<String> simulationLines;
+        public List<String> result;
     }
 
 }

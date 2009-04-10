@@ -28,6 +28,9 @@
             <webResources>
               <resource>
                 <directory>src/main/webapp</directory>
+                <includes>
+                  <include>launch.jnlp</include>
+                </includes>
                 <filtering>true</filtering>
               </resource>
             </webResources>
@@ -193,6 +196,10 @@
                       </includes>
                     </resource>
                   </resources>
+                  <!--
+                    Copy to main vhdllab directory (one containing
+                    vhdllab-war project).
+                  -->
                   <outputDirectory>..</outputDirectory>
                 </configuration>
               </execution>

@@ -1,0 +1,5 @@
+v 3
+file . "textio_body.v87" "20070715063656.000" "20070715083654.734":
+  package body textio at 19( 842) + 0 on 28;
+file . "textio.v87" "20070715063656.000" "20070715083654.678":
+  package textio at 20( 914) + 0 on 27 body;

@@ -80,17 +80,7 @@
   <bean id="preferencesFileService" class="hr.fer.zemris.vhdllab.service.impl.PreferencesFileServiceImpl" />
   <bean id="clientLogService" class="hr.fer.zemris.vhdllab.service.impl.ClientLogServiceImpl" />
   <bean id="metadataExtractionService" class="hr.fer.zemris.vhdllab.service.impl.MetadataExtractionServiceImpl" />
-  <bean id="simulator" class="hr.fer.zemris.vhdllab.service.impl.GhdlSimulator" init-method="configure">
-    <property name="properties">
-      <props>
-        <prop key="executable">/usr/bin/ghdl</prop>
-        <prop key="run.simulation.executable">./run_simulation</prop>
-        <prop key="compilation.parameters">-a -Wc,-m32 -Wa,--gstabs -Wa,--32</prop>
-        <prop key="elaboration.parameters">-e -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,-m32 -o run_simulation</prop>
-        <prop key="tmpDir">/home/lord/tmp/vhdllab/simulations</prop>
-      </props>
-    </property>
-  </bean>
+  <bean id="simulator" class="hr.fer.zemris.vhdllab.service.impl.GhdlSimulator" />
 
   
   <!-- Aspects -->
