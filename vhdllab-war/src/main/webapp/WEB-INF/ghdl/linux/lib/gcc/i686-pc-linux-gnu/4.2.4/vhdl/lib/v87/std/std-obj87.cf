@@ -1,5 +1,0 @@
-v 3
-file . "../../../src/std/textio_body.v87" "20080701001555.000" "20080701021557.157":
-  package body textio at 19( 824) + 0 on 12;
-file . "../../../src/std/textio.v87" "20080701001555.000" "20080701021557.106":
-  package textio at 20( 895) + 0 on 11 body;

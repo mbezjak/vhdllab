@@ -113,8 +113,15 @@ public class GhdlSimulator extends ServiceSupport implements Simulator,
     private WorkspaceService workspaceService;
 
     @PostConstruct
-    public void setUnixFilePermissions() throws IOException {
+    public void extractLinuxGhdl() throws IOException {
         if (SystemUtils.IS_OS_UNIX) {
+            java.io.File workingDir = asFile(GHDL_BASE_DIR);
+            String tarCommand = "tar xf "
+                    + asFile(GHDL_BASE_DIR + "ghdl-linux.tar").getPath();
+            LOG.debug("Executing: " + tarCommand + " in directory: "
+                    + workingDir.getPath());
+            Runtime.getRuntime().exec(tarCommand, null, workingDir);
+
             String executablePath = getExecutable().getPath();
             String ghdl1 = asFile(LINUX_GHDL1_PATH).getPath();
             String chmodCommand = "chmod u+x " + executablePath + " " + ghdl1;
