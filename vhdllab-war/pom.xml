@@ -127,8 +127,13 @@
 
                     <property file="../configuration.properties" />
 
-                    <!-- pack200 segment size is 500k bytes -->
-                    <property name="segmentlimit" value="500000" />
+                    <!--
+                      pack200 segment size is set to -1 because of bug 5078608
+                      http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5078608
+                      It seems that this bug is still opened.
+                      Environment is: linux 32bit, java 1.6.0_10-b33
+                    -->
+                    <property name="segmentlimit" value="-1" />
 
                     <copy
                       file="../vhdllab-client/target/vhdllab-client-with-deps.jar"
