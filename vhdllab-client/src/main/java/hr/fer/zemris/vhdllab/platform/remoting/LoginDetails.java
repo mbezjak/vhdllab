@@ -64,15 +64,10 @@ public class LoginDetails implements PropertyConstraintProvider {
             protected void initRules() {
                 add(PROPERTY_USERNAME, all(new Constraint[] { required(),
                         minLength(getUsernameMinLength()) }));
-                add(PROPERTY_PASSWORD, all(new Constraint[] { required(),
-                        minLength(getPasswordMinLength()) }));
+                add(PROPERTY_PASSWORD, all(new Constraint[] { required() }));
             }
 
             protected int getUsernameMinLength() {
-                return 2;
-            }
-
-            protected int getPasswordMinLength() {
                 return 2;
             }
 
