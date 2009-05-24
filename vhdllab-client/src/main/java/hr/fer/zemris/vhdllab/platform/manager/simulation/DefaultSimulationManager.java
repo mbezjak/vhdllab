@@ -108,7 +108,7 @@ public class DefaultSimulationManager extends
         Project project = file.getProject();
         EditorManager em = editorManagerFactory
                 .getAllAssociatedWithProject(project);
-        boolean shouldSimulate = em.save(true, SaveContext.COMPILE_AFTER_SAVE);
+        boolean shouldSimulate = em.save(true, SaveContext.SIMULATE_AFTER_SAVE);
         if (shouldSimulate) {
             Result result;
             try {
