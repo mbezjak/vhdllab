@@ -22,7 +22,9 @@ public interface EditorManager {
     void undo() throws NotOpenedException;
 
     void redo() throws NotOpenedException;
-    
+
+    void highlightLine(int line) throws NotOpenedException;
+
     boolean isModified() throws NotOpenedException;
 
     EditorIdentifier getIdentifier();

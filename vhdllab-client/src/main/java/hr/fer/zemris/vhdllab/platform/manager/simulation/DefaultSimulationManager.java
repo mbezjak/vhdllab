@@ -76,7 +76,7 @@ public class DefaultSimulationManager extends
                         message));
             }
             lastCompiledFile = file;
-            fireCompiled(messages);
+            fireCompiled(file, messages);
             logger.info(localizationSource.getMessage(COMPILED_MESSAGE,
                     new Object[] { file.getName(), project.getName() }));
         }
@@ -92,9 +92,9 @@ public class DefaultSimulationManager extends
         compile(getLastCompiledFile());
     }
 
-    private void fireCompiled(List<CompilationMessage> messages) {
+    private void fireCompiled(File compiledFile, List<CompilationMessage> messages) {
         for (SimulationListener l : getListeners()) {
-            l.compiled(messages);
+            l.compiled(compiledFile, messages);
         }
     }
 
@@ -125,7 +125,7 @@ public class DefaultSimulationManager extends
                 result = new Result(Collections.singletonList(message));
             }
             lastSimulatedFile = file;
-            fireSimulated(result);
+            fireSimulated(file, result);
             openSimulationEditor(file, result);
             logger.info(localizationSource.getMessage(SIMULATED_MESSAGE,
                     new Object[] { file.getName(), project.getName() }));
@@ -142,9 +142,9 @@ public class DefaultSimulationManager extends
         simulate(getLastSimulatedFile());
     }
 
-    private void fireSimulated(Result result) {
+    private void fireSimulated(File simulatedFile, Result result) {
         for (SimulationListener l : getListeners()) {
-            l.simulated(result);
+            l.simulated(simulatedFile, result);
         }
     }
 

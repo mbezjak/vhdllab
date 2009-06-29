@@ -132,12 +132,12 @@ public class SchemaMainPanel extends AbstractEditor {
      * Performs all initialization assuming that a project container HAS BEEN
      * SET. Therefore, this is not called from a ctor.
      */
-    private void initDynamic() {
+    private JComponent initDynamic() {
         // init prototype components
         initPrototypes();
 
         // init gui
-        initGUI();
+        return initGUI();
     }
 
     private void initPrototypes() {
@@ -193,9 +193,9 @@ public class SchemaMainPanel extends AbstractEditor {
         return usercircuits;
     }
 
-    private void initGUI() {
-        this.setLayout(new BorderLayout());
-
+    private JComponent initGUI() {
+        final JPanel control = new JPanel(new BorderLayout());
+        
         componentPropertyToolbar = new CPToolbar(localGUIController, controller);
 
         componentToAddToolbar = new TabbedCTAddToolbar(controller,
@@ -220,16 +220,16 @@ public class SchemaMainPanel extends AbstractEditor {
 
         // #########Added by Delac: key listener for delete and escape
         // action#########
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        control.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
                 "delete_key_action");
-        this.getActionMap().put("delete_key_action", new AbstractAction() {
+        control.getActionMap().put("delete_key_action", new AbstractAction() {
             private static final long serialVersionUID = 1844240025875439799L;
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (localGUIController.getSelectedType() == CanvasToolbarLocalGUIController.TYPE_WIRE) {
-                    if (SchemaCanvas.doDeleteWire(SchemaMainPanel.this)) {
+                    if (SchemaCanvas.doDeleteWire(control)) {
                         Caseless sel = localGUIController
                                 .getSelectedComponent();
                         localGUIController
@@ -250,10 +250,10 @@ public class SchemaMainPanel extends AbstractEditor {
                 }
             }
         });
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        control.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 "escape_key_action");
-        this.getActionMap().put("escape_key_action", new AbstractAction() {
+        control.getActionMap().put("escape_key_action", new AbstractAction() {
             private static final long serialVersionUID = 1844240025875439799L;
 
             @Override
@@ -292,12 +292,12 @@ public class SchemaMainPanel extends AbstractEditor {
         horizontalSplitPane.setOneTouchExpandable(true);
         verticalSplitPane.setOneTouchExpandable(true);
 
-        addComponentListener(new ComponentAdapter() {
+        control.addComponentListener(new ComponentAdapter() {
 
             @Override
             public void componentResized(ComponentEvent e) {
-                int width = getWidth();
-                int height = getHeight();
+                int width = control.getWidth();
+                int height = control.getHeight();
 
                 if (width <= 0) {
                     return;
@@ -318,7 +318,8 @@ public class SchemaMainPanel extends AbstractEditor {
             }
         });
 
-        this.add(verticalSplitPane, BorderLayout.CENTER);
+        control.add(verticalSplitPane, BorderLayout.CENTER);
+        return control;
     }
 
     private void resetSchema() {
@@ -431,8 +432,8 @@ public class SchemaMainPanel extends AbstractEditor {
     }
 
     @Override
-    protected void doInitWithoutData() {
-        initDynamic();
+    protected JComponent doInitWithoutData() {
+        return initDynamic();
     }
 
     @Override

@@ -18,6 +18,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -53,7 +54,7 @@ public class Automat extends AbstractEditor {
      * 
      * 
      */
-    private void createGUI() {
+    private JComponent createGUI() {
 
         adrw = new AutoDrawer(this);
 
@@ -150,9 +151,9 @@ public class Automat extends AbstractEditor {
         tulbar.add(podatci);
 
         JScrollPane p = new JScrollPane(adrw);
-        this.setLayout(new BorderLayout());
-        this.add(p, BorderLayout.CENTER);
-        this.add(tulbar, BorderLayout.NORTH);
+        JPanel control = new JPanel(new BorderLayout());
+        control.add(p, BorderLayout.CENTER);
+        control.add(tulbar, BorderLayout.NORTH);
 
         // predpostavke za -3:
         // adrw.setMinXY(Automat.this.getWidth() - 3, Automat.this.getHeight()
@@ -191,10 +192,10 @@ public class Automat extends AbstractEditor {
                 source.requestFocusInWindow();
             }
         });
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        control.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 "escape_key_action");
-        this.getActionMap().put("escape_key_action", new AbstractAction() {
+        control.getActionMap().put("escape_key_action", new AbstractAction() {
             private static final long serialVersionUID = 1844240025875439799L;
 
             @Override
@@ -208,6 +209,8 @@ public class Automat extends AbstractEditor {
                 podatci.setSelected(false);
             }
         });
+        
+        return control;
     }
 
     // *************************************************************************
@@ -228,10 +231,10 @@ public class Automat extends AbstractEditor {
     }
 
     @Override
-    protected void doInitWithoutData() {
+    protected JComponent doInitWithoutData() {
         bundle = ResourceBundle
                 .getBundle("Client_Automat_ApplicationResources");
-        createGUI();
+        return createGUI();
     }
 
 }

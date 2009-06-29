@@ -78,7 +78,7 @@ public class TabbedEditorsView extends AbstractView implements
         title = MessageFormat.format(title, args);
         tooltip = MessageFormat.format(tooltip, args);
         Icon editorIcon = getIconSource().getIcon("editor.icon");
-        tabbedPane.addTab(title, editorIcon, editor.getPanel(), tooltip);
+        tabbedPane.addTab(title, editorIcon, editor.getControl(), tooltip);
         editor.getEventPublisher().addListener(new EditorModifiedListener());
         updateEditorCommandEnabledState();
         addingTab = false;
@@ -86,7 +86,7 @@ public class TabbedEditorsView extends AbstractView implements
 
     @Override
     public void editorRemoved(Editor editor) {
-        tabbedPane.remove(editor.getPanel());
+        tabbedPane.remove(editor.getControl());
         editors.remove(editor.getFile());
         updateEditorCommandEnabledState();
     }
@@ -94,7 +94,7 @@ public class TabbedEditorsView extends AbstractView implements
     @Override
     public void editorSelected(Editor editor) {
         if (editor != null) {
-            tabbedPane.setSelectedComponent(editor.getPanel());
+            tabbedPane.setSelectedComponent(editor.getControl());
             updateEditorCommandEnabledState();
         }
     }
@@ -110,7 +110,7 @@ public class TabbedEditorsView extends AbstractView implements
         if (selectedComponent != null) {
             for (Editor editor : editors.values()) {
                 if (editor.isModified()) {
-                    saveEnabled = editor.getPanel() == selectedComponent;
+                    saveEnabled = editor.getControl() == selectedComponent;
                     saveAllEnabled = true;
                 }
             }

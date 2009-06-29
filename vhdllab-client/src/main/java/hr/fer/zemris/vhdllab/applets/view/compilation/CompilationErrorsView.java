@@ -1,9 +1,16 @@
 package hr.fer.zemris.vhdllab.applets.view.compilation;
 
-import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
-import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationAdapter;
+import hr.fer.zemris.vhdllab.applets.texteditor.ViewVhdlEditorMetadata;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileType;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorIdentifier;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
+import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationListener;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.platform.ui.MouseClickAdapter;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
+import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.awt.event.MouseEvent;
 import java.text.Format;
@@ -22,21 +29,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.richclient.application.support.AbstractView;
 
 /**
- * Panel koji sadrzi mozebitne greske prilikom kompajliranja VHDL koda.
- * 
- * @author Boris Ozegovic
+ * @author Miro Bezjak
  * @version 1.0
- * @since 22.12.2006.
  */
-public class CompilationErrorsView extends AbstractView {
+public class CompilationErrorsView extends AbstractView implements
+        SimulationListener {
 
     @Autowired
-    private PlatformContainer container;
+    private SimulationManager simulationManager;
+    @Autowired
+    private EditorManagerFactory editorManagerFactory;
 
     /** DefaultListModel */
     private DefaultListModel model;
 
-    void setContent(List<CompilationMessage> messages) {
+    private File file = null;
+
+    @Override
+    protected JComponent createControl() {
+        model = new DefaultListModel();
+        final JList listContent = new JList(model);
+        listContent.setFixedCellHeight(15);
+        listContent.addMouseListener(new MouseClickAdapter() {
+            @Override
+            protected void onDoubleClick(MouseEvent e) {
+                String selectedValue = (String) listContent.getSelectedValue();
+                highlightError(selectedValue);
+            }
+        });
+
+        simulationManager.addListener(this);
+        return new JScrollPane(listContent);
+    }
+
+    private void setContent(List<CompilationMessage> messages) {
         if (messages.isEmpty()) {
             Format formatter = new SimpleDateFormat("HH:mm:ss");
             String time = formatter.format(new Date());
@@ -65,57 +91,35 @@ public class CompilationErrorsView extends AbstractView {
      *            Linija koju je generira VHDL simulator
      */
     void highlightError(String error) {
+        if (file == null) {
+            return;
+        }
         Pattern pattern = Pattern.compile("([^:]+):([^:]+):([^:]+):(.+)");
         Matcher matcher = pattern.matcher(error);
         if (matcher.matches()) {
-            // FileIdentifier resource = resultTarget.getResource();
-            // Editor editor;
-            // if (container.getResourceManager().getFileType(
-            // resource.getProjectName(), resource.getFileName()).equals(
-            // FileType.SOURCE)) {
-            // IComponentIdentifier<FileIdentifier> identifier =
-            // ComponentIdentifierFactory
-            // .createFileEditorIdentifier(resource);
-            // editor = container.getEditorManager().getOpenedEditor(
-            // identifier);
-            // if (editor == null) {
-            // editor = container.getEditorManager().openEditorByResource(
-            // identifier);
-            // }
-            // } else {
-            // IComponentIdentifier<FileIdentifier> identifier =
-            // ComponentIdentifierFactory
-            // .createViewVHDLIdentifier(resource);
-            // editor = container.getEditorManager().viewVHDLCode(identifier);
-            // }
-            // int temp = Integer.valueOf(matcher.group(2));
-            // editor.highlightLine(temp);
+            EditorManager em;
+            if (file.getType().equals(FileType.SOURCE)) {
+                em = editorManagerFactory.get(file);
+            } else {
+                EditorIdentifier identifier = new EditorIdentifier(
+                        new ViewVhdlEditorMetadata(), file);
+                em = editorManagerFactory.get(identifier);
+            }
+            em.open();
+            int line = Integer.valueOf(matcher.group(2));
+            em.highlightLine(line);
         }
     }
 
     @Override
-    protected JComponent createControl() {
-        model = new DefaultListModel();
-        final JList listContent = new JList(model);
-        listContent.setFixedCellHeight(15);
-        listContent.addMouseListener(new MouseClickAdapter() {
-            @Override
-            protected void onDoubleClick(MouseEvent e) {
-                String selectedValue = (String) listContent.getSelectedValue();
-                highlightError(selectedValue);
-            }
-        });
+    public void compiled(File compiledFile, List<CompilationMessage> messages) {
+        setContent(messages);
+        getActiveWindow().getPage().setActiveComponent(this);
+        this.file = compiledFile;
+    }
 
-        container.getSimulationManager().addListener(new SimulationAdapter() {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void compiled(List<CompilationMessage> messages) {
-                setContent(messages);
-                getActiveWindow().getPage().setActiveComponent(
-                        CompilationErrorsView.this);
-            }
-        });
-        return new JScrollPane(listContent);
+    @Override
+    public void simulated(File simulatedfile, Result result) {
     }
 
 }

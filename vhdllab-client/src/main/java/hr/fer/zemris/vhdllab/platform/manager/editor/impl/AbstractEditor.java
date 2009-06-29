@@ -8,15 +8,20 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorListener;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorMetadata;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 
+import java.awt.BorderLayout;
+
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.richclient.factory.AbstractControlFactory;
 
-public abstract class AbstractEditor extends JPanel implements Editor {
-
-    private static final long serialVersionUID = 1L;
+public abstract class AbstractEditor extends AbstractControlFactory implements
+        Editor {
 
     private final EventPublisher<EditorListener> publisher;
+    private boolean modificationsEnabled;
     private boolean modified;
     private File file;
     protected PlatformContainer container;
@@ -25,6 +30,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     public AbstractEditor() {
         this.publisher = new StandaloneEventPublisher<EditorListener>(
                 EditorListener.class);
+        modificationsEnabled = false;
         modified = false;
     }
 
@@ -39,17 +45,16 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     }
 
     @Override
-    public JPanel getPanel() {
-        return this;
-    }
-
-    @Override
-    public void init() {
-        doInitWithoutData();
+    protected JComponent createControl() {
+        JPanel control = new JPanel(new BorderLayout());
+        JComponent userComponent = doInitWithoutData();
+        control.add(new JScrollPane(userComponent), BorderLayout.CENTER);
+        return control;
     }
 
     @Override
     public void dispose() {
+        modificationsEnabled = false;
         publisher.removeListeners();
         doDispose();
     }
@@ -65,13 +70,18 @@ public abstract class AbstractEditor extends JPanel implements Editor {
     @Override
     public void setFile(File file) {
         this.file = (file != null ? new File(file, true) : null);
+        modificationsEnabled = false;
         doInitWithData(this.file);
         setModified(false);
+        modificationsEnabled = true;
     }
 
     @Override
     public File getFile() {
-        String data = getData();
+        String data = null;
+        if (isControlCreated()) {
+            data = getData();
+        }
         if (file != null && data != null) {
             file.setData(data);
         }
@@ -93,6 +103,9 @@ public abstract class AbstractEditor extends JPanel implements Editor {
 
     @Override
     public boolean setModified(boolean flag) {
+        if (!modificationsEnabled) {
+            return false;
+        }
         if (flag != modified) {
             modified = flag;
             fireModified(getFile(), flag);
@@ -151,7 +164,7 @@ public abstract class AbstractEditor extends JPanel implements Editor {
                 .getSimpleName());
         beanName = beanName.replace("Metadata", "");
         Object[] args = new Object[] { getFileName(), getProjectName() };
-        return container.getMessage(beanName + ".title", args);
+        return getMessage(beanName + ".title", args);
     }
 
     @Override
@@ -167,10 +180,10 @@ public abstract class AbstractEditor extends JPanel implements Editor {
         }
         Object[] args = new Object[] { getFileName(), getProjectName(),
                 editableMessage };
-        return container.getMessage(beanName + ".caption", args);
+        return getMessage(beanName + ".caption", args);
     }
 
-    protected abstract void doInitWithoutData();
+    protected abstract JComponent doInitWithoutData();
 
     protected abstract void doInitWithData(File f);
 

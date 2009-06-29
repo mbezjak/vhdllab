@@ -1,7 +1,6 @@
 package hr.fer.zemris.vhdllab.applets.editor.automat;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -62,7 +61,7 @@ public class Testpan extends JFrame {
 //			this.getContentPane().add(aut,BorderLayout.CENTER);
 //		}
 	
-		this.setSize(((Component) aut).getPreferredSize());
+		this.setSize(aut.getControl().getPreferredSize());
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException{

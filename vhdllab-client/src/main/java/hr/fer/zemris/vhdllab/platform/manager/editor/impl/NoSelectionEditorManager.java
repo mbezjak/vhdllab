@@ -53,6 +53,10 @@ public class NoSelectionEditorManager implements EditorManager {
     }
 
     @Override
+    public void highlightLine(int line) throws NotOpenedException {
+    }
+
+    @Override
     public boolean isModified() throws NotOpenedException {
         return false;
     }

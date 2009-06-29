@@ -3,17 +3,13 @@ package hr.fer.zemris.vhdllab.platform.manager.editor;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.listener.EventPublisher;
 
-import javax.swing.JPanel;
+import org.springframework.richclient.factory.ControlFactory;
 
-public interface Editor {
+public interface Editor extends ControlFactory {
 
     PlatformContainer getContainer();
 
     void setContainer(PlatformContainer container);
-
-    void init();
-
-    JPanel getPanel();
 
     void dispose();
 

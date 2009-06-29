@@ -6,8 +6,8 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.TestbenchFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.closure.Constraint;
 import org.springframework.rules.Rules;
+import org.springframework.rules.constraint.Constraint;
 import org.springframework.rules.support.DefaultRulesSource;
 
 public class ObjectValidationRulesSource extends DefaultRulesSource {

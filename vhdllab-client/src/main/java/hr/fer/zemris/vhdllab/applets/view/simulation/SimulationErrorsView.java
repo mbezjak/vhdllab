@@ -1,12 +1,15 @@
 package hr.fer.zemris.vhdllab.applets.view.simulation;
 
-import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
-import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationAdapter;
+import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationListener;
+import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
+import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -17,21 +20,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.richclient.application.support.AbstractView;
 
 /**
- * Panel koji sadrzi mozebitne greske prilikom kompajliranja VHDL koda.
- * 
- * @author Boris Ozegovic
+ * @author Miro Bezjak
  * @version 1.0
- * @since 22.12.2006.
  */
-public class SimulationErrorsView extends AbstractView {
+public class SimulationErrorsView extends AbstractView implements
+        SimulationListener {
 
     @Autowired
-    private PlatformContainer container;
+    private SimulationManager simulationManager;
 
     /** DefaultListModel */
     private DefaultListModel model;
 
-    void setContent(Result result) {
+    @Override
+    protected JComponent createControl() {
+        model = new DefaultListModel();
+        JList listContent = new JList(model);
+        listContent.setFixedCellHeight(15);
+
+        simulationManager.addListener(this);
+        return new JScrollPane(listContent);
+    }
+
+    private void setContent(Result result) {
         if (result.isSuccessful()) {
             // TODO ovo ucitat iz bundle-a
             Format formatter = new SimpleDateFormat("HH:mm:ss");
@@ -46,21 +57,13 @@ public class SimulationErrorsView extends AbstractView {
     }
 
     @Override
-    protected JComponent createControl() {
-        model = new DefaultListModel();
-        JList listContent = new JList(model);
-        listContent.setFixedCellHeight(15);
+    public void compiled(File compiledFile, List<CompilationMessage> messages) {
+    }
 
-        container.getSimulationManager().addListener(new SimulationAdapter() {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void simulated(Result result) {
-                setContent(result);
-                getActiveWindow().getPage().setActiveComponent(
-                        SimulationErrorsView.this);
-            }
-        });
-        return new JScrollPane(listContent);
+    @Override
+    public void simulated(File simulatedfile, Result result) {
+        setContent(result);
+        getActiveWindow().getPage().setActiveComponent(this);
     }
 
 }

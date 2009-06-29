@@ -56,7 +56,7 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
             editor = newInstance();
             editor.setContainer(platformContainer);
             editor.setMetadata(identifier.getMetadata());
-            editor.init();
+            editor.getControl(); // forces UI creation
             configureComponent();
             container.add(editor);
             registry.add(this, editor, identifier);
@@ -110,6 +110,12 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
     public void redo() throws NotOpenedException {
         checkIfOpened();
         editor.redo();
+    }
+
+    @Override
+    public void highlightLine(int line) throws NotOpenedException {
+        checkIfOpened();
+        editor.highlightLine(line);
     }
 
     @Override

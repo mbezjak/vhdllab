@@ -428,8 +428,10 @@ public class GhdlSimulator extends ServiceSupport implements Simulator,
          * destroy method, process terminates with exit code 143. And since we
          * manually ask watchdog if he killed the process, exit code 143 is
          * marked as successful (just so our code can be executed).
+         * 
+         * Exit code 1 in case of compilation error(s).
          */
-        executor.setExitValues(new int[] { 0, 143 });
+        executor.setExitValues(new int[] { 0, 1, 143 });
         try {
             executor.execute(cl);
         } catch (ExecuteException e) {

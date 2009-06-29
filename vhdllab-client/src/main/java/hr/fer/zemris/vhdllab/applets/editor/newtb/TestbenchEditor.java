@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,7 +27,6 @@ public class TestbenchEditor extends AbstractEditor {
 
     private Testbench testbench = null;
     protected JTestbench jTestbench = null;
-    private boolean GUICreated = false;
 
     private void initTestbench(String xml) {
         try {
@@ -36,9 +36,7 @@ public class TestbenchEditor extends AbstractEditor {
         }
     }
 
-    private void createGUI() {
-        this.GUICreated = true;
-
+    private JComponent createGUI() {
         this.jTestbench = new JTestbench(this.testbench);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -63,9 +61,9 @@ public class TestbenchEditor extends AbstractEditor {
         topPanel.add(topLeftPanel, BorderLayout.WEST);
         topPanel.add(topRightPanel, BorderLayout.EAST);
 
-        this.setLayout(new BorderLayout());
-        this.add(topPanel, BorderLayout.NORTH);
-        this.add(this.jTestbench, BorderLayout.CENTER);
+        JPanel control = new JPanel(new BorderLayout());
+        control.add(topPanel, BorderLayout.NORTH);
+        control.add(this.jTestbench, BorderLayout.CENTER);
 
         jTestbench.setChangeListener(new ChangeListener() {
             @Override
@@ -110,6 +108,8 @@ public class TestbenchEditor extends AbstractEditor {
                         .getSelectedItem().toString()));
             }
         });
+
+        return control;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class TestbenchEditor extends AbstractEditor {
     }
 
     @Override
-    public String getData() {
+    protected String getData() {
         if (this.testbench == null) {
             return "";
         }
@@ -125,19 +125,14 @@ public class TestbenchEditor extends AbstractEditor {
     }
 
     @Override
-    protected void doInitWithoutData() {
-        if (!this.GUICreated) {
-            this.createGUI();
-        }
+    protected JComponent doInitWithoutData() {
+        return createGUI();
     }
 
     @Override
     protected void doInitWithData(File f) {
         setModified(false);
         this.initTestbench(f.getData());
-        if (!this.GUICreated) {
-            this.createGUI();
-        }
         this.jTestbench.setModel(this.testbench);
     }
 

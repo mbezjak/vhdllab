@@ -15,9 +15,9 @@
  */
 package hr.fer.zemris.vhdllab.platform.remoting;
 
-import org.springframework.core.closure.Constraint;
 import org.springframework.rules.PropertyConstraintProvider;
 import org.springframework.rules.Rules;
+import org.springframework.rules.constraint.Constraint;
 import org.springframework.rules.constraint.property.PropertyConstraint;
 
 /**

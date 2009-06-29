@@ -1,5 +1,6 @@
 package hr.fer.zemris.vhdllab.platform.ui.wizard.simulator;
 
+import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.manager.simulation.SimulationManager;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
@@ -20,11 +21,11 @@ public class SimulateLastCommandGuard extends CompileLastCommandGuard {
     }
 
     @Override
-    public void compiled(List<CompilationMessage> messages) {
+    public void compiled(File compiledFile, List<CompilationMessage> messages) {
     }
 
     @Override
-    public void simulated(Result result) {
+    public void simulated(File simulatedfile, Result result) {
         updateEnabledState();
     }
 

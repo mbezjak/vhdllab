@@ -98,8 +98,8 @@ public class MulticastEditorManager implements EditorManager {
             }
         }
         if (!identifiers.isEmpty()) {
-            List<File> resourcesToSave = saveDialog.showDialog(
-                    identifiers, context);
+            List<File> resourcesToSave = saveDialog.showDialog(identifiers,
+                    context);
             if (resourcesToSave == null || resourcesToSave.isEmpty()) {
                 return false;
             }
@@ -124,6 +124,12 @@ public class MulticastEditorManager implements EditorManager {
     }
 
     @Override
+    public void highlightLine(int line) throws NotOpenedException {
+        throw new UnsupportedOperationException(
+                "This method isn't supported by " + getClass().getSimpleName());
+    }
+
+    @Override
     public boolean isModified() throws NotOpenedException {
         throw new UnsupportedOperationException(
                 "This method isn't supported by " + getClass().getSimpleName());
@@ -134,5 +140,5 @@ public class MulticastEditorManager implements EditorManager {
         throw new UnsupportedOperationException(
                 "This method isn't supported by " + getClass().getSimpleName());
     }
-
+    
 }

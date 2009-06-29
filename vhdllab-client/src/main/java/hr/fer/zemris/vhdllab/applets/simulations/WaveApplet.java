@@ -29,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -42,7 +43,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class WaveApplet extends AbstractEditor {
     /** Ovaj container */
-	protected JPanel cp = this;
+	protected JPanel cp = null;
 
 	/** Panel koji sadrzi imena signala */
 	protected SignalNamesPanel signalNames;
@@ -206,7 +207,9 @@ public class WaveApplet extends AbstractEditor {
 
 	
 	@Override
-	protected void doInitWithoutData() {
+	protected JComponent doInitWithoutData() {
+	    cp = new JPanel(new BorderLayout());
+	    
 		// textField.setEditable(false);
 		// textField.setToolTipText("Value");
 		search.setText("search signal");
@@ -441,6 +444,8 @@ public class WaveApplet extends AbstractEditor {
 		cp.add(horizontalScrollbar, "horizontalScrollbar");
 		cp.add(signalNamesScrollbar, "signalNamesScrollbar");
 		cp.add(signalValuesScrollbar, "valuesScrollbar");
+		
+		return cp;
 	}
 	
 	@Override

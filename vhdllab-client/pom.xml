@@ -14,7 +14,7 @@
   <name>VHDLLab Client</name>
 
   <properties>
-    <spring.richclient.version>1.0.0</spring.richclient.version>
+    <spring.richclient.version>1.1.0</spring.richclient.version>
   </properties>
 
   <build>
@@ -133,22 +133,7 @@
     <!-- Spring RichClient dependencies -->
     <dependency>
       <groupId>org.springframework.richclient</groupId>
-      <artifactId>spring-richclient-binding</artifactId>
-      <version>${spring.richclient.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-core</artifactId>
-      <version>${spring.richclient.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.richclient</groupId>
-      <artifactId>spring-richclient-form</artifactId>
-      <version>${spring.richclient.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.richclient</groupId>
-      <artifactId>spring-richclient-jdk5</artifactId>
       <version>${spring.richclient.version}</version>
     </dependency>
     <dependency>
@@ -159,16 +144,6 @@
     <dependency>
       <groupId>org.springframework.richclient</groupId>
       <artifactId>spring-richclient-resources</artifactId>
-      <version>${spring.richclient.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.richclient</groupId>
-      <artifactId>spring-richclient-support</artifactId>
-      <version>${spring.richclient.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.richclient</groupId>
-      <artifactId>spring-richclient-sandbox</artifactId>
       <version>${spring.richclient.version}</version>
     </dependency>
 <!--    <dependency>-->
