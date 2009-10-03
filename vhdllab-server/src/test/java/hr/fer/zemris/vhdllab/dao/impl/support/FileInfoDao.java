@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.dao.impl.support;
 
-import hr.fer.zemris.vhdllab.dao.EntityDao;
 import hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDao;
 
 /**
@@ -10,8 +9,7 @@ import hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDao;
  * @version 1.0
  * @since vhdllab2
  */
-public class FileInfoDao extends AbstractEntityDao<FileInfoTable> implements
-        EntityDao<FileInfoTable> {
+public class FileInfoDao extends AbstractEntityDao<FileInfoTable> {
 
     public FileInfoDao() {
         super(FileInfoTable.class);

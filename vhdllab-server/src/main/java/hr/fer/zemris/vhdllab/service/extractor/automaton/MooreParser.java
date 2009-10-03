@@ -290,7 +290,7 @@ public class MooreParser implements IAutomatVHDLGenerator {
 				ulazniSignali.add(new Signal(odKud,doKud,pom[0],pom[2]));
 			}else {
 				izlazniSignali.add(new Signal(odKud,doKud,pom[0],pom[2]));
-			};
+			}
 		}
 	}
 

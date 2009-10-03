@@ -1,6 +1,5 @@
 package hr.fer.zemris.vhdllab.dao.impl.support;
 
-import hr.fer.zemris.vhdllab.dao.EntityDao;
 import hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDao;
 
 /**
@@ -10,8 +9,7 @@ import hr.fer.zemris.vhdllab.dao.impl.AbstractEntityDao;
  * @version 1.0
  * @since vhdllab2
  */
-public class HistoryDao extends AbstractEntityDao<HistoryTable> implements
-        EntityDao<HistoryTable> {
+public class HistoryDao extends AbstractEntityDao<HistoryTable> {
 
     public HistoryDao() {
         super(HistoryTable.class);
