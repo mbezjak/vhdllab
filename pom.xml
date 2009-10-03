@@ -40,28 +40,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>enforce-versions</id>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <requireMavenVersion>
-                    <version>[2.0.10,)</version>
-                  </requireMavenVersion>
-                  <requireJavaVersion>
-                    <version>[1.6,)</version>
-                  </requireJavaVersion>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.3</version>
           <configuration>
@@ -90,6 +68,26 @@
     <plugins>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <message>You must run Maven 2.0.10 or higher.</message>
+                  <version>[2.0.10,)</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <message>You must run Maven using Java 1.6 or higher.</message>
+                  <version>[1.6,)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
