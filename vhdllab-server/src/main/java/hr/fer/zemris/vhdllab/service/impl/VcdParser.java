@@ -43,7 +43,7 @@ public class VcdParser
 	private List<Long> transitionPoints = new ArrayList<Long>();
 
     /** Sadrzi upotrebljene ASCII simbole, svaki od njih predstavlja signal */
-    private List<Character> asciiSignalSimbols = new ArrayList<Character>();
+    private List<String> asciiSignalSimbols = new ArrayList<String>();
 
     /** Predstavlja najduze ime od svih signala, potreban zbog duljine panela */
     private int maximumSignalNameLength;
@@ -104,7 +104,7 @@ public class VcdParser
 			{	
 				// Popravio Marko Cupic - 2007-11-14 - 9 sati navecer, nakon dugog dana!
 				String[] parts = vcdLines[index].split(" ");
-				asciiSignalSimbols.add(parts[3].charAt(0));
+                asciiSignalSimbols.add(parts[3]);
 				signalName = parts[4];
 				completeSignalName.setLength(0);
 				completeSignalName.append(scopeName.getFirst()).append(signalName);
@@ -177,7 +177,7 @@ public class VcdParser
 		
         /* vrijednosti pojedinih signala.  Mogu biti 0, 1, U, X, Z... */
 		String[] values = new String[asciiSignalSimbols.size()];
-		char asciiSimbol;
+        String asciiSimbol;
 		int position;
 		int positionOfWhiteSpaceChar;
 
@@ -190,14 +190,14 @@ public class VcdParser
             {
                 if (vcdLines[index].charAt(0) != 'b')
                 {
-                    asciiSimbol = vcdLines[index].charAt(1);
+                    asciiSimbol = vcdLines[index].substring(1);
                     position = asciiSignalSimbols.indexOf(asciiSimbol);
                     values[position] = new Character(vcdLines[index].charAt(0)).toString();
                 }
                 else
                 {
                     positionOfWhiteSpaceChar = vcdLines[index].indexOf(' ');
-                    asciiSimbol = vcdLines[index].charAt(positionOfWhiteSpaceChar + 1);
+                    asciiSimbol = vcdLines[index].substring(positionOfWhiteSpaceChar + 1);
                     position = asciiSignalSimbols.indexOf(asciiSimbol);
                     values[position] = vcdLines[index].substring (1, positionOfWhiteSpaceChar);
                 }
