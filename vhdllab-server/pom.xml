@@ -10,8 +10,80 @@
     <version>${application.version}</version>
   </parent>
   <artifactId>vhdllab-server</artifactId>
+  <packaging>war</packaging>
 
   <name>VHDLLab Server</name>
+
+  <build>
+    <finalName>vhdllab</finalName>
+    <filters>
+      <filter>../configuration.properties</filter>
+    </filters>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <configuration>
+            <webResources>
+              <resource>
+                <directory>src/main/webapp</directory>
+                <includes>
+                  <include>launch.jnlp</include>
+                  <include>WEB-INF/database.properties</include>
+                </includes>
+                <filtering>true</filtering>
+              </resource>
+            </webResources>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.16</version>
+        <configuration>
+          <webAppConfig>
+            <contextPath>/vhdllab</contextPath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+            <connector implementation="org.mortbay.jetty.security.SslSocketConnector">
+              <port>8443</port>
+              <maxIdleTime>60000</maxIdleTime>
+              <keystore>src/dev/devel-keystore</keystore>
+              <password>vhdllab</password>
+              <keyPassword>vhdllab</keyPassword>
+            </connector>
+          </connectors>
+          <userRealms>
+            <userRealm implementation="org.mortbay.jetty.security.HashUserRealm">
+              <name>Preauth Realm</name>
+              <config>src/dev/realm.properties</config>
+            </userRealm>
+          </userRealms>
+          <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+            <filename>target/request.log</filename>
+            <append>true</append>
+            <extended>false</extended>
+            <logTimeZone>GMT</logTimeZone>
+          </requestLog>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <!-- VHDLLab dependencies -->
@@ -32,13 +104,12 @@
       <artifactId>hibernate-entitymanager</artifactId>
     </dependency>
     <!--
-        Although Hibernate JMX is not required by VHDLLab if its not
-        included following exception is thrown:
-        java.lang.NoClassDefFoundError: Could not initialize class org.hibernate.ejb.Ejb3Configuration
-
-        Not sure if its a bug in maven or problem with
-        hibernate-entitymanager's pom.xml (because project type is set
-        to pom but jar is created)
+      Although Hibernate JMX is not required by VHDLLab if its not
+      included following exception is thrown:
+      java.lang.NoClassDefFoundError: Could not initialize class
+      org.hibernate.ejb.Ejb3Configuration Not sure if its a bug in maven
+      or problem with hibernate-entitymanager's pom.xml (because project
+      type is set to pom but jar is created)
     -->
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -135,4 +206,142 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <!--
+      'prod' profile also include vhdllab-client jar as a web resource
+      while 'dev' doesn't.
+    -->
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/log4j/dev</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+
+    <profile>
+      <id>prod</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/log4j/prod</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
+
+
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-signed-pack200-jar</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks>
+                    <taskdef name="pack200"
+                      classname="com.sun.tools.apache.ant.pack200.Pack200Task" />
+
+                    <property file="../configuration.properties" />
+
+                    <!--
+                      pack200 segment size is set to -1 because of bug 5078608
+                      http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5078608
+                      It seems that this bug is still opened.
+                      Environment is: linux 32bit, java 1.6.0_10-b33
+                    -->
+                    <property name="segmentlimit" value="-1" />
+
+                    <copy
+                      file="../vhdllab-client/target/vhdllab-client-with-deps.jar"
+                      toDir="target/signing" overwrite="true" />
+
+                    <!--
+                      Note: for this repacking destfile must be
+                      different from src otherwise Pack (packing task
+                      found in standard ant) claims that file is up to
+                      date so it won't execute pack200 task. Therefor
+                      this pack and following move tasks are in place to
+                      prevent up to date from Pack.
+                    -->
+                    <pack200
+                      src="target/signing/vhdllab-client-with-deps.jar"
+                      destfile="target/signing/vhdllab-client-with-deps.changed.jar"
+                      repack="true" segmentlimit="${segmentlimit}" />
+
+                    <move
+                      file="target/signing/vhdllab-client-with-deps.changed.jar"
+                      tofile="target/signing/vhdllab-client-with-deps.jar" />
+
+                    <signjar
+                      jar="target/signing/vhdllab-client-with-deps.jar"
+                      keystore="${keystore.location}" alias="${keystore.alias}"
+                      storepass="${keystore.password}" keypass="${keystore.keypassword}" />
+
+                    <pack200
+                      src="target/signing/vhdllab-client-with-deps.jar"
+                      destfile="target/signing/vhdllab-client-with-deps.jar.pack.gz"
+                      gzipoutput="true" segmentlimit="${segmentlimit}" />
+
+                    <!-- target/vhdllab is staging area when creating war -->
+                    <copy toDir="target/vhdllab" overwrite="true">
+                      <fileset dir="target/signing" />
+                    </copy>
+                  </tasks>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.codehaus.mojo.webstart</groupId>
+                <artifactId>webstart-pack200-anttasks</artifactId>
+                <version>1.1</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+
+
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution> <!-- Copy war to parent project -->
+                <id>copy-war-to-parent</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory>target</directory>
+                      <includes>
+                        <include>${project.build.finalName}.war</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                  <!--
+                    Copy to main vhdllab directory (one containing
+                    vhdllab-war project).
+                  -->
+                  <outputDirectory>..</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>

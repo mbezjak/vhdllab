@@ -137,7 +137,6 @@
       <modules>
         <module>vhdllab-server</module>
         <module>vhdllab-common</module>
-        <module>vhdllab-war</module>
       </modules>
     </profile>
 
@@ -148,7 +147,6 @@
         <module>vhdllab-client</module>
         <module>vhdllab-server</module>
         <module>vhdllab-common</module>
-        <module>vhdllab-war</module>
       </modules>
       <build>
         <plugins>
@@ -168,7 +166,6 @@
         <!-- vhdllab-client is omitted in this profile -->
         <module>vhdllab-common</module>
         <module>vhdllab-server</module>
-        <module>vhdllab-war</module>
       </modules>
       <properties>
         <maven.test.skip>true</maven.test.skip>
