@@ -206,13 +206,20 @@
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-jmx</artifactId>
-        <version>3.3.1.GA</version>
+        <artifactId>hibernate-core</artifactId>
+        <version>3.3.2.GA</version>
+        <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
+        <artifactId>hibernate-ehcache</artifactId>
         <version>3.3.2.GA</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>1.5.0</version>
         <scope>runtime</scope>
       </dependency>
       <dependency>
@@ -225,18 +232,6 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>5.1.10</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-ehcache</artifactId>
-        <version>3.3.1.GA</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-        <version>1.5.0</version>
         <scope>runtime</scope>
       </dependency>
       <dependency>
@@ -383,6 +378,25 @@
           <links>
             <link>http://java.sun.com/javase/6/docs/api/</link>
           </links>
+          <source>1.6</source>
+          <aggregate>true</aggregate>
+          <doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
+          <docletArtifact>
+            <groupId>gr.spinellis</groupId>
+            <artifactId>UmlGraph</artifactId>
+            <version>4.6</version>
+          </docletArtifact>
+          <additionalparam>
+            -inferrel
+            -inferdep
+            -quiet
+            -constructors
+            -visibility
+            -types
+            -postfixpackage
+            -nodefontsize 9
+            -nodefontpackagesize 7
+          </additionalparam>
         </configuration>
       </plugin>
       <plugin>

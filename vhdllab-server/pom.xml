@@ -103,21 +103,9 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
     </dependency>
-    <!--
-      Although Hibernate JMX is not required by VHDLLab if its not
-      included following exception is thrown:
-      java.lang.NoClassDefFoundError: Could not initialize class
-      org.hibernate.ejb.Ejb3Configuration Not sure if its a bug in maven
-      or problem with hibernate-entitymanager's pom.xml (because project
-      type is set to pom but jar is created)
-    -->
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-jmx</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
+      <artifactId>hibernate-ehcache</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-dbcp</groupId>
@@ -128,12 +116,8 @@
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-ehcache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
     </dependency>
 
     <!-- Springframework dependencies -->
