@@ -13,7 +13,6 @@
   <bean id="applicationDescriptor"
     class="org.springframework.richclient.application.support.DefaultApplicationDescriptor">
     <property name="version" value="${version}" />
-    <property name="buildId" value="${buildId}" />
   </bean>
 
   <bean id="lifecycleAdvisor"

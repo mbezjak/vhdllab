@@ -4,8 +4,7 @@
 <td valign="top">
 <b>VHDLLab - Web IDE for VHDL</b><br>
 <p>
-Version: ${version}<br>
-Build id: ${buildNumber}
+Version: ${version}
 <p>
 <a href="http://www.gnu.org/licenses/gpl-3.0.txt">&copy; Copyright 2006-2009</a> the original authors.
 <p>
@@ -70,8 +69,7 @@ Schematic editor - canvas
 <td valign="top">
 <b>VHDLLab - Web IDE for VHDL</b><br>
 <p>
-Version: ${version}<br>
-Build id: ${buildNumber}
+Version: ${version}
 <p>
 <a href="http://www.gnu.org/licenses/gpl-3.0.txt">&copy; Copyright 2006-2009</a> the original authors.
 <p>
