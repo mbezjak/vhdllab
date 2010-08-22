@@ -70,7 +70,7 @@ public class TextEditor extends AbstractEditor implements DocumentListener,
 
         int pos = 0;
         line--;
-        while (line != 0) {
+        while (line > 0) {
             pos = content.indexOf('\n', pos) + 1;
             line--;
         }
