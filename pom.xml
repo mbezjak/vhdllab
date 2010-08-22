@@ -224,25 +224,25 @@
       <dependency>
         <groupId>commons-dbcp</groupId>
         <artifactId>commons-dbcp</artifactId>
-        <version>1.2.2</version>
+        <version>1.4</version>
         <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.10</version>
+        <version>5.1.13</version>
         <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
-        <version>1.5.8</version>
+        <version>1.6.1</version>
         <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.5.8</version>
+        <version>1.6.1</version>
         <scope>runtime</scope>
       </dependency>
 
@@ -312,7 +312,7 @@
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <!-- Not using 1.2.15 because of weird dependencies in that version -->
+        <!-- Not using version > 1.2.15 because of weird dependencies in that version -->
         <version>1.2.14</version>
         <scope>compile</scope>
       </dependency>
@@ -324,7 +324,7 @@
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -339,7 +339,7 @@
       <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
-        <version>1.8.0</version>
+        <version>1.8.3</version>
       </dependency>
       <dependency>
         <groupId>commons-digester</groupId>
