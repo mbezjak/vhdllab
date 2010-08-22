@@ -312,7 +312,10 @@
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <!-- Not using version > 1.2.15 because of weird dependencies in that version -->
+        <!--
+          Not using version > 1.2.15 because of weird dependencies in
+          that version
+        -->
         <version>1.2.14</version>
         <scope>compile</scope>
       </dependency>
@@ -449,6 +452,13 @@
       <id>codehaus</id>
       <name>Codehaus Maven2 repository</name>
       <url>http://repository.codehaus.org/</url>
+    </repository>
+    <repository>
+      <id>com.springsource.repository.maven.release</id>
+      <url>http://maven.springframework.org/release/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>jboss</id> <!-- For hibernate -->
