@@ -62,8 +62,14 @@ public class HierarchyTest extends ValueObjectTestSupport {
         assertNotSame(project, hierarchy.getProject());
         assertNull(hierarchy.getProject().getFiles());
 
-        assertNull(hierarchy.getTopLevelNodes());
-        assertNull(hierarchy.getBottomLevelNodes());
+        assertEquals(1, hierarchy.getTopLevelNodes().size());
+        assertEquals(root, hierarchy.getTopLevelNodes().iterator().next());
+
+        assertEquals(2, hierarchy.getBottomLevelNodes().size());
+        Iterator<HierarchyNode> i = hierarchy.getBottomLevelNodes().iterator();
+        assertEquals(rightDep, i.next());
+        assertEquals(left, i.next());
+
         assertEquals(4, hierarchy.getAllNodes().size());
     }
 

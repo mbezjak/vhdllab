@@ -34,6 +34,7 @@ public final class Hierarchy implements Serializable {
         for (HierarchyNode n : collection) {
             this.nodes.put(n.getFile(), n);
         }
+        this.initNodes();
     }
 
     public Project getProject() {
@@ -138,10 +139,7 @@ public final class Hierarchy implements Serializable {
         return sb.toString();
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-        in.defaultReadObject();
-
+    private void initNodes() {
         Collection<HierarchyNode> allNodes = nodes.values();
         topLevelNodes = new HashSet<HierarchyNode>(allNodes);
         bottomLevelNodes = new HashSet<HierarchyNode>();
@@ -153,6 +151,13 @@ public final class Hierarchy implements Serializable {
                 topLevelNodes.remove(nodes.get(f));
             }
         }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        in.defaultReadObject();
+
+        this.initNodes();
     }
 
 }
