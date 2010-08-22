@@ -118,8 +118,8 @@
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <message>You must run Maven 2.2.1 or higher.</message>
-                  <version>[2.2.1,)</version>
+                  <message>You must run Maven 2.0.10 or higher.</message>
+                  <version>[2.0.10,)</version>
                 </requireMavenVersion>
                 <requireJavaVersion>
                   <message>You must run Maven using Java 1.6 or higher.</message>
