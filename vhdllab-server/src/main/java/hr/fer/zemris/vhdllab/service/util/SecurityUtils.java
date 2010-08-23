@@ -1,7 +1,7 @@
 package hr.fer.zemris.vhdllab.service.util;
 
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public abstract class SecurityUtils {
 

@@ -14,7 +14,7 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 
 @Aspect
 @Order(500)
