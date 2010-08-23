@@ -56,17 +56,17 @@ public class VcdParser
      * razdvajanja vrijednosti za svaki od signala prilikom transformacije us
      * mape u string
      */
-    private final String LIMITER = "###";
+    private static final String LIMITER = "###";
 
     /** 
      * Limiter koji razdvaja s jedne strane sva imena signala, njihove
      * vrijednosti, tocke u kojima se dogada promjena vrijednosti i konacno
      * duljinu u znakovima najduzeg imena signala
      */
-    private final String HEAD_LIMITER = "%%%";
+    private static final String HEAD_LIMITER = "%%%";
 
     /** Limiter koji razdvaju svaku od trenutnih vrijednosti (0 */
-    private final String VALUE_LIMITER = "&&&";
+    private static final String VALUE_LIMITER = "&&&";
 
 
     /** 
@@ -192,7 +192,7 @@ public class VcdParser
                 {
                     asciiSimbol = vcdLines[index].substring(1);
                     position = asciiSignalSimbols.indexOf(asciiSimbol);
-                    values[position] = new Character(vcdLines[index].charAt(0)).toString();
+                    values[position] = String.valueOf(vcdLines[index].charAt(0));
                 }
                 else
                 {

@@ -44,7 +44,7 @@ public final class VhdlUtil {
             pos++;
         }
         if (pos == 0) {
-            return new String();
+            return "";
         }
         return String.valueOf(chs, 0, pos);
     }

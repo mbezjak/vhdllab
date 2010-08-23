@@ -70,7 +70,7 @@ public class PredefinedFileDaoImplTest {
         assertFalse(dao.getPredefinedFiles().isEmpty());
     }
 
-    class ServletContextMock implements ServletContext {
+    static class ServletContextMock implements ServletContext {
 
         @Override
         public Object getAttribute(String name) {

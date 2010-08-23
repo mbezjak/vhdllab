@@ -229,7 +229,7 @@ public class TestbenchMetadataExtractor extends AbstractMetadataExtractor {
      * @author Ivan Kmetovic
      * 
      */
-    private class ChangesInMoment implements Comparable<ChangesInMoment> {
+    private static class ChangesInMoment implements Comparable<ChangesInMoment> {
 
         private long time;
         private List<ChangeWithSignalName> list = new ArrayList<ChangeWithSignalName>();
@@ -371,7 +371,7 @@ public class TestbenchMetadataExtractor extends AbstractMetadataExtractor {
      * @author Ivan Kmetovic
      * 
      */
-    private class ChangeWithSignalName {
+    private static class ChangeWithSignalName {
 
         private String signalName;
         private SignalChange change;

@@ -52,7 +52,6 @@ public final class Workspace implements Serializable {
             int index = projects.indexOf(project);
             if(index == -1) {
                 projects.add(project);
-                index = projects.size();
             } else {
                 projects.set(index, project);
             }
