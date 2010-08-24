@@ -13,7 +13,7 @@
   <!-- modules are listed in each profile -->
   <properties>
     <application.version>2.0</application.version>
-    <spring.version>3.0.4.RELEASE</spring.version>
+    <spring.version>2.5.6</spring.version>
   </properties>
 
 
@@ -272,11 +272,22 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-aspects</artifactId>
         <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-aop</artifactId>
         <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.6.8</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -306,17 +317,13 @@
       <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-core</artifactId>
-        <version>3.0.3.RELEASE</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-config</artifactId>
-        <version>3.0.3.RELEASE</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-web</artifactId>
-        <version>3.0.3.RELEASE</version>
+        <version>2.0.5.RELEASE</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-support</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <!-- Springframwork dependencies with test scope -->
@@ -383,7 +390,8 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.8.1</version>
+        <!-- Spring is not compatible with version 4.5 of junit! -->
+        <version>4.4</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
