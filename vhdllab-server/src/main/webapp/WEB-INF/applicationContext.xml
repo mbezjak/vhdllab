@@ -3,11 +3,11 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
   xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
   xmlns:security="http://www.springframework.org/schema/security"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-                http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+                http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
   
   <context:property-placeholder location="/WEB-INF/database.properties"/>
 
@@ -62,19 +62,19 @@
 
   <!-- DAO classes -->
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"
-    autowire="autodetect" />
+    autowire="byName" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
-    autowire="autodetect" />
+    autowire="byName" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.PreferencesFileDaoImpl"
-    autowire="autodetect" />
+    autowire="byName" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
-    autowire="autodetect" />
+    autowire="byName" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.PredefinedFileDaoImpl"
-    autowire="autodetect" />
+    autowire="byName" />
 
   <!-- Service classes -->
   <bean id="workspaceService" class="hr.fer.zemris.vhdllab.service.impl.WorkspaceServiceImpl" />
@@ -168,7 +168,10 @@
   
   
   
-  <security:authentication-manager alias="authenticationManager"/>
+  <security:authentication-manager alias="authenticationManager">
+    <security:authentication-provider ref='preAuthenticatedAuthenticationProvider' />
+  </security:authentication-manager>
+
 <!--  <security:authentication-provider>-->
 <!--    <security:user-service>-->
 <!--      <security:user password="test" name="test" authorities="ROLE_STUDENT"/>-->
@@ -177,44 +180,40 @@
 <!--  </security:authentication-provider>-->
   <security:http create-session="always" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
     <security:intercept-url pattern="/remoting/*" access="ROLE_STUDENT,ROLE_ADMIN" requires-channel="https"/>
+    <security:custom-filter ref="j2eePreAuthFilter" position="PRE_AUTH_FILTER"/>
 <!--    <security:http-basic/>-->
   </security:http>
 
-    <bean id="preAuthenticatedAuthenticationProvider" class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
-        <security:custom-authentication-provider />
+    <bean id="preAuthenticatedAuthenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
         <property name="preAuthenticatedUserDetailsService" ref="preAuthenticatedUserDetailsService"/>
     </bean>
 
     <bean id="preAuthenticatedUserDetailsService"
-            class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService"/>
+            class="org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService"/>
             
-    <bean id="j2eePreAuthFilter" class="org.springframework.security.ui.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
-        <security:custom-filter position="PRE_AUTH_FILTER" />
+    <bean id="j2eePreAuthFilter" class="org.springframework.security.web.authentication.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationDetailsSource" ref="authenticationDetailsSource"/>
     </bean>
     
     <bean id="preAuthenticatedProcessingFilterEntryPoint"
-            class="org.springframework.security.ui.preauth.PreAuthenticatedProcessingFilterEntryPoint"/>
+            class="org.springframework.security.web.authentication.preauth.PreAuthenticatedProcessingFilterEntryPoint"/>
 
-    <bean id="authenticationDetailsSource" class="org.springframework.security.ui.preauth.j2ee.J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource">
+    <bean id="authenticationDetailsSource" class="org.springframework.security.web.authentication.preauth.j2ee.J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource">
         <property name="mappableRolesRetriever" ref="j2eeMappableRolesRetriever"/>
         <property name="userRoles2GrantedAuthoritiesMapper" ref="j2eeUserRoles2GrantedAuthoritiesMapper"/>
     </bean>
 
-    <bean id="j2eeUserRoles2GrantedAuthoritiesMapper" class="org.springframework.security.authoritymapping.SimpleAttributes2GrantedAuthoritiesMapper">
+    <bean id="j2eeUserRoles2GrantedAuthoritiesMapper" class="org.springframework.security.core.authority.mapping.SimpleAttributes2GrantedAuthoritiesMapper">
         <property name="convertAttributeToUpperCase" value="true"/>
     </bean>
 
-    <bean id="j2eeMappableRolesRetriever" class="org.springframework.security.ui.preauth.j2ee.WebXmlMappableAttributesRetriever">
-        <property name="webXmlInputStream">
-            <bean factory-bean="webXmlResource" factory-method="getInputStream"/>
-        </property>
+    <bean id="j2eeMappableRolesRetriever" class="org.springframework.security.web.authentication.preauth.j2ee.WebXmlMappableAttributesRetriever">
+        <property name="resourceLoader" ref="servletContextResourceLoader" />
     </bean>
 
-    <bean id="webXmlResource" class="org.springframework.web.context.support.ServletContextResource">
+    <bean id="servletContextResourceLoader" class="org.springframework.web.context.support.ServletContextResourceLoader">
         <constructor-arg ref="servletContext"/>
-        <constructor-arg value="/WEB-INF/web.xml"/>
     </bean>
 
     <bean id="servletContext" class="org.springframework.web.context.support.ServletContextFactoryBean"/>
