@@ -146,6 +146,11 @@
       <artifactId>spring-richclient-resources</artifactId>
       <version>${spring.richclient.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-binding</artifactId>
+      <version>1.0</version> <!-- because of bug in ListBinding (catching IllegalArgumentException instead of ConversionException -->
+    </dependency>
 <!--    <dependency>-->
 <!--      <groupId>com.jgoodies</groupId>-->
 <!--      <artifactId>forms</artifactId>-->
