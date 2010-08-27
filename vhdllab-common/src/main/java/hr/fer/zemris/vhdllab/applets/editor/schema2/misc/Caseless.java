@@ -1,5 +1,7 @@
 package hr.fer.zemris.vhdllab.applets.editor.schema2.misc;
 
+import java.io.Serializable;
+
 
 
 
@@ -14,9 +16,11 @@ package hr.fer.zemris.vhdllab.applets.editor.schema2.misc;
  * @author brijest
  *
  */
-public final class Caseless {
+public final class Caseless implements Serializable {
 	
-	public static final Caseless Empty = new Caseless("");
+    private static final long serialVersionUID = 5107135366712264850L;
+
+    public static final Caseless Empty = new Caseless("");
 	
 	public static boolean isNullOrEmpty(Caseless caseless) {
 		return (caseless == null || caseless.equals(Empty));

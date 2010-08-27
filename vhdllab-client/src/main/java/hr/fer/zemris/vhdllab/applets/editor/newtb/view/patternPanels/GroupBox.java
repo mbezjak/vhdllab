@@ -41,7 +41,7 @@ public class GroupBox extends JPanel {
 		add("South",new lowerPane());
 	}
 	
-	private class sidePane extends JPanel {
+	private static class sidePane extends JPanel {
 
 		private static final long serialVersionUID = 1L;
 
@@ -88,7 +88,7 @@ public class GroupBox extends JPanel {
 		}
 	}
 	
-	private class lowerPane extends JPanel {
+	private static class lowerPane extends JPanel {
 
 		private static final long serialVersionUID = 1L;
 

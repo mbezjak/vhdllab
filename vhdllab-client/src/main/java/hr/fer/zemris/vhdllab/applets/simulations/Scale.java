@@ -22,58 +22,58 @@ class Scale extends JPanel
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * femto sekundama 
      */
-    private final byte FEMTO_SECONDS = 1; 
+    private static final byte FEMTO_SECONDS = 1; 
     
     /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * pico sekundama 
      */    
-    private final double PICO_SECONDS = 1e-3; 
+    private static final double PICO_SECONDS = 1e-3; 
     
     /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * nano sekundama 
      */    
-    private final double NANO_SECONDS = 1e-6; 
+    private static final double NANO_SECONDS = 1e-6; 
     
     /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * micro sekundama 
      */    
-    private final double MICRO_SECONDS = 1e-9; 
+    private static final double MICRO_SECONDS = 1e-9; 
     
     /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * mili sekundama 
      */    
-    private final double MILI_SECONDS = 1e-12;
+    private static final double MILI_SECONDS = 1e-12;
     
     /** 
      * Konstanta s kojom se mnozi trenutne vrijednosti ako je mjerna jedinica u
      * sekundama 
      */    
-    private final double SECONDS = 1e-15;
+    private static final double SECONDS = 1e-15;
 
     /** Razmak izmedu dvije tocke na skali je uvijek 100 piksela */
-    private final int SCALE_STEP_IN_PIXELS = 100;
+    private static final int SCALE_STEP_IN_PIXELS = 100;
 
     /** Visina skale */
-    private final int SCALE_HEIGHT = 30;
+    private static final int SCALE_HEIGHT = 30;
         
     /** Piksel na kojem pocinje iscrtavanje skale */
-    private int SCALE_START_POINT_IN_PIXELS = 0;
+    private static int SCALE_START_POINT_IN_PIXELS = 0;
 
     /** Svaki vrijednost na skali pocinje od 19. piksela */
-    private final int SCALE_VALUE_YAXIS = 19;
+    private static final int SCALE_VALUE_YAXIS = 19;
 
     /** Os pocinje od 4. piksela */
-    private final int SCALE_MAIN_LINE_YAXIS = 4;
+    private static final int SCALE_MAIN_LINE_YAXIS = 4;
     
     /** Svaka crtica pocinje od 2. piksela */
-    private final int SCALE_TAG_LINE_YSTART = 2;
+    private static final int SCALE_TAG_LINE_YSTART = 2;
     
     /** Svaka crtica zavrsava na 6. pikselu */
-    private final int SCALE_TAG_LINE_YEND = 6;
+    private static final int SCALE_TAG_LINE_YEND = 6;
     
     /** Tocke u kojima nastaju promjene vrijednosti signala */
     private long[] transitionPoints;

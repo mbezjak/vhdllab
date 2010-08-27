@@ -211,8 +211,8 @@ public class AutoDrawer extends JPanel{
 	}
 	
 	private void parseLegend() {
-		String ulazi=new String("|");
-		String izlazi=new String("|");
+		String ulazi="|";
+		String izlazi="|";
 		listaSignala=new HashSet<String>();
 		listaSignala.add("clock");
 		listaSignala.add("reset");
@@ -268,9 +268,9 @@ public class AutoDrawer extends JPanel{
 			
 		//upis u stanja
 			String tekst=null;
-			if(podatci.tip.equals(new String("Moore")))
+			if(podatci.tip.equals("Moore"))
 				tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
-			else if (podatci.tip.equals(new String("Mealy"))) 
+			else if (podatci.tip.equals("Mealy")) 
 				tekst=new StringBuffer().append(st.ime).toString();
 			g.setFont(new Font("Helvetica", Font.BOLD, radijus/2));
 			FontMetrics fm= g.getFontMetrics();
@@ -393,9 +393,9 @@ public class AutoDrawer extends JPanel{
 				//upis u stanja
 
 				String tekst=null;
-				if(podatci.tip.equals(new String("Moore")))
+				if(podatci.tip.equals("Moore"))
 					tekst=new StringBuffer().append(st.ime).append("/").append(st.izlaz).toString();
-				else if (podatci.tip.equals(new String("Mealy"))) 
+				else if (podatci.tip.equals("Mealy")) 
 					tekst=new StringBuffer().append(st.ime).toString();
 				g.setFont(new Font("Helvetica", Font.BOLD, radijus/2));
 				FontMetrics fm= g.getFontMetrics();

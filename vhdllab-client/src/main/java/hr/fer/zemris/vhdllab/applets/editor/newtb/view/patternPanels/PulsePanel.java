@@ -29,8 +29,8 @@ public class PulsePanel extends ScalarPatternPanel {
 	protected JPanel mid = new JPanel();
 	protected JPanel right;
 	
-	protected Integer nula = new Integer(0);
-	protected Integer jedan = new Integer(1);
+	protected Integer nula = Integer.valueOf(0);
+	protected Integer jedan = Integer.valueOf(1);
 	
 	protected JComboBox initialValue = new JComboBox(new Integer[]{nula, jedan});
 	protected JComboBox pulseValue = new JComboBox(new Integer[]{jedan, nula});

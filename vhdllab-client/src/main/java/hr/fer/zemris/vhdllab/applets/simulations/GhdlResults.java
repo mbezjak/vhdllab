@@ -15,13 +15,13 @@ import java.util.List;
 public class GhdlResults
 {
     /** Glavni limiter, razdvaja imena signala, vrijednosti i maxSignalName */
-    private final String HEAD_LIMITER = "%%%";
+    private static final String HEAD_LIMITER = "%%%";
     
     /** Razdvaja svako ime signala posebno, vrijednosti signala itd. */
-    private final String LIMITER = "###";
+    private static final String LIMITER = "###";
     
     /* Razdvaja vrijednosti po signalima */
-    private final String VALUE_LIMITER = "&&&";
+    private static final String VALUE_LIMITER = "&&&";
     
     /** Rezultat simulacije predstavljen kao string */
     private String resultInString;
@@ -64,12 +64,6 @@ public class GhdlResults
      * Lista trenutnih indeksa vektora u listi sa signalima
      */
     private List<Integer> currentVectorIndex = new ArrayList<Integer>();
-
-    /** Privremeni string kod mijenjanja poretka signala */
-    String tempString;
-
-    /** Privremeno polje stringova kod mijenjanja poretka signala */
-    String[] tempArrayString;
 
 
     /**

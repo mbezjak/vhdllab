@@ -40,14 +40,14 @@ public class ClockSignal extends Signal {
 		for(long t = 0; t < timeLength; ) {
 			if(low) {
 				try {
-					this.changes.put(new Long(t), new SignalChange((short)1, "0", new Long(t)));
+					this.changes.put(Long.valueOf(t), new SignalChange((short)1, "0", Long.valueOf(t)));
 				} catch (UniformSignalChangeException e) { }
 				t += clockTimeLow;
 				low = false;
 			}
 			else {
 				try {
-					this.changes.put(new Long(t), new SignalChange((short)1, "1", new Long(t)));
+					this.changes.put(Long.valueOf(t), new SignalChange((short)1, "1", Long.valueOf(t)));
 				} catch (UniformSignalChangeException e) { }
 				t += clockTimeHigh;
 				low = true;

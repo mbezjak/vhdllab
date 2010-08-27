@@ -24,8 +24,8 @@ public class Testpan extends JFrame {
 		
 		BufferedReader reader=new BufferedReader(new FileReader("./src/main/resources/hr/fer/zemris/vhdllab/applets/editor/automat/automat1.xml"));
 		//BufferedReader reader=new BufferedReader(new FileReader("c:\\dd.txt"));
-		String xmlAut=new String();
-		String pom=new String();
+		String xmlAut="";
+		String pom;
 		try {
 			while((pom=reader.readLine())!=null) xmlAut=new StringBuffer(xmlAut).append(pom).append("\n").toString();
 		} catch (IOException e) {

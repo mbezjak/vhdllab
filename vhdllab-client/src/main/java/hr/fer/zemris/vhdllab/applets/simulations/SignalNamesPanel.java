@@ -17,13 +17,13 @@ import javax.swing.JScrollBar;
 class SignalNamesPanel extends JPanel
 {
     /** Prvo ime signala pocinje od 30-tog piksela */
-    private final int YAXIS_START_POINT = 30;
+    private static final int YAXIS_START_POINT = 30;
 
     /** Svako se ime nalazi u springu (elasticnom pretincu) koji je visine 45 piksela */
-	private final int SIGNAL_NAME_SPRING_HEIGHT = 45;
+	private static final int SIGNAL_NAME_SPRING_HEIGHT = 45;
 
     /** Maksimalna duljina koju panel moze poprimiti iznosi 650 piksela */
-	private final int PANEL_MAX_WIDTH = 650;
+	private static final int PANEL_MAX_WIDTH = 650;
 
     /** Lista Stringova koje sadrzi sva imena signala */
     private List<String> signalNames;

@@ -13,7 +13,7 @@ public class CodeGenerator {
 	 * @return interni kod automata
 	 */
 	public String generateInternalCode(AUTPodatci podatci, HashSet<Prijelaz> prijelazi, LinkedList<Stanje> stanja){
-		String code=new String("<?xml version=\"1.0\"?>");
+		String code="<?xml version=\"1.0\"?>";
 		code=new StringBuffer().append(code).append("\n<Automat>").toString();
 		code=generateHead(podatci,code);
 		code=generateStanja(stanja,podatci,code);

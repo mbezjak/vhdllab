@@ -47,7 +47,7 @@ public abstract class Signal implements Iterable<SignalChange> {
 		}
 		
 		try {
-			this.changes.put(new Long(0), new SignalChange(this.dimension, new String(sb), 0, this));
+			this.changes.put(Long.valueOf(0), new SignalChange(this.dimension, sb.toString(), 0, this));
 		} catch (UniformSignalChangeException e) {}
 		
 		if(this.signalChangeListener != null) {
@@ -72,7 +72,7 @@ public abstract class Signal implements Iterable<SignalChange> {
 	}
 	
 	public SignalChange getSignalChange(long time) {
-		return ((TreeMap<Long, SignalChange>)this.changes).floorEntry(new Long(time)).getValue();
+		return ((TreeMap<Long, SignalChange>)this.changes).floorEntry(Long.valueOf(time)).getValue();
 	}
 	
 	public List<SignalChange> getSignalChangeList(long beginTime, long endTime) {

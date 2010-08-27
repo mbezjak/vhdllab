@@ -28,7 +28,7 @@ public class IntHashSet implements IntCollection, IntSet {
 		public Integer next() {
 			if (pos >= space.length) throw new NoSuchElementException();
 			
-			entry = new Integer(space[pos]);
+			entry = Integer.valueOf(space[pos]);
 			last = pos;
 			
 			pos++;

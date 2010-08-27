@@ -17,7 +17,7 @@ import javax.swing.JScrollBar;
 class WaveDrawBoard extends JPanel 
 {
     /** Prvi valni oblik pocinje po y-osi od 20. piksela */
-    private final int FIRST_WAVE_YAXIS_START = 20;
+    private static final int FIRST_WAVE_YAXIS_START = 20;
 
     /** Svaki spring (elasticni pretinac) vala iznosi 40 piksela */
     private final int WAVE_SPRING_SIZE;
@@ -326,7 +326,7 @@ class WaveDrawBoard extends JPanel
 	public void expand (int index)
 	{
 
-		String[] expandedValues = new String[signalValues.get(index).length];
+		String[] expandedValues;
 		int j = 0;
 		for (; j < signalValues.get(index + j)[0].length(); j++)
 		{

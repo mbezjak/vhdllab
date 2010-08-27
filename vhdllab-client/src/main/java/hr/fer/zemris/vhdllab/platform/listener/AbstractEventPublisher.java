@@ -47,7 +47,7 @@ public abstract class AbstractEventPublisher<T extends EventListener>
 
     @Override
     public void removeListeners() {
-        listeners.removeAll(listeners);
+        listeners.clear();
         if (logger.isTraceEnabled()) {
             logger.trace("Removed all listeners");
         }

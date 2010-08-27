@@ -65,7 +65,7 @@ public class JHelpManager extends JPanel implements TreeSelectionListener {
         displayURL(((HelpItem)node.getUserObject()).helpURL);
     }
 
-    private class HelpItem {
+    private static class HelpItem {
         public String topicName = null;
         public URL helpURL = null;
 

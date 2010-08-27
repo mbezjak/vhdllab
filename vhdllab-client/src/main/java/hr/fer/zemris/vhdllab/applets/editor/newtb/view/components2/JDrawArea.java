@@ -821,8 +821,6 @@ public class JDrawArea extends JComponent {
 				scaleT = 100;
 			else if (lengthScaled <= 10000)
 				scaleT = 200;
-			else if (lengthScaled <= 50000)
-				scaleT = 1000;
 			else
 				scaleT = 1000;
 			scaleX = scaleT * width / (int) lengthScaled;

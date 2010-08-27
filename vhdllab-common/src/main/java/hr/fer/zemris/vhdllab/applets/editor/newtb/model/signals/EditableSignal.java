@@ -3,14 +3,14 @@
  */
 package hr.fer.zemris.vhdllab.applets.editor.newtb.model.signals;
 
+import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformSignalChangeException;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformSignalException;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.listeners.SignalChangeListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformSignalChangeException;
-import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformSignalException;
-import hr.fer.zemris.vhdllab.applets.editor.newtb.listeners.SignalChangeListener;
 
 /**
  * @author Davor Jurisic
@@ -29,11 +29,11 @@ public abstract class EditableSignal extends Signal {
 		SignalChange prev = p == null ? null : p.getValue();
 		SignalChange next = n == null ? null : n.getValue();
 		
-		if (this.changes.containsKey(new Long(time))) {
-			this.changes.get(new Long(time)).setSignalValue(signalValue);
+		if (this.changes.containsKey(Long.valueOf(time))) {
+			this.changes.get(Long.valueOf(time)).setSignalValue(signalValue);
 		} else {
 			
-			this.changes.put(new Long(time), new SignalChange(this.dimension, signalValue,
+			this.changes.put(Long.valueOf(time), new SignalChange(this.dimension, signalValue,
 					time, this));
 			if (this.signalChangeListener != null) {
 				this.signalChangeListener.signalChanged(this);

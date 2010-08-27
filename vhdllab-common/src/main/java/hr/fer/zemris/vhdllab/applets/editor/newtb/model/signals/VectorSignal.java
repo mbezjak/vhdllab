@@ -97,7 +97,7 @@ public class VectorSignal extends EditableSignal {
                     sb.setCharAt(componentIndex, signalValue.charAt(0));
                     newSignalValue = sb.toString();
                 }
-                this.changes.put(new Long(time), new SignalChange(this.dimension, newSignalValue, time, this));
+                this.changes.put(Long.valueOf(time), new SignalChange(this.dimension, newSignalValue, time, this));
                 if (this.signalChangeListener != null) {
                     this.signalChangeListener.signalChanged(this);
                 }

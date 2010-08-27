@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 class CursorPanel extends JPanel
 {
     /* Aktivan je prvi kursor */
-    private final byte FIRST = 1;
+    private static final byte FIRST = 1;
 
     /** Zavrsna tocka panela  */
     private int panelEndPoint;

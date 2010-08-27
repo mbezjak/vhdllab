@@ -226,7 +226,7 @@ public class SaveDialog extends AbstractDialog<List<File>> {
      * @author Miro Bezjak
      * @see SaveDialog
      */
-    private class SaveItem {
+    private static class SaveItem {
 
         private File file;
         /** Indicating if checkbox is selected */
@@ -277,7 +277,7 @@ public class SaveDialog extends AbstractDialog<List<File>> {
      * @author Miro Bezjak
      * @see SaveDialog
      */
-    private class CheckBoxList extends JPanel {
+    private static class CheckBoxList extends JPanel {
 
         /**
          * Serial Version UID.

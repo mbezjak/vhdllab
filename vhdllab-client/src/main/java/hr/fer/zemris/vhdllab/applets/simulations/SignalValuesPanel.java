@@ -15,13 +15,13 @@ import javax.swing.JScrollBar;
 class SignalValuesPanel extends JPanel
 {
 	/** Prva vrijednosti pocinje od 30-tog piksela */
-    private final int YAXIS_START_POINT = 30;
+    private static final int YAXIS_START_POINT = 30;
 
     /** Svaka se vrijednost nalazi u springu (elasticnom pretincu) koji je visine 45 piksela */
-	private final int SIGNAL_NAME_SPRING_HEIGHT = 45;
+	private static final int SIGNAL_NAME_SPRING_HEIGHT = 45;
 
     /** Maksimalna duljina koju panel moze poprimiti iznosi 150 piksela */
-	private final int PANEL_MAX_WIDTH = 650;
+	private static final int PANEL_MAX_WIDTH = 650;
 
 	/** Trenutni indeks na kojem je kursor, vrijednost na tom indeksu crta se u panelu */
     private int valueIndex;

@@ -19,21 +19,21 @@ import java.awt.LayoutManager;
  */
 class WaveLayoutManager implements LayoutManager
 {
-    private final String TOOLBAR = "toolbar";
+    private static final String TOOLBAR = "toolbar";
   //  private final String TEXTFIELD = "textField";
-    private final String CURSOR_PANEL = "cursorPanel";
-    private final String SEARCH = "search";
-    private final String INTERVAL = "interval";
-    private final String SIGNAL_NAMES = "signalNames";
-    private final String SIGNAL_NAMES_SCROLLBAR = "signalNamesScrollbar";
-	private final String DIVIDER1 = "divider1";
-	private final String DIVIDER2 = "divider2";
-    private final String SIGNAL_VALUES = "signalValues";
-    private final String VALUES_SCROLLBAR = "valuesScrollbar";
-    private final String WAVES = "waves";
-    private final String SCALE = "scale";
-    private final String VERTICAL_SCROLLBAR = "verticalScrollbar";
-    private final String HORIZONTAL_SCROLLBAR = "horizontalScrollbar";
+    private static final String CURSOR_PANEL = "cursorPanel";
+    private static final String SEARCH = "search";
+    private static final String INTERVAL = "interval";
+    private static final String SIGNAL_NAMES = "signalNames";
+    private static final String SIGNAL_NAMES_SCROLLBAR = "signalNamesScrollbar";
+	private static final String DIVIDER1 = "divider1";
+	private static final String DIVIDER2 = "divider2";
+    private static final String SIGNAL_VALUES = "signalValues";
+    private static final String VALUES_SCROLLBAR = "valuesScrollbar";
+    private static final String WAVES = "waves";
+    private static final String SCALE = "scale";
+    private static final String VERTICAL_SCROLLBAR = "verticalScrollbar";
+    private static final String HORIZONTAL_SCROLLBAR = "horizontalScrollbar";
 
     private Component toolbar;
 	//private Component textField;

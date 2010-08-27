@@ -26,14 +26,14 @@ public class IntegerParameter extends AbstractParameter {
 	
 
 	public IntegerParameter(boolean isGeneric, String parameterName) {
-		val = new Integer(0);
+		val = Integer.valueOf(0);
 		constraint = new IntegerConstraint();
 		name = parameterName;
 		generic = isGeneric;
 	}
 	
 	public IntegerParameter(boolean isGeneric, String parameterName, int value) {
-		val = new Integer(value);
+		val = Integer.valueOf(value);
 		constraint = new IntegerConstraint();
 		name = parameterName;
 		generic = isGeneric;

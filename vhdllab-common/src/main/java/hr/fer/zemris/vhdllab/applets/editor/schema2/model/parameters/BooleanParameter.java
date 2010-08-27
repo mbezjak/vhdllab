@@ -25,14 +25,14 @@ public class BooleanParameter extends AbstractParameter {
 	
 
 	public BooleanParameter(boolean isGeneric, String parameterName) {
-		val = new Boolean(false);
+		val = Boolean.FALSE;
 		constraint = new BooleanConstraint();
 		name = parameterName;
 		generic = isGeneric;
 	}
 	
 	public BooleanParameter(boolean isGeneric, String parameterName, boolean value) {
-		val = new Boolean(value);
+		val = Boolean.valueOf(value);
 		constraint = new BooleanConstraint();
 		name = parameterName;
 		generic = isGeneric;

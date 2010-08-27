@@ -283,7 +283,7 @@ public class CPToolbarParameterEnvelopeCollection {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: parameterType=BOOLEAN");
 			}
-			return new Boolean(value.toString());
+			return Boolean.valueOf(value.toString());
 		} else if (pType == EParamTypes.CASELESS) {
 			if (CPToolbar.DEBUG_MODE) {
 				System.out
@@ -295,7 +295,7 @@ public class CPToolbarParameterEnvelopeCollection {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: parameterType=TEXT");
 			}
-			return new String(value.toString());
+			return String.valueOf(value.toString());
 		} else if (pType == EParamTypes.INTEGER) {
 			if (CPToolbar.DEBUG_MODE) {
 				System.out
@@ -346,7 +346,7 @@ public class CPToolbarParameterEnvelopeCollection {
 	 * @author Garfield
 	 * 
 	 */
-	private class ParameterEnvelope {
+	private static class ParameterEnvelope {
 
 		/**
 		 * Parametar za koji se izgradjuje ParameterEnvelope

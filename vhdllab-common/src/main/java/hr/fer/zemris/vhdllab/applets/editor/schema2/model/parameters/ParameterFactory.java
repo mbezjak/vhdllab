@@ -203,7 +203,7 @@ public class ParameterFactory {
 			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
 				try {
-					allowed.add(new Integer(Integer.parseInt(sfield[i])));
+					allowed.add(Integer.valueOf(Integer.parseInt(sfield[i])));
 				} catch (NumberFormatException nfe) {
 					continue;
 				}
@@ -227,7 +227,7 @@ public class ParameterFactory {
 			Set<Object> allowed = new HashSet<Object>();
 			String[] sfield = parwrapper.getAllowedValues().split(Constants.ALLOWED_SET_DIVIDER);
 			for (int i = 0; i < sfield.length; i++) {
-				allowed.add(new Boolean(Boolean.parseBoolean(sfield[i])));
+				allowed.add(Boolean.valueOf(Boolean.parseBoolean(sfield[i])));
 			}
 			parameter.getConstraint().setPossibleValues(allowed);
 		}

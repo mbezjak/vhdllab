@@ -1,5 +1,10 @@
 package hr.fer.zemris.vhdllab.applets.editor.newtb.view.patternPanels;
 
+import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.EvaluationMethod;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformPatternException;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformSignalChangeException;
+import hr.fer.zemris.vhdllab.applets.editor.newtb.model.patterns.Pattern;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -10,11 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import hr.fer.zemris.vhdllab.applets.editor.newtb.enums.EvaluationMethod;
-import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformPatternException;
-import hr.fer.zemris.vhdllab.applets.editor.newtb.exceptions.UniformSignalChangeException;
-import hr.fer.zemris.vhdllab.applets.editor.newtb.model.patterns.Pattern;
-
 public abstract class ShiftPatternPanel extends VectorPatternPanel {
 
 private static final long serialVersionUID = 1L;
@@ -23,8 +23,8 @@ private static final long serialVersionUID = 1L;
 	private JPanel mid = new JPanel();
 	private JPanel right;
 	
-	protected Integer nula = new Integer(0);
-	protected Integer jedan = new Integer(1);
+	protected Integer nula = Integer.valueOf(0);
+	protected Integer jedan = Integer.valueOf(1);
 	
 	protected JComboBox shiftInCombo = new JComboBox(new Integer[]{nula, jedan});
 	protected JTextField initTB = new JTextField(5);

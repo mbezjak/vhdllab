@@ -12,28 +12,28 @@ import java.awt.Graphics;
 class WaveForm
 {
     /** Svi oblici koji su jednaki nuli pripadaju grupi nula */
-    private final byte ZERO_SHAPES = 1;
+    private static final byte ZERO_SHAPES = 1;
 
     /** Svi oblici koji su jedinic pripadaju grupi jedinica */
-	private final byte ONE_SHAPES = 2;
+	private static final byte ONE_SHAPES = 2;
 
     /** Svi oblici koji predstavljaju vektor ili su neinicijalizirani */
-	private final byte HEXAGON_SHAPES = 3;
+	private static final byte HEXAGON_SHAPES = 3;
 
     /** Valni oblik koji ima visoku impedanciju */
-    private final byte HIGH_IMPEDANCE = 4;
+    private static final byte HIGH_IMPEDANCE = 4;
 
     /** Nepoznata vrijednost */
-    private final byte UNKNOWN = 5;
+    private static final byte UNKNOWN = 5;
 
     /** Valni oblici U, H, L, W */
-    private final byte OTHERS = 6;
+    private static final byte OTHERS = 6;
 
     /** Trajanje u pikselima */
     private int[] durationsInPixels;
 
     /** Pocetna tocka crtanja valnog oblika */
-    private final int WAVE_START_POINT_IN_PIXELS = 0;
+    private static final int WAVE_START_POINT_IN_PIXELS = 0;
     
     /** Duljina ekrana u pikselima */
     private int screenSizeInPixels;
