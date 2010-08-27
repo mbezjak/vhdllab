@@ -19,10 +19,10 @@ public class Hex {
 				char t = g.charAt(i);
 				if(t > 'F' || (t < 'A' && !Character.isDigit(t)))
 						throw new Exception();
-				else 
-					ret += mult
-						* (t >= 'A' ? t - 55
-								: t - 48);
+
+				ret += mult
+					* (t >= 'A' ? t - 55
+							: t - 48);
 			}
 			return ret;
 		} catch (Exception e) {

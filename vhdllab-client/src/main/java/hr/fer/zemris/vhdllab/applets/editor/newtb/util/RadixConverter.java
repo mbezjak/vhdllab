@@ -12,10 +12,10 @@ public class RadixConverter {
 	public static String binToOtherString(String binaryValue, int radix) {
 		if(binaryValue.length() < 32) {
 			return Integer.toString(Integer.parseInt(binaryValue, 2), radix).toUpperCase();
-		} else {
-			BigInteger a = new BigInteger(binaryValue, 2);
-			return a.toString(radix).toUpperCase();
 		}
+
+		BigInteger a = new BigInteger(binaryValue, 2);
+		return a.toString(radix).toUpperCase();
 	}
 	
 	public static String binToOtherString(String binaryValue, int radix, int minNofBits, boolean hexPrefix) {

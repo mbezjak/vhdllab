@@ -148,7 +148,8 @@ public class SimpleSchemaWireCollection implements ISchemaWireCollection {
 		ISchemaWire wire = wires.get(wireName);
 		
 		if (wire == null) return null;
-		else return wire.getBounds();
+
+		return wire.getBounds();
 	}
 
 

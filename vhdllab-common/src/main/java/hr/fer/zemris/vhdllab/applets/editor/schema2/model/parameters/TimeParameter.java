@@ -98,7 +98,7 @@ public class TimeParameter extends AbstractParameter {
 	}
 
 	public Time getValueAsTime() throws ClassCastException {
-		return (Time)value;
+		return value;
 	}
 
 	public String getVHDLGenericEntry() {

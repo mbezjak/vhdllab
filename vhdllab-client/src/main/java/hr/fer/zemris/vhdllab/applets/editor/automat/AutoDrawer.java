@@ -672,8 +672,7 @@ public class AutoDrawer extends JPanel{
 			xtekst+=(int)((double)fm.stringWidth(tekst)/2*Math.sin(fi));
 			ytekst-=(int)((double)fm.getAscent()/2*Math.cos(fi));
 		}
-		if(e.getX()>xtekst&&e.getX()<xtekst+fm.stringWidth(tekst)&&e.getY()<ytekst&&e.getY()>ytekst-fm.getHeight())return true;
-		else return false;
+		return e.getX()>xtekst&&e.getX()<xtekst+fm.stringWidth(tekst)&&e.getY()<ytekst&&e.getY()>ytekst-fm.getHeight();
 	}
 	
 	/**

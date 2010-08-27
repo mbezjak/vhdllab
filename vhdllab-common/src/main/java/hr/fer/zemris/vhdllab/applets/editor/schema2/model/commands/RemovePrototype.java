@@ -52,7 +52,8 @@ public class RemovePrototype implements ICommand {
 		
 		if (prototyper.removePrototype(toremovename))
 			return new CommandResponse(new ChangeTuple(EPropertyChange.PROTOTYPES_CHANGE));
-		else return new CommandResponse(new SchemaError(EErrorTypes.NONEXISTING_PROTOTYPE));
+
+		return new CommandResponse(new SchemaError(EErrorTypes.NONEXISTING_PROTOTYPE));
 	}
 
 	public ICommandResponse undoCommand(ISchemaInfo info)

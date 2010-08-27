@@ -126,7 +126,7 @@ public final class Time {
 
 	@Override
 	public final String toString() {
-		return (double) this.timeInterval + " " + this.timeMetric.toString();
+		return this.timeInterval + " " + this.timeMetric.toString();
 	}
 
 }

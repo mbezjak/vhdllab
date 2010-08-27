@@ -20,7 +20,7 @@ public class CustomTextFieldTest extends JFrame {
 		button.addActionListener(new ActionListener(){
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 				System.out.println(cost.getText());
-			};
+			}
 
 		});
 		this.getContentPane().add(button,BorderLayout.NORTH);

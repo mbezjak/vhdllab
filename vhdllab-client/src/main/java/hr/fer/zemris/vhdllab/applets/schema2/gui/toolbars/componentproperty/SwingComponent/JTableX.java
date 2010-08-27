@@ -67,6 +67,7 @@ public class JTableX extends JTable {
 		return rm;
 	}
 
+	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
 		TableCellEditor tmpEditor = null;
 		if (rm != null)

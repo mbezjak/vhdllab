@@ -46,7 +46,8 @@ public class SmartConnect implements IQuery {
 		@Override
 		public String toString() {
 			if (parent != null) return parentloc.toString() + parent.toString();
-			else return "";
+
+			return "";
 		}
 	}
 
@@ -317,12 +318,12 @@ public class SmartConnect implements IQuery {
 			start.y = closest.y;
 			
 			return true;
-		} else {
-			actualstart.x = start.x;
-			actualstart.y = start.y;
-			
-			return true;
 		}
+
+		actualstart.x = start.x;
+		actualstart.y = start.y;
+		
+		return true;
 	}
 
 	private List<WireSegment> reconstructPath(ANode goal, XYLocation modend) {
@@ -437,27 +438,27 @@ public class SmartConnect implements IQuery {
 			}
 			
 			return true;
-		} else {
-			/* check by inspecting ISchemaInfo - not optimized */
-			
-			/* check components */
-			if (info.getComponents().containsAt(loc.x, loc.y, 0)) return false;
-			
-			/* check wires */
-			Set<ISchemaWire> wires = info.getWires().fetchAllWires(loc.x, loc.y);
-			
-			if (wires != null && parentloc != null) {
-				boolean vertical = (loc.x == parentloc.x);
-				for (ISchemaWire sw : wires) {
-					Set<WireSegment> segments = sw.segmentsAt(loc.x, loc.y);
-					if (segments != null) for (WireSegment ws : segments) {
-						if (ws.isVertical() == vertical) return false;
-					}
+		}
+
+		/* check by inspecting ISchemaInfo - not optimized */
+		
+		/* check components */
+		if (info.getComponents().containsAt(loc.x, loc.y, 0)) return false;
+		
+		/* check wires */
+		Set<ISchemaWire> wires = info.getWires().fetchAllWires(loc.x, loc.y);
+		
+		if (wires != null && parentloc != null) {
+			boolean vertical = (loc.x == parentloc.x);
+			for (ISchemaWire sw : wires) {
+				Set<WireSegment> segments = sw.segmentsAt(loc.x, loc.y);
+				if (segments != null) for (WireSegment ws : segments) {
+					if (ws.isVertical() == vertical) return false;
 				}
 			}
-			
-			return true;
 		}
+		
+		return true;
 	}
 
 	private int heuristic(int x, int y) {

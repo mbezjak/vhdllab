@@ -517,9 +517,9 @@ public class InOutSchemaComponent implements ISchemaComponent {
 				if (first) {
 					first = false;
 					return portrel.port;
-				} else {
-					throw new NoSuchElementException();
 				}
+
+				throw new NoSuchElementException();
 			}
 			public void remove() {
 				throw new UnsupportedOperationException();

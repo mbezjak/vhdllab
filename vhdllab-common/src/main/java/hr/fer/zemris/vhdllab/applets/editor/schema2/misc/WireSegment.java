@@ -167,10 +167,10 @@ public final class WireSegment {
 		if (loc1.x == loc2.x) {
 			/* vertical */
 			return loc1.x == x && SMath.withinOrd(y, loc1.y, loc2.y);
-		} else {
-			/* horizontal */
-			return loc1.y == y && SMath.withinOrd(x, loc1.x, loc2.x);
 		}
+
+		/* horizontal */
+		return loc1.y == y && SMath.withinOrd(x, loc1.x, loc2.x);
 	}
 	
 	public final void setX1(int x1) {
@@ -212,17 +212,17 @@ public final class WireSegment {
 			} else {
 				return getlen(xlkp - this.loc1.x, ylkp - ly);
 			}
+		}
+
+		int lx = (this.loc1.x > this.loc2.x) ? (this.loc2.x) : (this.loc1.x);
+		int rx = (lx == this.loc1.x) ? (this.loc2.x) : (this.loc1.x);
+		
+		if (xlkp >= lx && xlkp <= rx) {
+			return Math.abs(ylkp - this.loc1.y);
+		} else if (xlkp > rx) {
+			return getlen(xlkp - rx, ylkp - this.loc1.y);
 		} else {
-			int lx = (this.loc1.x > this.loc2.x) ? (this.loc2.x) : (this.loc1.x);
-			int rx = (lx == this.loc1.x) ? (this.loc2.x) : (this.loc1.x);
-			
-			if (xlkp >= lx && xlkp <= rx) {
-				return Math.abs(ylkp - this.loc1.y);
-			} else if (xlkp > rx) {
-				return getlen(xlkp - rx, ylkp - this.loc1.y);
-			} else {
-				return getlen(xlkp - lx, ylkp - this.loc1.y);
-			}
+			return getlen(xlkp - lx, ylkp - this.loc1.y);
 		}
 	}
 	

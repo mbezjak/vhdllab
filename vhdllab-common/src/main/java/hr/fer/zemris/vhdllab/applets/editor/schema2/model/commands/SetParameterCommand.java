@@ -214,13 +214,13 @@ public class SetParameterCommand implements ICommand {
 			CommandResponse cr = new CommandResponse(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
 			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
 			return cr;
-		} else {
-			changes = new ArrayList<ChangeTuple>(changes);
-			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
-			CommandResponse cr = new CommandResponse(changes);
-			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
-			return cr;
 		}
+
+		changes = new ArrayList<ChangeTuple>(changes);
+		changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
+		CommandResponse cr = new CommandResponse(changes);
+		cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
+		return cr;
 	}
 
 	public ICommandResponse undoCommand(ISchemaInfo info) throws InvalidCommandOperationException {
@@ -269,13 +269,12 @@ public class SetParameterCommand implements ICommand {
 			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
 			return cr;
 		}
-		else {
-			changes = new ArrayList<ChangeTuple>(changes);
-			changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
-			CommandResponse cr = new CommandResponse(changes);
-			cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
-			return cr;
-		}
+
+		changes = new ArrayList<ChangeTuple>(changes);
+		changes.add(new ChangeTuple(EPropertyChange.PROPERTY_CHANGE));
+		CommandResponse cr = new CommandResponse(changes);
+		cr.getInfoMap().set(KEY_UPDATED_NAME, updname);
+		return cr;
 	}
 	
 	private Caseless getUpdatedName(ISchemaInfo info) {

@@ -17,21 +17,9 @@ import javax.swing.JPanel;
  */
 public abstract class ParameterSetterPanel<T> extends JPanel {
 	
-	/* static fields */
+    private static final long serialVersionUID = -4740020087218959148L;
 
-	
-	/* private fields */
-
-	
-	
-	/* ctors */
-
-	
-	
-	
-	/* methods */
-	
-	public abstract void setToValue(T value);
+    public abstract void setToValue(T value);
 
 	public abstract T getNewValue();
 	

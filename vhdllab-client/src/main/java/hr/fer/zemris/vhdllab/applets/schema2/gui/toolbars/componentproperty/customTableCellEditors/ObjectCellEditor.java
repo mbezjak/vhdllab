@@ -42,7 +42,6 @@ public class ObjectCellEditor extends AbstractCellEditor implements
 	}
 
 	private void initGUI() {
-		Object panel = null;
 		customEditor = new JPanel(new BorderLayout());
 		valueField = new JTextField();
 		valueField.setEditable(false);
@@ -50,7 +49,7 @@ public class ObjectCellEditor extends AbstractCellEditor implements
 		actionField = new JButton("...");
 		actionField.setMargin(new Insets(1, 1, 1, 1));
 		actionField.setSize(100, 50);
-		if ((panel = CustomDialogs.getDialogForObject(reference)) == null) {
+		if (CustomDialogs.getDialogForObject(reference) == null) {
 			actionField.setEnabled(false);
 		}
 		customEditor.add(valueField, BorderLayout.CENTER);

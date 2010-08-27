@@ -197,20 +197,17 @@ public class MealyParser implements IAutomatVHDLGenerator {
 	}
 
 	private String decToBinString(int tip, int indexOf, int size) {
-		String s = "";
-		
 		if(tip == Signal.STD_LOGIC){
 			return indexOf == 1?"'1'":"'0'";
-		}else{
-			StringBuffer b = new StringBuffer("\"");
-			for(int i = 0; i < size;i++){
-				b.append(indexOf%2);
-				indexOf/=2;
-			}
-			s = b.append("\"").reverse().toString();
 		}
-		
-		return s;
+
+    	StringBuffer b = new StringBuffer("\"");
+    	for(int i = 0; i < size;i++){
+    	    b.append(indexOf%2);
+    	    indexOf/=2;
+    	}
+
+    	return b.append("\"").reverse().toString();
 	}
 
 	private Signal createStateSignal() {

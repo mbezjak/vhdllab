@@ -195,7 +195,8 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		PlacedComponent cpw = components.get(componentName);
 		
 		if (cpw == null) return null;
-		else return new XYLocation(cpw.pos);
+
+		return new XYLocation(cpw.pos);
 	}
 
 
@@ -203,16 +204,15 @@ public class SimpleSchemaComponentCollection implements ISchemaComponentCollecti
 		PlacedComponent cpw = components.get(componentName);
 		
 		if (cpw == null) return null;
-		else {
-			Rectangle bounds = new Rectangle();
-			
-			bounds.x = cpw.pos.x;
-			bounds.y = cpw.pos.y;
-			bounds.width = cpw.comp.getWidth();
-			bounds.height = cpw.comp.getHeight();
-			
-			return bounds;
-		}
+
+		Rectangle bounds = new Rectangle();
+		
+		bounds.x = cpw.pos.x;
+		bounds.y = cpw.pos.y;
+		bounds.width = cpw.comp.getWidth();
+		bounds.height = cpw.comp.getHeight();
+		
+		return bounds;
 	}
 	
 

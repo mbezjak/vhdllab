@@ -131,11 +131,9 @@ class SignalNamesPanel extends JPanel
             return new Dimension(panelWidth, 
 					signalNames.size() * SIGNAL_NAME_SPRING_HEIGHT); 
         }
-        else
-        {
-            return new Dimension(PANEL_MAX_WIDTH, signalNames.size() * 
-					SIGNAL_NAME_SPRING_HEIGHT);
-        }
+
+        return new Dimension(PANEL_MAX_WIDTH, signalNames.size() * 
+				SIGNAL_NAME_SPRING_HEIGHT);
     }
 
 

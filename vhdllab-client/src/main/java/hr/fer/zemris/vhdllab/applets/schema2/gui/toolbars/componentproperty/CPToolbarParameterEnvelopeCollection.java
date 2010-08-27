@@ -332,7 +332,7 @@ public class CPToolbarParameterEnvelopeCollection {
 				System.out
 						.println("CPToolbarParameterEnvelopeCollection: parameterType=OBJECT");
 			}
-			return (Object) parameters.get(row).getParameterValueForObject(
+			return parameters.get(row).getParameterValueForObject(
 					(String) value);
 
 		}

@@ -26,8 +26,9 @@ public class CPToolbarTableModel extends DefaultTableModel {
 	public int getColumnCount() {
 		if (pec != null) {
 			return pec.getNumberOfColumns();
-		} else
-			return 0;
+		}
+
+		return 0;
 	}
 
 	/*
@@ -39,8 +40,9 @@ public class CPToolbarTableModel extends DefaultTableModel {
 	public int getRowCount() {
 		if (pec != null) {
 			return pec.getNumberOfRows();
-		} else
-			return 0;
+		}
+
+		return 0;
 	}
 
 	/*
@@ -52,8 +54,9 @@ public class CPToolbarTableModel extends DefaultTableModel {
 	public Object getValueAt(int row, int column) {
 		if (pec != null) {
 			return pec.getValueAt(row, column);
-		} else
-			return null;
+		}
+
+		return null;
 	}
 
 	/*
@@ -65,8 +68,9 @@ public class CPToolbarTableModel extends DefaultTableModel {
 	public boolean isCellEditable(int row, int column) {
 		if (column == 0) {
 			return false;
-		} else
-			return true;
+		}
+
+		return true;
 	}
 
 	/*
@@ -96,9 +100,9 @@ public class CPToolbarTableModel extends DefaultTableModel {
 	public String getColumnName(int column) {
 		if (column < 2) {
 			return CPToolbar.TOOLBAR_TABLE_HEADER[column];
-		} else {
-			return super.getColumnName(column);
 		}
+
+		return super.getColumnName(column);
 	}
 
 }

@@ -308,10 +308,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			for (SchemaPort sp : comp.getSchemaPorts()) {
 				Caseless mappedto = sp.getMapping();
 				if (Caseless.isNullOrEmpty(mappedto)) continue;
-				else {
-					wires.fetchWire(mappedto).getDrawer().draw(g, drawProperties);
-					drawConnectedPins(g, mappedto);
-				}
+
+				wires.fetchWire(mappedto).getDrawer().draw(g, drawProperties);
+				drawConnectedPins(g, mappedto);
 			}
 			g.setColor(cl);
 		}
@@ -678,10 +677,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				}else{
 //					Caseless c = port.getMapping();//TODO pitaj aleksa za ovaj getMapping!!
 //					point = new CriticalPoint(wires.fetchWire(port.getMapping()), alignToGrid(x), alignToGrid(y));
-					point = null;
 				}
-			}else{
-				point = null;
 			}
 
 		}
@@ -690,8 +686,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			ISchemaWire wire = wires.fetchWire(x, y, Constants.GRID_SIZE/2-1);
 			if(wire != null){
 				point = new CriticalPoint(wire, alignToGrid(x), alignToGrid(y));
-			}else{
-				point = null;
 			}
 		}
 		

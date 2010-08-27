@@ -198,8 +198,9 @@ public class LocalController implements ISchemaController {
 			undolist.clear();
 			redolist.clear();
 			throw new CommandExecutorException("Cannot redo command.");
-		} else
-			undolist.add(comm);
+		}
+
+		undolist.add(comm);
 		
 		reportChanges(response);
 
@@ -223,8 +224,9 @@ public class LocalController implements ISchemaController {
 			redolist.clear();
 			throw new CommandExecutorException("Cannot undo command. Reason: "
 					+ response.getError().toString());
-		} else
-			redolist.add(comm);
+		}
+
+		redolist.add(comm);
 		
 		reportChanges(response);
 
