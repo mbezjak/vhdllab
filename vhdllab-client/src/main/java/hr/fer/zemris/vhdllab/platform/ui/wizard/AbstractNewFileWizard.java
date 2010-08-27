@@ -18,11 +18,18 @@ public abstract class AbstractNewFileWizard extends
 
     @Override
     protected void onWizardFinished() {
-        File file = getFile();
-        file.setProject(EntityUtils.lightweightClone(file.getProject()));
-        file.setType(getFileType());
-        file.setData(createData());
-        manager.create(file);
+        try {
+            File file = getFile();
+            file.setProject(EntityUtils.lightweightClone(file.getProject()));
+            file.setType(getFileType());
+            file.setData(createData());
+            manager.create(file);
+        } catch (IllegalStateException e) {
+            // hack for NewTestbenchWizard to cancel wizard
+            if (!e.getMessage().equals("Dialog canceled")) {
+                throw e;
+            }
+        }
     }
 
     protected abstract File getFile();
