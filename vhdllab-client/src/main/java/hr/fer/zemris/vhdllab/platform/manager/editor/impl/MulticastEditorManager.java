@@ -100,7 +100,7 @@ public class MulticastEditorManager implements EditorManager {
         if (!identifiers.isEmpty()) {
             List<File> resourcesToSave = saveDialog.showDialog(identifiers,
                     context);
-            if (resourcesToSave == null || resourcesToSave.isEmpty()) {
+            if (resourcesToSave == null) {
                 return false;
             }
             for (File i : resourcesToSave) {
