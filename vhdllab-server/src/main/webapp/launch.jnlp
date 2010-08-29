@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/vhdllab/"
+<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/${app.context}/"
             href="$$name" version="${application.version}">
 
     <information>

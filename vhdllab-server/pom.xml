@@ -23,6 +23,7 @@
       <resource>
         <directory>src/main/resources</directory>
         <excludes>
+          <exclude>ehcache.xml</exclude>
           <exclude>ghdl.properties</exclude>
         </excludes>
         <filtering>false</filtering>
@@ -30,6 +31,7 @@
       <resource>
         <directory>src/main/resources</directory>
         <includes>
+          <include>ehcache.xml</include>
           <include>ghdl.properties</include>
         </includes>
         <filtering>true</filtering>

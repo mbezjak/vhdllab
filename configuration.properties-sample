@@ -1,4 +1,6 @@
 app.host = localhost
+# servlet context under which an application will reside
+app.context=vhdllab
 http.port=8080
 https.port=8443
 
