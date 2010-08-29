@@ -28,8 +28,8 @@ public class RandomVectorPattern extends VectorPattern {
 	public List<SignalChange> getChanges(long start, long end)
 			throws UniformSignalChangeException, UniformPatternException {
 		List<SignalChange> ret = new ArrayList<SignalChange>();
-		BigInteger maxGen = BigInteger.ONE.add(BigInteger.ONE).pow(dim);
-		int maxGenInt = maxGen.bitCount() < 32 ? maxGen.intValue() : Integer.MAX_VALUE;
+		BigInteger maxGen = BigInteger.valueOf(2l).pow(dim);
+		int maxGenInt = maxGen.bitLength() + 1 < 32 ? maxGen.intValue() : Integer.MAX_VALUE;
 		Random r = new Random();
 		for( int i = 0; i < cycles && start + i * pulseLen <= end && start + i * pulseLen >= start; i++)
 			ret.add(new SignalChange(
