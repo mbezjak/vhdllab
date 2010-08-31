@@ -6,7 +6,7 @@
 <p>
 Version: ${version}
 <p>
-<a href="http://www.gnu.org/licenses/gpl-3.0.txt">&copy; Copyright 2006-2010</a> the original authors.
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">&copy; Copyright 2006-2010</a> the original authors.
 <p>
 Send bug reports to <a href="mailto:vhdllab@gmail.com?subject=Bug%20in%20VHDLLab%20Client%20-%20please%20provide%20short%20description%20here">vhdllab@gmail.com</a><br/>
 Google group: <a href="http://groups.google.com/group/vhdllab">groups.google.com/group/vhdllab</a>
@@ -71,7 +71,7 @@ Schematic editor - canvas
 <p>
 Version: ${version}
 <p>
-<a href="http://www.gnu.org/licenses/gpl-3.0.txt">&copy; Copyright 2006-2010</a> the original authors.
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">&copy; Copyright 2006-2010</a> the original authors.
 <p>
 Send bug reports to <a href="mailto:vhdllab@gmail.com?subject=Bug%20in%20VHDLLab%20Client%20-%20please%20provide%20short%20description%20here">vhdllab@gmail.com</a><br/>
 Google group: <a href="http://groups.google.com/group/vhdllab">groups.google.com/group/vhdllab</a>
