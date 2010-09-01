@@ -27,9 +27,9 @@ https.port=8443
 # compiled/simulated.
 # 
 # In ghdl.simulation.cmd additional properties will be appended as run
-# options, i.e., --vcd and --stop-time. Former is a controls file name that
-# should be parsed for results and latter is only available as a runtime
-# parameter (depends upon testbench data). Do not use those options in your
+# options, i.e., --vcd and --stop-time. Former controls file name that should
+# be parsed for results and latter is only available as a runtime parameter
+# (depends upon testbench data). Do not use those options in your
 # ghdl.simulation.cmd!
 #
 # Note: only use absolute paths to ghdl executable (e.g. /usr/bin/ghdl or
