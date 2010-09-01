@@ -23,6 +23,10 @@ https.port=8443
 ###############################################################################
 ### GHDL parameters                                                         ###
 ###############################################################################
+# This parameter is optional and controls where compilation and simulation
+# data will be placed. If it isn't set then java.io.tmpdir will be used.
+#ghdl.tmp.dir=/tmp/vhdllab
+
 # {files} argument will be replaced with actual list of files that needs to be
 # compiled/simulated.
 # 

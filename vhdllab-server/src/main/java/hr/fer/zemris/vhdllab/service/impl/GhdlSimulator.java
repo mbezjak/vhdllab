@@ -218,12 +218,24 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
 
     private java.io.File createTempDirectory(Integer fileId) throws IOException {
         String suffix = "_by_user-" + SecurityUtils.getUser() + "__file_id-" + fileId;
-        java.io.File tempFile = java.io.File.createTempFile("ghd", suffix, null);
+        java.io.File tempFile = java.io.File.createTempFile("ghd", suffix, getRootDir());
         java.io.File tempDir = new java.io.File(tempFile.getParentFile(), "DIR" + tempFile.getName());
         FileUtils.forceMkdir(tempDir);
         FileUtils.deleteQuietly(tempFile);
         LOG.debug("Created temp directory: " + tempDir.getPath());
         return tempDir;
+    }
+
+    private java.io.File getRootDir() {
+        java.io.File root = null;
+
+        String tmpDir = getProperties().getProperty("tmp.dir");
+        if (tmpDir != null && !tmpDir.equals("${ghdl.tmp.dir}")) {
+            root = new java.io.File(tmpDir);
+        }
+
+        LOG.debug("Temp root dir resolved as: " + root);
+        return root;
     }
 
     private void copyFiles(List<String> dependencies, Integer projectId, java.io.File tempDirectory) throws IOException {
