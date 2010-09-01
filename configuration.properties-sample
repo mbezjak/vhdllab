@@ -41,7 +41,7 @@ ghdl.simulation.cmd=/usr/bin/ghdl --elab-run -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,
 
 # Windows variant
 #ghdl.compilation.cmd=C:/ghdl/bin/ghdl.exe -a {files}
-#ghdl.simulation.cmd=C:/ghdl/bin/ghdl.exe -elab-run {files} --stop-delta=1000
+#ghdl.simulation.cmd=C:/ghdl/bin/ghdl.exe --elab-run {files} --stop-delta=1000
 
 ###############################################################################
 ### Keystore parameters                                                     ###

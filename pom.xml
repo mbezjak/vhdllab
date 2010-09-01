@@ -491,6 +491,11 @@
       <url>http://repository.codehaus.org/</url>
     </repository>
     <repository>
+      <id>codehaus-nexux</id>
+      <name>Codehaus Nexux Maven2 repository</name>
+      <url>https://nexus.codehaus.org/content/repositories/releases/</url>
+    </repository>
+    <repository>
       <id>com.springsource.repository.maven.release</id>
       <url>http://maven.springframework.org/release/</url>
       <snapshots>
