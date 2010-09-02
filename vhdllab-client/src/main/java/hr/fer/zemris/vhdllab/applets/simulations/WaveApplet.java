@@ -219,6 +219,7 @@ public class WaveApplet extends AbstractEditor {
 	private static final long serialVersionUID = 1L;
 
 	public WaveApplet() {
+	    wrapInScrollPane = false;
 	}
 
 	

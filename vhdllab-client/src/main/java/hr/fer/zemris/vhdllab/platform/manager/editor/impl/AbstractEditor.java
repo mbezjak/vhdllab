@@ -43,6 +43,8 @@ public abstract class AbstractEditor extends AbstractControlFactory implements
     protected PlatformContainer container;
     private EditorMetadata metadata;
 
+    protected boolean wrapInScrollPane = true;
+
     public AbstractEditor() {
         this.publisher = new StandaloneEventPublisher<EditorListener>(
                 EditorListener.class);
@@ -64,7 +66,14 @@ public abstract class AbstractEditor extends AbstractControlFactory implements
     protected JComponent createControl() {
         JPanel control = new JPanel(new BorderLayout());
         JComponent userComponent = doInitWithoutData();
-        control.add(new JScrollPane(userComponent), BorderLayout.CENTER);
+        JComponent center = userComponent;
+
+        if (wrapInScrollPane) {
+            center = new JScrollPane(userComponent);
+        }
+
+        control.add(center, BorderLayout.CENTER);
+
         return control;
     }
 
