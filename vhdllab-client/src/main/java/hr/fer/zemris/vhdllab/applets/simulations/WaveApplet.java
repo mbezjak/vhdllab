@@ -1318,34 +1318,37 @@ public class WaveApplet extends AbstractEditor {
 				}
 				index = value / 45;
 
-				/* postavlja se vrijednost suprotna od one koja je do sada bila */
-				if (waves.getIndex() == index && waves.getIsClicked() == true) {
-					signalNames.setIsClicked(false);
-					waves.setIsClicked(false);
-					signalValues.setIsClicked(false);
-				} else {
-					signalNames.setIsClicked(true);
-					signalNames.setIndex(index);
-					waves.setIsClicked(true);
-					waves.setIndex(index);
-					signalValues.setIsClicked(true);
-					signalValues.setIndex(index);
-				}
-
-				Integer defaultVectorIndex = results.getCurrentVectorIndex().get(index);
-				/* provjerava je li kliknut plusic na bit-vektoru */
-				if (defaultVectorIndex != -1
-						&& results.getCurrentVectorIndex().indexOf(defaultVectorIndex) == index
-						&& (event.getX() >= 0 && event.getX() <= 15)) {
-					if (!results.getExpandedSignalNames().get(defaultVectorIndex)) {
-						results.getExpandedSignalNames().set(defaultVectorIndex, true);
-						signalNames.expand(index);
-						waves.expand(index);
-					} else {
-						results.getExpandedSignalNames().set(defaultVectorIndex, false);
-						signalNames.collapse(index);
-						waves.collapse(index);
-					}
+				if (index < results.getCurrentVectorIndex().size()) {
+    				
+    				/* postavlja se vrijednost suprotna od one koja je do sada bila */
+    				if (waves.getIndex() == index && waves.getIsClicked() == true) {
+    					signalNames.setIsClicked(false);
+    					waves.setIsClicked(false);
+    					signalValues.setIsClicked(false);
+    				} else {
+    					signalNames.setIsClicked(true);
+    					signalNames.setIndex(index);
+    					waves.setIsClicked(true);
+    					waves.setIndex(index);
+    					signalValues.setIsClicked(true);
+    					signalValues.setIndex(index);
+    				}
+    
+    				Integer defaultVectorIndex = results.getCurrentVectorIndex().get(index);
+    				/* provjerava je li kliknut plusic na bit-vektoru */
+    				if (defaultVectorIndex != -1
+    						&& results.getCurrentVectorIndex().indexOf(defaultVectorIndex) == index
+    						&& (event.getX() >= 0 && event.getX() <= 15)) {
+    					if (!results.getExpandedSignalNames().get(defaultVectorIndex)) {
+    						results.getExpandedSignalNames().set(defaultVectorIndex, true);
+    						signalNames.expand(index);
+    						waves.expand(index);
+    					} else {
+    						results.getExpandedSignalNames().set(defaultVectorIndex, false);
+    						signalNames.collapse(index);
+    						waves.collapse(index);
+    					}
+    				}
 				}
 			}
 
