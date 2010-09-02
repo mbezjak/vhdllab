@@ -16,9 +16,17 @@
  ******************************************************************************/
 package hr.fer.zemris.vhdllab.applets.simulations;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 
 /**
@@ -66,7 +74,12 @@ public class GhdlResults
     
     /** Tocke u kojima se dogada promjena */
     private long[] transitionPoints;
-
+    /**
+     * Kod za crtanje modificira {@link #transitionPoints}. Zadaca ovog polja jest
+     * sacuvati original.
+     */
+    private long[] unscaledTransitionPoints;
+    
     /** Broj znakova najduljeg imena signala */
     private int maximumSignalNameLength;
 
@@ -81,7 +94,12 @@ public class GhdlResults
      */
     private List<Integer> currentVectorIndex = new ArrayList<Integer>();
 
-
+    /**
+     * Objekt koji za svaki signal (ukljucivo i vektore i komponente vektora) cuva
+     * trenutke kada su se dogodile promjene.
+     */
+    private SignalChangeTracker signalChangeTracker;
+    
     /**
      * Metoda koja vrsi samo parsiranje stringa zapisanog u internom formatu
      */
@@ -101,7 +119,7 @@ public class GhdlResults
         /* prvo razdvaja sve signale (0&&&Z&&&1 itd za svaki) */
         String[] temp = splitResults[1].split(LIMITER);
         String[][] matrica = new String[temp.length][];
-        
+
         /* a onda pojedinacno sve vrijednosti tih signala */
         for (int i = 0; i < temp.length; i++)
         {
@@ -126,11 +144,14 @@ public class GhdlResults
         /* dobivanje tocaka u kojima se dogada promjena vrijednosti signala */
         transitionPointsInStrings = splitResults[2].split(LIMITER);
         transitionPoints = new long[transitionPointsInStrings.length];
+        unscaledTransitionPoints = new long[transitionPoints.length];
+
         for (int i = 0; i < transitionPointsInStrings.length; i++)
         {
             transitionPoints[i] = Long.valueOf(transitionPointsInStrings[i]).longValue();
+            unscaledTransitionPoints[i] = transitionPoints[i];
         }
-
+        
         /* broj znakova najduljeg imena signala */
         maximumSignalNameLength = Integer.valueOf(splitResults[3]).intValue();
 
@@ -143,9 +164,63 @@ public class GhdlResults
         {
             signalValues.add(array);
         }
+
+        // Sada za svaki signal napravi popis samo njegovih promjena
+        Map<String, SignalChangeEvent[]> signalChangeMap = new HashMap<String, SignalChangeEvent[]>(signalNames.size()*2);
+        SignalChangeEventCache sceCache = new SignalChangeEventCache();
+        for(int signalIndex = 0; signalIndex < signalNames.size(); signalIndex++) {
+	        List<SignalChangeEvent> scEvents = new ArrayList<SignalChangeEvent>();
+        	for(int transIndex = 0; transIndex < transitionPoints.length-1; transIndex++) {
+        		String signalValue = matrica[signalIndex][transIndex];
+        		        	// Ako je ovo prvi trenutak, dodaj ga i vozi dalje
+        		if(transIndex==0) {
+	        		scEvents.add(sceCache.get(signalValue, transitionPoints[transIndex]));
+	        		continue;
+	        	}
+	        	// Inace usporedi vrijednost sa onom od prethodnog trenutka; ako su iste, ovo nije promjena!
+        		if(signalValue.equals(matrica[signalIndex][transIndex-1])) continue;
+        		scEvents.add(sceCache.get(signalValue, transitionPoints[transIndex]));
+	        }
+        	SignalChangeEvent[] array = new SignalChangeEvent[scEvents.size()];
+        	scEvents.toArray(array);
+        	signalChangeMap.put(signalNames.get(signalIndex), array);
+        	signalChangeMap.put("!sig:"+signalIndex, array);
+        	if(transitionPoints.length<1) continue;
+        	// Ako je ovo vektor:
+        	if(matrica[signalIndex][0].length()>1) {
+        		int vectorLength = matrica[signalIndex][0].length();
+        		for(int scalarIndex = 0; scalarIndex < vectorLength; scalarIndex++) {
+        	        scEvents = new ArrayList<SignalChangeEvent>();
+                	for(int transIndex = 0; transIndex < transitionPoints.length-1; transIndex++) {
+                		char signalValue = matrica[signalIndex][transIndex].charAt(scalarIndex);
+    		        	// Ako je ovo prvi trenutak, dodaj ga i vozi dalje
+                		if(transIndex==0) {
+        	        		scEvents.add(sceCache.get(Character.toString(signalValue), transitionPoints[transIndex]));
+        	        		continue;
+        	        	}
+        	        	// Inace usporedi vrijednost sa onom od prethodnog trenutka; ako su iste, ovo nije promjena!
+                		if(signalValue==matrica[signalIndex][transIndex-1].charAt(scalarIndex)) continue;
+    	        		scEvents.add(sceCache.get(Character.toString(signalValue), transitionPoints[transIndex]));
+        	        }
+                	array = new SignalChangeEvent[scEvents.size()];
+                	scEvents.toArray(array);
+                	signalChangeMap.put(signalNames.get(signalIndex)+"\t"+scalarIndex, array);
+                	signalChangeMap.put("!sig:"+signalIndex+"_"+scalarIndex, array);
+        		}
+        	}
+        }
+        signalChangeTracker = new SignalChangeTracker(signalChangeMap);
     }
 
-
+    /**
+     * Dohvat objekta koji cuva promjene signala.
+     * 
+     * @return signalChangeTracker za trenutni rezultat simulacije
+     */
+    public SignalChangeTracker getSignalChangeTracker() {
+		return signalChangeTracker;
+	}
+    
     /**
      * Metoda koja mijenja poredak signala prema gore.  Mijenja se poredak imena
      * i poredak vrijednosti..
@@ -490,7 +565,24 @@ public class GhdlResults
         return transitionPoints;
     }
 
+    /**
+     * Vraca polje tocaka u kojima se dogada promjena signala; pri tome su vrijednosti
+     * u mjernim jedinicama u kojima radi sam simulator.
+     * @return polje vremena promjena
+     */
+    public long[] getUnscaledTransitionPoints() {
+		return unscaledTransitionPoints;
+	}
 
+    /**
+     * Vraca najveci trenutak u kojem se je dogodila bilo kakva promjena.
+     * @return najveci trenutak bilo kakve promjene
+     */
+    public long getMaxUnscaledSimulationTime() {
+    	if(unscaledTransitionPoints.length==0) return 0;
+    	return unscaledTransitionPoints[unscaledTransitionPoints.length-1];
+    }
+    
     /**
      * Vraca broj znakova najduljeg imena signala
      */

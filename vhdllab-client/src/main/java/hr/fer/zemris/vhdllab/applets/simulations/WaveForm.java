@@ -69,18 +69,41 @@ class WaveForm
     /** Svi valni oblici */
     private Shape[] shapes;    
 
+    /**
+     * Objekt koji cuva promjene svih signala
+     */
+    SignalChangeTracker signalChangeTracker;
+    /**
+     * Indeks signala. Ako je cisti skalar ili vektor, bit ce oblika "broj"; npr. "3"; 
+     * ako je druga komponenta vektora koji je na poziciji tri, bit ce "3_2". 
+     */
+    String signalIndex;
 
+    /**
+     * Kljuc za dohvat podataka iz signalChangeTracker-a.
+     */
+    String signalKey;
+
+    long[] transitionPoints;
+    long maxUnscaledSimulationTime;
+    
     /**
      * Constructor
      *
      * @param values polje vrijednosti za svaki signal
      * @param durationsInPixels vrijeme trajanja u pikselima
+     * @param signalChangeTracker sve promjene po svim signalima
+     * @param signalIndex identifikator ovog konkretnog signala
      */
-	public WaveForm (String[] values, int[] durationsInPixels, Shape[] shapes)
+	public WaveForm (String[] values, int[] durationsInPixels, Shape[] shapes, SignalChangeTracker signalChangeTracker, String signalIndex, long[] transitionPoints, long maxUnscaledSimulationTime)
 	{
 		this.values = values;
         this.durationsInPixels = durationsInPixels;
         this.shapes = shapes;
+        this.signalKey = "!sig:"+signalIndex;
+        this.transitionPoints = transitionPoints;
+        this.signalChangeTracker = signalChangeTracker;
+        this.maxUnscaledSimulationTime = maxUnscaledSimulationTime;
 	}
 	
 	
@@ -122,9 +145,99 @@ class WaveForm
             screenStartPointInPixels -= 1 ;
         }
 
+        SignalChangeEvent[] changes = signalChangeTracker.get(signalKey);
+        if(changes==null) {
+        	System.out.println("Error: nemam podatke za iscrtati signal ["+signalKey+"].");
+        	return;
+        }
+        
+        int currTimeIndex = 0;
+        for(int changeIndex = 0; changeIndex < changes.length; changeIndex++) {
+        	SignalChangeEvent ev = changes[changeIndex];
+        	long endTime = changeIndex==changes.length-1 ? maxUnscaledSimulationTime : changes[changeIndex+1].getTimestamp();
+        	x2 = x1;
+        	while(currTimeIndex<transitionPoints.length-1 && transitionPoints[currTimeIndex]<endTime) {
+        		x2 += this.durationsInPixels[currTimeIndex];
+        		currTimeIndex++;
+        	}
+
+        	String string = ev.getValue();
+			if (string.equals("0"))
+            {
+				presentGroup = ZERO_SHAPES;
+			}
+			else if (string.equals("1"))
+            {
+				presentGroup = ONE_SHAPES;
+			}
+			else if (string.toUpperCase().equals("Z"))
+            {
+				presentGroup = HIGH_IMPEDANCE;
+			}
+            else if (string.toUpperCase().equals("X"))
+            {
+                presentGroup = UNKNOWN;
+            }
+            else if (string.toUpperCase().equals("U") || string.toUpperCase().equals("H") ||
+                    string.toUpperCase().equals("L") || string.toUpperCase().equals("W"))
+            {
+                presentGroup = OTHERS;
+            }
+            else
+            {
+                presentGroup = HEXAGON_SHAPES;
+            }
+            
+            /* 
+             * ako je x2 manji od pocetka na kojem treba iscrtati jednostavno
+             * ignorira te signale
+             */
+            if (x2 > screenStartPointInPixels)
+            {
+                /* 
+                 * ako neki signal ide preko ekrana pocinje njegovo iscrtavanje,
+                 * medutim, treba ograniciti jer signal moze trajati po tisucu
+                 * piksela, a  moze biti i i manji od screenEndPointInPixels
+                 */
+                if (x2 < screenEndPointInPixels)
+                {
+                    draw(g, string, previousGroup, presentGroup, 
+                            screenStartPointInPixels - offsetXAxis, y1, 
+                            x2 - offsetXAxis);
+                }
+                else
+                {
+                    /* ako je screenEndPointInPixels jednak tocno kraju skale */
+                    if (screenEndPointInPixels == waveEndPointInPixels)
+                    {
+                        draw(g, string, previousGroup, presentGroup, 
+                                screenStartPointInPixels - offsetXAxis, 
+                                y1, screenEndPointInPixels - offsetXAxis);
+                    }
+
+                    /* 
+                     * inace crta s jednim prosirenim pikselom koji daje dojam
+                     * da signal ne zavrsava, vec se nastavlja
+                     */
+                    else
+                    {
+                        draw(g, string, previousGroup, presentGroup, 
+                                screenStartPointInPixels - offsetXAxis, 
+                                y1, screenEndPointInPixels + 1 - offsetXAxis);
+                        break;
+                    }
+                }
+                screenStartPointInPixels = x2;
+            }
+			previousGroup = presentGroup;
+			x1 = x2;
+        }
+        
+		/*
+		 * 
 		int i = 0;
 
-        /* za svaku pojedinu vrijednost signala */
+        /* za svaku pojedinu vrijednost signala *-/
 		for (String string : values)
         {
 			x2 = x1 + this.durationsInPixels[i]; 
@@ -163,14 +276,14 @@ class WaveForm
             /* 
              * ako je x2 manji od pocetka na kojem treba iscrtati jednostavno
              * ignorira te signale
-             */
+             *-/
             if (x2 > screenStartPointInPixels)
             {
                 /* 
                  * ako neki signal ide preko ekrana pocinje njegovo iscrtavanje,
                  * medutim, treba ograniciti jer signalmoze trajati po tisucu
                  * piksela, a  moze biti i i manji od screenEndPointInPixels
-                 */
+                 *-/
                 if (x2 < screenEndPointInPixels)
                 {
                     draw(g, string, previousGroup, presentGroup, 
@@ -179,7 +292,7 @@ class WaveForm
                 }
                 else
                 {
-                    /* ako je screenEndPointInPixels jednak tocno kraju skale */
+                    /* ako je screenEndPointInPixels jednak tocno kraju skale *-/
                     if (screenEndPointInPixels == waveEndPointInPixels)
                     {
                         draw(g, string, previousGroup, presentGroup, 
@@ -190,7 +303,7 @@ class WaveForm
                     /* 
                      * inace crta s jednim prosirenim pikselom koji daje dojam
                      * da signal ne zavrsava, vec se nastavlja
-                     */
+                     *-/
                     else
                     {
                         draw(g, string, previousGroup, presentGroup, 
@@ -205,6 +318,10 @@ class WaveForm
 			x1 = x2;
 			i++;
 		}
+		 * 
+		 */
+		
+		
 	}
 
 

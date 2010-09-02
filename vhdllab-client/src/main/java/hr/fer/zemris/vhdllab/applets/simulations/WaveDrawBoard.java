@@ -41,6 +41,13 @@ class WaveDrawBoard extends JPanel
     /** Vrijednosti signala */
     private List<String[]> signalValues;
 
+    /**
+     * Indeksi signala. U početku je ovo monotono rastući niz. Kasnije kada
+     * korisnik ekspandira vektor ili ga kolabira, u ovo se polje ubacuju
+     * odnosno uklanjaju.
+     */
+    private List<String> signalIndexes;
+    
 	/** Sadrzi rezultate simulacije */
     private GhdlResults results;
     
@@ -102,7 +109,11 @@ class WaveDrawBoard extends JPanel
     /** SerialVersionUID */ 
     private static final long serialVersionUID = 3;
 
-
+    /**
+     * Objekt koji cuva sve promjene po svim signalima.
+     */
+    private SignalChangeTracker signalChangeTracker;
+    
 
     /**
      * Constructor
@@ -132,7 +143,13 @@ class WaveDrawBoard extends JPanel
 	public void setContent(GhdlResults results) {
 		this.results = results;
 		this.signalValues = results.getSignalValues();
-
+		this.signalChangeTracker = results.getSignalChangeTracker();
+		
+		this.signalIndexes = new ArrayList<String>();
+		for(int i = 0; i < signalValues.size(); i++) {
+			this.signalIndexes.add(String.valueOf(i));
+		}
+		
 		/* skala proracunava sve parametre i panel koristi skaline parametre */
 		this.durationsInPixels = this.scale.getDurationInPixels();
         this.waveEndPointInPixels = this.scale.getScaleEndPointInPixels();
@@ -342,6 +359,8 @@ class WaveDrawBoard extends JPanel
 	public void expand (int index)
 	{
 
+		Integer defaultIndex = currentVectorIndex.get(index);
+		
 		String[] expandedValues;
 		int j = 0;
 		for (; j < signalValues.get(index + j)[0].length(); j++)
@@ -353,8 +372,10 @@ class WaveDrawBoard extends JPanel
 			}
 
 			signalValues.add(index + j, expandedValues);
+			signalIndexes.add(index+j, defaultIndex.toString()+"_"+j);
 		}
 		signalValues.remove(index + j);
+		signalIndexes.remove(index + j);
 	}
 
 
@@ -370,8 +391,10 @@ class WaveDrawBoard extends JPanel
 		for (int i = 0; i < vectorSize; i++)
 		{
 			signalValues.remove(index);
+			signalIndexes.remove(index);
 		}
 		signalValues.add(index, results.getDefaultSignalValues()[defaultIndex]);
+		signalIndexes.add(index, defaultIndex.toString());
 	}
 
     
@@ -451,13 +474,14 @@ class WaveDrawBoard extends JPanel
         g.setColor(themeColor.getLetters());
 
 
+        int index = -1;
 		for (String[] array : signalValues)
 		{
-			waveForm =  new WaveForm(array, durationsInPixels, shapes);
+			index++;
+			waveForm =  new WaveForm(array, durationsInPixels, shapes, signalChangeTracker, signalIndexes.get(index),this.results.getUnscaledTransitionPoints(), this.results.getMaxUnscaledSimulationTime());
 			waveForm.drawWave(g, this.getWidth(), yAxis, offsetXAxis, 
 					durationsInPixels, waveEndPointInPixels);
 			yAxis += WAVE_SPRING_SIZE;
-            
 		}
 	}
 }
