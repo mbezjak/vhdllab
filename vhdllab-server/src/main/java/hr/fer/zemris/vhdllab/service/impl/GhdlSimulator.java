@@ -375,11 +375,18 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     }
 
     private String extractWaveform(SimulationContext context) throws IOException {
-        String vcd = FileUtils.readFileToString(new java.io.File(context.tempDirectory, "simout.vcd"),
-                IOUtil.DEFAULT_ENCODING);
-        VcdParser parser = new VcdParser(StringUtil.splitToNewLines(vcd));
-        parser.parse();
-        return parser.getResultInString();
+        String waveform = "";
+
+        java.io.File simout = new java.io.File(context.tempDirectory, "simout.vcd");
+        if(simout.exists()) {
+            String vcd = FileUtils.readFileToString(new java.io.File(context.tempDirectory, "simout.vcd"),
+                    IOUtil.DEFAULT_ENCODING);
+            VcdParser parser = new VcdParser(StringUtil.splitToNewLines(vcd));
+            parser.parse();
+            waveform = parser.getResultInString();
+        }
+
+        return waveform;
     }
 
     private static class SimulationContext {
