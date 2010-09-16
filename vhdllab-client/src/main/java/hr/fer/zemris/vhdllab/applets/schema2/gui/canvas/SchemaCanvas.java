@@ -326,8 +326,10 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 			        Caseless mappedto = sp.getMapping();
 			        if (Caseless.isNullOrEmpty(mappedto)) continue;
 			        
-			        wires.fetchWire(mappedto).getDrawer().draw(g, drawProperties);
-			        drawConnectedPins(g, mappedto);
+			        if (wires.fetchWire(mappedto) != null) {
+			            wires.fetchWire(mappedto).getDrawer().draw(g, drawProperties);
+			            drawConnectedPins(g, mappedto);
+			        }
 			    }
 			    g.setColor(cl);
 			}
