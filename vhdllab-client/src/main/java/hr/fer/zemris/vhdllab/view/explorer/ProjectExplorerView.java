@@ -31,6 +31,7 @@ import hr.fer.zemris.vhdllab.platform.ui.MouseClickAdapter;
 import hr.fer.zemris.vhdllab.service.MetadataExtractionService;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
+import hr.fer.zemris.vhdllab.service.result.Result;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.Workspace;
 import hr.fer.zemris.vhdllab.util.BeanUtil;
@@ -62,6 +63,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.lf5.viewer.categoryexplorer.TreeModelAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.richclient.application.PageComponentContext;
@@ -455,14 +457,25 @@ public class ProjectExplorerView extends AbstractView implements
         @Override
         protected void doExecuteCommand() {
             File file = getSelectedFile();
-            String vhdl = metadataExtractionService.generateVhdl(file.getId())
-                    .getData();
+            Result result = metadataExtractionService.generateVhdl(file.getId());
+            String vhdl = getData(result);
             File viewVhdlFile = new File(file.getName() + ":vhdl", FileType.SOURCE, vhdl);
             viewVhdlFile.setProject(file.getProject());
             editorManagerFactory.get(
                     new EditorIdentifier(new ViewVhdlEditorMetadata(),
                             viewVhdlFile)).open();
         }
+
+        private String getData(Result result) {
+            String data = result.getData();
+
+            if (data == null) {
+                data = "Errors:\n" + StringUtils.join(result.getMessages(), '\n');
+            }
+
+            return data;
+        }
+
     }
 
     public class DeleteCommand extends ActionCommand {
