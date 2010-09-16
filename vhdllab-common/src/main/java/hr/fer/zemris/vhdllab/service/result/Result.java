@@ -75,7 +75,7 @@ public final class Result implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("dataLength", data.length())
+        return new ToStringBuilder(this).append("dataLength", data != null ? data.length() : 0)
                 .append("messages", messages, false).toString();
     }
 
