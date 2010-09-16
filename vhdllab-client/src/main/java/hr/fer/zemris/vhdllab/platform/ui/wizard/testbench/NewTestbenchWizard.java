@@ -131,7 +131,10 @@ public class NewTestbenchWizard extends AbstractNewFileWizard {
                                 .valueOf(p.getDirectionName().toLowerCase()));
                     }
                 }
-                tb.addSignal((EditableSignal) s);
+
+                if (s != null) {
+                    tb.addSignal((EditableSignal) s);
+                }
             } catch (UniformSignalException e) {
                 e.printStackTrace();
             } catch (UniformTestbenchException e) {
