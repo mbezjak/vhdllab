@@ -150,13 +150,16 @@ public class TabbedEditorsView extends AbstractView implements
 
     private void resetEditorTitle(File file, boolean modified) {
         int index = container.indexOf(editors.get(file));
-        String title = tabbedPane.getTitleAt(index);
-        if (modified) {
-            title = "*" + title;
-        } else {
-            title = title.substring(1); // omit leading * character
+        
+        if (index != -1) {
+            String title = tabbedPane.getTitleAt(index);
+            if (modified) {
+                title = "*" + title;
+            } else {
+                title = title.substring(1); // omit leading * character
+            }
+            tabbedPane.setTitleAt(index, title);
         }
-        tabbedPane.setTitleAt(index, title);
     }
 
     protected class EditorModifiedListener implements EditorListener {
