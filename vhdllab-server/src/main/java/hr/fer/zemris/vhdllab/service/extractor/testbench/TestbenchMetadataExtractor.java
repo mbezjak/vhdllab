@@ -213,7 +213,8 @@ public class TestbenchMetadataExtractor extends AbstractMetadataExtractor {
         ChangesInMoment tmp = new ChangesInMoment(0);
         Map<ChangesInMoment, ChangesInMoment> table = new HashMap<ChangesInMoment, ChangesInMoment>();
         for (Signal s : tbInfo.getSignals()) {
-            if (!ci.getPort(s.getName()).isIN())
+            Port port = ci.getPort(s.getName());
+            if (port == null || !port.isIN())
                 continue;
             long TestBenchLength = tbInfo.getTestBenchLength();
             if (tbInfo.getSimulationLength() != 0)
