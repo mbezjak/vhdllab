@@ -491,8 +491,8 @@
       <url>http://repository.codehaus.org/</url>
     </repository>
     <repository>
-      <id>codehaus-nexux</id>
-      <name>Codehaus Nexux Maven2 repository</name>
+      <id>codehaus-nexus</id>
+      <name>Codehaus Nexus Maven2 repository</name>
       <url>https://nexus.codehaus.org/content/repositories/releases/</url>
     </repository>
     <repository>
