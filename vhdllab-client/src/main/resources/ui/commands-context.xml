@@ -158,7 +158,7 @@
   <bean id="closeAllCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.CloseAllCommand" />
 
   <bean id="aboutCommand"
-    class="org.springframework.richclient.command.support.AboutCommand">
+    class="hr.fer.zemris.vhdllab.platform.ui.about.AboutCommand">
     <property name="aboutTextPath" value="ui/about.txt"/>
   </bean>
 
