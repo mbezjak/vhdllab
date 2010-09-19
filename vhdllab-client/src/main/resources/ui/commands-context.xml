@@ -132,6 +132,7 @@
     <property name="members">
       <list>
         <idref bean="aboutCommand"/>
+        <bean id="knownProblemsCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.KnownProblemsCommand" />
       </list>
     </property>
   </bean>
