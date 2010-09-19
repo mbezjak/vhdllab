@@ -1,2 +1,2 @@
-SplashScreen-Image: images/splash_no_letters.png
+SplashScreen-Image: splash_no_letters.png
 Main-Class: hr.fer.zemris.vhdllab.platform.Main
