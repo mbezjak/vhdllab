@@ -10,9 +10,6 @@
         <description kind="tooltip">A web based IDE for VHDL.</description>
         <description kind="short">A cross-platform web based IDE for VHDL programming language.</description>
 
-        <icon href="images/splash_no_letters.png" kind="splash"/>
-        <icon href="images/icons/vhdllab_main_32.png" kind="shortcut"/>
-
         <shortcut online="true">
             <desktop/>
             <menu submenu="VHDLLab"/>
