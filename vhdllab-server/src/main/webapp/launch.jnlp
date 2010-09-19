@@ -5,6 +5,7 @@
     <information>
         <title>VHDLLab</title>
         <vendor>FER Java team, University of Zagreb, Croatia</vendor>
+        <homepage href="http://morgoth.zemris.fer.hr/trac/vhdllab" />
         <description kind="one-line">A web based IDE for VHDL.</description>
         <description kind="tooltip">A web based IDE for VHDL.</description>
         <description kind="short">A cross-platform web based IDE for VHDL programming language.</description>
