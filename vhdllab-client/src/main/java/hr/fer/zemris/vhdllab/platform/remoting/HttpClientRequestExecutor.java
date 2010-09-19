@@ -20,7 +20,11 @@ import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.context.Environment;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -82,6 +86,16 @@ public class HttpClientRequestExecutor extends
             executePostMethod(config, httpClient, postMethod);
             break;
         }
+    }
+
+    @Override
+    protected InputStream decorateInputStream(InputStream is) throws IOException {
+        return new GZIPInputStream(is);
+    }
+
+    @Override
+    protected OutputStream decorateOutputStream(OutputStream os) throws IOException {
+        return new GZIPOutputStream(os);
     }
 
 }
