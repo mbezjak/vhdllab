@@ -37,6 +37,7 @@ import hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.CanvasToolbarLocalGUICon
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.SwingComponent.RowEditorModel;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors.ObjectCellEditor;
 import hr.fer.zemris.vhdllab.applets.schema2.gui.toolbars.componentproperty.customTableCellEditors.TimeCellEditor;
+import hr.fer.zemris.vhdllab.validation.NameFormatConstraintValidator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -237,6 +238,12 @@ public class CPToolbarParameterEnvelopeCollection {
 						.println("CPToolbarParameterEnvelopeCollection: new value is equal to old value - no action!");
 			}
 			return false;
+		} else if ("Name".equals(parameterName) && newValue instanceof Caseless && !new NameFormatConstraintValidator().isValid(newValue.toString())) {
+            if (CPToolbar.DEBUG_MODE) {
+                System.out
+                        .println("CPToolbarParameterEnvelopeCollection: new value is not a valid name: " + newValue);
+            }
+            return false;
 		}
 
 		ICommand command = new SetParameterCommand(componentName,
