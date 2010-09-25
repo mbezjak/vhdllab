@@ -57,7 +57,11 @@ public class EntitySecurityAspect extends ServiceSupport {
             + "execution(* hr.fer.zemris.vhdllab.service.MetadataExtractionService.*(..))) && args(id,..)")
     public void fileSecurity(JoinPoint jp, Integer id) throws Throwable {
         File file = loadFile(id);
-        checkSecurity(jp, file.getProject().getUserId(), id);
+        Project project = file.getProject();
+
+        if (project != null) {
+            checkSecurity(jp, project.getUserId(), id);
+        }
     }
 
     @Before("execution(* hr.fer.zemris.vhdllab.service.PreferencesFileService.save(..)) && args(files,..)")
