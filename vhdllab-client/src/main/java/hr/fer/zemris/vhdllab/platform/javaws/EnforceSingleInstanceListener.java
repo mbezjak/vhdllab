@@ -19,10 +19,10 @@ package hr.fer.zemris.vhdllab.platform.javaws;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 
 import javax.jnlp.SingleInstanceListener;
-import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 import org.springframework.richclient.application.Application;
+import org.springframework.richclient.application.ApplicationWindow;
 
 public final class EnforceSingleInstanceListener implements
         SingleInstanceListener {
@@ -42,9 +42,9 @@ public final class EnforceSingleInstanceListener implements
     @Override
     public void newActivation(String[] args) {
         LOG.debug("Denied start of second client application");
-        JFrame frame = Application.instance().getActiveWindow().getControl();
-        if (frame != null) {
-            frame.toFront();
+        ApplicationWindow window = Application.instance().getActiveWindow();
+        if (window != null && window.getControl() != null) {
+            window.getControl().toFront();
             dialogManager.showDialog();
         }
     }
