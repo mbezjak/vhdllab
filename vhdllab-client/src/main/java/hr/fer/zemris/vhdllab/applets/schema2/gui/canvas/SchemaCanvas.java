@@ -406,14 +406,14 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 	}
 
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas#setConteroler(hr.fer.zemris.vhdllab.applets.schema2.interfaces.ISchemaController)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas#registerSchemaController(hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ISchemaController)
 	 */
-	public void registerSchemaController(ISchemaController controller) {
-		this.controller=controller;
+	public void registerSchemaController(ISchemaController c) {
+		this.controller = c;
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas#registerLocalController(hr.fer.zemris.vhdllab.applets.schema2.interfaces.ILocalGuiController)
+	 * @see hr.fer.zemris.vhdllab.applets.schema2.gui.canvas.ISchemaCanvas#registerLocalController(hr.fer.zemris.vhdllab.applets.editor.schema2.interfaces.ILocalGuiController)
 	 */
 	public void registerLocalController(ILocalGuiController cont){
 		localController = cont;
@@ -445,14 +445,9 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 						distToWire = Math.abs(wires.distanceTo(wire.getName(), e.getX(), e.getY()));
 					}
 					
-//					System.err.println("############ : -- "+distToComp + " ----- "+ distToWire);
-					
 					if(distToComp != -1){
 						if(distToWire != -1){
-							if(distToComp<distToWire){
-//								ICommand instantiate = new DeleteComponentCommand(comp.getName());
-//								controller.send(instantiate);
-							}else{
+							if(distToComp>=distToWire){
 								int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
 								if (segNo != SMath.ERROR) {
 								    WireSegment seg = wire.getSegments().get(segNo);
@@ -460,9 +455,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 								    controller.send(deleteSegment);
 								}
 							}
-						}else{
-//							ICommand instantiate = new DeleteComponentCommand(comp.getName());
-//							controller.send(instantiate);
 						}
 					}else{
 						if(distToWire != -1){
@@ -474,20 +466,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 							}
 						}
 					}
-//					if(comp != null){
-//						ICommand instantiate = new DeleteComponentCommand(comp.getName());
-//						ICommandResponse response = controller.send(instantiate);
-//						System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
-//					}else{
-//						ISchemaWire wire = wires.fetchWire(e.getX(), e.getY(), 10);
-//						if(wire != null){
-//							int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
-//							WireSegment seg = wire.getSegments().get(segNo);
-//							ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
-//							ICommandResponse response = controller.send(deleteSegment);
-//							System.out.println ("canvas report| component delete succesful: "+response.isSuccessful());
-//						}
-//					}
 				}
 				else if(state.equals(ECanvasState.MOVE_STATE)){
 					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
@@ -501,8 +479,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					if(wire != null){
 						distToWire = Math.abs(wires.distanceTo(wire.getName(), e.getX(), e.getY()));
 					}
-					
-					//System.err.println("############ : -- "+distToComp + " ----- "+ distToWire);
 					
 					if(distToComp != -1){
 						if(distToWire != -1){
@@ -519,14 +495,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 							localController.setSelectedComponent(wire.getName(), CanvasToolbarLocalGUIController.TYPE_WIRE);
 						}
 					}
-//					ISchemaComponent comp = components.fetchComponent(e.getX(), e.getY(), MIN_COMPONENT_DISTANCE);
-//					if(comp != null){
-//						localController.setSelectedComponent(comp.getName(),CanvasToolbarLocalGUIController.TYPE_COMPONENT);
-//					}else{
-//						ISchemaWire wir = wires.fetchWire(e.getX(), e.getY(),10);
-//						if(wir!=null)
-//							localController.setSelectedComponent(wir.getName(), CanvasToolbarLocalGUIController.TYPE_WIRE);
-//					}
 					
 				}
 			}else if(e.getButton()==MouseEvent.BUTTON3){
@@ -698,9 +666,6 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					point = new CriticalPoint(port.getOffset().getX()+rect.x,port.getOffset().getY()+rect.y,
 							CriticalPoint.ON_COMPONENT_PLUG,comp.getName(),port.getName());
 					decrementer.reset();
-				}else{
-//					Caseless c = port.getMapping();//TODO pitaj aleksa za ovaj getMapping!!
-//					point = new CriticalPoint(wires.fetchWire(port.getMapping()), alignToGrid(x), alignToGrid(y));
 				}
 			}
 
