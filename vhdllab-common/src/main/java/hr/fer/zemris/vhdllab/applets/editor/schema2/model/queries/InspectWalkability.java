@@ -138,8 +138,6 @@ public class InspectWalkability implements IQuery {
 		walkability.width = ((maxx - minx) / STEP + 1) * STEP;
 		walkability.height = ((maxy - miny) / STEP + 1) * STEP;
 		
-		System.out.println(walkability.toString());
-		
 		return new QueryResult(KEY_WALKABILITY, walkability);
 	}
 	
