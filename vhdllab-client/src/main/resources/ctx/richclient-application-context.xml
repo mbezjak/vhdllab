@@ -232,6 +232,31 @@
             </bean>
           </property>
         </bean>
+        <bean
+          class="org.springframework.richclient.exceptionhandling.delegation.SimpleExceptionHandlerDelegate">
+          <property name="throwableClassList">
+            <list>
+              <value>java.net.NoRouteToHostException</value>
+            </list>
+          </property>
+          <property name="exceptionPurger">
+            <bean
+              class="org.springframework.richclient.exceptionhandling.delegation.DefaultExceptionPurger">
+              <property name="includeThrowableClassList">
+                <list>
+                  <value>java.net.NoRouteToHostException</value>
+                </list>
+              </property>
+            </bean>
+          </property>
+          <property name="exceptionHandler">
+            <bean
+              class="org.springframework.richclient.exceptionhandling.MessagesDialogExceptionHandler">
+              <property name="logLevel" value="ERROR" />
+              <property name="shutdownPolicy" value="ASK" />
+            </bean>
+          </property>
+        </bean>
         <!--
           The order is important: if Throwable would be first then the
           others would be ignored
