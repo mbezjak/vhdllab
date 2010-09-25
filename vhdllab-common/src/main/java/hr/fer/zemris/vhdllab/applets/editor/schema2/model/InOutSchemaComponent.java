@@ -379,7 +379,7 @@ public class InOutSchemaComponent implements ISchemaComponent {
 		}
 		
 		// copy port relation
-		inout.portrel = new PortRelation(this.portrel.port, this.portrel.orientation);
+		inout.portrel = new PortRelation(new Port(this.portrel.port), this.portrel.orientation);
 		for (SchemaPort sp : inout.schemaports) {
 			inout.portrel.relatedTo.add(sp);
 		}
