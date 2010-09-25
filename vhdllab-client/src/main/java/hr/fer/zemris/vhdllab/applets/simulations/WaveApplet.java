@@ -1037,6 +1037,9 @@ public class WaveApplet extends AbstractEditor {
 				}
 			} else {
 				while (cursorPanel.getSecondCursorStartPoint() >= transitionPoint) {
+                    if (index == results.getSignalValues().get(0).length - 1) {
+                        break;
+                    }
 					index++;
 					transitionPoint += scale.getDurationInPixels()[index];
 				}
