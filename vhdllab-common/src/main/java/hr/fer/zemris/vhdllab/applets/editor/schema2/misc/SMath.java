@@ -95,7 +95,7 @@ public class SMath {
 		
 		for (WireSegment ws : segments) {
 			int ndist = ws.calcDist(location.x, location.y);
-			if (ndist < mindist) {
+			if (ndist <= mindist) {
 				mindist = ndist;
 				index = i;
 			}

@@ -454,9 +454,11 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 //								controller.send(instantiate);
 							}else{
 								int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
-								WireSegment seg = wire.getSegments().get(segNo);
-								ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
-								controller.send(deleteSegment);
+								if (segNo != SMath.ERROR) {
+								    WireSegment seg = wire.getSegments().get(segNo);
+								    ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
+								    controller.send(deleteSegment);
+								}
 							}
 						}else{
 //							ICommand instantiate = new DeleteComponentCommand(comp.getName());
@@ -465,9 +467,11 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 					}else{
 						if(distToWire != -1){
 							int segNo = SMath.calcClosestSegment(new XYLocation(e.getX(), e.getY()), 10, wire.getSegments());
-							WireSegment seg = wire.getSegments().get(segNo);
-							ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
-							controller.send(deleteSegment);
+							if (segNo != SMath.ERROR) {
+							    WireSegment seg = wire.getSegments().get(segNo);
+							    ICommand deleteSegment = new DeleteSegmentAndDivideCommand(wire.getName(),seg);
+							    controller.send(deleteSegment);
+							}
 						}
 					}
 //					if(comp != null){
