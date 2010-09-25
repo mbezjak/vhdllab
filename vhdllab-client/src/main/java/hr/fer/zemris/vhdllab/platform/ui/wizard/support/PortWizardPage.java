@@ -156,6 +156,10 @@ public class PortWizardPage extends AbstractWizardPage {
 
     @SuppressWarnings("unchecked")
     public List<Port> getPorts() {
+        if(table.isEditing()) {
+            table.getCellEditor().stopCellEditing();
+        }
+
         return model.getRows();
     }
 
