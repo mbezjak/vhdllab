@@ -641,6 +641,7 @@ public class ProjectExplorerView extends AbstractView implements
         private static final String AUTOMATON_ICON = "automaton.icon";
         private static final String TESTBENCH_ICON = "testbench.icon";
         private static final String PREDEFINED_ICON = "predefined.icon";
+        private static final String SIMULATION_ICON = "simulation.icon";
 
         @SuppressWarnings("synthetic-access")
         @Override
@@ -673,6 +674,9 @@ public class ProjectExplorerView extends AbstractView implements
                     break;
                 case PREDEFINED:
                     setIcon(getIconSource().getIcon(PREDEFINED_ICON));
+                    break;
+                case SIMULATION:
+                    setIcon(getIconSource().getIcon(SIMULATION_ICON));
                     break;
                 default:
                     throw new IllegalStateException(file.getType().toString());
