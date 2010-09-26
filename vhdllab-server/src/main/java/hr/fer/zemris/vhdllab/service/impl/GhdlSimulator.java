@@ -119,8 +119,14 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         } catch (InterruptedException e) {
             throw new NoAvailableProcessException(e);
         }
-        List<CompilationMessage> result = compileImpl(fileId);
-        semaphore.release();
+
+        List<CompilationMessage> result;
+        try {
+            result = compileImpl(fileId);
+        } finally {
+            semaphore.release();
+        }
+
         return result;
     }
 
@@ -133,8 +139,14 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
         } catch (InterruptedException e) {
             throw new NoAvailableProcessException(e);
         }
-        Result result = simulateImpl(fileId);
-        semaphore.release();
+
+        Result result;
+        try {
+            result = simulateImpl(fileId);
+        } finally {
+            semaphore.release();
+        }
+
         return result;
     }
 
