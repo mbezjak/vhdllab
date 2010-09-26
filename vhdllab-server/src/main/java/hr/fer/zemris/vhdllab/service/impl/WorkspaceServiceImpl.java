@@ -22,7 +22,6 @@ import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
-import hr.fer.zemris.vhdllab.service.exception.DependencyExtractionException;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
@@ -40,9 +39,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.apache.log4j.Logger;
 
 public class WorkspaceServiceImpl extends ServiceSupport implements
         WorkspaceService {
+
+    private static final Logger LOG = Logger.getLogger(WorkspaceServiceImpl.class);
 
     @Override
     public FileReport createFile(Integer projectId, String name, FileType type,
@@ -146,7 +148,8 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
         Set<String> dependencies;
         try {
             dependencies = metadataExtractor.extractDependencies(file);
-        } catch (DependencyExtractionException e) {
+        } catch (Exception e) {
+            LOG.error("Error during extraction of hierarchy", e);
             dependencies = Collections.emptySet();
         }
         for (String name : dependencies) {
