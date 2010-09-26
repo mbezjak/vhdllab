@@ -43,7 +43,7 @@ public class FileSelectionComponent extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private final WorkspaceManager manager;
-    private final Predicate fileFilter;
+    private Predicate fileFilter;
 
     private JComboBox projectsCombobox;
     private JList list;
@@ -54,6 +54,14 @@ public class FileSelectionComponent extends JPanel {
         this.manager = manager;
         this.fileFilter = fileFilter;
         createComponent(projectFilter);
+    }
+
+    public Predicate getFileFilter() {
+        return fileFilter;
+    }
+
+    public void setFileFilter(Predicate fileFilter) {
+        this.fileFilter = fileFilter;
     }
 
     private void createComponent(Predicate projectFilter) {

@@ -34,6 +34,8 @@ public interface WorkspaceManager extends EventPublisher<WorkspaceListener> {
 
     void save(File file);
 
+    void saveSimulation(File file, String name);
+
     void delete(File file);
 
     void create(Project project) throws ProjectAlreadyExistsException;

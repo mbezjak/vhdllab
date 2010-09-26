@@ -19,6 +19,7 @@ package hr.fer.zemris.vhdllab.platform.ui.rule;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulationFile;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.TestbenchFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
         addRules(createProjectRules());
         addRules(createFileRules());
         addRules(createTestbenchFileRules());
+        addRules(createSimulationFileRules());
     }
 
     private Rules createProjectRules() {
@@ -69,4 +71,15 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
         };
     }
 
+    private Rules createSimulationFileRules() {
+        return new Rules(SimulationFile.class) {
+            @Override
+            protected void initRules() {
+                add("simulationName",
+                        new Constraint[] { new SimulationFileExistsConstraint(
+                                workspaceManager) });
+            }
+        };
+    }
+    
 }

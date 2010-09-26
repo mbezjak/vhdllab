@@ -20,10 +20,12 @@ import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.PreferencesFile;
 import hr.fer.zemris.vhdllab.entity.Project;
+import hr.fer.zemris.vhdllab.service.Simulator;
 import hr.fer.zemris.vhdllab.service.WorkspaceService;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 import hr.fer.zemris.vhdllab.service.hierarchy.Hierarchy;
 import hr.fer.zemris.vhdllab.service.hierarchy.HierarchyNode;
+import hr.fer.zemris.vhdllab.service.result.Result;
 import hr.fer.zemris.vhdllab.service.util.SecurityUtils;
 import hr.fer.zemris.vhdllab.service.workspace.FileReport;
 import hr.fer.zemris.vhdllab.service.workspace.ProjectMetadata;
@@ -38,13 +40,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkspaceServiceImpl extends ServiceSupport implements
         WorkspaceService {
 
     private static final Logger LOG = Logger.getLogger(WorkspaceServiceImpl.class);
+
+    @Autowired
+    private Simulator simulator;
 
     @Override
     public FileReport createFile(Integer projectId, String name, FileType type,
@@ -62,6 +69,24 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
         checkCircuitInterfaceName(file);
         File saved = fileDao.merge(file);
         return getReport(saved, saved.getProject());
+    }
+
+    @Override
+    public FileReport saveSimulation(Integer fileId, String name) {
+        Result result = simulator.simulate(fileId);
+
+        if (!StringUtils.isEmpty(result.getData())) {
+            File testbench = loadFile(fileId);
+            if (fileDao.findByName(testbench.getProject().getId(), name) == null) {
+                File simulation = new File(name, FileType.SIMULATION, result.getData());
+                testbench.getProject().addFile(simulation);
+
+                fileDao.persist(simulation);
+                return getReport(simulation, simulation.getProject());
+            }
+        }
+
+        return null;
     }
 
     private void checkCircuitInterfaceName(File file) {

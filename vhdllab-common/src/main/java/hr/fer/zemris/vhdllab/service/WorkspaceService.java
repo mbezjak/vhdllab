@@ -29,6 +29,8 @@ public interface WorkspaceService {
 
     FileReport saveFile(Integer fileId, String data);
 
+    FileReport saveSimulation(Integer fileId, String name);
+
     FileReport deleteFile(Integer fileId);
 
     File findByName(Integer projectId, String name);

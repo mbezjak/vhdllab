@@ -52,6 +52,8 @@ public class DefaultWorkspaceManager extends
 
     private static final String FILE_CREATED_MESSAGE = "notification.file.created";
     private static final String FILE_SAVED_MESSAGE = "notification.file.saved";
+    private static final String SIMULATION_SAVED_MESSAGE = "notification.simulation.saved";
+    private static final String SIMULATION_SAVE_FAILED_MESSAGE = "notification.simulation.save.failed";
     private static final String FILE_DELETED_MESSAGE = "notification.file.deleted";
     private static final String PROJECT_CREATED_MESSAGE = "notification.project.created";
     private static final String PROJECT_DELETED_MESSAGE = "notification.project.deleted";
@@ -220,6 +222,22 @@ public class DefaultWorkspaceManager extends
         addFile(report.getFile());
         fireFileSaved(report);
         log(report, FILE_SAVED_MESSAGE);
+    }
+
+    @Override
+    public void saveSimulation(File file, String name) {
+        checkIfNull(file);
+        FileReport report = workspaceService.saveSimulation(file.getId(), name);
+
+        if (report == null) {
+            logger.info(localizationSource.getMessage(SIMULATION_SAVE_FAILED_MESSAGE));
+        } else {
+            getWorkspace().addFile(report.getFile(), report.getHierarchy());
+            addFile(report.getFile());
+            fireFileCreated(report);
+            openEditor(report.getFile());
+            log(report, SIMULATION_SAVED_MESSAGE);
+        }
     }
 
     @Override

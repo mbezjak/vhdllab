@@ -123,6 +123,7 @@
         <value>separator</value>
         <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulateWithDialogCommand" />
         <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulateLastCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SaveSimulationCommand" />
       </list>
     </property>
   </bean>
