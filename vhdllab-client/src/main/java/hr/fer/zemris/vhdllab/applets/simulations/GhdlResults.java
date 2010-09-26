@@ -16,17 +16,11 @@
  ******************************************************************************/
 package hr.fer.zemris.vhdllab.applets.simulations;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 
 /**
@@ -93,6 +87,11 @@ public class GhdlResults
      * Lista trenutnih indeksa vektora u listi sa signalima
      */
     private List<Integer> currentVectorIndex = new ArrayList<Integer>();
+
+    /**
+     * Pomocni objekt koji predstavlja cache za objekte tipa SignalChangeEvent.
+     */
+    private SignalChangeEventCache sceCache;
 
     /**
      * Objekt koji za svaki signal (ukljucivo i vektore i komponente vektora) cuva
@@ -166,19 +165,29 @@ public class GhdlResults
         }
 
         // Sada za svaki signal napravi popis samo njegovih promjena
+        Map<String, SignalChangeEvent[]> signalChangeMap = rebuildSignalChangeMap();
+        signalChangeTracker = new SignalChangeTracker(signalChangeMap);
+    }
+
+    
+    private Map<String, SignalChangeEvent[]> rebuildSignalChangeMap() {
+        // Sada za svaki signal napravi popis samo njegovih promjena
         Map<String, SignalChangeEvent[]> signalChangeMap = new HashMap<String, SignalChangeEvent[]>(signalNames.size()*2);
-        SignalChangeEventCache sceCache = new SignalChangeEventCache();
+        if(sceCache==null) {
+        	sceCache = new SignalChangeEventCache();
+        }
         for(int signalIndex = 0; signalIndex < signalNames.size(); signalIndex++) {
 	        List<SignalChangeEvent> scEvents = new ArrayList<SignalChangeEvent>();
-        	for(int transIndex = 0; transIndex < transitionPoints.length-1; transIndex++) {
-        		String signalValue = matrica[signalIndex][transIndex];
+        	String[] sValues = signalValues.get(signalIndex);
+	        for(int transIndex = 0; transIndex < transitionPoints.length-1; transIndex++) {
+        		String signalValue = sValues[transIndex];
         		        	// Ako je ovo prvi trenutak, dodaj ga i vozi dalje
         		if(transIndex==0) {
 	        		scEvents.add(sceCache.get(signalValue, transitionPoints[transIndex]));
 	        		continue;
 	        	}
 	        	// Inace usporedi vrijednost sa onom od prethodnog trenutka; ako su iste, ovo nije promjena!
-        		if(signalValue.equals(matrica[signalIndex][transIndex-1])) continue;
+        		if(signalValue.equals(sValues[transIndex-1])) continue;
         		scEvents.add(sceCache.get(signalValue, transitionPoints[transIndex]));
 	        }
         	SignalChangeEvent[] array = new SignalChangeEvent[scEvents.size()];
@@ -187,19 +196,19 @@ public class GhdlResults
         	signalChangeMap.put("!sig:"+signalIndex, array);
         	if(transitionPoints.length<1) continue;
         	// Ako je ovo vektor:
-        	if(matrica[signalIndex][0].length()>1) {
-        		int vectorLength = matrica[signalIndex][0].length();
+        	if(sValues[0].length()>1) {
+        		int vectorLength = sValues[0].length();
         		for(int scalarIndex = 0; scalarIndex < vectorLength; scalarIndex++) {
         	        scEvents = new ArrayList<SignalChangeEvent>();
                 	for(int transIndex = 0; transIndex < transitionPoints.length-1; transIndex++) {
-                		char signalValue = matrica[signalIndex][transIndex].charAt(scalarIndex);
+                		char signalValue = sValues[transIndex].charAt(scalarIndex);
     		        	// Ako je ovo prvi trenutak, dodaj ga i vozi dalje
                 		if(transIndex==0) {
         	        		scEvents.add(sceCache.get(Character.toString(signalValue), transitionPoints[transIndex]));
         	        		continue;
         	        	}
         	        	// Inace usporedi vrijednost sa onom od prethodnog trenutka; ako su iste, ovo nije promjena!
-                		if(signalValue==matrica[signalIndex][transIndex-1].charAt(scalarIndex)) continue;
+                		if(signalValue==sValues[transIndex-1].charAt(scalarIndex)) continue;
     	        		scEvents.add(sceCache.get(Character.toString(signalValue), transitionPoints[transIndex]));
         	        }
                 	array = new SignalChangeEvent[scEvents.size()];
@@ -209,9 +218,9 @@ public class GhdlResults
         		}
         	}
         }
-        signalChangeTracker = new SignalChangeTracker(signalChangeMap);
+        return signalChangeMap;
     }
-
+    
     /**
      * Dohvat objekta koji cuva promjene signala.
      * 
@@ -224,6 +233,11 @@ public class GhdlResults
     /**
      * Metoda koja mijenja poredak signala prema gore.  Mijenja se poredak imena
      * i poredak vrijednosti..
+     * 
+     * MČ: promjene signala su u ovoj verziji vhdllab-a ONEMOGUCENE tako dugo dok se pamcenje
+     *     stanja ne prebaci na jedno mjesto. Trenutno je postalo nemoguce sinkronizirati sve
+     *     komponente koje pamte svaka za sebe je li nesto ekspandirano ili nije i gdje bi se
+     *     to na ekranu trebalo nalaziti (2010-09-25).
      *
      * @param index Indeks signala koji se pomice prema gore
 	 * @return Vraca indeks tako da se ponovno pozicionira na signal koji se pomicao
@@ -236,133 +250,140 @@ public class GhdlResults
             return index;
         }
 
-		/* prethodni index defaultnog polja s imenima signala */
-		Integer previousDefaultIndex;
-		int vectorSize;
-
-		/* ako gore ide obican signal ili neekspandirani vektor*/
-		if (currentVectorIndex.get(index) == -1 || 
-				(currentVectorIndex.get(index) != -1 && 
-				 !expandedSignalNames.get(currentVectorIndex.get(index))))
-		{
-			previousDefaultIndex = currentVectorIndex.get(index - 1);
-			/* ako je iznad obicnog signala bio obican signal ili neekspandirani vektor*/
-			if (previousDefaultIndex == -1 || 
-					(previousDefaultIndex != -1 && 
-					 !expandedSignalNames.get(previousDefaultIndex)))
-			{
-				/* promjena poretka imena signala */
-				signalNames.add(index - 1, signalNames.get(index));
-				signalNames.remove(index + 1);
-
-				/* promjena poretka vrijednosti signala */
-				signalValues.add(index - 1, signalValues.get(index));
-				signalValues.remove(index + 1);
-
-				/* promjena poretka u listi indeksa */
-				currentVectorIndex.add(index - 1, currentVectorIndex.get(index));
-				currentVectorIndex.remove(index + 1);
-				
-				index--;
-			}
-			/* inace ako je iznad obicnog signala bio ekspandirani vektor */
-			else if (previousDefaultIndex != -1 && 
-					expandedSignalNames.get(previousDefaultIndex) == true)
-			{
-				vectorSize = defaultSignalValues[previousDefaultIndex][0].length();
-				
-				/* promjena poretka imena signala */
-				signalNames.add(index - vectorSize, signalNames.get(index));
-				signalNames.remove(index + 1);
-				
-				/* promjena poretka vrijednosti */
-				signalValues.add(index - vectorSize, signalValues.get(index));
-				signalValues.remove(index + 1);
-
-				/* promjena u listi indeksa */
-				currentVectorIndex.add(index - vectorSize, 
-						currentVectorIndex.get(index));
-				currentVectorIndex.remove(index + 1);
-
-				index -= vectorSize;
-			}
-		}
-		/* Inace ako gore ide ekspandirani vektor */
-		else
-		{
-			vectorSize = defaultSignalValues[currentVectorIndex.get(index)][0].length();
-			int vectorStartIndex = currentVectorIndex.indexOf(currentVectorIndex.get(index));
-			if (vectorStartIndex == 0)
-			{
-				return index;
-			}
-			previousDefaultIndex = currentVectorIndex.get(vectorStartIndex - 1);
-
-			/* ako je iznad bio obican signal ili neekspandirani vektor */
-			if (previousDefaultIndex == -1 || 
-				(previousDefaultIndex != -1 && 
-				 !expandedSignalNames.get(previousDefaultIndex)))
-			{
-				/* promjena poretka imena signala */
-				signalNames.add(vectorStartIndex + vectorSize, 
-						signalNames.get(vectorStartIndex - 1));
-				signalNames.remove(vectorStartIndex - 1);
-
-				/* promjena poretka vrijednosti */
-				signalValues.add(vectorStartIndex + vectorSize, 
-						signalValues.get(vectorStartIndex - 1));
-				signalValues.remove(vectorStartIndex - 1);
-
-				/* promjena poretka indeksa u listi */
-				currentVectorIndex.add(vectorStartIndex + vectorSize, 
-						currentVectorIndex.get(vectorStartIndex - 1));
-				currentVectorIndex.remove(vectorStartIndex - 1);
-
-				index--;
-			}
-			/* ako je iznad bio ekspandirani vektor */
-			else
-			{
-				vectorStartIndex = currentVectorIndex.indexOf(currentVectorIndex.get(index));
-				int vectorSizeUp = defaultSignalValues[currentVectorIndex.get(index)][0].length();
-				int vectorSizeDown = 
-					defaultSignalValues[currentVectorIndex.get(vectorStartIndex - 1)][0].length();
-
-				/* promjena poretka imena signala */
-				for (int i = 0; i < vectorSizeDown; i++)
-				{
-					signalNames.add(vectorStartIndex + vectorSizeUp - i, 
-							signalNames.get(vectorStartIndex - 1 - i));
-					signalNames.remove(vectorStartIndex - i - 1);
-				}
-
-				/* promjena poretka vrijednosti */
-				for (int i = 0; i < vectorSizeDown; i++)
-				{
-					signalValues.add(vectorStartIndex + vectorSizeUp - i, 
-							signalValues.get(vectorStartIndex - 1 - i));
-					signalValues.remove(vectorStartIndex - i - 1);
-				}
-
-				/* promjena poretka indeksa */
-				for (int i = 0; i < vectorSizeDown; i++)
-				{
-					currentVectorIndex.add(vectorStartIndex + vectorSizeUp - i, 
-							currentVectorIndex.get(vectorStartIndex - 1 - i));
-					currentVectorIndex.remove(vectorStartIndex - i - 1);
-				}
-
-				index -= vectorSizeDown;
-			}
-		}
-		/* Vraca indeks tako da se pozicionira na signal koji se pomicao u pocetku */
-		return index;
+    	return index;
+//		/* prethodni index defaultnog polja s imenima signala */
+//		Integer previousDefaultIndex;
+//		int vectorSize;
+//
+//		/* ako gore ide obican signal ili neekspandirani vektor*/
+//		if (currentVectorIndex.get(index) == -1 || 
+//				(currentVectorIndex.get(index) != -1 && 
+//				 !expandedSignalNames.get(currentVectorIndex.get(index))))
+//		{
+//			previousDefaultIndex = currentVectorIndex.get(index - 1);
+//			/* ako je iznad obicnog signala bio obican signal ili neekspandirani vektor*/
+//			if (previousDefaultIndex == -1 || 
+//					(previousDefaultIndex != -1 && 
+//					 !expandedSignalNames.get(previousDefaultIndex)))
+//			{
+//				/* promjena poretka imena signala */
+//				signalNames.add(index - 1, signalNames.get(index));
+//				signalNames.remove(index + 1);
+//
+//				/* promjena poretka vrijednosti signala */
+//				signalValues.add(index - 1, signalValues.get(index));
+//				signalValues.remove(index + 1);
+//
+//				/* promjena poretka u listi indeksa */
+//				currentVectorIndex.add(index - 1, currentVectorIndex.get(index));
+//				currentVectorIndex.remove(index + 1);
+//				
+//				index--;
+//			}
+//			/* inace ako je iznad obicnog signala bio ekspandirani vektor */
+//			else if (previousDefaultIndex != -1 && 
+//					expandedSignalNames.get(previousDefaultIndex) == true)
+//			{
+//				vectorSize = defaultSignalValues[previousDefaultIndex][0].length();
+//				
+//				/* promjena poretka imena signala */
+//				signalNames.add(index - vectorSize, signalNames.get(index));
+//				signalNames.remove(index + 1);
+//				
+//				/* promjena poretka vrijednosti */
+//				signalValues.add(index - vectorSize, signalValues.get(index));
+//				signalValues.remove(index + 1);
+//
+//				/* promjena u listi indeksa */
+//				currentVectorIndex.add(index - vectorSize, 
+//						currentVectorIndex.get(index));
+//				currentVectorIndex.remove(index + 1);
+//
+//				index -= vectorSize;
+//			}
+//		}
+//		/* Inace ako gore ide ekspandirani vektor */
+//		else
+//		{
+//			vectorSize = defaultSignalValues[currentVectorIndex.get(index)][0].length();
+//			int vectorStartIndex = currentVectorIndex.indexOf(currentVectorIndex.get(index));
+//			if (vectorStartIndex == 0)
+//			{
+//				return index;
+//			}
+//			previousDefaultIndex = currentVectorIndex.get(vectorStartIndex - 1);
+//
+//			/* ako je iznad bio obican signal ili neekspandirani vektor */
+//			if (previousDefaultIndex == -1 || 
+//				(previousDefaultIndex != -1 && 
+//				 !expandedSignalNames.get(previousDefaultIndex)))
+//			{
+//				/* promjena poretka imena signala */
+//				signalNames.add(vectorStartIndex + vectorSize, 
+//						signalNames.get(vectorStartIndex - 1));
+//				signalNames.remove(vectorStartIndex - 1);
+//
+//				/* promjena poretka vrijednosti */
+//				signalValues.add(vectorStartIndex + vectorSize, 
+//						signalValues.get(vectorStartIndex - 1));
+//				signalValues.remove(vectorStartIndex - 1);
+//
+//				/* promjena poretka indeksa u listi */
+//				currentVectorIndex.add(vectorStartIndex + vectorSize, 
+//						currentVectorIndex.get(vectorStartIndex - 1));
+//				currentVectorIndex.remove(vectorStartIndex - 1);
+//
+//				index--;
+//			}
+//			/* ako je iznad bio ekspandirani vektor */
+//			else
+//			{
+//				vectorStartIndex = currentVectorIndex.indexOf(currentVectorIndex.get(index));
+//				int vectorSizeUp = defaultSignalValues[currentVectorIndex.get(index)][0].length();
+//				int vectorSizeDown = 
+//					defaultSignalValues[currentVectorIndex.get(vectorStartIndex - 1)][0].length();
+//
+//				/* promjena poretka imena signala */
+//				for (int i = 0; i < vectorSizeDown; i++)
+//				{
+//					signalNames.add(vectorStartIndex + vectorSizeUp - i, 
+//							signalNames.get(vectorStartIndex - 1 - i));
+//					signalNames.remove(vectorStartIndex - i - 1);
+//				}
+//
+//				/* promjena poretka vrijednosti */
+//				for (int i = 0; i < vectorSizeDown; i++)
+//				{
+//					signalValues.add(vectorStartIndex + vectorSizeUp - i, 
+//							signalValues.get(vectorStartIndex - 1 - i));
+//					signalValues.remove(vectorStartIndex - i - 1);
+//				}
+//
+//				/* promjena poretka indeksa */
+//				for (int i = 0; i < vectorSizeDown; i++)
+//				{
+//					currentVectorIndex.add(vectorStartIndex + vectorSizeUp - i, 
+//							currentVectorIndex.get(vectorStartIndex - 1 - i));
+//					currentVectorIndex.remove(vectorStartIndex - i - 1);
+//				}
+//
+//				index -= vectorSizeDown;
+//			}
+//		}
+//		signalChangeTracker.update(rebuildSignalChangeMap());
+//		/* Vraca indeks tako da se pozicionira na signal koji se pomicao u pocetku */
+//		return index;
 	}
 
 
     /**
      * Metoda koja mijenja poredak signala prema dolje. 
-     *
+     * 
+     * MČ: promjene signala su u ovoj verziji vhdllab-a ONEMOGUCENE tako dugo dok se pamcenje
+     *     stanja ne prebaci na jedno mjesto. Trenutno je postalo nemoguce sinkronizirati sve
+     *     komponente koje pamte svaka za sebe je li nesto ekspandirano ili nije i gdje bi se
+     *     to na ekranu trebalo nalaziti (2010-09-25).
+     * 
      * @param index indeks signala koji se pomice prema dolje
 	 * @return Vraca indeks tako da se ponovno pozicionira na signal koji se pomicao
      */
@@ -374,132 +395,135 @@ public class GhdlResults
             return index;
         }
 
-		/* Sljedeci index defaultnog polja s imenima signala */
-		Integer nextDefaultIndex;
-		int vectorSize;
-
-		/* ako dolje ide obican signal ili neekspandirani vektor*/
-		if (currentVectorIndex.get(index) == -1 || 
-				(currentVectorIndex.get(index) != -1 && 
-				 !expandedSignalNames.get(currentVectorIndex.get(index))))
-		{
-			nextDefaultIndex = currentVectorIndex.get(index + 1);
-			/* ako je ispod obicnog signala bio obican signal ili neekspandirani vektor */
-			if (nextDefaultIndex == -1 || 
-					(nextDefaultIndex != -1 && 
-					 !expandedSignalNames.get(nextDefaultIndex)))
-			{
-				/* promjena poretka imena signala */
-				signalNames.add(index, signalNames.get(index + 1));
-				signalNames.remove(index + 2);
-
-				/* promjena poretka vrijednosti signala */
-				signalValues.add(index, signalValues.get(index + 1));
-				signalValues.remove(index + 2);
-
-				/* promjena poretka u listi indeksa */
-				currentVectorIndex.add(index, currentVectorIndex.get(index + 1));
-				currentVectorIndex.remove(index + 2);
-
-				index++;
-			}
-			/* inace ako je ispod obicnog signala bio ekspandirani vektor */
-			else if (nextDefaultIndex != -1 && 
-					expandedSignalNames.get(nextDefaultIndex) == true)
-			{
-				vectorSize = defaultSignalValues[nextDefaultIndex][0].length();
-				
-				/* promjena poretka imena signala */
-				signalNames.add(index + vectorSize + 1, signalNames.get(index));
-				signalNames.remove(index);
-				
-				/* promjena poretka vrijednosti */
-				signalValues.add(index + vectorSize + 1, signalValues.get(index));
-				signalValues.remove(index);
-
-				/* promjena u listi indeksa */
-				currentVectorIndex.add(index + vectorSize + 1, 
-						currentVectorIndex.get(index));
-				currentVectorIndex.remove(index);
-
-				index += vectorSize;
-			}
-		}
-		/* Inace ako dolje ide ekspandirani vektor */
-		else
-		{
-			vectorSize = 
-				defaultSignalValues[currentVectorIndex.get(index)][0].length();
-			int vectorStartIndex = 
-				currentVectorIndex.indexOf(currentVectorIndex.get(index));
-			if (vectorStartIndex + vectorSize - 1 == (signalNames.size() - 1))
-			{
-				return index;
-			}
-			nextDefaultIndex = currentVectorIndex.get(vectorStartIndex + vectorSize);
-
-			/* ako je ispod bio obican signal ili neekspandirani vektor */
-			if (nextDefaultIndex == -1 || 
-				(nextDefaultIndex != -1 && 
-				 !expandedSignalNames.get(nextDefaultIndex)))
-			{
-				/* promjena poretka imena signala */
-				signalNames.add(vectorStartIndex, 
-						signalNames.get(vectorStartIndex + vectorSize));
-				signalNames.remove(vectorStartIndex + vectorSize + 1);
-
-				/* promjena poretka vrijednosti */
-				signalValues.add(vectorStartIndex, 
-						signalValues.get(vectorStartIndex + vectorSize));
-				signalValues.remove(vectorStartIndex + vectorSize + 1);
-
-				/* promjena poretka indeksa u listi */
-				currentVectorIndex.add(vectorStartIndex, 
-						currentVectorIndex.get(vectorStartIndex + vectorSize));
-				currentVectorIndex.remove(vectorStartIndex + vectorSize + 1);
-
-				index++;
-			}
-			/* ako je ispod bio ekspandirani vektor */
-			else
-			{
-				vectorStartIndex = 
-					currentVectorIndex.indexOf(currentVectorIndex.get(index));
-				int vectorSizeDown = 
-					defaultSignalValues[currentVectorIndex.get(index)][0].length();
-				int vectorSizeUp = 
-					defaultSignalValues[currentVectorIndex.get(vectorStartIndex + 
-							vectorSizeDown)][0].length();
-
-				/* promjena poretka imena signala */
-				for (int i = 0; i < vectorSizeDown; i++)
-				{
-					signalNames.add(vectorStartIndex + vectorSizeUp + vectorSizeDown - i, 
-							signalNames.get(vectorStartIndex + vectorSizeDown - 1 - i));
-					signalNames.remove(vectorStartIndex + vectorSizeDown - i - 1);
-				}
-
-				/* promjena poretka vrijednosti */
-				for (int i = 0; i < vectorSizeDown; i++)
-				{
-					signalValues.add(vectorStartIndex + vectorSizeUp + vectorSizeDown - i, 
-							signalValues.get(vectorStartIndex + vectorSizeDown - 1 - i));
-					signalValues.remove(vectorStartIndex + vectorSizeDown - i - 1);
-				}
-
-				/* promjena poretka indeksa */
-				for (int i = 0; i < vectorSizeDown; i++)
-				{
-					currentVectorIndex.add(vectorStartIndex + vectorSizeUp + vectorSizeDown - i, 
-							currentVectorIndex.get(vectorStartIndex + vectorSizeDown - 1 - i));
-					currentVectorIndex.remove(vectorStartIndex + vectorSizeDown - i - 1);
-				}
-
-				index += vectorSizeUp;
-			}
-		}
-		/* Vraca indeks tako da se ponovno pozicionira na signal koji se pomicao */
-		return index;
+        return index;
+        
+//		/* Sljedeci index defaultnog polja s imenima signala */
+//		Integer nextDefaultIndex;
+//		int vectorSize;
+//
+//		/* ako dolje ide obican signal ili neekspandirani vektor*/
+//		if (currentVectorIndex.get(index) == -1 || 
+//				(currentVectorIndex.get(index) != -1 && 
+//				 !expandedSignalNames.get(currentVectorIndex.get(index))))
+//		{
+//			nextDefaultIndex = currentVectorIndex.get(index + 1);
+//			/* ako je ispod obicnog signala bio obican signal ili neekspandirani vektor */
+//			if (nextDefaultIndex == -1 || 
+//					(nextDefaultIndex != -1 && 
+//					 !expandedSignalNames.get(nextDefaultIndex)))
+//			{
+//				/* promjena poretka imena signala */
+//				signalNames.add(index, signalNames.get(index + 1));
+//				signalNames.remove(index + 2);
+//
+//				/* promjena poretka vrijednosti signala */
+//				signalValues.add(index, signalValues.get(index + 1));
+//				signalValues.remove(index + 2);
+//
+//				/* promjena poretka u listi indeksa */
+//				currentVectorIndex.add(index, currentVectorIndex.get(index + 1));
+//				currentVectorIndex.remove(index + 2);
+//
+//				index++;
+//			}
+//			/* inace ako je ispod obicnog signala bio ekspandirani vektor */
+//			else if (nextDefaultIndex != -1 && 
+//					expandedSignalNames.get(nextDefaultIndex) == true)
+//			{
+//				vectorSize = defaultSignalValues[nextDefaultIndex][0].length();
+//				
+//				/* promjena poretka imena signala */
+//				signalNames.add(index + vectorSize + 1, signalNames.get(index));
+//				signalNames.remove(index);
+//				
+//				/* promjena poretka vrijednosti */
+//				signalValues.add(index + vectorSize + 1, signalValues.get(index));
+//				signalValues.remove(index);
+//
+//				/* promjena u listi indeksa */
+//				currentVectorIndex.add(index + vectorSize + 1, 
+//						currentVectorIndex.get(index));
+//				currentVectorIndex.remove(index);
+//
+//				index += vectorSize;
+//			}
+//		}
+//		/* Inace ako dolje ide ekspandirani vektor */
+//		else
+//		{
+//			vectorSize = 
+//				defaultSignalValues[currentVectorIndex.get(index)][0].length();
+//			int vectorStartIndex = 
+//				currentVectorIndex.indexOf(currentVectorIndex.get(index));
+//			if (vectorStartIndex + vectorSize - 1 == (signalNames.size() - 1))
+//			{
+//				return index;
+//			}
+//			nextDefaultIndex = currentVectorIndex.get(vectorStartIndex + vectorSize);
+//
+//			/* ako je ispod bio obican signal ili neekspandirani vektor */
+//			if (nextDefaultIndex == -1 || 
+//				(nextDefaultIndex != -1 && 
+//				 !expandedSignalNames.get(nextDefaultIndex)))
+//			{
+//				/* promjena poretka imena signala */
+//				signalNames.add(vectorStartIndex, 
+//						signalNames.get(vectorStartIndex + vectorSize));
+//				signalNames.remove(vectorStartIndex + vectorSize + 1);
+//
+//				/* promjena poretka vrijednosti */
+//				signalValues.add(vectorStartIndex, 
+//						signalValues.get(vectorStartIndex + vectorSize));
+//				signalValues.remove(vectorStartIndex + vectorSize + 1);
+//
+//				/* promjena poretka indeksa u listi */
+//				currentVectorIndex.add(vectorStartIndex, 
+//						currentVectorIndex.get(vectorStartIndex + vectorSize));
+//				currentVectorIndex.remove(vectorStartIndex + vectorSize + 1);
+//
+//				index++;
+//			}
+//			/* ako je ispod bio ekspandirani vektor */
+//			else
+//			{
+//				vectorStartIndex = 
+//					currentVectorIndex.indexOf(currentVectorIndex.get(index));
+//				int vectorSizeDown = 
+//					defaultSignalValues[currentVectorIndex.get(index)][0].length();
+//				int vectorSizeUp = 
+//					defaultSignalValues[currentVectorIndex.get(vectorStartIndex + 
+//							vectorSizeDown)][0].length();
+//
+//				/* promjena poretka imena signala */
+//				for (int i = 0; i < vectorSizeDown; i++)
+//				{
+//					signalNames.add(vectorStartIndex + vectorSizeUp + vectorSizeDown - i, 
+//							signalNames.get(vectorStartIndex + vectorSizeDown - 1 - i));
+//					signalNames.remove(vectorStartIndex + vectorSizeDown - i - 1);
+//				}
+//
+//				/* promjena poretka vrijednosti */
+//				for (int i = 0; i < vectorSizeDown; i++)
+//				{
+//					signalValues.add(vectorStartIndex + vectorSizeUp + vectorSizeDown - i, 
+//							signalValues.get(vectorStartIndex + vectorSizeDown - 1 - i));
+//					signalValues.remove(vectorStartIndex + vectorSizeDown - i - 1);
+//				}
+//
+//				/* promjena poretka indeksa */
+//				for (int i = 0; i < vectorSizeDown; i++)
+//				{
+//					currentVectorIndex.add(vectorStartIndex + vectorSizeUp + vectorSizeDown - i, 
+//							currentVectorIndex.get(vectorStartIndex + vectorSizeDown - 1 - i));
+//					currentVectorIndex.remove(vectorStartIndex + vectorSizeDown - i - 1);
+//				}
+//
+//				index += vectorSizeUp;
+//			}
+//		}
+//		signalChangeTracker.update(rebuildSignalChangeMap());
+//		/* Vraca indeks tako da se ponovno pozicionira na signal koji se pomicao */
+//		return index;
 	}
 
 

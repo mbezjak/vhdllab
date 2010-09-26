@@ -24,6 +24,16 @@ public class SignalChangeTracker {
 	}
 
 	/**
+	 * Metoda namjenjena azuriranju podataka o promjenama signala. Ideja je da se interno ne
+	 * manipulira podatcima iz ove mape vec da se mapa po potrebi nanovo izgradi i postavi ovom
+	 * metodom.
+	 * @param signalChangeMap mapa promjena
+	 */
+	public void update(Map<String, SignalChangeEvent[]> signalChangeMap) {
+		this.signalChangeMap = signalChangeMap;
+	}
+	
+	/**
 	 * Vraca polje svih promjena po signalu.
 	 * 
 	 * @param signalKey identifikator signala
