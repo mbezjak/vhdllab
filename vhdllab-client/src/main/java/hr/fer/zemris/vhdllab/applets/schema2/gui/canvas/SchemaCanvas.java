@@ -346,12 +346,15 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		IQuery q = new FindConnectedPins(sel);
 		IQueryResult r = controller.send(q);
 		List<XYLocation> locList = (List<XYLocation>) r.get(FindConnectedPins.KEY_PIN_LOCATIONS);
-		Color cl = g.getColor();
-		g.setColor(CanvasColorProvider.SIGNAL_LINE_SELECTED_PORT);
-		for(XYLocation xy:locList){
-			g.fillOval(xy.x-4, xy.y-4, 8, 8);
+
+		if (locList != null) {
+		    Color cl = g.getColor();
+		    g.setColor(CanvasColorProvider.SIGNAL_LINE_SELECTED_PORT);
+		    for(XYLocation xy:locList){
+		        g.fillOval(xy.x-4, xy.y-4, 8, 8);
+		    }
+		    g.setColor(cl);		
 		}
-		g.setColor(cl);		
 	}
 
 	private void setCanvasSize(int sizeX, int sizeY) {
