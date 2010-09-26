@@ -235,8 +235,8 @@ public class DefaultWorkspaceManager extends
             getWorkspace().addFile(report.getFile(), report.getHierarchy());
             addFile(report.getFile());
             fireFileCreated(report);
-            openEditor(report.getFile());
             log(report, SIMULATION_SAVED_MESSAGE);
+            openEditor(report.getFile());
         }
     }
 
