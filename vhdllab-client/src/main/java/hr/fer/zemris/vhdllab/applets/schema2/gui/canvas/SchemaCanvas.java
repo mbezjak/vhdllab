@@ -319,7 +319,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 		if(type == CanvasToolbarLocalGUIController.TYPE_COMPONENT 
 				&& !Caseless.isNullOrEmpty(sel)){
 			ISchemaComponent comp = components.fetchComponent(sel);
-			if (comp != null) {
+			if (comp != null && comp.getSchemaPorts() != null) {
 			    Color cl = g.getColor();
 			    g.setColor(CanvasColorProvider.SIGNAL_LINE_SELECTED_ONCOMP);
 			    for (SchemaPort sp : comp.getSchemaPorts()) {
