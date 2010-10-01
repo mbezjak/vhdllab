@@ -171,6 +171,9 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
         end += WHITESPACE.length();
         start = end;
         end = s.indexOf(RIGHT_BRACKET, start);
+        if (end < start) {
+            throwException();
+        }
         String toString = s.substring(start, end).trim();
         end += RIGHT_BRACKET.length();
         int to = 0;
