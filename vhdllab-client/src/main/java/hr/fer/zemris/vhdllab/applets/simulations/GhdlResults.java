@@ -645,7 +645,7 @@ public class GhdlResults
         for (int i = 0; i < defaultSignalValues.length; i++)
         {	
 			expandedSignalNames.add(false);
-			if (defaultSignalValues[i][1].length() != 1)
+			if (defaultSignalValues[i].length >= 2 && defaultSignalValues[i][1].length() != 1)
             {
 				currentVectorIndex.add(i);
             }
