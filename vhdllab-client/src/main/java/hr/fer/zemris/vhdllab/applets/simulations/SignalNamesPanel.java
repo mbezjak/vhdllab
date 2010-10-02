@@ -430,7 +430,7 @@ class SignalNamesPanel extends JPanel
 		yAxis = YAXIS_START_POINT - offsetYAxis;
 		for (int i = 0; i < signalNames.size(); i++)
 		{
-            if (currentVectorIndex.get(i) != -1)
+            if (i < currentVectorIndex.size() && currentVectorIndex.get(i) != -1)
             {
 				Integer defaultIndex = currentVectorIndex.get(i);
 				if (expandedSignalNames.get(defaultIndex))
