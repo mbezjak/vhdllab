@@ -58,7 +58,9 @@ public class NewSourceWizard extends AbstractNewFileWizard {
         CircuitInterface ci = getCircuitInterface(fileForm, portWizardPage);
         StringBuilder sb = new StringBuilder(100 + ci.getPorts().size() * 20);
         sb.append("library IEEE;\nuse IEEE.STD_LOGIC_1164.ALL;\n\n");
-        sb.append("-- note: entity name and resource name must match\n");
+        sb.append("-- warning: this file will not be saved if:\n");
+        sb.append("--     * following entity block contains any syntactic errors (e.g. port list isn't separated with ; character)\n");
+        sb.append("--     * following entity name and current file name differ (e.g. if file is named mux41 then entity must also be named mux41)\n");
         sb.append(ci.toString()).append("\n\n");
         sb.append("ARCHITECTURE arch OF ").append(ci.getName());
         sb.append(" IS \n\nBEGIN\n\nEND arch;");
