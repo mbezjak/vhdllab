@@ -121,14 +121,16 @@ public class SchemaInfo2VHDL {
 					Port origin = plc.comp.getPort(p.getPortindex());
 					WireMapping wm = wiremap.get(mappedto);
 					
-					if (origin.isIN()) {
-						wm.ioins++;
-						if (wm.ioins == 1) wm.inSingleName = getPortWithIndexName(plc, origin, p);
-					} else if (origin.isOUT()) {
-						wm.ioouts++;
-						if (wm.ioouts == 1) wm.outSingleName = getPortWithIndexName(plc, origin, p);
-					} else {
-						throw new NotImplementedException("Only IN and OUT directions implemented.");
+					if (wm != null) {
+					    if (origin.isIN()) {
+					        wm.ioins++;
+					        if (wm.ioins == 1) wm.inSingleName = getPortWithIndexName(plc, origin, p);
+					    } else if (origin.isOUT()) {
+					        wm.ioouts++;
+					        if (wm.ioouts == 1) wm.outSingleName = getPortWithIndexName(plc, origin, p);
+					    } else {
+					        throw new NotImplementedException("Only IN and OUT directions implemented.");
+					    }
 					}
 				}
 			} else {
@@ -140,12 +142,14 @@ public class SchemaInfo2VHDL {
 					Port origin = plc.comp.getPort(p.getPortindex());
 					WireMapping wm = wiremap.get(mappedto);
 					
-					if (origin.isIN()) {
-						wm.normins++;
-					} else if (origin.isOUT()) {
-						wm.normouts++;
-					} else {
-						throw new NotImplementedException("Only IN and OUT directions implemented.");
+					if (wm != null) {
+					    if (origin.isIN()) {
+					        wm.normins++;
+					    } else if (origin.isOUT()) {
+					        wm.normouts++;
+					    } else {
+					        throw new NotImplementedException("Only IN and OUT directions implemented.");
+					    }
 					}
 				}
 			}
