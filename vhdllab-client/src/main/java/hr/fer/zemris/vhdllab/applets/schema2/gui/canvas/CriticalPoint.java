@@ -113,6 +113,10 @@ public class CriticalPoint {
 			}
 		}
 		
+		if (clSegment == null) {
+		    return;
+		}
+		
 		if(clSegment.isVertical()){
 			this.x = clSegment.getStart().x;
 		}else{
