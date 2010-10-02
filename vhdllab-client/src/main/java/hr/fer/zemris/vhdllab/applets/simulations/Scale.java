@@ -191,6 +191,12 @@ class Scale extends JPanel
 			double operand2 = transitionPoints[i];
 			durationsInFemtoSeconds[i] = operand1 - operand2;
         }
+
+        // fix for http://morgoth.zemris.fer.hr/trac/vhdllab/ticket/39
+        if (Arrays.equals(durationsInFemtoSeconds, new double[] {0.0})) {
+            durationsInFemtoSeconds[0] = 1.0;
+        }
+
         /* crta pocetne valne oblike sa scaleFaktorom 1 */
         drawDefaultWave();
 	}
