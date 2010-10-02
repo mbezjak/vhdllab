@@ -30,9 +30,11 @@ import hr.fer.zemris.vhdllab.service.extractor.AbstractMetadataExtractor;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -125,8 +127,10 @@ public class AutomatonMetadataExtractor extends AbstractMetadataExtractor {
             else
                 inter = new MealyParser(stanja, podatci, prijelazi);
             parsedVHDL = inter.getData();
-        } else
-            throw new VhdlGenerationException("nemoguce generirati VHDL");
+        } else {
+            List<String> messages = Arrays.asList("Nije moguce generirat VHDL ukoliko pocetno stanje nije postavljeno");
+            return new Result(messages);
+        }
         return new Result(parsedVHDL);
     }
 
