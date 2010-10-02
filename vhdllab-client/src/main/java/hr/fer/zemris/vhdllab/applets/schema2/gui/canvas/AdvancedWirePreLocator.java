@@ -129,13 +129,22 @@ public class AdvancedWirePreLocator implements IWirePreLocator{
 		Caseless wireName = null;
 
 		wireName = createName(x1,y1,x2,y2); //TODOcreateNeme
-		ICommand instantiate = new AddWireCommand(wireName,segmentList);
-		ICommandResponse response = controller.send(instantiate);
-		System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
+		ICommand instantiate;
+        try {
+            instantiate = new AddWireCommand(wireName,segmentList);
+        } catch (IllegalArgumentException e) {
+            // overlapping segments
+            instantiate = null;
+        }
 
-
-		plugToPoint(wireBeginning,controller,wireName);
-		plugToPoint(wireEnding,controller,wireName);
+        if (instantiate != null) {
+            ICommandResponse response = controller.send(instantiate);
+            System.out.println ("canvas report| wire instantiate succesful: "+response.isSuccessful());
+            
+            
+            plugToPoint(wireBeginning,controller,wireName);
+            plugToPoint(wireEnding,controller,wireName);
+        }
 	}
 	
 	private void plugToPoint(CriticalPoint point, ISchemaController controller, Caseless wireName) {
