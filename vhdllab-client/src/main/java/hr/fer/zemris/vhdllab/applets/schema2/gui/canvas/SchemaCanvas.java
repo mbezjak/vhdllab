@@ -602,7 +602,7 @@ public class SchemaCanvas extends JPanel implements PropertyChangeListener, ISch
 				repaint();
 			}else if(state.equals(ECanvasState.MOVE_STATE)&&componentToMove!=null){
 				ISchemaComponent comp = components.fetchComponent(componentToMove);
-				if(e.getX()>comp.getWidth()/2&&e.getY()>comp.getHeight()/2){
+				if(comp != null && e.getX()>comp.getWidth()/2&&e.getY()>comp.getHeight()/2){
 					ICommand move = new MoveComponentCommand(
 							componentToMove,new XYLocation(
 									alignToGrid(e.getX()-comp.getWidth()/2),alignToGrid(e.getY()-comp.getHeight()/2)
