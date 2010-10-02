@@ -62,6 +62,8 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
     private DialogManager dialogManager;
     @Resource(name = "invalidEntityBlockInSourceEditorDialogManager")
     private DialogManager invalidEntityBlockDialogManager;
+    @Resource(name = "differentEntityNameDialogManager")
+    private DialogManager differentEntityNameDialogManager;
     @Autowired
     private WorkspaceManager workspaceManager;
 
@@ -191,6 +193,13 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
             try {
                 workspaceManager.save(file);
                 editor.setModified(false);
+            } catch (IllegalStateException e) {
+                if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Resource source must have only one entity with the same name.")) {
+                    differentEntityNameDialogManager.showDialog();
+                    return false;
+                }
+
+                throw e;
             } catch (CircuitInterfaceExtractionException e) {
                 if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Entity block is invalid.")) {
                     invalidEntityBlockDialogManager.showDialog();
