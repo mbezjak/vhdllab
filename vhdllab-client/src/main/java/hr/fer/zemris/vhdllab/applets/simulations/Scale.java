@@ -220,7 +220,24 @@ class Scale extends JPanel
          * se na temelju nje postavlja skala u najmanju jedinicu i mnozi ostatak s
          * odgovarajucim 10^x faktorom.
          * */
-        String minimumDuration = String.valueOf((long)temporaryDurations[0]);
+        // FIXED: ovo ne radi ako citava simulacija traje 0 pa je i minimalna promjena 0!
+        // Zato ova petlja ispod.
+        // String minimumDuration = String.valueOf((long)temporaryDurations[0]);
+        String minimumDuration = null;
+        double firstNonZeroDuration = 0;
+        for(double dur : temporaryDurations) {
+        	long ldur = (long)dur;
+        	if(ldur>0) {
+        		firstNonZeroDuration = dur;
+        		minimumDuration = String.valueOf(ldur);
+        		break;
+        	}
+        }
+        if(minimumDuration==null) {
+        	minimumDuration = "1";
+        	firstNonZeroDuration = 1;
+        }
+        
 		//System.out.println("minimalna razlika je " + minimumDuration);
         
 		int numberOfEndZeroes = 0;
@@ -274,12 +291,13 @@ class Scale extends JPanel
         }
 
         scaleEndPointInPixels = 0;
-		minimumDurationInTime = (int)(durationsInFemtoSeconds[0] * measureUnit);
+		// minimumDurationInTime = (int)(durationsInFemtoSeconds[0] * measureUnit);
+		minimumDurationInTime = (int)(firstNonZeroDuration * measureUnit);
         for (int i = 0; i < durationsInTime.length; i++)
         {
             durationsInTime[i] = (int)(durationsInFemtoSeconds[i] * measureUnit);
 			if (durationsInTime[i] < minimumDurationInTime) {
-				minimumDurationInTime = durationsInTime[i];
+				if(durationsInTime[i]>0) minimumDurationInTime = durationsInTime[i];
 			}
 			scaleEndPointInPixels += durationsInTime[i];
         }
