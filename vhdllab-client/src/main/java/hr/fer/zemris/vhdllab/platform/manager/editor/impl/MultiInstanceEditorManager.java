@@ -17,6 +17,7 @@
 package hr.fer.zemris.vhdllab.platform.manager.editor.impl;
 
 import hr.fer.zemris.vhdllab.entity.File;
+import hr.fer.zemris.vhdllab.entity.FileType;
 import hr.fer.zemris.vhdllab.entity.Project;
 import hr.fer.zemris.vhdllab.platform.gui.dialog.DialogManager;
 import hr.fer.zemris.vhdllab.platform.i18n.LocalizationSupport;
@@ -28,6 +29,7 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.NotOpenedException;
 import hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
+import hr.fer.zemris.vhdllab.service.exception.CircuitInterfaceExtractionException;
 
 import javax.annotation.Resource;
 
@@ -58,6 +60,8 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
 
     @Resource(name = "singleSaveDialogManager")
     private DialogManager dialogManager;
+    @Resource(name = "invalidEntityBlockInSourceEditorDialogManager")
+    private DialogManager invalidEntityBlockDialogManager;
     @Autowired
     private WorkspaceManager workspaceManager;
 
@@ -184,8 +188,17 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
                     return false;
                 }
             }
-            workspaceManager.save(file);
-            editor.setModified(false);
+            try {
+                workspaceManager.save(file);
+                editor.setModified(false);
+            } catch (CircuitInterfaceExtractionException e) {
+                if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Entity block is invalid.")) {
+                    invalidEntityBlockDialogManager.showDialog();
+                    return false;
+                }
+
+                throw e;
+            }
         }
         return true;
     }
