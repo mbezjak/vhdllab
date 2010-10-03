@@ -133,7 +133,7 @@
     <property name="members">
       <list>
         <idref bean="aboutCommand"/>
-        <bean id="knownProblemsCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.KnownProblemsCommand" />
+        <bean id="bugsCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.BugsCommand" />
       </list>
     </property>
   </bean>
@@ -165,5 +165,6 @@
   </bean>
 
   <bean id="loginCommand" class="hr.fer.zemris.vhdllab.platform.remoting.LoginCommand" />
+  <bean id="welcomeCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.WelcomeCommand" />
 
 </beans>

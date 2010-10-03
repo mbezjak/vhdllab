@@ -27,6 +27,8 @@ import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationWindow;
 import org.springframework.richclient.application.config.ApplicationWindowConfigurer;
 import org.springframework.richclient.application.config.DefaultApplicationLifecycleAdvisor;
+import org.springframework.richclient.command.ActionCommand;
+import org.springframework.richclient.command.CommandManager;
 
 public class VhdllabLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor {
 
@@ -57,6 +59,10 @@ public class VhdllabLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor 
     @Override
     public void onPostStartup() {
         workspaceInitializer.initWorkspace();
+
+        CommandManager cm = getApplication().getActiveWindow().getCommandManager();
+        ActionCommand welcome = (ActionCommand) cm.getCommand("welcomeCommand");
+        welcome.execute();
     }
 
     @Override
