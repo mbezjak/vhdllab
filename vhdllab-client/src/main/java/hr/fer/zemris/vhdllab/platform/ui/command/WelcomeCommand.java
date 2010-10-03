@@ -34,7 +34,7 @@ public class WelcomeCommand extends ApplicationWindowAwareCommand {
 
     @Override
     protected void doExecuteCommand() {
-        Preferences pref = Preferences.userNodeForPackage(getClass());
+        Preferences pref = Preferences.userNodeForPackage(WelcomeCommand.class);
         int count = pref.getInt(PREF_WELCOME_DIALOG_SHOW_COUNT, 0);
 
         if (count < 5) {
