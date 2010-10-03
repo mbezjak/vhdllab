@@ -42,6 +42,8 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractButton;
@@ -242,15 +244,22 @@ public class ProjectExplorerView extends AbstractView implements
             updateHierarchy(nextParentNode, hierarchy, next);
         }
 
-        int[] childIndices = new int[map.size()];
-        Object[] removedChildren = new Object[map.size()];
-        int i = 0;
-        for (DefaultMutableTreeNode n : map.values()) {
+        // model.nodesWereRemoved expected ordered indices
+        Map<Integer, DefaultMutableTreeNode> sortedMap = new TreeMap<Integer, DefaultMutableTreeNode>();
+        for(DefaultMutableTreeNode n : map.values()) {
             int index = parentNode.getIndex(n);
-            childIndices[i] = index;
-            removedChildren[i] = n;
+            sortedMap.put(Integer.valueOf(index), n);
+        }
+
+        // construct arguments for model.nodesWereRemoved
+        int[] childIndices = new int[sortedMap.size()];
+        Object[] removedChildren = new Object[sortedMap.size()];
+        int i = 0;
+        for (Entry<Integer, DefaultMutableTreeNode> entry : sortedMap.entrySet()) {
+            childIndices[i] = entry.getKey();
+            removedChildren[i] = entry.getValue();
             i++;
-            parentNode.remove(n);
+            parentNode.remove(entry.getValue());
         }
         model.nodesWereRemoved(parentNode, childIndices, removedChildren);
     }
