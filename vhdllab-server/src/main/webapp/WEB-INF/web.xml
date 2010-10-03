@@ -86,6 +86,9 @@
   <security-role>
     <role-name>admin</role-name>
   </security-role>
+  <security-role>
+    <role-name>n_osoblje</role-name>
+  </security-role>
 
   <login-config>
     <auth-method>BASIC</auth-method>
@@ -100,6 +103,7 @@
     <auth-constraint>
       <role-name>student</role-name>
       <role-name>admin</role-name>
+      <role-name>n_osoblje</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>CONFIDENTIAL</transport-guarantee>
