@@ -23,16 +23,16 @@
   <package>hr.fer.zemris.vhdllab.entity</package>
   <access>FIELD</access>
 
-  <entity class="File">
-    <entity-listeners>
-      <entity-listener class="hr.fer.zemris.vhdllab.entity.HistoryListener" />
-    </entity-listeners>
-  </entity>
-
-  <entity class="Project">
-    <entity-listeners>
-      <entity-listener class="hr.fer.zemris.vhdllab.entity.HistoryListener" />
-    </entity-listeners>
-  </entity>
+<!--  <entity class="File">-->
+<!--    <entity-listeners>-->
+<!--      <entity-listener class="hr.fer.zemris.vhdllab.entity.HistoryListener" />-->
+<!--    </entity-listeners>-->
+<!--  </entity>-->
+<!---->
+<!--  <entity class="Project">-->
+<!--    <entity-listeners>-->
+<!--      <entity-listener class="hr.fer.zemris.vhdllab.entity.HistoryListener" />-->
+<!--    </entity-listeners>-->
+<!--  </entity>-->
 
 </entity-mappings>

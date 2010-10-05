@@ -74,7 +74,7 @@
   <aop:aspectj-autoproxy />
 
   <!-- Injects entityManagerFactory to HistoryListener so history can be created -->
-  <bean class="hr.fer.zemris.vhdllab.entity.HistoryListenerConfigurer" />
+<!--  <bean class="hr.fer.zemris.vhdllab.entity.HistoryListenerConfigurer" />-->
 
   <!-- DAO classes -->
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"
