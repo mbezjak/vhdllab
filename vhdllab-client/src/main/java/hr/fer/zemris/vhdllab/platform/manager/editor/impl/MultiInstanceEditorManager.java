@@ -209,7 +209,7 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
 
                 throw e;
             } catch (InvalidStateException e) {
-                if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("validation failed for: hr.fer.zemris.vhdllab.service.ci.Port")) {
+                if (file.getType().equals(FileType.SOURCE) && e.getMessage().startsWith("validation failed for: hr.fer.zemris.vhdllab.service.ci")) {
                     invalidEntityBlockDialogManager.showDialog();
                     return false;
                 }
