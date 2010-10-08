@@ -35,6 +35,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
+import org.hibernate.validator.InvalidStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MultiInstanceEditorManager extends LocalizationSupport implements
@@ -202,6 +203,13 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
                 throw e;
             } catch (CircuitInterfaceExtractionException e) {
                 if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Entity block is invalid.")) {
+                    invalidEntityBlockDialogManager.showDialog();
+                    return false;
+                }
+
+                throw e;
+            } catch (InvalidStateException e) {
+                if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("validation failed for: hr.fer.zemris.vhdllab.service.ci.Port")) {
                     invalidEntityBlockDialogManager.showDialog();
                     return false;
                 }
