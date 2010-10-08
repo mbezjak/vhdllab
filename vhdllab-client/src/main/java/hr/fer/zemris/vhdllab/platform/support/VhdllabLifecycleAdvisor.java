@@ -16,6 +16,7 @@
  ******************************************************************************/
 package hr.fer.zemris.vhdllab.platform.support;
 
+import hr.fer.zemris.vhdllab.platform.context.ApplicationContextHolder;
 import hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownManager;
 import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializer;
 
@@ -60,6 +61,20 @@ public class VhdllabLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor 
     public void onPostStartup() {
         workspaceInitializer.initWorkspace();
 
+        showUserCredentials();
+        showWelcomeDialog();
+    }
+
+    private void showUserCredentials() {
+        ApplicationWindow window = getApplication().getActiveWindow();
+        JFrame frame = window.getControl();
+        String user = ApplicationContextHolder.getContext().getUserId();
+
+        frame.setTitle(frame.getTitle() + ", " + user);
+        window.getStatusBar().setMessage("Logged in as " + user);
+    }
+
+    private void showWelcomeDialog() {
         CommandManager cm = getApplication().getActiveWindow().getCommandManager();
         ActionCommand welcome = (ActionCommand) cm.getCommand("welcomeCommand");
         welcome.execute();
@@ -67,8 +82,7 @@ public class VhdllabLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor 
 
     @Override
     public boolean onPreWindowClose(ApplicationWindow window) {
-        if (((VhdllabApplication) Application.instance())
-                .isForceShutdownInProgress()) {
+        if (((VhdllabApplication) Application.instance()).isForceShutdownInProgress()) {
             return true;
         }
         confirmExitDialog.showDialog();
