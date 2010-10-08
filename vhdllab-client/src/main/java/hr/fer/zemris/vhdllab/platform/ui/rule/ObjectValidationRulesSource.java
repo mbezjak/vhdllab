@@ -55,7 +55,7 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
             @Override
             protected void initRules() {
                 add("name", new Constraint[] { new FileExistsConstraint(
-                        workspaceManager) });
+                        workspaceManager), new FileNameDiffersFromProjectConstraint() });
             }
         };
     }
@@ -66,7 +66,7 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
             protected void initRules() {
                 add("testbenchName",
                         new Constraint[] { new TestbenchFileExistsConstraint(
-                                workspaceManager) });
+                                workspaceManager), new FileNameDiffersFromProjectConstraint()});
             }
         };
     }
@@ -77,7 +77,7 @@ public class ObjectValidationRulesSource extends DefaultRulesSource {
             protected void initRules() {
                 add("simulationName",
                         new Constraint[] { new SimulationFileExistsConstraint(
-                                workspaceManager) });
+                                workspaceManager), new FileNameDiffersFromProjectConstraint()});
             }
         };
     }
