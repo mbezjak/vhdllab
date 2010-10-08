@@ -193,7 +193,7 @@
 <!--    </security:user-service>-->
 <!--  </security:authentication-provider>-->
   <security:http create-session="always" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
-    <security:intercept-url pattern="/remoting/*" access="ROLE_STUDENT,ROLE_ADMIN" requires-channel="https"/>
+    <security:intercept-url pattern="/remoting/*" access="ROLE_STUDENT,ROLE_ADMIN,ROLE_N_OSOBLJE" requires-channel="https"/>
 <!--    <security:http-basic/>-->
   </security:http>
 
