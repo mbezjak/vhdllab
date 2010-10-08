@@ -23,6 +23,7 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitial
 import javax.swing.JFrame;
 import javax.swing.ToolTipManager;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.application.ApplicationWindow;
@@ -32,6 +33,8 @@ import org.springframework.richclient.command.ActionCommand;
 import org.springframework.richclient.command.CommandManager;
 
 public class VhdllabLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor {
+
+    private static final Logger LOG = Logger.getLogger(VhdllabLifecycleAdvisor.class);
 
     @Autowired
     private ShutdownManager shutdownManager;
@@ -63,6 +66,8 @@ public class VhdllabLifecycleAdvisor extends DefaultApplicationLifecycleAdvisor 
 
         showUserCredentials();
         showWelcomeDialog();
+
+        LOG.debug("VHDLLab version: " + getApplication().getDescriptor().getVersion());
     }
 
     private void showUserCredentials() {
