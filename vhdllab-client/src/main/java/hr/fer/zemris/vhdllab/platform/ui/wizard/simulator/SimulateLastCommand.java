@@ -35,6 +35,7 @@ public class SimulateLastCommand extends GuardedActionCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
         simulationManager.simulateLast();
     }
 

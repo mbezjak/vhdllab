@@ -51,6 +51,7 @@ public class SimulateWithDialogCommand extends GuardedActionCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
         new SimulateDialog().showDialog();
     }
 

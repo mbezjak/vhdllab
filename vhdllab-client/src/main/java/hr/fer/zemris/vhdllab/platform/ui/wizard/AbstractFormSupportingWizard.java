@@ -58,11 +58,20 @@ public abstract class AbstractFormSupportingWizard extends AbstractWizard {
     }
 
     @Override
+    protected boolean onCancel() {
+        logger.debug("Wizard canceled " + getClass());
+
+        return super.onCancel();
+    }
+
+    @Override
     protected boolean onFinish() {
         for (Form form : formPages) {
             form.commit();
         }
         onWizardFinished();
+
+        logger.debug("Wizard finished " + getClass());
         return true;
     }
 

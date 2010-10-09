@@ -45,6 +45,8 @@ public abstract class AbstractShowWizardDialogCommand extends
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
+
         Wizard wizard = getWizard();
         new WizardDialog(wizard).showDialog();
     }

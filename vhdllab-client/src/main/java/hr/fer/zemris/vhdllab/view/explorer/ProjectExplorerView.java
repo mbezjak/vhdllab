@@ -305,6 +305,7 @@ public class ProjectExplorerView extends AbstractView implements
         Integer oldHierarchyMode = this.hierarchyMode;
         this.hierarchyMode = newHierarchyMode;
         if (!ObjectUtils.equals(this.hierarchyMode, oldHierarchyMode)) {
+            logger.debug("Hierarchy changed to: " + this.hierarchyMode);
             refereshProjectExplorer();
         }
     }
@@ -427,6 +428,7 @@ public class ProjectExplorerView extends AbstractView implements
         @Override
         protected void doExecuteCommand() {
             File file = getSelectedFile();
+            logger.debug("Opening " + file);
             editorManagerFactory.get(file).open();
         }
     }
@@ -440,6 +442,7 @@ public class ProjectExplorerView extends AbstractView implements
         @Override
         protected void doExecuteCommand() {
             File file = getSelectedFile();
+            logger.debug("Compiling " + file);
             simulationManager.compile(file);
         }
     }
@@ -453,6 +456,7 @@ public class ProjectExplorerView extends AbstractView implements
         @Override
         protected void doExecuteCommand() {
             File file = getSelectedFile();
+            logger.debug("Simulating " + file);
             simulationManager.simulate(file);
         }
     }
@@ -466,6 +470,7 @@ public class ProjectExplorerView extends AbstractView implements
         @Override
         protected void doExecuteCommand() {
             File file = getSelectedFile();
+            logger.debug("Opening view vhdl for " + file);
             Result result = metadataExtractionService.generateVhdl(file.getId());
             String vhdl = getData(result);
             File viewVhdlFile = new File(file.getName() + ":vhdl", FileType.SOURCE, vhdl);
@@ -521,6 +526,7 @@ public class ProjectExplorerView extends AbstractView implements
 
                     @Override
                     protected void onConfirm() {
+                        logger.debug("Deleting " + project);
                         workspaceManager.delete(project);
                     }
                 }.showDialog();
@@ -542,6 +548,7 @@ public class ProjectExplorerView extends AbstractView implements
 
                     @Override
                     protected void onConfirm() {
+                        logger.debug("Deleting " + file);
                         workspaceManager.delete(file);
                     }
                 }.showDialog();
@@ -629,6 +636,8 @@ public class ProjectExplorerView extends AbstractView implements
         @Override
         protected void onRightMouseClick(MouseEvent e) {
             setSelectionPath(e);
+
+            logger.debug("About to show project explorer popup menu");
             popupMenu.show(tree, e.getX(), e.getY());
         }
 

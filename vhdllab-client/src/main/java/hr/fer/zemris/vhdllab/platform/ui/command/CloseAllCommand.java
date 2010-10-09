@@ -35,6 +35,7 @@ public class CloseAllCommand extends ActionCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
         editorManagerFactory.getAll().close();
     }
 

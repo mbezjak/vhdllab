@@ -51,6 +51,7 @@ public class CompileWithDialogCommand extends GuardedActionCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
         new CompileDialog().showDialog();
     }
 

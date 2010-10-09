@@ -33,6 +33,8 @@ public class BugsCommand extends ApplicationWindowAwareCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
+
         BugsDialog dialog = new BugsDialog();
         dialog.setParentComponent(getApplicationWindow().getControl());
         dialog.showDialog();

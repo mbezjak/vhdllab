@@ -34,6 +34,7 @@ public class RedoCommand extends ActionCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
         editorManagerFactory.getSelected().redo();
     }
 

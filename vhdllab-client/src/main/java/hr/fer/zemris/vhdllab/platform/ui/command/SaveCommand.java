@@ -35,6 +35,7 @@ public class SaveCommand extends ActionCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
         editorManagerFactory.getSelected().save(false);
     }
 

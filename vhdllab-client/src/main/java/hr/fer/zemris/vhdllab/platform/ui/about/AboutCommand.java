@@ -51,6 +51,8 @@ public class AboutCommand extends ApplicationWindowAwareCommand {
 
     @Override
     protected void doExecuteCommand() {
+        logger.debug("Executing " + getClass());
+
         aboutBox.display(getApplicationWindow().getControl());
     }
 
