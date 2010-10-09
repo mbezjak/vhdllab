@@ -18,9 +18,15 @@ package hr.fer.zemris.vhdllab.platform.ui.command;
 
 import java.util.prefs.Preferences;
 
+import javax.swing.JComponent;
+
+import org.apache.commons.lang.SystemUtils;
 import org.springframework.richclient.command.ActionCommand;
 import org.springframework.richclient.command.CommandManager;
 import org.springframework.richclient.command.support.ApplicationWindowAwareCommand;
+import org.springframework.richclient.dialog.ApplicationDialog;
+import org.springframework.richclient.dialog.CloseAction;
+import org.springframework.richclient.text.HtmlPane;
 
 public class WelcomeCommand extends ApplicationWindowAwareCommand {
 
@@ -37,8 +43,9 @@ public class WelcomeCommand extends ApplicationWindowAwareCommand {
         Preferences pref = Preferences.userNodeForPackage(WelcomeCommand.class);
         int count = pref.getInt(PREF_WELCOME_DIALOG_SHOW_COUNT, 0);
 
-        if (count < 5) {
-            showWelcomeDialog();
+        if (count < 10) {
+            // showWelcomeDialog();
+            showUpdateJavaDialog();
 
             pref.putInt(PREF_WELCOME_DIALOG_SHOW_COUNT, count + 1);
         }
@@ -48,6 +55,47 @@ public class WelcomeCommand extends ApplicationWindowAwareCommand {
         CommandManager cm = getApplicationWindow().getCommandManager();
         ActionCommand command = (ActionCommand) cm.getCommand("bugsCommand");
         command.execute();
+    }
+
+    protected void showUpdateJavaDialog() {
+        if (!SystemUtils.JAVA_RUNTIME_VERSION.startsWith("1.6.0_21")) {
+            UpdateJavaDialog dialog = new UpdateJavaDialog();
+            dialog.setParentComponent(getApplicationWindow().getControl());
+            dialog.showDialog();
+        }
+    }
+
+    private static class UpdateJavaDialog extends ApplicationDialog {
+
+        public UpdateJavaDialog() {
+            super();
+
+            setTitle("Update Java");
+            setModal(false);
+            setCloseAction(CloseAction.DISPOSE);
+        }
+
+        @Override
+        protected JComponent createDialogContentPane() {
+            HtmlPane pane = new HtmlPane();
+
+            pane.setText("<html>A number of VHDLLab bugs are actually bugs in Java itself.<br />"
+                        + "Please update Java for added stability.<br />"
+                        + "<a href='http://www.java.com/en/download/index.jsp'>http://www.java.com/en/download/index.jsp</a>");
+
+            return pane;
+        }
+
+        @Override
+        protected boolean onFinish() {
+            return true;
+        }
+
+        @Override
+        protected Object[] getCommandGroupMembers() {
+            return new Object[] { getFinishCommand() };
+        }
+
     }
 
 }
