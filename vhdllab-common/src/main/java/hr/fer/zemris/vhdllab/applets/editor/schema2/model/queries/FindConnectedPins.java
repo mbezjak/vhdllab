@@ -84,13 +84,15 @@ public class FindConnectedPins implements IQuery {
 		// get pins this wire is connected to
 		List<XYLocation> positions = new ArrayList<XYLocation>();
 		for (PlacedComponent placed : info.getComponents()) {
-			for (SchemaPort sp : placed.comp.getSchemaPorts()) {
-				Caseless mappedto = sp.getMapping();
-				if (Caseless.isNullOrEmpty(mappedto)) continue;
-				if (!mappedto.equals(wirename)) continue;
-				positions.add(new XYLocation(placed.pos.x + sp.getOffset().x,
-						placed.pos.y + sp.getOffset().y));
-			}
+		    if (placed.comp != null) {
+		        for (SchemaPort sp : placed.comp.getSchemaPorts()) {
+		            Caseless mappedto = sp.getMapping();
+		            if (Caseless.isNullOrEmpty(mappedto)) continue;
+		            if (!mappedto.equals(wirename)) continue;
+		            positions.add(new XYLocation(placed.pos.x + sp.getOffset().x,
+		                    placed.pos.y + sp.getOffset().y));
+		        }
+		    }
 		}
 		
 		return new QueryResult(KEY_PIN_LOCATIONS, positions);
