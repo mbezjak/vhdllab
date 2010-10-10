@@ -44,6 +44,12 @@ public class TestbenchEditor extends AbstractEditor {
     private Testbench testbench = null;
     protected JTestbench jTestbench = null;
 
+    public TestbenchEditor() {
+        super();
+
+        wrapInScrollPane = false;
+    }
+
     private void initTestbench(String xml) {
         try {
             this.testbench = TestbenchParser.parseXml(xml);

@@ -61,6 +61,8 @@ public class Automat extends AbstractEditor {
 
     public Automat() {
         super();
+
+        wrapInScrollPane = false;
     }
 
     /**

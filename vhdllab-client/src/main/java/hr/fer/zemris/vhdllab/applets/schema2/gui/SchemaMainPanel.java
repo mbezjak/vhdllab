@@ -121,6 +121,8 @@ public class SchemaMainPanel extends AbstractEditor {
     /* ctors */
 
     public SchemaMainPanel() {
+        wrapInScrollPane = false;
+
         initStatic();
     }
 
