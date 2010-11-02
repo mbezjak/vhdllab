@@ -75,7 +75,7 @@ public final class HierarchyNode implements Serializable {
          * disallow cyclic dependencies!
          */
         if (canFormCyclicDependency(this, node)) {
-            throw new IllegalArgumentException(node + "already uses " + this);
+            throw new IllegalArgumentException(node + " already uses " + this);
         }
         dependencies.add(node.getFile());
         node.parent = this;
