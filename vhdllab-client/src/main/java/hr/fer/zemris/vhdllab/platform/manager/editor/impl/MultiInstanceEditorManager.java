@@ -195,7 +195,7 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
                 workspaceManager.save(file);
                 editor.setModified(false);
             } catch (IllegalStateException e) {
-                if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Resource source must have only one entity with the same name.")) {
+                if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Resource " + file.getName() + " must have only one entity with the same name.")) {
                     differentEntityNameDialogManager.showDialog();
                     return false;
                 }
