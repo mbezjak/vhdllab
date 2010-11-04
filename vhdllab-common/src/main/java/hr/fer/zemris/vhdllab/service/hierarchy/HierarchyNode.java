@@ -68,14 +68,13 @@ public final class HierarchyNode implements Serializable {
 
     public void addDependency(HierarchyNode node) {
         if (dependencies.contains(node.getFile())) {
-            throw new IllegalArgumentException(
-                    "Node already added as a dependency: " + node);
+            return; // duplicate dependencies are ignored
         }
         /*
          * disallow cyclic dependencies!
          */
         if (canFormCyclicDependency(this, node)) {
-            throw new IllegalArgumentException(node + " already uses " + this);
+            return; // cyclic dependencies are ignored
         }
         dependencies.add(node.getFile());
         node.parent = this;

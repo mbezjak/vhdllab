@@ -77,36 +77,45 @@ public class HierarchyNodeTest extends ValueObjectTestSupport {
         root.addDependency(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void addDependencyDuplicate() {
         HierarchyNode node = new HierarchyNode(new File(), null);
         root.addDependency(node);
         root.addDependency(node);
+
+        assertEquals(1, root.getDependencies().size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void addDependencyDuplicate2() {
         HierarchyNode node = new HierarchyNode(new File(), null);
         root.addDependency(node);
         root.addDependency(new HierarchyNode(
                 new File("middle_file", null, null), null));
         root.addDependency(node);
+
+        assertEquals(2, root.getDependencies().size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void addDependencySelf() throws Exception {
         root.addDependency(root);
+
+        assertTrue(root.getDependencies().isEmpty());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void addDependencyCyclic() throws Exception {
         File file = new File("a_file_name", null, null);
         HierarchyNode node = new HierarchyNode(file, null);
         root.addDependency(node);
         node.addDependency(new HierarchyNode(file, null));
+
+        assertEquals(1, root.getDependencies().size());
+        assertTrue(node.getDependencies().isEmpty());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void addDependencyCyclic2() throws Exception {
         File file = new File("a_file_name", null, null);
         HierarchyNode node = new HierarchyNode(file, null);
@@ -116,6 +125,9 @@ public class HierarchyNodeTest extends ValueObjectTestSupport {
         node.addDependency(noodDeepInHierarchy);
         noodDeepInHierarchy.addDependency(new HierarchyNode(root.getFile(),
                 null));
+
+        assertEquals(1, root.getDependencies().size());
+        assertEquals(1, node.getDependencies().size());
     }
 
     @Test
