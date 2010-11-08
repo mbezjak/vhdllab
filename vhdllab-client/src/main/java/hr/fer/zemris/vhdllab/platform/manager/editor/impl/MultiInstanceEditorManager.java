@@ -63,6 +63,8 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
     private DialogManager dialogManager;
     @Resource(name = "invalidEntityBlockInSourceEditorDialogManager")
     private DialogManager invalidEntityBlockDialogManager;
+    @Resource(name = "duplicateEntityBlockInSourceEditorDialogManager")
+    private DialogManager duplicateEntityBlockDialogManager;
     @Resource(name = "differentEntityNameDialogManager")
     private DialogManager differentEntityNameDialogManager;
     @Autowired
@@ -204,6 +206,10 @@ public class MultiInstanceEditorManager extends LocalizationSupport implements
             } catch (CircuitInterfaceExtractionException e) {
                 if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Entity block is invalid.")) {
                     invalidEntityBlockDialogManager.showDialog();
+                    return false;
+                }
+                if (file.getType().equals(FileType.SOURCE) && e.getMessage().equals("Duplicate entity block")) {
+                    duplicateEntityBlockDialogManager.showDialog(file.getName());
                     return false;
                 }
 

@@ -225,6 +225,15 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
         pos = next(source, entityName.toUpperCase(Locale.ENGLISH), pos);
         pos = maybeNext(source, WHITESPACE, pos);
         pos = next(source, SEMICOLON, pos);
+
+        // check for duplicate entity block
+        while((pos = source.indexOf(ENTITY, pos)) != -1) {
+            pos = next(source, ENTITY, pos);
+            if (!source.startsWith(" WORK.", pos)) {
+                throwException("Duplicate entity block");
+            }
+        }
+
         try {
             CircuitInterface ci = new CircuitInterface(entityName);
             ci.addAll(ports);
