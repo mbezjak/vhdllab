@@ -19,6 +19,9 @@ package hr.fer.zemris.vhdllab.platform.ui.wizard.support;
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractMultiValidationForm;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.JComboBox;
 
 import org.springframework.richclient.form.builder.TableFormBuilder;
@@ -34,6 +37,12 @@ public class FileForm extends AbstractMultiValidationForm {
     @Override
     protected void doBuildForm(TableFormBuilder builder) {
         projectCombobox = (JComboBox) builder.add("project")[1];
+        projectCombobox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                getFormModel().validate();
+            }
+        });
         builder.row();
         focusOnBeginning(builder.add("name")[1]);
     }
