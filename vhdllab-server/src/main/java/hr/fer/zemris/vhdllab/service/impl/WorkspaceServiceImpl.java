@@ -180,8 +180,11 @@ public class WorkspaceServiceImpl extends ServiceSupport implements
         for (String name : dependencies) {
             File dep = findProjectOrPredefinedFile(file.getProject().getId(),
                     name);
-            if (dep == null)
+            if (dep == null) {
+                resolvedNodes.get(file).addMissingDependency(name);
                 continue;
+            }
+
             HierarchyNode parent = resolvedNodes.get(file);
             if (resolvedNodes.containsKey(dep)) {
                 HierarchyNode depNode = resolvedNodes.get(dep);

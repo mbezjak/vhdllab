@@ -27,19 +27,23 @@ import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManager;
 import hr.fer.zemris.vhdllab.platform.manager.editor.EditorManagerFactory;
 import hr.fer.zemris.vhdllab.platform.manager.editor.SaveContext;
 import hr.fer.zemris.vhdllab.service.Simulator;
+import hr.fer.zemris.vhdllab.service.exception.CompilationException;
 import hr.fer.zemris.vhdllab.service.exception.NoAvailableProcessException;
 import hr.fer.zemris.vhdllab.service.exception.SimulatorTimeoutException;
 import hr.fer.zemris.vhdllab.service.result.CompilationMessage;
 import hr.fer.zemris.vhdllab.service.result.Result;
 
+import java.awt.Frame;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.swing.JOptionPane;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.richclient.application.Application;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -90,6 +94,14 @@ public class DefaultSimulationManager extends
                                 .getName() });
                 messages = Collections.singletonList(new CompilationMessage(
                         message));
+            } catch (CompilationException e) {
+                if (e.getMessage().endsWith("Neither compilation nor simulation can be run.")) {
+                    Frame frame = Application.instance().getActiveWindow().getControl();
+                    JOptionPane.showMessageDialog(frame, e.getMessage(), "Couldn't run complation", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                throw e;
             }
             lastCompiledFile = file;
             fireCompiled(file, messages);
@@ -139,6 +151,14 @@ public class DefaultSimulationManager extends
                         "simulator.simulate.no.processes", new Object[] { file
                                 .getName() });
                 result = new Result(Collections.singletonList(message));
+            } catch (CompilationException e) {
+                if (e.getMessage().endsWith("Neither compilation nor simulation can be run.")) {
+                    Frame frame = Application.instance().getActiveWindow().getControl();
+                    JOptionPane.showMessageDialog(frame, e.getMessage(), "Couldn't run simulation", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                throw e;
             }
             lastSimulatedFile = file;
             fireSimulated(file, result);

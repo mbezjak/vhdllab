@@ -219,6 +219,12 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
     }
 
     private void orderFileNames(List<File> ordered, Hierarchy hierarchy, HierarchyNode node) {
+        Set<String> missing = node.getMissingDependencies();
+        if (!missing.isEmpty()) {
+            String dep = missing.iterator().next();
+            throw new CompilationException(node.getFile().getName() + " uses " + dep + " however that circuit doesn't exist. Neither compilation nor simulation can be run.");
+        }
+        
         Set<HierarchyNode> dependencies = hierarchy.getDependenciesFor(node);
         for (HierarchyNode n : dependencies) {
             orderFileNames(ordered, hierarchy, n);

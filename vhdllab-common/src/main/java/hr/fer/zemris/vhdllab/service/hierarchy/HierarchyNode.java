@@ -22,8 +22,10 @@ import hr.fer.zemris.vhdllab.util.EntityUtils;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -54,12 +56,14 @@ public final class HierarchyNode implements Serializable {
 
     private final File file;
     private final Set<File> dependencies;
+    private final transient Set<String> missingDependencies;
     private transient HierarchyNode parent;
 
     public HierarchyNode(File file, HierarchyNode parent) {
         Validate.notNull(file, "File can't be null");
         this.file = EntityUtils.lightweightClone(file);
         this.dependencies = new HashSet<File>();
+        this.missingDependencies = new LinkedHashSet<String>();
         this.parent = parent;
         if (this.parent != null) {
             this.parent.addDependency(this);
@@ -78,6 +82,12 @@ public final class HierarchyNode implements Serializable {
         }
         dependencies.add(node.getFile());
         node.parent = this;
+    }
+
+    public void addMissingDependency(String name) {
+        if (!StringUtils.isBlank(name)) {
+            missingDependencies.add(name);
+        }
     }
 
     private static boolean canFormCyclicDependency(HierarchyNode node,
@@ -101,6 +111,10 @@ public final class HierarchyNode implements Serializable {
 
     public Set<File> getDependencies() {
         return Collections.unmodifiableSet(dependencies);
+    }
+
+    public Set<String> getMissingDependencies() {
+        return Collections.unmodifiableSet(missingDependencies);
     }
 
     public boolean containsDependency(File dependency) {
