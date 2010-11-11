@@ -24,21 +24,26 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Document;
+import javax.swing.text.DocumentFilter;
 import javax.swing.text.Highlighter;
 
 import org.springframework.binding.value.CommitTrigger;
+import org.springframework.richclient.application.Application;
 import org.springframework.richclient.text.TextComponentPopup;
 
-public class TextEditor extends AbstractEditor implements DocumentListener,
-        CaretListener {
+public class TextEditor extends AbstractEditor implements DocumentListener, CaretListener {
 
     private JTextPane textPane;
     private CommitTrigger commitTrigger;
@@ -48,7 +53,27 @@ public class TextEditor extends AbstractEditor implements DocumentListener,
     @Override
     protected JComponent doInitWithoutData() {
         textPane = new JTextPane();
-        textPane.getDocument().addDocumentListener(this);
+        Document document = textPane.getDocument();
+        document.addDocumentListener(this);
+
+        if (document instanceof AbstractDocument) {
+            ((AbstractDocument) document).setDocumentFilter(new DocumentFilter() {
+
+                @Override
+                public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                        throws BadLocationException {
+                    if (length == 0 && text != null && text.length() > 10) {
+                        JFrame frame = Application.instance().getActiveWindow().getControl();
+                        JOptionPane.showMessageDialog(frame, "Pasting text is disabled!", "Paste text",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        super.replace(fb, offset, length, text, attrs);
+                    }
+                }
+
+            });
+        }
+
         textPane.addCaretListener(this);
         commitTrigger = new CommitTrigger();
         TextComponentPopup.attachPopup(textPane, commitTrigger);
@@ -95,9 +120,8 @@ public class TextEditor extends AbstractEditor implements DocumentListener,
             last = content.length();
         }
         try {
-            highlighted = h.addHighlight(pos, last,
-                    new DefaultHighlighter.DefaultHighlightPainter(new Color(
-                            180, 210, 238)));
+            highlighted = h.addHighlight(pos, last, new DefaultHighlighter.DefaultHighlightPainter(new Color(180, 210,
+                    238)));
         } catch (BadLocationException e) {
             e.printStackTrace();
             StringWriter sw = new StringWriter();
