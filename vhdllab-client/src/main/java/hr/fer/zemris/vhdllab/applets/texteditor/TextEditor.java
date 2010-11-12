@@ -62,13 +62,17 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
                 @Override
                 public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                         throws BadLocationException {
-                    if (length == 0 && text != null && text.length() > 10) {
-                        JFrame frame = Application.instance().getActiveWindow().getControl();
-                        JOptionPane.showMessageDialog(frame, "Pasting text is disabled!", "Paste text",
-                                JOptionPane.INFORMATION_MESSAGE);
+                    if (text != null && (text.length() - length) > 10) {
+                        informPastingIsDisabled();
                     } else {
                         super.replace(fb, offset, length, text, attrs);
                     }
+                }
+
+                private void informPastingIsDisabled() {
+                    JFrame frame = Application.instance().getActiveWindow().getControl();
+                    JOptionPane.showMessageDialog(frame, "Pasting text is disabled!", "Paste text",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
 
             });
