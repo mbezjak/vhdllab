@@ -45,14 +45,14 @@ import org.springframework.richclient.text.TextComponentPopup;
 
 public class TextEditor extends AbstractEditor implements DocumentListener, CaretListener {
 
-    private JTextPane textPane;
+    private CustomJTextPane textPane;
     private CommitTrigger commitTrigger;
 
     private Object highlighted;
 
     @Override
     protected JComponent doInitWithoutData() {
-        textPane = new JTextPane();
+        textPane = new CustomJTextPane();
         Document document = textPane.getDocument();
         document.addDocumentListener(this);
 
@@ -62,7 +62,7 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
                 @Override
                 public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                         throws BadLocationException {
-                    if (text != null && (text.length() - length) > 10) {
+                    if (text != null && (text.length() - length) > 10 && !text.equals(CustomJTextPane.getClipboardText())) {
                         informPastingIsDisabled();
                     } else {
                         super.replace(fb, offset, length, text, attrs);
@@ -71,7 +71,7 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
 
                 private void informPastingIsDisabled() {
                     JFrame frame = Application.instance().getActiveWindow().getControl();
-                    JOptionPane.showMessageDialog(frame, "Pasting text is disabled!", "Paste text",
+                    JOptionPane.showMessageDialog(frame, "Pasting text from outside of vhdllab is disabled!", "Paste text",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
 
@@ -166,4 +166,30 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
         }
     }
 
+    private static class CustomJTextPane extends JTextPane {
+
+		private static final long serialVersionUID = 1L;
+
+		private static String clipboardText;
+		
+		@Override
+		public void copy() {
+			setClipboardText(this.getSelectedText());
+			super.copy();
+		}
+		
+		@Override
+		public void cut() {
+			setClipboardText(this.getSelectedText());
+			super.cut();
+		}
+		
+		public static synchronized String getClipboardText() {
+			return clipboardText;
+		}
+		
+		public static synchronized void setClipboardText(String clipboardText) {
+			CustomJTextPane.clipboardText = clipboardText;
+		}
+    }
 }
