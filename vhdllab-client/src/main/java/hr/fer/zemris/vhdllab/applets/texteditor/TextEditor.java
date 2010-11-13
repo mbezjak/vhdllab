@@ -20,6 +20,7 @@ import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -166,11 +167,26 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
         }
     }
 
+    /**
+     * Custom razred koji omogucava presretanje copy&paste operacija.
+     * Interno, u globalnu se varijablu pamti sve sto je korisnik
+     * kopirao/izrezao iz uredivaca tako da se pastanje toga dozvoljava
+     * ali pastanje bilo cega drugoga veceg od 10 znakova ne.
+     * Dodatno, font se postavlja na monospaced sto je uobicajeno
+     * za uredivace koda.
+     */
     private static class CustomJTextPane extends JTextPane {
 
 		private static final long serialVersionUID = 1L;
 
 		private static String clipboardText;
+		
+		public CustomJTextPane() {
+			Font font = this.getFont();
+			int fontSize = font.getSize();
+			Font newFont = new Font(Font.MONOSPACED, Font.PLAIN, fontSize);
+			this.setFont(newFont);
+		}
 		
 		@Override
 		public void copy() {
